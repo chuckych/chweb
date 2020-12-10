@@ -1,0 +1,112 @@
+<!-- Modal -->
+<div class="modal fade" id="ModalABM" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header border-0">
+        <p class="m-0 modal-title" id="exampleModalLabel"></p>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form action="insert.php" method="POST" class="form_abm_rol">
+        <div class="modal-body">
+          <input type="hidden" id="NombreRol">
+          <input type="hidden" id="RecidRol" name="RecidRol">
+          <input type="hidden" id="IdRol" name="IdRol">
+          <input type="hidden" id="Cliente">
+          <input type="hidden" id="act_abm" name="act_abm">
+          <div class="row mt-n4">
+            <div class="col-12">
+              <span class="fontq btn btn-link p-0 text-gris" id="marcar">Marcar Todo</span>
+              <span class="ml-2 fontq btn btn-link p-0 text-gris" id="desmarcar">Desmarcar</span>
+            </div>
+          </div>
+          <div class="row p-3">
+            <div class="col-12 col-sm-6">
+              <p class="m-0 fw4">Fichadas</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="aFic" name="aFic">
+                <label class="custom-control-label" style="padding-top: 3px;" for="aFic">Alta</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="mFic" name="mFic">
+                <label class="custom-control-label" style="padding-top: 3px;" for="mFic">Modificación</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bFic" name="bFic">
+                <label class="custom-control-label" style="padding-top: 3px;" for="bFic">Baja</label>
+              </div>
+              <p class="m-0 mt-2 fw4">Novedades</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="aNov" name="aNov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="aNov">Alta</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="mNov" name="mNov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="mNov">Modificación</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bNov" name="bNov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="bNov">Baja</label>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <p class="m-0 fw4">Horas</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="aHor" name="aHor">
+                <label class="custom-control-label" style="padding-top: 3px;" for="aHor">Alta</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="mHor" name="mHor">
+                <label class="custom-control-label" style="padding-top: 3px;" for="mHor">Modificación</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bHor" name="bHor">
+                <label class="custom-control-label" style="padding-top: 3px;" for="bHor">Baja</label>
+              </div>
+              <p class="m-0 mt-2 fw4">Otras Novedades</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="aONov" name="aONov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="aONov">Alta</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="mONov" name="mONov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="mONov">Modificación</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bONov" name="bONov">
+                <label class="custom-control-label" style="padding-top: 3px;" for="bONov">Baja</label>
+              </div>
+            </div>
+            <div class="col-12 mt-2">
+              <p class="m-0 fw4">Procesar</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="Proc" name="Proc">
+                <label class="custom-control-label" style="padding-top: 3px;" for="Proc">Sí</label>
+              </div>
+            </div>
+            <div class="col-12 mt-2">
+              <p class="m-0 fw4">Citaciones</p>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="aCit" name="aCit">
+                <label class="custom-control-label" style="padding-top: 3px;" for="aCit">Alta</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="mCit" name="mCit">
+                <label class="custom-control-label" style="padding-top: 3px;" for="mCit">Baja</label>
+              </div>
+              <div class="custom-control custom-checkbox">
+                <input type="checkbox" class="custom-control-input" id="bCit" name="bCit">
+                <label class="custom-control-label" style="padding-top: 3px;" for="bCit">Modificación</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-sm btn-outline-custom fontq" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-sm btn-custom fontq" id="submitABM">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

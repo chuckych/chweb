@@ -1,0 +1,8 @@
+{
+    "require": {
+        "igorescobar/jquery-mask-plugin": "^1.14", 
+        "spipu/html2pdf": "*",
+        "mpdf/mpdf": "^8.0",
+        "phpoffice/phpspreadsheet": "^1.14"
+    }
+}
