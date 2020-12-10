@@ -1,0 +1,123 @@
+<!-- Modal -->
+<div class="modal animate__animated animate__fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <label for="Tipo" class="mb-1 fontq">Tipo Personal: </label>
+                        <select class="selectjs_tipoper" id="Tipo" name="Tipo">
+                        </select>
+                        <span id="trash_allIn" title="Limpiar Filtros"
+                            class="trash align-middle pb-0 fw5 float-right">Limpiar Filtros</span>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Empresa -->
+                        <label for="Emp" class="mb-1 fontq">Empresas</label>
+                        <select class="form-control selectjs_empresa  id=" Emp" name="Emp">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Planta -->
+                        <label for="Plan" class="mb-1 w100 fontq">Plantas </label>
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Sector -->
+                        <label for="Sect" class="mb-1 w100 fontq">Sectores</label>
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect">
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-4">
+                        <!-- Seccion -->
+                        <label for="Sec2" class="mb-1 w100 fontq">Secciónes</label>
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Grupos -->
+                        <label for="Grup" class="mb-1 w100 fontq">Grupos</label>
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Sucursal -->
+                        <label for="Sucur" class="mb-1 w100 fontq">Sucursales</label>
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur">
+                        </select>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-center">
+                    <div class="col-12 col-sm-6">
+                        <!-- Tareas -->
+                        <label for="Tar" class="mb-1 w100 fontq">Tareas</label>
+                        <select class="form-control selectjs_tareas" id="Tar" name="Tar">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-6">
+                        <!-- Legajo -->
+                        <label for="Per" class="mb-1 w100 fontq">Legajos</label>
+                        <select class="form-control selectjs_personal" id="Per" name="Per">
+                        </select>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-center">
+                    <div class="col-12 col-sm-4">
+                        <!-- Tipo de hora -->
+                        <label for="Thora" class="mb-1 w100 fontq">Tipo de Horas</label>
+                        <select class="form-control selectjs_thora" id="Thora" name="Thora">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-3">
+                        <!-- Min -->
+                        <label for="HoraMin" class="mb-1 w100 fontq">Min / Max</label>
+                        <div class="d-flex align-items-center">
+                            <input type="text" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMin" class="ls1 w100 form-control h40" placeholder="00:00"
+                                value="00:00">
+                            <input type="text" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMax" class="ml-2 ls1 w100 form-control h40" placeholder="00:00"
+                                value="23:59">
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-5">
+                        <label for="" class="mb-1 w100 fontq">Sobre Horas</label>
+                        <div class="d-flex align-items-center">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-sm fontq btn-outline-custom border w100" id="Hechas"
+                                title="Min/Max sobre horas hechas.">
+                                <input checked type="radio" name="SHoras" id="SHoras1"> Hechas
+                            </label>
+                            <label class="btn btn-sm fontq btn-outline-custom border w100" id="Autori"
+                                title="Min/Max sobre horas autorizadas.">
+                                <input type="radio" name="SHoras" id="SHoras2"> Autorizadas
+                            </label>
+                            <input type="hidden" hidden id="SHoras">
+                        </div>
+                        <div class="custom-control custom-switch custom-control-inline ml-sm-2">
+                            <input type="checkbox" class="custom-control-input" id="Calculos">
+                            <label class="custom-control-label" for="Calculos" title="Mostrar Todos los cálculos"
+                                style="padding-top: 3px;">Todos los cálculos</label>
+                        </div>
+                        </div>
+                    </div>
+                    <div class="col-12 form-inline pt-3">
+                        <label class="w80 mr-2" for="Agrupar">Agrupar Por</label>
+                        <select name="" id="Agrupar" class="selectAgrupar form-control w200">
+                            <?php
+                            foreach (AGRUPAR as $key => $value) {
+                                echo '<option value="' . $value . '">' . $key . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

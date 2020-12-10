@@ -1,0 +1,17 @@
+$('#LegCUIT').mask('00-00000000-0');
+$('#EmpCUIT').mask('00-00000000-0');
+$('#OTROConValor').mask('#.##0.00', { reverse: true });
+$('#LegValHora').mask('#.##0.00', { reverse: true });
+$('#LegToTa').mask('00');
+$('#LegToIn').mask('00');
+$('#LegToSa').mask('00');
+$('#LegReTa').mask('00');
+$('#LegReIn').mask('00');
+$('#LegReSa').mask('00');
+$('#LegDoPi').mask('000');
+$('#IDCodigo').mask('0000000000');
+$('#LegNume').mask('0000000000');
+$('#LegHoLi').mask('00:00', {clearIfNotMatch: true, placeholder: "00:00"});
+// $('#OTROConValor').mask('00.00');
+// $('#Nacimiento').mask('00/00/0000');
+// $('#numdoc').mask('00.000.000');

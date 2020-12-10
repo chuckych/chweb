@@ -1,0 +1,70 @@
+<!-- Modal -->
+<div class="modal animate__animated animate__fadeIn" id="Detalle" tabindex="-1" aria-labelledby="DetalleLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable ">
+    <div class="modal-content">
+      <div class="modal-header border-0 bg-light">
+        <p class="modal-title text-dark" id="detalle-modal-title"></p>
+        <button class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" name="" id="FicLega">
+        <input type="hidden" name="" id="DRFech">
+        <ul class="nav nav-tabs radius fontq bg-light" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <a class="nav-link active text-secondary fw4 text-nowrap" id="HSHechas-tab" data-toggle="tab"
+              href="#HSHechas" role="tab" aria-controls="HSHechas" aria-selected="true" title="HORAS HECHAS"></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-secondary fw4" id="JorReduc-tab" data-toggle="tab" href="#JorReduc" role="tab"
+              aria-controls="JorReduc" aria-selected="false" title="JORNADA REDUCIDA. RESTA EN CTA CTE"></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-secondary fw4" id="JorReduc2-tab" data-toggle="tab" href="#JorReduc2" role="tab"
+              aria-controls="JorReduc2" aria-selected="false" title="JORNADA REDUCIDA. SUMA EN CTA CTE"></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-secondary fw4" id="Francos-tab" data-toggle="tab" href="#Francos" role="tab"
+              aria-controls="Francos" aria-selected="false" title="FRANCOS. RESTA EN CTA CTE"></a>
+          </li>
+          <li class="nav-item" role="presentation">
+            <a class="nav-link text-secondary fw4" id="Francos2-tab" data-toggle="tab" href="#Francos2" role="tab"
+              aria-controls="Francos2" aria-selected="false" title="FRANCOS. SUMA EN CTA CTE"></a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active table-responsive" id="HSHechas" role="tabpanel" aria-labelledby="HSHechas-tab" style="min-height:300px;">
+              <table class="fw5 table w-auto text-nowrap p-1 table-hover" id="GetHoras">
+                <thead></thead>
+              </table>
+        </div>
+        <div class="tab-pane fade" id="JorReduc" role="tabpanel" aria-labelledby="JorReduc-tab" style="min-height:300px;">
+          <table class="fw5 table w-auto text-nowrap p-1 table-hover" id="GetNovedades">
+            <thead></thead>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="JorReduc2" role="tabpanel" aria-labelledby="JorReduc2-tab" style="min-height:300px;">
+          <table class="fw5 table w-auto text-nowrap p-1 table-hover" id="GetNovedades2">
+            <thead></thead>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="Francos" role="tabpanel" aria-labelledby="Francos-tab" style="min-height:300px;">
+          <table class="fw5 table w-auto text-nowrap p-1 table-hover" id="GetNovedades3">
+            <thead></thead>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="Francos2" role="tabpanel" aria-labelledby="Francos2-tab" style="min-height:300px;">
+          <table class="fw5 table w-auto text-nowrap p-1 table-hover" id="GetNovedades4">
+            <thead></thead>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
+    </div>
+  </div>
+</div>
+</div>

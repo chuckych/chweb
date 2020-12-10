@@ -1,0 +1,159 @@
+<?php
+session_start();
+require __DIR__ . '../../../config/index.php';
+// ultimoacc();
+// secure_auth_ch();
+header("Content-Type: application/json");
+header('Access-Control-Allow-Origin: *');
+
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
+FusNuloPOST('tipo', false);
+FusNuloPOST('modulos', false);
+
+require __DIR__ . '../../../config/conect_mysql.php';
+
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'true')) {
+    $query = "SELECT tipo_modulo.id AS 'id', tipo_modulo.descripcion AS 'descripcion', (SELECT COUNT(modulos.id) FROM modulos WHERE modulos.idtipo = tipo_modulo.id AND modulos.estado='0') AS 'CantMod' FROM tipo_modulo WHERE estado = '0' ORDER BY CantMod desc";
+    // h1($query);exit;
+    $result = mysqli_query($link, $query);
+    $data  = array();
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) :
+            $id          = $row['id'];
+            $descripcion = $row['descripcion'];
+            $CantMod     = $row['CantMod'];
+            $data[] = array(
+                'id'         => $id,
+                'TipoModulo' => $descripcion,
+                'CantMod'    => $CantMod
+            );
+        endwhile;
+        mysqli_free_result($result);
+        mysqli_close($link);
+
+        $data = array('status' => 'ok', 'datos' => $data);
+        echo json_encode($data);
+        exit;
+    } else {
+        $data = array('status' => 'error', 'datos' => $data);
+        echo json_encode($data);
+        exit;
+    }
+
+    $datos = array($respuesta);
+    echo json_encode($datos);
+}
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['modulos'] == 'true')) {
+
+    FusNuloPOST('recidRol', false);
+    $recidRol = $_POST['recidRol'];
+    $tipo     = $_POST['tipo'];
+
+    if (empty($recidRol)) {
+        $data = array('status' => 'error', 'datos' => $data, 'error' => 'No hay Recid');
+        echo json_encode($data);
+        exit;
+    }
+
+    $respuesta=array(); $nocuentas = '';
+    
+    //$recid = (isset($recidRol)) ? "AND modulos.recid='$recidRol'" : "";
+    $idtipo = (isset($tipo)) ? "AND modulos.idtipo='$tipo'" : "";
+    
+    if ($tipo=='5') {
+        $nocuentas = (modulo_cuentas()!='1') ? "AND modulos.id != '1'":'';
+    }
+
+    $query = "SELECT modulos.id AS 'id', modulos.recid AS 'recid', modulos.nombre AS 'nombre', modulos.idtipo AS 'tipo'
+    FROM modulos 
+    WHERE modulos.id>'0' $idtipo $nocuentas AND modulos.estado ='0'
+    ORDER BY modulos.orden";
+    $result = mysqli_query($link, $query);
+    // print_r(mysqli_error_list($link));
+    // print_r($query); exit;
+    $data  = array();
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) :
+            
+            $id     = $row['id'];
+            $recid  = $row['recid'];
+            $tipo   = $row['tipo'];
+            $nombre = $row['nombre'];
+            
+            $data[] = array(
+                'id'     => $id,
+                'recid'  => $recid,
+                'nombre' => $nombre,
+                'tipo'   => $tipo
+            );
+
+        endwhile;
+        mysqli_free_result($result);
+        mysqli_close($link);
+        $respuesta = array('status' => 'ok', 'datos' => $data, 'modulos' => 'true');
+    } 
+    echo json_encode($respuesta);
+    exit;
+
+
+    // $data = array();
+    // $url  = host() . "/" . HOMEHOST . "/data/GetModulos2.php?tk=" . token() . "&idtipo=" . $tipo."&recidRol=" . $recidRol;
+    // $json = file_get_contents($url);
+    // $data = json_decode($json, TRUE);
+    // print_r($data); exit;
+    // echo $url; exit;
+    if (is_array($data)) {
+        if ($data[0]['success'] == 'YES') {
+            $data = array('status' => 'ok', 'datos' => $data, 'modulos' => 'true');
+            echo json_encode($data);
+            exit;
+        } else {
+            $data = array('status' => 'errors', 'datos' => $data, 'modulos' => 'true');
+            echo json_encode($data);
+            exit;
+        }
+    } else {
+        $data = array('status' => 'errorArray', 'datos' => $data, 'modulos' => 'true');
+        echo json_encode($data);
+        exit;
+    }
+}
+
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['activos'] == 'true')) {
+
+    FusNuloPOST('recidRol', false);
+    $recidRol = $_POST['recidRol'];
+
+    if (empty($recidRol)) {
+        $data = array('status' => 'error', 'datos' => $data, 'error' => 'No hay Recid');
+        echo json_encode($data);
+        exit;
+    }
+    $data = array();
+    $url  = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $recidRol;
+    $json = file_get_contents($url);
+    $data = json_decode($json, TRUE);
+
+    // echo $url; exit;
+
+    if (is_array($data)) {
+        if ($data[0]['success'] == 'YES') {
+            $data = array('status' => 'ok', 'datos' => $data, 'activos' => 'true');
+            echo json_encode($data);
+            exit;
+        } else {
+            $data = array('status' => 'errors', 'datos' => $data, 'activos' => 'true');
+            echo json_encode($data);
+            exit;
+        }
+    } else {
+        $data = array('status' => 'error', 'datos' => $data, 'activos' => 'true');
+        echo json_encode($data);
+        exit;
+    }
+
+    // $datos = array($respuesta);
+    // echo json_encode($datos);
+}
