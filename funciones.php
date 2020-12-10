@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.64';
+    return 'v0.0.65';
 }
 function API_KEY_MAPS()
 {
@@ -291,7 +291,7 @@ function secure_auth_ch()
     }
     session_regenerate_id();
     error_reporting(E_ALL);
-    ini_set('display_errors', '1');
+    ini_set('display_errors', '0');
 }
 /** ultimaacc */
 function ultimoacc()
