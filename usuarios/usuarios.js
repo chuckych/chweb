@@ -447,7 +447,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "crudCopy.php",
+            url: "crud.php",
             'data': {
                 submit: 'key',
                 uid: data_uid,
@@ -485,7 +485,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "crudCopy.php",
+            url: "crud.php",
             'data': {
                 submit: 'estado',
                 uid: data_uid,
@@ -523,7 +523,7 @@ $(document).ready(function() {
 
         $.ajax({
             type: "POST",
-            url: "crudCopy.php",
+            url: "crud.php",
             'data': {
                 submit: 'delete',
                 uid: data_uid,
