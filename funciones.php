@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.65';
+    return 'v0.0.66';
 }
 function API_KEY_MAPS()
 {
@@ -879,15 +879,22 @@ function ExisteCliente($recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
-    $url   = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
-    $count = (count($array[0]['clientes']));
-    ($count) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+    $query="SELECT clientes.recid as recid, clientes.nombre as nombre FROM clientes WHERE clientes.id >'0' AND clientes.recid='$recid' LIMIT 1";
+    require 'config/conect_mysql.php';
+    $result = mysqli_query($link, $query);
+    if (mysqli_num_rows($result) > 0) {
+        while ($row = mysqli_fetch_assoc($result)) :
+            $nombre = $row['nombre'];
+        endwhile;
+        mysqli_free_result($result);
+        mysqli_close($link);
+        return $nombre;
+    }else{
+        header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+    }
+
+    // CountRegMayorCeroMySql($query) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     /** redirect */
-    /** 
-     *  
-     */
 }
 function ExisteRol($recid)
 {
@@ -2291,6 +2298,12 @@ function PrintError($TituloError, $Mensaje)
 function PrintOK($Mensaje)
 {
     $data = array('status' => 'ok', 'Mensaje' => $Mensaje);
+    echo json_encode($data);
+    /** Imprimo json con resultado */
+}
+function PrintRespuestaJson($status, $Mensaje)
+{
+    $data = array('status' => $status, 'Mensaje' => $Mensaje);
     echo json_encode($data);
     /** Imprimo json con resultado */
 }

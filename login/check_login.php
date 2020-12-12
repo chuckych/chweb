@@ -37,10 +37,10 @@ if ($_POST["guarda"] == "on") {
 /** Consultamos el si el usuario y clave son correctos */
 require __DIR__ . '../../config/conect_mysql.php';
 
-$user = (isset($_GET['conf']))?$_GET['conf'] : strip_tags(strtolower($_POST['user']));
-$pass = (isset($_GET['conf']))?$_GET['conf'] : strip_tags($_POST['clave']);
+$user = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
+$pass = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags($_POST['clave']);
 
-$sql="SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='" . test_input($user) . "' AND usuarios.estado='0' LIMIT 1";
+$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='" . test_input($user) . "' AND usuarios.estado='0' LIMIT 1";
 
 // print_r($sql); exit;
 
@@ -51,32 +51,31 @@ $hash     = $row['clave'];
 // print_r($sql); exit;
 /** Si es correcto */
 if (($NumRows > '0') && (password_verify($pass, $hash))) {
-
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
 	$query = "SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1";
 	$result = mysqli_query($link, $query);
 	// print_r($query); exit;
-	$ABMRol=array();
+	$ABMRol = array();
 	if (mysqli_num_rows($result) > 0) {
-	while ($rowabm = mysqli_fetch_assoc($result)) :
+		while ($rowabm = mysqli_fetch_assoc($result)) :
 			$aFic  = $rowabm['aFic'];
-            $mFic  = $rowabm['mFic'];
-            $bFic  = $rowabm['bFic'];
-            $aNov  = $rowabm['aNov'];
-            $mNov  = $rowabm['mNov'];
-            $bNov  = $rowabm['bNov'];
-            $aHor  = $rowabm['aHor'];
-            $mHor  = $rowabm['mHor'];
-            $bHor  = $rowabm['bHor'];
-            $aONov = $rowabm['aONov'];
-            $mONov = $rowabm['mONov'];
-            $bONov = $rowabm['bONov'];
-            $Proc  = $rowabm['Proc'];
-            $aCit  = $rowabm['aCit'];
-            $mCit  = $rowabm['mCit'];
-            $bCit  = $rowabm['bCit'];
+			$mFic  = $rowabm['mFic'];
+			$bFic  = $rowabm['bFic'];
+			$aNov  = $rowabm['aNov'];
+			$mNov  = $rowabm['mNov'];
+			$bNov  = $rowabm['bNov'];
+			$aHor  = $rowabm['aHor'];
+			$mHor  = $rowabm['mHor'];
+			$bHor  = $rowabm['bHor'];
+			$aONov = $rowabm['aONov'];
+			$mONov = $rowabm['mONov'];
+			$bONov = $rowabm['bONov'];
+			$Proc  = $rowabm['Proc'];
+			$aCit  = $rowabm['aCit'];
+			$mCit  = $rowabm['mCit'];
+			$bCit  = $rowabm['bCit'];
 			$ABMRol = array(
 				'aFic'  => $aFic,
 				'mFic'  => $mFic,
@@ -95,8 +94,8 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 				'mCit'  => $mCit,
 				'bCit'  => $bCit,
 			);
-	endwhile;
-}else{
+		endwhile;
+	} else {
 		$ABMRol = array(
 			'aFic'  => '0',
 			'mFic'  => '0',
@@ -115,7 +114,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 			'mCit'  => '0',
 			'bCit'  => '0',
 		);
-}
+	}
 	mysqli_free_result($result);
 
 	$query = "SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]'";
@@ -134,46 +133,46 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
 	$_SESSION["MODS_ROL"] = $data_mod;
 	$_SESSION["ABM_ROL"] = $ABMRol;
-	
-    $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
-    $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
-    $_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));
+
+	$_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
+	$_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
+	$_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));
 	$_SESSION['SectRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sectores', 'sector'));
 	$_SESSION['Sec2Rol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'secciones', 'seccion'));
-    $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
-    $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
-	
-    $_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
-    $_SESSION["secure_auth_ch"] = true;
-    $_SESSION["user"]           = strtolower($row['usuario']);
-    $_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
-    $_SESSION["UID"]            = $row["id"];
-    $_SESSION["NOMBRE_SESION"]  = $row["nombre"];
-    $_SESSION["LEGAJO_SESION"]  = $row["legajo"];
-    $_SESSION["RECID_USER"]     = $row["recid_user"];
-    $_SESSION["ID_ROL"]         = $row["id_rol"];
-    $_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
-    $_SESSION["CLIENTE"]        = $row["cliente"];
-    $_SESSION["ROL"]            = $row["rol"];
-    $_SESSION["RECID_ROL"]      = $row["recid_rol"];
-    $_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
-    $_SESSION["TK_MOBILE"]      = $row["tkmobile"];
-    $_SESSION["WEBSERVICE"]     = $row["WebService"];
-    $_SESSION["HASH_CLAVE"]     = ($row['clave']);
-    $_SESSION["LIMIT_SESION"]   = 3600;
-    $_SESSION['USER_AGENT']      = $_SERVER['HTTP_USER_AGENT'];
-    $_SESSION['IP_CLIENTE']      = $_SERVER['REMOTE_ADDR'];
-    // $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+	$_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
+	$_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
+
+	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+	$_SESSION["secure_auth_ch"] = true;
+	$_SESSION["user"]           = strtolower($row['usuario']);
+	$_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
+	$_SESSION["UID"]            = $row["id"];
+	$_SESSION["NOMBRE_SESION"]  = $row["nombre"];
+	$_SESSION["LEGAJO_SESION"]  = $row["legajo"];
+	$_SESSION["RECID_USER"]     = $row["recid_user"];
+	$_SESSION["ID_ROL"]         = $row["id_rol"];
+	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+	$_SESSION["CLIENTE"]        = $row["cliente"];
+	$_SESSION["ROL"]            = $row["rol"];
+	$_SESSION["RECID_ROL"]      = $row["recid_rol"];
+	$_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
+	$_SESSION["TK_MOBILE"]      = $row["tkmobile"];
+	$_SESSION["WEBSERVICE"]     = $row["WebService"];
+	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
+	$_SESSION["LIMIT_SESION"]   = 3600;
+	$_SESSION['USER_AGENT']      = $_SERVER['HTTP_USER_AGENT'];
+	$_SESSION['IP_CLIENTE']      = $_SERVER['REMOTE_ADDR'];
+	// $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();
 
 	mysqli_free_result($rs);
 
 	login_logs('1');
-	
+
 	if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
-	}else{
+	} else {
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 }
