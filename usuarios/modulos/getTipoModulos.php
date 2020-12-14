@@ -58,10 +58,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['modulos'] == 'true')) {
     }
 
     $respuesta=array(); $nocuentas = '';
-    
-    //$recid = (isset($recidRol)) ? "AND modulos.recid='$recidRol'" : "";
     $idtipo = (isset($tipo)) ? "AND modulos.idtipo='$tipo'" : "";
-    
     if ($tipo=='5') {
         $nocuentas = (modulo_cuentas()!='1') ? "AND modulos.id != '1'":'';
     }
@@ -131,26 +128,57 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['activos'] == 'true')) {
         echo json_encode($data);
         exit;
     }
-    $data = array();
-    $url  = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $recidRol;
-    $json = file_get_contents($url);
-    $data = json_decode($json, TRUE);
+    // $data = array();
+    // $url  = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $recidRol;
+    // $json = file_get_contents($url);
+    // $data = json_decode($json, TRUE);
 
-    // echo $url; exit;
+        $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo'
+        FROM mod_roles
+        INNER JOIN modulos ON mod_roles.modulo = modulos.id
+        WHERE mod_roles.id>'0' AND modulos.estado ='0' AND mod_roles.recid_rol = '$recidRol'
+        ORDER BY modulos.orden";
+        $result = mysqli_query($link, $query);
+        // print_r(mysqli_error_list($link));
+        // print_r($query); exit;
+        $data  = array();
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) :
+                
+                $id        = $row['id'];
+                $id_mod    = $row['id_mod'];
+                $recid_rol = $row['recid_rol'];
+                $nombre    = $row['nombre'];
+                $idtipo    = $row['idtipo'];
+                $data[] = array(
+                    'id'        => $id,
+                    'recid_rol' => $recid_rol,
+                    'id_mod'    => $id_mod,
+                    'modulo'    => $nombre,
+                    'idtipo'    => $idtipo
+                );
+            endwhile;
+            mysqli_free_result($result);
+            mysqli_close($link);
+            $respuesta = array('success' => 'YES', 'error' => '0', 'mod_roles' => $data);
+        } 
+                        // echo json_encode($respuesta);
+                        // exit;
+        // print_r($data);
 
-    if (is_array($data)) {
-        if ($data[0]['success'] == 'YES') {
-            $data = array('status' => 'ok', 'datos' => $data, 'activos' => 'true');
-            echo json_encode($data);
+    if (is_array($respuesta)) {
+        if ($respuesta['success'] == 'YES') {
+            $respuesta = array('status' => 'ok', 'datos' => $data, 'activos' => 'true');
+            echo json_encode($respuesta);
             exit;
         } else {
-            $data = array('status' => 'errors', 'datos' => $data, 'activos' => 'true');
-            echo json_encode($data);
+            $respuesta = array('status' => 'errors', 'datos' => $respuesta, 'activos' => 'true');
+            echo json_encode($respuesta);
             exit;
         }
     } else {
-        $data = array('status' => 'error', 'datos' => $data, 'activos' => 'true');
-        echo json_encode($data);
+        $respuesta = array('status' => 'error', 'datos' => $data, 'activos' => 'true');
+        echo json_encode($respuesta);
         exit;
     }
 

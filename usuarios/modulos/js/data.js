@@ -41,14 +41,14 @@ $(document).ready(function () {
                 if (data.status == "ok") {
                     $.each(data.datos, function (key, value) {
                         // console.log(value);
-                        if (key == '0') {
+                        // if (key == '0') {
                             var array = value.mod_roles
                             // console.log(array);
-                            $.each(array, function (key, value) {
+                            // $.each(array, function (key, value) {
                                 // console.log(value);
                                 $("#m" + TrimEspacios(value.modulo)+"m").prop('checked', true);
-                            });
-                        }
+                            // });
+                        // }
                     });
                     
                 } else {
