@@ -18,6 +18,7 @@ $Cliente = ExisteCliente($_GET['_c'])
             encabezado_mod2('bg-custom', 'white', 'people-fill',  'Usuarios: ' . $Cliente, '25', 'text-white mr-2');
         ?>
         <input type="hidden" id="recid_c" value="<?= $_GET['_c'] ?>">
+        <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
         <div class="row mt-3">
             <div class="col-12 col-sm-6">
                 <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border">
@@ -72,7 +73,7 @@ $Cliente = ExisteCliente($_GET['_c'])
     <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/bootbox.min.js"></script>
-    <script src="usuarios.js"></script>
+    <script src="usuarios-min.js"></script>
 </body>
 
 </html>

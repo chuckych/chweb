@@ -34,7 +34,7 @@ $sqlRec .= $sql_query;
 
 if (!empty($params['search']['value'])) {
     $where_condition .= " AND ";
-    $where_condition .= " usuarios.nombre LIKE '%" . $params['search']['value'] . "%' ";
+    $where_condition .= " CONCAT_WS(' ', roles.nombre, usuarios.nombre) LIKE '%" . $params['search']['value'] . "%' ";
 }
 
 if (isset($where_condition) && $where_condition != '') {
@@ -108,7 +108,8 @@ if ($totalRecords > 0) {
         );
     endwhile;
 }
-mysqli_free_result($result);
+mysqli_free_result($queryTot);
+mysqli_free_result($queryRecords);
 mysqli_close($link);
 $json_data = array(
     "draw"            => intval($params['draw']),

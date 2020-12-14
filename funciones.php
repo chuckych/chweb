@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.68';
+    return 'v0.0.69';
 }
 function API_KEY_MAPS()
 {
@@ -1070,13 +1070,26 @@ function estructura_rol_count($get_rol, $recid_rol, $e, $data)
 function count_estructura($_c, $e)
 {
     $urls   = host() . "/" . HOMEHOST . "/data/GetEstructura.php?tk=" . token() . "&_c=" . $_c . "&count&e=" . $e;
-    // echo $urls;
+    // echo $urls.PHP_EOL;
+    // CountRegMySql("SELECT modulos.id AS 'id' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");    
     $jsons  = file_get_contents($urls);
     $arrays = json_decode($jsons, TRUE);
     if (is_array($arrays)) :
         $rowcount = ($arrays[0]['error']) ? ($arrays[0]['count_cod']) : '-';
         return $rowcount;
     endif;
+}
+function count_estructura2($_c, $tabla, $ColCodi)
+{
+    require_once __DIR__ . '/config/conect_mssql.php';
+    $query = "SELECT COUNT($tabla.$ColCodi) AS count_cod
+    FROM $tabla";
+    $result = sqlsrv_query($link, $query);
+    while ($row = sqlsrv_fetch_array($result)) :
+        $count_cod = $row['count_cod'];
+    endwhile;
+    sqlsrv_free_stmt($result);
+    sqlsrv_close($link);
 }
 function TipoNov($var)
 {
@@ -1689,6 +1702,23 @@ function DeleteRegistro($query)
         echo json_encode($data[0]);
         exit;
         sqlsrv_close($link);
+    }
+}
+/** Query MYSQL */
+function CountRegMySql($query)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $stmt = mysqli_query($link, $query);
+    // print_r($query); exit;
+    if ($stmt) {
+        $num=mysqli_num_rows($stmt);
+        return $num;
+        mysqli_free_result($stmt);
+        mysqli_close($link);
+    } else {
+        return 'Error';
+        mysqli_close($link);
+        exit;
     }
 }
 /** Query MYSQL */

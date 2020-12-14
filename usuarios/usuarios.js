@@ -11,7 +11,7 @@ $(document).ready(function () {
     // $.fn.DataTable.ext.pager.numbers_length = 5;
     var table = $('#GetUsuarios').DataTable({
         initComplete: function (settings, json) {
-            $('.form-control-sm').attr('placeholder', 'Buscar nombre')
+            $('.form-control-sm').attr('placeholder', 'Buscar nombre o rol')
             $('#GetUsuarios_filter').prepend('<button tittle="Alta de Usuario" class="px-2 btn btn-outline-custom add fontq border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>')
             if ($(window).width() < 769) {
                 $('.botones').removeClass('float-right')
@@ -20,7 +20,7 @@ $(document).ready(function () {
             }
         },
         drawCallback: function (settings) {
-            $(".page-link").addClass('border border-0');
+            // $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary');
             $('.contentd').removeClass('text-light bg-light w30')
@@ -188,7 +188,7 @@ $(document).ready(function () {
         ClassTBody()
         $('#respuestaResetClave').html('')
     });
-
+    $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
     if ($(window).width() < 769) {
         $('#GetUsuarios').removeClass('text-wrap')
         $('#GetUsuarios').addClass('text-nowrap')
