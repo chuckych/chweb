@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.67';
+    return 'v0.0.68';
 }
 function API_KEY_MAPS()
 {

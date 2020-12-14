@@ -74,21 +74,23 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
         <?=
             encabezado_mod2('bg-custom', 'white', 'sliders',  'Roles: ' . nombre_c, '25', 'text-white mr-2');
         ?>
+        <span id="respuesta"></span>
+        <input type="hidden" id="recid_cRol" value="<?= $_GET['_c'] ?>">
         <!-- Fin Encabezado -->
         <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" method="post" class="" onsubmit="ShowLoading()">
             <div class="row mt-3">
-                <div class="col-4">
-                    <a class="fontq btn px-3 btn-custom opa8" data-toggle="collapse" href="#collapse_rol" role="button" aria-expanded="false" aria-controls="collapse_rol">
-                        <?= $tituloform ?>
+                <!-- <div class="col-4">
+                    <a class="fontq btn px-3 btn-custom opa8 altaRol" data-toggle="collapse" href="#collapse_rol" role="button" aria-expanded="false" aria-controls="collapse_rol">
+                        Alta
                     </a>
                     <p class="m-0 fw4 fontq mt-2"><?= $nombre ?></p>
                     <?= $duplicado ?>
-                </div>
-                <div class="col-8">
+                </div> -->
+                <div class="col-12">
                     <?php if (modulo_cuentas() == '1') { ?>
-                        <a href="/<?= HOMEHOST ?>/usuarios/clientes/" class="w80 btn fontq float-right m-0 opa7 btn-custom">Cuentas</a>
+                        <a href="/<?= HOMEHOST ?>/usuarios/clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
                     <?php } ?>
-                    <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>" class="w80 btn mr-1 fontq float-right m-0 opa7 btn-custom">Usuarios</a>
+                    <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>" class="btn mr-1 fontq float-right m-0 opa7 btn-custom"><i class="bi bi-people-fill mr-2"></i>Usuarios</a>
                 </div>
                 <div class="col-12 <?= $collapse ?>" id="collapse_rol">
                     <div class="form-inline mt-2">
@@ -108,7 +110,7 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
         <div class="row mt-2">
             <?= notif_error_var('err', 'Error al borrar el Rol. Existe información en la base de datos') ?>
             <div class="col-12 mt-2">
-                <table class="table w-100 text-nowrap" id="table-roles">
+                <table class="table w-100 text-nowrap" id="GetRoles">
                     <thead class="text-uppercase">
                         <tr>
                             <th class="">Nombre</th>
@@ -121,16 +123,10 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
                             <th class="text-center">Sectores</th>
                             <th class="text-center">Grupo</th>
                             <th class="text-center">Sucursal</th>
-                            <th class="text-center text-secondary">
-                                <svg class="bi" width="12" height="12" fill="currentColor">
-                                    <use xlink:href="../../img/bootstrap-icons.svg#pencil" />
-                                </svg>
-                            </th>
-                            <th class="text-center text-secondary">
-                                <svg class="bi" width="12" height="12" fill="currentColor">
-                                    <use xlink:href="../../img/bootstrap-icons.svg#trash" />
-                                </svg>
-                            </th>
+                            <th class="text-center text-secondary"></th>
+                            <!-- <th class="text-center text-secondary">
+                                <i class="bi bi-trash"></i>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>
@@ -227,25 +223,24 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
                                         </a>
                                     </td>
                                     <?php /** EDITAR ROL */ ?>
-                                    <td class="text-center">
-                                        <a onclick="ShowLoading()" title="Editar rol" href="index.php?id=<?= $recid ?>&mod&_c=<?= $_GET['_c'] ?>" class="btn btn-sm fontp btn-outline-custom border">
-                                            <svg class="bi" width="15" height="15" fill="currentColor">
-                                                <use xlink:href="../../img/bootstrap-icons.svg#pencil" />
-                                            </svg>
-                                        </a>
-                                    </td>
-                                    <?php /** ELIMINAR ROL */ ?>
-                                    <td class="">
+                                    <td class="text-center d-inline-flex">
+                                        <!-- <a onclick="ShowLoading()" title="Editar rol" href="index.php?id=<?= $recid ?>&mod&_c=<?= $_GET['_c'] ?>" class="btn btn-sm fontp btn-outline-custom border mr-1 editRol" datarol="<?= $nombre ?>" dataidrol="<?= $id ?>">
+                                            <i class="bi bi-pencil fontq"></i>
+                                        </a> -->
+                                        <button type="button" title="Editar rol" class="btn btn-sm fontp btn-outline-custom border mr-1 editRol" datarol="<?= $nombre ?>" dataidrol="<?= $id ?>" datarecid_c="<?= $_GET['_c'] ?>" id="Editar_<?= $id ?>">
+                                            <i class="bi bi-pencil fontq"></i>
+                                        </button>
+                                        <!-- </td> -->
+                                        <?php /** ELIMINAR ROL */ ?>
+                                        <!-- <td class="">  -->
                                         <?php if (array_sum($sum_cant) <= 0) : ?>
-                                            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" method="post" onsubmit="ShowLoading()">
-                                                <input type="hidden" name="recid" id="recid" value="<?= $recid ?>">
-                                                <input type="hidden" name="recid_c" id="recid_c" placeholder="" class="form-control mr-sm-2" value="<?= recid_c ?>">
-                                                <button name='submit' value="trash" type="submit" title="Eliminar" class="btn btn-sm fontp btn-outline-custom border">
-                                                    <svg class="bi" width="15" height="15" fill="currentColor">
-                                                        <use xlink:href="../../img/bootstrap-icons.svg#trash" />
-                                                    </svg>
-                                                </button>
-                                            </form>
+                                            <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" method="post" onsubmit="ShowLoading()"> -->
+                                            <input type="hidden" name="recid" id="recid" value="<?= $recid ?>">
+                                            <input type="hidden" name="recid_c" id="recid_c" placeholder="" class="form-control mr-sm-2" value="<?= recid_c ?>">
+                                            <button type="button" title="Eliminar" class="btn btn-sm fontp btn-outline-custom border deleteRol" datarol="<?= $nombre ?>" dataidrol="<?= $id ?>" datarecid_c="<?= $_GET['_c'] ?>" id="Eliminar_<?= $id ?>">
+                                                <i class="bi bi-trash fontq"></i>
+                                            </button>
+                                            <!-- </form> -->
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -331,7 +326,6 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
 
             <script>
                 $.fn.DataTable.ext.pager.numbers_length = 5;
-                alert = function() {};
                 $(document).ready(function() {
                     $('#table-<?= $nombre ?>').DataTable({
                         ajax: {
@@ -368,7 +362,21 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
     ?>
     <script>
         $(document).ready(function() {
-            $('#table-roles').DataTable({
+
+            $('#GetRoles').DataTable({
+                initComplete: function(settings, json) {
+                    $('.form-control-sm').attr('placeholder', 'Buscar Rol')
+                    $('.LabelSearchDT').html('')
+                    $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-outline-custom addRol fontq border" id="AltaRol"><span><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span></button>')             
+                    $(".addRol").hover(
+                        function() {
+                            $(this).find("span").html('<span class="animate__animated animate__fadeIn"><svg class="mr-2" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg>Nuevo Rol</span>');
+                        },
+                        function() {
+                            $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
+                        }
+                    );
+                },
                 scrollY: '50vh',
                 scrollX: true,
                 scrollCollapse: true,
@@ -384,7 +392,9 @@ $chSucursales = count_estructura($_GET['_c'], 'sucursales');
         });
     </script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="../../js/bootbox.min.js"></script>
     <script src="modal.js"></script>
+    <script src="datarol-min.js"></script>
 </body>
 
 </html>

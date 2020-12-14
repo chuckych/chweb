@@ -8,12 +8,6 @@ $Cliente = ExisteCliente($_GET['_c'])
     <link href="../js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
     <title>Usuarios</title>
-    <style>
-        .dtrg-level-0 {
-            /* background-color: #fafafa !important; */
-            /* border-top : 2px solid #333 !important; */
-        }
-    </style>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -29,17 +23,15 @@ $Cliente = ExisteCliente($_GET['_c'])
                 <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border">
                     <span class="mr-1 d-none d-sm-inline">IMPORTAR PERSONAL</span>
                     <span class="mr-1 d-inline d-sm-none">IMPORTAR</span>
-                    <svg class="bi" width="17" height="17" fill="currentColor">
-                        <use xlink:href="../img/bootstrap-icons.svg#download" />
-                    </svg>
+                    <i class="bi-download font1"></i>
                 </a>
                 <span id="respuestaResetClave"></span>
             </div>
             <div class="col-12 col-sm-6 mb-2">
                 <?php if (modulo_cuentas() == '1') { ?>
-                    <a href="clientes/" class="w80 btn fontq float-right m-0 opa7 btn-custom">Cuentas</a>
+                    <a href="clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
                 <?php } ?>
-                <a href="roles/?_c=<?= $_GET['_c'] ?>" class="w80 mr-1 btn fontq float-right m-0 opa7 btn-custom">Roles</a>
+                <a href="roles/?_c=<?= $_GET['_c'] ?>" class="mr-1 btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-sliders mr-2"></i>Roles</a>
             </div>
         </div>
         <div class="mt-2">
@@ -79,7 +71,8 @@ $Cliente = ExisteCliente($_GET['_c'])
     ?>
     <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="usuarios-min.js"></script>
+    <script src="../js/bootbox.min.js"></script>
+    <script src="usuarios.js"></script>
 </body>
 
 </html>

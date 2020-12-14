@@ -17,7 +17,8 @@ define("ident", $ident);
         .dataTables_info {
             margin-top: 0px !Important;
         }
-        .dataTables_paginate  {
+
+        .dataTables_paginate {
             margin-top: 0px !Important;
         }
     </style>
@@ -28,7 +29,7 @@ define("ident", $ident);
     <div class="container shadow">
         <?php require __DIR__ . '../../../nav.php'; ?>
         <?=
-            encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: '.nombre_c, '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . nombre_c, '25', 'text-white mr-2');
         ?>
         <div class="mt-1">
             <div class="row mt-3">
@@ -53,14 +54,19 @@ define("ident", $ident);
                         </div>
                     </div>
                     <div class="col-12 col-sm-3">
-                    <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>" class="d-flex align-items-center btn fontq float-right opa7 btn-custom">
-                        <span class="">Usuarios</span>
-                    </a>
+                        <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>" class="d-flex align-items-center btn fontq float-right opa7 btn-custom">
+                            <span class=""><i class="bi bi-people-fill mr-2"></i>Usuarios</span>
+                        </a>
                     </div>
                     <div class="col-12 pb-2 <?= dnone($rowcount) ?>">
-                        <div class="">
-                            <button type="button" class="p-0 fontq btn btn-link text-secondary" id="marcar">Marcar</button> |
-                            <button type="button" class="p-0 fontq btn btn-link text-secondary" id="desmarcar">Desmarcar</button>
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="p-0 fontq btn btn-link text-secondary mr-2" id="marcar"><i class="bi bi-check2-square mr-2"></i>Marcar</button>
+                            <button type="button" class="p-0 fontq btn btn-link text-secondary" id="desmarcar">
+                                <svg class="bi mr-2" width="12" height="12" fill="currentColor">
+                                    <use xlink:href="../../img/bootstrap-icons.svg#dash-square" />
+                                </svg>
+                                Desmarcar
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -87,8 +93,7 @@ define("ident", $ident);
                             </thead>
                         </table>
                         <div class="">
-                            <button type="submit" name="submit" class="d-none d-sm-block fw4 btn border w130 fontq float-right mt-2 <?= dnone($rowcount) ?> btn-custom" value="Importar">IMPORTAR</button>
-                            <button type="submit" name="submit" class="d-block d-sm-none h50 btn-block fw4 btn border fontq float-right mt-2 <?= dnone($rowcount) ?> btn-custom" value="Importar">IMPORTAR</button>
+                            <button type="submit" name="submit" class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile" value="Importar"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
                         </div>
                     </div>
                 </div>

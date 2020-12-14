@@ -50,12 +50,16 @@ $queryRecords = mysqli_query($link, $sqlRec);
 // print_r($sqlRec).PHP_EOL; exit;
 $classButton = 'btn btn-sm btn-outline-custom border mr-1';
 $IconEditar  = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#pen" /></svg>';
-
-$IconPerson  = '<svg class="bi mb-1 mr-2" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-fill" /></svg>';
-$IconClave   = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#shield-lock" /></svg>';
-$IconBaja    = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#arrow-down-circle" /></svg>';
-$IconAlta    = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#arrow-up-circle" /></svg>';
-$IconTrash   = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#trash" /></svg>';
+$IconEditar  = '<i class="bi bi-pen"></i>';
+$IconPerson  = '<i class="bi-person-fill mb-1 mr-2"></i>';
+//$IconClave   = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#shield-lock" /></svg>';
+$IconClave   = '<i class="bi-shield-lock"></i>';
+$IconBaja    = '<svg class="bi" width="14" height="14" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#arrow-down-circle" /></svg>';
+//$IconBaja    = '<i class="bi bi-arrow-down-circle"></i>';
+$IconAlta    = '<svg class="bi" width="14" height="14" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#arrow-up-circle" /></svg>';
+//$IconAlta    = '<i class="bi bi-arrow-up-circle"></i>';
+//$IconTrash   = '<svg class="bi" width="17" height="17" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#trash" /></svg>';
+$IconTrash   = '<i class="bi bi-trash"></i>';
 
 if ($totalRecords > 0) {
     while ($row = mysqli_fetch_assoc($queryRecords)) :
@@ -76,17 +80,18 @@ if ($totalRecords > 0) {
 
         $IconEstado = ($estado) ? $IconAlta : $IconBaja;
         $TitleEstado = ($estado) ? 'Dar de alta' : 'Dar de baja';
+        $TitleEstado2 = ($estado) ? 'alta' : 'baja';
         $ColorEstado = ($estado) ? 'text-danger' : 'text-secondary';
 
         $ButtonEditar='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data_rol="'.$rol.'" data_legajo="'.$legajo.'" data_estado_n="'.$estado_n.'" data_estado="'.$estado.'" data_fecha_alta="'.$fecha_alta .'" data_fecha_mod="'.$fecha_mod .'" data_cliente="'.$cliente .'" title="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
         $ButtonClave='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" title="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_'.$uid.'">' . $IconClave . '</button>';
-        $ButtonBaja='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_estado="'.$estado.'" title="'.$TitleEstado.': ' . $nombre . '" class="' . $classButton . ' estado" id="estado_'.$uid.'">' . $IconEstado . '</button>';
+        $ButtonBaja='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_estado="'.$estado.'" title="'.$TitleEstado.': ' . $nombre . '" data_title="'.$TitleEstado2.'" class="' . $classButton . ' estado" id="estado_'.$uid.'">' . $IconEstado . '</button>';
         $ButtonTrash='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" title="Eliminar ' . $nombre . '" class="' . $classButton . ' delete" id="delete_'.$uid.'">' . $IconTrash . '</button>';
 
         $data[] = array(
             'uid'           => '<span class="contentd '.$ColorEstado.'">' . $uid . '</span>',
             'recid'         => '<span class="contentd '.$ColorEstado.'">' . $recid . '</span>',
-            'nombre'        => '<div class="contentd text-nowrap pt-2 '.$ColorEstado.'"><b class="contentd" '.$ColorEstado.'>' . $nombre . '</b><span class="mx-2"></span><span class="float-right botones">' . $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
+            'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"'.$ColorEstado.'"><b class="contentd" '.$ColorEstado.'><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' . $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
             'usuario'       => '<span class="contentd '.$ColorEstado.'">'.$IconPerson  . $usuario . '</span>',
             'legajo'        => '<span class="contentd ls1 '.$ColorEstado.'">' . $legajo . '</span>',
             'rol_n'         => '<span class="contentd '.$ColorEstado.'">' . $rol_n . '</span>',

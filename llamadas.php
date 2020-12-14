@@ -16,6 +16,7 @@
 <link href="http://fonts.googleapis.com/css?family=Dosis:400,500,700" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
 <?php
 switch ($Modulo) {
 	case '1':

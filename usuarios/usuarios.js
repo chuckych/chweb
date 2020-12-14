@@ -1,4 +1,4 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     $('.requerido').addClass('fontp ml-1 ls1')
     $('.requerido').html('(*)')
@@ -10,17 +10,16 @@ $(document).ready(function() {
     }
     // $.fn.DataTable.ext.pager.numbers_length = 5;
     var table = $('#GetUsuarios').DataTable({
-        initComplete: function(settings, json) {
-            $('.form-control-sm').attr('placeholder', 'Buscar nombre') 
+        initComplete: function (settings, json) {
+            $('.form-control-sm').attr('placeholder', 'Buscar nombre')
             $('#GetUsuarios_filter').prepend('<button tittle="Alta de Usuario" class="px-2 btn btn-outline-custom add fontq border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>')
             if ($(window).width() < 769) {
                 $('.botones').removeClass('float-right')
             } else {
                 $('.botones').addClass('float-right')
             }
-
         },
-        drawCallback: function(settings) {
+        drawCallback: function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary');
@@ -29,48 +28,56 @@ $(document).ready(function() {
             $('.table-responsive').removeClass('invisible')
             fadeInOnly('.table-responsive')
             $('.dataTables_length').addClass('d-none d-sm-block')
+            setTimeout(() => {
+                if ($(window).width() < 769) {
+                    $('.botones').removeClass('float-right')
+                } else {
+                    $('.botones').addClass('float-right')
+                }
+
+            }, 100);
         },
-        lengthMenu: [ 5, 10, 25, 50, 100 ],
+        lengthMenu: [5, 10, 25, 50, 100],
         columnDefs: [{
-                "visible": false,
-                "targets": 0
-            },
-            {
-                "visible": false,
-                "targets": 1
-            },
-            {
-                "visible": false,
-                "targets": 2
-            },
-            {
-                "visible": true,
-                "targets": 3
-            },
-            {
-                "visible": false,
-                "targets": 6
-            },
-            {
-                "visible": false,
-                "targets": 8
-            },
-            {
-                "visible": false,
-                "targets": 9
-            },
-            {
-                "visible": true,
-                "targets": 10
-            },
-            {
-                "visible": false,
-                "targets": 11
-            },
-            {
-                "visible": false,
-                "targets": 14
-            },
+            "visible": false,
+            "targets": 0
+        },
+        {
+            "visible": false,
+            "targets": 1
+        },
+        {
+            "visible": false,
+            "targets": 2
+        },
+        {
+            "visible": true,
+            "targets": 3
+        },
+        {
+            "visible": false,
+            "targets": 6
+        },
+        {
+            "visible": false,
+            "targets": 8
+        },
+        {
+            "visible": false,
+            "targets": 9
+        },
+        {
+            "visible": true,
+            "targets": 10
+        },
+        {
+            "visible": false,
+            "targets": 11
+        },
+        {
+            "visible": false,
+            "targets": 14
+        },
         ],
         rowGroup: {
             dataSrc: ['nombre']
@@ -82,93 +89,90 @@ $(document).ready(function() {
         ajax: {
             url: "GetUsuarios.php",
             type: "POST",
-            "data": function(data) {
+            "data": function (data) {
                 // console.log(data);
                 data.recid_c = $("#recid_c").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetUsuarios_processing").hide();
             },
         },
         columns: [{
-                "class": "",
-                /** Col 00 */
-                "data": "uid"
-            },
-            {
-                "class": "",
-                /** Col 01 */
-                "data": "recid"
-            },
-            {
-                "class": "",
-                /** Col 02 */
-                "data": "nombre"
-            },
-            {
-                "class": "border-0 pb-2",
-                /** Col 03 */
-                "data": "usuario"
-            },
-            {
-                "class": "border-0",
-                /** Col 04 */
-                "data": "legajo"
-            },
-            {
-                "class": "border-0",
-                /** Col 05 */
-                "data": "rol_n"
-            },
-            {
-                "class": "",
-                /** Col 06 */
-                "data": "estado"
-            },
-            {
-                "class": "border-0",
-                /** Col 07 */
-                "data": "estado_n"
-            },
-            {
-                "class": "",
-                /** Col 08 */
-                "data": "id_cliente"
-            },
-            {
-                "class": "",
-                /** Col 09 */
-                "data": "recid_cliente"
-            },
-            {
-                "class": "border-0",
-                /** Col 10 */
-                "data": "cliente"
-            },
-            {
-                "class": "",
-                /** Col 11 */
-                "data": "rol"
-            },
-            {
-                "class": "border-0",
-                /** Col 12 */
-                "data": "fecha_alta"
-            },
-            {
-                "class": "border-0",
-                /** Col 13 */
-                "data": "fecha_mod"
-            },
-            {
-                "class": "text-nowrap",
-                /** Col 14 */
-                "data": "Buttons"
-            },
+            "class": "",
+            /** Col 00 */
+            "data": "uid"
+        },
+        {
+            "class": "",
+            /** Col 01 */
+            "data": "recid"
+        },
+        {
+            "class": "",
+            /** Col 02 */
+            "data": "nombre"
+        },
+        {
+            "class": "border-0 pb-2",
+            /** Col 03 */
+            "data": "usuario"
+        },
+        {
+            "class": "border-0",
+            /** Col 04 */
+            "data": "legajo"
+        },
+        {
+            "class": "border-0",
+            /** Col 05 */
+            "data": "rol_n"
+        },
+        {
+            "class": "",
+            /** Col 06 */
+            "data": "estado"
+        },
+        {
+            "class": "border-0",
+            /** Col 07 */
+            "data": "estado_n"
+        },
+        {
+            "class": "",
+            /** Col 08 */
+            "data": "id_cliente"
+        },
+        {
+            "class": "",
+            /** Col 09 */
+            "data": "recid_cliente"
+        },
+        {
+            "class": "border-0",
+            /** Col 10 */
+            "data": "cliente"
+        },
+        {
+            "class": "",
+            /** Col 11 */
+            "data": "rol"
+        },
+        {
+            "class": "border-0",
+            /** Col 12 */
+            "data": "fecha_alta"
+        },
+        {
+            "class": "border-0",
+            /** Col 13 */
+            "data": "fecha_mod"
+        },
+        {
+            "class": "text-nowrap",
+            /** Col 14 */
+            "data": "Buttons"
+        },
         ],
-        // scrollY: '450px',
-        // scrollX: true,
-        // scrollCollapse: false,
         paging: true,
         responsive: false,
         info: true,
@@ -180,9 +184,11 @@ $(document).ready(function() {
     });
 
     table.page.len('5').draw();
-    table.on('page.dt', function() {
+    table.on('page.dt', function () {
         ClassTBody()
+        $('#respuestaResetClave').html('')
     });
+
     if ($(window).width() < 769) {
         $('#GetUsuarios').removeClass('text-wrap')
         $('#GetUsuarios').addClass('text-nowrap')
@@ -190,7 +196,7 @@ $(document).ready(function() {
         $('#GetUsuarios').removeClass('text-nowrap')
         $('#GetUsuarios').addClass('text-wrap')
     }
-    $(document).on("click", ".editar", function(e) {
+    $(document).on("click", ".editar", function (e) {
 
         e.preventDefault();
         $('#modalEditUser').modal('show');
@@ -233,26 +239,26 @@ $(document).ready(function() {
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
             language: {
-                noResults: function() {
+                noResults: function () {
                     return 'No hay resultados..'
                 },
-                inputTooLong: function(args) {
+                inputTooLong: function (args) {
                     var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
                     if (overChars != 1) {
                         message += 'es'
                     }
                     return message
                 },
-                searching: function() {
+                searching: function () {
                     return 'Buscando..'
                 },
-                errorLoading: function() {
+                errorLoading: function () {
                     return 'Sin datos..'
                 },
-                inputTooShort: function() {
+                inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
-                maximumSelected: function() {
+                maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 }
             },
@@ -261,13 +267,13 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
-                data: function(params) {
+                data: function (params) {
                     return {
                         q: params.term,
                         recid_c: $("#recid_c").val(),
                     }
                 },
-                processResults: function(data) {
+                processResults: function (data) {
                     return {
                         results: data
                     }
@@ -280,17 +286,17 @@ $(document).ready(function() {
 
         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
 
-        $("#FormEdit").bind("submit", function(e) {
+        $("#FormEdit").bind("submit", function (e) {
             e.preventDefault();
             $.ajax({
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),
                 data: $(this).serialize(),
                 // async : false,
-                beforeSend: function(data) {
+                beforeSend: function (data) {
                     ActiveBTN(true, '#submitEdit', 'Guardando', 'Guardar')
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.status == "ok") {
                         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
                         $('#respuestaForm').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
@@ -311,7 +317,7 @@ $(document).ready(function() {
         });
     });
 
-    $('#modalEditUser').on('hidden.bs.modal', function() {
+    $('#modalEditUser').on('hidden.bs.modal', function () {
         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
         $('#data_nombre').html('');
         $('#e_nombre').val('');
@@ -321,7 +327,7 @@ $(document).ready(function() {
         $('#respuestaForm').html('')
     });
 
-    $(document).on("click", ".add", function(e) {
+    $(document).on("click", ".add", function (e) {
 
         e.preventDefault();
 
@@ -348,26 +354,26 @@ $(document).ready(function() {
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
             language: {
-                noResults: function() {
+                noResults: function () {
                     return 'No hay resultados..'
                 },
-                inputTooLong: function(args) {
+                inputTooLong: function (args) {
                     var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
                     if (overChars != 1) {
                         message += 'es'
                     }
                     return message
                 },
-                searching: function() {
+                searching: function () {
                     return 'Buscando..'
                 },
-                errorLoading: function() {
+                errorLoading: function () {
                     return 'Sin datos..'
                 },
-                inputTooShort: function() {
+                inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
-                maximumSelected: function() {
+                maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 }
             },
@@ -376,13 +382,13 @@ $(document).ready(function() {
                 dataType: "json",
                 type: "POST",
                 delay: opt2["delay"],
-                data: function(params) {
+                data: function (params) {
                     return {
                         q: params.term,
                         recid_c: $("#recid_c").val(),
                     }
                 },
-                processResults: function(data) {
+                processResults: function (data) {
                     return {
                         results: data
                     }
@@ -392,17 +398,17 @@ $(document).ready(function() {
 
         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
 
-        $("#FormAdd").bind("submit", function(e) {
+        $("#FormAdd").bind("submit", function (e) {
             e.preventDefault();
             $.ajax({
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),
                 data: $(this).serialize(),
                 // async : false,
-                beforeSend: function(data) {
+                beforeSend: function (data) {
                     ActiveBTN(true, '#submitAdd', 'Guardando', 'Agregar')
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.status == "ok") {
                         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
                         $('#respuestaFormAdd').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
@@ -418,7 +424,7 @@ $(document).ready(function() {
                         $('#respuestaFormAdd').html('<div class="py-3 fontq text-danger fw5">' + data.Mensaje + '</div>')
                     }
                 },
-                error: function(data) {
+                error: function (data) {
                     ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
                     $('#respuestaFormAdd').html('<div class="py-3 fontq text-danger fw5">Error</div>')
                 }
@@ -428,7 +434,7 @@ $(document).ready(function() {
 
     });
 
-    $('#modalAddUser').on('hidden.bs.modal', function() {
+    $('#modalAddUser').on('hidden.bs.modal', function () {
         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
         $('#a_nombre').val('')
         $('#a_usuario').val('')
@@ -437,7 +443,7 @@ $(document).ready(function() {
         $('#respuestaFormAdd').html('')
     });
 
-    $(document).on('click', '.resetKey', function(e) {
+    $(document).on('click', '.resetKey', function (e) {
 
         e.preventDefault();
         var data_uid = $(this).attr('data_uid');
@@ -445,109 +451,166 @@ $(document).ready(function() {
         var data_usuario = $(this).attr('data_usuario');
         $('.resetKey').unbind('click');
 
-        $.ajax({
-            type: "POST",
-            url: "crud.php",
-            'data': {
-                submit: 'key',
-                uid: data_uid,
-                nombre: data_nombre,
-                usuario: data_usuario
-            },
-            beforeSend: function(data) {
-                $('#reset_' + data_uid).prop('disabled', true)
-            },
-            success: function(data) {
-                if (data.status == "ok") {
-                    $('#reset_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
-                } else {
-                    $('#reset_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+        bootbox.confirm({
+            // title: "<span class='fonth'>Eliminar Usuario</span>",
+            message: '<span class="fonth fw4">¿Desea restablecer la contraseña de <span class="fw5">'+data_nombre+'</span>?<br />Su nueva contraseña será: '+data_usuario+'</span>',
+            buttons: {
+                confirm: {
+                    label: 'Confirmar',
+                    className: 'btn-custom btn-sm fontq btn-mobile'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-outline-custom border btn-sm fontq btn-mobile'
                 }
             },
-            error: function(data) {
-                $('#reset_' + data_uid).prop('disabled', false)
-                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+            callback: function (result) {
+                $('.resetKey').unbind('click');
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "crud.php",
+                        'data': {
+                            submit: 'key',
+                            uid: data_uid,
+                            nombre: data_nombre,
+                            usuario: data_usuario
+                        },
+                        beforeSend: function (data) {
+                            $('#reset_' + data_uid).prop('disabled', true)
+                        },
+                        success: function (data) {
+                            if (data.status == "ok") {
+                                $('#reset_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            } else {
+                                $('#reset_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            }
+                        },
+                        error: function (data) {
+                            $('#reset_' + data_uid).prop('disabled', false)
+                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                        }
+                    });
+            
+                }
             }
         });
 
         e.stopImmediatePropagation();
     });
 
-    $(document).on('click', '.estado', function(e) {
+    $(document).on('click', '.estado', function (e) {
 
         e.preventDefault();
-        var data_uid = $(this).attr('data_uid');
+        var data_uid    = $(this).attr('data_uid');
         var data_nombre = $(this).attr('data_nombre');
         var data_estado = $(this).attr('data_estado');
+        var data_title  = $(this).attr('data_title');
         $('.estado').unbind('click');
 
-        $.ajax({
-            type: "POST",
-            url: "crud.php",
-            'data': {
-                submit: 'estado',
-                uid: data_uid,
-                nombre: data_nombre,
-                estado: data_estado
-            },
-            beforeSend: function(data) {
-                $('#estado_' + data_uid).prop('disabled', true)
-            },
-            success: function(data) {
-                if (data.status == "ok") {
-                    $('#estado_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
-                    $('#GetUsuarios').DataTable().ajax.reload()
-                } else {
-                    $('#estado_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+        bootbox.confirm({
+            // title: "<span class='fonth'>Eliminar Usuario</span>",
+            message: '<span class="fonth fw4">¿Confirma dar de '+data_title+' a <span class="fw5">'+data_nombre+'</span>?</span>',
+            buttons: {
+                confirm: {
+                    label: 'Confirmar',
+                    className: 'btn-custom btn-sm fontq btn-mobile'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-outline-custom border btn-sm fontq btn-mobile'
                 }
             },
-            error: function(data) {
-                $('#estado_' + data_uid).prop('disabled', false)
-                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+            callback: function (result) {
+                $('.estado').unbind('click');
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "crud.php",
+                        'data': {
+                            submit: 'estado',
+                            uid: data_uid,
+                            nombre: data_nombre,
+                            estado: data_estado
+                        },
+                        beforeSend: function (data) {
+                            $('#estado_' + data_uid).prop('disabled', true)
+                        },
+                        success: function (data) {
+                            if (data.status == "ok") {
+                                $('#estado_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $('#GetUsuarios').DataTable().ajax.reload()
+                            } else {
+                                $('#estado_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            }
+                        },
+                        error: function (data) {
+                            $('#estado_' + data_uid).prop('disabled', false)
+                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                        }
+                    });
+                }
             }
         });
 
         e.stopImmediatePropagation();
     });
 
-    $(document).on('click', '.delete', function(e) {
-
+    $(document).on('click', '.delete', function (e) {
         e.preventDefault();
         var data_uid = $(this).attr('data_uid');
         var data_nombre = $(this).attr('data_nombre');
         $('.delete').unbind('click');
 
-        $.ajax({
-            type: "POST",
-            url: "crud.php",
-            'data': {
-                submit: 'delete',
-                uid: data_uid,
-                nombre: data_nombre,
-            },
-            beforeSend: function(data) {
-                $('#delete_' + data_uid).prop('disabled', true)
-            },
-            success: function(data) {
-                if (data.status == "ok") {
-                    $('#delete_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
-                    $('#GetUsuarios').DataTable().ajax.reload()
-                } else {
-                    $('#delete_' + data_uid).prop('disabled', false)
-                    $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+        bootbox.confirm({
+            // title: "<span class='fonth'>Eliminar Usuario</span>",
+            message: '<span class="fonth fw4">¿Confirma eliminar el usuario/a: <span class="fw5">' + data_nombre + '</span>?</span>',
+            buttons: {
+                confirm: {
+                    label: 'Confirmar',
+                    className: 'btn-custom btn-sm fontq btn-mobile'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-outline-custom border btn-sm fontq btn-mobile'
                 }
             },
-            error: function(data) {
-                $('#delete_' + data_uid).prop('disabled', false)
-                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+            callback: function (result) {
+                $('.delete').unbind('click');
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "crud.php",
+                        'data': {
+                            submit: 'delete',
+                            uid: data_uid,
+                            nombre: data_nombre,
+                        },
+                        beforeSend: function (data) {
+                            $('#delete_' + data_uid).prop('disabled', true)
+                        },
+                        success: function (data) {
+                            if (data.status == "ok") {
+                                $('#delete_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $('#GetUsuarios').DataTable().ajax.reload()
+                            } else {
+                                $('#delete_' + data_uid).prop('disabled', false)
+                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            }
+                        },
+                        error: function (data) {
+                            $('#delete_' + data_uid).prop('disabled', false)
+                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                        }
+                    });
+                }
             }
         });
-
         e.stopImmediatePropagation();
     });
 });

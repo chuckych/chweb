@@ -38,14 +38,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
 /** MODIFICACION DE ROL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
     require __DIR__ . '../../../config/conect_mysql.php';
-    $nombre     = test_input($_POST["nombre"]);
-    $nombre2     = test_input($_POST["nombre2"]);
-    $recid      = test_input($_POST["recid"]);
+    $nombre  = test_input($_POST["nombre"]);
+    $nombre2 = test_input($_POST["nombre2"]);
+    $recid   = test_input($_POST["recid"]);
     $cliente = test_input($_POST["cliente"]);
     // $recid_c     = test_input($_POST["recid_c"]);
     $fecha      = date("Y/m/d H:i:s");
     $border     = 'border border-danger';
-    ($nombre===$nombre2) ? header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&alta"):'';
+    ($nombre === $nombre2) ? header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&alta") : '';
     /* Comprobamos campos vacios  */
     if ((valida_campo($nombre))) {
         $ErrNombre     = (valida_campo($nombre)) ? $border : '';
@@ -55,36 +55,35 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
         $CountRolC = mysqli_num_rows($rs);
         // print_r($CountRolC);
         if ($CountRolC == 0) {
-        $query = "UPDATE roles SET
+            $query = "UPDATE roles SET
         nombre  = '$nombre',
         fecha   = '$fecha'
         WHERE recid='$recid'
         ";
-        $rs_insert = mysqli_query($link, $query);
-        mysqli_error($link);
-        if (mysqli_errno($link) == 1062) {
-            $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Nombre de usuario duplicado</div>";
+            $rs_insert = mysqli_query($link, $query);
+            mysqli_error($link);
+            if (mysqli_errno($link) == 1062) {
+                $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Nombre de usuario duplicado</div>";
+            } else {
+                header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&alta");
+            }
+            mysqli_free_result($rs);
         } else {
-            header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&alta");
+            $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Ya existe un Rol con el nombre $nombre</div>";
         }
-        mysqli_free_result($rs);
-    } else {
-        $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Ya existe un Rol con el nombre $nombre</div>";
-    }
     }
     mysqli_close($link);
 }
-/** FIN MODIFICACION DE ROL */
 /** BORRAR DE ROL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'trash')) {
     $recid = test_input($_POST["recid"]);
 
-    $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $_GET['_c']."&recid=".$recid;
+    $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $_GET['_c'] . "&recid=" . $recid;
     echo $url;
     $json = file_get_contents($url);
     $array = json_decode($json, TRUE);
     if (is_array($array)) :
-    $rowcount = (count($array[0]['roles']));
+        $rowcount = (count($array[0]['roles']));
     endif;
     $data_rol = $array[0]['roles'];
     if (is_array($data_rol)) :
@@ -97,7 +96,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'trash')) {
             $cant_sucur     = $value['cant_sucur'];
             $cant_empresas  = $value['cant_empresas'];
             $cant_convenios = $value['cant_convenios'];
-            $sum_cant= array(
+            $sum_cant = array(
                 $cant_roles,
                 $cant_modulos,
                 $cant_sectores,
@@ -109,23 +108,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'trash')) {
             );
             print_r($sum_cant);
         endforeach;
-        endif;
+    endif;
     // exit;
-    if (array_sum($sum_cant)<=0){
-    require __DIR__ . '../../../config/conect_mysql.php';
-    // $recid_c     = test_input($_POST["recid_c"]);
-    /* Comprobamos campos vacios  */
-    $query = "DELETE FROM roles WHERE roles.recid='$recid'";
-    $rs_insert = mysqli_query($link, $query);
-    mysqli_error($link);
-    if (mysqli_errno($link) == 1451) {
-        $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Existe Información en usuarios</div>";
+    if (array_sum($sum_cant) <= 0) {
+        require __DIR__ . '../../../config/conect_mysql.php';
+        // $recid_c     = test_input($_POST["recid_c"]);
+        /* Comprobamos campos vacios  */
+        $query = "DELETE FROM roles WHERE roles.recid='$recid'";
+        $rs_insert = mysqli_query($link, $query);
+        mysqli_error($link);
+        if (mysqli_errno($link) == 1451) {
+            $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Existe Información en usuarios</div>";
+        } else {
+            header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]");
+        }
+        mysqli_close($link);
     } else {
-        header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]");
+        header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&err");
     }
-    mysqli_close($link);
-}else{
-    header("Location:/" . HOMEHOST . "/usuarios/roles/?_c=$_GET[_c]&err");
-}
 }
 /** FIN BORRAR DE ROL */
