@@ -7,13 +7,13 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 
 FusNuloPOST('tipo', false);
 FusNuloPOST('modulos', false);
 
 require __DIR__ . '../../../config/conect_mysql.php';
-
+$respuesta = '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'true')) {
     $query = "SELECT tipo_modulo.id AS 'id', tipo_modulo.descripcion AS 'descripcion', (SELECT COUNT(modulos.id) FROM modulos WHERE modulos.idtipo = tipo_modulo.id AND modulos.estado='0') AS 'CantMod' FROM tipo_modulo WHERE estado = '0' ORDER BY CantMod desc";
     // h1($query);exit;
