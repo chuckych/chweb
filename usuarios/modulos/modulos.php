@@ -1,9 +1,11 @@
 <?php
 $modulo = '2';
-ExisteRol($_GET['_r']);
-UnsetGet('id');
-UnsetGet('_r');
-list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol) = Rol_Recid($_GET['_r']);
+// ExisteRol($_GET['_r']);
+// UnsetGet('id');
+// UnsetGet('_r');
+// list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol) = Rol_Recid($_GET['_r']);
+$Cliente = ExisteCliente($_GET['_c']);
+$Rol     = ExisteRol2($_GET['_r'])
 ?>
 <!doctype html>
 <html lang="es">
@@ -21,17 +23,17 @@ list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol) = Rol_Re
         <div class="row pl-1 py-3">
             <div class="col-12 col-sm-6">
                 <div class="form-inline">
-                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $nombreRol ?></span>
+                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $Rol ?></span>
                 </div>
                 <div class="form-inline">
-                    <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $clienteRol ?></span>
+                    <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $Cliente ?></span>
                 </div>
-                <div class="form-inline">
+                <!-- <div class="form-inline">
                     <label class="w70 fontq">Usuarios </label><span class="fw4 fontq"><?= ceronull($UsuariosRol) ?></span>
-                </div>
+                </div> -->
             </div>
             <div class="col-12 col-sm-6">
-                <a href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $recid_clienteRol ?>" class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
+                <a href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_GET['_c'] ?>" class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
             </div>
         </div>
         <?php if (!principal($_GET['_r'])) {

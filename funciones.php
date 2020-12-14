@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.69';
+    return 'v0.0.70';
 }
 function API_KEY_MAPS()
 {
@@ -889,6 +889,27 @@ function ExisteCliente($recid)
         mysqli_free_result($result);
         mysqli_close($link);
         return $nombre;
+    }else{
+        header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+    }
+
+    // CountRegMayorCeroMySql($query) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+    /** redirect */
+}
+function ExisteRol2($recid)
+{
+    /** Verificamos el recid de cliente para ver si existe. 
+     * Sino existe redirigimos a Clientes*/
+    $q = "SELECT roles.recid as recid, roles.nombre as nombre FROM roles WHERE roles.recid='$recid' LIMIT 1";
+    require 'config/conect_mysql.php';
+    $rs = mysqli_query($link, $q);
+    if (mysqli_num_rows($rs) > 0) {
+        while ($r = mysqli_fetch_assoc($rs)) :
+            $n = $r['nombre'];
+        endwhile;
+        mysqli_free_result($rs);
+        mysqli_close($link);
+        return $n;
     }else{
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }

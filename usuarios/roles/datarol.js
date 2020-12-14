@@ -207,7 +207,7 @@ $(document).ready(function () {
 
     function ClassTBody() {
         $('.open-modal').removeClass('btn-outline-custom')
-        $('.contentd').addClass('text-light bg-light w30')
+        $('.contentd').addClass('text-light bg-light border-0')
         $('.botones').hide()
     }
 
@@ -230,7 +230,7 @@ $(document).ready(function () {
             );
         },
         drawCallback: function (settings) {
-            $('.contentd').removeClass('text-light bg-light w30')
+            $('.contentd').removeClass('text-light bg-light border-0')
         },
         lengthMenu: [5, 10, 25, 50, 100],
         columnDefs: [
