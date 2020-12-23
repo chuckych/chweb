@@ -51,7 +51,7 @@
     <div class="container shadow pb-2" style="animation-fill-mode: unset">
         <?php require __DIR__ . '../../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas' . MODULOS['mobile'], '') ?>
+        <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas ' . MODULOS['mobile'], '') ?>
         <!-- Fin Encabezado -->
         <?php if (token_exist($_SESSION['RECID_CLIENTE'])) {
             /** Check de token */ ?>

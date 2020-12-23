@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.72';
+    return 'v0.0.73';
 }
 function API_KEY_MAPS()
 {
@@ -26,6 +26,18 @@ function recid()
         $pass .= substr($cadena, $pos, 1);
     }
     return $pass;
+}
+function Ident()
+{
+    $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $longitudCadena = strlen($cadena);
+    $Ident = "";
+    $longitudIdent = 3;
+    for ($i = 1; $i <= $longitudIdent; $i++) {
+        $pos = rand(0, $longitudCadena - 1);
+        $Ident .= substr($cadena, $pos, 1);
+    }
+    return $Ident;
 }
 function statusData($status, $dato)
 {
