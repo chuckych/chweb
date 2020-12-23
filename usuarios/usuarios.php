@@ -73,7 +73,7 @@ $Cliente = ExisteCliente($_GET['_c'])
     <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/bootbox.min.js"></script>
-    <script src="usuarios-min.js"></script>
+    <script src="usuarios.js"></script>
 </body>
 
 </html>
