@@ -24,6 +24,7 @@ spOptions = {
     }
 };
 $('.HoraMask').mask(maskBehavior, spOptions);
+
 function OcultaNavTab() {
     if ($("#Mxs").val()=='1') {
         // $("#nav-tab").addClass('d-none d-sm-block')
