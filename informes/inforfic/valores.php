@@ -8,6 +8,7 @@ $FechaIni  = test_input(dr_fecha($DateRange[0]));
 $FechaFin  = test_input(dr_fecha($DateRange[1]));
 
 FusNuloPOST("Per",'');
+FusNuloPOST("q",'');
 FusNuloPOST("Per2",'');
 FusNuloPOST("Emp",'');
 FusNuloPOST("Plan",'');
@@ -19,6 +20,7 @@ FusNuloPOST("Tipo",'');
 FusNuloPOST("FicFalta", 0);
 
 $Per      = test_input($_POST['Per']);
+$q        = test_input($_POST['q']);
 $Per2     = test_input($_POST['Per2']);
 $Per3     = test_input($_POST['Per2']);
 $Emp      = test_input($_POST['Emp']);
