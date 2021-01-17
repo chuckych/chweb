@@ -162,10 +162,10 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
         });
     </script>
     <script src="../../js/select2.min.js"></script>
-    <script src="js/select.js"></script>
-    <script src="js/trash-select.js"></script>
-    <script src="js/detalle.js"></script>
-    <script src="js/cteHorasXLS.js"></script>
+    <script src="js/select.js?v=<?=vjs()?>"></script>
+    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
+    <script src="js/detalle.js?v=<?=vjs()?>"></script>
+    <script src="js/cteHorasXLS.js?v=<?=vjs()?>"></script>
     <script>
         $('#datos').val('2');
         $(document).ready(function() {

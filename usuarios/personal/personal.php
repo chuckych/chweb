@@ -106,7 +106,7 @@ define("ident", $ident);
     require __DIR__ . "../../../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
-    <script src="data-min.js"></script>
+    <script src="data-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

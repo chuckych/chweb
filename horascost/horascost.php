@@ -190,10 +190,10 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/js-cookie/src/js.cookie.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/select.js"></script>
-    <script src="js/trash-select.js"></script>
-    <script src="js/HorXLS.js"></script>
+    <script src="js/data.js?v=<?=vjs()?>"></script>
+    <script src="js/select.js?v=<?=vjs()?>"></script>
+    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
+    <script src="js/HorXLS.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

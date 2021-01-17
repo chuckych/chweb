@@ -68,21 +68,21 @@
             <div class="row bg-white pb-sm-3" id="pagLega">
                 <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
                     <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
+                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal">
 
                     </table>
                 </div>
             </div>
             <div class="row bg-white pb-sm-3" id="pagFech">
                 <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
+                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetFechas">
 
                     </table>
                 </div>
             </div>
             <div class="row bg-white radius mt-sm-n5">
                 <div class="col-12 animate__animated animate__fadeIn">
-                    <div class="table-responsive" id="GetFichadasTable">
+                    <div class="table-responsive invisible" id="GetFichadasTable">
                         <table class="table table-hover text-nowrap w-100" id="GetFichadas">
                             <thead class="">
                                 <tr>
@@ -101,7 +101,7 @@
                     </div>
                 </div>
                 <div class="col-12 animate__animated animate__fadeIn">
-                    <div class="table-responsive" id="GetFichadasFechaTable">
+                    <div class="table-responsive invisible" id="GetFichadasFechaTable">
                         <table class="table table-hover text-nowrap w-100" id="GetFichadasFecha">
                             <thead class="">
                                 <tr>
@@ -135,13 +135,6 @@
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <!-- <script>
-        var host = "<?= host() ?>/<?= HOMEHOST ?>/<?= $_datos ?>";
-        var FechaIni = "<?= $FechaIni ?>";
-        var FechaFin = "<?= $FechaFin ?>";
-        var QueryString = "<?= $_SERVER['QUERY_STRING'] ?>";
-        var diaString = "<?= FechaFormatVar($value_fecha, 'Ymd') ?>";
-    </script> -->
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.flash.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
@@ -150,10 +143,10 @@
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/1.6.2/js/buttons.print.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/select.js"></script>
+    <script src="js/data.js?v=<?=vjs()?>"></script>
+    <script src="js/select.js?v=<?=vjs()?>"></script>
     <script src="js/trash-select.js"></script>
-    <script src="js/FicExcel.js"></script>
+    <script src="js/FicExcel.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

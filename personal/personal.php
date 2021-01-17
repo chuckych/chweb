@@ -58,7 +58,7 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../js/DataTable.php";
     ?>
-    <script src="altaLeg.js"></script>
+    <script src="altaLeg.js?v=<?=vjs()?>"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="legajo/js/mascaras.js"></script>
     <script>

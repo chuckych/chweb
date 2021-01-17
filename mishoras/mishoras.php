@@ -79,7 +79,7 @@
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "../../js/DataTable.php";
     ?>
-    <script src="proceso-min.js"></script>
+    <script src="proceso-min.js?v=<?=vjs()?>"></script>
 
 </body>
 

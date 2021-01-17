@@ -1,7 +1,25 @@
 <?php
 function version()
 {
-    return 'v0.0.76';
+    return 'v0.0.77';
+}
+function E_ALL()
+{
+	if ($_SERVER['SERVER_NAME'] == 'localhost') {
+		error_reporting(E_ALL);
+		ini_set('display_errors', '1');
+	} else {
+		error_reporting(E_ALL);
+		ini_set('display_errors', '0');
+	}
+}
+function vjs()
+{
+    if ($_SERVER['SERVER_NAME'] == 'localhost') {
+		return time();
+	} else {
+		return version();
+	}
 }
 function API_KEY_MAPS()
 {
@@ -302,8 +320,7 @@ function secure_auth_ch()
         }
     }
     session_regenerate_id();
-    error_reporting(E_ALL);
-    ini_set('display_errors', '0');
+    E_ALL();
 }
 /** ultimaacc */
 function ultimoacc()

@@ -76,8 +76,8 @@ $Cliente = ExisteCliente($_GET['_c']);
     ?>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../js/bootbox.min.js"></script>
-    <script src="modal.js"></script>
-    <script src="datarol-min.js"></script>
+    <script src="modal.js?v=<?=vjs()?>"></script>
+    <script src="datarol-min.js?v=<?=vjs()?>"></script>
 
 </body>
 

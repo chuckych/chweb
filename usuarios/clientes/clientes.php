@@ -38,7 +38,7 @@
         ?>
         <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../js/bootbox.min.js"></script>
-        <script src="data.js"></script>
+        <script src="data.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

@@ -58,17 +58,22 @@ $(document).keydown(function (e) {
 $("#pagFech").addClass('d-none');
 $("#GetFichadasFechaTable").addClass('d-none');
 $('#Visualizar').prop('disabled', true)
-
     var GetPersonal = $('#GetPersonal').DataTable({
         "initComplete": function( settings, json ) {
             $('.dt-buttons').addClass('d-none');
         },
         "drawCallback": function( settings ) {
-            $("#GetPersonal thead").remove();  
+            classEfect(".table-responsive",'animate__animated animate__fadeIn')
+            $("#GetPersonal").removeClass('invisible');
+            var recordsTotalPers = settings.json.recordsTotal
+            $("#GetPersonal thead").remove();
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
-            $('#GetFichadas').DataTable().ajax.reload();
-        },  
+            // if (recordsTotalPers > 0) {
+                $('#GetFichadas').DataTable().ajax.reload();
+                // console.log('hay fichadas');
+            // }
+        },
         pagingType: "full",
         lengthMenu: [[1], [1]],
         bProcessing: false,
@@ -119,8 +124,7 @@ $('#Visualizar').prop('disabled', true)
             "url": "../js/DataTableSpanishShort2.json"
         },
     });
-    
-    $('#GetFichadas').DataTable({
+    var GetFichadas = $('#GetFichadas').DataTable({
         "initComplete": function( settings, json ) {
             $("#Refresh").prop('disabled', false);
             $('#trash_all').removeClass('invisible');
@@ -132,6 +136,7 @@ $('#Visualizar').prop('disabled', true)
              }, 500);            
         },
         "drawCallback": function( settings ) {
+            $("#GetFichadasTable").removeClass('invisible');
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
@@ -152,20 +157,20 @@ $('#Visualizar').prop('disabled', true)
             url: "/" + $("#_homehost").val() + "/fichadas/GetFichadas.php?_c=" + $("#_c").val() + "&_r=" + $("#_r").val(),
             type: "POST",
             "data": function(data){
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
-                data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
-                data.HoraMin = $("#HoraMin").val();
-                data.HoraMax = $("#HoraMax").val();
+                data.Per      = $("#Per").val();
+                data.Tipo     = $("#Tipo").val();
+                data.Emp      = $("#Emp").val();
+                data.Plan     = $("#Plan").val();
+                data.Sect     = $("#Sect").val();
+                data.Sec2     = $("#Sec2").val();
+                data.Grup     = $("#Grup").val();
+                data.Sucur    = $("#Sucur").val();
+                data._dr      = $("#_dr").val();
+                data._l       = $("#_l").val();
+                data.Thora    = $("#Thora").val();
+                data.SHoras   = $("#SHoras").val();
+                data.HoraMin  = $("#HoraMin").val();
+                data.HoraMax  = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
             },
             error: function() {
@@ -214,11 +219,12 @@ $('#Visualizar').prop('disabled', true)
             "url": "../js/DataTableSpanishShort.json"
         },
     });
-
     setTimeout(function(){
     $('#GetFechas').DataTable({
         "initComplete": function( settings, json ) {
+            $("#GetFechas").removeClass('invisible');
             $("#GetFechas thead").remove(); 
+            $("#GetFichadasFechaTable").removeClass('invisible');
           },
           "drawCallback": function( settings ) {        
             $(".page-link").addClass('border border-0');
@@ -274,6 +280,7 @@ $('#Visualizar').prop('disabled', true)
     });
     $('#GetFichadasFecha').DataTable({
         "initComplete": function( settings, json ) {
+            $("#GetFichadasFecha").removeClass('invisible');
             setTimeout(function(){ 
                 $('.dt-button').addClass('btn btn-sm btn-outline-custom fontq border');
                 $('.dt-button').removeClass('dt-button buttons-csv buttons-html5');

@@ -147,11 +147,11 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js"></script>
-    <script src="js/select.js"></script>
-    <script src="js/selectadd-min.js"></script>
-    <script src="js/trashSelect.js"></script>
-    <script src="js/NovXLS.js"></script>
+    <script src="js/data.js?v=<?=vjs()?>"></script>
+    <script src="js/select.js?v=<?=vjs()?>"></script>
+    <script src="js/selectadd-min.js?v=<?=vjs()?>"></script>
+    <script src="js/trashSelect.js?v=<?=vjs()?>"></script>
+    <script src="js/NovXLS.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

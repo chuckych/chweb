@@ -81,7 +81,7 @@ $Modulo='26';
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     // require __DIR__ . "../../../js/DataTable.php";
     ?>
-    <script src="enroll.js"></script>
+    <script src="enroll.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

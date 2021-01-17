@@ -112,7 +112,7 @@
     require __DIR__ . "../../../js/DataTable.php";
     ?>
     <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
-    <script src="js/datamods.js"></script>
+    <script src="js/datamods.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

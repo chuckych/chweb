@@ -120,9 +120,9 @@
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar.js"></script>
-    <script src="js/select.js"></script>
-    <script src="js/trash-select.js"></script>
+    <script src="js/procesar.js?v=<?=vjs()?>"></script>
+    <script src="js/select.js?v=<?=vjs()?>"></script>
+    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
 
 </body>
 

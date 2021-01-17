@@ -134,13 +134,92 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	$_SESSION["MODS_ROL"] = $data_mod;
 	$_SESSION["ABM_ROL"] = $ABMRol;
 
-	$_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
-	$_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
-	$_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));
-	$_SESSION['SectRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sectores', 'sector'));
-	$_SESSION['Sec2Rol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'secciones', 'seccion'));
-	$_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
-	$_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
+
+	function estructura_recid_rol($recid_rol, $e, $data)
+	{
+		error_reporting(E_ALL);
+		ini_set('display_errors', '1');
+		require __DIR__ . '../../config/conect_mysql.php';
+		$concat = '';
+		switch ($e) {
+			case 'sectores':
+				$tabla     = 'sect_roles';
+				$ColEstr   = 'sector';
+				break;
+			case 'plantas':
+				$tabla     = 'plan_roles';
+				$ColEstr   = 'planta';
+				break;
+			case 'grupos':
+				$tabla     = 'grup_roles';
+				$ColEstr   = 'grupo';
+				break;
+			case 'sucursales':
+				$tabla     = 'suc_roles';
+				$ColEstr   = 'sucursal';
+				break;
+			case 'empresas':
+				$tabla     = 'emp_roles';
+				$ColEstr   = 'empresa';
+				break;
+			case 'convenios':
+				$tabla     = 'conv_roles';
+				$ColEstr   = 'convenio';
+				break;
+			case 'secciones':
+				$tabla     = 'secc_roles';
+				$ColEstr   = 'seccion';
+				$concat = ", CONCAT(secc_roles.sector,secc_roles.seccion) AS 'sect_secc'";
+				break;
+			case 'personal':
+				break;
+			default:
+				$concat = '';
+				// $respuesta = array('success' => 'NO', 'error' => '1', 'mensaje' => 'No se especifico parametro de estructura');
+				// $datos = array($respuesta);
+				// echo json_encode($datos);
+				// exit;
+				break;
+		}
+
+        $recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
+        $query    = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
+        $result   = mysqli_query($link, $query);
+		// print_r($query);exit;
+
+		if (mysqli_num_rows($result) > 0) {
+			while ($row = mysqli_fetch_assoc($result)) {
+				$id = ($e == 'secciones') ? $row['sect_secc'] : $row['id'];
+				// $recid_rol = $row['recid_rol'];
+				$DataID[] = (
+					$id
+				);
+			}
+			
+			$data = implode(",", $DataID);
+		}else{
+			$data = '';
+		}
+		mysqli_free_result($result);
+		mysqli_close($link);
+		return $data;
+	}
+
+	$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
+	$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
+	$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
+	$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
+	$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
+	$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
+	$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+	
+	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
+	// $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
+	// $_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));
+	// $_SESSION['SectRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sectores', 'sector'));
+	// $_SESSION['Sec2Rol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'secciones', 'seccion'));
+	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
+	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
 	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
 	$_SESSION["secure_auth_ch"] = true;

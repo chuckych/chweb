@@ -156,8 +156,8 @@ $Rol     = ExisteRol2($_GET['_r'])
     require __DIR__ . "../../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
-    <script src="js/data-min.js"></script>
-    <script src="js/abm-min.js"></script>
+    <script src="js/data-min.js?v=<?=vjs()?>"></script>
+    <script src="js/abm-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>
