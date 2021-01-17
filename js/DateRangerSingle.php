@@ -9,10 +9,10 @@
         moment().locale('es');
         $('input[name="_dr"]').daterangepicker({
             singleDatePicker: true,
-            showDropdowns: false,
+            showDropdowns: true,
             minYear: <?= $FirstYear ?>,
             maxYear: <?= $maxYear ?>,
-            showWeekNumbers: true,
+            // showWeekNumbers: true,
             autoUpdateInput:true,
             opens: "left",
             startDate: '<?= fechformat($FechaIni) ?>',
@@ -23,13 +23,6 @@
             ranges: {
                 'Hoy': [moment(), moment()],
                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                // 'Lunes'     : [moment().day(1), moment().day(1)],
-                // 'Martes'    : [moment().day(2), moment().day(2)],
-                // 'Miércoles' : [moment().day(3), moment().day(3)],
-                // 'Jueves'    : [moment().day(4), moment().day(4)],
-                // 'Viernes'   : [moment().day(5), moment().day(5)],
-                // 'Sabado'    : [moment().day(6), moment().day(6)],
-                // 'Domingo'   : [moment().day(7), moment().day(7)],
             },
             locale: {
                 format: "DD/MM/YYYY",
