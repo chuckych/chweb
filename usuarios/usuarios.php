@@ -53,6 +53,7 @@ $Cliente = ExisteCliente($_GET['_c'])
                                 <th class="border-bottom">recid_cliente</th>
                                 <th class="border-bottom">cuenta</th>
                                 <th class="border-bottom">rol</th>
+                                <th class="border-bottom">ultimo acceso</th>
                                 <th class="border-bottom">fecha alta</th>
                                 <th class="border-bottom">fecha mod</th>
                                 <th class="border-bottom">Acciones</th>
@@ -73,7 +74,7 @@ $Cliente = ExisteCliente($_GET['_c'])
     <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/bootbox.min.js"></script>
-    <script src="usuarios.js?v=<?=vjs()?>"></script>
+    <script src="usuarios-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

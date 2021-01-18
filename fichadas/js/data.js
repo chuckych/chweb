@@ -63,8 +63,8 @@ $('#Visualizar').prop('disabled', true)
             $('.dt-buttons').addClass('d-none');
         },
         "drawCallback": function( settings ) {
-            classEfect(".table-responsive",'animate__animated animate__fadeIn')
             $("#GetPersonal").removeClass('invisible');
+            classEfect(".table-responsive",'animate__animated animate__fadeIn')
             var recordsTotalPers = settings.json.recordsTotal
             $("#GetPersonal thead").remove();
             $(".page-link").addClass('border border-0');

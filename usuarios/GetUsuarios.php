@@ -21,11 +21,7 @@ $recid_c = test_input($_POST['recid_c']);
 // print_r($recid_c).PHP_EOL; exit;
 // $recid_c = 'Hh9tzrQZ';
 
-$sql_query = "SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod' 
-FROM usuarios 
-LEFT JOIN roles ON usuarios.rol = roles.id
-INNER JOIN clientes ON usuarios.cliente = clientes.id
-WHERE usuarios.id>'1' AND clientes.recid='$recid_c'";
+$sql_query="SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access' FROM usuarios LEFT JOIN roles ON usuarios.rol=roles.id INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id>'1' AND clientes.recid='$recid_c'";
 
 // print_r($sql_query).PHP_EOL; exit;
 
@@ -42,7 +38,7 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlRec .= $where_condition;
 }
 
-$sqlRec .=  " ORDER BY usuarios.estado, usuarios.fecha desc LIMIT " . $params['start'] . " ," . $params['length'];
+$sqlRec .=  " ORDER BY last_access desc, usuarios.estado, usuarios.fecha desc LIMIT " . $params['start'] . " ," . $params['length'];
 $queryTot = mysqli_query($link, $sqlTot);
 $totalRecords = mysqli_num_rows($queryTot);
 $queryRecords = mysqli_query($link, $sqlRec);
@@ -77,6 +73,7 @@ if ($totalRecords > 0) {
         $estado_n      = ($estado) ? 'Inactivo' : 'Activo';
         $fecha_alta    = $row['fecha_alta'];
         $fecha_mod     = $row['fecha_mod'];
+        $last_access   = !empty($row['last_access']) ? FechaFormatH($row['last_access']):'-';
 
         $IconEstado = ($estado) ? $IconAlta : $IconBaja;
         $TitleEstado = ($estado) ? 'Dar de alta' : 'Dar de baja';
@@ -103,6 +100,7 @@ if ($totalRecords > 0) {
             'rol'           => '<span class="contentd '.$ColorEstado.'">' . $rol . '</span>',
             'fecha_alta'    => '<span class="contentd ls1 '.$ColorEstado.'">' . FechaFormatH($fecha_alta) . '</span>',
             'fecha_mod'     => '<span class="contentd ls1 '.$ColorEstado.'">' . FechaFormatH($fecha_mod) . '</span>',
+            'last_access'     => '<span class="contentd ls1 '.$ColorEstado.'">' . ($last_access) . '</span>',
             'ButtonEditar'  => '<span class="contentd '.$ColorEstado.'">' . $ButtonEditar . '</span>',
             'Buttons'=>'<span class="contentd '.$ColorEstado.'">' . $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span>',
         );

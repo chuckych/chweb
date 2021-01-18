@@ -270,6 +270,7 @@ $(document).ready(function () {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
+        iDisplayLenght: 5,
         ajax: {
             url: "GetRoles.php?_c=" + $("#recid_cRol").val(),
             type: "POST",
@@ -383,7 +384,7 @@ $(document).ready(function () {
         },
     });
 
-    table.page.len('5').draw();
+    // table.page.len('5').draw();
     table.on('page.dt', function () {
         ClassTBody()
     });

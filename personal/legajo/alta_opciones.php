@@ -1818,7 +1818,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
             //    print_r($sql); exit;
 
             // $stmt = sqlsrv_prepare($link, $sql, $procedure_params); /** preparar la sentencia */
-            $stmt = sqlsrv_query($link, $sql, $paramas, $options); /** preparar la sentencia */
+            $stmt = sqlsrv_query($link, $sql, $params, $options); /** preparar la sentencia */
             
             if (!$stmt) {
                 die(print_r(sqlsrv_errors(), true));

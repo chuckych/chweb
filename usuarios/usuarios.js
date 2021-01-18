@@ -76,7 +76,7 @@ $(document).ready(function () {
         },
         {
             "visible": false,
-            "targets": 14
+            "targets": 15
         },
         ],
         rowGroup: {
@@ -85,6 +85,7 @@ $(document).ready(function () {
         bProcessing: true,
         serverSide: true,
         deferRender: true,
+        iDisplayLenght: 5,
         searchDelay: 1500,
         ajax: {
             url: "GetUsuarios.php",
@@ -160,16 +161,21 @@ $(document).ready(function () {
         {
             "class": "border-0",
             /** Col 12 */
-            "data": "fecha_alta"
+            "data": "last_access"
         },
         {
             "class": "border-0",
             /** Col 13 */
+            "data": "fecha_alta"
+        },
+        {
+            "class": "border-0",
+            /** Col 14 */
             "data": "fecha_mod"
         },
         {
             "class": "text-nowrap",
-            /** Col 14 */
+            /** Col 15 */
             "data": "Buttons"
         },
         ],
@@ -183,12 +189,14 @@ $(document).ready(function () {
         },
     });
 
-    table.page.len('5').draw();
+    // table.page.len('5').draw();
     table.on('page.dt', function () {
         ClassTBody()
         $('#respuestaResetClave').html('')
     });
-    $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
+    if ($('#_rol').val()!='') {
+        $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
+    }
     if ($(window).width() < 769) {
         $('#GetUsuarios').removeClass('text-wrap')
         $('#GetUsuarios').addClass('text-nowrap')

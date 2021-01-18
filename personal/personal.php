@@ -28,8 +28,8 @@
                 <?php require __DIR__ . '/modalNuevoLeg.php' ?>
             </div>
         </div>
-        <div class="row bg-white py-3 radius">
-            <div class="col-12 animate__animated animate__fadeIn table-responsive">
+        <div class="row bg-white py-3 radius invisible" id="PersonalTable">
+            <div class="col-12 table-responsive">
                 <table class="table table-hover text-nowrap w-100 table-sm" id="table-personal">
                     <thead class="text-uppercase border-top-0">
                         <tr>
@@ -58,98 +58,10 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../js/DataTable.php";
     ?>
-    <script src="altaLeg.js?v=<?=vjs()?>"></script>
+    <script src="altaLeg.js?v=<?= vjs() ?>"></script>
+    <script src="data.js?v=<?= vjs() ?>"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <script src="legajo/js/mascaras.js"></script>
-    <script>
-        $("#_eg").click(function() {
-            if ($("#_eg").is(":checked")) {
-                $("#_eg").val('on').trigger('change')
-                $('#table-personal').DataTable().ajax.reload();
-            } else {
-                $("#_eg").val('off').trigger('change')
-                $('#table-personal').DataTable().ajax.reload();
-            }
-        });
-        $('#table-personal').dataTable({
-            bProcessing: true,
-            serverSide: true,
-            deferRender: true,
-            "ajax": {
-                url: "?p=array_personal.php&<?= $_SERVER['QUERY_STRING'] ?>",
-                type: "GET",
-                dataType: "json",
-                "data": function(data) {
-                    data._c = $("#_c").val();
-                    data._r = $("#_r").val();
-                    data._eg = $("input[name=_eg]:checked").val();
-                },
-                error: function() {
-                    $("#table-personal").css("display", "none");
-                }
-            },
-            columns: [{
-                    "class": "align-middle",
-                    "data": 'editar'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_legajo'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_nombre'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_dni'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_estado'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_empresa'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_planta'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_convenio'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_sector'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_seccion'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_grupo'
-                },
-                {
-                    "class": "align-middle",
-                    "data": 'pers_sucur'
-                },
-            ],
-            // scrollY: '50vh',
-            scrollX: true,
-            paging: true,
-            searching: true,
-            scrollCollapse: true,
-            info: 1,
-            ordering: 0,
-            responsive: 0,
-            language: {
-                "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
-            }
-        });
-    </script>
+    <script src="legajo/js/mascaras.js?v=<?= vjs() ?>"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/select2Filtros-min.js"></script>
 </body>
