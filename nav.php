@@ -1,4 +1,4 @@
-<!-- <div class="loader"></div> -->
+<div class="loader"></div>
 <input type="hidden" hidden id="_c" value="<?= $_SESSION["RECID_CLIENTE"] ?>">
 <input type="hidden" hidden id="_r" value="<?= $_SESSION["RECID_ROL"] ?>">
 <input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?>">

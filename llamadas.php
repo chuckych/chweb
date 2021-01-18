@@ -10,11 +10,12 @@
 <link rel="mask-icon" href="/<?= HOMEHOST ?>/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#da532c">
 <meta name="theme-color" content="#ffffff">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize.css" type="text/css" />
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
-<link href="https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i&display=swap" rel="stylesheet" type="text/css">
-<link href="http://fonts.googleapis.com/css?family=Dosis:400,500,700" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons.css" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/montserrat-min.css" type="text/css" />
+<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i&display=swap" rel="stylesheet" type="text/css"> -->
+<!-- <link href="http://fonts.googleapis.com/css?family=Dosis:400,500,700" rel="stylesheet" type="text/css"> -->
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
 <?php
