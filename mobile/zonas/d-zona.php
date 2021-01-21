@@ -11,7 +11,7 @@ ini_set('display_errors', '1');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['d_zona'] == 'true')) {
 
-  $tkcliente = $_SESSION["TK_MOBILE"];
+  $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
   $nombrezona = $_POST['_nombre'];
 
   $parametros = "?TYPE=DELETE&tk=" . $tkcliente . "&col=zones&validation_parameters%5Bname%5D=" . $nombrezona;

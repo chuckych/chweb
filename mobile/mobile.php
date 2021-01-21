@@ -84,11 +84,8 @@
             </div>
             <!-- </form> -->
 
-            <div class="row bg-white pb-3 radius">
-                <!-- <div class="col-12 m-0">
-
-                    <button class="btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="Refresh">Actualizar Grilla</button>
-                </div> -->
+            <div class="row bg-white pb-3 radius" id="RowTableMobile">
+                
                 <div class="col-12 table-responsive">
                     <table class="table text-wrap w-100" id="table-mobile">
                         <thead class="text-uppercase border-top-0">
@@ -108,6 +105,10 @@
                             </tr>
                         </thead>
                     </table>
+                </div>
+                <div class="col-12 mt-2">
+                    <p class="m-0"><label class="w80">Cuenta:</label> <span class="cuenta fontq text-secondary"></span></p>
+                    <p class="m-0 mt-n2" title="Codigo de activación para App Mobile"><label class="w80">App Code:</label> <span class="appcode fontq text-secondary"></span></p>
                 </div>
                 <?php
                 if (modulo_cuentas()) :

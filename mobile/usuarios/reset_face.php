@@ -9,7 +9,7 @@ header('Access-Control-Allow-Origin: *');
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-$tkcliente = $_SESSION["TK_MOBILE"];
+$tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 $u_id      = $_POST['u_id'];
 
 $url     = "https://server.xenio.uy/save.php?u_id=" . $u_id . "&tk=" . $tkcliente . "&TYPE=LIST_FACES";

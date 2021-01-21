@@ -22,14 +22,14 @@ $Modulo='26';
             </div>';
             exit;
         }
-        if (empty($_SESSION["TK_MOBILE"])) {
+        if (empty(TokenMobile($_SESSION["TK_MOBILE"], 'token'))) {
             echo '<div class="row p-3">
             <div class="col-12 p-3 alert alert-info fw4 border-0">Sesi&oacute;n expirada.</div>
             </div>';
             exit;
         }
 
-        $tkcliente = $_SESSION["TK_MOBILE"];
+        $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
         $id        = $_GET['u_id'];
         $url = "https://server.xenio.uy/list.php?u_id=" . $id . "&tk=" . $tkcliente . "&TYPE=LIST_TRAIN";
         $json = file_get_contents($url);

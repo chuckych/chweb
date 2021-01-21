@@ -11,7 +11,7 @@ ini_set('display_errors', '1');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
 
-      $tkcliente = $_SESSION["TK_MOBILE"];
+      $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
       $_id       = FusNuloPOST('_id',''); /** DNI */
       $_name     = FusNuloPOST('_name',''); /** Nombre */
@@ -59,7 +59,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
    }
 } elseif(($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'update')) {
    
-      $tkcliente = $_SESSION["TK_MOBILE"];
+   $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
       $_id       = FusNuloPOST('_id',''); /** DNI */
       $_name     = FusNuloPOST('_name',''); /** Nombre */

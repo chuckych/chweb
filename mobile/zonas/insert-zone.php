@@ -11,7 +11,7 @@ ini_set('display_errors', '1');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_zona'] == 'true')) {
 
-   $tkcliente = $_SESSION["TK_MOBILE"];
+   $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
    $lat        = $_POST['lat'];
    $lng        = $_POST['lng'];

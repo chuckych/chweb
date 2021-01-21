@@ -11,7 +11,7 @@ ini_set('display_errors', '1');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['d_user'] == 'true')) {
 
-  $tkcliente = $_SESSION["TK_MOBILE"];
+  $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
   $nombre = $_POST['_nombre'];
 
   $id   = test_input($_POST['_id']);

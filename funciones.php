@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.80';
+    return 'v0.0.81';
 }
 function E_ALL()
 {
@@ -2422,5 +2422,25 @@ function mod_roles($recid_rol)
         mysqli_close($link);
         $respuesta = array('success' => 'YES', 'error' => '0', 'mod_roles' => $data);
         return $respuesta;
+    }
+}
+function TokenMobile($token, $data)
+{
+    /** data = "appcode" devuelve Aplication Code, "token" = devuelve el token */
+    if (!empty($token)) {
+        $t = explode('@', $token);
+        switch ($data) {
+            case 'appcode':
+                return $t[1];
+                break;
+            case 'token':
+                return $t[0];
+                break;
+            default:
+                return '';
+                break;
+        }
+    } else {
+        return '';
     }
 }

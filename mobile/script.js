@@ -1,6 +1,5 @@
 $(document).ready(function () {
 
-
     $("#Refresh").on("click", function () {
         $('#table-mobile').DataTable().ajax.reload();
         $(".dataTables_scrollBody").addClass("opa2");
@@ -9,11 +8,26 @@ $(document).ready(function () {
     $('#btnFiltrar').removeClass('d-sm-block');
 
     $('#table-mobile').DataTable({
-        "initComplete": function (settings, json) {
-
-        },
-
+        // "initComplete": function (settings, json) {
+         
+        // },
         "drawCallback": function (settings) {
+            // console.log(jQuery.makeArray(settings.json));
+            var arrayJson = jQuery.makeArray(settings.json)
+            $.each(arrayJson, function (key, value) {
+                // console.log(value['success']);
+                $('.appcode').html('<b>'+value['AppCode']+'</b>')
+                $('.cuenta').html('<b>'+value['Cuenta']+'</b>')
+                if (value['success']=='YES') {
+                        $("#alertmessage").fadeOut("slow");
+                        setTimeout(function () {
+                            $("#alertmessage").remove();
+                        }, 1000);
+                }else{
+                    $('#RowTableMobile').append('<div class="col-12 mt-2"><div class="alert alert-danger" id="alertmessage">' + value['message'] + '</div></div>')
+                }
+            });
+
             $(".dataTables_scrollBody").removeClass("opa2");
             $('.form-control-sm').attr('placeholder', 'Buscar')
         },

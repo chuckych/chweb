@@ -9,7 +9,7 @@ header('Access-Control-Allow-Origin: *');
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-$tkcliente = $_SESSION["TK_MOBILE"];
+$tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 $url = "https://app.xmartclock.com/xmart/be/xmart_end_point.php?TYPE=LIST&col=zones&tk=" . $tkcliente;
 $json = file_get_contents($url);
