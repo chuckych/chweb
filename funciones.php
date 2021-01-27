@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.81';
+    return 'v0.0.82';
 }
 function E_ALL()
 {
@@ -12,6 +12,55 @@ function E_ALL()
 		error_reporting(E_ALL);
 		ini_set('display_errors', '0');
 	}
+}
+function secure_auth_ch()
+{
+    if (
+        $_SESSION["secure_auth_ch"] !== true
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
+        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
+        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+    ) {
+        // echo '<script>alert("SESION EXPIRADA")</script>';
+        echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
+        header("location:/" . HOMEHOST . "/login/");
+        http_response_code(403);
+        exit;
+    } else {
+        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+        /** */
+        $fechaGuardada = $_SESSION["ultimoAcceso"];
+        $ahora = date("Y-m-d H:i:s");
+        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+        /** comparamos el tiempo transcurrido */
+        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+            /** Si pasaron 60 minutos o más */
+            session_destroy();
+            /** destruyo la sesión */
+            header("location:/" . HOMEHOST . "/login/?sesion");
+            /** envío al usuario a la pag. de autenticación */
+            exit();
+            /** sino, actualizo la fecha de la sesión */
+        } else {
+            $_SESSION["ultimoAcceso"] = $ahora;
+        }
+    }
+    session_regenerate_id();
+    E_ALL();
+}
+/** ultimaacc */
+function ultimoacc()
+{
+    return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s");
+}
+/** Seguridad injections SQL */
+function secureVar($key)
+{
+    $key = htmlspecialchars(stripslashes($key));
+    $key = str_ireplace("script", "blocked", $key);
+    $key = htmlentities($key, ENT_QUOTES);
+    return $key;
 }
 function vjs()
 {
@@ -286,54 +335,6 @@ function valida_password($pass)
     } else {
         return true;
     }
-}
-function secure_auth_ch()
-{
-    if (
-        $_SESSION["secure_auth_ch"] !== true
-        && (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        && ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        && ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-    ) {
-        // echo '<script>alert("SESION EXPIRADA")</script>';
-        echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
-        header("location:/" . HOMEHOST . "/login/");
-        http_response_code(403);
-        exit;
-    } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
-        /** */
-        $fechaGuardada = $_SESSION["ultimoAcceso"];
-        $ahora = date("Y-m-d H:i:s");
-        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
-        /** comparamos el tiempo transcurrido */
-        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
-            /** Si pasaron 60 minutos o más */
-            session_destroy();
-            /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion");
-            /** envío al usuario a la pag. de autenticación */
-            exit();
-            /** sino, actualizo la fecha de la sesión */
-        } else {
-            $_SESSION["ultimoAcceso"] = $ahora;
-        }
-    }
-    session_regenerate_id();
-    E_ALL();
-}
-/** ultimaacc */
-function ultimoacc()
-{
-    return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s");
-}
-/** Seguridad injections SQL */
-function secureVar($key)
-{
-    $key = htmlspecialchars(stripslashes($key));
-    $key = str_ireplace("script", "blocked", $key);
-    $key = htmlentities($key, ENT_QUOTES);
-    return $key;
 }
 function error_prepre($var)
 {

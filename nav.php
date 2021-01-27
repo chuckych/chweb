@@ -4,10 +4,16 @@
 <input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?>">
 <input type="hidden" hidden id="_homehost" value="<?= HOMEHOST ?>">
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
-<nav class="navbar sticky-top navbar-expand-lg navbar-light mb-2 bg-white row">
+<nav class="navbar sticky-top navbar-expand-lg navbar-light mb-2 bg-white row" style="z-index:1040;">
+<?php if(HOMEHOST == 'chweb'){ ?>
     <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
         <img src="/<?= HOMEHOST ?>/img/logo.png" class="w120">
     </a>
+<?php } elseif(HOMEHOST=='seguimiento'){ ?>
+    <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
+        <img src="/<?= HOMEHOST ?>/img/logo.png" class="w250">
+    </a>
+<?php } ?>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>

@@ -84,6 +84,7 @@ $(document).ready(function() {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
+        iDisplayLength:15,
         // dom: '<"d-inline-flex d-flex align-items-center"<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
         "ajax": {
             url: "GetGeneralMisHoras.php",
@@ -140,10 +141,10 @@ $(document).ready(function() {
                 "data": "NovHor"
             },
         ],
-        scrollY: '70vh',
+        // scrollY: '70vh',
         bLengthChange: false,
-        scrollX: true,
-        scrollCollapse: true,
+        // scrollX: true,
+        // scrollCollapse: true,
         paging: true,
         searching: false,
         info: true,

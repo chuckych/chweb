@@ -21,6 +21,7 @@ $bgcolor = 'bg-custom ';
                 width: 100%;
             }
         }
+
         @media only screen and (min-width: 375px) {
             .ancho {
                 width: 360px;
@@ -43,8 +44,14 @@ $bgcolor = 'bg-custom ';
                             <div class="form-group">
                                 <label for="user" class="fw4">Usuario</label>
                                 <input required type="text" class="form-control text-lowercase mr-1 mb-2 h50" id="user" placeholder="" name="user" value="<?= $usuario ?>">
-                                <label for="clave" class="fw4">Contrase&ntilde;a</label>
-                                <input required type="password" class="form-control h50" id="clave" placeholder="" name="clave" value="<?= $clave ?>">
+                                <!-- <label for="clave" class="fw4">Contrase&ntilde;a</label>
+                                <input required type="password" class="form-control h50" id="clave" placeholder="" name="clave" value="<?= $clave ?>"> -->
+                                <div class="input-group">
+                                    <div class="input-group-prepend" style="width:100% !important">
+                                        <input required type="password" class="form-control h50" id="clave" placeholder="" name="clave" value="<?= $clave; ?>">
+                                        <div class="border border-0 pointer" id="uc_mostrar" style="position: absolute;right:15px; top:13px"><i class="bi bi-eye-slash-fill text-secondary"></i></div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-row px-3 mt-4">
                                 <div class="custom-control custom-switch">
@@ -70,6 +77,7 @@ $bgcolor = 'bg-custom ';
         </form>
     </div>
     <?php require __DIR__ . "../../js/jquery.php"; ?>
+    <script src="login-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

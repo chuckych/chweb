@@ -241,6 +241,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	$_SESSION["LIMIT_SESION"]   = 3600;
 	$_SESSION['USER_AGENT']      = $_SERVER['HTTP_USER_AGENT'];
 	$_SESSION['IP_CLIENTE']      = $_SERVER['REMOTE_ADDR'];
+	$_SESSION['DIA_ACTUAL']      = hoy();
 	// $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();

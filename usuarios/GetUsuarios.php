@@ -30,7 +30,7 @@ $sqlRec .= $sql_query;
 
 if (!empty($params['search']['value'])) {
     $where_condition .= " AND ";
-    $where_condition .= " CONCAT_WS(' ', roles.nombre, usuarios.nombre) LIKE '%" . $params['search']['value'] . "%' ";
+    $where_condition .= " CONCAT_WS(' ', roles.nombre, usuarios.nombre, usuarios.legajo) LIKE '%" . $params['search']['value'] . "%' ";
 }
 
 if (isset($where_condition) && $where_condition != '') {

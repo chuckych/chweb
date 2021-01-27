@@ -64,7 +64,7 @@
                 </div>
                 <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
                     <input checked type="checkbox" class="custom-control-input" id="FicDiaL">
-                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;">
+                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;" title="Al desactivar muestra días laborales, francos y feriados. Al estar activo solo días laborales">
                         <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
                         <span class="text-dark d-block d-lg-none">Laboral</span>
                     </label>

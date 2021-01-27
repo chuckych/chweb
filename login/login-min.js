@@ -1,0 +1,1 @@
+$("#uc_mostrar").on("click",(function(t){var e=document.getElementById("clave");"password"==e.type?(e.type="text",$("#uc_mostrar").html('<i class="bi bi-eye-fill text-secondary"></i>')):(e.type="password",$("#uc_mostrar").html('<i class="bi bi-eye-slash-fill text-secondary"></i>'))}));

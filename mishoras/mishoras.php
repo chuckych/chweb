@@ -21,11 +21,13 @@
         echo '</div>';
         ?>
     <!-- Encabezado -->
+    <div class="sticky-top">
     <?=
         encabezado_mod2('bg-custom', 'white', 'clock-history', '<span class="d-none d-sm-inline">'.MODULOS['mishoras'] . '&nbsp;</span><span class="nombre"></span>', '25', 'text-white mr-2');
     ?>
+    <!-- </div> -->
     <!-- Fin Encabezado -->
-    <div class="row pt-3 pb-sm-2 ">
+    <div class="row pt-3 pb-sm-3 bg-white">
         <div class="col-12 col-sm-6 d-flex justify-content-end justify-content-sm-start">
             <button type="button" disabled class="btn-lg d-flex align-items-center btn fontq btn-outline-custom px-3 totales" data-toggle="modal" data-target="#Total_General">
                 <?=$icon_bar_chart_fill?>
@@ -47,6 +49,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
     <div class="row pb-3 radius ">
         <div class="col-12 m-0">
