@@ -52,7 +52,7 @@
     </div>
     </div>
     <div class="row pb-3 radius ">
-        <div class="col-12 m-0">
+        <div class="col-12 m-0 table-responsive">
             <table class="table table-hover w-100 text-nowrap bg-white" id="Tabla_General">
                 <thead class="">
                     <th class="text-center">VER</th>
