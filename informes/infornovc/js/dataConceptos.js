@@ -1,6 +1,6 @@
-$(window).on('load', function () {
-    $("#ConceptosModal").modal("show");
-});
+// $(window).on('load', function () {
+//     $("#ConceptosModal").modal("show");
+// });
 $(function () {
     var tableConceptos = $('#GetConceptos').DataTable({
         "initComplete": function (settings, json) {

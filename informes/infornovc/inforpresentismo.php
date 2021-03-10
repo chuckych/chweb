@@ -6,7 +6,6 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title><?= MODULOS['infornovc'] ?></title>
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.1.8/css/fixedHeader.dataTables.min.css"> -->
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -39,11 +38,13 @@
                     <input type="radio" class="custom-control-input" id="PorLegajo" name="ordenar" value="0">
                     <label class="custom-control-label" for="PorLegajo" style="padding-top: 3px;"><span class="text-dark">Por Legajo</span></label>
                 </div>
-                <div class="custom-control custom-switch custom-control-inline ml-1 w180">
+                <div class="custom-control custom-switch custom-control-inline ml-1">
                     <input type="radio" class="custom-control-input" id="PorNombre" name="ordenar" value="1">
-                    <label class="custom-control-label w180" for="PorNombre" style="padding-top: 3px;"><span class="text-dark">Por Nombre</span></label>
+                    <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span class="text-dark">Por Nombre</span></label>
                 </div>
                 <input type="hidden" id="ordenar">
+                
+                <!-- <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../img/xls.png" class="w15" alt="Exportar Excel"></button> -->
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
@@ -143,12 +144,15 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
     require __DIR__ . "../../../js/DataTable.php";
     ?>
-    <!-- <script src="https://cdn.datatables.net/fixedheader/3.1.8/js/dataTables.fixedHeader.min.js"></script> -->
+    <!-- <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script> -->
     <!-- <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> -->
     <script src="../../js/select2.min.js"></script>
     <script src="js/data.js?v=<?= vjs() ?>"></script>
     <script src="js/dataConceptos.js?v=<?= vjs() ?>"></script>
     <script src="js/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/FicExcel.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

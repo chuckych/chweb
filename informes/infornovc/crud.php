@@ -6,7 +6,7 @@ ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ini_set('display_errors', '0');
 
 /** ALTA DE PARAMS AUSENTES Y PRESENTES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {

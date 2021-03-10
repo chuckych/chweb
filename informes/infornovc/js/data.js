@@ -169,7 +169,8 @@ $(function () {
 
     var table = $('#GetPresentismo').DataTable({
         "initComplete": function (settings, json) {
-
+            $("#GetPresentismo_filter").prepend('<button type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel"></button>')
+            // $("select[name='GetPresentismo_length']").addClass('bg-light')
         },
         "drawCallback": function (settings) {
 
@@ -199,16 +200,16 @@ $(function () {
             url: 'getPresentismo.php?v=' + $.now(),
             type: "POST",
             "data": function (data) {
-                data.fecha = $("#_drnovc").val();
+                data.fecha   = $("#_drnovc").val();
                 data.ordenar = $("#ordenar").val();
-                data.Emp = $("#Emp").val();
-                data.Plan = $("#Plan").val();
-                data.Sect = $("#Sect").val();
-                data.Sec2 = $("#Sec2").val();
-                data.Grup = $("#Grup").val();
-                data.Sucur = $("#Sucur").val();
-                data.Tipo = $("#Tipo").val();
-                data.Per = $("#Per").val();
+                data.Emp     = $("#Emp").val();
+                data.Plan    = $("#Plan").val();
+                data.Sect    = $("#Sect").val();
+                data.Sec2    = $("#Sec2").val();
+                data.Grup    = $("#Grup").val();
+                data.Sucur   = $("#Sucur").val();
+                data.Tipo    = $("#Tipo").val();
+                data.Per     = $("#Per").val();
             },
             error: function () { },
         },
