@@ -17,7 +17,7 @@ $(document).ready(function () {
                 $("#respuetatext").html('<div class="d-flex align-items-center mr-3">Procesando<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>');
             },
             success: function (data) {
-                console.log(data.status);
+                // console.log(data.status);
                 if (data.status == "ok") {
                     fadeInOnly('#respuesta')
                     $("#respuetatext").html(`${data.dato}`);
@@ -35,7 +35,17 @@ $(document).ready(function () {
                     $("#respuesta").removeClass("alert-info");
                     $("#respuesta").addClass("alert-danger");
                 }
+            },
+            error: function () {
+                $("#respuetatext").html('Error');
+                fadeInOnly('#respuesta')
+                $("#submit").prop("disabled", false);
+                $("#submit").html("Procesar");
+                $("#respuesta").removeClass("alert-success");
+                $("#respuesta").removeClass("alert-info");
+                $("#respuesta").addClass("alert-danger");
             }
+
         });
         e.stopImmediatePropagation();
     });

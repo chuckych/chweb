@@ -43,7 +43,6 @@ $pass = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags($_POST['clave']);
 $sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='" . test_input($user) . "' AND usuarios.estado='0' LIMIT 1";
 
 // print_r($sql); exit;
-
 $rs       = mysqli_query($link, $sql);
 $NumRows  = mysqli_num_rows($rs);
 $row      = mysqli_fetch_assoc($rs);
@@ -51,6 +50,18 @@ $hash     = $row['clave'];
 // print_r($sql); exit;
 /** Si es correcto */
 if (($NumRows > '0') && (password_verify($pass, $hash))) {
+
+	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")){
+		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('29', 'FFeVjsix', 'Informe Presentismo', 13, '0', 2)");
+	}
+
+	$createParamsTable = InsertRegistroMySql("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
+	if ($createParamsTable) {
+		$selDataPresentes  = CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'presentes' and cliente = $row[id_cliente] LIMIT 1");
+		$selDataAusentes   = CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'ausentes' and cliente = $row[id_cliente] LIMIT 1");
+		(!$selDataPresentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'presentes', '', $row[id_cliente])") : '';
+		(!$selDataAusentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'ausentes', '', $row[id_cliente])") : '';
+	}
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
@@ -182,22 +193,20 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 				break;
 		}
 
-        $recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
-        $query    = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
-        $result   = mysqli_query($link, $query);
+		$recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
+		$query    = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
+		$result   = mysqli_query($link, $query);
 		// print_r($query);exit;
 
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
 				$id = ($e == 'secciones') ? $row['sect_secc'] : $row['id'];
 				// $recid_rol = $row['recid_rol'];
-				$DataID[] = (
-					$id
-				);
+				$DataID[] = ($id);
 			}
-			
+
 			$data = implode(",", $DataID);
-		}else{
+		} else {
 			$data = '';
 		}
 		mysqli_free_result($result);
@@ -212,7 +221,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
 	$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
 	$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
-	
+
 	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
 	// $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
 	// $_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));

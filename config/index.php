@@ -37,4 +37,5 @@ define("MODULOS", [
        /** ID = 26 */ 'mobileuser'  => 'Usuarios Mobile',
        /** ID = 27 */ 'mobilesms'  => 'Mensajes Mobile',
        /** ID = 28 */ 'horascost'  => 'Horas Costeadas',
-]);       
+       /** ID = 29 */ 'infornovc'  => 'Informe de Presentismo',
+]);

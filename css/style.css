@@ -446,6 +446,9 @@
  .Mw150 {
      min-width: 150px!important
  }
+ .Mw350 {
+     min-width: 350px!important
+ }
 
  .Mxw150 {
      max-width: 150px!important
@@ -1299,3 +1302,28 @@
      color: #fff;
      opacity: 0.6;
  }
+ /* width */
+::-webkit-scrollbar {
+    width: 5px !important;
+    height: 7px !important;  
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1; 
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #c4c3c3; 
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #888; 
+  }
+
+  .bi2::before{  
+    line-height: 1.5;
+    vertical-align: text-top;
+}

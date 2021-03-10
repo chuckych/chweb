@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"> -->
 <?php
 switch ($Modulo) {
 	case '1':
@@ -28,6 +29,10 @@ switch ($Modulo) {
 	case '22':
 		/** Modulo novedades. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #0288d1; } </style>';
+		break;
+	case '29':
+		/** Modulo novedades custom. Color predeterminado */
+		echo '<style>:root { --main-bg-modcolor : #0276aa; } </style>';
 		break;
 	case '3':
 		/** Modulo fichadas. Color predeterminado */

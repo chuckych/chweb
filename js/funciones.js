@@ -371,3 +371,6 @@ function SelectSelect2(selector, allowClear, placeholder, minimumInputLength, mi
         }
     });
 }
+function vjs() {
+    return $('#_vjs').val()
+}

@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.84';
+    return 'v0.0.85';
 }
 function E_ALL()
 {
@@ -518,6 +518,20 @@ function test_input($data)
     $data = htmlentities($data, ENT_QUOTES);
 
     return $data;
+}
+function test_input2($data)
+{
+    foreach ($data as $key => $value) {
+        $value = trim($data);
+        // $data = stripslashes($data);
+        // $data = htmlspecialchars($data);
+        // $data = htmlspecialchars(stripslashes($data));
+        $value = str_ireplace("script", "blocked", $data);
+        $value = htmlentities($data, ENT_QUOTES);
+
+    }
+    return $value;
+    
 }
 function hoy()
 {
@@ -2190,7 +2204,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión');
+        $data = array('status' => 'error', 'dato' => 'No hay Conexión..');
         echo json_encode($data);
         exit;
     }
@@ -2202,9 +2216,12 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     }
     $processID = respuestaWebService($respuesta);
     $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
+    // echo $processID.PHP_EOL; 
+    // echo EstadoProceso($url); exit;
 
     if ($httpCode == 201) {
-        return EstadoProceso($url);
+        // return EstadoProceso($url);
+        return array('ProcesoId'=>$processID, 'EstadoProceso'=>EstadoProceso($url));
         exit;
     }
 }

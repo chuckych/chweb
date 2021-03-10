@@ -6,7 +6,7 @@ ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 error_reporting(E_ALL);
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) { 
 
@@ -82,11 +82,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
         return $Dato;
     }
 
+    // echo json_encode($procesando['EstadoProceso']);
+    // exit;
 
-    if(($procesando)=='Terminado'){
+    if(($procesando['EstadoProceso'])=='Terminado'){
         if ($_POST['procesaLegajo']) {
-            sleep(1);
-            $data = array('status' => 'ok', 'dato' => 'Proceso enviado correctamente!<br>Legajo: ('.$LegaIni.') '.$_POST['nombreLegajo'].' <br/>Fecha: '.Fech_Format_Var($FechaIni,'d/m/Y').'');
+            // sleep(1);
+            $data = array('status' => 'ok', 'dato' => 'Proceso enviado correctamente!<br>Legajo: ('.$LegaIni.') '.$_POST['nombreLegajo'].' <br/>Fecha: '.Fech_Format_Var($FechaIni,'d/m/Y'), 'EstadoProceso'=>$procesando['EstadoProceso'], 'ProcesoId'=> $procesando['ProcesoId']);
             /** Insertar en tabla Auditor */
             $Dato=dato_proceso($LegaIni,$LegaFin,$FechaIni,$FechaFin);
             audito_ch('P', $Dato);
@@ -95,7 +97,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
 
         $textoLegajo = ($LegaIni == $LegaFin) ? 'Legajo: <b>'.$LegaIni.'</b>' : 'Legajos: <b>'.$LegaIni.'</b> a <b>'.$LegaFin.'</b>';
         $textoFecha = (FechaString($FechaIni) == FechaString($FechaFin)) ? 'Fecha: <b>'.Fech_Format_Var($FechaIni,'d/m/Y').'</b>' : 'Desde<b> '.Fech_Format_Var($FechaIni,'d/m/Y').'</b> hasta <b>'.Fech_Format_Var($FechaFin,'d/m/Y'.'</b>');
-        $data = array('status' => 'ok', 'dato' => '<b>Proceso enviado correctamente!</b> <br>'.$textoLegajo.'<br/>'.$textoFecha.$datas); 
+        $data = array('status' => 'ok', 'dato' => '<b>Proceso enviado correctamente!</b> <br>'.$textoLegajo.'<br/>'.$textoFecha.$datas, 'EstadoProceso'=>$procesando['EstadoProceso'], 'ProcesoId'=> $procesando['ProcesoId']); 
         /** Insertar en tabla Auditor */
         $Dato=dato_proceso($LegaIni,$LegaFin,$FechaIni,$FechaFin);
          audito_ch('P', $Dato);
@@ -105,7 +107,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
         echo json_encode($data);
         exit;
     }else{
-        $data = array('status' => 'error', 'dato' => 'Error');
+        $data = array('status' => 'error', 'dato' => 'Error', 'EstadoProceso'=>$procesando['EstadoProceso'], 'ProcesoId'=> $procesando['ProcesoId']);
         echo json_encode($data);
         exit;
     };

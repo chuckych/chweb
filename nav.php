@@ -4,14 +4,15 @@
 <input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?>">
 <input type="hidden" hidden id="_homehost" value="<?= HOMEHOST ?>">
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
+<input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <nav class="navbar sticky-top navbar-expand-lg navbar-light mb-2 bg-white row" style="z-index:1040;">
 <?php if(HOMEHOST == 'chweb'){ ?>
     <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-        <img src="/<?= HOMEHOST ?>/img/logo.png" class="w120">
+        <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w120">
     </a>
 <?php } elseif(HOMEHOST=='seguimiento'){ ?>
     <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-        <img src="/<?= HOMEHOST ?>/img/logo.png" class="w250">
+        <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w250">
     </a>
 <?php } ?>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,8 +55,8 @@
                     ?>
                         <!--Operaciones-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Operaciones</a>
-                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdown">
+                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Operaciones</a>
+                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownOperaciones">
                                 <?php
                                 foreach ($dataROL as $values) {
                                     $Modulo  = $values['modulo'];
@@ -102,8 +103,8 @@
                     ?>
                         <!--Informes-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Informes</a>
-                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdown">
+                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownInformes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Informes</a>
+                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownInformes">
                                 <?php
                                 foreach ($dataROL as $values) {
                                     $Modulo = $values['modulo'];
@@ -130,6 +131,9 @@
                                         case 'Informe de Horas':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforhora/>" . $Modulo2 . "</a>";
                                             break;
+                                        case 'Informe Presentismo':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/infornovc/>" . $Modulo2 . "</a>";
+                                            break;
                                     }
                                 }
                                 ?>
@@ -141,8 +145,8 @@
                     ?>
                         <!--Mobile-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mobile</a>
-                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdown">
+                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownMobile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mobile</a>
+                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMobile">
                                 <?php
                                 foreach ($dataROL as $values) {
                                     $Modulo = $values['modulo'];
@@ -177,8 +181,8 @@
                             if (checkTipoMod($arrIdTipo, '5')) {
                     ?>
                                 <!--Mi Cuenta-->
-                                <li class="nav-item mx-1 dropdown"><a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mi Cuenta </a>
-                                    <div class="dropdown-menu radius" aria-labelledby="navbarDropdown">
+                                <li class="nav-item mx-1 dropdown"><a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownMiCuenta" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mi Cuenta </a>
+                                    <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMiCuenta">
                                         <a class="dropdown-item fontq px-3 sub_menu" href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Roles</a>
                                         <a class="dropdown-item fontq px-3 sub_menu" href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Usuarios</a>
                                         <?php if (modulo_cuentas() == '1') { ?>
@@ -213,6 +217,7 @@
                             && ($Modulo2 != 'Zonas Mobile')
                             && ($Modulo2 != 'Usuarios Mobile')
                             && ($Modulo2 != 'Mensajes Mobile')
+                            && ($Modulo2 != 'Informe Presentismo')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>
