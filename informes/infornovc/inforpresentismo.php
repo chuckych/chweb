@@ -15,23 +15,6 @@
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['infornovc'], '') ?>
         <!-- Fin Encabezado -->
-        <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
-        <?php
-        $FechaMinMax = (fecha_min_max2('FICHAS3', 'FICHAS3.FicFech'));
-        $FirstDate = $FechaMinMax['min'];
-        /** FirstDate */
-        $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
-        /** FirstYear */
-        $maxDate   = $FechaMinMax['max'];
-        // $maxDate   = date('Y-m-d');
-        /** maxDate */
-        $maxYear   = date('Y');
-        /** maxYear */
-        $FechaIni = $FechaMinMax['max'];
-        $FechaFin = $FechaMinMax['max'];
-        // $FechaIni = date('Y-m-d');
-        // $FechaFin = date('Y-m-d');
-        ?>
         <div class="row bg-white py-2">
             <div class="col-12 col-sm-6 mt-2">
                 <div class="custom-control custom-switch custom-control-inline">
@@ -42,9 +25,7 @@
                     <input type="radio" class="custom-control-input" id="PorNombre" name="ordenar" value="1">
                     <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span class="text-dark">Por Nombre</span></label>
                 </div>
-                <input type="hidden" id="ordenar">
-                
-                <!-- <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../img/xls.png" class="w15" alt="Exportar Excel"></button> -->
+                <input type="hidden" id="ordenar">                
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
@@ -144,15 +125,10 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
     require __DIR__ . "../../../js/DataTable.php";
     ?>
-    <!-- <script src="https://cdn.datatables.net/buttons/1.7.0/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/1.7.0/js/buttons.html5.min.js"></script> -->
-    <!-- <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> -->
     <script src="../../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
-    <script src="js/dataConceptos.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/FicExcel.js?v=<?= vjs() ?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/dataConceptos-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/select-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

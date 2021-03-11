@@ -10,7 +10,7 @@ ini_set('display_errors', '0');
 
 /** ALTA DE PARAMS AUSENTES Y PRESENTES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
-    sleep(1);
+    // sleep(1);
     $ausentes  = $_POST['ausentes'];
     $presentes = $_POST['presentes'];
     $cliente   = $_SESSION['ID_CLIENTE'];

@@ -6,8 +6,8 @@ if(isset($_GET['_c'])){
 require __DIR__ .'/conect_mysql.php';
 $querydb="SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
 // print_r($query);
-$result=mysqli_query($link, $querydb);
-$row = mysqli_fetch_assoc($result);
+$result = mysqli_query($link, $querydb);
+$row    = mysqli_fetch_assoc($result);
 mysqli_free_result($result);
 $serverName = $row['host'];
         $db = $row['db'];
@@ -50,14 +50,15 @@ $serverName = $_SESSION["CONEXION_MS"]['host'];
 				// exit;
 			}
 		}
-		header('Location:'.HOMEHOST.'/inicio/?err_con');
+		header('Location:/'.HOMEHOST.'/inicio/?err_conexion_mssql');
+		exit;
 	}else{
         $queryDateFirst = "SET DATEFIRST 7";
 		$rs = sqlsrv_query($link, $queryDateFirst);
 		sqlsrv_free_stmt($rs);
 	}
-	// print_r(json_encode(sqlsrv_client_info( $link)));
-	if($client_info = sqlsrv_client_info( $link)) {
+	// print_r(json_encode(sqlsrv_client_info($link)));
+	if($client_info = sqlsrv_client_info($link)) {
 		foreach($client_info as $key => $value) {
 			// echo $key.": ".$value."<br />";
 		}

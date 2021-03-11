@@ -35,6 +35,7 @@ if (sqlsrv_num_rows($rs) > 0) {
         $NovTipo  = $r['NovTipo'];
         $checked = '';
         $checked2 = '';
+        $ClassTNov = substr(TipoNov($NovTipo), 0, 3);
         $n = '0';
         foreach ($presentes as $value) {
             if ($NovCodi == $value) {
@@ -50,17 +51,18 @@ if (sqlsrv_num_rows($rs) > 0) {
                 break;
             }
         }
+
         // $checked2 = ($n=='0') ? 'checked':'';
 
-        $Presentes = '<div class="custom-control custom-checkbox"><input name="presentes[]" ' . $checked . ' type="checkbox" class="custom-control-input" id="' . $NovCodi . '_Pres" value="' . $NovCodi . '"><label class="custom-control-label" for="' . $NovCodi . '_Pres"></label></div>';
+        $Presentes = '<div class="custom-control custom-checkbox"><input name="presentes[]" ' . $checked . ' type="checkbox" class="custom-control-input '.$ClassTNov.'_Pre" id="' . $NovCodi . '_Pres" value="' . $NovCodi . '"><label class="custom-control-label" for="' . $NovCodi . '_Pres"></label></div>';
 
-        $Ausentes = '<div class="custom-control custom-checkbox"><input name="ausentes[]" ' . $checked2 . ' type="checkbox" class="custom-control-input" id="' . $NovCodi . '_Aus" value="' . $NovCodi . '"><label class="custom-control-label" for="' . $NovCodi . '_Aus"></label></div>';
+        $Ausentes = '<div class="custom-control custom-checkbox"><input name="ausentes[]" ' . $checked2 . ' type="checkbox" class="custom-control-input '.$ClassTNov.'_Aus" id="' . $NovCodi . '_Aus" value="' . $NovCodi . '"><label class="custom-control-label" for="' . $NovCodi . '_Aus"></label></div>';
 
         $data[] = array(
             'NovCodi'   => $NovCodi,
             'NovDesc'   => $NovDesc,
             'NovID'     => $NovID,
-            'NovTipo'   => TipoNov($NovTipo),
+            'NovTipo'   => '<span class="pointer '.$ClassTNov.'">'.TipoNov($NovTipo).'</span>',
             'Presentes' => $Presentes,
             'Ausentes'  => $Ausentes,
             'n'         => $n

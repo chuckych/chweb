@@ -1,6 +1,6 @@
 $(function () {
-    var AnioMin = parseFloat($('#AnioMin').val());
-    var AnioMax = parseFloat($('#AnioMax').val());
+    // var AnioMin = parseFloat($('#AnioMin').val());
+    // var AnioMax = parseFloat($('#AnioMax').val());
 
     function _rutauser() {
         var _rutauser = $('#_homehost').val() + '_' + $('#_lega').val()
@@ -29,8 +29,8 @@ $(function () {
         $('.selectjs_personal').val(null).trigger("change");
         $('.selectjs_tipoper').val(null).trigger("change");
         // $("select[name='GetPresentismo_length']").val('10');
-        table.page.len( 10 ).draw();
-        $('#GetConceptosAusentes').DataTable().page.len( 10 ).draw();
+        table.page.len(10).draw();
+        $('#GetConceptosAusentes').DataTable().page.len(10).draw();
         // console.log($("select[name='GetPresentismo_length']").val());
         $('#datoPorLegajo').val('1');
         CheckedInput('#PorLegajo')
@@ -46,7 +46,7 @@ $(function () {
         sessionStorage.clear();
         var desde = moment().subtract(6, "month").format('DD/MM/YYYY')
         var hasta = moment().subtract(1, "days").format('DD/MM/YYYY')
-        $('#_drnovc').val(desde +' al '+ hasta)
+        $('#_drnovc').val(desde + ' al ' + hasta)
         dateRange(desde, hasta)
     });
 
@@ -54,8 +54,8 @@ $(function () {
         $('#_drnovc').daterangepicker({
             singleDatePicker: false,
             showDropdowns: false,
-            minYear: AnioMin,
-            maxYear: AnioMax,
+            // minYear: AnioMin,
+            // maxYear: AnioMax,
             startDate: desde,
             endDate: hasta,
             showWeekNumbers: false,
@@ -119,7 +119,7 @@ $(function () {
             },
         });
     }
-    
+
     dateRange(desde, hasta)
 
     function ActualizaTablas() {
@@ -167,20 +167,83 @@ $(function () {
         table.order([1, 'asc']).draw();
     });
 
+    var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
+    ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
+    var IconCsv = '.csv <img src="../../img/csv.png" class="w15" alt="Exportar a Csv">'
+    ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
+    
+    function GetFicCsv(data) {
+        $.ajax({
+            type: 'POST',
+            dataType: "json",
+            url: "FicCsv.php",
+            'data': {
+                datos:data
+            },
+            beforeSend:function(){
+                ActiveBTN(true, "#btnCsv", 'Exportando', IconCsv)
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
+                window.location=data.archivo
+                }
+    
+            },
+            error: function () {
+                ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)               
+            }
+        });
+    }
+    function GetFicExcel(data) {
+        $.ajax({
+            type: 'POST',
+            dataType: "json",
+            // url: "FicCsv.php",
+            url: "FicExcel.php",
+            'data': {
+                datos:data
+            },
+            beforeSend:function(){
+                ActiveBTN(true, "#btnExcel", 'Exportando', IconExcel)
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
+                window.location=data.archivo
+                }
+    
+            },
+            error: function () {
+                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)               
+            }
+        });
+    }
+    
     var table = $('#GetPresentismo').DataTable({
         "initComplete": function (settings, json) {
-            $("#GetPresentismo_filter").prepend('<button type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel"></button>')
-            // $("select[name='GetPresentismo_length']").addClass('bg-light')
+            $("#GetPresentismo_filter").prepend('<button title="Exportar Excel" type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel"></button>')
+            $("#GetPresentismo_filter").prepend('<button title="Exportar Csv" type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnCsv">.csv <img src="../../img/csv.png" class="w15" alt="Exportar a Csv"></button>')
         },
-        "drawCallback": function (settings) {
+        drawCallback: function (settings) {
 
+            $(document).on("click", "#btnExcel", function (e) {
+                e.preventDefault();
+                $('#rowFiltros').collapse('hide')
+                var datoexcel = JSON.stringify(settings.json);
+                GetFicExcel(datoexcel)
+                e.stopImmediatePropagation()
+            });
+
+            $(document).on("click", "#btnCsv", function (e) {
+                e.preventDefault();
+                $('#rowFiltros').collapse('hide')
+                var datocsv = JSON.stringify(settings.json);
+                GetFicCsv(datocsv)
+                e.stopImmediatePropagation()
+            });
         },
-        // "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
-        // },
-        "createdRow": function (row, data, index) {
-            // $(row).addClass("animated fadeIn align-middle");
-        },
-        "lengthMenu": [ [10, 25, 50, 100, -1], [10, 25, 50, 100, "Todo"] ],
+        "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todo"]],
         columnDefs: [
             { orderable: false, targets: 0 },
             { orderable: false, targets: 1 },
@@ -192,6 +255,7 @@ $(function () {
             { orderable: false, targets: 7 },
             { orderable: false, targets: 8 },
             { orderable: false, targets: 9 },
+            { orderable: false, targets: 10 },
         ],
         bProcessing: true,
         stateSave: true,
@@ -200,16 +264,16 @@ $(function () {
             url: 'getPresentismo.php?v=' + $.now(),
             type: "POST",
             "data": function (data) {
-                data.fecha   = $("#_drnovc").val();
+                data.fecha = $("#_drnovc").val();
                 data.ordenar = $("#ordenar").val();
-                data.Emp     = $("#Emp").val();
-                data.Plan    = $("#Plan").val();
-                data.Sect    = $("#Sect").val();
-                data.Sec2    = $("#Sec2").val();
-                data.Grup    = $("#Grup").val();
-                data.Sucur   = $("#Sucur").val();
-                data.Tipo    = $("#Tipo").val();
-                data.Per     = $("#Per").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data.Tipo = $("#Tipo").val();
+                data.Per = $("#Per").val();
             },
             error: function () { },
         },
@@ -274,12 +338,4 @@ $(function () {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
         },
     })
-    table.on('page.dt', function (e) {
-        e.preventDefault();
-        // ClassTBody()
-        // if ($("#collapseFiltros").hasClass('show')) {
-        //     $('#collapseFiltros').collapse('hide')
-        // }
-    });
-
 });

@@ -1,4 +1,5 @@
 <!-- Modal -->
+<input type="hidden" id="tconcepto" value="0">
 <form action="crud.php" method="post" id="FormConceptos">
 <div class="modal fade" id="ConceptosModal" data-keyboard="false" tabindex="-1" tabindex="-1" aria-labelledby="ConceptosModal" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -11,14 +12,14 @@
             </div>
             <div class="modal-body mt-n3">
                 <div class="row">
-                    <div class="col-12 table-responsive">
+                    <div class="col-12 table-responsive" id="divGetConceptos">
                         <table id="GetConceptos" class="table text-nowrap w-100">
                             <thead>
                                 <th>Presente</th>
                                 <th>Ausente</th>
                                 <th>Cod</th>
-                                <th>Descripci&oacute;n</th>
-                                <th class=""></th>
+                                <th class="">Descripci&oacute;n</th>
+                                <th class="">ID</th>
                                 <th class=""></th>
                                 <th class=""></th>
                             </thead>

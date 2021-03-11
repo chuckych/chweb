@@ -5,6 +5,8 @@ secure_auth_ch();
 $Modulo = '29';
 ExisteModRol($Modulo);
 $bgcolor = 'bg-custom';
+$FirstYear='2000';
+$maxYear='2100';
 define("TIPO_HOJA", [
     'A4'     => 'A4',
     'Oficio' => 'LEGAL',
