@@ -19,7 +19,7 @@
                                 <th>Ausente</th>
                                 <th>Cod</th>
                                 <th class="">Descripci&oacute;n</th>
-                                <th class="">ID</th>
+                                <th class=""></th>
                                 <th class=""></th>
                                 <th class=""></th>
                             </thead>
