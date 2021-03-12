@@ -156,6 +156,9 @@ $(function () {
             sessionStorage.setItem(_rutauser + '_ordenar', $("#ordenar").val());
         }
         table.order([0, 'asc']).draw();
+        setTimeout(function () {
+            table.columns.adjust().draw();
+        }, 100);
     });
     $("#PorNombre").change(function (e) {
         e.preventDefault();
@@ -165,33 +168,36 @@ $(function () {
             sessionStorage.setItem(_rutauser + '_ordenar', $("#ordenar").val());
         }
         table.order([1, 'asc']).draw();
+        setTimeout(function () {
+            table.columns.adjust().draw();
+        }, 100);
     });
 
     var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
     ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
     var IconCsv = '.csv <img src="../../img/csv.png" class="w15" alt="Exportar a Csv">'
     ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
-    
+
     function GetFicCsv(data) {
         $.ajax({
             type: 'POST',
             dataType: "json",
             url: "FicCsv.php",
             'data': {
-                datos:data
+                datos: data
             },
-            beforeSend:function(){
+            beforeSend: function () {
                 ActiveBTN(true, "#btnCsv", 'Exportando', IconCsv)
             },
             success: function (data) {
                 if (data.status == "ok") {
-                ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
-                window.location=data.archivo
+                    ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
+                    window.location = data.archivo
                 }
-    
+
             },
             error: function () {
-                ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)               
+                ActiveBTN(false, "#btnCsv", 'Exportando', IconCsv)
             }
         });
     }
@@ -202,30 +208,30 @@ $(function () {
             // url: "FicCsv.php",
             url: "FicExcel.php",
             'data': {
-                datos:data
+                datos: data
             },
-            beforeSend:function(){
+            beforeSend: function () {
                 ActiveBTN(true, "#btnExcel", 'Exportando', IconExcel)
             },
             success: function (data) {
                 if (data.status == "ok") {
-                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
-                window.location=data.archivo
+                    ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
+                    window.location = data.archivo
                 }
-    
+
             },
             error: function () {
-                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)               
+                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
             }
         });
     }
-    
+
     var table = $('#GetPresentismo').DataTable({
         "initComplete": function (settings, json) {
             $("#GetPresentismo_filter").prepend('<button title="Exportar Excel" type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel"></button>')
             $("#GetPresentismo_filter").prepend('<button title="Exportar Csv" type="button" class="mr-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnCsv">.csv <img src="../../img/csv.png" class="w15" alt="Exportar a Csv"></button>')
         },
-        drawCallback: function (settings) {
+        "fnDrawCallback": function (settings) {
 
             $(document).on("click", "#btnExcel", function (e) {
                 e.preventDefault();
@@ -255,7 +261,6 @@ $(function () {
             { orderable: false, targets: 7 },
             { orderable: false, targets: 8 },
             { orderable: false, targets: 9 },
-            { orderable: false, targets: 10 },
         ],
         bProcessing: true,
         stateSave: true,
@@ -283,7 +288,7 @@ $(function () {
                 "data": 'legajo'
             },
             {
-                "class": "",
+                "class": "text-wrap",
                 "data": 'nombre'
             },
             {
@@ -322,11 +327,9 @@ $(function () {
             //     "class": "text-center",
             //     "data": '_totalmesesfecha'
             // },
-            {
-                "class": "w-100",
-                "data": 'n'
-            }
         ],
+        scrollY: '50vh',
+        bScrollCollapse: true,
         deferRender: true,
         bLengthChange: true,
         paging: true,
@@ -334,8 +337,13 @@ $(function () {
         info: true,
         ordering: true,
         responsive: false,
+        "autoWidth": true,
+
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
         },
     })
+    setTimeout(function () {
+        table.columns.adjust().draw();
+    }, 100);
 });

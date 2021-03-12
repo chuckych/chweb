@@ -43,15 +43,13 @@ $spreadsheet = $documento->getActiveSheet();
 $data = ($_POST['datos']);
 $data = json_decode(($data), true);
 
-// foreach ($data['data'] as $value) {
-//     $desde = $value['desde'];
-//     $hasta = $value['hasta'];
-//     $reporte = 'REPORTE DESDE'.$desde.' a '.$hasta;
-//     break;
-//     echo $desde; exit;
-// }
-// $spreadsheet->setTitle($reporte);
-$spreadsheet->setTitle("REPORTE");
+$Desde = $data['data'][0]['desde']; 
+$Hasta = $data['data'][0]['hasta']; 
+$Desde = str_replace("/", "-", $Desde);
+$Hasta = str_replace("/", "-", $Hasta);
+// print_r($Hasta);
+// exit;
+
 # Escribir encabezado de los productos
 $encabezado = [
     "Legajo",
@@ -79,7 +77,8 @@ $styleArray = [
         ],
     ],
 ];
-
+$titleHoja = 'Del '.$Desde.' al '.$Hasta;
+$spreadsheet->setTitle($titleHoja);
 $spreadsheet->getStyle('A1:J1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
@@ -101,7 +100,7 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 // $spreadsheet->getPageSetup()->setHorizontalCentered(true);
 // $spreadsheet->getPageSetup()->setVerticalCentered(false);
 /** Encabezado y Pie de Pagina */
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE PRESENTISMO');
+
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
@@ -157,7 +156,7 @@ $numeroDeFila = 2;
 
 // print_r($data['data']); exit;
 foreach ($data['data'] as $r) {
-
+    $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(19);
     $legajo          = $r['legajo'];
     $nombre          = $r['nombre'];
     $desde           = $r['desde'];
@@ -184,6 +183,7 @@ foreach ($data['data'] as $r) {
     $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $_totalmesesconv);
     $numeroDeFila++;
 }
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE PRESENTISMO DESDE '.$desde.' A '.$hasta);
 
 # Crear un "escritor"
 try {
@@ -197,7 +197,7 @@ try {
     $writer->save('archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    $data = array('status' => 'ok', 'desde'=>$desde, 'hasta'=>$hasta , 'archivo' => 'archivos/' . $NombreArchivo);
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {

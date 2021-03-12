@@ -25,7 +25,7 @@
                     <input type="radio" class="custom-control-input" id="PorNombre" name="ordenar" value="1">
                     <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span class="text-dark">Por Nombre</span></label>
                 </div>
-                <input type="hidden" id="ordenar">                
+                <input type="hidden" id="ordenar">
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
@@ -96,8 +96,8 @@
             <div class="col-12 table-responsive">
                 <table id="GetPresentismo" class="table w-100 text-nowrap">
                     <thead>
-                        <th>Legajo</th>
-                        <th style="min-width: 230px !important;">Apellido y Nombre</th>
+                        <th>Num. Legajo</th>
+                        <th>Apellido y Nombre</th>
                         <th>Fecha Desde</th>
                         <th>Fecha Hasta</th>
                         <th>Total Días<br>Presentes</th>
@@ -107,7 +107,6 @@
                         <th>Meses<br>Ausentes</th>
                         <th>Total<br>Meses</th>
                         <!-- <th>Total Meses<br>Fecha</th> -->
-                        <th></th>
                     </thead>
                 </table>
             </div>
