@@ -465,13 +465,6 @@
                     Grup: $("#Grup").val(),
                     Sucur: $("#Sucur").val(),
                     fecha: $("#_drnovc").val(),
-                    _l: $("#_l").val(),
-                    FicDiaL: $("#datoFicDiaL").val(),
-                    FicFalta: $("#datoFicFalta").val(),
-                    FicNovT: $("#datoFicNovT").val(),
-                    FicNovI: $("#datoFicNovI").val(),
-                    FicNovS: $("#datoFicNovS").val(),
-                    FicNovA: $("#datoFicNovA").val(),
                 }
             },
             processResults: function (data) {

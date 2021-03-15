@@ -12,7 +12,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 $data = array();
 
 error_reporting(E_ALL);
-ini_set('display_errors', '0');
+ini_set('display_errors', '1');
 
 
 require __DIR__ . '../valores.php';
@@ -55,13 +55,17 @@ $ausentes  = ($_SESSION['CONCEPTO_AUSENTES']);
 
 $dias_franco  = $_SESSION["DIAS_FRANCO"];
 $dias_feriado = $_SESSION["DIAS_FERIADOS"];
-
+$queryDL= $queryDF='';
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+if($dias_franco){
+$queryDL = "(SELECT COUNT(FicDL.FicLega) FROM FICHAS FicDL WHERE FicDL.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDl.FicLega AND FicDL.FicDiaL = 0 AND FicDL.FicDiaF = 0 ) AS 'TotalDiasFrancos',";
+}
+if($dias_feriado){
+$queryDF = "(SELECT COUNT(FicDF.FicLega) FROM FICHAS FicDF WHERE FicDF.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDF.FicLega AND FicDF.FicDiaF = 1 ) AS 'TotalDiasFeriados',";
+}
 
-$query = "SELECT DISTINCT FICHAS.FicLega AS 'legajo', PERSONAL.LegApNo AS 'nombre',
-(SELECT COUNT(FicDL.FicLega) FROM FICHAS FicDL WHERE FicDL.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDl.FicLega AND FicDL.FicDiaL = 0 AND FicDL.FicDiaF = 0 ) AS 'TotalDiasFrancos',
-(SELECT COUNT(FicDF.FicLega) FROM FICHAS FicDF WHERE FicDF.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDF.FicLega AND FicDF.FicDiaF = 1 ) AS 'TotalDiasFeriados',
+$query = "SELECT DISTINCT FICHAS.FicLega AS 'legajo', PERSONAL.LegApNo AS 'nombre', $queryDL $queryDF 
 (SELECT COUNT(FicAus.FicLega) FROM FICHAS FicAus INNER JOIN FICHAS3 ON FicAus.FicLega = FICHAS3.FicLega AND FicAus.FicFech = FICHAS3.FicFech WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND  FICHAS.FicLega = FicAus.FicLega AND FICHAS3.FicNove IN ($ausentes)) AS 'TotDiasAus',
 (SELECT COUNT(Fic.FicLega) FROM FICHAS Fic WHERE Fic.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS.FicLega = Fic.FicLega) AS 'TotalDiasFichas' 
 FROM FICHAS INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn INNER JOIN PERSONAL ON  FICHAS.FicLega = PERSONAL.LegNume WHERE  FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FiltrosFichas $FilterEstruct ORDER BY FICHAS.FicLega";
@@ -81,8 +85,8 @@ function ConvMesesPresentes($TotalDiasPresentes, $TotalMeses, $TotalDias)
 
             $legajo            = $r['legajo'];
             $nombre            = $r['nombre'];
-            $TotalDiasFrancos  = $r['TotalDiasFrancos'];
-            $TotalDiasFeriados = $r['TotalDiasFeriados'];
+            $TotalDiasFrancos  = $r['TotalDiasFrancos'] ?? '';
+            $TotalDiasFeriados = $r['TotalDiasFeriados'] ?? '';
             $TotalDiasFichas   = $r['TotalDiasFichas'];
             $TotDiasAus        = $r['TotDiasAus'];
             $TotDiasAus        = $r['TotDiasAus'];
