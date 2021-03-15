@@ -5,17 +5,14 @@ require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-// header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP 1.1.
-// header("Pragma: no-cache"); // HTTP 1.0.
-// header("Expires: 0"); // Proxies.
 
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
 $data = array();
 
-// error_reporting(E_ALL);
-// ini_set('display_errors', '1');
+error_reporting(E_ALL);
+ini_set('display_errors', '0');
 
 
 require __DIR__ . '../valores.php';
@@ -56,13 +53,18 @@ $TotalFechas = '';
 $presentes = ($_SESSION['CONCEPTO_PRESENTES']);
 $ausentes  = ($_SESSION['CONCEPTO_AUSENTES']);
 
+$dias_franco  = $_SESSION["DIAS_FRANCO"];
+$dias_feriado = $_SESSION["DIAS_FERIADOS"];
+
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $query = "SELECT DISTINCT FICHAS.FicLega AS 'legajo', PERSONAL.LegApNo AS 'nombre',
-(SELECT COUNT(FI.FicLega) FROM FICHAS FI INNER JOIN FICHAS3 ON FI.FicLega = FICHAS3.FicLega AND FI.FicFech = FICHAS3.FicFech AND FI.FicTurn = FICHAS3.FicTurn WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FI.FicHsTr = '00:00' AND  FICHAS.FicLega = FI.FicLega AND FICHAS3.FicNove IN ($presentes)) AS 'TotDiasPre',
-(SELECT COUNT(FI2.FicLega) FROM FICHAS FI2 WHERE FI2.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FI2.FicHsTr > '00:00' AND  FICHAS.FicLega = FI2.FicLega) AS 'TotDiasPreHs', 
-(SELECT COUNT(FI3.FicLega) FROM FICHAS FI3 INNER JOIN FICHAS3 ON FI3.FicLega = FICHAS3.FicLega AND FI3.FicFech = FICHAS3.FicFech AND FI3.FicTurn = FICHAS3.FicTurn WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FI3.FicHsTr = '00:00' AND  FICHAS.FicLega = FI3.FicLega AND FICHAS3.FicNove IN ($ausentes)) AS 'TotDiasAus' FROM FICHAS INNER JOIN FICHAS3 ON  FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn INNER JOIN PERSONAL ON  FICHAS.FicLega = PERSONAL.LegNume WHERE  FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FiltrosFichas $FilterEstruct ORDER BY FICHAS.FicLega";
+(SELECT COUNT(FicDL.FicLega) FROM FICHAS FicDL WHERE FicDL.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDl.FicLega AND FicDL.FicDiaL = 0 AND FicDL.FicDiaF = 0 ) AS 'TotalDiasFrancos',
+(SELECT COUNT(FicDF.FicLega) FROM FICHAS FicDF WHERE FicDF.FicFech BETWEEN '20200701' AND '20201231' AND FICHAS.FicLega = FicDF.FicLega AND FicDF.FicDiaF = 1 ) AS 'TotalDiasFeriados',
+(SELECT COUNT(FicAus.FicLega) FROM FICHAS FicAus INNER JOIN FICHAS3 ON FicAus.FicLega = FICHAS3.FicLega AND FicAus.FicFech = FICHAS3.FicFech WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND  FICHAS.FicLega = FicAus.FicLega AND FICHAS3.FicNove IN ($ausentes)) AS 'TotDiasAus',
+(SELECT COUNT(Fic.FicLega) FROM FICHAS Fic WHERE Fic.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS.FicLega = Fic.FicLega) AS 'TotalDiasFichas' 
+FROM FICHAS INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn INNER JOIN PERSONAL ON  FICHAS.FicLega = PERSONAL.LegNume WHERE  FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FiltrosFichas $FilterEstruct ORDER BY FICHAS.FicLega";
 // print_r($query).PHP_EOL; exit;
 function ConvMesesPresentes($TotalDiasPresentes, $TotalMeses, $TotalDias)
 {
@@ -73,34 +75,42 @@ function ConvMesesPresentes($TotalDiasPresentes, $TotalMeses, $TotalDias)
         return $v;
     }
 }
-
     $rs = sqlsrv_query($link, $query, $param, $options);
     if (sqlsrv_num_rows($rs) > 0) {
         while ($r = sqlsrv_fetch_array($rs)) :
 
-            $legajo         = $r['legajo'];
-            $nombre         = $r['nombre'];
-            $TotDiasPre     = $r['TotDiasPre'];
-            $TotDiasPreHs   = $r['TotDiasPreHs'];
-            $TotDiasAus     = $r['TotDiasAus'];
-            // $TotDiasAus     = 130;
-            // $presentes      = 54;
-            $presentes      = $TotDiasPre + $TotDiasPreHs;
-            $TotalDias      = $presentes + $TotDiasAus;
-            $TotalDias      = $presentes + $TotDiasAus;
-            $ConvPres       = (ConvMesesPresentes($presentes, $TotalMeses, $TotalDias));
-            $ConvAus        = (ConvMesesPresentes($TotDiasAus, $TotalMeses, $TotalDias));
-            $TotalMesesConv = ($ConvPres) + ($ConvAus);
-            $TotalMesesConv = number_format($TotalMesesConv, 0);
-            $ConvAus        = number_format($ConvAus, 2, ',', '.');
-            $ConvPres       = number_format($ConvPres, 2, ',', '.');
+            $legajo            = $r['legajo'];
+            $nombre            = $r['nombre'];
+            $TotalDiasFrancos  = $r['TotalDiasFrancos'];
+            $TotalDiasFeriados = $r['TotalDiasFeriados'];
+            $TotalDiasFichas   = $r['TotalDiasFichas'];
+            $TotDiasAus        = $r['TotDiasAus'];
+            $TotDiasAus        = $r['TotDiasAus'];
+            $presentes         = $TotalDiasFichas - $TotDiasAus;
+
+            if ($dias_franco) {
+                $presentes  = $TotalDiasFichas - $TotDiasAus;
+                $presentes  = $presentes - $TotalDiasFrancos;
+                $TotDiasAus = $TotDiasAus + $TotalDiasFrancos;
+            }
+            if ($dias_feriado) {
+                $presentes  = $TotalDiasFichas - $TotDiasAus;
+                $presentes  = $presentes - $TotalDiasFeriados;
+                $TotDiasAus = $TotDiasAus + $TotalDiasFeriados;
+            }
+
+            $TotalDias       = $presentes + $TotDiasAus;
+            $ConvPres        = (ConvMesesPresentes($presentes, $TotalMeses, $TotalDias));
+            $ConvAus         = (ConvMesesPresentes($TotDiasAus, $TotalMeses, $TotalDias));
+            $TotalMesesConv  = ($ConvPres) + ($ConvAus);
+            $TotalMesesConv  = number_format($TotalMesesConv, 0);
+            $ConvAus         = number_format($ConvAus, 2, ',', '.');
+            $ConvPres        = number_format($ConvPres, 2, ',', '.');
             $data[] = array(
                 'legajo'           => $legajo,
                 'nombre'           => $nombre,
                 'desde'            => Fech_Format_Var($FechaIni, 'd/m/Y'),
                 'hasta'            => Fech_Format_Var($FechaFin, 'd/m/Y'),
-                'totDiasPre'       => $TotDiasPre,
-                'totDiasPreHs'     => $TotDiasPreHs,
                 '_presentes'       => $presentes,
                 '_ausentes'        => $TotDiasAus,
                 '_totaldias'       => $TotalDias,
@@ -117,11 +127,7 @@ function ConvMesesPresentes($TotalDiasPresentes, $TotalMeses, $TotalDias)
 
 
 $json_data = array(
-    "data"          => $data,
-    // "a_FechaIni"    => Fech_Format_Var($FechaIni, 'd/m/Y'),
-    // "b_FechaFin"    => Fech_Format_Var($FechaFin, 'd/m/Y'),
-    // "c_TotalMeses"  => $TotalMeses,
-    // "d_TotalTiempo" => $TotalFechas,
+    "data" => $data,
 );
 
 echo json_encode($json_data);

@@ -10,12 +10,14 @@ $(function () {
         if ($("#tconcepto").val() == '0') {
             var tableConceptos = $('#GetConceptos').DataTable({
                 "initComplete": function (settings, json) {
-                    $('#GetConceptos_filter .form-control-sm').attr('placeholder', 'Buscar Novedad')
+                    $('#GetConceptos_filter .form-control-sm').attr('placeholder', 'Buscar Concepto')
                     $("#tconcepto").val('1')
                 },
                 "drawCallback": function (settings) {
                     $("#divGetConceptos").show()
                     $("#divGetConceptos").addClass('animate__animated animate__fadeIn')
+                    let dl = ( $('#dl').val() == '1' ) ?  $('#FrancoAus').attr('checked', true) : $('#FrancoPre').attr('checked', true)                       
+                    let df = ( $('#df').val() == '1' ) ?  $('#FeriadosAus').attr('checked', true) : $('#FeriadosPre').attr('checked', true)                       
                 },
                 // "fnRowCallback": function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {
                 // },
@@ -74,15 +76,33 @@ $(function () {
                 language: {
                     "sProcessing": "Actualizando . . .",
                     "sLengthMenu": "_MENU_",
-                    "sInfo": "Total Novedades: _TOTAL_",
+                    "sInfo": "Total Conceptos: _TOTAL_",
                     "sInfoEmpty": "No se encontraron resultados",
                     "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
                     "sSearch": "",
                     "sLoadingRecords": "<div class='spinner-border text-light'></div>",
                     "sEmptyTable": "",
-                    "sZeroRecords": "Sin novedades",
+                    "sZeroRecords": "Sin Conceptos",
                 },
             })
+            tableConceptos.row.add({
+                "Presentes" : '<div class="custom-control custom-checkbox"><input name="Franco" type="radio" value="0" class="custom-control-input" id="FrancoPre"><label class="custom-control-label" for="FrancoPre"></label></div>',
+                "Ausentes"  : '<div class="custom-control custom-checkbox"><input name="Franco" type="radio" value="1" class="custom-control-input" id="FrancoAus"><label class="custom-control-label" for="FrancoAus"></label></div>',
+                "NovCodi"   : "-",
+                "NovDesc"   : "Franco",
+                "NovID"     : "-",
+                "NovTipo"   : "-",
+                "n"         : ""
+            }).draw();
+            tableConceptos.row.add({
+                "Presentes" : '<div class="custom-control custom-checkbox"><input name="Feriados" type="radio" checked value="0" class="custom-control-input" id="FeriadosPre"><label class="custom-control-label" for="FeriadosPre"></label></div>',
+                "Ausentes"  : '<div class="custom-control custom-checkbox"><input name="Feriados" type="radio" value="1" class="custom-control-input" id="FeriadosAus"><label class="custom-control-label" for="FeriadosAus"></label></div>',
+                "NovCodi"   : "-",
+                "NovDesc"   : "Feriados",
+                "NovID"     : "-",
+                "NovTipo"   : "-",
+                "n"         : ""
+            }).draw();
         }
     })
     $('#ConceptosModal').on('hidden.bs.modal', function (e) {

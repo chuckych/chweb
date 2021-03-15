@@ -8,14 +8,18 @@ header("Content-Type: application/json");
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-/** ALTA DE PARAMS AUSENTES Y PRESENTES */
+/** ALTA DE PARAMS AUSENTES, PRESENTES, FRANCOS Y FERIADOS*/
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
     // sleep(1);
-    $ausentes  = $_POST['ausentes'];
+    $Franco    = test_input($_POST['Franco']);
+    $Feriados  = test_input($_POST['Feriados']);
     $presentes = $_POST['presentes'];
+    $ausentes  = $_POST['ausentes'];
     $cliente   = $_SESSION['ID_CLIENTE'];
     $presentes = test_input(implode(',', $presentes));
+    $presentes .= '@' . $Franco . '@' . $Feriados;
     $ausentes  = test_input(implode(',', $ausentes));
+    // $ausentes .= '@'.$Franco.','.$Feriados;
 
     require __DIR__ . '../../../config/conect_mysql.php';
 
@@ -33,6 +37,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
         if ($rs_a && $rs_p) {
             $_SESSION["CONCEPTO_PRESENTES"] = $presentes;
             $_SESSION["CONCEPTO_AUSENTES"]  = $ausentes;
+            $_SESSION["DIAS_FRANCO"]        = $Franco;
+            $_SESSION["DIAS_FERIADOS"]      = $Feriados;
             PrintRespuestaJson('ok', 'Datos guardados correctamente');
             mysqli_close($link);
             exit;

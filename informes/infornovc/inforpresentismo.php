@@ -17,6 +17,8 @@
         <!-- Fin Encabezado -->
         <div class="row bg-white py-2">
             <div class="col-12 col-sm-6 mt-2">
+            <input type="hidden" id="dl" value="<?=$_SESSION["DIAS_FRANCO"]?>">
+            <input type="hidden" id="df" value="<?=$_SESSION["DIAS_FERIADOS"]?>">
                 <div class="custom-control custom-switch custom-control-inline">
                     <input type="radio" class="custom-control-input" id="PorLegajo" name="ordenar" value="0">
                     <label class="custom-control-label" for="PorLegajo" style="padding-top: 3px;"><span class="text-dark">Por Legajo</span></label>
