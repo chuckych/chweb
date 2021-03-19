@@ -110,7 +110,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $Gen_Horario     = $row['Gen_Horario'];
 
     /** FICHADAS */
+    if ($Gen_Fecha2<'20210319') {
         $query_Fic="SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    }else {
+        $query_Fic="SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    }
 
         $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
         // print_r($query_Fic).PHP_EOL; exit;
@@ -148,7 +152,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     /** FIN FICHADAS */
 
     /** NOVEDADES */
-    $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas FROM FICHAS3,NOVEDAD WHERE FICHAS3.FicLega='$Gen_Lega' AND FICHAS3.FicFech='$Gen_Fecha2' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove >0 AND FICHAS3.FicNoTi >=0 ORDER BY FICHAS3.FICFech";
+        $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas FROM FICHAS3,NOVEDAD WHERE FICHAS3.FicLega='$Gen_Lega' AND FICHAS3.FicFech='$Gen_Fecha2' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove >0 AND FICHAS3.FicNoTi >=0 ORDER BY FICHAS3.FICFech";
         $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
 
         if (sqlsrv_num_rows($result_Nov) > 0) {
@@ -243,8 +247,8 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         }
     /** Fin HORAS */
 
-    $entrada = color_fichada(array($primero));
-    $salida  = color_fichada(array($ultimo));
+    $entrada = color_Fichada(array($primero));
+    $salida  = color_Fichada(array($ultimo));
 
     if (BrowserIE()) {
         $icono='<svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-clipboard-data" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
