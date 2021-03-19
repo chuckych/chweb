@@ -59,7 +59,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $Gen_Horario     = $row['Gen_Horario'];
 
     /** FICHADAS */
-    $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    if ($Gen_Fecha2 < '20210319') {
+        $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    } else {
+        $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    }
 
     $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
     // print_r($query_Fic).PHP_EOL; exit;
@@ -97,74 +101,74 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     /** FIN FICHADAS */
 
     /** NOVEDADES */
-    $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas FROM FICHAS3,NOVEDAD WHERE FICHAS3.FicLega='$Gen_Lega' AND FICHAS3.FicFech='$Gen_Fecha2' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove >0 AND FICHAS3.FicNoTi >=0 ORDER BY FICHAS3.FICFech";
-    $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
+        $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas FROM FICHAS3,NOVEDAD WHERE FICHAS3.FicLega='$Gen_Lega' AND FICHAS3.FicFech='$Gen_Fecha2' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove >0 AND FICHAS3.FicNoTi >=0 ORDER BY FICHAS3.FICFech";
+        $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
 
-    if (sqlsrv_num_rows($result_Nov) > 0) {
-        while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
+        if (sqlsrv_num_rows($result_Nov) > 0) {
+            while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
+                $Novedad[] = array(
+                    'Cod'         => $row_Nov['nov_novedad'],
+                    'Descripcion' => $row_Nov['nov_descripcion'],
+                    'Horas'       => $row_Nov['nov_horas'],
+                    'Tipo'        => $row_Nov['nov_tipo']
+                );
+            endwhile;
+            sqlsrv_free_stmt($result_Nov);
+        } else {
             $Novedad[] = array(
-                'Cod'         => $row_Nov['nov_novedad'],
-                'Descripcion' => $row_Nov['nov_descripcion'],
-                'Horas'       => $row_Nov['nov_horas'],
-                'Tipo'        => $row_Nov['nov_tipo']
+                'Cod'         => "",
+                'Descripcion' => "",
+                'Horas'       => "",
+                'Tipo'        => ""
             );
-        endwhile;
-        sqlsrv_free_stmt($result_Nov);
-    } else {
-        $Novedad[] = array(
-            'Cod'         => "",
-            'Descripcion' => "",
-            'Horas'       => "",
-            'Tipo'        => ""
-        );
-    }
-    if (is_array($Novedad)) {
-        foreach ($Novedad as $fila) {
-            $desc[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2'>" . ceronull($fila["Horas"]) . "</td><td class='px-2'>" . ceronull(TipoNov($fila["Tipo"])) . "</td><td class='w-100'></td></tr>";
-            $desc2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . $fila["Horas"] . 'hs.">' . ($fila["Descripcion"]) . '</span>';
-            $desc3[] = ($fila["Horas"]);
         }
+        if (is_array($Novedad)) {
+            foreach ($Novedad as $fila) {
+                $desc[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2'>" . ceronull($fila["Horas"]) . "</td><td class='px-2'>" . ceronull(TipoNov($fila["Tipo"])) . "</td><td class='w-100'></td></tr>";
+                $desc2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . $fila["Horas"] . 'hs.">' . ($fila["Descripcion"]) . '</span>';
+                $desc3[] = ($fila["Horas"]);
+            }
 
-        $Novedades  = implode("", $desc);
-        $Novedades2 = implode("<br/>", $desc2);
-        $NoveHoras  = implode("<br/>", $desc3);
-        unset($desc);
-        unset($desc2);
-        unset($desc3);
-        // var_export($Novedades); 
-    }
+            $Novedades  = implode("", $desc);
+            $Novedades2 = implode("<br/>", $desc2);
+            $NoveHoras  = implode("<br/>", $desc3);
+            unset($desc);
+            unset($desc2);
+            unset($desc3);
+            // var_export($Novedades); 
+        }
     /** FIN NOVEDADES */
 
     /** HORAS */
-    $query_Horas = "SELECT FICHAS1.FicHora AS Hora, TIPOHORA.THoDesc AS HoraDesc, TIPOHORA.THoDesc2 AS HoraDesc2, FICHAS1.FicHsHe AS HsHechas, FICHAS1.FicHsAu AS HsCalculadas, FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1,TIPOHORA,TIPOHORACAUSA WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND FICHAS1.FicHora=TIPOHORA.THoCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
-    $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
-    // print_r($query_Horas);
-    // exit;
+        $query_Horas = "SELECT FICHAS1.FicHora AS Hora, TIPOHORA.THoDesc AS HoraDesc, TIPOHORA.THoDesc2 AS HoraDesc2, FICHAS1.FicHsHe AS HsHechas, FICHAS1.FicHsAu AS HsCalculadas, FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1,TIPOHORA,TIPOHORACAUSA WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND FICHAS1.FicHora=TIPOHORA.THoCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
+        $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
+        // print_r($query_Horas);
+        // exit;
 
-    if (sqlsrv_num_rows($result_Hor) > 0) {
-        while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
+        if (sqlsrv_num_rows($result_Hor) > 0) {
+            while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
+                $Horas[] = array(
+                    'Cod'          => $row_Hor['Hora'],
+                    'Descripcion'  => $row_Hor['HoraDesc'],
+                    'Descripcion2' => $row_Hor['HoraDesc2'],
+                    'HsHechas'     => $row_Hor['HsHechas'],
+                    'HsCalc'       => $row_Hor['HsCalculadas'],
+                    'HsAuto'       => $row_Hor['HsAutorizadas']
+                );
+            endwhile;
+            sqlsrv_free_stmt($result_Hor);
+        } else {
             $Horas[] = array(
-                'Cod'          => $row_Hor['Hora'],
-                'Descripcion'  => $row_Hor['HoraDesc'],
-                'Descripcion2' => $row_Hor['HoraDesc2'],
-                'HsHechas'     => $row_Hor['HsHechas'],
-                'HsCalc'       => $row_Hor['HsCalculadas'],
-                'HsAuto'       => $row_Hor['HsAutorizadas']
+                'Cod'          => '',
+                'Descripcion'  => '',
+                'Descripcion2' => '',
+                'HsHechas'     => '',
+                'HsCalc'       => '',
+                'HsAuto'       => ''
             );
-        endwhile;
-        sqlsrv_free_stmt($result_Hor);
-    } else {
-        $Horas[] = array(
-            'Cod'          => '',
-            'Descripcion'  => '',
-            'Descripcion2' => '',
-            'HsHechas'     => '',
-            'HsCalc'       => '',
-            'HsAuto'       => ''
-        );
-    }
-    if (is_array($Horas)) {
-        foreach ($Horas as $fila) {
+        }
+        if (is_array($Horas)) {
+            foreach ($Horas as $fila) {
             $hor[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2 text-center bg-light fw4'>" . ceronull($fila["HsAuto"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsCalc"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsHechas"]) . "</td><td class='w-100'></td></tr>";
             // $hor2[] = $fila["Descripcion"];
             $hor2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion"]) . '</span>';
