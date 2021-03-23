@@ -49,6 +49,7 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset">
+    
         <?php require __DIR__ . '../../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas ' . MODULOS['mobile'], '') ?>

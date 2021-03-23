@@ -29,22 +29,11 @@ $end_date   = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
 
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
-// $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $_GET['start_date'] . "&end_date=" . $_GET['end_date'] ;
-// echo $url;
-// exit;
+
 $json  = file_get_contents($url);
 $array = json_decode($json, TRUE);
 
 $respuesta = array();
-
-// if ($array['SUCCESS'] == 'NO') {
-
-//     echo json_encode($array['MESSAGE']);exit;
-
-// }
-
-
-// if (is_array($array['MESSAGE'])) {
     
     if ($array['SUCCESS'] == 'YES' && (!empty($array['MESSAGE']))) {
         foreach ($array['MESSAGE'] as $key => $valor) {

@@ -174,7 +174,8 @@ $spreadsheet->freezePane('A2');
 $numeroDeFila = 2;
 
 /** Llamamos a la API */
-$token = $_SESSION["TK_MOBILE"];
+// $token = $_SESSION["TK_MOBILE"];
+$token = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
 
@@ -199,6 +200,7 @@ function FormatoFechaToExcel($Fecha)
     $Fecha = ($excelTimestamp);
     return $Fecha;
 }
+// print_r($url);exit;
 
 if ($array['SUCCESS'] == 'YES' && (!empty($array['MESSAGE']))) {
     foreach ($array['MESSAGE'] as $key => $valor) {
