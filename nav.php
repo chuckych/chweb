@@ -6,15 +6,15 @@
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <nav class="navbar sticky-top navbar-expand-lg navbar-light mb-2 bg-white row" style="z-index:1040;">
-<?php if(HOMEHOST == 'chweb'){ ?>
-    <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-        <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w120">
-    </a>
-<?php } elseif(HOMEHOST=='seguimiento'){ ?>
-    <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-        <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w250">
-    </a>
-<?php } ?>
+    <?php if (HOMEHOST == 'chweb') { ?>
+        <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
+            <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w120">
+        </a>
+    <?php } elseif (HOMEHOST == 'seguimiento') { ?>
+        <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
+            <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w250">
+        </a>
+    <?php } ?>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -141,6 +141,28 @@
                         </li>
                     <?php endif # Fin 2 Informes 
                     ?>
+                    <?php if (checkTipoMod($arrIdTipo, '3')) : # 3 Configuración
+                    ?>
+                        <!--Operaciones-->
+                        <li class="nav-item mx-1 dropdown">
+                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Configuración</a>
+                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownOperaciones">
+                                <?php
+                                foreach ($dataROL as $values) {
+                                    $Modulo  = $values['modulo'];
+                                    $Modulo2 = $values['modulo'];
+                                    switch ($Modulo2) {
+                                        case 'Direcciones':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/direcciones'>" . $Modulo2 . "</a>";
+                                            break;
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </li>
+                    <?php endif  # Fin 1 Operaciones 
+                    ?>
+
                     <?php if (checkTipoMod($arrIdTipo, '4')) : # 4 Mobile 
                     ?>
                         <!--Mobile-->
@@ -218,6 +240,7 @@
                             && ($Modulo2 != 'Usuarios Mobile')
                             && ($Modulo2 != 'Mensajes Mobile')
                             && ($Modulo2 != 'Informe Presentismo')
+                            && ($Modulo2 != 'Direcciones')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>
