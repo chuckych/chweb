@@ -261,7 +261,9 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
 	if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
-	} else {
+	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
+		header('Location:/' . HOMEHOST . '/mobile/');
+	}else{
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 }

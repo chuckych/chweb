@@ -1443,6 +1443,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
     require_once __DIR__ . '../../../config/conect_mssql.php';
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
+    $_POST['LPreCodi'] = $_POST['LPreCodi'] ?? '';
     if(valida_campo($_POST['LPreCodi'])){
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.');
         echo json_encode($data);
@@ -1549,6 +1550,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
 /** ALTAS OTROS CONCEPTOS LEGAJO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONLEG')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
+    $_POST['OTROConCodi'] = $_POST['OTROConCodi'] ?? '';
     if(valida_campo($_POST['OTROConCodi'])){
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
         echo json_encode($data);
@@ -1659,7 +1661,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
 /** ALTAS PERSONAL HORARIO ALTERNATIVO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
-
+    $_POST['LegHoAl'] = $_POST['LegHoAl'] ??'';
     if(valida_campo($_POST['LegHoAl'])){
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
         echo json_encode($data);
