@@ -1,7 +1,7 @@
 /** Select */
 $(document).ready(function () {
-    $('#Tipo').css({"width": "200px"});
-    $('.form-control').css({"width": "100%"});
+    $('#Tipo').css({ "width": "200px" });
+    $('.form-control').css({ "width": "100%" });
     $('#HoraMin').mask('00:00');
     $('#HoraMax').mask('00:00');
 
@@ -48,19 +48,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
                         // Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        Thora  : $("#Thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        Thora: $("#Thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -113,19 +113,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
                         // Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        Thora  : $("#Thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        Thora: $("#Thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -178,19 +178,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
                         // Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        Thora  : $("#Thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        Thora: $("#Thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -243,19 +243,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
                         // Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        Thora  : $("#Thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        Thora: $("#Thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -308,19 +308,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
                         // Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        Thora  : $("#Thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        Thora: $("#Thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -373,19 +373,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
                         // Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        thora  : $("#thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        thora: $("#thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -438,19 +438,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
+                        q: params.term,
                         // Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        thora  : $("#thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        thora: $("#thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -503,19 +503,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
                         // Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        thora  : $("#thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        thora: $("#thora").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val()
                     }
@@ -568,19 +568,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
                         // thora  : $("#thora").val(),
-                        SHoras : $("#SHoras").val(),
+                        SHoras: $("#SHoras").val(),
                         HoraMin: $("#HoraMin").val(),
                         HoraMax: $("#HoraMax").val(),
                         Calculos: $("#Calculos").val()
@@ -653,12 +653,12 @@ $(document).ready(function () {
             if ($("#Calculos").is(":checked")) {
                 $('#Calculos').val(1)
             }
-            else{
+            else {
                 $('#Calculos').val(null)
             }
             ActualizaTablas()
         });
-    
+
         $("#SHoras2").change(function () {
             if ($("#SHoras2").is(":checked")) {
                 $('#TipoIngreso').val(2)
@@ -666,12 +666,37 @@ $(document).ready(function () {
             ActualizaTablas()
         });
 
+        $('#HoraMin').change(function () {
+            if (!$('#HoraMin').val()) {
+                $('#HoraMin').css('border', '1px solid red')
+                $('#minmaxreq').addClass('text-danger')
+                switchClass('#minmaxreq', 'text-danger fw5 animate__animated animate__flash', 'text-secondary')
+            } else {
+                $('#HoraMin').css('border', '1px solid #ddd')
+                if ($('#HoraMax').val()) {
+                    switchClass('#minmaxreq', 'text-secondary', 'text-danger fw5 animate__animated animate__flash')
+                    ActualizaTablas()
+                }
+            }
+        });
+        $('#HoraMax').change(function () {
+            if (!$('#HoraMax').val()) {
+                $('#HoraMax').css('border', '1px solid red')
+                switchClass('#minmaxreq', 'text-danger fw5 animate__animated animate__flash', 'text-secondary')
+            } else {
+                $('#HoraMax').css('border', '1px solid #ddd')
+                if ($('#HoraMin').val()) {
+                    switchClass('#minmaxreq', 'text-secondary', 'text-danger fw5 animate__animated animate__flash')
+                    ActualizaTablas()
+                }
+            }
+        });
         refreshOnChange("#Calculos");
-        refreshOnChange("#HoraMin");
-        refreshOnChange("#HoraMax");
+        // refreshOnChange("#HoraMin");
+        // refreshOnChange("#HoraMax");
     });
 });
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
     $('#Filtros').modal('dispose');
-  });
+});

@@ -94,6 +94,10 @@ function classEfect(selector,efect) {
         $(selector).removeClass(efect)
     }, 1000);
 }
+function switchClass(selector,add,remove) {
+    $(selector).addClass(add)
+    $(selector).removeClass(remove)
+}
 
 function invisibleIO(selector2) {
     // $(selector2).addClass('invisible')
@@ -374,3 +378,4 @@ function SelectSelect2(selector, allowClear, placeholder, minimumInputLength, mi
 function vjs() {
     return $('#_vjs').val()
 }
+$('.requerido').html('(*)')
