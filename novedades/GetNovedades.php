@@ -13,20 +13,20 @@ require __DIR__ . '../../config/conect_mssql.php';
 
 $data = array();
 
-$legajo = test_input(FusNuloPOST('_l', 'vacio'));
+$legajo = test_input(FusNuloPOST('_l', ''));
 
-if($legajo=='vacio'){
+// if($legajo=='vacio'){
 
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+//     $json_data = array(
+//         "draw"            => '',
+//         "recordsTotal"    => '',
+//         "recordsFiltered" => '',
+//         "data"            => $data
+//     );
     
-    echo json_encode($json_data);
-    exit;
-}
+//     echo json_encode($json_data);
+//     exit;
+// }
 
 require __DIR__ . '../valores.php';
 
