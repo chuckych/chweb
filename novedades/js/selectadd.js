@@ -627,7 +627,7 @@ $(".alta_novedad").bind("submit", function (e) {
     function myTimer() {
         GetLog("../novedades/logs/Ingreso_" + now + ".log");
     }
-    var myVar = setInterval(myTimer, 1500);
+    var myVar = setInterval(myTimer, 500);
     function myStopFunction() {
         clearInterval(myVar);
     }
