@@ -13,8 +13,9 @@ $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 $url = "https://server.xenio.uy/persons.php?TYPE=LIST_PERSONS&tk=" . $tkcliente;
 // $url = "https://app.xmartclock.com/xmart/be/xmart_end_point.php?TYPE=LIST&tk=" . $tkcliente."&if_exists=&if_not_exists=&col=persons&validation_parameters=&data_parameters=";
 // echo $url; exit;
-$json = file_get_contents($url);
-$array = json_decode($json, TRUE);
+// $json = file_get_contents($url);
+// $array = json_decode($json, TRUE);
+$array = json_decode(getRemoteFile($url), true);
 
 $data = array();
 if (is_array($array['MESSAGE']) || $array instanceof Traversable) {

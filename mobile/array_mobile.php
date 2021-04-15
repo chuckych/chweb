@@ -30,8 +30,9 @@ $end_date   = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
 
-$json  = file_get_contents($url);
-$array = json_decode($json, TRUE);
+// $json  = file_get_contents($url);
+// $array = json_decode($json, TRUE);
+$array = json_decode(getRemoteFile($url), true);
 
 $respuesta = array();
     

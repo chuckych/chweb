@@ -20,8 +20,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
         $url   = host() . "/" . HOMEHOST . "/data/getImpoPerso.php?tk=" . token() . "&_c=" . $_POST['_c'] . "&_l%5B%5D%3D=" . implode("&_l%5B%5D%3D=", $_POST['_l']);
         // echo $url;
         // exit;
-        $json  = file_get_contents($url);
-        $array = json_decode($json, TRUE);
+        // $json  = file_get_contents($url);
+        // $array = json_decode($json, TRUE);
+        $array = json_decode(getRemoteFile($url), true);
         if (is_array($array)) :
             $rowcount = (count($array['impo_personal']));
         endif;

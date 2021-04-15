@@ -2,7 +2,7 @@
 function version()
 {
     // return 'v0.0.108';
-    return 'v0.0.105';
+    return 'v0.0.106';
 }
 function E_ALL()
 {
@@ -1003,7 +1003,7 @@ function ExisteRol($recid)
     $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
-    $array = json_decode(getRemoteFile($url), TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $count = (count($array[0]['roles']));
     ($count) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     /** redirect */
@@ -1016,7 +1016,7 @@ function Cliente_c($recid)
     $url   = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
     // $json         = file_get_contents($url);
     // $array        = json_decode($json, TRUE);
-    $array = json_decode(getRemoteFile($url), TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $data         = $array[0]['clientes'];
     if (is_array($data)) :
         // $r = array_filter($data, function ($e) {
@@ -1156,7 +1156,7 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
     // echo $url; br();
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
-    $array = json_decode(getRemoteFile($url), TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $data = $array[0][$data];
     if (is_array($data)) {
         $val_roles = (!$array[0]['error']) ? implode(",", $data) : '';

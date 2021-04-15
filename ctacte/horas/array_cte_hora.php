@@ -5,8 +5,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', '0');
 $url   = host() . "/" . HOMEHOST . "/data/GetCtaCteHoras.php?tk=" . token() . "&_c=" . $_SESSION["RECID_CLIENTE"] . "&_r=" . $_SESSION["RECID_ROL"] . "&" . $_SERVER['QUERY_STRING'];
 // echo ($url);exit;
-$json  = file_get_contents($url);
-$array = json_decode($json, true);
+// $json  = file_get_contents($url);
+// $array = json_decode($json, true);
+$array = json_decode(getRemoteFile($url), true);
 if ($array[0]['cta_horas']) {
     foreach ($array[0]['cta_horas'] as $key => $value) {
         $ctacte = ($value['ctacte']);

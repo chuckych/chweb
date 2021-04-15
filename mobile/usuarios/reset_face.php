@@ -26,8 +26,9 @@ if ($array['SUCCESS'] == 'YES') {
          /** Si el valor FaceId existe lo borramos en un bucle*/
          $url  = "https://server.xenio.uy/save.php?u_id=" . $valor['ExternalImageId'] . "&FaceId=" . $valor['FaceId'] . "&tk=" . $tkcliente . "&TYPE=DELETE_FACE";
          // echo $url; exit;
-         $json = file_get_contents($url);
-         $array = json_decode($json, TRUE);
+         // $json = file_get_contents($url);
+         // $array = json_decode($json, TRUE);
+         $array = json_decode(getRemoteFile($url), true);
          foreach ($array as $key => $value) {
             $SUCCESS = $array['SUCCESS'];
             $ERROR   = $array['ERROR'];

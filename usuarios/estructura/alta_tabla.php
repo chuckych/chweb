@@ -3,8 +3,9 @@
      <?php
         $url = host() . "/" . HOMEHOST . "/data/" . $getjson . "?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'];
         // echo $url;
-        $json  = file_get_contents($url);
-        $array = json_decode($json, TRUE);
+        // $json  = file_get_contents($url);
+        // $array = json_decode($json, TRUE);
+        $array = json_decode(getRemoteFile($url), true);
         if (is_array($array)) :
             if (!$array[0]['error']) {
                 $rowcount = (count($array[0][$arrayjson]));

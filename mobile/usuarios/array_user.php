@@ -13,8 +13,9 @@ $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 $url = "https://server.xenio.uy/persons.php?TYPE=LIST_PERSON_BY_ID&tk=" . $tkcliente . "&id=" . $_POST['id'];
 // echo $url; exit;
-$json = file_get_contents($url);
-$array = json_decode($json, TRUE);
+// $json = file_get_contents($url);
+// $array = json_decode($json, TRUE);
+$array = json_decode(getRemoteFile($url), true);
 
 echo json_encode($array['MESSAGE']);
 

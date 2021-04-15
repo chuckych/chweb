@@ -12,8 +12,9 @@ ini_set('display_errors', '0');
 $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 $id        = $_POST['id'];
 $url = "https://server.xenio.uy/list.php?u_id=".$id."&tk=".$tkcliente ."&TYPE=LIST_TRAIN";
-$json = file_get_contents($url);
-$array = json_decode($json, TRUE);
+// $json = file_get_contents($url);
+// $array = json_decode($json, TRUE);
+$array = json_decode(getRemoteFile($url), true);
 
 echo json_encode(($array));
 exit;

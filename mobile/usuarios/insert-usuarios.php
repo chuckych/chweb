@@ -38,8 +38,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
    $url=("https://server.xenio.uy/".$parametros);
    // echo $url; exit;
 
-   $json  = file_get_contents($url);
-   $array = json_decode($json, TRUE);
+   // $json  = file_get_contents($url);
+   // $array = json_decode($json, TRUE);
+   $array = json_decode(getRemoteFile($url), true);
   
  
    foreach ($array as $key => $value) {
@@ -85,8 +86,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
    $url=("https://server.xenio.uy/".$parametros);
    // echo $url; exit;
 
-   $json  = file_get_contents($url);
-   $array = json_decode($json, TRUE);
+   // $json  = file_get_contents($url);
+   // $array = json_decode($json, TRUE);
+   $array = json_decode(getRemoteFile($url), true);
   
  
    foreach ($array as $key => $value) {

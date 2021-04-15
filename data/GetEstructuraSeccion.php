@@ -35,8 +35,9 @@ $respuesta  = '';
 
 $url   = host() . "/" . HOMEHOST . "/data/GetEstructRol.php?tk=" . token() . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'] . "&sect=1";
 // echo $url; br();
-$json  = file_get_contents($url);
-$array = json_decode($json, TRUE);
+// $json  = file_get_contents($url);
+// $array = json_decode($json, TRUE);
+$array = json_decode(getRemoteFile($url), true);
 $val_roles = (!$array[0]['error']) ? implode(",", $array[0]['sector']) : '';
 $roles2 = (!$array[0]['error']) ? "$val_roles" : "";
 

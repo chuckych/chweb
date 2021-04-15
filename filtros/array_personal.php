@@ -25,8 +25,9 @@ $estruct .= '&Tipo='.$_GET['Tipo'];
 
 $url   = host() . "/" . HOMEHOST . "/data/GetPersonal.php?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r']."&act&q=".$_GET['q'].$estruct;
 // echo $url; exit;
-$json  = file_get_contents($url);
-$array = json_decode($json, true);
+// $json  = file_get_contents($url);
+// $array = json_decode($json, true);
+$array = json_decode(getRemoteFile($url), true);
 $datos = $array[0]['personal'];
 
 // print_r($datos);exit;
