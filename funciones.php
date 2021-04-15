@@ -2,7 +2,7 @@
 function version()
 {
     // return 'v0.0.108';
-    return 'v0.0.104';
+    return 'v0.0.105';
 }
 function E_ALL()
 {
@@ -928,9 +928,10 @@ function DatoArchivo($ruta)
 /** FUNCION PARA TRAER DATOS DESDE API*/
 function GetDatosApi($url, $key)
 {
-    $Get   = file_get_contents($url);
+    // $Get   = file_get_contents($url);
     /** Traemos el fichero completo de la url */
-    $array = json_decode($Get, TRUE);
+    // $array = json_decode($Get, TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     /** Decodificamos el string de JSON que devuelve el get */
     $array = $array[$key];
     /** Array de los datos obtenidos del Get con la clave de acuerdo al manual de la API */
@@ -1036,7 +1037,7 @@ function Rol_Recid($recid)
     $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
     //$json  = file_get_contents($url);
     // $array = getRemoteFile($url);
-    $array = json_decode(getRemoteFile($url), TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $data  = $array[0]['roles'];
     if (is_array($data)) :
         // $r = array_filter($data, function ($e) {
@@ -1127,8 +1128,9 @@ function notif_error($GET, $msg, $texto)
 function ListaRoles($Recid_C)
 {
     $url          = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $Recid_C;
-    $json         = file_get_contents($url);
-    $array        = json_decode($json, TRUE);
+    // $json         = file_get_contents($url);
+    // $array        = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $data         = $array[0]['roles'];
     if (is_array($array)) :
         foreach ($data as $value) :
@@ -1141,8 +1143,9 @@ function ListaRoles($Recid_C)
 function sector_rol($recid_rol)
 {
     $url   = host() . "/" . HOMEHOST . "/data/GetEstructRol.php?tk=" . token() . "&_r=" . $recid_rol;
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
+    // $json  = file_get_contents($url);
+    // $array = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $sect_roles = (!$array[0]['error']) ? implode(",", $array[0]['sector']) : '';
     $rol = (!$array[0]['error']) ? "$sect_roles" : "";
     return $rol;
@@ -1164,8 +1167,9 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
 function estructura_rol_count($get_rol, $recid_rol, $e, $data)
 {
     $url   = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
+    // $json  = file_get_contents($url);
+    // $array = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), true);
     $val_roles = (!$array[0]['error']) ? count($array[0][$data]) : '';
     $rol = (!$array[0]['error']) ? "$val_roles" : "";
     return $rol;
