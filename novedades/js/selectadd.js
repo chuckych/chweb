@@ -662,20 +662,21 @@ $(".alta_novedad").bind("submit", function (e) {
                 $("#respuesta").addClass("alert-success");
                 fadeInOnly("#respuesta")
                 // $('.check').prop('checked', false)
-                $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
-                    type: 'success',
-                    z_index: NotifZindex,
-                    delay: NotifDelay,
-                    offset: NotifOffset,
-                    mouse_over: NotifMouseOver,
-                    placement: {
-                        align: NotifAlign
-                    },
-                    animate: {
-                        enter: NotifEnter,
-                        exit: NotifExit
-                    }
-                });
+                notify(data.dato, 'success', 2000, 'center')
+                // $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
+                //     type: 'success',
+                //     z_index: NotifZindex,
+                //     delay: NotifDelay,
+                //     offset: NotifOffset,
+                //     mouse_over: NotifMouseOver,
+                //     placement: {
+                //         align: NotifAlign
+                //     },
+                //     animate: {
+                //         enter: NotifEnter,
+                //         exit: NotifExit
+                //     }
+                // });
                 setTimeout(() => {
                     $("#respuetatext").html("");
                     $("#respuesta").addClass("d-none");
@@ -689,20 +690,21 @@ $(".alta_novedad").bind("submit", function (e) {
                 $("#respuesta").removeClass("alert-success");
                 $("#respuesta").removeClass("alert-info");
                 $("#respuesta").removeClass("alert-danger");
-                $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
-                    type: 'danger',
-                    z_index: NotifZindex,
-                    delay: NotifDelay,
-                    offset: NotifOffset,
-                    mouse_over: NotifMouseOver,
-                    placement: {
-                        align: NotifAlign
-                    },
-                    animate: {
-                        enter: NotifEnter,
-                        exit: NotifExit
-                    }
-                });
+                notify(data.dato, 'danger', 2000, 'center')
+                // $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
+                //     type: 'danger',
+                //     z_index: NotifZindex,
+                //     delay: NotifDelay,
+                //     offset: NotifOffset,
+                //     mouse_over: NotifMouseOver,
+                //     placement: {
+                //         align: NotifAlign
+                //     },
+                //     animate: {
+                //         enter: NotifEnter,
+                //         exit: NotifExit
+                //     }
+                // });
                 // GetPers.ajax.reload();
             }
         },
@@ -729,20 +731,21 @@ $(".alta_novedad").bind("submit", function (e) {
             $("#respuesta").removeClass("alert-success");
             $("#respuesta").removeClass("alert-info");
             $("#respuesta").removeClass("alert-danger");
-            $.notify("<span class='fonth fw4'><span class=''>" + error + "</span></span>", {
-                type: 'danger',
-                z_index: NotifZindex,
-                delay: NotifDelay,
-                offset: NotifOffset,
-                mouse_over: NotifMouseOver,
-                placement: {
-                    align: NotifAlign
-                },
-                animate: {
-                    enter: NotifEnter,
-                    exit: NotifExit
-                }
-            });
+            notify(error, 'danger', 2000, 'center')
+            // $.notify("<span class='fonth fw4'><span class=''>" + error + "</span></span>", {
+            //     type: 'danger',
+            //     z_index: NotifZindex,
+            //     delay: NotifDelay,
+            //     offset: NotifOffset,
+            //     mouse_over: NotifMouseOver,
+            //     placement: {
+            //         align: NotifAlign
+            //     },
+            //     animate: {
+            //         enter: NotifEnter,
+            //         exit: NotifExit
+            //     }
+            // });
         }
     });
     e.stopImmediatePropagation();

@@ -379,3 +379,37 @@ function vjs() {
     return $('#_vjs').val()
 }
 $('.requerido').html('(*)')
+
+function respuesta_form(selector, Mensaje, alert) {
+    let respuesta_form = $(selector).html('<div class="mt-3 animate__animated animate__fadeInDown alert alert-'+alert+' alert-dismissible fontq p-3 fw5" role="alert">' + Mensaje + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+    setTimeout(function () {
+        $('.alert-'+alert).removeClass('fadeInDown')
+        $('.alert-'+alert).addClass('fadeOutUp')
+        setTimeout(function () {
+            $(selector).html('')
+        }, 3500);
+    }, 1000);
+    return respuesta_form
+}
+function notify(Mensaje, type, delay, NotifAlign) {
+    $.notify(`<span class='fontq fw5'>${Mensaje}</span>`, {
+        type       : type,  /** success, danger, warning, secondary, light, etc */
+        z_index    : 9999,
+        delay      : delay, /** ej 2000 */
+        offset     : 10,
+        mouse_over : 'pause',
+        placement: {
+            align: NotifAlign /** orientación de la notificacion */
+        },
+        animate: {
+            enter: 'animate__animated animate__fadeInDown',
+            exit: 'animate__animated animate__fadeOutUp'
+        }
+    });
+}
+function focusEndText(input){
+    let textInput = $(input);
+    let strLength = textInput.val().length;
+    textInput.focus();
+    textInput[0].setSelectionRange(strLength, strLength);            
+}

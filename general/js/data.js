@@ -163,7 +163,7 @@ $("#FicNovA").change(function () {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $('#pagLega').removeClass('d-none')
-            $('#GetGeneral').DataTable().ajax.reload();
+            $('#GetGeneral').DataTable().ajax.reload(null, false);
             fadeInOnly('#GetGeneral');
             // console.log(settings.json.recordsTotal);
             if ((settings.json.recordsTotal>0)) {
@@ -343,8 +343,8 @@ $("#FicNovA").change(function () {
             $(".dataTables_info").addClass('text-secondary');
             fadeInOnly('#GetGeneralFecha');
             if ((settings.json.recordsTotal>0)) {
-                $('#GetGeneralFecha').DataTable().ajax.reload();
-                $('#GetGeneralFechaTotales').DataTable().ajax.reload();
+                $('#GetGeneralFecha').DataTable().ajax.reload(null, false);
+                $('#GetGeneralFechaTotales').DataTable().ajax.reload(null, false);
             }else{
                 $('#GetGeneralFecha').DataTable().clear().draw();
             }
@@ -520,13 +520,13 @@ $('#VerPorM').html('<span class="d-block d-lg-none">Fecha</span>')
 $("#Visualizar").change(function () {
     // $("#loader").addClass('loader');
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload();
+        $('#GetFechas').DataTable().ajax.reload(null, false);
         $("#GetGeneralTable").addClass('d-none');
         $("#GetGeneralFechaTable").show()
         $("#pagLega").hide()
         $("#pagFech").show()
     } else {       
-        $('#GetPersonal').DataTable().ajax.reload();
+        $('#GetPersonal').DataTable().ajax.reload(null, false);
         $("#GetGeneralTable").removeClass('d-none');
         $("#GetGeneralFechaTable").hide()
         $("#pagFech").hide()

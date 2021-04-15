@@ -5,7 +5,7 @@
     "sEmptyTable": "",
     "sInfo": "<span class=''>Registros: _TOTAL_</span>",
     "sInfoEmpty": "No se encontraron resultados",
-    "sInfoFiltered": "",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
     "sInfoPostFix": "",
     "sSearch": "",
     "sUrl": "",

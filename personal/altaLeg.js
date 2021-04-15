@@ -8,7 +8,7 @@ $(document).on('shown.bs.modal', '#altaNuevoLeg', function() {
     $(this).find('[autofocus]').focus();
   });
 $(document).ready(function () {
-    $(".form-NuevoLeg").bind("submit", function () {
+    $(".form-NuevoLeg").bind("submit", function (event) {
       event.preventDefault();
       $.ajax({
           type: $(this).attr("method"),

@@ -1,7 +1,8 @@
 <?php
 function version()
 {
-    return 'v0.0.101';
+    // return 'v0.0.108';
+    return 'v0.0.102';
 }
 function E_ALL()
 {
@@ -22,10 +23,43 @@ function secure_auth_ch()
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
-        // echo '<script>alert("SESION EXPIRADA")</script>';
         echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         header("location:/" . HOMEHOST . "/login/");
         http_response_code(403);
+        exit;
+    } else {
+        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+        /** */
+        $fechaGuardada = $_SESSION["ultimoAcceso"];
+        $ahora = date("Y-m-d H:i:s");
+        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+        /** comparamos el tiempo transcurrido */
+        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+            /** Si pasaron 60 minutos o más */
+            session_destroy();
+            /** destruyo la sesión */
+            header("location:/" . HOMEHOST . "/login/?sesion");
+            /** envío al usuario a la pag. de autenticación */
+            exit();
+            /** sino, actualizo la fecha de la sesión */
+        } else {
+            $_SESSION["ultimoAcceso"] = $ahora;
+        }
+    }
+    session_regenerate_id();
+    E_ALL();
+}
+function secure_auth_ch2()
+{
+    if (
+        $_SESSION["secure_auth_ch"] !== true
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
+        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
+        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+    ) {
+        // PrintRespuestaJson('error', 'Session Expirada');
+        echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';
         exit;
     } else {
         /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
@@ -289,7 +323,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
                 <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
                     ' . $svg . '
                 </a>
-                <span class="text-nowrap" id="Encabezado" style="position:absolute;margin-top:4px;">' . $titulo . '</span>
+                <span class="text-nowrap" id="Encabezado">' . $titulo . '</span>
             </div>
         </div>
         <div class="col-4 d-flex align-items-center justify-content-end pr-1">

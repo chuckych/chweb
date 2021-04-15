@@ -152,8 +152,8 @@
                                     $Modulo  = $values['modulo'];
                                     $Modulo2 = $values['modulo'];
                                     switch ($Modulo2) {
-                                        case 'Direcciones':
-                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/direcciones'>" . $Modulo2 . "</a>";
+                                        case 'Datos':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/datos'>" . $Modulo2 . "</a>";
                                             break;
                                     }
                                 }

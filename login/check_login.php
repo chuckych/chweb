@@ -54,6 +54,9 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")){
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('29', 'FFeVjsix', 'Informe Presentismo', 13, '0', 2)");
 	}
+	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 30 LIMIT 1")){
+		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('30', 'geD-wzy1', 'Datos', 10, '0', 3)");
+	}
 
 	$createParamsTable = InsertRegistroMySql("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
 	if ($createParamsTable) {
