@@ -122,6 +122,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        $Dato     = 'Nacionalidad: ' .$NacDesc . ': ' . $NacCod;
+        audito_ch('M', $Dato);
         PrintRespuestaJson('ok', 'Nacionalidad <strong>'.$NacDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -161,6 +163,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $query="DELETE FROM NACIONES WHERE NacCodi = $NacCod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        $Dato     = 'Nacionalidad: ' .$NacDesc . ': ' . $NacCod;
+        audito_ch('B', $Dato);
         PrintRespuestaJson('ok', 'Nacionalidad <strong>'.$NacDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -272,6 +276,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        $Dato     = 'Provincia: ' .$ProDesc . ': ' . $ProCod;
+        audito_ch('M', $Dato);
         PrintRespuestaJson('ok', 'Provincia <strong>'.$ProDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -311,6 +317,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $query="DELETE FROM PROVINCI WHERE ProCodi = $ProCod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        $Dato     = 'Provincia: ' .$ProCod . ': ' . $ProDesc;
+        audito_ch('B', $Dato);
         PrintRespuestaJson('ok', 'Provincia <strong>'.$ProDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -422,6 +430,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        $Dato     = 'Localidad: ' .$LocDesc . ': ' . $LocCod;
+        audito_ch('M', $Dato);
+
         PrintRespuestaJson('ok', 'Localidad <strong>'.$LocDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -443,8 +454,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     };
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    
-
     /** Query revisar si el personal contiene Localidad. */
     $query = "SELECT PERSONAL.LegLoca FROM PERSONAL WHERE PERSONAL.LegLoca = $LocCod";
     $result  = sqlsrv_query($link, $query, $params, $options);
@@ -457,10 +466,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
         }
     }
     /** fin */
-    
+    $Dato     = 'Localidad: ' .$LocDesc . ': ' . $LocCod;
+
     $query="DELETE FROM LOCALIDA WHERE LocCodi = $LocCod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
+        audito_ch('B', $Dato);
         PrintRespuestaJson('ok', 'Localidad <strong>'.$LocDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
