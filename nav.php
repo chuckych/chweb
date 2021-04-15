@@ -153,7 +153,10 @@
                                     $Modulo2 = $values['modulo'];
                                     switch ($Modulo2) {
                                         case 'Datos':
-                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/datos'>" . $Modulo2 . "</a>";
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/datos/'>" . $Modulo2 . "</a>";
+                                            break;
+                                        case 'Estructura':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/estruct/'>" . $Modulo2 . "</a>";
                                             break;
                                     }
                                 }
@@ -240,7 +243,8 @@
                             && ($Modulo2 != 'Usuarios Mobile')
                             && ($Modulo2 != 'Mensajes Mobile')
                             && ($Modulo2 != 'Informe Presentismo')
-                            && ($Modulo2 != 'Direcciones')
+                            && ($Modulo2 != 'Datos')
+                            && ($Modulo2 != 'Estructura')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>

@@ -2,7 +2,7 @@
 function version()
 {
     // return 'v0.0.108';
-    return 'v0.0.103';
+    return 'v0.0.104';
 }
 function E_ALL()
 {
@@ -1000,8 +1000,9 @@ function ExisteRol($recid)
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
     $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
+    // $json  = file_get_contents($url);
+    // $array = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), TRUE);
     $count = (count($array[0]['roles']));
     ($count) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     /** redirect */
@@ -1012,8 +1013,9 @@ function ExisteRol($recid)
 function Cliente_c($recid)
 {
     $url   = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
-    $json         = file_get_contents($url);
-    $array        = json_decode($json, TRUE);
+    // $json         = file_get_contents($url);
+    // $array        = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), TRUE);
     $data         = $array[0]['clientes'];
     if (is_array($data)) :
         // $r = array_filter($data, function ($e) {
@@ -1032,8 +1034,9 @@ function Cliente_c($recid)
 function Rol_Recid($recid)
 {
     $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
+    //$json  = file_get_contents($url);
+    // $array = getRemoteFile($url);
+    $array = json_decode(getRemoteFile($url), TRUE);
     $data  = $array[0]['roles'];
     if (is_array($data)) :
         // $r = array_filter($data, function ($e) {
@@ -1148,8 +1151,9 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
 {
     $url   = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
     // echo $url; br();
-    $json  = file_get_contents($url);
-    $array = json_decode($json, TRUE);
+    // $json  = file_get_contents($url);
+    // $array = json_decode($json, TRUE);
+    $array = json_decode(getRemoteFile($url), TRUE);
     $data = $array[0][$data];
     if (is_array($data)) {
         $val_roles = (!$array[0]['error']) ? implode(",", $data) : '';
@@ -2447,7 +2451,8 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     $file_contents = curl_exec($ch);
     curl_close($ch);
-    return ($file_contents) ? $file_contents : FALSE;
+    return ($file_contents) ? $file_contents : false;
+    exit;
 }
 function mod_roles($recid_rol)
 {
