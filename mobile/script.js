@@ -107,8 +107,8 @@ $(document).ready(function () {
 
     });
 
-    $("#_dr").on("change", function () {
-        $('#table-mobile').DataTable().ajax.reload();
+    $("#_drMob").on("change", function () {
+        $('#table-mobile').DataTable().ajax.reload(null,false);
         $(".dataTables_scrollBody").addClass("opa2");
     });
 
