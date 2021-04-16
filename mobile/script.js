@@ -50,7 +50,7 @@ $(document).ready(function () {
             type: "POST",
             dataSrc: "mobile",
             "data": function (data) {
-                data._dr = $("#_dr").val();
+                data._drMob = $("#_drMob").val();
             },
         },
 

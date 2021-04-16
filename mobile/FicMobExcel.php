@@ -179,9 +179,9 @@ $token = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
 
-// $json  = file_get_contents($url);
-// $array = json_decode($json, TRUE);
-$array = json_decode(getRemoteFile($url), true);
+$json  = file_get_contents($url);
+$array = json_decode($json, TRUE);
+// $array = json_decode(getRemoteFile($url), true);
 $respuesta = array();
 
 function FormatoHoraToExcel($Hora)

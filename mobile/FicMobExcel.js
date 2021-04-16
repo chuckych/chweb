@@ -9,7 +9,7 @@ function GetFicExcel() {
         dataType: "json",
         url: "FicMobExcel.php",
         'data': {
-            _dr   : $("#_dr").val(),
+            _dr   : $("#_drMob").val(),
         },
         beforeSend:function(){
             ActiveBTN(true, "#btnExcel", 'Exportando', IconExcel)

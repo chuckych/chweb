@@ -32,9 +32,9 @@ $Modulo='26';
         $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
         $id        = $_GET['u_id'];
         $url = "https://server.xenio.uy/list.php?u_id=" . $id . "&tk=" . $tkcliente . "&TYPE=LIST_TRAIN";
-        // $json = file_get_contents($url);
-        // $array = json_decode($json, TRUE);
-        $array = json_decode(getRemoteFile($url), true);
+        $json = file_get_contents($url);
+        $array = json_decode($json, TRUE);
+        // $array = json_decode(getRemoteFile($url), true);
         $MESSAGE = $array['MESSAGE'];
         
         ?>

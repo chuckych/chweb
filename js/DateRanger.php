@@ -2,6 +2,12 @@
 // $PeriLiq = PeriLiq();
 // $MensDesde=$PeriLiq['MensDesde'];
 // $MensHasta=$PeriLiq['MensHasta'];
+$FechaIni  = $FechaIni ?? '';
+$FechaFin  = $FechaFin ?? '';
+$FirstYear = $FirstYear ?? '';
+$FirstDate = $FirstDate ?? '';
+$maxDate   = $maxDate ?? '';
+$maxYear   = $maxYear ?? '';
 ?>
 <!-- moment.min.js -->
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>

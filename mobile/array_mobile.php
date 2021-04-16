@@ -20,7 +20,7 @@ while ($row = mysqli_fetch_assoc($rs)) {
 mysqli_free_result($rs);
 mysqli_close($link);
 
-$DateRange  = explode(' al ', $_POST['_dr']);
+$DateRange  = explode(' al ', $_POST['_drMob']);
 // $start_date = (($DateRange[0]));
 // $end_date   = (($DateRange[1]));
 
@@ -30,9 +30,11 @@ $end_date   = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
 
-// $json  = file_get_contents($url);
-// $array = json_decode($json, TRUE);
-$array = json_decode(getRemoteFile($url), true);
+$json  = file_get_contents($url);
+$array = json_decode($json, TRUE);
+// $array = json_decode(getRemoteFile($url), true);
+
+// print_r($array);exit;
 
 $respuesta = array();
     

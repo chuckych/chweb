@@ -18,9 +18,9 @@ $url = "https://server.xenio.uy/save.php?TYPE=ADD_FACES&u_id=".$u_id."&tk=".$tkc
 
 // echo $url;exit;
 
-// $json = file_get_contents($url);
-// $array = json_decode($json, TRUE);
-$array = json_decode(getRemoteFile($url), true);
+$json = file_get_contents($url);
+$array = json_decode($json, TRUE);
+// $array = json_decode(getRemoteFile($url), true);
 
 
 foreach ($array as $key => $value) {

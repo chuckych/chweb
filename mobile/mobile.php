@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
-    <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"> -->
     <title><?= MODULOS['mobile'] ?></title>
     <style type="text/css" media="screen">
         .datos {
@@ -74,7 +74,7 @@
                 </div>
                 <div class="col-12 col-sm-9">
                     <div class="d-flex justify-content-sm-end justify-content-center">
-                        <input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_dr" placeholder="<?= fechformat($FechaIni) . ' - ' . fechformat($FechaFin) ?>">
+                        <input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob">
                         <button title="Actualizar Grilla" type="button" id="Refresh" class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
                             <svg class="bi" width="20" height="20" fill="currentColor">
                                 <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />

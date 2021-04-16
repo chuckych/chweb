@@ -12,9 +12,9 @@ ini_set('display_errors', '1');
 $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 $url = "https://app.xmartclock.com/xmart/be/xmart_end_point.php?TYPE=LIST&col=zones&tk=" . $tkcliente;
-// $json = file_get_contents($url);
-// $array = json_decode($json, TRUE);
-$array = json_decode(getRemoteFile($url), true);
+$json = file_get_contents($url);
+$array = json_decode($json, TRUE);
+//$array = json_decode(getRemoteFile($url), true);
 // echo $url; exit;
 
 $data = array();

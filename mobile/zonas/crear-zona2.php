@@ -14,8 +14,6 @@ require_once "../sidebar/sidebar.php";?>
   height : 300px;
   border : 1px solid #cecece;
 }
-.pac-container{
-}
 .pac-item{
    font-family : 'Montserrat';
    font-style  : normal;

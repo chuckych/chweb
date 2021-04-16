@@ -3,7 +3,6 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css">
     <?php require __DIR__ . "../../llamadas.php"; ?>
     <title><?= MODULOS['fichadas'] ?></title>
     <style>
