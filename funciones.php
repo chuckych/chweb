@@ -2,7 +2,7 @@
 function version()
 {
     // return 'v0.0.108';
-    return 'v0.0.106';
+    return 'v0.0.107';
 }
 function E_ALL()
 {
@@ -1179,8 +1179,9 @@ function count_estructura($_c, $e)
     $urls   = host() . "/" . HOMEHOST . "/data/GetEstructura.php?tk=" . token() . "&_c=" . $_c . "&count&e=" . $e;
     // echo $urls.PHP_EOL;
     // CountRegMySql("SELECT modulos.id AS 'id' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");    
-    $jsons  = file_get_contents($urls);
-    $arrays = json_decode($jsons, TRUE);
+    // $jsons  = file_get_contents($urls);
+    // $arrays = json_decode($jsons, TRUE);
+    $arrays = json_decode(getRemoteFile($urls), true);
     if (is_array($arrays)) :
         $rowcount = ($arrays[0]['error']) ? ($arrays[0]['count_cod']) : '-';
         return $rowcount;

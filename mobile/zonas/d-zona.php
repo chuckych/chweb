@@ -17,8 +17,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['d_zona'] == 'true')) {
   $parametros = "?TYPE=DELETE&tk=" . $tkcliente . "&col=zones&validation_parameters%5Bname%5D=" . $nombrezona;
   $parametros = str_replace(" ", "%20", $parametros);
   $url        = "https://app.xmartclock.com/xmart/be/xmart_end_point.php" . $parametros;
-  $json       = file_get_contents($url);
-  $array      = json_decode($json, TRUE);
+  // $json       = file_get_contents($url);
+  // $array      = json_decode($json, TRUE);
+  $array = json_decode(getRemoteFile($url), true);
 
   foreach ($array as $key => $value) {
     $SUCCESS = $array['SUCCESS'];
