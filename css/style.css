@@ -505,6 +505,12 @@
  .w50 {
      width: 50px!important
  }
+ .w30 {
+     width: 30px!important
+ }
+ .w35 {
+     width: 35px!important
+ }
 
  .Mw50 {
      min-width: 50px!important
@@ -767,8 +773,10 @@
  }
 
  .badge {
-     padding: 5px!important;
-     border-radius: var(--main-radius)
+     padding: 5px !important;
+     border-radius: var(--main-radius);
+     font-weight: 500 !important;
+     font-size: 85% !important;
  }
 
  .daterangepicker {
@@ -1284,6 +1292,10 @@
      color: #999;
      opacity: 0.7 !important;
  }
+ textarea::placeholder {
+     color: #999;
+     opacity: 0.7 !important;
+ }
 
  .requerido {
      font-size: .7rem;
@@ -1338,3 +1350,7 @@
      line-height: 1.5;
      vertical-align: text-top;
  }
+ 
+.tr-fw5, .tr-fw5 > td, .tr-fw5 > th {
+    font-weight: 500 !important;
+}

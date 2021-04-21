@@ -413,3 +413,61 @@ function focusEndText(input){
     textInput.focus();
     textInput[0].setSelectionRange(strLength, strLength);            
 }
+function select2Ajax(selector, placeholder, clear, selclose, url) {
+    $(selector).select2({
+        placeholder: placeholder,
+        allowClear: clear,
+        selectOnClose: selclose,
+        minimumResultsForSearch: 10,
+        language: {
+            noResults: function() {
+                return 'No hay resultados..'
+            },
+            searching: function() {
+                return 'Buscando..'
+            },
+            errorLoading: function() {
+                return 'Sin datos..'
+            }
+        },
+        ajax: {
+            url: url,
+            dataType: "json",
+            type: "GET",
+            data: function(params) {
+                return {
+                    q: params.term,
+                }
+            },
+            processResults: function(data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+}
+function select2Simple(selector, placeholder, clear, selclose) {
+    $(selector).select2({
+        placeholder: placeholder,
+        minimumResultsForSearch: 10,
+        allowClear: clear,
+        selectOnClose: selclose,
+    })
+}
+function Select2Value(id, text, selector){
+    var newOption = new Option(text, id, false, false);
+    if (text!='') {
+        $(selector).append(newOption).trigger('change');
+    }
+}
+function CheckUncheck(selector_check, selector_uncheck, selectorcheckbox, classactive) {
+    $(selector_check).click(function (e) {
+        $(selectorcheckbox).prop('checked', true)
+        $(selectorcheckbox).parents('tr').addClass('table-active')
+    });
+    $(selector_uncheck).click(function (e) {
+        $(selectorcheckbox).prop('checked', false)
+        $(selectorcheckbox).parents('tr').removeClass('table-active')
+    });
+}

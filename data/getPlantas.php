@@ -7,7 +7,7 @@ UnsetGet('q');
 $respuesta    = '';
         require_once __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT PLANTAS.PlaDesc, PLANTAS.PlaCodi FROM PLANTAS WHERE PLANTAS.PlaDesc LIKE '%$q%' AND PLANTAS.PlaCodi > '0'";
+        $query = "SELECT PLANTAS.PlaDesc, PLANTAS.PlaCodi FROM PLANTAS WHERE PLANTAS.PlaDesc LIKE '%$q%'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -16,7 +16,7 @@ $respuesta    = '';
         if (sqlsrv_num_rows($result) > 0) {
             while ($fila = sqlsrv_fetch_array($result)) {
                 $PlaCodi = $fila['PlaCodi'];
-                $PlaDesc  = empty($fila['PlaDesc']) ? '-': $fila['PlaDesc'];
+                $PlaDesc  = empty($fila['PlaDesc']) ? 'Sin Planta': $fila['PlaDesc'];
                 $data[] = array(
                     'id' => $PlaCodi,
                     'text' => $PlaDesc,

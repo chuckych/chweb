@@ -6,7 +6,7 @@ UnsetGet('q');
 $respuesta    = '';
         require_once __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT LOCALIDA.LocCodi, LOCALIDA.LocDesc FROM LOCALIDA WHERE LOCALIDA.LocDesc LIKE '%$q%' AND LOCALIDA.LocCodi > '0'";
+        $query = "SELECT LOCALIDA.LocCodi, LOCALIDA.LocDesc FROM LOCALIDA WHERE LOCALIDA.LocDesc collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%' AND LOCALIDA.LocCodi > '0'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

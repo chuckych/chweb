@@ -1,8 +1,7 @@
 <?php
 // session_start();
 require __DIR__ . '../../funciones.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 header("Content-Type: text/html;charset=UTF-8");
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "spanish");
@@ -39,4 +38,5 @@ define("MODULOS", [
        /** ID = 28 */ 'horascost'  => 'Horas Costeadas',
        /** ID = 29 */ 'infornovc'  => 'Informe de Presentismo',
        /** ID = 30 */ 'datos'  => 'Datos',
+       /** ID = 31 */ 'estruct'  => 'Estructura',
 ]);

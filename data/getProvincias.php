@@ -6,7 +6,7 @@ UnsetGet('q');
 $respuesta    = '';
         require_once __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT PROVINCI.ProCodi, PROVINCI.ProDesc FROM PROVINCI WHERE PROVINCI.ProDesc LIKE '%$q%' AND PROVINCI.ProCodi > '0'";
+        $query = "SELECT PROVINCI.ProCodi, PROVINCI.ProDesc FROM PROVINCI WHERE PROVINCI.ProDesc collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%' AND PROVINCI.ProCodi > '0'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

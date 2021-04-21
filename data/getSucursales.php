@@ -7,7 +7,7 @@ UnsetGet('q');
 $respuesta    = '';
         require_once __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT SUCURSALES.SucDesc, SUCURSALES.SucCodi FROM SUCURSALES WHERE SUCURSALES.SucDesc LIKE '%$q%' AND SUCURSALES.SucCodi > '0'";
+        $query = "SELECT SUCURSALES.SucDesc, SUCURSALES.SucCodi FROM SUCURSALES WHERE SUCURSALES.SucDesc LIKE '%$q%'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -16,7 +16,7 @@ $respuesta    = '';
         if (sqlsrv_num_rows($result) > 0) {
             while ($fila = sqlsrv_fetch_array($result)) {
                 $SucCodi = $fila['SucCodi'];
-                $SucDesc  = empty($fila['SucDesc']) ? '-': $fila['SucDesc'];
+                $SucDesc  = empty($fila['SucDesc']) ? 'Sin Sucursal': $fila['SucDesc'];
                 $data[] = array(
                     'id' => $SucCodi,
                     'text' => $SucDesc,

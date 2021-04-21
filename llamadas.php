@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Control Horario WEB HRProcess">
-<meta name="author" content="Norberto Chaquer">
+<meta name="author" content="nch@outlook.com.ar">
 <meta name="msapplication-TileColor" content="#2d89ef" />
 <link rel="apple-touch-icon" sizes="76x76" href="/<?= HOMEHOST ?>/img/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/<?= HOMEHOST ?>/img/favicon/favicon-32x32.png">
@@ -13,12 +13,9 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/montserrat-min.css" type="text/css" />
-<!-- <link href="https://fonts.googleapis.com/css?family=Montserrat:200,200i,300,300i,400,400i,500,500i&display=swap" rel="stylesheet" type="text/css"> -->
-<!-- <link href="http://fonts.googleapis.com/css?family=Dosis:400,500,700" rel="stylesheet" type="text/css"> -->
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
-<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css"> -->
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/bootstrap-icons.css" type="text/css">
 <?php
 switch ($Modulo) {
 	case '1':
@@ -137,8 +134,7 @@ if (getBrowser($_SERVER['HTTP_USER_AGENT'])=='Internet explorer') {
 <!--
 ****************************
 ****************************
- Autor : Norberto CH
- E-Mail: nchaquer@gmail.com
+ Autor : nch@outlook.com.ar
 ****************************
 ****************************
 -->

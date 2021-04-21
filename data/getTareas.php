@@ -7,7 +7,7 @@ UnsetGet('q');
 $respuesta    = '';
         require_once __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT TAREAS.TareDesc, TAREAS.TareCodi FROM TAREAS WHERE TAREAS.TareDesc LIKE '%$q%' AND TAREAS.TareCodi >'0'";
+        $query = "SELECT TAREAS.TareDesc, TAREAS.TareCodi FROM TAREAS WHERE TAREAS.TareDesc LIKE '%$q%'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -16,7 +16,7 @@ $respuesta    = '';
         if (sqlsrv_num_rows($result) > 0) {
             while ($fila = sqlsrv_fetch_array($result)) {
                 $TareCodi = $fila['TareCodi'];
-                $TareDesc  = empty($fila['TareDesc']) ? '-': $fila['TareDesc'];
+                $TareDesc  = empty($fila['TareDesc']) ? 'Sin Tarea': $fila['TareDesc'];
                 $data[] = array(
                     'id' => $TareCodi,
                     'text' => $TareDesc,

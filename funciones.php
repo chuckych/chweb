@@ -1,8 +1,7 @@
 <?php
 function version()
 {
-    // return 'v0.0.108';
-    return 'v0.0.109';
+    return 'v0.0.110';
 }
 function E_ALL()
 {
@@ -16,6 +15,7 @@ function E_ALL()
 }
 function secure_auth_ch()
 {
+    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
     if (
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
@@ -547,11 +547,11 @@ function test_input($data)
     $data = trim($data);
     // $data = stripslashes($data);
     // $data = htmlspecialchars($data);
-    $data = htmlspecialchars(stripslashes($data));
-    $data = str_ireplace("script", "blocked", $data);
-    $data = htmlentities($data, ENT_QUOTES);
-
-    return $data;
+    $data = utf8str($data);
+    $data = htmlspecialchars(stripslashes($data),ENT_QUOTES);
+    $data = str_ireplace("script", '', $data);
+    // $data = htmlentities($data, ENT_QUOTES);
+    return ($data);
 }
 function test_input2($data)
 {
@@ -2505,4 +2505,44 @@ function TokenMobile($token, $data)
     } else {
         return '';
     }
+}
+function utf8str($cadena)
+{
+	return str_replace([
+		"&Aacute;",
+		"&Eacute;",
+		"&Iacute;",
+		"&Oacute;",
+		"&Uacute;",
+		"&Ntilde;",
+		"&aacute;",
+		"&eacute;",
+		"&iacute;",
+		"&oacute;",
+		"&uacute;",
+		"&ntilde;",
+		"&amp;",
+		"&#039;",
+		"&#39;",
+		"&quot;",
+		"&hellip;",
+	], [
+		"Á",
+		"É",
+		"Í",
+		"Ó",
+		"Ú",
+		"Ñ",
+		"á",
+		"é",
+		"í",
+		"ó",
+		"ú",
+		"ñ",
+		"&",
+		"'",
+		"'",
+		"'",
+		"...",
+	], $cadena);
 }

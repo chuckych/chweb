@@ -6,7 +6,7 @@ UnsetGet('q');
 session_start();
         require __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT GRUPOS.GruDesc, GRUPOS.GruCodi FROM GRUPOS WHERE GRUPOS.GruDesc LIKE '%$q%' AND GRUPOS.GruCodi > '0'";
+        $query = "SELECT GRUPOS.GruDesc, GRUPOS.GruCodi FROM GRUPOS WHERE GRUPOS.GruDesc LIKE '%$q%'";
     
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -15,7 +15,7 @@ session_start();
         if (sqlsrv_num_rows($result) > 0) {
             while ($fila = sqlsrv_fetch_array($result)) {
                 $GruCodi = $fila['GruCodi'];
-                $GruDesc  = empty($fila['GruDesc']) ? '-': $fila['GruDesc'];
+                $GruDesc  = empty($fila['GruDesc']) ? 'Sin Grupo': $fila['GruDesc'];
                 $data[] = array(
                     'id' => $GruCodi,
                     'text' => $GruDesc,

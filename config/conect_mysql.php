@@ -5,15 +5,9 @@ $host = "localhost";
 $user = "root";
 $pw   = "";
 $db   = "chwebhrp";
-$link = mysqli_connect($host, $user, $pw, $db) or die("
-<html>
-<body style='background:#efefef'>
-<h1 style='text-align:center; padding:20px;'>
-Error de Conexión.
-</h1>
-</body>
-</html>
-");
+$ErrConBDHTML="<html><body style='background:#333'><h1 style='text-align:center; padding:20px;color:#fff; font-family: Arial'>No hay conexión.
+</h1></body></html>";
+$link = mysqli_connect($host, $user, $pw, $db) or die($ErrConBDHTML);
 printf("", mysqli_character_set_name($link));
 if (!mysqli_set_charset($link, "utf8")) {
 	printf("Error cargando el conjunto de caracteres utf8: %s\n </br>", mysqli_error($link));

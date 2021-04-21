@@ -46,8 +46,6 @@ $serverName = $_SESSION["CONEXION_MS"]['host'];
 				$TextErr="------------------------------\n".$date."\nSQLSTATE: ".$error[ 'SQLSTATE']."\ncode: ".$error[ 'code']."\nMensaje: ".$error[ 'message']."\n------------------------------";
 				$TextErr2="<div class='alert alert-warning m-3 w-100'>".$date."<br />SQLSTATE: ".$error[ 'SQLSTATE']."<br />code: ".$error[ 'code']."<br /><span class='fw5'>Mensaje: ".$error[ 'message']."</span><br /></div>";
 				EscribirArchivo("Error_Conn_".date('YmdHis'), "../logs/error/", $TextErr, false, true, false);
-				// echo $TextErr2;
-				// exit;
 			}
 		}
 		header('Location:/'.HOMEHOST.'/inicio/?err_conexion_mssql');

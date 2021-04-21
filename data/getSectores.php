@@ -8,7 +8,7 @@ $respuesta    = '';
         // require __DIR__ . '../../filtros/filtros.php';
         require __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
-        $query = "SELECT SECTORES.SecDesc, SECTORES.SecCodi FROM SECTORES WHERE SECTORES.SecDesc LIKE '%$q%' AND SECTORES.SecCodi >'0'";
+        $query = "SELECT SECTORES.SecDesc, SECTORES.SecCodi FROM SECTORES WHERE SECTORES.SecDesc LIKE '%$q%'";
 
         // print_r($query);
     
@@ -19,7 +19,7 @@ $respuesta    = '';
         if (sqlsrv_num_rows($result) > 0) {
             while ($fila = sqlsrv_fetch_array($result)) {
                 $SecCodi = $fila['SecCodi'];
-                $SecDesc  = empty($fila['SecDesc']) ? '-': $fila['SecDesc'];
+                $SecDesc  = empty($fila['SecDesc']) ? 'Sin Sector': $fila['SecDesc'];
                 $data[] = array(
                     'id' => $SecCodi,
                     "text" => $SecDesc,
