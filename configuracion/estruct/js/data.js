@@ -80,7 +80,7 @@ $(function () {
                 "<'row'<'col-12 btns'>>" +
                 "<'row'<'col-12'tr>>" +
                 "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'l>>",
-            lengthMenu: [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "Todo"]],
+            lengthMenu: [[5, 10, 25, 100, -1], [5, 10, 25, 50, 100, "Todo"]],
             iDisplayLength: 5,
             bLengthChange: true,
             "ajax": {

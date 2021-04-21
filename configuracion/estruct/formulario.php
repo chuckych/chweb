@@ -72,10 +72,6 @@ switch ($Tipo) {
         $titleForm = '';
         break;
 }
-// if ($Tipo == 'c_empresas') {
-//     require 'formulario_empresa.php';
-//     exit;
-// }
 switch ($Tipo) {
     case 'c_empresas':
     case 'u_empresas':
