@@ -1,4 +1,5 @@
 <?php
+ini_set('max_execution_time', 900); // 900 segundos 15 minutos
 session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
