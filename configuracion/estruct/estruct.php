@@ -6,9 +6,6 @@
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title><?= MODULOS['estruct'] ?></title>
     <style>
-        /* .form-control{
-            border:1px solid #333 !important;
-        } */
         .dataTables_paginate {
             margin-bottom: 0px !important;
             margin-top: 0px !important;
@@ -21,63 +18,6 @@
 
         thead {
             display: none;
-        }
-
-        [data-title]:hover:after {
-            opacity: 1;
-            transition: all 0.1s ease 0.2s;
-            visibility: visible;
-        }
-
-        [data-title]:after {
-            content: attr(data-title);
-            background-color: #fafafa;
-            color: #333;
-            font-size: 12px;
-            position: absolute;
-            padding: 5px 20px;
-            bottom: -.4em;
-            right: 130%;
-            white-space: nowrap;
-            box-shadow: 1px 1px 3px #cecece;
-            opacity: 1;
-            border: 1px solid #cecece;
-            z-index: 999999;
-            visibility: hidden;
-            border-radius: 4px;
-            font-weight: 500;
-
-        }
-        [data-title] {
-            position: relative;
-        }
-        [data-titler]:hover:after {
-            opacity: 1;
-            transition: all 0.1s ease 0.2s;
-            visibility: visible;
-        }
-
-        [data-titler]:after {
-            content: attr(data-titler);
-            background-color: #fafafa;
-            color: #333;
-            font-size: 12px;
-            position: absolute;
-            padding: 5px 20px;
-            bottom: -.4em;
-            left: 100%;
-            white-space: nowrap;
-            box-shadow: 1px 1px 3px #cecece;
-            opacity: 1;
-            border: 1px solid #cecece;
-            z-index: 999999;
-            visibility: hidden;
-            border-radius: 4px;
-            font-weight: 500;
-
-        }
-        [data-titler] {
-            position: relative;
         }
     </style>
 </head>

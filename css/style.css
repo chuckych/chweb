@@ -3,6 +3,7 @@
      --main-radius: 3px;
      --main-radius0: .0px;
      --main-transition: .5s;
+     --animate-duration: .5s;
  }
 
  .bg-nov, .bg-nov:hover {
@@ -505,9 +506,11 @@
  .w50 {
      width: 50px!important
  }
+
  .w30 {
      width: 30px!important
  }
+
  .w35 {
      width: 35px!important
  }
@@ -1058,8 +1061,20 @@
  }
 
  .dropdown-toggle::after {
-     margin-left: .455em;
+     margin-left: .455em !important;
+     border: solid #767575 !important;
+     border-width: 0 1px 1px 0 !important;
+     display: inline-block !important;
+     padding: 2px !important;
+     transform: rotate(45deg) !important;
+    -webkit-transform: rotate(45deg) !important;
  }
+
+ /* .dropdown-toggle::after {
+    margin-left: .455em;
+    vertical-align: middle;
+    color: #767575;
+ } */
 
  .trash {
      margin-top: 5px;
@@ -1139,6 +1154,7 @@
      background-color: var(--main-bg-modcolor);
      border-color: var(--main-bg-modcolor);
  }
+
  .btn-custom.disabled, .btn-custom:disabled {
      color: #fff;
      background-color: var(--main-bg-modcolor);
@@ -1292,6 +1308,7 @@
      color: #999;
      opacity: 0.7 !important;
  }
+
  textarea::placeholder {
      color: #999;
      opacity: 0.7 !important;
@@ -1350,7 +1367,68 @@
      line-height: 1.5;
      vertical-align: text-top;
  }
- 
-.tr-fw5, .tr-fw5 > td, .tr-fw5 > th {
-    font-weight: 500 !important;
-}
+
+ .tr-fw5, .tr-fw5>td, .tr-fw5>th {
+     font-weight: 500 !important;
+ }
+
+ [data-title]:hover:after {
+     opacity: 1;
+     transition: all 0.1s ease 0.2s;
+     visibility: visible;
+ }
+
+ [data-title]:after {
+     content: attr(data-title);
+     background-color: #fafafa;
+     color: #333;
+     font-size: 12px;
+     position: absolute;
+     padding: 5px 20px;
+     bottom: -.4em;
+     right: 130%;
+     white-space: nowrap;
+     box-shadow: 1px 1px 3px #cecece;
+     opacity: 1;
+     border: 1px solid #cecece;
+     z-index: 999999;
+     visibility: hidden;
+     border-radius: 4px;
+     font-weight: 500;
+ }
+
+ [data-title] {
+     position: relative;
+ }
+
+ [data-titler]:hover:after {
+     opacity: 1;
+     transition: all 0.1s ease 0.2s;
+     visibility: visible;
+ }
+
+ [data-titler]:after {
+     content: attr(data-titler);
+     background-color: #fafafa;
+     color: #333;
+     font-size: 12px;
+     position: absolute;
+     padding: 5px 20px;
+     bottom: -.4em;
+     left: 100%;
+     white-space: nowrap;
+     box-shadow: 1px 1px 3px #cecece;
+     opacity: 1;
+     border: 1px solid #cecece;
+     z-index: 999999;
+     visibility: hidden;
+     border-radius: 4px;
+     font-weight: 500;
+ }
+
+ [data-titler] {
+     position: relative;
+ }
+ .woo-motivation-satisfaction{
+     display: none !important;
+ }

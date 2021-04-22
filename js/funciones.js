@@ -1,3 +1,11 @@
+$('li').on('shown.bs.dropdown', function () {
+    $(this).addClass('bg-light shadow-sm radius')
+    $(this).children(".dropdown-menu").addClass("animate__animated animate__fadeIn mt-1");
+})
+$('li').on('hidden.bs.dropdown', function () {
+    $(this).removeClass('bg-light shadow-sm radius')
+    $(this).children(".dropdown-menu").removeClass("animate__animated animate__fadeIn mt-1");
+})
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -78,23 +86,23 @@ function fadeInOnly(selector2) {
         $(selector2).removeClass('animate__animated animate__fadeIn')
     }, 1000);
 }
-function classHover(selector,efect) {
+function classHover(selector, efect) {
     $(selector).hover(
-        function() {
+        function () {
             $(this).addClass(efect);
         },
-        function() {
+        function () {
             $(this).removeClass(efect);
         }
     );
 }
-function classEfect(selector,efect) {
+function classEfect(selector, efect) {
     $(selector).addClass(efect)
     setTimeout(function () {
         $(selector).removeClass(efect)
     }, 1000);
 }
-function switchClass(selector,add,remove) {
+function switchClass(selector, add, remove) {
     $(selector).addClass(add)
     $(selector).removeClass(remove)
 }
@@ -381,10 +389,10 @@ function vjs() {
 $('.requerido').html('(*)')
 
 function respuesta_form(selector, Mensaje, alert) {
-    let respuesta_form = $(selector).html('<div class="mt-3 animate__animated animate__fadeInDown alert alert-'+alert+' alert-dismissible fontq p-3 fw5" role="alert">' + Mensaje + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+    let respuesta_form = $(selector).html('<div class="mt-3 animate__animated animate__fadeInDown alert alert-' + alert + ' alert-dismissible fontq p-3 fw5" role="alert">' + Mensaje + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
     setTimeout(function () {
-        $('.alert-'+alert).removeClass('fadeInDown')
-        $('.alert-'+alert).addClass('fadeOutUp')
+        $('.alert-' + alert).removeClass('fadeInDown')
+        $('.alert-' + alert).addClass('fadeOutUp')
         setTimeout(function () {
             $(selector).html('')
         }, 3500);
@@ -393,11 +401,11 @@ function respuesta_form(selector, Mensaje, alert) {
 }
 function notify(Mensaje, type, delay, NotifAlign) {
     $.notify(`<span class='fontq fw5'>${Mensaje}</span>`, {
-        type       : type,  /** success, danger, warning, secondary, light, etc */
-        z_index    : 9999,
-        delay      : delay, /** ej 2000 */
-        offset     : 10,
-        mouse_over : 'pause',
+        type: type,  /** success, danger, warning, secondary, light, etc */
+        z_index: 9999,
+        delay: delay, /** ej 2000 */
+        offset: 10,
+        mouse_over: 'pause',
         placement: {
             align: NotifAlign /** orientación de la notificacion */
         },
@@ -407,11 +415,11 @@ function notify(Mensaje, type, delay, NotifAlign) {
         }
     });
 }
-function focusEndText(input){
+function focusEndText(input) {
     let textInput = $(input);
     let strLength = textInput.val().length;
     textInput.focus();
-    textInput[0].setSelectionRange(strLength, strLength);            
+    textInput[0].setSelectionRange(strLength, strLength);
 }
 function select2Ajax(selector, placeholder, clear, selclose, url) {
     $(selector).select2({
@@ -420,13 +428,13 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         selectOnClose: selclose,
         minimumResultsForSearch: 10,
         language: {
-            noResults: function() {
+            noResults: function () {
                 return 'No hay resultados..'
             },
-            searching: function() {
+            searching: function () {
                 return 'Buscando..'
             },
-            errorLoading: function() {
+            errorLoading: function () {
                 return 'Sin datos..'
             }
         },
@@ -434,12 +442,12 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
             url: url,
             dataType: "json",
             type: "GET",
-            data: function(params) {
+            data: function (params) {
                 return {
                     q: params.term,
                 }
             },
-            processResults: function(data) {
+            processResults: function (data) {
                 return {
                     results: data
                 }
@@ -455,9 +463,9 @@ function select2Simple(selector, placeholder, clear, selclose) {
         selectOnClose: selclose,
     })
 }
-function Select2Value(id, text, selector){
+function Select2Value(id, text, selector) {
     var newOption = new Option(text, id, false, false);
-    if (text!='') {
+    if (text != '') {
         $(selector).append(newOption).trigger('change');
     }
 }

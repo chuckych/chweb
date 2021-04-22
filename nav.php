@@ -5,10 +5,10 @@
 <input type="hidden" hidden id="_homehost" value="<?= HOMEHOST ?>">
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
-<nav class="navbar sticky-top navbar-expand-lg navbar-light mb-2 bg-white row" style="z-index:1040;">
+<nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white row d-flex align-items-center" style="z-index:1040;">
     <?php if (HOMEHOST == 'chweb') { ?>
         <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-            <img src="/<?= HOMEHOST ?>/img/logo.png" alt="<?= CUSTOMER ?>" class="w120">
+            <img src="/<?= HOMEHOST ?>/img/Logo-HRP.jpg?v=<?= vjs() ?>" alt="<?= CUSTOMER ?>">
         </a>
     <?php } elseif (HOMEHOST == 'seguimiento') { ?>
         <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
@@ -19,7 +19,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto mt-2">
+        <ul class="navbar-nav mr-auto d-flex align-items-center">
             <?php
             //$url   = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $_SESSION["RECID_ROL"];
             // $json  = file_get_contents(($url));
@@ -54,8 +54,8 @@
                     <?php if (checkTipoMod($arrIdTipo, '1')) : # 1 Operaciones 
                     ?>
                         <!--Operaciones-->
-                        <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Operaciones</a>
+                        <li class="nav-item mx-1 dropdown" id="lidrop">
+                            <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Operaciones</a>
                             <div class="dropdown-menu radius" aria-labelledby="navbarDropdownOperaciones">
                                 <?php
                                 foreach ($dataROL as $values) {
@@ -103,7 +103,7 @@
                     ?>
                         <!--Informes-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownInformes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Informes</a>
+                            <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownInformes" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Informes</a>
                             <div class="dropdown-menu radius" aria-labelledby="navbarDropdownInformes">
                                 <?php
                                 foreach ($dataROL as $values) {
@@ -145,8 +145,8 @@
                     ?>
                         <!--Operaciones-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Configuración</a>
-                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownOperaciones">
+                            <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownconfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Configuración</a>
+                            <div class="dropdown-menu radius" aria-labelledby="navbarDropdownconfiguracion">
                                 <?php
                                 foreach ($dataROL as $values) {
                                     $Modulo  = $values['modulo'];
@@ -170,7 +170,7 @@
                     ?>
                         <!--Mobile-->
                         <li class="nav-item mx-1 dropdown">
-                            <a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownMobile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mobile</a>
+                            <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownMobile" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mobile</a>
                             <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMobile">
                                 <?php
                                 foreach ($dataROL as $values) {
@@ -206,7 +206,7 @@
                             if (checkTipoMod($arrIdTipo, '5')) {
                     ?>
                                 <!--Mi Cuenta-->
-                                <li class="nav-item mx-1 dropdown"><a class="nav-link fontq fw5 dropdown-toggle" href="#" id="navbarDropdownMiCuenta" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mi Cuenta </a>
+                                <li class="nav-item mx-1 dropdown"><a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownMiCuenta" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mi Cuenta </a>
                                     <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMiCuenta">
                                         <a class="dropdown-item fontq px-3 sub_menu" href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Roles</a>
                                         <a class="dropdown-item fontq px-3 sub_menu" href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Usuarios</a>
@@ -248,7 +248,7 @@
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>
-                            <li class="nav-item mx-1"><a class="nav-link fontq hob fw4" href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/"><?= $Modulo2 ?></a></li>
+                            <li class="nav-item mx-1"><a class="nav-link fontq fw4 text-dark" href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/"><?= $Modulo2 ?></a></li>
             <?php }
                     endforeach;
                 } else {
@@ -257,8 +257,8 @@
             endif; ?>
         </ul>
         <div id="contenedoruser">
-            <a href="/<?= HOMEHOST ?>/usuarios/perfil/index.php" class="btn btn-sm border-0 btn-light mt-2 px-3 py-2">
-                <p class="m-0"><?= imgIcon('perfil', 'Mi Perfil', 'w20') ?></p>
+            <a href="/<?= HOMEHOST ?>/usuarios/perfil/index.php" class="btn btn-sm border-0 btn-light px-3 py-2">
+                <p class="m-0"><?= imgIcon('perfil', 'Mi Perfil', '') ?></p>
             </a>
             <div class="bg-white mt-2 shadow p-0 animate__animated animate__fadeIn radius" id="showuser" style="z-index:9999">
                 <div class="p-3">
@@ -268,7 +268,7 @@
                 </div>
             </div>
         </div>
-        <a href="/<?= HOMEHOST ?>/logout.php" title="Salir" class="btn btn-sm border-0 btn-light mt-2 px-3 py-2" data-toggle="modal" data-target="#salir"><?= imgIcon('exit', 'Salir', 'w20') ?></a>
+        <a href="/<?= HOMEHOST ?>/logout.php" title="Salir" class="btn btn-sm border-0 btn-light px-3 py-2" data-toggle="modal" data-target="#salir"><?= imgIcon('exit', 'Salir', '') ?></a>
     </div>
 </nav>
 <div id="salir" class="modal" tabindex="-1" role="dialog" aria-labelledby="salir-title" aria-hidden="true">

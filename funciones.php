@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.111';
+    return 'v0.0.112';
 }
 function E_ALL()
 {
@@ -249,12 +249,18 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 
     echo '
     <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
-    <div class="col-12">
-    <p class="h6 fw4 py-2 m-0">
-    <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
-    <img src="/' . HOMEHOST . '/img/' . $img . '" alt="' . $titulo . '" class="w30 mr-2 img-fluid ' . $imgclass . ' img-thumbnail">
-    </a><span class="" id="Encabezado" style="position:absolute;margin-top:6px;">' . $titulo . '</span><span class="float-right fontpp" style="color:#efefef">' . version() . '</span>
-    </p>
+    <div class="col-12 d-inline-flex h6 fw3 py-2 m-0">
+        <div class="d-flex align-items-center w-100">
+            <div>
+                <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
+                <img src="/' . HOMEHOST . '/img/' . $img . '?v='.vjs().'" alt="' . $titulo . '"class="mr-2 img-fluid ' . $imgclass . ' bg-light radius w30">
+                </a>
+            </div>
+            <div class="w-100 d-inline-flex h30">
+                <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef">' . version() . '</div>
+            </div>
+        </div>
     </div>
     </div>';
 }
@@ -319,11 +325,11 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
     echo '
     <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
         <div class="col-8 d-flex align-items-center">
-            <div class="h6 fw4 py-2 m-0">
+            <div class="h6 fw4 py-2 m-0 d-inline-flex">
                 <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
                     ' . $svg . '
                 </a>
-                <span class="text-nowrap" id="Encabezado">' . $titulo . '</span>
+                <div class="text-nowrap d-flex align-items-center fonth" id="Encabezado">' . $titulo . '</div>
             </div>
         </div>
         <div class="col-4 d-flex align-items-center justify-content-end pr-1">
@@ -1345,7 +1351,7 @@ function porcentaje($valor, $cantidad)
 }
 function imgIcon($var, $title, $width)
 {
-    $src = "/" . HOMEHOST . "/img/" . $var . ".png";
+    $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=".vjs();
     return '<img loading="lazy" src="' . $src . '" class="' . $width . '" "alt="' . $title . '" title="' . $title . '">';
 }
 function imgFoto($face_url, $title, $width)

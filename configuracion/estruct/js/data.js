@@ -96,7 +96,7 @@ $(function () {
                 { className: "align-middle py-4 text-center Check pointer", targets: 0 },
                 { className: "align-middle w-100 Check pointer", targets: 1 },
                 { className: "align-middle CheckPersonal Check pointer", targets: 2 },
-                { className: "align-middle Check pointer", targets: 3 },
+                { className: "align-middle Check pointer text-nowrap", targets: 3 },
             ],
             deferRender: true,
             bProcessing: true,
@@ -197,7 +197,7 @@ $(function () {
                 e.preventDefault();
                 $(actionForm).html('')
                 $('.selectEstruc').focus()
-                $(actionForm).html('<form action="'+formaction+'" method="post" id="FormPerson"><div class="animate__animated animate__fadeIn"><p class="mt-3 fontq w-100">'+estruct+': <span class="fw5"><input type="hidden" name="EstructActual" value="' + data[0] + '@' + data[1] + '">' + data[1] + '</span class="fw5"></p><table class="table-responsive table text-nowrap w-100 border table-hover" style="display: none"id="' + table + '"></table></div></form>');
+                $(actionForm).html('<form action="'+formaction+'" method="post" id="FormPerson"><div class="animate__animated animate__fadeIn"><p class="mt-3 fontq w-100">'+estruct+': <span class="fw5"><input type="hidden" name="EstructActual" value="' + data[0] + '@' + data[1] + '">' + data[1] + '</span class="fw5"></p><table class="table-responsive table text-wrap w-100 border table-hover" style="display: none"id="' + table + '"></table></div></form>');
                 personalTable(data[0], estruct, '#' + table, 'getPersonalEstruct.php', 'Reasignar '+estruct, url, estruct)
                 $('#' + table + ' tbody').on('click', '.Check', function (e) {
                     e.preventDefault();

@@ -96,7 +96,7 @@ function ClearFormCitacion() {
     $("#alta_Citación").val("true");
     $("#CitEntra").val();
     $("#CitSale").val();
-    $("#CitDesc").val();
+    $("#CitDesc").val('00:00');
     $("#rowCitacion").removeClass('animate__animated animate__fadeIn')
     $(".submit_btn_Citación").prop("disabled", false);
 };
@@ -809,7 +809,7 @@ $(document).on("click", ".open-modal", function (e) {
             error: function () {
                 $("#CitEntra").val();
                 $("#CitSale").val();
-                $("#CitDesc").val();
+                $("#CitDesc").val('00:00');
             }
         });
         // });
@@ -2353,7 +2353,7 @@ $('#modalGeneral').on('hidden.bs.modal', function () {
     $('#OtrasNov').removeClass('d-none')
     $("#CitEntra").val('');
     $("#CitSale").val('');
-    $("#CitDesc").val('');
+    $("#CitDesc").val('00:00');
     $("#Mxs").val('')
     MuestraNavTab();
     $("#xsTFic").html('Fichadas')
