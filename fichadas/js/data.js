@@ -141,7 +141,6 @@ var GetPersonal = $('#GetPersonal').DataTable({
 });
 var GetFichadas = $('#GetFichadas').DataTable({
     "initComplete": function (settings, json) {
-        $('.dataTables_length').hide()
         $("#Refresh").prop('disabled', false);
         $('#trash_all').removeClass('invisible');
         setTimeout(function () {
@@ -153,7 +152,6 @@ var GetFichadas = $('#GetFichadas').DataTable({
     },
     "drawCallback": function (settings) {
         classEfect("#GetFichadasTable", 'animate__animated animate__fadeIn')
-        $('.dataTables_length').show()
         $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
