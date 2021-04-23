@@ -14,6 +14,8 @@ function LimpiarFiltros() {
     $('.selectjs_sucursal').val(null).trigger("change");
     $('.selectjs_personal').val(null).trigger("change");
     $('.selectjs_tipoper').val(null).trigger("change");
+    $('#FicFalta').prop('checked', false)
+    $('#FicFalta').val(0)
     $('#Per2').val(null)
 }
 function LimpiarFiltros2() {
@@ -36,7 +38,7 @@ $("#trash_all").on("click", function () {
 
 $("#trash_allIn").on("click", function () {
     LimpiarFiltros()
-    ActualizaTablas()
+    // ActualizaTablas()
 });
 
 $(document).on("click", ".numlega", function (e) {

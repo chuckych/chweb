@@ -4,7 +4,7 @@ header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
-header("Content-Type: application/json");
+// header("Content-Type: application/json");
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
@@ -15,19 +15,6 @@ $data = array();
 
 $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 
-if ($legajo == 'vacio') {
-
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
-
-    echo json_encode($json_data);
-    exit;
-}
-
 require __DIR__ . '../valores.php';
 
 $param = array();
@@ -37,7 +24,9 @@ $params = $columns = $totalRecords;
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query = "SELECT DISTINCT REGISTRO.RegLega AS 'Fic_Lega', PERSONAL.LegApNo AS 'Fic_Nombre', REGISTRO.RegFeAs AS 'Fic_Asignada', dbo.fn_DiaDeLaSemana(REGISTRO.RegFeAs) AS 'Fic_Dia_Semana', dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS 'Fic_horario' FROM REGISTRO INNER JOIN PERSONAL ON REGISTRO.RegLega=PERSONAL.LegNume LEFT JOIN FICHAS ON REGISTRO.RegLega=FICHAS.FicLega AND REGISTRO.RegFeAs=FICHAS.FicFech WHERE REGISTRO.RegFeAs BETWEEN '$FechaIni' AND '$FechaFin' AND REGISTRO.RegLega='$legajo' $FilterEstruct $filtros";
+$sql_query="SELECT DISTINCT FICHAS.FicLega AS 'Fic_Lega', PERSONAL.LegApNo AS 'Fic_Nombre', FICHAS.FicFech AS 'Fic_Asignada', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Fic_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Fic_horario'
+FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume INNER JOIN REGISTRO ON FICHAS.FicLega=REGISTRO.RegLega AND FICHAS.FicFech=REGISTRO.RegFeAs
+WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS.FicLega='$legajo' $FilterEstruct $filtros";
 
 // print_r($sql_query).PHP_EOL; exit;
 
@@ -54,7 +43,7 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlRec .= $where_condition;
 }
 
-$sqlRec .=  " ORDER BY REGISTRO.RegFeAs, REGISTRO.RegLega OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+$sqlRec .=  " ORDER BY FICHAS.FicFech, FICHAS.FicLega OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
@@ -69,23 +58,9 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $Fic_Dia_Semana = $row['Fic_Dia_Semana'];
     $Fic_horario    = $row['Fic_horario'];
     if ($Fic_Asignada2 < '20210319') {
-        $query_Fic = "SELECT
-            REGISTRO.RegHoRe AS 'Fic_Hora',
-            REGISTRO.RegFeRe AS 'Fic_RegFeRe',
-            'Fic_Tipo' = CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END,
-            'Fic_Estado' = CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END 
-            FROM REGISTRO
-            WHERE REGISTRO.RegFeAs = '$Fic_Asignada2' AND REGISTRO.RegLega = '$Fic_Lega'
-            ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+        $query_Fic="SELECT REGISTRO.RegHoRe AS 'Fic_Hora', REGISTRO.RegFeRe AS 'Fic_RegFeRe', 'Fic_Tipo'=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, 'Fic_Estado'=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fic_Asignada2' AND REGISTRO.RegLega='$Fic_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
     } else {
-        $query_Fic = "SELECT
-            REGISTRO.RegHoRe AS 'Fic_Hora',
-            REGISTRO.RegFeRe AS 'Fic_RegFeRe',
-            'Fic_Tipo' = CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END,
-            'Fic_Estado' = CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END 
-            FROM REGISTRO
-            WHERE REGISTRO.RegFeAs = '$Fic_Asignada2' AND REGISTRO.RegLega = '$Fic_Lega'
-            ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+       $query_Fic="SELECT REGISTRO.RegHoRe AS 'Fic_Hora', REGISTRO.RegFeRe AS 'Fic_RegFeRe', 'Fic_Tipo'=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, 'Fic_Estado'=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fic_Asignada2' AND REGISTRO.RegLega='$Fic_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
     }
     // print_r($query_Fic).PHP_EOL; exit;
     $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);

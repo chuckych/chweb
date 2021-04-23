@@ -1,13 +1,13 @@
 <?php
 ini_set('max_execution_time', 900); // 900 segundos 15 minutos
 session_start();
-header('Content-type: text/html; charset=utf-8');
+header("Content-Type: application/json");
+// header('Access-Control-Allow-Origin: *');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 
 $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

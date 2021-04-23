@@ -10,19 +10,20 @@ ini_set('display_errors', '0');
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+$data = array();
 
-if(empty($_POST['_dr'])){
+// if(empty($_POST['_dr'])){
 
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+//     $json_data = array(
+//         "draw"            => '',
+//         "recordsTotal"    => '',
+//         "recordsFiltered" => '',
+//         "data"            => $data
+//     );
     
-    echo json_encode($json_data);
-    exit;
-}
+//     echo json_encode($json_data);
+//     exit;
+// }
 
 $DateRange = explode(' al ', $_POST['_dr']);
 $FechaIni  = test_input(dr_fecha($DateRange[0]));
@@ -36,7 +37,13 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query="SELECT REGISTRO.RegFeAs AS 'FicFech', dbo.fn_DiaDeLaSemana(REGISTRO.RegFeAs) AS 'Dia' FROM REGISTRO INNER JOIN PERSONAL ON REGISTRO.RegLega=PERSONAL.LegNume LEFT JOIN FICHAS ON REGISTRO.RegLega=FICHAS.FicLega AND REGISTRO.RegFeAs=FICHAS.FicFech WHERE REGISTRO.RegFeAs BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct GROUP BY REGISTRO.RegFeAs";
+$sql_query="SELECT (FICHAS.FicFech) AS 'FicFech',
+dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia'
+FROM FICHAS
+INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs
+INNER JOIN PERSONAL ON REGISTRO.RegLega = PERSONAL.LegNume
+WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct
+GROUP BY FICHAS.FicFech";
 
 // print_r($sql_query); exit;
 
@@ -54,7 +61,7 @@ $sqlRec .= $where_condition;
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  " ORDER BY REGISTRO.RegFeAs OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
+$sqlRec .=  " ORDER BY FICHAS.FicFech OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);

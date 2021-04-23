@@ -57,21 +57,17 @@
             <div class="row bg-white pb-sm-3" id="pagLega">
                 <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
                     <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
-                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal">
-
-                    </table>
+                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal"></table>
                 </div>
             </div>
             <div class="row bg-white pb-sm-3" id="pagFech">
                 <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
-                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetFechas">
-
-                    </table>
+                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetFechas"></table>
                 </div>
             </div>
             <div class="row bg-white radius mt-sm-n5">
                 <div class="col-12 animate__animated animate__fadeIn">
-                    <div class="table-responsive invisible" id="GetFichadasTable">
+                    <div class="table-responsive" id="GetFichadasTable" style="display: none;">
                         <table class="table table-hover text-nowrap w-100" id="GetFichadas">
                             <thead class="">
                                 <tr>
@@ -125,10 +121,10 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select.js"></script>
-    <script src="js/FicExcel.js?v=<?=vjs()?>"></script>
+    <script src="js/data-min.js?v=<?=vjs()?>"></script>
+    <script src="js/select-min.js?v=<?=vjs()?>"></script>
+    <script src="js/trash-select-min.js?v=<?=vjs()?>"></script>
+    <script src="js/FicExcel-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

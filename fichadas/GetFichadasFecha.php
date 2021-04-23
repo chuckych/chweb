@@ -17,18 +17,18 @@ $data = array();
 
 $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
 
-if ($Fecha == 'vacio') {
+// if ($Fecha == 'vacio') {
 
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+//     $json_data = array(
+//         "draw"            => '',
+//         "recordsTotal"    => '',
+//         "recordsFiltered" => '',
+//         "data"            => $data
+//     );
 
-    echo json_encode($json_data);
-    exit;
-}
+//     echo json_encode($json_data);
+//     exit;
+// }
 
 require __DIR__ . '../valores.php';
 

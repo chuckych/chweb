@@ -1,12 +1,12 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
+header("Content-Type: application/json");
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
-header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+// header("Content-Type: application/json");
+E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
@@ -17,27 +17,20 @@ $FechaIni  = test_input(dr_fecha($DateRange[0]));
 $FechaFin  = test_input(dr_fecha($DateRange[1]));
 
 $data = array();
-
-if(empty($DateRange)){
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
-    
-    echo json_encode($json_data);
-    exit;
-}
-
 require __DIR__ . '../valores.php';
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords;
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-// $sql_query="SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE PERSONAL.LegFeEg='17530101' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct GROUP BY PERSONAL.LegNume, PERSONAL.LegApNo ";
-$sql_query="SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM REGISTRO INNER JOIN PERSONAL ON REGISTRO.RegLega = PERSONAL.LegNume WHERE PERSONAL.LegFeEg='17530101' AND REGISTRO.RegLega > 0 AND REGISTRO.RegFech BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct GROUP BY PERSONAL.LegNume, PERSONAL.LegApNo ";
+$sql_query="SELECT FICHAS.FicLega AS 'pers_legajo',
+    PERSONAL.LegApNo AS 'pers_nombre'
+FROM FICHAS
+    INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs
+    INNER JOIN PERSONAL ON FICHAS.FicLega =  PERSONAL.LegNume
+WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct
+GROUP BY FICHAS.FicLega,
+    PERSONAL.LegApNo ";
 
 // print_r($sql_query); exit;
 
@@ -55,10 +48,12 @@ $sqlRec .= $where_condition;
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  "ORDER BY PERSONAL.LegNume OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
+$sqlRec .=  "ORDER BY FICHAS.FicLega OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
+
+// print_r($sqlRec); exit;
 
 while ($row = sqlsrv_fetch_array($queryRecords)) {
     $pers_legajo   = $row['pers_legajo'];
@@ -72,6 +67,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
 if (!empty($Per2)) {
     if (!CountRegistrosMayorCero("SELECT DISTINCT FICHAS.FicLega FROM FICHAS
     INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
+    INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs
     WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")) {
         $data[] = array(
             'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $Per3 . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',

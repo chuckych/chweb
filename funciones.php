@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.114';
+    return 'v0.0.115';
 }
 function E_ALL()
 {
@@ -2326,10 +2326,11 @@ function dr_fecha($ddmmyyyy)
 }
 function datosGetIn($Get, $Col)
 {
-    if (!empty($Get)) {
+    $v = ($Get>='0') ? true : false;
+    if ($v) {
         $Get = implode(',', $Get);
-        $texto = !empty($Get) ? "AND " . $Col . " IN (" . $Get . ") " : '';
-        return $texto;
+        $t = ($v) ? "AND " . $Col . " IN (" . ($Get) . ") " : '';
+        return test_input($t);
     }
 };
 function datosGet($Get, $Col)
