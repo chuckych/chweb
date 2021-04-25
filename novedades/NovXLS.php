@@ -23,8 +23,7 @@ ultimoacc();
 secure_auth_ch();
 $Modulo='3';
 ExisteModRol($Modulo);
-error_reporting(E_ALL);
-ini_set('display_errors', '0'); 
+E_ALL();
 
 require_once __DIR__ . '../../vendor/autoload.php'; 
 
@@ -195,7 +194,7 @@ INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICH
 INNER JOIN PERSONAL ON FICHAS3.FicLega = PERSONAL.LegNume
 INNER JOIN NOVEDAD ON FICHAS3.FicNove = NOVEDAD.NovCodi
 INNER JOIN NOVECAUSA ON FICHAS3.FicNove = NOVECAUSA.NovCNove AND FICHAS3.FicCaus = NOVECAUSA.NovCCodi
-WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FilterEstruct2 $FiltrosFichas
+WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas
 ORDER BY FICHAS3.FicFech, FICHAS3.FicLega";
 // h4($query); exit;
 $result = sqlsrv_query($link, $query,$param, $options);
@@ -263,10 +262,20 @@ $NombreArchivo="Reporte_Novedades_".$MicroTime.".xls";
 $writer = new Xls($documento);
 # Le pasamos la ruta de guardado
 $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-$writer->save('archivos/'.$NombreArchivo);
+// $ruta = '/'.HOMEHOST.'/novedades/archivos/'.$NombreArchivo;
+$ruta = 'archivos/'.$NombreArchivo;
+$writer->save($ruta);
 // $writer->save('php://output');
-
-$data = array('status' => 'ok', 'archivo'=> 'archivos/'.$NombreArchivo);
+switch ($ToInfornov) {
+    case '1':
+        $ruta = '/'.HOMEHOST.'/novedades/archivos/'.$NombreArchivo;
+        break;
+    
+    default:
+        $ruta = 'archivos/'.$NombreArchivo;
+        break;
+}
+$data = array('status' => 'ok', 'archivo'=> $ruta);
 echo json_encode($data);
 exit;
 

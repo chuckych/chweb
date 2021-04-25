@@ -18,15 +18,17 @@ $FechaFin  = test_input(dr_fecha($DateRange[1]));
 $data = array();
 
 if(empty($DateRange)){
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+
+    $data = array();
+    // $json_data = array(
+    //     "draw"            => '',
+    //     "recordsTotal"    => '',
+    //     "recordsFiltered" => '',
+    //     "data"            => $data
+    // );
     
-    echo json_encode($json_data);
-    exit;
+    // echo json_encode($json_data);
+    // exit;
 }
 
 require __DIR__ . '../valores.php';
@@ -35,14 +37,7 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
- $sql_query="SELECT PERSONAL.LegNume AS 'pers_legajo',
-    PERSONAL.LegApNo AS 'pers_nombre'
-FROM FICHAS3
-    INNER JOIN PERSONAL ON FICHAS3.FicLega = PERSONAL.LegNume
-    INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega
-WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FilterEstruct2
-GROUP BY PERSONAL.LegNume,
-    PERSONAL.LegApNo";
+$sql_query="SELECT FICHAS.FicLega AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, PERSONAL.LegApNo";
 
 // print_r($sql_query); exit;
 
@@ -51,7 +46,7 @@ $sqlRec .= $sql_query;
 
 if( !empty($params['search']['value']) ) {
     $where_condition .=	" AND ";
-    $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
+    $where_condition .= " (CONCAT(FICHAS.FicLega,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
 }
 
 if(isset($where_condition) && $where_condition != '') {
@@ -60,7 +55,7 @@ $sqlRec .= $where_condition;
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  " ORDER BY PERSONAL.LegNume OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
+$sqlRec .=  " ORDER BY FICHAS.FicLega OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);

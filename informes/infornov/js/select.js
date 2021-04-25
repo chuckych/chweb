@@ -1,7 +1,8 @@
 /** Select */
 $(document).ready(function () {
 // $('#rowFiltros').on('shown.bs.collapse', function () {
-
+    // var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
+    // ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
     $('#Tipo').css({ "width": "150px" });
     // $('.form-control').css({ "width": "100%" });
     var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };

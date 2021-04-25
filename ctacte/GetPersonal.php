@@ -51,7 +51,7 @@ $sqlRec .= $sql_query;
 
 if( !empty($params['search']['value']) ) {
     $where_condition .=	" AND ";
-    $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
+    $where_condition .= " (dbo.fn_Concatenar(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
 }
 
 if(isset($where_condition) && $where_condition != '') {

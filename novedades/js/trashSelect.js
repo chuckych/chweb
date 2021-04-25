@@ -16,7 +16,10 @@ function LimpiarFiltros() {
     $('.selectjs_tipoper').val(null).trigger("change");
     $('.selectjs_FicNoTi').val(null).trigger("change");
     $('.selectjs_FicNove').val(null).trigger("change");
+    $('.selectjs_FicCausa').val(null).trigger("change");
     $('#Per2').val(null)
+    $('#FicNovA').val('0')
+    $('#FicNovA').prop('disabled' , false)
 }
 function LimpiarFiltros2() {
     $('.selectjs_plantas').val(null).trigger("change");
@@ -30,17 +33,20 @@ function LimpiarFiltros2() {
     $('.selectjs_tipoper').val(null).trigger("change");
     $('.selectjs_FicNoTi').val(null).trigger("change");
     $('.selectjs_FicNove').val(null).trigger("change");
+    $('.selectjs_FicCausa').val(null).trigger("change");
+    $('#FicNovA').val('0')
+    $('#FicNovA').prop('disabled' , false)
 }
 $("#trash_all").on("click", function () {
     $('#Filtros').modal('show')
     LimpiarFiltros()
     $('#Filtros').modal('hide')
-    ActualizaTablas()
+    // ActualizaTablas()
 });
 
 $("#trash_allIn").on("click", function () {
     LimpiarFiltros()
-    ActualizaTablas()
+    // ActualizaTablas()
 });
 
 $(document).on("click", ".numlega", function (e) {
@@ -55,7 +61,7 @@ function refreshOnChange(selector) {
         $('#Filtros').modal('show')
         LimpiarFiltros2()
         $('#Filtros').modal('hide')
-        ActualizaTablas()
+        // ActualizaTablas()
         GetPersonal.on( 'xhr', function () {
             var json = GetPersonal.ajax.json();
             // $("#tableInfo").html(json.recordsTotal)

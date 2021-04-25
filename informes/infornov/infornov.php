@@ -32,7 +32,7 @@
         // $FechaFin = date('Y-m-d');
         ?>
         <div class="row bg-white py-2">
-            <div class="col-12 col-sm-8">
+            <div class="col-12 col-sm-6">
                 <label for="Tipo" class="mb-1 fontq"><span class="mr-1 d-none d-sm-none d-md-none d-lg-block mb-1 fontq">Tipo de Personal: </span></label>
                 <select class="selectjs_tipoper" id="Tipo" name="Tipo">
                 </select>
@@ -45,11 +45,14 @@
                     ?>
                 </select>
             </div>
-            <div class="col-12 col-sm-4">
+            <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
                     <button type="button" class="btn btn-outline-custom border btn-sm fontq" data-toggle="collapse" data-target="#rowFiltros" aria-expanded="false" aria-controls="rowFiltros">
                         Filtros
                     </button>
+                    <!-- <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">
+                        Excel
+                    </button> -->
                     <span id="trash_allIn" title="Limpiar Filtros" class="trash align-middle mt-2 fw5 ml-1"></span>
                     <input type="text" readonly class="mx-2 form-control text-center w250 ls2" name="_dr" id="_dr">
                 </div>
@@ -114,6 +117,7 @@
                     <input type="checkbox" class="custom-control-input" id="FicNovT">
                     <label class="custom-control-label" for="FicNovT" style="padding-top: 3px;"><span class="text-dark">Llegadas Tarde</span></label>
                     <input type="hidden" name="" id="datoFicNovT">
+                    <input type="hidden" name="" id="ToInfornov" value="1">
                 </div>
                 <!-- Incumplimientos -->
                 <div class="custom-control custom-switch custom-control-inline ml-1 w180">
@@ -247,6 +251,7 @@
     <script src="../../js/select2.min.js"></script>
     <script src="js/select.js?v=<?=vjs()?>"></script>
     <script src="js/export.js?v=<?=vjs()?>"></script>
+    <!-- <script src="../../novedades/js/NovXLS.js?v=<?=vjs()?>"></script> -->
 </body>
 
 </html>

@@ -14,12 +14,12 @@ require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
 $id       = 'FICHAS.FicSec2';
-$id2       = 'CONCAT(FICHAS.FicSect,FICHAS.FicSec2)';
+$id2       = 'dbo.fn_Concatenar(FICHAS.FicSect,FICHAS.FicSec2)';
 $Desc     = 'SECCION.Se2Desc';
 $DescCodi = 'SECCION.Se2Codi';
 $Col      = 'SECCION';
 $ColData  = 'FICHAS';
-$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
+$FiltroQ  = (!empty($q)) ? "AND dbo.fn_Concatenar($id, $Desc) LIKE '%$q%'":'';
 
  $query="SELECT $id AS 'id', $id2 AS 'id2', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech INNER JOIN $Col ON $id=$DescCodi AND FICHAS.FicSect=SECCION.SecCodi INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FilterEstruct2 $FiltrosFichas GROUP BY $id, $id2, $Desc ORDER BY $Desc";
 // print_r($query); exit;

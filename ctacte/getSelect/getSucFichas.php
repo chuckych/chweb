@@ -18,7 +18,7 @@ $Desc     = 'SUCURSALES.SucDesc';
 $DescCodi = 'SUCURSALES.SucCodi';
 $Col      = 'SUCURSALES';
 $ColData  = 'FICHAS';
-$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
+$FiltroQ  = (!empty($q)) ? "AND dbo.fn_Concatenar($id, $Desc) LIKE '%$q%'":'';
 
  $query="SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FilterEstruct2 $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
 // print_r($query); exit;

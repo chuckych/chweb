@@ -72,10 +72,23 @@
                         <select class="form-control selectjs_FicNove" id="FicNove" name="FicNove">
                         </select>
                     </div>
+                    <div class="col-12 col-sm-6">
+                        <!-- Causa -->
+                        <label for="FicCausa" class="mb-1 w100 fontq">Causa</label>
+                        <select disabled class="form-control selectjs_FicCausa" id="FicCausa" name="FicCausa">
+                        </select>
+                    </div>
+                    <div class="col-12 mt-3" style="display: none;">
+                        <!-- Inasistencias -->
+                        <div class="custom-control custom-switch custom-control-inline ml-1 w300">
+                            <input type="checkbox" class="custom-control-input" id="FicNovA" value="0">
+                            <label class="custom-control-label" for="FicNovA" style="padding-top: 3px;"><span class="text-dark">Inasistencias</span></label>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-custom btn-sm fontq" data-dismiss="modal">Aplicar Filtros</button>
             </div>
         </div>
     </div>

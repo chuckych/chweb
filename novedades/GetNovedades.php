@@ -37,7 +37,7 @@ $params = $columns = $totalRecords;
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query="SELECT DISTINCT FICHAS3.FicLega AS 'nov_LegNume', FICHAS3.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS3.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario' FROM FICHAS3, FICHAS, NOVEDAD, NOVECAUSA, PERSONAL WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS3.FicLega='$legajo' AND FICHAS3.FicLega=FICHAS.FicLega AND FICHAS3.FicFech=FICHAS.FicFech AND FICHAS3.FicTurn=FICHAS.FicTurn AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi AND FICHAS3.FicLega=PERSONAL.LegNume AND FICHAS3.FicNove >0 $FilterEstruct $FilterEstruct2 $FiltrosFichas";
+$sql_query="SELECT DISTINCT FICHAS3.FicLega AS 'nov_LegNume', FICHAS3.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS3.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario' FROM FICHAS3, FICHAS, NOVEDAD, NOVECAUSA, PERSONAL WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS3.FicLega='$legajo' AND FICHAS3.FicLega=FICHAS.FicLega AND FICHAS3.FicFech=FICHAS.FicFech AND FICHAS3.FicTurn=FICHAS.FicTurn AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi AND FICHAS3.FicLega=PERSONAL.LegNume AND FICHAS3.FicNove > 0 $FilterEstruct $FiltrosFichas";
 
 
 $sqlTot .= $sql_query;
@@ -45,7 +45,7 @@ $sqlRec .= $sql_query;
 
 if( !empty($params['search']['value']) ) {
 $where_condition .=	" AND ";
-$where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%' ";
+$where_condition .= " (dbo.fn_Concatenar(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%' ";
 $where_condition .= " OR NOVEDAD.NovDesc LIKE '%".$params['search']['value']."%')";
 }
 
@@ -59,7 +59,7 @@ $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
 
-// print_r($sql_query).PHP_EOL; exit;
+// print_r($sqlRec).PHP_EOL; exit;
 
 // $data  = array();
 // if (sqlsrv_num_rows($result) > 0) {
@@ -71,26 +71,15 @@ $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
         $nov_dia_semana = $row['nov_dia_semana'];
         $nov_horario    = $row['nov_horario'];
 
-$query_Nov="SELECT FICHAS3.FicNove AS 'nov_novedad',
-    NOVEDAD.NovDesc AS 'nov_descripcion',
-    NOVEDAD.NovTipo AS 'nov_tipo',
-    FICHAS3.FicHoras AS 'nov_horas',
-    FICHAS3.FicCaus AS 'nov_cod_causa',
-    NOVECAUSA.NovCDesc AS 'nov_causa',
-    'nov_justif' =CASE
-        FICHAS3.FicJust
-        WHEN 1 THEN 'Si'
-        ELSE 'No'
-    END,
-    FICHAS3.FicObse AS 'nov_observ'
-FROM FICHAS3,
-    NOVEDAD,
-    NOVECAUSA
-WHERE FICHAS3.FicFech = '$nov_Fecha2'
-    and FICHAS3.FicLega = '$nov_LegNume'
-    AND FICHAS3.FicNove = NOVEDAD.NovCodi
-    AND FICHAS3.FicNove = NOVECAUSA.NovCNove
-    AND FICHAS3.FicCaus = NOVECAUSA.NovCCodi $FilterEstruct2";
+//  $query_Nov="SELECT FICHAS3.FicNove AS 'nov_novedad', NOVEDAD.NovDesc AS 'nov_descripcion', NOVEDAD.NovTipo AS 'nov_tipo', FICHAS3.FicHoras AS 'nov_horas', FICHAS3.FicCaus AS 'nov_cod_causa', NOVECAUSA.NovCDesc AS 'nov_causa', 'nov_justif'=CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS 'nov_observ' FROM FICHAS, FICHAS3, NOVEDAD, NOVECAUSA WHERE FICHAS3.FicFech='$nov_Fecha2' and FICHAS3.FicLega='$nov_LegNume' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi $FilterEstruct";
+ $query_Nov="SELECT FICHAS3.FicNove AS 'nov_novedad', NOVEDAD.NovDesc AS 'nov_descripcion', NOVEDAD.NovTipo AS 'nov_tipo', FICHAS3.FicHoras AS 'nov_horas', 
+ FICHAS3.FicCaus AS 'nov_cod_causa', NOVECAUSA.NovCDesc AS 'nov_causa', 
+ 'nov_justif'= CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS 'nov_observ'
+ FROM FICHAS
+ INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech
+ INNER JOIN NOVEDAD ON FICHAS3.FicNove = NOVEDAD.NovCodi
+ INNER JOIN NOVECAUSA ON FICHAS3.FicCaus = NOVECAUSA.NovCCodi AND FICHAS3.FicNove = NOVECAUSA.NovCNove 
+ WHERE FICHAS3.FicFech='$nov_Fecha2' and FICHAS3.FicLega='$nov_LegNume' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi $FilterEstruct";
 
     // print_r($query_Nov).PHP_EOL; exit;
 

@@ -87,6 +87,8 @@ $('#Visualizar').prop('disabled', true)
                 data._dr     = $("#_dr").val();
                 data.FicNoTi = $("#FicNoTi").val();
                 data.FicNove = $("#FicNove").val();
+                data.FicNovA = $('#FicNovA').val();
+                data.FicCausa = $('#FicCausa').val();
             },
 
             error: function() {
@@ -150,6 +152,8 @@ $('#Visualizar').prop('disabled', true)
                 data._l  = $("#_l").val();
                 data.FicNoTi  = $("#FicNoTi").val();
                 data.FicNove  = $("#FicNove").val();
+                data.FicNovA = $('#FicNovA').val();
+                data.FicCausa = $('#FicCausa').val();
             },
             error: function() {
                 $("#GetNovedades").css("display", "none");
@@ -239,6 +243,8 @@ $('#Visualizar').prop('disabled', true)
                 data._l      = $("#_l").val();
                 data.FicNoTi = $("#FicNoTi").val();
                 data.FicNove = $("#FicNove").val();
+                data.FicNovA = $('#FicNovA').val();
+                data.FicCausa = $('#FicCausa').val();
             },
             error: function() {
                 $("#GetFecha_processing").css("display", "none");
@@ -296,6 +302,8 @@ $('#Visualizar').prop('disabled', true)
                 data._l      = $("#_l").val();
                 data.FicNoTi = $("#FicNoTi").val();
                 data.FicNove = $("#FicNove").val();
+                data.FicNovA = $('#FicNovA').val();
+                data.FicCausa = $('#FicCausa').val();
             },
             error: function() {
                 $("#GetNovedadesFecha_processing").css("display", "none");

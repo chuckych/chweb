@@ -11,18 +11,19 @@ ini_set('display_errors', '0');
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
-if(empty($_POST['_dr'])){
+$data = array();
+// if(empty($_POST['_dr'])){
 
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+//     $json_data = array(
+//         "draw"            => '',
+//         "recordsTotal"    => '',
+//         "recordsFiltered" => '',
+//         "data"            => $data
+//     );
     
-    echo json_encode($json_data);
-    exit;
-}
+//     echo json_encode($json_data);
+//     exit;
+// }
 
 $DateRange = explode(' al ', $_POST['_dr']);
 $FechaIni  = test_input(dr_fecha($DateRange[0]));
@@ -36,13 +37,7 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
- $sql_query="SELECT FICHAS3.FicFech as 'FicFech',
-    dbo.fn_DiaDeLaSemana(FICHAS3.FicFech) AS 'Dia'
-FROM FICHAS3
-    INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega
-    INNER JOIN PERSONAL ON FICHAS3.FicLega = PERSONAL.LegNume
-WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FilterEstruct2
-GROUP BY FICHAS3.FicFech";
+$sql_query="SELECT FICHAS.FicFech AS 'FicFech', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia' FROM FICHAS INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicFech";
 
 // print_r($sql_query); exit;
 
@@ -60,7 +55,7 @@ $sqlRec .= $where_condition;
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  " ORDER BY FICHAS3.FicFech OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
+$sqlRec .=  " ORDER BY FICHAS.FicFech OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
@@ -69,9 +64,9 @@ $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
 
 while( $row = sqlsrv_fetch_array($queryRecords) ) {
 
-    $Dia         = $row['Dia'];
-    $FicFech     = $row['FicFech']->format('d/m/Y');
-    $FicFechStr     = $row['FicFech']->format('Ymd');
+    $Dia        = $row['Dia'];
+    $FicFech    = $row['FicFech']->format('d/m/Y');
+    $FicFechStr = $row['FicFech']->format('Ymd');
 
     $data[] = array(
         'FicFech' => '<span class="animate__animated animate__fadeIn">'.$FicFech.'</span><input type="hidden" class="" id="_f" value='.$FicFechStr.'>',

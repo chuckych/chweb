@@ -42,7 +42,7 @@ $Tipo = empty(($_POST['Tipo'])) ? "": $Tipo;
 
 if(!empty($_POST['Sec2'])){
     $Sec2 = implode(',',($_POST['Sec2']));
-    $Seccion = !empty($Sec2) ? "AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($Sec2)" :'';
+    $Seccion = !empty($Sec2) ? "AND dbo.fn_Concatenar(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($Sec2)" :'';
 }else{
     $Seccion ='';
 }
