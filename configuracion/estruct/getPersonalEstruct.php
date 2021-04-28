@@ -44,7 +44,7 @@ if (sqlsrv_num_rows($rs) > 0) {
         $ApNo   = utf8str($r['ApNo']);
         $Lega   = $r['Lega'];
         $FeEg   = $r['FeEg']->format('Ymd');
-        $FeEg = ($FeEg=='17530101') ? '<span class="bg-success text-white p-1 px-2 fontp" data-title="Legajo '.$ApNo.': Activo">Activo</span>' :'<span class="bg-danger text-white p-1 px-2 fontp" data-title="Legajo '.$ApNo.': De Baja">De Baja</span>';
+        $FeEg = ($FeEg=='17530101') ? '<span class="bg-success text-white p-1 px-2 fontp" data-titlel="Legajo '.$ApNo.': Activo">Activo</span>' :'<span class="bg-danger text-white p-1 px-2 fontp" data-titlel="Legajo '.$ApNo.': De Baja">De Baja</span>';
         $Check='<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input checkReg" id="Check'.$Lega.'" name="checks[]" value="'.$Lega.'@'.$ApNo.'"><label class="custom-control-label" for="Check'.$Lega.'"></label></div>';
         $data[] = array($Lega, $ApNo,  $Check, $FeEg);
     endwhile;

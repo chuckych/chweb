@@ -53,10 +53,10 @@ $(function () {
     }
     function actionButtons(data0, data1, nameidbtn1, nameidbtn2, actionForm) {
         if (data0 == '0') {
-            let btns = `<div class="d-flex align-items-center justify-content-between">` + data1 + `<div class=""><a href="`+ actionForm + `" data-title="Ver personal afectado" type="button" id="view` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction mr-1 fontq btn btn-custom px-2 btn-sm view"><i class="bi2 bi-people-fill"></i></a></div></div>`
+            let btns = `<div class="d-flex align-items-center justify-content-between">` + data1 + `<div class=""><a href="`+ actionForm + `" data-titlel="Ver personal afectado" type="button" id="view` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction mr-1 fontq btn btn-custom px-2 btn-sm view"><i class="bi2 bi-people-fill"></i></a></div></div>`
             return btns;
         } else {
-            let btns = `<div class="d-flex align-items-center justify-content-between">` + data1 + `<div class=""><a href="`+ actionForm + `" data-title="Ver personal afectado" type="button" id="view` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction mr-1 fontq btn btn-custom px-2 btn-sm view"><i class="bi2 bi-people-fill"></i></a><a href="`+ actionForm + `" data-title="Editar ` + data1 + `" type="button" id="` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction fontq mr-1 btn btn-custom px-2 btn-sm" id="EditEmpresas" value="1"><i class="bi2 bi-pencil"></i></a><a href="`+ actionForm + `" data-title="Eliminar  ` + data1 + `" type="button" id="` + nameidbtn2 + data0 + `n" class="animate__animated animate__fadeIn btnAction fontq btn btn-custom px-2 btn-sm"><i class="bi2 bi-trash"></i></a></div>`
+            let btns = `<div class="d-flex align-items-center justify-content-between">` + data1 + `<div class=""><a href="`+ actionForm + `" data-titlel="Ver personal afectado" type="button" id="view` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction mr-1 fontq btn btn-custom px-2 btn-sm view"><i class="bi2 bi-people-fill"></i></a><a href="`+ actionForm + `" data-titlel="Editar ` + data1 + `" type="button" id="` + nameidbtn1 + data0 + `n" class="animate__animated animate__fadeIn btnAction fontq mr-1 btn btn-custom px-2 btn-sm" id="EditEmpresas" value="1"><i class="bi2 bi-pencil"></i></a><a href="`+ actionForm + `" data-titlel="Eliminar  ` + data1 + `" type="button" id="` + nameidbtn2 + data0 + `n" class="animate__animated animate__fadeIn btnAction fontq btn btn-custom px-2 btn-sm"><i class="bi2 bi-trash"></i></a></div>`
             return btns;
         }
     }
@@ -135,7 +135,7 @@ $(function () {
             initComplete: function () {
                 $(selectorDT+' thead').remove()
                 // $("#tableempresas_filter").addClass('d-inline-flex ')
-                $(selectorDT+'_filter').append(`<a href="`+actionForm+`" data-title="Agregar `+estruct+`" type="button" class="ml-1 btn btn-custom btn-sm" id="`+selectoraddbutton+`"><i class="bi2 bi-plus"></i></a>`)
+                $(selectorDT+'_filter').append(`<a href="`+actionForm+`" data-titlel="Agregar `+estruct+`" type="button" class="ml-1 btn btn-custom btn-sm" id="`+selectoraddbutton+`"><i class="bi2 bi-plus"></i></a>`)
                 $('#'+selectoraddbutton).click(function () {
                     printForm('', '', nameidbtn0, actionForm) /** imprimo html para ingresar datos */
                 });

@@ -83,7 +83,7 @@ switch ($Tipo) {
 <div class="animate__animated animate__fadeIn p-2 mt-2">
     <form action="crud.php" method="post" class="w-100" id="Formulario">
         <div id="titleForm" class="fw4"><?= $titleForm ?></div>
-        <label class="mt-2 fw4" for="cod" id="labelCod" data-title="Si se deja en blanco, se asignará automaticamente">C&oacute;digo <i class="bi bi-info-circle"></i></label>
+        <label class="mt-2 fw4" for="cod" id="labelCod" data-titlel="Si se deja en blanco, se asignará automaticamente">C&oacute;digo <i class="bi bi-info-circle"></i></label>
         <input type="hidden" name="tipo" id="tipo" value="<?= $Tipo ?>">
         <input type="tel" placeholder="C&oacute;digo" name="cod" id="cod" class="form-control w100 h40" value="<?= $Cod ?>" maxlength="8">
         <label class="mt-2 fw4" for="desc">Descripci&oacute;n <span class="requerido"></span></label>

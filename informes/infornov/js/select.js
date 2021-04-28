@@ -619,7 +619,6 @@ $(document).ready(function () {
         }
     });
 
-
     function refreshSelected(slectjs) {
         $(slectjs).on('select2:select', function (e) {
             $('#Per2').val(null)

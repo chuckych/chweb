@@ -1020,7 +1020,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $ActualCD = '(' . $actualCod . ') ' . $actualDes;
     // PrintRespuestaJson('error', $Estructura);
     // exit;
-    
+
     // sleep(2);
     if (valida_campo($Checks)) {
         PrintRespuestaJson('error', 'Debe seleccionar al menos un Legajo');
@@ -1045,7 +1045,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         $ChecksCod = test_input($Checks[0]);
         $ChecksDes = test_input($Checks[1]);
         $LegApNo   = '(' . $ChecksCod . ') ' . $ChecksDes;
-        $Dato      = 'Legajo: ' . $LegApNo.'. ' . $Estructura . ': ' . $ActualCD . ', por (' . $selectEstruc . ') ' . $EstructName;
+        $Dato      = 'Legajo: ' . $LegApNo . '. ' . $Estructura . ': ' . $ActualCD . ', por (' . $selectEstruc . ') ' . $EstructName;
 
         switch ($Estructura) {
             case 'Empresa':
@@ -1059,6 +1059,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                 break;
             case 'Sector':
                 $Col = 'LegSect';
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc', LegSec2 = 0 WHERE LegNume = '$ChecksCod'";
                 break;
             case 'Grupo':
                 $Col = 'LegGrup';
@@ -1069,8 +1070,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             case 'Sector':
                 $Col = 'LegSect';
                 break;
+            default:
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
+                break;
         }
-        $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
+        // $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
         $rs = sqlsrv_query($link, $query);
         if ($rs) {
             audito_ch2('M', $Dato);
@@ -1084,12 +1088,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                 exit;
             }
         }
-
     }
     PrintRespuestaJson('ok', 'Legajos Reasignados correctamente');
     sqlsrv_close($link);
     exit;
-
 } else {
     PrintRespuestaJson('error', 'Falta Tipo');
     exit;

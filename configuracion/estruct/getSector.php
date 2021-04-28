@@ -18,7 +18,7 @@ $rs = sqlsrv_query($link, $query, $params, $options);
 if (sqlsrv_num_rows($rs) > 0) {
     while ($r = sqlsrv_fetch_array($rs)) :
         $cant        = $r['cant'];
-        $cant        = '<span class="float-left text-center" data-title="Total Personal: '.$cant.'"><span class="w35 badge badge-light border">'.$cant.'</span>';
+        $cant        = '<span class="float-left text-center" data-titlel="Total Personal: '.$cant.'"><span class="w35 badge badge-light border">'.$cant.'</span>';
         $codigo      = $r['codigo'];
         $descripcion = ($codigo=='0')?'Sin Sector':$r['descripcion'];
         $data[] = array($codigo, $descripcion, $cant );
