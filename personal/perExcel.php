@@ -135,7 +135,7 @@ $spreadsheet->getStyle('A1:AL1')->getAlignment()->setVertical(\PhpOffice\PhpSpre
 $spreadsheet->getColumnDimension('A')->setWidth(10);
 $spreadsheet->getColumnDimension('B')->setWidth(25);
 $spreadsheet->getColumnDimension('C')->setWidth(10);
-$spreadsheet->getColumnDimension('D')->setWidth(11);
+$spreadsheet->getColumnDimension('D')->setWidth(12);
 $spreadsheet->getColumnDimension('E')->setWidth(15);
 $spreadsheet->getColumnDimension('F')->setWidth(10);
 
@@ -159,10 +159,9 @@ $ColNume = array("F","H","J","L","N","P","R","T","X","Z");
 foreach ($ColNume as $colN) {
     $spreadsheet->getColumnDimension($colN)->setWidth(10);
     $spreadsheet->getStyle($colN)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-}
-foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 }
+
 $ColNume = array("G","I","K","M","O","Q","S","U");
 foreach ($ColNume as $colN) {
     $spreadsheet->getColumnDimension($colN)->setWidth(28);
@@ -209,6 +208,11 @@ $spreadsheet->getTabColor()->setRGB('FFFFFF');
 //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 
 $spreadsheet->getStyle('D')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED3);
+$ColNume = array("C","D","E");
+foreach ($ColNume as $colN) {
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $spreadsheet->getStyle($colN)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+}
 
 $ColNume = array("A","F","H","J","L","N","P","R","T","X","Z","AA");
 foreach ($ColNume as $colN) {
