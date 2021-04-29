@@ -1046,16 +1046,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         $ChecksDes = test_input($Checks[1]);
         $LegApNo   = '(' . $ChecksCod . ') ' . $ChecksDes;
         $Dato      = 'Legajo: ' . $LegApNo . '. ' . $Estructura . ': ' . $ActualCD . ', por (' . $selectEstruc . ') ' . $EstructName;
-
+        // $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
         switch ($Estructura) {
             case 'Empresa':
                 $Col = 'LegEmpr';
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
                 break;
             case 'Planta':
                 $Col = 'LegPlan';
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
                 break;
             case 'Sucursal':
                 $Col = 'LegSucu';
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
                 break;
             case 'Sector':
                 $Col = 'LegSect';
@@ -1063,16 +1066,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                 break;
             case 'Grupo':
                 $Col = 'LegGrup';
+                $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
                 break;
             case 'Tarea':
                 $Col = 'LegTareProd';
-                break;
-            case 'Sector':
-                $Col = 'LegSect';
-                break;
-            default:
                 $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
                 break;
+            default:
+            $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
+            break;
         }
         // $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
         $rs = sqlsrv_query($link, $query);

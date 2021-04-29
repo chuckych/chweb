@@ -9,7 +9,7 @@ require __DIR__ . '../../config/conect_mssql.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
-$eg = $_GET['_eg'] ?? '';
+$eg = $_POST['_eg'] ?? '';
 $estado = (($eg === 'on')) ? "AND PERSONAL.LegFeEg != '17530101'" : "AND PERSONAL.LegFeEg = '17530101'";
 // echo $estado;exit;
 
@@ -51,49 +51,9 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 if ($_GET['Modulo'] == 'Cierres') {
-    $sql_query = "SELECT PERSONAL.LegNume AS pers_legajo, PERSONAL.LegApNo AS pers_nombre, PERCIERRE.CierreFech AS FechaCierre FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
+    $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.'LegApNo' AS pers_nombre, PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
 } else {
-    $sql_query = "SELECT PERSONAL.LegNume AS pers_legajo,
-    PERSONAL.LegApNo AS pers_nombre,
-    PERSONAL.LegDocu AS pers_dni,
-    PERSONAL.LegSect AS pers_LegSect,
-    EMPRESAS.EmpRazon AS pers_empresa,
-    PLANTAS.PlaDesc AS pers_planta,
-    CONVENIO.ConDesc AS pers_convenio,
-    SECTORES.SecDesc AS pers_sector,
-    SECCION.Se2Desc AS pers_seccion,
-    GRUPOS.GruDesc AS pers_grupo,
-    SUCURSALES.SucDesc AS pers_sucur,
-    PERSONAL.LegMail AS pers_mail,
-    PERSONAL.LegDomi AS pers_domic,
-    PERSONAL.LegDoNu AS pers_numero,
-    PERSONAL.LegDoOb AS pers_observ,
-    PERSONAL.LegDoPi AS pers_piso,
-    PERSONAL.LegDoDP AS pers_depto,
-    LOCALIDA.LocDesc AS pers_localidad,
-    PERSONAL.LegCOPO AS pers_cp,
-    PROVINCI.ProDesc AS pers_prov,
-    NACIONES.NacDesc AS pers_nacion,
-    (
-        CASE
-            PERSONAL.LegFeEg
-            WHEN '17530101' THEN '0'
-            ELSE '1'
-        END
-    ) AS pers_estado
-FROM PERSONAL
-    INNER JOIN PLANTAS ON PERSONAL.LegPlan = PLANTAS.PlaCodi
-    INNER JOIN SECTORES ON PERSONAL.LegSect = SECTORES.SecCodi
-    INNER JOIN SECCION ON PERSONAL.LegSec2 = SECCION.Se2Codi
-    AND SECTORES.SecCodi = SECCION.SecCodi
-    INNER JOIN EMPRESAS ON PERSONAL.LegEmpr = EMPRESAS.EmpCodi
-    INNER JOIN CONVENIO ON PERSONAL.LegConv = CONVENIO.ConCodi
-    INNER JOIN GRUPOS ON PERSONAL.LegGrup = GRUPOS.GruCodi
-    INNER JOIN SUCURSALES ON PERSONAL.LegSucu = SUCURSALES.SucCodi
-    INNER JOIN PROVINCI ON PERSONAL.LegProv = PROVINCI.ProCodi
-    INNER JOIN LOCALIDA ON PERSONAL.LegLoca = LOCALIDA.LocCodi
-    INNER JOIN NACIONES ON PERSONAL.LegNaci = NACIONES.NacCodi
-WHERE PERSONAL.LegNume > '0' $estado $filtros $FilterEstruct";
+    $sql_query="SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', SECCION.Se2Desc AS 'pers_seccion', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', ( CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END ) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
 }
 // print_r($sql_query); exit;
 
@@ -103,7 +63,7 @@ $sqlRec .= $sql_query;
 
 if (!empty($params['search']['value'])) {
     $where_condition .=    " AND ";
-    $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%" . $params['search']['value'] . "%') ";
+    $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) collate SQL_Latin1_General_CP1_CI_AS LIKE '%" . $params['search']['value'] . "%') ";
 }
 
 if (isset($where_condition) && $where_condition != '') {

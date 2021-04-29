@@ -26,6 +26,7 @@ class Color extends Supervisor
     const COLOR_DARKGREEN = 'FF008000';
     const COLOR_YELLOW = 'FFFFFF00';
     const COLOR_DARKYELLOW = 'FF808000';
+    const COLOR_EFEFEFEF = 'EFEFEFEF';
 
     /**
      * Indexed colors array.

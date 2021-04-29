@@ -1,5 +1,10 @@
 $(function () {
-    $("#_eg").click(function() {
+
+    function ActualizaTablas() {
+        $('#table-personal').DataTable().ajax.reload();
+    };
+
+    $("#_eg").click(function () {
         if ($("#_eg").is(":checked")) {
             $("#_eg").val('on').trigger('change')
             $('#table-personal').DataTable().ajax.reload();
@@ -8,84 +13,113 @@ $(function () {
             $('#table-personal').DataTable().ajax.reload();
         }
     });
+    $("#_porApNo").click(function () {
+        if ($("#_porApNo").is(":checked")) {
+            $("#_porApNo").val('on').trigger('change')
+            $('#table-personal').DataTable().ajax.reload();
+        } else {
+            $("#_porApNo").val('off').trigger('change')
+            $('#table-personal').DataTable().ajax.reload();
+        }
+    });
     $('#table-personal').dataTable({
-        "initComplete": function(settings) {
+        "initComplete": function (settings) {
             $("#PersonalTable").removeClass('invisible');
-        },
-        "drawCallback": function(settings) {
             classEfect("#PersonalTable", 'animate__animated animate__fadeIn')
+            $("#table-personal_filter .form-control").attr('placeholder', 'Buscar')
+        },
+        "drawCallback": function (settings) {
+            $("td").tooltip({container:'table'});
+            $('[data-toggle="tooltip"]').tooltip();
+            if ($("#_eg").is(":checked")) {
+                $('td').addClass('text-danger')
+            } else {
+                $('td').removeClass('text-danger')
+            }
         },
         bProcessing: true,
-        serverSide: true,
+        serverSide: false,
         deferRender: true,
+        stateSave: true,
+        stateDuration: -1,
         "ajax": {
-            url: "?p=array_personal.php&<?= $_SERVER['QUERY_STRING'] ?>",
-            type: "GET",
+            url: "getPersonal.php",
+            type: "POST",
             dataType: "json",
-            "data": function(data) {
-                data._c = $("#_c").val();
-                data._r = $("#_r").val();
+            "data": function (data) {
                 data._eg = $("input[name=_eg]:checked").val();
+                data._porApNo = $("input[name=_porApNo]:checked").val();
+                data.Per = $("#Per").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data.Tipo = $("#Tipo").val();
+                data.Tare = $("#Tare").val();
+                data.Conv = $("#Conv").val();
+                data.Regla = $("#Regla").val();
             },
-            error: function() {
+            error: function () {
                 $("#table-personal").css("display", "none");
             }
         },
         columns: [{
-                "class": "align-middle",
-                "data": 'editar'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_legajo'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_nombre'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_dni'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_estado'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_empresa'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_planta'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_convenio'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_sector'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_seccion'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_grupo'
-            },
-            {
-                "class": "align-middle",
-                "data": 'pers_sucur'
-            },
+            "class": "align-middle",
+            "data": 'editar'
+        },
+        {
+            "class": "align-middle",
+            "data": 'pers_legajo'
+        },
+        {
+            "class": "align-middle",
+            "data": 'pers_nombre'
+        },
+        {
+            "class": "text-center align-middle",
+            "data": 'pers_tipo'
+        },
+        // {
+        //     "class": "align-middle",
+        //     "data": 'pers_estado'
+        // },
+        {
+            "class": "align-middle",
+            "data": 'pers_empresa'
+        },
+        {
+            "class": "align-middle",
+            "data": 'pers_planta'
+        },
+        {
+            "class": "align-middle",
+            "data": 'pers_convenio'
+        },
+        {
+            "class": "align-middle",
+            "data": 'pers_sector'
+        },
+        // {
+        //     "class": "align-middle",
+        //     "data": 'pers_seccion'
+        // },
+        {
+            "class": "align-middle w-100",
+            "data": 'pers_grupo'
+        },
+            // {
+            //     "class": "align-middle",
+            //     "data": 'pers_sucur'
+            // },
         ],
         // scrollY: '50vh',
-        scrollX: true,
+        // scrollX: true,
         paging: true,
         searching: true,
-        scrollCollapse: true,
-        info: 1,
+        // scrollCollapse: true,
+        info: true,
         ordering: 0,
         responsive: 0,
         language: {
