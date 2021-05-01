@@ -68,7 +68,7 @@ $encabezado = [
     "REGLA CH",
     "EMAIL",
     "CALLE",
-    "NUMERO",
+    "NUM",
     "OBSERVACION",
     "PISO",
     "DEPTO",
@@ -127,12 +127,17 @@ $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
 $spreadsheet->getStyle('A:AL')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 $spreadsheet->freezePane('A2');
+// $spreadsheet->freezePaneByColumnAndRow('B', '2');
+$ColumnCount=3;
+$RowIndex=2;
+$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+
 $spreadsheet->getStyle('A1:AL1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 /** cálculo automático de ancho de columna */
 // foreach (range('A:E', $spreadsheet->getHighestDataColumn()) as $col) {
 //     $spreadsheet->getColumnDimension($col)->setAutoSize(true);
 // }
-$spreadsheet->getColumnDimension('A')->setWidth(10);
+$spreadsheet->getColumnDimension('A')->setWidth(12);
 $spreadsheet->getColumnDimension('B')->setWidth(25);
 $spreadsheet->getColumnDimension('C')->setWidth(10);
 $spreadsheet->getColumnDimension('D')->setWidth(12);
@@ -140,31 +145,58 @@ $spreadsheet->getColumnDimension('E')->setWidth(15);
 $spreadsheet->getColumnDimension('F')->setWidth(10);
 
 $cols = array("V","W","Y","AB","AD","AE","R","T","X","Z");
+
+
 foreach ($cols as $col) {
-    $spreadsheet->getColumnDimension($col)->setWidth(27);
+    $spreadsheet->getColumnDimension($col)->setWidth(28);
+    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setIndent(1);
 }
-$cols = array("AA","AC","AF","AG","AH","AI");
+$spreadsheet->getColumnDimension("W")->setWidth(42);
+$spreadsheet->getColumnDimension("V")->setWidth(35);
+
+$cols = array("AA","AC","AF","AG","AH","AI", "AJ");
 foreach ($cols as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(12);
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setIndent(1);
 }
 $cols = array("AK","AL");
 foreach ($cols as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(17);
-    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setIndent(1);
 }
 
 $ColNume = array("F","H","J","L","N","P","R","T","X","Z");
 foreach ($ColNume as $colN) {
-    $spreadsheet->getColumnDimension($colN)->setWidth(10);
-    $spreadsheet->getStyle($colN)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-    $spreadsheet->getStyle($colN.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $spreadsheet->getColumnDimension($colN)->setWidth(7);
+    $spreadsheet->getStyle($colN)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setIndent(1);
 }
+$spreadsheet->getColumnDimension("X")->setWidth(9);
 
-$ColNume = array("G","I","K","M","O","Q","S","U");
+$ColNume = array("B","G","I","K","M","O","Q","S","U");
 foreach ($ColNume as $colN) {
     $spreadsheet->getColumnDimension($colN)->setWidth(28);
+    $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setIndent(1);
+}
+$cols = getcolumnrange('AF','AI');
+foreach ($cols as $col) {
+    $spreadsheet->getColumnDimension($col)->setWidth(17);
+    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+    $spreadsheet->getStyle($col)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($col.'1')->getAlignment()->setIndent(1);
 }
 // $spreadsheet->getColumnDimension('E')->setWidth(13);
 
@@ -218,6 +250,11 @@ $ColNume = array("A","F","H","J","L","N","P","R","T","X","Z","AA");
 foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 }
+$spreadsheet->getStyle('A')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+$spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+$spreadsheet->getStyle('A')->getAlignment()->setIndent(1);
+$spreadsheet->getStyle('A1')->getAlignment()->setIndent(1);
+
 $ColFecha = array("AK","AL");
 foreach ($ColFecha as $colF) {
     $spreadsheet->getStyle($colF)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
@@ -242,59 +279,7 @@ $numeroDeFila = 2;
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '/valores.php';
 
-$sql_query = "SELECT 
-PERSONAL.LegNume AS 'LegNume',
-PERSONAL.LegApNo AS 'LegApNo',
-PERSONAL.LegTipo AS 'LegTipo',
-PERSONAL.LegDocu AS 'LegDocu',
-PERSONAL.LegCUIT AS 'LegCUIT',
-PERSONAL.LegEmpr AS 'EmpCodi',
-EMPRESAS.EmpRazon AS 'EmpRazo',
-PERSONAL.LegPlan AS 'PlaCodi',
-PLANTAS.PlaDesc AS 'PlaDesc',
-PERSONAL.LegConv AS 'ConCodi',
-CONVENIO.ConDesc AS 'ConDesc',
-PERSONAL.LegSect AS 'SecCodi',
-SECTORES.SecDesc AS 'SecDesc',
-PERSONAL.LegSec2 AS 'Se2Codi',
-SECCION.Se2Desc AS 'Se2Desc',
-PERSONAL.LegGrup AS 'GruCodi',
-GRUPOS.GruDesc AS 'GruDesc',
-PERSONAL.LegSucu AS 'SucCodi',
-SUCURSALES.SucDesc AS 'SucDesc',
-PERSONAL.LegMail AS 'LegMail',
-PERSONAL.LegDomi AS 'LegDomi',
-PERSONAL.LegDoNu AS 'LegDoNu',
-PERSONAL.LegDoOb AS 'LegDoOb',
-PERSONAL.LegDoPi AS 'LegDoPi',
-PERSONAL.LegDoDP AS 'LegDoDP',
-LOCALIDA.LocDesc AS 'LocDesc',
-PERSONAL.LegCOPO AS 'LegCOPO',
-PROVINCI.ProDesc AS 'ProDesc',
-NACIONES.NacDesc AS 'NacDesc',
-(CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END) AS 'LegEsta',
-PERSONAL.LegFeEg AS 'LegFeEg',
-PERSONAL.LegFeIn AS 'LegFeIn',
-PERSONAL.LegTel1 AS 'LegTel1',
-PERSONAL.LegTeO1 AS 'LegTeO1',
-PERSONAL.LegTel2 AS 'LegTel2',
-PERSONAL.LegTeO2 AS 'LegTeO2',
-PERSONAL.LegRegCH AS 'LegRegl',
-REGLASCH.RCDesc AS 'RCHDesc'
-FROM PERSONAL
-INNER JOIN PLANTAS ON PERSONAL.LegPlan = PLANTAS.PlaCodi
-INNER JOIN SECTORES ON PERSONAL.LegSect = SECTORES.SecCodi
-INNER JOIN SECCION ON PERSONAL.LegSec2 = SECCION.Se2Codi
-AND SECTORES.SecCodi = SECCION.SecCodi
-INNER JOIN EMPRESAS ON PERSONAL.LegEmpr = EMPRESAS.EmpCodi
-INNER JOIN CONVENIO ON PERSONAL.LegConv = CONVENIO.ConCodi
-INNER JOIN GRUPOS ON PERSONAL.LegGrup = GRUPOS.GruCodi
-INNER JOIN SUCURSALES ON PERSONAL.LegSucu = SUCURSALES.SucCodi
-INNER JOIN PROVINCI ON PERSONAL.LegProv = PROVINCI.ProCodi
-INNER JOIN LOCALIDA ON PERSONAL.LegLoca = LOCALIDA.LocCodi
-INNER JOIN NACIONES ON PERSONAL.LegNaci = NACIONES.NacCodi
-LEFT JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi
-WHERE PERSONAL.LegNume > '0' $filtros $FilterEstruct";
+ $sql_query="SELECT PERSONAL.LegNume AS 'LegNume', PERSONAL.LegApNo AS 'LegApNo', PERSONAL.LegTipo AS 'LegTipo', PERSONAL.LegDocu AS 'LegDocu', PERSONAL.LegCUIT AS 'LegCUIT', PERSONAL.LegEmpr AS 'EmpCodi', EMPRESAS.EmpRazon AS 'EmpRazo', PERSONAL.LegPlan AS 'PlaCodi', PLANTAS.PlaDesc AS 'PlaDesc', PERSONAL.LegConv AS 'ConCodi', CONVENIO.ConDesc AS 'ConDesc', PERSONAL.LegSect AS 'SecCodi', SECTORES.SecDesc AS 'SecDesc', PERSONAL.LegSec2 AS 'Se2Codi', SECCION.Se2Desc AS 'Se2Desc', PERSONAL.LegGrup AS 'GruCodi', GRUPOS.GruDesc AS 'GruDesc', PERSONAL.LegSucu AS 'SucCodi', SUCURSALES.SucDesc AS 'SucDesc', PERSONAL.LegMail AS 'LegMail', PERSONAL.LegDomi AS 'LegDomi', PERSONAL.LegDoNu AS 'LegDoNu', PERSONAL.LegDoOb AS 'LegDoOb', PERSONAL.LegDoPi AS 'LegDoPi', PERSONAL.LegDoDP AS 'LegDoDP', LOCALIDA.LocDesc AS 'LocDesc', PERSONAL.LegCOPO AS 'LegCOPO', PROVINCI.ProDesc AS 'ProDesc', NACIONES.NacDesc AS 'NacDesc', (CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END) AS 'LegEsta', PERSONAL.LegFeEg AS 'LegFeEg', PERSONAL.LegFeIn AS 'LegFeIn', PERSONAL.LegTel1 AS 'LegTel1', PERSONAL.LegTeO1 AS 'LegTeO1', PERSONAL.LegTel2 AS 'LegTel2', PERSONAL.LegTeO2 AS 'LegTeO2', PERSONAL.LegRegCH AS 'LegRegl', REGLASCH.RCDesc AS 'RCHDesc' FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi LEFT JOIN REGLASCH ON PERSONAL.LegRegCH=REGLASCH.RCCodi WHERE PERSONAL.LegNume >'0' $filtros $FilterEstruct $OrderBy";
 
 // print_r($sql_query); exit;
 

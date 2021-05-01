@@ -66,51 +66,52 @@ $(function () {
             }
         },
         columns: [{
-            "class": "align-middle",
+            "class": "",
             "data": 'editar'
         },
         {
-            "class": "align-middle",
+            "class": "",
             "data": 'pers_legajo'
         },
         {
-            "class": "align-middle",
+            "class": "",
             "data": 'pers_nombre'
         },
         {
-            "class": "text-center align-middle",
+            "class": "text-center ",
             "data": 'pers_tipo'
         },
         // {
-        //     "class": "align-middle",
+        //     "class": "",
         //     "data": 'pers_estado'
         // },
         {
-            "class": "align-middle",
+            "class": "",
             "data": 'pers_empresa'
         },
+        // {
+        //     "class": "",
+        //     "data": 'pers_planta'
+        // },
+        
         {
-            "class": "align-middle",
-            "data": 'pers_planta'
-        },
-        {
-            "class": "align-middle",
-            "data": 'pers_convenio'
-        },
-        {
-            "class": "align-middle",
+            "class": "",
             "data": 'pers_sector'
         },
         // {
-        //     "class": "align-middle",
+        //     "class": "",
         //     "data": 'pers_seccion'
         // },
         {
-            "class": "align-middle w-100",
+            "class": "",
             "data": 'pers_grupo'
         },
+        {
+            "class": "w-100",
+            "data": 'pers_convenio'
+        },
             // {
-            //     "class": "align-middle",
+            //     "class": "",
             //     "data": 'pers_sucur'
             // },
         ],

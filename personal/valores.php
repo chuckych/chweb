@@ -32,10 +32,13 @@ $toexcel    = test_input($_POST['toexcel']);
 $eg       = test_input($_POST['_eg']);
 $_porApNo = test_input($_POST['_porApNo']);
 
+
+
+$OrderBy = (($_porApNo === 'on')) ? "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegApNo":"ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume";
+
 if (!$toexcel) {
     $estado = (($eg === 'on')) ? "AND PERSONAL.LegFeEg != '17530101'" : "AND PERSONAL.LegFeEg = '17530101'";
 }
-$OrderBy = (($_porApNo === 'on')) ? "ORDER BY PERSONAL.LegApNo":"ORDER BY PERSONAL.LegNume";
 
 switch ($estruct) {
     case 'Empr':
