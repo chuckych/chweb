@@ -120,6 +120,10 @@ switch ($Modulo) {
 		/** Modulo custom2. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #009688; } </style>';
 		break;
+	case '32':
+		/** Modulo custom2. Color predeterminado */
+		echo '<style>:root { --main-bg-modcolor : #F48024; } </style>';
+		break;
 	default:
 		echo '<style>:root { --main-bg-modcolor : #17a2b8; } </style>';
 		break;

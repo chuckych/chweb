@@ -190,6 +190,9 @@
                                         case 'Mensajes Mobile':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/sms/>" . $Modulo . "</a>";
                                             break;
+                                        case 'Mobile HRP':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/hrp/>" . $Modulo . "</a>";
+                                            break;
                                     }
                                 }
                                 ?>
@@ -245,6 +248,7 @@
                             && ($Modulo2 != 'Informe Presentismo')
                             && ($Modulo2 != 'Datos')
                             && ($Modulo2 != 'Estructura')
+                            && ($Modulo2 != 'Mobile HRP')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>

@@ -1,17 +1,17 @@
 <?php
 function version()
 {
-    return 'v0.0.122';
+    return 'v0.0.123';
 }
 function E_ALL()
 {
-	if ($_SERVER['SERVER_NAME'] == 'localhost') {
-		error_reporting(E_ALL);
-		ini_set('display_errors', '1');
-	} else {
-		error_reporting(E_ALL);
-		ini_set('display_errors', '0');
-	}
+    if ($_SERVER['SERVER_NAME'] == 'localhost') {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '1');
+    } else {
+        error_reporting(E_ALL);
+        ini_set('display_errors', '0');
+    }
 }
 function secure_auth_ch()
 {
@@ -28,7 +28,8 @@ function secure_auth_ch()
         http_response_code(403);
         exit;
     } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
+        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
         /** */
         $fechaGuardada = $_SESSION["ultimoAcceso"];
         $ahora = date("Y-m-d H:i:s");
@@ -62,7 +63,8 @@ function secure_auth_ch2()
         echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';
         exit;
     } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */ (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
+        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
         /** */
         $fechaGuardada = $_SESSION["ultimoAcceso"];
         $ahora = date("Y-m-d H:i:s");
@@ -99,10 +101,10 @@ function secureVar($key)
 function vjs()
 {
     if ($_SERVER['SERVER_NAME'] == 'localhost') {
-		return time();
-	} else {
-		return version();
-	}
+        return time();
+    } else {
+        return version();
+    }
 }
 function API_KEY_MAPS()
 {
@@ -253,7 +255,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
         <div class="d-flex align-items-center w-100">
             <div>
                 <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
-                <img src="/' . HOMEHOST . '/img/' . $img . '?v='.vjs().'" alt="' . $titulo . '"class="mr-2 img-fluid ' . $imgclass . ' bg-light radius w30">
+                <img src="/' . HOMEHOST . '/img/' . $img . '?v=' . vjs() . '" alt="' . $titulo . '"class="mr-2 img-fluid ' . $imgclass . ' bg-light radius w30">
                 </a>
             </div>
             <div class="w-100 d-inline-flex h30">
@@ -554,7 +556,7 @@ function test_input($data)
     // $data = stripslashes($data);
     // $data = htmlspecialchars($data);
     $data = utf8str($data);
-    $data = htmlspecialchars(stripslashes($data),ENT_QUOTES);
+    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
     $data = str_ireplace("script", '', $data);
     // $data = htmlentities($data, ENT_QUOTES);
     return ($data);
@@ -568,10 +570,8 @@ function test_input2($data)
         // $data = htmlspecialchars(stripslashes($data));
         $value = str_ireplace("script", "blocked", $data);
         $value = htmlentities($data, ENT_QUOTES);
-
     }
     return $value;
-    
 }
 function hoy()
 {
@@ -858,6 +858,17 @@ function FechaFormatH($FechaHora)
     $var  = date_format($dato, "d/m/Y H:i");
     return $var;
 }
+function HoraFormat($FechaHora, $second = true)
+{
+    if ($second) {
+        $dato = date_create($FechaHora);
+        $var  = date_format($dato, "H:i:s");
+    }else{
+        $dato = date_create($FechaHora);
+        $var  = date_format($dato, "H:i");
+    }
+    return $var; 
+}
 function FechaFormatVar($FechaHora, $var)
 {
     $dato = date_create($FechaHora);
@@ -866,7 +877,7 @@ function FechaFormatVar($FechaHora, $var)
 }
 function fechformatM($var)
 {
-    $dato = date_create("$var");
+    $dato = date_create($var);
     $var = date_format($dato, "d-m-Y");
     return $var;
 }
@@ -964,7 +975,7 @@ function ExisteCliente($recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
-    $query="SELECT clientes.recid as recid, clientes.nombre as nombre FROM clientes WHERE clientes.id >'0' AND clientes.recid='$recid' LIMIT 1";
+    $query = "SELECT clientes.recid as recid, clientes.nombre as nombre FROM clientes WHERE clientes.id >'0' AND clientes.recid='$recid' LIMIT 1";
     require 'config/conect_mysql.php';
     $result = mysqli_query($link, $query);
     if (mysqli_num_rows($result) > 0) {
@@ -974,7 +985,7 @@ function ExisteCliente($recid)
         mysqli_free_result($result);
         mysqli_close($link);
         return $nombre;
-    }else{
+    } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
 
@@ -995,7 +1006,7 @@ function ExisteRol2($recid)
         mysqli_free_result($rs);
         mysqli_close($link);
         return $n;
-    }else{
+    } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
 
@@ -1351,7 +1362,7 @@ function porcentaje($valor, $cantidad)
 }
 function imgIcon($var, $title, $width)
 {
-    $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=".vjs();
+    $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=" . vjs();
     return '<img loading="lazy" src="' . $src . '" class="' . $width . '" "alt="' . $title . '" title="' . $title . '">';
 }
 function imgFoto($face_url, $title, $width)
@@ -1825,7 +1836,7 @@ function CountRegMySql($query)
     $stmt = mysqli_query($link, $query);
     // print_r($query); exit;
     if ($stmt) {
-        $num=mysqli_num_rows($stmt);
+        $num = mysqli_num_rows($stmt);
         return $num;
         mysqli_free_result($stmt);
         mysqli_close($link);
@@ -2270,7 +2281,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
 
     if ($httpCode == 201) {
         // return EstadoProceso($url);
-        return array('ProcesoId'=>$processID, 'EstadoProceso'=>EstadoProceso($url));
+        return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
         exit;
     }
 }
@@ -2326,7 +2337,7 @@ function dr_fecha($ddmmyyyy)
 }
 function datosGetIn($Get, $Col)
 {
-    $v = ($Get>='0') ? true : false;
+    $v = ($Get >= '0') ? true : false;
     if ($v) {
         $Get = implode(',', $Get);
         $t = ($v) ? "AND " . $Col . " IN (" . ($Get) . ") " : '';
@@ -2515,41 +2526,41 @@ function TokenMobile($token, $data)
 }
 function utf8str($cadena)
 {
-	return str_replace([
-		"&Aacute;",
-		"&Eacute;",
-		"&Iacute;",
-		"&Oacute;",
-		"&Uacute;",
-		"&Ntilde;",
-		"&aacute;",
-		"&eacute;",
-		"&iacute;",
-		"&oacute;",
-		"&uacute;",
-		"&ntilde;",
-		"&amp;",
-		"&#039;",
-		"&#39;",
-		"&quot;",
-		"&hellip;",
-	], [
-		"Á",
-		"É",
-		"Í",
-		"Ó",
-		"Ú",
-		"Ñ",
-		"á",
-		"é",
-		"í",
-		"ó",
-		"ú",
-		"ñ",
-		"&",
-		"'",
-		"'",
-		"'",
-		"...",
-	], $cadena);
+    return str_replace([
+        "&Aacute;",
+        "&Eacute;",
+        "&Iacute;",
+        "&Oacute;",
+        "&Uacute;",
+        "&Ntilde;",
+        "&aacute;",
+        "&eacute;",
+        "&iacute;",
+        "&oacute;",
+        "&uacute;",
+        "&ntilde;",
+        "&amp;",
+        "&#039;",
+        "&#39;",
+        "&quot;",
+        "&hellip;",
+    ], [
+        "Á",
+        "É",
+        "Í",
+        "Ó",
+        "Ú",
+        "Ñ",
+        "á",
+        "é",
+        "í",
+        "ó",
+        "ú",
+        "ñ",
+        "&",
+        "'",
+        "'",
+        "'",
+        "...",
+    ], $cadena);
 }
