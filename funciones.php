@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.124';
+    return 'v0.0.125';
 }
 function E_ALL()
 {
@@ -24,8 +24,44 @@ function secure_auth_ch()
         || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
+        // PrintRespuestaJson('error', 'Sesión Expirada');
         header("location:/" . HOMEHOST . "/login/");
         http_response_code(403);
+        exit;
+    } else {
+        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
+        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+        /** */
+        $fechaGuardada = $_SESSION["ultimoAcceso"];
+        $ahora = date("Y-m-d H:i:s");
+        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+        /** comparamos el tiempo transcurrido */
+        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+            /** Si pasaron 60 minutos o más */
+            session_destroy();
+            /** destruyo la sesión */
+            header("location:/" . HOMEHOST . "/login/?sesion");
+            /** envío al usuario a la pag. de autenticación */
+            exit();
+            /** sino, actualizo la fecha de la sesión */
+        } else {
+            $_SESSION["ultimoAcceso"] = $ahora;
+        }
+    }
+    session_regenerate_id();
+    E_ALL();
+}
+function secure_auth_ch_json()
+{
+    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
+    if (
+        $_SESSION["secure_auth_ch"] !== true
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
+        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
+        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+    ) {
+        PrintRespuestaJson('sesion', 'Sesión Expirada');
         exit;
     } else {
         /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
@@ -1711,6 +1747,25 @@ function fecha_min_max2($tabla, $ColFech)
     return $array;
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
+    exit;
+}
+function fecha_min_max_mysql($tabla, $ColFech)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $query = "SELECT MIN($ColFech) AS 'min', MAX($ColFech) AS 'max' FROM $tabla";
+    // print_r($query);exit;
+    $rs = mysqli_query($link, $query);
+    while ($r = mysqli_fetch_assoc($rs)) {
+        $min = ($r['min'] != null) ? $r['min'] : '';
+        $max = ($r['max'] != null) ? $r['max'] : '';
+    }
+    $array = array(
+        'min' => $min,
+        'max' => $max
+    );
+    return $array;
+    mysqli_free_result($rs);
+    mysqli_close($link);
     exit;
 }
 function nov_cta_cte()

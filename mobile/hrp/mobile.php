@@ -7,7 +7,6 @@
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"> -->
     <title><?= MODULOS['mobile'] ?></title>
     <style type="text/css" media="screen">
-    
         .datos {
             margin-left: 5px;
         }
@@ -41,23 +40,23 @@
         <!-- Encabezado -->
         <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas ' . MODULOS['mobile'] . ' HR', '') ?>
         <!-- Fin Encabezado -->
-        <!-- <div class="row bg-white radius py-2">
                 <?php
                 $FirstDate = "2019/01/01";
-                /** FisrsDate */
                 $FirstYear = '2019';
-                /** FirstYear */
                 $maxDate   = date('Y-m-d');
-                /** maxDate */
                 $maxYear   = date('Y');
-                /** maxYear */
+                /** Para dateRangePicker */
+                $arrayFech=(fecha_min_max_mysql('reg_', 'fechaHora'));
+                $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'],'d-m-Y'): date('d-m-Y');
+                $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'],'d-m-Y'): date('d-m-Y');
+                $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'],'Y'): date('Y');
+                $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'],'Y'): date('Y');
+                echo '<input type="hidden" id="min" value="'.$min.'">';
+                echo '<input type="hidden" id="max" value="'.$max.'">';
+                echo '<input type="hidden" id="aniomin" value="'.$aniomin.'">';
+                echo '<input type="hidden" id="aniomax" value="'.$aniomax.'">';
+              
                 ?>
-                <div class="col-12 col-sm-9">
-                    <div class="d-flex justify-content-sm-end justify-content-center">
-                        <input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob">
-                    </div>
-                </div>
-            </div> -->
         <input type="hidden" id="_drMob2">
         <div class="row bg-white py-3 radius" id="RowTableMobile">
 

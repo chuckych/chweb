@@ -1,32 +1,27 @@
 $(document).ready(function () {
-
+    $('#Encabezado').addClass('pointer')
     function loadingTable() {
         $('td div').addClass('bg-light text-light')
         $('td img').addClass('invisible')
-        // $(".dataTable ").addClass("opa8");
     }
     function loadingTableRemove() {
         $('td div').removeClass('bg-light text-light')
         $('td img').removeClass('invisible')
-        // $(".dataTable ").addClass("opa8");
     }
-
-    $("#Refresh").on("click", function () {
-        $('#table-mobile').DataTable().ajax.reload();
-        // loadingTable()
-    });
     function dateRange() {
         $('#_drMob').daterangepicker({
             singleDatePicker: false,
             showDropdowns: false,
-            minYear: '2021',
-            maxYear: '2030',
+            minYear: $('#aniomin').val(),
+            maxYear: $('#aniomax').val(),
             showWeekNumbers: false,
             autoUpdateInput: true,
             opens: "right",
             drops: "down",
-            startDate: moment().day(1),
-            endDate: moment().day(7),
+            minDate: $('#min').val(),
+            startDate: $('#min').val(),
+            maxDate: $('#max').val(),
+            endDate: $('#max').val(),
             autoApply: false,
             alwaysShowCalendars: true,
             linkedCalendars: false,
@@ -37,7 +32,11 @@ $(document).ready(function () {
                 'Hoy': [moment(), moment()],
                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
                 'Esta semana': [moment().day(1), moment().day(7)],
-                'Ultima Semana': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+                'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
             },
             locale: {
                 format: "DD/MM/YYYY",
@@ -61,13 +60,12 @@ $(document).ready(function () {
     let drmob2 = moment().day(1).format('DD/MM/YYYY') + ' al ' + moment().day(7).format('DD/MM/YYYY')
     $('#_drMob2').val(drmob2)
 
-    $('#table-mobile').DataTable({
+    tablemobile = $('#table-mobile').DataTable({
         "initComplete": function (settings, json) {
             $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar">Actualizar <i class="bi bi-cloud-download"></i></button>')
             $('.dr').append(`<div class=""><input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
             dateRange()
             $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
-                // loadingTable()
                 $('#_drMob2').val($('#_drMob').val())
                 $('#table-mobile').DataTable().ajax.reload();
             });
@@ -140,10 +138,6 @@ $(document).ready(function () {
             "url": "../../js/DataTableSpanishShort2.json"
         },
 
-    });
-    $('#table-mobile').on('page.dt', function () {
-        // loadingTable()
-        $(".dataTable ").addClass("opa8");
     });
 
     function initMap() {
@@ -367,9 +361,7 @@ $(document).ready(function () {
                     $.notifyClose();
                     ActiveBTN(false, ".actualizar", 'Actualizando.. ' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'success', '2000', 'right')
-                    $(".dataTable ").addClass("opa8");
-                    // loadingTable()
-                    $('#table-mobile').DataTable().ajax.reload();
+                    tablemobile.ajax.reload();
                 } else {
                     $.notifyClose();
                     ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
@@ -385,12 +377,11 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#Encabezado", function (e) {
-        // loadingTable()
-        $('#table-mobile').DataTable().ajax.reload();
+        tablemobile.ajax.reload();
     });
 
 
-    $('#table-mobile').dataTable().on('processing.dt', function (e, settings, processing) {
+    tablemobile.on('processing.dt', function (e, settings, processing) {
         loadingTable()
     });
 

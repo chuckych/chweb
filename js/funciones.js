@@ -399,12 +399,21 @@ function respuesta_form(selector, Mensaje, alert) {
     }, 1000);
     return respuesta_form
 }
+
 function notify(Mensaje, type, delay, NotifAlign) {
+
+    // if ($(window).width() < 769) {
+    //     var offset = 0
+    // } else {
+    //     var offset = 20
+    // }
+    var offset = ($(window).width() < 769) ? 0 : 20;
+    
     $.notify(`<span class='fontq fw5'>${Mensaje}</span>`, {
         type: type,  /** success, danger, warning, secondary, light, etc */
         z_index: 9999,
         delay: delay, /** ej 2000 */
-        offset: 10,
+        offset: offset,
         mouse_over: 'pause',
         placement: {
             align: NotifAlign /** orientación de la notificacion */

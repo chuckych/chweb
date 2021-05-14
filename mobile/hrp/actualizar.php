@@ -1,10 +1,10 @@
 <?php
-session_start();
 require __DIR__ . '../../../config/index.php';
-ultimoacc();
-secure_auth_ch();
+session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
+ultimoacc();
+secure_auth_ch_json();
 E_ALL();
 
 // $foto = file_get_contents("https://server.xenio.uy/bucket_1/5c991ff84b5d89b23de9caa6/M_20891138_120520211425_3290.png");
@@ -29,13 +29,15 @@ function getEvents($url, $timeout = 10)
 }
 
 require __DIR__ . '../../../config/conect_mysql.php';
-// sleep(3);
-// PrintRespuestaJson('no', 'No hay registros nuevos');exit;
+
+// sleep(1); PrintRespuestaJson('ok', '<div class="animate__animated animate__fadeInDown">Se actualizaron registros.<br/>Total de registros nuevos: 10</div>');exit;
 $query = "SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1";
 $rs = mysqli_query($link, $query);
 $createdDate = mysqli_fetch_assoc($rs);
 $createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $createdDate['createdDate'];
 mysqli_free_result($rs);
+
+// PrintRespuestaJson('error', $createdDate);exit;
 
 $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);
@@ -93,7 +95,7 @@ if (!empty($arrayData)) {
         $query = "INSERT INTO reg_ (phoneid,createdDate,fechaHora,lat,lng,gpsStatus,eventType,_id,regid,appVersion,attphoto) VALUES('$phoneid', '$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$_id', '$regid', '$appVersion', '$attphoto')";
         (mysqli_query($link, $query));
     }
-    PrintRespuestaJson('ok', 'Se actualizaron registros');
+    PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: '.count($arrayData));
     mysqli_close($link);
     exit;
 }else{
