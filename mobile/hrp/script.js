@@ -62,7 +62,7 @@ $(document).ready(function () {
 
     tablemobile = $('#table-mobile').DataTable({
         "initComplete": function (settings, json) {
-            $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar">Actualizar <i class="bi bi-cloud-download"></i></button>')
+            $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar h35 px-3">Actualizar <i class="bi bi-cloud-download"></i></button>')
             $('.dr').append(`<div class=""><input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
             dateRange()
             $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
@@ -71,8 +71,8 @@ $(document).ready(function () {
             });
         },
         "drawCallback": function (settings) {
-            // $(".dataTable ").removeClass("opa8");
-            setTimeout(() => {
+            classEfect("#table-mobile tbody", 'animate__animated animate__fadeIn')
+            setTimeout(function () {
                 loadingTableRemove()
             }, 100);
             $('.form-control-sm').attr('placeholder', 'Buscar')

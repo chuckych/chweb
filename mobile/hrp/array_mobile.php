@@ -1,10 +1,9 @@
 <?php
 require __DIR__ . '../../../config/index.php';
 session_start();
-ultimoacc();
-secure_auth_ch();
 header("Content-Type: application/json");
-
+ultimoacc();
+secure_auth_ch_json();
 E_ALL();
 
 require __DIR__ . '../../../config/conect_mysql.php';
