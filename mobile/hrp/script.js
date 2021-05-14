@@ -1,28 +1,95 @@
 $(document).ready(function () {
 
+    function loadingTable() {
+        $('td div').addClass('bg-light text-light')
+        $('td img').addClass('invisible')
+        // $(".dataTable ").addClass("opa8");
+    }
+    function loadingTableRemove() {
+        $('td div').removeClass('bg-light text-light')
+        $('td img').removeClass('invisible')
+        // $(".dataTable ").addClass("opa8");
+    }
+
     $("#Refresh").on("click", function () {
         $('#table-mobile').DataTable().ajax.reload();
-        $(".dataTables_scrollBody").addClass("opa2");
+        // loadingTable()
     });
+    function dateRange() {
+        $('#_drMob').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: false,
+            minYear: '2021',
+            maxYear: '2030',
+            showWeekNumbers: false,
+            autoUpdateInput: true,
+            opens: "right",
+            drops: "down",
+            startDate: moment().day(1),
+            endDate: moment().day(7),
+            autoApply: false,
+            alwaysShowCalendars: true,
+            linkedCalendars: false,
+            buttonClasses: "btn btn-sm fontq",
+            applyButtonClasses: "btn-custom fw4 px-3 opa8",
+            cancelClass: "btn-link fw4 text-gris",
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Esta semana': [moment().day(1), moment().day(7)],
+                'Ultima Semana': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                firstDay: 1,
+                alwaysShowCalendars: true,
+                applyButtonClasses: "btn-custom fw5 px-3 opa8",
+            },
+        });
+    }
 
     $('#btnFiltrar').removeClass('d-sm-block');
+    let drmob2 = moment().day(1).format('DD/MM/YYYY') + ' al ' + moment().day(7).format('DD/MM/YYYY')
+    $('#_drMob2').val(drmob2)
 
     $('#table-mobile').DataTable({
         "initComplete": function (settings, json) {
-            $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar">Actualizar</button>')
+            $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar">Actualizar <i class="bi bi-cloud-download"></i></button>')
+            $('.dr').append(`<div class=""><input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
+            dateRange()
+            $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
+                // loadingTable()
+                $('#_drMob2').val($('#_drMob').val())
+                $('#table-mobile').DataTable().ajax.reload();
+            });
         },
         "drawCallback": function (settings) {
-            $(".dataTables_scrollBody").removeClass("opa2");
+            // $(".dataTable ").removeClass("opa8");
+            setTimeout(() => {
+                loadingTableRemove()
+            }, 100);
             $('.form-control-sm').attr('placeholder', 'Buscar')
         },
-        iDisplayLength: -1,
-        bProcessing: true,
+        // iDisplayLength: -1,
+        dom: "<'row'<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-flex align-items-end justify-content-end'f>>" +
+            "<'row'<'col-12'tr>>" +
+            "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>",
         ajax: {
             url: "array_mobile.php",
             type: "POST",
-            dataSrc: "mobile",
+            // dataSrc: "mobile",
             "data": function (data) {
                 data._drMob = $("#_drMob").val();
+                data._drMob2 = $("#_drMob2").val();
             },
         },
         createdRow: function (row, data, dataIndex) {
@@ -37,7 +104,7 @@ $(document).ready(function () {
                 "data": "name"
             },
             {
-                "class": '',
+                "class": 'ls1',
                 "data": "Fecha2"
             },
             {
@@ -45,28 +112,28 @@ $(document).ready(function () {
                 "data": "Fecha"
             },
             {
-                "class": "ls1 fw5",
+                "class": "ls1 fw5 text-center",
                 "data": "time"
-            }, 
+            },
             {
                 "class": "text-center",
                 "data": "mapa"
-            }, 
+            },
             {
                 "class": "text-center",
                 "data": "eventType"
             },
             {
+                "class": "ls1",
                 "data": "phoneid"
             },
         ],
-
+        bProcessing: true,
+        serverSide: true,
         deferRender: true,
-        paging: false,
+        searchDelay: 1500,
+        paging: true,
         searching: true,
-        scrollY: '50vh',
-        scrollX: true,
-        scrollCollapse: true,
         info: true,
         ordering: false,
         language: {
@@ -74,10 +141,9 @@ $(document).ready(function () {
         },
 
     });
-
-    $("#_drMob").on("change", function () {
-        $('#table-mobile').DataTable().ajax.reload(null,false);
-        $(".dataTables_scrollBody").addClass("opa2");
+    $('#table-mobile').on('page.dt', function () {
+        // loadingTable()
+        $(".dataTable ").addClass("opa8");
     });
 
     function initMap() {
@@ -170,7 +236,7 @@ $(document).ready(function () {
 
         $('#zona').val(piczone)
         if (picfoto) {
-            $('.picFoto').html('<img loading="lazy" src= "data:image/png;base64,' +picfoto+ '" class="w150 img-fluid rounded"/>');
+            $('.picFoto').html('<img loading="lazy" src= "data:image/png;base64,' + picfoto + '" class="w150 img-fluid rounded"/>');
         } else {
             $('.picFoto').html('<img loading="lazy" src="../img/user.png" class="img-fluid rounded" alt="Sin Foto" title="Sin Foto">');
         }
@@ -225,7 +291,7 @@ $(document).ready(function () {
             });
 
             $('#rowCreaZona').removeClass('d-none')
-            
+
             $("#CrearZona").bind("submit", function (e) {
                 e.preventDefault();
                 $.ajax({
@@ -285,29 +351,49 @@ $(document).ready(function () {
         $("#map_size").val('5')
         $('#btnCrearZona').removeClass('d-none')
     }
+
+    let loading = `<div class="ml-2 spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+
     $(document).on("click", ".actualizar", function (e) {
         $.ajax({
             type: 'POST',
             url: 'actualizar.php',
             beforeSend: function (data) {
-                ActiveBTN(true, "actualizar", 'Actualizando..', 'Actualizar')
-                notify('Actualizando datos..', 'dark', 1000, 'right')
+                ActiveBTN(true, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
+                notify('Actualizando datos.. ' + loading, 'dark', 20000, 'right')
             },
             success: function (data) {
                 if (data.status == "ok") {
-                    ActiveBTN(false, "actualizar", 'Actualizando..', 'Actualizar')
+                    $.notifyClose();
+                    ActiveBTN(false, ".actualizar", 'Actualizando.. ' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'success', '2000', 'right')
+                    $(".dataTable ").addClass("opa8");
+                    // loadingTable()
                     $('#table-mobile').DataTable().ajax.reload();
                 } else {
-                    ActiveBTN(false, "actualizar", 'Actualizando..', 'Actualizar')
+                    $.notifyClose();
+                    ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'info', '2000', 'right')
                 }
             },
             error: function () {
-                ActiveBTN(false, "actualizar", 'Actualizando..', 'Actualizar')
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
                 notify('Error', 'danger', '2000', 'right')
             }
         });
     });
+
+    $(document).on("click", "#Encabezado", function (e) {
+        // loadingTable()
+        $('#table-mobile').DataTable().ajax.reload();
+    });
+
+
+    $('#table-mobile').dataTable().on('processing.dt', function (e, settings, processing) {
+        loadingTable()
+    });
+
+
 
 });

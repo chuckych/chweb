@@ -1,14 +1,11 @@
 <?php
-require __DIR__ . '../../../config/index.php';
 session_start();
+require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-header("Authorization: 7BB3A26C25687BCD56A9BAF353A78");
 header('Access-Control-Allow-Origin: *');
-
 E_ALL();
-
 
 // $foto = file_get_contents("https://server.xenio.uy/bucket_1/5c991ff84b5d89b23de9caa6/M_20891138_120520211425_3290.png");
 // echo'<img src= "data:image/png;base64,' . base64_encode($foto) . '" />';
@@ -30,33 +27,10 @@ function getEvents($url, $timeout = 10)
     return ($file_contents) ? $file_contents : false;
     exit;
 }
-//     $current_timestamp = '1620832217'; 
-
-//     $timestamp = '1620832217579';
-//     $timestamp = substr($timestamp, 0, 10);
-//     /* CONVERTIMOS TIMESTAMP Y LE DAMOS FORMATO AÑO/DIA/MES */
-//     $datetimeFormat = 'd/m/Y';
-//     /** Formato de fecha */
-//     $datetimeFormat2 = 'Ymd';
-//     $datetimeFormat3 = 'H:i';
-//     /** Formato de fecha2 */
-//     $dates          = new \DateTime();
-//     // $dates          = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
-//     $dates->setTimestamp($timestamp);
-//     // $fech           = $dates->format($datetimeFormat);
-//     $dia             = $dates->format($datetimeFormat2);
-//     $dia2            = $dates->format($datetimeFormat);
-//     $time            = $dates->format('H:i:s');
-
-//     echo 'Ymd: ' . $dia.'<br>';
-//     echo 'd/m/Y: ' . $dia2.'<br>';
-//     echo 'Hora: ' . $time.'<br>';
-
-
-//     echo 'current_timestamp: ' . $date = date("d/m/Y", $current_timestamp);
 
 require __DIR__ . '../../../config/conect_mysql.php';
-
+// sleep(3);
+// PrintRespuestaJson('no', 'No hay registros nuevos');exit;
 $query = "SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1";
 $rs = mysqli_query($link, $query);
 $createdDate = mysqli_fetch_assoc($rs);
