@@ -1,12 +1,12 @@
 $(document).ready(function () {
     $('#Encabezado').addClass('pointer')
-    function loadingTable() {
-        $('td div').addClass('bg-light text-light')
-        $('td img').addClass('invisible')
+    function loadingTable(selectortable) {
+        $(selectortable+' td div').addClass('bg-light text-light')
+        $(selectortable+' td img').addClass('invisible')
     }
-    function loadingTableRemove() {
-        $('td div').removeClass('bg-light text-light')
-        $('td img').removeClass('invisible')
+    function loadingTableRemove(selectortable) {
+        $(selectortable+' td div').removeClass('bg-light text-light')
+        $(selectortable+' td img').removeClass('invisible')
     }
     function dateRange() {
         $('#_drMob').daterangepicker({
@@ -73,16 +73,16 @@ $(document).ready(function () {
         "drawCallback": function (settings) {
             classEfect("#table-mobile tbody", 'animate__animated animate__fadeIn')
             setTimeout(function () {
-                loadingTableRemove()
+                loadingTableRemove('#table-mobile')
             }, 100);
             $('.form-control-sm').attr('placeholder', 'Buscar')
         },
         // iDisplayLength: -1,
-        dom: "<'row'<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-flex align-items-end justify-content-end'f>>" +
+        dom: "<'row'<'col-12 col-sm-8 d-flex align-items-start dr'l><'col-12 col-sm-4 d-flex align-items-start justify-content-end'f>>" +
             "<'row'<'col-12'tr>>" +
             "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>",
         ajax: {
-            url: "array_mobile.php",
+            url: "getRegMobile.php",
             type: "POST",
             // dataSrc: "mobile",
             "data": function (data) {
@@ -230,7 +230,7 @@ $(document).ready(function () {
 
         $('#zona').val(piczone)
         if (picfoto) {
-            $('.picFoto').html('<img loading="lazy" src= "data:image/png;base64,' + picfoto + '" class="w150 img-fluid rounded"/>');
+            $('.picFoto').html('<img loading="lazy" src= "'+ picfoto + '" class="w150 img-fluid rounded"/>');
         } else {
             $('.picFoto').html('<img loading="lazy" src="../img/user.png" class="img-fluid rounded" alt="Sin Foto" title="Sin Foto">');
         }
@@ -354,7 +354,7 @@ $(document).ready(function () {
             url: 'actualizar.php',
             beforeSend: function (data) {
                 ActiveBTN(true, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
-                notify('Actualizando datos.. ' + loading, 'dark', 20000, 'right')
+                notify('Actualizando datos.. ' + loading, 'dark', 60000, 'right')
             },
             success: function (data) {
                 if (data.status == "ok") {
@@ -382,9 +382,60 @@ $(document).ready(function () {
 
 
     tablemobile.on('processing.dt', function (e, settings, processing) {
-        loadingTable()
+        loadingTable('#table-mobile')
     });
 
+    $(document).on("click", ".openModal", function (e) {
+        $('#modalUsuarios').modal('show')
+    });
+    
 
+    // $('#modalUsuarios').on('shown.bs.modal', function () {
+
+        tableUsuarios = $('#tableUsuarios').DataTable({
+            "initComplete": function (settings, json) {
+             
+            },
+            "drawCallback": function (settings) {
+                classEfect("#tableUsuarios tbody", 'animate__animated animate__fadeIn')
+                setTimeout(function () {
+                    loadingTableRemove('#modalUsuarios')
+                }, 100);
+                $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar Usuarios')
+            },
+            // iDisplayLength: -1,
+            dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between bg-dark'fp>>" +
+                "<'row'<'col-12'tr>>" +
+                "<'row'<'col-12 d-flex align-items-center justify-content-between'il>>",
+            ajax: {
+                url: "getUsuariosMobile.php",
+                type: "POST",
+                "data": function (data) {},
+                error: function () { },
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('animate__animated animate__fadeIn align-middle');
+            },
+            columnDefs: [
+                { title: 'Phone ID', className: '', targets: 0 },
+                { title: 'Nombre', className: 'w-100', targets: 1 },
+            ],
+            bProcessing: true,
+            serverSide: true,
+            deferRender: true,
+            searchDelay: 1500,
+            paging: true,
+            searching: true,
+            info: true,
+            ordering: false,
+            language: {
+                "url": "../../js/DataTableSpanishShort2.json"
+            },
+    
+        });
+        tableUsuarios.on('processing.dt', function (e, settings, processing) {
+            loadingTable('#modalUsuarios')
+        });
+    // })
 
 });

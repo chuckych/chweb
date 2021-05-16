@@ -26,40 +26,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mt-4 d-none" id="rowRespuesta">
-                    <div class="col-12">
-                        <span id="respuesta"></span>
-                    </div>
-                </div>
-                <div class="row mt-4 d-none" id="rowCreaZona">
-                    <form action="zonas/insert-zone.php" method="POST" id="CrearZona">
-                        <div class="col-12">
-                        <div class="form-inline">
-                            <input name="lat" type="hidden">
-                            <input name="lng" type="hidden">
-                            <input name="alta_zona" type="hidden" value="true" class="">
-                            <label for="nombre" class="text-nowrap fontq w80">Nombre</label>
-                            <input type="text" class="form-control h40 w300" id="nombre" required name="nombre" placeholder="Nombre de la zona" pattern="[a-zA-Z0-9- _ñ]+">
-                        </div>
-                        <div class="form-inline mt-2">
-                            <label for="metros" class="text-nowrap fontq w80">Radio</label>
-                            <select name="metros" id="metros" class="select2 form-control w300 h40">
-                                <?php
-                                foreach (RADIOS as $key => $value) {
-                                    echo '<option value="' . $value . '">' . $key . '</option>';
-                                }
-                                ?>
-                            </select>
-                        </div>
-                        <div class="form-group row mt-2">
-                            <div class="col-12">
-                                <button type="submit" class="float-right btn btn-custom btn-sm px-3 opa8 fontq" name="submit" value="true" id="btnSubmitZone">Aceptar</button>
-                                <button type="button" class="float-right btn btn-link text-decoration-none text-secondary btn-sm px-3 fontq" id="cancelZone">Cancelar</button>
-                            </div>
-                        </div>
-                        </div>
-                    </form>
-                </div>
                 <div class="row bg-white">
                     <div id="mapzone" class="m-3 img-fluid rounded"></div>
                 </div>

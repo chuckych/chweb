@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '../../../config/index.php';
 session_start();
-header("Content-Type: application/json");
+
 header('Access-Control-Allow-Origin: *');
 ultimoacc();
 secure_auth_ch_json();
@@ -91,13 +91,19 @@ if (!empty($arrayData)) {
         $appVersion   = $valor['appVersion'];
         $attphoto     = $valor['attphoto'];
 
-
-        $query = "INSERT INTO reg_ (phoneid,createdDate,fechaHora,lat,lng,gpsStatus,eventType,_id,regid,appVersion,attphoto) VALUES('$phoneid', '$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$_id', '$regid', '$appVersion', '$attphoto')";
+        /** Guardamos la foto del base64 */
+        $f = fopen('fotos/' . $createdDate.'_'.$phoneid . '.png', "w") or die("Unable to open file!");
+        fwrite($f, base64_decode($attphoto));
+        fclose($f);
+        /** */
+        $query = "INSERT INTO reg_ (phoneid,createdDate,fechaHora,lat,lng,gpsStatus,eventType,_id,regid,appVersion) VALUES('$phoneid', '$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$_id', '$regid', '$appVersion')";
         (mysqli_query($link, $query));
     }
-    PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: '.count($arrayData));
+    header("Content-Type: application/json");
+    PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData));
     mysqli_close($link);
     exit;
-}else{
+} else {
+    header("Content-Type: application/json");
     PrintRespuestaJson('no', 'No hay registros nuevos');
 }

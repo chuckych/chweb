@@ -67,6 +67,7 @@ if ($totalRecords > 0) {
 }
 
 // print_r(json_encode($arrayData)); exit;
+$imgfoto = ($valor['face_url']) ? "https://server.xenio.uy/" . $valor['face_url'] : '../img/user.png';
 
 foreach ($arrayData as $key => $valor) {
     $dia  = Fecha_String($valor['fechaHora']);
@@ -76,9 +77,11 @@ foreach ($arrayData as $key => $valor) {
     $iconMapa        = ($valor['lat'] != '0') ? '<a href="' . $LinkMapa . '" target="_blank" rel="noopener noreferrer">' . imgIcon('markermaps', 'Ver Mapa', '') . '</a>' : imgIcon('nomarker', 'Sin GPS', 'w20');
    // $iconMapa        = ($valor['lat'] != '0') ? '<a href="' . $LinkMapa . '" target="_blank" rel="noopener noreferrer">' . imgIcon('marker', 'Ver Mapa', 'w20') . '</a>' : imgIcon('nomarker', 'Sin GPS', 'w20');
     $gps             = ($valor['gpsStatus'] != '0') ? 'Ok' : 'Sin GPS';
-    $imgfoto = '<img loading="lazy" src= "data:image/png;base64,' . ($valor['attphoto']) . '" class="shadow-sm w40 h40 scale radius img-fluid pointer"/>';
 
-    $foto = '<span class="pic" datafoto="' . $valor['attphoto'] . '" dataname="' . $valor['nombre'] . '" datauid="' . $valor['phoneid'] . '" datacerteza="" datacerteza2="" datainout="" datazone="" datahora="' . $time . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ($valor['eventType']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . ($imgfoto) . '</span>';
+    $imgfoto = "fotos/" . $valor['createdDate'].'_'.$valor['phoneid'].'.png';
+    //$imgfoto = '<img loading="lazy" src= "data:image/png;base64,' . ($valor['attphoto']) . '" class="shadow-sm w40 h40 scale radius img-fluid pointer"/>';
+
+    $foto = '<span class="pic" datafoto="' . $imgfoto . '" dataname="' . $valor['nombre'] . '" datauid="' . $valor['phoneid'] . '" datacerteza="" datacerteza2="" datainout="" datazone="" datahora="' . $time . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ($valor['eventType']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>';
 
     $respuesta[] = array(
         'createdDate' => '<div>'.$valor['createdDate'].'</div>',

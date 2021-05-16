@@ -58,6 +58,11 @@
               
                 ?>
         <input type="hidden" id="_drMob2">
+        <div class="row pt-3">
+            <div class="col-12">
+                <button type="button" class="btn btn-custom btn-sm px-3 openModal">Usuarios <i class="bi bi-people-fill"></i></button>
+            </div>
+        </div>
         <div class="row bg-white py-3 radius" id="RowTableMobile">
 
             <div class="col-12 table-responsive">
@@ -82,6 +87,7 @@
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require 'modal.php';
+    require __DIR__ . "/usuarios.html";
     require __DIR__ . "../../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "../../../js/DateRanger.php";
