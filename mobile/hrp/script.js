@@ -1,12 +1,12 @@
 $(document).ready(function () {
     $('#Encabezado').addClass('pointer')
     function loadingTable(selectortable) {
-        $(selectortable+' td div').addClass('bg-light text-light')
-        $(selectortable+' td img').addClass('invisible')
+        $(selectortable + ' td div').addClass('bg-light text-light')
+        $(selectortable + ' td img').addClass('invisible')
     }
     function loadingTableRemove(selectortable) {
-        $(selectortable+' td div').removeClass('bg-light text-light')
-        $(selectortable+' td img').removeClass('invisible')
+        $(selectortable + ' td div').removeClass('bg-light text-light')
+        $(selectortable + ' td img').removeClass('invisible')
     }
     function dateRange() {
         $('#_drMob').daterangepicker({
@@ -57,13 +57,13 @@ $(document).ready(function () {
     }
 
     $('#btnFiltrar').removeClass('d-sm-block');
-    let drmob2 = moment().day(1).format('DD/MM/YYYY') + ' al ' + moment().day(7).format('DD/MM/YYYY')
+    let drmob2 = $('#min').val() + ' al ' + $('#max').val()
     $('#_drMob2').val(drmob2)
 
     tablemobile = $('#table-mobile').DataTable({
         "initComplete": function (settings, json) {
-            $('#table-mobile_filter').prepend('<button class="btn btn-sm btn-outline-custom border fontq actualizar h35 px-3">Actualizar <i class="bi bi-cloud-download"></i></button>')
-            $('.dr').append(`<div class=""><input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
+            $('#table-mobile_filter').append('<button data-titlel="Usuarios"type="button" class="h35 mx-1 btn btn-custom btn-sm px-3 openModal"><i class="bi bi-people-fill"></i></button><button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3"><i class="bi bi-cloud-download"></i></button>')
+            $('.dr').append(`<div><input type="text" readonly  class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
             dateRange()
             $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
                 $('#_drMob2').val($('#_drMob').val())
@@ -78,7 +78,7 @@ $(document).ready(function () {
             $('.form-control-sm').attr('placeholder', 'Buscar')
         },
         // iDisplayLength: -1,
-        dom: "<'row'<'col-12 col-sm-8 d-flex align-items-start dr'l><'col-12 col-sm-4 d-flex align-items-start justify-content-end'f>>" +
+        dom: "<'row'<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-flex align-items-start justify-content-end'f>>" +
             "<'row'<'col-12'tr>>" +
             "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>",
         ajax: {
@@ -129,7 +129,7 @@ $(document).ready(function () {
         bProcessing: true,
         serverSide: true,
         deferRender: true,
-        searchDelay: 1500,
+        searchDelay: 1000,
         paging: true,
         searching: true,
         info: true,
@@ -137,8 +137,8 @@ $(document).ready(function () {
         language: {
             "url": "../../js/DataTableSpanishShort2.json"
         },
-
     });
+
 
     function initMap() {
 
@@ -230,7 +230,7 @@ $(document).ready(function () {
 
         $('#zona').val(piczone)
         if (picfoto) {
-            $('.picFoto').html('<img loading="lazy" src= "'+ picfoto + '" class="w150 img-fluid rounded"/>');
+            $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
         } else {
             $('.picFoto').html('<img loading="lazy" src="../img/user.png" class="img-fluid rounded" alt="Sin Foto" title="Sin Foto">');
         }
@@ -353,18 +353,18 @@ $(document).ready(function () {
             type: 'POST',
             url: 'actualizar.php',
             beforeSend: function (data) {
-                ActiveBTN(true, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
+                ActiveBTN(true, ".actualizar", + loading, '<i class="bi bi-cloud-download"></i>')
                 notify('Actualizando datos.. ' + loading, 'dark', 60000, 'right')
             },
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    ActiveBTN(false, ".actualizar", 'Actualizando.. ' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
+                    ActiveBTN(false, ".actualizar",  + loading, '<i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'success', '2000', 'right')
-                    tablemobile.ajax.reload();
+                    minmaxDate()
                 } else {
                     $.notifyClose();
-                    ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
+                    ActiveBTN(false, ".actualizar", + loading, '<i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'info', '2000', 'right')
                 }
             },
@@ -388,54 +388,72 @@ $(document).ready(function () {
     $(document).on("click", ".openModal", function (e) {
         $('#modalUsuarios').modal('show')
     });
-    
 
-    // $('#modalUsuarios').on('shown.bs.modal', function () {
 
-        tableUsuarios = $('#tableUsuarios').DataTable({
-            "initComplete": function (settings, json) {
-             
+
+    tableUsuarios = $('#tableUsuarios').DataTable({
+        "initComplete": function (settings, json) {
+
+        },
+        "drawCallback": function (settings) {
+            classEfect("#tableUsuarios tbody", 'animate__animated animate__fadeIn')
+            setTimeout(function () {
+                loadingTableRemove('#modalUsuarios')
+            }, 100);
+            $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar Usuarios')
+        },
+        // iDisplayLength: -1,
+        dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+            "<'row'<'col-12'tr>>" +
+            "<'row'<'col-12 d-flex align-items-center justify-content-between'ip>>",
+        ajax: {
+            url: "getUsuariosMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
+        },
+        columnDefs: [
+            { title: 'Phone ID', className: '', targets: 0 },
+            { title: 'Nombre', className: 'w-100', targets: 1 },
+        ],
+        bProcessing: true,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1500,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json"
+        },
+
+    });
+    tableUsuarios.on('processing.dt', function (e, settings, processing) {
+        loadingTable('#modalUsuarios')
+    });
+
+    function minmaxDate() {
+
+        $.ajax({
+            type: 'POST',
+            url: 'minmaxdate.php',
+            success: function (data) {
+                let t = data
+                let min = t.min
+                let max = t.max
+                let dr = min + ' al ' + max
+                $('#min').val(min)
+                $('#max').val(max)
+                $('#_drMob2').val(dr)
+                $('#_drMob').val(dr)
+                dateRange()
+                tablemobile.ajax.reload();
             },
-            "drawCallback": function (settings) {
-                classEfect("#tableUsuarios tbody", 'animate__animated animate__fadeIn')
-                setTimeout(function () {
-                    loadingTableRemove('#modalUsuarios')
-                }, 100);
-                $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar Usuarios')
-            },
-            // iDisplayLength: -1,
-            dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between bg-dark'fp>>" +
-                "<'row'<'col-12'tr>>" +
-                "<'row'<'col-12 d-flex align-items-center justify-content-between'il>>",
-            ajax: {
-                url: "getUsuariosMobile.php",
-                type: "POST",
-                "data": function (data) {},
-                error: function () { },
-            },
-            createdRow: function (row, data, dataIndex) {
-                $(row).addClass('animate__animated animate__fadeIn align-middle');
-            },
-            columnDefs: [
-                { title: 'Phone ID', className: '', targets: 0 },
-                { title: 'Nombre', className: 'w-100', targets: 1 },
-            ],
-            bProcessing: true,
-            serverSide: true,
-            deferRender: true,
-            searchDelay: 1500,
-            paging: true,
-            searching: true,
-            info: true,
-            ordering: false,
-            language: {
-                "url": "../../js/DataTableSpanishShort2.json"
-            },
-    
         });
-        tableUsuarios.on('processing.dt', function (e, settings, processing) {
-            loadingTable('#modalUsuarios')
-        });
-    // })
+    }
 
 });
