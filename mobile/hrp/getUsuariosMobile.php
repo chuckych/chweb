@@ -14,7 +14,7 @@ $params = $columns = $totalRecords;
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query = "SELECT reg_user_.phoneid as 'phoneid', reg_user_.nombre as 'nombre' FROM reg_user_ WHERE reg_user_.ID > 0";
+$sql_query = "SELECT reg_user_.phoneid as 'phoneid', reg_user_.nombre as 'nombre', (SELECT COUNT(1) FROM reg_ WHERE reg_.phoneid = reg_user_.phoneid) AS 'cant' FROM reg_user_ WHERE reg_user_.ID > 0";
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
@@ -39,8 +39,9 @@ $queryRecords = mysqli_query($link, $sqlRec);
 if ($totalRecords > 0) {
     while ($r = mysqli_fetch_assoc($queryRecords)) {
         $arrayData[] = array(
-            'phoneid'     => $r['phoneid'],
-            'nombre'      => $r['nombre'],
+            'phoneid' => $r['phoneid'],
+            'nombre'  => $r['nombre'],
+            'cant'    => $r['cant'],
         );
     }
 }
@@ -51,6 +52,7 @@ foreach ($arrayData as $key => $valor) {
     $respuesta[] = array(
         '<div>' . $valor['phoneid'] . '</div>',
         '<div>' . $valor['nombre'] . '</div>',
+        '<div>' . $valor['cant'] . '</div>',
     );
 }
 // $respuesta = array('mobile' => $respuesta);

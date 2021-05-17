@@ -582,6 +582,7 @@
  .h35 {
      height: 35px!important
  }
+
  .h30 {
      height: 30px!important
  }
@@ -1070,7 +1071,7 @@
      display: inline-block !important;
      padding: 2px !important;
      transform: rotate(45deg) !important;
-    -webkit-transform: rotate(45deg) !important;
+     -webkit-transform: rotate(45deg) !important;
  }
 
  /* .dropdown-toggle::after {
@@ -1432,6 +1433,66 @@
  [data-titler] {
      position: relative;
  }
- .woo-motivation-satisfaction{
+
+ .woo-motivation-satisfaction {
      display: none !important;
+ }
+
+ .dotting {
+     display: inline-block;
+     width: 10px;
+     min-height: 2px;
+     padding-right: 2px;
+     border-left: 2px solid currentColor;
+     border-right: 2px solid currentColor;
+     background-color: currentColor;
+     background-clip: content-box;
+     box-sizing: border-box;
+     -webkit-animation: dot 4s infinite step-start both;
+     animation: dot 4s infinite step-start both;
+ }
+
+ .dotting:before {
+     content: '...';
+ }
+
+ /* IE8 */
+
+ .dotting::before {
+     content: '';
+ }
+
+ :root .dotting {
+     margin-left: 2px;
+     padding-left: 2px;
+ }
+
+ /* IE9+ */
+
+ @-webkit-keyframes dot {
+     25% {
+         border-color: transparent;
+         background-color: transparent;
+     }
+     50% {
+         border-right-color: transparent;
+         background-color: transparent;
+     }
+     75% {
+         border-right-color: transparent;
+     }
+ }
+
+ @keyframes dot {
+     25% {
+         border-color: transparent;
+         background-color: transparent;
+     }
+     50% {
+         border-right-color: transparent;
+         background-color: transparent;
+     }
+     75% {
+         border-right-color: transparent;
+     }
  }

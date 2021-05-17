@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    actualizar()
+});
     $('#Encabezado').addClass('pointer')
     function loadingTable(selectortable) {
         $(selectortable + ' td div').addClass('bg-light text-light')
@@ -56,7 +58,7 @@ $(document).ready(function () {
         });
     }
 
-    $('#btnFiltrar').removeClass('d-sm-block');
+    // $('#btnFiltrar').removeClass('d-sm-block');
     let drmob2 = $('#min').val() + ' al ' + $('#max').val()
     $('#_drMob2').val(drmob2)
 
@@ -199,10 +201,10 @@ $(document).ready(function () {
         cityCircle = new google.maps.Circle(sunCircle)
         cityCircle.bindTo('center', marker, 'position');
     }
-    $('.select2').select2({
-        minimumResultsForSearch: -1,
-        placeholder: "Seleccionar"
-    });
+    // $('.select2').select2({
+    //     minimumResultsForSearch: -1,
+    //     placeholder: "Seleccionar"
+    // });
 
     $(document).on("click", ".pic", function (e) {
 
@@ -335,36 +337,30 @@ $(document).ready(function () {
     })
 
     function clean() {
-        // $('#mapzone').addClass('d-none');
-        $("#btnSubmitZone").prop("disabled", false);
-        $("#btnSubmitZone").html("Aceptar");
-        $("input[name=nombre]").val('');
-        $('.select2').val('200').trigger("change");
-        $('#rowRespuesta').addClass('d-none')
-        $("#rowCreaZona").addClass("d-none");
+        $('#mapzone').addClass('d-none');
+        // $('.select2').val('200').trigger("change");
         $("#map_size").val('5')
-        $('#btnCrearZona').removeClass('d-none')
     }
 
-    let loading = `<div class="ml-2 spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+    let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 
-    $(document).on("click", ".actualizar", function (e) {
+    function actualizar() {
         $.ajax({
             type: 'POST',
             url: 'actualizar.php',
             beforeSend: function (data) {
-                ActiveBTN(true, ".actualizar", + loading, '<i class="bi bi-cloud-download"></i>')
-                notify('Actualizando datos.. ' + loading, 'dark', 60000, 'right')
+                ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
             },
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    ActiveBTN(false, ".actualizar",  + loading, '<i class="bi bi-cloud-download"></i>')
+                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'success', '2000', 'right')
                     minmaxDate()
                 } else {
                     $.notifyClose();
-                    ActiveBTN(false, ".actualizar", + loading, '<i class="bi bi-cloud-download"></i>')
+                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
                     notify(data.Mensaje, 'info', '2000', 'right')
                 }
             },
@@ -374,6 +370,10 @@ $(document).ready(function () {
                 notify('Error', 'danger', '2000', 'right')
             }
         });
+    }
+
+    $(document).on("click", ".actualizar", function (e) {
+        actualizar()
     });
 
     $(document).on("click", "#Encabezado", function (e) {
@@ -387,53 +387,6 @@ $(document).ready(function () {
 
     $(document).on("click", ".openModal", function (e) {
         $('#modalUsuarios').modal('show')
-    });
-
-
-
-    tableUsuarios = $('#tableUsuarios').DataTable({
-        "initComplete": function (settings, json) {
-
-        },
-        "drawCallback": function (settings) {
-            classEfect("#tableUsuarios tbody", 'animate__animated animate__fadeIn')
-            setTimeout(function () {
-                loadingTableRemove('#modalUsuarios')
-            }, 100);
-            $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar Usuarios')
-        },
-        // iDisplayLength: -1,
-        dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-            "<'row'<'col-12'tr>>" +
-            "<'row'<'col-12 d-flex align-items-center justify-content-between'ip>>",
-        ajax: {
-            url: "getUsuariosMobile.php",
-            type: "POST",
-            "data": function (data) { },
-            error: function () { },
-        },
-        createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
-        },
-        columnDefs: [
-            { title: 'Phone ID', className: '', targets: 0 },
-            { title: 'Nombre', className: 'w-100', targets: 1 },
-        ],
-        bProcessing: true,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        paging: true,
-        searching: true,
-        info: true,
-        ordering: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json"
-        },
-
-    });
-    tableUsuarios.on('processing.dt', function (e, settings, processing) {
-        loadingTable('#modalUsuarios')
     });
 
     function minmaxDate() {
@@ -456,4 +409,4 @@ $(document).ready(function () {
         });
     }
 
-});
+// });

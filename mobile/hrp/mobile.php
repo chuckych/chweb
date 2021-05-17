@@ -94,10 +94,11 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
     <!-- <script src="../js/lib/geocomplete/jquery.geocomplete.js"></script> -->
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="../../js/select2.min.js"></script>
+    <!-- <script src="../../js/select2.min.js"></script> -->
     <!-- <script src="script-min.js"></script> -->
     <script src="script.js?v=<?= vjs() ?>"></script>
-    <script src="FicMobExcel.js?v=<?= vjs() ?>"></script>
+    <script src="script_user.js?v=<?= vjs() ?>"></script>
+    <!-- <script src="FicMobExcel.js?v=<?= vjs() ?>"></script> -->
 
 </body>
 

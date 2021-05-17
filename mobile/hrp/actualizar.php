@@ -30,14 +30,19 @@ function getEvents($url, $timeout = 10)
 
 require __DIR__ . '../../../config/conect_mysql.php';
 
-// sleep(1); PrintRespuestaJson('ok', '<div class="animate__animated animate__fadeInDown">Se actualizaron registros.<br/>Total de registros nuevos: 10</div>');exit;
+// sleep(6); 
+// header("Content-Type: application/json");
+// PrintRespuestaJson('ok', 'Se actualizaron registros');
+// exit;
+
+
 $query = "SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1";
 $rs = mysqli_query($link, $query);
 $createdDate = mysqli_fetch_assoc($rs);
 $createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $createdDate['createdDate'];
 mysqli_free_result($rs);
 
-// PrintRespuestaJson('error', $createdDate);exit;
+// PrintRespuestaJson('error', $createdDate); exit;
 
 $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);

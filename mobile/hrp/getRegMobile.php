@@ -73,6 +73,7 @@ foreach ($arrayData as $key => $valor) {
     $dia  = Fecha_String($valor['fechaHora']);
     $dia2 = fechformat($valor['fechaHora']);
     $time = HoraFormat($valor['fechaHora'], false);
+    $time_second = HoraFormat($valor['fechaHora'], true);
     $LinkMapa        = "https://www.google.com/maps/place/" . $valor['lat'] . "," . $valor['lng'];
     $iconMapa        = ($valor['lat'] != '0') ? '<a href="' . $LinkMapa . '" target="_blank" rel="noopener noreferrer">' . imgIcon('markermaps', 'Ver Mapa', '') . '</a>' : imgIcon('nomarker', 'Sin GPS', 'w20');
     // $iconMapa        = ($valor['lat'] != '0') ? '<a href="' . $LinkMapa . '" target="_blank" rel="noopener noreferrer">' . imgIcon('marker', 'Ver Mapa', 'w20') . '</a>' : imgIcon('nomarker', 'Sin GPS', 'w20');
@@ -94,7 +95,7 @@ foreach ($arrayData as $key => $valor) {
         'eventType'   => '<div>' . $valor['eventType'],
         'uid'         => '<div>' . $valor['phoneid'] . '</div>',
         'name'        => '<div>' . $valor['nombre'] . '</div>',
-        'time'        => '<div>' . $time . '</div>',
+        'time'        => '<div data-titler="'.$time_second.'">' . $time . '</div>',
         'gps'         => '<div>' . $gps . '</div>'
     );
 }
