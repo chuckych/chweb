@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.129';
+    return 'v0.0.130';
 }
 function E_ALL()
 {
@@ -616,7 +616,7 @@ function hoy()
 }
 function FechaString($var)
 {
-    $date        = date_create("$var");
+    $date        = date_create($var);
     $FormatFecha = date_format($date, "Ymd");
     return $FormatFecha;
 }
@@ -899,11 +899,11 @@ function HoraFormat($FechaHora, $second = true)
     if ($second) {
         $dato = date_create($FechaHora);
         $var  = date_format($dato, "H:i:s");
-    }else{
+    } else {
         $dato = date_create($FechaHora);
         $var  = date_format($dato, "H:i");
     }
-    return $var; 
+    return $var;
 }
 function FechaFormatVar($FechaHora, $var)
 {
@@ -1585,7 +1585,11 @@ function audito_ch($AudTipo, $AudDato)
     $usuario    = explode("-", $_SESSION["user"]);
 
     // $AudUser   = substr($_SESSION["user"], 4, 10);
-    $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
+    if (isset($usuario[1])) {
+        $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
+    } else {
+        $AudUser   = $_SESSION["user"];
+    }
     // $AudTerm   = gethostname();
     $AudTerm   = $ipCliente;
     $AudModu   = 21;
@@ -2220,8 +2224,7 @@ function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión');
-        echo json_encode($data);
+        PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
@@ -2253,8 +2256,7 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión');
-        echo json_encode($data);
+        PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
@@ -2286,8 +2288,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión');
-        echo json_encode($data);
+        PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
@@ -2319,8 +2320,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión..');
-        echo json_encode($data);
+        PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
@@ -2356,8 +2356,8 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
-        $data = array('status' => 'error', 'dato' => 'No hay Conexión');
-        echo json_encode($data);
+        PrintRespuestaJson('error', 'No hay Conexión..');
+        exit;
         exit;
     }
     curl_close($ch);

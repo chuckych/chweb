@@ -46,9 +46,10 @@ UnsetPost('CierreFech');
 $CierreFech = test_input($_POST['CierreFech']);
 
 /** Formato Variables */
+
     $LegFeNa    = !empty(($LegFeNa)) ? FechaString($LegFeNa) : '17530101';
-    $LegFeIn    = !empty(($LegFeIn)) ? FechaString($LegFeIn) : '17530101';
-    $LegFeEg    = !empty(($LegFeEg)) ? FechaString($LegFeEg) : '17530101';
+    $LegFeIn    = !empty(($LegFeIn)) ? dr_fecha($LegFeIn) : '17530101';
+    $LegFeEg    = !empty(($LegFeEg)) ? dr_fecha($LegFeEg) : '17530101';
     $CierreFech = !empty(($CierreFech)) ? FechaString($CierreFech) : '17530101';
 
     if((empty($LegDocu)) && !empty($LegCUIT)){

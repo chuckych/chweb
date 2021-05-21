@@ -1,14 +1,11 @@
 <?php
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
 require __DIR__ . '../../config/index.php';
 secure_auth_ch();
+E_ALL();
 $Modulo='12';
 ExisteModRol($Modulo);
-// $getData = 'GetFichadas';
-// $_datos  = 'fichadas';
-$bgcolor = 'bg-custom';
+$FirstDate = '2000-01-01';
 define("TIPO_PER", [
     'Todos'  => '0',
     'Mensuales'  => '1',

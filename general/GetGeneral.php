@@ -220,7 +220,13 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         'Gen_Lega'      => $Gen_Lega,
         'Gen_Nombre'    => $Gen_Nombre,
         'Fecha'         => $Gen_Fecha,
-        'FechaDia'      => $Gen_Fecha . '<br />' . ($Gen_Dia_Semana),
+        'FechaDia'     => '<span 
+            data-nombre="'.$Gen_Nombre.'" 
+            data-lega="'.$Gen_Lega.'"
+            data-fechaini="'.($Gen_Fecha2).'"
+            data-fechafin="'.($Gen_Fecha2).'"
+            data-procLega="true"
+        title="Procesar registro: ' . $Gen_Nombre . '. '.$Gen_Fecha.'" class="pointer procReg">' . $Gen_Fecha . '<br />' . ($Gen_Dia_Semana) . '</span>',
         'Fechastr'      => $Gen_Fecha2,
         'Primera'       => $entrada['Fic'] . '<br />' . $salida['Fic'],
         'Novedades'     => $Novedades2,

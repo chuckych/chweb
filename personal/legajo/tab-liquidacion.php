@@ -12,11 +12,29 @@
                     ?>
                 </select>
                 <!-- Tipo personal -->
+
+                <?php 
+
+                if($persLegFeEg){
+                    $persLegFeEg = Fech_Format_Var($persLegFeEg, 'd/m/Y');
+                } else{
+                    $persLegFeEg = '';
+                }
+                if($persLegFeIn){
+                    $persLegFeIn = Fech_Format_Var($persLegFeIn, 'd/m/Y');
+                } else{
+                    $persLegFeIn = '';
+                }
+                
+                ?>
+                
                 <label for="LegFeIn" class="mx-2">Ingreso</label>
-                <input class="form-control" type="date" value="<?= $persLegFeIn ?>" id="LegFeIn" name="LegFeIn" max="<?=date('Y-m-d')?>">
+                <input class="form-control text-center ls1" type="text" id="LegFeIn" name="LegFeIn" value="<?= ($persLegFeIn) ?>">
+                <!-- <input class="form-control text-center ls1" type="text" value="<?= $persLegFeIn ?>" id="LegFeIn" name="LegFeIn"> -->
                 <span id="trash_LegFeIn" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                 <label for="LegFeEg" class="mx-2">Egreso</label>
-                <input class="form-control" type="date" value="<?= $persLegFeEg ?>" id="LegFeEg" name="LegFeEg" max="<?=date('Y-m-d')?>">
+                <input class="form-control text-center ls1" type="text" value="<?= ($persLegFeEg) ?>" id="LegFeEg" name="LegFeEg">
+                <!-- <input class="form-control" type="date" value="<?= ($persLegFeEg) ?>" id="LegFeEg" name="LegFeEg" max="<?=date('Y-m-d')?>"> -->
                 <span id="trash_LegFeEg" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
             </div>
         </div>

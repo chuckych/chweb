@@ -90,7 +90,7 @@
                             <div class="form-inline mt-3">
                                 <!-- Fecha de cierre -->
                                 <label for="Sucur" class="mr-2 w120">Fecha de cierre</label>
-                                <input type="date" name="cierre" id="cierre" class="form-control w150" value="<?= date('Y-m-d') ?>">
+                                <input type="text" name="cierre" id="cierre" class="form-control h40 ls1 text-center">
                             </div>
                             <div class="form-inline mt-3">
                                 <!-- Eliminar Cierres -->
@@ -144,6 +144,8 @@
     <?php
     require __DIR__ . "../../js/jquery.php";
     require __DIR__ . "../../js/DataTable.php";
+    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
+    require __DIR__ . "../../js/DateRanger.php";
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

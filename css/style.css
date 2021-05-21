@@ -1496,3 +1496,10 @@
          border-right-color: transparent;
      }
  }
+ [data-notify="container"] {
+	font-size: .8rem !important;
+    font-weight: 500 !important;
+    min-height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+}

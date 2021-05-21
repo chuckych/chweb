@@ -2,12 +2,19 @@
 // $PeriLiq = PeriLiq();
 // $MensDesde=$PeriLiq['MensDesde'];
 // $MensHasta=$PeriLiq['MensHasta'];
-$FechaIni  = $FechaIni ?? '';
-$FechaFin  = $FechaFin ?? '';
-$FirstYear = $FirstYear ?? '';
-$FirstDate = $FirstDate ?? '';
-$maxDate   = $maxDate ?? '';
-$maxYear   = $maxYear ?? '';
+// $FechaIni  = $FechaIni ?? '';
+// $FechaFin  = $FechaFin ?? '';
+// $FirstYear = $FirstYear ?? '';
+// $FirstDate = $FirstDate ?? '';
+// $maxDate   = $maxDate ?? '';
+// $maxYear   = $maxYear ?? '';
+$date      = date('Y-m-d');
+$FirstYear = $FirstYear ?? date('Y');
+$maxYear   = $maxYear ?? date('Y');
+$FirstDate = $FirstDate ?? ($date);
+$maxDate   = $maxDate ?? ($date);
+$FechaIni  = $FechaIni ?? ($date);
+$FechaFin  = $FechaFin ?? ($date);
 ?>
 <!-- moment.min.js -->
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
@@ -18,20 +25,21 @@ $maxYear   = $maxYear ?? '';
 <script>
     $(function() {
         moment().locale('es');
+
         $('input[name="_dr"]').daterangepicker({
-            singleDatePicker : false,
-            showDropdowns    : false,
-            minYear          : <?= $FirstYear ?>,
-            maxYear          : <?= $maxYear ?>,
-            showWeekNumbers  : false,
-            autoUpdateInput  : true,
-            opens            : "left",
-            startDate        : '<?= fechformat($FechaIni) ?>',
-            endDate          : '<?= fechformat($FechaFin) ?>',
-            autoApply        : true,
-            minDate          : "<?= fechformat($FirstDate) ?>",
-            maxDate          : "<?= fechformat($maxDate) ?>",
-            linkedCalendars  : false,
+            singleDatePicker: false,
+            showDropdowns: false,
+            minYear: <?= $FirstYear ?>,
+            maxYear: <?= $maxYear ?>,
+            showWeekNumbers: false,
+            autoUpdateInput: true,
+            opens: "left",
+            startDate: '<?= fechformat($FechaIni) ?>',
+            endDate: '<?= fechformat($FechaFin) ?>',
+            autoApply: true,
+            minDate: '<?= fechformat($FirstDate) ?>',
+            maxDate: '<?= fechformat($maxDate) ?>',
+            linkedCalendars: false,
             ranges: {
                 'Hoy': [moment(), moment()],
                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],

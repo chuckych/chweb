@@ -143,6 +143,8 @@
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTNov">Novedades</span>
                                         <form action="insert.php" method="POST" class="Form_Novedad d-none">
+                                        <input type="hidden" name="_nt" id="novTipo">
+                                        <input type="hidden" name="_nc" id="novCate">
                                             <div class="mb-2 d-flex align-items-center">
                                                 <input type="hidden" name="alta_novedad" id="alta_novedad">
                                                 <input type="hidden" name="datos_novedad" class="datos_novedad" id="datos_novedad" value="">

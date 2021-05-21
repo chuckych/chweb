@@ -92,11 +92,13 @@
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "../../../js/jquery.php";
     require __DIR__ . "../../../js/DataTable.php";
+    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
+    require __DIR__ . "../../../js/DateRanger.php";
     ?>
-    <script src="js/enviar.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <script src="..\..\js\bootstrap-notify-master\bootstrap-notify.min.js"></script>
+    <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
+    <script src="js/enviar.js?v=<?=vjs()?>"></script>
     <?php
     $opt2 = array(
         'MinLength' => 0, 'SelClose' => 0, 'MaxInpLength' => 10, 'delay' => 250
@@ -118,9 +120,18 @@
         });
     </script>
     <?php require __DIR__ . "/js/valSelect.php"; ?>
+
     <script>
         $('#label_LegMail').tooltip('show');
+        singleDatePicker('#LegFeIn', 'center', 'down')
+        singleDatePicker('#LegFeEg', 'center', 'down')
 
+        <?php if (!$persLegFeEg) {
+            echo "$('#LegFeEg').val('');";
+        } 
+        if (!$persLegFeIn) {
+            echo "$('#LegFeIn').val('');";
+        } ?>
         /** Select Naciones */
         $(document).ready(function() {
             $(".selectjs_naciones").select2({
@@ -301,7 +312,7 @@
         $('.selectjs_secciones').on('select2:select', function(e) {
             $("#trash_secc").removeClass("d-none");
         });
-        
+
         $('#empresa-tab').on('shown.bs.tab', function(e) {
             /** Select Empresas */
             $(document).ready(function() {

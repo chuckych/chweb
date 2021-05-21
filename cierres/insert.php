@@ -30,7 +30,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_cierre'] == 'true'))
     FusNuloPOST('Grup', '');
     FusNuloPOST('Sucur', '');
     $FechaHora = date('Ymd H:i:s');
-    $CierreFech = test_input(FechaString($_POST['cierre']));
+    // $CierreFech = test_input(FechaString($_POST['cierre']));
+    $CierreFech  = test_input(dr_fecha($_POST['cierre']));
 
     // $legajo = !empty(($_POST['legajo'])) ? implode(',', $_POST['legajo']):''; 
 

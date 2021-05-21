@@ -65,7 +65,13 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
     $pers_nombre   = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
     $data[] = array(
         'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn pointer p-0 fontq text-dark fw4">' . $pers_legajo . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
-        'pers_nombre' => '<span class="animate__animated animate__fadeIn">' . $pers_nombre . '</span>',
+        'pers_nombre' => '<span 
+        data-nombre="'.$pers_nombre.'" 
+        data-lega="'.$pers_legajo.'"
+        data-fechaini="'.($FechaIni).'"
+        data-fechafin="'.($FechaFin).'"
+        data-procLega=""
+        title="Procesar registro: ' . $pers_nombre . '. '.fechformat($FechaIni).' al '.fechformat($FechaFin).'"  class="animate__animated animate__fadeIn pointer procReg">' . $pers_nombre . '</span>',
         'null'        => '',
     );
 }
@@ -75,7 +81,13 @@ if (!empty($Per2)) {
     WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")) {
         $data[] = array(
             'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $Per3 . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
-            'pers_nombre' => '<span class="animate__animated animate__fadeIn text-danger fw5">Legajo inválido</span>',
+            'pers_nombre' => '<span 
+            data-nombre="'.$pers_nombre.'" 
+            data-lega="'.$pers_legajo.'"
+            data-fechaini="'.($FechaIni).'"
+            data-fechafin="'.($FechaFin).'"
+            data-procLega=""
+            title="Procesar registro: ' . $pers_nombre . '. '.fechformat($FechaIni).' al '.fechformat($FechaFin).'" class="animate__animated animate__fadeIn text-danger fw5">Legajo inválido</span>',
             'null'        => '',
         );
     }

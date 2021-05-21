@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    actualizar()
+    // actualizar()
 });
     $('#Encabezado').addClass('pointer')
     function loadingTable(selectortable) {
@@ -356,18 +356,18 @@ $(document).ready(function () {
                 if (data.status == "ok") {
                     $.notifyClose();
                     ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                    notify(data.Mensaje, 'success', '2000', 'right')
+                    notify(data.Mensaje, 'success', 2000, 'right')
                     minmaxDate()
                 } else {
                     $.notifyClose();
                     ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                    notify(data.Mensaje, 'info', '2000', 'right')
+                    notify(data.Mensaje, 'info', 2000, 'right')
                 }
             },
             error: function () {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
-                notify('Error', 'danger', '2000', 'right')
+                notify('Error', 'danger', 2000, 'right')
             }
         });
     }

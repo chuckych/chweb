@@ -4,8 +4,13 @@ $(document).ready(function () {
     $('.select2').select2({
         minimumResultsForSearch: -1
     });
+
+    $("#ProcSec2").prop('disabled',true);
+
     $(".selectjs_empresa").select2({
         multiple: false,
+        allowClear:true,
+        allowClear:true,
         language: "es",
         placeholder: "Empresa",
         minimumInputLength: opt2["MinLength"],
@@ -55,6 +60,7 @@ $(document).ready(function () {
     })
     $(".selectjs_plantas").select2({
         multiple: false,
+        allowClear:true,
         language: "es",
         placeholder: "Planta",
         minimumInputLength: opt2["MinLength"],
@@ -104,6 +110,7 @@ $(document).ready(function () {
     })
     $(".selectjs_sectores").select2({
         multiple: false,
+        allowClear:true,
         language: "es",
         placeholder: "Sector",
         minimumInputLength: opt2["MinLength"],
@@ -153,6 +160,7 @@ $(document).ready(function () {
     })
     $(".selectjs_grupos").select2({
         multiple: false,
+        allowClear:true,
         language: "es",
         placeholder: "Grupo",
         minimumInputLength: opt2["MinLength"],
@@ -202,6 +210,7 @@ $(document).ready(function () {
     })
     $(".selectjs_sucursal").select2({
         multiple: false,
+        allowClear:true,
         language: "es",
         placeholder: "Sucursal",
         minimumInputLength: opt2["MinLength"],
@@ -251,6 +260,7 @@ $(document).ready(function () {
     })
     $(".select_seccion").select2({
         multiple: false,
+        allowClear:true,
         language: "es",
         placeholder: "Sección",
         minimumInputLength: opt2["MinLength"],
@@ -301,9 +311,13 @@ $(document).ready(function () {
     })
 
     $('.selectjs_sectores').on('select2:select', function (e) {
-        $("#select_seccion").removeClass("d-none");
+        $("#ProcSec2").prop('disabled',false);
         $("#select_seccion").addClass("animate__animated animate__fadeIn");
         $("#trash_sect").removeClass("d-none");
+        $('.select_seccion').val(null).trigger('change');
+    });
+    $('.selectjs_sectores').on('select2:unselect', function (e) {
+        $("#ProcSec2").prop('disabled',true);
         $('.select_seccion').val(null).trigger('change');
     });
     $('.select_seccion').on('select2:select', function (e) {
@@ -314,6 +328,12 @@ $(document).ready(function () {
             var selected = slectjs + ' '+ ':selected';
             var texto = $(selected).text();
             $(idselec).val(texto).trigger('change');
+            table.ajax.reload();
+        });
+    }
+    function textoUnSelected(slectjs) {
+        $(slectjs).on('select2:unselect', function (e) {
+            table.ajax.reload();
         });
     }
     textoSelected('.selectjs_empresa','#SelEmpresa');
@@ -322,6 +342,15 @@ $(document).ready(function () {
     textoSelected('.select_seccion','#SelSeccion');
     textoSelected('.selectjs_grupos','#SelGrupo');
     textoSelected('.selectjs_sucursal','#SelSucursal');
+    textoSelected('.select2','');
+
+    textoUnSelected('.selectjs_empresa');
+    textoUnSelected('.selectjs_plantas');
+    textoUnSelected('.selectjs_sectores');
+    textoUnSelected('.select_seccion');
+    textoUnSelected('.selectjs_grupos');
+    textoUnSelected('.selectjs_sucursal');
+    textoUnSelected('.select2');
 
     $('#procesando').val('true').trigger('change');
     $('#ProcLegaIni').mask('000000000');

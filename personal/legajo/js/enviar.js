@@ -1,31 +1,25 @@
-var NotifDelay     = 2000;
-var NotifOffset    = 10;
-var NotifOffsetX   = 10;
-var NotifOffsetY   = 10;
-var NotifZindex    = 9999;
-var NotifMouseOver = 'pause'
-var NotifEnter     = 'animate__animated animate__fadeInDown';
-var NotifExit      = 'animate__animated animate__fadeOutUp';
-var NotifAlign     = 'center';
-
 $(document).ready(function () {
-    $(".Update_Leg").bind("submit", function () {
-        event.preventDefault();
+    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
+    $(".Update_Leg").bind("submit", function (e) {
+        e.preventDefault();
+        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
         $.ajax({
             type: $(this).attr("method"),
             contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
                 $("#alerta_UpdateLega").addClass("d-none")
-                $("#btnGuardar").html(`Guardar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
-                $("#btnGuardar").prop('disabled', true);
-                
+                ActiveBTN(true, "#btnGuardar", 'Aguarde..', 'Aceptar')
+
             },
             success: function (data) {
                 // console.log(data.status);
                 if (data.status == 'ok') {
+                    $.notifyClose();
+                    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
                     var dt = new Date();
                     var Minutos = ("0" + dt.getMinutes()).substr(-2);
                     var Segundos = ("0" + dt.getSeconds()).substr(-2);
@@ -35,44 +29,17 @@ $(document).ready(function () {
                     $(".respuesta_UpdateLega").html(`Datos Guardados.! ${HoraActual}`)
                     $(".mensaje_UpdateLega").html('');
                     $("#Encabezado").html(`Legajo: ${data.Lega} &#8250 ${data.Nombre}`);
-                    $("#btnGuardar").html(`Guardar`);
-                    $("#btnGuardar").prop('disabled', false);
                     $("#LegDocu").val(`${data.docu}`)
-                    $.notify(`<span class='fonth fw4'><span data-icon='&#xe560;' class='mr-2'></span>Datos Guardados.! ${HoraActual}<br /><span class="fw5">Legajo: ${data.Lega} &#8250 ${data.Nombre}</span></span>`, {
-                        type: 'success',
-                        z_index: NotifZindex,
-                        delay: NotifDelay,
-                        offset: NotifOffset,
-                        mouse_over: NotifMouseOver,
-                        placement:{
-                                align: NotifAlign
-                            },
-                        animate: {
-                            enter: NotifEnter,
-                            exit: NotifExit
-                        }
-                    });
+                    
+                    notify(`Datos Guardados.! ${HoraActual}<br /><span class="fw5">Legajo: ${data.Lega} &#8250 ${data.Nombre}</span>`, 'success', 3000, 'right')
 
                 } else {
+                    $.notifyClose();
+                    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
                     $("#alerta_UpdateLega").removeClass("d-none").removeClass("text-success").addClass("text-danger")
                     $(".respuesta_UpdateLega").html("¡Error!")
                     $(".mensaje_UpdateLega").html(`Mensaje: ${data.dato}`);
-                    $("#btnGuardar").html(`Guardar`);
-                    $("#btnGuardar").prop('disabled', false);
-                    $.notify(`<span class='fonth fw4'><span data-icon='&#xe41a;' class='mr-2'> Error: </span>${data.dato}</span>`, {
-                        type: 'danger',
-                        z_index: NotifZindex,
-                        delay: NotifDelay,
-                        offset: NotifOffset,
-                        mouse_over: NotifMouseOver,
-                        placement:{
-                                align: NotifAlign
-                            },
-                        animate: {
-                            enter: NotifEnter,
-                            exit: NotifExit
-                        }
-                    });
+                    notify(`Error: ${data.dato}`, 'success', 3000, 'right')
                 }
             }
         });
@@ -125,8 +92,8 @@ $(document).on('shown.bs.modal', '#altaNacion', function () {
 var LegNume = $('#LegNume').val();
 
 $(document).ready(function () {
-    $("#Update_Leg").bind("submit", function () {
-        event.preventDefault();
+    $("#Update_Leg").bind("submit", function (e) {
+        e.preventDefault();
     });
 });
 
@@ -1599,12 +1566,12 @@ $(document).on('click', '.delete_identifica', function (e) {
 /** UPDATE GRUPO CAPTURADORES */
 $(document).ready(function () {
     // $(document).on('click', '#grupocapt', function (e) {
-    $('.selectjs_grupocapt').on('select2:select', function(e) {
+    $('.selectjs_grupocapt').on('select2:select', function (e) {
         event.preventDefault();
-        
+
         var LegajoGrHa = $('#LegajoGrHa').val()
-        var GrupoHabi  = $('#GrupoHabi').val()
-        var LegGrHa2   = $('#LegGrHa2').val()
+        var GrupoHabi = $('#GrupoHabi').val()
+        var LegGrHa2 = $('#LegGrHa2').val()
 
         $.ajax({
             type: "POST",

@@ -1,5 +1,5 @@
 // $(".Filtros").prop('disabled', true);
-function ActualizaTablas(){
+function ActualizaTablas() {
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();
     } else {
@@ -8,7 +8,7 @@ function ActualizaTablas(){
         $('.pers_legajo').removeClass('d-none')
     };
 };
-var map = {17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13:false, 27:false};
+var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
     if (e.keyCode in map) {
         map[e.keyCode] = true;
@@ -154,61 +154,61 @@ $("#FicNovA").change(function () {
     }
 });
 
-    var GetPersonal = $('#GetPersonal').DataTable({
-        initComplete: function(settings, json) {
-            // console.log(settings.json);
+var GetPersonal = $('#GetPersonal').DataTable({
+    initComplete: function (settings, json) {
+        // console.log(settings.json);
+    },
+    drawCallback: function (settings) {
+        $("#GetPersonal thead").remove();
+        $(".page-link").addClass('border border-0');
+        $(".dataTables_info").addClass('text-secondary');
+        $('#pagLega').removeClass('d-none')
+        $('#GetGeneral').DataTable().ajax.reload(null, false);
+        fadeInOnly('#GetGeneral');
+        // console.log(settings.json.recordsTotal);
+        if ((settings.json.recordsTotal > 0)) {
+            $('#Visualizar').prop('disabled', false)
+        } else {
+            $('#Visualizar').prop('disabled', true)
+        }
+    },
+    // bStateSave: -1,
+    pagingType: "full",
+    lengthMenu: [[1], [1]],
+    bProcessing: false,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    dom: ',<"d-inline-flex d-flex align-items-center"t<"m,l-2"p>><"mt-n3 d-flex justify-content-end"i>',
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/general/GetPersonalFichas.php",
+        type: "POST",
+        "data": function (data) {
+            data._l = $("#_l").val();
+            data.Per = $("#Per").val();
+            data.Per2 = $("#Per2").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data.FicDiaL = $("#datoFicDiaL").val();
+            data.FicFalta = $("#datoFicFalta").val();
+            data.FicNovT = $("#datoFicNovT").val();
+            data.FicNovI = $("#datoFicNovI").val();
+            data.FicNovS = $("#datoFicNovS").val();
+            data.FicNovA = $("#datoFicNovA").val();
         },
-        drawCallback: function(settings) {
-            $("#GetPersonal thead").remove();  
-            $(".page-link").addClass('border border-0');
-            $(".dataTables_info").addClass('text-secondary');
-            $('#pagLega').removeClass('d-none')
-            $('#GetGeneral').DataTable().ajax.reload(null, false);
-            fadeInOnly('#GetGeneral');
-            // console.log(settings.json.recordsTotal);
-            if ((settings.json.recordsTotal>0)) {
-                $('#Visualizar').prop('disabled', false)
-            }else{
-                $('#Visualizar').prop('disabled', true)
-            }
-        },  
-        bStateSave: true,
-        pagingType: "full",
-        lengthMenu: [[1], [1]],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        dom: ',<"d-inline-flex d-flex align-items-center"t<"m,l-2"p>><"mt-n3 d-flex justify-content-end"i>',
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/general/GetPersonalFichas.php",
-            type: "POST",
-            "data": function(data){
-                data._l      = $("#_l").val();
-                data.Per     = $("#Per").val();
-                data.Per2    = $("#Per2").val();
-                data.Tipo    = $("#Tipo").val();
-                data.Emp     = $("#Emp").val();
-                data.Plan    = $("#Plan").val();
-                data.Sect    = $("#Sect").val();
-                data.Sec2    = $("#Sec2").val();
-                data.Grup    = $("#Grup").val();
-                data.Sucur   = $("#Sucur").val();
-                data._dr     = $("#_dr").val();
-                data.FicDiaL = $("#datoFicDiaL").val();
-                data.FicFalta = $("#datoFicFalta").val();
-                data.FicNovT = $("#datoFicNovT").val();
-                data.FicNovI = $("#datoFicNovI").val();
-                data.FicNovS = $("#datoFicNovS").val();
-                data.FicNovA = $("#datoFicNovA").val();
-            },
 
-            error: function() {
-                $("#GetPersonal_processing").css("display", "none");
-            },
+        error: function () {
+            $("#GetPersonal_processing").css("display", "none");
         },
-        // },
-        columns: [
+    },
+    // },
+    columns: [
         {
             "class": "w80 px-3 border fw4 bg-light radius pers_legajo",
             "data": 'pers_legajo'
@@ -217,138 +217,138 @@ $("#FicNovA").change(function () {
             "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
             "data": 'pers_nombre'
         },
-        ],
-        paging: true,
-        responsive: false,
-        info: true,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json"
-        },
-    });
-    var buttonCommon = {
-        exportOptions: {
-            format: {
-                body: function ( data, row, column, node ) {
-                    // Strip $ from salary column to make it numeric
-                    return column === 5 ?
-                        data.replace( /[$,]/g, '' ) :
-                        data;
-                }
+    ],
+    paging: true,
+    responsive: false,
+    info: true,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort2.json"
+    },
+});
+var buttonCommon = {
+    exportOptions: {
+        format: {
+            body: function (data, row, column, node) {
+                // Strip $ from salary column to make it numeric
+                return column === 5 ?
+                    data.replace(/[$,]/g, '') :
+                    data;
             }
         }
-    };
-    var GetGeneral = $('#GetGeneral').DataTable({
-        "initComplete": function( settings, json ) {
-            $("#Refresh").prop('disabled', false);
-            $('#trash_all').removeClass('invisible');
-                fadeInOnly('#GetGeneralTable')
-                fadeInOnly('#pagLega')
+    }
+};
+var GetGeneral = $('#GetGeneral').DataTable({
+    "initComplete": function (settings, json) {
+        $("#Refresh").prop('disabled', false);
+        $('#trash_all').removeClass('invisible');
+        fadeInOnly('#GetGeneralTable')
+        fadeInOnly('#pagLega')
+    },
+    "drawCallback": function (settings) {
+        $(".page-link").addClass('border border-0');
+        $(".dataTables_info").addClass('text-secondary');
+        $(".custom-select").addClass('text-secondary bg-light');
+        $('#pagLega').removeClass('invisible')
+        $('#GetGeneralTable').removeClass('invisible')
+        setTimeout(function () {
+            $(".Filtros").prop('disabled', false);
+        }, 1000);
+    },
+    // stateSave: -1,
+    lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
+    bProcessing: true,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/general/GetGeneral.php",
+        type: "POST",
+        "data": function (data) {
+            data.Per = $("#Per").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data._l = $("#_l").val();
+            data.FicDiaL = $("#datoFicDiaL").val();
+            data.FicFalta = $("#datoFicFalta").val();
+            data.FicNovT = $("#datoFicNovT").val();
+            data.FicNovI = $("#datoFicNovI").val();
+            data.FicNovS = $("#datoFicNovS").val();
+            data.FicNovA = $("#datoFicNovA").val();
         },
-        "drawCallback": function(settings) {
-            $(".page-link").addClass('border border-0');
-            $(".dataTables_info").addClass('text-secondary');
-            $(".custom-select").addClass('text-secondary bg-light');
-            $('#pagLega').removeClass('invisible')
-            $('#GetGeneralTable').removeClass('invisible')
-            setTimeout(function(){ 
-                $(".Filtros").prop('disabled', false);
-             }, 1000);
+        error: function () {
+            $("#GetGeneral").css("display", "none");
         },
-        stateSave: true,
-        lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
-        bProcessing: true,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/general/GetGeneral.php",
-            type: "POST",
-            "data": function(data){
-                data.Per      = $("#Per").val();
-                data.Tipo     = $("#Tipo").val();
-                data.Emp      = $("#Emp").val();
-                data.Plan     = $("#Plan").val();
-                data.Sect     = $("#Sect").val();
-                data.Sec2     = $("#Sec2").val();
-                data.Grup     = $("#Grup").val();
-                data.Sucur    = $("#Sucur").val();
-                data._dr      = $("#_dr").val();
-                data._l       = $("#_l").val();
-                data.FicDiaL  = $("#datoFicDiaL").val();
-                data.FicFalta = $("#datoFicFalta").val();
-                data.FicNovT  = $("#datoFicNovT").val();
-                data.FicNovI  = $("#datoFicNovI").val();
-                data.FicNovS  = $("#datoFicNovS").val();
-                data.FicNovA  = $("#datoFicNovA").val();
-            },
-            error: function() {
-                $("#GetGeneral").css("display", "none");
-            },
+    },
+    columns: [
+        {
+            "class": "align-middle",
+            "data": "modal"
         },
-        columns: [
-            {
-                "class": "align-middle",
-                "data": "modal"
-            },
-            {
-                "class": "align-middle",
-                "data": "FechaDia"
-            },
-            {
-                "class": "text-nowrap ls1 align-middle",
-                "data": "Gen_Horario"
-            },
-            {
-                "class": "ls1 text-center fw4 align-middle",
-                "data": "Primera"
-            },
-            {
-                "class": "align-middle",
-                "data": "DescHoras"
-            }, {
-                "class": "text-center fw4 ls1 align-middle",
-                "data": "HsAuto"
-            }, {
-                "class": "text-center ls1 align-middle",
-                "data": "HsCalc"
-            }, {
-                "class": "align-middle",
-                "data": "Novedades"
-            }, 
-            {
-                "class": "text-center fw4 ls1 align-middle",
-                "data": "NovHor"
-            },
-        ],
-        scrollX: true,
-        scrollCollapse: true,
-        scrollY: '50vmax',
-        paging: true,
-        info: true,
-        searching: false,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json"
+        {
+            "class": "align-middle",
+            "data": "FechaDia"
         },
-    });
+        {
+            "class": "text-nowrap ls1 align-middle",
+            "data": "Gen_Horario"
+        },
+        {
+            "class": "ls1 text-center fw4 align-middle",
+            "data": "Primera"
+        },
+        {
+            "class": "align-middle",
+            "data": "DescHoras"
+        }, {
+            "class": "text-center fw4 ls1 align-middle",
+            "data": "HsAuto"
+        }, {
+            "class": "text-center ls1 align-middle",
+            "data": "HsCalc"
+        }, {
+            "class": "align-middle",
+            "data": "Novedades"
+        },
+        {
+            "class": "text-center fw4 ls1 align-middle",
+            "data": "NovHor"
+        },
+    ],
+    scrollX: true,
+    scrollCollapse: true,
+    scrollY: '50vmax',
+    paging: true,
+    info: true,
+    searching: false,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort2.json"
+    },
+});
 
-    setTimeout(function(){
+setTimeout(function () {
     var GetFechas = $('#GetFechas').DataTable({
-        "initComplete": function( settings, json ) {
-            $("#GetFechas thead").remove(); 
-          },
-          "drawCallback": function(settings) {     
+        "initComplete": function (settings, json) {
+            $("#GetFechas thead").remove();
+        },
+        "drawCallback": function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             fadeInOnly('#GetGeneralFecha');
-            if ((settings.json.recordsTotal>0)) {
+            if ((settings.json.recordsTotal > 0)) {
                 $('#GetGeneralFecha').DataTable().ajax.reload(null, false);
                 $('#GetGeneralFechaTotales').DataTable().ajax.reload(null, false);
-            }else{
+            } else {
                 $('#GetGeneralFecha').DataTable().clear().draw();
             }
-        },  
+        },
         pagingType: "full",
         lengthMenu: [[1], [1]],
         bProcessing: false,
@@ -359,17 +359,17 @@ $("#FicNovA").change(function () {
         ajax: {
             url: "/" + $("#_homehost").val() + "/general/GetFechasFichas.php",
             type: "POST",
-            "data": function(data){
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
+            "data": function (data) {
+                data.Per = $("#Per").val();
+                data.Tipo = $("#Tipo").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data._dr = $("#_dr").val();
+                data._l = $("#_l").val();
                 data.FicDiaL = $("#datoFicDiaL").val();
                 data.FicFalta = $("#datoFicFalta").val();
                 data.FicNovT = $("#datoFicNovT").val();
@@ -377,19 +377,19 @@ $("#FicNovA").change(function () {
                 data.FicNovS = $("#datoFicNovS").val();
                 data.FicNovA = $("#datoFicNovA").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetFecha_processing").css("display", "none");
             },
         },
         columns: [
-        {
-            "class": "w80 px-3 border fw4 bg-light radius ls1",
-            "data": 'FicFech'
-        },
-        {
-            "class": "w300 px-3 border fw4 bg-light radius",
-            "data": 'Dia'
-        },
+            {
+                "class": "w80 px-3 border fw4 bg-light radius ls1",
+                "data": 'FicFech'
+            },
+            {
+                "class": "w300 px-3 border fw4 bg-light radius",
+                "data": 'Dia'
+            },
         ],
         paging: true,
         responsive: false,
@@ -400,50 +400,50 @@ $("#FicNovA").change(function () {
         },
     });
     var GetGeneralFecha = $('#GetGeneralFecha').DataTable({
-        "initComplete": function( settings, json ) {
-            setTimeout(function(){ 
+        "initComplete": function (settings, json) {
+            setTimeout(function () {
                 $('.dt-button').addClass('btn btn-sm btn-outline-custom fontq border');
                 $('.dt-button').removeClass('dt-button buttons-csv buttons-html5');
                 $('.dt-buttons').removeClass('d-none');
                 $('.dt-button').removeAttr('style');
-             }, 500);  
-          },
-          "drawCallback": function( settings ) {
+            }, 500);
+        },
+        "drawCallback": function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
             // $('#Visualizar').prop('disabled', false)
-            if ((settings.json.recordsTotal>0)) {
+            if ((settings.json.recordsTotal > 0)) {
                 // $('#GetGeneralFechaTable').show()
-            }else{
+            } else {
                 // $('#GetGeneralFechaTable').hide()
             }
-            setTimeout(function(){ 
+            setTimeout(function () {
                 $(".Filtros").prop('disabled', false);
-             }, 1000);
-        },  
-        lengthMenu: [[10,25,50,100], [10,25,50,100]],
+            }, 1000);
+        },
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         bProcessing: true,
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        stateSave: true,
+        // stateSave: -1,
         dom: 'lBfrtip',
         ajax: {
             url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
             type: "POST",
-            "data": function(data){
+            "data": function (data) {
                 data._f = $("#_f").val();
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
+                data.Per = $("#Per").val();
+                data.Tipo = $("#Tipo").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data._dr = $("#_dr").val();
+                data._l = $("#_l").val();
                 data.FicDiaL = $("#datoFicDiaL").val();
                 data.FicFalta = $("#datoFicFalta").val();
                 data.FicNovT = $("#datoFicNovT").val();
@@ -451,7 +451,7 @@ $("#FicNovA").change(function () {
                 data.FicNovS = $("#datoFicNovS").val();
                 data.FicNovA = $("#datoFicNovA").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetGeneralFecha_processing").css("display", "none");
             },
         },
@@ -484,7 +484,7 @@ $("#FicNovA").change(function () {
             }, {
                 "class": "align-middle",
                 "data": "Novedades"
-            }, 
+            },
             {
                 "class": "text-center fw4 ls1 align-middle",
                 "data": "NovHor"
@@ -501,7 +501,7 @@ $("#FicNovA").change(function () {
             "url": "../js/DataTableSpanishShort2.json"
         },
     });
-    }, 1000);
+}, 1000);
 
 
 
@@ -525,7 +525,7 @@ $("#Visualizar").change(function () {
         $("#GetGeneralFechaTable").show()
         $("#pagLega").hide()
         $("#pagFech").show()
-    } else {       
+    } else {
         $('#GetPersonal').DataTable().ajax.reload(null, false);
         $("#GetGeneralTable").removeClass('d-none');
         $("#GetGeneralFechaTable").hide()

@@ -1,52 +1,145 @@
 $(document).ready(function () {
-    $("#submit").html("Procesar");
+    let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+    ActiveBTN(false, "#submit", 'Procesando <span class = "dotting mr-1"> </span> ' + loading, 'Procesar')
+
     $(".procesando").bind("submit", function (e) {
         e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),
             data: $(this).serialize(),
-            // async : false,
             beforeSend: function (data) {
-                $("#submit").prop("disabled", true);
-                fadeInOnly('#respuesta')
-                $("#respuesta").addClass("alert-info");
-                $("#respuesta").removeClass("d-none");
-                $("#respuesta").removeClass("alert-success");
-                $("#respuesta").removeClass("alert-danger");
-                $("#respuetatext").html('<div class="d-flex align-items-center mr-3">Procesando<div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div></div>');
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                ActiveBTN(true, "#submit", 'Procesando <span class = "dotting mr-1"> </span> ' + loading, 'Procesar')
             },
             success: function (data) {
-                // console.log(data.status);
                 if (data.status == "ok") {
-                    fadeInOnly('#respuesta')
-                    $("#respuetatext").html(`${data.dato}`);
-                    $("#submit").prop("disabled", false);
-                    $("#submit").html("Procesar");
-                    $("#respuesta").addClass("alert-success");
-                    $("#respuesta").removeClass("alert-danger");
-                    $("#respuesta").removeClass("alert-info");
+                    $.notifyClose();
+                    notify(data.Mensaje, 'success', 5000, 'right')
+                    ActiveBTN(false, "#submit", 'Procesando <span class = "dotting mr-1"> </span> ' + loading, 'Procesar')
                 } else {
-                    $("#respuetatext").html(`${data.dato}`);
-                    fadeInOnly('#respuesta')
-                    $("#submit").prop("disabled", false);
-                    $("#submit").html("Procesar");
-                    $("#respuesta").removeClass("alert-success");
-                    $("#respuesta").removeClass("alert-info");
-                    $("#respuesta").addClass("alert-danger");
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 2000, 'right')
+                    ActiveBTN(false, "#submit", 'Procesando <span class = "dotting mr-1"> </span> ' + loading, 'Procesar')
                 }
             },
             error: function () {
-                $("#respuetatext").html('Error');
-                fadeInOnly('#respuesta')
-                $("#submit").prop("disabled", false);
-                $("#submit").html("Procesar");
-                $("#respuesta").removeClass("alert-success");
-                $("#respuesta").removeClass("alert-info");
-                $("#respuesta").addClass("alert-danger");
+                $.notifyClose();
+                notify('Error', 'danger', 2000, 'right')
+                ActiveBTN(false, "#submit", 'Procesando <span class = "dotting mr-1"> </span> ' + loading, 'Procesar')
             }
 
         });
         e.stopImmediatePropagation();
+    });
+
+    if ($(window).width() < 769) {
+        $('input[name="_dr"]').prop('readonly', true)
+    }
+    $("#Legajos").prop('disabled', true)
+    function checkleg() {
+
+        if ($("#Legajos").is(":checked")) {
+            $('#Personal-select-all').prop('checked', true)
+            $('#Personal-select-all').prop('disabled', true)
+            $('.check').prop('checked', true)
+            $('.check').prop('disabled', true)
+            $('#GetPersonal_filter input').prop('disabled', true)
+        } else {
+            // $('#Personal-select-all').prop('checked', false)
+            $('#Personal-select-all').prop('disabled', false)
+            $('.check').prop('checked', true)
+            $('.check').prop('disabled', false)
+            $('#GetPersonal_filter input').prop('disabled', false)
+        };
+    }
+    table = $('#GetPersonal').DataTable({
+        "initComplete": function (settings, json) {
+            $('div.loader').remove();
+            $('#Personal-select-all').prop('checked', true)
+            $('#Personal-select-all').prop('disabled', true)
+            $('.check').prop('checked', true)
+            $('.check').prop('disabled', true)
+            $('#GetPersonal_filter input').attr('placeholder', 'Buscar legajos')
+            $('#GetPersonal_filter input').prop('disabled', true)
+            $("#Legajos").change(function () {
+                checkleg()
+            });
+            $("#Legajos").prop('disabled', false)
+        },
+        "drawCallback": function (settings) {
+            checkleg()
+        },
+        bProcessing: true,
+        deferRender: true,
+        ajax: {
+            url: "getPersonal.php",
+            type: "POST",
+            "data": function (data) {
+                // data._sec = function() { return $("#Sect").val()},
+                data.Per = $("#ProcPer").val();
+                data.Tipo = $("#ProcTipo").val();
+                data.Emp = $("#ProcEmp").val();
+                data.Plan = $("#ProcPlan").val();
+                data.Sect = $("#ProcSect").val();
+                data.Sec2 = $("#ProcSec2").val();
+                data.Grup = $("#ProcGrup").val();
+                data.Sucur = $("#ProcSucur").val();
+            },
+            error: function () {
+                $("#GetPersonal_processing").css("display", "none");
+            },
+        },
+        columns: [
+            {
+                "class": "align-middle animate__animated animate__fadeIn",
+                "data": 'check'
+            },
+            {
+                "class": "align-middle animate__animated animate__fadeIn",
+                "data": 'pers_legajo2'
+            },
+            {
+                "class": "align-middle animate__animated animate__fadeIn",
+                "data": 'pers_nombre2'
+            },
+
+        ],
+        scrollY: '335px',
+        scrollX: true,
+        scrollCollapse: false,
+        paging: false,
+        responsive: false,
+        searching: true,
+        info: true,
+        ordering: false,
+        language: {
+            "url": "../js/DataTableSpanishShort2.json"
+        },
+    });
+
+    // table.on('page', function () {
+    //     $('input[type="checkbox"]').prop('checked', false);
+    // });
+    // Handle click on "Select all" control
+    $('#Personal-select-all').on('click', function () {
+        // Check/uncheck all checkboxes in the table
+        var rows = table.rows({ 'search': 'applied' }).nodes();
+        $('input[type="checkbox"]', rows).prop('checked', this.checked);
+    });
+
+    // Handle click on checkbox to set state of "Select all" control
+    $('#GetPersonal tbody').on('change', 'input[type="checkbox"]', function () {
+        // If checkbox is not checked
+        if (!this.checked) {
+            var el = $('#Personal-select-all').get(0);
+            // If "Select all" control is checked and has 'indeterminate' property
+            if (el && el.checked && ('indeterminate' in el)) {
+                // Set visual state of "Select all" control 
+                // as 'indeterminate'
+                el.indeterminate = true;
+            }
+        }
     });
 });

@@ -402,14 +402,13 @@ function respuesta_form(selector, Mensaje, alert) {
 
 function notify(Mensaje, type, delay, NotifAlign) {
 
-    // if ($(window).width() < 769) {
-    //     var offset = 0
-    // } else {
-    //     var offset = 20
-    // }
     var offset = ($(window).width() < 769) ? 0 : 20;
-    
-    $.notify(`<span class='fontq fw5'>${Mensaje}</span>`, {
+
+    $.notify({
+        // options
+        message: Mensaje 
+    },{
+        // settings
         type: type,  /** success, danger, warning, secondary, light, etc */
         z_index: 9999,
         delay: delay, /** ej 2000 */
@@ -421,7 +420,7 @@ function notify(Mensaje, type, delay, NotifAlign) {
         animate: {
             enter: 'animate__animated animate__fadeInDown',
             exit: 'animate__animated animate__fadeOutUp'
-        }
+        },
     });
 }
 function focusEndText(input) {
@@ -486,5 +485,60 @@ function CheckUncheck(selector_check, selector_uncheck, selectorcheckbox, classa
     $(selector_uncheck).click(function (e) {
         $(selectorcheckbox).prop('checked', false)
         $(selectorcheckbox).parents('tr').removeClass('table-active')
+    });
+}
+function singleDatePicker(selector, opens, drop) {
+    $(selector).daterangepicker({
+        singleDatePicker: true,
+        opens: opens,
+        drops: drop,
+        autoUpdateInput: true,
+        buttonClasses: "btn btn-sm fontq",
+        applyButtonClasses: "btn-custom fw4 px-3 opa8",
+        cancelClass: "btn-link fw4 text-gris",
+        ranges: {
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        },
+        locale: {
+            format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                firstDay: 1,
+                alwaysShowCalendars: true,
+                applyButtonClasses: "text-white bg-custom",
+        },
+
+    });
+}
+function singleDatePickerValue(selector, opens, drop, value) {
+    $(selector).daterangepicker({
+        singleDatePicker: true,
+        opens: opens,
+        drops: drop,
+        startDate:value,
+        endDate:value,
+        autoApply: false,
+        buttonClasses: "btn btn-sm fontq",
+        applyButtonClasses: "btn-custom fw4 px-3 opa8",
+        ranges: {
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        },
+        locale: {
+            format: "DD/MM/YYYY",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+        },
     });
 }

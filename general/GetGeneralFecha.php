@@ -2,13 +2,12 @@
 
 <?php
 session_start();
+header("Content-Type: application/json");
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
-secure_auth_ch();
-header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+secure_auth_ch_json();
+E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
@@ -19,19 +18,6 @@ $Excel = $_POST['Excel'];
 $data = array();
 
 $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
-
-if ($Fecha == 'vacio') {
-
-    $json_data = array(
-        "draw"            => 1,
-        "recordsTotal"    => 0,
-        "recordsFiltered" => 0,
-        "data"            => array()
-    );
-
-    echo json_encode($json_data);
-    exit;
-}
 
 require __DIR__ . '../valores.php';
 
@@ -251,7 +237,13 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         );
     } else {
         $data[] = array(
-            'LegNombre'     => '<span title="' . $Gen_Nombre . '" class="d-inline-block text-truncate" style="max-width: 200px;">' . $Gen_Nombre . '<br>' . $Gen_Lega . '</span>',
+            'LegNombre'     => '<span 
+            data-nombre="'.$Gen_Nombre.'" 
+            data-lega="'.$Gen_Lega.'"
+            data-fechaini="'.($Gen_Fecha2).'"
+            data-fechafin="'.($Gen_Fecha2).'"
+            data-procLega="true"
+            "title="Procesar registro: ' . $Gen_Nombre . '. '.$Gen_Fecha.'" class="d-inline-block text-truncate pointer procReg" style="max-width: 200px;">' . $Gen_Nombre . '<br>' . $Gen_Lega . '</span>',
             'Gen_Lega'      => $Gen_Lega,
             'Gen_Nombre'    => $Gen_Nombre,
             'Fecha'         => $Gen_Fecha,
