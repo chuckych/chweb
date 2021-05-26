@@ -2,7 +2,7 @@
 $(document).ready(function () {
     $('#Tipo').css({"width": "200px"});
     $('.form-control').css({"width": "100%"});
-    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
+    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)  
     $('#Filtros').on('shown.bs.modal', function () {
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         $(".selectjs_empresa").select2({

@@ -1,12 +1,14 @@
 <?php
 session_start();
-header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
-ultimoacc();
-secure_auth_ch();
+ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+header('Access-Control-Allow-Origin: *');
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
+
+E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';

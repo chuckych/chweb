@@ -1,12 +1,13 @@
-
-
 <?php
 session_start();
-header("Content-Type: application/json");
-header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
-ultimoacc();
+ini_set('max_execution_time', 180); //180 seconds = 3 minutes
+header("Content-Type: application/json");
+header('Access-Control-Allow-Origin: *');
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
+
 E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';

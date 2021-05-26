@@ -1,16 +1,15 @@
 <?php
+session_start();
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 
-session_start();
-
-require __DIR__ . '../../config/index.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
 $param   = array();
@@ -52,25 +51,24 @@ if (sqlsrv_num_rows($result) > 0) {
         if($percierre){
             $disabled = 'disabled';
             $editar='<a title="Editar Hora:'.$row['HoraDesc'].'" href="#TopN"
-            class="icon btn btn-sm btn-link text-decoration-none '.$disabled.'" <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+            class="bi bi-pen btn btn-sm btn-link text-decoration-none '.$disabled.'"</a>';
             $eliminar = '<a title="Eliminar Hora: '.$row['HoraDesc'].'" 
-            class="icon btn btn-sm btn-link text-decoration-none '.$disabled.'"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+            class="bi bi-trash btn btn-sm btn-link text-decoration-none '.$disabled.'"></a>';
             $eliminar = ($row['Estado']=='2') ? $eliminar:''; 
         }else{
             $disabled = ($row['Estado']=='2') ? '':''; 
             $editar= '<a title="Editar Hora: '.$row['HoraDesc'].'" href="#TopN"
-            class="icon btn btn-sm btn-link text-decoration-none mod_hora text-gris '.$disabled.'" 
+            class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_hora text-gris '.$disabled.'" 
             data="'.$row['Hora'].'"
             data2="'.$row['FicHsAu2'].'"
             data3="'.$row['HoraDesc'].'"
             data4="'.$row['Motivo'].'"
             data5="'.$row['DescMotivo'].'"
-            data6="'.$row['Observ'].'"
-            <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+            data6="'.$row['Observ'].'"</a>';
             $eliminar = '<a title="Eliminar Hora: '.$row['HoraDesc'].'"
             data="'.$row['Hora'].'-'.$HoraFechStr.'-'.$Legajo.'" 
             data2="'.$row['HoraDesc'].'" 
-            class="icon btn btn-sm btn-link text-decoration-none baja_Hora '.$disabled.'"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+            class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Hora '.$disabled.'"></a>';
             $eliminar = ($row['Estado']=='2') ? $eliminar:''; 
         }
     }

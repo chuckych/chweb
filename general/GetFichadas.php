@@ -1,16 +1,15 @@
 <?php
+session_start();
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
-session_start();
-
-require __DIR__ . '../../config/index.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
 $param   = array();
@@ -46,13 +45,13 @@ if (sqlsrv_num_rows($result) > 0) {
 
         if ($percierre) {
             $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#TopN"
-            class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '"> <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+            class="bi bi-pen btn btn-sm btn-link text-decoration-none ' . $disabled . '"> </a>';
             $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" 
-            class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+            class="bi bi-trash btn btn-sm btn-link text-decoration-none ' . $disabled . '"></a>';
         } else {
             $disabled = '';
-            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="icon btn btn-sm btn-link text-decoration-none mod_Fic" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"><span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
-            $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" id="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" class="icon btn btn-sm btn-link text-decoration-none baja_Fic"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_Fic" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"></a>';
+            $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" id="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Fic"></a>';
         }
         $editar   = $_SESSION["ABM_ROL"]['mFic'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bFic'] == '0' ? '' : $eliminar;

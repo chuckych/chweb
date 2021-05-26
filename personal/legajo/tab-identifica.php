@@ -14,6 +14,7 @@
                             <tr>
                                 <th class="">ID</th>
                                 <th class="text-center">Fichada</th>
+                                <th class="">Tarjeta</th>
                                 <th class="">Vencimiento</th>
                                 <th class=""></th>
                                 <th class="w-100"></th>

@@ -8,7 +8,7 @@ UnsetGet('q2');
 session_start();
 require __DIR__ . '../../config/conect_mssql.php';
 $q2 = $_GET['q2'];
-$query = "SELECT [IDCodigo] ,[IDFichada], [FechaHora], [IDVence] FROM IDENTIFICA WHERE IDLegajo = '$q2' ORDER BY IDCodigo";
+$query = "SELECT [IDCodigo] ,[IDFichada], [FechaHora], [IDVence], [IDTarjeta] FROM IDENTIFICA WHERE IDLegajo = '$q2' ORDER BY IDCodigo";
 //    print_r($query);
 
 $params  = array();
@@ -20,6 +20,7 @@ $icon_trash=imgIcon('trash3', 'Eliminar registro ' ,'w15 opa5');
 if (sqlsrv_num_rows($result) > 0) {
     while ($fila = sqlsrv_fetch_array($result)) {
         $IDCodigo   = $fila['IDCodigo'];
+        $IDTarjeta   = $fila['IDTarjeta'];
         $IDVence = $fila['IDVence']->format('d/m/Y');
         $IDVence    = $IDVence=='01/01/1753' ? '-':$IDVence;
         $IDFichada  = $fila['IDFichada']=='0' ? '-':'&#10003;';
@@ -28,6 +29,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $data[] = array(
             "IDCodigo"  => $IDCodigo,
             "IDFichada" => $IDFichada,
+            "IDTarjeta" => $IDTarjeta,
             "IDVence"   => $IDVence,
             "FechaHora" => $FechaHora,
             "eliminar"  => $eliminar,

@@ -10,6 +10,7 @@ $('#LegReIn').mask('00');
 $('#LegReSa').mask('00');
 $('#LegDoPi').mask('000');
 $('#IDCodigo').mask('0000000000');
+$('#IDTarjeta').mask('0000000000');
 $('#LegNume').mask('0000000000');
 $('#LegHoLi').mask('00:00', {clearIfNotMatch: true, placeholder: "00:00"});
 // $('#OTROConValor').mask('00.00');

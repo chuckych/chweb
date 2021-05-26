@@ -1779,9 +1779,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $params  = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $data    = array();
-
+    $_POST['IDTarjeta'] = $_POST['IDTarjeta']?? '';
     $IDCodigo  = test_input($_POST['IDCodigo']);
     $IDLegajo  = test_input($_POST['IDLegajo']);
+    $IDTarjeta  = test_input($_POST['IDTarjeta']);
     $IDVence   = empty(test_input($_POST['IDVence'])) ? '17530101': test_input($_POST['IDVence']);
     $IDVence   = FechaString($IDVence);
     $IDFichada = '1';
@@ -1803,7 +1804,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
                 sqlsrv_free_stmt($result);
                 exit;
             }
-            $IDComedor='';$IDInvitado='0';$IDAcceso='1';$IDAlerta='0';$IDProvis='0';$IDAsigna='1';$IDTDoc='0';$IDDocu='0';$IDDisp='';$IDPrivi='0';$IDPass='';$IDFing='0';$IDFing1='0';$IDFing2='0';$IDFing3='0';$IDFing4='0';$IDFing5='0';$IDFing6='0';$IDFing7='0';$IDFing8='0';$IDFing9='0';$IDCap01='1';$IDCap02='1';$IDCap03='1';$IDCap04='1';$IDCap05='1';$IDTarjeta='';$IDSupTarj='';$IDSupAdmLev='0';$IDSupAutMod='0';$IDSupName='';$IDSupPass='';$IDSupFinger1='0';$IDSupDuress1='0';$IDSupFinger2='0';$IDSupDuress2='0';$IDSupStart='17530101';$IDSupExpiry='17530101';$IDSupTarjFC='0';
+            $IDComedor='';$IDInvitado='0';$IDAcceso='1';$IDAlerta='0';$IDProvis='0';$IDAsigna='1';$IDTDoc='0';$IDDocu='0';$IDDisp='';$IDPrivi='0';$IDPass='';$IDFing='0';$IDFing1='0';$IDFing2='0';$IDFing3='0';$IDFing4='0';$IDFing5='0';$IDFing6='0';$IDFing7='0';$IDFing8='0';$IDFing9='0';$IDCap01='1';$IDCap02='1';$IDCap03='1';$IDCap04='1';$IDCap05='1';$IDSupTarj='';$IDSupAdmLev='0';$IDSupAutMod='0';$IDSupName='';$IDSupPass='';$IDSupFinger1='0';$IDSupDuress1='0';$IDSupFinger2='0';$IDSupDuress2='0';$IDSupStart='17530101';$IDSupExpiry='17530101';$IDSupTarjFC='0';
         /** fin */            
             // $procedure_params = array(
             //     array(&$IDCodigo),array(&$IDFichada),array(&$IDComedor),array(&$IDInvitado),array(&$IDAcceso),array(&$IDAlerta),array(&$IDProvis),array(&$IDVence),array(&$IDAsigna),array(&$IDLegajo),array(&$IDTDoc),array(&$IDDocu),array(&$IDDisp),array(&$IDPrivi),array(&$IDPass),array(&$IDFing),array(&$IDFing1),array(&$IDFing2),array(&$IDFing3),array(&$IDFing4),array(&$IDFing5),array(&$IDFing6),array(&$IDFing7),array(&$IDFing8),array(&$IDFing9),array(&$IDCap01),array(&$IDCap02),array(&$IDCap03),array(&$IDCap04),array(&$IDCap05),array(&$IDTarjeta),array(&$IDSupTarj),array(&$IDSupAdmLev),array(&$IDSupAutMod),array(&$IDSupName),array(&$IDSupPass),array(&$IDSupFinger1),array(&$IDSupDuress1),array(&$IDSupFinger2),array(&$IDSupDuress2),array(&$IDSupStart),array(&$IDSupExpiry),array(&$IDSupTarjFC),array(&$FechaHora)

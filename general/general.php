@@ -45,16 +45,13 @@
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6 d-inline-flex d-flex align-items-center">
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
-                    Filtros
+                <button type="button" class="btn btn-outline-custom border fontq Filtros" data-toggle="modal" data-target="#Filtros">
+                Filtros
                 </button>
-                <button type="button" class="d-none ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">
-                    Excel
+                <button type="button" class="btn btn-outline-custom border fontq Exportar ml-1" data-toggle="modal" data-target="#Exportar">
+                Reporte
                 </button>
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Exportar ml-1" data-toggle="modal" data-target="#Exportar">
-                    Reporte
-                </button>
-                <span id="trash_all" title="Limpiar Filtros" class="mx-2 invisible trash"></span>
+                <span id="trash_all" title="Limpiar Filtros" class="mx-2 invisible bi bi-trash fontq text-secondary pointer"></span>
                 <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
                     <input type="checkbox" class="custom-control-input" id="Visualizar">
                     <label class="custom-control-label" for="Visualizar" style="padding-top: 3px;">
@@ -73,11 +70,9 @@
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                    <input type="text" readonly class="mx-2 form-control text-center w250 ls2" name="_dr" id="_dr">
-                    <button title="Actualizar Grilla" type="button" id="Refresh" disabled class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
-                        <svg class="bi" width="20" height="20" fill="currentColor">
-                            <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />
-                        </svg>
+                    <input type="text" readonly class="mx-1 form-control text-center w250 ls2 h40" name="_dr" id="_dr">
+                    <button title="Actualizar Grilla" type="button" id="Refresh" disabled class="btn border-0 float-right bg-custom text-white opa8">
+                        <i class="bi bi-arrow-repeat"></i>
                     </button>
                 </div>
             </div>
@@ -176,16 +171,12 @@
     </script>
     <script src="../js/select2.min.js"></script>
     <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/proceso-min.js?v=<?=vjs()?>"></script>
+    <script src="js/proceso.js?v=<?=vjs()?>"></script>
     <!-- <script src="js/proceso.js"></script> -->
     <script src="js/export.js?v=<?=vjs()?>"></script>
     <script src="js/select.js?v=<?=vjs()?>"></script>
     <script src="js/trash-select.js?v=<?=vjs()?>"></script>
     <!-- <script src="js/generalXLS.js"></script> -->
-    <script>
-
-
-    </script>
 </body>
 
 </html>

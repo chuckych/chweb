@@ -14,6 +14,8 @@
                         <div class="col-12 form-inline">
                             <label for="IDCodigo" class="mr-2 w100">Identificador</label>
                             <input autofocus class="form-control w180" type="number" name="IDCodigo" id="IDCodigo">
+                            <label for="IDTarjeta" class="mr-2 w100">Tarjeta</label>
+                            <input class="form-control w180" type="number" name="IDTarjeta" id="IDTarjeta" maxlength="10">
                             <input type="hidden" name="IDENTIFICA" value="IDENTIFICA">
                             <input type="hidden" name="IDLegajo" value="<?=$_GET['_leg']?>">
                         </div>

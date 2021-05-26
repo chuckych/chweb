@@ -98,15 +98,15 @@
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="js/enviar.js?v=<?=vjs()?>"></script>
+    <script src="js/enviar.js?v=<?= vjs() ?>"></script>
     <?php
     $opt2 = array(
         'MinLength' => 0, 'SelClose' => 0, 'MaxInpLength' => 10, 'delay' => 250
     );
     ?>
-    <script src="js/trash-select.js"></script>
-    <script src="js/mascaras.js"></script>
-    <script src="js/calculaEdad.js"></script>
+    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
+    <script src="js/mascaras.js?v=<?= vjs() ?>"></script>
+    <script src="js/calculaEdad.js?v=<?= vjs() ?>"></script>
     <script>
         $(document).ready(function() {
             $('.select2').select2({
@@ -128,7 +128,7 @@
 
         <?php if (!$persLegFeEg) {
             echo "$('#LegFeEg').val('');";
-        } 
+        }
         if (!$persLegFeIn) {
             echo "$('#LegFeIn').val('');";
         } ?>
@@ -1256,21 +1256,28 @@
                     },
                 },
                 columns: [{
-                    "class": "align-middle ls1",
-                    "data": "IDCodigo"
-                }, {
-                    "class": "align-middle text-center",
-                    "data": "IDFichada"
-                }, {
-                    "class": "align-middle",
-                    "data": "IDVence"
-                }, {
-                    "class": "align-middle text-center",
-                    "data": "eliminar"
-                }, {
-                    "class": "align-middle w-100",
-                    "data": "null"
-                }],
+                        "class": "align-middle ls1",
+                        "data": "IDCodigo"
+                    },
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDFichada"
+                    },
+                    {
+                        "class": "align-middle ls1",
+                        "data": "IDTarjeta"
+                    },
+                    {
+                        "class": "align-middle",
+                        "data": "IDVence"
+                    }, {
+                        "class": "align-middle text-center",
+                        "data": "eliminar"
+                    }, {
+                        "class": "align-middle w-100",
+                        "data": "null"
+                    }
+                ],
                 paging: false,
                 scrollX: false,
                 scrollCollapse: false,

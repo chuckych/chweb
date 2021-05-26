@@ -1,29 +1,26 @@
 <?php
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../config/index.php';
+header("Content-Type: application/json");
+ultimoacc();
+secure_auth_ch_json();
+$Modulo = '5';
+ExisteModRol($Modulo);
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
+header('Cache-Control: max-age=1');
 $datehis = date('YmdHis');
 // header('Content-Disposition: attachment;filename="Reporte_Fichadas_Mobile_'.$datehis.'.xls"');
 // If you're serving to IE 9, then the following may be needed
-header('Cache-Control: max-age=1');
 // If you're serving to IE over SSL, then the following may be needed
 header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
 header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
 header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
-
+E_ALL();
 require __DIR__ . '../../config/conect_mssql.php';
-
-ultimoacc();
-secure_auth_ch();
-$Modulo = '3';
-ExisteModRol($Modulo);
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 require_once __DIR__ . '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;

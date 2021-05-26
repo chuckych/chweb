@@ -13,16 +13,21 @@ function GetFicExcel() {
         },
         beforeSend:function(){
             ActiveBTN(true, "#btnExcel", 'Exportando', IconExcel)
+            $.notifyClose();
+            notify('Exportando', 'info', 0, 'right')
         },
         success: function (data) {
             if (data.status == "ok") {
             ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
             window.location=data.archivo
+            $.notifyClose();
+            notify(data.Mensaje, 'success', 5000, 'right')
             }
-
         },
         error: function () {
-            ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)               
+            ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)     
+            $.notifyClose();
+            notify('Error', 'danger', 5000, 'right')          
         }
     });
 }

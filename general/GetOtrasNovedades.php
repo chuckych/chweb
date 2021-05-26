@@ -1,16 +1,14 @@
 <?php
+session_start();
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
-session_start();
-
-require __DIR__ . '../../config/index.php';
+E_ALL();
 require __DIR__ . '../../config/conect_mssql.php';
 
 $param   = array();
@@ -41,23 +39,23 @@ while ($row = sqlsrv_fetch_array($result)) :
 
     if($percierre){
         $editar='<a title="Editar Novedad:'.$row['Descrip'].'" href="#TopN"
-        class="icon btn btn-sm btn-link text-decoration-none '.$disabled.'" <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+        class="bi bi-pen btn btn-sm btn-link text-decoration-none '.$disabled.'" </a>';
         $eliminar = '<a title="Eliminar Novedad: '.$row['Descrip'].'" 
-        class="icon btn btn-sm btn-link text-decoration-none '.$disabled.'"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+        class="bi bi-trash btn btn-sm btn-link text-decoration-none '.$disabled.'"></a>';
     }else{
         $disabled = '';
         $editar= '<a title="Editar Novedad: '.$row['Descrip'].'" href="#TopN"
-        class="icon btn btn-sm btn-link text-decoration-none mod_ONov text-gris" 
+        class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_ONov text-gris" 
         data="'.$row['FicONov'].'-'.$NovFechStr.'-'.$FicLega.'"
         data1="'.$row['Descrip'].'"
         data2="'.$row['Observ'].'"
         data3="'.$row['FicValor'].'"
         data4="'.$row['FicONov'].'"
-        <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+        </a>';
         $eliminar = '<a title="Eliminar Novedad: '.$row['Descrip'].'"
         data="'.$row['FicONov'].'-'.$NovFechStr.'-'.$FicLega.'"
         data2="'.$row['Descrip'].'" 
-        class="icon btn btn-sm btn-link text-decoration-none baja_ONov"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+        class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_ONov"></a>';
     }
         $FicValor = ($row['FicValor']=='0') ? '-': $row['FicValor'];
 

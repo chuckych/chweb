@@ -5,8 +5,8 @@
                 <p class="fw5 font1 nombre"></p>
                 <p class="d-none d-sm-block align-middle mt-1 fontq">Fecha:<span class="mx-1 dia fw4 ls1"></span><br />Horario:<span class="mx-1 fw5 ls1" id="FicHorario"></span>
                     <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
-                        <button title="Editar Horario" class="icon btn btn-sm btn-link text-decoration-none Citacion" id="Citacion">
-                            <span data-icon="&#xe042;" class="align-middle text-gris"></span></button>
+                        <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-link text-decoration-none Citacion" id="Citacion">
+                            </button>
                     <?php } ?>
                     <span class="fontq" id="FechCierre"></span></p>
             </div>
@@ -26,15 +26,15 @@
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitEntra" class="w80"><span class="pb-sm-1">Entrada</span></label>
-                                        <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask" type="tel">
+                                        <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask h35" type="tel">
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitSale" class="w80"><span class="pb-sm-1">Salida</span></label>
-                                        <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask" type="tel">
+                                        <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask h35" type="tel">
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitDesc" class="w80"><span class="pb-sm-1">Descanso</span></label>
-                                        <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask" type="tel" value="00:00">
+                                        <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask h35" type="tel" value="00:00">
                                     </div>
                                 </div>
                             </div>
@@ -42,8 +42,8 @@
                                 <div class="form-inline d-flex justify-content-end mt-2">
                                     <input type="hidden" name="alta_Citación" id="alta_Citación">
                                     <input type="hidden" name="datos_Citación" class="datos_Citación">
-                                    <button type="submit" class="mr-sm-2 btn btn-sm btn-custom fontq submit_btn_Citación btn-mobile mt-2">Confirmar</button>
-                                    <button type="button" class="btn btn-sm btn-outline-custom border-0 fontq btn-mobile mt-2" id="cancelar_btn_Citación">Cancelar</button>
+                                    <button type="submit" class="h35 mr-sm-2 btn btn-sm btn-custom fontq submit_btn_Citación btn-mobile mt-2">Confirmar</button>
+                                    <button type="button" class="h35 btn btn-sm btn-light border fontq btn-mobile mt-2" id="cancelar_btn_Citación">Cancelar</button>
                                 </div>
                                 <div class="respuesta_Citacion fontq text-secondary mx-2 d-flex float-right"></div>
                             </div>

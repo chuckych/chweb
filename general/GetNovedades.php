@@ -1,16 +1,15 @@
 <?php
+session_start();
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
-session_start();
-
-require __DIR__ . '../../config/index.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
 $param   = array();
@@ -59,7 +58,7 @@ while ($row = sqlsrv_fetch_array($result)) :
         $eliminar = ($row['Estado']=='0') ? '':$eliminar; 
     }else{
         $editar= '<a title="Editar Novedad: '.$row['nov_descripcion'].'" href="#TopN"
-        class="icon btn btn-sm btn-link text-decoration-none mod_Nov text-gris" 
+        class="btn btn-sm btn-link text-decoration-none mod_Nov bi bi-pen" 
         data="'.$row['nov_novedad'].'-'.$row['nov_tipo'].'-'.$row['FicCate'].'"
         data2="'.$row['nov_novedad'].'"
         data3="'.$row['nov_descripcion'].'"
@@ -70,11 +69,11 @@ while ($row = sqlsrv_fetch_array($result)) :
         data8="'.$row['FicCate'].'"
         data9="'.$row['nov_horas'].'"
         data10="'.$row['nov_tipo'].'"
-        <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+        </a>';
         $eliminar = '<a title="Eliminar Novedad: '.$row['nov_descripcion'].'"
         data="'.$row['nov_novedad'].'-'.$NovFechStr.'-'.$Legajo.'" 
         data2="'.$row['nov_descripcion'].'" 
-        class="icon btn btn-sm btn-link text-decoration-none baja_Nov"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+        class="btn btn-sm btn-link text-decoration-none baja_Nov bi bi-trash"></a>';
         $eliminar = ($row['Estado']=='0') ? '':$eliminar; 
     }
 

@@ -1,5 +1,6 @@
 // $(".Filtros").prop('disabled', true);
 function ActualizaTablas() {
+
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();
     } else {
@@ -507,14 +508,18 @@ setTimeout(function () {
 
 $("#Refresh").on("click", function () {
     ActualizaTablas()
+    CheckSesion()
 });
 
 $("#_dr").change(function () {
+    CheckSesion()
     ActualizaTablas()
 });
 $("#Visualizar").change(function () {
+    CheckSesion()
     $('#Per2').addClass('d-none')
 });
+
 $('#VerPor').html('<span class="d-none d-lg-block">Por Fecha</span>')
 $('#VerPorM').html('<span class="d-block d-lg-none">Fecha</span>')
 $("#Visualizar").change(function () {

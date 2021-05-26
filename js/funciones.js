@@ -406,8 +406,8 @@ function notify(Mensaje, type, delay, NotifAlign) {
 
     $.notify({
         // options
-        message: Mensaje 
-    },{
+        message: Mensaje
+    }, {
         // settings
         type: type,  /** success, danger, warning, secondary, light, etc */
         z_index: 9999,
@@ -502,18 +502,18 @@ function singleDatePicker(selector, opens, drop) {
         },
         locale: {
             format: "DD/MM/YYYY",
-                separator: " al ",
-                applyLabel: "Aplicar",
-                cancelLabel: "Cancelar",
-                fromLabel: "Desde",
-                toLabel: "Para",
-                customRangeLabel: "Personalizado",
-                weekLabel: "Sem",
-                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-                "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-                firstDay: 1,
-                alwaysShowCalendars: true,
-                applyButtonClasses: "text-white bg-custom",
+            separator: " al ",
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Para",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+            alwaysShowCalendars: true,
+            applyButtonClasses: "text-white bg-custom",
         },
 
     });
@@ -523,8 +523,8 @@ function singleDatePickerValue(selector, opens, drop, value) {
         singleDatePicker: true,
         opens: opens,
         drops: drop,
-        startDate:value,
-        endDate:value,
+        startDate: value,
+        endDate: value,
         autoApply: false,
         buttonClasses: "btn btn-sm fontq",
         applyButtonClasses: "btn-custom fw4 px-3 opa8",
@@ -540,5 +540,19 @@ function singleDatePickerValue(selector, opens, drop, value) {
             monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
             firstDay: 1,
         },
+    });
+}
+function CheckSesion() {
+    $.ajax({
+        dataType: "json",
+        url: "../sesion.php",
+        context: document.body
+    }).done(function (data) {
+        if (data.status == 'sesion') {
+            $('#_sesion').val('1')
+            window.location.href="/"+$('#_homehost').val()+"/login/"
+        } else {
+            $('#_sesion').val('0')
+        }
     });
 }

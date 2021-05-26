@@ -39,5 +39,6 @@ $.ajax({
 });
 }
 $(document).on("click", "#btnExcel", function (e) {
+CheckSesion()
 GetGeneral()
 });

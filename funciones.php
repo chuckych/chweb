@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.130';
+    return 'v0.0.131';
 }
 function E_ALL()
 {
@@ -23,10 +23,9 @@ function secure_auth_ch()
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
-        echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
+        // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
         header("location:/" . HOMEHOST . "/login/");
-        http_response_code(403);
         exit;
     } else {
         /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
