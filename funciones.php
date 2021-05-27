@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.133';
+    return 'v0.0.134';
 }
 function E_ALL()
 {
@@ -2039,12 +2039,12 @@ function UpdateRegistro($query)
         sqlsrv_close($link);
     }
 }
-function CountRegistrosMayorCero($queryy)
+function CountRegistrosMayorCero($query)
 {
     $params    = array();
     $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $queryy, $params, $options);
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     if (($stmt)) {
         if (sqlsrv_num_rows($stmt) > 0) {

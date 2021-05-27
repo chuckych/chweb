@@ -1810,6 +1810,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
                 sqlsrv_free_stmt($result);
                 exit;
             }
+            /** Revisar que la tarjeta no este asignada a otro legajo */
+            if ((CountRegistrosMayorCero("SELECT TOP 1 IDTarjeta FROM IDENTIFICA WHERE IDTarjeta='$IDTarjeta'")))
+            {
+                $data = array('status' => 'existe', 'dato' => 'El número de tarjeta ya fue asignado a otro legajo');
+                echo json_encode($data);
+                exit;
+            }
+
             $IDComedor='';$IDInvitado='0';$IDAcceso='1';$IDAlerta='0';$IDProvis='0';$IDAsigna='1';$IDTDoc='0';$IDDocu='0';$IDDisp='';$IDPrivi='0';$IDPass='';$IDFing='0';$IDFing1='0';$IDFing2='0';$IDFing3='0';$IDFing4='0';$IDFing5='0';$IDFing6='0';$IDFing7='0';$IDFing8='0';$IDFing9='0';$IDCap01='1';$IDCap02='1';$IDCap03='1';$IDCap04='1';$IDCap05='1';$IDSupTarj='';$IDSupAdmLev='0';$IDSupAutMod='0';$IDSupName='';$IDSupPass='';$IDSupFinger1='0';$IDSupDuress1='0';$IDSupFinger2='0';$IDSupDuress2='0';$IDSupStart='17530101';$IDSupExpiry='17530101';$IDSupTarjFC='0';
         /** fin */            
             // $procedure_params = array(
