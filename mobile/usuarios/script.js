@@ -12,6 +12,7 @@ function clean() {
     $("input[name=_enable]").prop('checked', false);
 }
 $("#Refresh").on("click", function () {
+    CheckSesion()
 // $(document).on("click", "#Refresh", function (e) {
     $('#table-usuarios').DataTable().ajax.reload();
     $("tbody").addClass("opa2");
@@ -24,7 +25,7 @@ $("#Refresh").on("click", function () {
 });
 $('#table-usuarios').DataTable({
     "initComplete": function (settings, json) {
-
+        CheckSesion()
     },
     "drawCallback": function (settings) {
         $("tbody").removeClass("opa2");
@@ -100,7 +101,7 @@ $('#table-usuarios').DataTable({
 });
 
 $(document).on("click", ".EliminaUsuario", function (e) {
-
+    CheckSesion()
     var _tk     = $(this).attr('data2');
     var _nombre = $(this).attr('data1');
     var _id     = $(this).attr('data');
@@ -114,6 +115,7 @@ $(document).on("click", ".EliminaUsuario", function (e) {
 }); 
 
 $(document).on("click", ".EntrenarUsuario", function (e) {
+    CheckSesion()
     var ide = parseFloat($(this).attr('data'));
     var itk = ($(this).attr('data2'));
     var iname = ($(this).attr('data1'));
@@ -125,6 +127,7 @@ $(document).on("click", ".EntrenarUsuario", function (e) {
 }); 
 
 $(document).on("click", "#btnBack", function (e) {
+    CheckSesion()
     $('#table-usuarios').DataTable().search('').draw();
     $('#table-usuarios').DataTable().ajax.reload();
     $('#divEntrenar').addClass('d-none')
@@ -134,6 +137,7 @@ $(document).on("click", "#btnBack", function (e) {
 }); 
 
 $(document).on("click", "#NuevoUsuario", function (e) {
+    CheckSesion()
     $("#Titulo").html('Nuevo')
     $("#btnSubmitUser").html("Crear");
     $("input[name=_id]").attr('readonly', false);
@@ -153,7 +157,7 @@ $(document).on("click", "#cancelUsuario", function (e) {
 });
 
 $(document).on("click", ".ModificarUsuario", function (e) {
-
+    CheckSesion()
     $("#Titulo").html('Editar')
     $("#btnSubmitUser").html("Guardar");
     $("input[name=alta]").val('update');
@@ -371,6 +375,7 @@ $(".selectjs_cuentaToken").select2({
     }
 });
 $('.selectjs_cuentaToken').on('select2:select', function (e) {
+    CheckSesion()
     $("#RefreshToken").submit();
 });
 $("#RefreshToken").bind("submit", function (e) {

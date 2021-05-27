@@ -269,7 +269,11 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	login_logs('1');
 
 	if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
-		header('Location:/' . HOMEHOST . '/mishoras/');
+		if ($_POST['lasturl']) {
+			header('Location:' . urldecode($_POST['lasturl']));
+		}else{
+			header('Location:/' . HOMEHOST . '/mishoras/');
+		}
 	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
 		header('Location:/' . HOMEHOST . '/mobile/');
 	}else{

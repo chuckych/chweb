@@ -1,10 +1,12 @@
 $(function () {
 
     function ActualizaTablas() {
+        CheckSesion()
         $('#table-personal').DataTable().ajax.reload();
     };
 
     $("#_eg").click(function () {
+        CheckSesion()
         if ($("#_eg").is(":checked")) {
             $("#_eg").val('on').trigger('change')
             $('#table-personal').DataTable().ajax.reload();
@@ -14,6 +16,7 @@ $(function () {
         }
     });
     $("#_porApNo").click(function () {
+        CheckSesion()
         if ($("#_porApNo").is(":checked")) {
             $("#_porApNo").val('on').trigger('change')
             $('#table-personal').DataTable().ajax.reload();

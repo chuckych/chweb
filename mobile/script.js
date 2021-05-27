@@ -1,7 +1,8 @@
 $(document).ready(function () {
 
     $("#Refresh").on("click", function () {
-        $('#table-mobile').DataTable().ajax.reload();
+        CheckSesion()
+        $('#table-mobile').DataTable().ajax.reload(null,false);
         $(".dataTables_scrollBody").addClass("opa2");
     });
 
@@ -46,7 +47,7 @@ $(document).ready(function () {
         iDisplayLength: -1,
         bProcessing: true,
         ajax: {
-            url: "?p=array_mobile.php",
+            url: "array_mobile.php",
             type: "POST",
             dataSrc: "mobile",
             "data": function (data) {
@@ -108,6 +109,7 @@ $(document).ready(function () {
     });
 
     $("#_drMob").on("change", function () {
+        CheckSesion()
         $('#table-mobile').DataTable().ajax.reload(null,false);
         $(".dataTables_scrollBody").addClass("opa2");
     });
@@ -367,6 +369,7 @@ $(document).ready(function () {
     });
 
     $('.selectjs_cuentaToken').on('select2:select', function (e) {
+        CheckSesion()
         $("#RefreshToken").submit();
     });
     $("#RefreshToken").bind("submit", function (e) {
@@ -376,9 +379,10 @@ $(document).ready(function () {
             url: $(this).attr("action"),
             data: $(this).serialize(),
             // dataType: "json",
-            beforeSend: function (data) { },
+            beforeSend: function (data) {CheckSesion()},
             success: function (data) {
                 if (data.status == "ok") {
+                    CheckSesion()
                     $('#table-mobile').DataTable().ajax.reload();
                     $(".dataTables_scrollBody").addClass("opa2");
                 }

@@ -1,13 +1,11 @@
 <?php
-session_start();
 require __DIR__ . '../../../config/index.php';
-ultimoacc();
-secure_auth_ch();
+session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+ultimoacc();
+secure_auth_ch_json();
+E_ALL();
 
 $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 

@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.132';
+    return 'v0.0.133';
 }
 function E_ALL()
 {
@@ -25,7 +25,11 @@ function secure_auth_ch()
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
-        header("location:/" . HOMEHOST . "/login/");
+        if(isset($_SERVER['HTTP_REFERER'])){
+            header("location:/" . HOMEHOST . "/login/?l=".urlencode($_SERVER['HTTP_REFERER']));
+        }else{
+            header("location:/" . HOMEHOST . "/login/");
+        }
         exit;
     } else {
         /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
@@ -39,7 +43,7 @@ function secure_auth_ch()
             /** Si pasaron 60 minutos o más */
             session_destroy();
             /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion");
+            header("location:/" . HOMEHOST . "/login/?sesion&l=".urlencode($_SERVER['HTTP_REFERER']));
             /** envío al usuario a la pag. de autenticación */
             exit();
             /** sino, actualizo la fecha de la sesión */
@@ -60,7 +64,8 @@ function secure_auth_ch_json()
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
-        PrintRespuestaJson('sesion', 'Sesión Expirada');
+        $f = 'Sesión Expirada. Incie sesión nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/'.HOMEHOST.'/login/?l='.urlencode($_SERVER['HTTP_REFERER']).'">Iniciar sesión</a>';
+        PrintRespuestaJson('sesion', $f);
         exit;
     } else {
         /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
@@ -74,7 +79,7 @@ function secure_auth_ch_json()
             /** Si pasaron 60 minutos o más */
             session_destroy();
             /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion");
+            header("location:/" . HOMEHOST . "/login/?sesion&l=".urlencode($_SERVER['HTTP_REFERER']));
             /** envío al usuario a la pag. de autenticación */
             exit();
             /** sino, actualizo la fecha de la sesión */

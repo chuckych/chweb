@@ -69,10 +69,12 @@ $(document).ready(function () {
             dateRange()
             $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
                 $('#_drMob2').val($('#_drMob').val())
+                CheckSesion()
                 $('#table-mobile').DataTable().ajax.reload();
             });
         },
         "drawCallback": function (settings) {
+            // CheckSesion()
             classEfect("#table-mobile tbody", 'animate__animated animate__fadeIn')
             setTimeout(function () {
                 loadingTableRemove('#table-mobile')
@@ -377,6 +379,7 @@ $(document).ready(function () {
     });
 
     $(document).on("click", "#Encabezado", function (e) {
+        CheckSesion()
         tablemobile.ajax.reload();
     });
 
@@ -404,6 +407,7 @@ $(document).ready(function () {
                 $('#_drMob2').val(dr)
                 $('#_drMob').val(dr)
                 dateRange()
+                // CheckSesion()
                 tablemobile.ajax.reload();
             },
         });

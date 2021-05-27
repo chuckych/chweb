@@ -1,12 +1,19 @@
 <?php
 // session_start();
-ultimoacc();
-secure_auth_ch();
+// ultimoacc();
+// secure_auth_ch();
+// header("Content-Type: application/json");
+// header('Access-Control-Allow-Origin: *');
+
+require __DIR__ . '../../config/index.php';
+session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-
+ultimoacc();
+secure_auth_ch_json();
 E_ALL();
 
+$_datos     = 'mobile';
 $token = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
 require __DIR__ . '../../config/conect_mysql.php';

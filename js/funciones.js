@@ -545,12 +545,12 @@ function singleDatePickerValue(selector, opens, drop, value) {
 function CheckSesion() {
     $.ajax({
         dataType: "json",
-        url: "../sesion.php",
+        url: "/"+$("#_homehost").val()+"/sesion.php",
         context: document.body
     }).done(function (data) {
         if (data.status == 'sesion') {
             $('#_sesion').val('1')
-            window.location.href="/"+$('#_homehost').val()+"/login/"
+            window.location.href="/"+$('#_homehost').val()+"/login/?l="+$('#_referer').val()
         } else {
             $('#_sesion').val('0')
         }

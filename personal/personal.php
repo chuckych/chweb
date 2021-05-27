@@ -68,6 +68,7 @@
     <script src="altaLeg-min.js?v=<?= vjs() ?>"></script>
     <script src="data-min.js?v=<?= vjs() ?>"></script>
     <script src="perExcel-min.js?v=<?= vjs() ?>"></script>
+    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="getSelect/select-min.js?v=<?= vjs() ?>"></script>
 </body>

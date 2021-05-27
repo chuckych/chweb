@@ -6,6 +6,10 @@
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <input type="hidden" hidden id="_sesion" value="0">
+<?php
+$_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
+?>
+<input type="hidden" hidden id="_referer" value="<?=urlencode($_SERVER['REQUEST_URI'])?>">
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white row d-flex align-items-center" style="z-index:1040;">
     <?php if (HOMEHOST == 'chweb') { ?>
         <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">

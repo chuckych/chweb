@@ -4,6 +4,7 @@ ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
 
 
 function GetExcel() {
+    CheckSesion()
     $.ajax({
         type: 'POST',
         dataType: "json",

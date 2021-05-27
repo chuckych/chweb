@@ -1,18 +1,16 @@
 <?php
-session_start();
-header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
-ultimoacc();
-secure_auth_ch();
+session_start();
 header("Content-Type: application/json");
-
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+header('Access-Control-Allow-Origin: *');
+ultimoacc();
+secure_auth_ch_json();
+E_ALL();
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
 
     if(valida_campo(test_input($_POST['LegNume']))){
-        $data = array('status' => 'error', 'dato' => '<strong>Campo Legajo Obligatorio</strong>.');
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Legajo Obligatorio.');
         echo json_encode($data);
         exit;
     };
@@ -35,7 +33,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
     $result  = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'Error', 'dato' => 'El Legajo: (<strong>'.$LegNume.'</strong>) ya existe.');
+            $data = array('status' => 'Error', 'Mensaje' => 'El Legajo: (<strong>'.$LegNume.'</strong>) ya existe.');
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -53,14 +51,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
             if (!$stmt) {
                 if( ($errors = sqlsrv_errors() ) != null) {
                     foreach( $errors as $error ) {
-                        $data = array("status" => "error", "dato" => $error['message']);
+                        $data = array("status" => "error", "Mensaje" => $error['message']);
                     }
                 }
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
             
-                $data = array("status" => "ok", "dato" => $Dato, "Legajo" => $LegNume);
+                $data = array("status" => "ok", "Mensaje" => $Dato, "Legajo" => $LegNume);
                 echo json_encode($data); /** retorno resultados en formato json */
                 audito_ch('A', $Dato); 
 
@@ -73,7 +71,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
                 if( ($errors = sqlsrv_errors() ) != null) {
                     foreach( $errors as $error ) {
                         $mensaje = explode(']', $error['message']);
-                        $data[] = array("status" => "error", "dato" => $mensaje[3]);
+                        $data[] = array("status" => "error", "Mensaje" => $mensaje[3]);
                     }
                 }
                 
