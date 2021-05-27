@@ -10,10 +10,18 @@
                         </div>
                     </div>
                 </div>
+                <?php
+                if ($persCierreFech) {
+                    $persCierreFech = Fech_Format_Var($persCierreFech, 'd/m/Y');
+                } else {
+                    $persCierreFech = '';
+                }
+                ?>
                 <div class="ml-5 input-group d-flex justify-content-end">
                     <label for="CierreFech" class="mr-2">Fecha de Cierre</label>
-                    <input type="date" class="form-control" value="<?= $persCierreFech ?>" id="CierreFech" name="CierreFech">
-                    <span id="trash_CierreFech" class="trash"></span>
+                    <input type="text" class="form-control" value="<?= $persCierreFech ?>" id="CierreFech" name="CierreFech" placeholder="dd/mm/yyyy">
+                    <!-- <span id="trash_CierreFech" class="ml-1 trash"></span> -->
+                    <span id="trash_CierreFech" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                 </div>
             </div>
             <div class="form-inline mt-3">

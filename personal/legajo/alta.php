@@ -122,16 +122,33 @@
     <?php require __DIR__ . "/js/valSelect.php"; ?>
 
     <script>
+    
         $('#label_LegMail').tooltip('show');
         singleDatePicker('#LegFeIn', 'center', 'down')
         singleDatePicker('#LegFeEg', 'center', 'down')
+        singleDatePicker('#IDVence', 'center', 'down')
+        singleDatePicker('#LegFeNa', 'center', 'down')
+        singleDatePicker('#CierreFech', 'center', 'down')
+        singleDatePicker('#InEgFeEg', 'center', 'down')
+        singleDatePicker('#InEgFeIn', 'center', 'down')
+        $('#IDVence').val('');
+        $('#InEgFeEg').val('');
+        $('#InEgFeIn').val('');
 
-        <?php if (!$persLegFeEg) {
+        <?php 
+        if (!$persLegFeNa) {
+            echo "$('#LegFeNa').val('');";
+        }
+        if (!$persLegFeEg) {
             echo "$('#LegFeEg').val('');";
         }
         if (!$persLegFeIn) {
             echo "$('#LegFeIn').val('');";
-        } ?>
+        } 
+        if (!$persCierreFech) {
+            echo "$('#CierreFech').val('');";
+        } 
+        ?>
         /** Select Naciones */
         $(document).ready(function() {
             $(".selectjs_naciones").select2({

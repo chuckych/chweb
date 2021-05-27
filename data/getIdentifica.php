@@ -23,7 +23,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $IDTarjeta   = $fila['IDTarjeta'];
         $IDVence = $fila['IDVence']->format('d/m/Y');
         $IDVence    = $IDVence=='01/01/1753' ? '-':$IDVence;
-        $IDFichada  = $fila['IDFichada']=='0' ? '-':'&#10003;';
+        $IDFichada  = $fila['IDFichada']=='0' ? '-':'<i class="bi bi-check2"></i>';
         $FechaHora  = $fila['FechaHora']->format('d/m/Y');
         $eliminar = '<div class="item"><a class="btn btn-light btn-sm delete_identifica" data="'.$IDCodigo.'" data2="'.$q2.'" data3="true">'.$icon_trash.'</a></div>';
         $data[] = array(

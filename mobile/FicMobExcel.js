@@ -21,7 +21,7 @@ function GetFicExcel() {
                 ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
                 window.location = data.archivo
                 $.notifyClose();
-                notify('Archivo exportado<br/>Si la descarga no se inicio haga clic en el siguiente enlace. <a href="' + data.archivo + '" class="btn btn-custom btn-sm mt-2 fontq">Descargar</a>', 'success', 10000, 'right')
+                notify('Archivo exportado correctamente.<br/>Si la descarga no ha iniciado, haga clic en el siguiente enlace. <a href="' + data.archivo + '" class="btn btn-custom btn-sm mt-2 fontq">Descargar</a>', 'success', 10000, 'right')
 
                 notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
             } else {

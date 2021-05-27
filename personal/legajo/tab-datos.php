@@ -55,9 +55,17 @@
                 </select>
                 <!-- Fin Género -->
                 <!-- Nacimiento -->
+                <?php 
+
+                if($persLegFeNa){
+                    $persLegFeNa = Fech_Format_Var($persLegFeNa, 'd/m/Y');
+                } else{
+                    $persLegFeNa = '';
+                }                
+                ?>
                 <label for="Nacimiento" class="mx-2">Nacimiento</label>
-                <input type="date" class="form-control" value="<?= $persLegFeNa ?>" id="LegFeNa" name="LegFeNa" onkeyup="javascript:calcularEdad();" max="<?= date('Y-m-d') ?>">
-                <span id="trash_LegFeNa" class="trash"></span>
+                <input type="text" class="form-control text-center" value="<?= $persLegFeNa ?>" id="LegFeNa" name="LegFeNa" onkeyup="javascript:calcularEdad();" placeholder="dd/mm/yyyy">
+                <span id="trash_LegFeNa" class="ml-1 trash"></span>
                 <div id="result" class="fontq ml-2"></div><!-- div donde mostraremos la edad -->
                 <!-- Fin Nacimiento -->
             </div>

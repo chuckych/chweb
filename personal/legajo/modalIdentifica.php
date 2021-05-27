@@ -13,15 +13,20 @@
                     <div class="row">
                         <div class="col-12 form-inline">
                             <label for="IDCodigo" class="mr-2 w100">Identificador</label>
-                            <input autofocus class="form-control w180" type="number" name="IDCodigo" id="IDCodigo">
-                            <label for="IDTarjeta" class="mr-2 w100">Tarjeta</label>
-                            <input class="form-control w180" type="number" name="IDTarjeta" id="IDTarjeta" maxlength="10">
+                            <input autofocus class="form-control w180" type="tel" name="IDCodigo" id="IDCodigo" placeholder="Identificador">
                             <input type="hidden" name="IDENTIFICA" value="IDENTIFICA">
-                            <input type="hidden" name="IDLegajo" value="<?=$_GET['_leg']?>">
+                            <input type="hidden" name="IDLegajo" value="<?= $_GET['_leg'] ?>">
                         </div>
                         <div class="col-12 form-inline mt-2">
-                            <label for="IDVence" class="mr-2 w100">Vencimiento</label>
-                            <input class="form-control w180" type="date" name="IDVence" id="IDVence">
+                            <label for="IDTarjeta" class="mr-2 w100">Tarjeta</label>
+                            <input class="form-control w180" type="tel" name="IDTarjeta" id="IDTarjeta" placeholder="N° de Tarjeta">
+                        </div>
+                        <div class="col-12 form-inline mt-2">
+                            <div class="d-inline-flex">
+                                <label for="IDVence" class="mr-2 w100">Vencimiento</label>
+                                <input class="form-control w180" type="text" name="IDVence" id="IDVence" placeholder="Fecha vencimiento">
+                                <span id="trash_IDVence" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
+                            </div>
                         </div>
                         <div class="col-12 my-3">
                             <div class="form-group d-flex justify-content-end">

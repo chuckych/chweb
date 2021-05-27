@@ -1,11 +1,11 @@
 <?php
+require __DIR__ . '../../../config/index.php';
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
-ultimoacc();
-secure_auth_ch();
 header("Content-Type: application/json");
-
+ultimoacc();
+secure_auth_ch_json();
+E_ALL();
 // $_POST['dato']           = $_POST['dato'] ?? '';
 FusNuloPOST('dato','');
 $_POST['alta_localidad'] = $_POST['alta_localidad'] ?? '';
@@ -1284,13 +1284,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     $params  = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $data    = array();
+    FusNuloPOST('InEgFeIn','');
+    FusNuloPOST('InEgFeEg','');
+    FusNuloPOST('InEgCaus','');
     
-    
-    $InEgLega = test_input($_POST['InEgLega']);
-    $InEgFeIn = test_input(FechaString($_POST['InEgFeIn']));
-    $InEgFeEg = test_input(($_POST['InEgFeEg']));
-    $InEgFeEg = empty($InEgFeEg) ? '17530101': FechaString($InEgFeEg);
-    $InEgCaus = test_input($_POST['InEgCaus']);
+    $InEgLega  = test_input($_POST['InEgLega']);
+
+    $InEgFeIn  = test_input(($_POST['InEgFeIn']));
+    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn) : '17530101';
+
+    $InEgFeEg  = test_input(($_POST['InEgFeEg']));
+    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg) : '17530101';
+
+    $InEgCaus  = test_input($_POST['InEgCaus']);
     $FechaHora = date('Ymd H:i:s');
 
     if(!valida_campo($_POST['InEgFeEg'])){
@@ -1775,18 +1781,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         echo json_encode($data);
         exit;
     };
-
-    $params  = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $_POST['IDVence']   = $_POST['IDVence']??'';
+    $params             = array();
+    $options            = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $data               = array();
     $_POST['IDTarjeta'] = $_POST['IDTarjeta']?? '';
-    $IDCodigo  = test_input($_POST['IDCodigo']);
-    $IDLegajo  = test_input($_POST['IDLegajo']);
-    $IDTarjeta  = test_input($_POST['IDTarjeta']);
-    $IDVence   = empty(test_input($_POST['IDVence'])) ? '17530101': test_input($_POST['IDVence']);
-    $IDVence   = FechaString($IDVence);
-    $IDFichada = '1';
-    $FechaHora = date('Ymd H:i:s');
+    $IDCodigo           = test_input($_POST['IDCodigo']);
+    $IDLegajo           = test_input($_POST['IDLegajo']);
+    $IDTarjeta          = test_input($_POST['IDTarjeta']);
+    $IDVence            = !empty(test_input($_POST['IDVence'])) ? dr_fecha(test_input($_POST['IDVence'])) : '17530101';
+    $IDVence            = FechaString($IDVence);
+    $IDFichada          = '1';
+    $FechaHora          = date('Ymd H:i:s');
 
     $Dato    = 'Identificador: ('.$IDCodigo.'). Legajo: '. $IDLegajo;
 

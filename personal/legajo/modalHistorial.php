@@ -5,25 +5,27 @@
             <div class="modal-header border-bottom-0">
                 <h6 class="modal-title" id="staticBackdropLabel">Ingreso y Egreso</h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <i class="bi bi-x"></i>
                 </button>
             </div>
             <div class="modal-body pb-0">
-            <form action="alta_opciones.php" method="post" class="form-perineg">
+                <form action="alta_opciones.php" method="post" class="form-perineg">
                     <div class="row">
                         <div class="col-12">
-                            <div class="form-inline">
-                                <label for="InEgFeIn" class="ml-2 w80">Ingreso</label>
-                                <input autofocus class="form-control" type="date" name="InEgFeIn" id="InEgFeIn">
-                                <input type="hidden" name="dato" value="alta_perineg">
-                                <input type="hidden" name="InEgLega" value="<?=$_GET['_leg']?>">
+                            <label for="InEgFeIn" class="w80">Ingreso</label>
+                            <div class="d-inline-flex">
+                                <input class="form-control" type="text" name="InEgFeIn" id="InEgFeIn" placeholder="dd/mm/yyyy">
+                                <span id="trash_InEgFeIn" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                             </div>
-                            <div class="form-inline mt-2">
-                                <label for="InEgFeEg" class="ml-2 w80">Egreso</label>
-                                <input class="form-control" type="date" name="InEgFeEg" id="InEgFeEg">
+                            <input type="hidden" name="dato" value="alta_perineg">
+                            <input type="hidden" name="InEgLega" value="<?= $_GET['_leg'] ?>">
+                            <label for="InEgFeEg" class="w80 mt-2">Egreso</label>
+                            <div class="d-inline-flex">
+                                <input class="form-control" type="text" name="InEgFeEg" id="InEgFeEg" placeholder="dd/mm/yyyy">
+                                <span id="trash_InEgFeEg" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                             </div>
                             <div class="form-group mt-2">
-                                <label for="InEgCaus" class="ml-2">Causa:</label>
+                                <label for="InEgCaus" class="">Causa:</label>
                                 <input class="form-control" type="text" name="InEgCaus" id="InEgCaus" maxlength="30">
                             </div>
                         </div>

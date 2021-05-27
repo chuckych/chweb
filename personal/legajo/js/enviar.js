@@ -26,12 +26,12 @@ $(document).ready(function () {
                     var Horas = ("0" + dt.getHours()).substr(-2);
                     var HoraActual = Horas + ":" + Minutos + ":" + Segundos + "Hs.";
                     $("#alerta_UpdateLega").removeClass("d-none").removeClass("d-none").removeClass("text-danger").addClass("text-success")
-                    $(".respuesta_UpdateLega").html(`Datos Guardados.! ${HoraActual}`)
+                    // $(".respuesta_UpdateLega").html(`Datos Guardados.! ${HoraActual}`)
                     $(".mensaje_UpdateLega").html('');
                     $("#Encabezado").html(`Legajo: ${data.Lega} &#8250 ${data.Nombre}`);
                     $("#LegDocu").val(`${data.docu}`)
                     
-                    notify(`Datos Guardados.! ${HoraActual}<br /><span class="fw5">Legajo: ${data.Lega} &#8250 ${data.Nombre}</span>`, 'success', 3000, 'right')
+                    notify(`Datos Guardados.<br /><span class="fw5">Legajo: ${data.Lega} <br>Nombre:  ${data.Nombre}</span>`, 'success', 5000, 'right')
 
                 } else {
                     $.notifyClose();
@@ -1567,7 +1567,7 @@ $(document).on('click', '.delete_identifica', function (e) {
 $(document).ready(function () {
     // $(document).on('click', '#grupocapt', function (e) {
     $('.selectjs_grupocapt').on('select2:select', function (e) {
-        event.preventDefault();
+        e.preventDefault();
 
         var LegajoGrHa = $('#LegajoGrHa').val()
         var GrupoHabi = $('#GrupoHabi').val()

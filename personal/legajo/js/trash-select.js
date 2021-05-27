@@ -56,4 +56,14 @@ $("#trash_LegFeIn").on("click", function () {
 });
 $("#trash_LegFeNa").on("click", function () {
     $('#LegFeNa').val(null).trigger("change");
+    $('#result').html('')
+});
+$("#trash_IDVence").on("click", function () {
+    $('#IDVence').val('');
+});
+$("#trash_InEgFeEg").on("click", function () {
+    $('#InEgFeEg').val('');
+});
+$("#trash_InEgFeIn").on("click", function () {
+    $('#InEgFeIn').val('');
 });
