@@ -26,7 +26,11 @@ $params = $columns = $totalRecords;
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query = "SELECT reg_.createdDate as 'createdDate', reg_.phoneid as 'phoneid', reg_user_.nombre as 'nombre', reg_.fechaHora 'fechaHora', reg_.lat as 'lat', reg_.lng as 'lng', reg_.gpsStatus as 'gpsStatus', reg_.eventType as 'eventType', reg_.appVersion as 'appVersion', reg_.attphoto as 'attphoto' FROM reg_ LEFT JOIN reg_user_ ON reg_.phoneid=reg_user_.phoneid WHERE reg_.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'";
+FusNuloPOST('SoloFic','');
+
+$Filtros = ($_POST['SoloFic']=='1') ? 'AND reg_.eventType=2' : '';
+
+$sql_query = "SELECT reg_.createdDate as 'createdDate', reg_.id_user as 'id_user', reg_.phoneid as 'phoneid', reg_user_.nombre as 'nombre', reg_.fechaHora 'fechaHora', reg_.lat as 'lat', reg_.lng as 'lng', reg_.gpsStatus as 'gpsStatus', reg_.eventType as 'eventType', reg_.operationType as 'operationType', reg_.operation as 'operation', reg_.appVersion as 'appVersion', reg_.attphoto as 'attphoto', reg_.regid as 'regid' FROM reg_ LEFT JOIN reg_user_ ON reg_.id_user=reg_user_.id_user WHERE reg_.fechaHora BETWEEN '$FechaIni' AND '$FechaFin' $Filtros";
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
@@ -51,23 +55,27 @@ $queryRecords = mysqli_query($link, $sqlRec);
 if ($totalRecords > 0) {
     while ($r = mysqli_fetch_assoc($queryRecords)) {
         $arrayData[] = array(
-            'phoneid'     => $r['phoneid'],
-            'nombre'      => $r['nombre'],
-            'fechaHora'   => $r['fechaHora'],
-            'dateTime'    => $r['dateTime'],
-            'lat'         => $r['lat'],
-            'lng'         => $r['lng'],
-            'gpsStatus'   => $r['gpsStatus'],
-            'eventType'   => $r['eventType'],
-            'appVersion'  => $r['appVersion'],
-            'attphoto'    => $r['attphoto'],
-            'createdDate' => $r['createdDate'],
+            'appVersion'    => $r['appVersion'],
+            'attphoto'      => $r['attphoto'],
+            'createdDate'   => $r['createdDate'],
+            'dateTime'      => $r['dateTime'],
+            'eventType'     => $r['eventType'],
+            'fechaHora'     => $r['fechaHora'],
+            'gpsStatus'     => $r['gpsStatus'],
+            'id_user'       => $r['id_user'],
+            'lat'           => $r['lat'],
+            'lng'           => $r['lng'],
+            'nombre'        => $r['nombre'],
+            'operation'     => $r['operation'],
+            'operationType' => $r['operationType'],
+            'phoneid'       => $r['phoneid'],
+            'regid'         => $r['regid'],
         );
     }
 }
 
 // print_r(json_encode($arrayData)); exit;
-$imgfoto = ($valor['face_url']) ? "https://server.xenio.uy/" . $valor['face_url'] : '../img/user.png';
+// $imgfoto = ($valor['face_url']) ? "https://server.xenio.uy/" . $valor['face_url'] : '../img/user.png';
 
 foreach ($arrayData as $key => $valor) {
     $dia  = Fecha_String($valor['fechaHora']);
@@ -81,22 +89,27 @@ foreach ($arrayData as $key => $valor) {
 
     $imgfoto = "fotos/" . $valor['createdDate'] . '_' . $valor['phoneid'] . '.png';
     //$imgfoto = '<img loading="lazy" src= "data:image/png;base64,' . ($valor['attphoto']) . '" class="shadow-sm w40 h40 scale radius img-fluid pointer"/>';
-
+    
     $foto = '<span class="pic" datafoto="' . $imgfoto . '" dataname="' . $valor['nombre'] . '" datauid="' . $valor['phoneid'] . '" datacerteza="" datacerteza2="" datainout="" datazone="" datahora="' . $time . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ($valor['eventType']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>';
 
+    $valor['operationType'] = ($valor['operationType']=='0') ? '': '/'.$valor['operationType'];
+    $valor['operation']     = ($valor['operation']=='0') ? '': '/'.$valor['operation'];
+
     $respuesta[] = array(
-        'createdDate' => '<div>' . $valor['createdDate'] . '</div>',
-        'Fecha2'      => '<div>' . $dia2 . '</div>',
         'Fecha'       => '<div>' . DiaSemana3($dia) . '</div>',
+        'Fecha2'      => '<div>' . $dia2 . '</div>',
         'Fecha4'      => '<div>' . DiaSemana4($dia) . '</div>',
+        'createdDate' => '<div>' . $valor['createdDate'] . '</div>',
+        'eventType'   => '<div>' . $valor['eventType']. $valor['operationType'] . $valor['operation']. '</div>',
         'face_url'    => '<div class="w40">' . $foto . '</div>',
+        'gps'         => '<div>' . $gps . '</div>',
+        'id_user'     => '<div>' . $valor['id_user'] . '</div>',
         'mapa'        => '<div>' . $iconMapa . '</div>',
-        'phoneid'     => '<div>' . $valor['phoneid'],
-        'eventType'   => '<div>' . $valor['eventType'],
-        'uid'         => '<div>' . $valor['phoneid'] . '</div>',
         'name'        => '<div>' . $valor['nombre'] . '</div>',
+        'phoneid'     => '<div>' . $valor['phoneid'],
         'time'        => '<div data-titler="'.$time_second.'">' . $time . '</div>',
-        'gps'         => '<div>' . $gps . '</div>'
+        'uid'         => '<div>' . $valor['phoneid'] . '</div>',
+        'regid'         => '<div data-titlel="Copiar Reg ID"><i data-clipboard-text="' . $valor['regid'] . '" class="copyRegig btn btn-sm btn-outline-custom border-0 pointer bi bi-clipboard"></i></div>',
     );
 }
 // $respuesta = array('mobile' => $respuesta);

@@ -178,6 +178,7 @@ function CheckedInputValChange(selector, valcheck, valuncheck, namecheck, nameun
         }
     });
 }
+
 function DisabledInput(selector) {
     if ($(selector).is(':not(:disabled)')) {
         $(selector).prop('disabled', true)
@@ -400,7 +401,7 @@ function respuesta_form(selector, Mensaje, alert) {
     return respuesta_form
 }
 
-function notify(Mensaje, type, delay, NotifAlign) {
+function notify(Mensaje, type, delay, NotifAlign, from) {
 
     var offset = ($(window).width() < 769) ? 0 : 20;
 
@@ -415,6 +416,7 @@ function notify(Mensaje, type, delay, NotifAlign) {
         offset: offset,
         mouse_over: 'pause',
         placement: {
+            from:from,
             align: NotifAlign /** orientación de la notificacion */
         },
         animate: {

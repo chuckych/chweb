@@ -48,23 +48,27 @@ $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);
 foreach ($array['payload'] as $key => $v) {
     $arrayData[] = array(
-        'phoneid'      => $v['phoneid'],
-        'dateTime'     => ($v['dateTime']),
-        'createdDate'  => $v['createdDate'],
-        'lat'          => $v['position']['lat'],
-        'lng'          => $v['position']['lng'],
-        'accuracy'     => $v['position']['accuracy'],
-        'gpsStatus'    => $v['position']['gpsStatus'],
-        'batteryLevel' => $v['position']['batteryLevel'],
-        'speed'        => $v['position']['speed'],
-        'bearing'      => $v['position']['bearing'],
-        'eventType'    => $v['eventType'],
-        '__v'          => $v['__v'],
-        'sync'         => $v['sync'],
-        '_id'          => $v['_id'],
-        'regid'        => $v['regid'],
-        'appVersion'   => $v['appVersion'],
-        'attphoto'     => $v['attphoto'],
+        '__v'           => $v['__v'],
+        '_id'           => $v['_id'],
+        'accuracy'      => $v['position']['accuracy'],
+        'appVersion'    => $v['appVersion'],
+        'attphoto'      => $v['attphoto'],
+        'batteryLevel'  => $v['position']['batteryLevel'],
+        'bearing'       => $v['position']['bearing'],
+        'companyCode'   => $v['companyCode'],
+        'createdDate'   => $v['createdDate'],
+        'dateTime'      => ($v['dateTime']),
+        'employeId'     => $v['employeId'],
+        'eventType'     => $v['eventType'],
+        'gpsStatus'     => $v['position']['gpsStatus'],
+        'lat'           => $v['position']['lat'],
+        'lng'           => $v['position']['lng'],
+        'phoneid'       => $v['phoneid'],
+        'regid'         => $v['regid'],
+        'speed'         => $v['position']['speed'],
+        'sync'          => $v['sync'],
+        'operationType' => $v['operationType'],
+        'operation'     => $v['operation']['observations'],
     );
 }
 // print_r(json_encode($arrayData));exit;
@@ -77,31 +81,35 @@ if (!empty($arrayData)) {
         $dates->setTimestamp($timestamp);
         $fechaHora = $dates->format('Y-m-d H:i:s');
 
-        $phoneid      = $valor['phoneid'];
-        $dateTime     = $valor['dateTime'];
-        $dateTime     = substr($dateTime, 0, 10);
-        $createdDate  = $valor['createdDate'];
-        $lat          = $valor['lat'];
-        $lng          = $valor['lng'];
-        $accuracy     = $valor['accuracy'];
-        $gpsStatus    = $valor['gpsStatus'];
-        $batteryLevel = $valor['batteryLevel'];
-        $speed        = $valor['speed'];
-        $bearing      = $valor['bearing'];
-        $eventType    = $valor['eventType'];
-        $__v          = $valor['__v'];
-        $sync         = $valor['sync'];
-        $_id          = $valor['_id'];
-        $regid        = $valor['regid'];
-        $appVersion   = $valor['appVersion'];
-        $attphoto     = $valor['attphoto'];
+        $__v           = $valor['__v'];
+        $_id           = $valor['_id'];
+        $accuracy      = $valor['accuracy'];
+        $appVersion    = $valor['appVersion'];
+        $attphoto      = $valor['attphoto'];
+        $batteryLevel  = $valor['batteryLevel'];
+        $bearing       = $valor['bearing'];
+        $companyCode   = $valor['companyCode'];
+        $createdDate   = $valor['createdDate'];
+        $dateTime      = $valor['dateTime'];
+        $dateTime      = substr($dateTime, 0, 10);
+        $employeId     = $valor['employeId'];
+        $eventType     = $valor['eventType'];
+        $gpsStatus     = $valor['gpsStatus'];
+        $lat           = $valor['lat'];
+        $lng           = $valor['lng'];
+        $phoneid       = $valor['phoneid'];
+        $regid         = $valor['regid'];
+        $speed         = $valor['speed'];
+        $sync          = $valor['sync'];
+        $operationType = $valor['operationType'] ?? '';
+        $operation     = $valor['operation'] ?? '';
 
         /** Guardamos la foto del base64 */
         $f = fopen('fotos/' . $createdDate.'_'.$phoneid . '.png', "w") or die("Unable to open file!");
         fwrite($f, base64_decode($attphoto));
         fclose($f);
         /** */
-        $query = "INSERT INTO reg_ (phoneid,createdDate,fechaHora,lat,lng,gpsStatus,eventType,_id,regid,appVersion) VALUES('$phoneid', '$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$_id', '$regid', '$appVersion')";
+        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion')";
         (mysqli_query($link, $query));
     }
     header("Content-Type: application/json");

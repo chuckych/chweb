@@ -19,4 +19,4 @@ define("RADIOS", [
     '900 Metros'  => '900',
     '1000 Metros' => '1000',
  ]);
-require pagina('mobile.php');
+require pagina('mobilehrp.php');

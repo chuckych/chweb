@@ -41,6 +41,7 @@
         <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas ' . MODULOS['mobile'] . ' HR', '') ?>
         <!-- Fin Encabezado -->
         <?php
+
         $FirstDate = "2019/01/01";
         $FirstYear = '2019';
         $maxDate   = date('Y-m-d');
@@ -60,18 +61,20 @@
         <input type="hidden" id="_drMob2">
         <div class="row bg-white py-3 radius" id="RowTableMobile">
 
-            <div class="col-12 table-responsive">
+            <div class="col-12 table-responsive" id="divTableMobile">
                 <table class="table text-wrap w-100" id="table-mobile">
                     <thead class="text-uppercase border-top-0">
                         <tr>
                             <th class="">FOTO</th>
+                            <th class="">LEGAJO</th>
                             <th class="">NOMBRE</th>
-                            <th class="">FECHA</th>
                             <th class="">DIA</th>
+                            <th class="">FECHA</th>
                             <th class="">HORA</th>
                             <th class="text-center">MAPA</th>
                             <th class="">EVENTO</th>
                             <th class="">PHONE ID</th>
+                            <th class=""></th>
                         </tr>
                     </thead>
                 </table>
@@ -88,16 +91,19 @@
     require __DIR__ . "../../../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../../js/DataTable.php";
+    
     ?>
     <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
     <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script> -->
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
     <!-- <script src="../js/lib/geocomplete/jquery.geocomplete.js"></script> -->
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="../../js/clipboardjs/dist/clipboard.min.js"></script>
     <!-- <script src="../../js/select2.min.js"></script> -->
     <!-- <script src="script-min.js"></script> -->
-    <script src="script.js?v=<?= vjs() ?>"></script>
-    <script src="script_user.js?v=<?= vjs() ?>"></script>
+    <script src="js/script.js?v=<?= vjs() ?>"></script>
+    <script src="js/script_user.js?v=<?= vjs() ?>"></script>
     <!-- <script src="FicMobExcel.js?v=<?= vjs() ?>"></script> -->
 
 </body>
