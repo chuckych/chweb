@@ -65,7 +65,7 @@
                 <table class="table text-wrap w-100" id="table-mobile">
                     <thead class="text-uppercase border-top-0">
                         <tr>
-                            <th class="">FOTO</th>
+                            <th class=""></th>
                             <th class="">LEGAJO</th>
                             <th class="">NOMBRE</th>
                             <th class="">DIA</th>

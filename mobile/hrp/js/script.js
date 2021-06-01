@@ -5,10 +5,14 @@ $('#Encabezado').addClass('pointer')
 function loadingTable(selectortable) {
     $(selectortable + ' td div').addClass('bg-light text-light')
     $(selectortable + ' td img').addClass('invisible')
+    $(selectortable + ' td i').addClass('invisible')
+    $(selectortable + ' td span').addClass('invisible')
 }
 function loadingTableRemove(selectortable) {
     $(selectortable + ' td div').removeClass('bg-light text-light')
     $(selectortable + ' td img').removeClass('invisible')
+    $(selectortable + ' td i').removeClass('invisible')
+    $(selectortable + ' td span').removeClass('invisible')
 }
 function dateRange() {
     $('#_drMob').daterangepicker({
@@ -101,6 +105,7 @@ tablemobile = $('#table-mobile').DataTable({
     },
     columns: [
         {
+            "class":"text-center",
             "data": "face_url"
         },
         {
@@ -195,6 +200,129 @@ function initMap() {
     var zona = (zona) ? zona : 'Fuera de Zona';
     var radio = parseFloat($('#map_size').val())
 
+    const styledMapType = new google.maps.StyledMapType(
+        [
+            { elementType: "geometry", stylers: [{ color: "#ebe3cd" }] },
+            { elementType: "labels.text.fill", stylers: [{ color: "#523735" }] },
+            { elementType: "labels.text.stroke", stylers: [{ color: "#f5f1e6" }] },
+            {
+                featureType: "administrative",
+                elementType: "geometry.stroke",
+                stylers: [{ color: "#c9b2a6" }],
+            },
+            {
+                featureType: "administrative.land_parcel",
+                elementType: "geometry.stroke",
+                stylers: [{ color: "#dcd2be" }],
+            },
+            {
+                featureType: "poi.business",
+                stylers: [{ visibility: "off" }],
+            },
+            {
+                featureType: "transit",
+                elementType: "labels.icon",
+                stylers: [{ visibility: "off" }],
+            },
+            {
+                featureType: "administrative.land_parcel",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#ae9e90" }],
+            },
+            {
+                featureType: "landscape.natural",
+                elementType: "geometry",
+                stylers: [{ color: "#dfd2ae" }],
+            },
+            {
+                featureType: "poi",
+                elementType: "geometry",
+                stylers: [{ color: "#dfd2ae" }],
+            },
+            {
+                featureType: "poi",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#93817c" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#a5b076" }],
+            },
+            {
+                featureType: "poi.park",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#447530" }],
+            },
+            {
+                featureType: "road",
+                elementType: "geometry",
+                stylers: [{ color: "#f5f1e6" }],
+            },
+            {
+                featureType: "road.arterial",
+                elementType: "geometry",
+                stylers: [{ color: "#fdfcf8" }],
+            },
+            {
+                featureType: "road.highway",
+                elementType: "geometry",
+                stylers: [{ color: "#f8c967" }],
+            },
+            {
+                featureType: "road.highway",
+                elementType: "geometry.stroke",
+                stylers: [{ color: "#e9bc62" }],
+            },
+            {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry",
+                stylers: [{ color: "#e98d58" }],
+            },
+            {
+                featureType: "road.highway.controlled_access",
+                elementType: "geometry.stroke",
+                stylers: [{ color: "#db8555" }],
+            },
+            {
+                featureType: "road.local",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#806b63" }],
+            },
+            {
+                featureType: "transit.line",
+                elementType: "geometry",
+                stylers: [{ color: "#dfd2ae" }],
+            },
+            {
+                featureType: "transit.line",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#8f7d77" }],
+            },
+            {
+                featureType: "transit.line",
+                elementType: "labels.text.stroke",
+                stylers: [{ color: "#ebe3cd" }],
+            },
+            {
+                featureType: "transit.station",
+                elementType: "geometry",
+                stylers: [{ color: "#dfd2ae" }],
+            },
+            {
+                featureType: "water",
+                elementType: "geometry.fill",
+                stylers: [{ color: "#b9d3c2" }],
+            },
+            {
+                featureType: "water",
+                elementType: "labels.text.fill",
+                stylers: [{ color: "#92998d" }],
+            },
+        ],
+        { name: "Styled Map" }
+    );
+
     const myLatLng = {
         lat: lati,
         lng: long
@@ -213,6 +341,9 @@ function initMap() {
         // mapTypeId: "terrain",
         // gestureHandling: "cooperative", /** para anular el zoom del scroll */
     });
+
+    map.mapTypes.set("styled_map", styledMapType);
+    map.setMapTypeId("styled_map");
     const contentString = '<div id="content"><span>' + zona + "</span></div>";
 
     const infowindow = new google.maps.InfoWindow({
@@ -254,10 +385,10 @@ function initMap() {
 $(document).on("click", ".pic", function (e) {
 
     $('#pic').modal('show')
-
     var picfoto = $(this).attr('datafoto');
     var picnombre = $(this).attr('dataname');
     var picuid = $(this).attr('datauid');
+    var picIDUser = $(this).attr('data-iduser');
     var piccerteza = $(this).attr('datacerteza');
     var piccerteza2 = $(this).attr('datacerteza2');
     var picinout = $(this).attr('datainout');
@@ -278,12 +409,14 @@ $(document).on("click", ".pic", function (e) {
     $('#zona').val(piczone)
     if (picfoto) {
         $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
+        $('.divFoto').show()
     } else {
-        $('.picFoto').html('<img loading="lazy" src="../img/user.png" class="img-fluid rounded" alt="Sin Foto" title="Sin Foto">');
+        $('.divFoto').hide()
     }
 
     $('.picName').html(picnombre);
     $('.picUid').html(picuid);
+    $('.picIDUser').html(picIDUser);
     $('.picHora').html('<b>' + pichora + '</b>');
     $('.picModo').html(picinout);
     $('.picTipo').html(pictype);

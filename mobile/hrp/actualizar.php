@@ -105,9 +105,12 @@ if (!empty($arrayData)) {
         $operation     = $valor['operation'] ?? '';
 
         /** Guardamos la foto del base64 */
-        $f = fopen('fotos/' . $createdDate.'_'.$phoneid . '.png', "w") or die("Unable to open file!");
-        fwrite($f, base64_decode($attphoto));
-        fclose($f);
+        if ($eventType == '2') {
+            $f = fopen('fotos/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
+            fwrite($f, base64_decode($attphoto));
+            fclose($f);
+        }
+
         /** */
         $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion')";
         (mysqli_query($link, $query));
