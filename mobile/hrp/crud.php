@@ -194,6 +194,9 @@ if (($_POST['tipo'] == 'c_usuario')) {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
         $headers = [
             'Content-Type: application/json',
+            'Access-Control-Allow-Origin: *',
+            'Accept: */*',
+            'Connection: keep-alive',
             'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -211,7 +214,8 @@ if (($_POST['tipo'] == 'c_usuario')) {
         PrintRespuestaJson('ok', 'Mensaje enviado correctamente');
         exit;
     } else {
-        PrintRespuestaJson('error', 'no se puedo enviar el mensaje');
+        $data = array('status' => 'error', 'Mensaje' => 'No se pudo enviar el mensaje', 'respuesta' => json_decode($sendMensaje), 'payload'=>json_decode($payload));
+        echo json_encode($data);
         exit;
     }
 } else if ($_POST['tipo'] == 'c_settings') {
