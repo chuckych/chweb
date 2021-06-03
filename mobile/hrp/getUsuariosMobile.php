@@ -50,7 +50,7 @@ if ($totalRecords > 0) {
 // print_r(json_encode($arrayData)); exit;
 
 foreach ($arrayData as $key => $valor) {
-    $Activar = (strlen($valor['regid'] > '100')) ? '<span data-regid="' . $valor['regid'] . '" data-titlel="Configurar dispositivo sin operaciones" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>' : '<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border-0"><i class="bi bi-phone"></i></span>';
+    $Activar = (strlen($valor['regid'] > '100')) ? '<span data-regid="' . $valor['regid'] . '" data-userid="' . $valor['id_user'] . '" data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>' : '<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border-0"><i class="bi bi-phone"></i></span>';
     $mensaje = (strlen($valor['regid'] > '100')) ? '<span data-nombre="' . $valor['nombre'] . '" data-regid="' . $valor['regid'] . '"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>' : '<span data-titlel="Sin Reg ID" data-regid="' . $valor['regid'] . '" class="ml-1 btn btn-outline-custom border-0 bi bi-chat-text disabled"></span></span>';
 
     $respuesta[] = array(

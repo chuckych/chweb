@@ -103,13 +103,15 @@ $(document).on("click", ".sendMensaje", function (e) {
 $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
     let regid = $(this).attr('data-regid')
+    let userid = $(this).attr('data-userid')
     CheckSesion()
     $.ajax({
         type: 'post',
         url: 'crud.php',
         data: {
-            tipo: 'c_settings',
+            tipo: 'c_setUserEmp',
             regid: regid,
+            userid: userid,
         },
         beforeSend: function (data) {
             $.notifyClose();

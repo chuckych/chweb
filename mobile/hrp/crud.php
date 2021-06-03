@@ -290,6 +290,10 @@ if (($_POST['tipo'] == 'c_usuario')) {
         PrintRespuestaJson('error', 'Falta Legajo');
         exit;
     };
+    if (($legajo=='0')) {
+        PrintRespuestaJson('error', 'Falta Legajo');
+        exit;
+    };
     if (valida_campo($fecha)) {
         PrintRespuestaJson('error', 'Falta Fecha');
         exit;
@@ -315,6 +319,68 @@ if (($_POST['tipo'] == 'c_usuario')) {
         exit;
     }
 
+}else if ($_POST['tipo'] == 'c_setUserEmp') {
+
+    $_POST['regid']  = $_POST['regid'] ?? '';
+    $_POST['userid'] = $_POST['userid'] ?? '';
+    $regid           = test_input($_POST['regid']);
+    $userid          = test_input($_POST['userid']);
+
+    if (valida_campo($regid)) {
+        PrintRespuestaJson('error', 'Falta Reg ID');
+        exit;
+    };
+    if (valida_campo($userid)) {
+        PrintRespuestaJson('error', 'Falta Legajo');
+        exit;
+    };
+
+    $cancellationReasons[] = '';
+    $operations[] = '';
+  
+    $data = array(
+        'eventType'           => 101,
+        'apiKey'              => '7BB3A26C25687BCD56A9BAF353A78',
+        'companyCode'          => $id_company,
+        'employeId'            => $userid,
+    );
+    $data = array(
+        'to' => $regid,
+        'data' => array('data' => $data)
+    );
+
+    $payload = json_encode($data);
+
+    function sendMessaje($url, $payload, $timeout = 10)
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+        $file_contents = curl_exec($ch);
+        curl_close($ch);
+        return ($file_contents) ? $file_contents : false;
+        exit;
+    }
+
+    $url = 'https://fcm.googleapis.com/fcm/send';
+    $sendMensaje = sendMessaje($url, $payload, 10);
+
+    if (json_decode($sendMensaje)->success == '1') {
+        $data = array('status' => 'ok', 'Mensaje' => 'Dispositivo configurado correctamente', 'respuesta' => json_decode($sendMensaje));
+        echo json_encode($data);
+        exit;
+    } else {
+        $data = array('status' => 'error', 'Mensaje' => 'No se puedo configurar el dispositivo', 'respuesta' => json_decode($sendMensaje));
+        echo json_encode($data);
+        exit;
+    }
 }
 mysqli_close($link);
 exit;

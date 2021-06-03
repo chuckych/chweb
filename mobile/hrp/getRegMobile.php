@@ -87,8 +87,8 @@ foreach ($arrayData as $key => $valor) {
     // $iconMapa        = ($valor['lat'] != '0') ? '<a href="' . $LinkMapa . '" target="_blank" rel="noopener noreferrer">' . imgIcon('marker', 'Ver Mapa', 'w20') . '</a>' : imgIcon('nomarker', 'Sin GPS', 'w20');
     $gps             = ($valor['gpsStatus'] != '0') ? 'Ok' : 'Sin GPS';
 
-    $valor['operationType'] = ($valor['operationType'] == '0') ? '' : '/' . $valor['operationType'];
-    $valor['operation']     = ($valor['operation'] == '0') ? '' : '/' . $valor['operation'];
+    $valor['operationType'] = ($valor['operationType'] <= '0') ? '' : '/' . $valor['operationType'];
+    $valor['operation']     = ($valor['operation'] <= '0') ? '' : '/' . $valor['operation'];
 
     $evento = $valor['eventType'] . $valor['operationType'] . $valor['operation'];
 
