@@ -75,6 +75,7 @@
                             <th class="">EVENTO</th>
                             <th class="">PHONE ID</th>
                             <th class=""></th>
+                            <th class=""></th>
                         </tr>
                     </thead>
                 </table>

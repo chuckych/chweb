@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 
 require __DIR__ . '../../../config/conect_mysql.php';
-
+// sleep(3);
 $id_company = $_SESSION["ID_CLIENTE"];
 
 if (($_POST['tipo'] == 'c_usuario')) {
@@ -194,9 +194,6 @@ if (($_POST['tipo'] == 'c_usuario')) {
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
         $headers = [
             'Content-Type: application/json',
-            'Access-Control-Allow-Origin: *',
-            'Accept: */*',
-            'Connection: keep-alive',
             'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
         ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -211,7 +208,8 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $sendMensaje = sendMessaje($url, $payload, 10);
 
     if (json_decode($sendMensaje)->success == '1') {
-        PrintRespuestaJson('ok', 'Mensaje enviado correctamente');
+        $data = array('status' => 'ok', 'Mensaje' => 'Mensaje enviado correctamente', 'respuesta' => json_decode($sendMensaje), 'payload'=>json_decode($payload));
+        echo json_encode($data);
         exit;
     } else {
         $data = array('status' => 'error', 'Mensaje' => 'No se pudo enviar el mensaje', 'respuesta' => json_decode($sendMensaje), 'payload'=>json_decode($payload));
@@ -279,6 +277,38 @@ if (($_POST['tipo'] == 'c_usuario')) {
         echo json_encode($data);
         exit;
     }
+} else if ($_POST['tipo'] == 'transferir'){
+
+    $_POST['legFech'] = $_POST['legFech']??'';
+    
+    $legFech = explode('@', $_POST['legFech']);
+    $legajo  = test_input($legFech[0]);
+    $fecha   = test_input($legFech[1]);
+    $hora    = test_input($legFech[2]);
+
+    if (valida_campo($legajo)) {
+        PrintRespuestaJson('error', 'Falta Legajo');
+        exit;
+    };
+    if (valida_campo($fecha)) {
+        PrintRespuestaJson('error', 'Falta Fecha');
+        exit;
+    };
+    if (valida_campo($hora)) {
+        PrintRespuestaJson('error', 'Falta Hora');
+        exit;
+    };
+
+    $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$legajo', '$fecha', '$hora', '9999', '9999', '0')";
+
+    if (InsertRegistroMS($query)) {
+        PrintRespuestaJson('ok', 'Se tranfirio el registro.<br>Legajo: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora);
+        exit;
+    }else{
+        PrintRespuestaJson('error', 'Error al transferir');
+        exit;
+    }
+
 }
 mysqli_close($link);
 exit;

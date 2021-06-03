@@ -142,6 +142,10 @@ tablemobile = $('#table-mobile').DataTable({
         },
         {
             "class": "text-center",
+            "data": "sendch"
+        },
+        {
+            "class": "text-center",
             "data": "regid"
         },
     ],
@@ -570,6 +574,39 @@ tablemobile.on('processing.dt', function (e, settings, processing) {
 $(document).on("click", ".openModal", function (e) {
     CheckSesion()
     $('#modalUsuarios').modal('show')
+});
+$(document).on("click", ".sendCH", function (e) {
+    CheckSesion()
+    e.preventDefault();
+    let legFech = $(this).attr('data-legFech')
+    $.ajax({
+        type: 'POST',
+        url: 'crud.php',
+        'data': {
+            legFech: legFech,
+            tipo: 'transferir'
+        },
+        beforeSend: function (data) {
+            ActiveBTN(true, ".sendCH", '<i class="bi bi-forward-fill fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+            notify('Enviando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+        },
+        success: function (data) {
+            if (data.status == "ok") {
+                $.notifyClose();
+                ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+                notify(data.Mensaje, 'success', 2000, 'right')
+            } else {
+                $.notifyClose();
+                ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+                notify(data.Mensaje, 'danger', 2000, 'right')
+            }
+        },
+        error: function () {
+            $.notifyClose();
+            ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+            notify('Error', 'danger', 2000, 'right')
+        }
+    });
 });
 
 function minmaxDate() {

@@ -102,6 +102,11 @@ foreach ($arrayData as $key => $valor) {
     }
     //$imgfoto = '<img loading="lazy" src= "data:image/png;base64,' . ($valor['attphoto']) . '" class="shadow-sm w40 h40 scale radius img-fluid pointer"/>';
 
+if ($evento=='2') {
+    $sendCH ='<div data-titlel="Transferir a CH"><button data-legFech="' . $valor['id_user'] . '@' . $dia . '@' . $time . '" class="sendCH btn btn-sm btn-outline-custom border-0 pointer"><i class="bi bi-forward fontt"></i></button></div>';
+}else{
+    $sendCH = '<div><button disabled class="btn btn-sm btn-outline-custom border-0"><i class="bi bi-forward fontt"></i></button></div>';
+}
 
     $respuesta[] = array(
         'Fecha'       => '<div>' . DiaSemana3($dia) . '</div>',
@@ -117,6 +122,7 @@ foreach ($arrayData as $key => $valor) {
         'phoneid'     => '<div>' . $valor['phoneid'],
         'time'        => '<div data-titler="' . $time_second . '">' . $time . '</div>',
         'uid'         => '<div>' . $valor['phoneid'] . '</div>',
+        'sendch'         => $sendCH,
         'regid'         => '<div data-titlel="Copiar Reg ID"><i data-clipboard-text="' . $valor['regid'] . '" class="copyRegig btn btn-sm btn-outline-custom border-0 pointer bi bi-clipboard"></i></div>',
     );
 }
