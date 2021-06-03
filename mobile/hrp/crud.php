@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 
 require __DIR__ . '../../../config/conect_mysql.php';
-// sleep(3);
+// sleep(1);
 $id_company = $_SESSION["ID_CLIENTE"];
 
 if (($_POST['tipo'] == 'c_usuario')) {
@@ -302,7 +302,13 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$legajo', '$fecha', '$hora', '9999', '9999', '0')";
 
     if (InsertRegistroMS($query)) {
-        PrintRespuestaJson('ok', 'Se tranfirio el registro.<br>Legajo: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora);
+        $data = array(
+            'status' => 'ok', 
+            'Mensaje' => 'Se tranfirio el registro.<br>Legajo: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora, 
+            'Legajo' => ($legajo),
+            'Fecha' => ($fecha),
+        );
+        echo json_encode($data);
         exit;
     }else{
         PrintRespuestaJson('error', 'Error al transferir');

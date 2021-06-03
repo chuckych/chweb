@@ -416,12 +416,12 @@ function notify(Mensaje, type, delay, NotifAlign, from) {
         offset: offset,
         mouse_over: 'pause',
         placement: {
-            from:from,
+            from: from,
             align: NotifAlign /** orientación de la notificacion */
         },
         animate: {
             enter: 'animate__animated animate__fadeInDown',
-            exit: 'animate__animated animate__fadeOutUp'
+            exit: 'animate__animated animate__fadeOut'
         },
     });
 }
@@ -547,14 +547,34 @@ function singleDatePickerValue(selector, opens, drop, value) {
 function CheckSesion() {
     $.ajax({
         dataType: "json",
-        url: "/"+$("#_homehost").val()+"/sesion.php",
+        url: "/" + $("#_homehost").val() + "/sesion.php",
         context: document.body
     }).done(function (data) {
         if (data.status == 'sesion') {
             $('#_sesion').val('1')
-            window.location.href="/"+$('#_homehost').val()+"/login/?l="+$('#_referer').val()
+            window.location.href = "/" + $('#_homehost').val() + "/login/?l=" + $('#_referer').val()
         } else {
             $('#_sesion').val('0')
+        }
+    });
+}
+function Procesar(FechaIni, FechaFin, LegaIni, LegaFin) {
+    $.ajax({
+        type: 'POST',      
+        dataType: "json",
+        url: "/" + $("#_homehost").val() + "/procesarajax.php",
+        'data': {
+            FechaIni:FechaIni,
+            FechaFin:FechaFin,
+            LegaIni:LegaIni,
+            LegaFin:LegaFin,
+        },
+        context: document.body
+    }).done(function (data) {
+        if (data.status == 'ok') {
+            console.log('ok');
+        } else {
+            console.log('error');
         }
     });
 }

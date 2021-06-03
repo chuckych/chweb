@@ -103,7 +103,8 @@ foreach ($arrayData as $key => $valor) {
     //$imgfoto = '<img loading="lazy" src= "data:image/png;base64,' . ($valor['attphoto']) . '" class="shadow-sm w40 h40 scale radius img-fluid pointer"/>';
 
 if ($evento=='2') {
-    $sendCH ='<div data-titlel="Transferir a CH"><button data-legFech="' . $valor['id_user'] . '@' . $dia . '@' . $time . '" class="sendCH btn btn-sm btn-outline-custom border-0 pointer"><i class="bi bi-forward fontt"></i></button></div>';
+    $datarecid='a'.recid().'a';
+    $sendCH ='<div data-titlel="Transferir a CH"><button data-legFech="' . $valor['id_user'] . '@' . $dia . '@' . $time . '" data-recid="'.$datarecid.'"id="'.$datarecid.'" class="sendCH btn btn-sm btn-outline-custom border-0 pointer"><i class="bi bi-forward fontt"></i></button></div>';
 }else{
     $sendCH = '<div><button disabled class="btn btn-sm btn-outline-custom border-0"><i class="bi bi-forward fontt"></i></button></div>';
 }

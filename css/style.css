@@ -542,6 +542,10 @@
  .w15 {
      width: 15px!important
  }
+ .wh15 {
+     width: 15px!important;
+     height: 15px!important
+ }
 
  .w14 {
      width: 14px!important

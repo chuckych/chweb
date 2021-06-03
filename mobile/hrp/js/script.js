@@ -105,7 +105,7 @@ tablemobile = $('#table-mobile').DataTable({
     },
     columns: [
         {
-            "class":"text-center",
+            "class": "text-center",
             "data": "face_url"
         },
         {
@@ -578,7 +578,8 @@ $(document).on("click", ".openModal", function (e) {
 $(document).on("click", ".sendCH", function (e) {
     CheckSesion()
     e.preventDefault();
-    let legFech = $(this).attr('data-legFech')
+    var legFech = $(this).attr('data-legFech')
+    let dataRecid = $(this).attr('data-recid')
     $.ajax({
         type: 'POST',
         url: 'crud.php',
@@ -587,24 +588,23 @@ $(document).on("click", ".sendCH", function (e) {
             tipo: 'transferir'
         },
         beforeSend: function (data) {
-            ActiveBTN(true, ".sendCH", '<i class="bi bi-forward-fill fontt"></i>', '<i class="bi bi-forward fontt"></i>')
-            notify('Enviando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+            ActiveBTN(true, "#" + dataRecid, '<i class="spinner-border fontp wh15"></i>', '<i class="bi bi-forward fontt"></i>')
         },
         success: function (data) {
             if (data.status == "ok") {
-                $.notifyClose();
-                ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
-                notify(data.Mensaje, 'success', 2000, 'right')
+                ActiveBTN(false, "#" + dataRecid, '<i class="b   bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+                notify(data.Mensaje, 'success', 3000, 'right')
+                Procesar(data.Fecha, data.Fecha, data.Legajo, data.Legajo)
             } else {
-                $.notifyClose();
-                ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
-                notify(data.Mensaje, 'danger', 2000, 'right')
+                // $.notifyClose();
+                ActiveBTN(false, "#" + dataRecid, '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+                notify(data.Mensaje, 'danger', 3000, 'right')
             }
         },
         error: function () {
-            $.notifyClose();
-            ActiveBTN(false, ".sendCH", '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
-            notify('Error', 'danger', 2000, 'right')
+            // $.notifyClose();
+            ActiveBTN(false, "#" + dataRecid, '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
+            notify(data.Mensaje, 'danger', 3000, 'right')
         }
     });
 });
