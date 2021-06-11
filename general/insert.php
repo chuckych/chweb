@@ -934,7 +934,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         );
         $data = array(
             'data' => array('data' => $data),
-            'to' => regid_legajo('29988600')
+            'to' => regid_legajo('20891138')
         );
 
         $payload = json_encode($data);
