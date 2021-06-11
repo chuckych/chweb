@@ -600,6 +600,9 @@ $(document).on("click", ".open-modal", function (e) {
             var mHor = $(this).attr('data_mHor');
             var mNov = $(this).attr('data_mNov');
             var NumLega = Datos.split('-');
+            
+            $("#NombreLega").val(Nombre);
+
 
             if (mFic == '1') {
                 $("#Mxs").val('1')
@@ -1751,6 +1754,7 @@ $(document).on("click", ".open-modal", function (e) {
                 $(".submit_btn_HorMod").prop("disabled", false);
 
                 var FicHora = $(this).attr('data');
+                var FicHsAu = $(this).attr('data1');
                 var FicHsAu2 = $(this).attr('data2');
                 var HoraDesc = $(this).attr('data3');
                 var Motivo = $(this).attr('data4');
@@ -1766,6 +1770,7 @@ $(document).on("click", ".open-modal", function (e) {
                 }
                 $("#Fic1Observ").val(Observ).trigger('change');
                 $("#Fic1HsAu2").val(FicHsAu2).trigger('change');
+                $("#FicHsAu").val(FicHsAu);
 
                 $("#Fic1HsAu2").focus();
                 $('#Fic1HsAu2').select();

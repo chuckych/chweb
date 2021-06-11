@@ -60,6 +60,7 @@ if (sqlsrv_num_rows($result) > 0) {
             $editar= '<a title="Editar Hora: '.$row['HoraDesc'].'" href="#TopN"
             class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_hora text-gris '.$disabled.'" 
             data="'.$row['Hora'].'"
+            data1="'.$row['FicHsAu'].'"
             data2="'.$row['FicHsAu2'].'"
             data3="'.$row['HoraDesc'].'"
             data4="'.$row['Motivo'].'"

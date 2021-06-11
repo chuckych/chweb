@@ -594,7 +594,9 @@ $(document).on("click", ".sendCH", function (e) {
             if (data.status == "ok") {
                 ActiveBTN(false, "#" + dataRecid, '<i class="b   bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')
                 notify(data.Mensaje, 'success', 3000, 'right')
-                Procesar(data.Fecha, data.Fecha, data.Legajo, data.Legajo)
+                setTimeout(() => {
+                    Procesar(data.Fecha, data.Fecha, data.Legajo, data.Legajo)
+                }, 3000);
             } else {
                 // $.notifyClose();
                 ActiveBTN(false, "#" + dataRecid, '<i class="bi bi-forward fontt"></i>', '<i class="bi bi-forward fontt"></i>')

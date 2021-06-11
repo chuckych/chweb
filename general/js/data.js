@@ -2,9 +2,9 @@
 function ActualizaTablas() {
 
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload();
+        $('#GetFechas').DataTable().ajax.reload(null, false);
     } else {
-        $('#GetPersonal').DataTable().ajax.reload();
+        $('#GetPersonal').DataTable().ajax.reload(null, false);
         $('#Per2').addClass('d-none')
         $('.pers_legajo').removeClass('d-none')
     };

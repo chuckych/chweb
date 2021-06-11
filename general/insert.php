@@ -880,6 +880,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     $Fic1HsAu2  = test_input($_POST['Fic1HsAu2']);
     $Fic1Caus   = test_input($_POST['Fic1Caus']);
     $Fic1Observ = test_input($_POST['Fic1Observ']);
+    $NombreLega = test_input($_POST['NombreLega']);
+    $FicHsAu    = test_input($_POST['FicHsAu']);
 
     require __DIR__ . '../../config/conect_mssql.php';
 
@@ -910,11 +912,63 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
 
     if (UpdateRegistro("UPDATE FICHAS1 Set FicHsHe = '$Fic1HsAu2',FicHsAu = '$Fic1HsAu2',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
-        audito_ch('M', $Dato);
         /** Grabamos en Auditor */
+        audito_ch('M', $Dato);
+
+        //setup request to send json via POST
+        $extraHours[] = array(
+            'name'       => $NombreLega,
+            'hour'       => $FicHsAu,
+            'auth_hours' => $Fic1HsAu2,
+            'employe_id' => $FicLega,
+            'type'       => $THoDesc,
+            'type_id'    => $Fic1Hora,
+            'date'       => FechaFormatVar($FechaHora, 'd M Y'),
+            'date_str'   => $FechaHora,
+        );
+
+        $data = array(
+            'apiKey' => "7BB3A26C25687BCD56A9BAF353A78",
+            'eventType' => 201,
+            'extraHours' => $extraHours,
+        );
+        $data = array(
+            'data' => array('data' => $data),
+            'to' => regid_legajo('29988600')
+        );
+
+        $payload = json_encode($data);
+
+        function sendMessaje($url, $payload, $timeout = 10)
+        {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+            $headers = [
+                'Content-Type: application/json',
+                'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
+            ];
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            $file_contents = curl_exec($ch);
+            curl_close($ch);
+            return ($file_contents) ? $file_contents : false;
+            exit;
+        }
+
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
-            $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod');
+
+            $url = 'https://fcm.googleapis.com/fcm/send';
+
+            if ($_SESSION["ID_CLIENTE"]=='1') {
+                $sendMensaje = sendMessaje($url, $payload, 10);
+            }else{
+                $sendMensaje = '';
+            }
+
+            $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje));
         } else {
             $Procesado = " - Sin procesar.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);

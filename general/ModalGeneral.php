@@ -202,6 +202,8 @@
                                                 <label for="Fic1Hora" class="mr-2 w80 d-block d-sm-none">Hora:</label>
                                                 <select class="selectjs_TipoHora w300" name="Fic1Hora" id="Fic1Hora"></select>
                                                 <input type="hidden" name="modHora" id="modHora">
+                                                <input type="hidden" name="NombreLega" id="NombreLega">
+                                                <input type="hidden" name="FicHsAu" id="FicHsAu">
                                                 <span class="mx-1"></span>
                                                 <label for="Fic1HsAu2" class="mx-2 d-none d-sm-block">Autorizadas:</label>
                                                 <label for="Fic1HsAu2" class="mr-1 d-block d-sm-none">Autor</label>

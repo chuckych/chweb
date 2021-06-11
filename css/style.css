@@ -1,6 +1,6 @@
  :root {
      --main-bg-color: #546e7a;
-     --main-radius: 3px;
+     --main-radius: 0px;
      --main-radius0: .0px;
      --main-transition: .5s;
      --animate-duration: .5s;

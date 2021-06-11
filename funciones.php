@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.140';
+    return 'v0.0.141';
 }
 function E_ALL()
 {
@@ -2652,4 +2652,31 @@ function utf8str($cadena)
         "'",
         "...",
     ], $cadena);
+}
+
+function NombreLegajo($NumLega)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $query = "SELECT TOP 1 PERSONAL.LegApNo FROM PERSONAL WHERE PERSONAL.LegNume = '$NumLega'";
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    while ($row = sqlsrv_fetch_array($stmt)) {
+        $LegApNo = $row['LegApNo'];
+    }
+    return $LegApNo;
+    sqlsrv_free_stmt($stmt);
+    sqlsrv_close($link);
+}
+function regid_legajo($legajo)
+{
+    require __DIR__ . '../config/conect_mysql.php';
+    $sql = "SELECT regid FROM reg_user_ WHERE id_user ='$legajo' LIMIT 1";
+    $rs = mysqli_query($link, $sql);
+    while ($a = mysqli_fetch_assoc($rs)) {
+        $regid = $a['regid'];
+    }
+    mysqli_free_result($rs);
+    mysqli_close($link);
+    return $regid;
 }
