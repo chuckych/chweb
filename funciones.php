@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.143';
+    return 'v0.0.144';
 }
 function E_ALL()
 {
