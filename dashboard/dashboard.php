@@ -5,55 +5,74 @@
     <?php require __DIR__ . "../../llamadas.php"; ?>
     <title><?= MODULOS['Dashboard'] ?></title>
     <style>
-    .highcharts-figure, .highcharts-data-table table {
+        /* .highcharts-figure, .highcharts-data-table table {
   min-width: 310px; 
   max-width: 800px;
   margin: 1em auto;
-}
+} */
 
-#container {
-  height: 400px;
-}
+        #container {
+            height: 400px;
+        }
 
-.highcharts-data-table table {
-	font-family: Verdana, sans-serif;
-	border-collapse: collapse;
-	border: 1px solid #EBEBEB;
-	margin: 10px auto;
-	text-align: center;
-	width: 100%;
-	max-width: 500px;
-}
-.highcharts-data-table caption {
-  padding: 1em 0;
-  font-size: 1.2em;
-  color: #555;
-}
-.highcharts-data-table th {
-	font-weight: 600;
-  padding: 0.5em;
-}
-.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
-  padding: 0.5em;
-}
-.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
-  background: #f8f8f8;
-}
-.highcharts-data-table tr:hover {
-  background: #f1f7ff;
-}
+        .highcharts-credits{
+            display: none;
+        }
+        .highcharts-figure,
+        .highcharts-data-table table {
+            min-width: 320px;
+            max-width: 660px;
+            margin: 1em auto;
+        }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #EBEBEB;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td,
+        .highcharts-data-table th,
+        .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr,
+        .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
     </style>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/export-data.js"></script>
-<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <div class="container shadow pb-2">
         <?php require __DIR__ . '../../nav.php'; ?>
         <?=
-            encabezado_mod2('bg-custom', 'white', 'graph-up',  MODULOS['Dashboard'], '25', 'text-white mr-2');
+        encabezado_mod2('bg-custom', 'white', 'graph-up',  MODULOS['Dashboard'], '25', 'text-white mr-2');
         ?>
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
@@ -92,11 +111,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="col-12 mt-3">
-                <figure class="highcharts-figure">
-                    <div id="container"></div>
-                </figure>
-            </div> -->
             <div class="col-12 mt-3" id="chartNove">
                 <div class="shadow-sm p-3 ChartsDiv">
                     <p class="fontq text-dark fw5">Novedades</p>
@@ -106,15 +120,25 @@
             <div class="col-12 col-sm-6 mt-3" id="charNoveT">
                 <div class="shadow-sm p-3 ChartsDiv">
                     <span class="fontq text-dark fw5">Novedades por Tipo</span>
-                    <canvas id="myChart" class="" height="200"></canvas>
+                    <figure class="highcharts-figure">
+                        <div id="ChartTipoNove"></div>
+                    </figure>
                 </div>
             </div>
             <div class="col-12 col-sm-6 mt-3" id="chartNoveH">
                 <div class="shadow-sm p-3 ChartsDiv">
                     <span class="fontq text-dark fw5">Total Horas</span>
-                    <canvas id="myChart2" class="" height="200"></canvas>
+                    <figure class="highcharts-figure">
+                        <div id="ChartTotalHoras"></div>
+                    </figure>
                 </div>
             </div>
+            <!-- <div class="col-12 col-sm-6 mt-3" id="chartNoveH">
+                <div class="shadow-sm p-3 ChartsDiv">
+                    <span class="fontq text-dark fw5">Total Horas</span>
+                    <canvas id="myChart2" class="" height="200"></canvas>
+                </div>
+            </div> -->
         </div>
     </div>
     <?php
@@ -128,52 +152,7 @@
     <link rel="stylesheet" type="text/css" href="../js/dateranger/daterangepicker.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     <script type="text/javascript" src="../js/chartjs/Chart.js"></script>
-    <script type="text/javascript" src="data.js?v=<?=vjs()?>"></script>
-    <script>
-        var result = [{
-            x: "18:00",
-            y: "230"
-        }, {
-            x: "19:00",
-            y: "232"
-        }, {
-            x: "20:00",
-            y: "236"
-        }, {
-            x: "22:00",
-            y: "228"
-        }];
-
-        // parse labels and data
-        var labels = result.map(e => moment(e.x, 'HH:mm'));
-        var data = result.map(e => +e.y);
-
-        var ctx = document.getElementById("Prueba").getContext('2d');
-        var Prueba = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Voltage Fluctuation',
-                    data: data,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                    xAxes: [{
-                        type: 'time',
-                        time: {
-                            unit: 'hour',
-                            displayFormats: {
-                                hour: 'HH:mm'
-                            }
-                        }
-                    }]
-                },
-            }
-        });
-    </script>
+    <script type="text/javascript" src="data.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

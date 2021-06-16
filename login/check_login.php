@@ -51,16 +51,16 @@ $hash     = $row['clave'];
 /** Si es correcto */
 if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
-	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")){
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('29', 'FFeVjsix', 'Informe Presentismo', 13, '0', 2)");
 	}
-	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 30 LIMIT 1")){
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 30 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('30', 'geD-wzy1', 'Datos', 10, '0', 3)");
 	}
-	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 31 LIMIT 1")){
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 31 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('31', '357ruc7a', 'Estructura', 11, '0', 3)");
 	}
-	if(!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 32 LIMIT 1")){
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 32 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('32', 'm0b1l3Hr', 'Mobile HRP', 30, '0', 4)");
 	}
 
@@ -268,15 +268,17 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
 	login_logs('1');
 
-	if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
+	if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
+		header('Location:/' . HOMEHOST . '/dashboard/');
+	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		if ($_POST['lasturl']) {
 			header('Location:' . urldecode($_POST['lasturl']));
-		}else{
+		} else {
 			header('Location:/' . HOMEHOST . '/mishoras/');
 		}
 	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
 		header('Location:/' . HOMEHOST . '/mobile/');
-	}else{
+	} else {
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 }
