@@ -1,5 +1,6 @@
 /** Select */
-$(document).ready(function () {
+// $("#divJornal").hide()
+// $(document).ready(function () {
     var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250" };
     $('.select2').select2({
         minimumResultsForSearch: -1
@@ -73,6 +74,7 @@ $(document).ready(function () {
     })
     $(".selectjs_empresa").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Empresa",
         minimumInputLength: opt2["MinLength"],
@@ -131,6 +133,7 @@ $(document).ready(function () {
     })
     $(".selectjs_plantas").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Planta",
         minimumInputLength: opt2["MinLength"],
@@ -189,6 +192,7 @@ $(document).ready(function () {
     })
     $(".selectjs_sectores").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Sector",
         minimumInputLength: opt2["MinLength"],
@@ -247,6 +251,7 @@ $(document).ready(function () {
     })
     $(".select_seccion").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Sección",
         minimumInputLength: opt2["MinLength"],
@@ -306,6 +311,7 @@ $(document).ready(function () {
     })
     $(".selectjs_grupos").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Grupo",
         minimumInputLength: opt2["MinLength"],
@@ -363,6 +369,7 @@ $(document).ready(function () {
     })
     $(".selectjs_sucursal").select2({
         multiple: false,
+        allowClear :true,
         language: "es",
         placeholder: "Sucursal",
         minimumInputLength: opt2["MinLength"],
@@ -420,6 +427,7 @@ $(document).ready(function () {
     })
     $(".selectjs_personal").select2({
         multiple: true,
+        // allowClear :true,
         language: "es",
         placeholder: "",
         minimumInputLength: 2,
@@ -500,8 +508,9 @@ $(document).ready(function () {
                 $(".Jor2Hasta").html(data.Jor2Hasta)
                 $(".ArchDesc").html(data.ArchDesc)
                 $(".ArchNomb").html(data.ArchNomb)
+                GetArch($(".ArchNomb").text(), data.ArchNomb,'')
+                
                 // $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
-
                 var Mes = moment().format("MM");
                 var Anio = moment().format("YYYY");
                 var FechaDesde = (Anio + "-" + Mes + "-" + data.MensDesde)
@@ -512,29 +521,45 @@ $(document).ready(function () {
                 $('.selectjs_mes').append(newOption).trigger('change');
                 $("#FechaIni").val(FechaDesde);
                 $("#FechaFin").val(FechaHasta);
+
+                var FechaDesde1 = moment(Anio + "/" + Mes + "/" + data.MensDesde).format("DD/MM/YYYY");
+                var FechaHasta1 = moment(Anio + "/" + Mes + "/" + data.MensHasta).format("DD/MM/YYYY");
+                var FechaHasta1 = (data.MensDesde >= data.MensHasta) ? SumarMes1(FechaHasta1, 1) : FechaHasta1;
+                let Fecha = FechaDesde1 +' al '+FechaHasta1
+                $('input[name="_drLiq"]').val(Fecha)
+        
+
             },
             error: function () {
             }
         });
     }
     GetParacont();
-    // function GetArch() {
-    //     var TXT_URL = "Liquidar.txt";
-    //     $.ajax({
-    //         dataType: "text",
-    //         url: TXT_URL,
-    //         success: function (data) {
-    //             $(".archivo").html("<pre>"+data+"</pre>");
-    //         },
-    //         error: function () {
-    //         }
-    //     });
-    // }
-    // GetArch();
+
+    function GetArch(arch, nombrearch, tipo) {
+        var TXT_URL = arch
+        $.ajax({
+            dataType: "text",
+            url: TXT_URL,
+            success: function (data) {
+                $(".archivo").html("<pre>"+data+"</pre>");
+                $(".archivo").addClass("shadow-sm border");
+                $(".ArchPath").html("<a class='text-secondary' download="+moment().format("DDMMYYYYHmmss")+"_"+tipo+"_"+nombrearch+" href="+nombrearch+">"+nombrearch+"</a>")
+                $('#trDownload').show()
+            },
+            error: function () {
+                $(".archivo").removeClass("shadow-sm border");
+            }
+        });
+    }
+    
 
     var TipoPer = $("#Tipo").val()    
     $("#TipoPer").val(TipoPer)
-
+    function SumarMes1(fecha, cant) {
+        var Fecha = moment(fecha).add(cant, 'months').format('DD/MM/YYYY');
+        return Fecha
+    }
     function FechaDeHa(anio, mes, diad, diah) {
         var Mes        = (mes != null) ? mes : moment().format("MM");
         var Anio       = (anio != null) ? anio : moment().format("YYYY");
@@ -542,11 +567,16 @@ $(document).ready(function () {
         var Hasta      = diah;
         // var FechaDesde = formatDate(Anio + "-" + Mes + "-" + Desde)
         var FechaDesde = moment(Anio + "-" + Mes + "-" + Desde).format("YYYY-MM-DD");
+        var FechaDesde1 = moment(Anio + "/" + Mes + "/" + Desde).format("DD/MM/YYYY");
         // var FechaHasta = formatDate(Anio + "-" + Mes + "-" + Hasta)
         var FechaHasta = moment(Anio + "-" + Mes + "-" + Hasta).format("YYYY-MM-DD");
+        var FechaHasta1 = moment(Anio + "/" + Mes + "/" + Hasta).format("DD/MM/YYYY");
         var FechaHasta = (Desde >= Hasta) ? SumarMes(FechaHasta, 1) : FechaHasta;
+        var FechaHasta1 = (Desde >= Hasta) ? SumarMes1(FechaHasta1, 1) : FechaHasta1;
         $("#FechaIni").val(FechaDesde);
         $("#FechaFin").val(FechaHasta);
+        let Fecha = FechaDesde1 +' al '+FechaHasta1
+        $('input[name="_drLiq"]').val(Fecha)
     }
     function FadeInSelec2Select(selec, selector2, selector3) {
         $(selec).on('select2:select', function () {
@@ -559,10 +589,10 @@ $(document).ready(function () {
         });
     }
 
-    FadeInSelec2Select('.selectjs_mes',"#FechaIni", "#FechaFin" );
-    FadeInSelec2Select('.select2_quincena',"#FechaIni", "#FechaFin" );
-    FadeInSelec2Select('.selectjs_anio',"#FechaIni", "#FechaFin" );
-    FadeInSelec2Select('.select2',"#FechaIni", "#FechaFin" );
+    FadeInSelec2Select('.selectjs_mes','input[name="_drLiq"]','input[name="_drLiq"]' );
+    FadeInSelec2Select('.select2_quincena','input[name="_drLiq"]','input[name="_drLiq"]' );
+    FadeInSelec2Select('.selectjs_anio','input[name="_drLiq"]','input[name="_drLiq"]' );
+    FadeInSelec2Select('.select2','input[name="_drLiq"]','input[name="_drLiq"]' );
 
 function cambioAnio(){
     $("#Anio").change(function (e) {
@@ -574,7 +604,7 @@ function cambioAnio(){
 
         var TipoPer = $("#TipoPer").val()
         if (TipoPer == '1') {
-            $("#divJornal").addClass('d-none');
+            $("#divJornal").hide()
             FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#MensDesde").val(), $("#MensHasta").val());
             $('.selectjs_mes').on('select2:select', function (e) {
                 FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#MensDesde").val(), $("#MensHasta").val());
@@ -582,7 +612,7 @@ function cambioAnio(){
         } else if (TipoPer == '2') {
             // $('.selectjs_mes').off('select2:select');
             /** valores por defecto */
-            $("#divJornal").removeClass('d-none');
+            $("#divJornal").show();
             FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#Jor1Desde").val(), $("#Jor1Hasta").val());
             /** */
             $('.selectjs_mes').on('select2:select', function (e) {
@@ -652,16 +682,16 @@ function cambioAnio(){
         $("#TipoPer").val(TipoPer)
         cambioAnio();
         var TipoPer = $("#TipoPer").val()
-        if (TipoPer == '1') {
-            $("#divJornal").addClass('d-none');
+        if (TipoPer == '0') {
+            $("#divJornal").hide()
             FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#MensDesde").val(), $("#MensHasta").val());
             $('.selectjs_mes').on('select2:select', function (e) {
                 FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#MensDesde").val(), $("#MensHasta").val());
             });
-        } else if (TipoPer == '2') {
+        } else if (TipoPer == '1') {
             // $('.selectjs_mes').off('select2:select');
             /** valores por defecto */
-            $("#divJornal").removeClass('d-none');
+            $("#divJornal").show();
             FechaDeHa($("#Anio").val(), $("#Mes").val(), $("#Jor1Desde").val(), $("#Jor1Hasta").val());
             /** */
             $('.selectjs_mes').on('select2:select', function (e) {
@@ -727,4 +757,4 @@ function cambioAnio(){
     textoSelected('.select_seccion', '#SelSeccion');
     textoSelected('.selectjs_grupos', '#SelGrupo');
     textoSelected('.selectjs_sucursal', '#SelSucursal');
-});
+// });

@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.145';
+    return 'v0.0.146';
 }
 function E_ALL()
 {
@@ -880,6 +880,7 @@ function fechformat($fecha)
     $fecha = date_format($fecha, 'd/m/Y');
     return $fecha;
 }
+
 function Fech_Format_Var($fecha, $var)
 {
     $fecha = date_create($fecha);
@@ -2034,7 +2035,7 @@ function InsertRegistroMS($query)
                 if ($error['SQLSTATE'] == '23000') {
                     PrintRespuestaJson('error', 'Ya existe en tabla Fichadas');
                     exit;
-                }else{
+                } else {
                     PrintRespuestaJson('error', $mensaje);
                     exit;
                 }
@@ -2308,8 +2309,8 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
 }
 function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
 {
-    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
-    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
+    // $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
+    // $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
     $ruta = rutaWebService("Liquidar");
     $post_data = "{Usuario=Supervisor,TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
     $ch = curl_init();
@@ -2327,7 +2328,10 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     }
     curl_close($ch);
     if ($httpCode == 404) {
-        echo $respuesta;
+        // echo $respuesta;
+        // exit;
+        $data = array('status' => 'error', 'dato' => $respuesta);
+        echo json_encode($data);
         exit;
     }
     $processID = respuestaWebService($respuesta);

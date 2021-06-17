@@ -6,8 +6,8 @@ $Modulo='15';
 ExisteModRol($Modulo);
 $bgcolor = 'bg-custom';
 define("TIPO_PER", [
-    'Mensuales'  => '1',
-    'Jornales' => '2',
+    'Mensuales'  => '0',
+    'Jornales' => '1',
     ]);
 define("QUINCENA", [
     'Primer'  => '1',

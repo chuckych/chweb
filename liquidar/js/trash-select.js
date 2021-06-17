@@ -50,18 +50,7 @@ $("#trash_all").on("click", function () {
     $('.selectjs_grupos').val(null).trigger("change");
     $('.selectjs_sucursal').val(null).trigger("change");
     $('.selectjs_personal').val(null).trigger("change");
-    $("#respuetatext").removeClass("animate__animated animate__fadeIn");
-    $("#respuetatext").html("");
-    $("#submit").prop("disabled", false);
-    $("#submit").html("Generar");
-    $("#respuesta").removeClass("alert-success");
-    $("#respuesta").removeClass("alert-danger");
-    $("#respuesta").removeClass("alert-info");
-    $("#FechaIni").addClass("animate__animated animate__fadeIn bg-light");
-    $("#FechaFin").addClass("animate__animated animate__fadeIn bg-light");
-    $("#respuesta").addClass("d-none");
-    setTimeout(function(){ 
-        $("#FechaIni").removeClass("animate__animated animate__fadeIn bg-light");
-        $("#FechaFin").removeClass("animate__animated animate__fadeIn bg-light");
-     }, 500);
+    $('#LegaIni').val('1')
+    $('#LegaFin').val('999999999')
+    ActiveBTN(false, "#submit", '', 'Generar');
 });
