@@ -1,9 +1,11 @@
 // $(".Filtros").prop('disabled', true);
 function ActualizaTablas(){
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload();
+        CheckSesion()
+        $('#GetFechas').DataTable().ajax.reload(null, false);
     } else {
-        $('#GetPersonal').DataTable().ajax.reload();
+        CheckSesion()
+        $('#GetPersonal').DataTable().ajax.reload(null, false);
         $('#Per2').addClass('d-none')
         $('.pers_legajo').removeClass('d-none')
     };
@@ -369,6 +371,7 @@ $("#_dr").change(function () {
 });
 $('#VerPor').html('Visualizar por Fecha')
 $("#Visualizar").change(function () {
+    CheckSesion()
     // $("#loader").addClass('loader');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();

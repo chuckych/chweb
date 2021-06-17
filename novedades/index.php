@@ -5,7 +5,7 @@ secure_auth_ch();
 $Modulo='2';
 ExisteModRol($Modulo);
 define("TIPO_PER", [
-    ''  => '',
+    'Todos'  => '',
     'Mensuales'  => 2,
     'Jornales' => 1,
     ]);

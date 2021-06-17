@@ -7,7 +7,12 @@
                 <div class="row">
                     <div class="col-12">
                         <label for="Tipo" class="mb-1 fontq">Tipo Personal: </label>
-                        <select class="selectjs_tipoper w200" id="Tipo" name="Tipo">
+                        <select class="selectjs_tipoper select2 w200" id="Tipo" name="Tipo">
+                            <?php
+                            foreach (TIPO_PER as $key => $value) {
+                                echo '<option value="' . $value . '">' . $key . '</option>';
+                            }
+                            ?>
                         </select>
                         <span id="trash_allIn" title="Limpiar Filtros"
                             class="trash align-middle pb-0 fw5 float-right">Limpiar Filtros</span>
@@ -82,7 +87,8 @@
                         <!-- Inasistencias -->
                         <div class="custom-control custom-switch custom-control-inline ml-1 w300">
                             <input type="checkbox" class="custom-control-input" id="FicNovA" value="0">
-                            <label class="custom-control-label" for="FicNovA" style="padding-top: 3px;"><span class="text-dark">Inasistencias</span></label>
+                            <label class="custom-control-label" for="FicNovA" style="padding-top: 3px;"><span
+                                    class="text-dark">Inasistencias</span></label>
                         </div>
                     </div>
                 </div>

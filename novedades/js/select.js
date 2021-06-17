@@ -85,15 +85,19 @@ $(function () {
             }
         });
     }
+    $('.select2').select2({
+        minimumResultsForSearch: -1
+    });
 
     CheboxChecked('#FicNovA');
     // $('#RegHora').mask('00:00');
     // $('#RegHora_mod').mask('00:00');
     $('#Filtros').on('shown.bs.modal', function () {
+        CheckSesion()
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         let url = "/" + $("#_homehost").val() + "/novedades/getSelect/getEstruct.php";
         let Empr = Select2Estruct(".selectjs_empresa", true, "Empresas", "Empr", url, $('#Filtros'));
-        let Tipo = Select2Estruct(".selectjs_tipoper", false, "Tipo de Personal", "Tipo", url, $('#Filtros'));
+        // let Tipo = Select2Estruct(".selectjs_tipoper", false, "Tipo de Personal", "Tipo", url, $('#Filtros'));
         let Plan = Select2Estruct(".selectjs_plantas", true, "Plantas", "Plan", url, $('#Filtros'));
         let Sect = Select2Estruct(".selectjs_sectores", true, "Sectores", "Sect", url, $('#Filtros'));
         let Sec2 = Select2Estruct(".select_seccion", true, "Secciones", "Sec2", url, $('#Filtros'));

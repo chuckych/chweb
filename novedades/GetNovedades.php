@@ -15,19 +15,6 @@ $data = array();
 
 $legajo = test_input(FusNuloPOST('_l', ''));
 
-// if($legajo=='vacio'){
-
-//     $json_data = array(
-//         "draw"            => '',
-//         "recordsTotal"    => '',
-//         "recordsFiltered" => '',
-//         "data"            => $data
-//     );
-    
-//     echo json_encode($json_data);
-//     exit;
-// }
-
 require __DIR__ . '../valores.php';
 
 $param = array();
@@ -76,6 +63,7 @@ $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
  FICHAS3.FicCaus AS 'nov_cod_causa', NOVECAUSA.NovCDesc AS 'nov_causa', 
  'nov_justif'= CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS 'nov_observ'
  FROM FICHAS
+ INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
  INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech
  INNER JOIN NOVEDAD ON FICHAS3.FicNove = NOVEDAD.NovCodi
  INNER JOIN NOVECAUSA ON FICHAS3.FicCaus = NOVECAUSA.NovCCodi AND FICHAS3.FicNove = NOVECAUSA.NovCNove 

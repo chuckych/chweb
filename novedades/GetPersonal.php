@@ -18,17 +18,7 @@ $FechaFin  = test_input(dr_fecha($DateRange[1]));
 $data = array();
 
 if(empty($DateRange)){
-
     $data = array();
-    // $json_data = array(
-    //     "draw"            => '',
-    //     "recordsTotal"    => '',
-    //     "recordsFiltered" => '',
-    //     "data"            => $data
-    // );
-    
-    // echo json_encode($json_data);
-    // exit;
 }
 
 require __DIR__ . '../valores.php';

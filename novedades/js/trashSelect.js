@@ -5,6 +5,7 @@
 }
 
 function LimpiarFiltros() {
+    // CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");
@@ -22,6 +23,7 @@ function LimpiarFiltros() {
     $('#FicNovA').prop('disabled' , false)
 }
 function LimpiarFiltros2() {
+    // CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");
@@ -38,18 +40,20 @@ function LimpiarFiltros2() {
     $('#FicNovA').prop('disabled' , false)
 }
 $("#trash_all").on("click", function () {
-    $('#Filtros').modal('show')
     LimpiarFiltros()
+    $('#Filtros').modal('show')
     $('#Filtros').modal('hide')
     // ActualizaTablas()
 });
 
 $("#trash_allIn").on("click", function () {
+    // CheckSesion()
     LimpiarFiltros()
     // ActualizaTablas()
 });
 
 $(document).on("click", ".numlega", function (e) {
+    CheckSesion()
     $('#Per2').val(null)
     $('.pers_legajo').addClass('d-none')
     $('#Per2').removeClass('d-none')

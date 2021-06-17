@@ -112,10 +112,10 @@
                     <span class="fontq py-2 fw5 mr-2">Ingresar Por:</span>
                     <div class="d-flex align-items-center pt-2">
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-sm fontq btn btn-outline-light border w100 text-dark fw4 radius" id="TipoIngresoFiltros" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<span class='fw5 fontq'>Ingresar por Filtros<br>(Carga R&aacute;pida)</span>">
+                            <label class="btn btn-sm fontq btn btn-outline-custom opa7 border w100 fw4 radius" id="TipoIngresoFiltros" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<span class='fw5 fontq'>Ingresar por Filtros<br>(Carga R&aacute;pida)</span>">
                                 <input checked type="radio" name="TipoIngresos" id="TipoIngreso1"> Filtros
                             </label>
-                            <label class="btn btn-sm fontq btn btn-outline-light border w100 text-dark fw4 radius" id="TipoIngresoFiltrosLegajos" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<span class='fw5 fontq'>Ingresar por Legajo<br>(Carga Lenta)</span>">
+                            <label class="btn btn-sm fontq btn btn-outline-custom opa7 border w100 fw4 radius" id="TipoIngresoFiltrosLegajos" data-toggle="tooltip" data-placement="bottom" data-html="true" title="" data-original-title="<span class='fw5 fontq'>Ingresar por Legajo<br>(Carga Lenta)</span>">
                                 <input type="radio" name="TipoIngresos" id="TipoIngreso2"> Legajos
                             </label>
                             <input type="hidden" hidden id="TipoIngreso" name="TipoIngreso">

@@ -75,6 +75,7 @@ $Tipo = test_input($_POST['Tipo']);
 $Tipo = ($Tipo=='null')?'':$Tipo;
 $Tipo = ($Tipo=='2') ? "AND PERSONAL.LegTipo = '0'": "AND PERSONAL.LegTipo = '$Tipo'";
 // $FicNovA = ($FicNovA=='1') ? "AND FICHAS.FicNovA = 1": "";
+
 $Tipo = empty(($_POST['Tipo'])) ? "": $Tipo;
 
 if(!empty($_POST['Sec2'])){

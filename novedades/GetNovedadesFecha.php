@@ -1,12 +1,12 @@
-
-
 <?php
 session_start();
-header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
-ultimoacc();
-secure_auth_ch();
 header("Content-Type: application/json");
+header('Access-Control-Allow-Origin: *');
+date_default_timezone_set('America/Argentina/Buenos_Aires');
+setlocale(LC_TIME, "es_ES");
+secure_auth_ch_json();
+
 E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
@@ -18,16 +18,6 @@ $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
 
 if ($Fecha == 'vacio') {
     $data = array();
-
-    // $json_data = array(
-    //     "draw"            => '',
-    //     "recordsTotal"    => '',
-    //     "recordsFiltered" => '',
-    //     "data"            => $data
-    // );
-
-    // echo json_encode($json_data);
-    // exit;
 }
 
 require __DIR__ . '../valores.php';
@@ -72,7 +62,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $nov_dia_semana = $row['nov_dia_semana'];
     $nov_horario    = $row['nov_horario'];
 
-    $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas, FICHAS3.FicCaus AS nov_cod_causa, NOVECAUSA.NovCDesc AS nov_causa, nov_justif=CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS nov_observ FROM FICHAS INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech INNER JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi INNER JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS.FicFech='$nov_Fecha2' AND FICHAS.FicLega=$nov_LegNume $FilterEstruct";
+    $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas, FICHAS3.FicCaus AS nov_cod_causa, NOVECAUSA.NovCDesc AS nov_causa, nov_justif=CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS nov_observ FROM FICHAS  INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech INNER JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi INNER JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS.FicFech='$nov_Fecha2' AND FICHAS.FicLega=$nov_LegNume $FilterEstruct";
     // print_r($query_Nov).PHP_EOL; exit;
 
     $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
