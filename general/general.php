@@ -171,7 +171,7 @@
     </script>
     <script src="../js/select2.min.js"></script>
     <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/proceso.js?v=<?=vjs()?>"></script>
+    <script src="js/proceso-min.js?v=<?=vjs()?>"></script>
     <!-- <script src="js/proceso.js"></script> -->
     <script src="js/export.js?v=<?=vjs()?>"></script>
     <script src="js/select.js?v=<?=vjs()?>"></script>

@@ -132,12 +132,12 @@ $Rol     = ExisteRol2($_GET['_r'])
                             <label class="custom-control-label" style="padding-top: 3px;" for="aCit">Alta</label>
                         </div>
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input abmcheck" id="mCit" name="mCit">
-                            <label class="custom-control-label" style="padding-top: 3px;" for="mCit">Baja</label>
+                            <input type="checkbox" class="custom-control-input abmcheck" id="bCit" name="bCit">
+                            <label class="custom-control-label" style="padding-top: 3px;" for="bCit">Baja</label>
                         </div>
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input abmcheck" id="bCit" name="bCit">
-                            <label class="custom-control-label" style="padding-top: 3px;" for="bCit">Modificación</label>
+                            <input type="checkbox" class="custom-control-input abmcheck" id="mCit" name="mCit">
+                            <label class="custom-control-label" style="padding-top: 3px;" for="mCit">Modificación</label>
                         </div>
                     </div>
                     <div class="col-6 col-sm-6 col-md-4 col-xl-3 p-3 d-flex align-items-end">

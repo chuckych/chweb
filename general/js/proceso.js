@@ -801,9 +801,12 @@ $(document).on("click", ".open-modal", function (e) {
 
                     },
                     success: function (respuesta) {
+                        (respuesta.CitEntra != 0) ? $("#bCit").show() : $("#bCit").hide();
+                        (respuesta.CitEntra != 0) ? $("#bCit").attr('datos',$('#data').val()) : $("#bCit").attr('datos','');
                         (respuesta.CitEntra != 0) ? $("#CitEntra").val(respuesta.CitEntra) : $("#CitEntra").val();
                         (respuesta.CitSale != 0) ? $("#CitSale").val(respuesta.CitSale) : $("#CitSale").val();
                         (respuesta.CitDesc != 0) ? $("#CitDesc").val(respuesta.CitDesc) : $("#CitDesc").val();
+                        
                     },
                     error: function () {
                         $("#CitEntra").val();
@@ -2003,6 +2006,65 @@ $(document).on("click", ".open-modal", function (e) {
                     }
                     // $('#Citacion').off('click');
                 });
+                /** BAJA CITACION */
+                $("#bCit").on("click", function (e) {
+                    e.preventDefault();
+                    var Datos = $(this).attr('datos');
+                    console.log(Datos);
+
+                    bootbox.confirm({
+                        message: '<span class="fonth fw5">Eliminar Citación</span><br><span class="fontq fw4">¿Confirma eliminar la Citación?</span>',
+                        // message: '',
+                        buttons: {
+                            confirm: {
+                                label: 'Aceptar',
+                                className: 'btn-custom text-white btn-sm fontq'
+                            },
+                            cancel: {
+                                label: 'Cancelar',
+                                className: 'btn-light btn-sm fontq text-secondary'
+                            }
+                        },
+                        callback: function (result) {
+                            if (result) {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "insert.php",
+                                    'data': {
+                                        baja_Cit: true,
+                                        Datos
+                                    },
+                                    beforeSend: function (data) {
+                                        CierraModalGeneral()
+                                        $.notifyClose();
+                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                                    },
+                                    success: function (data) {
+                                        if (data.status == "ok") {
+                                            DisabledClean();
+                                            /** vaciamos el form */
+                                            ClearFormCitacion()
+                                            /** refresh datatable */
+                                            RefreshDataTables();
+                                            $(".respuesta_OtrasNov").html('');
+                                            $.notifyClose();
+                                            notify(data.Mensaje, 'success', 5000, 'right')
+                                            /** refresh datatable */
+                                        } else {
+                                            DisabledClean();
+                                            RefreshDataTables();
+                                            $.notifyClose();
+                                            notify(data.Mensaje, 'danger', 5000, 'right')
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+
+                    e.stopImmediatePropagation()                    
+                });
+
                 if (Cita) {
                     GetCitacion()
                     $("#rowCitacion").removeClass('d-none')

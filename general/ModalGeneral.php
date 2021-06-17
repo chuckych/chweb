@@ -5,10 +5,15 @@
                 <p class="fw5 font1 nombre"></p>
                 <p class="d-none d-sm-block align-middle mt-1 fontq">Fecha:<span class="mx-1 dia fw4 ls1"></span><br />Horario:<span class="mx-1 fw5 ls1" id="FicHorario"></span>
                     <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
-                        <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-link text-decoration-none Citacion" id="Citacion">
-                            </button>
+                        <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-outline-custom border Citacion" id="Citacion">
+                        </button>
                     <?php } ?>
-                    <span class="fontq" id="FechCierre"></span></p>
+                    <?php if ($_SESSION['ABM_ROL']['bCit'] == 1) { ?>
+                        <button title="Eliminar Citación" class="bi bi-trash btn btn-sm btn-outline-custom border" id="bCit" style="display: none;">
+                        </button>
+                    <?php } ?>
+                    <span class="fontq" id="FechCierre"></span>
+                </p>
             </div>
             <input type="hidden" name="" id="data">
             <div class="modal-body fw4 pt-0 mt-n3">
@@ -143,8 +148,8 @@
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTNov">Novedades</span>
                                         <form action="insert.php" method="POST" class="Form_Novedad d-none">
-                                        <input type="hidden" name="_nt" id="novTipo">
-                                        <input type="hidden" name="_nc" id="novCate">
+                                            <input type="hidden" name="_nt" id="novTipo">
+                                            <input type="hidden" name="_nc" id="novCate">
                                             <div class="mb-2 d-flex align-items-center">
                                                 <input type="hidden" name="alta_novedad" id="alta_novedad">
                                                 <input type="hidden" name="datos_novedad" class="datos_novedad" id="datos_novedad" value="">

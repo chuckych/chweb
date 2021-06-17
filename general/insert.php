@@ -25,6 +25,7 @@ $_POST['baja_Hora']     = $_POST['baja_Hora'] ?? '';
 $_POST['alta_OtrasNov'] = $_POST['alta_OtrasNov'] ?? '';
 $_POST['baja_ONov']     = $_POST['baja_ONov'] ?? '';
 $_POST['alta_Citación'] = $_POST['alta_Citación'] ?? '';
+$_POST['baja_Cit']      = $_POST['baja_Cit'] ?? '';
 
 /** ALTA FICHADA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')) {
@@ -962,9 +963,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 
             $url = 'https://fcm.googleapis.com/fcm/send';
 
-            if ($_SESSION["ID_CLIENTE"]=='1') {
+            if ($_SESSION["ID_CLIENTE"] == '1') {
                 $sendMensaje = sendMessaje($url, $payload, 10);
-            }else{
+            } else {
                 $sendMensaje = '';
             }
 
@@ -1248,18 +1249,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         exit;
     }
 
-    if ((HoraMin($CitEntra) >= HoraMin($CitSale))) {
-        $data = array('status' => 'error', 'Mensaje' => 'El Horario de entrada no puede ser Mayor o Igual de Salida.');
-        echo json_encode($data);
-        exit;
-    };
+    // if ((HoraMin($CitEntra) >= HoraMin($CitSale))) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'El Horario de entrada no puede ser Mayor o Igual de Salida.');
+    //     echo json_encode($data);
+    //     exit;
+    // };
+
     $Intervalo = HoraMin($CitSale) - HoraMin($CitEntra);
 
-    if ((HoraMin($CitDesc) >= ($Intervalo))) {
-        $data = array('status' => 'error', 'Mensaje' => 'El Descanso no puede ser Mayor al intervalo entre Entrada y Salida<br/>Intervalo: ' . FormatHora($Intervalo) . '<br/>Descanso: ' . $CitDesc);
-        echo json_encode($data);
-        exit;
-    };
+    // if ((HoraMin($CitDesc) >= ($Intervalo))) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'El Descanso no puede ser Mayor al intervalo entre Entrada y Salida<br/>Intervalo: ' . FormatHora($Intervalo) . '<br/>Descanso: ' . $CitDesc);
+    //     echo json_encode($data);
+    //     exit;
+    // };
 
     if (valida_campo($_POST['datos_Citación'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_Citación</strong> requerido!');
@@ -1309,5 +1311,68 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
             echo json_encode($data);
             exit;
         };
+    }
+}
+/** ALTA CITACION */
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
+
+
+    // $data = array('status' => 'error', 'Mensaje' => 'Funciona.');
+    // echo json_encode($data);
+    // exit;
+
+    if ($_SESSION["ABM_ROL"]['bCit'] == '0') {
+        $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar citaciones.');
+        echo json_encode($data);
+        exit;
+    };
+
+    $_POST['Datos'] = $_POST['Datos'] ?? '';
+    $Datos = test_input($_POST['Datos']);
+
+
+    if (valida_campo($Datos)) {
+        $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Datos</strong> requerido!');
+        echo json_encode($data);
+        exit;
+    };
+
+    $Datos = explode('-', $Datos);
+    $FicLega  = ($Datos[0]);
+    $FicFech  = ($Datos[1]);
+
+    if (PerCierre($FicFech, $FicLega)) {
+        $data = array('status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y')));
+        echo json_encode($data);
+        exit;
+    }
+
+    $Dato = 'Baja Citación. Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
+
+    $ExisteCitacion = CountRegistrosMayorCero("SELECT CitLega ,CitFech ,CitTurn ,CitEntra ,CitSale ,CitDesc ,FechaHora FROM CITACION WHERE CitLega = '$FicLega' and CitFech = '$FicFech' and CitTurn = 1");
+
+    if ($ExisteCitacion) {
+        if ((DeleteRegistro("DELETE FROM CITACION WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1"))) {
+            audito_ch('B', $Dato);
+           
+            if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
+                $Procesado = " - Procesado.";
+                $data = array('status' => 'ok', 'Mensaje' => 'Citación eliminada correctamente' . $Procesado, 'tipo' => 'alta');
+            } else {
+                $Procesado = " - Sin procesar.";
+                $data = array('status' => 'ok', 'Mensaje' => 'Citación eliminada correctamente' . $Procesado, 'tipo' => 'alta');
+            }
+            echo json_encode($data);
+            exit;
+
+        } else {
+            $data = array('status' => 'ok', 'Mensaje' => 'Error');
+            echo json_encode($data);
+            exit;
+        }
+    } else {
+        $data = array('status' => 'ok', 'Mensaje' => 'No existe Citación.');
+        echo json_encode($data);
+        exit;
     }
 }
