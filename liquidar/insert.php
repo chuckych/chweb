@@ -72,11 +72,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'tr
     };
     
 
-    if ($FechaDesde > $FechaHasta) {
-        $data = array('status' => 'error', 'Mensaje' => 'Rango de Fecha Incorrecto!');
-        echo json_encode($data);
-        exit;
-    };
+    // if ($FechaDesde > $FechaHasta) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'Rango de Fecha Incorrecto!');
+    //     echo json_encode($data);
+    //     exit;
+    // };
     
 
     if ((($LegajoDesde) > ($LegajoHasta))) {

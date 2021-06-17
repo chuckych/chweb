@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.146';
+    return 'v0.0.147';
 }
 function E_ALL()
 {
@@ -2330,7 +2330,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($httpCode == 404) {
         // echo $respuesta;
         // exit;
-        $data = array('status' => 'error', 'dato' => $respuesta);
+        $data = array('status' => 'error', 'Mensaje' => $respuesta);
         echo json_encode($data);
         exit;
     }
