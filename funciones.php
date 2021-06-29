@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.150';
+    return 'v0.0.151';
 }
 function E_ALL()
 {
@@ -616,6 +616,11 @@ function test_input2($data)
 function hoy()
 {
     $hoy = date('Y-m-d');
+    return rtrim($hoy);
+}
+function hoyStr()
+{
+    $hoy = date('Ymd');
     return rtrim($hoy);
 }
 function FechaString($var)
@@ -2412,6 +2417,42 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
         exit;
     }
 }
+function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
+{
+    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
+    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
+    $ruta = rutaWebService("Horarios");
+    $post_data = "{Usuario=CHWEB,TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $ruta);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $respuesta = curl_exec($ch);
+    $curl_errno = curl_errno($ch);
+    $curl_error = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($curl_errno > 0) {
+        PrintRespuestaJson('error', 'No hay Conexión..');
+        exit;
+    }
+    curl_close($ch);
+    if ($httpCode == 404) {
+        $data = array('status' => 'error', 'dato' => $respuesta);
+        echo json_encode($data);
+        exit;
+    }
+    $processID = respuestaWebService($respuesta);
+    $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
+    // echo $processID.PHP_EOL; 
+    // echo EstadoProceso($url); exit;
+
+    if ($httpCode == 201) {
+        // return EstadoProceso($url);
+        return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
+        exit;
+    }
+}
 /** FIN EL WEBSERVICE CH*/
 
 function FusNuloPOST($dato, $result)
@@ -2684,4 +2725,22 @@ function regid_legajo($legajo)
     mysqli_free_result($rs);
     mysqli_close($link);
     return $regid;
+}
+function horarioCH($HorCodi)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $query = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    // print_r($query);
+    while ($a = sqlsrv_fetch_array($stmt)) {
+        $data = array(
+            'cod'  => $a['HorCodi'],
+            'desc' => $a['HorDesc'],
+        );
+        return $data;
+    }
+    sqlsrv_close($link);
+    exit;
 }

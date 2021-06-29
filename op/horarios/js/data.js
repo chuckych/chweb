@@ -1,5 +1,4 @@
 $(function () {
-
     var maskBehavior = function (val) {
         val = val.split(":");
         return parseInt(val[0]) > 19 ? "HZ:M0" : "H0:M0";
@@ -14,14 +13,13 @@ $(function () {
             'M': { pattern: /[0-5]/, optional: false }
         }
     };
-
-
     function ActualizaTablas() {
         $("#Horale1").DataTable().ajax.reload(null, false)
         $("#Horale2").DataTable().ajax.reload(null, false)
         $("#Rotacion").DataTable().ajax.reload(null, false)
+        let numLega = $('.divTablas .NumLega').text()
+        getHorarioActual((numLega))
     };
-
     $("#_eg").click(function () {
         CheckSesion()
         $("#detalleHorario").hide()
@@ -148,6 +146,9 @@ $(function () {
             drawCallback: function (settings) {
                 $("#tableHorarios_wrapper thead").remove()
                 classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
+                setTimeout(() => {
+                    $('#actModal').modal('show')
+                }, 100);
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn pointer');
@@ -225,6 +226,7 @@ $(function () {
             drawCallback: function (settings) {
                 $("#tableHorarios_wrapper thead").remove()
                 classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
+                $('#actModal').modal('show')
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn pointer');
@@ -289,11 +291,16 @@ $(function () {
         $(selector).dataTable({
             initComplete: function (settings) {
                 $(selector + " thead").remove()
+                // console.table(settings.json.TotalCit)
+                // if (settings.json.TotalCit) {
+                //     $('.cita').html('Citaciones ('+settings.json.TotalCit+')')
+                // }
             },
             drawCallback: function (settings) {
                 $(selector + " thead").remove()
                 let titletabla = '<div>Horarios Desde: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
                 let btnAdd = `<button title="Nueva asignación" class="btn btn-sm btn-light px-2 pointer border c_horale1"><i class="bi bi-plus fonth"></i></button>`
+
                 if (settings.aiDisplay.length == 0) {
                     let titletabla = '<div class="fw4">Sin Horario Desde asignado.</div>';
                     $('#titleDesde').removeClass('btn-custom')
@@ -313,8 +320,6 @@ $(function () {
                 $(".c_horale1").click(function () {
                     CheckSesion()
                     let data = settings.json.data[0];
-                    $('#actModal').modal('show')
-
                     $('#actModal .modal-title').html('Nueva Asignación')
                     getHTML('bodyHorale1.html', '#actModalbody')
 
@@ -346,7 +351,7 @@ $(function () {
                                 classEfect('#inputH1horario', 'fw5 border-info')
                                 e.stopImmediatePropagation();
                             });
-                        }, 300);
+                        }, 100);
 
                     }, 300);
                     submitForm('#form', 'crud.php')
@@ -359,8 +364,6 @@ $(function () {
                 $(".actModal").click(function () {
                     CheckSesion()
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    $('#actModal').modal('show')
-
                     $('#actModal .modal-title').html('Editar Asignación')
                     getHTML('bodyHorale1.html', '#actModalbody')
 
@@ -399,8 +402,7 @@ $(function () {
 
                             });
 
-                        }, 300);
-
+                        }, 100);
                     }, 300);
                     submitForm('#form', 'crud.php')
                 });
@@ -559,8 +561,6 @@ $(function () {
                 $(".c_horale2").click(function () {
                     CheckSesion()
                     let data = settings.json.data[0];
-                    $('#actModal').modal('show')
-
                     $('#actModal .modal-title').html('Nueva Asignación')
                     getHTML('bodyHorale1.html', '#actModalbody')
 
@@ -592,16 +592,13 @@ $(function () {
                                 classEfect('#inputH1horario', 'fw5 border-info')
                                 e.stopImmediatePropagation();
                             });
-                        }, 300);
-
+                        }, 100);
                     }, 300);
                 });
 
                 $(".actModal2").click(function () {
                     CheckSesion()
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    $('#actModal').modal('show')
-
                     $('#actModal .modal-title').html('Editar Asignación')
                     getHTML('bodyHorale1.html', '#actModalbody')
 
@@ -654,7 +651,8 @@ $(function () {
 
                             });
 
-                        }, 300);
+                        }, 200);
+                        // $('#actModal').modal('show')
                     }, 300);
                 });
                 submitForm('#form', 'crud.php')
@@ -953,6 +951,8 @@ $(function () {
                                             notify(data.Mensaje, 'success', 5000, 'right')
                                             $("#Citacion").DataTable().ajax.reload(null, false)
                                             $('#actModalCit').modal('hide')
+                                            let numLega = $('.divTablas .NumLega').text()
+                                            getHorarioActual((numLega))
                                         } else {
                                             ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
                                             $.notifyClose();
@@ -1228,9 +1228,7 @@ $(function () {
                     $('.RotaDeta').toast('hide')
                     CheckSesion()
                     // let data = settings.json.data[0];
-                    $('#actModal').modal('show')
-
-                    $('#actModal .modal-title').html('Nueva Asignación de Rotación')
+                    $('#actModal .modal-title').html('Nueva asignación de Rotación')
                     getHTML('bodyHorale1.html', '#actModalbody')
                     setTimeout(() => {
                         $('#H1Horario label').html('Rotación')
@@ -1266,16 +1264,14 @@ $(function () {
                                 classEfect('#inputH1horario', 'fw5 border-info')
                                 e.stopImmediatePropagation();
                             });
-                        }, 300);
-
-                    }, 300);
+                        }, 100);
+                    }, 200);
                 });
                 $(".actModalRot").click(function () {
                     CheckSesion()
                     $('.RotaDeta').toast('hide')
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
                     // console.log(data);
-                    $('#actModal').modal('show')
 
                     $('#actModal .modal-title').html('Editar Asignación de Rotación')
                     getHTML('bodyHorale1.html', '#actModalbody')
@@ -1315,8 +1311,8 @@ $(function () {
                                 classEfect('#inputH1horario', 'fw5 border-info')
                                 e.stopImmediatePropagation();
                             });
-                        }, 300);
-                    }, 300);
+                        }, 100);
+                    }, 200);
                 });
 
                 $(".RotDelete").click(function () {
@@ -1449,7 +1445,34 @@ $(function () {
             }
         });
     }
-
+    function getHorarioActual(legajo) {
+        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+        $.ajax({
+            dataType: "json",
+            type: "POST",
+            url: "getHorario.php",
+            'data': {
+                Legajo: legajo
+            },
+            beforeSend: function (data) {
+                $('#divHorarioActual').html(`
+                <div class="d-inline-flex w-100 align-items-center h40 shadow-sm">
+                    <div class="w150 fontq h40 d-flex align-items-center justify-content-center btn-custom">Horario Actual: </div>
+                    <div class="fontq w-100 h40 d-flex align-items-center px-2"></div>
+                </div>
+            `)
+            },
+            success: function (data) {
+                // console.table(data);
+                $('#divHorarioActual').html(`
+                    <div class="d-inline-flex w-100 align-items-center h40 shadow-sm">
+                        <div class="w150 fontq h40 d-flex align-items-center justify-content-center btn-custom">Horario Actual: </div>
+                        <div class="fontq w-100 h40 d-flex align-items-center fw4 px-2 animate__animated animate__fadeIn">`+ data.Mensaje + `</div>
+                    </div>
+                `)
+            }
+        })
+    }
     $("#tablePersonal tbody").on('click', '.view', function (e) {
         e.preventDefault();
         CheckSesion()
@@ -1458,7 +1481,7 @@ $(function () {
         $('tr').removeClass('table-active')
         $(this).parents('tr').addClass('table-active')
         let data = $("#tablePersonal").DataTable().row($(this).parents('tr')).data();
-        // console.log(data);
+        // console.table(data);
         $("#detalleHorario").hide()
         $("#detalleHorario").html(`
         <div class="p-2 divTablas">
@@ -1484,8 +1507,11 @@ $(function () {
         </div>`)
 
         $(".divTablas").prepend(`<div class="">
-            <p class="fontq m-0 p-0"><label class="w60 fontq mb-1">Legajo: </label><span class="fw5 NumLega">` + data.pers_legajo + `</span></p><p class="fontq m-0 p-0"><label class="w60 fontq mb-0">Nombre: </label><span class="fw5 ApNo">` + data.pers_nombre + `</span><button class="btn btn-custom border btn-sm fontq cita float-right px-4 mb-2">Citaciones</button></p>
+            <p class="fontq m-0 p-0">
+            <label class="w60 fontq mb-1">Legajo: </label><span class="fw5 NumLega">` + data.pers_legajo + `</span></p><p class="fontq m-0 p-0"><label class="w60 fontq mb-0">Nombre: </label><span class="fw5 ApNo">` + data.pers_nombre + `</span>
+            <button class="btn btn-custom border btn-sm fontq cita float-right px-4 mb-2">Citaciones</button></p>
         </div>`)
+        getHorarioActual(data.pers_legajo)
         let Horale1 = JSON.stringify({ 'nombre': data.pers_nombre, 'legajo': data.pers_legajo, 'tabla': 'Desde' });
         let Horale2 = JSON.stringify({ 'nombre': data.pers_nombre, 'legajo': data.pers_legajo, 'tabla': 'DesdeHasta' });
         let Citacion = JSON.stringify({ 'nombre': data.pers_nombre, 'legajo': data.pers_legajo, 'tabla': 'Citacion' });
@@ -1514,7 +1540,6 @@ $(function () {
             $("#detalleHorario").show()
         }, 200);
     });
-
     function submitForm(selector, url) {
         CheckSesion()
         var loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
@@ -1569,6 +1594,8 @@ $(function () {
                         notify(data.Mensaje, 'success', 5000, 'right')
                         $("#Citacion").DataTable().ajax.reload(null, false)
                         $('#actModalCit').modal('hide')
+                        let numLega = $('.divTablas .NumLega').text()
+                        getHorarioActual((numLega))
                     } else {
                         ActiveBTN(false, '#submit', 'Aguarde..', 'Aceptar')
                         $.notifyClose();

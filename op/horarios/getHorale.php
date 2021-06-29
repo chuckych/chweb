@@ -5,9 +5,7 @@ header("Content-Type: application/json");
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
-// E_ALL();
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
@@ -20,10 +18,17 @@ $Tabla  = $Datos['tabla'];
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
-$where_condition = $sqlTot = $sqlRec = "";
+$where_condition = $sqlTot = $sqlRec = $TotalCit="";
 
 switch ($Tabla) {
     case 'Desde':
+        $sql_cit = "SELECT SUM(1) as 'cant' FROM CITACION WHERE CITACION.CitLega = '$Legajo'";
+        $rs = sqlsrv_query($link, $sql_cit);
+        while ($a = sqlsrv_fetch_array($rs)) {
+            $TotalCit = $a['cant'];
+        }
+        sqlsrv_free_stmt($rs);
+
         $sql_query = "SELECT HORALE1.Ho1Fech as 'fecha', HORALE1.Ho1Hora as 'codHor', HORARIOS.HorDesc as 'horario' FROM HORALE1 INNER JOIN HORARIOS ON HORALE1.Ho1Hora = HORARIOS.HorCodi WHERE HORALE1.Ho1Lega = $Legajo ORDER BY HORALE1.Ho1Fech DESC";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
@@ -304,6 +309,7 @@ $json_data = array(
     "draw"            => intval($params['draw']),
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
-    "data"            => $data
+    "data"            => $data,
+    "TotalCit"        => $TotalCit
 );
 echo json_encode($json_data);
