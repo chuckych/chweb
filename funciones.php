@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.149';
+    return 'v0.0.150';
 }
 function E_ALL()
 {
@@ -2059,8 +2059,9 @@ function UpdateRegistro($query)
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
-                // $mensaje = explode(']', $error['message']);
-                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+                $mensaje = explode(']', $error['message']);
+                PrintRespuestaJson('error',$mensaje[3]);
+                // $data[] = array("status" => "error", "dato" => $mensaje[3]);
                 // $data[] = array("status" => "error", "dato" => 'Ya existe Novedad.');
                 exit;
             }

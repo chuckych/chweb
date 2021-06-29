@@ -69,6 +69,7 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
                                     $Modulo2 = ($Modulo2 == 'Fichar') ? 'Ingreso de Fichadas' : $Modulo2;
                                     $Modulo2 = ($Modulo2 == 'Cierres') ? 'Generar Cierres' : $Modulo2;
                                     $Modulo2 = ($Modulo2 == 'Liquidar') ? 'Generar Liquidación' : $Modulo2;
+                                    $Modulo2 = ($Modulo2 == 'Horarios') ? 'Adm de Horarios' : $Modulo2;
                                     switch ($Modulo2) {
                                         case 'General':
                                         case 'Mis Horas':
@@ -92,6 +93,9 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
                                             break;
                                         case 'Otras Novedades':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/otrasnov/>" . $Modulo2 . "</a>";
+                                            break;
+                                        case 'Adm de Horarios':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/op/horarios/>" . $Modulo2 . "</a>";
                                             break;
                                         case 'Auditoría':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/auditor/>" . $Modulo2 . "</a>";
@@ -255,6 +259,7 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
                             && ($Modulo2 != 'Estructura')
                             && ($Modulo2 != 'Mobile HRP')
                             && ($Modulo2 != 'Dashboard')
+                            && ($Modulo2 != 'Horarios')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>

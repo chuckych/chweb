@@ -1191,15 +1191,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         exit;
     };
 
+
     $_POST['CitEntra']       = $_POST['CitEntra'] ?? '';
     $_POST['CitSale']        = $_POST['CitSale'] ?? '';
     $_POST['CitDesc']        = $_POST['CitDesc'] ?? '';
-    $_POST['datos_Citación'] = $_POST['datos_Citación'] ?? '';
+    $_POST['datos_Citacion'] = $_POST['datos_Citacion'] ?? '';
 
     $CitEntra       = test_input($_POST['CitEntra']);
     $CitSale        = test_input($_POST['CitSale']);
     $CitDesc        = test_input($_POST['CitDesc']);
-    $datos_Citación = test_input($_POST['datos_Citación']);
+    $datos_Citacion = test_input($_POST['datos_Citacion']);
+
 
     if (ValidaFormatoHora($CitEntra)) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto');
@@ -1263,16 +1265,25 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
     //     exit;
     // };
 
-    if (valida_campo($_POST['datos_Citación'])) {
-        $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_Citación</strong> requerido!');
+    if (valida_campo($_POST['datos_Citacion'])) {
+        $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_Citacion</strong> requerido!');
         echo json_encode($data);
         exit;
     };
 
 
-    $datos_Citación = explode('-', $datos_Citación);
-    $FicLega  = ($datos_Citación[0]);
-    $FicFech  = ($datos_Citación[1]);
+    $datos_Citacion = explode('-', $datos_Citacion);
+    $FicLega  = ($datos_Citacion[0]);
+    $FicFech  = ($datos_Citacion[1]);
+
+    $_POST['tipo'] = $_POST['tipo'] ?? '';
+    if ($_POST['tipo'] == 'c_citacion') { /** cuando viene de admini de horarios */
+        $datos_Citacion=$_POST['datos_Citacion'];
+        $datos_Citacion = explode('-', $datos_Citacion);
+        $FicLega  = ($datos_Citacion[0]);
+        $FicFech  = (dr_fecha($datos_Citacion[1]));
+    }
+    
 
     if (PerCierre($FicFech, $FicLega)) {
         $data = array('status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y')));
@@ -1317,10 +1328,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
 
 
-    // $data = array('status' => 'error', 'Mensaje' => 'Funciona.');
-    // echo json_encode($data);
-    // exit;
-
     if ($_SESSION["ABM_ROL"]['bCit'] == '0') {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar citaciones.');
         echo json_encode($data);
@@ -1341,6 +1348,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
     $FicLega  = ($Datos[0]);
     $FicFech  = ($Datos[1]);
 
+    $_POST['tipo'] = $_POST['tipo'] ?? '';
+    if ($_POST['tipo'] == 'd_citacion') { /** cuando viene de admini de horarios */
+        $datos_Citacion=$_POST['Datos'];
+        $datos_Citacion = explode('-', $datos_Citacion);
+        $FicLega  = ($datos_Citacion[0]);
+        $FicFech  = (dr_fecha($datos_Citacion[1]));
+    }
+
     if (PerCierre($FicFech, $FicLega)) {
         $data = array('status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y')));
         echo json_encode($data);
@@ -1354,7 +1369,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
     if ($ExisteCitacion) {
         if ((DeleteRegistro("DELETE FROM CITACION WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1"))) {
             audito_ch('B', $Dato);
-           
+
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => 'Citación eliminada correctamente' . $Procesado, 'tipo' => 'alta');
@@ -1364,7 +1379,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
             }
             echo json_encode($data);
             exit;
-
         } else {
             $data = array('status' => 'ok', 'Mensaje' => 'Error');
             echo json_encode($data);

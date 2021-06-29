@@ -664,7 +664,7 @@ $(document).on("click", ".open-modal", function (e) {
             $(".datos_novedad").val(Datos);
             $(".datos_hora").val(Datos);
             $(".datos_OtrasNov").val(Datos);
-            $(".datos_Citación").val(Datos);
+            $(".datos_Citacion").val(Datos);
             $(".RegFech").val(FechaStr);
 
             /** Al hacer click en el link Procesar dentro del Modal */

@@ -31,22 +31,22 @@
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitEntra" class="w80"><span class="pb-sm-1">Entrada</span></label>
-                                        <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask h35" type="tel">
+                                        <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask h35" type="tel" autocomplete="off">
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitSale" class="w80"><span class="pb-sm-1">Salida</span></label>
-                                        <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask h35" type="tel">
+                                        <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask h35" type="tel" autocomplete="off">
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitDesc" class="w80"><span class="pb-sm-1">Descanso</span></label>
-                                        <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask h35" type="tel" value="00:00">
+                                        <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask h35" type="tel" value="00:00" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
                             <div class="col-12">
                                 <div class="form-inline d-flex justify-content-end mt-2">
                                     <input type="hidden" name="alta_Citación" id="alta_Citación">
-                                    <input type="hidden" name="datos_Citación" class="datos_Citación">
+                                    <input type="hidden" name="datos_Citacion" class="datos_Citacion">
                                     <button type="submit" class="h35 mr-sm-2 btn btn-sm btn-custom fontq submit_btn_Citación btn-mobile mt-2">Confirmar</button>
                                     <button type="button" class="h35 btn btn-sm btn-light border fontq btn-mobile mt-2" id="cancelar_btn_Citación">Cancelar</button>
                                 </div>

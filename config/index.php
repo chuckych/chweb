@@ -39,4 +39,5 @@ define("MODULOS", [
        /** ID = 29 */ 'infornovc'  => 'Informe de Presentismo',
        /** ID = 30 */ 'datos'  => 'Datos',
        /** ID = 31 */ 'estruct'  => 'Estructura',
+       /** ID = 33 */ 'horarios'  => 'Horarios',
 ]);

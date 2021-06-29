@@ -544,6 +544,37 @@ function singleDatePickerValue(selector, opens, drop, value) {
         },
     });
 }
+function dobleDatePicker(selector, opens, drop) {
+    $(selector).daterangepicker({
+        singleDatePicker: false,
+        opens: opens,
+        drops: drop,
+        autoUpdateInput: true,
+        buttonClasses: "btn btn-sm fontq",
+        applyButtonClasses: "btn-custom fw4 px-3 opa8",
+        cancelClass: "btn-link fw4 text-gris",
+        // ranges: {
+        //     'Hoy': [moment(), moment()],
+        //     'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        // },
+        locale: {
+            format: "DD/MM/YYYY",
+            separator: " al ",
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Para",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+            alwaysShowCalendars: true,
+            applyButtonClasses: "text-white bg-custom",
+        },
+
+    });
+}
 function CheckSesion() {
     $.ajax({
         dataType: "json",
@@ -560,14 +591,14 @@ function CheckSesion() {
 }
 function Procesar(FechaIni, FechaFin, LegaIni, LegaFin) {
     $.ajax({
-        type: 'POST',      
+        type: 'POST',
         dataType: "json",
         url: "/" + $("#_homehost").val() + "/procesarajax.php",
         'data': {
-            FechaIni:FechaIni,
-            FechaFin:FechaFin,
-            LegaIni:LegaIni,
-            LegaFin:LegaFin,
+            FechaIni: FechaIni,
+            FechaFin: FechaFin,
+            LegaIni: LegaIni,
+            LegaFin: LegaFin,
         },
         context: document.body
     }).done(function (data) {
@@ -577,4 +608,24 @@ function Procesar(FechaIni, FechaFin, LegaIni, LegaFin) {
             console.log('error');
         }
     });
+}
+function HoraMin(Hora) {
+    if (Hora) {
+        let hora = Hora;
+        let parts = hora.split(':');
+        let total = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+        return total
+    }else{
+        return 0
+    }
+
+}
+function getHTML(url, selector) {
+    $.ajax({
+        url: url + '?v=' + $('#_vjs').val(),
+        type: "get",
+        DataType: 'html'
+    }).done(function (data) {
+        $(selector).html(data);
+    })
 }
