@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.151';
+    return 'v0.0.152';
 }
 function E_ALL()
 {
@@ -1930,7 +1930,6 @@ function CountRegMayorCeroMySql($query)
         mysqli_free_result($stmt);
         mysqli_close($link);
     } else {
-
         mysqli_close($link);
         exit;
     }
@@ -2543,7 +2542,7 @@ function ArrayFechas($start, $end)
     if (is_string($start) === true) $start = strtotime($start);
     if (is_string($end) === true) $end = strtotime($end);
 
-    if ($start > $end) return createDateRangeArray($end, $start);
+    // if ($start > $end) return createDateRangeArray($end, $start);
 
     do {
         $range[] = date('Ymd', $start);
@@ -2646,9 +2645,11 @@ function TokenMobile($token, $data)
         $t = explode('@', $token);
         switch ($data) {
             case 'appcode':
+                $t[1] = $t[1]??'';
                 return $t[1];
                 break;
             case 'token':
+                $t[0] = $t[0]??'';
                 return $t[0];
                 break;
             default:

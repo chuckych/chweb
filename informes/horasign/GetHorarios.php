@@ -33,7 +33,7 @@ ini_set('display_errors', '0');
         $param   = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-        $params = $columns = $totalRecords;
+        $params = $columns = $totalRecords ='';
         $params = $_REQUEST;
         $where_condition = $sqlTot = $sqlRec = "";
         

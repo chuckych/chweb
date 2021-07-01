@@ -1,17 +1,16 @@
 <?php
+require __DIR__ . '../../../config/index.php';
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $data = array();
 require __DIR__ . '../../../config/conect_mysql.php';
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

@@ -22,7 +22,7 @@ $FechaIni  = fechformat2($FechaIni) . ' 00:00:00';
 $FechaFin  = test_input(dr_f($DateRange[1]));
 $FechaFin  = fechformat2($FechaFin) . ' 23:59:59';
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
@@ -58,7 +58,7 @@ if ($totalRecords > 0) {
             'appVersion'    => $r['appVersion'],
             'attphoto'      => $r['attphoto'],
             'createdDate'   => $r['createdDate'],
-            'dateTime'      => $r['dateTime'],
+            // 'dateTime'      => $r['dateTime'],
             'eventType'     => $r['eventType'],
             'fechaHora'     => $r['fechaHora'],
             'gpsStatus'     => $r['gpsStatus'],

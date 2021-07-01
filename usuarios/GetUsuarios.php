@@ -7,11 +7,11 @@ secure_auth_ch();
 header("Content-Type: application/json");
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
-
+// <br /><b>Notice</b>:  Undefined index: _rol in <b>C:\Users\nch\OneDrive\Documentos\htdocs\chweb\usuarios\usuarios.php</b> on line <b>21</b><br />
 $data = array();
 require __DIR__ . '../../config/conect_mysql.php';
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

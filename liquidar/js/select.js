@@ -508,7 +508,7 @@ function GetParacont() {
             $(".Jor2Hasta").html(data.Jor2Hasta)
             $(".ArchDesc").html(data.ArchDesc)
             $(".ArchNomb").html(data.ArchNomb)
-            GetArch($(".ArchNomb").text(), data.ArchNomb, '')
+            // GetArch($(".ArchNomb").text(), data.ArchNomb, '')
 
             // $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
             var Mes = moment().format("MM");

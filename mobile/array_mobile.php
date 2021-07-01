@@ -1,10 +1,4 @@
 <?php
-// session_start();
-// ultimoacc();
-// secure_auth_ch();
-// header("Content-Type: application/json");
-// header('Access-Control-Allow-Origin: *');
-
 require __DIR__ . '../../config/index.php';
 session_start();
 header("Content-Type: application/json");

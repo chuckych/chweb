@@ -15,6 +15,9 @@ $query  = "SELECT valores FROM params WHERE modulo=29 and descripcion='presentes
 $result = mysqli_query($link, $query);
 $valorPresentes = mysqli_fetch_assoc($result);
 $p = explode('@', $valorPresentes['valores']);
+$p[0]=$p[0]??'';
+$p[1]=$p[1]??'';
+$p[2]=$p[2]??'';
 $_SESSION["CONCEPTO_PRESENTES"] = $p[0];
 $_SESSION["DIAS_FRANCO"]        = $p[1];
 $_SESSION["DIAS_FERIADOS"]      = $p[2];    

@@ -1,5 +1,6 @@
 <?php
-$Cliente = ExisteCliente($_GET['_c'])
+$Cliente = ExisteCliente($_GET['_c']);
+$_GET['_rol'] = $_GET['_rol'] ?? '';
 ?>
 <!doctype html>
 <html lang="es">

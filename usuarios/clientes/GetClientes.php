@@ -11,6 +11,8 @@ require __DIR__ . '../../../config/conect_mysql.php';
 
 FusNuloPOST('q', '');
 $q = $_POST['q'];
+$recid = $recid ?? '';
+$id = $id ?? '';
 
 $query = "SELECT clientes.recid as recid, clientes.ident as ident, clientes.id as id, clientes.nombre as nombre, clientes.host as host, clientes.db as db, clientes.user as user, clientes.pass as pass, clientes.auth as auth, clientes.fecha_alta as fecha_alta, clientes.fecha as fecha_mod, clientes.tkmobile as tkmobile, clientes.WebService as WebService, ( SELECT COUNT(usuarios.cliente) FROM usuarios WHERE clientes.id=usuarios.cliente ) AS cant_usuarios, ( SELECT COUNT(roles.id) FROM roles WHERE roles.cliente=clientes.id ) AS cant_roles FROM clientes WHERE clientes.id >'0' $recid $id ORDER BY clientes.fecha DESC";
 // print_r($query); exit;

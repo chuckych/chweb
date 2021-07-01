@@ -10,7 +10,7 @@ require __DIR__ . '../../../config/conect_mysql.php';
 // sleep(2);
 $respuesta = array();
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

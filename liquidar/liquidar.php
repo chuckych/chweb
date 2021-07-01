@@ -198,7 +198,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="archivo overflow-auto p-3" style="max-height: 360px;">
+                    <div class="archivo overflow-auto p-3 d-none" style="max-height: 360px;">
                     </div>
                 </div>
             </div>

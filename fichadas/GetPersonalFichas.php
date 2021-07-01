@@ -19,7 +19,7 @@ $FechaFin  = test_input(dr_fecha($DateRange[1]));
 $data = array();
 require __DIR__ . '../valores.php';
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

@@ -31,7 +31,7 @@ require __DIR__ . '../valores.php';
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$params = $columns = $totalRecords;
+$params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

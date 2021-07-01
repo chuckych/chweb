@@ -2,7 +2,7 @@ $(document).ready(function () {
 
     $("#Refresh").on("click", function () {
         CheckSesion()
-        $('#table-mobile').DataTable().ajax.reload(null,false);
+        $('#table-mobile').DataTable().ajax.reload(null, false);
         $(".dataTables_scrollBody").addClass("opa2");
     });
 
@@ -10,22 +10,24 @@ $(document).ready(function () {
 
     $('#table-mobile').DataTable({
         // "initComplete": function (settings, json) {
-         
+
         // },
         "drawCallback": function (settings) {
             // console.log(jQuery.makeArray(settings.json));
             var arrayJson = jQuery.makeArray(settings.json)
             $.each(arrayJson, function (key, value) {
                 // console.log(value['success']);
-                $('.appcode').html('<b>'+value['AppCode']+'</b>')
-                $('.cuenta').html('<b>'+value['Cuenta']+'</b>')
-                if (value['success']=='YES') {
-                        $("#alertmessage").fadeOut("slow");
-                        setTimeout(function () {
-                            $("#alertmessage").remove();
-                        }, 1000);
-                }else{
-                    $('#RowTableMobile').append('<div class="col-12 mt-2"><div class="alert alert-danger" id="alertmessage">' + value['message'] + '</div></div>')
+                $('.appcode').html('<b>' + value['AppCode'] + '</b>')
+                $('.cuenta').html('<b>' + value['Cuenta'] + '</b>')
+                if (value['success'] == 'YES') {
+                    $("#alertmessage").fadeOut("slow");
+                    setTimeout(function () {
+                        $("#alertmessage").remove();
+                    }, 1000);
+                } else {
+                    // $('#RowTableMobile').append('<div class="col-12 mt-2"><div class="alert alert-danger" id="alertmessage">' + value['message'] + '</div></div>')
+                    $.notifyClose();
+                    notify(value['message'], 'danger', 5000, 'right')
                 }
             });
 
@@ -110,7 +112,7 @@ $(document).ready(function () {
 
     $("#_drMob").on("change", function () {
         CheckSesion()
-        $('#table-mobile').DataTable().ajax.reload(null,false);
+        $('#table-mobile').DataTable().ajax.reload(null, false);
         $(".dataTables_scrollBody").addClass("opa2");
     });
 
@@ -379,7 +381,7 @@ $(document).ready(function () {
             url: $(this).attr("action"),
             data: $(this).serialize(),
             // dataType: "json",
-            beforeSend: function (data) {CheckSesion()},
+            beforeSend: function (data) { CheckSesion() },
             success: function (data) {
                 if (data.status == "ok") {
                     CheckSesion()

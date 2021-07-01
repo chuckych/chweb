@@ -24,7 +24,7 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto d-flex align-items-center">
+        <ul class="navbar-nav mr-auto d-flex">
             <?php
             //$url   = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $_SESSION["RECID_ROL"];
             // $json  = file_get_contents(($url));

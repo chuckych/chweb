@@ -31,8 +31,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $Query = "DELETE mod_roles FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
         if (mysqli_query($link, $Query)) {  /** Hacemos el delete de todos los modulos del tipo */
             return true;
+            mysqli_close($link);
         }else {
             return false;
+            mysqli_close($link);
         }
     }
     function InsertModRol($recidRol,$Modulo,$Fecha){
@@ -41,8 +43,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $rs_insert = mysqli_query($link, $Query);
         if ($rs_insert) { /** Si el insert se hizo correctamente */
             return true;
+            mysqli_close($link);
         } else { /** Si hubo error */
             return false;
+            mysqli_close($link);
         }
     }
     
@@ -61,21 +65,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                     /** Hacemos el insert de los modulos */
                     if (!InsertModRol($recidRol,$ValueMod,$Fecha)) { /** Si hubo error */
                         mysqli_error($link); PrintError('ErrorInsert',mysqli_errno($link)); /** Imprimo json con resultado */
-                        mysqli_close($link); /** Cerramos conexion con Mysql */
+                        // mysqli_close($link); /** Cerramos conexion con Mysql */
                         exit;
                     }
                 }
-                PrintOK('Datos Guardados'); /** Imprimo json con resultado */
-                mysqli_close($link); /** Cerramos conexion con Mysql */
+                //PrintOK('Datos Guardados'); /** Imprimo json con resultado */
+                PrintRespuestaJson('ok', 'Datos Guardados');
+                // mysqli_close($link); /** Cerramos conexion con Mysql */
                 exit;
             } else { /** Si no recibimos datos de modulos devolvemos mensaje del delete de los modulos */
-                PrintOK('Datos Guardados'); /** Imprimo json con resultado */
-                mysqli_close($link); /** Cerramos conexion con Mysql */
+                PrintRespuestaJson('ok', 'Datos Guardados');
+                // mysqli_close($link); /** Cerramos conexion con Mysql */
                 exit;
             }
         } else {
             mysqli_error($link); PrintError('ErrorDelete',mysqli_errno($link)); /** Imprimo json con resultado */
-            mysqli_close($link); /** Cerramos conexion con Mysql */
+            // mysqli_close($link); /** Cerramos conexion con Mysql */
             exit;
         }
 
