@@ -32,6 +32,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     }
     function checkPresentes($query)
     {
+        $rows    = array();
         $params    = array();
         $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         require __DIR__ . '../../config/conect_mssql.php';
