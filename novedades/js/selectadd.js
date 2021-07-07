@@ -623,93 +623,86 @@ $(".alta_novedad").bind("submit", function (e) {
     e.preventDefault();
 
     var now = $.now()
-
     function myTimer() {
         GetLog("../novedades/logs/Ingreso_" + now + ".log");
     }
-    var myVar = setInterval(myTimer, 500);
+    // var myVar = setInterval(myTimer, 500);
     function myStopFunction() {
         clearInterval(myVar);
     }
+
+    let checkLega = new Array();
+    $(".checkLega:checked").each(function () {
+        checkLega.push($(this).val());
+    });
+    let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
     $.ajax({
         type: $(this).attr("method"),
         url: $(this).attr("action"),
         data: $(this).serialize()
             + "&alta_novedad=" + true
-            + "&now=" + now,
+            + "&now=" + now + "&legajos=" + (checkLega),
         // async : false,
         beforeSend: function (data) {
             // console.log(data);
+            $.notifyClose();
+            notify('Aguarde <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
             ActiveBTN(true, "#submit", 'Ingresando', 'Ingresar')
-            $("#respuetatext").html("Inicio de Ingreso Novedades");
-            $("#respuesta").addClass("alert-info");
-            $("#respuesta").removeClass("d-none");
-            fadeInOnly("#respuesta")
-            $("#respuesta").removeClass("alert-success");
-            $("#respuesta").removeClass("alert-danger");
-            setTimeout(() => {
-                myTimer()
-            }, 2000);
+            // $("#respuetatext").html("Inicio de Ingreso Novedades");
+            // $("#respuesta").addClass("alert-info");
+            // $("#respuesta").removeClass("d-none");
+            // fadeInOnly("#respuesta")
+            // $("#respuesta").removeClass("alert-success");
+            // $("#respuesta").removeClass("alert-danger");
+            // setTimeout(() => {
+            //     myTimer()
+            // }, 2000);
         },
         success: function (data) {
             if (data.status == "ok") {
-                myStopFunction()
+                $.notifyClose();
+                notify(data.Mensaje, 'success', 2000, 'right')
+
+                if (data.ErrorTotal > 0) {
+                    notify('<div class=""><span class="fonth">No se pudo ingresar la novedad en los siguientes registros.</span><div class="overflow-auto pr-3 table-responsive" style="max-height:300px"><table id="presentes" class="w-100 mt-2"><thead><tr><td><span class="fontq fw5">Fecha</span></td><td><span class="fontq fw5">Legajo</span></td><td><span class="fontq fw5">Nombre</span></td><td><tr></thead><tbody></tbody></table></div></div>', 'warning', 0, 'right')
+                    setTimeout(() => {
+                        $.each(data.Errores, function (key, value) {
+                            $("#presentes tbody").append(`<tr class="animate__animated animate__fadeIn"><td class="p-0 m-0"><span class="fontq ls1">`+ value.Fecha + `</span></td><td class="p-0 m-0"><span class="fontq">`+ value.Legajo + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Nombre + `</span></td></tr>`)
+                        })
+                    }, 500);
+                }
+
+                // myStopFunction()
                 cleanAll()
-                $("#respuetatext").html("Fin de Ingreso de Novedades");
+                // $("#respuetatext").html("Fin de Ingreso de Novedades");
                 ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-                $("#respuesta").removeClass("alert-info");
-                $("#respuesta").removeClass("alert-danger");
-                $("#respuesta").addClass("alert-success");
-                fadeInOnly("#respuesta")
-                // $('.check').prop('checked', false)
-                notify(data.dato, 'success', 2000, 'center')
-                // $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
-                //     type: 'success',
-                //     z_index: NotifZindex,
-                //     delay: NotifDelay,
-                //     offset: NotifOffset,
-                //     mouse_over: NotifMouseOver,
-                //     placement: {
-                //         align: NotifAlign
-                //     },
-                //     animate: {
-                //         enter: NotifEnter,
-                //         exit: NotifExit
-                //     }
-                // });
-                setTimeout(() => {
-                    $("#respuetatext").html("");
-                    $("#respuesta").addClass("d-none");
-                }, 2000);
+                // $("#respuesta").removeClass("alert-info");
+                // $("#respuesta").removeClass("alert-danger");
+                // $("#respuesta").addClass("alert-success");
+                // fadeInOnly("#respuesta")
+                // setTimeout(() => {
+                //     $("#respuetatext").html("");
+                //     $("#respuesta").addClass("d-none");
+                // }, 2000);
                 GetPers.ajax.reload();
             } else {
-                $("#respuetatext").html("");
-                myStopFunction()
+                $.notifyClose();
+                notify(data.Mensaje, 'danger', 0, 'right')
+                // $("#respuetatext").html("");
+                // myStopFunction()
                 // $("#respuetatext").removeClass("animate__animated animate__fadeIn");
                 ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-                $("#respuesta").removeClass("alert-success");
-                $("#respuesta").removeClass("alert-info");
-                $("#respuesta").removeClass("alert-danger");
-                notify(data.dato, 'danger', 2000, 'center')
-                // $.notify(`<span class='fonth fw4'><span class="">${data.dato}</span></span>`, {
-                //     type: 'danger',
-                //     z_index: NotifZindex,
-                //     delay: NotifDelay,
-                //     offset: NotifOffset,
-                //     mouse_over: NotifMouseOver,
-                //     placement: {
-                //         align: NotifAlign
-                //     },
-                //     animate: {
-                //         enter: NotifEnter,
-                //         exit: NotifExit
-                //     }
-                // });
-                // GetPers.ajax.reload();
+                // $("#respuesta").removeClass("alert-success");
+                // $("#respuesta").removeClass("alert-info");
+                // $("#respuesta").removeClass("alert-danger");
+
+
             }
         },
         error: function (jqXHR, textStatus) {
-            myStopFunction()
+            // console.log(jqXHR.responseText);
+            $.notifyClose();
+            // myStopFunction()
             if (jqXHR.status === 0) {
                 var error = ('No hay Conexión');
             } else if (jqXHR.status == 404) {
@@ -725,27 +718,14 @@ $(".alta_novedad").bind("submit", function (e) {
             } else {
                 var error = ('Error no detectado: ' + jqXHR.responseText);
             }
-            $("#respuetatext").html("");
+            notify(error, 'danger', 5000, 'right')
+            notify('<div class="fw5 fonth">Error</div>'+jqXHR.responseText, 'danger', 0, 'right')
+            // $("#respuetatext").html("");
             // $("#respuetatext").removeClass("animate__animated animate__fadeIn");
             ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-            $("#respuesta").removeClass("alert-success");
-            $("#respuesta").removeClass("alert-info");
-            $("#respuesta").removeClass("alert-danger");
-            notify(error, 'danger', 2000, 'center')
-            // $.notify("<span class='fonth fw4'><span class=''>" + error + "</span></span>", {
-            //     type: 'danger',
-            //     z_index: NotifZindex,
-            //     delay: NotifDelay,
-            //     offset: NotifOffset,
-            //     mouse_over: NotifMouseOver,
-            //     placement: {
-            //         align: NotifAlign
-            //     },
-            //     animate: {
-            //         enter: NotifEnter,
-            //         exit: NotifExit
-            //     }
-            // });
+            // $("#respuesta").removeClass("alert-success");
+            // $("#respuesta").removeClass("alert-info");
+            // $("#respuesta").removeClass("alert-danger");
         }
     });
     e.stopImmediatePropagation();

@@ -114,7 +114,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
             'pers_nombre2' => '<label class="fontq align-middle m-0 fw4" style="margin-top:2px" for="' . $pers_legajo . '">' . $pers_nombre . '</label>',
             'pers_nombre3' => '<span class="animate__animated animate__fadeIn">' . $pers_nombre . '</span>',
             'FechaCierre' => $FechaCierre,
-            'check' => '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input check" name="legajo[]" id="' . $pers_legajo . '" value="' . $pers_legajo . '"><label class="custom-control-label" for="' . $pers_legajo . '"></label></div>',
+            'check' => '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input check checkLega" name="legajo[]" id="' . $pers_legajo . '" value="' . $pers_legajo . '"><label class="custom-control-label" for="' . $pers_legajo . '"></label></div>',
             'null' => '',
         );
     } else {

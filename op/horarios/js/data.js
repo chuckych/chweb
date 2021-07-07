@@ -23,6 +23,7 @@ $(function () {
     $("#_eg").click(function () {
         CheckSesion()
         $("#detalleHorario").hide()
+        $("#divHorarioActual").hide()
         if ($("#_eg").is(":checked")) {
             $("#_eg").val('on').trigger('change')
             $('#tablePersonal').DataTable().ajax.reload();
@@ -34,6 +35,7 @@ $(function () {
     $("#_porApNo").click(function () {
         CheckSesion()
         $("#detalleHorario").hide()
+        $("#divHorarioActual").hide()
         if ($("#_porApNo").is(":checked")) {
             $("#_porApNo").val('on').trigger('change')
             $('#tablePersonal').DataTable().ajax.reload();
@@ -1538,6 +1540,7 @@ $(function () {
 
         setTimeout(() => {
             $("#detalleHorario").show()
+            $("#divHorarioActual").show()
         }, 200);
     });
     function submitForm(selector, url) {

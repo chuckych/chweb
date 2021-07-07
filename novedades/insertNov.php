@@ -13,29 +13,56 @@ $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $data      = array();
 $FechaHora = date('Ymd H:i:s');
-
 $_POST['alta_novedad']  = $_POST['alta_novedad'] ?? '';
-
-
 /** ALTA NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) {
-
+    function checkTipoNov($novCodi)
+    {
+        $params    = array();
+        $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+        require __DIR__ . '../../config/conect_mssql.php';
+        $query = "SELECT NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo FROM NOVEDAD WHERE NOVEDAD.NovCodi = '$novCodi'";
+        $stmt  = sqlsrv_query($link, $query, $params, $options);
+        while ($row = sqlsrv_fetch_array($stmt)) {
+            $NovTipo = $row['NovTipo'];
+        }
+        return $NovTipo;
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($link);
+    }
+    function checkPresentes($query)
+    {
+        $params    = array();
+        $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+        require __DIR__ . '../../config/conect_mssql.php';
+        $stmt  = sqlsrv_query($link, $query, $params, $options);
+        while ($row = sqlsrv_fetch_array($stmt))
+        $rows[] = array(
+            'Legajo' => $row['Legajo'],
+            'Nombre' => $row['Nombre'],
+            'Fecha'  => $row['Fecha']->format('d/m/Y'),
+            'Count'  => $row['Fichada'],
+        );
+        return $rows;
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($link);
+    }
+    $tipoNov = checkTipoNov(FusNuloPOST('aFicNove', ''));
     $TipoIngreso  = FusNuloPOST('TipoIngreso', '');
     if ((valida_campo(test_input($TipoIngreso)))) {
-        $data = array('status' => 'error', 'dato' => 'Error TipoIngreso!');
+        $data = array('status' => 'error', 'Mensaje' => 'Error TipoIngreso!');
         echo json_encode($data);
         exit;
     }
     if ($TipoIngreso == '1') {
         if ($_POST['Cuenta'] == '0') {
-            $data = array('status' => 'error', 'dato' => 'Al menos un Filtro es requerido!');
+            $data = array('status' => 'error', 'Mensaje' => 'Al menos un Filtro es requerido!');
             echo json_encode($data);
             exit;
         }
     }
-
     if ((valida_campo($_POST['_draddNov']))) {
-        $data = array('status' => 'error', 'dato' => 'Campo Fecha requerido!');
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Fecha requerido!');
         echo json_encode($data);
         exit;
     }
@@ -43,9 +70,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     $DateRange = explode(' al ', $_POST['_draddNov']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));
     $FechaFin  = test_input(dr_fecha($DateRange[1]));
-
     if ((($FechaIni) > ($FechaFin))) {
-        $data = array('status' => 'error', 'dato' => 'Rango de Fecha Incorrecto.');
+        $data = array('status' => 'error', 'Mensaje' => 'Rango de Fecha Incorrecto.');
         echo json_encode($data);
         exit;
     };
@@ -58,6 +84,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     FusNuloPOST('aSec2', '0');
     FusNuloPOST('aGrup', '0');
     FusNuloPOST('aSucur', '0');
+    FusNuloPOST('legajos', '');
 
     $aTipo  = !empty($_POST['aTipo']) ? $_POST['aTipo'] : '0';
     $aEmp   = !empty($_POST['aEmp']) ? $_POST['aEmp'] : '0';
@@ -66,24 +93,41 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     $aSec2  = !empty($_POST['aSec2']) ? $_POST['aSec2'] : '0';
     $aGrup  = !empty($_POST['aGrup']) ? $_POST['aGrup'] : '0';
     $aSucur = !empty($_POST['aSucur']) ? $_POST['aSucur'] : '0';
+    $Legajos = !empty($_POST['legajos']) ? $_POST['legajos'] : '0';
 
-    $DataFiltros = $aEmp>0 ? 'Empresa: '.$aEmp.'. ' :'';
-    $DataFiltros .= $aPlan>0 ? 'Planta: '.$aPlan.'. ' :'';
-    $DataFiltros .= $aGrup>0 ? 'Grupo: '.$aGrup.'. ' :'';
-    $DataFiltros .= $aSucur>0 ? 'Sucursal: '.$aSucur.'. ' :'';
-    $DataFiltros .= $aSect>0 ? 'Sector: '.$aSect.'. ' :'';
-    $DataFiltros .= $aSec2>0 ? 'Sección: '.$aSec2.'. ' :'';
+    $queryFiltro = ($aTipo == '0') ? "":" AND P.LegTipo = $aTipo";
+    $queryFiltro .= ($aEmp == '0') ? "":" AND P.LegEmpr = $aEmp";
+    $queryFiltro .= ($aPlan == '0') ? "":" AND P.LegPlan = $aPlan";
+    $queryFiltro .= ($aSect == '0') ? "":" AND P.LegSect = $aSect";
+    $queryFiltro .= ($aSec2 == '0') ? "":" AND P.LegSec2 = $aSec2";
+    $queryFiltro .= ($aGrup == '0') ? "":" AND P.LegGrup = $aGrup";
+    $queryFiltro .= ($aSucur == '0') ? "":" AND P.LegSucu = $aSucur";
+    $queryFiltro .= ($TipoIngreso != '1') ? "":" AND R.RegLega BETWEEN '1' AND '99999999'";
+    $queryFiltro .= ($TipoIngreso == '1') ? "":" AND R.RegLega IN ($Legajos)";
+    $queryFiltro .= " AND R.RegFeAs BETWEEN '$FechaIni' AND '$FechaFin'";
+
+    $queryPresentes = "SELECT COUNT(R.RegHoRe) AS 'Fichada', R.RegFeAs AS 'Fecha', R.RegLega AS 'Legajo', P.LegApNo AS 'Nombre', P.LegTipo AS 'Tipo', P.LegEmpr AS 'Empresa', P.LegPlan AS 'Planta', P.LegSect AS 'Sector', P.LegSec2 AS 'Seccion', P.LegGrup AS 'Grupo', P.LegSucu AS 'Sucursal' 
+    FROM REGISTRO R
+    INNER JOIN PERSONAL P ON R.RegLega = P.LegNume
+    WHERE R.RegLega > 0 $queryFiltro GROUP BY R.RegFeAs, R.RegLega, P.LegApNo, P.LegTipo, P.LegEmpr, P.LegPlan, P.LegSect, P.LegSec2, P.LegGrup, P.LegSucu";
+
+    $DataFiltros = $aEmp > 0 ? 'Empresa: ' . $aEmp . '. ' : '';
+    $DataFiltros .= $aPlan > 0 ? 'Planta: ' . $aPlan . '. ' : '';
+    $DataFiltros .= $aGrup > 0 ? 'Grupo: ' . $aGrup . '. ' : '';
+    $DataFiltros .= $aSucur > 0 ? 'Sucursal: ' . $aSucur . '. ' : '';
+    $DataFiltros .= $aSect > 0 ? 'Sector: ' . $aSect . '. ' : '';
+    $DataFiltros .= $aSec2 > 0 ? 'Sección: ' . $aSec2 . '. ' : '';
 
     $aFicNove  = FusNuloPOST('aFicNove', '');
     if ((valida_campo(test_input($aFicNove)))) {
-        $data = array('status' => 'error', 'dato' => 'Campo Novedad requerido!');
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Novedad requerido!');
         echo json_encode($data);
         exit;
     }
     $microtime  = FusNuloPOST('now', '');
 
     if ((valida_campo(($microtime)))) {
-        $data = array('status' => 'error', 'dato' => 'Error!');
+        $data = array('status' => 'error', 'Mensaje' => 'Error!');
         echo json_encode($data);
         exit;
     }
@@ -125,128 +169,43 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         /** Si el tipo de ingreso es 2 (por Legajo) */
         /** Si el tipo de ingreso es 2. Por Legajo. Validamos que vengan legajos. */
         if ((valida_campo(($_POST['legajo'])))) {
-            $data = array('status' => 'error', 'dato' => 'Campo Legajo requerido!');
+            $data = array('status' => 'error', 'Mensaje' => 'Campo Legajo requerido!');
             echo json_encode($data);
             exit;
         }
-        // require __DIR__ . '../../filtros/filtros.php';
-        // require_once __DIR__ . '../../config/conect_mssql.php';
 
-        // $qTipo  = ($aTipo == '1') ? "AND PERSONAL.LegTipo = '$aTipo'" : '';
-        // $qTipo2  = ($aTipo == '2') ? "AND PERSONAL.LegTipo = '0'" : '';
-        // $qEmp   = ($aEmp > '0') ? "AND PERSONAL.LegEmpr = '$aEmp'" : '';
-        // $qPlan  = ($aPlan > '0') ? "AND PERSONAL.LegPlan = '$aPlan'" : '';
-        // $qSucur = ($aSucur > '0') ? "AND PERSONAL.LegSucu = '$aSucur'" : '';
-        // $qGrup  = ($aGrup > '0') ? "AND PERSONAL.LegGrup = '$aGrup'" : '';
-        // $qSect  = ($aSect > '0') ? "AND PERSONAL.LegSect = '$aSect'" : '';
-        // $qSec2  = ($aSec2 > '0') ? "AND PERSONAL.LegSec2 = '$aSec2'" : '';
-
-        // $Filter = $qTipo;
-        // $Filter .= $qTipo2;
-        // $Filter .= $qEmp;
-        // $Filter .= $qPlan;
-        // $Filter .= $qSucur;
-        // $Filter .= $qGrup;
-        // $Filter .= $qSect;
-        // $Filter .= $qSec2;
-
-        $primerLegajo = current($_POST['legajo']);
-        $ultimoLegajo = end($_POST['legajo']);
-
-        // $query = "SELECT PERSONAL.LegNume FROM PERSONAL WHERE PERSONAL.LegNume >0 AND PERSONAL.LegFeEg='17530101' $Filter AND PERSONAL.LegNume BETWEEN $primerLegajo AND $ultimoLegajo ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume";
-
-        // $param = array();
-        // $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        // $result = sqlsrv_query($link, $query, $param, $options);
-
-        // while ($row = sqlsrv_fetch_array($result)) {
-        //     $arraydb[] = ($row['LegNume']);
-        // }
-
-        // sqlsrv_free_stmt($result);
-        // sqlsrv_close($link);
-
-        // array_push($arraydb, $ultimoLegajo + 1);
-        // $arrayForm[] = ($_POST['legajo']);
-
-        // $resultado = array_diff($arraydb, $arrayForm[0]);
-
-        // $numero = $primerLegajo - 1;
-
-        // if (count($_POST['legajo']) > 1) {
-        //     foreach ($arrayForm[0] as $key => $valor) {
-        //         foreach ($resultado as $key => $value) {
-        //             if ($valor < $value) {
-        //                 if (($numero + 1) < ($value - 1)) {
-        //                     $arrayLega[] =  (($numero + 1) . ',' . ($value - 1));
-        //                 }
-        //             }
-        //             $numero = $value;
-        //         }
-        //         break;
-        //     }
-        // } else {
-        //     $arrayLega[] = ($primerLegajo . ',' . $primerLegajo);
-        // }
- 
-        foreach ($_POST['legajo'] as $key => $value) {
-            $legajo = $value;
-            $procesando = IngresarNovedad($aTipo, $legajo, $legajo, $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
+        // foreach ($_POST['legajo'] as $key => $value) {
+            // $legajo = $value;
+            $arrLega = str_replace(',',';', $Legajos);
+            $procesando = IngresarNovedad($aTipo. ',Legajos=['.$arrLega.']', '1', '99999999', $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
             /** Envio a webservice */
             if (($procesando) == 'Terminado') {
-                $mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
-                EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-                audito_ch2("A", 'Alta Novedad Legajo '.$legajo.'. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')).' a '.FechaFormatVar($FechaFin, ('d/m/Y')));
+                //$mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
+                //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
+                //audito_ch2("A", 'Alta Novedad Legajos ' . $legajo . '. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+                audito_ch2("A", 'Alta Novedad ('.$aFicNove.') Legajos varios. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
             } else {
                 $mensaje = 'Error No Enviado';
-                EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
-                $data = array('status' => 'error', 'dato' => $mensaje);
+                //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
+                $data = array('status' => 'error', 'Mensaje' => $mensaje);
                 echo json_encode($data);
                 exit;
             };
-        }
-
-        // foreach ($arrayLega as $key => $value) {
-
-        //     $LegaDH = explode(",", $value);
-        //     $LegaIni = $LegaDH[0];
-        //     $LegaFin = $LegaDH[1];
-
-        //     // $ExisteDH = ($LegaIni < $LegaFin) ? true: false;
-
-        //     $ExisteDH = CountRegistrosMayorCero("SELECT PERSONAL.LegNume FROM PERSONAL WHERE PERSONAL.LegNume >= $LegaIni AND PERSONAL.LegNume <= $LegaFin AND PERSONAL.LegFeEg='17530101' $Filter ORDER BY PERSONAL.LegNume ASC");
-
-        //     if ($ExisteDH) {
-        //         // echo $LegaIni . ' a ' . $LegaFin . PHP_EOL;
-        //         /** Recorremos el bucle de Legajos y enviamos peticiones al webservice */
-        //         // $legajo = $value;
-        //         $procesando = IngresarNovedad($aTipo, $LegaIni, $LegaFin, $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
-        //         /** Envio a webservice */
-        //         // $count=$count++; 
-        //         if (($procesando) == 'Terminado') {
-        //             $mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaIni, 'd/m/Y');
-        //             EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-        //         } else {
-        //             $mensaje = 'Error No Enviado';
-        //             EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
-        //             $data = array('status' => 'error', 'dato' => $mensaje);
-        //             echo json_encode($data);
-        //             exit;
-        //         };
-        //     }
         // }
+
     } else {
+        
         /** Si el tipo de ingreso es 1 (por Filtros) */
         $procesando = IngresarNovedad($aTipo, '1', '99999999', $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
         // $count=$count++; 
         if (($procesando) == 'Terminado') {
-            $mensaje = '(' . $count++ . ') Fin de Ingreso NOVEDAD ' . $DescNovedad . '. <br>Desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
-            EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-            audito_ch2("A", 'Alta Novedad Legajos. '.$DataFiltros.'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')).' a '.FechaFormatVar($FechaFin, ('d/m/Y')));
+            //$mensaje = '(' . $count++ . ') Fin de Ingreso NOVEDAD ' . $DescNovedad . '. <br>Desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
+            //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
+            audito_ch2("A", 'Alta Novedad ('.$aFicNove.') Legajos. ' . $DataFiltros . 'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
         } else {
             $mensaje = 'Error No Enviado';
-            EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
-            $data = array('status' => 'error', 'dato' => $mensaje);
+            //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
+            $data = array('status' => 'error', 'Mensaje' => $mensaje);
             echo json_encode($data);
             exit;
         };
@@ -256,11 +215,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
     BorrarArchivosPDF('../novedades/logs/*.log');
     /** Borra los archivos log */
-    $data = array('status' => 'ok', 'dato' => 'Fin de Ingreso de Novedades', 'log' => 'Ingreso_' . $microtime . '.log');
+    $presentes = array();
+    if ($tipoNov>2) {
+        // header("Content-Type: application/json");
+        $presentes = checkPresentes($queryPresentes);
+    }
+    header("Content-Type: application/json");
+    $data = array('status' => 'ok', 'Mensaje' => 'Fin de Ingreso de Novedades', 'log' => 'Ingreso_' . $microtime . '.log', 'Errores' => ($presentes), 'ErrorTotal' => count($presentes));
     echo json_encode($data);
     exit;
+
 } else {
-    $data = array('status' => 'error', 'dato' => 'ErrorPOST');
+    $data = array('status' => 'error', 'Mensaje' => 'ErrorPOST');
     echo json_encode($data);
     exit;
 }
