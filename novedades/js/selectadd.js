@@ -685,6 +685,7 @@ $(".alta_novedad").bind("submit", function (e) {
                 //     $("#respuesta").addClass("d-none");
                 // }, 2000);
                 GetPers.ajax.reload();
+                ActualizaTablas()
             } else {
                 $.notifyClose();
                 notify(data.Mensaje, 'danger', 0, 'right')

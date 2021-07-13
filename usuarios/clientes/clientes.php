@@ -38,6 +38,7 @@
         ?>
         <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../js/bootbox.min.js"></script>
+        <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
         <script src="data.js?v=<?=vjs()?>"></script>
 </body>
 

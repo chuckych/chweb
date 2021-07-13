@@ -1,6 +1,4 @@
 $(document).ready(function () {
-
-
     function ClassTBody() {
         $('.open-modal').removeClass('btn-outline-custom')
         $('.contentd').addClass('text-light bg-light')
@@ -184,18 +182,18 @@ $(document).ready(function () {
     $(document).on('click', '.editCuenta', function (e) {
         $('#modalFormCuenta').modal('show')
         $('#submitFormCuenta').val('EditCuenta')
-        var dataNombre     = $(this).attr('dataNombre');
-        var dataIdent      = $(this).attr('dataIdent');
-        var dataRecid      = $(this).attr('dataRecid');
-        var dataId         = $(this).attr('dataId');
-        var dataHost       = $(this).attr('dataHost');
-        var dataDB         = $(this).attr('dataDB');
-        var dataUser       = $(this).attr('dataUser');
-        var dataPass       = $(this).attr('dataPass');
-        var dataAuth       = $(this).attr('dataAuth');
-        var dataTkmobile   = $(this).attr('dataTkmobile');
-        var dataWebService = $(this).attr('dataWebService');
-        $('#nombreCuenta').html('Editar Cuenta: '+dataNombre)
+        let dataNombre = $(this).attr('dataNombre');
+        let dataIdent = $(this).attr('dataIdent');
+        let dataRecid = $(this).attr('dataRecid');
+        let dataId = $(this).attr('dataId');
+        let dataHost = $(this).attr('dataHost');
+        let dataDB = $(this).attr('dataDB');
+        let dataUser = $(this).attr('dataUser');
+        let dataPass = $(this).attr('dataPass');
+        let dataAuth = $(this).attr('dataAuth');
+        let dataTkmobile = $(this).attr('dataTkmobile');
+        let dataWebService = $(this).attr('dataWebService');
+        $('#nombreCuenta').html('Editar Cuenta: ' + dataNombre)
         $('#nombre').val(dataNombre)
         $('#ident').val(dataIdent)
         $('#recid').val(dataRecid)
@@ -203,10 +201,10 @@ $(document).ready(function () {
         $('#db').val(dataDB)
         $('#user').val(dataUser)
         $('#pass').val(dataPass)
-        if ((dataAuth=='2')) {
-            $('#auth').prop('checked',true)
-        }else{
-            $('#auth').prop('checked',false)
+        if ((dataAuth == '2')) {
+            $('#auth').prop('checked', true)
+        } else {
+            $('#auth').prop('checked', false)
         }
         $('#tkmobile').val(dataTkmobile)
         $('#WebService').val(dataWebService)
@@ -216,4 +214,33 @@ $(document).ready(function () {
         $('#nombreCuenta').html('Nueva Cuenta')
         $('#submitFormCuenta').val('AltaCuenta')
     })
+    $(document).on('click', '.testConnect', function (e) {
+        e.preventDefault();
+        let dataRecid = $(this).attr('dataRecid');
+        $.ajax({
+            type: 'GET',
+            url: 'testConnect.php?_c=' + dataRecid,
+            beforeSend: function (data) {
+                ActiveBTN(true, ".testConnect", 'Aguarde..', 'Test Conexión')
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    $.notifyClose();
+                    ActiveBTN(false, ".testConnect", 'Aguarde..', 'Test Conexión')
+                    notify(data.Mensaje, 'success', 2000, 'right')
+                } else {
+                    $.notifyClose();
+                    ActiveBTN(false, ".testConnect", 'Aguarde..', 'Test Conexión')
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            },
+            error: function () {
+                $.notifyClose();
+                ActiveBTN(false, ".testConnect", 'Aguarde..', 'Test Conexión')
+                notify('Error', 'danger', 2000, 'right')
+            }
+        });
+    });
 });

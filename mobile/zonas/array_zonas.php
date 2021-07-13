@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '../../../config/index.php';
+ini_set('max_execution_time', 900); // 900 segundos 15 minutos
 session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -17,6 +18,21 @@ $array = json_decode($json, TRUE);
 
 $data = array();
 
+// foreach ($array['DATA'] as $key => $v) {
+    
+//     $data_parameters="data_parameters[name]=".urlencode($v['name']);
+//     $data_parameters.="&data_parameters[map_size]=100";
+//     $data_parameters.="&data_parameters[lat]=".urlencode($v['lat']);
+//     $data_parameters.="&data_parameters[lng]=".urlencode($v['lng']);
+//     $urlUpdate = "https://app.xmartclock.com/xmart/be/xmart_end_point.php?TYPE=UPDATE&col=zones&tk=" . $tkcliente."&".($data_parameters)."&validation_parameters[name]=".urlencode($v['name']);
+//     if ($v['map_size']!='100') {
+//         $array = file_get_contents($urlUpdate);
+//     }
+//     // print_r(($urlUpdate));
+//     // break;
+   
+// }
+// exit;
 foreach ($array['DATA'] as $key => $valor) {
 
     $name       = (($valor['name']));

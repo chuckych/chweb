@@ -112,6 +112,3 @@ if (sqlsrv_num_rows($result) > 0) {
 echo json_encode(array('Horas'=> $data, 'Fichas' => $dataFichas ));
 sqlsrv_close($link);
 exit;
-
-
-

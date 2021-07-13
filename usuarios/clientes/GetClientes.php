@@ -60,24 +60,24 @@ if (mysqli_num_rows($result) > 0) {
     // $btnEditar = '<a title="Editar Cuenta: '.$nombre.'" href="index.php?id='.$recid.'&mod" class="btn border btn-outline-custom fontp">'.$IconEditar.'</span></a>';
     $Botones = $btnUsers . $btnRoles . $btnEditar;
     $data[] = array(
-      'recid' => '<span class="contentd">' . $recid . '</span>',
-      'ident' => '<span class="contentd" title="Identificador de la cuenta"><span class="mr-2 text-info">' . $IconHash . '</span>' . $ident . '</span>',
-      'id' => '<span class="contentd">' . $id . '</span>',
-      'nombre' => '<div class="contentd text-nowrap pt-2 text-secondary"><b class="contentd text-secondary mr-2" title="Nombre de la Cuenta">' . '<span class="mr-2 text-info">' . $IconCuenta . '</span>' . $nombre . '</b><div class="float-right">' . $Botones . '</div></div>',
-      'host' => '<span class="contentd" title="Servidor de Base de Datos">' . '<span class="mr-2 text-info">' . $IconServer . '</span>' . $host . '</span>',
-      'db' => '<span class="contentd" title="Nombre de la Base de Datos">' . '<span class="mr-2 text-info">' . $IconHDD . '</span>' . $db . '</span>',
-      'user' => '<span class="contentd" title="Usuario de la Base de Datos">' . '<span class="mr-2 text-info">' . $IconUser . '</span>' . $user . '</span>',
-      //  'pass' => '<span class="contentd">'.'<span class="mr-2 text-info">'.$IconKey.'</span>'.$pass.'</span>',
-      'pass' => '<span class="contentd">' . '<span class="d-inline-block text-truncate" style="max-width: 70px;" title="' . $pass . '">' . '<span class="mr-2 text-info" title="Contraseña de la Base de Datos">' . $IconKey . '</span>' . $pass . '</span>' . '</span>',
-      'auth_windows' => '<span class="contentd" title="Autenticación de Windows"><span class="text-info" >Auth: </span>' . $auth . '</span>',
-      'tkmobile' => '<span class="contentd">' . '<span class="d-inline-block text-truncate" style="max-width: 120px;" title="' . $tkmobile . '"><span class="text-info" title="Token Mobile">Token: </span>' . $tkmobile . '</span>' . '</span>',
-      'WebService' => '<span class="contentd" title="Web Service CH"><span class="text-info">WS: </span>' . $WebService . '</span>',
-      'fecha_alta' => '<span class="contentd ls1" title="Fecha de alta">' . $fecha_alta . '</span>',
-      'fecha_mod' => '<span class="contentd">' . $fecha . '</span>',
+      'recid'         => '<span class="contentd">' . $recid . '</span>',
+      'ident'         => '<span class="contentd" title="Identificador de la cuenta"><span class="mr-2 text-info">' . $IconHash . '</span>' . $ident . '</span>',
+      'id'            => '<span class="contentd">' . $id . '</span>',
+      'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"><b class="contentd text-secondary mr-2" title="Nombre de la Cuenta">' . '<span class="mr-2 text-info">' . $IconCuenta . '</span>' . $nombre . '</b><button class="btn btn-sm fontp btn-link testConnect text-secondary" dataRecid="' . $recid . '">Test Conexión</button><div class="float-right">' . $Botones . '</div></div>',
+      'host'          => '<span class="contentd" title="Servidor de Base de Datos">' . '<span class="mr-2 text-info">' . $IconServer . '</span>' . $host . '</span>',
+      'db'            => '<span class="contentd" title="Nombre de la Base de Datos">' . '<span class="mr-2 text-info">' . $IconHDD . '</span>' . $db . '</span>',
+      'user'          => '<span class="contentd" title="Usuario de la Base de Datos">' . '<span class="mr-2 text-info">' . $IconUser . '</span>' . $user . '</span>',
+      //  'pass'      => '<span class="contentd">'.'<span class="mr-2 text-info">'.$IconKey.'</span>'.$pass.'</span>',
+      'pass'          => '<span class="contentd">' . '<span class="d-inline-block text-truncate" style="max-width: 70px;" title="' . $pass . '">' . '<span class="mr-2 text-info" title="Contraseña de la Base de Datos">' . $IconKey . '</span>' . $pass . '</span>' . '</span>',
+      'auth_windows'  => '<span class="contentd" title="Autenticación de Windows"><span class="text-info" >Auth: </span>' . $auth . '</span>',
+      'tkmobile'      => '<span class="contentd">' . '<span class="d-inline-block text-truncate" style="max-width: 120px;" title="' . $tkmobile . '"><span class="text-info" title="Token Mobile">Token: </span>' . $tkmobile . '</span>' . '</span>',
+      'WebService'    => '<span class="contentd" title="Web Service CH"><span class="text-info">WS: </span>' . $WebService . '</span>',
+      'fecha_alta'    => '<span class="contentd ls1" title="Fecha de alta">' . $fecha_alta . '</span>',
+      'fecha_mod'     => '<span class="contentd">' . $fecha . '</span>',
       'cant_usuarios' => '<span class="contentd">' . $btnUsers . '</span>',
-      'cant_roles' => '<span class="contentd">' . $btnRoles . '</span>',
-      'Editar' => '<span class="contentd">' . $btnEditar . '</span>',
-      'null' => ''
+      'cant_roles'    => '<span class="contentd">' . $btnRoles . '</span>',
+      'Editar'        => '<span class="contentd">' . $btnEditar . '</span>',
+      'null'          => ''
       //    <span data-icon="" class="icon ml-2 align-middle mt-1 text-gris"></span>
     );
   endwhile;
