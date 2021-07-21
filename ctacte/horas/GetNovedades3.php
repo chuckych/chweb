@@ -4,20 +4,16 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
-
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 session_start();
-
 require __DIR__ . '../../../config/index.php';
 require __DIR__ . '../../../config/conect_mssql.php';
+E_ALL();
 
 $param   = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $Datos = explode(',', $_POST['DRFech']);
-
+$Fecha = '';
 $FechaIni  = $Datos[0];
 $FechaFin  = $Datos[1];
 
@@ -42,7 +38,7 @@ ORDER BY FICHAS3.FicCate, FICHAS3.FicNove";
 
 $result = sqlsrv_query($link, $query, $param, $options);
 
-if(PerCierre($Fecha,$Legajo)){
+if(PerCierre($Fecha, $Legajo)){
     $percierre=true;
     $disabled = 'disabled';
 }else{

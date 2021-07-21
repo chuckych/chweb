@@ -108,6 +108,17 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         'Fichadas'    => ($Fichadas),
         'null'        => '',
     );
+    $data2[] = array(
+        'Fic_Lega'    => $Fic_Lega,
+        'Fic_Nombre'  => $Fic_Nombre,
+        'num_dia'     => ($Fic_Dia_Semana),
+        'Fic_horario' => ($Fic_horario),
+        'Fecha'       => ($Fic_Asignada),
+        'Primera'     => $entrada['Fic'],
+        'Ultima'      => $salida['Fic'],
+        'Fichadas'    => ($Fichadas),
+        'null'        => '',
+    );
     unset($Fic_Hora);
 
 endwhile;

@@ -91,7 +91,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'tr
         exit;
     };
 
-   
+    $body = array('Fecha Desde'=> $FechaDesde, 'Fecha Hasta'=> $FechaHasta, 'Legajo Desde'=> $LegajoDesde, 'Legajo Hasta'=> $LegajoHasta, 'Tipo'=> $TipoDePersonal, 'Empresa'=> $Empresa, 'Planta'=> $Planta, 'Sucursal'=> $Sucursal, 'Grupo'=> $Grupo, 'Sector'=> $Sector, 'Seccion'=> $Seccion);
 
     $Liquidar = Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion);
 
@@ -122,7 +122,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'tr
     }
 
     if (($Liquidar) == 'Terminado') {
-        $data = array('status' => 'ok', 'Mensaje' => dato_proceso($LegajoDesde, $LegajoHasta, $FechaIni, $FechaFin, $FechaDesde, $FechaHasta) . $datas, 'Tipo de Personal' => $TipoDePersonal);
+        $data = array('status' => 'ok', 'Mensaje' => dato_proceso($LegajoDesde, $LegajoHasta, $FechaIni, $FechaFin, $FechaDesde, $FechaHasta) . $datas, 'Tipo de Personal' => $TipoDePersonal, 'body'=> $body );
         /** Insertar en tabla Auditor */
         $Dato = dato_proceso($LegajoDesde, $LegajoHasta, $FechaIni, $FechaFin, $FechaDesde, $FechaHasta);
         audito_ch('P', $Dato);
