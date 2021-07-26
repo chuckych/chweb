@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.157';
+    return 'v0.0.158';
 }
 function E_ALL()
 {
@@ -2065,7 +2065,7 @@ function UpdateRegistro($query)
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                PrintRespuestaJson('error',$mensaje[3]);
+                PrintRespuestaJson('error', $mensaje[3]);
                 // $data[] = array("status" => "error", "dato" => $mensaje[3]);
                 // $data[] = array("status" => "error", "dato" => 'Ya existe Novedad.');
                 exit;
@@ -2191,7 +2191,7 @@ function respuestaWebService($respuesta)
 {
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    return ($respuesta[1]);
+    return ($respuesta[0]);
 }
 function EstadoProceso($url)
 {
@@ -2241,7 +2241,7 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
     if ($httpCode == 201) {
         // usleep(1000000); /** un segundo */
@@ -2274,7 +2274,7 @@ function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
     if ($httpCode == 201) {
         // sleep(2);
@@ -2306,7 +2306,7 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoFicharHorario?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
@@ -2341,7 +2341,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoFicharHorario?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
@@ -2374,7 +2374,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
     // echo $processID.PHP_EOL; 
     // echo EstadoProceso($url); exit;
 
@@ -2410,7 +2410,7 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
         exit;
     }
     $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoNovedades?ProcesoId=" . $processID);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
@@ -2442,14 +2442,12 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
         echo json_encode($data);
         exit;
     }
-    $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("EstadoProceso?ProcesoId=" . $processID);
-    // echo $processID.PHP_EOL; 
-    // echo EstadoProceso($url); exit;
-
+    $respuesta = substr($respuesta, 1, -1);
+    $respuesta = explode("=", $respuesta);
+    $processID = ($respuesta[1]);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
     if ($httpCode == 201) {
-        // return EstadoProceso($url);
-        return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
+        return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
         exit;
     }
 }
@@ -2646,11 +2644,11 @@ function TokenMobile($token, $data)
         $t = explode('@', $token);
         switch ($data) {
             case 'appcode':
-                $t[1] = $t[1]??'';
+                $t[1] = $t[1] ?? '';
                 return $t[1];
                 break;
             case 'token':
-                $t[0] = $t[0]??'';
+                $t[0] = $t[0] ?? '';
                 return $t[0];
                 break;
             default:

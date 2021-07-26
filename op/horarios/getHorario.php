@@ -14,9 +14,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
     $Fecha  = hoyStr();
 
     $getHorario = getHorario($Fecha, $Fecha, $Legajo, $Legajo, '0', '0', '0', '0', '0', '0', '0');
+
     $data = array();
     if ($getHorario) {
-        $explode = explode(',', $getHorario['EstadoProceso']);
+        $explode = explode(',', $getHorario['Estado']);
+        // PrintRespuestaJson('ok',json_encode($getHorario));exit;
         $legajo     = $explode[0];
         $fecha      = $explode[1];
         $desde      = $explode[2];
@@ -100,7 +102,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
                 $vsHorario = 'Feriado';
             }
         }
-        $Mensaje = (($getHorario['EstadoProceso'])) ? $tipo . ' (' . $vsHorario . ')' . $horariodesc : 'No hay Conexión';
+        $Mensaje = (($getHorario['Estado'])) ? $tipo . ' (' . $vsHorario . ')' . $horariodesc : 'No hay Conexión';
 
         $data = array(
             'legajo'     => intval($legajo),

@@ -141,7 +141,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
         $tiempo_fini = microtime(true);
         $duracion    = round($tiempo_fini - $tiempo_ini, 2);
         $textDuracion='<br>Duración: '.$duracion.'s.'; 
-        $data = array('status' => 'error', 'Mensaje' => 'Error'.$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracio);
+        $data = array('status' => 'error', 'Mensaje' => 'Error'.$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
         echo json_encode($data);
         exit;
     };

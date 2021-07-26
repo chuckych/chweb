@@ -842,11 +842,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         exit;
     }
 
-    if (ValidarHora($_POST['Fic1HsAu2'])) {
-        $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto: ' . $_POST['Fic1HsAu2']);
-        echo json_encode($data);
-        exit;
-    }
+    // if (ValidarHora($_POST['Fic1HsAu2'])) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto: ' . $_POST['Fic1HsAu2']);
+    //     echo json_encode($data);
+    //     exit;
+    // }
 
     if ((valida_campo($_POST['Fic1Hora'])) || (valida_campo($_POST['Fic1HsAu2']))) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Tipo Hora y Autorizadas</strong> son requeridos!');
@@ -963,7 +963,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 
             $url = 'https://fcm.googleapis.com/fcm/send';
 
-            if ($_SESSION["ID_CLIENTE"] == '1') {
+            if ($_SESSION["ID_CLIENTE"] == '1' && $_SERVER['SERVER_NAME'] != 'localhost') {
                 $sendMensaje = sendMessaje($url, $payload, 10);
             } else {
                 $sendMensaje = '';

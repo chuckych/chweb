@@ -174,28 +174,7 @@ $spreadsheet->getComment('F1')->getText()->createTextRun("\r\nFranco compensator
 
 $numeroDeFila = 2;
 
-    $query="SELECT PERSONAL.LegNume as 'Legajo', PERSONAL.LegApNo as 'Nombre', 
-    Ex.HorasEx, 
-    S.FrancoCompe1, 
-    S.FrancoCompe2, 
-    S.JornadaReducida1, 
-    S.JornadaReducida2,
-    CtaCte=Ex.HorasEx-((S.JornadaReducida1 + S.FrancoCompe1)-(S.JornadaReducida2 + S.FrancoCompe2)) 
-    FROM PERSONAL 
-    CROSS APPLY 
-    (SELECT 
-    ISNULL(SUM( CASE WHEN N.NovTiCo=1 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS FrancoCompe1, 
-    ISNULL(SUM( CASE WHEN N.NovTiCo=4 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS FrancoCompe2, 
-    ISNULL(SUM( CASE WHEN N.NovTiCo=2 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS JornadaReducida1, 
-    ISNULL(SUM( CASE WHEN N.NovTiCo=5 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS JornadaReducida2 
-    FROM FICHAS3 H3 JOIN NOVEDAD N ON H3.FicNove=N.NovCodi 
-    WHERE H3.FicLega=PERSONAL.LegNume AND H3.FicFech >='$FechaIni' AND H3.FicFech <='$FechaFin' AND H3.FicNove >0 ) S 
-    CROSS APPLY (SELECT 
-    ISNULL(SUM((LEFT(H1.FicHsAu,2)*60+RIGHT(H1.FicHsAu,2)) - (LEFT(H1.FicHsAu2,2)*60+RIGHT(H1.FicHsAu2,2))),0) AS HorasEx 
-    FROM FICHAS1 H1 
-    JOIN TIPOHORA TH ON H1.FicHora=TH.THoCodi 
-    WHERE H1.FicLega=PERSONAL.LegNume AND H1.FicFech >='$FechaIni' AND H1.FicFech <='$FechaFin' AND TH.THoCtaH=1 AND H1.FicHsAu2 < H1.FicHsAu) Ex 
-    WHERE PERSONAL.LegNume >0 AND PERSONAL.LegFeEg='17530101' $cta $FiltroNulo $FilterEstruct $filtros";
+    $query="SELECT PERSONAL.LegNume as 'Legajo', PERSONAL.LegApNo as 'Nombre', Ex.HorasEx, S.FrancoCompe1, S.FrancoCompe2, S.JornadaReducida1, S.JornadaReducida2, CtaCte=Ex.HorasEx-((S.JornadaReducida1 + S.FrancoCompe1)-(S.JornadaReducida2 + S.FrancoCompe2)) FROM PERSONAL CROSS APPLY (SELECT ISNULL(SUM( CASE WHEN N.NovTiCo=1 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS FrancoCompe1, ISNULL(SUM( CASE WHEN N.NovTiCo=4 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS FrancoCompe2, ISNULL(SUM( CASE WHEN N.NovTiCo=2 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS JornadaReducida1, ISNULL(SUM( CASE WHEN N.NovTiCo=5 THEN LEFT(H3.FicHoras,2)*60+RIGHT(H3.FicHoras,2) ELSE 0 END),0) AS JornadaReducida2 FROM FICHAS3 H3 JOIN NOVEDAD N ON H3.FicNove=N.NovCodi WHERE H3.FicLega=PERSONAL.LegNume AND H3.FicFech >='$FechaIni' AND H3.FicFech <='$FechaFin' AND H3.FicNove >0 ) S CROSS APPLY (SELECT ISNULL(SUM((LEFT(H1.FicHsAu,2)*60+RIGHT(H1.FicHsAu,2)) - (LEFT(H1.FicHsAu2,2)*60+RIGHT(H1.FicHsAu2,2))),0) AS HorasEx FROM FICHAS1 H1 JOIN TIPOHORA TH ON H1.FicHora=TH.THoCodi WHERE H1.FicLega=PERSONAL.LegNume AND H1.FicFech >='$FechaIni' AND H1.FicFech <='$FechaFin' AND TH.THoCtaH=1 AND H1.FicHsAu2 < H1.FicHsAu) Ex WHERE PERSONAL.LegNume >0 AND PERSONAL.LegFeEg='17530101' $cta $FiltroNulo $FilterEstruct $filtros";
 // h4($query); exit;
 $result = sqlsrv_query($link, $query,$param, $options);
 
@@ -224,7 +203,7 @@ while ($row = sqlsrv_fetch_array($result)) {
     $FrancoCompe2     = (MinExcel($row['FrancoCompe2']));
     $JornadaReducida1 = (MinExcel($row['JornadaReducida1']));
     $JornadaReducida2 = (MinExcel($row['JornadaReducida2']));
-    $CtaCte           = (FormatHoraR($row['CtaCte']));
+    $CtaCte           = (($row['CtaCte']));
 
     if($CtaCte>=0){
         $CtaCte = (FormatHoraR($CtaCte)); /** positivo */
