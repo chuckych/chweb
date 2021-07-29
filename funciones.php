@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.158';
+    return 'v0.0.159';
 }
 function E_ALL()
 {
@@ -185,7 +185,7 @@ function Ident()
 }
 function statusData($status, $dato)
 {
-    $data = array('status' => $status, 'dato' => $dato);
+    $data = array('status' => $status, 'Mensaje' => $dato);
     echo json_encode($data);
     exit;
 }
@@ -1038,6 +1038,43 @@ function ExisteCliente($recid)
 
     // CountRegMayorCeroMySql($query) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     /** redirect */
+}
+function ExisteRol3($recid, $id)
+{
+    /** Verificamos el recid de rol para ver si existe. 
+     * Sino existe redirigimos a Clientes*/
+    $q = "SELECT roles.nombre, roles.id, roles.recid FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
+    require 'config/conect_mysql.php';
+    $rs = mysqli_query($link, $q);
+    if (mysqli_num_rows($rs) > 0) {
+        while ($row = mysqli_fetch_assoc($rs)) :
+            $nombre = $row['nombre'];
+            $id     = $row['id'];
+            $recid  = $row['recid'];
+        endwhile;
+        return array('nombre' => $nombre, 'id' => $id, 'recid' => $recid);
+    } else {
+        header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+        // return false;
+    }
+    mysqli_free_result($rs);
+    mysqli_close($link);
+    exit;
+}
+function ExisteRol4($recid, $id)
+{
+    /** Verificamos si existe el rol */
+    $q = "SELECT 1 FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
+    require 'config/conect_mysql.php';
+    $rs = mysqli_query($link, $q);
+    if (mysqli_num_rows($rs) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+    mysqli_free_result($rs);
+    mysqli_close($link);
+    exit;
 }
 function ExisteRol2($recid)
 {
@@ -1976,6 +2013,42 @@ function UpdateRegistroMySql($query)
         exit;
     }
 }
+function deleteRegistroMySql($query)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $stmt = mysqli_query($link, $query);
+    // print_r($query); exit;
+    if (($stmt)) {
+        return true;
+        mysqli_close($link);
+    } else {
+        statusData('error', mysqli_error($link));
+        mysqli_close($link);
+        exit;
+    }
+}
+function dataLista($lista, $rol)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $stmt = mysqli_query($link, "SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
+    // print_r($query); exit;
+    if (($stmt)) {
+        if (mysqli_num_rows($stmt) > 0) {
+            while ($row = mysqli_fetch_assoc($stmt)) {
+                return array($row['datos']);
+            }
+        } else {
+            return array('-');
+        }
+
+        mysqli_free_result($stmt);
+        mysqli_close($link);
+    } else {
+        statusData('error', mysqli_error($link));
+        mysqli_close($link);
+        exit;
+    }
+}
 /** Fin Query MYSQL */
 /**Query MS-SQL */
 function DateFirst($numerodia)
@@ -2743,4 +2816,31 @@ function horarioCH($HorCodi)
     }
     sqlsrv_close($link);
     exit;
+}
+function listaRol($idLista  = '0')
+{
+    $idLista = intval($idLista);
+    switch ($idLista) {
+        case 0:
+            return 'Todos';
+            break;
+        case 1:
+            return 'Novedades';
+            break;
+        case 2:
+            return 'Otras Novedades';
+            break;
+        case 3:
+            return 'Horarios';
+            break;
+        case 4:
+            return 'Rotaciones';
+            break;
+        case 5:
+            return 'Tipos de Hora';
+            break;
+        default:
+            return 'Todos';
+            break;
+    }
 }

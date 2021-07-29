@@ -3,14 +3,18 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 require_once __DIR__ . '../../config/index.php';
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 
 require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+
+$ListaTipoHora = $_SESSION['ListaTipoHora'];
+if ($ListaTipoHora  != "-") {
+    $filtroTipoHora = " AND TipoHora.THoCodi IN ($ListaTipoHora)";
+}
 
 $_POST['modHora'] = $_POST['modHora'] ?? '';
 $modHora = test_input($_POST['modHora']);
@@ -44,7 +48,7 @@ if (sqlsrv_num_rows($result) > 0) {
 sqlsrv_free_stmt($result);
 
 
-$query="SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi >0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi ORDER BY THoCodi";
+$query="SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi > 0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi $filtroTipoHora ORDER BY THoCodi";
 
 $result  = sqlsrv_query($link, $query, $params, $options);
 // print_r($query); exit;

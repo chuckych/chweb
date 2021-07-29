@@ -10,6 +10,11 @@ require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$ListaNov = $_SESSION['ListaNov'];
+if ($ListaNov  != "-") {
+    $filtroNov = " AND NOVEDAD.NovCodi IN ($ListaNov)";
+}
+
 
 $_POST['Fic'] = $_POST['Fic'] ?? '';
 $Fic = test_input($_POST['Fic']);
@@ -77,7 +82,7 @@ if (sqlsrv_num_rows($result) > 0) {
 sqlsrv_free_stmt($result);
 
 
-$query = "SELECT DISTINCT NOVEDAD.NovTipo FROM NOVEDAD $FiltrarNovTipo $_ntipo $FiltrarNovTipo2";
+$query = "SELECT DISTINCT NOVEDAD.NovTipo FROM NOVEDAD $FiltrarNovTipo $_ntipo $FiltrarNovTipo2 $filtroNov";
 $result  = sqlsrv_query($link, $query, $params, $options);
 // print_r($query);exit;
 $data = array();
@@ -88,7 +93,7 @@ if (sqlsrv_num_rows($result) > 0) {
 
         $NovTipo = $fila['NovTipo'];
 
-        $query = "SELECT NOVEDAD.NovCodi AS Codigo , NOVEDAD.NovDesc AS Descripción FROM NOVEDAD WHERE NOVEDAD.NovTipo='$NovTipo' AND NOVEDAD.NovCodi >0 AND CONCAT(' ', NOVEDAD.NovCodi, NOVEDAD.NovDesc) LIKE '%$q%' AND NOVEDAD.NovCodi NOT IN (SELECT FicNove FROM FICHAS3 WHERE FICHAS3.FicLega='$RegLega' AND FICHAS3.FicFech='$RegFeAs') ORDER BY NOVEDAD.NovCodi";
+        $query = "SELECT NOVEDAD.NovCodi AS Codigo , NOVEDAD.NovDesc AS Descripción FROM NOVEDAD WHERE NOVEDAD.NovTipo='$NovTipo' AND NOVEDAD.NovCodi >0 AND CONCAT(' ', NOVEDAD.NovCodi, NOVEDAD.NovDesc) LIKE '%$q%' AND NOVEDAD.NovCodi NOT IN (SELECT FicNove FROM FICHAS3 WHERE FICHAS3.FicLega='$RegLega' AND FICHAS3.FicFech='$RegFeAs') $filtroNov ORDER BY NOVEDAD.NovCodi";
         // print_r($query);exit;
 
         $result_Nov  = sqlsrv_query($link, $query, $params, $options);

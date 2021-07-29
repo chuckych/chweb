@@ -72,9 +72,10 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     require __DIR__ . "../../js/jquery.php";
     require __DIR__ . "../../js/DataTable.php";
     ?>
-    <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
-    <script src="../js/select2.min.js"></script>
-    <script src="../js/bootbox.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
     <script src="usuarios-min.js?v=<?=vjs()?>"></script>
 </body>
 

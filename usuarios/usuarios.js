@@ -191,10 +191,11 @@ $(document).ready(function () {
 
     // table.page.len('5').draw();
     table.on('page.dt', function () {
+        CheckSesion()
         ClassTBody()
         $('#respuestaResetClave').html('')
     });
-    if ($('#_rol').val()!='') {
+    if ($('#_rol').val() != '') {
         $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
     }
     if ($(window).width() < 769) {
@@ -205,7 +206,8 @@ $(document).ready(function () {
         $('#GetUsuarios').addClass('text-wrap')
     }
     $(document).on("click", ".editar", function (e) {
-
+        CheckSesion()
+        $.notifyClose();
         e.preventDefault();
         $('#modalEditUser').modal('show');
         // $('#e_nombre').focus()
@@ -295,6 +297,7 @@ $(document).ready(function () {
         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
 
         $("#FormEdit").bind("submit", function (e) {
+            CheckSesion()
             e.preventDefault();
             $.ajax({
                 type: $(this).attr("method"),
@@ -303,21 +306,20 @@ $(document).ready(function () {
                 // async : false,
                 beforeSend: function (data) {
                     ActiveBTN(true, '#submitEdit', 'Guardando', 'Guardar')
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
                 },
                 success: function (data) {
                     if (data.status == "ok") {
                         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
-                        $('#respuestaForm').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                        $.notifyClose();
+                        notify(data.Mensaje, 'success', 5000, 'right')
+                        $('#modalEditUser').modal('hide')
                         $('#GetUsuarios').DataTable().ajax.reload()
-                        setTimeout(() => {
-                            classEfect('#modalEditUser', 'animate__animated animate__fadeOut')
-                            setTimeout(() => {
-                                $('#modalEditUser').modal('hide')
-                            }, 500);
-                        }, 1500);
                     } else {
                         ActiveBTN(false, '#submitEdit', 'Guardando', 'Guardar')
-                        $('#respuestaForm').html('<div class="py-3 fontq text-danger fw5">' + data.Mensaje + '</div>')
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
                     }
                 }
             });
@@ -336,9 +338,9 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".add", function (e) {
-
+        CheckSesion()
+        $.notifyClose();
         e.preventDefault();
-
         $('#modalAddUser').modal('show');
         $('#a_nombre').focus()
         $('#a_recid').val($("#recid_c").val())
@@ -407,6 +409,7 @@ $(document).ready(function () {
         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
 
         $("#FormAdd").bind("submit", function (e) {
+            CheckSesion()
             e.preventDefault();
             $.ajax({
                 type: $(this).attr("method"),
@@ -415,26 +418,26 @@ $(document).ready(function () {
                 // async : false,
                 beforeSend: function (data) {
                     ActiveBTN(true, '#submitAdd', 'Guardando', 'Agregar')
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
                 },
                 success: function (data) {
                     if (data.status == "ok") {
                         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
-                        $('#respuestaFormAdd').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
                         $('#GetUsuarios').DataTable().ajax.reload()
-                        setTimeout(() => {
-                            classEfect('#modalAddUser', 'animate__animated animate__fadeOut')
-                            setTimeout(() => {
-                                $('#modalAddUser').modal('hide')
-                            }, 500);
-                        }, 1500);
+                        $.notifyClose();
+                        notify(data.Mensaje, 'success', 5000, 'right')
+                        $('#modalAddUser').modal('hide')
                     } else {
                         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
-                        $('#respuestaFormAdd').html('<div class="py-3 fontq text-danger fw5">' + data.Mensaje + '</div>')
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
                     }
                 },
                 error: function (data) {
                     ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
-                    $('#respuestaFormAdd').html('<div class="py-3 fontq text-danger fw5">Error</div>')
+                    $.notifyClose();
+                    notify('Error', 'danger', 5000, 'right')
                 }
             });
             e.stopImmediatePropagation();
@@ -452,7 +455,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.resetKey', function (e) {
-
+        $.notifyClose();
         e.preventDefault();
         var data_uid = $(this).attr('data_uid');
         var data_nombre = $(this).attr('data_nombre');
@@ -461,7 +464,7 @@ $(document).ready(function () {
 
         bootbox.confirm({
             // title: "<span class='fonth'>Eliminar Usuario</span>",
-            message: '<span class="fonth fw4">¿Desea restablecer la contraseña de <span class="fw5">'+data_nombre+'</span>?<br />Su nueva contraseña será: '+data_usuario+'</span>',
+            message: '<span class="fonth fw4">¿Desea restablecer la contraseña de <span class="fw5">' + data_nombre + '</span>?<br />Su nueva contraseña será: ' + data_usuario + '</span>',
             buttons: {
                 confirm: {
                     label: 'Confirmar',
@@ -486,22 +489,27 @@ $(document).ready(function () {
                         },
                         beforeSend: function (data) {
                             $('#reset_' + data_uid).prop('disabled', true)
+                            $.notifyClose();
+                            notify('Aguarde..', 'info', 0, 'right')
                         },
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#reset_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 10000, 'right')
                             } else {
                                 $('#reset_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#reset_' + data_uid).prop('disabled', false)
-                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'danger', 5000, 'right')
                         }
                     });
-            
+
                 }
             }
         });
@@ -510,17 +518,17 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.estado', function (e) {
-
+        $.notifyClose();
         e.preventDefault();
-        var data_uid    = $(this).attr('data_uid');
+        var data_uid = $(this).attr('data_uid');
         var data_nombre = $(this).attr('data_nombre');
         var data_estado = $(this).attr('data_estado');
-        var data_title  = $(this).attr('data_title');
+        var data_title = $(this).attr('data_title');
         $('.estado').unbind('click');
 
         bootbox.confirm({
             // title: "<span class='fonth'>Eliminar Usuario</span>",
-            message: '<span class="fonth fw4">¿Confirma dar de '+data_title+' a <span class="fw5">'+data_nombre+'</span>?</span>',
+            message: '<span class="fonth fw4">¿Confirma dar de ' + data_title + ' a <span class="fw5">' + data_nombre + '</span>?</span>',
             buttons: {
                 confirm: {
                     label: 'Confirmar',
@@ -545,20 +553,25 @@ $(document).ready(function () {
                         },
                         beforeSend: function (data) {
                             $('#estado_' + data_uid).prop('disabled', true)
+                            $.notifyClose();
+                            notify('Aguarde', 'info', 0, 'right')
                         },
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#estado_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 5000, 'right')
                                 $('#GetUsuarios').DataTable().ajax.reload()
                             } else {
                                 $('#estado_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#estado_' + data_uid).prop('disabled', false)
-                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'success', 5000, 'right')
                         }
                     });
                 }
@@ -569,6 +582,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.delete', function (e) {
+        $.notifyClose();
         e.preventDefault();
         var data_uid = $(this).attr('data_uid');
         var data_nombre = $(this).attr('data_nombre');
@@ -600,20 +614,25 @@ $(document).ready(function () {
                         },
                         beforeSend: function (data) {
                             $('#delete_' + data_uid).prop('disabled', true)
+                            $.notifyClose();
+                            notify('Aguarde', 'info', 0, 'right')
                         },
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#delete_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 5000, 'right')
                                 $('#GetUsuarios').DataTable().ajax.reload()
                             } else {
                                 $('#delete_' + data_uid).prop('disabled', false)
-                                $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#delete_' + data_uid).prop('disabled', false)
-                            $('#respuestaResetClave').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'danger', 5000, 'right')
                         }
                     });
                 }

@@ -54,23 +54,32 @@ $(document).ready(function () {
                         },
                         beforeSend: function (data) {
                             $('#Editar_' + dataidrol).prop('disabled', true)
+                            $.notifyClose();
+                            notify('Aguarde..', 'info', 0, 'right')
                         },
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#Editar_' + dataidrol).prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 5000, 'right')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
                                 $('#GetRoles').DataTable().ajax.reload();
+
                             } else if (data.status == "nocambios") {
                                 $('#Editar_' + dataidrol).prop('disabled', false)
-                                $('#respuesta').html('')
+                                // $('#respuesta').html('')
                             } else {
                                 $('#Editar_' + dataidrol).prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#Editar_' + dataidrol).prop('disabled', false)
-                            $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'danger', 5000, 'right')
                         }
                     });
                     // });
@@ -129,19 +138,25 @@ $(document).ready(function () {
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#AltaRol').prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
                                 $('#GetRoles').DataTable().ajax.reload();
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 5000, 'right')
                             } else if (data.status == "nocambios") {
                                 $('#AltaRol').prop('disabled', false)
-                                $('#respuesta').html('')
+                                // $('#respuesta').html('')
                             } else {
                                 $('#AltaRol').prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#AltaRol').prop('disabled', false)
-                            $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'danger', 5000, 'right')
                         }
                     });
                     // });
@@ -187,16 +202,22 @@ $(document).ready(function () {
                         success: function (data) {
                             if (data.status == "ok") {
                                 $('#delete_' + dataidrol).prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'success', 5000, 'right')
                                 $('#GetRoles').DataTable().ajax.reload();
                             } else {
                                 $('#delete_' + dataidrol).prop('disabled', false)
-                                $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         },
                         error: function (data) {
                             $('#delete_' + dataidrol).prop('disabled', false)
-                            $('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            //$('#respuesta').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>Error</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+                            $.notifyClose();
+                            notify('Error', 'danger', 5000, 'right')
                         }
                     });
                 }
@@ -228,6 +249,18 @@ $(document).ready(function () {
                     $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
                 }
             );
+
+            $('.ListaRol').on('click', function() {
+                CheckSesion()
+                let c = $(this).attr('data-c');
+                let r = $(this).attr('data-r');
+                let id = $(this).attr('data-id');
+                let url = '../listas/index.php?_r=' + r + '&id=' + id + '&_c=' + c;
+                $.get(url).done(function(data) {
+                    $('#modalListas .modal-body').html(data);
+                    $('#modalListas').modal('show');
+                });
+            });
         },
         drawCallback: function (settings) {
             $('.contentd').removeClass('text-light bg-light border-0')
@@ -256,11 +289,11 @@ $(document).ready(function () {
             },
             {
                 "visible": false,
-                "targets": 15
+                "targets": 16
             },
             {
                 "visible": false,
-                "targets": 16
+                "targets": 17
             },
         ],
         // rowGroup: {
@@ -299,7 +332,7 @@ $(document).ready(function () {
                 "data": "recid_cliente"
             },
             {
-                "class": "",
+                "class": "w-100",
                 /** Col 03 */
                 "data": "nombre"
             },
@@ -326,51 +359,56 @@ $(document).ready(function () {
             {
                 "class": "text-center",
                 /** Col 08 */
-                "data": "abm_rol"
+                "data": "listas"
             },
             {
                 "class": "text-center",
                 /** Col 09 */
-                "data": "cant_empresas"
+                "data": "abm_rol"
             },
             {
                 "class": "text-center",
                 /** Col 10 */
-                "data": "cant_plantas"
+                "data": "cant_empresas"
             },
             {
                 "class": "text-center",
                 /** Col 11 */
-                "data": "cant_convenios"
+                "data": "cant_plantas"
             },
             {
                 "class": "text-center",
                 /** Col 12 */
-                "data": "cant_sectores"
+                "data": "cant_convenios"
             },
             {
                 "class": "text-center",
                 /** Col 13 */
-                "data": "cant_grupos"
+                "data": "cant_sectores"
             },
             {
                 "class": "text-center",
                 /** Col 14 */
+                "data": "cant_grupos"
+            },
+            {
+                "class": "text-center",
+                /** Col 15 */
                 "data": "cant_sucur"
             },
             {
                 "class": "",
-                /** Col 15 */
+                /** Col 16 */
                 "data": "fecha_alta"
             },
             {
                 "class": "",
-                /** Col 16 */
+                /** Col 17 */
                 "data": "fecha_mod"
             },
             {
                 "class": "",
-                /** Col 17 */
+                /** Col 18 */
                 "data": "edit_rol"
             },
         ],
@@ -388,4 +426,8 @@ $(document).ready(function () {
     table.on('page.dt', function () {
         ClassTBody()
     });
+    $('#modalListas').on('hidden.bs.modal', function (e) {
+        $('#modalListas .modal-body').html('');
+        $.notifyClose();
+    })
 });

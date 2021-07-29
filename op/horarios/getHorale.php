@@ -20,6 +20,15 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = $TotalCit="";
 
+$ListaHorarios = $_SESSION['ListaHorarios'];
+if ($ListaHorarios  != "-") {
+    $filtroListaHorarios = " AND HORARIOS.HorCodi IN ($ListaHorarios)";
+}
+$ListaRotaciones = $_SESSION['ListaRotaciones'];
+if ($ListaRotaciones  != "-") {
+    $filtroListaRotaciones = " AND ROTACION.RotCodi IN ($ListaRotaciones)";
+}
+
 switch ($Tabla) {
     case 'Desde':
         $sql_cit = "SELECT SUM(1) as 'cant' FROM CITACION WHERE CITACION.CitLega = '$Legajo'";
@@ -260,7 +269,7 @@ switch ($Tabla) {
         exit;
         break;
     case 'ListHorarios':
-        $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS ORDER BY HorCodi";
+        $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS WHERE HorCodi >=0 $filtroListaHorarios ORDER BY HorCodi";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
         $sqlRec .= $sql_query;
@@ -283,7 +292,7 @@ switch ($Tabla) {
             );
         }
     case 'ListRotaciones':
-        $sql_query = "SELECT RotCodi, RotDesc FROM ROTACION ORDER BY RotCodi";
+        $sql_query = "SELECT RotCodi, RotDesc FROM ROTACION WHERE RotCodi >= 0 $filtroListaRotaciones ORDER BY RotCodi";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
         $sqlRec .= $sql_query;

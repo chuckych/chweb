@@ -40,7 +40,7 @@ require __DIR__ . '../../config/conect_mysql.php';
 $user = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
 $pass = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags($_POST['clave']);
 $user = test_input($user);
-$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='$user' AND usuarios.estado='0' LIMIT 1";
+$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='$user' AND usuarios.estado='0' LIMIT 1";
 
 // print_r($sql); exit;
 $rs       = mysqli_query($link, $sql);
@@ -74,9 +74,33 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		(!$selDataPresentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'presentes', '', $row[id_cliente])") : '';
 		(!$selDataAusentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'ausentes', '', $row[id_cliente])") : '';
 	}
+	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_roles` (
+		`id_rol` TINYINT(4) NOT NULL,
+		`lista` ENUM('0','1','2','3','4','5') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci',
+		`datos` TEXT NOT NULL COLLATE 'utf8mb4_bin',
+		`fecha` DATETIME NOT NULL,
+		PRIMARY KEY (`id_rol`, `lista`) USING BTREE,
+		CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `chwebhrp`.`roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+	)
+	COLLATE='utf8_general_ci'
+	ENGINE=InnoDB");
+	
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
+
+	function sesionListas($id_rol, $lista, $nombreSesion)
+	{
+		$dataLista = dataLista($lista, $id_rol);
+		$dataLista = implode(',', $dataLista);
+		$_SESSION[$nombreSesion] = $dataLista;
+	}
+	sesionListas($row['id_rol'], 1, 'ListaNov'); // Sesion lista de novedades
+	sesionListas($row['id_rol'], 2, 'ListaONov'); // Sesion lista de otras Novedades
+	sesionListas($row['id_rol'], 3, 'ListaHorarios'); // Sesion lista de horarios
+	sesionListas($row['id_rol'], 4, 'ListaRotaciones'); // Sesion lista de rotaciones
+	sesionListas($row['id_rol'], 5, 'ListaTipoHora'); // Sesion lista de tipos de horas
+
 	$query = "SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1";
 	$result = mysqli_query($link, $query);
 	// print_r($query); exit;
@@ -273,7 +297,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
 	if ($_POST['lasturl']) {
 		header('Location:' . urldecode($_POST['lasturl']));
-	}else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
+	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
 		header('Location:/' . HOMEHOST . '/dashboard/');
 	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
