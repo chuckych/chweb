@@ -10,46 +10,55 @@ $Rol     = ExisteRol3($_GET['_r'], $_GET['id'])
         font-weight: 500 !important;
         border-bottom: 2px solid #cecece !important;
     }
+
     #tableNovedades .table-active>td {
         background-color: #F8F9FA !important;
 
     }
+
     #tableONovedades .dtrg-level-0 td {
         font-size: 1rem;
         /* background-color: #F8F9FA !important; */
         font-weight: 500 !important;
         border-bottom: 2px solid #cecece !important;
     }
+
     #tableONovedades .table-active>td {
         background-color: #F8F9FA !important;
 
     }
+
     #tableHorarios .dtrg-level-0 td {
         font-size: 1rem;
         /* background-color: #F8F9FA !important; */
         font-weight: 500 !important;
         border-bottom: 2px solid #cecece !important;
     }
+
     #tableHorarios .table-active>td {
         background-color: #F8F9FA !important;
 
     }
+
     #tableRotaciones .dtrg-level-0 td {
         font-size: 1rem;
         /* background-color: #F8F9FA !important; */
         font-weight: 500 !important;
         border-bottom: 2px solid #cecece !important;
     }
+
     #tableRotaciones .table-active>td {
         background-color: #F8F9FA !important;
 
     }
+
     #tableTipoHoras .dtrg-level-0 td {
         font-size: 1rem;
         /* background-color: #F8F9FA !important; */
         font-weight: 500 !important;
         border-bottom: 2px solid #cecece !important;
     }
+
     #tableTipoHoras .table-active>td {
         background-color: #F8F9FA !important;
 
@@ -90,11 +99,17 @@ $Rol     = ExisteRol3($_GET['_r'], $_GET['id'])
                 </div>
             </nav>
             <div class="tab-content px-2" id="nav-tabContent">
-                <?php require 'tabs.php' ?>
+                <?php //require 'tabs.php?v=' . vjs() ?>
             </div>
         </div>
     </div>
 </div>
+<script>
+    let url = '/<?= HOMEHOST ?>/usuarios/listas/tabs.php?v=' + vjs();
+    $.get(url).done(function(data) {
+        $('#nav-tabContent').html(data);
+    });
+</script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataNov.js?v=<?= vjs() ?>"></script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataoNov.js?v=<?= vjs() ?>"></script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataHorarios.js?v=<?= vjs() ?>"></script>
@@ -102,5 +117,5 @@ $Rol     = ExisteRol3($_GET['_r'], $_GET['id'])
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataTipoHora.js?v=<?= vjs() ?>"></script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataCopyLista.js?v=<?= vjs() ?>"></script>
 <script>
-    $('#modalListasLabel').html(`<div><label class="fontq w70 my-0">Cuenta:</label><span class="fw5 fontq"><?= $Cliente ?></span></div><div><label class="fontq w70 my-0">Rol:</label><span class="fw5 fontq"><?= $Rol['nombre'] ?></span></div>`)
+    $('#modalListasLabel').html(`<div><label class="fontq w70 my-0">Cuenta:</label><span class="fw5 fontq"><?= $Cliente ?></span></div><div><label class="fontq w70 my-0">Rol:</label><span class="fw5 fontq nombreRol"><?= $Rol['nombre'] ?></span></div>`)
 </script>

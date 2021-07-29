@@ -90,7 +90,7 @@ $Cliente = ExisteCliente($_GET['_c']);
     <!-- fin container -->
     <?php
     require "modal_abm.html";
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ .  '../../../js/jquery.php';
     require __DIR__ . "../../../js/DataTable.php";
     ?>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>

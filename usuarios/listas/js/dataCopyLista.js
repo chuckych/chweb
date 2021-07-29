@@ -155,6 +155,8 @@ $(function () {
             $('#tableCopyListas tr').removeClass('table-active')
         });
 
+        $('#copyListas .nombreRol').html($('#modalListasLabel .nombreRol').text())
+
         $('#aplicarCopyLista').on('click', function () {
             CheckSesion()
             let selected = new Array();

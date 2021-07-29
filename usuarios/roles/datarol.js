@@ -250,7 +250,8 @@ $(document).ready(function () {
                 }
             );
 
-            $('.ListaRol').on('click', function() {
+            $('.ListaRol').on('click', function(e) {
+                e.preventDefault();
                 CheckSesion()
                 let c = $(this).attr('data-c');
                 let r = $(this).attr('data-r');
@@ -260,6 +261,7 @@ $(document).ready(function () {
                     $('#modalListas .modal-body').html(data);
                     $('#modalListas').modal('show');
                 });
+                e.stopImmediatePropagation();
             });
         },
         drawCallback: function (settings) {
