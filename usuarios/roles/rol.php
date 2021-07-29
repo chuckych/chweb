@@ -99,5 +99,4 @@ $Cliente = ExisteCliente($_GET['_c']);
     <script src="modal-min.js?v=<?= vjs() ?>"></script>
     <script src="datarol-min.js?v=<?= vjs() ?>"></script>
 </body>
-
 </html>

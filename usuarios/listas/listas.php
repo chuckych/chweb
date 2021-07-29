@@ -104,12 +104,6 @@ $Rol     = ExisteRol3($_GET['_r'], $_GET['id'])
         </div>
     </div>
 </div>
-<script>
-    let url = '/<?= HOMEHOST ?>/usuarios/listas/tabs.php?v=' + vjs();
-    $.get(url).done(function(data) {
-        $('#nav-tabContent').html(data);
-    });
-</script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataNov.js?v=<?= vjs() ?>"></script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataoNov.js?v=<?= vjs() ?>"></script>
 <script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataHorarios.js?v=<?= vjs() ?>"></script>

@@ -249,23 +249,26 @@ $(document).ready(function () {
                     $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
                 }
             );
-
-            $('.ListaRol').on('click', function(e) {
+        },
+        drawCallback: function (settings) {
+            $('.contentd').removeClass('text-light bg-light border-0')
+            $('.ListaRol').on('click', function (e) {
                 e.preventDefault();
                 CheckSesion()
                 let c = $(this).attr('data-c');
                 let r = $(this).attr('data-r');
                 let id = $(this).attr('data-id');
                 let url = '../listas/index.php?_r=' + r + '&id=' + id + '&_c=' + c;
-                $.get(url).done(function(data) {
+                $.get(url).done(function (data) {
+                    let urltabs = '../listas/tabs.php?v=' + vjs();
+                    $.get(urltabs).done(function (data) {
+                        $('#nav-tabContent').html(data);
+                    });
                     $('#modalListas .modal-body').html(data);
                     $('#modalListas').modal('show');
                 });
                 e.stopImmediatePropagation();
             });
-        },
-        drawCallback: function (settings) {
-            $('.contentd').removeClass('text-light bg-light border-0')
         },
         lengthMenu: [5, 10, 25, 50, 100],
         columnDefs: [
