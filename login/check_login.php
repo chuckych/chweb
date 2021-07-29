@@ -80,7 +80,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		`datos` TEXT NOT NULL COLLATE 'utf8mb4_bin',
 		`fecha` DATETIME NOT NULL,
 		PRIMARY KEY (`id_rol`, `lista`) USING BTREE,
-		CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `chwebhrp`.`roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+		CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
 	)
 	COLLATE='utf8_general_ci'
 	ENGINE=InnoDB");
