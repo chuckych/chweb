@@ -8,8 +8,7 @@ ultimoacc();
 secure_auth_ch();
 $Modulo='24';
 ExisteModRol($Modulo);
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 
 require_once __DIR__ . '../../../../vendor/autoload.php'; 
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {

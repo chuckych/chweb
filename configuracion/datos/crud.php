@@ -5,10 +5,7 @@ require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-// error_reporting(E_ALL);
-// ini_set('display_errors', '1');
 E_ALL();
-
 FusNuloPOST('submit', '');
 /** ALTA DE CLIENTE */
 $FechaHora = date('Ymd H:i:s');

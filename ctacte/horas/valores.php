@@ -21,14 +21,14 @@ FusNuloPOST("Grup",'');
 FusNuloPOST("Sucur",'');
 FusNuloPOST("Tipo",'');
 
-$Per     = test_input($_POST['Per']);
+$Per     = ($_POST['Per']);
 $Per2    = test_input($_POST['Per2']);
 $Per3    = test_input($_POST['Per2']);
-$Emp     = test_input($_POST['Emp']);
-$Plan    = test_input($_POST['Plan']);
-$Sect    = test_input($_POST['Sect']);
-$Grup    = test_input($_POST['Grup']);
-$Sucur   = test_input($_POST['Sucur']);
+$Emp     = ($_POST['Emp']);
+$Plan    = ($_POST['Plan']);
+$Sect    = ($_POST['Sect']);
+$Grup    = ($_POST['Grup']);
+$Sucur   = ($_POST['Sucur']);
 
 $Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'": "";
 
@@ -38,6 +38,7 @@ $Tipo = empty(($_POST['Tipo'])) ? "": $Tipo;
 
 if(!empty($_POST['Sec2'])){
     $Sec2 = implode(',',($_POST['Sec2']));
+    $Sec2 = test_input($Sec2);
     $Seccion = !empty($Sec2) ? "AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($Sec2)" :'';
 }else{
     $Seccion ='';

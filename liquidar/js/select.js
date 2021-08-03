@@ -549,7 +549,7 @@ function GetArch(arch, nombrearch, tipo) {
         success: function (data) {
             $(".archivo").html("<pre>" + data + "</pre>");
             $(".archivo").addClass("shadow-sm border");
-            $(".ArchPath").html("<a class='text-secondary' download=" + moment().format("DDMMYYYYHmmss") + "_" + tipo + "_" + nombrearch + " href=" + nombrearch + ">" + nombrearch + "</a>")
+            $(".ArchPath").html("<a class='d-inline-flex text-dark fw5' download=" + moment().format("DDMMYYYYHmmss") + "_" + tipo + "_" + nombrearch + " href=" + nombrearch + ">" + nombrearch + "<i class='ml-2 bi bi-file-earmark-arrow-down'></i></a>")
             $('#trDownload').show()
         },
         error: function () {

@@ -5,9 +5,9 @@ class Log
     {
         $this->path     = ($path) ? $path : "/";
         $this->filename = ($filename) ? $filename : "log";
-        $this->date     = date("Ymd");
+        $this->date     = date("YmdHis");
         $this->ip       = ($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 0;
-        $this->otro=date('d/m/Y H:i:s').' ';
+        $this->otro=date('d/m/Y H:i:s').'';
     }
     public function insert($text, $dated, $clear, $backup)
     {

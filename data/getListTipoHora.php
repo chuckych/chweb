@@ -4,13 +4,11 @@ header('Access-Control-Allow-Origin: *');
 require_once __DIR__ . '../../config/index.php';
 session_start();
 E_ALL();
-
-
 require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-
+$filtroTipoHora = '';
 $ListaTipoHora = $_SESSION['ListaTipoHora'];
 if ($ListaTipoHora  != "-") {
     $filtroTipoHora = " AND TipoHora.THoCodi IN ($ListaTipoHora)";

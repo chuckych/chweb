@@ -10,6 +10,7 @@ require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$filtroNov ='';
 $ListaNov = $_SESSION['ListaNov'];
 if ($ListaNov  != "-") {
     $filtroNov = " AND NOVEDAD.NovCodi IN ($ListaNov)";

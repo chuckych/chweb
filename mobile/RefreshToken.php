@@ -5,8 +5,7 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $tk = $_POST['tk'];
 $_SESSION["TK_MOBILE"] = $tk;

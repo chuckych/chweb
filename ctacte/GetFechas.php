@@ -5,30 +5,32 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
+$data = array();
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
+}
 
-if(empty($_POST['_dr'])){
-
+$params = $_REQUEST;
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
     $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
         "data"            => $data
     );
-    
     echo json_encode($json_data);
     exit;
 }
-
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
-
-$legajo = test_input(FusNuloPOST('_l', 'vacio'));
 
 require __DIR__ . '../valores.php';
 

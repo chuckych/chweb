@@ -70,9 +70,10 @@ $(function () {
                         }, 200);
                     }
                     let classTipo = 'Horclass_' + row.idtipo
+                    let cod = (row['codigo']===0) ? 32768 : row['codigo']
                     let datacol = `
                     <div class="custom-control custom-checkbox">
-                        <input `+ checked + ` type="checkbox" class="custom-control-input ` + classTipo + `" id="Horario_` + row['codigo'] + `" value="` + row['codigo'] + `">
+                        <input `+ checked + ` type="checkbox" class="custom-control-input ` + classTipo + `" id="Horario_` + row['codigo'] + `" value="` + cod + `">
                         <label class="custom-control-label" for="Horario_`+ row['codigo'] + `"></label>
                     </div>
                     `
@@ -131,17 +132,6 @@ $(function () {
                 $(this).addClass('table-active')
             };
         });
-        // $('#tableHorarios tbody').on('click', '.groupHorarioTipo', function (e) {
-        //     e.preventDefault();
-        //     let tipo = $(this).attr('data-tipo')
-        //     if ($('.Horclass_' + tipo).is(":checked")) {
-        //         $('.Horclass_' + tipo).prop('checked', false)
-        //         $('.Horclass_' + tipo).parents('tr').removeClass('table-active')
-        //     } else {
-        //         $('.Horclass_' + tipo).prop('checked', true)
-        //         $('.Horclass_' + tipo).parents('tr').addClass('table-active')
-        //     };
-        // })
 
         $("#tableHorarios_filter .form-control").attr('placeholder', 'Buscar Horario')
         $(this).children('thead').remove()
@@ -155,8 +145,8 @@ $(function () {
             `
         let buttonsCheck = `
             <div class="">
-                <button class="btn btn-link btn-sm fontq" id="checkAllHorario">Marcar Todo</button>
-                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllHorario">Desmarcar Todo</button>
+                <button class="btn btn-link btn-sm fontq" id="checkAllHorario">Marcar</button>
+                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllHorario">Desmarcar</button>
             </div>
             `
         let buttonsSubmit = `

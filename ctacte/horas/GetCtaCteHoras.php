@@ -7,8 +7,7 @@ ultimoacc();
 secure_auth_ch();
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
     UnsetPost('Visualizar', '2');
 

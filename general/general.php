@@ -163,11 +163,7 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script>
-        var host = "<?= host() ?>/<?= HOMEHOST ?>/<?= $_datos ?>";
-        var FechaIni = "<?= $FechaIni ?>";
-        var FechaFin = "<?= $FechaFin ?>";
-        var QueryString = "<?= $_SERVER['QUERY_STRING'] ?>";
-        var diaString = "<?= FechaFormatVar($value_fecha, 'Ymd') ?>";
+   
     </script>
     <script src="../js/select2.min.js"></script>
     <script src="js/data.js?v=<?=vjs()?>"></script>

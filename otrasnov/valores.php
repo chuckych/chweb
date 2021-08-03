@@ -2,9 +2,15 @@
 FusNuloPOST('q', '');
 $q = test_input($_POST['q']);
 
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
+
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
+}
 
 FusNuloPOST("Per",'');
 FusNuloPOST("Per2",'');
@@ -17,14 +23,14 @@ FusNuloPOST("Sucur",'');
 FusNuloPOST("Tipo",'');
 // FusNuloPOST("FicNoTi",'');
 
-$Per     = test_input($_POST['Per']);
+$Per     = ($_POST['Per']);
 $Per2    = test_input($_POST['Per2']);
 $Per3    = test_input($_POST['Per2']);
-$Emp     = test_input($_POST['Emp']);
-$Plan    = test_input($_POST['Plan']);
-$Sect    = test_input($_POST['Sect']);
-$Grup    = test_input($_POST['Grup']);
-$Sucur   = test_input($_POST['Sucur']);
+$Emp     = ($_POST['Emp']);
+$Plan    = ($_POST['Plan']);
+$Sect    = ($_POST['Sect']);
+$Grup    = ($_POST['Grup']);
+$Sucur   = ($_POST['Sucur']);
 
 $Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'": "";
 
@@ -38,9 +44,12 @@ if(!empty($_POST['Sec2'])){
 }else{
     $Seccion ='';
 }
-
+if(!empty($_POST['FicONove'])){
 $FicONove = implode(',',($_POST['FicONove']));
 $FicONove = ($FicONove!='') ? "AND FICHAS2.FicONov IN ($FicONove)" :'';
+}else{
+    $FicONove ='';
+}
 
 $Empresa  = datosGetIn($_POST['Emp'], "FICHAS.FicEmpr");
 $Planta   = datosGetIn($_POST['Plan'], "FICHAS.FicPlan");
@@ -59,7 +68,7 @@ $FilterEstruct  .= $Sucursal;
 $FilterEstruct  .= $Tipo;
 $FilterEstruct  .= $Legajos;
 $FilterEstruct  .= $Per2;
-$FilterEstruct  .= $FicNoTi;
+// $FilterEstruct  .= $FicNoTi;
 
-$FilterEstruct2  .= $FicONove;
+$FilterEstruct2  = $FicONove;
 // $FilterEstruct  .= $Thora;

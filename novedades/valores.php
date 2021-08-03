@@ -2,9 +2,14 @@
 FusNuloPOST('q', '');
 $q = test_input($_POST['q']);
 
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
+}
 
 FusNuloPOST("Per",'');
 FusNuloPOST("Per2",'');
@@ -22,14 +27,14 @@ FusNuloPOST("FicCausa",'');
 FusNuloPOST("FicNovA",'');
 FusNuloPOST("estruct",'');
 $estruct    = test_input($_POST['estruct']);
-$Per        = test_input($_POST['Per']);
+$Per        = ($_POST['Per']);
 $Per2       = test_input($_POST['Per2']);
 $Per3       = test_input($_POST['Per2']);
-$Emp        = test_input($_POST['Emp']);
-$Plan       = test_input($_POST['Plan']);
+$Emp        = ($_POST['Emp']);
+$Plan       = ($_POST['Plan']);
 $Sect       = ($_POST['Sect']);
-$Grup       = test_input($_POST['Grup']);
-$Sucur      = test_input($_POST['Sucur']);
+$Grup       = ($_POST['Grup']);
+$Sucur      = ($_POST['Sucur']);
 $ToInfornov = test_input($_POST['ToInfornov']);
 $FicNovA = test_input($_POST['FicNovA']);
 
@@ -80,6 +85,7 @@ $Tipo = empty(($_POST['Tipo'])) ? "": $Tipo;
 
 if(!empty($_POST['Sec2'])){
     $Sec2 = implode(',',($_POST['Sec2']));
+    $Sec2 = test_input($Sec2);
     $Seccion = !empty($Sec2) ? "AND dbo.fn_Concatenar(FICHAS.FicSect, FICHAS.FicSec2) IN ($Sec2)" :'';
 }else{
     $Seccion ='';

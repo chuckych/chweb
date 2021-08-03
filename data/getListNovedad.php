@@ -4,8 +4,7 @@ header('Access-Control-Allow-Origin: *');
 require __DIR__ . '../../config/index.php';
 UnsetGet('q');
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 
 
         require_once __DIR__ . '../../config/conect_mssql.php';

@@ -6,6 +6,7 @@
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <input type="hidden" hidden id="_sesion" value="0">
+<!-- <input type="" id="" value="<?=$_SESSION['ConvRol']?>"> -->
 <?php
 $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
 ?>

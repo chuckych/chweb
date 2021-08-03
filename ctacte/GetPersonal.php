@@ -5,28 +5,20 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
 
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
-
+E_ALL();
 $data = array();
-
-if(empty($DateRange)){
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
-    
-    echo json_encode($json_data);
-    exit;
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
 }
 
 require __DIR__ . '../valores.php';

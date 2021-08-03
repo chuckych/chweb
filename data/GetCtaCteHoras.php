@@ -4,8 +4,7 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME,"es_ES");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 require __DIR__ . '../../config/index.php';
 UnsetGet('tk');

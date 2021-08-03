@@ -5,13 +5,11 @@ header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 $Modulo='4';
 ExisteModRol($Modulo);
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 require_once __DIR__ . '../../../vendor/autoload.php'; 
+E_ALL();
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $start_time = microtime(true);
 

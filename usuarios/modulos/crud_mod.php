@@ -5,8 +5,7 @@ ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $data = array();
 
@@ -95,7 +94,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                 }
             }
             PrintOK('Datos Guardados'); /** Imprimo json con resultado */
-            mysqli_close($link); /** Cerramos conexion con Mysql */
+            // mysqli_close($link); /** Cerramos conexion con Mysql */
             exit;
         }
     }

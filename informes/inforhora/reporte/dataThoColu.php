@@ -1,6 +1,5 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 require __DIR__ . '../../../../config/conect_mssql.php';
 $dataTHoDesc2 = array();
 $sql_query="SELECT TIPOHORA.THoDesc2, TIPOHORA.THoDesc FROM TIPOHORA WHERE TIPOHORA.THoColu > 0 ORDER BY TIPOHORA.THoColu";

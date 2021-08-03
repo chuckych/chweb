@@ -1,23 +1,20 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
-
+E_ALL();
 $dataLegajo = array();
 
-if(empty($DateRange)){
-    $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
-        "data"            => $data
-    );
+// if(empty($DateRange)){
+//     $json_data = array(
+//         "draw"            => '',
+//         "recordsTotal"    => '',
+//         "recordsFiltered" => '',
+//         "data"            => $data
+//     );
     
-    echo json_encode($json_data);
-    exit;
-}
+//     echo json_encode($json_data);
+//     exit;
+// }
 
 $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 FusNuloPOST("Per",'');
@@ -85,11 +82,11 @@ $noveTipos = $FicNovT2;
 $noveTipos .= $FicNovI2;
 $noveTipos .= $FicNovS2;
 $noveTipos .= $FicNovA2;
-
-if($noveTipos>='0'){
-$FicNoTi  = "AND FICHAS3.FicNoTi IN ($noveTipos)"; /** Novedades tipo para la query de novedades */
-}
-// echo $FicNoTi; exit;
+$FicNoTi  = ($noveTipos>='0') ? "AND FICHAS3.FicNoTi IN ($noveTipos)":'';
+// if($noveTipos>='0'){
+// $FicNoTi  = "AND FICHAS3.FicNoTi IN ($noveTipos)"; /** Novedades tipo para la query de novedades */
+// }
+// // echo $FicNoTi; exit;
 
 switch ($Tipo) {
     case '1':
@@ -125,14 +122,7 @@ $FilterEstruct2 = $FicNoTi;
 // $FilterEstruct2 .= $FicNovS2;
 
 
-    $sql_query="SELECT FICHAS.FicLega AS 'Legajo',
-        PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil'
-    FROM FICHAS
-        INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-    WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin'
-    $FilterEstruct $FiltrosFichas
-    GROUP BY FICHAS.FicLega,
-        PERSONAL.LegApNo, PERSONAL.LegCUIT  ORDER BY FICHAS.FicLega";
+$sql_query="SELECT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, PERSONAL.LegApNo, PERSONAL.LegCUIT ORDER BY FICHAS.FicLega";
 
 // print_r($sql_query); exit;
 

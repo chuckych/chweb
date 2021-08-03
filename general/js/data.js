@@ -247,6 +247,7 @@ var GetGeneral = $('#GetGeneral').DataTable({
         fadeInOnly('#pagLega')
     },
     "drawCallback": function (settings) {
+        console.log(settings.json);
         $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
@@ -255,6 +256,7 @@ var GetGeneral = $('#GetGeneral').DataTable({
         setTimeout(function () {
             $(".Filtros").prop('disabled', false);
         }, 1000);
+        
     },
     // stateSave: -1,
     lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],

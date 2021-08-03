@@ -17,7 +17,7 @@ if (array_key_exists('lista', $_POST)) {
         $_POST['check']     = $_POST['check'] ?? '';
         $_POST['id_rol']    = $_POST['id_rol'] ?? '';
         $_POST['recid_rol'] = $_POST['recid_rol'] ?? '';
-        $count = count($_POST['check']);
+        // $count = count($_POST['check']);
         $datos     = json_decode(test_input(($_POST['check'])));
         $datos     = implode(',', ($datos));
         $recid_rol = (test_input($_POST['recid_rol']));
@@ -39,9 +39,8 @@ if (array_key_exists('lista', $_POST)) {
             PrintRespuestaJson('error', 'Rol Inválido');
             exit;
         }
-
-        $CheckLista = CountRegMayorCeroMySql("SELECT 1 FROM lista_roles WHERE id_rol = '$id_rol' and lista = '$lista' LIMIT 1");
-
+        $CheckLista = CountRegMayorCeroMySql("SELECT 1 FROM lista_roles WHERE id_rol = '$id_rol' and lista = '$lista' LIMIT 1");      
+        // $datos = str_replace(32768, 0, $datos);
         if ($CheckLista) {
             $update = "UPDATE lista_roles SET datos = '$datos', fecha = '$fechaHora' WHERE id_rol = '$id_rol' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
@@ -64,13 +63,13 @@ if (array_key_exists('listaRol', $_POST)) {
         $_POST['check']     = $_POST['check'] ?? '';
         $_POST['id_rol']    = $_POST['id_rol'] ?? '';
         $_POST['recid_rol'] = $_POST['recid_rol'] ?? '';
-        $count     = count($_POST['check']);
+        // $count     = count($_POST['check']);
         $arrDatos  = json_decode(test_input(($_POST['check'])));
         $datos     = json_decode(test_input(($_POST['check'])));
         $datos     = implode(',', ($datos));
         $recid_rol = (test_input($_POST['recid_rol']));
         $id_rol    = (test_input($_POST['id_rol']));
-        $lista     = (test_input($_POST['lista']));
+        $lista     = (test_input($_POST['listaRol']));
 
         $NombreLista = listaRol($lista);
 
@@ -93,6 +92,7 @@ if (array_key_exists('listaRol', $_POST)) {
         require __DIR__ . '../../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT id_rol, lista, datos FROM lista_roles WHERE id_rol = '$id_rol'");
         // print_r($query); exit;
+        $data=array();
         if (($stmt)) {
             if (mysqli_num_rows($stmt) > 0) {
                 while ($row = mysqli_fetch_assoc($stmt)) {

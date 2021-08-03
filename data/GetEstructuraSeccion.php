@@ -3,9 +3,8 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "spanish");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
 require __DIR__ . '../../config/index.php';
+E_ALL();
 
 switch ($_GET['e']) {
     case 'secciones':

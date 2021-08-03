@@ -3,27 +3,24 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
-
+E_ALL();
 $data = array();
-
-$Fecha = test_input(FusNuloPOST('_f', 'vacio'));
-
-if($Fecha=='vacio'){
-
+ 
+$params = $_REQUEST;
+if (isset($_POST['_f']) && !empty($_POST['_f'])) {
+    $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
+}else{
     $json_data = array(
-        "draw"            => '',
-        "recordsTotal"    => '',
-        "recordsFiltered" => '',
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
         "data"            => $data
     );
-    
     echo json_encode($json_data);
     exit;
 }
@@ -145,7 +142,7 @@ $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
         unset($Novedad);
     endwhile;
           
-    sqlsrv_free_stmt($result);
+    sqlsrv_free_stmt($queryRecords);
     sqlsrv_close($link);
     $json_data = array(
         "draw"            => intval( $params['draw'] ),   

@@ -3,10 +3,11 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "spanish");
+session_start();
 require __DIR__ . '../../config/index.php';
 UnsetGet('tk'); 
 UnsetGet('q');
-
+header("Content-Type: application/json");
 FusNuloGET("Emp",'');
 FusNuloGET("Plan",'');
 FusNuloGET("Sect",'');

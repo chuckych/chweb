@@ -2,8 +2,7 @@
 header("Content-Type: application/json");
 // session_start();
 require __DIR__ . '../../funciones.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 $respuesta   = '';
 $token = token();
 $recid = (isset($_GET['recid'])) ? "AND clientes.recid='$_GET[recid]'" : "";

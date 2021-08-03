@@ -11,15 +11,10 @@ $(document).ready(function () {
     // $.fn.DataTable.ext.pager.numbers_length = 5;
     var table = $('#GetUsuarios').DataTable({
         initComplete: function (settings, json) {
-            $('.form-control-sm').attr('placeholder', 'Buscar nombre o rol')
-            $('#GetUsuarios_filter').prepend('<button tittle="Alta de Usuario" class="px-2 btn btn-outline-custom add fontq border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>')
-            if ($(window).width() < 769) {
-                $('.botones').removeClass('float-right')
-            } else {
-                $('.botones').addClass('float-right')
-            }
+
         },
         drawCallback: function (settings) {
+
             // $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary');
@@ -36,6 +31,7 @@ $(document).ready(function () {
                 }
 
             }, 100);
+
         },
         lengthMenu: [5, 10, 25, 50, 100],
         columnDefs: [{
@@ -194,6 +190,16 @@ $(document).ready(function () {
         CheckSesion()
         ClassTBody()
         $('#respuestaResetClave').html('')
+    });
+    table.on('init.dt', function () {
+        $('.form-control-sm').attr('placeholder', 'Buscar nombre o rol')
+        $('#GetUsuarios_filter').prepend('<button data-titlel="Alta de Usuario" class="px-2 btn btn-outline-custom add fontq border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>')
+        if ($(window).width() < 769) {
+            $('.botones').removeClass('float-right')
+        } else {
+            $('.botones').addClass('float-right')
+        }
+        
     });
     if ($('#_rol').val() != '') {
         $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
@@ -445,6 +451,29 @@ $(document).ready(function () {
 
     });
 
+    $(document).on("click", "#GetUsuarios .ListaUsuario", function (e) {
+        CheckSesion()
+        e.preventDefault();
+        let c = $(this).attr('data-c');
+        let nombre = $(this).attr('data_nombre');
+        let usuario = $(this).attr('data_usuario');
+        let rol_n = $(this).attr('data_rol_n');
+        let uid = $(this).attr('data-uid');
+        let url = 'listas_estruct/index.php?uid=' + uid + '&_c=' + c + '&nombre=' + nombre + '&usuario=' + usuario + '&rol_n=' + rol_n;
+        $.get(url).done(function (data) {
+            let urltabs = 'listas_estruct/tabs.php?v=' + vjs();
+            $.get(urltabs).done(function (data) {
+                $('#nav-tabContent').html(data);
+                $('#copyListas .nombreUsuario').html(nombre)
+            });
+            $('#modalListas .modal-body').html(data);
+            $('#modalListas').modal('show');
+            
+        });
+        e.stopImmediatePropagation();
+    });
+
+
     $('#modalAddUser').on('hidden.bs.modal', function () {
         ActiveBTN(false, '#submitAdd', 'Guardando', 'Agregar')
         $('#a_nombre').val('')
@@ -640,4 +669,8 @@ $(document).ready(function () {
         });
         e.stopImmediatePropagation();
     });
+    $('#modalListas').on('hidden.bs.modal', function (e) {
+        $('#modalListas .modal-body').html('');
+        $.notifyClose();
+    })
 });

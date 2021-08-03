@@ -3,10 +3,7 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 require_once __DIR__ . '../../config/index.php';
 session_start();
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
-
+E_ALL();
 require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();

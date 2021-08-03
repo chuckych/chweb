@@ -5,29 +5,24 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
-
+E_ALL();
 $data = array();
 
-$legajo = test_input(FusNuloPOST('_l', ''));
-
-// if($legajo=='vacio'){
-
-//     $json_data = array(
-//         "draw"            => '',
-//         "recordsTotal"    => '',
-//         "recordsFiltered" => '',
-//         "data"            => $data
-//     );
-    
-//     echo json_encode($json_data);
-//     exit;
-// }
-
+$params = $_REQUEST;
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
 require __DIR__ . '../valores.php';
 
 $param = array();

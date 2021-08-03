@@ -12,25 +12,6 @@ E_ALL();
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
-
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
-
-$data = array();
-
-if(empty($DateRange)){
-    $json_data = array(
-        "draw"            => 0,
-        "recordsTotal"    => 0,
-        "recordsFiltered" => 0,
-        "data"            => $data
-    );
-    
-    echo json_encode($json_data);
-    exit;
-}
-
 require __DIR__ . '../valores.php';
 
 $params = $columns = $totalRecords = $data = array();

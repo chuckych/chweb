@@ -15,11 +15,32 @@ require __DIR__ . '../../config/conect_mssql.php';
 
 FusNuloPOST('Excel', false);
 $Excel = $_POST['Excel'];
-
+$params = $_REQUEST;
 $data = array();
-
-$Fecha = test_input(FusNuloPOST('_f', 'vacio'));
-
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
+if (isset($_POST['_f']) && !empty($_POST['_f'])) {
+    $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
 require __DIR__ . '../valores.php';
 
 $param = array();

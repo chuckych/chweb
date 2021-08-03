@@ -4,7 +4,7 @@ header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 E_ALL();
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
@@ -18,17 +18,20 @@ $Tabla  = $Datos['tabla'];
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
-$where_condition = $sqlTot = $sqlRec = $TotalCit="";
+$where_condition = $sqlTot = $sqlRec = $TotalCit = "";
 
 $ListaHorarios = $_SESSION['ListaHorarios'];
+$filtroListaHorarios='';
 if ($ListaHorarios  != "-") {
-    $filtroListaHorarios = " AND HORARIOS.HorCodi IN ($ListaHorarios)";
+    $ListaHorarios1 = str_replace(32768, 0, $ListaHorarios);
+    $filtroListaHorarios = " AND HORARIOS.HorCodi IN ($ListaHorarios1)";
 }
+$filtroListaRotaciones ='';
 $ListaRotaciones = $_SESSION['ListaRotaciones'];
 if ($ListaRotaciones  != "-") {
     $filtroListaRotaciones = " AND ROTACION.RotCodi IN ($ListaRotaciones)";
 }
-
+// print_r($Tabla);
 switch ($Tabla) {
     case 'Desde':
         $sql_cit = "SELECT SUM(1) as 'cant' FROM CITACION WHERE CITACION.CitLega = '$Legajo'";
@@ -291,6 +294,7 @@ switch ($Tabla) {
                 'HorID'   => $r['HorID']
             );
         }
+        break;
     case 'ListRotaciones':
         $sql_query = "SELECT RotCodi, RotDesc FROM ROTACION WHERE RotCodi >= 0 $filtroListaRotaciones ORDER BY RotCodi";
         // print_r($sql_query); exit;
@@ -309,13 +313,14 @@ switch ($Tabla) {
                 'RotDesc' => $r['RotDesc']
             );
         }
+        break;
 }
 
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 
 $json_data = array(
-    "draw"            => intval($params['draw']),
+    "draw"            => 0,
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data,

@@ -5,14 +5,11 @@ require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 require __DIR__ . '../../valores.php';
 
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
-
+E_ALL();
 $id       = 'FICHAS.FicEmpr';
 $Desc     = 'EMPRESAS.EmpRazon';
 $DescCodi = 'EMPRESAS.EmpCodi';

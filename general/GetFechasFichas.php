@@ -8,29 +8,25 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
 
-E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
 
-if (empty($_POST['_dr'])) {
-
+$params = $_REQUEST;
+$data = array();
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
     $json_data = array(
-        "draw"            => 0,
+        "draw"            => intval($params['draw']),
         "recordsTotal"    => 0,
         "recordsFiltered" => 0,
         "data"            => $data
     );
-
     echo json_encode($json_data);
     exit;
 }
-
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
-
-$legajo = test_input(FusNuloPOST('_l', 'vacio'));
 
 require __DIR__ . '../valores.php';
 

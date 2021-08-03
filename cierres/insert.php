@@ -5,8 +5,7 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

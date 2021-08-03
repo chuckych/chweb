@@ -7,17 +7,23 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
 
-E_ALL();
-
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
 
 $data = array();
-
-$Fecha = test_input(FusNuloPOST('_f', 'vacio'));
-
-if ($Fecha == 'vacio') {
-    $data = array();
+$params = $_REQUEST;
+if (isset($_POST['_f']) && !empty($_POST['_f'])) {
+    $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
 }
 
 require __DIR__ . '../valores.php';
@@ -138,7 +144,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     unset($Novedad);
 endwhile;
 
-sqlsrv_free_stmt($result);
+sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 $json_data = array(
     "draw"            => intval($params['draw']),

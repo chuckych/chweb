@@ -191,7 +191,7 @@
 
                             </tr>
                             <tr id="trDownload" style="display: none">
-                                <td class="fw4">Descargar</td>
+                                <td class="fw5"><span id="tdDescargar">Descargar</span></td>
                                 <td class=""><span class="ArchPath"></span></td>
                                 <td class=""></td>
                                 <td class=""></td>

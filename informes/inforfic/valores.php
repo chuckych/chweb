@@ -1,7 +1,6 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $DateRange = explode(' al ', $_POST['_dr']);
 $FechaIni  = test_input(dr_fecha($DateRange[0]));

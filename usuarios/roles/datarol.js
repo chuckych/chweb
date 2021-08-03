@@ -5,6 +5,7 @@ $(document).ready(function () {
     })
 
     $(document).on('click', '.editRol', function (e) {
+        CheckSesion()
         e.preventDefault();
         var datarol = $(this).attr('datarol');
         var dataidrol = $(this).attr('dataidrol');
@@ -90,6 +91,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.addRol', function (e) {
+        CheckSesion()
         e.preventDefault();
         var datarecid_c = $('#recid_cRol').val();
 
@@ -167,6 +169,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '.deleteRol', function (e) {
+        CheckSesion()
         e.preventDefault();
         var datarol = $(this).attr('datarol');
         var dataidrol = $(this).attr('dataidrol');
@@ -253,8 +256,8 @@ $(document).ready(function () {
         drawCallback: function (settings) {
             $('.contentd').removeClass('text-light bg-light border-0')
             $('.ListaRol').on('click', function (e) {
-                e.preventDefault();
                 CheckSesion()
+                e.preventDefault();
                 let c = $(this).attr('data-c');
                 let r = $(this).attr('data-r');
                 let id = $(this).attr('data-id');

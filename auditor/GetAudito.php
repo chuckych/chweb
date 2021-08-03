@@ -3,13 +3,10 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME,"es_ES");
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
-
 session_start();
 require __DIR__ . '../../config/index.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;

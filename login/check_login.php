@@ -85,6 +85,19 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	COLLATE='utf8_general_ci'
 	ENGINE=InnoDB");
 	
+	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_estruct` (
+		`uid` INT(11) NOT NULL,
+		`lista` ENUM('1','2','3','4','5','6','7','8') NOT NULL COLLATE 'utf8_general_ci',
+		`datos` TEXT NOT NULL COLLATE 'utf8mb4_bin',
+		`fecha` DATETIME NOT NULL,
+		PRIMARY KEY (`uid`, `lista`) USING BTREE,
+		CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+	)
+	COLLATE='utf8_general_ci'
+	ENGINE=InnoDB");
+	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
+
+	
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
@@ -184,8 +197,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
 	function estructura_recid_rol($recid_rol, $e, $data)
 	{
-		error_reporting(E_ALL);
-		ini_set('display_errors', '1');
+		E_ALL();
 		require __DIR__ . '../../config/conect_mysql.php';
 		$concat = '';
 		switch ($e) {
@@ -249,6 +261,21 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		mysqli_close($link);
 		return $data;
 	}
+	function estructUsuario($uid, $lista){
+		$v = dataListaEstruct($lista, $uid);
+        $v = implode(',', $v);
+        $v = ($v=='-') ? '' : $v;
+		return $v;
+	}
+
+	// $_SESSION['EmprRol'] =  estructUsuario(intval($row['id']), 1);
+	// $_SESSION['PlanRol'] =  estructUsuario(intval($row['id']), 2);
+	// $_SESSION['ConvRol'] =  estructUsuario(intval($row['id']), 3);
+	// $_SESSION['SectRol'] =  estructUsuario(intval($row['id']), 4);
+	// $_SESSION['Sec2Rol'] =  estructUsuario(intval($row['id']), 5);
+	// $_SESSION['GrupRol'] =  estructUsuario(intval($row['id']), 6);
+	// $_SESSION['SucuRol'] =  estructUsuario(intval($row['id']), 7);
+	$_SESSION['EstrUser'] =  estructUsuario(intval($row['id']), 8);
 
 	$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
 	$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));

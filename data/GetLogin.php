@@ -6,8 +6,7 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME,"es_ES");
 
 require __DIR__ . '../../funciones.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 UnsetGet('tk');
 UnsetGet('q');
 // UnsetGet('k');

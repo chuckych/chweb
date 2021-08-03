@@ -148,8 +148,8 @@ $(function () {
             `
         let buttonsCheck = `
             <div class="">
-                <button class="btn btn-link btn-sm fontq" id="checkAllRotacion">Marcar Todo</button>
-                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllRotacion">Desmarcar Todo</button>
+                <button class="btn btn-link btn-sm fontq" id="checkAllRotacion">Marcar</button>
+                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllRotacion">Desmarcar</button>
             </div>
             `
         let buttonsSubmit = `

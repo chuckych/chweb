@@ -2,8 +2,7 @@
 session_start();
 
 require __DIR__ . '../../config/index.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 // secure_auth_ch();
 $Modulo = '999';
 $bgcolor = 'bg-custom ';

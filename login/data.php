@@ -6,8 +6,7 @@ header('Access-Control-Allow-Origin: *');
 // require __DIR__ . '../../config/index.php';
 require __DIR__ . '../../config/conect_mysql.php';
 // require __DIR__ . '../../funciones.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;

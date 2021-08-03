@@ -10,7 +10,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 
 $data = array();
 $dataLista = array();
-
+$set = 0;
 $_GET['id_rol']    = $_GET['id_rol'] ?? '';
 $_GET['recid_rol'] = $_GET['recid_rol'] ?? '';
 $_GET['_c']        = $_GET['_c'] ?? '';
@@ -57,6 +57,8 @@ switch ($lista) {
             endwhile;
         }
         break;
+        sqlsrv_free_stmt($rs);
+        sqlsrv_close($link);
     case 2:
         $query = "SELECT ONovCodi, ONovDesc, ONovTipo FROM OTRASNOV WHERE ONovCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -78,16 +80,20 @@ switch ($lista) {
             endwhile;
         }
         break;
+        sqlsrv_free_stmt($rs);
+        sqlsrv_close($link);
     case 3:
         $query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
             while ($r = sqlsrv_fetch_array($rs)) :
                 foreach ($dataLista as $key => $value) {
-                    $set = (intval($value) === intval($r['HorCodi'])) ? 1 : 0;
-                    $set = (count($dataLista) === 1 && ($value) === '-') ? 0 : $set;
-                    if ($set === 1) {
-                        break;
+                    if ($value != '-') {
+                        $value = ($value == '32768') ? 0 : $value;
+                        $set = (intval($value) === intval($r['HorCodi'])) ? 1 : 0;
+                        if ($set === 1) {
+                            break;
+                        }
                     }
                 }
                 $data[] = array(
@@ -100,6 +106,8 @@ switch ($lista) {
             endwhile;
         }
         break;
+        sqlsrv_free_stmt($rs);
+        sqlsrv_close($link);
     case 4:
         $query = "SELECT RotCodi, RotDesc FROM ROTACION";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -119,6 +127,8 @@ switch ($lista) {
             endwhile;
         }
         break;
+        sqlsrv_free_stmt($rs);
+        sqlsrv_close($link);
     case 5:
         $query = "SELECT THoCodi, THoDesc, THoID FROM TIPOHORA WHERE THoCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -139,6 +149,8 @@ switch ($lista) {
             endwhile;
         }
         break;
+        sqlsrv_free_stmt($rs);
+        sqlsrv_close($link);
     case 10:
         require __DIR__ . '../../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT r.id, r.nombre FROM roles r INNER JOIN clientes c ON r.cliente = c.id WHERE c.recid = '$recid_cliente' AND r.id != '$id_rol' AND r.id != 1");
@@ -162,10 +174,6 @@ switch ($lista) {
         }
         break;
 }
-
-sqlsrv_free_stmt($rs);
-sqlsrv_close($link);
-
 $json_data = array(
     "data" => $data
 );

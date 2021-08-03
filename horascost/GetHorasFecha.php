@@ -3,29 +3,27 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
+E_ALL();
 $data = array();
-$Fecha = test_input(FusNuloPOST('_f', ''));
-
-// if ($Fecha == 'vacio') {
-
-//     $json_data = array(
-//         "draw"            => '',
-//         "recordsTotal"    => '',
-//         "recordsFiltered" => '',
-//         "data"            => $data
-//     );
-
-//     echo json_encode($json_data);
-//     exit;
-// }
-
+$params = $_REQUEST;
+$params['draw']=$params['draw'] ?? 0;
+if (isset($_POST['_f']) && !empty($_POST['_f'])) {
+    $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
 require __DIR__ . '../valores.php';
 
 $param = array();
@@ -117,7 +115,7 @@ sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 
 $json_data = array(
-    "draw"            => intval($params['draw']),
+    "draw"            => intval(0),
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data

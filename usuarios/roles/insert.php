@@ -5,8 +5,7 @@ require __DIR__ . '../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 FusNuloPOST('aFic', '0');
 FusNuloPOST('mFic', '0');
@@ -25,6 +24,7 @@ FusNuloPOST('aCit', '0');
 FusNuloPOST('mCit', '0');
 FusNuloPOST('bCit', '0');
 FusNuloPOST('act_abm', '');
+FusNuloPOST('IdRol', '');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['act_abm'] == 'true')) {
 

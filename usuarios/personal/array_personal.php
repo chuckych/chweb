@@ -1,23 +1,16 @@
 <?php
 header("Content-Type: application/json");
-header('Access-Control-Allow-Origin: *');
 $urln   = host() . "/" . HOMEHOST . "/data/GetUser_legajo.php?tk=" . token() . "&recid_c=" . $_GET['_c'];
-//  echo $urln; br(); exit;
-// $json  = file_get_contents($urln);
-// $array = json_decode($json, TRUE);
 $array = json_decode(getRemoteFile($urln), TRUE);
-$legajos = ($array['error']) ? "&ln%5B%5D=" . implode("&ln%5B%5D=", $array['legajos']) : '';
+$legajos = ($array['error']=='0') ? "&ln%5B%5D=" . implode("&ln%5B%5D=", $array['legajos']) : '';
 
 $url   = host() . "/" . HOMEHOST . "/data/GetPersonal.php?tk=" . token() . "&_r=" . $_SESSION["RECID_ROL"] . "&_c=" . $_GET['_c'] . $legajos;
-// echo $url;
-// $json  = file_get_contents($url);
-// $array = json_decode($json, TRUE);
-$array = json_decode(getRemoteFile($url), true);
-$data  = $array[0]['personal'];
+$array = json_decode(getRemoteFile($url), TRUE);
+$dataPer  = $array[0]['personal'];
+
 if (!$array[0]['error']) {
     $_c = $_GET['_c'];
-    // print_r($data);
-    foreach ($data as $value) {
+    foreach ($dataPer as $value) {
         $pers_legajo  = $value['pers_legajo'];
         $pers_nombre  = $value['pers_nombre'];
         $pers_empresa = $value['pers_empresa'];
@@ -64,17 +57,7 @@ if (!$array[0]['error']) {
         );
     }
     $respuesta = array('personal' => $respuesta);
-    echo json_encode($respuesta);
-} else {
-    $respuesta = array(
-        'pers_legajo'  => '1',
-        'pers_nombre'  => '1',
-        'pers_empresa' => '1',
-        'pers_planta'  => '1',
-        'pers_sector'  => '1',
-        'pers_grupo'   => '1',
-        'pers_sucur'   => '1'
-    );
-    $respuesta = array('personal' => $respuesta);
-    echo json_encode($respuesta);
+} else{
+    $respuesta = array('personal' => array());
 }
+echo json_encode($respuesta);

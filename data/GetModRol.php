@@ -8,8 +8,7 @@ header("Content-Type: application/json");
 
 
 require __DIR__ . '../../funciones.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 $respuesta = '';
 $token     = token();
 $id        = (isset($_GET['id'])) ? "AND mod_roles.id='$_GET[id]'" : "";

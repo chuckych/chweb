@@ -1,10 +1,15 @@
 <?php
 FusNuloPOST('q', '');
 $q = test_input($_POST['q']);
-
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
+$data = array();
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
+}
 
 FusNuloPOST("Per",'');
 FusNuloPOST("Per2",'');
@@ -22,14 +27,14 @@ FusNuloPOST("FicNovI", 0);
 FusNuloPOST("FicNovS", 0);
 FusNuloPOST("FicNovA", 0);
 
-$Per      = test_input($_POST['Per']);
+$Per      = ($_POST['Per']);
 $Per2     = test_input($_POST['Per2']);
 $Per3     = test_input($_POST['Per2']);
-$Emp      = test_input($_POST['Emp']);
-$Plan     = test_input($_POST['Plan']);
-$Sect     = test_input($_POST['Sect']);
-$Grup     = test_input($_POST['Grup']);
-$Sucur    = test_input($_POST['Sucur']);
+$Emp      = ($_POST['Emp']);
+$Plan     = ($_POST['Plan']);
+$Sect     = ($_POST['Sect']);
+$Grup     = ($_POST['Grup']);
+$Sucur    = ($_POST['Sucur']);
 $FicDiaL  = test_input($_POST['FicDiaL']);
 $FicFalta = test_input($_POST['FicFalta']);
 $FicNovT  = test_input($_POST['FicNovT']);

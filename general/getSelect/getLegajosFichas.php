@@ -3,10 +3,9 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 require __DIR__ . '../../valores.php';
 
@@ -38,7 +37,7 @@ if (sqlsrv_num_rows($result) > 0) {
 
         $data[] = array(
             'id'    => $id,
-            'text'  => $text,
+            'text'  => $id.' - '.$text,
             'title' => $id.' - '.$text,
         );
     endwhile;

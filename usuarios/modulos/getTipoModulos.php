@@ -6,8 +6,7 @@ require __DIR__ . '../../../config/index.php';
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 FusNuloPOST('tipo', false);
 FusNuloPOST('modulos', false);

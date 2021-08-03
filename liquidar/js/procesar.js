@@ -18,9 +18,17 @@ $(".alta_liquidacion").bind("submit", function (e) {
                 ActiveBTN(false, "#submit", loading, 'Generar')
                 $('input[type="checkbox"]').prop('checked', false)
                 $.notifyClose();
-                notify(data.Mensaje, 'success', 2000, 'right')
+                notify(data.Mensaje, 'success', 3000, 'right')
                 let tipo = ($('#Tipo').val()=='1') ? 'jornales':'mensuales'
-                GetArch($(".ArchNomb").text() +'?v='+ $.now(), $(".ArchNomb").text(), tipo)
+                setTimeout(() => {
+                    GetArch($(".ArchNomb").text() +'?v='+ $.now(), $(".ArchNomb").text(), tipo)
+                    
+                    setTimeout(() => {
+                        classEfect('#tdDescargar', 'animate__animated animate__flash')
+                        classEfect('.ArchPath', 'animate__animated animate__flash')
+                    }, 200);
+    
+                }, 1000);
             } else {
                 $("#respuestatext").html("");
                 ActiveBTN(false, "#submit", loading, 'Generar')

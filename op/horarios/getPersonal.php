@@ -53,8 +53,8 @@ function tooltipTittle2($desc, $estruct, $desc2, $estruct2){
 while ($row = sqlsrv_fetch_array($queryRecords)) {
 
     $pers_legajo      = $row['pers_legajo'];
-    $FechaCierre      = !empty($row['FechaCierre']) ? $row['FechaCierre']->format('d/m/Y') : $row['FechaCierre'];
-    $FechaCierre      = ($FechaCierre == '01/01/1753') ? '-' : $FechaCierre;
+    //$FechaCierre      = !empty($row['FechaCierre']) ? $row['FechaCierre']->format('d/m/Y') : $row['FechaCierre'];
+    //$FechaCierre      = ($FechaCierre == '01/01/1753') ? '-' : $FechaCierre;
     $pers_nombre      = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
     $pers_dni         = ceronull($row['pers_dni']);
     $pers_cuit         = ceronull($row['pers_cuit']);
@@ -114,7 +114,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 $json_data = array(
-    "draw"            => intval($params['draw']),
+    "draw"            => intval(0),
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data

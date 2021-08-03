@@ -1,7 +1,6 @@
 <?php
  require __DIR__ . '../../../config/conect_mssql.php';
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 //  if(valida_campo($_POST['IDCodigo'])){
 //      $data = array('status' => 'cod_requerido', 'dato' => 'Identicador requerido.');

@@ -12,12 +12,21 @@ E_ALL();
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
-
+$params = $_REQUEST;
 $json_data = array();
 $data      = array();
-
-$legajo = test_input(FusNuloPOST('_l', 'vacio'));
-
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
 require __DIR__ . '../valores.php';
 
 $param = array();

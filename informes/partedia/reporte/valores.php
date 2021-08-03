@@ -72,9 +72,10 @@ $noveTipos .= $FicNovI2;
 $noveTipos .= $FicNovS2;
 $noveTipos .= $FicNovA2;
 
-if($noveTipos>='0'){
-$FicNoTi  = "AND FICHAS3.FicNoTi IN ($noveTipos)"; /** Novedades tipo para la query de novedades */
-}
+// if($noveTipos>='0'){
+// $FicNoTi  = "AND FICHAS3.FicNoTi IN ($noveTipos)"; /** Novedades tipo para la query de novedades */
+// }
+$FicNoTi = ($noveTipos>='0') ? " AND FICHAS3.FicNoTi IN ($noveTipos)":''; /** Novedades tipo para la query de novedades */
 
 switch ($Tipo) {
     case '1':

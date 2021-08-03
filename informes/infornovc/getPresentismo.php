@@ -11,8 +11,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 
 $data = array();
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 
 require __DIR__ . '../valores.php';

@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.162';
+    return 'v0.0.163';
 }
 function E_ALL()
 {
@@ -1076,6 +1076,21 @@ function ExisteRol4($recid, $id)
     mysqli_close($link);
     exit;
 }
+function ExisteUser($cliente_recid, $uid)
+{
+    /** Verificamos si existe el usuario */
+  $q="SELECT 1 FROM usuarios u INNER JOIN clientes c ON u.cliente=c.id WHERE u.id='$uid' AND c.recid='$cliente_recid' LIMIT 1";
+    require 'config/conect_mysql.php';
+    $rs = mysqli_query($link, $q);
+    if (mysqli_num_rows($rs) > 0) {
+        return true;
+    } else {
+        return false;
+    }
+    mysqli_free_result($rs);
+    mysqli_close($link);
+    exit;
+}
 function ExisteRol2($recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
@@ -1257,6 +1272,7 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
     // echo $url; br();
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
+    // print_r($url);exit;
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0][$data];
     if (is_array($data)) {
@@ -1270,6 +1286,7 @@ function estructura_rol_count($get_rol, $recid_rol, $e, $data)
     $url   = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
+    // print_r($url);exit;
     $array = json_decode(getRemoteFile($url), true);
     $val_roles = (!$array[0]['error']) ? count($array[0][$data]) : '';
     $rol = (!$array[0]['error']) ? "$val_roles" : "";
@@ -2049,6 +2066,28 @@ function dataLista($lista, $rol)
         exit;
     }
 }
+function dataListaEstruct($lista, $uid)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $stmt = mysqli_query($link, "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'");
+    // print_r($query); exit;
+    if (($stmt)) {
+        if (mysqli_num_rows($stmt) > 0) {
+            while ($row = mysqli_fetch_assoc($stmt)) {
+                return array($row['datos']);
+            }
+        } else {
+            return array('-');
+        }
+
+        mysqli_free_result($stmt);
+        mysqli_close($link);
+    } else {
+        statusData('error', mysqli_error($link));
+        mysqli_close($link);
+        exit;
+    }
+}
 /** Fin Query MYSQL */
 /**Query MS-SQL */
 function DateFirst($numerodia)
@@ -2546,7 +2585,7 @@ function datosGetIn($Get, $Col)
     $v = ($Get >= '0') ? true : false;
     if ($v) {
         $Get = implode(',', $Get);
-        $t = ($v) ? "AND " . $Col . " IN (" . ($Get) . ") " : '';
+        $t = ($v) ? "AND " . $Col . " IN (" . (test_input($Get)) . ") " : '';
         return test_input($t);
     }
 };
@@ -2680,6 +2719,7 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     $file_contents = curl_exec($ch);
     curl_close($ch);
+    // print_r($file_contents);exit;
     return ($file_contents) ? $file_contents : false;
     exit;
 }
@@ -2772,7 +2812,6 @@ function utf8str($cadena)
         "...",
     ], $cadena);
 }
-
 function NombreLegajo($NumLega)
 {
     $params    = array();
@@ -2838,6 +2877,42 @@ function listaRol($idLista  = '0')
             break;
         case 5:
             return 'Tipos de Hora';
+            break;
+        default:
+            return 'Todos';
+            break;
+    }
+}
+function listaEstruct($idLista  = '0')
+{
+    $idLista = intval($idLista);
+    switch ($idLista) {
+        case 0:
+            return 'Todos';
+            break;
+        case 1:
+            return 'Empresas';
+            break;
+        case 2:
+            return 'Plantas';
+            break;
+        case 3:
+            return 'Convenios';
+            break;
+        case 4:
+            return 'Sectores';
+            break;
+        case 5:
+            return 'Secciones';
+            break;
+        case 6:
+            return 'Grupos';
+            break;
+        case 7:
+            return 'Sucursales';
+            break;
+        case 8:
+            return 'Personal';
             break;
         default:
             return 'Todos';

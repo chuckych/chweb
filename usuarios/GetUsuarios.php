@@ -5,8 +5,7 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 // <br /><b>Notice</b>:  Undefined index: _rol in <b>C:\Users\nch\OneDrive\Documentos\htdocs\chweb\usuarios\usuarios.php</b> on line <b>21</b><br />
 $data = array();
 require __DIR__ . '../../config/conect_mysql.php';
@@ -76,19 +75,19 @@ if ($totalRecords > 0) {
         $last_access   = !empty($row['last_access']) ? FechaFormatH($row['last_access']):'-';
 
         $IconEstado = ($estado) ? $IconAlta : $IconBaja;
-        $TitleEstado = ($estado) ? 'Dar de alta' : 'Dar de baja';
+        $TitleEstado = ($estado) ? 'Dar de alta' : 'Dar de baja'; 
         $TitleEstado2 = ($estado) ? 'alta' : 'baja';
         $ColorEstado = ($estado) ? 'text-danger' : 'text-secondary';
 
-        $ButtonEditar='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data_rol="'.$rol.'" data_legajo="'.$legajo.'" data_estado_n="'.$estado_n.'" data_estado="'.$estado.'" data_fecha_alta="'.$fecha_alta .'" data_fecha_mod="'.$fecha_mod .'" data_cliente="'.$cliente .'" title="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
-        $ButtonClave='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" title="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_'.$uid.'">' . $IconClave . '</button>';
-        $ButtonBaja='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_estado="'.$estado.'" title="'.$TitleEstado.': ' . $nombre . '" data_title="'.$TitleEstado2.'" class="' . $classButton . ' estado" id="estado_'.$uid.'">' . $IconEstado . '</button>';
-        $ButtonTrash='<button data_uid="'.$uid .'" data_nombre="'.$nombre.'" title="Eliminar ' . $nombre . '" class="' . $classButton . ' delete" id="delete_'.$uid.'">' . $IconTrash . '</button>';
-
+        $ButtonEditar='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data_rol="'.$rol.'" data_legajo="'.$legajo.'" data_estado_n="'.$estado_n.'" data_estado="'.$estado.'" data_fecha_alta="'.$fecha_alta .'" data_fecha_mod="'.$fecha_mod .'" data_cliente="'.$cliente .'" data-titlel="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
+        $ButtonClave='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data-titlel="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_'.$uid.'">' . $IconClave . '</button>';
+        $ButtonBaja='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_estado="'.$estado.'" data-titlel="'.$TitleEstado.': ' . $nombre . '" data_title="'.$TitleEstado2.'" class="' . $classButton . ' estado" id="estado_'.$uid.'">' . $IconEstado . '</button>';
+        $ButtonTrash='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data-titlel="Eliminar ' . $nombre . '" class="' . $classButton . ' delete" id="delete_'.$uid.'">' . $IconTrash . '</button>';
+        $listas = '<button type="button" data-uid="'. $uid .'" data-c="'. $recid_cliente .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data-titlel="Estructura del usuario '. $nombre .'" class="' . $classButton . ' ListaUsuario"><span class="contentd"><i class="bi bi-list"></i></span></button>';
         $data[] = array(
             'uid'           => '<span class="contentd '.$ColorEstado.'">' . $uid . '</span>',
             'recid'         => '<span class="contentd '.$ColorEstado.'">' . $recid . '</span>',
-            'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"'.$ColorEstado.'"><b class="contentd" '.$ColorEstado.'><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' . $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
+            'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"'.$ColorEstado.'"><b class="contentd" '.$ColorEstado.'><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' .$listas. $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
             'usuario'       => '<span class="contentd '.$ColorEstado.'">'.$IconPerson  . $usuario . '</span>',
             'legajo'        => '<span class="contentd ls1 '.$ColorEstado.'">' . $legajo . '</span>',
             'rol_n'         => '<span class="contentd '.$ColorEstado.'">' . $rol_n . '</span>',

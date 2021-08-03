@@ -6,8 +6,7 @@ secure_auth_ch();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+E_ALL();
 
 require __DIR__ . '../../../config/conect_mysql.php';
 // sleep(2);

@@ -2,6 +2,7 @@
 // session_start();
 // require __DIR__ . '/index.php';
 /** FUNCIÓN PARA ESCRIBIR UN ARCHIVO */
+E_ALL();
 if (isset($_GET['_c'])) {
 	require __DIR__ . '/conect_mysql.php';
 	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
@@ -50,7 +51,13 @@ if ($link === false) {
 			$TextErr = "------------------------------\n" . $date . "\nSQLSTATE: " . $error['SQLSTATE'] . "\ncode: " . $error['code'] . "\nMensaje: " . $error['message'] . "\n------------------------------";
 			$TextErr2 = "<div class='alert alert-warning m-3 w-100'>" . $date . "<br />SQLSTATE: " . $error['SQLSTATE'] . "<br />code: " . $error['code'] . "<br /><span class='fw5'>Mensaje: " . $error['message'] . "</span><br /></div>";
 			$TextErr3 = "<div class=''>" . $date . "<br />SQLSTATE: <b>" . $error['SQLSTATE'] . "</b><br />Code: <b>" . $error['code'] . "</b><br />Mensaje: <b>" . $error['message'] . "</b></div>";
-			EscribirArchivo("Error_Conn_" . date('YmdHis'), "../logs/error/", $TextErr, false, true, false);
+			
+			$nombre_archivo = "Error_Conn_" . date('YmdHis');
+			$ruta_archivo = __DIR__. "../../logs/error/";
+			$texto = $TextErr;
+			$datelog = '';
+			EscribirArchivo($nombre_archivo, $ruta_archivo, $texto, $datelog, false, false);
+			//EscribirArchivo("Error_Conn_" . date('YmdHis'), "/".HOMEHOST."/logs/error/", $TextErr, false, true, false);
 		}
 	}
 	header("Content-Type: application/json");

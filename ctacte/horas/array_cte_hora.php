@@ -1,8 +1,7 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 $url   = host() . "/" . HOMEHOST . "/data/GetCtaCteHoras.php?tk=" . token() . "&_c=" . $_SESSION["RECID_CLIENTE"] . "&_r=" . $_SESSION["RECID_ROL"] . "&" . $_SERVER['QUERY_STRING'];
 // echo ($url);exit;
 // $json  = file_get_contents($url);

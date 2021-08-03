@@ -16,7 +16,7 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     <div class="container shadow">
         <?php require __DIR__ . '../../nav.php'; ?>
         <?=
-            encabezado_mod2('bg-custom', 'white', 'people-fill',  'Usuarios: ' . $Cliente, '25', 'text-white mr-2');
+        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Usuarios: ' . $Cliente, '25', 'text-white mr-2');
         ?>
         <input type="hidden" id="recid_c" value="<?= $_GET['_c'] ?>">
         <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
@@ -64,6 +64,25 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
                 </div>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal animate__animated animate__fadeIn" id="modalListas" data-backdrop="static" data-keyboard="true" tabindex="-1" aria-labelledby="modalListasLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <div class="modal-title" id="modalListasLabel"></div>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true" class="bi bi-x"></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer bg-light border-0">
+                        <button type="button" class="btn btn-outline-custom border btn-sm fontq px-3" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <?php require "modalAddUser.html"; ?>
         <?php require "modalEditUser.html"; ?>
     </div>
@@ -76,7 +95,7 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
-    <script src="usuarios-min.js?v=<?=vjs()?>"></script>
+    <script src="usuarios-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

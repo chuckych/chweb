@@ -154,8 +154,8 @@ $(function () {
             `
         let buttonsCheck = `
             <div class="">
-                <button class="btn btn-link btn-sm fontq" id="checkAllThora">Marcar Todo</button>
-                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllThora">Desmarcar Todo</button>
+                <button class="btn btn-link btn-sm fontq" id="checkAllThora">Marcar</button>
+                <button class="ml-1 btn btn-link btn-sm fontq" id="nocheckAllThora">Desmarcar</button>
             </div>
             `
         let buttonsSubmit = `

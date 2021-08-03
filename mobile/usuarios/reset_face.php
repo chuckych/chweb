@@ -6,8 +6,7 @@ secure_auth_ch();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+E_ALL();
 
 $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 $u_id      = $_POST['u_id'];

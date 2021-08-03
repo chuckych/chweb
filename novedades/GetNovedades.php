@@ -5,15 +5,27 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-error_reporting(E_ALL);
-ini_set('display_errors', '0');
+
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
-$data = array();
+E_ALL();
 
-$legajo = test_input(FusNuloPOST('_l', ''));
+$data = array();
+$params = $_REQUEST;
+if (isset($_POST['_l']) && !empty($_POST['_l'])) {
+    $legajo = test_input(FusNuloPOST('_l', 'vacio'));
+}else{
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
+}
 
 require __DIR__ . '../valores.php';
 
@@ -24,7 +36,7 @@ $params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query="SELECT DISTINCT FICHAS3.FicLega AS 'nov_LegNume', FICHAS3.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS3.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario' FROM FICHAS3, FICHAS, NOVEDAD, NOVECAUSA, PERSONAL WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS3.FicLega='$legajo' AND FICHAS3.FicLega=FICHAS.FicLega AND FICHAS3.FicFech=FICHAS.FicFech AND FICHAS3.FicTurn=FICHAS.FicTurn AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi AND FICHAS3.FicLega=PERSONAL.LegNume AND FICHAS3.FicNove > 0 $FilterEstruct $FiltrosFichas";
+$sql_query="SELECT DISTINCT FICHAS3.FicLega AS 'nov_LegNume', FICHAS3.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS3.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario', PERSONAL.LegApNo as 'nov_leg_nombre' FROM FICHAS3, FICHAS, NOVEDAD, NOVECAUSA, PERSONAL WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS3.FicLega='$legajo' AND FICHAS3.FicLega=FICHAS.FicLega AND FICHAS3.FicFech=FICHAS.FicFech AND FICHAS3.FicTurn=FICHAS.FicTurn AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi AND FICHAS3.FicLega=PERSONAL.LegNume AND FICHAS3.FicNove > 0 $FilterEstruct $FiltrosFichas";
 
 
 $sqlTot .= $sql_query;
@@ -144,7 +156,7 @@ $queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
         unset($Novedad);
     endwhile;
           
-    sqlsrv_free_stmt($result);
+    // sqlsrv_free_stmt($result);
     sqlsrv_close($link);
     $json_data = array(
         "draw"            => intval( $params['draw'] ),   

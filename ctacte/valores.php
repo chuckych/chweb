@@ -25,14 +25,14 @@ FusNuloPOST("Tipo",'');
 $periodo    = peri_min_max();
 $periodo    = (!empty($_POST['CTA2Peri'])) ? $_POST['CTA2Peri'] : $periodo['max'];
 
-$Per     = test_input($_POST['Per']);
+$Per     = ($_POST['Per']);
 $Per2    = test_input($_POST['Per2']);
 $Per3    = test_input($_POST['Per2']);
-$Emp     = test_input($_POST['Emp']);
-$Plan    = test_input($_POST['Plan']);
-$Sect    = test_input($_POST['Sect']);
-$Grup    = test_input($_POST['Grup']);
-$Sucur   = test_input($_POST['Sucur']);
+$Emp     = ($_POST['Emp']);
+$Plan    = ($_POST['Plan']);
+$Sect    = ($_POST['Sect']);
+$Grup    = ($_POST['Grup']);
+$Sucur   = ($_POST['Sucur']);
 
 $Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'": "";
 
@@ -71,7 +71,7 @@ $FilterEstruct  .= $Tipo;
 $FilterEstruct  .= $Legajos;
 $FilterEstruct  .= $Per2;
 // $FilterEstruct  .= $FicNove;
-
+$FilterEstruct2 ='';
 // $FilterEstruct2  = $FicNoTi;
 // $FilterEstruct2  .= "AND FICHAS3.FicNove IN ($novedad)";
 // $FilterEstruct  .= $Thora;

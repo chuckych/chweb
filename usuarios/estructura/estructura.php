@@ -2,7 +2,9 @@
 ExisteRol($_GET['_r']);
 UnsetGet('id');
 UnsetGet('_r');
-list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol) = Rol_Recid($_GET['_r']);
+
+// list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol) = Rol_Recid($_GET['_r']);
+(list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol) = Rol_Recid($_GET['_r']));
 switch ($_GET['e']) {
     case 'sectores':
         $e_titulo   = 'Sectores';
