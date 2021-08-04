@@ -109,20 +109,21 @@
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTFic">Fichadas</span>
                                         <form action="insert.php" method="POST" class="Form_Fichadas d-none">
-                                            <div class="form-inline mb-2"><label for="RegFech" class="mr-2 w80">Fecha:</label><input type="date" name="RegFech" class="h40 form-control RegFech w150"></div>
+                                            <div class="form-inline mb-2"><label for="RegFech" class="mr-2 w80">Fecha:</label>
+                                            <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada"></div>
                                             <div class="form-inline mb-2"><input type="hidden" name="alta_fichada" class="" value="true"><input type="hidden" name="datos_fichada" class="datos_fichada" value=""><label for="RegHora" class="mr-2 w80">Hora:</label>
-                                                <input type="tel" placeholder="00:00" name="RegHora" id="RegHora" class="HoraMask h40 form-control RegHora w100 ls1">
+                                                <input type="tel" placeholder="00:00" name="RegHora" id="RegHora" class="HoraMask h40 form-control RegHora w120 ls1">
                                                 <button type="submit" class="ml-sm-2 btn btn-sm btn-custom fontq submit_btn btn-mobile mt-2 mt-sm-0">Agregar</button><button type="button" class="float-right ml-sm-2 btn btn-sm btn-link border-0 text-secondary fontq cancelar_btn_fic btn-mobile mt-2 mt-sm-0">Cancelar</button>
                                                 <div class="respuesta_fichada fontq text-secondary mx-2"></div>
                                             </div>
                                         </form>
                                         <form action="insert.php" method="POST" class="Form_Fichadas_Mod d-none">
-                                            <div class="form-inline mb-2"><label for="RegFech_mod" class="mr-2 w80">Fecha:</label><input type="date" name="RegFech_mod" class="h40 form-control RegFech w150" id="RegFech_mod"></div>
+                                            <div class="form-inline mb-2"><label for="RegFech_mod" class="mr-2 w80">Fecha:</label><input type="text" name="RegFech_mod" readonly class="h40 form-control RegFech w120 ls1" id="RegFech_mod"></div>
                                             <div class="form-inline mb-2">
                                                 <input type="hidden" name="mod_fichada" class="" value="true">
                                                 <input type="hidden" name="datos_fichada_mod" class="datos_fichada_mod" id="datos_fichada_mod" value="">
                                                 <label for="RegHora_mod" class="mr-2 w80">Hora:</label>
-                                                <input type="tel" placeholder="00:00" name="RegHora_mod" class="HoraMask form-control w100 h40 ls1" id="RegHora_mod">
+                                                <input type="tel" placeholder="00:00" name="RegHora_mod" class="HoraMask form-control w120 h40 ls1" id="RegHora_mod">
                                                 <button type="submit" class="ml-sm-2 btn btn-sm btn-custom fontq submit_btn btn-mobile mt-2 mt-sm-0">Modificar</button><button type="button" class="float-right ml-sm-2 btn btn-sm btn-link border-0 text-secondary fontq cancelar_btn_fic  btn-mobile mt-2 mt-sm-0">Cancelar</button>
                                                 <div class="respuesta_fichada_mod fontq text-secondary mx-2"></div>
                                             </div>

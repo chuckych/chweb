@@ -579,7 +579,7 @@ $(document).on("click", ".procReg", function (e) {
     });
 });
 $(".Filtros").on("click", function () {
-    CheckSesion() 
+    CheckSesion()
 });
 /** ABRIR MODAL */
 $(document).on("click", ".open-modal", function (e) {
@@ -588,1561 +588,1571 @@ $(document).on("click", ".open-modal", function (e) {
     $(document).off('keydown');
     CheckSesion()
     // setTimeout(function () {
-        // if ($('#_sesion').val()==0) {
+    // if ($('#_sesion').val()==0) {
 
-            $('#modalGeneral').modal('show');
-            $('#modalGeneral').modal('handleUpdate')
-            
-            $('.navbar').addClass('mr-0');
-            $('#Fichadas-tab').tab('show');
-            $("#AddHora").addClass('d-none');
-            $("#AddNov").addClass('d-none');
-            $("#AddONov").addClass('d-none');
-            $('#Horas').addClass('d-none')
-            $('#Novedades').addClass('d-none')
-            $('#OtrasNov').addClass('d-none')
-            $('#FicValor').mask('##.##00.00', { reverse: true });
+    $('#modalGeneral').modal('show');
+    $('#modalGeneral').modal('handleUpdate')
 
-            var Datos = $(this).attr('data');
-            var Nombre = $(this).attr('data2');
-            var Fecha = $(this).attr('data3');
-            var Dia = $(this).attr('data4');
-            var Horario = $(this).attr('data5');
-            var FechaStr = $(this).attr('data6');
-            var Cita = $(this).attr('data7');
-            var mFic = $(this).attr('data_mFic');
-            var mHor = $(this).attr('data_mHor');
-            var mNov = $(this).attr('data_mNov');
-            var NumLega = Datos.split('-');
-            
-            $("#NombreLega").val(Nombre);
+    $('.navbar').addClass('mr-0');
+    $('#Fichadas-tab').tab('show');
+    $("#AddHora").addClass('d-none');
+    $("#AddNov").addClass('d-none');
+    $("#AddONov").addClass('d-none');
+    $('#Horas').addClass('d-none')
+    $('#Novedades').addClass('d-none')
+    $('#OtrasNov').addClass('d-none')
+    $('#FicValor').mask('##.##00.00', { reverse: true });
+
+    var Datos = $(this).attr('data');
+    var Nombre = $(this).attr('data2');
+    var Fecha = $(this).attr('data3');
+    var Dia = $(this).attr('data4');
+    var Horario = $(this).attr('data5');
+    var FechaStr = $(this).attr('data6');
+    var FechaStr = $(this).attr('data6');
+    var dataFechDR = $(this).attr('dataFechDR');
+    var Cita = $(this).attr('data7');
+    var mFic = $(this).attr('data_mFic');
+    var mHor = $(this).attr('data_mHor');
+    var mNov = $(this).attr('data_mNov');
+    var NumLega = Datos.split('-');
+
+    $("#NombreLega").val(Nombre);
 
 
-            if (mFic == '1') {
-                $("#Mxs").val('1')
-                $('.nav').addClass('d-none')
-                Modal_XL_LG('#TopN')
-                $('#Fichadas').removeClass('border-top-0')
+    if (mFic == '1') {
+        $("#Mxs").val('1')
+        $('.nav').addClass('d-none')
+        Modal_XL_LG('#TopN')
+        $('#Fichadas').removeClass('border-top-0')
+    }
+    if (mHor == '1') {
+        $("#Mxs").val('1')
+        $('.nav').addClass('d-none')
+        $('#Horas-tab').tab('show')
+        Modal_XL_LG('#TopN')
+        $('#Horas').removeClass('border-top-0')
+    }
+    if (mNov == '1') {
+        $("#Mxs").val('1')
+        $('.nav').addClass('d-none')
+        $('#Novedades-tab').tab('show')
+        Modal_XL_LG('#TopN')
+        $('#Novedades').removeClass('border-top-0')
+    }
+    $('#Fichadas-tab').on('shown.bs.tab', function (e) {
+        $('#Fichadas').removeClass('d-none')
+        fadeInOnly('#Fichadas')
+        $('#Horas').addClass('d-none')
+        $('#Novedades').addClass('d-none')
+        $('#OtrasNov').addClass('d-none')
+    })
+    $('#Novedades-tab').on('shown.bs.tab', function (e) {
+        $('#Novedades').removeClass('d-none')
+        fadeInOnly('#Novedades')
+        $('#Fichadas').addClass('d-none')
+        $('#Horas').addClass('d-none')
+        $('#OtrasNov').addClass('d-none')
+    })
+    $('#Horas-tab').on('shown.bs.tab', function (e) {
+        $('#Horas').removeClass('d-none')
+        fadeInOnly('#Horas')
+        $('#Novedades').addClass('d-none')
+        $('#Fichadas').addClass('d-none')
+        $('#OtrasNov').addClass('d-none')
+    })
+    $('#OtrasNov-tab').on('shown.bs.tab', function (e) {
+        $('#OtrasNov').removeClass('d-none')
+        fadeInOnly('#OtrasNov')
+        $('#Horas').addClass('d-none')
+        $('#Novedades').addClass('d-none')
+        $('#Fichadas').addClass('d-none')
+    })
+
+    $('#data').val(Datos);
+
+    $(".nombre").html(Nombre + "<br /><span class='text-secondary fonth fw4'>Legajo: <span class='ls1'>" + NumLega[0] + "</span></span>");
+    $(".NumLega").html(NumLega[0]);
+    $(".fecha").html(Fecha);
+    $(".dia").html(Dia);
+    // $(".horario").html(Horario);
+    $(".datos_fichada").val(Datos);
+    $(".datos_novedad").val(Datos);
+    $(".datos_hora").val(Datos);
+    $(".datos_OtrasNov").val(Datos);
+    $(".datos_Citacion").val(Datos);
+    // $(".RegFech").val(FechaStr);
+    singleDatePicker('#RegFech_Fichada', 'center', 'down')
+    $('#RegFech_Fichada').data('daterangepicker').setStartDate(dataFechDR);
+    $('#RegFech_Fichada').data('daterangepicker').setEndDate(dataFechDR);
+
+
+    /** Al hacer click en el link Procesar dentro del Modal */
+    $("#ProcesarLegajo").on("click", function () {
+        CheckSesion()
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "../procesar/procesando.php",
+            data: {
+                procesaLegajo: true,
+                nombreLegajo: Nombre,
+                procesando: true,
+                ProcLegaIni: NumLega[0],
+                ProcLegaFin: NumLega[0],
+                ProcFechaIni: FechaStr,
+                ProcFechaFin: FechaStr,
+            },
+            beforeSend: function () {
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                CierraModalGeneral();
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    DisabledClean()
+                    RefreshDataTables();
+                    $.notifyClose();
+                    notify(data.Mensaje, 'success', 5000, 'right')
+                } else {
+                    DisabledClean()
+                    // RefreshDataTables();
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+
             }
-            if (mHor == '1') {
-                $("#Mxs").val('1')
-                $('.nav').addClass('d-none')
-                $('#Horas-tab').tab('show')
-                Modal_XL_LG('#TopN')
-                $('#Horas').removeClass('border-top-0')
+        });
+    });
+
+    /** GET FECHA CIERRE */
+    function GetCierre() {
+        // event.preventDefault();
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: "../data/GetCierre.php",
+            'data': {
+                Datos: $('#data').val()
+            },
+            success: function (respuesta) {
+                if (respuesta.status == 'ok') {
+                    $("#FechCierre").html('<br /> Fecha Cierre: <span class="ls1 fw5">' + respuesta.dato + '</span>');
+                    $("#AddHora").prop('disabled', true)
+                    $("#AddONov").prop('disabled', true)
+                    $("#AddFic").prop('disabled', true)
+                    $("#AddNov").prop('disabled', true)
+                    $(".mod_Fic").prop('disabled', true);
+                    $("#Citacion").prop("disabled", true);
+                    $("#Citacion").addClass('d-none');
+                } else {
+                    $("#FechCierre").html('');
+                    // $("#FechCierre").addClass('d-none');
+                    $("#AddHora").prop('disabled', false)
+                    $("#AddONov").prop('disabled', false)
+                    $("#AddFic").prop('disabled', false)
+                    $("#AddNov").prop('disabled', false)
+                }
+
+            },
+            error: function () {
+
             }
-            if (mNov == '1') {
-                $("#Mxs").val('1')
-                $('.nav').addClass('d-none')
-                $('#Novedades-tab').tab('show')
-                Modal_XL_LG('#TopN')
-                $('#Novedades').removeClass('border-top-0')
+        });
+    }
+    GetCierre()
+    /** GET FICHAS */
+    function refrescaFichas() {
+        // event.preventDefault();
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: "GetFichas2.php",
+            'data': {
+                Datos: $('#data').val()
+            },
+            success: function (respuesta) {
+                // const FicHsTr1 = respuesta.FicHsTr;
+                //$("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
+                // if (respuesta.FicDiaL == 1) {
+                //     $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
+                //     $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
+                //     $("#FicHsAT").html(respuesta.FicHsAT + 'Hs.');
+                //     $("#divHorasTR").removeClass("d-none");
+                // } else {
+                //     $("#FicHsAT").html("");
+                //     $("#TextFicHsAT").html('');
+                //     $("#divHorasTR").addClass("d-none");
+                // }
+                // if (respuesta.FicHsTr != "00:00") {
+                //     $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
+                //     $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
+                //     // $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
+                // } else {
+                //     $("#FicHsTr").html("");
+                //     $("#TextFicHsTr").html('');
+                // }
+
+                // $("#FicHorario").html(respuesta.FicHorario);
+                // if (respuesta.HorasNeg == 1) {
+                //     $("#FicHsTr").addClass('text-danger');
+                // } else {
+                //     $("#FicHsTr").removeClass('text-danger');
+                // }
+            },
+            error: function () {
             }
-            $('#Fichadas-tab').on('shown.bs.tab', function (e) {
-                $('#Fichadas').removeClass('d-none')
-                fadeInOnly('#Fichadas')
-                $('#Horas').addClass('d-none')
-                $('#Novedades').addClass('d-none')
-                $('#OtrasNov').addClass('d-none')
-            })
-            $('#Novedades-tab').on('shown.bs.tab', function (e) {
-                $('#Novedades').removeClass('d-none')
-                fadeInOnly('#Novedades')
-                $('#Fichadas').addClass('d-none')
-                $('#Horas').addClass('d-none')
-                $('#OtrasNov').addClass('d-none')
-            })
-            $('#Horas-tab').on('shown.bs.tab', function (e) {
-                $('#Horas').removeClass('d-none')
-                fadeInOnly('#Horas')
-                $('#Novedades').addClass('d-none')
-                $('#Fichadas').addClass('d-none')
-                $('#OtrasNov').addClass('d-none')
-            })
-            $('#OtrasNov-tab').on('shown.bs.tab', function (e) {
-                $('#OtrasNov').removeClass('d-none')
-                fadeInOnly('#OtrasNov')
-                $('#Horas').addClass('d-none')
-                $('#Novedades').addClass('d-none')
-                $('#Fichadas').addClass('d-none')
-            })
+        });
+    }
+    // refrescaFichas()
+    /** FIN GET FICHAS */
 
-            $('#data').val(Datos);
+    /** GET CITACION */
+    function GetCitacion() {
+        // $(document).ready(function (e) {
+        // e.preventDefault();
+        $.ajax({
+            type: 'GET',
+            dataType: "json",
+            url: "GetCitacion.php",
+            'data': {
+                Datos: $('#data').val()
+            },
+            beforeSend: function () {
 
-            $(".nombre").html(Nombre + "<br /><span class='text-secondary fonth fw4'>Legajo: <span class='ls1'>" + NumLega[0] + "</span></span>");
-            $(".NumLega").html(NumLega[0]);
-            $(".fecha").html(Fecha);
-            $(".dia").html(Dia);
-            // $(".horario").html(Horario);
-            $(".datos_fichada").val(Datos);
-            $(".datos_novedad").val(Datos);
-            $(".datos_hora").val(Datos);
-            $(".datos_OtrasNov").val(Datos);
-            $(".datos_Citacion").val(Datos);
-            $(".RegFech").val(FechaStr);
+            },
+            success: function (respuesta) {
+                (respuesta.CitEntra != 0) ? $("#bCit").show() : $("#bCit").hide();
+                (respuesta.CitEntra != 0) ? $("#bCit").attr('datos', $('#data').val()) : $("#bCit").attr('datos', '');
+                (respuesta.CitEntra != 0) ? $("#CitEntra").val(respuesta.CitEntra) : $("#CitEntra").val();
+                (respuesta.CitSale != 0) ? $("#CitSale").val(respuesta.CitSale) : $("#CitSale").val();
+                (respuesta.CitDesc != 0) ? $("#CitDesc").val(respuesta.CitDesc) : $("#CitDesc").val();
 
-            /** Al hacer click en el link Procesar dentro del Modal */
-            $("#ProcesarLegajo").on("click", function () {
-                CheckSesion()
-                $.ajax({
-                    type: "POST",
-                    dataType: "json",
-                    url: "../procesar/procesando.php",
-                    data: {
-                        procesaLegajo: true,
-                        nombreLegajo: Nombre,
-                        procesando: true,
-                        ProcLegaIni: NumLega[0],
-                        ProcLegaFin: NumLega[0],
-                        ProcFechaIni: FechaStr,
-                        ProcFechaFin: FechaStr,
-                    },
-                    beforeSend: function () {
-                        $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                        CierraModalGeneral();
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            DisabledClean()
-                            RefreshDataTables();
-                            $.notifyClose();
-                            notify(data.Mensaje, 'success', 5000, 'right')
-                        } else {
-                            DisabledClean()
-                            // RefreshDataTables();
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
-                        }
+            },
+            error: function () {
+                $("#CitEntra").val();
+                $("#CitSale").val();
+                $("#CitDesc").val('00:00');
+            }
+        });
+        // });
+    }
 
-                    }
-                });
+    // $(document).on('click', '.Citacion', function (e) {
+    // });
+    // GetCitacion()
+    /** FIN GET CITACION */
+
+    $('#GetFichadas').DataTable({
+        "initComplete": function (settings, json) {
+        },
+        "drawCallback": function (settings) {
+            $.each(settings.json, function (key, value) {
+                (value.length > 0) ? $("#CantFic").html("(" + value.length + ")") : $("#CantFic").html("");
             });
+        },
 
-            /** GET FECHA CIERRE */
-            function GetCierre() {
-                // event.preventDefault();
-                $.ajax({
-                    type: 'GET',
-                    dataType: "json",
-                    url: "../data/GetCierre.php",
-                    'data': {
-                        Datos: $('#data').val()
-                    },
-                    success: function (respuesta) {
-                        if (respuesta.status == 'ok') {
-                            $("#FechCierre").html('<br /> Fecha Cierre: <span class="ls1 fw5">' + respuesta.dato + '</span>');
-                            $("#AddHora").prop('disabled', true)
-                            $("#AddONov").prop('disabled', true)
-                            $("#AddFic").prop('disabled', true)
-                            $("#AddNov").prop('disabled', true)
-                            $(".mod_Fic").prop('disabled', true);
-                            $("#Citacion").prop("disabled", true);
-                            $("#Citacion").addClass('d-none');
-                        } else {
-                            $("#FechCierre").html('');
-                            // $("#FechCierre").addClass('d-none');
-                            $("#AddHora").prop('disabled', false)
-                            $("#AddONov").prop('disabled', false)
-                            $("#AddFic").prop('disabled', false)
-                            $("#AddNov").prop('disabled', false)
-                        }
+        bProcessing: true,
+        deferRender: true,
+        "ajax": {
+            url: "GetFichadas.php",
+            type: "GET",
+            dataSrc: "Fichadas",
+            'data': {
+                Datos
+            },
+        },
+        columns: [
+            { "class": "align-middle ls1", "data": "Fic" },
+            { "class": "align-middle", "data": "editar" },
+            { "class": "align-middle", "data": "eliminar" },
+            { "class": "align-middle", "data": "Estado" },
+            { "class": "align-middle", "data": "Tipo" },
+            { "class": "align-middle ls1", "data": "Fecha" },
+            { "class": "align-middle ls1", "data": "Original" },
+            { "class": "align-middle w-100", "data": "null" }
+        ],
+        paging: false,
+        // scrollY: '100px',
+        scrollX: false,
+        scrollCollapse: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        language: {
+            "url": "../js/DataTableSpanish.json"
+        },
+    });
+    $('#GetNovedades').DataTable({
+        "drawCallback": function (settings) {
+            $.each(settings.json, function (key, value) {
+                (value.length > 0) ? $("#CantNov").html("(" + value.length + ")") : $("#CantNov").html("");
+            });
+        },
+        bProcessing: true,
+        deferRender: true,
+        "ajax": {
+            url: "GetNovedades.php",
+            type: "GET",
+            dataSrc: "Novedades",
+            'data': {
+                Datos
+            },
+        },
+        columns: [
+            { "class": "align-middle ls1", "data": "Cod" },
+            { "class": "align-middle", "data": "Descripcion" },
+            { "class": "align-middle ls1 fw5", "data": "Horas" },
+            { "class": "align-middle ", "data": "editar" },
+            { "class": "align-middle ", "data": "eliminar" },
+            { "class": "align-middle", "data": "Obserb" },
+            { "class": "align-middle", "data": "Causa" },
+            { "class": "align-middle", "data": "Just" },
+            { "class": "align-middle", "data": "Tipo" },
+            { "class": "align-middle", "data": "Cate" },
+            { "class": "align-middle w-100", "data": "null" }
+        ],
+        paging: false,
+        // scrollY: '100px',
+        scrollX: false,
+        scrollCollapse: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        language: {
+            "url": "../js/DataTableSpanish.json"
+        },
+    });
+    $('#GetHoras').DataTable({
+        "drawCallback": function (settings) {
+            // console.log(settings.json);
+            $.each(settings.json, function (key, value) {
+                // console.log(key);
+                if (key == 'Horas') {
+                    (value.length > 0) ? $("#CantHor").html("(" + value.length + ")") : $("#CantHor").html("");
+                }
+                if (key == 'Fichas') {
+                    // console.log(value.Horario);
+                    // $("#FicHsTr").html(value.FicHsTr + 'Hs.');
 
-                    },
-                    error: function () {
-
+                    if (value.FicDiaL == 1) {
+                        $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
+                        $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
+                        $("#FicHsAT").html(value.FicHsAT + 'Hs.');
+                        $("#divHorasTR").removeClass("d-none");
+                    } else {
+                        $("#FicHsAT").html("");
+                        $("#TextFicHsAT").html('');
+                        $("#divHorasTR").addClass("d-none");
                     }
-                });
-            }
-            GetCierre()
-            /** GET FICHAS */
-            function refrescaFichas() {
-                // event.preventDefault();
-                $.ajax({
-                    type: 'GET',
-                    dataType: "json",
-                    url: "GetFichas2.php",
-                    'data': {
-                        Datos: $('#data').val()
-                    },
-                    success: function (respuesta) {
-                        // const FicHsTr1 = respuesta.FicHsTr;
-                        //$("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
-                        // if (respuesta.FicDiaL == 1) {
-                        //     $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
-                        //     $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
-                        //     $("#FicHsAT").html(respuesta.FicHsAT + 'Hs.');
-                        //     $("#divHorasTR").removeClass("d-none");
-                        // } else {
-                        //     $("#FicHsAT").html("");
-                        //     $("#TextFicHsAT").html('');
-                        //     $("#divHorasTR").addClass("d-none");
+                    if (value.FicHsTr != "00:00") {
+                        $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
+                        $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
+                        $("#FicHsTr").html(value.FicHsTr + 'Hs.');
+                    } else {
+                        $("#FicHsTr").html("");
+                        $("#TextFicHsTr").html('');
+                    }
+                    $("#FicHorario").html(value.Horario);
+                    if (value.HorasNeg == 1) {
+                        $("#FicHsTr").addClass('text-danger');
+                    } else {
+                        $("#FicHsTr").removeClass('text-danger');
+                    }
+
+                    var Porcentaje = (value.FicHsTrMin / value.FicHsATMin) * 100
+                    var Porcentaje = Porcentaje.toFixed()
+                    var DatoFicha = value.DatoFicha
+
+                    var Max = (value.FicHsTrMin > value.FicHsATMin) ? value.FicHsTrMin : value.FicHsATMin
+                    // console.log(Porcentaje.toFixed());
+                    if (value.FicHsTrMin > 0 && value.FicHsTrMin <= value.FicHsATMin) {
+
+                        $('#ProgressHoras').html('<div class="pb-2">'
+                            + '<div class="progress border-0" style="height: 20px;">'
+                            + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsTr + '</div>'
+                            + '</div>'
+                            + '</div>')
+
+                        if (value.FicHsTrMin < value.FicHsATMin) {
+                            $("#" + DatoFicha).addClass('bg-danger');
+                            $("#" + DatoFicha).removeClass('bg-custom');
+                        } else {
+                            $("#" + DatoFicha).removeClass('bg-danger');
+                            $("#" + DatoFicha).addClass('bg-custom');
+                        }
+                    } else if (value.FicHsTrMin > value.FicHsATMin) {
+
+                        var Porcentaje = (value.FicHsATMin / value.FicHsTrMin) * 100
+                        var Porcentaje = Porcentaje.toFixed()
+                        var Porcentaje2 = (100 - Porcentaje) + 5
+                        // if (Porcentaje2 < 10) {
+                        //     var Max2 = (Max + 200)
+                        // }else{
+                        //     var Max2 = (Max)
                         // }
-                        // if (respuesta.FicHsTr != "00:00") {
-                        //     $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
-                        //     $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
-                        //     // $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
-                        // } else {
-                        //     $("#FicHsTr").html("");
-                        //     $("#TextFicHsTr").html('');
-                        // }
+                        var Max2 = (Max)
+                        $('#ProgressHoras').html('<div class="pb-2">'
+                            + '<div class="progress" style="height: 20px;">'
+                            + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsAT + '</div>'
+                            + '<div class="progress-bar bg-info" role="progressbar" style="width: ' + Porcentaje2 + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max2 + '"></div>'
+                            + '</div>'
+                            + '</div>')
 
-                        // $("#FicHorario").html(respuesta.FicHorario);
-                        // if (respuesta.HorasNeg == 1) {
-                        //     $("#FicHsTr").addClass('text-danger');
-                        // } else {
-                        //     $("#FicHsTr").removeClass('text-danger');
-                        // }
-                    },
-                    error: function () {
-                    }
-                });
-            }
-            // refrescaFichas()
-            /** FIN GET FICHAS */
-
-            /** GET CITACION */
-            function GetCitacion() {
-                // $(document).ready(function (e) {
-                // e.preventDefault();
-                $.ajax({
-                    type: 'GET',
-                    dataType: "json",
-                    url: "GetCitacion.php",
-                    'data': {
-                        Datos: $('#data').val()
-                    },
-                    beforeSend: function () {
-
-                    },
-                    success: function (respuesta) {
-                        (respuesta.CitEntra != 0) ? $("#bCit").show() : $("#bCit").hide();
-                        (respuesta.CitEntra != 0) ? $("#bCit").attr('datos',$('#data').val()) : $("#bCit").attr('datos','');
-                        (respuesta.CitEntra != 0) ? $("#CitEntra").val(respuesta.CitEntra) : $("#CitEntra").val();
-                        (respuesta.CitSale != 0) ? $("#CitSale").val(respuesta.CitSale) : $("#CitSale").val();
-                        (respuesta.CitDesc != 0) ? $("#CitDesc").val(respuesta.CitDesc) : $("#CitDesc").val();
-                        
-                    },
-                    error: function () {
-                        $("#CitEntra").val();
-                        $("#CitSale").val();
-                        $("#CitDesc").val('00:00');
-                    }
-                });
-                // });
-            }
-
-            // $(document).on('click', '.Citacion', function (e) {
-            // });
-            // GetCitacion()
-            /** FIN GET CITACION */
-
-            $('#GetFichadas').DataTable({
-                "initComplete": function (settings, json) {
-                },
-                "drawCallback": function (settings) {
-                    $.each(settings.json, function (key, value) {
-                        (value.length > 0) ? $("#CantFic").html("(" + value.length + ")") : $("#CantFic").html("");
-                    });
-                },
-
-                bProcessing: true,
-                deferRender: true,
-                "ajax": {
-                    url: "GetFichadas.php",
-                    type: "GET",
-                    dataSrc: "Fichadas",
-                    'data': {
-                        Datos
-                    },
-                },
-                columns: [
-                    { "class": "align-middle ls1", "data": "Fic" },
-                    { "class": "align-middle", "data": "editar" },
-                    { "class": "align-middle", "data": "eliminar" },
-                    { "class": "align-middle", "data": "Estado" },
-                    { "class": "align-middle", "data": "Tipo" },
-                    { "class": "align-middle ls1", "data": "Fecha" },
-                    { "class": "align-middle ls1", "data": "Original" },
-                    { "class": "align-middle w-100", "data": "null" }
-                ],
-                paging: false,
-                // scrollY: '100px',
-                scrollX: false,
-                scrollCollapse: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                language: {
-                    "url": "../js/DataTableSpanish.json"
-                },
-            });
-            $('#GetNovedades').DataTable({
-                "drawCallback": function (settings) {
-                    $.each(settings.json, function (key, value) {
-                        (value.length > 0) ? $("#CantNov").html("(" + value.length + ")") : $("#CantNov").html("");
-                    });
-                },
-                bProcessing: true,
-                deferRender: true,
-                "ajax": {
-                    url: "GetNovedades.php",
-                    type: "GET",
-                    dataSrc: "Novedades",
-                    'data': {
-                        Datos
-                    },
-                },
-                columns: [
-                    { "class": "align-middle ls1", "data": "Cod" },
-                    { "class": "align-middle", "data": "Descripcion" },
-                    { "class": "align-middle ls1 fw5", "data": "Horas" },
-                    { "class": "align-middle ", "data": "editar" },
-                    { "class": "align-middle ", "data": "eliminar" },
-                    { "class": "align-middle", "data": "Obserb" },
-                    { "class": "align-middle", "data": "Causa" },
-                    { "class": "align-middle", "data": "Just" },
-                    { "class": "align-middle", "data": "Tipo" },
-                    { "class": "align-middle", "data": "Cate" },
-                    { "class": "align-middle w-100", "data": "null" }
-                ],
-                paging: false,
-                // scrollY: '100px',
-                scrollX: false,
-                scrollCollapse: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                language: {
-                    "url": "../js/DataTableSpanish.json"
-                },
-            });
-            $('#GetHoras').DataTable({
-                "drawCallback": function (settings) {
-                    // console.log(settings.json);
-                    $.each(settings.json, function (key, value) {
-                        // console.log(key);
-                        if (key == 'Horas') {
-                            (value.length > 0) ? $("#CantHor").html("(" + value.length + ")") : $("#CantHor").html("");
-                        }
-                        if (key == 'Fichas') {
-                            // console.log(value.Horario);
-                            // $("#FicHsTr").html(value.FicHsTr + 'Hs.');
-
-                            if (value.FicDiaL == 1) {
-                                $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
-                                $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
-                                $("#FicHsAT").html(value.FicHsAT + 'Hs.');
-                                $("#divHorasTR").removeClass("d-none");
-                            } else {
-                                $("#FicHsAT").html("");
-                                $("#TextFicHsAT").html('');
-                                $("#divHorasTR").addClass("d-none");
-                            }
-                            if (value.FicHsTr != "00:00") {
-                                $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
-                                $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
-                                $("#FicHsTr").html(value.FicHsTr + 'Hs.');
-                            } else {
-                                $("#FicHsTr").html("");
-                                $("#TextFicHsTr").html('');
-                            }
-                            $("#FicHorario").html(value.Horario);
-                            if (value.HorasNeg == 1) {
-                                $("#FicHsTr").addClass('text-danger');
-                            } else {
-                                $("#FicHsTr").removeClass('text-danger');
-                            }
-
-                            var Porcentaje = (value.FicHsTrMin / value.FicHsATMin) * 100
-                            var Porcentaje = Porcentaje.toFixed()
-                            var DatoFicha = value.DatoFicha
-
-                            var Max = (value.FicHsTrMin > value.FicHsATMin) ? value.FicHsTrMin : value.FicHsATMin
-                            // console.log(Porcentaje.toFixed());
-                            if (value.FicHsTrMin > 0 && value.FicHsTrMin <= value.FicHsATMin) {
-
-                                $('#ProgressHoras').html('<div class="pb-2">'
-                                    + '<div class="progress border-0" style="height: 20px;">'
-                                    + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsTr + '</div>'
-                                    + '</div>'
-                                    + '</div>')
-
-                                if (value.FicHsTrMin < value.FicHsATMin) {
-                                    $("#" + DatoFicha).addClass('bg-danger');
-                                    $("#" + DatoFicha).removeClass('bg-custom');
-                                } else {
-                                    $("#" + DatoFicha).removeClass('bg-danger');
-                                    $("#" + DatoFicha).addClass('bg-custom');
-                                }
-                            } else if (value.FicHsTrMin > value.FicHsATMin) {
-
-                                var Porcentaje = (value.FicHsATMin / value.FicHsTrMin) * 100
-                                var Porcentaje = Porcentaje.toFixed()
-                                var Porcentaje2 = (100 - Porcentaje) + 5
-                                // if (Porcentaje2 < 10) {
-                                //     var Max2 = (Max + 200)
-                                // }else{
-                                //     var Max2 = (Max)
-                                // }
-                                var Max2 = (Max)
-                                $('#ProgressHoras').html('<div class="pb-2">'
-                                    + '<div class="progress" style="height: 20px;">'
-                                    + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsAT + '</div>'
-                                    + '<div class="progress-bar bg-info" role="progressbar" style="width: ' + Porcentaje2 + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max2 + '"></div>'
-                                    + '</div>'
-                                    + '</div>')
-
-                                if (value.FicHsTrMin < value.FicHsATMin) {
-                                    $("#" + DatoFicha).addClass('bg-danger');
-                                    $("#" + DatoFicha).removeClass('bg-custom');
-                                } else {
-                                    $("#" + DatoFicha).removeClass('bg-danger');
-                                    $("#" + DatoFicha).addClass('bg-custom');
-                                }
-
-                            } else {
-                                $('#ProgressHoras').html('')
-                            }
-
-                        }
-                    });
-                },
-                bProcessing: true,
-                deferRender: true,
-                "ajax": {
-                    url: "GetHoras.php",
-                    type: "GET",
-                    dataSrc: "Horas",
-                    'data': {
-                        Datos
-                    },
-                },
-                columns: [
-                    { "class": "align-middle ls1", "data": "Cod" },
-                    { "class": "align-middle", "data": "Descripcion" },
-                    { "class": "align-middle ls1 fw5", "data": "HsAuto" },
-                    { "class": "align-middle ls1", "data": "HsHechas" },
-                    { "class": "align-middle", "data": "editar" },
-                    { "class": "align-middle", "data": "eliminar" },
-                    // { "class": "align-middle ls1 text-center", "data": "Motivo" },
-                    { "class": "align-middle", "data": "DescMotivo" },
-                    { "class": "align-middle", "data": "Observ" },
-                    { "class": "align-middle w-100", "data": "null" },
-
-                ],
-                paging: false,
-                // scrollY: '100px',
-                scrollX: false,
-                scrollCollapse: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                language: {
-                    "url": "../js/DataTableSpanish.json"
-                },
-            });
-            $('#GetOtrasNov').DataTable({
-                "drawCallback": function (settings) {
-                    $.each(settings.json, function (key, value) {
-                        (value.length > 0) ? $("#CantONov").html("(" + value.length + ")") : $("#CantONov").html("");
-                    });
-                },
-                bProcessing: true,
-                deferRender: true,
-                "ajax": {
-                    url: "GetOtrasNovedades.php",
-                    type: "GET",
-                    dataSrc: "ONovedades",
-                    'data': {
-                        Datos
-                    },
-                },
-
-                columns: [
-                    { "class": "align-middle ls1 text-center", "data": "Cod" },
-                    { "class": "align-middle", "data": "Descripcion" },
-                    { "class": "align-middle ls1 text-right fw5", "data": "FicValor" },
-                    { "class": "align-middle", "data": "Observ" },
-                    { "class": "align-middle", "data": "editar" },
-                    { "class": "align-middle", "data": "eliminar" },
-                    { "class": "align-middle", "data": "Tipo" },
-                    { "class": "align-middle w-100", "data": "null" }
-                ],
-                paging: false,
-                scrollX: false,
-                scrollCollapse: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                language: {
-                    "url": "../js/DataTableSpanish.json"
-                },
-            });
-            var optSelect2 = {
-                MinLength: 0,
-                SelClose: 0,
-                MaxInpLength: 0,
-                delay: 250
-            }
-            $(".selectjs_Novedades").select2({
-                dropdownAutoHeight: true,
-                multiple: false,
-                language: 'es',
-                allowClear: true,
-                placeholder: "Seleccionar Novedad",
-                minimumInputLength: optSelect2.MinLength,
-                minimumResultsForSearch: 10,
-                maximumInputLength: optSelect2.MaxInpLength,
-                selectOnClose: optSelect2.SelClose,
-                language: {
-                    noResults: function () {
-                        return 'No hay resultados..'
-                    },
-                    inputTooLong: function (args) {
-                        var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
-                        if (overChars != 1) {
-                            message += 'es'
-                        }
-                        return message
-                    },
-                    searching: function () {
-                        return 'Buscando..'
-                    },
-                    errorLoading: function () {
-                        return 'Sin datos..'
-                    },
-                    inputTooShort: function () {
-                        return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
-                    },
-                    maximumSelected: function () {
-                        return 'Puede seleccionar solo una opción'
-                    },
-                    removeAllItems: function () {
-                        return "Borrar"
-                    }
-                },
-                ajax: {
-                    url: "../data/getListNovedades.php",
-                    dataType: "json",
-                    type: "POST",
-                    delay: optSelect2.delay,
-                    data: function (params) {
-                        return {
-                            q: params.term,
-                            // Fic: true,
-                            _nt: $("#novTipo").val(),
-                            _nc: $("#novCate").val(),
-                            Datos,
-                        }
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        }
-                    },
-                }
-            })
-            $('.selectjs_Novedades').on('select2:select', function (e) {
-                $('#FicNove').val($(this).val())
-                // console.log($('#FicNove').val())
-                $('.selectjs_NoveCausa').val(null).trigger('change');
-                $("#FicHoras").focus();
-                if ($("#FicHoras").val() != '') {
-                    $('#FicHoras').select();
-                }
-            });
-            $(".selectjs_Novedades").on("select2:unselecting", function (e) {
-                $('.selectjs_NoveCausa').val(null).trigger('change');
-            });
-            $(".selectjs_NoveCausa").select2({
-                multiple: false,
-                language: "es",
-                allowClear: true,
-                placeholder: "Seleccionar Causa",
-                minimumInputLength: optSelect2.MinLength,
-                minimumResultsForSearch: 10,
-                maximumInputLength: optSelect2.MaxInpLength,
-                selectOnClose: optSelect2.SelClose,
-                language: {
-                    noResults: function () {
-                        return 'No hay resultados..'
-                    },
-                    inputTooLong: function (args) {
-                        var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
-                        if (overChars != 1) {
-                            message += 'es'
-                        }
-                        return message
-                    },
-                    searching: function () {
-                        return 'Buscando..'
-                    },
-                    errorLoading: function () {
-                        return 'Sin datos..'
-                    },
-                    inputTooShort: function () {
-                        return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
-                    },
-                    maximumSelected: function () {
-                        return 'Puede seleccionar solo una opción'
-                    },
-                    removeAllItems: function () {
-                        return "Borrar"
-                    }
-                },
-                ajax: {
-                    url: "../data/getListNoveCausa.php",
-                    dataType: "json",
-                    type: "POST",
-                    delay: optSelect2.delay,
-                    data: function (params, page) {
-                        return {
-                            q: params.term,
-                            NovCNove: $("#FicNove").val(),
-                            // NovCNove: 'data',
-                        }
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        }
-                    },
-                }
-            })
-            $(".selectjs_TipoHora").select2({
-                multiple: false,
-                language: "es",
-                placeholder: "Seleccionar Tipo Hora",
-                minimumInputLength: optSelect2.MinLength,
-                minimumResultsForSearch: 10,
-                maximumInputLength: optSelect2.MaxInpLength,
-                selectOnClose: optSelect2.SelClose,
-                language: {
-                    noResults: function () {
-                        return 'No hay resultados..'
-                    },
-                    inputTooLong: function (args) {
-                        var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
-                        if (overChars != 1) {
-                            message += 'es'
-                        }
-                        return message
-                    },
-                    searching: function () {
-                        return 'Buscando..'
-                    },
-                    errorLoading: function () {
-                        return 'Sin datos..'
-                    },
-                    inputTooShort: function () {
-                        return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
-                    },
-                    maximumSelected: function () {
-                        return 'Puede seleccionar solo una opción'
-                    },
-                    removeAllItems: function () {
-                        return "Borrar"
-                    }
-                },
-                ajax: {
-                    url: "../data/getListTipoHora.php",
-                    dataType: "json",
-                    type: "POST",
-                    delay: optSelect2.delay,
-                    data: function (params, page) {
-                        return {
-                            q: params.term,
-                            Datos,
-                            modHora: $("#modHora").val(),
-                            THoCodi: $(".selectjs_TipoHora").val(),
-                        }
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        }
-                    },
-                }
-            })
-            $(".selectjs_MotivoHora").select2({
-                multiple: false,
-                language: "es",
-                allowClear: true,
-                placeholder: "Seleccionar Motivo",
-                minimumInputLength: optSelect2.MinLength,
-                minimumResultsForSearch: 10,
-                maximumInputLength: optSelect2.MaxInpLength,
-                selectOnClose: optSelect2.SelClose,
-                language: {
-                    noResults: function () {
-                        return 'No hay resultados..'
-                    },
-                    inputTooLong: function (args) {
-                        var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
-                        if (overChars != 1) {
-                            message += 'es'
-                        }
-                        return message
-                    },
-                    searching: function () {
-                        return 'Buscando..'
-                    },
-                    errorLoading: function () {
-                        return 'Sin datos..'
-                    },
-                    inputTooShort: function () {
-                        return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
-                    },
-                    maximumSelected: function () {
-                        return 'Puede seleccionar solo una opción'
-                    },
-                    removeAllItems: function () {
-                        return "Borrar"
-                    }
-                },
-                ajax: {
-                    url: "../data/getListMotivoHora.php",
-                    dataType: "json",
-                    type: "POST",
-                    delay: optSelect2.delay,
-                    data: function (params, page) {
-                        return {
-                            q: params.term,
-                            Fic1Hora: $("#Fic1Hora").val(),
-                            // NovCNove: 'data',
-                        }
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        }
-                    },
-                }
-            })
-            $('.selectjs_TipoHora').on('select2:select', function (e) {
-                $('#Fic1Hora').val($(this).val())
-                $('.selectjs_MotivoHora').val(null).trigger('change');
-                $("#Fic1HsAu2").focus();
-                if ($("#Fic1HsAu2").val() != '') {
-                    $('#Fic1HsAu2').select();
-                }
-            });
-            $(".selectjs_TipoHora").on("select2:unselecting", function (e) {
-                $('.selectjs_MotivoHora').val(null).trigger('change');
-            });
-            $(".selectjs_OtrasNovedades").select2({
-                dropdownAutoHeight: true,
-                multiple: false,
-                language: 'es',
-                allowClear: true,
-                placeholder: "Seleccionar Novedad",
-                minimumInputLength: optSelect2.MinLength,
-                minimumResultsForSearch: 10,
-                maximumInputLength: optSelect2.MaxInpLength,
-                selectOnClose: optSelect2.SelClose,
-                language: {
-                    noResults: function () {
-                        return 'No hay resultados..'
-                    },
-                    inputTooLong: function (args) {
-                        var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
-                        if (overChars != 1) {
-                            message += 'es'
-                        }
-                        return message
-                    },
-                    searching: function () {
-                        return 'Buscando..'
-                    },
-                    errorLoading: function () {
-                        return 'Sin datos..'
-                    },
-                    inputTooShort: function () {
-                        return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
-                    },
-                    maximumSelected: function () {
-                        return 'Puede seleccionar solo una opción'
-                    },
-                    removeAllItems: function () {
-                        return "Borrar"
-                    }
-                },
-                ajax: {
-                    url: "../data/getListOtrasNovedades.php",
-                    dataType: "json",
-                    type: "POST",
-                    delay: optSelect2.delay,
-                    data: function (params) {
-                        return {
-                            q: params.term,
-                            Datos,
-                        }
-                    },
-                    processResults: function (data) {
-                        return {
-                            results: data
-                        }
-                    },
-                }
-            })
-            $('.selectjs_OtrasNovedades').on('select2:select', function (e) {
-                $("#FicValor").focus();
-                if ($("#FicValor").val() != '') {
-                    $('#FicValor').select();
-                }
-            });
-
-            function CierraModalGeneral() {
-                $("#CierraModalGeneral").prop("disabled", true)
-                $("#CierraModalGeneral").html("Procesando")
-                $("#ProcesarLegajo").prop("disabled", true)
-                $("#ProcesarLegajo").html("Procesando")
-            }
-            function DisabledClean() {
-                $("#ProcesarLegajo").attr("disabled", false);
-                $("#ProcesarLegajo").html("Procesar");
-                $("#CierraModalGeneral").prop("disabled", false)
-                $("#CierraModalGeneral").html("Cerrar")
-                $(".respuesta_fichada").html("");
-                $(".submit_btn").prop("disabled", false);
-                $(".submit_btn_mod").prop("disabled", false);
-                $(".respuesta_novedad").html('');
-            }
-            function RefreshDataTables() {
-                DisabledClean();
-                $('#GetFichadas').DataTable().ajax.reload(null, false);
-                $('#GetNovedades').DataTable().ajax.reload(null, false);
-                $('#GetHoras').DataTable().ajax.reload(null, false);
-                $('#GetOtrasNov').DataTable().ajax.reload(null, false);
-                ActualizaTablas();
-                GetCierre();
-                // refrescaFichas();
-                // GetCitacion();
-            };
-            $('#RefreshModal').click(function (e) {
-                // e.preventDefault();
-                CheckSesion()
-                RefreshDataTables();
-                // e.stopImmediatePropagation();
-            });
-            /** ALTA Y MOD FICHADA */
-            $(".Form_Fichadas").bind("submit", function (e) {
-                e.preventDefault();
-                CheckSesion()
-                $.ajax({
-                    type: $(this).attr("method"),
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    // async : false,
-                    beforeSend: function (data) {
-                        CierraModalGeneral()
-                        $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                        $(".respuesta_fichada").html("Procesando.!");
-                        $(".submit_btn").prop("disabled", true);
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            RefreshDataTables();
-                            DisabledClean();
-                            $(".RegHora").val('')
-                            $(".Form_Fichadas").addClass('d-none')
-                            ClearFormFic();
-                            $.notifyClose();
-                            notify('Fichada creada.<br>' + data.Mensaje, 'success', 5000, 'right')
+                        if (value.FicHsTrMin < value.FicHsATMin) {
+                            $("#" + DatoFicha).addClass('bg-danger');
+                            $("#" + DatoFicha).removeClass('bg-custom');
                         } else {
-                            DisabledClean();
-                            RefreshDataTables();
-                            ClearFormFic();
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
+                            $("#" + DatoFicha).removeClass('bg-danger');
+                            $("#" + DatoFicha).addClass('bg-custom');
                         }
-                    }
-                });
-                e.stopImmediatePropagation();
-            });
-            $(document).on("click", ".mod_Fic", function (e) {
-                CheckSesion()
-                OcultaNavTab()
-                $(".Form_Fichadas_Mod").removeClass('d-none')
-                $(".Form_Fichadas_Mod").addClass('animate__animated animate__fadeIn')
-                var Hora = $(this).attr('data2');
-                var Fecha = $(this).attr('data3');
-                var Datos = $(this).attr('data');
-                $("#datos_fichada_mod").val(Datos).trigger('change');
-                $("#RegFech_mod").val(Fecha).trigger('change');
-                $("#RegHora_mod").val(Hora).trigger('change');
-                $(".submit_btn").prop("disabled", false);
-                $('#RegHora_mod').select();
-                $("#xsTFic").html('Modificar Fichada')
-            });
-            $(".Form_Fichadas_Mod").bind("submit", function (e) {
-                e.preventDefault();
-                CheckSesion()
-                $.ajax({
-                    type: $(this).attr("method"),
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    cache: false,
-                    beforeSend: function (data) {
-                        $(".submit_btn").prop('disabled', true);
-                        CierraModalGeneral()
-                        $(".submit_btn").prop("disabled", true);
-                        $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            $(".submit_btn").prop('disabled', false);
-                            RefreshDataTables();
-                            DisabledClean();
-                            $("#RegHora_mod").val('');
-                            $(".Form_Fichadas_Mod").addClass('d-none');
-                            ClearFormFic();
-                            $.notifyClose();
-                            notify('Fichada modificada.<br>' + data.Mensaje, 'success', 5000, 'right')
-                        } else {
-                            DisabledClean();
-                            ClearFormFic();
-                            $(".submit_btn").prop('disabled', false);
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
-                        }
-                    }
-                });
-                e.stopImmediatePropagation();
-            });
-            /** BAJA FICHADA */
-            $(document).on('click', '.baja_Fic', function (e) {
-                e.preventDefault();
-                CheckSesion()
-                var RegHora = $(this).attr('data2');
-                var Datos = $(this).attr('data');
 
-                bootbox.confirm({
-                    message: '<span class="fonth fw5">Eliminar Fichada</span><br><span class="fontq fw4">¿Confirma eliminar la Fichada: ' + RegHora + 'Hs.?</span>',
-                    // message: '',
-                    buttons: {
-                        confirm: {
-                            label: 'Aceptar',
-                            className: 'btn-custom text-white btn-sm fontq'
-                        },
-                        cancel: {
-                            label: 'Cancelar',
-                            className: 'btn-light btn-sm fontq text-secondary'
-                        }
-                    },
-                    callback: function (result) {
-                        $('.baja_Fic').unbind('click');
-                        if (result) {
-                            $.ajax({
-                                type: "POST",
-                                url: "insert.php",
-                                'data': {
-                                    baja_fichada: true,
-                                    Datos
-                                },
-                                beforeSend: function (data) {
-                                    $(".baja_Fic").addClass('d-none')
-                                    $.notifyClose();
-                                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    CierraModalGeneral()
-                                },
-                                success: function (data) {
-                                    if (data.status == "ok") {
-                                        DisabledClean();
-                                        $(".baja_Fic").removeClass('d-none')
-                                        RefreshDataTables();
-                                        $(".Form_Fichadas").addClass('d-none')
-                                        $(".respuesta_baja_fichada").addClass('d-none')
-                                        $.notifyClose();
-                                        notify('Fichada Eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
-                                    } else {
-                                        DisabledClean();
-                                        $(".baja_Fic").removeClass('d-none')
-                                        $(".respuesta_baja_fichada").removeClass('d-none')
-                                        $.notifyClose();
-                                        notify(data.Mensaje, 'danger', 5000, 'right')
-                                    }
-                                }
-                            });
-                        }
+                    } else {
+                        $('#ProgressHoras').html('')
                     }
-                });
-                e.stopImmediatePropagation();
+
+                }
             });
-            /** ALTA, MOD, BAJA NOVEDADES */
-            $(document).ready(function () {
-                $(".Form_Novedad").bind("submit", function (e) {
-                    e.preventDefault();
-                    CheckSesion()
+        },
+        bProcessing: true,
+        deferRender: true,
+        "ajax": {
+            url: "GetHoras.php",
+            type: "GET",
+            dataSrc: "Horas",
+            'data': {
+                Datos
+            },
+        },
+        columns: [
+            { "class": "align-middle ls1", "data": "Cod" },
+            { "class": "align-middle", "data": "Descripcion" },
+            { "class": "align-middle ls1 fw5", "data": "HsAuto" },
+            { "class": "align-middle ls1", "data": "HsHechas" },
+            { "class": "align-middle", "data": "editar" },
+            { "class": "align-middle", "data": "eliminar" },
+            // { "class": "align-middle ls1 text-center", "data": "Motivo" },
+            { "class": "align-middle", "data": "DescMotivo" },
+            { "class": "align-middle", "data": "Observ" },
+            { "class": "align-middle w-100", "data": "null" },
+
+        ],
+        paging: false,
+        // scrollY: '100px',
+        scrollX: false,
+        scrollCollapse: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        language: {
+            "url": "../js/DataTableSpanish.json"
+        },
+    });
+    $('#GetOtrasNov').DataTable({
+        "drawCallback": function (settings) {
+            $.each(settings.json, function (key, value) {
+                (value.length > 0) ? $("#CantONov").html("(" + value.length + ")") : $("#CantONov").html("");
+            });
+        },
+        bProcessing: true,
+        deferRender: true,
+        "ajax": {
+            url: "GetOtrasNovedades.php",
+            type: "GET",
+            dataSrc: "ONovedades",
+            'data': {
+                Datos
+            },
+        },
+
+        columns: [
+            { "class": "align-middle ls1 text-center", "data": "Cod" },
+            { "class": "align-middle", "data": "Descripcion" },
+            { "class": "align-middle ls1 text-right fw5", "data": "FicValor" },
+            { "class": "align-middle", "data": "Observ" },
+            { "class": "align-middle", "data": "editar" },
+            { "class": "align-middle", "data": "eliminar" },
+            { "class": "align-middle", "data": "Tipo" },
+            { "class": "align-middle w-100", "data": "null" }
+        ],
+        paging: false,
+        scrollX: false,
+        scrollCollapse: false,
+        searching: false,
+        info: false,
+        ordering: false,
+        language: {
+            "url": "../js/DataTableSpanish.json"
+        },
+    });
+    var optSelect2 = {
+        MinLength: 0,
+        SelClose: 0,
+        MaxInpLength: 0,
+        delay: 250
+    }
+    $(".selectjs_Novedades").select2({
+        dropdownAutoHeight: true,
+        multiple: false,
+        language: 'es',
+        allowClear: true,
+        placeholder: "Seleccionar Novedad",
+        minimumInputLength: optSelect2.MinLength,
+        minimumResultsForSearch: 10,
+        maximumInputLength: optSelect2.MaxInpLength,
+        selectOnClose: optSelect2.SelClose,
+        language: {
+            noResults: function () {
+                return 'No hay resultados..'
+            },
+            inputTooLong: function (args) {
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                if (overChars != 1) {
+                    message += 'es'
+                }
+                return message
+            },
+            searching: function () {
+                return 'Buscando..'
+            },
+            errorLoading: function () {
+                return 'Sin datos..'
+            },
+            inputTooShort: function () {
+                return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
+            },
+            maximumSelected: function () {
+                return 'Puede seleccionar solo una opción'
+            },
+            removeAllItems: function () {
+                return "Borrar"
+            }
+        },
+        ajax: {
+            url: "../data/getListNovedades.php",
+            dataType: "json",
+            type: "POST",
+            delay: optSelect2.delay,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    // Fic: true,
+                    _nt: $("#novTipo").val(),
+                    _nc: $("#novCate").val(),
+                    Datos,
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+    $('.selectjs_Novedades').on('select2:select', function (e) {
+        $('#FicNove').val($(this).val())
+        // console.log($('#FicNove').val())
+        $('.selectjs_NoveCausa').val(null).trigger('change');
+        $("#FicHoras").focus();
+        if ($("#FicHoras").val() != '') {
+            $('#FicHoras').select();
+        }
+    });
+    $(".selectjs_Novedades").on("select2:unselecting", function (e) {
+        $('.selectjs_NoveCausa').val(null).trigger('change');
+    });
+    $(".selectjs_NoveCausa").select2({
+        multiple: false,
+        language: "es",
+        allowClear: true,
+        placeholder: "Seleccionar Causa",
+        minimumInputLength: optSelect2.MinLength,
+        minimumResultsForSearch: 10,
+        maximumInputLength: optSelect2.MaxInpLength,
+        selectOnClose: optSelect2.SelClose,
+        language: {
+            noResults: function () {
+                return 'No hay resultados..'
+            },
+            inputTooLong: function (args) {
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                if (overChars != 1) {
+                    message += 'es'
+                }
+                return message
+            },
+            searching: function () {
+                return 'Buscando..'
+            },
+            errorLoading: function () {
+                return 'Sin datos..'
+            },
+            inputTooShort: function () {
+                return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
+            },
+            maximumSelected: function () {
+                return 'Puede seleccionar solo una opción'
+            },
+            removeAllItems: function () {
+                return "Borrar"
+            }
+        },
+        ajax: {
+            url: "../data/getListNoveCausa.php",
+            dataType: "json",
+            type: "POST",
+            delay: optSelect2.delay,
+            data: function (params, page) {
+                return {
+                    q: params.term,
+                    NovCNove: $("#FicNove").val(),
+                    // NovCNove: 'data',
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+    $(".selectjs_TipoHora").select2({
+        multiple: false,
+        language: "es",
+        placeholder: "Seleccionar Tipo Hora",
+        minimumInputLength: optSelect2.MinLength,
+        minimumResultsForSearch: 10,
+        maximumInputLength: optSelect2.MaxInpLength,
+        selectOnClose: optSelect2.SelClose,
+        language: {
+            noResults: function () {
+                return 'No hay resultados..'
+            },
+            inputTooLong: function (args) {
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                if (overChars != 1) {
+                    message += 'es'
+                }
+                return message
+            },
+            searching: function () {
+                return 'Buscando..'
+            },
+            errorLoading: function () {
+                return 'Sin datos..'
+            },
+            inputTooShort: function () {
+                return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
+            },
+            maximumSelected: function () {
+                return 'Puede seleccionar solo una opción'
+            },
+            removeAllItems: function () {
+                return "Borrar"
+            }
+        },
+        ajax: {
+            url: "../data/getListTipoHora.php",
+            dataType: "json",
+            type: "POST",
+            delay: optSelect2.delay,
+            data: function (params, page) {
+                return {
+                    q: params.term,
+                    Datos,
+                    modHora: $("#modHora").val(),
+                    THoCodi: $(".selectjs_TipoHora").val(),
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+    $(".selectjs_MotivoHora").select2({
+        multiple: false,
+        language: "es",
+        allowClear: true,
+        placeholder: "Seleccionar Motivo",
+        minimumInputLength: optSelect2.MinLength,
+        minimumResultsForSearch: 10,
+        maximumInputLength: optSelect2.MaxInpLength,
+        selectOnClose: optSelect2.SelClose,
+        language: {
+            noResults: function () {
+                return 'No hay resultados..'
+            },
+            inputTooLong: function (args) {
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                if (overChars != 1) {
+                    message += 'es'
+                }
+                return message
+            },
+            searching: function () {
+                return 'Buscando..'
+            },
+            errorLoading: function () {
+                return 'Sin datos..'
+            },
+            inputTooShort: function () {
+                return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
+            },
+            maximumSelected: function () {
+                return 'Puede seleccionar solo una opción'
+            },
+            removeAllItems: function () {
+                return "Borrar"
+            }
+        },
+        ajax: {
+            url: "../data/getListMotivoHora.php",
+            dataType: "json",
+            type: "POST",
+            delay: optSelect2.delay,
+            data: function (params, page) {
+                return {
+                    q: params.term,
+                    Fic1Hora: $("#Fic1Hora").val(),
+                    // NovCNove: 'data',
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+    $('.selectjs_TipoHora').on('select2:select', function (e) {
+        $('#Fic1Hora').val($(this).val())
+        $('.selectjs_MotivoHora').val(null).trigger('change');
+        $("#Fic1HsAu2").focus();
+        if ($("#Fic1HsAu2").val() != '') {
+            $('#Fic1HsAu2').select();
+        }
+    });
+    $(".selectjs_TipoHora").on("select2:unselecting", function (e) {
+        $('.selectjs_MotivoHora').val(null).trigger('change');
+    });
+    $(".selectjs_OtrasNovedades").select2({
+        dropdownAutoHeight: true,
+        multiple: false,
+        language: 'es',
+        allowClear: true,
+        placeholder: "Seleccionar Novedad",
+        minimumInputLength: optSelect2.MinLength,
+        minimumResultsForSearch: 10,
+        maximumInputLength: optSelect2.MaxInpLength,
+        selectOnClose: optSelect2.SelClose,
+        language: {
+            noResults: function () {
+                return 'No hay resultados..'
+            },
+            inputTooLong: function (args) {
+                var message = 'Máximo ' + optSelect2.MaxInpLength + ' caracteres. Elimine ' + overChars + ' caracter';
+                if (overChars != 1) {
+                    message += 'es'
+                }
+                return message
+            },
+            searching: function () {
+                return 'Buscando..'
+            },
+            errorLoading: function () {
+                return 'Sin datos..'
+            },
+            inputTooShort: function () {
+                return 'Ingresar ' + optSelect2.MinLength + ' o mas caracteres'
+            },
+            maximumSelected: function () {
+                return 'Puede seleccionar solo una opción'
+            },
+            removeAllItems: function () {
+                return "Borrar"
+            }
+        },
+        ajax: {
+            url: "../data/getListOtrasNovedades.php",
+            dataType: "json",
+            type: "POST",
+            delay: optSelect2.delay,
+            data: function (params) {
+                return {
+                    q: params.term,
+                    Datos,
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: data
+                }
+            },
+        }
+    })
+    $('.selectjs_OtrasNovedades').on('select2:select', function (e) {
+        $("#FicValor").focus();
+        if ($("#FicValor").val() != '') {
+            $('#FicValor').select();
+        }
+    });
+
+    function CierraModalGeneral() {
+        $("#CierraModalGeneral").prop("disabled", true)
+        $("#CierraModalGeneral").html("Procesando")
+        $("#ProcesarLegajo").prop("disabled", true)
+        $("#ProcesarLegajo").html("Procesando")
+    }
+    function DisabledClean() {
+        $("#ProcesarLegajo").attr("disabled", false);
+        $("#ProcesarLegajo").html("Procesar");
+        $("#CierraModalGeneral").prop("disabled", false)
+        $("#CierraModalGeneral").html("Cerrar")
+        $(".respuesta_fichada").html("");
+        $(".submit_btn").prop("disabled", false);
+        $(".submit_btn_mod").prop("disabled", false);
+        $(".respuesta_novedad").html('');
+    }
+    function RefreshDataTables() {
+        DisabledClean();
+        $('#GetFichadas').DataTable().ajax.reload(null, false);
+        $('#GetNovedades').DataTable().ajax.reload(null, false);
+        $('#GetHoras').DataTable().ajax.reload(null, false);
+        $('#GetOtrasNov').DataTable().ajax.reload(null, false);
+        ActualizaTablas();
+        GetCierre();
+        // refrescaFichas();
+        // GetCitacion();
+    };
+    $('#RefreshModal').click(function (e) {
+        // e.preventDefault();
+        CheckSesion()
+        RefreshDataTables();
+        // e.stopImmediatePropagation();
+    });
+    /** ALTA Y MOD FICHADA */
+    $(".Form_Fichadas").bind("submit", function (e) {
+        e.preventDefault();
+        CheckSesion()
+        $.ajax({
+            type: $(this).attr("method"),
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            // async : false,
+            beforeSend: function (data) {
+                CierraModalGeneral()
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                $(".respuesta_fichada").html("Procesando.!");
+                $(".submit_btn").prop("disabled", true);
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    RefreshDataTables();
+                    DisabledClean();
+                    $(".RegHora").val('')
+                    $(".Form_Fichadas").addClass('d-none')
+                    ClearFormFic();
+                    $.notifyClose();
+                    notify('Fichada creada.<br>' + data.Mensaje, 'success', 5000, 'right')
+                } else {
+                    DisabledClean();
+                    RefreshDataTables();
+                    ClearFormFic();
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+    $(document).on("click", ".mod_Fic", function (e) {
+        CheckSesion()
+        OcultaNavTab()
+        $(".Form_Fichadas_Mod").removeClass('d-none')
+        $(".Form_Fichadas_Mod").addClass('animate__animated animate__fadeIn')
+        let Hora = $(this).attr('data2');
+        let Fecha = $(this).attr('data3');
+        let Datos = $(this).attr('data');
+        let RegFechaDR = $(this).attr('data-fechadr');
+        singleDatePicker('#RegFech_mod', 'center', 'down')
+        $('#RegFech_mod').data('daterangepicker').setStartDate(RegFechaDR);
+        $('#RegFech_mod').data('daterangepicker').setEndDate(RegFechaDR);
+        $("#datos_fichada_mod").val(Datos).trigger('change');
+        // $("#RegFech_mod").val(Fecha).trigger('change');
+        $("#RegHora_mod").val(Hora).trigger('change');
+        $(".submit_btn").prop("disabled", false);
+        $('#RegHora_mod').select();
+        $("#xsTFic").html('Modificar Fichada')
+    });
+    $(".Form_Fichadas_Mod").bind("submit", function (e) {
+        e.preventDefault();
+        CheckSesion()
+        $.ajax({
+            type: $(this).attr("method"),
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            cache: false,
+            beforeSend: function (data) {
+                $(".submit_btn").prop('disabled', true);
+                CierraModalGeneral()
+                $(".submit_btn").prop("disabled", true);
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    $(".submit_btn").prop('disabled', false);
+                    RefreshDataTables();
+                    DisabledClean();
+                    $("#RegHora_mod").val('');
+                    $(".Form_Fichadas_Mod").addClass('d-none');
+                    ClearFormFic();
+                    $.notifyClose();
+                    notify('Fichada modificada.<br>' + data.Mensaje, 'success', 5000, 'right')
+                } else {
+                    DisabledClean();
+                    ClearFormFic();
+                    $(".submit_btn").prop('disabled', false);
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+    /** BAJA FICHADA */
+    $(document).on('click', '.baja_Fic', function (e) {
+        e.preventDefault();
+        CheckSesion()
+        var RegHora = $(this).attr('data2');
+        var Datos = $(this).attr('data');
+
+        bootbox.confirm({
+            message: '<span class="fonth fw5">Eliminar Fichada</span><br><span class="fontq fw4">¿Confirma eliminar la Fichada: ' + RegHora + 'Hs.?</span>',
+            // message: '',
+            buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-custom text-white btn-sm fontq'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-light btn-sm fontq text-secondary'
+                }
+            },
+            callback: function (result) {
+                $('.baja_Fic').unbind('click');
+                if (result) {
                     $.ajax({
-                        type: $(this).attr("method"),
-                        // contetnType: "application_json; charset=utf-8",
-                        url: $(this).attr("action"),
-                        data: $(this).serialize(),
+                        type: "POST",
+                        url: "insert.php",
+                        'data': {
+                            baja_fichada: true,
+                            Datos
+                        },
                         beforeSend: function (data) {
+                            $(".baja_Fic").addClass('d-none')
                             $.notifyClose();
                             notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
                             CierraModalGeneral()
-                            $(".submit_btn_mod").prop("disabled", true);
                         },
                         success: function (data) {
                             if (data.status == "ok") {
                                 DisabledClean();
-                                $(".Form_Novedad").addClass('d-none')
-                                /** refresh datatable */
+                                $(".baja_Fic").removeClass('d-none')
                                 RefreshDataTables();
-                                /** vaciamos el form */
-                                ClearFormNov()
-                                /** Notificación */
-                                if (data.tipo == 'mod') {
-                                    var Textsuccess = 'Novedad modificada.';
-                                } else {
-                                    var Textsuccess = 'Novedad creada.';
-                                }
+                                $(".Form_Fichadas").addClass('d-none')
+                                $(".respuesta_baja_fichada").addClass('d-none')
                                 $.notifyClose();
-                                notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                                notify('Fichada Eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
                             } else {
                                 DisabledClean();
+                                $(".baja_Fic").removeClass('d-none')
+                                $(".respuesta_baja_fichada").removeClass('d-none')
                                 $.notifyClose();
                                 notify(data.Mensaje, 'danger', 5000, 'right')
                             }
                         }
                     });
-                    e.stopImmediatePropagation();
-                });
-                $(document).on("click", "#FicCate", function (e) {
-                    CheckSesion()
-                    if ($('#FicCate').is(':checked')) {
-                        $('#novCate').val('1').trigger('change');
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+    /** ALTA, MOD, BAJA NOVEDADES */
+    $(document).ready(function () {
+        $(".Form_Novedad").bind("submit", function (e) {
+            e.preventDefault();
+            CheckSesion()
+            $.ajax({
+                type: $(this).attr("method"),
+                // contetnType: "application_json; charset=utf-8",
+                url: $(this).attr("action"),
+                data: $(this).serialize(),
+                beforeSend: function (data) {
+                    $.notifyClose();
+                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                    CierraModalGeneral()
+                    $(".submit_btn_mod").prop("disabled", true);
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        DisabledClean();
+                        $(".Form_Novedad").addClass('d-none')
+                        /** refresh datatable */
+                        RefreshDataTables();
+                        /** vaciamos el form */
+                        ClearFormNov()
+                        /** Notificación */
+                        if (data.tipo == 'mod') {
+                            var Textsuccess = 'Novedad modificada.';
+                        } else {
+                            var Textsuccess = 'Novedad creada.';
+                        }
+                        $.notifyClose();
+                        notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                     } else {
-                        $('#novCate').val('2').trigger('change');
-                        $('.selectjs_Novedades').val(null).trigger("change");
-                        $('.selectjs_NoveCausa').val(null).trigger("change");
-                    }
-                });
-                $(document).on("click", ".mod_Nov", function (e) {
-                    CheckSesion()
-                    $("#xsTNov").html('Modificar Novedad')
-                    // ClearFormNov();
-                    OcultaNavTab()
-                    $(".submit_btn_mod").prop("disabled", false);
-                    $(".Form_Novedad").removeClass('d-none')
-                    $(".Form_Novedad").addClass('animate__animated animate__fadeIn')
-                    $(".submit_btn_mod").html('Modificar');
-                    $('#FicHoras').select();
-
-                    var DatosNov = $(this).attr('data'); /** Cod Nov, Tipo y Categoria */
-                    var nov_novedad = $(this).attr('data2');
-                    var nov_descripcion = $(this).attr('data3');
-                    var CodCaus = $(this).attr('data4');
-                    var DescCausa = $(this).attr('data5');
-                    var Obserb = $(this).attr('data6');
-                    var FicJust = $(this).attr('data7');
-                    var FicCate = $(this).attr('data8');
-                    var nov_horas = $(this).attr('data9');
-                    var novTipo = $(this).attr('data10');
-
-                    $('#novTipo').val(novTipo).trigger('change');
-
-                    if (FicJust == 1) {
-                        $("#FicJust").prop('checked', true);
-                    }
-                    if (FicCate == 2) {
-                        $("#FicCate").prop('checked', true);
-                        $("#FicCate").prop('disabled', true);
-                    }
-
-                    var newOption = new Option(nov_descripcion, nov_novedad, true, true);
-                    $('.selectjs_Novedades').append(newOption).trigger('change');
-                    if (CodCaus != 0) {
-                        var newOption = new Option(DescCausa, CodCaus, true, true);
-                        $('.selectjs_NoveCausa').append(newOption).trigger('change');
-                    }
-                    $("#FicObse").val(Obserb).trigger('change');
-                    $("#alta_novedad").val("Mod")
-                    $("#CNove").val(DatosNov).trigger('change');
-                    $("#FicHoras").val(nov_horas).trigger('change');
-                });
-                /** BAJA NOVEDAD */
-                $(document).on('click', '.baja_Nov', function (e) {
-                    e.preventDefault();
-                    CheckSesion()
-                    var NovDes = $(this).attr('data2');
-                    var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
-                    bootbox.confirm({
-                        message: '<span class="fonth fw5">Eliminar Novedad</span><br><span class="fontq fw4">¿Confirma eliminar la Novedad: ' + NovDes + 'Hs.?</span>',
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
-                        },
-                        callback: function (result) {
-                            $('.baja_Nov').unbind('click');
-                            if (result) {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "insert.php",
-                                    'data': {
-                                        baja_novedad: true,
-                                        Datos,
-                                        NovDes
-                                    },
-                                    beforeSend: function (data) {
-                                        $(".baja_Nov").addClass('d-none')
-                                        $.notifyClose();
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                        CierraModalGeneral()
-                                    },
-
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            DisabledClean();
-                                            $(".Form_Novedad").addClass('d-none')
-                                            /** refresh datatable */
-                                            RefreshDataTables();
-                                            $.notifyClose();
-                                            notify('Novedad eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
-                                        } else {
-                                            DisabledClean();
-                                            RefreshDataTables();
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                    e.stopImmediatePropagation()
-                });
-                // });
-            });
-            /** ALTA, MOD, BAJA HORA */
-            $(".Form_Horas").bind("submit", function (e) {
-                e.preventDefault();
-                CheckSesion()
-                $.ajax({
-                    type: $(this).attr("method"),
-                    // contetnType: "application_json; charset=utf-8",
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    beforeSend: function (data) {
+                        DisabledClean();
                         $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                        CierraModalGeneral()
-                        $(".submit_btn_HorMod").prop("disabled", true);
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            DisabledClean();
-                            /** vaciamos el form */
-                            ClearFormHora()
-                            /** refresh datatable */
-                            RefreshDataTables();
-                            /** Notificación */
-                            if (data.tipo == 'mod') {
-                                var Textsuccess = 'Hora modificada.';
-                            } else {
-                                var Textsuccess = 'Hora cargada.';
-                            }
-                            $.notifyClose();
-                            notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
-                            /** refresh datatable */
-                        } else {
-                            DisabledClean();
-                            $(".submit_btn_HorMod").prop("disabled", false);
-                            /** refresh datatable */
-                            RefreshDataTables();
-                            $(".respuesta_Horas").html("");
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
-                        }
+                        notify(data.Mensaje, 'danger', 5000, 'right')
                     }
-                });
-                e.stopImmediatePropagation();
-            });
-
-            $(document).on("click", ".mod_hora", function (e) {
-                CheckSesion()
-                e.preventDefault();
-                $("#xsTHor").html('Modificar Horas')
-                $(".Form_Horas").removeClass('d-none')
-                $(".Form_Horas").addClass('animate__animated animate__fadeIn')
-                $(".submit_btn_HorMod").html('Modificar');
-                $("#alta_horas").val("mod").trigger('change');
-                $("#modHora").val("1").trigger('change');
-                $(".submit_btn_HorMod").prop("disabled", false);
-
-                var FicHora = $(this).attr('data');
-                var FicHsAu = $(this).attr('data1');
-                var FicHsAu2 = $(this).attr('data2');
-                var HoraDesc = $(this).attr('data3');
-                var Motivo = $(this).attr('data4');
-                var DescMotivo = $(this).attr('data5');
-                var Observ = $(this).attr('data6');
-
-                var newOption = new Option(HoraDesc, FicHora, true, true);
-                $('.selectjs_TipoHora').append(newOption).trigger('change');
-
-                if (Motivo != 0) {
-                    var newOption = new Option(DescMotivo, Motivo, true, true);
-                    $('.selectjs_MotivoHora').append(newOption).trigger('change');
-                }
-                $("#Fic1Observ").val(Observ).trigger('change');
-                $("#Fic1HsAu2").val(FicHsAu2).trigger('change');
-                $("#FicHsAu").val(FicHsAu);
-
-                $("#Fic1HsAu2").focus();
-                $('#Fic1HsAu2').select();
-
-            });
-            /** BAJA HORA */
-            $(document).on('click', '.baja_Hora', function (e) {
-                e.preventDefault();
-                CheckSesion()
-                var HoraDesc = $(this).attr('data2');
-                var Datos = $(this).attr('data'); /** FicHora, FicFech, FicLega */
-                bootbox.confirm({
-                    message: '<span class="fonth fw5">Eliminar Hora</span><br><span class="fontq fw4">¿Confirma eliminar la Hora: ' + HoraDesc + 'Hs.?</span>',
-                    // message: '',
-                    buttons: {
-                        confirm: {
-                            label: 'Aceptar',
-                            className: 'btn-custom text-white btn-sm fontq'
-                        },
-                        cancel: {
-                            label: 'Cancelar',
-                            className: 'btn-light btn-sm fontq text-secondary'
-                        }
-                    },
-                    callback: function (result) {
-                        $('.baja_Hora').unbind('click');
-                        if (result) {
-                            $.ajax({
-                                type: "POST",
-                                url: "insert.php",
-                                'data': {
-                                    baja_Hora: true,
-                                    Datos,
-                                    HoraDesc
-                                },
-                                beforeSend: function (data) {
-                                    $.notifyClose();
-                                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    $(".baja_Hora").addClass('d-none')
-                                    CierraModalGeneral()
-                                },
-                                success: function (data) {
-                                    if (data.status == "ok") {
-                                        DisabledClean();
-                                        $(".Form_Horas").addClass('d-none')
-                                        $(".baja_Hora").removeClass('d-none')
-                                        /** refresh datatable */
-                                        RefreshDataTables();
-                                        $.notifyClose();
-                                        notify('Hora eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
-                                    } else {
-                                        DisabledClean();
-                                        RefreshDataTables();;
-                                        $.notifyClose();
-                                        notify(data.Mensaje, 'danger', 5000, 'right')
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-                e.stopImmediatePropagation();
-            });
-            // });
-            /** ALTA, MOD, BAJA OTRAS NOVEDADES */
-            $(".Form_OtraNovedad").bind("submit", function (e) {
-                e.preventDefault();
-                CheckSesion()
-                $.ajax({
-                    type: $(this).attr("method"),
-                    // contetnType: "application_json; charset=utf-8",
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    beforeSend: function (data) {
-                        $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                        CierraModalGeneral()
-                        $(".submit_btn_OtrasNov").prop("disabled", true);
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            DisabledClean();
-                            /** vaciamos el form */
-                            ClearFormONov()
-                            /** refresh datatable */
-                            RefreshDataTables();
-                            /** Notificación */
-                            if (data.tipo == 'mod') {
-                                var Textsuccess = 'Novedad modificada.';
-                            } else {
-                                var Textsuccess = 'Novedad creada.';
-                            }
-                            $.notifyClose();
-                            notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
-                        } else {
-                            $(".submit_btn_OtrasNov").prop("disabled", false);
-                            $(".respuesta_OtrasNov").html("");
-                            DisabledClean();
-                            RefreshDataTables();
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
-                        }
-                    }
-                });
-                e.stopImmediatePropagation();
-            });
-            $(document).on("click", ".mod_ONov", function (e) {
-                e.preventDefault();
-                CheckSesion()
-                ClearFormONov();
-                $("#xsTOnov").html('Modificar Novedad')
-                $(".submit_btn_OtrasNov").prop("disabled", false);
-                $(".Form_OtraNovedad").removeClass('d-none')
-                $(".Form_OtraNovedad").addClass('animate__animated animate__fadeIn')
-                $(".submit_btn_OtrasNov").html('Modificar');
-                $("#alta_OtrasNov").val("mod").trigger('change');
-                // var DatosONov = $(this).attr('data'); //** FicOnov, FicFech, FicLega */
-                var Descrip = $(this).attr('data1');
-                var FicObsN = $(this).attr('data2');
-                var FicValor = $(this).attr('data3');
-                var FicONov = $(this).attr('data4');
-                var newOption = new Option(Descrip, FicONov, true, true);
-                $('.selectjs_OtrasNovedades').append(newOption).trigger('change');
-                $("#FicValor").val(FicValor).trigger('change');
-                $("#FicObsN").val(FicObsN).trigger('change');
-                $("#FicValor").focus();
-                if ($("#FicValor").val() != '') {
-                    $('#FicValor').select();
-                }
-                e.stopImmediatePropagation();
-            });
-            /** BAJA OTRA NOVEDAD */
-            $(document).on('click', '.baja_ONov', function (e) {
-                e.preventDefault();
-                CheckSesion()
-                var Descrip = $(this).attr('data2');
-                var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
-                bootbox.confirm({
-                    message: '<span class="fonth fw5">Eliminar Novedad</span><br><span class="fontq fw4">¿Confirma eliminar la Novedad: ' + Descrip + '?</span>',
-                    // message: '',
-                    buttons: {
-                        confirm: {
-                            label: 'Aceptar',
-                            className: 'btn-custom text-white btn-sm fontq'
-                        },
-                        cancel: {
-                            label: 'Cancelar',
-                            className: 'btn-light btn-sm fontq text-secondary'
-                        }
-                    },
-                    callback: function (result) {
-                        if (result) {
-                            $.ajax({
-                                type: "POST",
-                                url: "insert.php",
-                                'data': {
-                                    baja_ONov: true,
-                                    Datos,
-                                    Descrip
-                                },
-                                beforeSend: function (data) {
-                                    CierraModalGeneral()
-                                    $.notifyClose();
-                                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                },
-                                success: function (data) {
-                                    if (data.status == "ok") {
-                                        DisabledClean();
-                                        $(".respuesta_OtrasNov").html('');
-                                        $.notifyClose();
-                                        notify('Novedad eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
-                                        /** refresh datatable */
-                                        RefreshDataTables();
-                                    } else {
-                                        DisabledClean();
-                                        RefreshDataTables();
-                                        $.notifyClose();
-                                        notify(data.Mensaje, 'danger', 5000, 'right')
-                                    }
-                                }
-                            });
-                        }
-                    }
-                });
-                // e.stopImmediatePropagation();
-            });
-            /** ALTA, CITACION */
-            $(".Form_Citacion").bind("submit", function (e) {
-                CheckSesion()
-                e.preventDefault();
-                $.ajax({
-                    type: $(this).attr("method"),
-                    url: $(this).attr("action"),
-                    data: $(this).serialize(),
-                    beforeSend: function (data) {
-                        $.notifyClose();
-                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                        $(".submit_btn_Citación").prop("disabled", true);
-                        CierraModalGeneral()
-                    },
-                    success: function (data) {
-                        if (data.status == "ok") {
-                            DisabledClean();
-                            /** vaciamos el form */
-                            ClearFormCitacion()
-                            /** refresh datatable */
-                            RefreshDataTables();
-                            /** Notificación */
-                            var Textsuccess = (data.tipo == 'mod') ? 'Citación Modificada.' : 'Citación Creada.';
-                            $.notifyClose();
-                            notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
-                        } else {
-                            DisabledClean();
-                            $(".submit_btn_Citación").prop("disabled", false);
-                            RefreshDataTables();
-                            $.notifyClose();
-                            notify(data.Mensaje, 'danger', 5000, 'right')
-                        }
-                    }
-                });
-
-            });
-            /** Al hace click en boton + agregar Citación modal general*/
-            $(document).ready(function () {
-                $("#Citacion").on("click", function (e) {
-                    CheckSesion()
-                    GetCitacion()
-                    e.preventDefault();
-                    $("#rowCitacion").removeClass('d-none')
-                    $("#rowCitacion").addClass('animate__animated animate__fadeIn')
-                    $("#alta_Citación").val("true").trigger('change');
-                    e.stopImmediatePropagation()
-                    $('#CitEntra').focus();
-                    if ($("#CitEntra").val() != '') {
-                        $('#CitEntra').select();
-                    }
-                    // $('#Citacion').off('click');
-                });
-                /** BAJA CITACION */
-                $("#bCit").on("click", function (e) {
-                    e.preventDefault();
-                    CheckSesion()
-                    var Datos = $(this).attr('datos');
-                    console.log(Datos);
-
-                    bootbox.confirm({
-                        message: '<span class="fonth fw5">Eliminar Citación</span><br><span class="fontq fw4">¿Confirma eliminar la Citación?</span>',
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                $.ajax({
-                                    type: "POST",
-                                    url: "insert.php",
-                                    'data': {
-                                        baja_Cit: true,
-                                        Datos
-                                    },
-                                    beforeSend: function (data) {
-                                        CierraModalGeneral()
-                                        $.notifyClose();
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    },
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            DisabledClean();
-                                            /** vaciamos el form */
-                                            ClearFormCitacion()
-                                            /** refresh datatable */
-                                            RefreshDataTables();
-                                            $(".respuesta_OtrasNov").html('');
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'success', 5000, 'right')
-                                            /** refresh datatable */
-                                        } else {
-                                            DisabledClean();
-                                            RefreshDataTables();
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-
-                    e.stopImmediatePropagation()                    
-                });
-
-                if (Cita) {
-                    GetCitacion()
-                    $("#rowCitacion").removeClass('d-none')
-                    $("#rowCitacion").addClass('animate__animated animate__fadeIn')
-                    $("#alta_Citación").val("true").trigger('change');
-                    $('#Navs').addClass('d-none')
-                    Modal_XL_LG('#TopN')
-                    setTimeout(function () {
-                        $('#CitEntra').focus();
-                        if ($("#CitEntra").val() != '') {
-                            $('#CitEntra').select();
-                        }
-                    }, 500);
                 }
             });
-            $('#Fichadas-tab').on('hide.bs.tab', function (e) {
-                $("#AddFic").addClass('d-none')
-                ClearFormFic();
-            });
-            $('#Fichadas-tab').on('shown.bs.tab', function (e) {
-                $("#AddFic").removeClass('d-none')
-            });
-            $('#Novedades-tab').on('hide.bs.tab', function (e) {
-                $("#AddNov").addClass('d-none')
-                ClearFormNov();
-            });
-            $('#Novedades-tab').on('shown.bs.tab', function (e) {
-                $("#AddNov").removeClass('d-none')
+            e.stopImmediatePropagation();
+        });
+        $(document).on("click", "#FicCate", function (e) {
+            CheckSesion()
+            if ($('#FicCate').is(':checked')) {
+                $('#novCate').val('1').trigger('change');
+            } else {
                 $('#novCate').val('2').trigger('change');
+                $('.selectjs_Novedades').val(null).trigger("change");
+                $('.selectjs_NoveCausa').val(null).trigger("change");
+            }
+        });
+        $(document).on("click", ".mod_Nov", function (e) {
+            CheckSesion()
+            $("#xsTNov").html('Modificar Novedad')
+            // ClearFormNov();
+            OcultaNavTab()
+            $(".submit_btn_mod").prop("disabled", false);
+            $(".Form_Novedad").removeClass('d-none')
+            $(".Form_Novedad").addClass('animate__animated animate__fadeIn')
+            $(".submit_btn_mod").html('Modificar');
+            $('#FicHoras').select();
+
+            var DatosNov = $(this).attr('data'); /** Cod Nov, Tipo y Categoria */
+            var nov_novedad = $(this).attr('data2');
+            var nov_descripcion = $(this).attr('data3');
+            var CodCaus = $(this).attr('data4');
+            var DescCausa = $(this).attr('data5');
+            var Obserb = $(this).attr('data6');
+            var FicJust = $(this).attr('data7');
+            var FicCate = $(this).attr('data8');
+            var nov_horas = $(this).attr('data9');
+            var novTipo = $(this).attr('data10');
+
+            $('#novTipo').val(novTipo).trigger('change');
+
+            if (FicJust == 1) {
+                $("#FicJust").prop('checked', true);
+            }
+            if (FicCate == 2) {
+                $("#FicCate").prop('checked', true);
+                $("#FicCate").prop('disabled', true);
+            }
+
+            var newOption = new Option(nov_descripcion, nov_novedad, true, true);
+            $('.selectjs_Novedades').append(newOption).trigger('change');
+            if (CodCaus != 0) {
+                var newOption = new Option(DescCausa, CodCaus, true, true);
+                $('.selectjs_NoveCausa').append(newOption).trigger('change');
+            }
+            $("#FicObse").val(Obserb).trigger('change');
+            $("#alta_novedad").val("Mod")
+            $("#CNove").val(DatosNov).trigger('change');
+            $("#FicHoras").val(nov_horas).trigger('change');
+        });
+        /** BAJA NOVEDAD */
+        $(document).on('click', '.baja_Nov', function (e) {
+            e.preventDefault();
+            CheckSesion()
+            var NovDes = $(this).attr('data2');
+            var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
+            bootbox.confirm({
+                message: '<span class="fonth fw5">Eliminar Novedad</span><br><span class="fontq fw4">¿Confirma eliminar la Novedad: ' + NovDes + 'Hs.?</span>',
+                // message: '',
+                buttons: {
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-custom text-white btn-sm fontq'
+                    },
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-light btn-sm fontq text-secondary'
+                    }
+                },
+                callback: function (result) {
+                    $('.baja_Nov').unbind('click');
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: "insert.php",
+                            'data': {
+                                baja_novedad: true,
+                                Datos,
+                                NovDes
+                            },
+                            beforeSend: function (data) {
+                                $(".baja_Nov").addClass('d-none')
+                                $.notifyClose();
+                                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                                CierraModalGeneral()
+                            },
+
+                            success: function (data) {
+                                if (data.status == "ok") {
+                                    DisabledClean();
+                                    $(".Form_Novedad").addClass('d-none')
+                                    /** refresh datatable */
+                                    RefreshDataTables();
+                                    $.notifyClose();
+                                    notify('Novedad eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
+                                } else {
+                                    DisabledClean();
+                                    RefreshDataTables();
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'danger', 5000, 'right')
+                                }
+                            }
+                        });
+                    }
+                }
             });
-            $('#Horas-tab').on('hide.bs.tab', function (e) {
-                $("#AddHora").addClass('d-none')
-                ClearFormHora();
+            e.stopImmediatePropagation()
+        });
+        // });
+    });
+    /** ALTA, MOD, BAJA HORA */
+    $(".Form_Horas").bind("submit", function (e) {
+        e.preventDefault();
+        CheckSesion()
+        $.ajax({
+            type: $(this).attr("method"),
+            // contetnType: "application_json; charset=utf-8",
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            beforeSend: function (data) {
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                CierraModalGeneral()
+                $(".submit_btn_HorMod").prop("disabled", true);
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    DisabledClean();
+                    /** vaciamos el form */
+                    ClearFormHora()
+                    /** refresh datatable */
+                    RefreshDataTables();
+                    /** Notificación */
+                    if (data.tipo == 'mod') {
+                        var Textsuccess = 'Hora modificada.';
+                    } else {
+                        var Textsuccess = 'Hora cargada.';
+                    }
+                    $.notifyClose();
+                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                    /** refresh datatable */
+                } else {
+                    DisabledClean();
+                    $(".submit_btn_HorMod").prop("disabled", false);
+                    /** refresh datatable */
+                    RefreshDataTables();
+                    $(".respuesta_Horas").html("");
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+
+    $(document).on("click", ".mod_hora", function (e) {
+        CheckSesion()
+        e.preventDefault();
+        $("#xsTHor").html('Modificar Horas')
+        $(".Form_Horas").removeClass('d-none')
+        $(".Form_Horas").addClass('animate__animated animate__fadeIn')
+        $(".submit_btn_HorMod").html('Modificar');
+        $("#alta_horas").val("mod").trigger('change');
+        $("#modHora").val("1").trigger('change');
+        $(".submit_btn_HorMod").prop("disabled", false);
+
+        var FicHora = $(this).attr('data');
+        var FicHsAu = $(this).attr('data1');
+        var FicHsAu2 = $(this).attr('data2');
+        var HoraDesc = $(this).attr('data3');
+        var Motivo = $(this).attr('data4');
+        var DescMotivo = $(this).attr('data5');
+        var Observ = $(this).attr('data6');
+
+        var newOption = new Option(HoraDesc, FicHora, true, true);
+        $('.selectjs_TipoHora').append(newOption).trigger('change');
+
+        if (Motivo != 0) {
+            var newOption = new Option(DescMotivo, Motivo, true, true);
+            $('.selectjs_MotivoHora').append(newOption).trigger('change');
+        }
+        $("#Fic1Observ").val(Observ).trigger('change');
+        $("#Fic1HsAu2").val(FicHsAu2).trigger('change');
+        $("#FicHsAu").val(FicHsAu);
+
+        $("#Fic1HsAu2").focus();
+        $('#Fic1HsAu2').select();
+
+    });
+    /** BAJA HORA */
+    $(document).on('click', '.baja_Hora', function (e) {
+        e.preventDefault();
+        CheckSesion()
+        var HoraDesc = $(this).attr('data2');
+        var Datos = $(this).attr('data'); /** FicHora, FicFech, FicLega */
+        bootbox.confirm({
+            message: '<span class="fonth fw5">Eliminar Hora</span><br><span class="fontq fw4">¿Confirma eliminar la Hora: ' + HoraDesc + 'Hs.?</span>',
+            // message: '',
+            buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-custom text-white btn-sm fontq'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-light btn-sm fontq text-secondary'
+                }
+            },
+            callback: function (result) {
+                $('.baja_Hora').unbind('click');
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "insert.php",
+                        'data': {
+                            baja_Hora: true,
+                            Datos,
+                            HoraDesc
+                        },
+                        beforeSend: function (data) {
+                            $.notifyClose();
+                            notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                            $(".baja_Hora").addClass('d-none')
+                            CierraModalGeneral()
+                        },
+                        success: function (data) {
+                            if (data.status == "ok") {
+                                DisabledClean();
+                                $(".Form_Horas").addClass('d-none')
+                                $(".baja_Hora").removeClass('d-none')
+                                /** refresh datatable */
+                                RefreshDataTables();
+                                $.notifyClose();
+                                notify('Hora eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
+                            } else {
+                                DisabledClean();
+                                RefreshDataTables();;
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+    // });
+    /** ALTA, MOD, BAJA OTRAS NOVEDADES */
+    $(".Form_OtraNovedad").bind("submit", function (e) {
+        e.preventDefault();
+        CheckSesion()
+        $.ajax({
+            type: $(this).attr("method"),
+            // contetnType: "application_json; charset=utf-8",
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            beforeSend: function (data) {
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                CierraModalGeneral()
+                $(".submit_btn_OtrasNov").prop("disabled", true);
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    DisabledClean();
+                    /** vaciamos el form */
+                    ClearFormONov()
+                    /** refresh datatable */
+                    RefreshDataTables();
+                    /** Notificación */
+                    if (data.tipo == 'mod') {
+                        var Textsuccess = 'Novedad modificada.';
+                    } else {
+                        var Textsuccess = 'Novedad creada.';
+                    }
+                    $.notifyClose();
+                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                } else {
+                    $(".submit_btn_OtrasNov").prop("disabled", false);
+                    $(".respuesta_OtrasNov").html("");
+                    DisabledClean();
+                    RefreshDataTables();
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+    $(document).on("click", ".mod_ONov", function (e) {
+        e.preventDefault();
+        CheckSesion()
+        ClearFormONov();
+        $("#xsTOnov").html('Modificar Novedad')
+        $(".submit_btn_OtrasNov").prop("disabled", false);
+        $(".Form_OtraNovedad").removeClass('d-none')
+        $(".Form_OtraNovedad").addClass('animate__animated animate__fadeIn')
+        $(".submit_btn_OtrasNov").html('Modificar');
+        $("#alta_OtrasNov").val("mod").trigger('change');
+        // var DatosONov = $(this).attr('data'); //** FicOnov, FicFech, FicLega */
+        var Descrip = $(this).attr('data1');
+        var FicObsN = $(this).attr('data2');
+        var FicValor = $(this).attr('data3');
+        var FicONov = $(this).attr('data4');
+        var newOption = new Option(Descrip, FicONov, true, true);
+        $('.selectjs_OtrasNovedades').append(newOption).trigger('change');
+        $("#FicValor").val(FicValor).trigger('change');
+        $("#FicObsN").val(FicObsN).trigger('change');
+        $("#FicValor").focus();
+        if ($("#FicValor").val() != '') {
+            $('#FicValor').select();
+        }
+        e.stopImmediatePropagation();
+    });
+    /** BAJA OTRA NOVEDAD */
+    $(document).on('click', '.baja_ONov', function (e) {
+        e.preventDefault();
+        CheckSesion()
+        var Descrip = $(this).attr('data2');
+        var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
+        bootbox.confirm({
+            message: '<span class="fonth fw5">Eliminar Novedad</span><br><span class="fontq fw4">¿Confirma eliminar la Novedad: ' + Descrip + '?</span>',
+            // message: '',
+            buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-custom text-white btn-sm fontq'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-light btn-sm fontq text-secondary'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        type: "POST",
+                        url: "insert.php",
+                        'data': {
+                            baja_ONov: true,
+                            Datos,
+                            Descrip
+                        },
+                        beforeSend: function (data) {
+                            CierraModalGeneral()
+                            $.notifyClose();
+                            notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                        },
+                        success: function (data) {
+                            if (data.status == "ok") {
+                                DisabledClean();
+                                $(".respuesta_OtrasNov").html('');
+                                $.notifyClose();
+                                notify('Novedad eliminada<br>' + data.Mensaje, 'success', 5000, 'right')
+                                /** refresh datatable */
+                                RefreshDataTables();
+                            } else {
+                                DisabledClean();
+                                RefreshDataTables();
+                                $.notifyClose();
+                                notify(data.Mensaje, 'danger', 5000, 'right')
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        // e.stopImmediatePropagation();
+    });
+    /** ALTA, CITACION */
+    $(".Form_Citacion").bind("submit", function (e) {
+        CheckSesion()
+        e.preventDefault();
+        $.ajax({
+            type: $(this).attr("method"),
+            url: $(this).attr("action"),
+            data: $(this).serialize(),
+            beforeSend: function (data) {
+                $.notifyClose();
+                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                $(".submit_btn_Citación").prop("disabled", true);
+                CierraModalGeneral()
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    DisabledClean();
+                    /** vaciamos el form */
+                    ClearFormCitacion()
+                    /** refresh datatable */
+                    RefreshDataTables();
+                    /** Notificación */
+                    var Textsuccess = (data.tipo == 'mod') ? 'Citación Modificada.' : 'Citación Creada.';
+                    $.notifyClose();
+                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                } else {
+                    DisabledClean();
+                    $(".submit_btn_Citación").prop("disabled", false);
+                    RefreshDataTables();
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+            }
+        });
+
+    });
+    /** Al hace click en boton + agregar Citación modal general*/
+    $(document).ready(function () {
+        $("#Citacion").on("click", function (e) {
+            CheckSesion()
+            GetCitacion()
+            e.preventDefault();
+            $("#rowCitacion").removeClass('d-none')
+            $("#rowCitacion").addClass('animate__animated animate__fadeIn')
+            $("#alta_Citación").val("true").trigger('change');
+            e.stopImmediatePropagation()
+            $('#CitEntra').focus();
+            if ($("#CitEntra").val() != '') {
+                $('#CitEntra').select();
+            }
+            // $('#Citacion').off('click');
+        });
+        /** BAJA CITACION */
+        $("#bCit").on("click", function (e) {
+            e.preventDefault();
+            CheckSesion()
+            var Datos = $(this).attr('datos');
+            console.log(Datos);
+
+            bootbox.confirm({
+                message: '<span class="fonth fw5">Eliminar Citación</span><br><span class="fontq fw4">¿Confirma eliminar la Citación?</span>',
+                // message: '',
+                buttons: {
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-custom text-white btn-sm fontq'
+                    },
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-light btn-sm fontq text-secondary'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: "insert.php",
+                            'data': {
+                                baja_Cit: true,
+                                Datos
+                            },
+                            beforeSend: function (data) {
+                                CierraModalGeneral()
+                                $.notifyClose();
+                                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                            },
+                            success: function (data) {
+                                if (data.status == "ok") {
+                                    DisabledClean();
+                                    /** vaciamos el form */
+                                    ClearFormCitacion()
+                                    /** refresh datatable */
+                                    RefreshDataTables();
+                                    $(".respuesta_OtrasNov").html('');
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'success', 5000, 'right')
+                                    /** refresh datatable */
+                                } else {
+                                    DisabledClean();
+                                    RefreshDataTables();
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'danger', 5000, 'right')
+                                }
+                            }
+                        });
+                    }
+                }
             });
-            $('#Horas-tab').on('shown.bs.tab', function (e) {
-                $("#AddHora").removeClass('d-none')
-            });
-            $('#OtrasNov-tab').on('show.bs.tab', function (e) {
-                $("#AddONov").removeClass('d-none');
-            });
-            $('#OtrasNov-tab').on('hide.bs.tab', function (e) {
-                $("#AddONov").addClass('d-none')
-                ClearFormONov();
-            });
-        // }
+
+            e.stopImmediatePropagation()
+        });
+
+        if (Cita) {
+            GetCitacion()
+            $("#rowCitacion").removeClass('d-none')
+            $("#rowCitacion").addClass('animate__animated animate__fadeIn')
+            $("#alta_Citación").val("true").trigger('change');
+            $('#Navs').addClass('d-none')
+            Modal_XL_LG('#TopN')
+            setTimeout(function () {
+                $('#CitEntra').focus();
+                if ($("#CitEntra").val() != '') {
+                    $('#CitEntra').select();
+                }
+            }, 500);
+        }
+    });
+    $('#Fichadas-tab').on('hide.bs.tab', function (e) {
+        $("#AddFic").addClass('d-none')
+        ClearFormFic();
+    });
+    $('#Fichadas-tab').on('shown.bs.tab', function (e) {
+        $("#AddFic").removeClass('d-none')
+    });
+    $('#Novedades-tab').on('hide.bs.tab', function (e) {
+        $("#AddNov").addClass('d-none')
+        ClearFormNov();
+    });
+    $('#Novedades-tab').on('shown.bs.tab', function (e) {
+        $("#AddNov").removeClass('d-none')
+        $('#novCate').val('2').trigger('change');
+    });
+    $('#Horas-tab').on('hide.bs.tab', function (e) {
+        $("#AddHora").addClass('d-none')
+        ClearFormHora();
+    });
+    $('#Horas-tab').on('shown.bs.tab', function (e) {
+        $("#AddHora").removeClass('d-none')
+    });
+    $('#OtrasNov-tab').on('show.bs.tab', function (e) {
+        $("#AddONov").removeClass('d-none');
+    });
+    $('#OtrasNov-tab').on('hide.bs.tab', function (e) {
+        $("#AddONov").addClass('d-none')
+        ClearFormONov();
+    });
+    // }
     // }, 200);
 });
 // });

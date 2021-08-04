@@ -40,6 +40,7 @@ if (PerCierre($Fecha, $Legajo)) {
 if (sqlsrv_num_rows($result) > 0) {
     while ($row_Fic = sqlsrv_fetch_array($result)) :
 
+        $RegFechaDR = $row_Fic['RegFech']->format('d/m/Y');
         $RegFechStr = $row_Fic['RegFech']->format('Ymd');
         $RegFeRe = $row_Fic['RegFeRe']->format('Y-m-d');
 
@@ -50,7 +51,7 @@ if (sqlsrv_num_rows($result) > 0) {
             class="bi bi-trash btn btn-sm btn-link text-decoration-none ' . $disabled . '"></a>';
         } else {
             $disabled = '';
-            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_Fic" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"></a>';
+            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_Fic" data-fechadr="'.$RegFechaDR.'" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"></a>';
             $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" id="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Fic"></a>';
         }
         $editar   = $_SESSION["ABM_ROL"]['mFic'] == '0' ? '' : $editar;

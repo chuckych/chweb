@@ -81,7 +81,7 @@ if (sqlsrv_num_rows($result) > 0) {
                 'Descripcion'  => $row['HoraDesc'],
                 'Descripcion2' => $row['HoraDesc2'],
                 'HsCalc'       => $row['FicHsHe'],
-                'HsHechas'     => $row['FicHsAu'],
+                'HsHechas'     => $row['FicHsHe'],
                 'HsAuto'       => $row['FicHsAu2'],
                 'Observ'       => ceronull($row['Observ']),
                 'Motivo'       => ceronull($row['Motivo']),

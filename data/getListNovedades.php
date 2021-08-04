@@ -10,7 +10,7 @@ require_once __DIR__ . '../../config/conect_mssql.php';
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$filtroNov ='';
+$filtroNov = '';
 $ListaNov = $_SESSION['ListaNov'];
 if ($ListaNov  != "-") {
     $filtroNov = " AND NOVEDAD.NovCodi IN ($ListaNov)";
@@ -59,13 +59,8 @@ if (sqlsrv_num_rows($result) > 0) {
     $FiltrarNovTipo = "WHERE NOVEDAD.NovTipo <= '2'";
     /** Chequeamos si el registro es esta tarde, si lo esta mostramos las novedades de tarde. sino las ocultamos */
     if ($_POST['_nc'] == '2') {
-        $queryTar = "SELECT TOP 1 (dbo.fn_STRMinutos(REGISTRO.RegHoRe) - dbo.fn_STRMinutos(FICHAS.FicHorE)) - PERSONAL.LegToTa AS Tarde
-            FROM FICHAS 
-            INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-            LEFT JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega
-            WHERE FICHAS.FicLega = '$RegLega' AND FICHAS.FicFech = '$RegFeAs' AND REGISTRO.RegFeAs = '$RegFeAs'
-            ORDER BY REGISTRO.RegHoRe ASC";
-        // print_r($queryTar);exit;
+        $queryTar = "SELECT (dbo.fn_STRMinutos(REGISTRO.RegHoRe) - dbo.fn_STRMinutos(FICHAS.FicHorE)) - PERSONAL.LegToTa AS Tarde FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume LEFT JOIN REGISTRO ON FICHAS.FicLega=REGISTRO.RegLega WHERE FICHAS.FicLega='$RegLega' AND FICHAS.FicFech='$RegFeAs' AND REGISTRO.RegFeAs='$RegFeAs' ORDER BY REGISTRO.RegHoRe ASC";
+        // print_r($queryTar); exit;
 
         $resultTar  = sqlsrv_query($link, $queryTar, $params, $options);
         while ($rowTar = sqlsrv_fetch_array($resultTar)) {

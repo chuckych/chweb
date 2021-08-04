@@ -105,26 +105,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
 
     //$RegTarj= $_POST['RegTarj']; /** 29988600 */
     $RegFech = $_POST['RegFech'];
-    /** 20200630 */
-    $RegFech = Fech_Format_Var($RegFech, 'Ymd');
+    $RegFech = dr_fecha($RegFech); /** Ymd */
+
     $RegHora = $_POST['RegHora'];
-    /** 10:00 */
     $RegTipo = '1';
-    /** 1 */
-    //$RegLega= $_POST['RegLega']; /** 29988600 */
-    //$RegFeAs= $_POST['RegFeAs']; /** 20200630 */
     $RegFeRe = $RegFech;
-    /** 20200630 */
     $RegHoRe = $RegHora;
-    /** 10:00 */
     $RegTran = '1';
-    /** 1 */
     $RegSect = '0';
-    /** 0 */
     $RegRelo = '';
-    /**  */
     $RegLect = '';
-    /**  */
 
     $ExisteRegistro = CountRegistrosMayorCero("SELECT TOP 1 REGISTRO.RegTarj FROM REGISTRO WHERE RegTarj = '$RegTarj' and RegFech = '$RegFech' and RegHora = '$RegHora' ORDER BY RegTarj,RegFech,RegHora");
 
@@ -297,7 +287,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
     }
 
     $RegHora = $_POST['RegHora_mod'];
-    $RegFech = Fech_Format_Var($_POST['RegFech_mod'], 'Ymd');
+    // $RegFech = Fech_Format_Var($_POST['RegFech_mod'], 'Ymd');
+    $RegFech = dr_fecha(test_input($_POST['RegFech_mod'])); /** Ymd */
 
     $RegFeAs = Fech_Format_Var($RegFech1, 'Ymd');
     $RegFeRe = $RegFech;
@@ -912,7 +903,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     $Dato = 'Modificación Hora: (' . $Fic1Hora . ') ' . $THoDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
 
-    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsHe = '$Fic1HsAu2',FicHsAu = '$Fic1HsAu2',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
+    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsHe = '$FicHsAu', FicHsAu = '$Fic1HsAu2',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
         /** Grabamos en Auditor */
         audito_ch('M', $Dato);
 
