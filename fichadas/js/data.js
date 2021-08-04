@@ -1,5 +1,6 @@
 // $(".Filtros").prop('disabled', true);
 function ActualizaTablas() {
+    // CheckSesion()
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();
     } else {
@@ -8,6 +9,9 @@ function ActualizaTablas() {
         $('.pers_legajo').removeClass('d-none')
     };
 };
+$('#Filtros').on('shown.bs.modal', function() { 
+    CheckSesion()
+});
 var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
     if (e.keyCode in map) {
@@ -61,6 +65,7 @@ $("#GetFichadasFechaTable").addClass('d-none');
 $('#datoFicFalta').val('0');
 
 function CheboxChecked(selector) {
+    CheckSesion()
     $(selector).val(0)
     $(selector).change(function () {
         if (($(selector).is(":checked"))) {
@@ -384,18 +389,32 @@ setTimeout(function () {
         },
     });
 }, 1000);
-
+$('#GetFichadas').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetPersonal').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetFechas').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetFichadasFecha').on('page.dt', function () {
+    CheckSesion()
+});
 $("#Refresh").on("click", function (e) {
     e.preventDefault();
+    CheckSesion()
     ActualizaTablas()
 });
 
 $("#_dr").change(function (e) {
     e.preventDefault();
+    CheckSesion()
     ActualizaTablas()
 });
 $('#VerPor').html('Visualizar por Fecha')
 $("#Visualizar").change(function () {
+    CheckSesion()
     // $("#loader").addClass('loader');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();

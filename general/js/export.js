@@ -238,6 +238,7 @@ $(document).ready(function () {
     $("#btnExportar").html(btnPDF);
 
     $("#FormExportar").bind("submit", function (e) {
+        CheckSesion()
         e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),

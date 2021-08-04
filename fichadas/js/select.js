@@ -85,16 +85,23 @@ $(function () {
 
         function refreshSelected(slectjs) {
             $(slectjs).on('select2:select', function (e) {
+                CheckSesion()
                 $('#Per2').val(null)
-                // ActualizaTablas()
             });
         }
         function refreshUnselected(slectjs) {
             $(slectjs).on('select2:unselecting', function (e) {
+                CheckSesion()
                 $('#Per2').val(null)
-                // ActualizaTablas()
             });
         }
+        
+        // $(".form-control").click(function (e) {
+        // $('input').on('focus', function (e) {
+        //     e.preventDefault();
+        //     CheckSesion()
+        //     e.stopPropagation();
+        // });
              
         refreshSelected('.selectjs_empresa');
         refreshSelected('.selectjs_plantas');
@@ -113,6 +120,7 @@ $(function () {
         refreshUnselected('.selectjs_tipoper');
 
         $('.selectjs_sectores').on('select2:select', function (e) {
+            CheckSesion()
             $('#Per2').val(null)
             $(".select_seccion").prop("disabled", false);
             $('.select_seccion').val(null).trigger('change');
@@ -121,19 +129,22 @@ $(function () {
             $("#DatosFiltro").html('Sector: ' + nombresector);
         });
         $('.selectjs_sectores').on('select2:unselecting', function (e) {
+            CheckSesion()
             $('#Per2').val(null)
             $(".select_seccion").prop("disabled", true);
             $('.select_seccion').val(null).trigger('change');
             // ActualizaTablas()
         });
         $('.selectjs_personal').on('select2:select', function (e) {
+            CheckSesion()
             $('#Per2').val(null)
             // ActualizaTablas()
         });
     });
 });
-
+onOpenSelect2()
 $('#Filtros').on('hidden.bs.modal', function (e) {
+    CheckSesion()
     // $('#Filtros').modal('dispose');
     ActualizaTablas()
   });

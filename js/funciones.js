@@ -615,7 +615,7 @@ function HoraMin(Hora) {
         let parts = hora.split(':');
         let total = parseInt(parts[0]) * 60 + parseInt(parts[1]);
         return total
-    }else{
+    } else {
         return 0
     }
 
@@ -628,4 +628,10 @@ function getHTML(url, selector) {
     }).done(function (data) {
         $(selector).html(data);
     })
+}
+function onOpenSelect2() {
+    $('select').on('select2:opening', function (e) {
+        CheckSesion()
+        e.stopPropagation();
+    });
 }

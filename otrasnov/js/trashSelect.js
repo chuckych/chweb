@@ -1,10 +1,12 @@
 
  function TrashSelect(slectjs) {
+    CheckSesion()
     $(slectjs).val(null).trigger("change");
     ActualizaTablas()
 }
 
 function LimpiarFiltros() {
+    CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");
@@ -18,6 +20,7 @@ function LimpiarFiltros() {
     $('#Per2').val(null)
 }
 function LimpiarFiltros2() {
+    CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");
@@ -42,6 +45,7 @@ $("#trash_allIn").on("click", function () {
 });
 
 $(document).on("click", ".numlega", function (e) {
+    CheckSesion()
     $('#Per2').val(null)
     $('.pers_legajo').addClass('d-none')
     $('#Per2').removeClass('d-none')

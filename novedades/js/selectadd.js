@@ -4,6 +4,7 @@
 HoraMask('.HoraMask')
 
 $(document).on('click', '#addNov', function (e) {
+    CheckSesion()
     var AnioMin = parseFloat($('#AnioMin').val());
     var AnioMax = parseFloat($('#AnioMax').val());
     $('#_draddNov').daterangepicker({
@@ -557,6 +558,7 @@ $(document).on('click', '#addNov', function (e) {
     UnSelected('.sel_sucursal');
 
     $("#aTipo").change(function () {
+        CheckSesion()
         $('.sel_sucursal').val(null).trigger("change");
         $('#SelSucursal').val(null).trigger("change");
         $('.sel_grupos').val(null).trigger("change");
@@ -583,12 +585,14 @@ $(document).on('click', '#addNov', function (e) {
 $('.check').prop('disabled', true)
 $('#TipoIngreso').val(1);
 $("#TipoIngreso1").change(function () {
+    CheckSesion()
     if ($("#TipoIngreso1").is(":checked")) {
         $('#TipoIngreso').val(1)
         $('.check').prop('disabled', true)
     }
 });
 $("#TipoIngreso2").change(function () {
+    CheckSesion()
     if ($("#TipoIngreso2").is(":checked")) {
         $('#TipoIngreso').val(2)
         $('.check').prop('disabled', false)
@@ -621,7 +625,7 @@ function GetLog(archivo) {
 }
 $(".alta_novedad").bind("submit", function (e) {
     e.preventDefault();
-
+    CheckSesion()
     var now = $.now()
     function myTimer() {
         GetLog("../novedades/logs/Ingreso_" + now + ".log");
@@ -739,6 +743,7 @@ $("#trash_allFilter").on("click", function () {
 });
 
 function cleanAll() {
+    CheckSesion()
     $('#Cuenta').val(0)
     $('#SelEmpresa').val(null).trigger("change");
     $('#SelPlanta').val(null).trigger("change");
@@ -842,6 +847,7 @@ var GetPers = $('#GetPers').DataTable({
     },
 });
 GetPers.on('page.dt', function () {
+    CheckSesion()
     setTimeout(function () {
         $('.check').prop('checked', true)
         $("#EliminaCierre").prop('checked', false)
@@ -852,6 +858,7 @@ GetPers.on('page', function () {
 });
 // Handle click on "Select all" control
 $('#Personal-select-all').on('click', function () {
+    CheckSesion()
     // Check/uncheck all checkboxes in the GetPers
     var rows = GetPers.rows({ 'search': 'applied' }).nodes();
     $('.check', rows).prop('checked', this.checked);

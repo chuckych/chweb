@@ -1,9 +1,9 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-E_ALL();
 // session_start();
 require __DIR__ . '../../config/index.php';
+E_ALL();
 
 $url   = host() . "/" . HOMEHOST . "/data/GetEstructura.php?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r']."&e=" . $_GET['e']."&act&q=".$_GET['q'];
 // echo $url; exit;

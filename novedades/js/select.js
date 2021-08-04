@@ -187,5 +187,6 @@ $(function () {
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
     // $('#Filtros').modal('dispose');
+    CheckSesion()
     ActualizaTablas()
 });

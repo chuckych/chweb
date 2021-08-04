@@ -63,6 +63,7 @@ $("#GetGeneralFechaTable").hide();
 
 $('#datoFicDiaL').val('1');
 $("#FicDiaL").change(function () {
+    CheckSesion()
     if ($("#FicDiaL").is(":checked")) {
         $('#datoFicDiaL').val('1')
         ActualizaTablas()
@@ -247,7 +248,7 @@ var GetGeneral = $('#GetGeneral').DataTable({
         fadeInOnly('#pagLega')
     },
     "drawCallback": function (settings) {
-        console.log(settings.json);
+        // console.log(settings.json);
         $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
@@ -506,7 +507,18 @@ setTimeout(function () {
     });
 }, 1000);
 
-
+$('#GetPersonal').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetGeneral').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetFechas').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetGeneralFecha').on('page.dt', function () {
+    CheckSesion()
+});
 
 $("#Refresh").on("click", function () {
     ActualizaTablas()

@@ -5,6 +5,7 @@ $(document).ready(function() {
     });
     
     $("#_dr").change(function() {
+        CheckSesion()
         ActualizaTablas()
         // $('tbody').addClass('opa3')
         // $('tbody').addClass('bg-light')
@@ -28,9 +29,11 @@ $(document).ready(function() {
         $('.contentd').addClass('text-light bg-light w30')
     }
     $("#Refresh").on("click", function() {
+        CheckSesion()
         ActualizaTablas()
     });
     $("#RefreshModal").on("click", function() {
+        CheckSesion()
         RefreshDataTables()
     });
     $('.totales').addClass('invisible')
@@ -155,11 +158,13 @@ $(document).ready(function() {
         },
     })
     $('#Tabla_General').on('page.dt', function () {
+        CheckSesion()
         ClassTBody()
     });
 });
 
-$('#Total_General').on('shown.bs.modal', function(e) {    
+$('#Total_General').on('shown.bs.modal', function() { 
+    CheckSesion()
     $('#table-Total_General').DataTable({
         "drawCallback": function(settings) {
             $('.Fechas').html($('#_dr').val())
@@ -300,7 +305,6 @@ $('#Total_General').on('shown.bs.modal', function(e) {
             "url": "../js/DataTableSpanishShort2.json"
         },
     });
-
 });
 
 $('#Total_General').on('hide.bs.modal', function(e) {
@@ -317,10 +321,10 @@ function DestroyDataTablesModal() {
 };
 
 $(document).on("click", ".open-modal", function (e) {
+    CheckSesion();
     e.preventDefault();
     $('#modalGeneral').modal('show');
     $('#Fichadas-tab').tab('show')
-
     var Datos    = $(this).attr('data');
     var Nombre   = $(this).attr('data2');
     var Fecha    = $(this).attr('data3');

@@ -541,7 +541,9 @@ $(document).ready(function () {
                 },
             }
         });
-
+        $('#Per2').on('change', function () {
+            CheckSesion()
+        })
         function refreshSelected(slectjs) {
             $(slectjs).on('select2:select', function (e) {
                 $('#Per2').val(null)

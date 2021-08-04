@@ -1,24 +1,27 @@
 <?php
+require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
-
-E_ALL();
-
 session_start();
-
-require __DIR__ . '../../config/index.php';
+secure_auth_ch_json();
 
 $data      = array();
 $legajo    = test_input($_POST['_lega']);
-$DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
+
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+}else{
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
+}
 
 require __DIR__ . '../../config/conect_mssql.php';
-
+E_ALL();
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 if (test_input($_POST['Tipo']) == 'Horas') {

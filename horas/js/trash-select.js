@@ -1,34 +1,42 @@
 $("#trash_emp").on("click", function () {
+    CheckSesion()
     $('.selectjs_empresa').val(null).trigger("change");
     ActualizaTablas()
 });
 $("#trash_plan").on("click", function () {
+    CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     ActualizaTablas()
 });
 $("#trash_sect").on("click", function () {
+    CheckSesion()
     $('.selectjs_sectores').val(null).trigger("change");
     $('.select_seccion').val(null).trigger("change");
     $(".select_seccion").prop("disabled", true);
     ActualizaTablas()
 });
 $("#trash_secc").on("click", function () {
+    CheckSesion()
     $('.select_seccion').val(null).trigger("change");
     ActualizaTablas()
 });
 $("#trash_grup").on("click", function () {
+    CheckSesion()
     $('.selectjs_grupos').val(null).trigger("change");
     ActualizaTablas()
 });
 $("#trash_sucur").on("click", function () {
+    CheckSesion()
     $('.selectjs_sucursal').val(null).trigger("change");
     ActualizaTablas()
 });
 $("#trash_per").on("click", function () {
+    CheckSesion()
     $('.selectjs_personal').val(null).trigger("change");
     ActualizaTablas()
 });
 function LimpiarFiltros() {
+    CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");

@@ -6,6 +6,7 @@ function ActualizaTablas() {
         $('#GetPersonal').DataTable().ajax.reload();
     };
 };
+onOpenSelect2()
 var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
     if (e.keyCode in map) {

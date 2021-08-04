@@ -1,9 +1,9 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-E_ALL();
 // session_start();
 require __DIR__ . '../../config/index.php';
+E_ALL();
 UnsetGet('q');
 
 FusNuloGET("Emp",'');

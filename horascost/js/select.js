@@ -6,6 +6,7 @@ $(document).ready(function () {
     $('#HoraMax').mask('00:00');
 
     $('#Filtros').on('shown.bs.modal', function () {
+        CheckSesion()
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         $(".selectjs_empresa").select2({
             multiple: true,
@@ -719,6 +720,7 @@ $(document).ready(function () {
 
         $('#TipoIngreso').val(1);
         $("#TipoIngreso1").change(function () {
+            CheckSesion()
             if ($("#TipoIngreso1").is(":checked")) {
                 $('#TipoIngreso').val(1)
             }
@@ -726,6 +728,7 @@ $(document).ready(function () {
         });
         $('#Calculos').val(null);
         $("#Calculos").change(function () {
+            CheckSesion()
             if ($("#Calculos").is(":checked")) {
                 $('#Calculos').val(1)
             }
@@ -736,6 +739,7 @@ $(document).ready(function () {
         });
     
         $("#SHoras2").change(function () {
+            CheckSesion()
             if ($("#SHoras2").is(":checked")) {
                 $('#TipoIngreso').val(2)
             }
@@ -749,5 +753,6 @@ $(document).ready(function () {
 });
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
+    CheckSesion()
     $('#Filtros').modal('dispose');
   });

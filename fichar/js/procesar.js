@@ -1,7 +1,9 @@
 $(document).ready(function () {
+    onOpenSelect2()
     $("#submit").html("Ingresar Fichadas");
     $(".FicharHorario").bind("submit", function (e) {
         e.preventDefault();
+        CheckSesion()
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),

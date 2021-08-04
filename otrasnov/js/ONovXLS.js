@@ -40,6 +40,7 @@ function GetFicExcel() {
 }
 
 $(document).on("click", "#btnExcel", function (e) {
+    CheckSesion()
     GetFicExcel()
 });
 

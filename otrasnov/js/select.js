@@ -5,6 +5,7 @@ $(document).ready(function () {
     // $('#RegHora').mask('00:00');
     // $('#RegHora_mod').mask('00:00');
     $('#Filtros').on('shown.bs.modal', function () {
+        CheckSesion()
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         $(".selectjs_empresa").select2({
             multiple: true,
@@ -627,5 +628,6 @@ $(document).ready(function () {
 });
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
+    CheckSesion()
     $('#Filtros').modal('dispose');
   });

@@ -8,6 +8,7 @@ function ActualizaTablas(){
         $('.pers_legajo').removeClass('d-none')
     };
 };
+onOpenSelect2()
 var map = {17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13:false, 27:false};
 $(document).keydown(function (e) {
     if (e.keyCode in map) {
@@ -204,7 +205,18 @@ $('#Visualizar').prop('disabled', true)
             "url": "../js/DataTableSpanishShort.json"
         },
     });
-
+    $('#GetPersonal').on('page.dt', function () {
+        CheckSesion()
+    });
+    $('#GetNovedades').on('page.dt', function () {
+        CheckSesion()
+    });
+    $('#GetNovedadesFecha').on('page.dt', function () {
+        CheckSesion()
+    });
+    $('#GetFechas').on('page.dt', function () {
+        CheckSesion()
+    });
     setTimeout(function(){
     $('#GetFechas').DataTable({
         "initComplete": function( settings, json ) {
@@ -351,14 +363,17 @@ $('#Visualizar').prop('disabled', true)
     }, 1000);
 
 $("#Refresh").on("click", function () {
+    CheckSesion()
     ActualizaTablas()
 });
 
 $("#_dr").change(function () {
+    CheckSesion()
     ActualizaTablas()
 });
 $('#VerPor').html('Visualizar por Fecha')
 $("#Visualizar").change(function () {
+    CheckSesion()
     // $("#loader").addClass('loader');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();

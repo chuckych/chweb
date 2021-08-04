@@ -14,7 +14,7 @@ spOptions = {
     }
 };
 $('.HoraMask').mask(maskBehavior, spOptions);
-
+onOpenSelect2()
 function OcultaNavTab() {
     if ($("#Mxs").val() == '1') {
         // $("#nav-tab").addClass('d-none d-sm-block')
@@ -103,6 +103,7 @@ $('#PagDia').addClass('invisible');
 $('#Total_dia').addClass('d-none');
 /** Al hacer cick en el toggle Solo Laboral */
 $(document).on("click", "#_dl", function () {
+    CheckSesion()
     if ($("#_dl").is(":checked")) {
         $("#_dl").val('on').trigger('change')
         $('#GetGeneral').DataTable().ajax.reload(null, false);
@@ -112,6 +113,7 @@ $(document).on("click", "#_dl", function () {
     }
 });
 $(document).on("click", "#FullScreen", function () {
+    CheckSesion()
     $("#container").removeClass("container")
     $("#container").addClass("container-fluid")
     // $(".table-responsive").addClass("d-flex justify-content-center")
@@ -124,6 +126,7 @@ $(document).on("click", "#FullScreen", function () {
     $('#GetGeneral').DataTable().ajax.reload(null, false);
 });
 $(document).on("click", "#NormalScreen", function () {
+    CheckSesion()
     $("#container").removeClass("container-fluid")
     $("#container").addClass("container")
     // $(".table-responsive").removeClass("d-flex justify-content-center")
@@ -138,6 +141,7 @@ $(document).on("click", "#NormalScreen", function () {
 });
 /** Al hace click en toggle Rango de Fecha de la pagina*/
 $(document).on("click", "#_range", function () {
+    CheckSesion()
     if ($("#_range").is(":checked")) {
         $("#_range").val('on')
         $('#Total_dia').addClass('d-none');
@@ -154,6 +158,7 @@ $(document).on("click", "#_range", function () {
 /** Al hacer click en el link Procesar */
 $(document).on("click", "#ProcesarTodo", function (e) {
     e.preventDefault();
+    CheckSesion()
     $.ajax({
         type: "POST",
         dataType: "text",
@@ -448,6 +453,7 @@ $(document).ready(function () {
 });
 /** Al hace click en boton + agregar fichada del modal general */
 $(document).on("click", "#AddFic", function (e) {
+    CheckSesion()
     ClearFormFic()
     $(".Form_Fichadas").removeClass('d-none')
     $(".Form_Fichadas").addClass('animate__animated animate__fadeIn')
@@ -459,6 +465,7 @@ $(document).on("click", "#AddFic", function (e) {
 });
 /** Al hace click en boton + agregar novedad del modal general*/
 $(document).on("click", "#AddNov", function (e) {
+    CheckSesion()
     ClearFormNov()
     $(".Form_Novedad").removeClass('d-none')
     $(".Form_Novedad").addClass('animate__animated animate__fadeIn')
@@ -473,6 +480,7 @@ $(document).on("click", "#AddNov", function (e) {
 });
 /** Al hace click en boton + agregar hora del modal general*/
 $(document).on("click", "#AddHora", function (e) {
+    CheckSesion()
     ClearFormHora()
     $("#modHora").val("0").trigger('change');
     $(".Form_Horas").removeClass('d-none')
@@ -487,6 +495,7 @@ $(document).on("click", "#AddHora", function (e) {
 });
 /** Al hace click en boton + agregar Otra Novedad del modal general*/
 $(document).on("click", "#AddONov", function (e) {
+    CheckSesion()
     ClearFormONov()
     $(".Form_OtraNovedad").removeClass('d-none')
     $(".Form_OtraNovedad").addClass('animate__animated animate__fadeIn')
@@ -498,22 +507,27 @@ $(document).on("click", "#AddONov", function (e) {
 });
 /** Al hace click en boton cancelar del formulario fichadas del modal general*/
 $(document).on("click", ".cancelar_btn_fic", function (e) {
+    CheckSesion()
     ClearFormFic();
 });
 /** Al hace click en boton cancelar del formulario novedade del modal general*/
 $(document).on("click", ".cancelar_btn_nov", function (e) {
+    CheckSesion()
     ClearFormNov();
     $('#novCate').val('2').trigger('change');
 });
 /** Al hace click en boton cancelar del formulario horas del modal general*/
 $(document).on("click", "#cancelar_btn_hor", function (e) {
+    CheckSesion()
     ClearFormHora();
 });
 /** Al hace click en boton cancelar del formulario Otra Novedad del modal general*/
 $(document).on("click", "#cancelar_btn_OtrasNov", function (e) {
+    CheckSesion()
     ClearFormONov();
 });
 $(document).on("click", "#cancelar_btn_Citación", function (e) {
+    CheckSesion()
     // $("#rowCitacion").addClass('d-none')
     ClearFormCitacion();
 });
@@ -669,6 +683,7 @@ $(document).on("click", ".open-modal", function (e) {
 
             /** Al hacer click en el link Procesar dentro del Modal */
             $("#ProcesarLegajo").on("click", function () {
+                CheckSesion()
                 $.ajax({
                     type: "POST",
                     dataType: "json",
@@ -1407,12 +1422,14 @@ $(document).on("click", ".open-modal", function (e) {
             };
             $('#RefreshModal').click(function (e) {
                 // e.preventDefault();
+                CheckSesion()
                 RefreshDataTables();
                 // e.stopImmediatePropagation();
             });
             /** ALTA Y MOD FICHADA */
             $(".Form_Fichadas").bind("submit", function (e) {
                 e.preventDefault();
+                CheckSesion()
                 $.ajax({
                     type: $(this).attr("method"),
                     url: $(this).attr("action"),
@@ -1446,6 +1463,7 @@ $(document).on("click", ".open-modal", function (e) {
                 e.stopImmediatePropagation();
             });
             $(document).on("click", ".mod_Fic", function (e) {
+                CheckSesion()
                 OcultaNavTab()
                 $(".Form_Fichadas_Mod").removeClass('d-none')
                 $(".Form_Fichadas_Mod").addClass('animate__animated animate__fadeIn')
@@ -1461,6 +1479,7 @@ $(document).on("click", ".open-modal", function (e) {
             });
             $(".Form_Fichadas_Mod").bind("submit", function (e) {
                 e.preventDefault();
+                CheckSesion()
                 $.ajax({
                     type: $(this).attr("method"),
                     url: $(this).attr("action"),
@@ -1497,6 +1516,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** BAJA FICHADA */
             $(document).on('click', '.baja_Fic', function (e) {
                 e.preventDefault();
+                CheckSesion()
                 var RegHora = $(this).attr('data2');
                 var Datos = $(this).attr('data');
 
@@ -1556,6 +1576,7 @@ $(document).on("click", ".open-modal", function (e) {
             $(document).ready(function () {
                 $(".Form_Novedad").bind("submit", function (e) {
                     e.preventDefault();
+                    CheckSesion()
                     $.ajax({
                         type: $(this).attr("method"),
                         // contetnType: "application_json; charset=utf-8",
@@ -1593,6 +1614,7 @@ $(document).on("click", ".open-modal", function (e) {
                     e.stopImmediatePropagation();
                 });
                 $(document).on("click", "#FicCate", function (e) {
+                    CheckSesion()
                     if ($('#FicCate').is(':checked')) {
                         $('#novCate').val('1').trigger('change');
                     } else {
@@ -1602,6 +1624,7 @@ $(document).on("click", ".open-modal", function (e) {
                     }
                 });
                 $(document).on("click", ".mod_Nov", function (e) {
+                    CheckSesion()
                     $("#xsTNov").html('Modificar Novedad')
                     // ClearFormNov();
                     OcultaNavTab()
@@ -1646,6 +1669,7 @@ $(document).on("click", ".open-modal", function (e) {
                 /** BAJA NOVEDAD */
                 $(document).on('click', '.baja_Nov', function (e) {
                     e.preventDefault();
+                    CheckSesion()
                     var NovDes = $(this).attr('data2');
                     var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
                     bootbox.confirm({
@@ -1705,6 +1729,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** ALTA, MOD, BAJA HORA */
             $(".Form_Horas").bind("submit", function (e) {
                 e.preventDefault();
+                CheckSesion()
                 $.ajax({
                     type: $(this).attr("method"),
                     // contetnType: "application_json; charset=utf-8",
@@ -1747,6 +1772,7 @@ $(document).on("click", ".open-modal", function (e) {
             });
 
             $(document).on("click", ".mod_hora", function (e) {
+                CheckSesion()
                 e.preventDefault();
                 $("#xsTHor").html('Modificar Horas')
                 $(".Form_Horas").removeClass('d-none')
@@ -1782,6 +1808,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** BAJA HORA */
             $(document).on('click', '.baja_Hora', function (e) {
                 e.preventDefault();
+                CheckSesion()
                 var HoraDesc = $(this).attr('data2');
                 var Datos = $(this).attr('data'); /** FicHora, FicFech, FicLega */
                 bootbox.confirm({
@@ -1840,6 +1867,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** ALTA, MOD, BAJA OTRAS NOVEDADES */
             $(".Form_OtraNovedad").bind("submit", function (e) {
                 e.preventDefault();
+                CheckSesion()
                 $.ajax({
                     type: $(this).attr("method"),
                     // contetnType: "application_json; charset=utf-8",
@@ -1880,6 +1908,7 @@ $(document).on("click", ".open-modal", function (e) {
             });
             $(document).on("click", ".mod_ONov", function (e) {
                 e.preventDefault();
+                CheckSesion()
                 ClearFormONov();
                 $("#xsTOnov").html('Modificar Novedad')
                 $(".submit_btn_OtrasNov").prop("disabled", false);
@@ -1905,6 +1934,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** BAJA OTRA NOVEDAD */
             $(document).on('click', '.baja_ONov', function (e) {
                 e.preventDefault();
+                CheckSesion()
                 var Descrip = $(this).attr('data2');
                 var Datos = $(this).attr('data'); /** FicNov, FicFech, FicLega */
                 bootbox.confirm({
@@ -1958,6 +1988,7 @@ $(document).on("click", ".open-modal", function (e) {
             });
             /** ALTA, CITACION */
             $(".Form_Citacion").bind("submit", function (e) {
+                CheckSesion()
                 e.preventDefault();
                 $.ajax({
                     type: $(this).attr("method"),
@@ -1994,6 +2025,7 @@ $(document).on("click", ".open-modal", function (e) {
             /** Al hace click en boton + agregar Citación modal general*/
             $(document).ready(function () {
                 $("#Citacion").on("click", function (e) {
+                    CheckSesion()
                     GetCitacion()
                     e.preventDefault();
                     $("#rowCitacion").removeClass('d-none')
@@ -2009,6 +2041,7 @@ $(document).on("click", ".open-modal", function (e) {
                 /** BAJA CITACION */
                 $("#bCit").on("click", function (e) {
                     e.preventDefault();
+                    CheckSesion()
                     var Datos = $(this).attr('datos');
                     console.log(Datos);
 
@@ -2114,6 +2147,14 @@ $(document).on("click", ".open-modal", function (e) {
 });
 // });
 /** CIERRA MODAL */
+$('#Exportar').on('shown.bs.modal', function (e) {
+    e.stopImmediatePropagation();
+    CheckSesion();
+});
+$('#Exportar').on('hidden.bs.modal', function (e) {
+    e.stopImmediatePropagation();
+    CheckSesion();
+});
 $('#modalGeneral').on('hidden.bs.modal', function () {
     DestroyDataTablesModal();
     ClearFormFic();
