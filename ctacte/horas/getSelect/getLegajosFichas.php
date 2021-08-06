@@ -37,7 +37,7 @@ if (sqlsrv_num_rows($result) > 0) {
 
         $data[] = array(
             'id'    => $id,
-            'text'  => $text,
+            'text'  => $id.' - '.$text,
             'title' => $id.' - '.$text,
         );
     endwhile;

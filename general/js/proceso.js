@@ -1028,7 +1028,7 @@ $(document).on("click", ".open-modal", function (e) {
             { "class": "align-middle ls1", "data": "Cod" },
             { "class": "align-middle", "data": "Descripcion" },
             { "class": "align-middle ls1 fw5", "data": "HsAuto" },
-            { "class": "align-middle ls1", "data": "HsHechas" },
+            { "class": "align-middle ls1", "data": "HsCalc" },
             { "class": "align-middle", "data": "editar" },
             { "class": "align-middle", "data": "eliminar" },
             // { "class": "align-middle ls1 text-center", "data": "Motivo" },

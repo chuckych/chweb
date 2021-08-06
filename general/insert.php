@@ -902,8 +902,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 
     $Dato = 'Modificación Hora: (' . $Fic1Hora . ') ' . $THoDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
-
-    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsHe = '$FicHsAu', FicHsAu = '$Fic1HsAu2',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
+    //UPDATE FICHAS1 Set FicHsHe = '$FicHsAu', FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'
+    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
         /** Grabamos en Auditor */
         audito_ch('M', $Dato);
 
