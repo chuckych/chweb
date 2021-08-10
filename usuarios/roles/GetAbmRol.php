@@ -38,6 +38,9 @@ if (mysqli_num_rows($result) > 0) {
             $aCit  = $row['aCit'];
             $mCit  = $row['mCit'];
             $bCit  = $row['bCit'];
+            $aTur  = $row['aTur'];
+            $mTur  = $row['mTur'];
+            $bTur  = $row['bTur'];
 
         $data = array(
             'aFic'  => $aFic,
@@ -56,6 +59,9 @@ if (mysqli_num_rows($result) > 0) {
             'aCit'  => $aCit,
             'mCit'  => $mCit,
             'bCit'  => $bCit,
+            'aTur'  => $aTur,
+            'mTur'  => $mTur,
+            'bTur'  => $bTur,
         );
     endwhile;
 }else{

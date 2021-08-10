@@ -17,7 +17,7 @@ $(function () {
         $("#Horale1").DataTable().ajax.reload(null, false)
         $("#Horale2").DataTable().ajax.reload(null, false)
         $("#Rotacion").DataTable().ajax.reload(null, false)
-        let numLega = $('.divTablas .NumLega').text()
+        let numLega = $('#divData .NumLega').text()
         getHorarioActual((numLega))
     };
     $("#_eg").click(function () {
@@ -293,31 +293,19 @@ $(function () {
         $(selector).dataTable({
             initComplete: function (settings) {
                 $(selector + " thead").remove()
-                // console.table(settings.json.TotalCit)
-                // if (settings.json.TotalCit) {
-                //     $('.cita').html('Citaciones ('+settings.json.TotalCit+')')
-                // }
             },
             drawCallback: function (settings) {
                 $(selector + " thead").remove()
                 let titletabla = '<div>Horarios Desde: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm btn-light px-2 pointer border c_horale1"><i class="bi bi-plus fonth"></i></button>`
+                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_horale1"><i class="bi bi-plus"></i></button>`
 
                 if (settings.aiDisplay.length == 0) {
                     let titletabla = '<div class="fw4">Sin Horario Desde asignado.</div>';
-                    $('#titleDesde').removeClass('btn-custom')
-                    $('#titleDesde').addClass('text-dark shadow-sm')
                     $('#titleDesde').html(titletabla + btnAdd)
-                    $('.c_horale1').removeClass('btn-custom')
-                    $('.c_horale1').addClass('btn-custom')
                     $(selector).hide()
                 } else {
                     $(selector).show()
-                    $('#titleDesde').removeClass('text-dark shadow-sm')
-                    $('#titleDesde').addClass('btn-custom')
                     $('#titleDesde').html(titletabla + btnAdd)
-                    $('.c_horale1').removeClass('btn-custom')
-                    $('.c_horale1').addClass('btn-light')
                 }
                 $(".c_horale1").click(function () {
                     CheckSesion()
@@ -333,8 +321,8 @@ $(function () {
                         </div>
                         `)
                         singleDatePicker('#inputH1FDesde', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('.divTablas .NumLega').text() + ') ' + $('.divTablas .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('.divTablas .NumLega').text())
+                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                        $('#inputH1Legajo').val($('#divData .NumLega').text())
                         $('#inputH1Codhor').mask('0000');
                         $('#inputTipo').val('c_horale1');
                         $('#divtableHorarios').html('')
@@ -358,11 +346,6 @@ $(function () {
                     }, 300);
                     submitForm('#form', 'crud.php')
                 });
-                // $(".viewHor").click(function () { 
-                //     let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                //     let HorCodi = JSON.stringify({ 'HorCodi': data.CodHor, 'nombre': '', 'legajo': '', 'tabla': 'Horario' });
-                //     getHorario(HorCodi)
-                // });
                 $(".actModal").click(function () {
                     CheckSesion()
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
@@ -464,6 +447,33 @@ $(function () {
                     });
                 });
 
+                $.each(settings.json, function (key, value) {
+                    if (key == '_aTur') {
+                        if (value === 1) {
+                            $('.c_horale1').prop('disabled', false);
+                        } else {
+                            $('.c_horale1').prop('disabled', true);
+                        }
+                    } else if (key == '_mTur') {
+                        if (value === 1) {
+                            $('.actModal').prop('disabled', false);
+                        } else {
+                            $('.actModal').prop('disabled', true);
+                        }
+                    } else if (key == '_bTur') {
+                        if (value === 1) {
+                            $('.horale1Delete').prop('disabled', false);
+                        } else {
+                            $('.horale1Delete').prop('disabled', true);
+                        }
+                    } else if (key == 'TotalCit') {
+                        if (value > 0) {
+                            $('.cita').html('Citaciones (' + value + ')')
+                        }else{
+                            $('.cita').html('Citaciones (0)')
+                        }
+                    }
+                });
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
@@ -543,22 +553,14 @@ $(function () {
             drawCallback: function (settings) {
                 $(selector + " thead").remove()
                 let titletabla = '<div>Horarios Desde Hasta: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm btn-light px-2 pointer border c_horale2"><i class="bi bi-plus fonth"></i></button>`
+                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 btn-custom pointer border c_horale2"><i class="bi bi-plus"></i></button>`
                 if (settings.aiDisplay.length == 0) {
                     let titletabla = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
-                    $('#titleDesdeHasta').removeClass('btn-custom')
-                    $('#titleDesdeHasta').addClass('text-dark shadow-sm')
                     $('#titleDesdeHasta').html(titletabla + btnAdd)
-                    $('.c_horale2').removeClass('btn-custom')
-                    $('.c_horale2').addClass('btn-custom')
                     $(selector).hide()
                 } else {
                     $(selector).show()
-                    $('#titleDesdeHasta').removeClass('text-dark shadow-sm')
-                    $('#titleDesdeHasta').addClass('btn-custom')
                     $('#titleDesdeHasta').html(titletabla + btnAdd)
-                    $('.c_horale2').removeClass('btn-custom')
-                    $('.c_horale2').addClass('btn-light')
                 }
                 $(".c_horale2").click(function () {
                     CheckSesion()
@@ -574,8 +576,8 @@ $(function () {
                         </div>
                         `)
                         dobleDatePicker('#inputH1FDesdeHasta', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('.divTablas .NumLega').text() + ') ' + $('.divTablas .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('.divTablas .NumLega').text())
+                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                        $('#inputH1Legajo').val($('#divData .NumLega').text())
                         $('#inputH1Codhor').mask('0000');
                         $('#inputTipo').val('c_horale2');
                         $('#divtableHorarios').html('')
@@ -657,6 +659,29 @@ $(function () {
                         // $('#actModal').modal('show')
                     }, 300);
                 });
+
+                $.each(settings.json, function (key, value) {
+                    if (key == '_aTur') {
+                        if (value === 1) {
+                            $('.c_horale2').prop('disabled', false);
+                        } else {
+                            $('.c_horale2').prop('disabled', true);
+                        }
+                    } else if (key == '_mTur') {
+                        if (value === 1) {
+                            $('.actModal2').prop('disabled', false);
+                        } else {
+                            $('.actModal2').prop('disabled', true);
+                        }
+                    } else if (key == '_bTur') {
+                        if (value === 1) {
+                            $('.horale2Delete').prop('disabled', false);
+                        } else {
+                            $('.horale2Delete').prop('disabled', true);
+                        }
+                    }
+                });
+
                 submitForm('#form', 'crud.php')
                 $(".horale2Delete").click(function () {
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
@@ -801,22 +826,14 @@ $(function () {
             drawCallback: function (settings) {
                 $(selector + " thead").remove()
                 let titletabla = '<div>Citaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva citación" class="btn btn-sm btn-light px-2 pointer border c_citacion"><i class="bi bi-plus fonth"></i></button>`
+                let btnAdd = `<button title="Nueva citación" class="btn btn-sm btn-custom px-2 pointer border c_citacion"><i class="bi bi-plus"></i></button>`
                 if (settings.aiDisplay.length == 0) {
                     let titletabla = '<div class="fw4">Sin Citaciones</div>';
-                    $('#titleCitaciones').removeClass('btn-custom')
-                    $('#titleCitaciones').addClass('text-dark shadow-sm')
                     $('#titleCitaciones').html(titletabla + btnAdd)
-                    $('.c_citacion').removeClass('btn-custom')
-                    $('.c_citacion').addClass('btn-custom')
                     $(selector).hide()
                 } else {
                     $(selector).show()
-                    $('#titleCitaciones').removeClass('text-dark shadow-sm')
-                    $('#titleCitaciones').addClass('btn-custom')
                     $('#titleCitaciones').html(titletabla + btnAdd)
-                    $('.c_citacion').removeClass('btn-custom')
-                    $('.c_citacion').addClass('btn-light')
                 }
 
                 $(".c_citacion").click(function () {
@@ -846,12 +863,12 @@ $(function () {
                         <input type="hidden" class="" name="datos_Citacion" id="datos_Citacion">
                         `)
                         singleDatePicker('#Fecha', 'right', 'down')
-                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('.divTablas .NumLega').text() + ') ' + $('.divTablas .ApNo').text() + `</span>`)
-                        $('#actModalCitbody #inputH1Legajo').val($('.divTablas .NumLega').text())
+                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                        $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
                         $('#actModalCitbody #inputTipo').val('c_citacion');
-                        $('#actModalCitbody #datos_Citacion').val($('.divTablas .NumLega').text() + '-' + $("#Fecha").val())
+                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
                         $("#actModalCitbody #Fecha").change(function () {
-                            $('#actModalCitbody #datos_Citacion').val($('.divTablas .NumLega').text() + '-' + $("#Fecha").val())
+                            $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
                         });
                         $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
                         $('#actModalCit').modal('show')
@@ -894,12 +911,12 @@ $(function () {
                         $('#actModalCitbody #CitEntra').val(data.CitEntra)
                         $('#actModalCitbody #CitSale').val(data.CitSale)
                         $('#actModalCitbody #CitDesc').val(data.CitDesc)
-                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('.divTablas .NumLega').text() + ') ' + $('.divTablas .ApNo').text() + `</span>`)
-                        $('#actModalCitbody #inputH1Legajo').val($('.divTablas .NumLega').text())
+                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                        $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
                         $('#actModalCitbody #inputTipo').val('c_citacion');
-                        $('#actModalCitbody #datos_Citacion').val($('.divTablas .NumLega').text() + '-' + $("#Fecha").val())
+                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
                         $("#actModalCitbody #Fecha").change(function () {
-                            $('#actModalCitbody #datos_Citacion').val($('.divTablas .NumLega').text() + '-' + $("#Fecha").val())
+                            $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
                         });
                         $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
                         $('#actModalCit').modal('show')
@@ -953,7 +970,7 @@ $(function () {
                                             notify(data.Mensaje, 'success', 5000, 'right')
                                             $("#Citacion").DataTable().ajax.reload(null, false)
                                             $('#actModalCit').modal('hide')
-                                            let numLega = $('.divTablas .NumLega').text()
+                                            let numLega = $('#divData .NumLega').text()
                                             getHorarioActual((numLega))
                                         } else {
                                             ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
@@ -965,6 +982,28 @@ $(function () {
                             }
                         }
                     });
+                });
+
+                $.each(settings.json, function (key, value) {
+                    if (key == '_aCit') {
+                        if (value === 1) {
+                            $('.c_citacion').prop('disabled', false);
+                        } else {
+                            $('.c_citacion').prop('disabled', true);
+                        }
+                    } else if (key == '_mCit') {
+                        if (value === 1) {
+                            $('.actModalCit').prop('disabled', false);
+                        } else {
+                            $('.actModalCit').prop('disabled', true);
+                        }
+                    } else if (key == '_bCit') {
+                        if (value === 1) {
+                            $('.CitDelete').prop('disabled', false);
+                        } else {
+                            $('.CitDelete').prop('disabled', true);
+                        }
+                    }
                 });
 
             },
@@ -1203,22 +1242,14 @@ $(function () {
             drawCallback: function (settings) {
                 $(selector + " thead").remove()
                 let titletabla = '<div>Rotaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm btn-light px-2 pointer border c_rotacion"><i class="bi bi-plus fonth"></i></button>`
+                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_rotacion"><i class="bi bi-plus"></i></button>`
                 if (settings.aiDisplay.length == 0) {
-                    let titletabla = '<div class="fw4">Sin Rotación asignada</div>';
-                    $('#titleRotaciones').removeClass('btn-custom')
-                    $('#titleRotaciones').addClass('text-dark shadow-sm')
+                    titletabla = '<div class="fw4">Sin Rotación asignada</div>';
                     $('#titleRotaciones').html(titletabla + btnAdd)
-                    $('.c_rotacion').removeClass('btn-custom')
-                    $('.c_rotacion').addClass('btn-custom')
                     $(selector).hide()
                 } else {
                     $(selector).show()
-                    $('#titleRotaciones').removeClass('text-dark shadow-sm')
-                    $('#titleRotaciones').addClass('btn-custom')
                     $('#titleRotaciones').html(titletabla + btnAdd)
-                    $('.c_rotacion').removeClass('btn-custom')
-                    $('.c_rotacion').addClass('btn-light')
                 }
                 $(".viewRot").click(function () {
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
@@ -1245,8 +1276,8 @@ $(function () {
                         </div>
                         `)
                         singleDatePicker('#inputRotFecha', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('.divTablas .NumLega').text() + ') ' + $('.divTablas .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('.divTablas .NumLega').text())
+                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                        $('#inputH1Legajo').val($('#divData .NumLega').text())
                         $('#inputH1Codhor').mask('0000');
                         $('#inputRotDia').mask('000');
                         $('#inputTipo').val('c_rotacion');
@@ -1316,7 +1347,6 @@ $(function () {
                         }, 100);
                     }, 200);
                 });
-
                 $(".RotDelete").click(function () {
                     $('.RotaDeta').toast('hide')
                     let data = $(selector).DataTable().row($(this).parents('tr')).data();
@@ -1375,6 +1405,27 @@ $(function () {
                     });
                 });
                 submitForm('#form', 'crud.php')
+                $.each(settings.json, function (key, value) {
+                    if (key == '_aTur') {
+                        if (value === 1) {
+                            $('.c_rotacion').prop('disabled', false);
+                        } else {
+                            $('.c_rotacion').prop('disabled', true);
+                        }
+                    } else if (key == '_mTur') {
+                        if (value === 1) {
+                            $('.actModalRot').prop('disabled', false);
+                        } else {
+                            $('.actModalRot').prop('disabled', true);
+                        }
+                    } else if (key == '_bTur') {
+                        if (value === 1) {
+                            $('.RotDelete').prop('disabled', false);
+                        } else {
+                            $('.RotDelete').prop('disabled', true);
+                        }
+                    }
+                });
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
@@ -1458,8 +1509,8 @@ $(function () {
             },
             beforeSend: function (data) {
                 $('#divHorarioActual').html(`
-                <div class="d-inline-flex w-100 align-items-center h40 shadow-sm">
-                    <div class="w150 fontq h40 d-flex align-items-center justify-content-center btn-custom">Horario Actual: </div>
+                <div class="d-inline-flex w-100 align-items-center h40 shadow-sm border">
+                    <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-light fw4 text-dark border">Horario Actual: </div>
                     <div class="fontq w-100 h40 d-flex align-items-center px-2"></div>
                 </div>
             `)
@@ -1467,8 +1518,8 @@ $(function () {
             success: function (data) {
                 // console.table(data);
                 $('#divHorarioActual').html(`
-                    <div class="d-inline-flex w-100 align-items-center h40 shadow-sm">
-                        <div class="w150 fontq h40 d-flex align-items-center justify-content-center btn-custom">Horario Actual: </div>
+                    <div class="d-inline-flex w-100 align-items-center h40 shadow-sm border">
+                        <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-light fw4 text-dark border">Horario Actual: </div>
                         <div class="fontq w-100 h40 d-flex align-items-center fw4 px-2 animate__animated animate__fadeIn">`+ data.Mensaje + `</div>
                     </div>
                 `)
@@ -1486,32 +1537,31 @@ $(function () {
         // console.table(data);
         $("#detalleHorario").hide()
         $("#detalleHorario").html(`
-        <div class="p-2 divTablas">
-            <div class="shadow-sm">
-                <div class="p-2 btn-custom fontq d-inline-flex w-100 justify-content-between align-items-center" id="titleDesde">Horarios Desde</div>
-                <div class="overflow-auto w-100 table-responsive mb-2" style="max-height:150px">
-                    <table class="table fonth w-100 text-wrap" id="Horale1"></table>
+        <div class="divTablas">
+            <div class="shadow-sm border mb-2">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleDesde">Horarios Desde</div>
+                <div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                    <table class="table w-100 text-wrap" id="Horale1"></table>
                 </div>
             </div>
-            <div class="shadow-sm">
-                <div class="p-2 border-top-0 btn-custom fontq d-inline-flex w-100 justify-content-between align-items-center" id="titleDesdeHasta">Horarios Desde Hasta</div><div class="overflow-auto w-100 table-responsive mb-2" style="max-height:150px">
-                    <table class="table fonth text-wrap w-100" id="Horale2"></table>
+            <div class="shadow-sm border mb-2">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleDesdeHasta">Horarios Desde Hasta</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                    <table class="table text-wrap w-100" id="Horale2"></table>
                 </div>
             </div>
-            <div class="shadow-sm">
-                <div class="p-2 border-top-0 btn-custom fontq d-inline-flex w-100 justify-content-between align-items-center" id="titleRotaciones">Rotaciones</div><div class="overflow-auto w-100 table-responsive mb-2" style="max-height:150px">
-                    <table class="table fonth text-wrap w-100" id="Rotacion"></table>
+            <div class="shadow-sm border mb-2">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleRotaciones">Rotaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                    <table class="table text-wrap w-100" id="Rotacion"></table>
                 </div>
             </div>
             <div class="toast RotaDeta border-0" role="alert" aria-live="polite" data-autohide="false" aria-atomic="true">
-                
             </div>
-        </div>`)
-
-        $(".divTablas").prepend(`<div class="">
+        </div>
+        <button class="btn border btn-sm btn-custom fontq cita float-right px-4 mt-2">Citaciones</button>
+        `)
+        $("#divData").html(`<div class="mb-2 p-2 border shadow-sm animate__animated animate__fadeIn">
             <p class="fontq m-0 p-0">
             <label class="w60 fontq mb-1">Legajo: </label><span class="fw5 NumLega">` + data.pers_legajo + `</span></p><p class="fontq m-0 p-0"><label class="w60 fontq mb-0">Nombre: </label><span class="fw5 ApNo">` + data.pers_nombre + `</span>
-            <button class="btn btn-custom border btn-sm fontq cita float-right px-4 mb-2">Citaciones</button></p>
         </div>`)
         getHorarioActual(data.pers_legajo)
         let Horale1 = JSON.stringify({ 'nombre': data.pers_nombre, 'legajo': data.pers_legajo, 'tabla': 'Desde' });
@@ -1525,9 +1575,9 @@ $(function () {
             CheckSesion()
             $('#divCitaciones').remove()
             $('.divTablas').append(`
-            <div class="shadow-sm" id="divCitaciones" style="display:none">
-                <div class="p-2 border-top-0 btn-custom fontq d-inline-flex w-100 justify-content-between align-items-center" id="titleCitaciones">Citaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
-                    <table class="table fonth text-wrap w-100" id="Citacion"></table>
+            <div class="shadow-sm border" id="divCitaciones" style="display:none">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleCitaciones">Citaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                    <table class="table text-wrap w-100" id="Citacion"></table>
                 </div>
             </div>
             `)
@@ -1597,7 +1647,7 @@ $(function () {
                         notify(data.Mensaje, 'success', 5000, 'right')
                         $("#Citacion").DataTable().ajax.reload(null, false)
                         $('#actModalCit').modal('hide')
-                        let numLega = $('.divTablas .NumLega').text()
+                        let numLega = $('#divData .NumLega').text()
                         getHorarioActual((numLega))
                     } else {
                         ActiveBTN(false, '#submit', 'Aguarde..', 'Aceptar')

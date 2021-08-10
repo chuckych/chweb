@@ -19,7 +19,10 @@ $FechaHora = date('Ymd H:i:s');
 $_POST['tipo'] = $_POST['tipo'] ?? '';
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_horale1')) {
-
+    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
+        exit;
+    };
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['Codhor2'] = $_POST['Codhor2'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
@@ -66,7 +69,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 } else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_horale1')) {
-
+    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
+        exit;
+    };
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['Fecha']   = $_POST['Fecha'] ?? '';
@@ -106,6 +112,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale1')) {
+    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
+        exit;
+    };
 
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
@@ -147,7 +157,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale2')) {
-
+    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
+        exit;
+    };
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['FDesde']   = $_POST['FDesde'] ?? '';
@@ -194,7 +207,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_horale2')) {
-
+    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
+        exit;
+    };
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['Codhor2'] = $_POST['Codhor2'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
@@ -255,7 +271,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_horale2')) {
-
+    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
+        exit;
+    };
     $_POST['Codhor']   = $_POST['Codhor'] ?? '';
     $_POST['NumLega']  = $_POST['NumLega'] ?? '';
     $_POST['FechaIni'] = $_POST['FechaIni'] ?? '';
@@ -302,7 +321,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_rotacion')) {
-
+    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
+        exit;
+    };
     $_POST['Codhor']  = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['RotFecha']   = $_POST['RotFecha'] ?? '';
@@ -349,7 +371,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_rotacion')) {
-
+    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
+        exit;
+    };
     $_POST['Codhor']   = $_POST['Codhor'] ?? '';
     $_POST['Codhor2']  = $_POST['Codhor2'] ?? '';
     $_POST['NumLega']  = $_POST['NumLega'] ?? '';
@@ -400,7 +425,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 }else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_rotacion')) {
-
+    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+        PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
+        exit;
+    };
     $_POST['Codhor']   = $_POST['Codhor'] ?? '';
     $_POST['NumLega']  = $_POST['NumLega'] ?? '';
     $_POST['Fecha']    = $_POST['Fecha'] ?? '';

@@ -16,6 +16,13 @@ $Legajo = $Datos['legajo'];
 $ApNo   = $Datos['nombre'];
 $Tabla  = $Datos['tabla'];
 
+$aTur = intval($_SESSION["ABM_ROL"]['aTur']);
+$bTur = intval($_SESSION["ABM_ROL"]['bTur']);
+$mTur = intval($_SESSION["ABM_ROL"]['mTur']);
+$aCit = intval($_SESSION["ABM_ROL"]['aCit']);
+$bCit = intval($_SESSION["ABM_ROL"]['bCit']);
+$mCit = intval($_SESSION["ABM_ROL"]['mCit']);
+
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = $TotalCit = "";
@@ -66,7 +73,7 @@ switch ($Tabla) {
                 'CodHor'   => $codHor,
                 'Horario'  => $horario,
                 'Legajo'   => $Legajo,
-                'ApNo'     => $ApNo,
+                'ApNo'     => $ApNo
             );
         }
         break;
@@ -324,6 +331,13 @@ $json_data = array(
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data,
-    "TotalCit"        => $TotalCit
+    "TotalCit"        => $TotalCit,
+    '_aTur'            => $aTur,
+    '_bTur'            => $bTur,
+    '_mTur'            => $mTur,
+    '_aCit'            => $aCit,
+    '_bCit'            => $bCit,
+    '_mCit'            => $mCit
+    
 );
 echo json_encode($json_data);

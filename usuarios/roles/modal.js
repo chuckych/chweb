@@ -1,14 +1,3 @@
-/** Variables para las notificaciones de pantalla */
-var NotifDelay = 2000;
-var NotifOffset = 0;
-var NotifOffsetX = 0;
-var NotifOffsetY = 0;
-var NotifZindex = 9999;
-var NotifMouseOver = 'pause'
-var NotifEnter = 'animate__animated animate__fadeInDown';
-var NotifExit = 'animate__animated animate__fadeOutUp';
-var NotifAlign = 'center';
-
 $(document).on("click", "#marcar", function (e) {
     $('input[type="checkbox"]').prop('checked', true)
 });
@@ -67,6 +56,9 @@ $(document).on("click", "#open-modal", function (e) {
                     checked(respuesta.aCit, "#aCit");
                     checked(respuesta.mCit, "#mCit");
                     checked(respuesta.bCit, "#bCit");
+                    checked(respuesta.aTur, "#aTur");
+                    checked(respuesta.bTur, "#bTur");
+                    checked(respuesta.mTur, "#mTur");
                 },
                 error: function () {
                     $('.modal-body').addClass('d-none')
@@ -86,58 +78,24 @@ $(document).on("click", "#open-modal", function (e) {
                 // async : false,
                 beforeSend: function (data) {
                     $('#submitABM').prop('disabled', true);
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
                 },
                 success: function (data) {
                     if (data.status == "ok") {
                         $('#submitABM').prop('disabled', false);
-                        $.notify(`<span class='fonth fw4'><span class="text-dark">${data.dato}</span></span>`, {
-                            type: 'success',
-                            z_index: NotifZindex,
-                            delay: NotifDelay,
-                            offset: NotifOffset,
-                            mouse_over: NotifMouseOver,
-                            placement: {
-                                align: NotifAlign
-                            },
-                            animate: {
-                                enter: NotifEnter,
-                                exit: NotifExit
-                            }
-                        });
+                        $.notifyClose();
+                        notify(data.Mensaje, 'success', 5000, 'right')
                     } else {
                         $('#submitABM').prop('disabled', false);
-                        $.notify(`<span class='fonth fw4'><span data-icon='&#xe41a;' class='mr-2'></span><span class="text-dark">${data.dato}</span></span>`, {
-                            type: 'danger',
-                            z_index: NotifZindex,
-                            delay: NotifDelay,
-                            offset: NotifOffset,
-                            mouse_over: NotifMouseOver,
-                            placement: {
-                                align: NotifAlign
-                            },
-                            animate: {
-                                enter: NotifEnter,
-                                exit: NotifExit
-                            }
-                        });
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
                     }
                 },
-                error: function() {
+                error: function () {
                     $('#submitABM').prop('disabled', false);
-                    $.notify(`<span class='fonth fw4'><span data-icon='&#xe41a;' class='mr-2'> Error</span></span>`, {
-                        type: 'danger',
-                        z_index: NotifZindex,
-                        delay: NotifDelay,
-                        offset: NotifOffset,
-                        mouse_over: NotifMouseOver,
-                        placement: {
-                            align: NotifAlign
-                        },
-                        animate: {
-                            enter: NotifEnter,
-                            exit: NotifExit
-                        }
-                    });
+                    $.notifyClose();
+                    notify('Error', 'danger', 5000, 'right')
                 }
             });
             e.stopImmediatePropagation();

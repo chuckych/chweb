@@ -42,7 +42,8 @@
             </div>
             <div class="col-12 col-sm-7 mt-sm-4 w-100">
                 <div class="h-100">
-                    <div class="px-2 mb-2" id="divHorarioActual"></div>
+                    <div class="" id="divData"></div>
+                    <div class="mb-2" id="divHorarioActual"></div>
                     <div class="animate__animated animate__fadeIn" id="detalleHorario">
                         <div class="text-secondary text-center w-100 mt-5 d-flex align-items-center justify-content-center w-100" style="height: 200px;"><p>Seleccionar un Legajo</p></div>
                     </div>

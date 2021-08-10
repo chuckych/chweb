@@ -1177,7 +1177,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true')) {
 
     if ($_SESSION["ABM_ROL"]['aCit'] == '0') {
-        $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para modificar Otras Novedades.');
+        $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para crear citaciones.');
         echo json_encode($data);
         exit;
     };
@@ -1315,7 +1315,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         };
     }
 }
-/** ALTA CITACION */
+/** BAJA CITACION */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
 
 

@@ -97,6 +97,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	ENGINE=InnoDB");
 	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
 
+	InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN IF NOT EXISTS `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN IF NOT EXISTS `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN IF NOT EXISTS `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
 	
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
@@ -120,6 +121,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	$ABMRol = array();
 	if (mysqli_num_rows($result) > 0) {
 		while ($rowabm = mysqli_fetch_assoc($result)) :
+
 			$aFic  = $rowabm['aFic'];
 			$mFic  = $rowabm['mFic'];
 			$bFic  = $rowabm['bFic'];
@@ -136,44 +138,15 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 			$aCit  = $rowabm['aCit'];
 			$mCit  = $rowabm['mCit'];
 			$bCit  = $rowabm['bCit'];
-			$ABMRol = array(
-				'aFic'  => $aFic,
-				'mFic'  => $mFic,
-				'bFic'  => $bFic,
-				'aNov'  => $aNov,
-				'mNov'  => $mNov,
-				'bNov'  => $bNov,
-				'aHor'  => $aHor,
-				'mHor'  => $mHor,
-				'bHor'  => $bHor,
-				'aONov' => $aONov,
-				'mONov' => $mONov,
-				'bONov' => $bONov,
-				'Proc'  => $Proc,
-				'aCit'  => $aCit,
-				'mCit'  => $mCit,
-				'bCit'  => $bCit,
-			);
+			$aTur  = $rowabm['aTur'];
+			$mTur  = $rowabm['mTur'];
+			$bTur  = $rowabm['bTur'];
+
+            $ABMRol = array('aFic'  => $aFic,'mFic'  => $mFic,'bFic'  => $bFic,'aNov'  => $aNov,'mNov'  => $mNov,'bNov'  => $bNov,'aHor'  => $aHor,'mHor'  => $mHor,'bHor'  => $bHor,'aONov' => $aONov,'mONov' => $mONov,'bONov' => $bONov,'Proc'  => $Proc,'aCit'  => $aCit,'mCit'  => $mCit,'bCit'  => $bCit,'aTur'  => $aTur,'mTur'  => $mTur,'bTur'  => $bTur, );
+
 		endwhile;
 	} else {
-		$ABMRol = array(
-			'aFic'  => '0',
-			'mFic'  => '0',
-			'bFic'  => '0',
-			'aNov'  => '0',
-			'mNov'  => '0',
-			'bNov'  => '0',
-			'aHor'  => '0',
-			'mHor'  => '0',
-			'bHor'  => '0',
-			'aONov' => '0',
-			'mONov' => '0',
-			'bONov' => '0',
-			'Proc'  => '0',
-			'aCit'  => '0',
-			'mCit'  => '0',
-			'bCit'  => '0',
-		);
+		$ABMRol = array('aFic'  => '0','mFic'  => '0','bFic'  => '0','aNov'  => '0','mNov'  => '0','bNov'  => '0','aHor'  => '0','mHor'  => '0','bHor'  => '0','aONov' => '0','mONov' => '0','bONov' => '0','Proc'  => '0','aCit'  => '0','mCit'  => '0','bCit'  => '0','aTur'  => '0','mTur'  => '0','bTur'  => '0');
 	}
 	mysqli_free_result($result);
 
