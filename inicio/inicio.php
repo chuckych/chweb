@@ -13,6 +13,12 @@
                 <?php require __DIR__ . '../../nav.php'; ?>
             </div>
         </div>
+        <?php 
+        $vjs =  str_replace('v','', (vjs()));
+		$vjs =  str_replace('.','', ($vjs));
+		echo intval($vjs);
+        
+        ?>
         <?= encabezado_mod($bgcolor, 'white', 'inicio2.png', 'Control Horario Web', ''); ?>
             <div class="row">
                 <div class="col-12 p-0">

@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.168';
+    return 'v0.0.169';
 }
 function E_ALL()
 {
@@ -143,6 +143,7 @@ function vjs()
 {
     if ($_SERVER['SERVER_NAME'] == 'localhost') {
         return time();
+        // return version();
     } else {
         return version();
     }

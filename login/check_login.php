@@ -97,8 +97,17 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	ENGINE=InnoDB");
 	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
 
-	InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN IF NOT EXISTS `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN IF NOT EXISTS `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN IF NOT EXISTS `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
-	
+
+	if ($_SERVER['SERVER_NAME'] != 'localhost') {
+		$vjs =  str_replace('v','', (vjs()));
+		$vjs =  str_replace('.','', ($vjs));
+		if (intval($vjs) <= 168) {
+			InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
+		}
+    }
+
+		
+			
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
