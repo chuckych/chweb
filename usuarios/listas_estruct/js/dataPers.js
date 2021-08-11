@@ -22,7 +22,8 @@ $(function () {
             "data": function (data) {
                 data._c = cliente,
                 data.lista   = 8,
-                data.uid     = uid
+                data.uid     = uid,
+                data.rel = relacionesSwith
             },
             error: function () {
                 $("#tablePersonal").css("display", "none");
@@ -154,6 +155,7 @@ $(function () {
 
         $('#refreshPerList').on('click', function (e) {
             e.preventDefault();
+            habilitarRelacionesSwith(8)
             $('#tablePersonal').DataTable().ajax.reload()
         })
         $('#checkAllPer').on('click', function () {
@@ -203,5 +205,10 @@ $(function () {
                 }
             })
         });
+    })
+    tablePersonal.on('draw.dt', function () {
+        $('#spanFinishTable').html('Personal')
+        finishCallBack = finishCallBack + 1
+        habilitarRelacionesSwith(finishCallBack)
     })
 });

@@ -1,4 +1,5 @@
 function actualizaListas() {
+    finishCallBack = 0
     $('#tableEmpresa').DataTable().ajax.reload()
     $('#tablePlantas').DataTable().ajax.reload()
     $('#tableConvenios').DataTable().ajax.reload()
@@ -8,12 +9,41 @@ function actualizaListas() {
     $('#tableSucursales').DataTable().ajax.reload()
     $('#tablePersonal').DataTable().ajax.reload()
 }
+finishCallBack = 0
+relacionesSwith = 1
+$('#relacionesSwith').on('change', function (e) {
+    finishCallBack = 0
+    habilitarRelacionesSwith(finishCallBack)
+    if ($("#relacionesSwith").is(":checked")) {
+        relacionesSwith = 1
+        $('#divRelacion').attr('data-titler', 'Quitar relación de estructura')
+    } else {
+        relacionesSwith = 0
+        $('#divRelacion').attr('data-titler', 'Mantener relación de estructura')
+    }
+    actualizaListas()
+    e.stopImmediatePropagation()
+});
+function habilitarRelacionesSwith(finishCallBack) {
+    if (finishCallBack >= 8) {
+        $('#spanFinishTable').html('')
+        if ($("#relacionesSwith").is(":disabled")) {
+            $('#relacionesSwith').prop('disabled', false)
+        }
+    } else {
+        if (!$("#relacionesSwith").is(":disabled")) {
+            $('#relacionesSwith').prop('disabled', true)
+        }
+    }
+    console.log(finishCallBack);
+}
 
 $(function () {
     'use strict'
 
     let cliente = $('#cliente').val()
     let uid = $('#uid').val()
+    // let relacionesSwith = $('#relacionesSwith').val()    
 
     let tableEmpresa = $('#tableEmpresa').dataTable({
         initComplete: function (settings, json) {
@@ -33,7 +63,8 @@ $(function () {
             "data": function (data) {
                 data._c = cliente,
                     data.lista = 1,
-                    data.uid = uid
+                    data.uid = uid,
+                    data.rel = relacionesSwith
             },
             error: function () {
                 $("#tableEmpresa").css("display", "none");
@@ -121,7 +152,6 @@ $(function () {
         }
     });
     tableEmpresa.on('init.dt', function () {
-
         $('#tableEmpresa_info').css('margin-top', '0px')
         $('#tableEmpresa_info').addClass('p-0')
 
@@ -164,6 +194,7 @@ $(function () {
 
         $('#refreshEmpresaList').on('click', function (e) {
             e.preventDefault();
+            habilitarRelacionesSwith(8)
             $('#tableEmpresa').DataTable().ajax.reload()
         })
         $('#checkAllEmpresa').on('click', function () {
@@ -213,6 +244,12 @@ $(function () {
             })
         });
     })
+    tableEmpresa.on('draw.dt', function () {
+        $('#spanFinishTable').html('Empresas')
+        finishCallBack = finishCallBack + 1
+        habilitarRelacionesSwith(finishCallBack)
+    })
+
 
     $('#initEstruct').on('click', function () {
         CheckSesion()
@@ -244,7 +281,7 @@ $(function () {
                 notify('Error', 'danger', 5000, 'right')
             }
         })
-    });    
+    });
 });
 function setGeneral(uid, cliente, idTable, lista) {
     let checked = new Array();
@@ -254,7 +291,7 @@ function setGeneral(uid, cliente, idTable, lista) {
         }
     });
     $.ajax({
-        url: "listas_estruct/setLista.php?e="+idTable,
+        url: "listas_estruct/setLista.php?e=" + idTable,
         type: "POST",
         data: {
             lista: lista,
@@ -269,19 +306,19 @@ function setGeneral(uid, cliente, idTable, lista) {
     })
     return true
 }
-function setSeccion(uid, cliente){
+function setSeccion(uid, cliente) {
     let checked3 = new Array();
     $("#tableSecciones input:checkbox:checked").each(function () {
         (checked3.push(parseInt($(this).val())));
     });
     $.ajax({
-        url: "listas_estruct/setLista.php?e="+"tableSecciones",
+        url: "listas_estruct/setLista.php?e=" + "tableSecciones",
         type: "POST",
         data: {
-            lista2 : 5,
-            check  : JSON.stringify(checked3),
-            uid    : uid,
-            _c     : cliente,
+            lista2: 5,
+            check: JSON.stringify(checked3),
+            uid: uid,
+            _c: cliente,
         },
         success: function (data) {
             if (data.status == "ok") {

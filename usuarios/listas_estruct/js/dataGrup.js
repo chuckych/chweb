@@ -22,7 +22,8 @@ $(function () {
             "data": function (data) {
                 data._c = cliente,
                 data.lista   = 6,
-                data.uid     = uid
+                data.uid     = uid,
+                data.rel = relacionesSwith
             },
             error: function () {
                 $("#tableGrupos").css("display", "none");
@@ -153,6 +154,7 @@ $(function () {
 
         $('#refreshGrupList').on('click', function (e) {
             e.preventDefault();
+            habilitarRelacionesSwith(8)
             $('#tableGrupos').DataTable().ajax.reload()
         })
         $('#checkAllGrup').on('click', function () {
@@ -201,5 +203,10 @@ $(function () {
                 }
             })
         });
+    })
+    tableGrupos.on('draw.dt', function () {
+        $('#spanFinishTable').html('Grupos')
+        finishCallBack = finishCallBack + 1
+        habilitarRelacionesSwith(finishCallBack)
     })
 });

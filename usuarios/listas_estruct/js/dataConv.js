@@ -22,7 +22,8 @@ $(function () {
             "data": function (data) {
                 data._c = cliente,
                 data.lista   = 3,
-                data.uid     = uid
+                data.uid     = uid,
+                data.rel = relacionesSwith
             },
             error: function () {
                 $("#tableConvenios").css("display", "none");
@@ -153,6 +154,7 @@ $(function () {
 
         $('#refreshConvList').on('click', function (e) {
             e.preventDefault();
+            habilitarRelacionesSwith(8)
             $('#tableConvenios').DataTable().ajax.reload()
         })
         $('#checkAllConv').on('click', function () {
@@ -201,5 +203,10 @@ $(function () {
                 }
             })
         });
+    })
+    tableConvenios.on('draw.dt', function () {
+        $('#spanFinishTable').html('Convenios')
+        finishCallBack = finishCallBack + 1
+        habilitarRelacionesSwith(finishCallBack)
     })
 });

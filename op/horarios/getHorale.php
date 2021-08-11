@@ -109,6 +109,13 @@ switch ($Tabla) {
         }
         break;
     case 'Citacion':
+        $sql_cit = "SELECT SUM(1) as 'cant' FROM CITACION WHERE CITACION.CitLega = '$Legajo'";
+        $rs = sqlsrv_query($link, $sql_cit);
+        while ($a = sqlsrv_fetch_array($rs)) {
+            $TotalCit = $a['cant'];
+        }
+        sqlsrv_free_stmt($rs);
+        
         $sql_query = "SELECT CITACION.CitLega, CITACION.CitFech, CITACION.CitEntra, CITACION.CitSale, CITACION.CitDesc FROM CITACION WHERE CITACION.CitLega = $Legajo ORDER BY CITACION.CitFech DESC";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;

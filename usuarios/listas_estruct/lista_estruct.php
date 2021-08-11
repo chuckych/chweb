@@ -14,7 +14,11 @@ if (!ExisteUser($_GET['_c'], $_GET['uid'])) {
 <input type="hidden" id="cliente" value="<?= $_GET['_c'] ?>">
 <input type="hidden" id="uid" value="<?= $_GET['uid'] ?>">
 <div class="row bg-white mt-n3">
-    <div class="col-12">
+    <div class="col-12 d-inline-flex justify-content-between align-items-center">
+        <div class="custom-control custom-switch" data-titler="Quitar relación de estructura" id="divRelacion">
+            <input type="checkbox" checked class="custom-control-input" id="relacionesSwith" disabled>
+            <label class="custom-control-label mr-2" for="relacionesSwith" style="padding-top: 3px;"><i class="bi bi-diagram-3-fill text-secondary fonth"></i><span class="fontp text-secondary ml-2" id="spanFinishTable"></span></label>
+        </div>
         <button class="btn btn-sm btn-link fontq float-right p-1" data-titlel="Inicializar Estructura" id="initEstruct">Inicializar <i class="bi bi-eraser"></i></button>
     </div>
     <div class="col-12">

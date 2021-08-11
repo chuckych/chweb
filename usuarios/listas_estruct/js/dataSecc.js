@@ -25,7 +25,8 @@ $(function () {
             "data": function (data) {
                 data._c = cliente,
                 data.lista   = 5,
-                data.uid     = uid
+                data.uid     = uid,
+                data.rel = relacionesSwith
             },
             error: function () {
                 $("#tableSecciones").css("display", "none");
@@ -173,6 +174,7 @@ $(function () {
 
         $('#refreshList').on('click', function (e) {
             e.preventDefault();
+            habilitarRelacionesSwith(8)
             $('#tableSecciones').DataTable().ajax.reload()
         })
         $('#checkAllSecc').on('click', function () {
@@ -220,5 +222,10 @@ $(function () {
         //         }
         //     })
         // });
+    })
+    tableSecciones.on('draw.dt', function () {
+        $('#spanFinishTable').html('Secciones')
+        finishCallBack = finishCallBack + 1
+        habilitarRelacionesSwith(finishCallBack)
     })
 });

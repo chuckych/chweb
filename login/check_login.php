@@ -74,40 +74,18 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		(!$selDataPresentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'presentes', '', $row[id_cliente])") : '';
 		(!$selDataAusentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'ausentes', '', $row[id_cliente])") : '';
 	}
-	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_roles` (
-		`id_rol` TINYINT(4) NOT NULL,
-		`lista` ENUM('0','1','2','3','4','5') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci',
-		`datos` TEXT NOT NULL COLLATE 'utf8mb4_bin',
-		`fecha` DATETIME NOT NULL,
-		PRIMARY KEY (`id_rol`, `lista`) USING BTREE,
-		CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
-	)
-	COLLATE='utf8_general_ci'
-	ENGINE=InnoDB");
-	
-	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_estruct` (
-		`uid` INT(11) NOT NULL,
-		`lista` ENUM('1','2','3','4','5','6','7','8') NOT NULL COLLATE 'utf8_general_ci',
-		`datos` TEXT NOT NULL COLLATE 'utf8mb4_bin',
-		`fecha` DATETIME NOT NULL,
-		PRIMARY KEY (`uid`, `lista`) USING BTREE,
-		CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
-	)
-	COLLATE='utf8_general_ci'
-	ENGINE=InnoDB");
+	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_roles` ( `id_rol` TINYINT(4) NOT NULL, `lista` ENUM('0','1','2','3','4','5') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci', `datos` TEXT NOT NULL COLLATE 'utf8mb4_bin', `fecha` DATETIME NOT NULL, PRIMARY KEY (`id_rol`, `lista`) USING BTREE, CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION ) COLLATE='utf8_general_ci' ENGINE=InnoDB");
+
+	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_estruct` (`uid` INT(11) NOT NULL, `lista` ENUM('1','2','3','4','5','6','7','8') NOT NULL COLLATE 'utf8_general_ci', `datos` TEXT NOT NULL COLLATE 'utf8mb4_bin', `fecha` DATETIME NOT NULL, PRIMARY KEY (`uid`, `lista`) USING BTREE, CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8_general_ci' ENGINE=InnoDB");
+
 	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
+	
+	$check_schema_abm_roles="SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='abm_roles' AND COLUMN_NAME='aTur'";
 
+	if (!CountRegMayorCeroMySql($check_schema_abm_roles)) {
+		InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
+	}
 
-	if ($_SERVER['SERVER_NAME'] != 'localhost') {
-		$vjs =  str_replace('v','', (vjs()));
-		$vjs =  str_replace('.','', ($vjs));
-		if (intval($vjs) <= 168) {
-			InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
-		}
-    }
-
-		
-			
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
@@ -151,11 +129,11 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 			$mTur  = $rowabm['mTur'];
 			$bTur  = $rowabm['bTur'];
 
-            $ABMRol = array('aFic'  => $aFic,'mFic'  => $mFic,'bFic'  => $bFic,'aNov'  => $aNov,'mNov'  => $mNov,'bNov'  => $bNov,'aHor'  => $aHor,'mHor'  => $mHor,'bHor'  => $bHor,'aONov' => $aONov,'mONov' => $mONov,'bONov' => $bONov,'Proc'  => $Proc,'aCit'  => $aCit,'mCit'  => $mCit,'bCit'  => $bCit,'aTur'  => $aTur,'mTur'  => $mTur,'bTur'  => $bTur, );
+			$ABMRol = array('aFic'  => $aFic, 'mFic'  => $mFic, 'bFic'  => $bFic, 'aNov'  => $aNov, 'mNov'  => $mNov, 'bNov'  => $bNov, 'aHor'  => $aHor, 'mHor'  => $mHor, 'bHor'  => $bHor, 'aONov' => $aONov, 'mONov' => $mONov, 'bONov' => $bONov, 'Proc'  => $Proc, 'aCit'  => $aCit, 'mCit'  => $mCit, 'bCit'  => $bCit, 'aTur'  => $aTur, 'mTur'  => $mTur, 'bTur'  => $bTur,);
 
 		endwhile;
 	} else {
-		$ABMRol = array('aFic'  => '0','mFic'  => '0','bFic'  => '0','aNov'  => '0','mNov'  => '0','bNov'  => '0','aHor'  => '0','mHor'  => '0','bHor'  => '0','aONov' => '0','mONov' => '0','bONov' => '0','Proc'  => '0','aCit'  => '0','mCit'  => '0','bCit'  => '0','aTur'  => '0','mTur'  => '0','bTur'  => '0');
+		$ABMRol = array('aFic'  => '0', 'mFic'  => '0', 'bFic'  => '0', 'aNov'  => '0', 'mNov'  => '0', 'bNov'  => '0', 'aHor'  => '0', 'mHor'  => '0', 'bHor'  => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc'  => '0', 'aCit'  => '0', 'mCit'  => '0', 'bCit'  => '0', 'aTur'  => '0', 'mTur'  => '0', 'bTur'  => '0');
 	}
 	mysqli_free_result($result);
 
@@ -243,10 +221,11 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		mysqli_close($link);
 		return $data;
 	}
-	function estructUsuario($uid, $lista){
+	function estructUsuario($uid, $lista)
+	{
 		$v = dataListaEstruct($lista, $uid);
-        $v = implode(',', $v);
-        $v = ($v=='-') ? '' : $v;
+		$v = implode(',', $v);
+		$v = ($v == '-') ? '' : $v;
 		return $v;
 	}
 

@@ -7,16 +7,18 @@ secure_auth_ch_json();
 header("Content-Type: application/json");
 
 require __DIR__ . '../../../config/conect_mssql.php';
-
+// sleep(2);
 $data = array();
 $dataLista = array();
 
 $_GET['_c'] = $_GET['_c'] ?? '';
 $_GET['uid']     = $_GET['uid'] ?? '';
+$_GET['rel']     = $_GET['rel'] ?? '';
 
 $uid     = test_input($_GET['uid']);
 $lista   = test_input($_GET['lista']);
 $cliente = test_input($_GET['_c']);
+$rel = test_input($_GET['rel']);
 
 if (!$uid) {
     $data = array();
@@ -35,6 +37,8 @@ function filtroListas($uid, $lista)
     $r = str_replace(32768, 0, $r);
     return $r;
 }
+$filtroListas='';
+if ($rel) {
 $Empr = test_input(filtroListas($uid, 1));
 $Plan = test_input(filtroListas($uid, 2));
 $Conv = test_input(filtroListas($uid, 3));
@@ -52,7 +56,7 @@ $filtroListas .= ($Sec2 != '') ? "AND CONCAT(PERSONAL.LegSect,PERSONAL.LegSec2) 
 $filtroListas .= ($Grup != '') ? "AND PERSONAL.LegGrup IN($Grup)" : '';
 $filtroListas .= ($Sucu != '') ? "AND PERSONAL.LegSucu IN($Sucu)" : '';
 $filtroListas .= ($Lega != '') ? "AND PERSONAL.LegNume IN($Lega)" : '';
-
+}
 // print_r($Empr);exit;
 
 $dataLista = dataListaEstruct($lista, $uid);

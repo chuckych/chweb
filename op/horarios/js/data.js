@@ -1003,8 +1003,15 @@ $(function () {
                         } else {
                             $('.CitDelete').prop('disabled', true);
                         }
+                    } else if (key == 'TotalCit') {
+                        if (value > 0) {
+                            $('.cita').html('Citaciones (' + value + ')')
+                        }else{
+                            $('.cita').html('Citaciones (0)')
+                        }
                     }
                 });
+
 
             },
             createdRow: function (row, data, dataIndex) {
