@@ -34,6 +34,8 @@ $_POST['_f'] = $_POST['_f'] ?? '';
 if (empty($_POST['_f'])) {
     $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
     $Fecha = FechaString($FechaMinMax['max']);
+}else{
+    $Fecha = FechaString(test_input($_POST['_f']));
 }
 require __DIR__ . '../valores.php';
 
