@@ -77,5 +77,6 @@ $FechaFin  = $FechaFin ?? ($date);
         $('input[name="_dr"]').on('apply.daterangepicker', function(ev, picker) {
             $("#range").submit();
         });
+        
     });
 </script>

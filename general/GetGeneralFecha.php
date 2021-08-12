@@ -29,17 +29,11 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     echo json_encode($json_data);
     exit;
 }
-if (isset($_POST['_f']) && !empty($_POST['_f'])) {
-    $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
-}else{
-    $json_data = array(
-        "draw"            => intval($params['draw']),
-        "recordsTotal"    => 0,
-        "recordsFiltered" => 0,
-        "data"            => $data
-    );
-    echo json_encode($json_data);
-    exit;
+$_POST['_f'] = $_POST['_f'] ?? '';
+
+if (empty($_POST['_f'])) {
+    $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
+    $Fecha = FechaString($FechaMinMax['max']);
 }
 require __DIR__ . '../valores.php';
 

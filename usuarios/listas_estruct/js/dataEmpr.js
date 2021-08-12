@@ -26,16 +26,18 @@ $('#relacionesSwith').on('change', function (e) {
 });
 function habilitarRelacionesSwith(finishCallBack) {
     if (finishCallBack >= 8) {
-        $('#spanFinishTable').html('')
         if ($("#relacionesSwith").is(":disabled")) {
             $('#relacionesSwith').prop('disabled', false)
         }
+        setTimeout(() => {
+            $('#spanFinishTable').html('')
+        }, 300);
     } else {
         if (!$("#relacionesSwith").is(":disabled")) {
             $('#relacionesSwith').prop('disabled', true)
         }
     }
-    console.log(finishCallBack);
+    // console.log(finishCallBack);
 }
 
 $(function () {
@@ -249,6 +251,9 @@ $(function () {
         finishCallBack = finishCallBack + 1
         habilitarRelacionesSwith(finishCallBack)
     })
+    // tableEmpresa.on('preXhr.dt', function (e, settings, data) {
+    //     console.log(e);
+    // })
 
 
     $('#initEstruct').on('click', function () {

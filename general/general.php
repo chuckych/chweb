@@ -32,6 +32,9 @@
         #GetGeneralFecha_filter label {
             margin: 0px !important;
         }
+        .page-link{
+            border: 0 px solid #cecece !important;
+        }
     </style>
 </head>
 
@@ -126,7 +129,7 @@
                 </div>
             </div>
             <div class="col-12 animate__animated animate__fadeIn">
-                <div class="table-responsive" id="GetGeneralFechaTable">
+                <div class="table-responsive invisible" id="GetGeneralFechaTable">
                     <table class="table text-nowrap w-100" id="GetGeneralFecha">
                         <thead class="">
                             <tr>

@@ -72,6 +72,7 @@ function totLeg($col, $codi, $filtroListas)
 $set = '';
 switch ($lista) {
     case 1:
+        // sleep(3);
         $totLeg = totLeg('LegEmpr', 'EmpCodi', $filtroListas);
         $query = "SELECT DISTINCT(PERSONAL.LegEmpr) AS 'EmpCodi', EMPRESAS.EmpRazon AS 'EmpRazon', ($totLeg) AS 'totLeg' FROM PERSONAL INNER JOIN EMPRESAS ON PERSONAL.LegEmpr = EMPRESAS.EmpCodi WHERE ($totLeg) > 0 $filtroListas";
         // print_r($query);exit;
