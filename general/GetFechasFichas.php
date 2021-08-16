@@ -34,7 +34,7 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query = "SELECT FICHAS.FicFech as 'FicFech', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicFech";
+$sql_query = "SELECT FICHAS.FicFech as 'FicFech', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicFech";
 // print_r($sql_query); exit;
 
 $sqlTot .= $sql_query;

@@ -9,10 +9,15 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
 } else {
     // $FechaIni  = date('Ymd');
     // $FechaFin  = date('Ymd');
-    $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
-    $FechaIni = FechaString($FechaMinMax['max']);
-    $FechaFin = FechaString($FechaMinMax['max']);
+    // $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
+    // $FechaIni = FechaString($FechaMinMax['max']);
+    // $FechaFin = FechaString($FechaMinMax['max']);
+
+    FusNuloPOST("FechaFin", '');
+    $FechaIni = FechaString(test_input($_POST['FechaFin']));
+    $FechaFin = FechaString(test_input($_POST['FechaFin']));
     // print_r($FechaMinMax['max']);exit;
+
 }
 
 FusNuloPOST("Per", '');
@@ -30,6 +35,7 @@ FusNuloPOST("FicNovT", 0);
 FusNuloPOST("FicNovI", 0);
 FusNuloPOST("FicNovS", 0);
 FusNuloPOST("FicNovA", 0);
+FusNuloPOST("Fic3Nov", '');
 
 $Per      = ($_POST['Per']);
 $Per2     = test_input($_POST['Per2']);
@@ -45,12 +51,14 @@ $FicNovT  = test_input($_POST['FicNovT']);
 $FicNovI  = test_input($_POST['FicNovI']);
 $FicNovS  = test_input($_POST['FicNovS']);
 $FicNovA  = test_input($_POST['FicNovA']);
+$Fic3Nov  = test_input($_POST['Fic3Nov']);
 $FicDiaL  = ($FicDiaL) ? "AND FICHAS.FicDiaL = '$FicDiaL'" : "";
 $FicFalta = ($FicFalta) ? "AND FICHAS.FicFalta = '$FicFalta'" : "";
 $FicNovT  = ($FicNovT) ? "AND FICHAS.FicNovT = '$FicNovT'" : "";
 $FicNovI  = ($FicNovI) ? "AND FICHAS.FicNovI = '$FicNovI'" : "";
 $FicNovS  = ($FicNovS) ? "AND FICHAS.FicNovS = '$FicNovS'" : "";
 $FicNovA  = ($FicNovA) ? "AND FICHAS.FicNovA = '$FicNovA'" : "";
+$Fic3Nov  = ($Fic3Nov) ? "AND FICHAS3.FicNove = '$Fic3Nov'" : "";
 
 $Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'" : "";
 
@@ -65,6 +73,41 @@ if (!empty($_POST['Sec2'])) {
 } else {
     $Seccion = '';
 }
+
+
+/** Filtro de novedad */
+$FicNovTNov  = test_input($_POST['FicNovT']);
+$FicNovINov  = test_input($_POST['FicNovI']);
+$FicNovSNov  = test_input($_POST['FicNovS']);
+$FicNovANov  = test_input($_POST['FicNovA']);
+
+$tipoNovT = ($FicNovTNov) ? "99" : '';
+$tipoNovI = ($FicNovINov) ? '1' : '';
+$tipoNovS = ($FicNovSNov) ? '2' : '';
+$tipoNovA = ($FicNovANov) ? '3,4,5,6,7,8' : '';
+
+$arraTipo = array();
+($tipoNovT) ? array_push($arraTipo, $tipoNovT) : '';
+($tipoNovI) ? array_push($arraTipo, $tipoNovI) : '';
+($tipoNovS) ? array_push($arraTipo, $tipoNovS) : '';
+($tipoNovA) ? array_push($arraTipo, $tipoNovA) : '';
+
+
+$arraTipo = implode(',', $arraTipo);
+
+if ($arraTipo) {
+    $arraTipo   = str_replace('99', '0', $arraTipo);
+    $filtroTipo = "AND FICHAS3.FicNoTi IN ($arraTipo)";
+} else {
+    $filtroTipo = '';
+}
+if (test_input($_POST['Fic3Nov'])) {
+    $joinFichas3 = "INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech AND FICHAS.FicTurn=FICHAS3.FicTurn";
+}else {
+    $joinFichas3 = '';
+}
+
+/** Fin Filtro de novedad */
 
 $Empresa  = datosGetIn($_POST['Emp'], "PERSONAL.LegEmpr");
 $Planta   = datosGetIn($_POST['Plan'], "PERSONAL.LegPlan");
@@ -89,4 +132,5 @@ $FilterEstruct  .= $Sucursal;
 $FilterEstruct  .= $Tipo;
 $FilterEstruct  .= $Legajos;
 $FilterEstruct  .= $Per2;
+$FilterEstruct  .= $Fic3Nov;
 // $FilterEstruct  .= $Thora;

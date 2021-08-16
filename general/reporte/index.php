@@ -54,7 +54,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     // echo $diff->days . ' dias'; exit;
 
     if($diff->days >'31'){
-        $data = array('status' => 'error', 'dato' => '<b>Rango de fechas supierior a 31 d&iacute;as</b>');
+        $data = array('status' => 'error', 'Mensaje' => 'Error: Rango de fechas supierior a 31 d&iacute;as');
         echo json_encode($data);
         exit;
     }
@@ -139,7 +139,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
 
-        $data = array('status' => 'ok', 'dato' => 'Reporte Creado.'.$_nombre, 'archivo'=> $NombreArchivo2, 'destino'=> $_destino, 'x'=>getmypid());
+        $data = array('status' => 'ok', 'Mensaje' => 'Reporte Creado.'.$_nombre, 'archivo'=> $NombreArchivo2, 'destino'=> $_destino, 'x'=>getmypid());
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {

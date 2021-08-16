@@ -1,8 +1,8 @@
 /** Select */
 $(document).ready(function () {
-    $('#Tipo').css({"width": "200px"});
-    $('.form-control').css({"width": "100%"});
-    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)  
+    $('#Tipo').css({ "width": "200px" });
+    $('.form-control').css({ "width": "100%" });
+    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
     $('#Filtros').on('shown.bs.modal', function () {
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         $(".selectjs_empresa").select2({
@@ -32,12 +32,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getEmpFichas.php",
@@ -46,23 +52,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
                         // Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -99,12 +106,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getPlanFichas.php",
@@ -113,23 +126,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
                         // Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -166,12 +180,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSectFichas.php",
@@ -180,23 +200,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
                         // Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -233,12 +254,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSec2Fichas.php",
@@ -247,23 +274,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
                         // Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -300,12 +328,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getGrupFichas.php",
@@ -314,23 +348,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
                         // Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -367,12 +402,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSucFichas.php",
@@ -381,23 +422,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
                         // Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -434,12 +476,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + "2" + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichas.php",
@@ -448,23 +496,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
+                        q: params.term,
                         // Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -501,12 +550,18 @@ $(document).ready(function () {
                 errorLoading: function () {
                     return 'Sin datos..'
                 },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
                 inputTooShort: function () {
                     return 'Ingresar ' + "2" + ' o mas caracteres'
                 },
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
-                }
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
             },
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getTipoPerFichas.php",
@@ -515,23 +570,24 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
                         // Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicDiaL : $("#datoFicDiaL").val(),
-                        FicFalta : $("#datoFicFalta").val(),
-                        FicNovT : $("#datoFicNovT").val(),
-                        FicNovI : $("#datoFicNovI").val(),
-                        FicNovS : $("#datoFicNovS").val(),
-                        FicNovA : $("#datoFicNovA").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
                     }
                 },
                 processResults: function (data) {
@@ -541,22 +597,96 @@ $(document).ready(function () {
                 },
             }
         });
+        $("#datoNovedad").select2({
+            allowClear: opt2["allowClear"],
+            multiple: false,
+            language: "es",
+            dropdownParent: $('#Filtros'),
+            placeholder: "Seleccionar Novedad",
+            minimumInputLength: opt2["MinLength"],
+            minimumResultsForSearch: 2,
+            maximumInputLength: opt2["MaxInpLength"],
+            selectOnClose: opt2["SelClose"],
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + "2" + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                loadingMore: function() {
+                    return "Cargando más resultados…"
+                },
+            },
+            ajax: {
+                url: "/" + $("#_homehost").val() + "/general/getSelect/getNovNovedades.php",
+                dataType: "json",
+                type: "POST",
+                delay: opt2["delay"],
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: $("#datoFicDiaL").val(),
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        // Fic3Nov: $("#datoNovedad").val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+            }
+        })
         $('#Per2').on('change', function () {
             CheckSesion()
         })
         function refreshSelected(slectjs) {
             $(slectjs).on('select2:select', function (e) {
                 $('#Per2').val(null)
-                ActualizaTablas()
+                ActualizaTablas2()
             });
         }
         function refreshUnselected(slectjs) {
             $(slectjs).on('select2:unselecting', function (e) {
                 $('#Per2').val(null)
-                ActualizaTablas()
+                ActualizaTablas2()
             });
         }
-             
+
         refreshSelected('.selectjs_empresa');
         refreshSelected('.selectjs_plantas');
         refreshSelected('.select_seccion');
@@ -564,8 +694,10 @@ $(document).ready(function () {
         refreshSelected('.selectjs_sucursal');
         refreshSelected('.selectjs_personal');
         refreshSelected('.selectjs_tipoper');
+        refreshSelected('#datoNovedad');
 
         refreshUnselected('.selectjs_empresa');
+        refreshUnselected('#datoNovedad');
         refreshUnselected('.selectjs_plantas');
         refreshUnselected('.select_seccion');
         refreshUnselected('.selectjs_grupos');
@@ -597,4 +729,4 @@ $(document).ready(function () {
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
     $('#Filtros').modal('dispose');
-  });
+});

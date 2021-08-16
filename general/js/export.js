@@ -259,7 +259,8 @@ $(document).ready(function () {
                 "&FicNovT= " + $("#datoFicNovT").val() +
                 "&FicNovI= " + $("#datoFicNovI").val() +
                 "&FicNovS= " + $("#datoFicNovS").val() +
-                "&FicNovA= " + $("#datoFicNovA").val(),
+                "&FicNovA= " + $("#datoFicNovA").val() +
+                "&Fic3Nov= " + $("#datoNovedad").val(),
             dataType: "json",
             beforeSend: function (data) {
                 ActiveBTN(true, "#btnExportar", 'Generando.!', btnPDF)
@@ -289,7 +290,7 @@ $(document).ready(function () {
                 } else {
                     ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
                     $.notifyClose();
-                    notify('Error', 'danger', 5000, 'right')
+                    notify(`${data.Mensaje}`, 'danger', 5000, 'right')
                 }
             },
             error: function () {

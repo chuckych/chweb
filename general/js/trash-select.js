@@ -6,6 +6,7 @@
 
 function LimpiarFiltros() {
     $('.selectjs_plantas').val(null).trigger("change");
+    $('#datoNovedad').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");
     $('.select_seccion').val(null).trigger("change");
@@ -34,6 +35,7 @@ function LimpiarFiltros() {
     $('#FicNovS').prop('disabled', false)
 }
 function LimpiarFiltros2() {
+    $('#datoNovedad').val(null).trigger("change");
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
     $('.selectjs_sectores').val(null).trigger("change");

@@ -6,27 +6,29 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        <label for="Tipo" class="mb-1 fontq d-none d-sm-block">Tipo Personal: </label>
-                        <select class="selectjs_tipoper" id="Tipo" name="Tipo">
-                        </select>
+                        <div class="d-inline-flex align-items-center">
+                            <label for="Tipo" class="mb-1 fontq d-none d-sm-block mr-1">Tipo Personal: </label>
+                            <select class="selectjs_tipoper" id="Tipo" name="Tipo">
+                            </select>
+                        </div>
                         <span id="trash_allIn" title="Limpiar Filtros"
                             class="trash align-middle pb-0 fw5 float-right">Limpiar Filtros</span>
                     </div>
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Empresa -->
-                        <label for="Emp" class="mb-0 d-none d-sm-block"><span class="fontq ">Empresas</span> </label>
+                        <label for="Emp" class="my-1 d-none d-sm-block"><span class="fontq ">Empresas</span> </label>
                         <select class="form-control selectjs_empresa" id="Emp" name="Emp">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Planta -->
-                        <label for="Plan" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Plantas</span>  </label>
+                        <label for="Plan" class="w100 my-1 d-none d-sm-block"><span class="fontq">Plantas</span>  </label>
                         <select class="form-control selectjs_plantas" id="Plan" name="Plan">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Sector -->
-                        <label for="Sect" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Sectores</span> </label>
+                        <label for="Sect" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sectores</span> </label>
                         <select class="form-control selectjs_sectores" id="Sect" name="Sect">
                         </select>
                     </div>
@@ -34,19 +36,19 @@
                 <div class="row">
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Seccion -->
-                        <label for="Sec2" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Secciónes</span> </label>
+                        <label for="Sec2" class="w100 my-1 d-none d-sm-block"><span class="fontq">Secciónes</span> </label>
                         <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Grupos -->
-                        <label for="Grup" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Grupos</span> </label>
+                        <label for="Grup" class="w100 my-1 d-none d-sm-block"><span class="fontq">Grupos</span> </label>
                         <select class="form-control selectjs_grupos" id="Grup" name="Grup">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-1 mt-sm-0">
                         <!-- Sucursal -->
-                        <label for="Sucur" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Sucursales</span> </label>
+                        <label for="Sucur" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sucursales</span> </label>
                         <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur">
                         </select>
                     </div>
@@ -54,9 +56,53 @@
                 <div class="row d-flex align-items-center">
                     <div class="col-12 mt-1 mt-sm-0">
                         <!-- Legajo -->
-                        <label for="Per" class="w100 mb-0 d-none d-sm-block"><span class="fontq">Legajos</span> </label>
+                        <label for="Per" class="w100 my-1 d-none d-sm-block"><span class="fontq">Legajos</span> </label>
                         <select class="form-control selectjs_personal" id="Per" name="Per">
                         </select>
+                    </div>
+                </div>
+                <div class="border mt-3 p-2">
+                    <div class="row d-flex align-items-center">
+                        <div class="col-12">
+                            <span for="" class="w-100 mb-2 p-2 d-none d-sm-block bg-light fontq">Novedades</span>
+                            <!-- Tardes -->
+                            <div class="custom-control custom-switch custom-control-inline ml-1 w180">
+                                <input type="checkbox" class="custom-control-input" id="FicNovT">
+                                <label class="custom-control-label" for="FicNovT" style="padding-top: 3px;"><span class="text-dark">Llegadas Tarde</span></label>
+                                <input type="hidden" name="" id="datoFicNovT">
+                            </div>
+                            <!-- Incumplimientos -->
+                            <div class="custom-control custom-switch custom-control-inline ml-1 w180">
+                                <input type="checkbox" class="custom-control-input" id="FicNovI">
+                                <label class="custom-control-label" for="FicNovI" style="padding-top: 3px;"><span class="text-dark">Incumplimientos</span></label>
+                                <input type="hidden" name="" id="datoFicNovI">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-12">
+                            <!-- Salidas anticipadas -->
+                            <div class="custom-control custom-switch custom-control-inline ml-1 w180">
+                                <input type="checkbox" class="custom-control-input" id="FicNovS">
+                                <label class="custom-control-label" for="FicNovS" style="padding-top: 3px;"><span
+                                        class="text-dark">Salidas anticipadas</span></label>
+                                <input type="hidden" name="" id="datoFicNovS">
+                            </div>
+                            <!-- Ausencias -->
+                            <div class="custom-control custom-switch custom-control-inline ml-1 w180">
+                                <input type="checkbox" class="custom-control-input" id="FicNovA">
+                                <label class="custom-control-label" for="FicNovA" style="padding-top: 3px;"><span
+                                        class="text-dark">Ausencias</span></label>
+                                <input type="hidden" name="" id="datoFicNovA">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-12 col-sm-4 mt-1 mt-sm-2">
+                            <!-- Novedades -->
+                            <select class="form-control" id="datoNovedad" name="datoNovedad">
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="row d-flex align-items-center mt-3">
@@ -66,40 +112,6 @@
                             <input type="checkbox" class="custom-control-input" id="FicFalta">
                             <label class="custom-control-label" for="FicFalta" style="padding-top: 3px;"><span class="text-dark">Fichadas Inconsistentes</span></label>
                             <input type="hidden" name="" id="datoFicFalta">
-                        </div>
-                    </div>
-                </div>
-                <div class="row d-flex align-items-center">
-                    <div class="col-12">
-                        <!-- Tardes -->
-                        <div class="custom-control custom-switch custom-control-inline ml-1 w180">
-                            <input type="checkbox" class="custom-control-input" id="FicNovT">
-                            <label class="custom-control-label" for="FicNovT" style="padding-top: 3px;"><span class="text-dark">Llegadas Tarde</span></label>
-                            <input type="hidden" name="" id="datoFicNovT">
-                        </div>
-                        <!-- Incumplimientos -->
-                        <div class="custom-control custom-switch custom-control-inline ml-1 w180">
-                            <input type="checkbox" class="custom-control-input" id="FicNovI">
-                            <label class="custom-control-label" for="FicNovI" style="padding-top: 3px;"><span class="text-dark">Incumplimientos</span></label>
-                            <input type="hidden" name="" id="datoFicNovI">
-                        </div>
-                    </div>
-                </div>
-                <div class="row d-flex align-items-center">
-                    <div class="col-12">
-                        <!-- Salidas anticipadas -->
-                        <div class="custom-control custom-switch custom-control-inline ml-1 w180">
-                            <input type="checkbox" class="custom-control-input" id="FicNovS">
-                            <label class="custom-control-label" for="FicNovS" style="padding-top: 3px;"><span
-                                    class="text-dark">Salidas anticipadas</span></label>
-                            <input type="hidden" name="" id="datoFicNovS">
-                        </div>
-                        <!-- Ausencias -->
-                        <div class="custom-control custom-switch custom-control-inline ml-1 w180">
-                            <input type="checkbox" class="custom-control-input" id="FicNovA">
-                            <label class="custom-control-label" for="FicNovA" style="padding-top: 3px;"><span
-                                    class="text-dark">Ausencias</span></label>
-                            <input type="hidden" name="" id="datoFicNovA">
                         </div>
                     </div>
                 </div>

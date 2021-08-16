@@ -93,6 +93,7 @@
         $FechaIni = $FechaMinMax['max'];
         $FechaFin = $FechaMinMax['max'];
         ?>
+        <input type="hidden" value="<?=$FechaFin?>" id="FechaFin">
         <div class="row bg-white pb-sm-3 invisible" id="pagLega">
             <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
                 <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
@@ -119,8 +120,8 @@
                                 <th class="text-nowrap">HORARIO</th>
                                 <th class="text-center ls1" title="Primer y última Fichada">ENT-SAL</th>
                                 <th>TIPO HORA</th>
-                                <th class="text-center " title="Horas Autorizadas">HS AUTO</th>
-                                <th class="text-center " title="Horas Calculadas">HS HECHAS</th>
+                                <th class="text-center" title="Horas Autorizadas">HS AUTO</th>
+                                <th class="text-center" title="Horas Calculadas">HS HECHAS</th>
                                 <th title="Descripción de Novedad">NOVEDADES</th>
                                 <th class="" title="Horas de la Novedad">NOV HS</th>
                             </tr>

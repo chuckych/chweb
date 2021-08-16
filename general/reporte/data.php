@@ -31,6 +31,7 @@ FusNuloPOST("Sec2",'');
 FusNuloPOST("Grup",'');
 FusNuloPOST("Sucur",'');
 FusNuloPOST("Tipo",'');
+FusNuloPOST("Fic3Nov",'');
 
 $Per      = test_input($_POST['Per']);
 // $Emp      = ($_POST['Emp']=='null') ? '' : test_input($_POST['Emp']);
@@ -45,6 +46,8 @@ $FicNovI  = test_input($_POST['FicNovI']);
 $FicNovI2 = test_input($_POST['FicNovI']);
 $FicNovS  = test_input($_POST['FicNovS']);
 $FicNovS2 = test_input($_POST['FicNovS']);
+$Fic3Nov  = test_input($_POST['Fic3Nov']);
+
 $Tipo     = test_input($_POST['Tipo']);
 $Plan     = test_input($_POST['Plan']);
 $Sect     = test_input($_POST['Sect']);
@@ -69,6 +72,7 @@ $FicNovT  = ($FicNovT && $FicNovT !='null') ? " AND FICHAS.FicNovT = '$FicNovT'"
 $FicNovA  = ($FicNovA && $FicNovA !='null') ? " AND FICHAS.FicNovA = '$FicNovA'" : "";/** Novedades tipo Ausencia */
 $FicNovI  = ($FicNovI && $FicNovI !='null') ? " AND FICHAS.FicNovI = '$FicNovI'" : "";/** Novedades tipo Incumplimiento */
 $FicNovS  = ($FicNovS && $FicNovS !='null') ? " AND FICHAS.FicNovS = '$FicNovS'" : "";/** Novedades tipo Salida */
+$Fic3Nov  = ($Fic3Nov && $Fic3Nov !='null') ? "AND FICHAS3.FicNove = '$Fic3Nov'" : "";/** Novedades*/
 
 $FicNovT2 = ($FicNovT2) ? "0":'';
 $FicNovT2 .= ($FicNovI2 && $FicNovT2=='0') ? ",":'';
@@ -117,12 +121,21 @@ $FilterEstruct  .= $FicNovA;
 $FilterEstruct  .= $FicNovI;
 $FilterEstruct  .= $FicNovS;
 $FilterEstruct  .= $Tipo;
+$FilterEstruct  .= $Fic3Nov;
 
 $FilterEstruct2 = $FicNoTi;
+$FilterEstruct3 = $Fic3Nov;
 // $FilterEstruct2 .= $FicNovS2;
+if (test_input($_POST['Fic3Nov'] && test_input($_POST['Fic3Nov']) != 'null')) {
+    $joinFichas3 = "INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech AND FICHAS.FicTurn=FICHAS3.FicTurn";
+}else {
+    $joinFichas3 = '';
+}
+if (test_input($_POST['Fic3Nov']) == 'null') {
+    $joinFichas3 = '';
+}
 
-
-$sql_query="SELECT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, PERSONAL.LegApNo, PERSONAL.LegCUIT ORDER BY FICHAS.FicLega";
+$sql_query="SELECT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FilterEstruct3 GROUP BY FICHAS.FicLega, PERSONAL.LegApNo, PERSONAL.LegCUIT ORDER BY FICHAS.FicLega";
 
 // print_r($sql_query); exit;
 

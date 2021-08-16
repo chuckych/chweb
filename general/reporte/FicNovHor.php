@@ -79,16 +79,16 @@
                             if ($_VerFic == '1') {
                                 /** Mostramos Las Fichadas E/S */
                             ?>
-                                <td class="px-2 vtop"><?php echo $dataRegistros['Primera']; ?></td>
-                                <td class="px-2 vtop"><?php echo $dataRegistros['Ultima']; ?></td>
+                                <td class="px-2 vtop"><?php echo ceronull($dataRegistros['Primera']); ?></td>
+                                <td class="px-2 vtop"><?php echo ceronull($dataRegistros['Ultima']); ?></td>
                             <?php
                             }
                             /** FIN Mostramos Las Fichadas E/S */
                             if ($_VerNove == '1') {
                                 /** Mostramos Las Novedades */
                             ?>
-                                <td class="px-2 vtop"><?php echo $dataRegistros['Novedades']; ?></td>
-                                <td class="px-2 vtop center ls1"><?php echo $dataRegistros['NovHor']; ?></td>
+                                <td class="px-2 vtop"><?php echo ceronull($dataRegistros['Novedades'])?></td>
+                                <td class="px-2 vtop center ls1"><?php echo ceronull($dataRegistros['NovHor']); ?></td>
                             <?php
                             }
                             /** FIN Mostramos Las Horas */

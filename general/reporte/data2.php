@@ -9,7 +9,7 @@ $legajo = $valueLegajo['Legajo'];
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICHAS.FicLega";
+$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICHAS.FicLega";
 // print_r($sql_query); exit;
 
 $queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
@@ -74,7 +74,6 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
         // print_r($query_Nov); exit;
 
-
         $Novedad = array();
         if (sqlsrv_num_rows($result_Nov) > 0) {
             while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
@@ -93,12 +92,15 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
                 $desc2[] = ($fila["Descripcion"]);
                 $desc3[] = ($fila["Horas"]);
             }
-
+           
+            
             $Novedades  = implode("", $desc);
             /** Codigo de la novedad */
-            $Novedades2 = implode("<br/>", $desc2);
+            // $Novedades2 = implode("<hr>", $desc2);
+            $Novedades2 = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", ($desc2));
             /** Descripción de la novedad */
-            $NoveHoras  = implode("<br/>", $desc3);
+            // $NoveHoras  = implode("<hr>", $desc3);
+            $NoveHoras  = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", $desc3);
             /** Horas de la novedad */
             unset($desc);
             unset($desc2);
@@ -116,11 +118,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     // WHERE FICHAS1.FicLega = '$Gen_Lega' AND FICHAS1.FicFech = '$Gen_Fecha2'
     // AND TIPOHORA.THoColu > 0
     // ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega, FICHAS1.FicFech, FICHAS1.FicTurn, FICHAS1.FicHora";
-    $query_Horas = "SELECT TIPOHORA.THoCodi AS Hora, TIPOHORA.THoDesc2 AS 'HoraDesc2', TIPOHORA.THoDesc AS 'HoraDesc',
-                    (SELECT FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 WHERE FICHAS1.FicLega = '$Gen_Lega' AND FICHAS1.FicFech = '$Gen_Fecha2' AND FICHAS1.FicHora = TIPOHORA.THoCodi) AS 'HsAutorizadas'
-                    FROM TIPOHORA
-                    WHERE TIPOHORA.THoColu > 0
-                    ORDER BY TIPOHORA.THoColu";
+    $query_Horas="SELECT TIPOHORA.THoCodi AS Hora, TIPOHORA.THoDesc2 AS 'HoraDesc2', TIPOHORA.THoDesc AS 'HoraDesc', (SELECT FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND FICHAS1.FicHora=TIPOHORA.THoCodi) AS 'HsAutorizadas' FROM TIPOHORA WHERE TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu";
     // print_r($query_Horas);exit;
     $Horas = array();
     if ($_VerHoras == '1') {

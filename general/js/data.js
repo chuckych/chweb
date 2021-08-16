@@ -10,12 +10,25 @@ function ActualizaTablas() {
         $('.pers_legajo').removeClass('d-none')
     };
 };
+function ActualizaTablas2() {
+
+    if ($("#Visualizar").is(":checked")) {
+        $('#GetFechas').DataTable().ajax.reload();
+        $("#GetFechas_paginate .page-link").addClass('border border-0');
+    } else {
+        $('#GetPersonal').DataTable().ajax.reload();
+        $('#Per2').addClass('d-none')
+        $('.pers_legajo').removeClass('d-none')
+    };
+};
 var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
     if (e.keyCode in map) {
         map[e.keyCode] = true;
         if (map[32]) { /** Barra espaciadora */
-            $('#Filtros').modal('show');
+            if (!$('#Exportar').hasClass('show')) {
+                $('#Filtros').modal('show');
+            }
         }
     }
     if (e.keyCode in map) {
@@ -96,7 +109,9 @@ $("#FicNovT").change(function () {
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas()
+        $('#datoNovedad').val(null).trigger("change");
     } else {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovT').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas()
@@ -105,12 +120,14 @@ $("#FicNovT").change(function () {
 $('#datoFicNovI').val('0');
 $("#FicNovI").change(function () {
     if ($("#FicNovI").is(":checked")) {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovI').val('1')
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas()
     } else {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovI').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas()
@@ -119,12 +136,14 @@ $("#FicNovI").change(function () {
 $('#datoFicNovS').val('0');
 $("#FicNovS").change(function () {
     if ($("#FicNovS").is(":checked")) {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovS').val('1')
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas()
     } else {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovS').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas()
@@ -133,6 +152,7 @@ $("#FicNovS").change(function () {
 $('#datoFicNovA').val('0');
 $("#FicNovA").change(function () {
     if ($("#FicNovA").is(":checked")) {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovA').val('1')
         $('#datoFicFalta').val('0')
         $('#datoFicNovT').val('0')
@@ -148,6 +168,7 @@ $("#FicNovA").change(function () {
         $('#FicNovS').prop('disabled', true)
         ActualizaTablas()
     } else {
+        $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovA').val('0')
         $('#FicFalta').prop('disabled', false)
         $('#FicNovT').prop('disabled', false)
@@ -179,23 +200,25 @@ let GetPersonal = $('#GetPersonal').DataTable({
         url: "/" + $("#_homehost").val() + "/general/GetPersonalFichas.php",
         type: "POST",
         "data": function (data) {
-            data._l = $("#_l").val();
-            data.Per = $("#Per").val();
-            data.Per2 = $("#Per2").val();
-            data.Tipo = $("#Tipo").val();
-            data.Emp = $("#Emp").val();
-            data.Plan = $("#Plan").val();
-            data.Sect = $("#Sect").val();
-            data.Sec2 = $("#Sec2").val();
-            data.Grup = $("#Grup").val();
-            data.Sucur = $("#Sucur").val();
-            data._dr = $("#_dr").val();
-            data.FicDiaL = $("#datoFicDiaL").val();
+            data._l       = $("#_l").val();
+            data.Per      = $("#Per").val();
+            data.Per2     = $("#Per2").val();
+            data.Tipo     = $("#Tipo").val();
+            data.Emp      = $("#Emp").val();
+            data.Plan     = $("#Plan").val();
+            data.Sect     = $("#Sect").val();
+            data.Sec2     = $("#Sec2").val();
+            data.Grup     = $("#Grup").val();
+            data.Sucur    = $("#Sucur").val();
+            data._dr      = $("#_dr").val();
+            data.FicDiaL  = $("#datoFicDiaL").val();
             data.FicFalta = $("#datoFicFalta").val();
-            data.FicNovT = $("#datoFicNovT").val();
-            data.FicNovI = $("#datoFicNovI").val();
-            data.FicNovS = $("#datoFicNovS").val();
-            data.FicNovA = $("#datoFicNovA").val();
+            data.FicNovT  = $("#datoFicNovT").val();
+            data.FicNovI  = $("#datoFicNovI").val();
+            data.FicNovS  = $("#datoFicNovS").val();
+            data.FicNovA  = $("#datoFicNovA").val();
+            data.Fic3Nov  = $("#datoNovedad").val();
+            data.FechaFin = $("#FechaFin").val();
         },
 
         error: function () {
@@ -246,8 +269,8 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
     $(".dataTables_info").addClass('text-secondary');
     $('#pagLega').removeClass('d-none')
 })
-$('#GetPersonal').DataTable().on('xhr.dt', function (e, settings, json) {
-    if (json.draw === 1) {
+$('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
+    if (settings.iDraw === 1) {
         $('#GetGeneral').DataTable({
             "initComplete": function (settings, json) {
                 $("#Refresh").prop('disabled', false);
@@ -281,6 +304,8 @@ $('#GetPersonal').DataTable().on('xhr.dt', function (e, settings, json) {
                     data.FicNovI = $("#datoFicNovI").val();
                     data.FicNovS = $("#datoFicNovS").val();
                     data.FicNovA = $("#datoFicNovA").val();
+                    data.Fic3Nov = $("#datoNovedad").val();
+                    data.FechaFin = $("#FechaFin").val();
                 },
                 error: function () {
                     $("#GetGeneral").css("display", "none");
@@ -353,181 +378,189 @@ $('#GetPersonal').DataTable().on('xhr.dt', function (e, settings, json) {
 
 // setTimeout(function () {
 
-    $('#GetFechas').DataTable({
-        "initComplete": function (settings, json) {
-            $("#GetFechas thead").remove();
-            // $(".page-link").addClass('border border-0');
-        },
-        "drawCallback": function (settings) {
-            $(".page-link").addClass('border border-0');
-            if ((settings.json.recordsTotal > 0)) {
-                // $('#GetGeneralFecha').DataTable().ajax.reload(null, false);
-                // $('#GetGeneralFechaTotales').DataTable().ajax.reload(null, false);
-            } else {
-                // $('#GetGeneralFecha').DataTable().clear().draw();
-            }
-        },
-        pagingType: "full",
-        lengthMenu: [[1], [1]],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/general/GetFechasFichas.php",
-            type: "POST",
-            "data": function (data) {
-                data.Per = $("#Per").val();
-                data.Tipo = $("#Tipo").val();
-                data.Emp = $("#Emp").val();
-                data.Plan = $("#Plan").val();
-                data.Sect = $("#Sect").val();
-                data.Sec2 = $("#Sec2").val();
-                data.Grup = $("#Grup").val();
-                data.Sucur = $("#Sucur").val();
-                data._dr = $("#_dr").val();
-                data._l = $("#_l").val();
-                data.FicDiaL = $("#datoFicDiaL").val();
-                data.FicFalta = $("#datoFicFalta").val();
-                data.FicNovT = $("#datoFicNovT").val();
-                data.FicNovI = $("#datoFicNovI").val();
-                data.FicNovS = $("#datoFicNovS").val();
-                data.FicNovA = $("#datoFicNovA").val();
-            },
-            error: function () {
-                $("#GetFecha_processing").css("display", "none");
-            },
-        },
-        columns: [
-            {
-                "class": "w80 px-3 border fw4 bg-light radius ls1",
-                "data": 'FicFech'
-            },
-            {
-                "class": "w300 px-3 border fw4 bg-light radius",
-                "data": 'Dia'
-            },
-        ],
-        paging: true,
-        responsive: false,
-        info: true,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json"
-        },
-    });
-
-    $('#GetFechas').DataTable().on('xhr.dt', function (e, settings, json) {
-        if (json.draw === 1) {
-            // console.log(json.draw);
-            $('#GetGeneralFecha').DataTable({
-                "drawCallback": function (settings) {
-                    $(".page-link").addClass('border border-0');
-                    // $('#Visualizar').prop('disabled', false)
-                    if ((settings.json.recordsTotal > 0)) {
-                        // $('#GetGeneralFechaTable').show()
-                    } else {
-                        // $('#GetGeneralFechaTable').hide()
-                    }
-                    setTimeout(function () {
-                        $(".Filtros").prop('disabled', false);
-                    }, 1000);
-                },
-                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
-                bProcessing: true,
-                serverSide: true,
-                deferRender: true,
-                searchDelay: 1500,
-                // stateSave: -1,
-                dom: 'lBfrtip',
-                ajax: {
-                    url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
-                    type: "POST",
-                    "data": function (data) {
-                        data._f = $("#_f").val();
-                        data.Per = $("#Per").val();
-                        data.Tipo = $("#Tipo").val();
-                        data.Emp = $("#Emp").val();
-                        data.Plan = $("#Plan").val();
-                        data.Sect = $("#Sect").val();
-                        data.Sec2 = $("#Sec2").val();
-                        data.Grup = $("#Grup").val();
-                        data.Sucur = $("#Sucur").val();
-                        data._dr = $("#_dr").val();
-                        data._l = $("#_l").val();
-                        data.FicDiaL = $("#datoFicDiaL").val();
-                        data.FicFalta = $("#datoFicFalta").val();
-                        data.FicNovT = $("#datoFicNovT").val();
-                        data.FicNovI = $("#datoFicNovI").val();
-                        data.FicNovS = $("#datoFicNovS").val();
-                        data.FicNovA = $("#datoFicNovA").val();
-                    },
-                    error: function () {
-                        $("#GetGeneralFecha_processing").css("display", "none");
-                    },
-                },
-                columns: [
-                    {
-                        "class": "align-middle",
-                        "data": "modal"
-                    },
-                    {
-                        "class": "align-middle",
-                        "data": "LegNombre"
-                    },
-                    {
-                        "class": "text-nowrap ls1 align-middle",
-                        "data": "Gen_Horario"
-                    },
-                    {
-                        "class": "ls1 text-center fw4 align-middle",
-                        "data": "Primera"
-                    },
-                    {
-                        "class": "align-middle",
-                        "data": "DescHoras"
-                    }, {
-                        "class": "text-center fw4 ls1 align-middle",
-                        "data": "HsAuto"
-                    }, {
-                        "class": "text-center ls1 align-middle",
-                        "data": "HsCalc"
-                    }, {
-                        "class": "align-middle",
-                        "data": "Novedades"
-                    },
-                    {
-                        "class": "text-center fw4 ls1 align-middle",
-                        "data": "NovHor"
-                    },
-                ],
-                scrollX: true,
-                scrollCollapse: true,
-                scrollY: '50vmax',
-                paging: true,
-                info: true,
-                searching: true,
-                ordering: false,
-                language: {
-                    "url": "../js/DataTableSpanishShort2.json"
-                },
-            });
-            $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
-                $(".page-link").addClass('border border-0');
-                $(".dataTables_info").addClass('text-secondary');
-                $(".custom-select").addClass('text-secondary bg-light');
-                fadeInOnly('#GetGeneralFecha');
-            })
+$('#GetFechas').DataTable({
+    "initComplete": function (settings, json) {
+        $("#GetFechas thead").remove();
+        // $(".page-link").addClass('border border-0');
+    },
+    "drawCallback": function (settings) {
+        $(".page-link").addClass('border border-0');
+        if ((settings.json.recordsTotal > 0)) {
+            // $('#GetGeneralFecha').DataTable().ajax.reload(null, false);
+            // $('#GetGeneralFechaTotales').DataTable().ajax.reload(null, false);
         } else {
-            $('#GetGeneralFecha').DataTable().ajax.reload();
-            $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
-                fadeInOnly('#GetGeneralFecha');
-                $('#GetGeneralFechaTable').removeClass('invisible')
-            })
+            // $('#GetGeneralFecha').DataTable().clear().draw();
         }
-    })
-    
+    },
+    pagingType: "full",
+    lengthMenu: [[1], [1]],
+    bProcessing: false,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/general/GetFechasFichas.php",
+        type: "POST",
+        "data": function (data) {
+            data.Per = $("#Per").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data._l = $("#_l").val();
+            data.FicDiaL = $("#datoFicDiaL").val();
+            data.FicFalta = $("#datoFicFalta").val();
+            data.FicNovT = $("#datoFicNovT").val();
+            data.FicNovI = $("#datoFicNovI").val();
+            data.FicNovS = $("#datoFicNovS").val();
+            data.FicNovA = $("#datoFicNovA").val();
+            data.Fic3Nov = $("#datoNovedad").val();
+            data.FechaFin = $("#FechaFin").val();
+        },
+        error: function () {
+            $("#GetFecha_processing").css("display", "none");
+        },
+    },
+    columns: [
+        {
+            "class": "w80 px-3 border fw4 bg-light radius ls1",
+            "data": 'FicFech'
+        },
+        {
+            "class": "w300 px-3 border fw4 bg-light radius",
+            "data": 'Dia'
+        },
+    ],
+    paging: true,
+    responsive: false,
+    info: true,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort2.json"
+    },
+});
+
+// $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
+// console.log(settings.iDraw);
+// })
+$('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
+    if (settings.iDraw === 1) {
+        // console.log(json.draw);
+        $('#GetGeneralFecha').DataTable({
+            "drawCallback": function (settings) {
+                $(".page-link").addClass('border border-0');
+                // $('#Visualizar').prop('disabled', false)
+                if ((settings.json.recordsTotal > 0)) {
+                    // $('#GetGeneralFechaTable').show()
+                } else {
+                    // $('#GetGeneralFechaTable').hide()
+                }
+                setTimeout(function () {
+                    $(".Filtros").prop('disabled', false);
+                }, 1000);
+            },
+            lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+            bProcessing: true,
+            serverSide: true,
+            deferRender: true,
+            searchDelay: 1500,
+            // stateSave: -1,
+            dom: 'lBfrtip',
+            ajax: {
+                url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
+                type: "POST",
+                "data": function (data) {
+                    data._f = $("#_f").val();
+                    data.Per = $("#Per").val();
+                    data.Tipo = $("#Tipo").val();
+                    data.Emp = $("#Emp").val();
+                    data.Plan = $("#Plan").val();
+                    data.Sect = $("#Sect").val();
+                    data.Sec2 = $("#Sec2").val();
+                    data.Grup = $("#Grup").val();
+                    data.Sucur = $("#Sucur").val();
+                    data._dr = $("#_dr").val();
+                    data._l = $("#_l").val();
+                    data.FicDiaL = $("#datoFicDiaL").val();
+                    data.FicFalta = $("#datoFicFalta").val();
+                    data.FicNovT = $("#datoFicNovT").val();
+                    data.FicNovI = $("#datoFicNovI").val();
+                    data.FicNovS = $("#datoFicNovS").val();
+                    data.FicNovA = $("#datoFicNovA").val();
+                    data.Fic3Nov = $("#datoNovedad").val();
+                    data.FechaFin = $("#FechaFin").val();
+                },
+                error: function () {
+                    $("#GetGeneralFecha_processing").css("display", "none");
+                },
+            },
+            columns: [
+                {
+                    "class": "align-middle",
+                    "data": "modal"
+                },
+                {
+                    "class": "align-middle",
+                    "data": "LegNombre"
+                },
+                {
+                    "class": "text-nowrap ls1 align-middle",
+                    "data": "Gen_Horario"
+                },
+                {
+                    "class": "ls1 text-center fw4 align-middle",
+                    "data": "Primera"
+                },
+                {
+                    "class": "align-middle",
+                    "data": "DescHoras"
+                }, {
+                    "class": "text-center fw4 ls1 align-middle",
+                    "data": "HsAuto"
+                }, {
+                    "class": "text-center ls1 align-middle",
+                    "data": "HsCalc"
+                }, {
+                    "class": "align-middle",
+                    "data": "Novedades"
+                },
+                {
+                    "class": "text-center fw4 ls1 align-middle",
+                    "data": "NovHor"
+                },
+            ],
+            scrollX: true,
+            scrollCollapse: true,
+            scrollY: '50vmax',
+            paging: true,
+            info: true,
+            searching: true,
+            ordering: false,
+            language: {
+                "url": "../js/DataTableSpanishShort2.json"
+            },
+        });
+        $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
+            $(".page-link").addClass('border border-0');
+            $(".dataTables_info").addClass('text-secondary');
+            $(".custom-select").addClass('text-secondary bg-light');
+            fadeInOnly('#GetGeneralFecha');
+        })
+    } else {
+        $('#GetGeneralFecha').DataTable().ajax.reload();
+        $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
+            fadeInOnly('#GetGeneralFecha');
+            $('#GetGeneralFechaTable').removeClass('invisible')
+        })
+    }
+})
+
+
 // }, 1000);
 
 
@@ -581,3 +614,6 @@ $("#Visualizar").change(function () {
         $("#pagLega").show()
     }
 });
+
+// SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumInputLength, minimumResultsForSearch, maximumInputLength, selectOnClose, ajax_url, delay, data_array, type)
+// SelectSelect2Ajax("#datoNovedad", false, true, 'Novedades', 0, 10, 10, true, "../data/getListNovedades.php", '250', '', 'GET')

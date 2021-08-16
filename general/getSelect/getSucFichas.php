@@ -3,7 +3,7 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
 
@@ -19,7 +19,7 @@ $Col      = 'SUCURSALES';
 $ColData  = 'FICHAS';
 $FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
 
- $query="SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
+ $query="SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
 // print_r($query); exit;
 
 $params  = array();
