@@ -64,15 +64,6 @@ if (!ExisteUser($_GET['_c'], $_GET['uid'])) {
         </div>
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataEmpr.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataPlan.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataConv.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSect.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSecc.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataGrup.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSucu.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataPers.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataCopy.js?v=<?= vjs() ?>"></script>
 <script>
     $('#modalListasLabel').html(`<div><label class="fontq w70 my-0">Usuario:</label><span class="fw5 fontq" id="nombreUsuario"><?= $_GET['nombre'] ?></div><div><label class="fontq w70 my-0">Rol:</label><span class="fw5 fontq nombreRol"><?= $_GET['rol_n'] ?></span></div>`)
 </script>

@@ -1,12 +1,11 @@
 $(function () {
     'use strict'
-
     let cliente = $('#cliente').val()
     let uid = $('#uid').val()
 
     let tablePlantas = $('#tablePlantas').dataTable({
         initComplete: function (settings, json) {
-            if(json.data.length===0){
+            if (json.data.length === 0) {
                 $("#tablePlantas").parents('.table-responsive').hide();
                 $('#planta').html('<div class="my-3 fontq">No se encontraron resultados</div>')
             }
@@ -21,9 +20,9 @@ $(function () {
             dataType: "json",
             "data": function (data) {
                 data._c = cliente,
-                data.lista   = 2,
-                data.uid     = uid,
-                data.rel = relacionesSwith
+                    data.lista = 2,
+                    data.uid = uid,
+                    data.rel = relacionesSwith
             },
             error: function () {
                 $("#tablePlantas").css("display", "none");
@@ -50,7 +49,7 @@ $(function () {
             {
                 className: 'align-middle', targets: 'totLeg', title: '',
                 "render": function (data, type, row, meta) {
-                    let datacol = '<span data-titlel="Total Legajos">'+row['totLeg']+'</span>'
+                    let datacol = '<span data-titlel="Total Legajos">' + row['totLeg'] + '</span>'
                     return datacol;
                 },
             },
@@ -64,7 +63,7 @@ $(function () {
                         }, 200);
                     }
                     let classTipo = 'PlanClass_' + row.idtipo
-                    let cod = (row['codigo']===0) ? 32768 : row['codigo']
+                    let cod = (row['codigo'] === 0) ? 32768 : row['codigo']
                     let datacol = `
                     <div class="custom-control custom-checkbox">
                         <input `+ checked + ` type="checkbox" class="custom-control-input ` + classTipo + `" id="Planta_` + row['codigo'] + `" value="` + cod + `">
@@ -176,10 +175,10 @@ $(function () {
                 url: "listas_estruct/setLista.php",
                 type: "POST",
                 data: {
-                    lista : 2,
-                    check : JSON.stringify(selected),
-                    uid   : uid,
-                    _c    : cliente
+                    lista: 2,
+                    check: JSON.stringify(selected),
+                    uid: uid,
+                    _c: cliente
                 },
                 beforeSend: function (data) {
                     $.notifyClose();
@@ -206,7 +205,7 @@ $(function () {
     })
     tablePlantas.on('draw.dt', function () {
         $('#spanFinishTable').html('Plantas')
-        finishCallBack = finishCallBack+1
+        finishCallBack = finishCallBack + 1
         habilitarRelacionesSwith(finishCallBack)
     })
 });

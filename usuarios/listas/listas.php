@@ -104,12 +104,6 @@ $Rol     = ExisteRol3($_GET['_r'], $_GET['id'])
         </div>
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataNov.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataoNov.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataHorarios.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataRotacion.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataTipoHora.js?v=<?= vjs() ?>"></script>
-<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataCopyLista.js?v=<?= vjs() ?>"></script>
 <script>
     $('#modalListasLabel').html(`<div><label class="fontq w70 my-0">Cuenta:</label><span class="fw5 fontq"><?= $Cliente ?></span></div><div><label class="fontq w70 my-0">Rol:</label><span class="fw5 fontq nombreRol"><?= $Rol['nombre'] ?></span></div>`)
 </script>

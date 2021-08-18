@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '../../../config/index.php';
+?>
 <!-- Novedaes Tab -->
 <div class="tab-pane fade show active" id="novedades" role="tabpanel" aria-labelledby="novedades-tab">
     <div class="row">
@@ -69,3 +72,9 @@
     </div>
 </div>
 <!-- Fin Copiar Listas Tab -->
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataNov-min.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataoNov-min.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataHorarios-min.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataRotacion-min.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataTipoHora-min.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas/js/dataCopyLista-min.js?v=<?= vjs() ?>"></script>

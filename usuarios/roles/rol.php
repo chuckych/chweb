@@ -96,7 +96,8 @@ $Cliente = ExisteCliente($_GET['_c']);
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
-    <script src="modal-min.js?v=<?= vjs() ?>"></script>
-    <script src="datarol-min.js?v=<?= vjs() ?>"></script>
+    <script src="/<?= HOMEHOST ?>/usuarios/roles/modal-min.js?v=<?= vjs() ?>"></script>
+    <script src="/<?= HOMEHOST ?>/usuarios/roles/datarol-min.js?v=<?= vjs() ?>"></script>
 </body>
+
 </html>

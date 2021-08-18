@@ -7,7 +7,7 @@ $(function () {
 
     let tableNovedades = $('#tableNovedades').dataTable({
         initComplete: function (settings, json) {
-            if(json.data.length===0){
+            if (json.data.length === 0) {
                 $("#tableNovedades").parents('.table-responsive').hide();
                 $('#novedades').html('<div class="my-3 fontq">No se encontraron resultados</div>')
             }

@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '../../../config/index.php';
+?>
 <!-- Empresas Tab -->
 <div class="tab-pane fade show active" id="empresa" role="tabpanel" aria-labelledby="empresa-tab">
     <div class="row">
@@ -97,3 +100,12 @@
     </div>
 </div>
 <!-- Fin Copiar Listas Tab -->
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataEmpr.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataPlan.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataConv.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSect.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSecc.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataGrup.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataSucu.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataPers.js?v=<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/usuarios/listas_estruct/js/dataCopy.js?v=<?= vjs() ?>"></script>

@@ -39,10 +39,8 @@ function habilitarRelacionesSwith(finishCallBack) {
     }
     // console.log(finishCallBack);
 }
-
 $(function () {
     'use strict'
-
     let cliente = $('#cliente').val()
     let uid = $('#uid').val()
     // let relacionesSwith = $('#relacionesSwith').val()    
@@ -251,11 +249,6 @@ $(function () {
         finishCallBack = finishCallBack + 1
         habilitarRelacionesSwith(finishCallBack)
     })
-    // tableEmpresa.on('preXhr.dt', function (e, settings, data) {
-    //     console.log(e);
-    // })
-
-
     $('#initEstruct').on('click', function () {
         CheckSesion()
         $.ajax({
@@ -288,6 +281,8 @@ $(function () {
         })
     });
 });
+
+
 function setGeneral(uid, cliente, idTable, lista) {
     let checked = new Array();
     $("#" + idTable + " input:checkbox").each(function () {
