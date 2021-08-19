@@ -9,7 +9,7 @@ E_ALL();
 
 $data      = array();
 $FechaHora = date('Ymd H:i:s');
-
+sleep(1);
 $_POST['alta_liquidacion']  = $_POST['alta_liquidacion'] ?? '';
 
 /** GENERA LIQUIDACION */

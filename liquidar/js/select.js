@@ -540,7 +540,6 @@ function GetParacont() {
     });
 }
 GetParacont();
-
 function GetArch(arch, nombrearch, tipo) {
     var TXT_URL = arch
     $.ajax({
