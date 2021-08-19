@@ -205,6 +205,7 @@ $(function () {
                 }
             })
         });
+        $('#personal').removeClass('invisible')
     })
     tablePersonal.on('draw.dt', function () {
         $('#spanFinishTable').html('Personal')

@@ -221,5 +221,6 @@ $(function () {
                 }
             })
         });
+        $('#novedades').removeClass('invisible')
     })
 });

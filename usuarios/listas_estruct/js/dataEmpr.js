@@ -26,6 +26,7 @@ $('#relacionesSwith').on('change', function (e) {
 });
 function habilitarRelacionesSwith(finishCallBack) {
     if (finishCallBack >= 8) {
+        
         if ($("#relacionesSwith").is(":disabled")) {
             $('#relacionesSwith').prop('disabled', false)
         }
@@ -243,6 +244,7 @@ $(function () {
                 }
             })
         });
+        $('#empresa').removeClass('invisible')
     })
     tableEmpresa.on('draw.dt', function () {
         $('#spanFinishTable').html('Empresas')

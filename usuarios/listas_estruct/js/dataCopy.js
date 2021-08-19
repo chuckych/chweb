@@ -189,5 +189,6 @@ $(function () {
                     }
                 })
             });
+            $('#copyListas').removeClass('invisible')
         })
 });

@@ -210,5 +210,6 @@ $(function () {
                 }
             })
         });
+        $('#rotaciones').removeClass('invisible')
     })
 });

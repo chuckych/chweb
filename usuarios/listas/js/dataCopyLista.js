@@ -193,5 +193,6 @@ $(function () {
                 }
             })
         });
+        $('#copyListas').removeClass('invisible')
     })
 });

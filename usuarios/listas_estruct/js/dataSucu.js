@@ -203,6 +203,7 @@ $(function () {
                 }
             })
         });
+        $('#sucursal').removeClass('invisible')
     })
     tableSucursales.on('draw.dt', function () {
         $('#spanFinishTable').html('Sucursales')

@@ -224,6 +224,7 @@ $(function () {
                 }
             })
         });        
+        $('#sector').removeClass('invisible')
     })
     tableSectores.on('draw.dt', function () {
         $('#spanFinishTable').html('Sectores')

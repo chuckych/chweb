@@ -203,6 +203,7 @@ $(function () {
                 }
             })
         });
+        $('#convenio').removeClass('invisible')
     })
     tableConvenios.on('draw.dt', function () {
         $('#spanFinishTable').html('Convenios')

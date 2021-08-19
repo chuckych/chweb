@@ -211,5 +211,6 @@ $(function () {
                 }
             })
         });
+        $('#o_novedades').removeClass('invisible')
     })
 });

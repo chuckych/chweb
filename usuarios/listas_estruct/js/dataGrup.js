@@ -203,6 +203,7 @@ $(function () {
                 }
             })
         });
+        $('#grupo').removeClass('invisible')
     })
     tableGrupos.on('draw.dt', function () {
         $('#spanFinishTable').html('Grupos')

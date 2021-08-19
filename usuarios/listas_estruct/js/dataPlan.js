@@ -202,6 +202,7 @@ $(function () {
                 }
             })
         });
+        $('#planta').removeClass('invisible')
     })
     tablePlantas.on('draw.dt', function () {
         $('#spanFinishTable').html('Plantas')

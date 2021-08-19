@@ -216,5 +216,6 @@ $(function () {
                 }
             })
         });
+        $('#tipoHoras').removeClass('invisible')
     })
 });

@@ -207,5 +207,6 @@ $(function () {
                 }
             })
         });
+        $('#horarios').removeClass('invisible')
     })
 });

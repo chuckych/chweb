@@ -2,7 +2,7 @@
 require_once __DIR__ . '../../../config/index.php';
 ?>
 <!-- Empresas Tab -->
-<div class="tab-pane fade show active" id="empresa" role="tabpanel" aria-labelledby="empresa-tab">
+<div class="tab-pane fade show active invisible" id="empresa" role="tabpanel" aria-labelledby="empresa-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -13,7 +13,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Empresas Tab -->
 <!-- Plantas Tab -->
-<div class="tab-pane fade" id="planta" role="tabpanel" aria-labelledby="planta-tab">
+<div class="tab-pane fade invisible" id="planta" role="tabpanel" aria-labelledby="planta-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -24,7 +24,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Plantas Tab -->
 <!-- Convenios -->
-<div class="tab-pane fade" id="convenio" role="tabpanel" aria-labelledby="convenio-tab">
+<div class="tab-pane fade invisible" id="convenio" role="tabpanel" aria-labelledby="convenio-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -35,7 +35,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Convenios -->
 <!-- Sectores / Secciones Tab -->
-<div class="tab-pane fade" id="sector" role="tabpanel" aria-labelledby="sector-tab">
+<div class="tab-pane fade invisible" id="sector" role="tabpanel" aria-labelledby="sector-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -52,7 +52,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Sectores / Secciones Tab -->
 <!-- Grupos Tab -->
-<div class="tab-pane fade" id="grupo" role="tabpanel" aria-labelledby="grupo-tab">
+<div class="tab-pane fade invisible" id="grupo" role="tabpanel" aria-labelledby="grupo-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -63,7 +63,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Grupos Tab -->
 <!-- Sucursales Tab -->
-<div class="tab-pane fade" id="sucursal" role="tabpanel" aria-labelledby="sucursal-tab">
+<div class="tab-pane fade invisible" id="sucursal" role="tabpanel" aria-labelledby="sucursal-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -74,7 +74,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Sucursales Tab -->
 <!-- Personal Tab -->
-<div class="tab-pane fade" id="personal" role="tabpanel" aria-labelledby="personal-tab">
+<div class="tab-pane fade invisible" id="personal" role="tabpanel" aria-labelledby="personal-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="table-responsive mt-2">
@@ -85,7 +85,7 @@ require_once __DIR__ . '../../../config/index.php';
 </div>
 <!-- Fin Personal Tab -->
 <!-- Copiar Listas Tab -->
-<div class="tab-pane fade" id="copyListas" role="tabpanel" aria-labelledby="copyListas-tab">
+<div class="tab-pane fade invisible" id="copyListas" role="tabpanel" aria-labelledby="copyListas-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
             <div class="alert alert-warning fw5 fontq mt-3">Copiar configuracion de la estructura del usuario:<br /><span class="font-weight-bold nombreUsuario"></span><br/>a la siguiente selección</div>
