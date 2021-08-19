@@ -482,6 +482,7 @@ $(".selectjs_personal").select2({
         },
     }
 })
+
 /** GET PARACONT */
 function GetParacont() {
     $.ajax({
@@ -508,8 +509,9 @@ function GetParacont() {
             $(".Jor2Hasta").html(data.Jor2Hasta)
             $(".ArchDesc").html(data.ArchDesc)
             $(".ArchNomb").html(data.ArchNomb)
-            // GetArch($(".ArchNomb").text(), data.ArchNomb, '')
-
+            let tipoPer = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
+            GetArch($(".ArchNomb").text()+ '?v=' + $.now(), data.ArchNomb, tipoPer)
+            // GetArch($(".ArchNomb").text() + '?v=' + $.now(), $(".ArchNomb").text(), tipo)
             // $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
             var Mes = moment().format("MM");
             var Anio = moment().format("YYYY");
@@ -540,6 +542,9 @@ function GetParacont() {
     });
 }
 GetParacont();
+
+
+
 function GetArch(arch, nombrearch, tipo) {
     var TXT_URL = arch
     $.ajax({
@@ -557,6 +562,10 @@ function GetArch(arch, nombrearch, tipo) {
     });
 }
 
+$('#Tipo').on('change', function () {
+    let tipoPer2 = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
+    GetArch($(".ArchNomb").text()+ '?v=' + $.now(), $(".ArchNomb").text(), tipoPer2)
+})
 
 var TipoPer = $("#Tipo").val()
 $("#TipoPer").val(TipoPer)

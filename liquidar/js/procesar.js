@@ -11,7 +11,7 @@ $(".alta_liquidacion").bind("submit", function (e) {
             ruta: $(".ArchNomb").text()
         }
     });
-
+    
     $.ajax({
         type: $(this).attr("method"),
         url: $(this).attr("action"),
