@@ -509,8 +509,8 @@ function GetParacont() {
             $(".Jor2Hasta").html(data.Jor2Hasta)
             $(".ArchDesc").html(data.ArchDesc)
             $(".ArchNomb").html(data.ArchNomb)
-            let tipoPer = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
-            GetArch($(".ArchNomb").text()+ '?v=' + $.now(), data.ArchNomb, tipoPer)
+            // let tipoPer = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
+            // GetArch($(".ArchNomb").text()+ '?v=' + $.now(), data.ArchNomb, tipoPer)
             // GetArch($(".ArchNomb").text() + '?v=' + $.now(), $(".ArchNomb").text(), tipo)
             // $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
             var Mes = moment().format("MM");
@@ -543,8 +543,6 @@ function GetParacont() {
 }
 GetParacont();
 
-
-
 function GetArch(arch, nombrearch, tipo) {
     var TXT_URL = arch
     $.ajax({
@@ -553,7 +551,7 @@ function GetArch(arch, nombrearch, tipo) {
         success: function (data) {
             $(".archivo").html("<pre>" + data + "</pre>");
             $(".archivo").addClass("shadow-sm border");
-            $(".ArchPath").html("<a class='d-inline-flex text-dark fw5' download=" + moment().format("DDMMYYYYHmmss") + "_" + tipo + "_" + nombrearch + " href=" + nombrearch + ">" + nombrearch + "<i class='ml-2 bi bi-file-earmark-arrow-down'></i></a>")
+            $(".ArchPath").html("<a class='d-inline-flex btn btn-sm btn-custom fw5 fontq px-4' download=" + moment().format("DDMMYYYYHmmss") + "_" + tipo + "_" + nombrearch + " href=" + nombrearch + ">" + nombrearch + "<i class='ml-2 bi bi-file-earmark-arrow-down'></i></a>")
             $('#trDownload').show()
         },
         error: function () {
@@ -562,12 +560,12 @@ function GetArch(arch, nombrearch, tipo) {
     });
 }
 
-$('#Tipo').on('change', function () {
-    let tipoPer2 = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
-    GetArch($(".ArchNomb").text()+ '?v=' + $.now(), $(".ArchNomb").text(), tipoPer2)
-})
+// $('#Tipo').on('change', function () {
+//     let tipoPer2 = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
+//     GetArch($(".ArchNomb").text()+ '?v=' + $.now(), $(".ArchNomb").text(), tipoPer2)
+// })
 
-var TipoPer = $("#Tipo").val()
+let TipoPer = $("#Tipo").val()
 $("#TipoPer").val(TipoPer)
 function SumarMes1(fecha, cant) {
     var Fecha = moment(fecha).add(cant, 'months').format('DD/MM/YYYY');

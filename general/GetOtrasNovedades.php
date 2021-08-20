@@ -59,6 +59,16 @@ while ($row = sqlsrv_fetch_array($result)) :
     }
         $FicValor = ($row['FicValor']=='0') ? '-': $row['FicValor'];
 
+        if (str_replace("-", "", $_SESSION['ListaONov'])) {
+            if (in_array(intval($row['FicONov']), explode(',', $_SESSION['ListaONov']))) {
+                $editar   = $editar;
+                $eliminar = $eliminar;
+            } else {
+                $editar = '';
+                $eliminar = '';
+            }
+        }
+
         $editar   = $_SESSION["ABM_ROL"]['mONov']=='0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bONov']=='0' ? '' : $eliminar;
         

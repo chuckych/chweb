@@ -20,7 +20,7 @@ $(".alta_liquidacion").bind("submit", function (e) {
             ActiveBTN(true, "#submit", loading, 'Generar')
             $(".archivo").removeClass("animate__animated animate__fadeIn");
             $.notifyClose();
-            notify('Generando <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+            notify('Generando archivo <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
         },
         success: function (data) {
             if (data.status == "ok") {
@@ -30,16 +30,18 @@ $(".alta_liquidacion").bind("submit", function (e) {
                 let tipo = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
            
                 setTimeout(() => {
-                    GetArch($(".ArchNomb").text() + '?v=' + $.now(), $(".ArchNomb").text(), tipo)
 
-                    setTimeout(() => {
+                    GetArch($(".ArchNomb").text() + '?v=' + $.now(), $(".ArchNomb").text(), tipo)
+                    $('#trDownload').show()
+                    // setTimeout(() => {
                         classEfect('#tdDescargar', 'animate__animated animate__flash')
                         classEfect('.ArchPath', 'animate__animated animate__flash')
                         $.notifyClose();
                         notify(data.Mensaje, 'success', 3000, 'right')
-                    }, 500);
+                    // }, 500);
 
                 }, 1500);
+                
             } else {
                 $("#respuestatext").html("");
                 ActiveBTN(false, "#submit", loading, 'Generar')

@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.178';
+    return 'v0.0.179';
 }
 function E_ALL()
 {

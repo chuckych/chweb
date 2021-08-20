@@ -190,11 +190,11 @@
                                 <td class="w-100"></td>
 
                             </tr>
-                            <tr id="trDownload" style="display: none">
-                                <td class="fw5"><span id="tdDescargar">Descargar</span></td>
-                                <td class=""><span class="ArchPath"></span></td>
-                                <td class=""></td>
-                                <td class=""></td>
+                            <tr id="trDownload" class="" style="display: none">
+                                <td class="fw5 align-middle pt-2"><span id="tdDescargar">Descargar</span></td>
+                                <td class="pt-2"><span class="ArchPath"></span></td>
+                                <td class="pt-2"></td>
+                                <td class="pt-2"></td>
                             </tr>
                         </tbody>
                     </table>
