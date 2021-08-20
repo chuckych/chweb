@@ -4,10 +4,10 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
-E_ALL();
 session_start();
-
 require __DIR__ . '../../../config/index.php';
+E_ALL();
+
 require __DIR__ . '../../../config/conect_mssql.php';
 
 $param   = array();
