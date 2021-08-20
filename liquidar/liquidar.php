@@ -198,8 +198,8 @@
                             </tr>
                         </tbody>
                     </table>
-                    <div class="archivo overflow-auto p-3" style="max-height: 360px;">
-                    </div>
+                    <!-- <div class="archivo overflow-auto p-3" style="max-height: 360px;">
+                    </div> -->
                 </div>
             </div>
         </form>
@@ -215,9 +215,9 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/moment.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
+    <script src="js/procesar-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/select-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
 
 </body>
 

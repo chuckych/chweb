@@ -31,8 +31,9 @@ $(".alta_liquidacion").bind("submit", function (e) {
                 setTimeout(() => {
                     $.notifyClose();
                     notify(data.Mensaje, 'success', 3000, 'right')
-                    GetArch($("#ArchNomb").val() + '?v=' + $.now(), $("#ArchNomb").val(), tipo)
+                    GetArch($("#ArchNomb").val() + `?v=` + $.now(), $("#ArchNomb").val(), tipo)
                     // $('#trDownload').show()
+                    console.log($("#ArchNomb").val());
                 }, 1500);
 
             } else {
