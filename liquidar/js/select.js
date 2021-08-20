@@ -499,7 +499,7 @@ function GetParacont() {
             $("#Jor2Hasta").val(data.Jor2Hasta)
             $("#ArchDesc").val(data.ArchDesc)
             $("#ArchNomb").val(data.ArchNomb)
-            // $("#ArchPath").val(data.ArchPath)
+            $("#ArchPath").val(data.ArchPath)
 
             $(".MensDesde").html(data.MensDesde)
             $(".MensHasta").html(data.MensHasta)
@@ -512,7 +512,7 @@ function GetParacont() {
             // let tipoPer = ($('#Tipo').val() == '1') ? 'jornales' : 'mensuales'
             // GetArch($(".ArchNomb").text()+ '?v=' + $.now(), data.ArchNomb, tipoPer)
             // GetArch($(".ArchNomb").text() + '?v=' + $.now(), $(".ArchNomb").text(), tipo)
-            // $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
+            $(".ArchPath").html("<a class='text-secondary' href="+data.ArchPath+"/"+data.ArchNomb+">"+data.ArchPath+"</a>")
             var Mes = moment().format("MM");
             var Anio = moment().format("YYYY");
 
@@ -552,7 +552,11 @@ function GetArch(arch, nombrearch, tipo) {
             $(".archivo").html("<pre>" + data + "</pre>");
             $(".archivo").addClass("shadow-sm border");
             $(".ArchPath").html("<a class='d-inline-flex btn btn-sm btn-custom fw5 fontq px-4' download=" + moment().format("DDMMYYYYHmmss") + "_" + tipo + "_" + nombrearch + " href=" + nombrearch + ">" + nombrearch + "<i class='ml-2 bi bi-file-earmark-arrow-down'></i></a>")
+            classEfect('#tdDescargar', 'animate__animated animate__fadeIn')
             $('#trDownload').show()
+            classEfect('.ArchPath', 'animate__animated animate__fadeIn')
+            
+            console.log();
         },
         error: function () {
             $(".archivo").removeClass("shadow-sm border");
