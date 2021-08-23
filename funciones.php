@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.182';
+    return 'v0.0.183';
 }
 function E_ALL()
 {
@@ -1690,15 +1690,14 @@ function audito_ch($AudTipo, $AudDato)
         $dataAud = array("auditor" => "ok");
         // echo json_encode($dataAud); 
     } else {
-
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $dataAud[] = array("auditor" => "error", "dato" => $mensaje[3]);
+                $dataAud[] = array("auditor" => "error", "Mensaje" => $mensaje[3]);
             }
         }
-
-        echo json_encode($dataAud);
+        // echo json_encode($procedure_params);
+        // exit;
     }
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
@@ -2362,6 +2361,44 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
         return EstadoProceso($url);
     }
 }
+function procesar_lega($legajo, $FechaDesde, $FechaHasta)
+{
+    // PingWebServiceRRHH();
+    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
+    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
+    $ruta = rutaWebService("Procesar");
+    $post_data = "{Usuario=Supervisor,TipoDePersonal=0,LegajoDesde='$legajo',LegajoHasta='$legajo',FechaDesde='$FechaDesde',FechaHasta='$FechaHasta',Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $ruta);
+    curl_setopt($ch, CURLOPT_POST, TRUE);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $respuesta = curl_exec($ch);
+    $curl_errno = curl_errno($ch);
+    $curl_error = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($curl_errno > 0) {
+        return $ruta;
+        exit;
+    }
+    curl_close($ch);
+    if ($httpCode === 404) {
+        return $ruta;
+        exit;
+    }
+    $processID = respuestaWebService($respuesta);
+    $url = rutaWebService("Estado?ProcesoId=" . $processID);
+    return ($url);
+    exit;
+    if ($httpCode == 201) {
+        // if (EstadoProceso($url) == 'Terminado') {
+        //     return true;
+        // }else{
+        //     return false;
+        // }
+        return EstadoProceso($url);
+    }
+}
 function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2497,6 +2534,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         exit;
     }
 }
+
 function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesde, $FechaHasta, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $Laboral, $Novedad, $Justifica, $Observacion, $Horas, $Causa, $Categoria)
 {
     $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
@@ -2919,4 +2957,27 @@ function listaEstruct($idLista  = '0')
             return 'Todos';
             break;
     }
+}
+function totalDiasFechas($fecha_inicial, $fecha_final)
+{
+    $dias = (strtotime($fecha_inicial) - strtotime($fecha_final)) / 86400;
+    $dias = abs($dias);
+    $dias = floor($dias);
+    return $dias;
+}
+function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
+{
+    $TotalDias = totalDiasFechas($fecha_inicial, $fecha_final);
+    $arrayTotalMeses[] = array();
+    for ($i = 0; $i < intval($TotalDias / $dias); $i++) {
+        $arrayTotalMeses[] = array($i);
+    }
+    foreach ($arrayTotalMeses as $value) {
+        $fecha1 = $fecha_inicial;
+        $fecha2 = date("Ymd", strtotime($fecha1 . "+ " . $dias . " days"));
+        $fecha2 = ($fecha2 > date('Ymd')) ?  date('Ymd') : $fecha2;
+        $arrayFechas[] = array('FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'),  'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y'));
+        $fecha_inicial = date("Ymd", strtotime($fecha2 . "+ 1 days"));
+    }
+    return $arrayFechas;
 }

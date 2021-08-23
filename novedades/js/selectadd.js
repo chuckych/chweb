@@ -1,6 +1,5 @@
 /** Select */
-// $(document).ready(function () {
-
+$(document).ready(function () {
 HoraMask('.HoraMask')
 
 $(document).on('click', '#addNov', function (e) {
@@ -671,7 +670,7 @@ $(".alta_novedad").bind("submit", function (e) {
                     notify('<div class=""><span class="fonth">No se pudo ingresar la novedad en los siguientes registros.</span><div class="overflow-auto pr-3 table-responsive" style="max-height:300px"><table id="presentes" class="w-100 mt-2"><thead><tr><td><span class="fontq fw5">Fecha</span></td><td><span class="fontq fw5">Legajo</span></td><td><span class="fontq fw5">Nombre</span></td><td><tr></thead><tbody></tbody></table></div></div>', 'warning', 0, 'right')
                     setTimeout(() => {
                         $.each(data.Errores, function (key, value) {
-                            $("#presentes tbody").append(`<tr class="animate__animated animate__fadeIn"><td class="p-0 m-0"><span class="fontq ls1">`+ value.Fecha + `</span></td><td class="p-0 m-0"><span class="fontq">`+ value.Legajo + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Nombre + `</span></td></tr>`)
+                            $("#presentes tbody").append(`<tr class="animate__animated animate__fadeIn"><td class="p-0 m-0"><span class="fontq ls1">` + value.Fecha + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Legajo + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Nombre + `</span></td></tr>`)
                         })
                     }, 500);
                 }
@@ -724,7 +723,7 @@ $(".alta_novedad").bind("submit", function (e) {
                 var error = ('Error no detectado: ' + jqXHR.responseText);
             }
             notify(error, 'danger', 5000, 'right')
-            notify('<div class="fw5 fonth">Error</div>'+jqXHR.responseText, 'danger', 0, 'right')
+            notify('<div class="fw5 fonth">Error</div>' + jqXHR.responseText, 'danger', 0, 'right')
             // $("#respuetatext").html("");
             // $("#respuetatext").removeClass("animate__animated animate__fadeIn");
             ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
@@ -775,14 +774,15 @@ function cleanAll() {
     $(".sel_causa").prop("disabled", true);
     $("#select_causa").addClass("d-none");
 }
+
 $('#Personal-select-all').addClass('check')
-var GetPers = $('#GetPers').DataTable({
+let GetPers = $('#GetPers').DataTable({
     "initComplete": function (settings, json) {
         $('div.loader').remove();
     },
     "drawCallback": function (settings) {
-        var pagIni = (settings._iDisplayStart);
-        var pagFin = (settings._iDisplayLength);
+        let pagIni = (settings._iDisplayStart);
+        let pagFin = (settings._iDisplayLength);
         $('#pagIni').val(pagIni)
         $('#pagFin').val(pagFin)
         setTimeout(() => {
@@ -800,7 +800,7 @@ var GetPers = $('#GetPers').DataTable({
     deferRender: true,
     searchDelay: 1500,
     ajax: {
-        url: "../personal/?p=array_personal.php",
+        url: "/" + _homehost + "/novedades/?p=array_personal.php",
         type: "GET",
         "data": function (data) {
             data.Tipo = $("#aTipo").val();
@@ -856,6 +856,11 @@ GetPers.on('page.dt', function () {
 GetPers.on('page', function () {
     $('.check').prop('checked', false);
 });
+// GetPers.on('draw.dt', function () {
+//     console.log("/" + _homehost + "/personal/?p=array_personal.php");
+//     console.log('Hola');
+// });
+
 // Handle click on "Select all" control
 $('#Personal-select-all').on('click', function () {
     CheckSesion()
@@ -923,5 +928,5 @@ $(document).on('click', '#CloseaddNov', function (e) {
 });
 
 
-// });
+});
 

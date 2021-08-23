@@ -15,11 +15,12 @@ $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $data      = array();
 $FechaHora = date('Ymd H:i:s');
+$FechaHoy  = date('Ymd');
 
 $_POST['tipo'] = $_POST['tipo'] ?? '';
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_horale1')) {
-    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+    if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
     };
@@ -60,16 +61,67 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $query = "UPDATE HORALE1 set Ho1Hora = '$Codhor' WHERE Ho1Hora = '$Codhor2' AND Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega' ";
     if (UpdateRegistro($query)) {
-        $Dato    = 'Horario Desde: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
+
         audito_ch('M', $Dato);
-        PrintRespuestaJson('ok', 'Asignación modificada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
 } else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_horale1')) {
-    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+    if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
     };
@@ -103,16 +155,65 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $query = "DELETE FROM HORALE1 WHERE Ho1Hora = '$Codhor' AND Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega'";
     if (UpdateRegistro($query)) {
-        $Dato    = 'Horario Desde: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+        $tiempo_inicio_proceso = microtime(true);
+        $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('B', $Dato);
-        PrintRespuestaJson('ok', 'Asignación eliminada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale1')) {
-    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale1')) {
+    if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
     };
@@ -123,6 +224,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $Codhor  = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
+    $FDesde   = test_input(($_POST['FDesde']));
     $Fecha   = test_input(dr_fecha($_POST['FDesde']));
 
     if (valida_campo($Codhor)) {
@@ -148,16 +250,67 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "INSERT INTO HORALE1 (Ho1Lega,Ho1Fech,Ho1Hora,FechaHora) VALUES ('$NumLega','$Fecha','$Codhor','$FechaHora')";
 
     if (InsertRegistro($query)) {
-        $Dato    = 'Horario Desde: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        
+        $Dato    = 'Horario Desde: ' . $FDesde . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('A', $Dato);
-        PrintRespuestaJson('ok', 'Asignación creada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale2')) {
-    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale2')) {
+    if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
     };
@@ -198,16 +351,65 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "INSERT INTO HORALE2 (Ho2Lega,Ho2Fec1,Ho2Fec2,Ho2Hora,FechaHora) VALUES ('$NumLega','$FechaIni','$FechaFin','$Codhor','$FechaHora')";
 
     if (InsertRegistro($query)) {
-        $Dato    = 'Horario Desde Hasta: '.Fech_Format_Var($FechaIni, 'd/m/Y').' - '.Fech_Format_Var($FechaFin, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        
+        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('A', $Dato);
-        PrintRespuestaJson('ok', 'Asignación creada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_horale2')) {
-    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_horale2')) {
+    if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
     };
@@ -262,16 +464,66 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $query = "UPDATE HORALE2 set Ho2Hora = '$Codhor', Ho2Fec2 = '$FechaFin' WHERE Ho2Hora = '$Codhor2' AND Ho2Fec1 = '$FechaIni' AND Ho2Fec2 = '$FechaFin2' AND Ho2Lega = '$NumLega' ";
     if (UpdateRegistro($query)) {
-        $Dato    = 'Horario Desde Hasta: '.Fech_Format_Var($FechaIni, 'd/m/Y').' - '.Fech_Format_Var($FechaFin, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        
+        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('M', $Dato);
-        PrintRespuestaJson('ok', 'Asignación modificada correctamente.');
+        // PrintRespuestaJson('ok', 'Asignación modificada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_horale2')) {
-    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_horale2')) {
+    if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
     };
@@ -312,16 +564,67 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $query = "DELETE FROM HORALE2 WHERE Ho2Hora = '$Codhor' AND Ho2Fec1 = '$FechaIni' AND Ho2Fec2 = '$FechaFin' AND Ho2Lega = '$NumLega'";
     if (UpdateRegistro($query)) {
-        $Dato    = 'Horario Desde Hasta: '.Fech_Format_Var($FechaIni, 'd/m/Y').' - '.Fech_Format_Var($FechaFin, 'd/m/Y').'. Horario: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        
+        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
+
         audito_ch('B', $Dato);
-        PrintRespuestaJson('ok', 'Asignación eliminada correctamente.');
+        // PrintRespuestaJson('ok', 'Asignación eliminada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_rotacion')) {
-    if (($_SESSION["ABM_ROL"]['aTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_rotacion')) {
+    if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
     };
@@ -362,16 +665,66 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "INSERT INTO ROTALEG (RolLega,RolFech,RolRota,RolDias,FechaHora) VALUES ('$NumLega','$Fecha','$Codhor','$RotDia','$FechaHora')";
 
     if (InsertRegistro($query)) {
-        $Dato    = 'Rotación: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Rotación: ' . $Codhor.'. Legajo: ' . $NumLega;
+
+        $tiempo_inicio_proceso = microtime(true);
+        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
         audito_ch('A', $Dato);
-        PrintRespuestaJson('ok', 'Rotación asignada correctamente.');
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Rotación asignada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_rotacion')) {
-    if (($_SESSION["ABM_ROL"]['mTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'u_rotacion')) {
+    if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
     };
@@ -416,16 +769,65 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "UPDATE ROTALEG SET RolRota = '$Codhor', RolDias = '$RotDia', FechaHora = '$FechaHora' WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
 
     if (UpdateRegistro($query)) {
-        $Dato    = 'Rotación: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Rotación: ' . $Codhor.'. Legajo: ' . $NumLega;
+        $tiempo_inicio_proceso = microtime(true);
+        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Rotación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('M', $Dato);
-        PrintRespuestaJson('ok', 'Rotación modificada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
         exit;
     }
-}else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_rotacion')) {
-    if (($_SESSION["ABM_ROL"]['bTur']=='0')) {
+} else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'd_rotacion')) {
+    if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
     };
@@ -459,9 +861,58 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $query = "DELETE FROM ROTALEG WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
     if (UpdateRegistro($query)) {
-        $Dato    = 'Rotación: '.Fech_Format_Var($Fecha, 'd/m/Y').'. Rotación: ' . $Codhor.'. Legajo: ' . $NumLega;
+        $tiempo_inicio_proceso = microtime(true);
+        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $FechaIni = $Fecha;
+        $FechaFin = date('Ymd');
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+
+        if ($FechaIni <= date('Ymd')) {
+            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrRespuesta = array();
+            if ($totalDias > 31) {
+                foreach ($arrayFechas as $date) {
+                    $tiempo_ini = microtime(true);
+                    $procesar = procesar_legajo($NumLega, $date['FechaIni'], $date['FechaFin']);
+                    $totalDias = totalDiasFechas($date['FechaIni'], $date['FechaFin']);
+                    if (($procesar == 'Terminado')) {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                    } else {
+                        $tiempo_fini = microtime(true);
+                        $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                    }
+                }
+            } else {
+                $tiempo_ini = microtime(true);
+                $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
+                if (($procesar == 'Terminado')) {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Procesado. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                } else {
+                    $tiempo_fini = microtime(true);
+                    $duracion = round($tiempo_fini - $tiempo_ini, 2);
+                    $arrRespuesta = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. ' . $totalDias . ' días', 'Tiempo' => $duracion);
+                }
+            }
+        } else {
+            $tiempo_ini = microtime(true);
+            $tiempo_fini = microtime(true);
+            $duracion = round($tiempo_fini - $tiempo_ini, 2);
+            $procesar = 'Fecha Posterior a la actual';
+            $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
+        }
+        $tiempo_fin_proceso = microtime(true);
+        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $data = array('status' => 'ok', 'Mensaje' => 'Rotación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        echo json_encode($data);
         audito_ch('B', $Dato);
-        PrintRespuestaJson('ok', 'Rotación eliminada correctamente.');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');

@@ -553,6 +553,7 @@ function dobleDatePicker(selector, opens, drop) {
         buttonClasses: "btn btn-sm fontq",
         applyButtonClasses: "btn-custom fw4 px-3 opa8",
         cancelClass: "btn-link fw4 text-gris",
+        linkedCalendars: false,
         // ranges: {
         //     'Hoy': [moment(), moment()],
         //     'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
