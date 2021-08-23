@@ -217,7 +217,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_fichada'] == 'true')
     if (UpdateRegistro("UPDATE REGISTRO SET RegTipo=1, RegLega=$RegLega, RegFeAs='$RegFeAs', RegFeRe='$RegFech', RegHoRe='$RegHora', RegTran='$RegTran', RegSect='$RegSect', RegRelo='$RegRelo', RegLect='$RegLect', FechaHora='$FechaHora' WHERE RegTarj='$RegTarj' AND RegFech='$RegFech' AND RegHora='$RegHora'")) {
 
         audito_ch('B', $Dato);
-        if (procesar_legajo($RegLega2, $RegFech, $RegFech) == 'Terminado') {
+        $RegFech0 = date("Ymd", strtotime($RegFech . "- 1 days"));
+        $RegFech1 = date("Ymd", strtotime($RegFech . "+ 1 days"));
+        if (procesar_legajo($RegLega2, $RegFech0, $RegFech1) == 'Terminado') {
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {

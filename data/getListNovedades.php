@@ -59,13 +59,15 @@ if (sqlsrv_num_rows($result) > 0) {
     $FiltrarNovTipo = "WHERE NOVEDAD.NovTipo <= '2'";
     /** Chequeamos si el registro es esta tarde, si lo esta mostramos las novedades de tarde. sino las ocultamos */
     if ($_POST['_nc'] == '2') {
-        $queryTar = "SELECT (dbo.fn_STRMinutos(REGISTRO.RegHoRe) - dbo.fn_STRMinutos(FICHAS.FicHorE)) - PERSONAL.LegToTa AS Tarde FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume LEFT JOIN REGISTRO ON FICHAS.FicLega=REGISTRO.RegLega WHERE FICHAS.FicLega='$RegLega' AND FICHAS.FicFech='$RegFeAs' AND REGISTRO.RegFeAs='$RegFeAs' ORDER BY REGISTRO.RegHoRe ASC";
+        $queryTar = "SELECT REGISTRO.RegFeRe as 'RegFeRe' , REGISTRO.RegFeAs as 'RegFeAs', (dbo.fn_STRMinutos(REGISTRO.RegHoRe) - dbo.fn_STRMinutos(FICHAS.FicHorE)) - PERSONAL.LegToTa AS 'Tarde' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume LEFT JOIN REGISTRO ON FICHAS.FicLega=REGISTRO.RegLega WHERE FICHAS.FicLega='$RegLega' AND FICHAS.FicFech='$RegFeAs' AND REGISTRO.RegFeAs='$RegFeAs' ORDER BY REGISTRO.RegHoRe ASC";
         // print_r($queryTar); exit;
 
         $resultTar  = sqlsrv_query($link, $queryTar, $params, $options);
         while ($rowTar = sqlsrv_fetch_array($resultTar)) {
+            $RegFeRe = $rowTar['RegFeRe']->format('Ymd');
+            $RegFeAs = $rowTar['RegFeAs']->format('Ymd');
             if ($rowTar['Tarde'] <= '0') {
-                $FiltrarNovTipo2 = "AND NOVEDAD.NovTipo NOT IN (0)";
+                $FiltrarNovTipo2 = ($RegFeRe==$RegFeAs) ? "AND NOVEDAD.NovTipo NOT IN (0)":'';
             } else {
                 $FiltrarNovTipo2 = "AND NOVEDAD.NovTipo <= '2'";
             }
@@ -78,7 +80,7 @@ if (sqlsrv_num_rows($result) > 0) {
 sqlsrv_free_stmt($result);
 
 
-$query = "SELECT DISTINCT NOVEDAD.NovTipo FROM NOVEDAD $FiltrarNovTipo $_ntipo $FiltrarNovTipo2 $filtroNov";
+$query = "SELECT DISTINCT NOVEDAD.NovTipo  FROM NOVEDAD $FiltrarNovTipo $_ntipo $FiltrarNovTipo2 $filtroNov";
 $result  = sqlsrv_query($link, $query, $params, $options);
 // print_r($query);exit;
 $data = array();

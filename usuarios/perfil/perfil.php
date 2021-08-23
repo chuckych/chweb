@@ -17,6 +17,7 @@
         }
         require __DIR__ . '../../../nav.php';
         echo '</div>';
+        $_GET['true'] = $_GET['true'] ??'';
         $ocultar = $_GET['true'] == true ? 'd-none' : '';
         ?>
         <?=

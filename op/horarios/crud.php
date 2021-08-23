@@ -204,7 +204,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         }
         $tiempo_fin_proceso = microtime(true);
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
-        $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
+        $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('B', $Dato);
         exit;
