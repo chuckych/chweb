@@ -469,7 +469,7 @@ $(document).on('click', '#addNov', function (e) {
         }
     })
 
-    SelectSelect2Ajax(".sel_novedad", false, true, 'Novedad', 0, 5, 10, true, "data/getListNovedad.php", '250', '', 'GET')
+    SelectSelect2Ajax(".sel_novedad", false, true, 'Novedad', 0, 5, 10, true, "data/getNovNovedades.php", '250', '', 'POST')
 
     CloseDropdownOnClearSelect2('.sel_causa')
     CloseDropdownOnClearSelect2('.sel_empresa')
