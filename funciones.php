@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.185';
+    return 'v0.0.186';
 }
 function E_ALL()
 {
@@ -2870,8 +2870,12 @@ function regid_legajo($legajo)
     require __DIR__ . '../config/conect_mysql.php';
     $sql = "SELECT regid FROM reg_user_ WHERE id_user ='$legajo' LIMIT 1";
     $rs = mysqli_query($link, $sql);
-    while ($a = mysqli_fetch_assoc($rs)) {
-        $regid = $a['regid'];
+    if (mysqli_num_rows($rs) > 0) {
+        while ($a = mysqli_fetch_assoc($rs)) {
+            $regid = $a['regid'];
+        }
+    }else{
+        $regid = '';
     }
     mysqli_free_result($rs);
     mysqli_close($link);

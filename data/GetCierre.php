@@ -1,14 +1,10 @@
 <?php
-ini_set('max_execution_time', 180); //180 seconds = 3 minutes
-header("Content-Type: application/json");
-header('Access-Control-Allow-Origin: *');
-date_default_timezone_set('America/Argentina/Buenos_Aires');
-setlocale(LC_TIME, "es_ES");
-E_ALL();
-
 session_start();
-
 require __DIR__ . '../../config/index.php';
+header('Access-Control-Allow-Origin: *');
+header("Content-Type: application/json");
+secure_auth_ch_json();
+E_ALL();
 
 $Datos = (explode('-', ($_GET['Datos'])));
 

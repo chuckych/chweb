@@ -17,7 +17,7 @@ $Desc     = 'SECCION.Se2Desc';
 $DescCodi = 'SECCION.Se2Codi';
 $Col      = 'SECCION';
 $ColData  = 'FICHAS1';
-$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
+$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%'":'';
 
  $query="SELECT $id AS 'id', $id2 AS 'id2', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS ON $ColData.FicLega=FICHAS.FicLega AND $ColData.FicFech = FICHAS.FicFech AND $ColData.FicTurn=FICHAS.FicTurn INNER JOIN $Col ON $id = $DescCodi AND FICHAS.FicSect=SECCION.SecCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id > 0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $id2, $Desc ORDER BY $Desc";
 // print_r($query); exit;

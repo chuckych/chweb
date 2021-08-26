@@ -23,7 +23,7 @@
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
+                <button type="button" class="text-pop-up-top btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
                     Filtros
                 </button>
                 <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">
@@ -157,10 +157,10 @@
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/proceso.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
-    <script src="js/HorXLS.js?v=<?=vjs()?>"></script>
+    <script src="js/proceso.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
+    <script src="js/HorXLS.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

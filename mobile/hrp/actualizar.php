@@ -43,33 +43,34 @@ $createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $created
 mysqli_free_result($rs);
 
 // PrintRespuestaJson('error', $createdDate); exit;
-
 $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);
-foreach ($array['payload'] as $key => $v) {
-    $arrayData[] = array(
-        '__v'           => $v['__v'],
-        '_id'           => $v['_id'],
-        'accuracy'      => $v['position']['accuracy'],
-        'appVersion'    => $v['appVersion'],
-        'attphoto'      => $v['attphoto'],
-        'batteryLevel'  => $v['position']['batteryLevel'],
-        'bearing'       => $v['position']['bearing'],
-        'companyCode'   => $v['companyCode'],
-        'createdDate'   => $v['createdDate'],
-        'dateTime'      => ($v['dateTime']),
-        'employeId'     => $v['employeId'],
-        'eventType'     => $v['eventType'],
-        'gpsStatus'     => $v['position']['gpsStatus'],
-        'lat'           => $v['position']['lat'],
-        'lng'           => $v['position']['lng'],
-        'phoneid'       => $v['phoneid'],
-        'regid'         => $v['regid'],
-        'speed'         => $v['position']['speed'],
-        'sync'          => $v['sync'],
-        'operationType' => $v['operationType'],
-        'operation'     => $v['operation']['observations'],
-    );
+if (!empty($array['payload'])) {
+    foreach ($array['payload'] as $key => $v) {
+        $arrayData[] = array(
+            '__v'           => $v['__v'],
+            '_id'           => $v['_id'],
+            'accuracy'      => $v['position']['accuracy'],
+            'appVersion'    => $v['appVersion'],
+            'attphoto'      => $v['attphoto'],
+            'batteryLevel'  => $v['position']['batteryLevel'],
+            'bearing'       => $v['position']['bearing'],
+            'companyCode'   => $v['companyCode'],
+            'createdDate'   => $v['createdDate'],
+            'dateTime'      => ($v['dateTime']),
+            'employeId'     => $v['employeId'],
+            'eventType'     => $v['eventType'],
+            'gpsStatus'     => $v['position']['gpsStatus'],
+            'lat'           => $v['position']['lat'],
+            'lng'           => $v['position']['lng'],
+            'phoneid'       => $v['phoneid'],
+            'regid'         => $v['regid'],
+            'speed'         => $v['position']['speed'],
+            'sync'          => $v['sync'],
+            'operationType' => $v['operationType'],
+            'operation'     => $v['operation']['observations'],
+        );
+    }
 }
 // print_r(json_encode($arrayData));exit;
 if (!empty($arrayData)) {

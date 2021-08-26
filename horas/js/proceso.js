@@ -1,13 +1,13 @@
 // $(".Filtros").prop('disabled', true);
-function ActualizaTablas(){
+function ActualizaTablas() {
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload();
+        $('#GetFechas').DataTable().ajax.reload(null, false);
     } else {
-        $('#GetPersonal').DataTable().ajax.reload();
+        $('#GetPersonal').DataTable().ajax.reload(null, false);
     };
 };
 onOpenSelect2()
-var map = {17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13:false, 27:false};
+var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
     if (e.keyCode in map) {
         map[e.keyCode] = true;
@@ -59,47 +59,47 @@ $("#pagFech").addClass('d-none');
 $("#GetHorasFechaTable").addClass('d-none');
 $('#Visualizar').prop('disabled', true)
 
-    $('#GetPersonal').DataTable({
-        "initComplete": function( settings, json ) {
+$('#GetPersonal').DataTable({
+    "initComplete": function (settings, json) {
+    },
+    "drawCallback": function (settings) {
+        $("#GetPersonal thead").remove();
+        $(".page-link").addClass('border border-0');
+        $(".dataTables_info").addClass('text-secondary');
+        $('#GetHoras').DataTable().ajax.reload(null, false);
+        $('#GetHorasTotales').DataTable().ajax.reload(null, false);
+    },
+    pagingType: "full",
+    lengthMenu: [[1], [1]],
+    bProcessing: false,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/horas/GetPersonalFichas1.php",
+        type: "POST",
+        "data": function (data) {
+            data._l = $("#_l").val();
+            data.Per = $("#Per").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data.Thora = $("#Thora").val();
+            data.SHoras = $("#SHoras").val();
+            data.HoraMin = $("#HoraMin").val();
+            data.HoraMax = $("#HoraMax").val();
         },
-        "drawCallback": function( settings ) {
-            $("#GetPersonal thead").remove();  
-            $(".page-link").addClass('border border-0');
-            $(".dataTables_info").addClass('text-secondary');
-            $('#GetHoras').DataTable().ajax.reload();
-            $('#GetHorasTotales').DataTable().ajax.reload();
-        },  
-        pagingType: "full",
-        lengthMenu: [[1], [1]],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetPersonalFichas1.php",
-            type: "POST",
-            "data": function(data){
-                data._l      = $("#_l").val();
-                data.Per     = $("#Per").val();
-                data.Tipo    = $("#Tipo").val();
-                data.Emp     = $("#Emp").val();
-                data.Plan    = $("#Plan").val();
-                data.Sect    = $("#Sect").val();
-                data.Sec2    = $("#Sec2").val();
-                data.Grup    = $("#Grup").val();
-                data.Sucur   = $("#Sucur").val();
-                data._dr     = $("#_dr").val();
-                data.Thora   = $("#Thora").val();
-                data.SHoras  = $("#SHoras").val();
-                data.HoraMin = $("#HoraMin").val();
-                data.HoraMax = $("#HoraMax").val();
-            },
-            error: function() {
-                $("#GetPersonal_processing").css("display", "none");
-            },
+        error: function () {
+            $("#GetPersonal_processing").css("display", "none");
         },
-        columns: [
+    },
+    columns: [
         {
             "class": "w80 px-3 border fw4 bg-light radius",
             "data": 'pers_legajo'
@@ -108,195 +108,195 @@ $('#Visualizar').prop('disabled', true)
             "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
             "data": 'pers_nombre'
         },
-        ],
-        paging: true,
-        responsive: false,
-        info: true,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json"
+    ],
+    paging: true,
+    responsive: false,
+    info: true,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort2.json"
+    },
+});
+$('#GetHoras').DataTable({
+    "initComplete": function (settings, json) {
+        $("#Refresh").prop('disabled', false);
+        $('#trash_all').removeClass('invisible');
+        fadeInOnly('#pagLega')
+        fadeInOnly('#GetHorasTable')
+    },
+    "drawCallback": function (settings) {
+        $(".page-link").addClass('border border-0');
+        $(".dataTables_info").addClass('text-secondary');
+        $(".custom-select").addClass('text-secondary bg-light');
+        $('#pagLega').removeClass('invisible')
+        $('#GetHorasTable').removeClass('invisible')
+        setTimeout(function () {
+            $(".Filtros").prop('disabled', false);
+        }, 1000);
+    },
+    lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
+    bProcessing: true,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/horas/GetHoras.php",
+        type: "POST",
+        "data": function (data) {
+            data.Per = $("#Per").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data._l = $("#_l").val();
+            data.Thora = $("#Thora").val();
+            data.SHoras = $("#SHoras").val();
+            data.HoraMin = $("#HoraMin").val();
+            data.HoraMax = $("#HoraMax").val();
+            data.Calculos = $("#Calculos").val();
         },
-    });
-    $('#GetHoras').DataTable({
-        "initComplete": function( settings, json ) {
-            $("#Refresh").prop('disabled', false);
-            $('#trash_all').removeClass('invisible');
-            fadeInOnly('#pagLega')
-            fadeInOnly('#GetHorasTable')
+        error: function () {
+            $("#GetHoras_processing").css("display", "none");
         },
-        "drawCallback": function( settings ) {
-            $(".page-link").addClass('border border-0');
-            $(".dataTables_info").addClass('text-secondary');
-            $(".custom-select").addClass('text-secondary bg-light');
-            $('#pagLega').removeClass('invisible')
-            $('#GetHorasTable').removeClass('invisible')
-            setTimeout(function(){ 
-                $(".Filtros").prop('disabled', false);
-             }, 1000);
+    },
+    columns: [
+        {
+            'class': 'ls1',
+            'data': 'FicFech',
         },
-        lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
-        bProcessing: true,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetHoras.php",
-            type: "POST",
-            "data": function(data){
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
-                data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
-                data.HoraMin = $("#HoraMin").val();
-                data.HoraMax = $("#HoraMax").val();
-                data.Calculos = $("#Calculos").val();
-            },
-            error: function() {
-                $("#GetHoras_processing").css("display", "none");
-            },
+        {
+            'class': '',
+            'data': 'Dia',
         },
-        columns: [
-            { 
-                'class': 'ls1',
-                'data': 'FicFech',
-            },
-            { 
-                'class': '',
-                'data': 'Dia',
-            },
-            { 
-                'class': 'ls1',
-                'data': 'Horario',
-            },
-            { 
-                'class': 'text-center',
-                'data': 'Hora',
-            },
-            { 
-                'class': '',
-                'data': 'HoraDesc',
-            },
-            { 
-                'class': 'ls1 text-center',
-                'data': 'FicHsAu',
-            },
-            { 
-                'class': 'ls1 bg-light fw4 text-center',
-                'data': 'FicHsAu2',
-            },
-            { 
-                'class': '',
-                'data': 'Observ',
-            },
-            { 
-                'class': '',
-                'data': 'DescMotivo',
-            },
-        ],
-        scrollX: true,
-        scrollCollapse: true,
-        scrollY: '25vmax',
-        paging: true,
-        info: true,
-        searching: false,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort2.json"
+        {
+            'class': 'ls1',
+            'data': 'Horario',
         },
-    });
-    $('#GetHorasTotales').DataTable({
-        "initComplete": function( settings, json ) {
-            $("#Refresh").prop('disabled', false);
-            $('#trash_all').removeClass('invisible');
+        {
+            'class': 'text-center',
+            'data': 'Hora',
         },
-        "drawCallback": function( settings ) {
-            $(".page-link").addClass('border border-0');
-            $(".dataTables_info").addClass('text-secondary');
-            $(".custom-select").addClass('text-secondary bg-light');
-            setTimeout(function(){ 
-                $(".Filtros").prop('disabled', false);
-             }, 1000);
-             $('#GetHorasTotalesTable').removeClass('invisible')
+        {
+            'class': '',
+            'data': 'HoraDesc',
         },
-        bProcessing: true,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1500,
-        ajax: {
-            url: "/" + $("#_homehost").val() + "/horas/GetHorasTotales.php",
-            type: "POST",
-            "data": function(data){
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
-                data.Thora = $("#Thora").val();
-                data.SHoras = $("#SHoras").val();
-                data.HoraMin = $("#HoraMin").val();
-                data.HoraMax = $("#HoraMax").val();
-                data.Calculos = $("#Calculos").val();
-            },
-            error: function() {
-                $("#GetHorasNew_processing").css("display", "none");
-            },
+        {
+            'class': 'ls1 text-center',
+            'data': 'FicHsAu',
         },
-        columns: [
-            { 
-                'class': 'ls1 text-center',
-                'data': 'FicHora',
-            },
-            { 
-                'class': 'w150',
-                'data': 'THoDesc',
-            },
-            { 
-                'class': 'ls1 text-center',
-                'data': 'FicHsAu',
-            },
-            { 
-                'class': 'ls1 text-center bg-light fw4',
-                'data': 'FicHsAu2',
-            },
-        ],
-        // scrollY: '450px',
-        scrollX: true,
-        scrollCollapse: false,
-        paging: false,
-        responsive: false,
-        info: false,
-        searching: false,
-        ordering: false,
-        language: {
-            "url": "../js/DataTableSpanishShort.json"
+        {
+            'class': 'ls1 bg-light fw4 text-center',
+            'data': 'FicHsAu2',
         },
-    });
-    setTimeout(function(){
+        {
+            'class': '',
+            'data': 'Observ',
+        },
+        {
+            'class': '',
+            'data': 'DescMotivo',
+        },
+    ],
+    scrollX: true,
+    scrollCollapse: true,
+    scrollY: '25vmax',
+    paging: true,
+    info: true,
+    searching: false,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort2.json"
+    },
+});
+$('#GetHorasTotales').DataTable({
+    "initComplete": function (settings, json) {
+        $("#Refresh").prop('disabled', false);
+        $('#trash_all').removeClass('invisible');
+    },
+    "drawCallback": function (settings) {
+        $(".page-link").addClass('border border-0');
+        $(".dataTables_info").addClass('text-secondary');
+        $(".custom-select").addClass('text-secondary bg-light');
+        setTimeout(function () {
+            $(".Filtros").prop('disabled', false);
+        }, 1000);
+        $('#GetHorasTotalesTable').removeClass('invisible')
+    },
+    bProcessing: true,
+    serverSide: true,
+    deferRender: true,
+    searchDelay: 1500,
+    ajax: {
+        url: "/" + $("#_homehost").val() + "/horas/GetHorasTotales.php",
+        type: "POST",
+        "data": function (data) {
+            data.Per = $("#Per").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data._l = $("#_l").val();
+            data.Thora = $("#Thora").val();
+            data.SHoras = $("#SHoras").val();
+            data.HoraMin = $("#HoraMin").val();
+            data.HoraMax = $("#HoraMax").val();
+            data.Calculos = $("#Calculos").val();
+        },
+        error: function () {
+            $("#GetHorasNew_processing").css("display", "none");
+        },
+    },
+    columns: [
+        {
+            'class': 'ls1 text-center',
+            'data': 'FicHora',
+        },
+        {
+            'class': 'w150',
+            'data': 'THoDesc',
+        },
+        {
+            'class': 'ls1 text-center',
+            'data': 'FicHsAu',
+        },
+        {
+            'class': 'ls1 text-center bg-light fw4',
+            'data': 'FicHsAu2',
+        },
+    ],
+    // scrollY: '450px',
+    scrollX: true,
+    scrollCollapse: false,
+    paging: false,
+    responsive: false,
+    info: false,
+    searching: false,
+    ordering: false,
+    language: {
+        "url": "../js/DataTableSpanishShort.json"
+    },
+});
+setTimeout(function () {
     $('#GetFechas').DataTable({
-        "initComplete": function( settings, json ) {
-            $("#GetFechas thead").remove(); 
-          },
-          "drawCallback": function( settings ) {        
+        "initComplete": function (settings, json) {
+            $("#GetFechas thead").remove();
+        },
+        "drawCallback": function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             // $( "#GetHorasFechaTable" ).append( "<div class='loader2'></div>" );
-            $('#GetHorasFecha').DataTable().ajax.reload();
-            $('#GetHorasFechaTotales').DataTable().ajax.reload();
+            $('#GetHorasFecha').DataTable().ajax.reload(null, false);
+            $('#GetHorasFechaTotales').DataTable().ajax.reload(null, false);
             // $(".loader2").fadeOut("slow");
-        },  
+        },
         pagingType: "full",
         lengthMenu: [[1], [1]],
         bProcessing: false,
@@ -307,35 +307,35 @@ $('#Visualizar').prop('disabled', true)
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetFechasFichas1.php",
             type: "POST",
-            "data": function(data){
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
+            "data": function (data) {
+                data.Per = $("#Per").val();
+                data.Tipo = $("#Tipo").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data._dr = $("#_dr").val();
+                data._l = $("#_l").val();
                 data.Thora = $("#Thora").val();
                 data.SHoras = $("#SHoras").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetFecha_processing").css("display", "none");
             },
         },
         columns: [
-        {
-            "class": "w80 px-3 border fw4 bg-light radius ls1",
-            "data": 'FicFech'
-        },
-        {
-            "class": "w300 px-3 border fw4 bg-light radius",
-            "data": 'Dia'
-        },
+            {
+                "class": "w80 px-3 border fw4 bg-light radius ls1",
+                "data": 'FicFech'
+            },
+            {
+                "class": "w300 px-3 border fw4 bg-light radius",
+                "data": 'Dia'
+            },
         ],
         paging: true,
         responsive: false,
@@ -346,19 +346,19 @@ $('#Visualizar').prop('disabled', true)
         },
     });
     $('#GetHorasFecha').DataTable({
-        "initComplete": function( settings, json ) {
-          },
-          "drawCallback": function( settings ) {
+        "initComplete": function (settings, json) {
+        },
+        "drawCallback": function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
             $('#Visualizar').prop('disabled', false)
             $('#GetHorasFechaTable').removeClass('invisible')
-            setTimeout(function(){ 
+            setTimeout(function () {
                 $(".Filtros").prop('disabled', false);
-             }, 1000);
-        },  
-        lengthMenu: [[10,25,50,100], [10,25,50,100]],
+            }, 1000);
+        },
+        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         bProcessing: true,
         serverSide: true,
         deferRender: true,
@@ -366,62 +366,62 @@ $('#Visualizar').prop('disabled', true)
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetHorasFecha.php",
             type: "POST",
-            "data": function(data){
-                data._f       = $("#_f").val();
-                data.Per      = $("#Per").val();
-                data.Tipo     = $("#Tipo").val();
-                data.Emp      = $("#Emp").val();
-                data.Plan     = $("#Plan").val();
-                data.Sect     = $("#Sect").val();
-                data.Sec2     = $("#Sec2").val();
-                data.Grup     = $("#Grup").val();
-                data.Sucur    = $("#Sucur").val();
-                data._dr      = $("#_dr").val();
-                data._l       = $("#_l").val();
-                data.Thora    = $("#Thora").val();
-                data.SHoras   = $("#SHoras").val();
-                data.HoraMin  = $("#HoraMin").val();
-                data.HoraMax  = $("#HoraMax").val();
+            "data": function (data) {
+                data._f = $("#_f").val();
+                data.Per = $("#Per").val();
+                data.Tipo = $("#Tipo").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data._dr = $("#_dr").val();
+                data._l = $("#_l").val();
+                data.Thora = $("#Thora").val();
+                data.SHoras = $("#SHoras").val();
+                data.HoraMin = $("#HoraMin").val();
+                data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetHorasFecha_processing").css("display", "none");
             },
         },
         columns: [
-            { 
+            {
                 'class': 'ls1',
                 'data': 'Legajo',
             },
-            { 
+            {
                 'class': 'ApNo',
                 'data': 'Nombre',
             },
-            { 
+            {
                 'class': 'ls1',
                 'data': 'Horario',
             },
-            { 
+            {
                 'class': 'text-center',
                 'data': 'Hora',
             },
-            { 
+            {
                 'class': '',
                 'data': 'HoraDesc',
             },
-            { 
+            {
                 'class': 'ls1 text-center',
                 'data': 'FicHsAu',
             },
-            { 
+            {
                 'class': 'ls1 bg-light fw4 text-center',
                 'data': 'FicHsAu2',
             },
-            { 
+            {
                 'class': '',
                 'data': 'Observ',
             },
-            { 
+            {
                 'class': '',
                 'data': 'DescMotivo',
             },
@@ -438,19 +438,19 @@ $('#Visualizar').prop('disabled', true)
         },
     });
     $('#GetHorasFechaTotales').DataTable({
-        "initComplete": function( settings, json ) {
+        "initComplete": function (settings, json) {
             $(".CollapseFiltros").prop('disabled', false);
             $("#Refresh").prop('disabled', false);
             $('#trash_all').removeClass('invisible');
         },
-        "drawCallback": function( settings ) {
+        "drawCallback": function (settings) {
             $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
-            setTimeout(function(){ 
+            setTimeout(function () {
                 $(".Filtros").prop('disabled', false);
-             }, 1000);
-            
+            }, 1000);
+
         },
         bProcessing: true,
         serverSide: true,
@@ -459,42 +459,42 @@ $('#Visualizar').prop('disabled', true)
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetHorasFechaTotales.php",
             type: "POST",
-            "data": function(data){
+            "data": function (data) {
                 data._f = $("#_f").val();
-                data.Per= $("#Per").val();
-                data.Tipo= $("#Tipo").val();
-                data.Emp= $("#Emp").val();
-                data.Plan= $("#Plan").val();
-                data.Sect= $("#Sect").val();
-                data.Sec2= $("#Sec2").val();
-                data.Grup= $("#Grup").val();
-                data.Sucur= $("#Sucur").val();
-                data._dr  = $("#_dr").val();
-                data._l  = $("#_l").val();
+                data.Per = $("#Per").val();
+                data.Tipo = $("#Tipo").val();
+                data.Emp = $("#Emp").val();
+                data.Plan = $("#Plan").val();
+                data.Sect = $("#Sect").val();
+                data.Sec2 = $("#Sec2").val();
+                data.Grup = $("#Grup").val();
+                data.Sucur = $("#Sucur").val();
+                data._dr = $("#_dr").val();
+                data._l = $("#_l").val();
                 data.Thora = $("#Thora").val();
                 data.SHoras = $("#SHoras").val();
                 data.HoraMin = $("#HoraMin").val();
                 data.HoraMax = $("#HoraMax").val();
                 data.Calculos = $("#Calculos").val();
             },
-            error: function() {
+            error: function () {
                 $("#GetHorasNew_processing").css("display", "none");
             },
         },
         columns: [
-            { 
+            {
                 'class': 'ls1 text-center',
                 'data': 'FicHora',
             },
-            { 
+            {
                 'class': 'w150',
                 'data': 'THoDesc',
             },
-            { 
+            {
                 'class': 'ls1 text-center',
                 'data': 'FicHsAu',
             },
-            { 
+            {
                 'class': 'ls1 text-center bg-light fw4',
                 'data': 'FicHsAu2',
             },
@@ -511,29 +511,30 @@ $('#Visualizar').prop('disabled', true)
             "url": "../js/DataTableSpanishShort.json"
         },
     });
-    }, 1000);
-    $('#GetPersonal').on('page.dt', function () {
-        CheckSesion()
-    });
-    $('#GetHoras').on('page.dt', function () {
-        CheckSesion()
-    });
-    $('#GetHorasTotales').on('page.dt', function () {
-        CheckSesion()
-    });
-    $('#GetFechas').on('page.dt', function () {
-        CheckSesion()
-    });
-    $('#GetHorasFecha').on('page.dt', function () {
-        CheckSesion()
-    });
-    $('#GetHorasFechaTotales').on('page.dt', function () {
-        CheckSesion()
-    });
+}, 1000);
+$('#GetPersonal').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetHoras').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetHorasTotales').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetFechas').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetHorasFecha').on('page.dt', function () {
+    CheckSesion()
+});
+$('#GetHorasFechaTotales').on('page.dt', function () {
+    CheckSesion()
+});
 
 $("#Refresh").on("click", function () {
     CheckSesion()
     ActualizaTablas()
+    // classHover('.refreshIcon', 'rotate-scale-up')
 });
 
 $("#_dr").change(function () {
@@ -552,7 +553,7 @@ $("#Visualizar").change(function () {
         $("#pagLega").addClass('d-none');
         $("#pagFech").removeClass('d-none')
         // $('#VerPor').html('Visualizar por Legajo')
-    } else {       
+    } else {
         $('#GetPersonal').DataTable().ajax.reload();
         $("#GetHorasTable").removeClass('d-none');
         $("#GetHorasFechaTable").addClass('d-none')

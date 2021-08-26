@@ -375,9 +375,6 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
 })
 
 
-
-// setTimeout(function () {
-
 $('#GetFechas').DataTable({
     "initComplete": function (settings, json) {
         $("#GetFechas thead").remove();
@@ -445,9 +442,6 @@ $('#GetFechas').DataTable({
     },
 });
 
-// $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
-// console.log(settings.iDraw);
-// })
 $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
     if (settings.iDraw === 1) {
         // console.log(json.draw);
@@ -559,10 +553,6 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
         })
     }
 })
-
-
-// }, 1000);
-
 
 
 $('#GetPersonal').on('page.dt', function () {

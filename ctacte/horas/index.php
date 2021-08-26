@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
-$Modulo='9';
+$Modulo='13';
 ExisteModRol($Modulo);
 // $getData = 'GetCtaCteHoras2';
 $_datos  = 'cta_horas';

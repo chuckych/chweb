@@ -105,7 +105,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
 
     //$RegTarj= $_POST['RegTarj']; /** 29988600 */
     $RegFech = $_POST['RegFech'];
-    $RegFech = dr_fecha($RegFech); /** Ymd */
+    $RegFech = dr_fecha($RegFech);
+    /** Ymd */
 
     $RegHora = $_POST['RegHora'];
     $RegTipo = '1';
@@ -290,7 +291,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
 
     $RegHora = $_POST['RegHora_mod'];
     // $RegFech = Fech_Format_Var($_POST['RegFech_mod'], 'Ymd');
-    $RegFech = dr_fecha(test_input($_POST['RegFech_mod'])); /** Ymd */
+    $RegFech = dr_fecha(test_input($_POST['RegFech_mod']));
+    /** Ymd */
 
     $RegFeAs = Fech_Format_Var($RegFech1, 'Ymd');
     $RegFeRe = $RegFech;
@@ -926,11 +928,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
             'eventType' => 201,
             'extraHours' => $extraHours,
         );
+        $regid_legajo = regid_legajo('20891138');
         $data = array(
             'data' => array('data' => $data),
-            'to' => regid_legajo('20891138')
+            'to' => $regid_legajo
         );
-
         $payload = json_encode($data);
 
         function sendMessaje($url, $payload, $timeout = 10)
@@ -956,7 +958,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 
             $url = 'https://fcm.googleapis.com/fcm/send';
 
-            if ($_SESSION["ID_CLIENTE"] == '1' && $_SERVER['SERVER_NAME'] != 'localhost') {
+            if ($_SESSION["ID_CLIENTE"] == '1' && $_SERVER['SERVER_NAME'] != 'localhost' && !empty($regid_legajo)) {
                 $sendMensaje = sendMessaje($url, $payload, 10);
             } else {
                 $sendMensaje = '';
@@ -1270,13 +1272,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
     $FicFech  = ($datos_Citacion[1]);
 
     $_POST['tipo'] = $_POST['tipo'] ?? '';
-    if ($_POST['tipo'] == 'c_citacion') { /** cuando viene de admini de horarios */
-        $datos_Citacion=$_POST['datos_Citacion'];
+    if ($_POST['tipo'] == 'c_citacion') {
+        /** cuando viene de admini de horarios */
+        $datos_Citacion = $_POST['datos_Citacion'];
         $datos_Citacion = explode('-', $datos_Citacion);
         $FicLega  = ($datos_Citacion[0]);
         $FicFech  = (dr_fecha($datos_Citacion[1]));
     }
-    
+
 
     if (PerCierre($FicFech, $FicLega)) {
         $data = array('status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y')));
@@ -1342,8 +1345,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
     $FicFech  = ($Datos[1]);
 
     $_POST['tipo'] = $_POST['tipo'] ?? '';
-    if ($_POST['tipo'] == 'd_citacion') { /** cuando viene de admini de horarios */
-        $datos_Citacion=$_POST['Datos'];
+    if ($_POST['tipo'] == 'd_citacion') {
+        /** cuando viene de admini de horarios */
+        $datos_Citacion = $_POST['Datos'];
         $datos_Citacion = explode('-', $datos_Citacion);
         $FicLega  = ($datos_Citacion[0]);
         $FicFech  = (dr_fecha($datos_Citacion[1]));

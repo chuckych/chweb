@@ -20,7 +20,7 @@ INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.
 INNER JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi 
 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume 
 WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FiltroQ $filtroTipo GROUP BY NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo ORDER BY NOVEDAD.NovCodi";
-print_r($query); exit; 
+// print_r($query); exit; 
 $result  = sqlsrv_query($link, $query, $params, $options);
 $data    = array();
 $NumRows = sqlsrv_num_rows($result);
