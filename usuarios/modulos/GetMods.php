@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
@@ -42,17 +42,17 @@ require __DIR__ . '../../../config/conect_mysql.php';
     }
     mysqli_free_result($result);
     mysqli_close($link);
-
-    foreach ($data as $key => $value) {
-        if ($value['tipo'] != ($data[$key - 1]['tipo'])) {
-            $data2[] = array(
-                'id'   => $value['idtipo'],
-                'tipo' => $value['tipo']
-            );
-        } else {
-            $data2[] = array();
-        }
-    }
+    $data2[] = array();
+    // foreach ($data as $key => $value) {
+    //     if ($value['tipo'] != ($data[$key - 1]['tipo'])) {
+    //         $data2[] = array(
+    //             'id'   => $value['idtipo'],
+    //             'tipo' => $value['tipo']
+    //         );
+    //     } else {
+    //         $data2[] = array();
+    //     }
+    // }
 
     $respuesta = array('modulos' => $data, 'UniqueMod' => $data2);
     echo json_encode($respuesta); 

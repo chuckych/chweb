@@ -39,7 +39,7 @@ $Rol     = ExisteRol2($_GET['_r'])
         <?php if (!principal($_GET['_r'])) {
             /** Check de usuario principal del sistema*/ ?>
             <div class="row m-1">
-            <div class="col-12 fonth mt-2 fw4 bg-light py-2 mb-2">M&oacute;dulos</div>
+                <div class="col-12 fonth mt-2 fw4 bg-light py-2 mb-2">M&oacute;dulos</div>
                 <div class="col-sm-4 col-xl-2 col-12">
                     <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
                     </div>
@@ -52,7 +52,7 @@ $Rol     = ExisteRol2($_GET['_r'])
             <form action="../roles/insert.php" method="POST" class="form_abm_rol w-100">
                 <div class="row m-1 d-none" id="RowModulos">
                     <div class="col-12 fonth mt-2 fw4 bg-light py-2 mb-2">Permisos</div>
-                    <input type="hidden" id="RecidRol" name="RecidRol" value="<?=$_GET['_r']?>">
+                    <input type="hidden" id="RecidRol" name="RecidRol" value="<?= $_GET['_r'] ?>">
                     <input type="hidden" id="act_abm" name="act_abm" value="true">
                     <div class="col-12">
                         <span class="fontq btn btn-link p-0 text-gris" id="marcar">Marcar Todo</span>
@@ -140,6 +140,21 @@ $Rol     = ExisteRol2($_GET['_r'])
                             <label class="custom-control-label" style="padding-top: 3px;" for="mCit">Modificación</label>
                         </div>
                     </div>
+                    <div class="col-12 col-sm-6 mt-2">
+                        <p class="fonth text-secondary m-0 fw4">Horarios</p>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input abmcheck" id="aTur" name="aTur">
+                            <label class="custom-control-label" style="padding-top: 3px;" for="aTur">Alta</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input abmcheck" id="bTur" name="bTur">
+                            <label class="custom-control-label" style="padding-top: 3px;" for="bTur">Baja</label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input abmcheck" id="mTur" name="mTur">
+                            <label class="custom-control-label" style="padding-top: 3px;" for="mTur">Modificación</label>
+                        </div>
+                    </div>
                     <div class="col-6 col-sm-6 col-md-4 col-xl-3 p-3 d-flex align-items-end">
                         <button type="submit" class="fontq fw4 btn btn-custom border px-3 opa7" id="submitABM">Guardar</button>
                         <span class="ml-2 fw5 fontq align-middle respuestaabm p-2"></span>
@@ -156,8 +171,9 @@ $Rol     = ExisteRol2($_GET['_r'])
     require __DIR__ . "../../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
-    <script src="js/data-min.js?v=<?=vjs()?>"></script>
-    <script src="js/abm-min.js?v=<?=vjs()?>"></script>
+    <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/abm-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

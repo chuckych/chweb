@@ -44,6 +44,9 @@ $(document).on("click", "#desmarcar", function (e) {
                     checked(respuesta.aCit, "#aCit");
                     checked(respuesta.mCit, "#mCit");
                     checked(respuesta.bCit, "#bCit");
+                    checked(respuesta.aTur, "#aTur");
+                    checked(respuesta.bTur, "#bTur");
+                    checked(respuesta.mTur, "#mTur");
                 },
                 error: function () {
                     $('#act_abm').val('false');
@@ -62,23 +65,30 @@ $(document).on("click", "#desmarcar", function (e) {
                 // async : false,
                 beforeSend: function (data) {
                     ActiveBTN(true, '#submitABM', 'Espere..', 'Guardar')
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
                 },
                 success: function (data) {
                     if (data.status == "ok") {
                         ActiveBTN(false, '#submitABM', 'Espere..', 'Guardar')
-                        $(".respuestaabm").html('Datos Guardados')
+                        $(".respuestaabm").html(data.Mensaje)
                         setTimeout(() => {
                             $(".respuestaabm").html('')
                         }, 2000);
-
+                        $.notifyClose();
+                        notify(data.Mensaje, 'success', 5000, 'right')
                     } else {
                         $(".respuestaabm").html('Error')
                         ActiveBTN(false, '#submitABM', 'Espere..', 'Guardar')
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
                     }
                 },
                 error: function() {
                     $(".respuestaabm").html('Error')
                     ActiveBTN(false, '#submitABM', 'Espere..', 'Guardar')
+                    $.notifyClose();
+                    notify('Error', 'danger', 5000, 'right')
                 }
             });
             e.stopImmediatePropagation();

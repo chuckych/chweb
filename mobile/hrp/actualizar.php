@@ -47,6 +47,7 @@ $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
     foreach ($array['payload'] as $key => $v) {
+        $operation = $v['operation']['observations'] ?? '';
         $arrayData[] = array(
             '__v'           => $v['__v'],
             '_id'           => $v['_id'],
@@ -68,7 +69,7 @@ if (!empty($array['payload'])) {
             'speed'         => $v['position']['speed'],
             'sync'          => $v['sync'],
             'operationType' => $v['operationType'],
-            'operation'     => $v['operation']['observations'],
+            'operation'     => $operation,
         );
     }
 }
@@ -117,7 +118,9 @@ if (!empty($arrayData)) {
         (mysqli_query($link, $query));
     }
     header("Content-Type: application/json");
-    PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData));
+    // PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData));
+    $data = array('status' => 'ok', 'Mensaje' => 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData), 'data'=>$arrayData);
+    echo json_encode($data);
     mysqli_close($link);
     exit;
 } else {
