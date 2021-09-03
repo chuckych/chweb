@@ -119,6 +119,7 @@ $(document).ready(function () {
     function submitForms(idform, idbtnsubmit) {
         $(idform).bind("submit", function (e) {
             e.preventDefault();
+            CheckSesion()
             $.ajax({
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),

@@ -58,6 +58,7 @@ $(document).on("click", "#desmarcar", function (e) {
     $(document).ready(function () {
         $(".form_abm_rol").bind("submit", function (e) {
             e.preventDefault();
+            CheckSesion()
             $.ajax({
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),

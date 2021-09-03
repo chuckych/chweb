@@ -70,21 +70,12 @@ $(document).keydown(function (e) {
     }
 });
 
-// $("#pagFech").addClass('d-none');
 $("#pagFech").hide()
 $("#GetGeneralFechaTable").hide();
-// $('#Visualizar').prop('disabled', true)
 
-$('#datoFicDiaL').val('1');
 $("#FicDiaL").change(function () {
     CheckSesion()
-    if ($("#FicDiaL").is(":checked")) {
-        $('#datoFicDiaL').val('1')
-        ActualizaTablas()
-    } else {
-        $('#datoFicDiaL').val('0')
-        ActualizaTablas()
-    }
+    ActualizaTablas()
 });
 
 $('#datoFicFalta').val('0');
@@ -200,24 +191,24 @@ let GetPersonal = $('#GetPersonal').DataTable({
         url: "/" + $("#_homehost").val() + "/general/GetPersonalFichas.php",
         type: "POST",
         "data": function (data) {
-            data._l       = $("#_l").val();
-            data.Per      = $("#Per").val();
-            data.Per2     = $("#Per2").val();
-            data.Tipo     = $("#Tipo").val();
-            data.Emp      = $("#Emp").val();
-            data.Plan     = $("#Plan").val();
-            data.Sect     = $("#Sect").val();
-            data.Sec2     = $("#Sec2").val();
-            data.Grup     = $("#Grup").val();
-            data.Sucur    = $("#Sucur").val();
-            data._dr      = $("#_dr").val();
-            data.FicDiaL  = $("#datoFicDiaL").val();
+            data._l = $("#_l").val();
+            data.Per = $("#Per").val();
+            data.Per2 = $("#Per2").val();
+            data.Tipo = $("#Tipo").val();
+            data.Emp = $("#Emp").val();
+            data.Plan = $("#Plan").val();
+            data.Sect = $("#Sect").val();
+            data.Sec2 = $("#Sec2").val();
+            data.Grup = $("#Grup").val();
+            data.Sucur = $("#Sucur").val();
+            data._dr = $("#_dr").val();
+            data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
             data.FicFalta = $("#datoFicFalta").val();
-            data.FicNovT  = $("#datoFicNovT").val();
-            data.FicNovI  = $("#datoFicNovI").val();
-            data.FicNovS  = $("#datoFicNovS").val();
-            data.FicNovA  = $("#datoFicNovA").val();
-            data.Fic3Nov  = $("#datoNovedad").val();
+            data.FicNovT = $("#datoFicNovT").val();
+            data.FicNovI = $("#datoFicNovI").val();
+            data.FicNovS = $("#datoFicNovS").val();
+            data.FicNovA = $("#datoFicNovA").val();
+            data.Fic3Nov = $("#datoNovedad").val();
             data.FechaFin = $("#FechaFin").val();
         },
 
@@ -298,7 +289,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
                     data.Sucur = $("#Sucur").val();
                     data._dr = $("#_dr").val();
                     data._l = $("#_l").val();
-                    data.FicDiaL = $("#datoFicDiaL").val();
+                    data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
                     data.FicFalta = $("#datoFicFalta").val();
                     data.FicNovT = $("#datoFicNovT").val();
                     data.FicNovI = $("#datoFicNovI").val();
@@ -410,7 +401,7 @@ $('#GetFechas').DataTable({
             data.Sucur = $("#Sucur").val();
             data._dr = $("#_dr").val();
             data._l = $("#_l").val();
-            data.FicDiaL = $("#datoFicDiaL").val();
+            data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
             data.FicFalta = $("#datoFicFalta").val();
             data.FicNovT = $("#datoFicNovT").val();
             data.FicNovI = $("#datoFicNovI").val();
@@ -480,7 +471,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                     data.Sucur = $("#Sucur").val();
                     data._dr = $("#_dr").val();
                     data._l = $("#_l").val();
-                    data.FicDiaL = $("#datoFicDiaL").val();
+                    data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
                     data.FicFalta = $("#datoFicFalta").val();
                     data.FicNovT = $("#datoFicNovT").val();
                     data.FicNovI = $("#datoFicNovI").val();
@@ -604,6 +595,47 @@ $("#Visualizar").change(function () {
         $("#pagLega").show()
     }
 });
+// $('.MaskLega').mask('000000000000', {selectOnFocus: true});
 
+// let options = {
+//     onKeyPress: function (cep, e, field, options) {
+//         // console.log(cep.length);
+//         var masks = ['0000-0000', '00 0000-0000', '+00 0 00 0000-0000'];
+//         //   let mask = (cep.length>=17) ? masks[0] : masks[1];
+//         let mask = '0#';
+
+//         switch (cep.length) {
+//             case 7 :
+//                 mask = '0000-0000#'
+//                 break;
+//             case 8 :
+//                 mask = '0000-0000#'
+//                 break;
+//             case 9:
+//                 mask = '0000-00000#'
+//                 break;
+//             case 10:
+//                 mask = '00 0000-0000#'
+//                 break;
+//             case 11:
+//                 mask = '00 0000-000#'
+//                 break;
+//             case 12:
+//                 mask = '00 0000-0000#'
+//                 break;
+//             case 13:
+//                 mask =  '+00 0 00 0000-0000#'
+//                 break;
+//             default:
+//                 mask = '0#'
+//                 break;
+//         }
+//         console.log(cep.length+' - '+ mask);
+
+//         $('.MaskLega').mask(mask, options);
+//     }
+// };
+
+// $('.MaskLega').mask('0#', options, {selectOnFocus: true});
 // SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumInputLength, minimumResultsForSearch, maximumInputLength, selectOnClose, ajax_url, delay, data_array, type)
 // SelectSelect2Ajax("#datoNovedad", false, true, 'Novedades', 0, 10, 10, true, "../data/getListNovedades.php", '250', '', 'GET')

@@ -16,8 +16,7 @@ function LimpiarFiltros() {
     $('.selectjs_personal').val(null).trigger("change");
     $('.selectjs_tipoper').val(null).trigger("change");
     $('#Per2').val(null)
-    $('#datoFicDiaL').val('1')
-    $('#FicDiaL').prop('checked', true)
+    $('#FicDiaL').prop('checked', false)
     $('#datoFicFalta').val('0')
     $('#FicFalta').prop('checked', false)
     $('#datoFicNovT').val('0')
@@ -45,8 +44,7 @@ function LimpiarFiltros2() {
     $('.selectjs_sucursal').val(null).trigger("change");
     $('.selectjs_personal').val(null).trigger("change");
     $('.selectjs_tipoper').val(null).trigger("change");
-    $('#datoFicDiaL').val('1')
-    $('#FicDiaL').prop('checked', true)
+    $('#FicDiaL').prop('checked', false)
     $('#datoFicFalta').val('0')
     $('#FicFalta').prop('checked', false)
     $('#datoFicNovT').val('0')

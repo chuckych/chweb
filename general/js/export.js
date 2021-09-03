@@ -254,7 +254,7 @@ $(document).ready(function () {
                 "&Grup= " + $("#Grup").val() +
                 "&Sucur= " + $("#Sucur").val() +
                 "&_dr= " + $("#_dr").val() +
-                "&FicDiaL= " + $("#datoFicDiaL").val() +
+                "&FicDiaL= " + ($("#FicDiaL").is(":checked")) ? 1: 0 +
                 "&FicFalta= " + $("#datoFicFalta").val() +
                 "&FicNovT= " + $("#datoFicNovT").val() +
                 "&FicNovI= " + $("#datoFicNovI").val() +

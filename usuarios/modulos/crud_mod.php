@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
@@ -78,8 +78,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                 exit;
             }
         } else {
-            mysqli_error($link); PrintError('ErrorDelete',mysqli_errno($link)); /** Imprimo json con resultado */
+            mysqli_error($link); 
+            PrintError('ErrorDelete',mysqli_errno($link)); /** Imprimo json con resultado */
             // mysqli_close($link); /** Cerramos conexion con Mysql */
+            // PrintRespuestaJson('error', 'Error');
             exit;
         }
 
@@ -93,8 +95,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                     exit;
                 }
             }
-            PrintOK('Datos Guardados'); /** Imprimo json con resultado */
-            // mysqli_close($link); /** Cerramos conexion con Mysql */
+            PrintRespuestaJson('ok', 'Datos Guardadoss');
+            exit;
+        }else{
+            PrintRespuestaJson('ok', 'Datos Guardados');
             exit;
         }
     }
