@@ -1,8 +1,8 @@
 /** Select */
 $(document).ready(function () {
     $('#Tipo').css({ "width": "200px" });
+    // SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
     $('.form-control').css({ "width": "100%" });
-    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
     $('#Filtros').on('shown.bs.modal', function () {
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
         $(".selectjs_empresa").select2({
@@ -53,6 +53,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         // Emp    : $("#Emp").val(),
@@ -69,7 +70,7 @@ $(document).ready(function () {
                         FicNovI: $("#datoFicNovI").val(),
                         FicNovS: $("#datoFicNovS").val(),
                         FicNovA: $("#datoFicNovA").val(),
-                        Fic3Nov: $("#datoNovedad").val(),
+                        Fic3Nov: $("#datoNovedad").val()
                     }
                 },
                 processResults: function (data) {
@@ -127,6 +128,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -201,6 +203,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -275,6 +278,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -349,6 +353,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -423,6 +428,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -497,6 +503,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         // Per    : $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -571,6 +578,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         // Tipo   : $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -645,6 +653,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
+                        Filtros : _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),

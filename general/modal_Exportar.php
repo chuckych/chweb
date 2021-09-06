@@ -33,7 +33,7 @@
                             </a>
                         </div>
                         <div class="collapse" id="Permisos">
-                            <div class="col-12 form-inline pt-2">
+                            <div class="col-12 d-inline-flex pt-2">
                                 <label for="_format"><span class="w80 d-none d-sm-none d-md-none d-lg-block">Hoja: </span></label>
                                 <select name="_format" id="_format" class="select2 form-control">
                                     <?php

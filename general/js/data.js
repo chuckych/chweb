@@ -1,6 +1,6 @@
 // $(".Filtros").prop('disabled', true);
 function ActualizaTablas() {
-
+    console.log(_Filtros());
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload(null, false);
         $("#GetFechas_paginate .page-link").addClass('border border-0');
@@ -169,11 +169,22 @@ $("#FicNovA").change(function () {
     }
 });
 
+function _Filtros() {
+    let LegDe = parseInt($('#LegDe').val());
+    let LegHa = parseInt($('#LegHa').val());
+    if ((LegDe && LegHa)) {
+        (LegDe > LegHa) ? $('#LegDe').val(LegHa) : $('#LegDe').val(LegDe);
+    }
+    let Filtros = { 'LegDe': LegDe, 'LegHa': LegHa };
+    return JSON.stringify(Filtros)
+}
 
-// $('#_dr').on('init.daterangepicker', function(ev, picker) {
-//     console.log('dr: '+$('#_dr').val());
-// })
-
+_Filtros()
+$("._filtro").change(function () {
+    $('.selectjs_personal').val(null).trigger("change");
+    _Filtros()
+    ActualizaTablas()
+});
 
 let GetPersonal = $('#GetPersonal').DataTable({
     initComplete: function (settings, json) {
@@ -210,6 +221,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
             data.FicNovA = $("#datoFicNovA").val();
             data.Fic3Nov = $("#datoNovedad").val();
             data.FechaFin = $("#FechaFin").val();
+            data.Filtros = _Filtros()
         },
 
         error: function () {
@@ -297,6 +309,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
                     data.FicNovA = $("#datoFicNovA").val();
                     data.Fic3Nov = $("#datoNovedad").val();
                     data.FechaFin = $("#FechaFin").val();
+                    data.Filtros = _Filtros();
                 },
                 error: function () {
                     $("#GetGeneral").css("display", "none");
@@ -365,7 +378,6 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
     }
 })
 
-
 $('#GetFechas').DataTable({
     "initComplete": function (settings, json) {
         $("#GetFechas thead").remove();
@@ -409,6 +421,7 @@ $('#GetFechas').DataTable({
             data.FicNovA = $("#datoFicNovA").val();
             data.Fic3Nov = $("#datoNovedad").val();
             data.FechaFin = $("#FechaFin").val();
+            data.Filtros = _Filtros()
         },
         error: function () {
             $("#GetFecha_processing").css("display", "none");
@@ -432,7 +445,6 @@ $('#GetFechas').DataTable({
         "url": "../js/DataTableSpanishShort2.json"
     },
 });
-
 $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
     if (settings.iDraw === 1) {
         // console.log(json.draw);
@@ -479,6 +491,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                     data.FicNovA = $("#datoFicNovA").val();
                     data.Fic3Nov = $("#datoNovedad").val();
                     data.FechaFin = $("#FechaFin").val();
+                    data.Filtros = _Filtros()
                 },
                 error: function () {
                     $("#GetGeneralFecha_processing").css("display", "none");
@@ -545,7 +558,6 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
     }
 })
 
-
 $('#GetPersonal').on('page.dt', function () {
     CheckSesion()
 });
@@ -595,7 +607,7 @@ $("#Visualizar").change(function () {
         $("#pagLega").show()
     }
 });
-// $('.MaskLega').mask('000000000000', {selectOnFocus: true});
+$('.MaskLega').mask('000000000000', { selectOnFocus: true });
 
 // let options = {
 //     onKeyPress: function (cep, e, field, options) {

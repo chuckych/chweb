@@ -1,9 +1,9 @@
 $(document).ready(function () {
-
     $('.select2').select2({
         minimumResultsForSearch: -1,
         placeholder: "Seleccionar"
     });
+    SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
     // var DRVal = $("#_dr").val();
     $('#RangoDr').html($("#_dr").val())
     $("#_dr").change(function () {
@@ -234,17 +234,25 @@ $(document).ready(function () {
             hideHor()
         }
     });
-    var btnPDF = 'Generar PDF'
-    $("#btnExportar").html(btnPDF);
+    let btnPDF = 'Generar PDF'
 
+    let ficDial = ($("#FicDiaL").is(":checked")) ? 1 : 0;
+    $(document).on("change", "#FicDiaL", function (e) {
+        ficDial = ($("#FicDiaL").is(":checked")) ? 1 : 0;
+        console.log(ficDial);
+    });
+
+    $("#btnExportar").html(btnPDF);
+    
     $("#FormExportar").bind("submit", function (e) {
-        CheckSesion()
         e.preventDefault();
+        CheckSesion();
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),
             data: $(this).serialize() +
                 "&_l= " + $("#_l").val() +
+                "&Filtros= " + _Filtros() +
                 "&Per= " + $("#Per").val() +
                 "&Tipo= " + $("#Tipo").val() +
                 "&Emp= " + $("#Emp").val() +
@@ -254,7 +262,7 @@ $(document).ready(function () {
                 "&Grup= " + $("#Grup").val() +
                 "&Sucur= " + $("#Sucur").val() +
                 "&_dr= " + $("#_dr").val() +
-                "&FicDiaL= " + ($("#FicDiaL").is(":checked")) ? 1: 0 +
+                "&FicDiaL= " + ficDial +
                 "&FicFalta= " + $("#datoFicFalta").val() +
                 "&FicNovT= " + $("#datoFicNovT").val() +
                 "&FicNovI= " + $("#datoFicNovI").val() +

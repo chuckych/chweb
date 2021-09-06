@@ -26,6 +26,9 @@ function LimpiarFiltros() {
     $('#datoFicNovS').val('0')
     $('#FicNovS').prop('checked', false)
     $('#datoFicNovA').val('0')
+    $('#LegDe').val('')
+    $('#LegHa').val('')
+    _Filtros()
     $('#FicNovA').prop('checked', false)
     $('#FicNovA').prop('disabled', false)
     $('#FicFalta').prop('disabled', false)
@@ -54,6 +57,9 @@ function LimpiarFiltros2() {
     $('#datoFicNovS').val('0')
     $('#FicNovS').prop('checked', false)
     $('#datoFicNovA').val('0')
+    $('#LegDe').val('')
+    $('#LegHa').val('')
+    _Filtros()
     $('#FicNovA').prop('checked', false)
     $('#FicNovA').prop('disabled', false)
     $('#FicFalta').prop('disabled', false)
@@ -65,7 +71,13 @@ $("#trash_all").on("click", function () {
     $('#Filtros').modal('show')
     LimpiarFiltros()
     $('#Filtros').modal('hide')
-    ActualizaTablas()
+    ActualizaTablas2()
+});
+$("#trashDeHa").on("click", function () {
+    $('#LegDe').val('')
+    $('#LegHa').val('')
+    $('.selectjs_personal').val(null).trigger("change");
+    ActualizaTablas2()
 });
 
 $("#trash_allIn").on("click", function () {

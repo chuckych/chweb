@@ -7,17 +7,9 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni  = test_input(dr_fecha($DateRange[0]));
     $FechaFin  = test_input(dr_fecha($DateRange[1]));
 } else {
-    // $FechaIni  = date('Ymd');
-    // $FechaFin  = date('Ymd');
-    // $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
-    // $FechaIni = FechaString($FechaMinMax['max']);
-    // $FechaFin = FechaString($FechaMinMax['max']);
-
     FusNuloPOST("FechaFin", '');
     $FechaIni = FechaString(test_input($_POST['FechaFin']));
     $FechaFin = FechaString(test_input($_POST['FechaFin']));
-    // print_r($FechaMinMax['max']);exit;
-
 }
 
 FusNuloPOST("Per", '');
@@ -36,6 +28,7 @@ FusNuloPOST("FicNovI", 0);
 FusNuloPOST("FicNovS", 0);
 FusNuloPOST("FicNovA", 0);
 FusNuloPOST("Fic3Nov", '');
+
 
 $Per      = ($_POST['Per']);
 $Per2     = test_input($_POST['Per2']);
@@ -60,8 +53,20 @@ $FicNovS  = ($FicNovS) ? "AND FICHAS.FicNovS = '$FicNovS'" : "";
 $FicNovA  = ($FicNovA) ? "AND FICHAS.FicNovA = '$FicNovA'" : "";
 $Fic3Nov  = ($Fic3Nov) ? "AND FICHAS3.FicNove = '$Fic3Nov'" : "";
 
-$Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'" : "";
+FusNuloPOST("Filtros", '');
+$arrFiltros = json_decode($_POST['Filtros']);
+$LegDe = (intval($arrFiltros->LegDe)) ? intval($arrFiltros->LegDe) : 1;
+$LegHa = (intval($arrFiltros->LegHa)) ? intval($arrFiltros->LegHa) : 999999999999;
 
+if (($LegDe + $LegHa) > 0) {
+    $LegDe = ($LegHa < $LegDe) ? $LegHa : $LegDe;
+    $Filtros = "AND FICHAS.FicLega BETWEEN $LegDe AND $LegHa";
+}else {
+    $Filtros = "";
+}
+// print_r($Filtros);exit;
+
+$Per2 = !empty($Per2) ? "AND PERSONAL.LegNume = '$Per2'" : "";
 
 $Tipo = test_input($_POST['Tipo']);
 $Tipo = ($Tipo == '2') ? "AND PERSONAL.LegTipo = '0'" : "AND PERSONAL.LegTipo = '$Tipo'";
@@ -133,4 +138,5 @@ $FilterEstruct  .= $Tipo;
 $FilterEstruct  .= $Legajos;
 $FilterEstruct  .= $Per2;
 $FilterEstruct  .= $Fic3Nov;
+$FilterEstruct  .= $Filtros;
 // $FilterEstruct  .= $Thora;

@@ -87,10 +87,18 @@ $noveTipos .= $FicNovI2;
 $noveTipos .= $FicNovS2;
 $noveTipos .= $FicNovA2;
 $FicNoTi  = ($noveTipos>='0') ? "AND FICHAS3.FicNoTi IN ($noveTipos)":'';
-// if($noveTipos>='0'){
-// $FicNoTi  = "AND FICHAS3.FicNoTi IN ($noveTipos)"; /** Novedades tipo para la query de novedades */
-// }
-// // echo $FicNoTi; exit;
+
+FusNuloPOST("Filtros", '');
+$arrFiltros = json_decode($_POST['Filtros']);
+$LegDe = (intval($arrFiltros->LegDe)) ? intval($arrFiltros->LegDe) : 1;
+$LegHa = (intval($arrFiltros->LegHa)) ? intval($arrFiltros->LegHa) : 999999999999;
+
+if (($LegDe + $LegHa) > 0) {
+    $LegDe = ($LegHa < $LegDe) ? $LegHa : $LegDe;
+    $Filtros = "AND FICHAS.FicLega BETWEEN $LegDe AND $LegHa";
+}else {
+    $Filtros = "";
+}
 
 switch ($Tipo) {
     case '1':
@@ -122,6 +130,7 @@ $FilterEstruct  .= $FicNovI;
 $FilterEstruct  .= $FicNovS;
 $FilterEstruct  .= $Tipo;
 $FilterEstruct  .= $Fic3Nov;
+$FilterEstruct  .= $Filtros;
 
 $FilterEstruct2 = $FicNoTi;
 $FilterEstruct3 = $Fic3Nov;
