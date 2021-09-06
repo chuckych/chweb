@@ -8,13 +8,21 @@
 // $FirstDate = $FirstDate ?? '';
 // $maxDate   = $maxDate ?? '';
 // $maxYear   = $maxYear ?? '';
-$date      = date('Y-m-d');
-$FirstYear = $FirstYear ?? date('Y');
-$maxYear   = $maxYear ?? date('Y');
-$FirstDate = $FirstDate ?? ($date);
-$maxDate   = $maxDate ?? ($date);
-$FechaIni  = $FechaIni ?? ($date);
-$FechaFin  = $FechaFin ?? ($date);
+$date        = date('Y-m-d');
+$FirstYear   = $FirstYear ?? date('Y');
+$maxYear     = $maxYear ?? date('Y');
+$FirstDate   = $FirstDate ?? ($date);
+$maxDate     = $maxDate ?? ($date);
+$FechaIni    = $FechaIni ?? ($date);
+$FechaFin    = $FechaFin ?? ($date);
+$FechaFin2    = $FechaFin ?? ($date);
+$FechaFinEnd = $FechaFinEnd ?? ($date);
+echo FechaString($FechaFinEnd);
+
+if (FechaString($FechaFinEnd)>FechaString($date)) {
+    $FechaFin2 = $FechaFinEnd;
+}
+
 ?>
 <!-- moment.min.js -->
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
@@ -25,10 +33,9 @@ $FechaFin  = $FechaFin ?? ($date);
 <script>
     $(function() {
         moment().locale('es');
-
         $('input[name="_dr"]').daterangepicker({
             singleDatePicker: false,
-            showDropdowns: false,
+            showDropdowns: true,
             minYear: <?= $FirstYear ?>,
             maxYear: <?= $maxYear ?>,
             showWeekNumbers: false,
@@ -38,7 +45,7 @@ $FechaFin  = $FechaFin ?? ($date);
             endDate: '<?= fechformat($FechaFin) ?>',
             autoApply: true,
             minDate: '<?= fechformat($FirstDate) ?>',
-            maxDate: '<?= fechformat($maxDate) ?>',
+            maxDate: '<?= fechformat($FechaFin2) ?>',
             linkedCalendars: false,
             ranges: {
                 'Hoy': [moment(), moment()],
@@ -77,6 +84,6 @@ $FechaFin  = $FechaFin ?? ($date);
         $('input[name="_dr"]').on('apply.daterangepicker', function(ev, picker) {
             $("#range").submit();
         });
-        
+
     });
 </script>

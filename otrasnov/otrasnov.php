@@ -48,6 +48,8 @@
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS2', 'FICHAS2.FicFech'));
         $FirstDate = $FechaMinMax['min'];
+        $FechaMinMax2 = (fecha_min_max2('FICHAS2', 'FICHAS2.FicFech'));
+        $FechaFinEnd = $FechaMinMax2['max'];
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
         /** FirstYear */

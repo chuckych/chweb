@@ -97,7 +97,7 @@ function refreshOnChange(selector) {
         $('#Filtros').modal('show')
         LimpiarFiltros2()
         $('#Filtros').modal('hide')
-        ActualizaTablas()
+        ActualizaTablas2()
         GetPersonal.on( 'xhr', function () {
             var json = GetPersonal.ajax.json();
             // $("#tableInfo").html(json.recordsTotal)

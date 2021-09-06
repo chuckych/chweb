@@ -32,7 +32,8 @@
         #GetGeneralFecha_filter label {
             margin: 0px !important;
         }
-        .page-link{
+
+        .page-link {
             border: 0 px solid #cecece !important;
         }
     </style>
@@ -49,10 +50,10 @@
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6 d-inline-flex d-flex align-items-center">
                 <button type="button" class="btn btn-outline-custom border fontq Filtros" data-toggle="modal" data-target="#Filtros">
-                Filtros
+                    Filtros
                 </button>
                 <button type="button" class="btn btn-outline-custom border fontq Exportar ml-1" data-toggle="modal" data-target="#Exportar">
-                Reporte
+                    Reporte
                 </button>
                 <span id="trash_all" title="Limpiar Filtros" class="mx-2 invisible bi bi-trash fontq text-secondary pointer"></span>
                 <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
@@ -82,6 +83,14 @@
         </div>
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
+        $FechaMinMax2 = (fecha_min_max2('FICHAS3', 'FICHAS3.FicFech'));
+        $FechaMinMax3 = (fecha_min_max2('FICHAS2', 'FICHAS2.FicFech'));
+
+        $FechaFinEnd = $FechaMinMax2['max'];
+        $FechaFinEnd = $FechaMinMax3['max'];
+
+        $FechaFinEnd = FechaString($FechaMinMax3['max']) > FechaString($FechaMinMax2['max']) ? ($FechaMinMax3['max']): ($FechaMinMax2['max']);
+
         $FirstDate = $FechaMinMax['min'];
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
@@ -93,7 +102,7 @@
         $FechaIni = $FechaMinMax['max'];
         $FechaFin = $FechaMinMax['max'];
         ?>
-        <input type="hidden" value="<?=$FechaFin?>" id="FechaFin">
+        <input type="hidden" value="<?= $FechaFin ?>" id="FechaFin">
         <div class="row bg-white pb-sm-3 invisible" id="pagLega">
             <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
                 <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
@@ -167,15 +176,15 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script>
-   
+
     </script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?=vjs()?>"></script>
-    <script src="js/proceso-min.js?v=<?=vjs()?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
     <!-- <script src="js/proceso.js"></script> -->
-    <script src="js/select-min.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select-min.js?v=<?=vjs()?>"></script>
-    <script src="js/export-min.js?v=<?=vjs()?>"></script>
+    <script src="js/select-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/export-min.js?v=<?= vjs() ?>"></script>
     <!-- <script src="js/generalXLS.js"></script> -->
 </body>
 

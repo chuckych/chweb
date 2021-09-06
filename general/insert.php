@@ -575,7 +575,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     $DiaLaboral = CountRegistrosMayorCero("SELECT FicDiaL FROM FICHAS WHERE FICHAS.FicLega= '$FicLega' AND FICHAS.FicFech= '$FicFech' AND FICHAS.FicDiaL='1'");
 
     if (!$DiaLaboral && $FicCate == 0) {
-        echo $DiaLaboral;
+        // echo $DiaLaboral;
         $data = array('status' => 'Error', 'Mensaje' => 'Error. Solo se permiten Novedades Secundarias en día no Laboral');
         echo json_encode($data);
         exit;
@@ -599,7 +599,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     $Dato = 'Novedad: (' . $NovCodi . ') ' . $NovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Nov: (' . $NovCodi . ') ' . $NovDesc;
 
-    if (UpdateRegistro("UPDATE FICHAS3 SET FicNove = '$FicNove', FicNoTi='$NovTipo', FicHoras='$FicHoras', FicJust='$FicJust', FicObse='$FicObse', FicCaus='$FicCaus', FicCate='$FicCate', FechaHora = '$FechaHora' WHERE FicNove = '$MNoveCod' AND FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn='1'")) {
+    if (UpdateRegistro("UPDATE FICHAS3 SET FicNove = '$FicNove', FicNoTi='$NovTipo', FicHoras='$FicHoras', FicJust='$FicJust', FicObse='$FicObse', FicCaus='$FicCaus', FicCate='$FicCate', FicEsta= 1, FechaHora = '$FechaHora' WHERE FicNove = '$MNoveCod' AND FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn='1'")) {
         audito_ch('M', $Dato);
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
