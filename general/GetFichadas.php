@@ -23,11 +23,11 @@ $Legajo = $Datos[0];
 $data = array();
 
 /** FICHADAS */
-if ($Fecha < '20210319') {
+// if ($Fecha < '20210319') {
     $query = "SELECT REGISTRO.RegHoRe AS Fic_Hora, REGISTRO.RegFech AS RegFech, REGISTRO.RegTarj AS RegTarj, REGISTRO.RegHora AS RegHora, REGISTRO.RegLega AS RegLega, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END, REGISTRO.RegTipo AS RegTipo, REGISTRO.RegFeRe as RegFeRe FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fecha' AND REGISTRO.RegLega='$Legajo' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
-} else {
-    $query = "SELECT REGISTRO.RegHoRe AS Fic_Hora, REGISTRO.RegFech AS RegFech, REGISTRO.RegTarj AS RegTarj, REGISTRO.RegHora AS RegHora, REGISTRO.RegLega AS RegLega, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END, REGISTRO.RegTipo AS RegTipo, REGISTRO.RegFeRe as RegFeRe FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fecha' AND REGISTRO.RegLega='$Legajo' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
-}
+// } else {
+    //$query = "SELECT REGISTRO.RegHoRe AS Fic_Hora, REGISTRO.RegFech AS RegFech, REGISTRO.RegTarj AS RegTarj, REGISTRO.RegHora AS RegHora, REGISTRO.RegLega AS RegLega, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END, REGISTRO.RegTipo AS RegTipo, REGISTRO.RegFeRe as RegFeRe FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fecha' AND REGISTRO.RegLega='$Legajo' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+// }
 
 $result = sqlsrv_query($link, $query, $param, $options);
 // print_r($query).PHP_EOL; exit;

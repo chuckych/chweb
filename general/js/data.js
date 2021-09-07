@@ -261,9 +261,8 @@ function textResult(params, selector, tipo) {
     }
     classEfect(selector, 'animate__animated animate__fadeIn')
 }
-
 $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
-    atajosTeclado()
+
     if ((settings.json.recordsTotal > 0)) {
         $('#Visualizar').prop('disabled', false)
     } else {
@@ -274,9 +273,9 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
     $(".page-link").addClass('border border-0');
     $(".dataTables_info").addClass('text-secondary');
     $('#pagLega').removeClass('d-none')
-})
-$('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
+
     if (settings.iDraw === 1) {
+        atajosTeclado()
         $('#GetGeneral').DataTable({
             "initComplete": function (settings, json) {
                 $("#Refresh").prop('disabled', false);
@@ -475,7 +474,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                 url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
                 type: "POST",
                 "data": function (data) {
-                    console.log(data);
+                    // console.log(data);
                     data._f = $("#_f").val();
                     data.Per = $("#Per").val();
                     data.Tipo = $("#Tipo").val();

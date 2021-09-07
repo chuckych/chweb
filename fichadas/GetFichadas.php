@@ -66,11 +66,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $Fic_Nombre     = $row['Fic_Nombre'];
     $Fic_Dia_Semana = $row['Fic_Dia_Semana'];
     $Fic_horario    = $row['Fic_horario'];
-    if ($Fic_Asignada2 < '20210319') {
+    // if ($Fic_Asignada2 < '20210319') {
         $query_Fic="SELECT REGISTRO.RegHoRe AS 'Fic_Hora', REGISTRO.RegFeRe AS 'Fic_RegFeRe', 'Fic_Tipo'=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, 'Fic_Estado'=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fic_Asignada2' AND REGISTRO.RegLega='$Fic_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
-    } else {
-       $query_Fic="SELECT REGISTRO.RegHoRe AS 'Fic_Hora', REGISTRO.RegFeRe AS 'Fic_RegFeRe', 'Fic_Tipo'=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, 'Fic_Estado'=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fic_Asignada2' AND REGISTRO.RegLega='$Fic_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
-    }
+    // } else {
+       //$query_Fic="SELECT REGISTRO.RegHoRe AS 'Fic_Hora', REGISTRO.RegFeRe AS 'Fic_RegFeRe', 'Fic_Tipo'=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, 'Fic_Estado'=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fic_Asignada2' AND REGISTRO.RegLega='$Fic_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    // }
     // print_r($query_Fic).PHP_EOL; exit;
     $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
 

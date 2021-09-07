@@ -40,6 +40,22 @@
         .divTipo .select2-container {
             width: 140px !important;
         }
+        .bootbox.fade~.modal-backdrop.fade {
+            opacity: 0 !important;
+            filter: alpha(opacity=0) !important;
+        }
+        .bootbox-confirm {
+            margin-top: 1.5rem !important;
+        }
+        .bootbox .modal-content {
+            border: 0px solid #fafafa !important;
+            box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
+            -webkit-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
+            -moz-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
+        }
+        .modal-content{
+            border-radius: 0px !important;
+        }
     </style>
 </head>
 

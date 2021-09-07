@@ -1065,9 +1065,13 @@
      border-top: 0px !important;
  }
 
- .modal-backdrop.show .bootbox {
+ /* .modal-backdrop.show .bootbox {
      opacity: 0.2 !important;
- }
+ } */
+ 
+ .modal-content{
+    border-radius: 0px !important;
+}
 
  .dropdown-toggle::after {
      margin-left: .455em !important;

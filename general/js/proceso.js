@@ -2164,6 +2164,7 @@ $('#Exportar').on('shown.bs.modal', function (e) {
 $('#Exportar').on('hidden.bs.modal', function (e) {
     e.stopImmediatePropagation();
     CheckSesion();
+    atajosTeclado()
 });
 $('#modalGeneral').on('hidden.bs.modal', function () {
     DestroyDataTablesModal();
@@ -2227,4 +2228,5 @@ $('#modalGeneral').on('hidden.bs.modal', function () {
     $("#xsTOnov").html('Otras Novedades')
     $('.navbar').removeClass('mr-0');
     $("#nav-tab").show()
+    atajosTeclado()
 });
