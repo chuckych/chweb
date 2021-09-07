@@ -32,6 +32,14 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
 $_POST['_f'] = $_POST['_f'] ?? '';
 
 if (empty($_POST['_f'])) {
+    $json_data = array(
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => 0,
+        "recordsFiltered" => 0,
+        "data"            => $data
+    );
+    echo json_encode($json_data);
+    exit;
     $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
     $Fecha = FechaString($FechaMinMax['max']);
 }else{
@@ -46,21 +54,7 @@ $params = $columns = $totalRecords ='';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega',
-    dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia',
-    PERSONAL.LegApNo AS 'Gen_Nombre',
-    FICHAS.FicFech AS 'Gen_Fecha',
-    DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana',
-    dbo.fn_HorarioAsignado(
-        FICHAS.FicHorE,
-        FICHAS.FicHorS,
-        FICHAS.FicDiaL,
-        FICHAS.FicDiaF
-    ) AS 'Gen_Horario'
-FROM FICHAS 
-    $joinFichas3
-    INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-WHERE FICHAS.FicFech = '$Fecha' $FilterEstruct $FiltrosFichas";
+$sql_query="SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech='$Fecha' $FilterEstruct $FiltrosFichas";
 // print_r($sql_query); exit;
 
 $sqlTot .= $sql_query;

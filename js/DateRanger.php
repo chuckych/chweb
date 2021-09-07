@@ -17,12 +17,8 @@ $FechaIni    = $FechaIni ?? ($date);
 $FechaFin    = $FechaFin ?? ($date);
 $FechaFin2    = $FechaFin ?? ($date);
 $FechaFinEnd = $FechaFinEnd ?? ($date);
-echo FechaString($FechaFinEnd);
 
-if (FechaString($FechaFinEnd)>FechaString($date)) {
-    $FechaFin2 = $FechaFinEnd;
-}
-
+$FechaFin2 = (FechaString($FechaFinEnd) > FechaString($date)) ? $FechaFinEnd : $FechaFin;
 ?>
 <!-- moment.min.js -->
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
@@ -81,9 +77,49 @@ if (FechaString($FechaFinEnd)>FechaString($date)) {
                 applyButtonClasses: "text-white bg-custom",
             },
         });
+        $('#_drFiltro').daterangepicker({
+            parentEl: "#Filtros",
+            singleDatePicker: false,
+            showDropdowns: true,
+            minYear: <?= $FirstYear ?>,
+            maxYear: <?= $maxYear ?>,
+            showWeekNumbers: false,
+            autoUpdateInput: true,
+            opens: "left",
+            startDate: '<?= fechformat($FechaIni) ?>',
+            endDate: '<?= fechformat($FechaFin) ?>',
+            autoApply: true,
+            minDate: '<?= fechformat($FirstDate) ?>',
+            maxDate: '<?= fechformat($FechaFin2) ?>',
+            linkedCalendars: false,
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Esta semana': [moment().day(1), moment().day(7)],
+                'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                firstDay: 1,
+                alwaysShowCalendars: true,
+                applyButtonClasses: "text-white bg-custom",
+            },
+        });
         $('input[name="_dr"]').on('apply.daterangepicker', function(ev, picker) {
             $("#range").submit();
         });
-
     });
 </script>

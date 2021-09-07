@@ -18,7 +18,7 @@ $.ajax({
         Sucur   : $("#Sucur").val(),
         _dr     : $("#_dr").val(),
         _l      : $("#_l").val(),
-        FicDiaL : $("#datoFicDiaL").val(),
+        // FicDiaL : $("#datoFicDiaL").val(),
         FicFalta: $("#datoFicFalta").val(),
         FicNovT : $("#datoFicNovT").val(),
         FicNovI : $("#datoFicNovI").val(),

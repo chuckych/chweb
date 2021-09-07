@@ -130,11 +130,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $stylesheet = file_get_contents('../../css/stylepdf/mpdfstyletables.css');
 
         $mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
-        
         $chunks = explode("chunk", $buffer);
         foreach($chunks as $key => $val) {
             $mpdf->WriteHTML($val,2);
         }
+        $mpdf->WriteHTML($val,2);
+
         ob_end_clean();
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);

@@ -3,57 +3,92 @@
     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="d-inline-flex align-items-center">
-                            <label for="Tipo" class="mb-1 fontq d-none d-sm-block mr-1">Tipo Personal: </label>
-                            <select class="selectjs_tipoper" id="Tipo" name="Tipo">
+            <div class="modal-header pb-0 border-bottom-0" style="display: table;">
+                <div class="form-row">
+                    <div class="col-12 col-lg-6 d-inline-flex">
+                        <div class="d-flex align-items-center divTipo">
+                            <!-- <label for="Tipo" class="mb-1 fontq d-none d-sm-block mr-1">Tipo Personal: </label> -->
+                            <select class="selectjs_tipoper" id="Tipo" name="Tipo" title="Tipo de Personal">
                             </select>
                         </div>
-                        <span id="trash_allIn" title="Limpiar Filtros"
-                            class="trash align-middle pb-0 fw5 float-right">Limpiar Filtros</span>
+                        <div class="d-flex align-items-center">
+                            <div
+                                class="custom-control custom-switch custom-control-inline ml-2 ml-sm-3 d-flex align-items-center">
+                                <input type="checkbox" class="custom-control-input" id="VisualizarFiltro">
+                                <label class="custom-control-label" for="VisualizarFiltro" style="padding-top: 3px;">
+                                    <span class="text-dark d-none d-lg-block">Por Fecha</span>
+                                    <span class="text-dark d-block d-lg-none">Fecha</span>
+                                </label>
+                            </div>
+                            <div
+                                class="custom-control custom-switch custom-control-inline d-flex align-items-center">
+                                <input type="checkbox" class="custom-control-input" id="FicDiaLFiltro">
+                                <label class="custom-control-label" for="FicDiaLFiltro" style="padding-top: 3px;"
+                                    title="Al desactivar muestra días laborales, francos y feriados. Al estar activo solo días laborales">
+                                    <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
+                                    <span class="text-dark d-block d-lg-none">Laboral</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                    <div class="col-12 col-lg-6">
+                        <div class="d-flex align-items-center justify-content-sm-end justify-content-between">
+                            <div class="mt-3 mt-sm-0">
+                                <input type="text" readonly class="mx-1 form-control text-center w250 ls2 h40"
+                                    name="_drFiltro" id="_drFiltro">
+                            </div>
+                            <span id="trash_allIn" title="Limpiar Filtros"
+                                class="trash align-middle pb-0 fw5 float-right">
+                                <span class="text-dark d-none d-lg-block">Limpiar Filtros</span>
+                                <span class="text-dark d-block d-lg-none">Limpiar</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <!-- <div class="form-row">
+                    
+                </div> -->
+                <div class="form-row">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Empresa -->
-                        <label for="Emp" class="my-1 d-none d-sm-block"><span class="fontq ">Empresas</span> </label>
-                        <select class="form-control selectjs_empresa" id="Emp" name="Emp">
+                        <!-- <label for="Emp" class="my-1 d-none d-sm-block"><span class="fontq ">Empresas</span> </label> -->
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" title="Empresas">
                         </select>
                     </div>
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Planta -->
-                        <label for="Plan" class="w100 my-1 d-none d-sm-block"><span class="fontq">Plantas</span>
-                        </label>
-                        <select class="form-control selectjs_plantas" id="Plan" name="Plan">
+                        <!-- <label for="Plan" class="w100 my-1 d-none d-sm-block"><span class="fontq">Plantas</span></label> -->
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" title="Plantas">
                         </select>
                     </div>
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Sector -->
-                        <label for="Sect" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sectores</span>
-                        </label>
-                        <select class="form-control selectjs_sectores" id="Sect" name="Sect">
+                        <!-- <label for="Sect" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sectores</span></label> -->
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" title="Sectores">
                         </select>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                <div class="form-row">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Seccion -->
-                        <label for="Sec2" class="w100 my-1 d-none d-sm-block"><span class="fontq">Secciónes</span>
-                        </label>
-                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
+                        <!-- <label for="Sec2" class="w100 my-1 d-none d-sm-block"><span class="fontq">Secciones</span>
+                        </label> -->
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" title="Secciones">
                         </select>
                     </div>
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Grupos -->
-                        <label for="Grup" class="w100 my-1 d-none d-sm-block"><span class="fontq">Grupos</span> </label>
-                        <select class="form-control selectjs_grupos" id="Grup" name="Grup">
+                        <!-- <label for="Grup" class="w100 my-1 d-none d-sm-block"><span class="fontq">Grupos</span> </label> -->
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" title="Grupos">
                         </select>
                     </div>
-                    <div class="col-12 col-sm-4 mt-1 mt-sm-0">
+                    <div class="col-12 col-sm-4 mt-2">
                         <!-- Sucursal -->
-                        <label for="Sucur" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sucursales</span>
-                        </label>
-                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur">
+                        <!-- <label for="Sucur" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sucursales</span>
+                        </label> -->
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" title="Sucursales">
                         </select>
                     </div>
                 </div>
@@ -63,9 +98,14 @@
                             <!-- Legajos Desde/Hasta -->
                             <span for="" class="w-100 mb-2 p-2 d-none d-sm-block bg-light fontq">Legajos</span>
                             <div class="d-flex d-inline-flex align-items-center">
-                                <input autocomplete="off" type="tel" class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegDe" name="LegDe" placeholder="Desde" value=""> <span class="fontq mx-2">a</span>
-                                <input autocomplete="off" type="tel" class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegHa" name="LegHa" placeholder="Hasta" value="">
-                                    <i title="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq" id="trashDeHa"></i>
+                                <input autocomplete="off" type="tel"
+                                    class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegDe"
+                                    name="LegDe" placeholder="Desde" value=""> <span class="fontq mx-2">a</span>
+                                <input autocomplete="off" type="tel"
+                                    class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegHa"
+                                    name="LegHa" placeholder="Hasta" value="">
+                                <i title="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq"
+                                    id="trashDeHa"></i>
                             </div>
                         </div>
                     </div>
@@ -138,6 +178,7 @@
                 </div>
             </div>
             <div class="modal-footer bg-light">
+                <span class="result fontq"></span>
                 <span class="float-right text-dark fontq btn btn-outline-custom btn-sm border"
                     id="ReporteFiltro">Reporte</span>
                 <button type="button" class="btn btn-outline-custom btn-sm fontq border"

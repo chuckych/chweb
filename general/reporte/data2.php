@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '../../../config/conect_mssql.php';
-E_ALL();
+// E_ALL();
 $data   = array();
 $legajo = $valueLegajo['Legajo'];
 

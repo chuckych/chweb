@@ -1,6 +1,6 @@
 <?php
 require __DIR__ . '../../../config/conect_mssql.php';
-E_ALL();
+// E_ALL();
 $dataTotHorLeg = array();
 $sql_query = "SELECT TIPOHORA.THoCodi AS 'Hora', TIPOHORA.THoDesc2 AS 'HoraDesc2', TIPOHORA.THoDesc AS 'HoraDesc', ( SELECT dbo.fn_MinutosSTR(SUM(dbo.fn_STRMinutos(FICHAS1.FicHsAu2))) FROM FICHAS1 INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech WHERE FICHAS1.FicLega='$legajo' AND FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct AND FICHAS1.FicHora=TIPOHORA.THoCodi) AS 'HsAutorizadas' FROM TIPOHORA WHERE TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu";
     // print_r($sql_query); exit;

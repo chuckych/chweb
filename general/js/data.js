@@ -1,6 +1,6 @@
 // $(".Filtros").prop('disabled', true);
 function ActualizaTablas() {
-    console.log(_Filtros());
+    $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload(null, false);
         $("#GetFechas_paginate .page-link").addClass('border border-0');
@@ -11,7 +11,7 @@ function ActualizaTablas() {
     };
 };
 function ActualizaTablas2() {
-
+    $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload();
         $("#GetFechas_paginate .page-link").addClass('border border-0');
@@ -21,62 +21,53 @@ function ActualizaTablas2() {
         $('.pers_legajo').removeClass('d-none')
     };
 };
-var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
-$(document).keydown(function (e) {
-    if (e.keyCode in map) {
-        map[e.keyCode] = true;
-        if (map[32]) { /** Barra espaciadora */
-            if (!$('#Exportar').hasClass('show')) {
-                $('#Filtros').modal('show');
+function atajosTeclado() {
+    let map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
+    $(document).keydown(function (e) {
+        if (e.keyCode in map) {
+            map[e.keyCode] = true;
+            if (map[32]) { /** Barra espaciadora */
+                if (!$('#Exportar').hasClass('show')) {
+                    $('#Filtros').modal('show');
+                }
             }
         }
-    }
-    if (e.keyCode in map) {
-        map[e.keyCode] = true;
-        if (map[27]) { /** Esc */
-            $('#Filtros').modal('hide');
+        if (e.keyCode in map) {
+            map[e.keyCode] = true;
+            if (map[27]) { /** Esc */
+                $('#Filtros').modal('hide');
+            }
         }
-    }
-    // if (e.keyCode in map) {
-    //     map[e.keyCode] = true;
-    //     if (map[13]) { /** Enter */
-    //         ActualizaTablas()
-    //     }
-    // }
-    if (e.keyCode in map) {
-        map[e.keyCode] = true;
-        if (map[39]) { /** Flecha derecha */
-            if ($("#Visualizar").is(":checked")) {
-                $('#GetFechas').DataTable().page('next').draw('page');
-            } else {
-                $('#GetPersonal').DataTable().page('next').draw('page');
-            };
+        if (e.keyCode in map) {
+            map[e.keyCode] = true;
+            if (map[39]) { /** Flecha derecha */
+                if ($("#Visualizar").is(":checked")) {
+                    $('#GetFechas').DataTable().page('next').draw('page');
+                } else {
+                    $('#GetPersonal').DataTable().page('next').draw('page');
+                };
+            }
         }
-    }
-    if (e.keyCode in map) {
-        map[e.keyCode] = true;
-        if (map[37]) { /** Flecha izquierda */
-            if ($("#Visualizar").is(":checked")) {
-                $('#GetFechas').DataTable().page('previous').draw('page');
-            } else {
-                $('#GetPersonal').DataTable().page('previous').draw('page');
-            };
+        if (e.keyCode in map) {
+            map[e.keyCode] = true;
+            if (map[37]) { /** Flecha izquierda */
+                if ($("#Visualizar").is(":checked")) {
+                    $('#GetFechas').DataTable().page('previous').draw('page');
+                } else {
+                    $('#GetPersonal').DataTable().page('previous').draw('page');
+                };
 
+            }
         }
-    }
-}).keyup(function (e) {
-    if (e.keyCode in map) {
-        map[e.keyCode] = false;
-    }
-});
+    }).keyup(function (e) {
+        if (e.keyCode in map) {
+            map[e.keyCode] = false;
+        }
+    });
+}
 
 $("#pagFech").hide()
 $("#GetGeneralFechaTable").hide();
-
-$("#FicDiaL").change(function () {
-    CheckSesion()
-    ActualizaTablas()
-});
 
 $('#datoFicFalta').val('0');
 $("#FicFalta").change(function () {
@@ -188,7 +179,6 @@ $("._filtro").change(function () {
 
 let GetPersonal = $('#GetPersonal').DataTable({
     initComplete: function (settings, json) {
-        // console.log(settings.json);
     },
     // bStateSave: -1,
     pagingType: "full",
@@ -261,12 +251,25 @@ let buttonCommon = {
     }
 };
 
+function textResult(params, selector, tipo) {
+    if ((params > 0)) {
+        let plural = (params > 1) ? 's' : '';
+        let text = (params > 1) ? 'Hay ' + params + ' ' + tipo + plural + ' con resultado' + plural : 'Hay ' + params + ' ' + tipo + plural + ' con resultado' + plural;
+        $(selector).html(text)
+    } else {
+        $(selector).html('No se encontraron resultados.')
+    }
+    classEfect(selector, 'animate__animated animate__fadeIn')
+}
+
 $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
+    atajosTeclado()
     if ((settings.json.recordsTotal > 0)) {
         $('#Visualizar').prop('disabled', false)
     } else {
         $('#Visualizar').prop('disabled', true)
     }
+    (!$('#Visualizar').is(':checked')) ? textResult(settings.json.recordsTotal, '.modal-footer .result', 'legajo') : '';
     $("#GetPersonal thead").remove();
     $(".page-link").addClass('border border-0');
     $(".dataTables_info").addClass('text-secondary');
@@ -446,8 +449,8 @@ $('#GetFechas').DataTable({
     },
 });
 $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
+    ($('#Visualizar').is(':checked')) ? textResult(settings.json.recordsTotal, '.modal-footer .result', 'día') : '';
     if (settings.iDraw === 1) {
-        // console.log(json.draw);
         $('#GetGeneralFecha').DataTable({
             "drawCallback": function (settings) {
                 $(".page-link").addClass('border border-0');
@@ -472,6 +475,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                 url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
                 type: "POST",
                 "data": function (data) {
+                    console.log(data);
                     data._f = $("#_f").val();
                     data.Per = $("#Per").val();
                     data.Tipo = $("#Tipo").val();
@@ -577,35 +581,81 @@ $("#Refresh").on("click", function () {
 });
 
 $('#_dr').on('apply.daterangepicker', function (ev, picker) {
-    // console.log('dr: '+$('#_dr').val());
+    let endDate = picker.endDate.format('DD/MM/YYYY');
+    let startDate = picker.startDate.format('DD/MM/YYYY');
+    $('#_drFiltro').data('daterangepicker').setStartDate(startDate);
+    $('#_drFiltro').data('daterangepicker').setEndDate(endDate);
     CheckSesion()
     ActualizaTablas()
 })
-$("#Visualizar").change(function () {
+$('#_drFiltro').on('apply.daterangepicker', function (ev, picker) {
+    let endDate = picker.endDate.format('DD/MM/YYYY');
+    let startDate = picker.startDate.format('DD/MM/YYYY');
+    $('#_dr').data('daterangepicker').setStartDate(startDate);
+    $('#_dr').data('daterangepicker').setEndDate(endDate);
     CheckSesion()
-    $('#Per2').addClass('d-none')
+    ActualizaTablas()
+});
+$("#FicDiaLFiltro").change(function (e) {
+    e.preventDefault();
+    if ($("#FicDiaLFiltro").is(":checked")) {
+        $("#FicDiaL").prop('checked', true);
+    } else {
+        $("#FicDiaL").prop('checked', false);
+    }
+    ActualizaTablas()
+});
+$("#FicDiaL").change(function (e) {
+    e.preventDefault();
+    if ($("#FicDiaL").is(":checked")) {
+        $("#FicDiaLFiltro").prop('checked', true);
+    } else {
+        $("#FicDiaLFiltro").prop('checked', false);
+    }
+    CheckSesion()
+    ActualizaTablas()
 });
 
 $('#VerPor').html('<span class="d-none d-lg-block">Por Fecha</span>')
 $('#VerPorM').html('<span class="d-block d-lg-none">Fecha</span>')
 
-$("#Visualizar").change(function () {
-    // $("#loader").addClass('loader');
+$("#Visualizar").change(function (e) {
+    e.preventDefault();
+    CheckSesion()
+    $('#Per2').addClass('d-none')
     if ($("#Visualizar").is(":checked")) {
-        // $('#GetFechas').DataTable().ajax.reload(null, false);
-        ActualizaTablas()
+        $("#VisualizarFiltro").prop('checked', true);
         $("#GetGeneralTable").addClass('d-none');
         $("#GetGeneralFechaTable").show()
         $("#pagLega").hide()
         $("#pagFech").show()
     } else {
-        // $('#GetPersonal').DataTable().ajax.reload(null, false);
-        ActualizaTablas()
+        $("#VisualizarFiltro").prop('checked', false);
         $("#GetGeneralTable").removeClass('d-none');
         $("#GetGeneralFechaTable").hide()
         $("#pagFech").hide()
         $("#pagLega").show()
     }
+    ActualizaTablas()
+});
+$("#VisualizarFiltro").change(function (e) {
+    e.preventDefault();
+    CheckSesion()
+    $('#Per2').addClass('d-none')
+    if ($("#VisualizarFiltro").is(":checked")) {
+        $("#Visualizar").prop('checked', true);
+        $("#GetGeneralTable").addClass('d-none');
+        $("#GetGeneralFechaTable").show()
+        $("#pagLega").hide()
+        $("#pagFech").show()
+    } else {
+        $("#Visualizar").prop('checked', false);
+        $("#GetGeneralTable").removeClass('d-none');
+        $("#GetGeneralFechaTable").hide()
+        $("#pagFech").hide()
+        $("#pagLega").show()
+    }
+    ActualizaTablas()
 });
 $('.MaskLega').mask('000000000000', { selectOnFocus: true });
 

@@ -14,8 +14,8 @@ define("TIPO_HOJA", [
     'A3'     => 'A3',
  ]);
 define("ORIENTACION", [
-    'Vertical'   => 'P',
     'Horizontal' => 'L',
+    'Vertical'   => 'P',
  ]);
 define("DESTINO", [
     'Mostrar Pantalla' => 'I',

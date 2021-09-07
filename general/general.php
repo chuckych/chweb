@@ -36,6 +36,10 @@
         .page-link {
             border: 0 px solid #cecece !important;
         }
+
+        .divTipo .select2-container {
+            width: 140px !important;
+        }
     </style>
 </head>
 
@@ -69,7 +73,6 @@
                         <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
                         <span class="text-dark d-block d-lg-none">Laboral</span>
                     </label>
-                    <input type="hidden" name="" id="datoFicDiaL">
                 </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -89,7 +92,7 @@
         $FechaFinEnd = $FechaMinMax2['max'];
         $FechaFinEnd = $FechaMinMax3['max'];
 
-        $FechaFinEnd = FechaString($FechaMinMax3['max']) > FechaString($FechaMinMax2['max']) ? ($FechaMinMax3['max']): ($FechaMinMax2['max']);
+        $FechaFinEnd = FechaString($FechaMinMax3['max']) > FechaString($FechaMinMax2['max']) ? ($FechaMinMax3['max']) : ($FechaMinMax2['max']);
 
         $FirstDate = $FechaMinMax['min'];
         /** FirstDate */
@@ -104,18 +107,22 @@
         ?>
         <input type="hidden" value="<?= $FechaFin ?>" id="FechaFin">
         <div class="row bg-white pb-sm-3 invisible" id="pagLega">
-            <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
-                <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
-                <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
+            <div class="table-responsive">
+                <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
+                    <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
+                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
 
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="row bg-white pb-sm-3" id="pagFech">
-            <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
-                <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
+            <div class="table-responsive">
+                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
+                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
 
-                </table>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="row bg-white radius mt-sm-n5">
@@ -141,7 +148,7 @@
             <div class="col-12 animate__animated animate__fadeIn">
                 <div class="table-responsive invisible" id="GetGeneralFechaTable">
                     <table class="table text-nowrap w-100" id="GetGeneralFecha">
-                        <thead class="">
+                        <thead>
                             <tr>
                                 <th title="Detalle del registro" class="text-center"></th>
                                 <th class="">LEGAJO</th>
@@ -179,7 +186,7 @@
 
     </script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?v=<?= vjs() ?>"></script>
     <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
     <!-- <script src="js/proceso.js"></script> -->
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>

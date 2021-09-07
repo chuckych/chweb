@@ -50,7 +50,7 @@
                                     }
                                     ?>
                                 </select>
-                                <span class="ml-sm-1 mt-sm-0 mt-1">
+                                <span class="ml-1 mt-sm-0">
                                     <select name="_destino" id="_destino" class="select2 form-control w250">
                                         <?php
                                         foreach (DESTINO as $key => $value) {
@@ -148,6 +148,7 @@
                 </div>
             </div>
             <div class="modal-footer bg-light">
+                <span class="result fontq"></span>
                 <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
             </div>
         </div>

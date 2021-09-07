@@ -535,7 +535,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Tipo de Personal",
+            placeholder: "Tipo Personal",
             minimumInputLength: 0,
             minimumResultsForSearch: -1,
             maximumInputLength: opt2["MaxInpLength"],
@@ -738,4 +738,5 @@ $(document).ready(function () {
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
     $('#Filtros').modal('dispose');
+    $('.show-calendar').hide();
 });
