@@ -134,7 +134,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         foreach($chunks as $key => $val) {
             $mpdf->WriteHTML($val,2);
         }
-        $mpdf->WriteHTML($val,2);
+        // $mpdf->WriteHTML($val,2);
 
         ob_end_clean();
 

@@ -76,11 +76,11 @@ $("#FicFalta").change(function () {
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
-        ActualizaTablas()
+        ActualizaTablas2()
     } else {
         $('#datoFicFalta').val('0')
         $('#FicNovA').prop('disabled', false)
-        ActualizaTablas()
+        ActualizaTablas2()
     }
 });
 $('#datoFicNovT').val('0');
@@ -90,13 +90,13 @@ $("#FicNovT").change(function () {
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
-        ActualizaTablas()
+        ActualizaTablas2()
         $('#datoNovedad').val(null).trigger("change");
     } else {
         $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovT').val('0')
         $('#FicNovA').prop('disabled', false)
-        ActualizaTablas()
+        ActualizaTablas2()
     }
 });
 $('#datoFicNovI').val('0');
@@ -107,12 +107,12 @@ $("#FicNovI").change(function () {
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
-        ActualizaTablas()
+        ActualizaTablas2()
     } else {
         $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovI').val('0')
         $('#FicNovA').prop('disabled', false)
-        ActualizaTablas()
+        ActualizaTablas2()
     }
 });
 $('#datoFicNovS').val('0');
@@ -123,12 +123,12 @@ $("#FicNovS").change(function () {
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
-        ActualizaTablas()
+        ActualizaTablas2()
     } else {
         $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovS').val('0')
         $('#FicNovA').prop('disabled', false)
-        ActualizaTablas()
+        ActualizaTablas2()
     }
 });
 $('#datoFicNovA').val('0');
@@ -148,7 +148,7 @@ $("#FicNovA").change(function () {
         $('#FicNovT').prop('disabled', true)
         $('#FicNovI').prop('disabled', true)
         $('#FicNovS').prop('disabled', true)
-        ActualizaTablas()
+        ActualizaTablas2()
     } else {
         $('#datoNovedad').val(null).trigger("change");
         $('#datoFicNovA').val('0')
@@ -156,7 +156,7 @@ $("#FicNovA").change(function () {
         $('#FicNovT').prop('disabled', false)
         $('#FicNovI').prop('disabled', false)
         $('#FicNovS').prop('disabled', false)
-        ActualizaTablas()
+        ActualizaTablas2()
     }
 });
 
@@ -166,15 +166,20 @@ function _Filtros() {
     if ((LegDe && LegHa)) {
         (LegDe > LegHa) ? $('#LegDe').val(LegHa) : $('#LegDe').val(LegDe);
     }
-    let Filtros = { 'LegDe': LegDe, 'LegHa': LegHa };
+    let SoloFic = $('#SoloFic').is(":checked") ? 1 : 0;
+    let Filtros = { 'LegDe': LegDe, 'LegHa': LegHa, 'SoloFic': SoloFic };
     return JSON.stringify(Filtros)
 }
 
 _Filtros()
-$("._filtro").change(function () {
+$("._filtroLegDeHa").change(function (e) {
+    e.preventDefault();
     $('.selectjs_personal').val(null).trigger("change");
+});
+$("._filtro").change(function (e) {
+    e.preventDefault();
     _Filtros()
-    ActualizaTablas()
+    ActualizaTablas2()
 });
 
 let GetPersonal = $('#GetPersonal').DataTable({

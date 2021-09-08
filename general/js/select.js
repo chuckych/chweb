@@ -718,7 +718,7 @@ $(document).ready(function () {
             $('#Per2').val(null)
             $(".select_seccion").prop("disabled", false);
             $('.select_seccion').val(null).trigger('change');
-            ActualizaTablas()
+            ActualizaTablas2()
             var nombresector = $('.selectjs_sectores :selected').text();
             $("#DatosFiltro").html('Sector: ' + nombresector);
         });
@@ -726,11 +726,11 @@ $(document).ready(function () {
             $('#Per2').val(null)
             $(".select_seccion").prop("disabled", true);
             $('.select_seccion').val(null).trigger('change');
-            ActualizaTablas()
+            ActualizaTablas2()
         });
         $('.selectjs_personal').on('select2:select', function (e) {
             $('#Per2').val(null)
-            ActualizaTablas()
+            ActualizaTablas2()
         });
 
     });

@@ -19,7 +19,7 @@ $params = $_REQUEST;
 $data = array();
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
-}else{
+} else {
     $json_data = array(
         "draw"            => intval($params['draw']),
         "recordsTotal"    => 0,
@@ -42,7 +42,7 @@ if (empty($_POST['_f'])) {
     exit;
     $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
     $Fecha = FechaString($FechaMinMax['max']);
-}else{
+} else {
     $Fecha = FechaString(test_input($_POST['_f']));
 }
 require __DIR__ . '../valores.php';
@@ -50,11 +50,11 @@ require __DIR__ . '../valores.php';
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$params = $columns = $totalRecords ='';
+$params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query="SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech='$Fecha' $FilterEstruct $FiltrosFichas";
+$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE FICHAS.FicFech='$Fecha' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, FICHAS.FicFech, PERSONAL.LegApNo, DATEPART(dw,.FICHAS.FicFech), dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF)";
 // print_r($sql_query); exit;
 
 $sqlTot .= $sql_query;
@@ -92,9 +92,9 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
 
     /** FICHADAS */
     // if ($Gen_Fecha2 < '20210319') {
-        $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
     // } else {
-        //$query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
+    //$query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Capturador' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
     // }
 
     $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
@@ -172,7 +172,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     /** FIN NOVEDADES */
 
     /** HORAS */
-    $query_Horas="SELECT FICHAS1.FicHora AS Hora, TIPOHORA.THoDesc AS HoraDesc, TIPOHORA.THoDesc2 AS HoraDesc2, FICHAS1.FicHsHe AS HsHechas, FICHAS1.FicHsAu AS HsCalculadas, FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
+    $query_Horas = "SELECT FICHAS1.FicHora AS Hora, TIPOHORA.THoDesc AS HoraDesc, TIPOHORA.THoDesc2 AS HoraDesc2, FICHAS1.FicHsHe AS HsHechas, FICHAS1.FicHsAu AS HsCalculadas, FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
     $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
     // print_r($query_Horas);
     // exit;
@@ -264,12 +264,12 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     } else {
         $data[] = array(
             'LegNombre'     => '<span 
-            data-nombre="'.$Gen_Nombre.'" 
-            data-lega="'.$Gen_Lega.'"
-            data-fechaini="'.($Gen_Fecha2).'"
-            data-fechafin="'.($Gen_Fecha2).'"
+            data-nombre="' . $Gen_Nombre . '" 
+            data-lega="' . $Gen_Lega . '"
+            data-fechaini="' . ($Gen_Fecha2) . '"
+            data-fechafin="' . ($Gen_Fecha2) . '"
             data-procLega="true"
-            "title="Procesar registro: ' . $Gen_Nombre . '. '.$Gen_Fecha.'" class="d-inline-block text-truncate pointer procReg" style="max-width: 200px;">' . $Gen_Nombre . '<br>' . $Gen_Lega . '</span>',
+            "title="Procesar registro: ' . $Gen_Nombre . '. ' . $Gen_Fecha . '" class="d-inline-block text-truncate pointer procReg" style="max-width: 200px;">' . $Gen_Nombre . '<br>' . $Gen_Lega . '</span>',
             'Gen_Lega'      => $Gen_Lega,
             'Gen_Nombre'    => $Gen_Nombre,
             'Fecha'         => $Gen_Fecha,

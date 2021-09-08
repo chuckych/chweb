@@ -57,11 +57,12 @@ FusNuloPOST("Filtros", '');
 $arrFiltros = json_decode($_POST['Filtros']);
 $LegDe = (intval($arrFiltros->LegDe)) ? intval($arrFiltros->LegDe) : 1;
 $LegHa = (intval($arrFiltros->LegHa)) ? intval($arrFiltros->LegHa) : 999999999999;
+$joinRegistros = (intval($arrFiltros->SoloFic)) ? "INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs" : "";
 
 if (($LegDe + $LegHa) > 0) {
     $LegDe = ($LegHa < $LegDe) ? $LegHa : $LegDe;
     $Filtros = "AND FICHAS.FicLega BETWEEN $LegDe AND $LegHa";
-}else {
+}else { 
     $Filtros = "";
 }
 // print_r($Filtros);exit;

@@ -1,64 +1,13 @@
 <!doctype html>
 <html lang="es">
-
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
     <title>Control <?= MODULOS['general'] ?></title>
     <style>
-        .dataTables_info {
-            font-size: small;
-            margin-top: 0px;
-        }
-
-        .dt-button {
-            display: none;
-        }
-
-        .well {
-            margin-bottom: 0px !important;
-        }
-
-        @media all and (max-width:480px) {
-            .custom-select {
-                display: none !important;
-            }
-
-            .dataTables_filter {
-                display: none !important;
-            }
-        }
-
-        #GetGeneralFecha_filter label {
-            margin: 0px !important;
-        }
-
-        .page-link {
-            border: 0 px solid #cecece !important;
-        }
-
-        .divTipo .select2-container {
-            width: 140px !important;
-        }
-        .bootbox.fade~.modal-backdrop.fade {
-            opacity: 0 !important;
-            filter: alpha(opacity=0) !important;
-        }
-        .bootbox-confirm {
-            margin-top: 1.5rem !important;
-        }
-        .bootbox .modal-content {
-            border: 0px solid #fafafa !important;
-            box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
-            -webkit-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
-            -moz-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);
-        }
-        .modal-content{
-            border-radius: 0px !important;
-        }
+        .dataTables_info{ font-size: small; margin-top: 0px;} .dt-button{ display: none;} .well{ margin-bottom: 0px !important;} @media all and (max-width:480px){ .custom-select{ display: none !important;} .dataTables_filter{ display: none !important;}} #GetGeneralFecha_filter label{ margin: 0px !important;} .page-link{ border: 0 px solid #cecece !important;} .divTipo .select2-container{ width: 140px !important;} .bootbox.fade~.modal-backdrop.fade{ opacity: 0 !important; filter: alpha(opacity=0) !important;} .bootbox-confirm{ margin-top: 1.5rem !important;} .bootbox .modal-content{ border: 0px solid #fafafa !important; box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4); -webkit-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4); -moz-box-shadow: -1px 5px 29px -7px rgba(0, 0, 0, 0.4);} .modal-content{ border-radius: 0px !important;}
     </style>
 </head>
-
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
@@ -104,12 +53,9 @@
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
         $FechaMinMax2 = (fecha_min_max2('FICHAS3', 'FICHAS3.FicFech'));
         $FechaMinMax3 = (fecha_min_max2('FICHAS2', 'FICHAS2.FicFech'));
-
         $FechaFinEnd = $FechaMinMax2['max'];
         $FechaFinEnd = $FechaMinMax3['max'];
-
         $FechaFinEnd = FechaString($FechaMinMax3['max']) > FechaString($FechaMinMax2['max']) ? ($FechaMinMax3['max']) : ($FechaMinMax2['max']);
-
         $FirstDate = $FechaMinMax['min'];
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
@@ -198,17 +144,12 @@
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <script>
-
-    </script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
     <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
-    <!-- <script src="js/proceso.js"></script> -->
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/export-min.js?v=<?= vjs() ?>"></script>
-    <!-- <script src="js/generalXLS.js"></script> -->
 </body>
 
 </html>

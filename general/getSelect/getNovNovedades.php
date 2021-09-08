@@ -15,11 +15,7 @@ $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $FiltroQ  = (!empty($q)) ? "AND CONCAT(NOVEDAD.NovCodi, NOVEDAD.NovDesc) LIKE '%$q%'" : '';
 
-$query = "SELECT NOVEDAD.NovCodi AS 'NovCodi', NOVEDAD.NovDesc AS 'NovDesc', NOVEDAD.NovTipo AS 'NovTipo' FROM FICHAS 
-INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech AND FICHAS.FicTurn=FICHAS3.FicTurn 
-INNER JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi 
-INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume 
-WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FiltroQ $filtroTipo GROUP BY NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo ORDER BY NOVEDAD.NovCodi";
+$query="SELECT NOVEDAD.NovCodi AS 'NovCodi', NOVEDAD.NovDesc AS 'NovDesc', NOVEDAD.NovTipo AS 'NovTipo' FROM FICHAS INNER JOIN FICHAS3 ON FICHAS.FicLega=FICHAS3.FicLega AND FICHAS.FicFech=FICHAS3.FicFech AND FICHAS.FicTurn=FICHAS3.FicTurn INNER JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FiltroQ $filtroTipo GROUP BY NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo ORDER BY NOVEDAD.NovCodi GROUP BY NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo";
 // print_r($query); exit; 
 $result  = sqlsrv_query($link, $query, $params, $options);
 $data    = array();

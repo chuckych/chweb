@@ -15,7 +15,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 $id       = 'PERSONAL.LegTipo';
 $ColData  = 'FICHAS';
 
-$query="SELECT $id AS 'id' FROM $ColData $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY $id ORDER BY $id";
+$query="SELECT $id AS 'id' FROM $ColData $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY $id ORDER BY $id";
 
 $params  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

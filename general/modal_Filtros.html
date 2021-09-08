@@ -20,8 +20,7 @@
                                     <span class="text-dark d-block d-lg-none">Fecha</span>
                                 </label>
                             </div>
-                            <div
-                                class="custom-control custom-switch custom-control-inline d-flex align-items-center">
+                            <div class="custom-control custom-switch custom-control-inline d-flex align-items-center">
                                 <input type="checkbox" class="custom-control-input" id="FicDiaLFiltro">
                                 <label class="custom-control-label" for="FicDiaLFiltro" style="padding-top: 3px;"
                                     title="Al desactivar muestra días laborales, francos y feriados. Al estar activo solo días laborales">
@@ -37,8 +36,8 @@
                                 <input type="text" readonly class="mx-1 form-control text-center w250 ls2 h40"
                                     name="_drFiltro" id="_drFiltro">
                             </div>
-                            <span id="trash_allIn" title="Limpiar Filtros"
-                                class="trash align-middle pb-0 fw5 float-right">
+                            <span class="trash align-middle pb-0 fw5 float-right" id="trash_allIn"
+                                title="Limpiar Filtros">
                                 <span class="text-dark d-none d-lg-block">Limpiar Filtros</span>
                                 <span class="text-dark d-block d-lg-none">Limpiar</span>
                             </span>
@@ -99,10 +98,10 @@
                             <span for="" class="w-100 mb-2 p-2 d-none d-sm-block bg-light fontq">Legajos</span>
                             <div class="d-flex d-inline-flex align-items-center">
                                 <input autocomplete="off" type="tel"
-                                    class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegDe"
+                                    class="h40 form-control text-center text-secondary MaskLega _filtro _filtroLegDeHa" id="LegDe"
                                     name="LegDe" placeholder="Desde" value=""> <span class="fontq mx-2">a</span>
                                 <input autocomplete="off" type="tel"
-                                    class="h40 form-control text-center text-secondary MaskLega _filtro" id="LegHa"
+                                    class="h40 form-control text-center text-secondary MaskLega _filtro _filtroLegDeHa" id="LegHa"
                                     name="LegHa" placeholder="Hasta" value="">
                                 <i title="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq"
                                     id="trashDeHa"></i>
@@ -168,11 +167,17 @@
                 <div class="row d-flex align-items-center mt-3">
                     <div class="col-12">
                         <!-- Fichadas Inonsistentes -->
-                        <div class="custom-control custom-switch custom-control-inline ml-1 w300">
+                        <div class="custom-control custom-switch custom-control-inline ml-1" title="Solo registros con Fichadas e impares">
                             <input type="checkbox" class="custom-control-input" id="FicFalta">
                             <label class="custom-control-label" for="FicFalta" style="padding-top: 3px;"><span
                                     class="text-dark">Fichadas Inconsistentes</span></label>
                             <input type="hidden" name="" id="datoFicFalta">
+                        </div>
+                        <div class="custom-control custom-switch custom-control-inline ml-1" title="Solo registros con Fichadas (No aplica en reporte)">
+                            <input type="checkbox" class="custom-control-input _filtro" id="SoloFic">
+                            <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
+                                <span class="text-dark">Solo Fichadas</span>
+                            </label>
                         </div>
                     </div>
                 </div>
