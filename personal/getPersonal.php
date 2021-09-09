@@ -32,8 +32,8 @@ if (isset($where_condition) && $where_condition != '') {
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-// $sqlRec .=  $OrderBy." OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
-$sqlRec .=  $OrderBy;
+$sqlRec .=  $OrderBy." OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+// $sqlRec .=  $OrderBy;
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
@@ -100,9 +100,10 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 $json_data = array(
-    // "draw"            => intval($params['draw']),
+    "draw"            => intval($params['draw']),
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data
 );
 echo json_encode($json_data);
+exit;

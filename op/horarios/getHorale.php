@@ -28,12 +28,12 @@ $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = $TotalCit = "";
 
 $ListaHorarios = $_SESSION['ListaHorarios'];
-$filtroListaHorarios='';
+$filtroListaHorarios = '';
 if ($ListaHorarios  != "-") {
     $ListaHorarios1 = str_replace(32768, 0, $ListaHorarios);
     $filtroListaHorarios = " AND HORARIOS.HorCodi IN ($ListaHorarios1)";
 }
-$filtroListaRotaciones ='';
+$filtroListaRotaciones = '';
 $ListaRotaciones = $_SESSION['ListaRotaciones'];
 if ($ListaRotaciones  != "-") {
     $filtroListaRotaciones = " AND ROTACION.RotCodi IN ($ListaRotaciones)";
@@ -115,7 +115,7 @@ switch ($Tabla) {
             $TotalCit = $a['cant'];
         }
         sqlsrv_free_stmt($rs);
-        
+
         $sql_query = "SELECT CITACION.CitLega, CITACION.CitFech, CITACION.CitEntra, CITACION.CitSale, CITACION.CitDesc FROM CITACION WHERE CITACION.CitLega = $Legajo ORDER BY CITACION.CitFech DESC";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
@@ -286,10 +286,15 @@ switch ($Tabla) {
         exit;
         break;
     case 'ListHorarios':
-        $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS WHERE HorCodi >=0 $filtroListaHorarios ORDER BY HorCodi";
+        $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS WHERE HorCodi >=0 $filtroListaHorarios";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
         $sqlRec .= $sql_query;
+
+        if (!empty($params['search']['value'])) {
+            $where_condition .=    " AND ";
+            $where_condition .= " (dbo.fn_Concatenar(HorCodi,HorDesc)) collate SQL_Latin1_General_CP1_CI_AS LIKE '%" . $params['search']['value'] . "%'";
+        }
 
         if (isset($where_condition) && $where_condition != '') {
             $sqlTot .= $where_condition;
@@ -297,9 +302,12 @@ switch ($Tabla) {
         }
         $param        = array();
         $options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        $queryTot     = sqlsrv_query($link, $sqlTot, $param, $options);
+
+        $sqlRec .= " ORDER BY HorCodi OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+        $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
+        // print_r($sqlRec);exit;
 
         while ($r = sqlsrv_fetch_array($queryRecords)) {
             $data[] = array(
@@ -308,7 +316,18 @@ switch ($Tabla) {
                 'HorID'   => $r['HorID']
             );
         }
-        break;
+        header("Content-Type: application/json");
+        $json_data = array(
+            "draw"            => intval($params['draw']),
+            "recordsTotal"    => intval($totalRecords),
+            "recordsFiltered" => intval($totalRecords),
+            "data"            => $data
+        );
+        sqlsrv_free_stmt($queryRecords);
+        sqlsrv_close($link);
+        echo json_encode($json_data);
+        // break;
+        exit;
     case 'ListRotaciones':
         $sql_query = "SELECT RotCodi, RotDesc FROM ROTACION WHERE RotCodi >= 0 $filtroListaRotaciones ORDER BY RotCodi";
         // print_r($sql_query); exit;
@@ -345,6 +364,6 @@ $json_data = array(
     '_aCit'            => $aCit,
     '_bCit'            => $bCit,
     '_mCit'            => $mCit
-    
+
 );
 echo json_encode($json_data);

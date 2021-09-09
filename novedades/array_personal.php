@@ -50,6 +50,7 @@ $FilterEstruct  .= $Per;
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
+
 if ($_GET['Modulo'] == 'Cierres') {
     $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
 } else {
@@ -70,19 +71,18 @@ if (isset($where_condition) && $where_condition != '') {
 }
 $param  = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-// $sqlRec .=  "ORDER BY login_logs.id desc";
-// $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegApNo";
 $_GET['NoPag'] = $_GET['NoPag']?? '';
-if ($_GET['NoPag'] == true) {
-    $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume";
-} else {
-    $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
-}
+// if ($_GET['NoPag']) {
+//     $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume";
+// } else {
+//     $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+// }
+$sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 
-// print_r($totalRecords); exit;
+// print_r($sqlRec); exit;
 
 while ($row = sqlsrv_fetch_array($queryRecords)) {
 
@@ -144,3 +144,4 @@ $json_data = array(
     "data"            => $data
 );
 echo json_encode($json_data);
+exit;

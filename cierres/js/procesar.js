@@ -51,11 +51,6 @@ $(document).ready(function () {
 });
 
 table = $('#GetPersonal').DataTable({
-    "initComplete": function (settings, json) {
-        $('div.loader').remove();
-        $('input[type="checkbox"]').prop('checked', true)
-        $("#EliminaCierre").prop('checked', false)
-    },
     lengthMenu: [[10, 25, 50, 100, 200, 300], [10, 25, 50, 100, 200, 300]],
     bProcessing: true,
     serverSide: true,
@@ -106,7 +101,7 @@ table = $('#GetPersonal').DataTable({
     // scrollCollapse: false,
     paging: true,
     responsive: false,
-    searching: false,
+    searching: true,
     info: true,
     ordering: false,
     language: {
@@ -115,19 +110,23 @@ table = $('#GetPersonal').DataTable({
 });
 
 table.on('page.dt', function () {
-    setTimeout(function () {
+    // setTimeout(function () {
         $('input[type="checkbox"]').prop('checked', true)
         $("#EliminaCierre").prop('checked', false)
-    }, 1000);
+    // }, 1000);
 });
-
-table.on('page', function () {
-    $('input[type="checkbox"]').prop('checked', false);
+table.on('init.dt', function (settings) {
+    $('div.loader').remove();
+    $('#GetPersonal_filter .form-control-sm').attr('placeholder','Buscar Legajo');
+    $("#EliminaCierre").prop('checked', false)
+});
+table.on('draw.dt', function (settings) {
+    $('input[type="checkbox"]').prop('checked', true)
 });
 // Handle click on "Select all" control
 $('#Personal-select-all').on('click', function () {
     // Check/uncheck all checkboxes in the table
-    var rows = table.rows({ 'search': 'applied' }).nodes();
+    let rows = table.rows({ 'search': 'applied' }).nodes();
     $('input[type="checkbox"]', rows).prop('checked', this.checked);
 });
 

@@ -41,7 +41,7 @@ $(function () {
             }
         },
         bProcessing: true,
-        serverSide: false,
+        serverSide: true,
         deferRender: true,
         stateSave: true,
         stateDuration: -1,

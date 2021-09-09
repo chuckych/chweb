@@ -62,7 +62,7 @@ $(function () {
             }
         },
         bProcessing: true,
-        serverSide: false,
+        serverSide: true,
         deferRender: true,
         stateSave: true,
         stateDuration: -1,
@@ -195,8 +195,8 @@ $(function () {
             scrollCollapse: true,
             deferRender: true,
             bProcessing: false,
-            serverSide: false,
-            paging: false,
+            serverSide: true,
+            paging: true,
             searching: true,
             info: true,
             ordering: false,
@@ -214,6 +214,12 @@ $(function () {
                 "sSearch": "",
                 "sUrl": "",
                 "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "<i class='bi bi-chevron-left'></i>",
+                    "sLast": "<i class='bi bi-chevron-right'></i>",
+                    "sNext": "<i class='bi bi-chevron-right'></i>",
+                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
+                },
                 "sLoadingRecords": "<div class='spinner-border text-light'></div>",
             },
         });
@@ -285,6 +291,12 @@ $(function () {
                 "sSearch": "",
                 "sUrl": "",
                 "sInfoThousands": ",",
+                "oPaginate": {
+                    "sFirst": "<i class='bi bi-chevron-left'></i>",
+                    "sLast": "<i class='bi bi-chevron-right'></i>",
+                    "sNext": "<i class='bi bi-chevron-right'></i>",
+                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
+                },
                 "sLoadingRecords": "<div class='spinner-border text-light'></div>",
             },
         });

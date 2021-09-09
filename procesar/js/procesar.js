@@ -39,7 +39,6 @@ $(document).ready(function () {
     }
     $("#Legajos").prop('disabled', true)
     function checkleg() {
-
         if ($("#Legajos").is(":checked")) {
             $('#Personal-select-all').prop('checked', true)
             $('#Personal-select-all').prop('disabled', true)
@@ -55,23 +54,8 @@ $(document).ready(function () {
         };
     }
     table = $('#GetPersonal').DataTable({
-        "initComplete": function (settings, json) {
-            $('div.loader').remove();
-            $('#Personal-select-all').prop('checked', true)
-            $('#Personal-select-all').prop('disabled', true)
-            $('.check').prop('checked', true)
-            $('.check').prop('disabled', true)
-            $('#GetPersonal_filter input').attr('placeholder', 'Buscar legajos')
-            $('#GetPersonal_filter input').prop('disabled', true)
-            $("#Legajos").change(function () {
-                checkleg()
-            });
-            $("#Legajos").prop('disabled', false)
-        },
-        "drawCallback": function (settings) {
-            checkleg()
-        },
         bProcessing: true,
+        bServerSide: true,
         deferRender: true,
         ajax: {
             url: "getPersonal.php",
@@ -109,7 +93,7 @@ $(document).ready(function () {
         scrollY: '335px',
         scrollX: true,
         scrollCollapse: false,
-        paging: false,
+        paging: true,
         responsive: false,
         searching: true,
         info: true,
@@ -119,9 +103,22 @@ $(document).ready(function () {
         },
     });
 
-    // table.on('page', function () {
-    //     $('input[type="checkbox"]').prop('checked', false);
-    // });
+    table.on('init.dt', function () {
+        $('div.loader').remove();
+        $('#Personal-select-all').prop('checked', true)
+        $('#Personal-select-all').prop('disabled', true)
+        $('.check').prop('checked', true)
+        $('.check').prop('disabled', true)
+        $('#GetPersonal_filter input').attr('placeholder', 'Buscar Legajos')
+        $('#GetPersonal_filter input').prop('disabled', true)
+        $("#Legajos").change(function () {
+            checkleg()
+        });
+        $("#Legajos").prop('disabled', false)
+    });
+    table.on('draw.dt', function () {
+        checkleg()
+    });
     // Handle click on "Select all" control
     $('#Personal-select-all').on('click', function () {
         // Check/uncheck all checkboxes in the table

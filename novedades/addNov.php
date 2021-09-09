@@ -144,17 +144,17 @@
             </div>
         </div>
         <div class="col-12 col-sm-6 table-responsive pt-2 d-none" id="divTablePers">
-            <table class="table table-hover text-nowrap w-100 table-sm table-borderless" id="GetPers">
+            <table class="table table-hover text-nowrap w-100 table-sm" id="GetPers">
                 <thead class="">
                     <tr>
-                        <th>
+                        <th class="border-0">
                             <div class="custom-control custom-checkbox">
                                 <input class="custom-control-input" name="select_all" value="1" id="Personal-select-all" type="checkbox">
                                 <label class="custom-control-label" for="Personal-select-all"></label>
                             </div>
                         </th>
-                        <th>LEGAJO</th>
-                        <th>NOMBRE</th>
+                        <th class="border-0"></th>
+                        <th class="border-0"></th>
                     </tr>
                 </thead>
             </table>
