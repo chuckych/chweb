@@ -185,6 +185,7 @@ $(function () {
             $("#tableSecciones input:checkbox").prop('checked', false)
             $('#tableSecciones tr').removeClass('table-active')
         });
+        
 
         // $('#aplicarSecci').on('click', function () {
         //     CheckSesion()

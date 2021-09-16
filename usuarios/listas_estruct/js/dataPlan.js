@@ -166,6 +166,7 @@ $(function () {
         });
 
         $('#aplicarPlanta').on('click', function () {
+            $('#tablePlantas').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tablePlantas input:checkbox:checked").each(function () {

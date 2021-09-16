@@ -179,6 +179,8 @@ $(function () {
         });
 
         $('#aplicarSect').on('click', function () {
+            $('#tableSectores').DataTable().search('').draw();
+            $('#tableSecciones').DataTable().search('').draw();
             CheckSesion()
             let checked = new Array();
             let checked2 = new Array();

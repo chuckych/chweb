@@ -186,6 +186,7 @@ $(function () {
         });
 
         $('#aplicarNove').on('click', function () {
+            $('#tableNovedades').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableNovedades input:checkbox:checked").each(function () {

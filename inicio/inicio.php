@@ -14,8 +14,7 @@
                 ?>
             </div>
         </div>
-        <?php encabezado_mod($bgcolor, 'white', 'inicio2.png', 'Control Horario Web', ''); 
-        ?>
+        <?php encabezado_mod($bgcolor, 'white', 'inicio2.png', 'Control Horario Web', '');  ?>
         <div class="row">
             <div class="col-12 p-0">
                 <div class="card text-left">

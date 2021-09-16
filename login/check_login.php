@@ -237,14 +237,23 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	// $_SESSION['GrupRol'] =  estructUsuario(intval($row['id']), 6);
 	// $_SESSION['SucuRol'] =  estructUsuario(intval($row['id']), 7);
 	$_SESSION['EstrUser'] =  estructUsuario(intval($row['id']), 8);
-
-	$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
-	$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
-	$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
-	$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
-	$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
-	$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
-	$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+	if ($row["recid_cliente"]=='kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
+		$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
+		$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
+		$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
+		$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
+		$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
+		$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
+		$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+	else:
+        $_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
+        $_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
+        $_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
+        $_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
+        $_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
+        $_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
+        $_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
+	endif;
 
 	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
 	// $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
@@ -254,33 +263,32 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
 	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
-	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
-	$_SESSION["secure_auth_ch"] = true;
-	$_SESSION["user"]           = strtolower($row['usuario']);
-	$_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
-	$_SESSION["UID"]            = $row["id"];
-	$_SESSION["NOMBRE_SESION"]  = $row["nombre"];
-	$_SESSION["LEGAJO_SESION"]  = $row["legajo"];
-	$_SESSION["RECID_USER"]     = $row["recid_user"];
-	$_SESSION["ID_ROL"]         = $row["id_rol"];
-	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
-	$_SESSION["CLIENTE"]        = $row["cliente"];
-	$_SESSION["ROL"]            = $row["rol"];
-	$_SESSION["RECID_ROL"]      = $row["recid_rol"];
-	$_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
-	$_SESSION["TK_MOBILE"]      = $row["tkmobile"];
-	$_SESSION["WEBSERVICE"]     = $row["WebService"];
-	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
-	$_SESSION["LIMIT_SESION"]   = 3600;
-	$_SESSION['USER_AGENT']      = $_SERVER['HTTP_USER_AGENT'];
-	$_SESSION['IP_CLIENTE']      = $_SERVER['REMOTE_ADDR'];
-	$_SESSION['DIA_ACTUAL']      = hoy();
+    $_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+    $_SESSION["secure_auth_ch"] = true;
+    $_SESSION["user"]           = strtolower($row['usuario']);
+    $_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
+    $_SESSION["UID"]            = $row["id"];
+    $_SESSION["NOMBRE_SESION"]  = $row["nombre"];
+    $_SESSION["LEGAJO_SESION"]  = $row["legajo"];
+    $_SESSION["RECID_USER"]     = $row["recid_user"];
+    $_SESSION["ID_ROL"]         = $row["id_rol"];
+    $_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+    $_SESSION["CLIENTE"]        = $row["cliente"];
+    $_SESSION["ROL"]            = $row["rol"];
+    $_SESSION["RECID_ROL"]      = $row["recid_rol"];
+    $_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
+    $_SESSION["TK_MOBILE"]      = $row["tkmobile"];
+    $_SESSION["WEBSERVICE"]     = $row["WebService"];
+    $_SESSION["HASH_CLAVE"]     = ($row['clave']);
+    $_SESSION["LIMIT_SESION"]   = 3600;
+    $_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
+    $_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
+    $_SESSION['DIA_ACTUAL']     = hoy();
+	$_SESSION['VER_DB_CH']		= ($_SESSION["CONEXION_MS"]) ?  getVerDBCH() :'No hay Datos'; 
 	// $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();
-
 	mysqli_free_result($rs);
-
 	login_logs('1');
 
 	if ($_POST['lasturl']) {

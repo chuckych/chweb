@@ -175,6 +175,7 @@ $(function () {
         });
 
         $('#aplicarRotacion').on('click', function () {
+            $('#tableRotaciones').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableRotaciones input:checkbox:checked").each(function () {

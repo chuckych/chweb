@@ -45,62 +45,29 @@ $FilterEstruct  .= $Seccion;
 $FilterEstruct  .= $Grupo;
 $FilterEstruct  .= $Sucursal;
 $FilterEstruct  .= $TipoPersonal;
-
+$_GET['ln'] = $_GET['ln'] ?? '';
 $respuesta    = '';
 $getFicLegaln = (isset($_GET['ln'])) ? implode(",",$_GET['ln']) : '';
+$getFicLegaln = ($getFicLegaln) ? $getFicLegaln : '0';
 $getFicLega   = (isset($_GET['_l'])) ? implode(",",$_GET['_l']) : '';
-$FicLegaln    = (isset($_GET['ln'])) ? "AND PERSONAL.LegNume NOT IN ($getFicLegaln)" : "";
+$FicLegaln    = (!empty($_GET['ln'])) ? "AND PERSONAL.LegNume NOT IN ($getFicLegaln)" : "";
+// print_r(($getFicLegaln));exit;
 $FicLega      = (isset($_GET['_l'])) ? "AND PERSONAL.LegNume IN ($getFicLega)" : "";
 $token = token();
+$data    = array();
     if ($_GET['tk'] == $token) {
         require __DIR__ . '../../filtros/filtros.php';
         require __DIR__ . '../../config/conect_mssql.php';
         $q = $_GET['q'];
 
         // $hoy=date("Ymd",strtotime(hoy()."- 0 day"))
-        $query = "SELECT PERSONAL.LegNume AS pers_legajo, 
-        PERSONAL.LegApNo AS pers_nombre, 
-        PERSONAL.LegDocu AS pers_dni,
-        PERSONAL.LegSect AS pers_LegSect,
-        EMPRESAS.EmpRazon AS pers_empresa,
-        PLANTAS.PlaDesc AS pers_planta, 
-        CONVENIO.ConDesc AS pers_convenio,
-        SECTORES.SecDesc AS pers_sector, 
-        GRUPOS.GruDesc AS pers_grupo, 
-        SUCURSALES.SucDesc AS pers_sucur,
-        PERSONAL.LegMail AS pers_mail,
-        PERSONAL.LegDomi AS pers_domic,
-        PERSONAL.LegDoNu AS pers_numero,
-        PERSONAL.LegDoOb AS pers_observ,
-        PERSONAL.LegDoPi AS pers_piso, 
-        PERSONAL.LegDoDP AS pers_depto,
-        LOCALIDA.LocDesc AS pers_localidad,
-        PERSONAL.LegCOPO AS pers_cp,
-        PROVINCI.ProDesc AS pers_prov,
-        NACIONES.NacDesc AS pers_nacion,
-        (CASE PERSONAL.LegFeEg WHEN '1753-01-01 00:00:00.000' THEN '0' ELSE '1' END) AS pers_estado
-        FROM PERSONAL
-        INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi
-        INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi
-        INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi = SECCION.SecCodi
-        INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi
-        INNER JOIN CONVENIO ON PERSONAL.LegConv = CONVENIO.ConCodi
-        INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi
-        INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi
-        INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi
-        INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi
-        INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi
-        WHERE PERSONAL.LegNume > '0'
-        AND CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%$q%' AND PERSONAL.LegFeEg = '1753-01-01 00:00:00.000'
-        $FicLega $FicLegaln $FilterEstruct $filtros 
-        ORDER BY pers_legajo ASC";
+        $query="SELECT PERSONAL.LegNume AS pers_legajo, PERSONAL.LegApNo AS pers_nombre, PERSONAL.LegDocu AS pers_dni, PERSONAL.LegSect AS pers_LegSect, EMPRESAS.EmpRazon AS pers_empresa, PLANTAS.PlaDesc AS pers_planta, CONVENIO.ConDesc AS pers_convenio, SECTORES.SecDesc AS pers_sector, GRUPOS.GruDesc AS pers_grupo, SUCURSALES.SucDesc AS pers_sucur, PERSONAL.LegMail AS pers_mail, PERSONAL.LegDomi AS pers_domic, PERSONAL.LegDoNu AS pers_numero, PERSONAL.LegDoOb AS pers_observ, PERSONAL.LegDoPi AS pers_piso, PERSONAL.LegDoDP AS pers_depto, LOCALIDA.LocDesc AS pers_localidad, PERSONAL.LegCOPO AS pers_cp, PROVINCI.ProDesc AS pers_prov, NACIONES.NacDesc AS pers_nacion, (CASE PERSONAL.LegFeEg WHEN '1753-01-01 00:00:00.000' THEN '0' ELSE '1' END) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' AND CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%$q%' AND PERSONAL.LegFeEg='1753-01-01 00:00:00.000' $FicLega $FicLegaln $FilterEstruct $filtros ORDER BY pers_legajo ASC";
         
-        // print_r($query);
-
+        // print_r($query);exit;
         $params  = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $result  = sqlsrv_query($link, $query, $params, $options);
-        $data    = array();
+
         if (sqlsrv_num_rows($result) > 0) {
             while ($row = sqlsrv_fetch_array($result)) :
             $pers_legajo    = $row['pers_legajo'];
@@ -152,7 +119,7 @@ $token = token();
             sqlsrv_close($link);
             $respuesta = array('success' => 'YES', 'error' => '0', 'personal' => $data);
         } else {
-            $respuesta = array('success' => 'NO', 'error' => '1', 'personal' => 'No hay datos');
+            $respuesta = array('success' => 'NO', 'error' => '1', 'personal' => $data);
             // $data[] = array('text' => 'Empleado no encontrado');
         }
     } else {

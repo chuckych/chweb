@@ -181,6 +181,7 @@ $(function () {
         });
 
         $('#aplicarTHora').on('click', function () {
+            $('#tableTipoHoras').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableTipoHoras input:checkbox:checked").each(function () {

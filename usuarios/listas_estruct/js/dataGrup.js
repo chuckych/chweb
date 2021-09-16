@@ -167,6 +167,7 @@ $(function () {
         });
 
         $('#aplicarGrup').on('click', function () {
+            $('#tableGrupos').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableGrupos input:checkbox:checked").each(function () {

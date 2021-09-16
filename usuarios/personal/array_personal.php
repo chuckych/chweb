@@ -1,11 +1,15 @@
 <?php
 header("Content-Type: application/json");
 $urln   = host() . "/" . HOMEHOST . "/data/GetUser_legajo.php?tk=" . token() . "&recid_c=" . $_GET['_c'];
+// echo ($urln); exit;
 $array = json_decode(getRemoteFile($urln), TRUE);
+// print_r($array['error']); exit;
 $legajos = ($array['error']=='0') ? "&ln%5B%5D=" . implode("&ln%5B%5D=", $array['legajos']) : '';
 
 $url   = host() . "/" . HOMEHOST . "/data/GetPersonal.php?tk=" . token() . "&_r=" . $_SESSION["RECID_ROL"] . "&_c=" . $_GET['_c'] . $legajos;
+// echo ($url); exit;
 $array = json_decode(getRemoteFile($url), TRUE);
+// print_r($array); exit;
 $dataPer  = $array[0]['personal'];
 
 if (!$array[0]['error']) {

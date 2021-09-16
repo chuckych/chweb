@@ -154,6 +154,7 @@ $(function () {
             $('#copyListas .nombreRol').html($('#modalListasLabel .nombreRol').text())
 
             $('#aplicarCopyLista').on('click', function () {
+                $('#tableCopyListas').DataTable().search('').draw();
                 CheckSesion()
                 let selected = new Array();
                 $("#tableCopyListas input:checkbox:checked").each(function () {

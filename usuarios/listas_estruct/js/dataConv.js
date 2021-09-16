@@ -167,6 +167,7 @@ $(function () {
         });
 
         $('#aplicarConv').on('click', function () {
+            $('#tableConvenios').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableConvenios input:checkbox:checked").each(function () {

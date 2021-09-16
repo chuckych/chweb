@@ -167,6 +167,7 @@ $(function () {
         });
 
         $('#aplicarSuc').on('click', function () {
+            $('#tableSucursales').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableSucursales input:checkbox:checked").each(function () {

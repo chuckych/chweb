@@ -35,7 +35,7 @@ define("ident", $ident);
             <div class="row mt-3">
                 <?= notif_error_var('error', '<span class="fw5">Los campos legajo y Rol son obligatorios</span>') ?>
             </div>
-            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" method="POST" class="w-100" onsubmit="ShowLoading()">
+            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()">
                 <div class="row">
                     <div class="col-12 col-sm-9">
                         <div class="form-inline <?= dnone($rowcount) ?> mb-2">

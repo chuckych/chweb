@@ -172,6 +172,7 @@ $(function () {
         });
 
         $('#aplicarHorarios').on('click', function () {
+            $('#tableHorarios').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableHorarios input:checkbox:checked").each(function () {

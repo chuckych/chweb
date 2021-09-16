@@ -208,6 +208,7 @@ $(function () {
         });
 
         $('#aplicarEmpresa').on('click', function () {
+            $('#tableEmpresa').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tableEmpresa input:checkbox:checked").each(function () {

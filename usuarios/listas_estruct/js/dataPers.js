@@ -168,6 +168,7 @@ $(function () {
         });
 
         $('#aplicarPer').on('click', function () {
+            $('#tablePersonal').DataTable().search('').draw();
             CheckSesion()
             let selected = new Array();
             $("#tablePersonal input:checkbox:checked").each(function () {

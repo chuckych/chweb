@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.194';
+    return 'v0.0.195';
 }
 function E_ALL()
 {
@@ -302,7 +302,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
             </div>
             <div class="w-100 d-inline-flex h30">
                 <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
-                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef">' . version() . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: '.$_SESSION['VER_DB_CH'].'">' . version() . '</div>
             </div>
         </div>
     </div>
@@ -345,7 +345,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
 </span>';
     }
     if ($countModRol != '1') {
-        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px">' . version() . '</span>';
+        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: '.$_SESSION['VER_DB_CH'].'">' . version() . '</span>';
     }
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
@@ -2984,4 +2984,18 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
         $fecha_inicial = date("Ymd", strtotime($fecha2 . "+ 1 days"));
     }
     return $arrayFechas;
+}
+function getVerDBCH() // Obtiene la version de la base de datos
+{
+    require __DIR__ . '/config/conect_mssql.php'; // Conexion a la base de datos
+    $params    = array(); // Parametros de conexion
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET); // Parametros de conexion
+    $query = "SELECT TOP 1 PARACONT.ParPath1 FROM PARACONT WHERE PARACONT.ParCodi = 10"; // Query
+    $stmt  = sqlsrv_query($link, $query, $params, $options); // Ejecucion del query
+    while ($a = sqlsrv_fetch_array($stmt)) { // Recorre el resultado
+        $path = $a['ParPath1']; // Asigna el valor a la variable
+    } 
+    sqlsrv_free_stmt($stmt); // Libera el query
+    sqlsrv_close($link); // Cierra la conexion
+    return $path; // Retorna el valor
 }

@@ -9,6 +9,7 @@ header("Content-Type: application/json");
 require __DIR__ . '../../../config/conect_mssql.php';
 
 $data = array();
+$countSet = '';
 $dataLista = array();
 $set = 0;
 $_GET['id_rol']    = $_GET['id_rol'] ?? '';
@@ -30,7 +31,6 @@ if (!$lista) {
 
 $dataLista = dataLista($lista, $id_rol);
 $dataLista = explode(',', $dataLista[0]);
-
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
@@ -39,6 +39,7 @@ switch ($lista) {
         $query = "SELECT NovCodi, NovDesc, NovID, NovTipo FROM NOVEDAD WHERE NovCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
+            $countSet = count($dataLista);
             while ($r = sqlsrv_fetch_array($rs)) :
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['NovCodi']) ? 1 : 0;
@@ -63,6 +64,7 @@ switch ($lista) {
         $query = "SELECT ONovCodi, ONovDesc, ONovTipo FROM OTRASNOV WHERE ONovCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
+            $countSet = count($dataLista);
             while ($r = sqlsrv_fetch_array($rs)) :
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['ONovCodi']) ? 1 : 0;
@@ -101,7 +103,6 @@ switch ($lista) {
                     'descripcion' => $r['HorDesc'],
                     'id'          => $r['HorID'],
                     'set'         => ($set),
-                    'count' => ($dataLista),
                 );
             endwhile;
         }
@@ -112,6 +113,7 @@ switch ($lista) {
         $query = "SELECT RotCodi, RotDesc FROM ROTACION";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
+            $countSet = count($dataLista);
             while ($r = sqlsrv_fetch_array($rs)) :
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['RotCodi']) ? 1 : 0;
@@ -133,6 +135,7 @@ switch ($lista) {
         $query = "SELECT THoCodi, THoDesc, THoID FROM TIPOHORA WHERE THoCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
+            $countSet = count($dataLista);
             while ($r = sqlsrv_fetch_array($rs)) :
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['THoCodi']) ? 1 : 0;
@@ -174,7 +177,10 @@ switch ($lista) {
         }
         break;
 }
+$countSet = array_count_values(array_column($data, 'set'))[1] ?? 0;
+
 $json_data = array(
+    "countSet" => $countSet,
     "data" => $data
 );
 
