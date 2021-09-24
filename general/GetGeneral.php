@@ -151,7 +151,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     /** FIN NOVEDADES */
 
     /** HORAS */
-    $query_Horas = "SELECT FICHAS1.FicHora AS 'Hora', TIPOHORA.THoDesc AS 'HoraDesc', TIPOHORA.THoDesc2 AS 'HoraDesc2', FICHAS1.FicHsHe AS 'HsHechas', FICHAS1.FicHsAu AS 'HsCalculadas', FICHAS1.FicHsAu2 AS 'HsAutorizadas' FROM FICHAS1 INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
+    $query_Horas = "SELECT FICHAS1.FicHora AS 'Hora', TIPOHORA.THoDesc AS 'HoraDesc', TIPOHORA.THoDesc2 AS 'HoraDesc2', FICHAS1.FicHsHe AS 'HsHechas', FICHAS1.FicHsAu AS 'HsCalculadas', FICHAS1.FicHsAu2 AS 'HsAutorizadas' FROM FICHAS1 INNER JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicHora=TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' $filtroSoloHCalc AND TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega,FICHAS1.FicFech,FICHAS1.FicTurn, FICHAS1.FicHora";
     $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
     // print_r($query_Horas);
     // exit;

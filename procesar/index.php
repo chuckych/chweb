@@ -5,6 +5,7 @@ secure_auth_ch();
 E_ALL();
 $Modulo='12';
 ExisteModRol($Modulo);
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $FirstDate = '2000-01-01';
 define("TIPO_PER", [
     'Todos'  => '0',

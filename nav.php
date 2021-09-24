@@ -144,6 +144,9 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
                                         case 'Informe Presentismo':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/infornovc/>" . $Modulo2 . "</a>";
                                             break;
+                                        case 'Informe FAR':
+                                            echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforfar/>" . $Modulo2 . "</a>";
+                                            break;
                                     }
                                 }
                                 ?>
@@ -251,6 +254,7 @@ $_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
                             && ($Modulo2 != 'Informe de Novedades')
                             && ($Modulo2 != 'Informe de Fichadas')
                             && ($Modulo2 != 'Informe de Horas')
+                            && ($Modulo2 != 'Informe FAR')
                             && ($Modulo2 != 'Mobile')
                             && ($Modulo2 != 'Zonas Mobile')
                             && ($Modulo2 != 'Usuarios Mobile')

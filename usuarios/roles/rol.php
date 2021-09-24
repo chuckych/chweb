@@ -93,6 +93,15 @@ $Cliente = ExisteCliente($_GET['_c']);
     require __DIR__ .  '../../../js/jquery.php';
     require __DIR__ . "../../../js/DataTable.php";
     ?>
+    <script>
+        fetch('../clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == "Error") {
+                    notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 0, 'right')
+                }
+            });
+    </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>

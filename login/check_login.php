@@ -51,6 +51,9 @@ $hash     = $row['clave'];
 /** Si es correcto */
 if (($NumRows > '0') && (password_verify($pass, $hash))) {
 
+	borrarLogs(__DIR__ . '../../logs/', 7, '.log');
+	borrarLogs(__DIR__ . '../../logs/error/', 7, '.log');
+
 	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('29', 'FFeVjsix', 'Informe Presentismo', 13, '0', 2)");
 	}
@@ -66,6 +69,9 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 33 LIMIT 1")) {
 		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('33', 'H0r4r10s', 'Horarios', 30, '0', 1)");
 	}
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 34 LIMIT 1")) {
+		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('34', '1nf0rf4r', 'Informe FAR', 14, '1', 2)");
+	}
 
 	$createParamsTable = InsertRegistroMySql("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
 	if ($createParamsTable) {
@@ -79,8 +85,8 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_estruct` (`uid` INT(11) NOT NULL, `lista` ENUM('1','2','3','4','5','6','7','8') NOT NULL COLLATE 'utf8_general_ci', `datos` TEXT NOT NULL COLLATE 'utf8mb4_bin', `fecha` DATETIME NOT NULL, PRIMARY KEY (`uid`, `lista`) USING BTREE, CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8_general_ci' ENGINE=InnoDB");
 
 	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
-	
-	$check_schema_abm_roles="SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='abm_roles' AND COLUMN_NAME='aTur'";
+
+	$check_schema_abm_roles = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='abm_roles' AND COLUMN_NAME='aTur'";
 
 	if (!CountRegMayorCeroMySql($check_schema_abm_roles)) {
 		InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
@@ -229,15 +235,8 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		return $v;
 	}
 
-	// $_SESSION['EmprRol'] =  estructUsuario(intval($row['id']), 1);
-	// $_SESSION['PlanRol'] =  estructUsuario(intval($row['id']), 2);
-	// $_SESSION['ConvRol'] =  estructUsuario(intval($row['id']), 3);
-	// $_SESSION['SectRol'] =  estructUsuario(intval($row['id']), 4);
-	// $_SESSION['Sec2Rol'] =  estructUsuario(intval($row['id']), 5);
-	// $_SESSION['GrupRol'] =  estructUsuario(intval($row['id']), 6);
-	// $_SESSION['SucuRol'] =  estructUsuario(intval($row['id']), 7);
 	$_SESSION['EstrUser'] =  estructUsuario(intval($row['id']), 8);
-	if ($row["recid_cliente"]=='kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
+	if ($row["recid_cliente"] == 'kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
 		$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
 		$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
 		$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
@@ -245,14 +244,14 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 		$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
 		$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
 		$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
-	else:
-        $_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
-        $_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
-        $_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
-        $_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
-        $_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
-        $_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
-        $_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
+	else :
+		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
+		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
+		$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
+		$_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
+		$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
+		$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
+		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
 	endif;
 
 	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
@@ -284,7 +283,8 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
     $_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
     $_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
     $_SESSION['DIA_ACTUAL']     = hoy();
-	$_SESSION['VER_DB_CH']		= ($_SESSION["CONEXION_MS"]) ?  getVerDBCH() :'No hay Datos'; 
+    $_SESSION['VER_DB_CH']      = false;
+    $_SESSION['CONECT_MSSQL']   = false;
 	// $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();

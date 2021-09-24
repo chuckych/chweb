@@ -5,6 +5,7 @@ $clave   = (isset($_COOKIE['clave'])) ? $_COOKIE['clave'] : '';
 $Modulo  = '999';
 $bgcolor = 'bg-custom ';
 $_GET['l'] = $_GET['l'] ?? false;
+// session_destroy();
 ?>
 <?php if (inicio() == 0) {
     header("Location:/" . HOMEHOST . "/conf/");

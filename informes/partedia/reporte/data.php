@@ -20,7 +20,7 @@ if ($_PerSN == 'on') {
 } else {
     $sql_query = "SELECT FICHAS3.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', FICHAS3.FicNove AS 'Codigo', NOVEDAD.NovDesc AS 'Novedad', NOVEDAD.NovTipo AS 'Tipo', FICHAS3.FicHoras AS 'Horas', FICHAS3.FicCaus AS 'CodigoCausa', NOVECAUSA.NovCDesc AS 'Causa', 'Justificada'=CASE FICHAS3.FicJust WHEN 1 THEN 'Si' ELSE 'No' END, FICHAS3.FicObse AS 'Observacion', dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS 'Horario' FROM FICHAS3 INNER JOIN PERSONAL ON FICHAS3.FicLega=PERSONAL.LegNume INNER JOIN FICHAS ON FICHAS3.FicLega=FICHAS.FicLega AND FICHAS3.FicFech=FICHAS.FicFech AND FICHAS3.FicTurn=FICHAS.FicTurn LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaIni' $FilterEstruct $FiltrosFichas ORDER BY FICHAS3.FicLega";
 }
-// h4($sql_query); exit;    
+// print_r($sql_query);    
 
 $param        = array();
 $options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -51,7 +51,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
         'Novedad'     => $Novedad,
         'TipoN'       => ($Tipo),
         'Tipo'        => TipoNov($Tipo),
-        'Horas'       => ceronull($Horas),
+        'Horas'       => ($Horas),
         'CodigoCausa' => $CodigoCausa,
         'Causa'       => ceronull($Causa),
         'Justificada' => $Justificada,

@@ -9,14 +9,12 @@
 <link rel="manifest" href="/<?= HOMEHOST ?>/img/favicon/site.webmanifest">
 <link rel="mask-icon" href="/<?= HOMEHOST ?>/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
 <meta name="msapplication-TileColor" content="#da532c">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#fafafa">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/montserrat-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
-<!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons/bootstrap-icons.css" type="text/css"> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons-1.5.0/bootstrap-icons.css" type="text/css">
 <?php
 switch ($Modulo) {
 	case '1':
@@ -89,6 +87,7 @@ switch ($Modulo) {
 		echo '<style>:root { --main-bg-modcolor : #bc5100; } </style>';
 		break;
 	case '24':
+	case '34':
 		/** Modulo Horas. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #bc5100; } </style>';
 		break;

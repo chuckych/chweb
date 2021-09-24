@@ -40,4 +40,5 @@ define("MODULOS", [
        /** ID = 30 */ 'datos'  => 'Datos',
        /** ID = 31 */ 'estruct'  => 'Estructura',
        /** ID = 33 */ 'horarios'  => 'Horarios',
+       /** ID = 34 */ 'inforfar'  => 'Informe FAR'
 ]);

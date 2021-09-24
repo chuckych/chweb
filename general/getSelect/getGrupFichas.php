@@ -17,7 +17,7 @@ $Desc     = 'GRUPOS.GruDesc';
 $DescCodi = 'GRUPOS.GruCodi';
 $Col      = 'GRUPOS';
 $ColData  = 'FICHAS';
-$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
+$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%'":'';
 
  $query="SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
 // print_r($query); exit;

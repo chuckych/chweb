@@ -4,6 +4,7 @@ require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
 $Modulo = '29';
 ExisteModRol($Modulo);
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $bgcolor = 'bg-custom';
 $FirstYear='2000';
 $maxYear='2100';

@@ -4,6 +4,7 @@ require __DIR__ . '../../config/index.php';
 secure_auth_ch();
 $Modulo='16';
 ExisteModRol($Modulo);
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetHoras';
 $_datos  = 'horas';
 $bgcolor = 'bg-custom';

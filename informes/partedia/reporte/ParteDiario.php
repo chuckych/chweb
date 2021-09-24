@@ -77,7 +77,7 @@
                         <td class="px-2"><?= $ValueDataParte['Codigo'] ?></td>
                         <td class="px-2" <?=$padding?>><?= $ValueDataParte['Novedad'] ?></td>
                         <!-- <td class="px-2"><?= $ValueDataParte['Tipo'] ?></td> -->
-                        <td class="px-2"><?= $ValueDataParte['Horas'] ?></td>
+                        <td class="px-2"><?= ceronull($ValueDataParte['Horas']) ?></td>
                         <td class="px-2"><?= $ValueDataParte['Causa'] ?></td>
                         <td class="px-2"><?= $ValueDataParte['Observacion'] ?></td>
                     </tr>

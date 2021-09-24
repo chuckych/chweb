@@ -5,6 +5,7 @@ secure_auth_ch();
 $Modulo='23';
 ExisteModRol($Modulo);
 $bgcolor = 'bg-custom';
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 define("TIPO_HOJA", [
     'A4'     => 'A4',
     'Oficio' => 'LEGAL',

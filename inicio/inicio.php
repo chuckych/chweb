@@ -21,7 +21,6 @@
                     <div class="card-body">
                         <h4 class="card-title">Hola <?= $_SESSION["NOMBRE_SESION"] ?></h4>
                         <p class="text-secondary"><?= $_SESSION["CLIENTE"] ?></p>
-                        <!-- <a name="" id="" class="btn btn-primary" href="exportar.php" role="button">Exportar</a> -->
                     </div>
                 </div>
             </div>

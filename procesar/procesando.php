@@ -9,6 +9,9 @@ E_ALL();
 // sleep(2);
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) {
+
+    pingWebService('Error al procesar. Intentelo denuevo mas tarde');
+
     $tiempo_ini = microtime(true);
     if ($_SESSION['ABM_ROL']['Proc'] != 1) {
         PrintRespuestaJson('ok','No tiene permisos para procesar datos'); exit;

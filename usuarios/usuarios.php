@@ -22,12 +22,11 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
         <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
         <div class="row mt-3">
             <div class="col-12 col-sm-6">
-                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border">
-                    <span class="mr-1 d-none d-sm-inline">IMPORTAR PERSONAL</span>
+                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border" id="btnImportar">
+                    <span class="mr-1 d-none d-sm-inline fw5">IMPORTAR PERSONAL</span>
                     <span class="mr-1 d-inline d-sm-none">IMPORTAR</span>
                     <i class="bi-download font1"></i>
                 </a>
-                <span id="respuestaResetClave"></span>
             </div>
             <div class="col-12 col-sm-6 mb-2">
                 <?php if (modulo_cuentas() == '1') { ?>
@@ -91,6 +90,18 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     require __DIR__ . "../../js/jquery.php";
     require __DIR__ . "../../js/DataTable.php";
     ?>
+    <script>
+        fetch('clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status == "Error") {
+                    setTimeout(() => {
+                        notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?=$Cliente?></strong>', 'warning', 5000, 'right')
+                    }, 1000);
+                    $('#btnImportar').hide()
+                }
+            });
+    </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>

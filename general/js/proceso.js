@@ -902,7 +902,7 @@ $(document).on("click", ".open-modal", function (e) {
         columns: [
             { "class": "align-middle ls1 py-3", "data": "Cod" },
             { "class": "align-middle", "data": "Descripcion" },
-            { "class": "align-middle ls1 fw5", "data": "Horas" },
+            { "class": "align-middle ls1", "data": "Horas" },
             { "class": "align-middle ", "data": "editar" },
             { "class": "align-middle ", "data": "eliminar" },
             { "class": "align-middle", "data": "Obserb" },
@@ -1027,7 +1027,7 @@ $(document).on("click", ".open-modal", function (e) {
         columns: [
             { "class": "align-middle ls1 py-3", "data": "Cod" },
             { "class": "align-middle", "data": "Descripcion" },
-            { "class": "align-middle ls1 fw5", "data": "HsAuto" },
+            { "class": "align-middle ls1", "data": "HsAuto" },
             { "class": "align-middle ls1", "data": "HsCalc" },
             { "class": "align-middle", "data": "editar" },
             { "class": "align-middle", "data": "eliminar" },
@@ -1068,7 +1068,7 @@ $(document).on("click", ".open-modal", function (e) {
         columns: [
             { "class": "align-middle text-center py-3", "data": "Cod" },
             { "class": "align-middle", "data": "Descripcion" },
-            { "class": "align-middle ls1 text-right fw5", "data": "FicValor" },
+            { "class": "align-middle ls1 text-right", "data": "FicValor" },
             { "class": "align-middle", "data": "Observ" },
             { "class": "align-middle", "data": "editar" },
             { "class": "align-middle", "data": "eliminar" },

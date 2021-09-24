@@ -111,6 +111,7 @@
     require __DIR__ . "../../../js/jquery.php";
     require __DIR__ . "../../../js/DataTable.php";
     ?>
+    <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="js/datamods.js?v=<?=vjs()?>"></script>
 </body>

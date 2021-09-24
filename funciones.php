@@ -2,58 +2,57 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.195';
+    return 'v0.0.196'; // Version
 }
 function E_ALL()
 {
-    if ($_SERVER['SERVER_NAME'] == 'localhost') {
-        error_reporting(E_ALL);
-        ini_set('display_errors', '1');
+    if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+        error_reporting(E_ALL); // Muestra todos los errores
+        ini_set('display_errors', '1'); // Muestra todos los errores
     } else {
         error_reporting(E_ALL);
         ini_set('display_errors', '0');
     }
 }
-function secure_auth_ch()
+function secure_auth_ch() // Funcion para validar si esta autenticado
 {
-    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
+    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? ''; // Si no existe la variable la crea
     if (
-        $_SESSION["secure_auth_ch"] !== true
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+        $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
+        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
+        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
+        || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si el dia actual no es el mismo
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
         if (isset($_SERVER['HTTP_REFERER'])) {
-            header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER']));
+            header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
         } else {
-            header("location:/" . HOMEHOST . "/login/");
+            header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login
         }
         exit;
     } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
+        // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
         (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
-        /** */
-        $fechaGuardada = $_SESSION["ultimoAcceso"];
-        $ahora = date("Y-m-d H:i:s");
-        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+        $fechaGuardada = $_SESSION["ultimoAcceso"]; // Fecha de ultimo acceso
+        $ahora = date("Y-m-d H:i:s"); // Fecha actual
+        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada)); // Tiempo transcurrido
         /** comparamos el tiempo transcurrido */
-        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) { // Si el tiempo transcurrido es mayor a la variable LIMIT_SESION
             /** Si pasaron 60 minutos o más */
-            session_destroy();
+            session_destroy(); // Destruye la sesión
             /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER']));
+            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
             /** envío al usuario a la pag. de autenticación */
-            exit();
+            exit(); // Fin del script
             /** sino, actualizo la fecha de la sesión */
         } else {
-            $_SESSION["ultimoAcceso"] = $ahora;
+            $_SESSION["ultimoAcceso"] = $ahora; // Actualizo la fecha de la sesión
         }
     }
-    session_regenerate_id();
-    E_ALL();
+    session_regenerate_id(); // Regenera la sesión
+    E_ALL(); // Funciones de error
 }
 function secure_auth_ch_json()
 {
@@ -127,16 +126,16 @@ function secure_auth_ch2()
     E_ALL();
 }
 /** ultimaacc */
-function ultimoacc()
+function ultimoacc() // Funcion para obtener la fecha hora del ultimo acceso
 {
-    return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s");
+    return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
 }
 /** Seguridad injections SQL */
 function secureVar($key)
 {
-    $key = htmlspecialchars(stripslashes($key));
-    $key = str_ireplace("script", "blocked", $key);
-    $key = htmlentities($key, ENT_QUOTES);
+    $key = htmlspecialchars(stripslashes($key)); // Limpio la variable
+    $key = str_ireplace("script", "blocked", $key); // Remplazo el script por una palabra bloqueada
+    $key = htmlentities($key, ENT_QUOTES); // Codifico la variable
     return $key;
 }
 function vjs()
@@ -174,15 +173,15 @@ function recid()
 }
 function Ident()
 {
-    $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; //abcdefghijklmnopqrstuvwxyz
     $longitudCadena = strlen($cadena);
-    $Ident = "";
-    $longitudIdent = 3;
-    for ($i = 1; $i <= $longitudIdent; $i++) {
+    $Ident = ""; // Variable para almacenar la cadena generada
+    $longitudIdent = 3; // Longitud de la cadena a generar
+    for ($i = 1; $i <= $longitudIdent; $i++) { // Ciclo para generar la cadena
         $pos = rand(0, $longitudCadena - 1);
         $Ident .= substr($cadena, $pos, 1);
     }
-    return $Ident;
+    return $Ident; // Retorno de la cadena generada
 }
 function statusData($status, $dato)
 {
@@ -260,20 +259,20 @@ function BorrarArchivo($RutaFiles)
     }
 }
 /** GENERAR generacontraseña */
-function GeneraClave()
+function GeneraClave() // Genera una contraseña aleatoria
 {
     $cadena0 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     $cadena1 = "12345678901234567890";
     $cadena2 = "abcdefghijklmnopqrstuvwxyz";
-    $cadena = ($cadena0) . ($cadena1) . ($cadena2);
-    $longitudCadena = strlen($cadena);
-    $pass = "";
-    $longitudPass = 12;
-    for ($i = 1; $i <= $longitudPass; $i++) {
+    $cadena = ($cadena0) . ($cadena1) . ($cadena2); //concatenamos las cadenas
+    $longitudCadena = strlen($cadena); //longitud de la cadena
+    $pass = ""; //variable para almacenar la contraseña
+    $longitudPass = 12; //longitud de la contraseña
+    for ($i = 1; $i <= $longitudPass; $i++) { //ciclo para generar la contraseña
         $pos = rand(0, $longitudCadena - 1);
         $pass .= substr($cadena, $pos, 1);
     }
-    return $pass;
+    return $pass; //retornamos la contraseña
 }
 function token()
 {
@@ -302,7 +301,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
             </div>
             <div class="w-100 d-inline-flex h30">
                 <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
-                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: '.$_SESSION['VER_DB_CH'].'">' . version() . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</div>
             </div>
         </div>
     </div>
@@ -345,7 +344,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
 </span>';
     }
     if ($countModRol != '1') {
-        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: '.$_SESSION['VER_DB_CH'].'">' . version() . '</span>';
+        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
     }
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
@@ -1080,7 +1079,7 @@ function ExisteRol4($recid, $id)
 function ExisteUser($cliente_recid, $uid)
 {
     /** Verificamos si existe el usuario */
-  $q="SELECT 1 FROM usuarios u INNER JOIN clientes c ON u.cliente=c.id WHERE u.id='$uid' AND c.recid='$cliente_recid' LIMIT 1";
+    $q = "SELECT 1 FROM usuarios u INNER JOIN clientes c ON u.cliente=c.id WHERE u.id='$uid' AND c.recid='$cliente_recid' LIMIT 1";
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
@@ -1195,6 +1194,11 @@ function ExisteModRol($modulo)
         exit;
     }
     /** redirect */
+}
+function existConnMSSQL() // verifica si existe conexion a MSSQL
+{
+    require_once __DIR__ . '/config/conect_mssql.php'; // conexion a MSSQL
+    (!$_SESSION['CONECT_MSSQL']) ? header("Location:/" . HOMEHOST . "/inicio/?e=errorConexionMSSQL") . exit : ''; // si no existe conexion a MSSQL redirigimos al inicio
 }
 function errors($valor)
 {
@@ -1545,7 +1549,7 @@ function color_Fichada2($tipo, $estado, $hora)
 
     switch ($tipo) {
         case 'Manual':
-            $fichada = '<span class="text-primary fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada = '<span class="text-primary" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
         default:
             $fichada =  '<span class="text-dark fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
@@ -2327,6 +2331,30 @@ function PingWebServiceRRHH()
     } while (($respuesta) == 'Pendiente');
     curl_close($ch);
 }
+
+function pingWebService($textError) // Funcion para validar que el Webservice de Control Horario esta disponible
+{
+    $url = rutaWebService("Ping?");
+    $ch = curl_init(); // Inicializar el objeto curl
+    curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    $response   = curl_exec($ch); // extract information from response
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        PrintRespuestaJson('Error', $textError);
+        exit; // salimos del script
+    }
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
+    //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
+    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
+    curl_close($ch); // close curl handle
+}
+
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
     // PingWebServiceRRHH();
@@ -2344,11 +2372,14 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
+        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         return "Error";
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         return $respuesta;
         exit;
     }
@@ -2378,11 +2409,15 @@ function procesar_lega($legajo, $FechaDesde, $FechaHasta)
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
+        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         return $ruta;
         exit;
     }
     curl_close($ch);
     if ($httpCode === 404) {
+        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         return $ruta;
         exit;
     }
@@ -2420,6 +2455,8 @@ function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         echo $respuesta;
         exit;
     }
@@ -2429,6 +2466,9 @@ function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
     if ($httpCode == 201) {
         // sleep(2);
         echo EstadoProceso($url);
+    } else {
+        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $TipoDeFichada, $Laboral)
@@ -2447,11 +2487,15 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
+        $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         echo $respuesta;
         exit;
     }
@@ -2461,6 +2505,9 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     if ($httpCode == 201) {
         return EstadoProceso($url);
         exit;
+    } else {
+        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
@@ -2479,13 +2526,15 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     if ($curl_errno > 0) {
+        $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
-        // echo $respuesta;
-        // exit;
+        $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'Mensaje' => $respuesta);
         echo json_encode($data);
         exit;
@@ -2496,6 +2545,9 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($httpCode == 201) {
         return EstadoProceso($url);
         exit;
+    } else {
+        $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
@@ -2513,12 +2565,15 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
     if ($curl_errno > 0) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'dato' => $respuesta);
         echo json_encode($data);
         exit;
@@ -2532,6 +2587,8 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         // return EstadoProceso($url);
         return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
         exit;
+    } else {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 
@@ -2550,13 +2607,15 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $text = "Error al ingresar Novedad. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
     if ($curl_errno > 0) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
-        exit;
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         echo $respuesta;
         exit;
     }
@@ -2566,6 +2625,8 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
     if ($httpCode == 201) {
         return EstadoProceso($url);
         exit;
+    } else {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
@@ -2583,12 +2644,15 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    $text = "Error al obtener Horario. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
     if ($curl_errno > 0) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'dato' => $respuesta);
         echo json_encode($data);
         exit;
@@ -2600,6 +2664,8 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
     if ($httpCode == 201) {
         return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
         exit;
+    } else {
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 /** FIN EL WEBSERVICE CH*/
@@ -2663,8 +2729,8 @@ function MinHora2($Min)
 function HoraMin($var)
 {
     $var = explode(":", $var);
-    $MinHora = $var[0] * 60;
-    $Min = $var[1];
+    $MinHora = intval($var[0]) * 60;
+    $Min = intval($var[1]);
     $Minutos = $MinHora + $Min;
     return $Minutos;
 }
@@ -2874,7 +2940,7 @@ function regid_legajo($legajo)
         while ($a = mysqli_fetch_assoc($rs)) {
             $regid = $a['regid'];
         }
-    }else{
+    } else {
         $regid = '';
     }
     mysqli_free_result($rs);
@@ -2985,17 +3051,39 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
     }
     return $arrayFechas;
 }
-function getVerDBCH() // Obtiene la version de la base de datos
+function getVerDBCH($link) // Obtiene la version de la base de datos
 {
-    require __DIR__ . '/config/conect_mssql.php'; // Conexion a la base de datos
-    $params    = array(); // Parametros de conexion
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET); // Parametros de conexion
     $query = "SELECT TOP 1 PARACONT.ParPath1 FROM PARACONT WHERE PARACONT.ParCodi = 10"; // Query
-    $stmt  = sqlsrv_query($link, $query, $params, $options); // Ejecucion del query
+    $stmt  = sqlsrv_query($link, $query); // Ejecucion del query
+    $path = '';
     while ($a = sqlsrv_fetch_array($stmt)) { // Recorre el resultado
         $path = $a['ParPath1']; // Asigna el valor a la variable
-    } 
+    }
     sqlsrv_free_stmt($stmt); // Libera el query
-    sqlsrv_close($link); // Cierra la conexion
     return $path; // Retorna el valor
+}
+function fileLog($text, $ruta_archivo)
+{
+    $log    = fopen($ruta_archivo, 'a');
+    $date   = date('d-m-Y H:i:s');
+    $text   = $date . ' ' . $text . "\n";
+    fwrite($log, $text);
+    fclose($log);
+}
+function dateDifference($date_1, $date_2, $differenceFormat = '%a') // diferencia en días entre dos fechas
+{
+    $datetime1 = date_create($date_1); // creo la fecha 1
+    $datetime2 = date_create($date_2); // creo la fecha 2
+    $interval = date_diff($datetime1, $datetime2); // obtengo la diferencia de fechas
+    return $interval->format($differenceFormat); // devuelvo el número de días
+}
+function borrarLogs($path, $dias, $ext) // borra los logs a partir de una cantidad de días
+{
+    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    foreach ($files as $file) { // recorremos todos los ficheros.
+        $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
+        $currentTime      = time(); // obtenemos la fecha actual
+        $dateDiff         = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
+        ($dateDiff >= $dias) ? unlink($file) : ''; //elimino el fichero
+    }
 }

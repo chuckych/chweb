@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="TopN">
         <div class="modal-content">
             <div class="modal-header border-bottom-0 pb-0">
-                <p class="fw5 font1 nombre"></p>
+                <p class="font1 nombre"></p>
                 <p class="d-none d-sm-block align-middle mt-1 fontq">Fecha:<span class="mx-1 dia fw4 ls1"></span><br />Horario:<span class="mx-1 fw5 ls1" id="FicHorario"></span>
                     <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
                         <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-outline-custom border Citacion" id="Citacion">
@@ -27,7 +27,7 @@
                             <div class="col-12 col-md-8 col-lg-5">
                                 <div class="row">
                                     <div class="col-12 d-flex justify-content-center justify-content-sm-start">
-                                        <p class="m-0 my-2 text-secondary fontq fw5">Citación de Horario</p>
+                                        <p class="m-0 my-2 text-secondary fontq">Citación de Horario</p>
                                     </div>
                                     <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
                                         <label for="CitEntra" class="w80"><span class="pb-sm-1">Entrada</span></label>
@@ -107,7 +107,7 @@
                             <div class="tab-pane fade show active border border-top-0" id="Fichadas" role="tabpanel" aria-labelledby="Fichadas-tab">
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
-                                        <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTFic">Fichadas</span>
+                                        <span class="d-block d-lg-none fontq mb-1" id="xsTFic">Fichadas</span>
                                         <form action="insert.php" method="POST" class="Form_Fichadas d-none">
                                             <div class="form-inline mb-2"><label for="RegFech" class="mr-2 w80">Fecha:</label>
                                             <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada"></div>
@@ -128,7 +128,7 @@
                                                 <div class="respuesta_fichada_mod fontq text-secondary mx-2"></div>
                                             </div>
                                         </form>
-                                        <table class="font1 fw5 table table-sm w-auto text-nowrap table-responsive" id="GetFichadas">
+                                        <table class="font1 fw4 table table-sm w-auto text-nowrap table-responsive" id="GetFichadas">
                                             <thead class="border-bottom text-uppercase fontpp">
                                                 <th class=" ls1">Hora</th>
                                                 <th class=""></th>
@@ -147,7 +147,7 @@
                             <div class="tab-pane fade border border-top-0" id="Novedades" role="tabpanel" aria-labelledby="Novedades-tab">
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
-                                        <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTNov">Novedades</span>
+                                        <span class="d-block d-lg-none fontq mb-1" id="xsTNov">Novedades</span>
                                         <form action="insert.php" method="POST" class="Form_Novedad d-none">
                                             <input type="hidden" name="_nt" id="novTipo">
                                             <input type="hidden" name="_nc" id="novCate">
@@ -180,7 +180,7 @@
                                                 </div>
                                             </div>
                                         </form>
-                                        <table class="font1 fw5 table table-sm w-auto text-nowrap table-responsive" id="GetNovedades">
+                                        <table class="font1 table table-sm w-auto text-nowrap table-responsive" id="GetNovedades">
                                             <thead class="border-bottom text-uppercase fontpp">
                                                 <th title="Código de la novedad">#</th>
                                                 <th title="Descripción de la novedad">Novedad</th>
@@ -201,7 +201,7 @@
                             <div class="tab-pane fade border border-top-0" id="Horas" role="tabpanel" aria-labelledby="Horas-tab">
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
-                                        <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTHor">Horas</span>
+                                        <span class="d-block d-lg-none fontq mb-1" id="xsTHor">Horas</span>
                                         <form action="insert.php" method="POST" class="Form_Horas d-none">
                                             <div class="d-flex align-items-center mb-2">
                                                 <label for="Fic1Hora" class="mr-2 w80 d-none d-sm-block">Tipo Hora:</label>
@@ -238,7 +238,7 @@
                                         </div>
                                         <div id="ProgressHoras">
                                         </div>
-                                        <table class="font1 fw5 table table-sm w-auto text-nowrap table-responsive" id="GetHoras">
+                                        <table class="font1 table table-sm w-auto text-nowrap table-responsive" id="GetHoras">
                                             <thead class="border-bottom text-uppercase fontpp">
                                                 <th class="px-2">#</th>
                                                 <th class="px-2">Descripción</th>
@@ -257,7 +257,7 @@
                             <div class="tab-pane fade border border-top-0" id="OtrasNov" role="tabpanel" aria-labelledby="OtrasNov-tab">
                                 <div class="row m-0 overflow-auto" style="min-height:250px;">
                                     <div class="col-12 py-2 py-sm-3">
-                                        <span class="d-block d-lg-none fontq fw5 mb-1" id="xsTOnov">Otras Novedades</span>
+                                        <span class="d-block d-lg-none fontq mb-1" id="xsTOnov">Otras Novedades</span>
                                         <form action="insert.php" method="POST" class="Form_OtraNovedad d-none">
                                             <div class="d-flex align-items-center mb-2">
                                                 <!-- <label for="FicONov" class="mr-2 w80">Novedad:</label> -->
@@ -277,7 +277,7 @@
                                                 <div class="respuesta_OtrasNov fontq text-secondary mx-2"></div>
                                             </div>
                                         </form>
-                                        <table class="font1 fw5 table w-auto text-nowrap table-sm table-responsive" id="GetOtrasNov">
+                                        <table class="font1 table w-auto text-nowrap table-sm table-responsive" id="GetOtrasNov">
                                             <thead class="border-bottom text-uppercase fontpp">
                                                 <th class="px-2 text-center">#</th>
                                                 <th class="px-2">Novedad</th>
@@ -296,7 +296,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer bg-light border-top-0"><button type="button" class="btn btn-outline-custom fontq border float-right fw5" data-dismiss="modal" id="CierraModalGeneral">Cerrar</button></div>
+            <div class="modal-footer bg-light border-top-0"><button type="button" class="btn btn-custom fontq border float-right" data-dismiss="modal" id="CierraModalGeneral">Cerrar</button></div>
         </div>
     </div>
 </div>

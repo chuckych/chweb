@@ -87,7 +87,7 @@ if ($totalRecords > 0) {
         $data[] = array(
             'uid'           => '<span class="contentd '.$ColorEstado.'">' . $uid . '</span>',
             'recid'         => '<span class="contentd '.$ColorEstado.'">' . $recid . '</span>',
-            'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"'.$ColorEstado.'"><b class="contentd" '.$ColorEstado.'><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' .$listas. $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
+            'nombre'        => '<div class="contentd text-nowrap pt-2 text-secondary"'.$ColorEstado.'"><b class="contentd '.$ColorEstado.' "><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' .$listas. $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
             'usuario'       => '<span class="contentd '.$ColorEstado.'">'.$IconPerson  . $usuario . '</span>',
             'legajo'        => '<span class="contentd ls1 '.$ColorEstado.'">' . $legajo . '</span>',
             'rol_n'         => '<span class="contentd '.$ColorEstado.'">' . $rol_n . '</span>',

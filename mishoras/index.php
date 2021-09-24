@@ -4,6 +4,7 @@ require __DIR__ . '../../config/index.php';
 secure_auth_ch();
 $Modulo = '6';
 ExisteModRol($Modulo);
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetGeneral';
 $_datos = 'mishoras';
 $_SESSION['FechaMinMax'] = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));

@@ -167,7 +167,8 @@ function _Filtros() {
         (LegDe > LegHa) ? $('#LegDe').val(LegHa) : $('#LegDe').val(LegDe);
     }
     let SoloFic = $('#SoloFic').is(":checked") ? 1 : 0;
-    let Filtros = { 'LegDe': LegDe, 'LegHa': LegHa, 'SoloFic': SoloFic };
+    let SoloHCalc = $('#SoloHCalc').is(":checked") ? 1 : 0;
+    let Filtros = { 'LegDe': LegDe, 'LegHa': LegHa, 'SoloFic': SoloFic, 'SoloHCalc': SoloHCalc };
     return JSON.stringify(Filtros)
 }
 
@@ -180,6 +181,11 @@ $("._filtro").change(function (e) {
     e.preventDefault();
     _Filtros()
     ActualizaTablas2()
+});
+$("#SoloHCalc").change(function (e) {
+    e.preventDefault();
+    _Filtros()
+    ActualizaTablas()
 });
 
 let GetPersonal = $('#GetPersonal').DataTable({

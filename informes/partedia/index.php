@@ -4,6 +4,7 @@ require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
 $Modulo='21';
 ExisteModRol($Modulo);
+existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $bgcolor = 'bg-custom';
 define("TIPO_HOJA", [
     'A4'     => 'A4',

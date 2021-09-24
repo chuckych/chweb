@@ -14,6 +14,8 @@ $_POST['alta_liquidacion']  = $_POST['alta_liquidacion'] ?? '';
 /** GENERA LIQUIDACION */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'true')) {
 
+    pingWebService('Error al liquidar. Intentelo denuevo mas tarde');
+
     $SelEmpresa  = test_input(FusNuloPOST('SelEmpresa', ''));
     $SelPlanta   = test_input(FusNuloPOST('SelPlanta', ''));
     $SelSector   = test_input(FusNuloPOST('SelSector', ''));

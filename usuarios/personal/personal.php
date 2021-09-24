@@ -29,7 +29,7 @@ define("ident", $ident);
     <div class="container shadow">
         <?php require __DIR__ . '../../../nav.php'; ?>
         <?=
-            encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . nombre_c, '25', 'text-white mr-2');
+        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . nombre_c, '25', 'text-white mr-2');
         ?>
         <div class="mt-1">
             <div class="row mt-3">
@@ -106,7 +106,8 @@ define("ident", $ident);
     require __DIR__ . "../../../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
-    <script src="data-min.js?v=<?=vjs()?>"></script>
+    <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="data.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

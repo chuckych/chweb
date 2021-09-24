@@ -16,6 +16,7 @@ $FechaHora = date('Ymd H:i:s');
 $_POST['alta_novedad']  = $_POST['alta_novedad'] ?? '';
 /** ALTA NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) {
+    pingWebService('Error al ingresar Novedades. Intentelo denuevo mas tarde');
     function checkTipoNov($novCodi)
     {
         $params    = array();

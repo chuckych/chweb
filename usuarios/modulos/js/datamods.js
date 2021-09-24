@@ -7,8 +7,9 @@ $(document).ready(function () {
         return c.indexOf(a, b + 1) < 0
     });
 
-    var modulos = $('#modulos').DataTable({
+    let modulos = $('#modulos').DataTable({
         initComplete: function (settings, json) {
+            console.log(json.UniqueMod);
             $.each(json.UniqueMod, function (key, value2) {
                 if (value2.id > 0) {
                     $('#TipoMod').prepend('<option value="' + value2.id + '">' + value2.tipo + '</option>');
@@ -34,9 +35,9 @@ $(document).ready(function () {
         rowGroup: {
             dataSrc: ['tipo'],
             endRender: null,
-            startRender: function ( rows, group ) {
-                var TextRegistro = (rows.count()=='1') ? ' Módulo':' Módulos';
-                return group +' <span class="fontp text-secondary">( '+rows.count()+ TextRegistro +' )</span>';
+            startRender: function (rows, group) {
+                var TextRegistro = (rows.count() == '1') ? ' Módulo' : ' Módulos';
+                return group + ' <span class="fontp text-secondary">( ' + rows.count() + TextRegistro + ' )</span>';
             },
         },
         // iDisplayLength: -1,
@@ -137,11 +138,11 @@ $(document).ready(function () {
         $('#accion').val(2)
 
         var idmodulo = $(this).attr('data');
-        var modulo   = $(this).attr('data1');
-        var orden    = $(this).attr('data2');
-        var estado   = $(this).attr('data3');
-        var idtipo   = $(this).attr('data4');
-        var tipo     = $(this).attr('data5');
+        var modulo = $(this).attr('data1');
+        var orden = $(this).attr('data2');
+        var estado = $(this).attr('data3');
+        var idtipo = $(this).attr('data4');
+        var tipo = $(this).attr('data5');
 
         $('#IdMod').val(idmodulo)
         $('#NombreMod').val(modulo)
@@ -169,6 +170,8 @@ $(document).ready(function () {
             data: $(this).serialize(),
             beforeSend: function (data) {
                 ActiveBTN(true, '#Aceptar', 'Guardando', 'Aceptar');
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
             },
             success: function (data) {
                 if (data.status == "ok") {
@@ -177,6 +180,8 @@ $(document).ready(function () {
                     $('#respuesta').show()
                     $('#respuesta').html(data.dato)
                     ActiveBTN(false, '#Aceptar', 'Guardando', 'Aceptar');
+                    $.notifyClose();
+                    notify(data.Mensaje, 'success', 5000, 'right')
                     setTimeout(() => {
                         Refresh()
                         hideForm()
@@ -187,6 +192,8 @@ $(document).ready(function () {
                     ActiveBTN(false, '#Aceptar', 'Guardando', 'Aceptar');
                     $('#respuesta').show()
                     $('#respuesta').html(data.dato)
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
                 }
             }
         });
