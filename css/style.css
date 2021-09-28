@@ -40,7 +40,7 @@
  @font-face {
      font-family: 'Montserrat';
      font-style: normal !important;
-     font-weight: 500 !important;
+     font-weight: 600 !important;
      src: local('Montserrat'), local('Montserrat-Regular'), url(Montserrat/Montserrat-Regular.ttf);
  }
 
@@ -58,9 +58,9 @@
      padding: 0!important;
      font-family: 'Montserrat' !important;
      /* font-family: 'Montserrat', sans-serif!important; */
-     /* font-style: normal; */
-     /* font-weight: 500; */
-     /* font-display: swap; */
+     /* font-style: normal !important; */
+     /* font-weight: 400 !important; */
+     font-display: swap;
      /* -webkit-font-smoothing: antialiased!important; */
      /* background-color: #e6e6e6 !important; */
      /* background: linear-gradient(#cecece, #fff) !important; */
@@ -1524,8 +1524,8 @@
 
  [data-notify="container"] {
      font-size: .8rem !important;
-     font-weight: 500 !important;
      min-height: 60px !important;
      display: flex !important;
      align-items: center !important;
+     font-weight: 500 !important;
  }

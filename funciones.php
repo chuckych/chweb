@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.196'; // Version
+    return 'v0.0.197'; // Version
 }
 function E_ALL()
 {
@@ -2354,7 +2354,6 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
     curl_close($ch); // close curl handle
 }
-
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
     // PingWebServiceRRHH();

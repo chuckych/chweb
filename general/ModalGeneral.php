@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header border-bottom-0 pb-0">
                 <p class="font1 nombre"></p>
-                <p class="d-none d-sm-block align-middle mt-1 fontq">Fecha:<span class="mx-1 dia fw4 ls1"></span><br />Horario:<span class="mx-1 fw5 ls1" id="FicHorario"></span>
+                <p class="d-none d-sm-block align-middle mt-1 fontq"><span class="mx-1 dia fw4 ls1 float-right"></span><br /><span class="mx-1" id="FicHorario"></span>
                     <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
                         <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-outline-custom border Citacion" id="Citacion">
                         </button>
@@ -20,27 +20,19 @@
                 <input type="hidden" hidden id="Mxs">
                 <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
                     <form action="insert.php" method="POST" class="Form_Citacion">
-                        <div class="row d-none" id="rowCitacion">
+                        <div class="row d-none mt-2" id="rowCitacion">
                             <!-- <div class="col-lg-6 col-12"></div> -->
                             <div class="col-12 col-md-4 col-lg-7">
                             </div>
-                            <div class="col-12 col-md-8 col-lg-5">
-                                <div class="row">
-                                    <div class="col-12 d-flex justify-content-center justify-content-sm-start">
-                                        <p class="m-0 my-2 text-secondary fontq">Citación de Horario</p>
-                                    </div>
-                                    <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
-                                        <label for="CitEntra" class="w80"><span class="pb-sm-1">Entrada</span></label>
-                                        <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask h35" type="tel" autocomplete="off">
-                                    </div>
-                                    <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
-                                        <label for="CitSale" class="w80"><span class="pb-sm-1">Salida</span></label>
-                                        <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask h35" type="tel" autocomplete="off">
-                                    </div>
-                                    <div class="col-4 form-inline d-flex justify-content-center justify-content-sm-end align-items-center mt-2">
-                                        <label for="CitDesc" class="w80"><span class="pb-sm-1">Descanso</span></label>
-                                        <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask h35" type="tel" value="00:00" autocomplete="off">
-                                    </div>
+                            <div class="col-12 col-md-8 col-lg-5 d-flex justify-content-end">
+                                <div class="d-inline-flex align-items-center">
+                                    <p class="m-0 text-secondary fontq fw5 mr-2">Citación: </p>
+                                    <span for="CitEntra" class="mx-2 d-none d-sm-block"><span class="text-secondary fontq">Ent.</span></span>
+                                    <input placeholder="00:00" name="CitEntra" id="CitEntra" class="form-control w80 HoraMask" type="tel" autocomplete="off">
+                                    <span for="CitSale" class="mx-2 d-none d-sm-block"><span class="text-secondary fontq">Sal.</span></span>
+                                    <input placeholder="00:00" name="CitSale" id="CitSale" class="form-control w80 HoraMask ml-1" type="tel" autocomplete="off">
+                                    <span for="CitDesc" class="mx-2 d-none d-sm-block"><span class="text-secondary fontq">Desc.</span></span>
+                                    <input placeholder="00:00" name="CitDesc" id="CitDesc" class="form-control w80 HoraMask ml-1" type="tel" value="00:00" autocomplete="off">
                                 </div>
                             </div>
                             <div class="col-12">
@@ -110,7 +102,8 @@
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTFic">Fichadas</span>
                                         <form action="insert.php" method="POST" class="Form_Fichadas d-none">
                                             <div class="form-inline mb-2"><label for="RegFech" class="mr-2 w80">Fecha:</label>
-                                            <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada"></div>
+                                                <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada">
+                                            </div>
                                             <div class="form-inline mb-2"><input type="hidden" name="alta_fichada" class="" value="true"><input type="hidden" name="datos_fichada" class="datos_fichada" value=""><label for="RegHora" class="mr-2 w80">Hora:</label>
                                                 <input type="tel" placeholder="00:00" name="RegHora" id="RegHora" class="HoraMask h40 form-control RegHora w120 ls1">
                                                 <button type="submit" class="ml-sm-2 btn btn-sm btn-custom fontq submit_btn btn-mobile mt-2 mt-sm-0">Agregar</button><button type="button" class="float-right ml-sm-2 btn btn-sm btn-link border-0 text-secondary fontq cancelar_btn_fic btn-mobile mt-2 mt-sm-0">Cancelar</button>

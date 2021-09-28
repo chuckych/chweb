@@ -581,6 +581,27 @@ $(document).on("click", ".procReg", function (e) {
 $(".Filtros").on("click", function () {
     CheckSesion()
 });
+function getHorarioActual(legajo, fecha, HorFichas) {
+    $.ajax({
+        dataType: "json",
+        type: "POST",
+        url: "../op/horarios/getHorario.php",
+        'data': {
+            Legajo: legajo,
+            Fecha: fecha
+        },
+        success: function (data) {
+            if (data.status == "ok") {
+                $('#FicHorario').html(`<span class="">` + data.Mensaje + `</span>`)
+            } else {
+                $('#FicHorario').html(`<span class="">Horario: ` + HorFichas + `</span>`)
+            }
+        },
+        error: function (data) {
+            $('#FicHorario').html(`<span class=""> Horario: ` + HorFichas + `</span>`)
+        }
+    })
+}
 /** ABRIR MODAL */
 $(document).on("click", ".open-modal", function (e) {
     // CheckSesion()
@@ -617,8 +638,9 @@ $(document).on("click", ".open-modal", function (e) {
     var mNov = $(this).attr('data_mNov');
     var NumLega = Datos.split('-');
 
-    $("#NombreLega").val(Nombre);
+    $('#FicHorario').html(`<span class="">Horario: ` + Horario + `</span>`)
 
+    $("#NombreLega").val(Nombre);
 
     if (mFic == '1') {
         $("#Mxs").val('1')
@@ -772,26 +794,27 @@ $(document).on("click", ".open-modal", function (e) {
                 Datos: $('#data').val()
             },
             success: function (respuesta) {
+                getHorarioActual(NumLega[0], NumLega[1], respuesta.FicHorario) // div de horario #FicHorario
                 // const FicHsTr1 = respuesta.FicHsTr;
-                //$("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
-                // if (respuesta.FicDiaL == 1) {
-                //     $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
-                //     $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
-                //     $("#FicHsAT").html(respuesta.FicHsAT + 'Hs.');
-                //     $("#divHorasTR").removeClass("d-none");
-                // } else {
-                //     $("#FicHsAT").html("");
-                //     $("#TextFicHsAT").html('');
-                //     $("#divHorasTR").addClass("d-none");
-                // }
-                // if (respuesta.FicHsTr != "00:00") {
-                //     $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
-                //     $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
-                //     // $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
-                // } else {
-                //     $("#FicHsTr").html("");
-                //     $("#TextFicHsTr").html('');
-                // }
+                $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
+                if (respuesta.FicDiaL == 1) {
+                    $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
+                    $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
+                    $("#FicHsAT").html(respuesta.FicHsAT + 'Hs.');
+                    $("#divHorasTR").removeClass("d-none");
+                } else {
+                    $("#FicHsAT").html("");
+                    $("#TextFicHsAT").html('');
+                    $("#divHorasTR").addClass("d-none");
+                }
+                if (respuesta.FicHsTr != "00:00") {
+                    $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
+                    $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
+                    // $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
+                } else {
+                    $("#FicHsTr").html("");
+                    $("#TextFicHsTr").html('');
+                }
 
                 // $("#FicHorario").html(respuesta.FicHorario);
                 // if (respuesta.HorasNeg == 1) {
@@ -804,7 +827,7 @@ $(document).on("click", ".open-modal", function (e) {
             }
         });
     }
-    // refrescaFichas()
+    refrescaFichas()
     /** FIN GET FICHAS */
 
     /** GET CITACION */
@@ -837,10 +860,9 @@ $(document).on("click", ".open-modal", function (e) {
         });
         // });
     }
-
     // $(document).on('click', '.Citacion', function (e) {
     // });
-    // GetCitacion()
+    GetCitacion()
     /** FIN GET CITACION */
 
     $('#GetFichadas').DataTable({
@@ -924,96 +946,6 @@ $(document).on("click", ".open-modal", function (e) {
         },
     });
     $('#GetHoras').DataTable({
-        "drawCallback": function (settings) {
-            // console.log(settings.json);
-            $.each(settings.json, function (key, value) {
-                // console.log(key);
-                if (key == 'Horas') {
-                    (value.length > 0) ? $("#CantHor").html("(" + value.length + ")") : $("#CantHor").html("");
-                }
-                if (key == 'Fichas') {
-                    // console.log(value.Horario);
-                    // $("#FicHsTr").html(value.FicHsTr + 'Hs.');
-
-                    if (value.FicDiaL == 1) {
-                        $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
-                        $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
-                        $("#FicHsAT").html(value.FicHsAT + 'Hs.');
-                        $("#divHorasTR").removeClass("d-none");
-                    } else {
-                        $("#FicHsAT").html("");
-                        $("#TextFicHsAT").html('');
-                        $("#divHorasTR").addClass("d-none");
-                    }
-                    if (value.FicHsTr != "00:00") {
-                        $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
-                        $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
-                        $("#FicHsTr").html(value.FicHsTr + 'Hs.');
-                    } else {
-                        $("#FicHsTr").html("");
-                        $("#TextFicHsTr").html('');
-                    }
-                    $("#FicHorario").html(value.Horario);
-                    if (value.HorasNeg == 1) {
-                        $("#FicHsTr").addClass('text-danger');
-                    } else {
-                        $("#FicHsTr").removeClass('text-danger');
-                    }
-
-                    var Porcentaje = (value.FicHsTrMin / value.FicHsATMin) * 100
-                    var Porcentaje = Porcentaje.toFixed()
-                    var DatoFicha = value.DatoFicha
-
-                    var Max = (value.FicHsTrMin > value.FicHsATMin) ? value.FicHsTrMin : value.FicHsATMin
-                    // console.log(Porcentaje.toFixed());
-                    if (value.FicHsTrMin > 0 && value.FicHsTrMin <= value.FicHsATMin) {
-
-                        $('#ProgressHoras').html('<div class="pb-2">'
-                            + '<div class="progress border-0" style="height: 20px;">'
-                            + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsTr + '</div>'
-                            + '</div>'
-                            + '</div>')
-
-                        if (value.FicHsTrMin < value.FicHsATMin) {
-                            $("#" + DatoFicha).addClass('bg-danger');
-                            $("#" + DatoFicha).removeClass('bg-custom');
-                        } else {
-                            $("#" + DatoFicha).removeClass('bg-danger');
-                            $("#" + DatoFicha).addClass('bg-custom');
-                        }
-                    } else if (value.FicHsTrMin > value.FicHsATMin) {
-
-                        var Porcentaje = (value.FicHsATMin / value.FicHsTrMin) * 100
-                        var Porcentaje = Porcentaje.toFixed()
-                        var Porcentaje2 = (100 - Porcentaje) + 5
-                        // if (Porcentaje2 < 10) {
-                        //     var Max2 = (Max + 200)
-                        // }else{
-                        //     var Max2 = (Max)
-                        // }
-                        var Max2 = (Max)
-                        $('#ProgressHoras').html('<div class="pb-2">'
-                            + '<div class="progress" style="height: 20px;">'
-                            + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsAT + '</div>'
-                            + '<div class="progress-bar bg-info" role="progressbar" style="width: ' + Porcentaje2 + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max2 + '"></div>'
-                            + '</div>'
-                            + '</div>')
-
-                        if (value.FicHsTrMin < value.FicHsATMin) {
-                            $("#" + DatoFicha).addClass('bg-danger');
-                            $("#" + DatoFicha).removeClass('bg-custom');
-                        } else {
-                            $("#" + DatoFicha).removeClass('bg-danger');
-                            $("#" + DatoFicha).addClass('bg-custom');
-                        }
-
-                    } else {
-                        $('#ProgressHoras').html('')
-                    }
-
-                }
-            });
-        },
         bProcessing: true,
         deferRender: true,
         "ajax": {
@@ -1047,6 +979,87 @@ $(document).on("click", ".open-modal", function (e) {
         language: {
             "url": "../js/DataTableSpanish.json"
         },
+    });
+    // on draw gethoras
+    $('#GetHoras').on('draw.dt', function (e, settings) { // on table init
+        $.each(settings.json, function (key, value) { // inicio each
+            // console.log(key);
+            if (key == 'Horas') {
+                (value.length > 0) ? $("#CantHor").html("(" + value.length + ")") : $("#CantHor").html("");
+            }
+            if (key == 'Fichas') { // si es fichas
+                // if (value.FicDiaL == 1) {
+                //     $("#TextFicHsAT").html('<span class="text-dark d-none d-sm-block">Horas a Trabajar </span>');
+                //     $("#TextFicHsAT_M").html('<span class="text-dark d-block d-sm-none">A Trabajar </span>');
+                //     $("#FicHsAT").html(value.FicHsAT + 'Hs.');
+                //     $("#divHorasTR").removeClass("d-none");
+                // } else {
+                //     $("#FicHsAT").html("");
+                //     $("#TextFicHsAT").html('');
+                //     $("#divHorasTR").addClass("d-none");
+                // }
+                // if (value.FicHsTr != "00:00") {
+                //     $("#TextFicHsTr").html('<span class="text-dark d-none d-sm-block">Horas Trabajadas </span>');
+                //     $("#TextFicHsTr_M").html('<span class="text-dark d-block d-sm-none">Trabajadas </span>');
+                //     $("#FicHsTr").html(value.FicHsTr + 'Hs.');
+                // } else {
+                //     $("#FicHsTr").html("");
+                //     $("#TextFicHsTr").html('');
+                // }
+
+                // if (value.HorasNeg == 1) {
+                //     $("#FicHsTr").addClass('text-danger');
+                // } else {
+                //     $("#FicHsTr").removeClass('text-danger');
+                // }
+
+                var Porcentaje = (value.FicHsTrMin / value.FicHsATMin) * 100
+                var Porcentaje = Porcentaje.toFixed()
+                var DatoFicha = value.DatoFicha
+
+                var Max = (value.FicHsTrMin > value.FicHsATMin) ? value.FicHsTrMin : value.FicHsATMin
+                if (value.FicHsTrMin > 0 && value.FicHsTrMin <= value.FicHsATMin) {
+
+                    $('#ProgressHoras').html('<div class="pb-2">'
+                        + '<div class="progress border-0" style="height: 20px;">'
+                        + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsTr + '</div>'
+                        + '</div>'
+                        + '</div>')
+
+                    if (value.FicHsTrMin < value.FicHsATMin) {
+                        $("#" + DatoFicha).addClass('bg-danger');
+                        $("#" + DatoFicha).removeClass('bg-custom');
+                    } else {
+                        $("#" + DatoFicha).removeClass('bg-danger');
+                        $("#" + DatoFicha).addClass('bg-custom');
+                    }
+                } else if (value.FicHsTrMin > value.FicHsATMin) {
+
+                    var Porcentaje = (value.FicHsATMin / value.FicHsTrMin) * 100
+                    var Porcentaje = Porcentaje.toFixed()
+                    var Porcentaje2 = (100 - Porcentaje) + 5
+                    var Max2 = (Max)
+                    $('#ProgressHoras').html('<div class="pb-2">'
+                        + '<div class="progress" style="height: 20px;">'
+                        + '<div id="' + DatoFicha + '" class="progress-bar" role="progressbar" style="width: ' + Porcentaje + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max + '">' + value.FicHsAT + '</div>'
+                        + '<div class="progress-bar bg-info" role="progressbar" style="width: ' + Porcentaje2 + '%;" aria-valuenow="' + value.FicHsTrMin + '" aria-valuemin="0" aria-valuemax="' + Max2 + '"></div>'
+                        + '</div>'
+                        + '</div>')
+
+                    if (value.FicHsTrMin < value.FicHsATMin) {
+                        $("#" + DatoFicha).addClass('bg-danger');
+                        $("#" + DatoFicha).removeClass('bg-custom');
+                    } else {
+                        $("#" + DatoFicha).removeClass('bg-danger');
+                        $("#" + DatoFicha).addClass('bg-custom');
+                    }
+
+                } else {
+                    $('#ProgressHoras').html('')
+                }
+            }   // fin de fichas
+        }); // fin de each
+        return false;
     });
     $('#GetOtrasNov').DataTable({
         "drawCallback": function (settings) {
@@ -1423,8 +1436,8 @@ $(document).on("click", ".open-modal", function (e) {
         $('#GetOtrasNov').DataTable().ajax.reload(null, false);
         ActualizaTablas();
         GetCierre();
-        // refrescaFichas();
-        // GetCitacion();
+        refrescaFichas();
+        GetCitacion();
     };
     $('#RefreshModal').click(function (e) {
         // e.preventDefault();
@@ -1822,7 +1835,7 @@ $(document).on("click", ".open-modal", function (e) {
         var HoraDesc = $(this).attr('data2');
         var Datos = $(this).attr('data'); /** FicHora, FicFech, FicLega */
         bootbox.confirm({
-            message: '<span class="fonth fw5">Eliminar Hora</span><br><span class="fontq fw4">¿Confirma eliminar la Hora: ' + HoraDesc + 'Hs.?</span>',
+            message: '<span class="fonth fw5">Eliminar Hora</span><br><span class="fontq fw4">¿Confirma eliminar la Hora: ' + HoraDesc + ' ?</span>',
             // message: '',
             buttons: {
                 confirm: {
@@ -2167,6 +2180,7 @@ $('#Exportar').on('hidden.bs.modal', function (e) {
     atajosTeclado()
 });
 $('#modalGeneral').on('hidden.bs.modal', function () {
+    $("#bCit").hide()
     DestroyDataTablesModal();
     ClearFormFic();
     Modal_LG_XL('#TopN')

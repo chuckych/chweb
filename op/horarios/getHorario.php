@@ -11,8 +11,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
     pingWebService('Horario no disponible');
     
     $_POST['Legajo']  = $_POST['Legajo'] ?? '';
+    $_POST['Fecha']  = $_POST['Fecha'] ?? '';
     $Legajo = test_input($_POST['Legajo']);
-    $Fecha  = hoyStr();
+    $Fecha2 = test_input($_POST['Fecha']);
+    $Fecha = empty($Fecha2) ? hoyStr():$Fecha2;
 
     $getHorario = getHorario($Fecha, $Fecha, $Legajo, $Legajo, '0', '0', '0', '0', '0', '0', '0');
 
@@ -106,20 +108,21 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
         $Mensaje = (($getHorario['Estado'])) ? $tipo . ' (' . $vsHorario . ')' . $horariodesc : 'No hay Conexión';
 
         $data = array(
-            'legajo'     => intval($legajo),
-            'fecha'      => $fecha,
-            'desde'      => $desde,
-            'hasta'      => $hasta,
-            'descanso'   => $descanso,
-            'laboral'    => intval($laboral),
-            'diaLaboral' => ($diaLaboral),
-            'feriado'    => intval($feriado),
-            'diaFeriado' => ($diaFeriado),
+            'Mensaje'    => $Mensaje,
             'asignacion' => intval($asignacion),
-            'tipoAsign'  => ($tipo),
             'codigo'     => intval($codigo),
+            'descanso'   => $descanso,
+            'desde'      => $desde,
+            'diaFeriado' => ($diaFeriado),
+            'diaLaboral' => ($diaLaboral),
+            'fecha'      => $fecha,
+            'feriado'    => intval($feriado),
+            'hasta'      => $hasta,
             'horario'    => $horario['desc'],
-            'Mensaje'  => $Mensaje
+            'laboral'    => intval($laboral),
+            'legajo'     => intval($legajo),
+            'status'     => 'ok',
+            'tipoAsign'  => ($tipo),
         );
         echo json_encode($data);
         exit;

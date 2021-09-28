@@ -131,7 +131,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
             }
             echo json_encode($data);
@@ -152,7 +152,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
             }
             echo json_encode($data);
@@ -220,11 +220,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_fichada'] == 'true')
         audito_ch('B', $Dato);
         $RegFech0 = date("Ymd", strtotime($RegFech . "- 1 days"));
         $RegFech1 = date("Ymd", strtotime($RegFech . "+ 1 days"));
+        $RegFech1 = ($RegFech1 > date("Ymd")) ? date("Ymd") : $RegFech1;
         if (procesar_legajo($RegLega2, $RegFech0, $RegFech1) == 'Terminado') {
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -321,7 +322,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
                 PrintRespuestaJson('ok', $Dato2 . $Procesado);
                 exit;
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 PrintRespuestaJson('ok', $Dato2 . $Procesado);
                 exit;
             }
@@ -490,7 +491,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -606,7 +607,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod');
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -658,7 +659,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_novedad'] == 'true')
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -756,7 +757,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -807,7 +808,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Hora'] == 'true')) {
             $Procesado = " - Procesado.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -966,7 +967,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje));
         } else {
-            $Procesado = " - Sin procesar.";
+            $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
@@ -1298,7 +1299,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod');
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod');
             }
             echo json_encode($data);
@@ -1312,7 +1313,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'alta');
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'alta');
             }
             echo json_encode($data);
@@ -1371,7 +1372,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => 'Citación eliminada correctamente' . $Procesado, 'tipo' => 'alta');
             } else {
-                $Procesado = " - Sin procesar.";
+                $Procesado = " - <b>Sin procesar.</b>.";
                 $data = array('status' => 'ok', 'Mensaje' => 'Citación eliminada correctamente' . $Procesado, 'tipo' => 'alta');
             }
             echo json_encode($data);
