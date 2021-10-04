@@ -2,4 +2,4 @@
 $host = "localhost";
 $user = "root";
 $pw   = "";
-$db   = "chwebhrp";
+$db   = "chweb";

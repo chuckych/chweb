@@ -196,9 +196,9 @@
     require 'modal_Exportar.php';
     require __DIR__ . "../ModalGeneral.php";
     ?>
-    <script src="../js/bootbox.min.js"></script>
-    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="../js/bootbox.min.js"></script> 
+    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> 
+    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script> 
     <script src="../js/select2.min.js"></script>
     <script src="js/data-min.js?v=<?= vjs() ?>"></script>
     <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
@@ -206,7 +206,7 @@
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/export-min.js?v=<?= vjs() ?>"></script>
     <script>
-    $(document).ready(function(){ $.get('/<?=HOMEHOST ?>/status_ws.php',{ status: 'ws',}) .done(function(data){ $.notifyClose(); notify(data.Mensaje, 'info', 2000, 'right')});});z
+    $(document).ready(function(){ $.get('/<?=HOMEHOST ?>/status_ws.php',{ status: 'ws',}) .done(function(data){ $.notifyClose(); notify(data.Mensaje, 'info', 2000, 'right')});});
     </script>
 </body>
 

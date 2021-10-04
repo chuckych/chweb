@@ -54,43 +54,20 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	borrarLogs(__DIR__ . '../../logs/', 7, '.log');
 	borrarLogs(__DIR__ . '../../logs/error/', 7, '.log');
 
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 29 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('29', 'FFeVjsix', 'Informe Presentismo', 13, '0', 2)");
-	}
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 30 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('30', 'geD-wzy1', 'Datos', 10, '0', 3)");
-	}
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 31 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('31', '357ruc7a', 'Estructura', 11, '0', 3)");
-	}
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 32 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('32', 'm0b1l3Hr', 'Mobile HRP', 30, '0', 4)");
-	}
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 33 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('33', 'H0r4r10s', 'Horarios', 30, '0', 1)");
-	}
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM modulos where id = 34 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('34', '1nf0rf4r', 'Informe FAR', 14, '1', 2)");
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 0 LIMIT 1")) {
+		InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, '')");
+		fileLog("Se inserto el parametro: \"Version DB\"", __DIR__ . '/info/' . date('Ymd') . '_cambios_db.log'); // escribir en el log
 	}
 
-	$createParamsTable = InsertRegistroMySql("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
-	if ($createParamsTable) {
-		$selDataPresentes  = CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'presentes' and cliente = $row[id_cliente] LIMIT 1");
-		$selDataAusentes   = CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'ausentes' and cliente = $row[id_cliente] LIMIT 1");
-		(!$selDataPresentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'presentes', '', $row[id_cliente])") : '';
-		(!$selDataAusentes) ? InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'ausentes', '', $row[id_cliente])") : '';
-	}
-	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_roles` ( `id_rol` TINYINT(4) NOT NULL, `lista` ENUM('0','1','2','3','4','5') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci', `datos` TEXT NOT NULL COLLATE 'utf8mb4_bin', `fecha` DATETIME NOT NULL, PRIMARY KEY (`id_rol`, `lista`) USING BTREE, CONSTRAINT `FK_lista_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION ) COLLATE='utf8_general_ci' ENGINE=InnoDB");
+    $rs = mysqli_query($link, "SELECT valores FROM params WHERE modulo = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
+    $a  = mysqli_fetch_assoc($rs);
+	mysqli_free_result($rs);
 
-	InsertRegistroMySql("CREATE TABLE IF NOT EXISTS `lista_estruct` (`uid` INT(11) NOT NULL, `lista` ENUM('1','2','3','4','5','6','7','8') NOT NULL COLLATE 'utf8_general_ci', `datos` TEXT NOT NULL COLLATE 'utf8mb4_bin', `fecha` DATETIME NOT NULL, PRIMARY KEY (`uid`, `lista`) USING BTREE, CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION) COLLATE='utf8_general_ci' ENGINE=InnoDB");
+	$verDB = intval($a['valores']); // valor de la version de la DB mysql
 
-	InsertRegistroMySql("ALTER TABLE `usuarios` CHANGE COLUMN `recid` `recid` CHAR(8) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `usuario`");
+	require_once __DIR__ . './cambios.php'; // Cambios en la DB
 
-	$check_schema_abm_roles = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='abm_roles' AND COLUMN_NAME='aTur'";
-
-	if (!CountRegMayorCeroMySql($check_schema_abm_roles)) {
-		InsertRegistroMySql("ALTER TABLE `abm_roles` ADD COLUMN `aTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `bCit`, ADD COLUMN `mTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `aTur`, ADD COLUMN `bTur` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `mTur`");
-	}
+	$_SESSION['VER_DB_LOCAL'] = $verDB; // Version de la DB local
 
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
@@ -285,7 +262,7 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
     $_SESSION['DIA_ACTUAL']     = hoy();
     $_SESSION['VER_DB_CH']      = false;
     $_SESSION['CONECT_MSSQL']   = false;
-	// $_SESSION["HOST_NAME"]      = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();
 	mysqli_free_result($rs);

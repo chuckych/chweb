@@ -76,7 +76,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
                         // print_r($modulo);
                         foreach ($modulo[0] as $value) {
                             $modulo = $value;
-                            $query = "INSERT INTO mod_roles(recid_rol, modulo, fecha ) VALUES( '$recid_rol', '$modulo', '$fecha')";
+                            $query = "INSERT INTO mod_roles(id_rol,recid_rol, modulo, fecha ) VALUES( 1,'$recid_rol', '$modulo', '$fecha')";
                             $rs_insert = mysqli_query($link, $query);
                             // mysqli_error($link);
                         }

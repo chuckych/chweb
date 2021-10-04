@@ -110,7 +110,7 @@ $(document).ready(function () {
             "data": "nombre"
         },
         {
-            "class": "border-0 pb-2",
+            "class": "border-0 pb-2 text-nowrap",
             /** Col 03 */
             "data": "usuario"
         },

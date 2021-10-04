@@ -2,7 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.197'; // Version
+    return 'v0.0.198'; // Version
+}
+function verDBLocal()
+{
+    return 20210930; // Version
 }
 function E_ALL()
 {
@@ -289,6 +293,7 @@ function EscribirArchivo($nombre_archivo, $ruta_archivo, $texto, $date, $clear, 
 function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 {
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
 
     echo '
     <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
@@ -301,7 +306,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
             </div>
             <div class="w-100 d-inline-flex h30">
                 <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
-                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $VER_DB_CH . '">' . version() . '</div>
             </div>
         </div>
     </div>
@@ -1095,12 +1100,12 @@ function ExisteRol2($recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
-    $q = "SELECT roles.recid as recid, roles.nombre as nombre FROM roles WHERE roles.recid='$recid' LIMIT 1";
+    $q = "SELECT roles.recid as 'recid', roles.nombre as 'nombre', roles.id as 'id_rol' FROM roles WHERE roles.recid='$recid' LIMIT 1";
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
         while ($r = mysqli_fetch_assoc($rs)) :
-            $n = $r['nombre'];
+            $n = array($r['nombre'], $r['id_rol'], $r['recid']);
         endwhile;
         mysqli_free_result($rs);
         mysqli_close($link);

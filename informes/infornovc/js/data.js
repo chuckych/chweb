@@ -1,7 +1,6 @@
 $(function () {
     // var AnioMin = parseFloat($('#AnioMin').val());
     // var AnioMax = parseFloat($('#AnioMax').val());
-
     function _rutauser() {
         var _rutauser = $('#_homehost').val() + '_' + $('#_lega').val()
         return _rutauser

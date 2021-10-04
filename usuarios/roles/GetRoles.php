@@ -92,16 +92,17 @@ if ($totalRecords > 0) {
         $cant_empresas  = $row['cant_empresas'];
 
         $sum_cant = array(
-            $cant_roles,
-            $cant_modulos,
-            $cant_sectores,
-            $cant_grupos,
-            $cant_plantas,
-            $cant_sucur,
-            $cant_empresas,
-            $cant_convenios
+            // $cant_roles,
+            //$cant_modulos,
+            // $cant_sectores,
+            // $cant_grupos,
+            // $cant_plantas,
+            // $cant_sucur,
+            // $cant_empresas,
+            // $cant_convenios
         );
-
+        $ocultar = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'style="display: none;"':'';
+        
         $cant_roles ='<a title="Usuarios del Rol '.$nombre.'" href="/'.HOMEHOST.'/usuarios/?_c='.$recid_cliente.'&_rol='.$nombre.'" class="w70 fw5 border btn btn-outline-custom btn-sm fontp contentd">
         <span class="contentd">'.$cant_roles.'</span></a>';
         
@@ -142,12 +143,12 @@ if ($totalRecords > 0) {
             'cant_modulos'   => '<span class="contentd">'.$cant_modulos.'</span>',
             'listas'         => '<span class="contentd">'.$listas.'</span>',
             'abm_rol'        => '<span class="contentd">'.$abm_rol.'</span>',
-            'cant_sectores'  => '<span class="contentd">'.$cant_sectores.'</span>',
-            'cant_sucur'     => '<span class="contentd">'.$cant_sucur.'</span>',
-            'cant_grupos'    => '<span class="contentd">'.$cant_grupos.'</span>',
-            'cant_plantas'   => '<span class="contentd">'.$cant_plantas.'</span>',
-            'cant_empresas'  => '<span class="contentd">'.$cant_empresas.'</span>',
-            'cant_convenios' => '<span class="contentd">'.$cant_convenios.'</span>',
+            'cant_sectores'  => '<span class="contentd" '.$ocultar.'>'.$cant_sectores.'</span>',
+            'cant_sucur'     => '<span class="contentd" '.$ocultar.'>'.$cant_sucur.'</span>',
+            'cant_grupos'    => '<span class="contentd" '.$ocultar.'>'.$cant_grupos.'</span>',
+            'cant_plantas'   => '<span class="contentd" '.$ocultar.'>'.$cant_plantas.'</span>',
+            'cant_empresas'  => '<span class="contentd" '.$ocultar.'>'.$cant_empresas.'</span>',
+            'cant_convenios' => '<span class="contentd" '.$ocultar.'>'.$cant_convenios.'</span>',
             'fecha_alta'     => '<span class="contentd">'.$fecha_alta.'</span>',
             'fecha_mod'      => '<span class="contentd">'.$fecha_mod.'</span>',
             'edit_rol'       => '<span class="contentd">'.$edit_rol.$delete_rol.'</span>',

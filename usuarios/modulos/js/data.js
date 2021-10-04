@@ -124,7 +124,8 @@ $(document).ready(function () {
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),
                 data: $(this).serialize() +
-                    "&recidRol= " + getUrlParameter('_r'),
+                    "&recidRol= " + getUrlParameter('_r') +
+                    "&IdRol= " + $("#IdRol").val(),
                 dataType: "json",
                 beforeSend: function (data) {
                     ActiveBTN(true, idbtnsubmit, 'Aguarde..', 'Guardar')

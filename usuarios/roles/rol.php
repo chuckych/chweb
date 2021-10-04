@@ -8,6 +8,21 @@ $Cliente = ExisteCliente($_GET['_c']);
 <head>
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title>Roles</title>
+    <style>
+        .dtrg-level-0 {
+            background-color: #ffffff;
+            /* border-radius: 5px; */
+        }
+        .dtrg-level-0 td{
+            padding-bottom: 0px;
+            /* font-family: 'Montserrat-SemiBold'; */
+            /* font-weight: 300 !important; */
+            border-top: 1px solid #e3e3e3 !important;
+        }
+        td{
+            border: 0px solid #e3e3e3 !important;
+        }
+    </style>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -31,7 +46,8 @@ $Cliente = ExisteCliente($_GET['_c']);
         </div>
         <div class="row mt-2">
             <div class="col-12 mt-2 table-responsive" style="display: none;">
-                <table class="table w-100 text-wrap" id="GetRoles">
+            <?php $classSKF = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'w-auto text-nowrap':'w-100 text-wrap';?>
+                <table class="table border p-2 <?=$classSKF?>" id="GetRoles">
                     <thead class="text-uppercase">
                         <tr>
                             <th>id</th>
@@ -44,18 +60,18 @@ $Cliente = ExisteCliente($_GET['_c']);
                             <th>modulos</th>
                             <th>Listas</th>
                             <th>abm</th>
-                            <th>empresas</th>
-                            <th>plantas</th>
-                            <th>convenios</th>
-                            <th>sectores</th>
-                            <th>grupos</th>
-                            <th>sucursal</th>
+                            <?php $ocultar = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'style="display: none;"':'';?>
+                                <th><span <?=$ocultar ?> >empresas</span></th>
+                                <th><span <?=$ocultar ?> >plantas</span></th>
+                                <th><span <?=$ocultar ?> >convenios</span></th>
+                                <th><span <?=$ocultar ?> >sectores</span></th>
+                                <th><span <?=$ocultar ?> >grupos</span></th>
+                                <th><span <?=$ocultar ?> >sucursal</span></th>
                             <th>fecha_alta</th>
                             <th>fecha_mod</th>
                             <th></th>
                         </tr>
                     </thead>
-                    <!-- <tbody> -->
                     <?php
                     // if (modulo_cuentas() != '1') {
                     //     $data_rol = array_filter($data_rol, function ($e) {
@@ -63,7 +79,6 @@ $Cliente = ExisteCliente($_GET['_c']);
                     //     });
                     // }
                     ?>
-                    <!-- </tbody> -->
                 </table>
             </div>
         </div>

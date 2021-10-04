@@ -47,6 +47,10 @@ $(function () {
             },
             {
                 "visible": false,
+                "targets": 3
+            },
+            {
+                "visible": false,
                 "targets": 4
             },
             {
@@ -62,9 +66,9 @@ $(function () {
                 "targets": 17
             },
         ],
-        // rowGroup: {
-        //     dataSrc: ['nombre']
-        // },
+        rowGroup: {
+            dataSrc: ['nombre']
+        },
         bProcessing: true,
         serverSide: true,
         deferRender: true,
@@ -98,7 +102,7 @@ $(function () {
                 "data": "recid_cliente"
             },
             {
-                "class": "w-100",
+                "class": "",
                 /** Col 03 */
                 "data": "nombre"
             },
@@ -173,7 +177,7 @@ $(function () {
                 "data": "fecha_mod"
             },
             {
-                "class": "",
+                "class": "text-nowrap",
                 /** Col 18 */
                 "data": "edit_rol"
             },

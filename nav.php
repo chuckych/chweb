@@ -8,7 +8,11 @@
 <input type="hidden" hidden id="_sesion" value="0">
 <!-- <input type="" id="" value="<?=$_SESSION['ConvRol']?>"> -->
 <?php
-$_SERVER['REQUEST_URI']=$_SERVER['REQUEST_URI']??'';
+$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
+if ($_SESSION['VER_DB_LOCAL'] != verDBLocal()) {
+	session_destroy();
+    header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login si la version de la base de datos es distinta a la version del servidor
+}
 ?>
 <input type="hidden" hidden id="_referer" value="<?=urlencode($_SERVER['REQUEST_URI'])?>">
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white row d-flex align-items-center" style="z-index:1040;">

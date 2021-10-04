@@ -23,7 +23,7 @@ $Rol     = ExisteRol2($_GET['_r'])
         <div class="row pl-1 py-3">
             <div class="col-12 col-sm-6">
                 <div class="form-inline">
-                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $Rol ?></span>
+                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $Rol['0'] ?></span>
                 </div>
                 <div class="form-inline">
                     <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $Cliente ?></span>
@@ -52,8 +52,9 @@ $Rol     = ExisteRol2($_GET['_r'])
             <form action="../roles/insert.php" method="POST" class="form_abm_rol w-100">
                 <div class="row m-1 d-none" id="RowModulos">
                     <div class="col-12 fonth mt-2 fw4 bg-light py-2 mb-2">Permisos</div>
-                    <input type="hidden" id="RecidRol" name="RecidRol" value="<?= $_GET['_r'] ?>">
+                    <input type="hidden" id="RecidRol" name="RecidRol" value="<?= $Rol['2'] ?>">
                     <input type="hidden" id="act_abm" name="act_abm" value="true">
+                    <input type="hidden" id="IdRol" name="IdRol" value="<?= $Rol['1'] ?>">
                     <div class="col-12">
                         <span class="fontq btn btn-link p-0 text-gris" id="marcar">Marcar Todo</span>
                         <span class="ml-2 fontq btn btn-link p-0 text-gris" id="desmarcar">Desmarcar</span>
