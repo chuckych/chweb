@@ -81,25 +81,25 @@ if ($verDB < 20210102) {
     InsertRegistroMySql("ALTER TABLE `suc_roles` CHANGE COLUMN `id_rol` `id_rol` TINYINT(4) NOT NULL AFTER `id`"); // 29/09/2021
     fileLog("Se cambiaron los campos de la tabla \"suc_roles\"", $pathLog); // escribir en el log
 
-    InsertRegistroMySql("ALTER TABLE `abm_roles` ADD CONSTRAINT `FK_abm_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `abm_roles` ADD CONSTRAINT `FK_abm_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"abm_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `mod_roles` ADD CONSTRAINT `FK_mod_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `mod_roles` ADD CONSTRAINT `FK_mod_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"mod_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `conv_roles` ADD CONSTRAINT `FK_conv_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `conv_roles` ADD CONSTRAINT `FK_conv_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"conv_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `emp_roles` ADD CONSTRAINT `FK_emp_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `emp_roles` ADD CONSTRAINT `FK_emp_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"emp_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `grup_roles` ADD CONSTRAINT `FK_grup_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `grup_roles` ADD CONSTRAINT `FK_grup_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"grup_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `plan_roles` ADD CONSTRAINT `FK_plan_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `plan_roles` ADD CONSTRAINT `FK_plan_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"plan_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `secc_roles` ADD CONSTRAINT `FK_secc_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `secc_roles` ADD CONSTRAINT `FK_secc_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"secc_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `sect_roles` ADD CONSTRAINT `FK_sect_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `sect_roles` ADD CONSTRAINT `FK_sect_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"sect_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `suc_roles` ADD CONSTRAINT `FK_suc_roles_roles` FOREIGN KEY  IF NOT EXISTS (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `suc_roles` ADD CONSTRAINT `FK_suc_roles_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"suc_roles\"", $pathLog); // escribir en el log
-    InsertRegistroMySql("ALTER TABLE `usuarios` ADD CONSTRAINT `FK_usuario_roles` FOREIGN KEY  IF NOT EXISTS (`rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION"); // 29/09/2021
+    InsertRegistroMySql("ALTER TABLE `usuarios` ADD CONSTRAINT `FK_usuario_roles` FOREIGN KEY (`rol`) REFERENCES `roles` (`id`) ON UPDATE NO ACTION"); // 29/09/2021
     fileLog("Se agregaron las claves foraneas a la tabla \"usuarios\"", $pathLog); // escribir en el log
     
     $verDB  = verDBLocal(); // nueva version de la DB
