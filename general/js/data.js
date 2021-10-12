@@ -330,11 +330,11 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
             },
             columns: [
                 {
-                    "class": "align-middle",
+                    "class": "pr-2 pl-2 align-middle",
                     "data": "modal"
                 },
                 {
-                    "class": "align-middle",
+                    "class": "pl-0 align-middle",
                     "data": "FechaDia"
                 },
                 {
@@ -342,7 +342,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
                     "data": "Gen_Horario"
                 },
                 {
-                    "class": "ls1 text-center fw4 align-middle",
+                    "class": "text-center fw4 align-middle",
                     "data": "Primera"
                 },
                 {
@@ -513,36 +513,36 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             },
             columns: [
                 {
-                    "class": "align-middle",
+                    "class": "pr-2 pl-2 align-middle",
                     "data": "modal"
                 },
                 {
-                    "class": "align-middle",
+                    "class": "pl-0 align-middle",
                     "data": "LegNombre"
                 },
                 {
-                    "class": "text-nowrap ls1 align-middle",
+                    "class": "text-nowrap align-middle",
                     "data": "Gen_Horario"
                 },
                 {
-                    "class": "ls1 text-center fw4 align-middle",
+                    "class": "text-center align-middle",
                     "data": "Primera"
                 },
                 {
                     "class": "align-middle",
                     "data": "DescHoras"
                 }, {
-                    "class": "text-center fw4 ls1 align-middle",
+                    "class": "text-center align-middle",
                     "data": "HsAuto"
                 }, {
-                    "class": "text-center ls1 align-middle",
+                    "class": "text-center align-middle",
                     "data": "HsCalc"
                 }, {
                     "class": "align-middle",
                     "data": "Novedades"
                 },
                 {
-                    "class": "text-center fw4 ls1 align-middle",
+                    "class": "text-center align-middle",
                     "data": "NovHor"
                 },
             ],

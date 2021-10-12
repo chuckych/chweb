@@ -79,7 +79,7 @@
                 <button type="button" class="btn btn-outline-custom border fontq Exportar ml-1" data-toggle="modal" data-target="#Exportar">
                     Reporte
                 </button>
-                <span id="trash_all" title="Limpiar Filtros" class="mx-2 invisible bi bi-trash fontq text-secondary pointer"></span>
+                <span id="trash_all" data-titler="Limpiar Filtros" class="mx-2 invisible bi bi-trash fontq text-secondary pointer"></span>
                 <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
                     <input type="checkbox" class="custom-control-input" id="Visualizar">
                     <label class="custom-control-label" for="Visualizar" style="padding-top: 3px;">
@@ -87,9 +87,9 @@
                         <span id="VerPorM"></span>
                     </label>
                 </div>
-                <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
+                <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center" data-titler='Activo : Solo días laborales; Inactivo: Todos'>
                     <input type="checkbox" class="custom-control-input" id="FicDiaL">
-                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;" title="Al desactivar muestra días laborales, francos y feriados. Al estar activo solo días laborales">
+                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;" >
                         <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
                         <span class="text-dark d-block d-lg-none">Laboral</span>
                     </label>
@@ -97,8 +97,8 @@
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                    <input type="text" readonly class="mx-1 form-control text-center w250 ls2 h40" name="_dr" id="_dr">
-                    <button title="Actualizar Grilla" type="button" id="Refresh" disabled class="btn border-0 float-right bg-custom text-white opa8">
+                    <span data-titlel="Filtrar Fechas"><input type="text" readonly class="mr-1 form-control text-center w250 ls1 h40" name="_dr" id="_dr"></span>
+                    <button data-titlel="Actualizar Grilla" type="button" id="Refresh" disabled class="btn float-right btn-custom">
                         <i class="bi bi-arrow-repeat"></i>
                     </button>
                 </div>
@@ -200,7 +200,7 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> 
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script> 
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?v=<?= vjs() ?>"></script>
     <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>

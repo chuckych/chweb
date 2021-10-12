@@ -16,7 +16,8 @@ $FechaHora = date('Ymd H:i:s');
 $_POST['alta_novedad']  = $_POST['alta_novedad'] ?? '';
 /** ALTA NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) {
-    pingWebService('Error al ingresar Novedades. Intentelo denuevo mas tarde');
+    //pingWebService('Error al ingresar Novedades. Intentelo denuevo mas tarde');
+
     function checkTipoNov($novCodi)
     {
         $params    = array();
@@ -39,16 +40,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         require __DIR__ . '../../config/conect_mssql.php';
         $stmt  = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt))
-        $rows[] = array(
-            'Legajo' => $row['Legajo'],
-            'Nombre' => $row['Nombre'],
-            'Fecha'  => $row['Fecha']->format('d/m/Y'),
-            'Count'  => $row['Fichada'],
-        );
+            $rows[] = array(
+                'Legajo' => $row['Legajo'],
+                'Nombre' => $row['Nombre'],
+                'Fecha'  => $row['Fecha']->format('d/m/Y'),
+                'Count'  => $row['Fichada'],
+            );
         return $rows;
         sqlsrv_free_stmt($stmt);
         sqlsrv_close($link);
     }
+
     $tipoNov = checkTipoNov(FusNuloPOST('aFicNove', ''));
     $TipoIngreso  = FusNuloPOST('TipoIngreso', '');
     if ((valida_campo(test_input($TipoIngreso)))) {
@@ -70,9 +72,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     }
 
     $DateRange = explode(' al ', $_POST['_draddNov']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
-    if ((($FechaIni) > ($FechaFin))) {
+    $FechaIni  = intval(test_input(dr_fecha($DateRange[0])));
+    $FechaFin  = intval(test_input(dr_fecha($DateRange[1])));
+    $start  = (test_input(dr_fecha($DateRange[0])));
+    $end  = (test_input(dr_fecha($DateRange[1])));
+
+    if (($FechaIni) > ($FechaFin)) {
         $data = array('status' => 'error', 'Mensaje' => 'Rango de Fecha Incorrecto.');
         echo json_encode($data);
         exit;
@@ -97,15 +102,40 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     $aSucur = !empty($_POST['aSucur']) ? $_POST['aSucur'] : '0';
     $Legajos = !empty($_POST['legajos']) ? $_POST['legajos'] : '0';
 
-    $queryFiltro = ($aTipo == '0') ? "":" AND P.LegTipo = $aTipo";
-    $queryFiltro .= ($aEmp == '0') ? "":" AND P.LegEmpr = $aEmp";
-    $queryFiltro .= ($aPlan == '0') ? "":" AND P.LegPlan = $aPlan";
-    $queryFiltro .= ($aSect == '0') ? "":" AND P.LegSect = $aSect";
-    $queryFiltro .= ($aSec2 == '0') ? "":" AND P.LegSec2 = $aSec2";
-    $queryFiltro .= ($aGrup == '0') ? "":" AND P.LegGrup = $aGrup";
-    $queryFiltro .= ($aSucur == '0') ? "":" AND P.LegSucu = $aSucur";
-    $queryFiltro .= ($TipoIngreso != '1') ? "":" AND R.RegLega BETWEEN '1' AND '99999999'";
-    $queryFiltro .= ($TipoIngreso == '1') ? "":" AND R.RegLega IN ($Legajos)";
+    /** Chequear Fecha Cierre */
+
+    // $CierreFech = (arrayQueryDataMS("SELECT CierreFech, CierreLega FROM PERCIERRE WHERE PERCIERRE.CierreLega IN ($Legajos)"));
+    // $ParCierr = simpleQueryDataMS("SELECT TOP 1 ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi");
+
+    // $ParCierr = intval($ParCierr['ParCierr']->format('Ymd'));
+
+    // foreach ($CierreFech as $v) {
+    //     $arrCierre[] = array($v['CierreLega'], $v['CierreFech']->format('Ymd'));
+    // }
+
+    // $arrFecha = ArrayFechas($start, $end);
+
+    // foreach ($arrCierre as $key => $c) {
+    //     foreach ($arrFecha as $key => $f) {
+    //         if ($c[1] < $f) {
+    //             $arrFechas[] = array('Fecha'=>FechaFormatVar($f, 'Y-m-d'), 'Valor'=>$c[0]);
+    //         }
+    //     }
+    // }
+
+    // var_export($arrFechas);
+    // exit;
+     /** Fin Chequear Fecha Cierre */
+      
+    $queryFiltro = ($aTipo == '0') ? "" : " AND P.LegTipo = $aTipo";
+    $queryFiltro .= ($aEmp == '0') ? "" : " AND P.LegEmpr = $aEmp";
+    $queryFiltro .= ($aPlan == '0') ? "" : " AND P.LegPlan = $aPlan";
+    $queryFiltro .= ($aSect == '0') ? "" : " AND P.LegSect = $aSect";
+    $queryFiltro .= ($aSec2 == '0') ? "" : " AND P.LegSec2 = $aSec2";
+    $queryFiltro .= ($aGrup == '0') ? "" : " AND P.LegGrup = $aGrup";
+    $queryFiltro .= ($aSucur == '0') ? "" : " AND P.LegSucu = $aSucur";
+    $queryFiltro .= ($TipoIngreso != '1') ? "" : " AND R.RegLega BETWEEN '1' AND '99999999'";
+    $queryFiltro .= ($TipoIngreso == '1') ? "" : " AND R.RegLega IN ($Legajos)";
     $queryFiltro .= " AND R.RegFeAs BETWEEN '$FechaIni' AND '$FechaFin'";
 
     $queryPresentes = "SELECT COUNT(R.RegHoRe) AS 'Fichada', R.RegFeAs AS 'Fecha', R.RegLega AS 'Legajo', P.LegApNo AS 'Nombre', P.LegTipo AS 'Tipo', P.LegEmpr AS 'Empresa', P.LegPlan AS 'Planta', P.LegSect AS 'Sector', P.LegSec2 AS 'Seccion', P.LegGrup AS 'Grupo', P.LegSucu AS 'Sucursal' 
@@ -177,33 +207,33 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         }
 
         // foreach ($_POST['legajo'] as $key => $value) {
-            // $legajo = $value;
-            $arrLega = str_replace(',',';', $Legajos);
-            $procesando = IngresarNovedad($aTipo. ',Legajos=['.$arrLega.']', '1', '99999999', $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
-            /** Envio a webservice */
-            if (($procesando) == 'Terminado') {
-                //$mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
-                //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-                //audito_ch2("A", 'Alta Novedad Legajos ' . $legajo . '. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
-                audito_ch2("A", 'Alta Novedad ('.$aFicNove.') Legajos varios. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
-            } else {
-                $mensaje = 'Error No Enviado';
-                //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
-                $data = array('status' => 'error', 'Mensaje' => $mensaje);
-                echo json_encode($data);
-                exit;
-            };
+        // $legajo = $value;
+        $arrLega = str_replace(',', ';', $Legajos);
+        $procesando = IngresarNovedad($aTipo . ',Legajos=[' . $arrLega . ']', '1', '99999999', $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
+        /** Envio a webservice */
+        if (($procesando) == 'Terminado') {
+            //$mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
+            //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
+            //audito_ch2("A", 'Alta Novedad Legajos ' . $legajo . '. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+            audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos varios. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+        } else {
+            $mensaje = 'Error No Enviado';
+            //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
+            $data = array('status' => 'error', 'Mensaje' => $mensaje);
+            echo json_encode($data);
+            exit;
+        };
         // }
 
     } else {
-        
+
         /** Si el tipo de ingreso es 1 (por Filtros) */
         $procesando = IngresarNovedad($aTipo, '1', '99999999', $FechaIni, $FechaFin, $aEmp, $aPlan, $aSucur, $aGrup, $aSect, $aSec2, $aLaboral, $aFicNove, $aFicJust, $aFicObse, $aFicHoras, $aCaus, $aFicCate);
         // $count=$count++; 
         if (($procesando) == 'Terminado') {
             //$mensaje = '(' . $count++ . ') Fin de Ingreso NOVEDAD ' . $DescNovedad . '. <br>Desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-            audito_ch2("A", 'Alta Novedad ('.$aFicNove.') Legajos. ' . $DataFiltros . 'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+            audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos. ' . $DataFiltros . 'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
         } else {
             $mensaje = 'Error No Enviado';
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
@@ -218,7 +248,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     BorrarArchivosPDF('../novedades/logs/*.log');
     /** Borra los archivos log */
     $presentes = array();
-    if ($tipoNov>2) {
+    if ($tipoNov > 2) {
         // header("Content-Type: application/json");
         $presentes = checkPresentes($queryPresentes);
     }
@@ -226,7 +256,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     $data = array('status' => 'ok', 'Mensaje' => 'Fin de Ingreso de Novedades', 'log' => 'Ingreso_' . $microtime . '.log', 'Errores' => ($presentes), 'ErrorTotal' => count($presentes));
     echo json_encode($data);
     exit;
-
 } else {
     $data = array('status' => 'error', 'Mensaje' => 'ErrorPOST');
     echo json_encode($data);

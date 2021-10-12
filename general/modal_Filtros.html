@@ -12,18 +12,16 @@
                             </select>
                         </div>
                         <div class="d-flex align-items-center">
-                            <div
-                                class="custom-control custom-switch custom-control-inline ml-2 ml-sm-3 d-flex align-items-center">
+                            <div class="custom-control custom-switch custom-control-inline ml-2 ml-sm-3 d-flex align-items-center">
                                 <input type="checkbox" class="custom-control-input" id="VisualizarFiltro">
                                 <label class="custom-control-label" for="VisualizarFiltro" style="padding-top: 3px;">
                                     <span class="text-dark d-none d-lg-block">Por Fecha</span>
                                     <span class="text-dark d-block d-lg-none">Fecha</span>
                                 </label>
                             </div>
-                            <div class="custom-control custom-switch custom-control-inline d-flex align-items-center">
+                            <div class="custom-control custom-switch custom-control-inline d-flex align-items-center" data-titler="Activo : Solo días laborales; Inactivo: Todos">
                                 <input type="checkbox" class="custom-control-input" id="FicDiaLFiltro">
-                                <label class="custom-control-label" for="FicDiaLFiltro" style="padding-top: 3px;"
-                                    title="Al desactivar muestra días laborales, francos y feriados. Al estar activo solo días laborales">
+                                <label class="custom-control-label" for="FicDiaLFiltro" style="padding-top: 3px;">
                                     <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
                                     <span class="text-dark d-block d-lg-none">Laboral</span>
                                 </label>
@@ -37,7 +35,7 @@
                                     name="_drFiltro" id="_drFiltro">
                             </div>
                             <span class="trash align-middle pb-0 float-right" id="trash_allIn"
-                                title="Limpiar Filtros">
+                                data-titlel="Limpiar Filtros">
                                 <span class="d-none d-lg-block">Limpiar Filtros</span>
                                 <span class="d-block d-lg-none">Limpiar</span>
                             </span>
@@ -103,8 +101,8 @@
                                 <input autocomplete="off" type="tel"
                                     class="h40 form-control text-center text-secondary MaskLega _filtro _filtroLegDeHa" id="LegHa"
                                     name="LegHa" placeholder="Hasta" value="">
-                                <i title="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq"
-                                    id="trashDeHa"></i>
+                                <span data-titler="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq"
+                                    id="trashDeHa"></span>
                             </div>
                         </div>
                     </div>
@@ -179,7 +177,7 @@
                                 <span class="text-dark">Solo Fichadas</span>
                             </label>
                         </div>
-                        <div class="custom-control custom-switch custom-control-inline ml-1" title="Mostrar solo Horas calculadas mayor a 00:00">
+                        <div class="custom-control custom-switch custom-control-inline ml-1" data-titler="Mostrar solo Horas calculadas mayor a 00:00">
                             <input type="checkbox" class="custom-control-input" id="SoloHCalc" checked>
                             <label class="custom-control-label" for="SoloHCalc" style="padding-top: 3px;">
                                 <span class="text-dark">Solo Horas Calculadas</span>

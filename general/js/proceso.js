@@ -592,27 +592,26 @@ function getHorarioActual(legajo, fecha, HorFichas) {
         },
         success: function (data) {
             if (data.status == "ok") {
-                $('#FicHorario').html(`<span class="">` + data.Mensaje + `</span>`)
+                $('#FicHorario').html('<span class="animate__animated animate__fadeIn">'+data.Mensaje+'</span>')
             } else {
-                $('#FicHorario').html(`<span class="">Horario: ` + HorFichas + `</span>`)
+                $('#FicHorario').html('<span class="">Horario: '+HorFichas+'</span>')
             }
         },
         error: function (data) {
-            $('#FicHorario').html(`<span class=""> Horario: ` + HorFichas + `</span>`)
+            $('#FicHorario').html('<span class="">Horario: '+HorFichas+'</span>')
         }
     })
 }
 /** ABRIR MODAL */
 $(document).on("click", ".open-modal", function (e) {
-    // CheckSesion()
     e.preventDefault();
+    $('#modalGeneral').modal('show');
+    // $('#modalGeneral').on('shown.bs.modal', function () {
     $(document).off('keydown');
     CheckSesion()
-    // setTimeout(function () {
-    // if ($('#_sesion').val()==0) {
-
-    $('#modalGeneral').modal('show');
+    $.notifyClose();
     $('#modalGeneral').modal('handleUpdate')
+
 
     $('.navbar').addClass('mr-0');
     $('#Fichadas-tab').tab('show');
@@ -638,7 +637,7 @@ $(document).on("click", ".open-modal", function (e) {
     var mNov = $(this).attr('data_mNov');
     var NumLega = Datos.split('-');
 
-    $('#FicHorario').html(`<span class="">Horario: ` + Horario + `</span>`)
+    $('#FicHorario').html(`Horario: ` + Horario)
 
     $("#NombreLega").val(Nombre);
 
@@ -693,10 +692,11 @@ $(document).on("click", ".open-modal", function (e) {
 
     $('#data').val(Datos);
 
-    $(".nombre").html(Nombre + "<br /><span class='text-secondary fonth fw4'>Legajo: <span class='ls1'>" + NumLega[0] + "</span></span>");
+    $(".nombre").html(Nombre);
     $(".NumLega").html(NumLega[0]);
+    $(".legajo").html('Legajo: ' + NumLega[0]);
     $(".fecha").html(Fecha);
-    $(".dia").html(Dia);
+    $(".dia").html('<span class="ls1">' + Dia + '</span>');
     // $(".horario").html(Horario);
     $(".datos_fichada").val(Datos);
     $(".datos_novedad").val(Datos);
@@ -759,14 +759,15 @@ $(document).on("click", ".open-modal", function (e) {
             },
             success: function (respuesta) {
                 if (respuesta.status == 'ok') {
-                    $("#FechCierre").html('<br /> Fecha Cierre: <span class="ls1 fw5">' + respuesta.dato + '</span>');
+                    $("#FechCierre").html('Cierre: <span class="ls1 fw5 ml-1">' + respuesta.dato + '</span>');
                     $("#AddHora").prop('disabled', true)
                     $("#AddONov").prop('disabled', true)
                     $("#AddFic").prop('disabled', true)
                     $("#AddNov").prop('disabled', true)
                     $(".mod_Fic").prop('disabled', true);
+                    $("#FicHorario").addClass('mt-1')
                     $("#Citacion").prop("disabled", true);
-                    $("#Citacion").addClass('d-none');
+                    $("#Citacion").hide();
                 } else {
                     $("#FechCierre").html('');
                     // $("#FechCierre").addClass('d-none');
@@ -774,6 +775,9 @@ $(document).on("click", ".open-modal", function (e) {
                     $("#AddONov").prop('disabled', false)
                     $("#AddFic").prop('disabled', false)
                     $("#AddNov").prop('disabled', false)
+                    $("#Citacion").prop("disabled", false);
+                    $("#Citacion").show();
+                    $("#FicHorario").removeClass('mt-1')
                 }
 
             },
@@ -2167,6 +2171,7 @@ $(document).on("click", ".open-modal", function (e) {
     });
     // }
     // }, 200);
+    // });
 });
 // });
 /** CIERRA MODAL */
@@ -2243,4 +2248,7 @@ $('#modalGeneral').on('hidden.bs.modal', function () {
     $('.navbar').removeClass('mr-0');
     $("#nav-tab").show()
     atajosTeclado()
+    $("#Citacion").prop("disabled", true);
+    $("#Citacion").hide();
+    $("#FicHorario").removeClass('mt-1')
 });

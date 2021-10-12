@@ -38,13 +38,13 @@ while ($row = sqlsrv_fetch_array($result)) :
     $NovFechStr = $row['FicFech']->format('Ymd');
 
     if($percierre){
-        $editar='<a title="Editar Novedad:'.$row['Descrip'].'" href="#TopN"
+        $editar='<a data-titler="Editar Novedad:'.$row['Descrip'].'" href="#TopN"
         class="bi bi-pen btn btn-sm btn-link text-decoration-none '.$disabled.'" </a>';
-        $eliminar = '<a title="Eliminar Novedad: '.$row['Descrip'].'" 
+        $eliminar = '<a data-titler="Eliminar Novedad: '.$row['Descrip'].'" 
         class="bi bi-trash btn btn-sm btn-link text-decoration-none '.$disabled.'"></a>';
     }else{
         $disabled = '';
-        $editar= '<a title="Editar Novedad: '.$row['Descrip'].'" href="#TopN"
+        $editar= '<a data-titler="Editar Novedad: '.$row['Descrip'].'" href="#TopN"
         class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_ONov text-gris" 
         data="'.$row['FicONov'].'-'.$NovFechStr.'-'.$FicLega.'"
         data1="'.$row['Descrip'].'"
@@ -52,7 +52,7 @@ while ($row = sqlsrv_fetch_array($result)) :
         data3="'.$row['FicValor'].'"
         data4="'.$row['FicONov'].'"
         </a>';
-        $eliminar = '<a title="Eliminar Novedad: '.$row['Descrip'].'"
+        $eliminar = '<a data-titler="Eliminar Novedad: '.$row['Descrip'].'"
         data="'.$row['FicONov'].'-'.$NovFechStr.'-'.$FicLega.'"
         data2="'.$row['Descrip'].'" 
         class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_ONov"></a>';

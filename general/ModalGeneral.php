@@ -1,22 +1,29 @@
 <div id="modalGeneral" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" tabindex="-1" style="padding-right:0px">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="TopN">
         <div class="modal-content">
-            <div class="modal-header border-bottom-0 pb-0">
-                <p class="font1 nombre"></p>
-                <p class="d-none d-sm-block align-middle mt-1 fontq"><span class="mx-1 dia fw4 ls1 float-right"></span><br /><span class="mx-1" id="FicHorario"></span>
-                    <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
-                        <button title="Editar Horario" class="bi bi-pen btn btn-sm btn-outline-custom border Citacion" id="Citacion">
-                        </button>
-                    <?php } ?>
-                    <?php if ($_SESSION['ABM_ROL']['bCit'] == 1) { ?>
-                        <button title="Eliminar Citación" class="bi bi-trash btn btn-sm btn-outline-custom border" id="bCit" style="display: none;">
-                        </button>
-                    <?php } ?>
-                    <span class="fontq" id="FechCierre"></span>
-                </p>
+            <div class="modal-header border-bottom-0 d-flex justify-content-between" style="color: #333333;">
+                <section>
+                    <div class="font1 nombre fw5"></div>
+                    <div class="fontq legajo"></div>
+                </section>
+                <section class="fontq d-none d-sm-block">
+                    <div class="d-flex justify-content-end"><span class="mx-1 dia fw5"></span><span class="fontq d-flex justify-content-end" id="FechCierre"></span></div>
+                    <div class="d-inline-flex align-items-center">
+                        <div class="d-flex justify-content-end w500 mt-1" id="FicHorario"></div>
+                        <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
+                            <button data-titlel="Citar Horario" class="bi bi-pen btn btn-link fontq Citacion pointer pr-0" id="Citacion" style="display: none;">
+                            </button>
+                        <?php } ?>
+                        <?php if ($_SESSION['ABM_ROL']['bCit'] == 1) { ?>
+                            <button data-titlel="Eliminar Citación" class="bi bi-trash btn btn-link fontq pl-2 pr-0 pointer" id="bCit" style="display: none;">
+                            </button>
+                        <?php } ?>
+
+                    </div>
+                </section>
             </div>
             <input type="hidden" name="" id="data">
-            <div class="modal-body fw4 pt-0 mt-n3">
+            <div class="modal-body pt-0 mt-n3">
                 <input type="hidden" hidden id="Mxs">
                 <?php if ($_SESSION['ABM_ROL']['aCit'] == 1) { ?>
                     <form action="insert.php" method="POST" class="Form_Citacion">
@@ -49,21 +56,22 @@
                 <?php } ?>
                 <div class="row bg-white py-2" id="Navs">
                     <div class="col-12 d-none d-sm-block">
-                        <button class="btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="RefreshModal">Actualizar</button>
+                        <button class="btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="RefreshModal" data-titlel="Actualizar Grilla">Actualizar</button>
                         <?php if ($_SESSION['ABM_ROL']['Proc'] == 1) { ?>
-                            <button class="mr-2 btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="ProcesarLegajo">Procesar</button>
+                            <button class="mr-2 btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="ProcesarLegajo" data-titlel="Procesar Legajo y Fecha">Procesar</button>
                         <?php } ?>
                     </div>
                     <div class="col-12 pb-3">
                         <nav class="fontq">
                             <div class="nav nav-tabs bg-light radius" id="nav-tab" role="tablist">
                                 <a class="p-3 nav-item nav-link active text-dark" id="Fichadas-tab" data-toggle="tab" href="#Fichadas" role="tab" aria-controls="Fichadas" aria-selected="true">
-                                    <span class="text-tab d-inline-flex">
+                                    <span class="text-tab d-inline-flex align-items-center">
                                         <span class="d-none d-lg-block">Fichadas</span>
                                         <span class="d-block d-lg-none">Fich</span>
                                         <span class="ml-1 ls1 fw3" id="CantFic"></span>
                                         <?php if ($_SESSION['ABM_ROL']['aFic'] == 1) { ?>
-                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0" type="button" id="AddFic">+</button>
+                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0 border border" type="button" id="AddFic" data-titler="Alta Fichada">+</button>
+                                            <!-- <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0 border" type="button" id="AddHora" data-titler="Alta Hora">+</button> -->
                                         <?php } ?>
                                     </span></a>
                                 <a class="p-3 nav-item nav-link text-dark" id="Novedades-tab" data-toggle="tab" href="#Novedades" role="tab" aria-controls="Novedades" aria-selected="true">
@@ -72,7 +80,7 @@
                                         <span class="d-block d-lg-none">Nov</span>
                                         <span class="ml-1 ls1 fw3" id="CantNov"></span>
                                         <?php if ($_SESSION['ABM_ROL']['aNov'] == 1) { ?>
-                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0" type="button" id="AddNov">+</button>
+                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0 border" type="button" id="AddNov" data-titler="Alta Novedad">+</button>
                                         <?php } ?>
                                     </span></a>
                                 <a class="p-3 nav-item nav-link text-dark" id="Horas-tab" data-toggle="tab" href="#Horas" role="tab" aria-controls="Horas" aria-selected="true">
@@ -81,7 +89,7 @@
                                         <span class="d-block d-lg-none">Hs.</span>
                                         <span class="ml-1 ls1 fw3" id="CantHor"></span>
                                         <?php if ($_SESSION['ABM_ROL']['aHor'] == 1) { ?>
-                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0" type="button" id="AddHora">+</button>
+                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0 border" type="button" id="AddHora" data-titler="Alta Hora">+</button>
                                         <?php } ?>
                                     </span></a>
                                 <a class="p-3 nav-item nav-link text-dark" id="OtrasNov-tab" data-toggle="tab" href="#OtrasNov" role="tab" aria-controls="OtrasNov" aria-selected="true">
@@ -90,7 +98,7 @@
                                         <span class="d-block d-lg-none">O Nov.</span>
                                         <span class="ml-1 ls1 fw3" id="CantONov"></span>
                                         <?php if ($_SESSION['ABM_ROL']['aONov'] == 1) { ?>
-                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0" type="button" id="AddONov">+</button>
+                                            <button class="btn btn-light btn-sm p-0 px-2 ml-2 m-0 border" type="button" id="AddONov" data-titler="Alta Otra Novedad">+</button>
                                         <?php } ?>
                                     </span></a>
                             </div>

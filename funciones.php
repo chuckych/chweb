@@ -2,11 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.199'; // Version
+    return 'v0.0.200'; // Version
 }
 function verDBLocal()
 {
-    return 20210930; // Version
+    return 20211006; // Version
 }
 function E_ALL()
 {
@@ -294,6 +294,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 {
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
+    $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
     echo '
     <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
@@ -306,7 +307,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
             </div>
             <div class="w-100 d-inline-flex h30">
                 <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
-                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $VER_DB_CH . '">' . version() . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $VER_DB_CH . ' - Version DB Local: ' . $VER_DB_LOCAL . '">' . version() . '</div>
             </div>
         </div>
     </div>
@@ -349,7 +350,8 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
 </span>';
     }
     if ($countModRol != '1') {
-        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
+        // $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
+        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
     }
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
@@ -1492,14 +1494,14 @@ function color_fichada($array)
         switch ($valor['Tipo']) {
             case 'Manual':
                 $fichada = array(
-                    'Fic'    => '<span class="text-primary fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic'    => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo'   => $valor['Tipo']
                 );
                 break;
             default:
                 $fichada = array(
-                    'Fic'    => '<span class="fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic'    => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo'   => $valor['Tipo']
                 );
@@ -1508,7 +1510,7 @@ function color_fichada($array)
         switch ($valor['Estado']) {
             case 'Modificada':
                 $fichada = array(
-                    'Fic'    => '<span class="text-danger fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
+                    'Fic'    => '<span class="text-danger fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo'   => $valor['Tipo']
                 );
@@ -1523,14 +1525,14 @@ function color_fichada3($array)
         switch ($valor['Tipo']) {
             case 'Manual':
                 $fichada = array(
-                    'Fic'    => '<span class="text-primary fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic'    => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo'   => $valor['Tipo']
                 );
                 break;
             default:
                 $fichada = array(
-                    'Fic'    => '<span class="fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic'    => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
                     'Tipo'   => $valor['Tipo']
                 );
@@ -1554,22 +1556,22 @@ function color_Fichada2($tipo, $estado, $hora)
 
     switch ($tipo) {
         case 'Manual':
-            $fichada = '<span class="text-primary" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada = '<span class="text-primary" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
         default:
-            $fichada =  '<span class="text-dark fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada =  '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
     }
     switch ($estado) {
         case 'Modificada':
-            $fichada = '<span class="text-danger fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '" >' . $hora . '</span>';
+            $fichada = '<span class="text-danger fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '" >' . $hora . '</span>';
             break;
         default:
-            $fichada =  '<span class="text-dark fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada =  '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
     }
     if ($tipo == 'Manual' && $estado == 'Normal') {
-        $fichada = '<span class="text-primary fw5" title="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+        $fichada = '<span class="text-primary fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
     }
 
     return $fichada;
@@ -1668,8 +1670,8 @@ function audito_ch($AudTipo, $AudDato)
     // $AudTerm   = gethostname();
     $AudTerm   = $ipCliente;
     $AudModu   = 21;
-    $FechaHora = date('Ymd H:i:s');
-    $AudFech   = date('Ymd');
+    $FechaHora = fechaHora();
+    $AudFech   = fechaHora();
     $AudHora   = date('H:i:s');
 
     $procedure_params = array(
@@ -1729,13 +1731,18 @@ function audito_ch2($AudTipo, $AudDato)
     $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
     // $AudTerm   = gethostname();
     $AudTerm   = $ipCliente . '-' . recid2(4);
+    $AudTerm   = $ipCliente;
     $AudModu   = 21;
-    $FechaHora = date('Ymd H:i:s');
+    // $FechaHora = date('Ymd H:i:s.u');
     $AudFech   = date('Ymd');
     $AudHora   = date('H:i:s');
+    // $now = DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
+    // $local = $now->setTimeZone(new DateTimeZone('America/Argentina/Buenos_Aires'));
+    // $FechaHora = $local->format("Y-m-d H:i:s.u");
+    $FechaHora = fechaHora();
 
     $procedure_params = array(
-        array(&$AudFech),
+        array(&$FechaHora),
         array(&$AudHora),
         array(&$AudUser),
         array(&$AudTerm),
@@ -1751,7 +1758,9 @@ function audito_ch2($AudTipo, $AudDato)
     if (!$stmt) {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
-                // $dataAud = array("auditor" => "error", "dato" => $error['message']);
+                $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQueryMS.log';
+                fileLog($_SERVER['REQUEST_URI'] . "\n" . sqlsrv_errors($link), $pathLog); // escribir en el log
+                return false;
             }
         }
     }
@@ -1765,7 +1774,10 @@ function audito_ch2($AudTipo, $AudDato)
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $dataAud[] = array("auditor" => "error", "dato" => $mensaje[3]);
+                $dataAud[] = array("auditor" => "error", "dato" => 'Error Auditor');
+                $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQueryMS.log';
+                fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje[3], $pathLog); // escribir en el log
+                return false;
             }
         }
 
@@ -1987,15 +1999,72 @@ function CountRegMayorCeroMySql($query)
     // print_r($query); exit;
     if ($stmt) {
         if (mysqli_num_rows($stmt) > 0) {
+            mysqli_free_result($stmt);
             return true;
         } else {
+            mysqli_free_result($stmt);
             return false;
         }
-        mysqli_free_result($stmt);
-        mysqli_close($link);
     } else {
-        mysqli_close($link);
-        exit;
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_count.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+    }
+}
+function checkKey($fk, $table)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    // $check_schema = "SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$db' AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = $fk";
+    $check_schema = "SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = '$table' AND CONSTRAINT_NAME = '$fk' AND TABLE_SCHEMA = '$db'";
+    $stmt = mysqli_query($link, $check_schema);
+    // print_r($query); exit;
+    if ($stmt) {
+        if (mysqli_num_rows($stmt) > 0) {
+            mysqli_free_result($stmt);
+            return true;
+        } else {
+            mysqli_free_result($stmt);
+            return false;
+        }
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_fk.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . $check_schema . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+    }
+}
+function checkColumn($table, $col)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $check_schema = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table' AND COLUMN_NAME='$col'";
+    $stmt = mysqli_query($link, $check_schema);
+    // print_r($query); exit;
+    if ($stmt) {
+        if (mysqli_num_rows($stmt) > 0) {
+            mysqli_free_result($stmt);
+            return true;
+        } else {
+            mysqli_free_result($stmt);
+            return false;
+        }
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_col.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+    }
+}
+function checkTable($table)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $check_schema = "SELECT distinct(TABLE_NAME) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table'";
+    $stmt = mysqli_query($link, $check_schema);
+    if ($stmt) {
+        if (mysqli_num_rows($stmt) > 0) {
+            mysqli_free_result($stmt);
+            return true;
+        } else {
+            mysqli_free_result($stmt);
+            return false;
+        }
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_table.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
     }
 }
 function CountModRol()
@@ -2023,6 +2092,88 @@ function InsertRegistroMySql($query)
         statusData('error', mysqli_error($link));
         mysqli_close($link);
         exit;
+    }
+}
+function simpleQuery($query, $link)
+{
+    $stmt = mysqli_query($link, $query);
+    if ($stmt) {
+        return true;
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
+    }
+}
+function simpleQueryData($query, $link)
+{
+    $stmt = mysqli_query($link, $query);
+    if ($stmt) {
+        if (mysqli_num_rows($stmt) > 0) {
+            $a  = mysqli_fetch_assoc($stmt);
+            mysqli_free_result($stmt);
+            return $a;
+        } else {
+            return false;
+        }
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
+    }
+}
+function simpleQueryDataMS($query)
+{
+    require __DIR__ . './config/conect_mssql.php';
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    if ($stmt) {
+        $a  = sqlsrv_fetch_array($stmt);
+        sqlsrv_free_stmt($stmt);
+        return $a;
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
+    }
+}
+function arrayQueryDataMS($query)
+{
+    require __DIR__ . './config/conect_mssql.php';
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    if ($stmt) {
+        while ($a  = sqlsrv_fetch_array($stmt)) {
+            $data[] = $a;
+        }
+        sqlsrv_free_stmt($stmt);
+        return $data;
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
+    }
+}
+function arrayQueryData($query, $link)
+{
+    $stmt = mysqli_query($link, $query);
+    if ($stmt) {
+        if (mysqli_num_rows($stmt) > 0) {
+            while ($a = mysqli_fetch_assoc($stmt)) {
+                $array[] = $a;
+            }
+            // $a = mysqli_fetch_assoc($stmt);
+            mysqli_free_result($stmt);
+            return $array;
+        } else {
+            return false;
+        }
+    } else {
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
 }
 function UpdateRegistroMySql($query)
@@ -2079,23 +2230,38 @@ function dataListaEstruct($lista, $uid)
 {
     require __DIR__ . '/config/conect_mysql.php';
     $stmt = mysqli_query($link, "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'");
-    // print_r($query); exit;
-    if (($stmt)) {
+
+    if ($stmt) {
         if (mysqli_num_rows($stmt) > 0) {
             while ($row = mysqli_fetch_assoc($stmt)) {
                 return array($row['datos']);
             }
+            mysqli_free_result($stmt);
         } else {
             return array('-');
         }
-
-        mysqli_free_result($stmt);
-        mysqli_close($link);
     } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
+        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
+    // print_r($query); exit;
+    // if (($stmt)) {
+    //     if (mysqli_num_rows($stmt) > 0) {
+    //         while ($row = mysqli_fetch_assoc($stmt)) {
+    //             return array($row['datos']);
+    //         }
+    //     } else {
+    //         return array('-');
+    //     }
+
+    //     mysqli_free_result($stmt);
+    //     mysqli_close($link);
+    // } else {
+    //     statusData('error', mysqli_error($link));
+    //     mysqli_close($link);
+    //     exit;
+    // }
 }
 /** Fin Query MYSQL */
 /**Query MS-SQL */
@@ -2252,7 +2418,7 @@ function PerCierre($FechaStr, $Legajo)
     }
     $perCierre = !empty($perCierre) ? $perCierre : '17530101';
     sqlsrv_free_stmt($stmt);
-    if ($FechaStr <= $perCierre) {
+    if (intval($FechaStr) <= intval($perCierre)) {
         return true;
     } else {
         $query = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
@@ -2262,7 +2428,7 @@ function PerCierre($FechaStr, $Legajo)
         }
         $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
-        if ($FechaStr <= $ParCierr) {
+        if (intval($FechaStr) <= intval($ParCierr)) {
             return true;
         } else {
             return false;
@@ -2359,41 +2525,60 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
     curl_close($ch); // close curl handle
 }
+function pingWS() // Funcion para validar que el Webservice de Control Horario esta disponible
+{
+    $url = rutaWebService("Ping?");
+    $ch = curl_init(); // Inicializar el objeto curl
+    curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // The number of seconds to wait while trying to connect
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    $response   = curl_exec($ch); // extract information from response
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
+        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    }
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
+    //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
+    return ($http_code == 201) ? true : false; // escribir en el log
+    curl_close($ch); // close curl handle
+}
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
-    // PingWebServiceRRHH();
-    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
-    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
-    $ruta = rutaWebService("Procesar");
-    $post_data = "{Usuario=Supervisor,TipoDePersonal=0,LegajoDesde='$legajo',LegajoHasta='$legajo',FechaDesde='$FechaDesde',FechaHasta='$FechaHasta',Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $ruta);
-    curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $respuesta = curl_exec($ch);
-    $curl_errno = curl_errno($ch);
-    $curl_error = curl_error($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ($curl_errno > 0) {
-        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        return "Error";
-        exit;
-    }
-    curl_close($ch);
-    if ($httpCode == 404) {
-        fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        return $respuesta;
-        exit;
-    }
-    $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("Estado?ProcesoId=" . $processID);
+    if (pingWS()) {
+        $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
+        $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
+        $ruta = rutaWebService("Procesar");
+        $post_data = "{Usuario=Supervisor,TipoDePersonal=0,LegajoDesde='$legajo',LegajoHasta='$legajo',FechaDesde='$FechaDesde',FechaHasta='$FechaHasta',Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $ruta);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $respuesta = curl_exec($ch);
+        $curl_errno = curl_errno($ch);
+        $curl_error = curl_error($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if ($curl_errno > 0) {
+            $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+            fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            return "Error";
+            exit;
+        }
+        curl_close($ch);
+        if ($httpCode == 404) {
+            fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            return $respuesta;
+            exit;
+        }
+        $processID = respuestaWebService($respuesta);
+        $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
-    if ($httpCode == 201) {
-        // usleep(1000000); /** un segundo */
-        // sleep(2);
-        return EstadoProceso($url);
+        if ($httpCode == 201) {
+            return EstadoProceso($url);
+        }
     }
 }
 function procesar_lega($legajo, $FechaDesde, $FechaHasta)
@@ -3090,4 +3275,10 @@ function borrarLogs($path, $dias, $ext) // borra los logs a partir de una cantid
         $dateDiff         = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
         ($dateDiff >= $dias) ? unlink($file) : ''; //elimino el fichero
     }
+}
+function fechaHora()
+{
+    $t = explode(" ", microtime());
+    $t = date("Ymd H:i:s", $t[1]) . substr((string)$t[0], 1, 4);
+    return $t;
 }

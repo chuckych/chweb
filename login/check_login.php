@@ -19,8 +19,14 @@ function login_logs($var)
 	}
 	$sql = "INSERT INTO login_logs (usuario,uid,estado,rol,cliente,ip,agent,fechahora)
 	VALUES('$_POST[user]','$uid','$var','$rol','$cliente','$ip','$agent','$fechahora')";
-	$rs = mysqli_query($link, $sql);
-	return $rs;
+	$stmt = mysqli_query($link, $sql);
+	if ($stmt) {
+		return true;
+	} else {
+		$pathLog = __DIR__ . '../../logs/error/' . date('Ymd') . '_auditoLogin.log';
+		fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+		return false;
+	}
 	mysqli_close($link);
 }
 
@@ -43,26 +49,28 @@ $user = test_input($user);
 $sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario='$user' AND usuarios.estado='0' LIMIT 1";
 
 // print_r($sql); exit;
-$rs       = mysqli_query($link, $sql);
-$NumRows  = mysqli_num_rows($rs);
-$row      = mysqli_fetch_assoc($rs);
-$hash     = $row['clave'];
-// print_r($sql); exit;
+// $rs       = mysqli_query($link, $sql);
+// $NumRows  = mysqli_num_rows($rs);
+// $row      = mysqli_fetch_assoc($rs);
+$row = simpleQueryData($sql, $link); // obtener los datos del usuario 
+// $hash = $row['clave']; // obtener la clave del usuario
+// print_r($row); exit;
 /** Si es correcto */
-if (($NumRows > '0') && (password_verify($pass, $hash))) {
+if (($row) && (password_verify($pass, $row['clave']))) { // password_verify($pass, $hash)
 
 	borrarLogs(__DIR__ . '../../logs/', 7, '.log');
 	borrarLogs(__DIR__ . '../../logs/error/', 7, '.log');
 
-	if (!CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 0 LIMIT 1")) {
-		InsertRegistroMySql("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, '')");
-		fileLog("Se inserto el parametro: \"Version DB\"", __DIR__ . '/info/' . date('Ymd') . '_cambios_db.log'); // escribir en el log
+	$pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
+
+	if (!CountRegMayorCeroMySql("SELECT 1 FROM params WHERE modulo = 0 LIMIT 1")) { // si no existe el registro en la tabla params
+		simpleQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, 0)", $link);
+		fileLog("Se inserto el parametro: \"Ver DB\"", $pathLog); // escribir en el log
+	} else { // Si existe el registro
+		//fileLog("El parametro: \"Ver DB\" ya existe", $pathLog); // escribir en el log
 	}
 
-    $rs = mysqli_query($link, "SELECT valores FROM params WHERE modulo = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
-    $a  = mysqli_fetch_assoc($rs);
-	mysqli_free_result($rs);
-
+	$a = simpleQueryData("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1", $link); // Traigo el valor de la version de la DB mysql
 	$verDB = intval($a['valores']); // valor de la version de la DB mysql
 
 	require_once __DIR__ . './cambios.php'; // Cambios en la DB
@@ -72,7 +80,6 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
-
 	function sesionListas($id_rol, $lista, $nombreSesion)
 	{
 		$dataLista = dataLista($lista, $id_rol);
@@ -85,57 +92,20 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	sesionListas($row['id_rol'], 4, 'ListaRotaciones'); // Sesion lista de rotaciones
 	sesionListas($row['id_rol'], 5, 'ListaTipoHora'); // Sesion lista de tipos de horas
 
-	$query = "SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1";
-	$result = mysqli_query($link, $query);
-	// print_r($query); exit;
-	$ABMRol = array();
-	if (mysqli_num_rows($result) > 0) {
-		while ($rowabm = mysqli_fetch_assoc($result)) :
+	$abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
+	$ABMRol = array(); // Array de permisos del rol
 
-			$aFic  = $rowabm['aFic'];
-			$mFic  = $rowabm['mFic'];
-			$bFic  = $rowabm['bFic'];
-			$aNov  = $rowabm['aNov'];
-			$mNov  = $rowabm['mNov'];
-			$bNov  = $rowabm['bNov'];
-			$aHor  = $rowabm['aHor'];
-			$mHor  = $rowabm['mHor'];
-			$bHor  = $rowabm['bHor'];
-			$aONov = $rowabm['aONov'];
-			$mONov = $rowabm['mONov'];
-			$bONov = $rowabm['bONov'];
-			$Proc  = $rowabm['Proc'];
-			$aCit  = $rowabm['aCit'];
-			$mCit  = $rowabm['mCit'];
-			$bCit  = $rowabm['bCit'];
-			$aTur  = $rowabm['aTur'];
-			$mTur  = $rowabm['mTur'];
-			$bTur  = $rowabm['bTur'];
-
-			$ABMRol = array('aFic'  => $aFic, 'mFic'  => $mFic, 'bFic'  => $bFic, 'aNov'  => $aNov, 'mNov'  => $mNov, 'bNov'  => $bNov, 'aHor'  => $aHor, 'mHor'  => $mHor, 'bHor'  => $bHor, 'aONov' => $aONov, 'mONov' => $mONov, 'bONov' => $bONov, 'Proc'  => $Proc, 'aCit'  => $aCit, 'mCit'  => $mCit, 'bCit'  => $bCit, 'aTur'  => $aTur, 'mTur'  => $mTur, 'bTur'  => $bTur,);
-
-		endwhile;
-	} else {
+	if ($abm) { // Si hay permisos
+		$ABMRol = array('aFic' => $abm['aFic'], 'mFic'  => $abm['mFic'], 'bFic'  => $abm['bFic'], 'aNov'  => $abm['aNov'], 'mNov'  => $abm['mNov'], 'bNov'  => $abm['bNov'], 'aHor'  => $abm['aHor'], 'mHor'  => $abm['mHor'], 'bHor'  => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc'  => $abm['Proc'], 'aCit'  => $abm['aCit'], 'mCit'  => $abm['mCit'], 'bCit'  =>  $abm['bCit'], 'aTur'  => $abm['aTur'], 'mTur'  => $abm['mTur'], 'bTur'  => $abm['bTur']);
+	} else { // Si no hay permisos
 		$ABMRol = array('aFic'  => '0', 'mFic'  => '0', 'bFic'  => '0', 'aNov'  => '0', 'mNov'  => '0', 'bNov'  => '0', 'aHor'  => '0', 'mHor'  => '0', 'bHor'  => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc'  => '0', 'aCit'  => '0', 'mCit'  => '0', 'bCit'  => '0', 'aTur'  => '0', 'mTur'  => '0', 'bTur'  => '0');
 	}
-	mysqli_free_result($result);
 
 	$query = "SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]'";
-	$result = mysqli_query($link, $query);
-	// $data=array();
-	while ($rows = mysqli_fetch_assoc($result)) :
-		$modsrol = $rows['modsrol'];
-		$data_mod[] = array(
-			'modsrol' => $modsrol
-		);
-	endwhile;
-	mysqli_free_result($result);
-	/** 
-	 * 
-	 */
+	$data_mod = arrayQueryData($query, $link); // Traigo los módulos asociados al rol
 
-	$_SESSION["MODS_ROL"] = $data_mod;
-	$_SESSION["ABM_ROL"] = $ABMRol;
+	$_SESSION["MODS_ROL"] = $data_mod; // Guardo en la session los módulos asociados al rol
+	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
 
 
 	function estructura_recid_rol($recid_rol, $e, $data)
@@ -239,35 +209,34 @@ if (($NumRows > '0') && (password_verify($pass, $hash))) {
 	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
 	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
-    $_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
-    $_SESSION["secure_auth_ch"] = true;
-    $_SESSION["user"]           = strtolower($row['usuario']);
-    $_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
-    $_SESSION["UID"]            = $row["id"];
-    $_SESSION["NOMBRE_SESION"]  = $row["nombre"];
-    $_SESSION["LEGAJO_SESION"]  = $row["legajo"];
-    $_SESSION["RECID_USER"]     = $row["recid_user"];
-    $_SESSION["ID_ROL"]         = $row["id_rol"];
-    $_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
-    $_SESSION["CLIENTE"]        = $row["cliente"];
-    $_SESSION["ROL"]            = $row["rol"];
-    $_SESSION["RECID_ROL"]      = $row["recid_rol"];
-    $_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
-    $_SESSION["TK_MOBILE"]      = $row["tkmobile"];
-    $_SESSION["WEBSERVICE"]     = $row["WebService"];
-    $_SESSION["HASH_CLAVE"]     = ($row['clave']);
-    $_SESSION["LIMIT_SESION"]   = 3600;
-    $_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
-    $_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
-    $_SESSION['DIA_ACTUAL']     = hoy();
-    $_SESSION['VER_DB_CH']      = false;
-    $_SESSION['CONECT_MSSQL']   = false;
+	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+	$_SESSION["secure_auth_ch"] = true;
+	$_SESSION["user"]           = strtolower($row['usuario']);
+	$_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
+	$_SESSION["UID"]            = $row["id"];
+	$_SESSION["NOMBRE_SESION"]  = $row["nombre"];
+	$_SESSION["LEGAJO_SESION"]  = $row["legajo"];
+	$_SESSION["RECID_USER"]     = $row["recid_user"];
+	$_SESSION["ID_ROL"]         = $row["id_rol"];
+	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+	$_SESSION["CLIENTE"]        = $row["cliente"];
+	$_SESSION["ROL"]            = $row["rol"];
+	$_SESSION["RECID_ROL"]      = $row["recid_rol"];
+	$_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
+	$_SESSION["TK_MOBILE"]      = $row["tkmobile"];
+	$_SESSION["WEBSERVICE"]     = $row["WebService"];
+	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
+	$_SESSION["LIMIT_SESION"]   = 3600;
+	$_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
+	$_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
+	$_SESSION['DIA_ACTUAL']     = hoy();
+	$_SESSION['VER_DB_CH']      = false;
+	$_SESSION['CONECT_MSSQL']   = false;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();
-	mysqli_free_result($rs);
 	login_logs('1');
-
+	// mysqli_close($link);
 	if ($_POST['lasturl']) {
 		header('Location:' . urldecode($_POST['lasturl']));
 	} else if (CountRegMayorCeroMySql("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {

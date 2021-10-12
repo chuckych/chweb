@@ -51,11 +51,11 @@ if (sqlsrv_num_rows($result) > 0) {
         $NovFechStr = $row['FicFech']->format('Ymd');
 
         if ($percierre) {
-            $editar = '<a title="Editar Novedad:' . $row['nov_descripcion'] . '" href="#TopN" class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '" <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
-            $eliminar = '<a title="Eliminar Novedad: ' . $row['nov_descripcion'] . '" class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
+            $editar = '<a data-titler="Editar Novedad:' . $row['nov_descripcion'] . '" href="#TopN" class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '" <span data-icon="&#xe042;" class="align-middle text-gris"></span></a>';
+            $eliminar = '<a data-titler="Eliminar Novedad: ' . $row['nov_descripcion'] . '" class="icon btn btn-sm btn-link text-decoration-none ' . $disabled . '"><span data-icon="&#xe03d;" class="align-middle text-gris"></span></a>';
             $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
         } else {
-            $editar = '<a title="Editar Novedad: ' . $row['nov_descripcion'] . '" href="#TopN"
+            $editar = '<a data-titler="Editar Novedad: ' . $row['nov_descripcion'] . '" href="#TopN"
         class="btn btn-sm btn-link text-decoration-none mod_Nov bi bi-pen" 
         data="' . $row['nov_novedad'] . '-' . $row['nov_tipo'] . '-' . $row['FicCate'] . '"
         data2="' . $row['nov_novedad'] . '"
@@ -68,7 +68,7 @@ if (sqlsrv_num_rows($result) > 0) {
         data9="' . $row['nov_horas'] . '"
         data10="' . $row['nov_tipo'] . '"
         </a>';
-        $eliminar = '<a title="Eliminar Novedad: ' . $row['nov_descripcion'] . '" data="' . $row['nov_novedad'] . '-' . $NovFechStr . '-' . $Legajo . '"  data2="' . $row['nov_descripcion'] . '" class="btn btn-sm btn-link text-decoration-none baja_Nov bi bi-trash"></a>';
+        $eliminar = '<a data-titler="Eliminar Novedad: ' . $row['nov_descripcion'] . '" data="' . $row['nov_novedad'] . '-' . $NovFechStr . '-' . $Legajo . '"  data2="' . $row['nov_descripcion'] . '" class="btn btn-sm btn-link text-decoration-none baja_Nov bi bi-trash"></a>';
         $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
         }
 

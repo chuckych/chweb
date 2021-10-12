@@ -29,6 +29,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_cierre'] == 'true'))
     FusNuloPOST('Grup', '');
     FusNuloPOST('Sucur', '');
     $FechaHora = date('Ymd H:i:s');
+    $t = explode(" ",microtime());
+    $FechaHora = date("Ymd H:i:s",$t[1]).substr((string)$t[0],1,4);
     // $CierreFech = test_input(FechaString($_POST['cierre']));
     $CierreFech  = test_input(dr_fecha($_POST['cierre']));
 
@@ -56,6 +58,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_cierre'] == 'true'))
     }
 
     foreach ($_POST['legajo'] as $key => $value) {
+        $FechaHora = fechaHora();
         $legajo = $value;
         if (CountRegistrosMayorCero("SELECT CierreLega FROM PERCIERRE WHERE CierreLega = '$legajo' AND CierreFech != '$CierreFech'")) {
             $update = UpdateRegistro("UPDATE PERCIERRE SET CierreFech = '$CierreFech', FechaHora = '$FechaHora' Where CierreLega = '$legajo'");

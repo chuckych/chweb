@@ -45,14 +45,14 @@ if (sqlsrv_num_rows($result) > 0) {
         $RegFeRe = $row_Fic['RegFeRe']->format('Y-m-d');
 
         if ($percierre) {
-            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#TopN"
+            $editar = '<a data-titler="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#TopN"
             class="bi bi-pen btn btn-sm btn-link text-decoration-none ' . $disabled . '"> </a>';
-            $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" 
+            $eliminar = '<a data-titler="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" 
             class="bi bi-trash btn btn-sm btn-link text-decoration-none ' . $disabled . '"></a>';
         } else {
             $disabled = '';
-            $editar = '<a title="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_Fic" data-fechadr="'.$RegFechaDR.'" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"></a>';
-            $eliminar = '<a title="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" id="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Fic"></a>';
+            $editar = '<a data-titler="Editar Fichada: ' . $row_Fic['Fic_Hora'] . '" href="#" class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_Fic" data-fechadr="'.$RegFechaDR.'" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '-' . $row_Fic['RegTipo'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data3="' . $RegFeRe . '"></a>';
+            $eliminar = '<a data-titler="Eliminar Fichada: ' . $row_Fic['Fic_Hora'] . '" data2="' . $row_Fic['Fic_Hora'] . '" data="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" id="' . $RegFechStr . '-' . $row_Fic['RegTarj'] . '-' . $row_Fic['RegHora'] . '-' . $row_Fic['RegLega'] . '" class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Fic"></a>';
         }
         $editar   = $_SESSION["ABM_ROL"]['mFic'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bFic'] == '0' ? '' : $eliminar;

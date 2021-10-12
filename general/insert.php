@@ -14,6 +14,7 @@ $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $data      = array();
 $FechaHora = date('Ymd H:i:s');
+$FechaHora = fechaHora();
 
 $_POST['alta_fichada']  = $_POST['alta_fichada'] ?? '';
 $_POST['baja_fichada']  = $_POST['baja_fichada'] ?? '';

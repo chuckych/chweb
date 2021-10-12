@@ -68,9 +68,9 @@
             /** Check de token */ ?>
             <div class="row bg-white py-2 radius" id="VerUsuarios">
                 <div class="col-12 m-0 pb-2">
-                    <button class="btn btn-sm btn-custom border fontq float-left opa8" id="NuevoUsuario">Nuevo Usuario</button>
-                    <a class="btn btn-link border-0 fontq opa8 text-decoration-none fontq text-secondary" href="../">Fichadas</a>
-                    <a class="btn btn-link border-0 fontq opa8 text-decoration-none fontq text-secondary float-left" href="../zonas/">Zonas</a>
+                    <button class="btn btn-outline-custom border-danger fontq float-left opa8" id="NuevoUsuario"><i class="bi bi-plus-lg mr-2"></i>Nuevo Usuario</button>
+                    <a class="btn btn-outline-custom border-danger fontq opa8 ml-1 text-decoration-none fontq" href="../"><i class="bi bi-clipboard-data mr-2"></i>Fichadas</a>
+                    <a class="btn btn-outline-custom border-danger fontq opa8 ml-1 text-decoration-none fontq float-left" href="../zonas/"><i class="bi bi-pin-map-fill mr-2"></i>Zonas</a>
                     <button class="btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="Refresh">Actualizar Grilla</button>
                 </div>
                 <div class="col-12 table-responsive" id="divtable">

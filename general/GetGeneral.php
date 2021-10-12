@@ -210,10 +210,10 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $entrada = color_fichada(array($primero));
     $salida  = color_fichada(array($ultimo));
 
-    $modal = '<button title="Detalle del registro" type="button" class="btn btn-sm open-modal btn-custom opa9" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '" >+</button>';
+    $modal = '<button type="button" class="btn open-modal btn-outline-custom border-0" data-titler="Detalle del Registro" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '" ><i class="bi bi-clipboard-data"></i></button>';
 
     // if ($_SESSION['ABM_ROL']['mFic']) {
-    $entrada['Fic'] = '<button title="Ver Fichada" type="button" class="btn btn-link ls1 fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mFic="1" >' . $entrada['Fic'] . '</button>';
+    $entrada['Fic'] = '<button title="Ver Fichada" type="button" class="btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mFic="1" >' . $entrada['Fic'] . '</button>';
 
     $horas6 = '<button title="Ver Horas" type="button" class="text-left btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mHor="1" >' . $horas6 . '</button>';
 

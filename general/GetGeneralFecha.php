@@ -157,7 +157,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     if (is_array($Novedad)) {
         foreach ($Novedad as $fila) {
             $desc[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2'>" . ceronull($fila["Horas"]) . "</td><td class='px-2'>" . ceronull(TipoNov($fila["Tipo"])) . "</td><td class='w-100'></td></tr>";
-            $desc2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . $fila["Horas"] . 'hs.">' . ($fila["Descripcion"]) . '</span>';
+            $desc2[] = '<span data-titlel="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . $fila["Horas"] . 'hs.">' . ($fila["Descripcion"]) . '</span>';
             $desc3[] = ($fila["Horas"]);
         }
 
@@ -203,8 +203,8 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
         foreach ($Horas as $fila) {
             $hor[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2 text-center bg-light fw4'>" . ceronull($fila["HsAuto"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsCalc"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsHechas"]) . "</td><td class='w-100'></td></tr>";
             // $hor2[] = $fila["Descripcion"];
-            $hor2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion"]) . '</span>';
-            $hor6[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion2"]) . '</span>';
+            $hor2[] = '<span data-titler="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion"]) . '</span>';
+            $hor6[] = '<span data-titler="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion2"]) . '</span>';
             $HsHechas[] = ceronull($fila["HsHechas"]);
             $HsCalc[]   = ceronull($fila["HsCalc"]);
             $HsAuto[]   = ceronull($fila["HsAuto"]);
@@ -231,16 +231,17 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $entrada = color_fichada(array($primero));
     $salida  = color_fichada(array($ultimo));
 
-    $modal = '<button type="button" class="btn btn-sm open-modal btn-custom opa9" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '">+</button>';
+    $modal = '<button type="button" class="btn open-modal btn-outline-custom border-0" data-titler="Detalle del Registro" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '"><i class="bi bi-clipboard-data"></i></button>';
+    // $modal = '<button type="button" class="btn open-modal btn-outline-custom border-0" data-titler="Detalle del Registro" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '" ><i class="bi bi-clipboard-data"></i></button>';
 
-    $entrada['Fic'] = '<button title="Ver Fichada" type="button" class="btn btn-link ls1 fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mFic="1" >' . $entrada['Fic'] . '</button>';
+    $entrada['Fic'] = '<button type="button" class="btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mFic="1" >' . $entrada['Fic'] . '</button>';
 
-    $horas6 = '<button title="Ver Horas" type="button" class="text-left btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mHor="1" >' . $horas6 . '</button>';
+    $horas6 = '<button type="button" class="text-left btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mHor="1" >' . $horas6 . '</button>';
 
-    $Novedades2 = '<button title="Ver Horas" type="button" class="text-left btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mNov="1" >' . $Novedades2 . '</button>';
+    $Novedades2 = '<button type="button" class="text-left btn btn-link fontq p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data_mNov="1" >' . $Novedades2 . '</button>';
 
     if ($_SESSION['ABM_ROL']['aCit']) {
-        $Gen_Horario = '<button title="Citar Horario" type="button" class="btn btn-link ls1 fontq p-0 Cita open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data7="Cita">' . $Gen_Horario . '</button>';
+        $Gen_Horario = '<button type="button" class="btn btn-link fontq p-0 Cita open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" data7="Cita">' . $Gen_Horario . '</button>';
     }
 
     if ($Excel) {

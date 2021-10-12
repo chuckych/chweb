@@ -75,19 +75,23 @@ if ($_SESSION['VER_DB_LOCAL'] != verDBLocal()) {
                                     $Modulo2 = ($Modulo2 == 'Cierres') ? 'Generar Cierres' : $Modulo2;
                                     $Modulo2 = ($Modulo2 == 'Liquidar') ? 'Generar Liquidación' : $Modulo2;
                                     $Modulo2 = ($Modulo2 == 'Horarios') ? 'Adm de Horarios' : $Modulo2;
+                                    $Modulo2 = ($Modulo2 == 'General') ? 'Control General' : $Modulo2;
+                                    $Modulo2 = ($Modulo2 == 'Cta Cte') ? 'Cta Cte Novedades' : $Modulo2;
+                                    $Modulo2 = ($Modulo2 == 'Personal') ? 'Adm de Personal' : $Modulo2;
+                                    $Modulo2 = ($Modulo2 == 'Procesar') ? 'Procesar Datos' : $Modulo2;
                                     switch ($Modulo2) {
-                                        case 'General':
+                                        case 'Control General':
                                         case 'Mis Horas':
                                         case 'Fichadas':
                                         case 'Horas':
                                         case 'Ingreso de Fichadas':
                                         case 'Novedades':
-                                        case 'Personal':
-                                        case 'Procesar':
+                                        case 'Adm de Personal':
+                                        case 'Procesar Datos':
                                         case 'Generar Cierres':
                                         case 'Generar Liquidación':
                                         case 'Dashboard':
-                                        case 'Cta Cte':
+                                        case 'Cta Cte Novedades':
                                             echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/" . strtolower(str_replace(" ", "", $Modulo)) . "/>" . $Modulo2 . "</a>";
                                             break;
                                         case 'Horas Costeadas':

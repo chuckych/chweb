@@ -50,14 +50,14 @@ if (sqlsrv_num_rows($result) > 0) {
             # code..
             if ($percierre) {
                 $disabled = 'disabled';
-                $editar = '<a title="Editar Hora:' . $row['HoraDesc'] . '" href="#TopN"
+                $editar = '<a data-titler="Editar Hora:' . $row['HoraDesc'] . '" href="#TopN"
             class="bi bi-pen btn btn-sm btn-link text-decoration-none ' . $disabled . '"</a>';
-                $eliminar = '<a title="Eliminar Hora: ' . $row['HoraDesc'] . '" 
+                $eliminar = '<a data-titler="Eliminar Hora: ' . $row['HoraDesc'] . '" 
             class="bi bi-trash btn btn-sm btn-link text-decoration-none ' . $disabled . '"></a>';
                 $eliminar = ($row['Estado'] == '2') ? $eliminar : '';
             } else {
                 $disabled = ($row['Estado'] == '2') ? '' : '';
-                $editar = '<a title="Editar Hora: ' . $row['HoraDesc'] . '" href="#TopN"
+                $editar = '<a data-titler="Editar Hora: ' . $row['HoraDesc'] . '" href="#TopN"
             class="bi bi-pen btn btn-sm btn-link text-decoration-none mod_hora text-gris ' . $disabled . '" 
             data="' . $row['Hora'] . '"
             data1="' . $row['FicHsAu'] . '"
@@ -66,7 +66,7 @@ if (sqlsrv_num_rows($result) > 0) {
             data4="' . $row['Motivo'] . '"
             data5="' . $row['DescMotivo'] . '"
             data6="' . $row['Observ'] . '"</a>';
-                $eliminar = '<a title="Eliminar Hora: ' . $row['HoraDesc'] . '"
+                $eliminar = '<a data-titler="Eliminar Hora: ' . $row['HoraDesc'] . '"
             data="' . $row['Hora'] . '-' . $HoraFechStr . '-' . $Legajo . '" 
             data2="' . $row['HoraDesc'] . '" 
             class="bi bi-trash btn btn-sm btn-link text-decoration-none baja_Hora ' . $disabled . '"></a>';
