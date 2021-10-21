@@ -663,28 +663,28 @@ $(document).on("click", ".open-modal", function (e) {
     }
     $('#Fichadas-tab').on('shown.bs.tab', function (e) {
         $('#Fichadas').removeClass('d-none')
-        fadeInOnly('#Fichadas')
+        // fadeInOnly('#Fichadas')
         $('#Horas').addClass('d-none')
         $('#Novedades').addClass('d-none')
         $('#OtrasNov').addClass('d-none')
     })
     $('#Novedades-tab').on('shown.bs.tab', function (e) {
         $('#Novedades').removeClass('d-none')
-        fadeInOnly('#Novedades')
+        // fadeInOnly('#Novedades')
         $('#Fichadas').addClass('d-none')
         $('#Horas').addClass('d-none')
         $('#OtrasNov').addClass('d-none')
     })
     $('#Horas-tab').on('shown.bs.tab', function (e) {
         $('#Horas').removeClass('d-none')
-        fadeInOnly('#Horas')
+        // fadeInOnly('#Horas')
         $('#Novedades').addClass('d-none')
         $('#Fichadas').addClass('d-none')
         $('#OtrasNov').addClass('d-none')
     })
     $('#OtrasNov-tab').on('shown.bs.tab', function (e) {
         $('#OtrasNov').removeClass('d-none')
-        fadeInOnly('#OtrasNov')
+        // fadeInOnly('#OtrasNov')
         $('#Horas').addClass('d-none')
         $('#Novedades').addClass('d-none')
         $('#Fichadas').addClass('d-none')

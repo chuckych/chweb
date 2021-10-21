@@ -127,7 +127,7 @@ $(function () {
         ordering: 0,
         responsive: 0,
         language: {
-            "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
+            "url": "/" + _homehost + "/js/DataTableSpanishShort2.json?"+vjs()
         }
     });
 });

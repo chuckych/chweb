@@ -20,5 +20,9 @@ define("DESTINO", [
     'Mostrar Pantalla' => 'I',
     'En Otra Pestaña'  => 'V',
  ]);
+define("AGRUPAR", [
+    'Mostrar Pantalla' => 'I',
+    'En Otra Pestaña'  => 'V',
+ ]);
 require pagina('inforfic.php');
 

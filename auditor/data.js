@@ -63,6 +63,6 @@ $('#table-auditoria').dataTable({
     ordering: false,
     responsive: false,
     language: {
-        "url": "/" + _homehost + "/js/DataTableSpanish.json"
+        "url": "/" + _homehost + "/js/DataTableSpanishShort2.json?"+vjs()
     }
 });

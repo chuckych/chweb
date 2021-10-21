@@ -86,6 +86,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
             endwhile;
             sqlsrv_free_stmt($result_Nov);
         }
+        
+        $desc = array();
+        $desc2 = array();
+        $desc3 = array();
+
         if (is_array($Novedad)) {
             foreach ($Novedad as $fila) {
                 $desc[]  = ($fila["Cod"]);
@@ -93,14 +98,21 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
                 $desc3[] = ($fila["Horas"]);
             }
            
-            
-            $Novedades  = implode("", $desc);
+            if (is_array($desc)) {
+                $Novedades  = implode("", $desc);
+            }
             /** Codigo de la novedad */
             // $Novedades2 = implode("<hr>", $desc2);
-            $Novedades2 = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", ($desc2));
+            if (is_array($desc2)) {
+                $Novedades2 = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", ($desc2));
+            }
+
             /** Descripción de la novedad */
             // $NoveHoras  = implode("<hr>", $desc3);
-            $NoveHoras  = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", $desc3);
+            if (is_array($desc3)) {
+                $NoveHoras  = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", $desc3);
+            }
+
             /** Horas de la novedad */
             unset($desc);
             unset($desc2);

@@ -245,7 +245,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 
@@ -371,7 +371,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
             searching: false,
             ordering: false,
             language: {
-                "url": "../js/DataTableSpanishShort2.json"
+                "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
             },
         });
         $('#GetGeneral').DataTable().on('draw.dt', function () {
@@ -455,7 +455,7 @@ $('#GetFechas').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs()
     },
 });
 $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
@@ -554,7 +554,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             searching: true,
             ordering: false,
             language: {
-                "url": "../js/DataTableSpanishShort2.json"
+                "url": "../js/DataTableSpanishShort2.json" + "?" + vjs()
             },
         });
         $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {

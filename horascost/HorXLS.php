@@ -21,7 +21,7 @@ require __DIR__ . '../valores.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='3';
+$Modulo='28';
 ExisteModRol($Modulo);
 E_ALL(); 
 
@@ -133,9 +133,9 @@ $spreadsheet->getStyle('A1:Q1')->getAlignment()->setVertical(\PhpOffice\PhpSprea
 // }
 $spreadsheet->getColumnDimension('A')->setWidth(10);
 $spreadsheet->getColumnDimension('B')->setWidth(27);
-$spreadsheet->getColumnDimension('C')->setWidth(13);
-$spreadsheet->getColumnDimension('D')->setWidth(13);
-$spreadsheet->getColumnDimension('E')->setWidth(13);
+$spreadsheet->getColumnDimension('C')->setWidth(16);
+$spreadsheet->getColumnDimension('D')->setWidth(16);
+$spreadsheet->getColumnDimension('E')->setWidth(16);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
@@ -147,13 +147,13 @@ $spreadsheet->getColumnDimension('G')->setWidth(22);
 $spreadsheet->getColumnDimension('H')->setWidth(10);
 $spreadsheet->getColumnDimension('I')->setWidth(10);
 $spreadsheet->getColumnDimension('J')->setWidth(10);
-$spreadsheet->getColumnDimension('K')->setWidth(22);
-$spreadsheet->getColumnDimension('L')->setWidth(22);
-$spreadsheet->getColumnDimension('M')->setWidth(22);
-$spreadsheet->getColumnDimension('N')->setWidth(22);
-$spreadsheet->getColumnDimension('O')->setWidth(22);
-$spreadsheet->getColumnDimension('P')->setWidth(22);
-$spreadsheet->getColumnDimension('Q')->setWidth(22);
+$spreadsheet->getColumnDimension('K')->setWidth(27);
+$spreadsheet->getColumnDimension('L')->setWidth(27);
+$spreadsheet->getColumnDimension('M')->setWidth(27);
+$spreadsheet->getColumnDimension('N')->setWidth(27);
+$spreadsheet->getColumnDimension('O')->setWidth(27);
+$spreadsheet->getColumnDimension('P')->setWidth(27);
+$spreadsheet->getColumnDimension('Q')->setWidth(27);
 
 
 // $Letras = range("F","G");
@@ -200,6 +200,10 @@ $spreadsheet->getStyle('J')
 ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 
 $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+$spreadsheet->getStyle('A1:Q1')->getAlignment()->setIndent(1);
+$spreadsheet->getStyle('A:Q')->getAlignment()->setIndent(1);
+
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
 // $spreadsheet->getColumnDimension('F')->setVisible(true);
@@ -304,7 +308,7 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Seccion  = $row['Seccion'];
 
     $Fecha = FormatoFechaToExcel($Fecha);
-
+    $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(19);
     # Escribirlos en el documento
     $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
     $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $Nombre);

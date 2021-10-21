@@ -255,7 +255,7 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
                 info: 1,
                 ordering: 0,
                 language: {
-                    "url": "/<?= HOMEHOST ?>/js/DataTableSpanishShort2.json"
+                    "url": "/<?= HOMEHOST ?>/js/DataTableSpanishShort2.json?"+vjs()
                 },
             });
         });

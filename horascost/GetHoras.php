@@ -106,7 +106,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
              'PlantaDesc'  => '<span title="'.$row['Planta'].'" class="d-inline-block text-truncate Mxw150">'.$Planta.'</span>',
              'SucurDesc'   => '<span title="'.$row['Sucursal'].'" class="d-inline-block text-truncate Mxw150">'.$Sucursal.'</span>',
              'GrupDesc'    => '<span title="'.$row['Grupos'].'" class="d-inline-block text-truncate Mxw150">'.$Grupo.'</span>',
-             'SectDesc'    => '<span title="'.$row['Sector'].'" class="d-inline-block text-truncate Mxw150">'.$Sector.'</span>',
+             'SectDesc'    => '<span title="'.$row['Sector'].'" class="d-inline-block text-truncate Mxw150">'.$Sector.'</span><br/><span title="'.$row['Seccion'].'" class="d-inline-block text-truncate Mxw150">'.$Seccion.'</span>',
              'Sec2Desc'    => '<span title="'.$row['Seccion'].'" class="d-inline-block text-truncate Mxw150">'.$Seccion.'</span>',
     );
 endwhile;

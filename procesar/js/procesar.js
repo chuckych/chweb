@@ -99,7 +99,7 @@ $(document).ready(function () {
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
 

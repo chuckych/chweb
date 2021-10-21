@@ -34,7 +34,7 @@
                 <label for="Tipo"><span class="d-none d-sm-none d-md-none d-lg-block mb-1 fontq">Tipo de Personal: </span></label>
                 <select class="selectjs_tipoper w150" id="Tipo" name="Tipo">
                 </select>
-                <span class="d-none">
+                <span style="display: none;">
                     <label class="mx-2" for="_agrupar">Agrupar por: </label>
                     <select id="_agrupar" class="select2 form-control w150">
                         <?php

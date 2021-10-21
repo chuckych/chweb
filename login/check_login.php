@@ -3,7 +3,8 @@
 function login_logs($var)
 {
 	require __DIR__ . '../../config/conect_mysql.php';
-	$fechahora = date("Y/m/d H:i:s");
+	// $fechahora = date("Y/m/d H:i:s");
+	$fechahora = fechaHora2();
 	$ip        = $_SERVER['REMOTE_ADDR'];
 	$agent     = secureVar($_SERVER['HTTP_USER_AGENT']);
 	$uid       = $_SESSION["UID"];
@@ -209,29 +210,29 @@ if (($row) && (password_verify($pass, $row['clave']))) { // password_verify($pas
 	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
 	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
-	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
-	$_SESSION["secure_auth_ch"] = true;
-	$_SESSION["user"]           = strtolower($row['usuario']);
-	$_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
-	$_SESSION["UID"]            = $row["id"];
-	$_SESSION["NOMBRE_SESION"]  = $row["nombre"];
-	$_SESSION["LEGAJO_SESION"]  = $row["legajo"];
-	$_SESSION["RECID_USER"]     = $row["recid_user"];
-	$_SESSION["ID_ROL"]         = $row["id_rol"];
-	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
-	$_SESSION["CLIENTE"]        = $row["cliente"];
-	$_SESSION["ROL"]            = $row["rol"];
-	$_SESSION["RECID_ROL"]      = $row["recid_rol"];
-	$_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
-	$_SESSION["TK_MOBILE"]      = $row["tkmobile"];
-	$_SESSION["WEBSERVICE"]     = $row["WebService"];
-	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
-	$_SESSION["LIMIT_SESION"]   = 3600;
-	$_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
-	$_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
-	$_SESSION['DIA_ACTUAL']     = hoy();
-	$_SESSION['VER_DB_CH']      = false;
-	$_SESSION['CONECT_MSSQL']   = false;
+    $_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+    $_SESSION["secure_auth_ch"] = true;
+    $_SESSION["user"]           = strtolower($row['usuario']);
+    $_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
+    $_SESSION["UID"]            = $row["id"];
+    $_SESSION["NOMBRE_SESION"]  = $row["nombre"];
+    $_SESSION["LEGAJO_SESION"]  = $row["legajo"];
+    $_SESSION["RECID_USER"]     = $row["recid_user"];
+    $_SESSION["ID_ROL"]         = $row["id_rol"];
+    $_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+    $_SESSION["CLIENTE"]        = $row["cliente"];
+    $_SESSION["ROL"]            = $row["rol"];
+    $_SESSION["RECID_ROL"]      = $row["recid_rol"];
+    $_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
+    $_SESSION["TK_MOBILE"]      = $row["tkmobile"];
+    $_SESSION["WEBSERVICE"]     = $row["WebService"];
+    $_SESSION["HASH_CLAVE"]     = ($row['clave']);
+    $_SESSION["LIMIT_SESION"]   = 3600;
+    $_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
+    $_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
+    $_SESSION['DIA_ACTUAL']     = hoy();
+    $_SESSION['VER_DB_CH']      = false;
+    $_SESSION['CONECT_MSSQL']   = false;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();

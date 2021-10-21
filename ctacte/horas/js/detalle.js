@@ -73,7 +73,7 @@ $(document).on("click", ".Detalle", function (e) {
         // info: true,
         ordering: false,
         language: {
-            "url": "../../js/DataTableSpanishTotal.json"
+            "url": "../../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetNovedades').DataTable({
@@ -106,7 +106,7 @@ $(document).on("click", ".Detalle", function (e) {
         // info: true,
         ordering: false,
         language: {
-            "url": "../../js/DataTableSpanishTotal.json"
+            "url": "../../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetNovedades2').DataTable({
@@ -139,7 +139,7 @@ $(document).on("click", ".Detalle", function (e) {
         // info: true,
         ordering: false,
         language: {
-            "url": "../../js/DataTableSpanishTotal.json"
+            "url": "../../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetNovedades3').DataTable({
@@ -172,7 +172,7 @@ $(document).on("click", ".Detalle", function (e) {
         // info: true,
         ordering: false,
         language: {
-            "url": "../../js/DataTableSpanishTotal.json"
+            "url": "../../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetNovedades4').DataTable({
@@ -205,7 +205,7 @@ $(document).on("click", ".Detalle", function (e) {
         // info: true,
         ordering: false,
         language: {
-            "url": "../../js/DataTableSpanishTotal.json"
+            "url": "../../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     

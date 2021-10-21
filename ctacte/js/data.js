@@ -118,7 +118,7 @@ $('#Visualizar').prop('disabled', true)
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     
@@ -208,7 +208,7 @@ $('#Visualizar').prop('disabled', true)
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
 
@@ -264,7 +264,7 @@ $('#Visualizar').prop('disabled', true)
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     $('#GetNovedadesFecha').DataTable({
@@ -348,7 +348,7 @@ $('#Visualizar').prop('disabled', true)
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     }, 1000);

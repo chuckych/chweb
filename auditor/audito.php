@@ -47,7 +47,7 @@
     ?>
     <!-- <link rel="stylesheet" href="../js/datatable/fixedHeader.bootstrap4.min.css"> -->
     <!-- <script src="../js/datatable/dataTables.fixedHeader.min.js"></script> -->
-    <script src="data.js?v=<?=vjs()?>"></script>
+    <script src="data-min.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

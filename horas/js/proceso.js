@@ -114,7 +114,7 @@ $('#GetPersonal').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 $('#GetHoras').DataTable({
@@ -209,7 +209,7 @@ $('#GetHoras').DataTable({
     searching: false,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 $('#GetHorasTotales').DataTable({
@@ -281,7 +281,7 @@ $('#GetHorasTotales').DataTable({
     searching: false,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 setTimeout(function () {
@@ -342,7 +342,7 @@ setTimeout(function () {
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     $('#GetHorasFecha').DataTable({
@@ -434,7 +434,7 @@ setTimeout(function () {
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     $('#GetHorasFechaTotales').DataTable({
@@ -508,7 +508,7 @@ setTimeout(function () {
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
 }, 1000);

@@ -12,7 +12,7 @@ E_ALL();
 
     function filtrar_estruc($get,$col){
         $cond = ((!empty($get)));
-        $Nombre_Filtro = $cond ? $valores = implode(",",$get) : $cond ? "AND PERSONAL.$col IN ($valores)" : '';
+        $Nombre_Filtro = ($cond ? $valores = implode(",",$get) : $cond) ? "AND PERSONAL.$col IN ($valores)" : '';
         return $Nombre_Filtro;
     };
     

@@ -200,7 +200,7 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> 
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script> 
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
     <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>

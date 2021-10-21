@@ -154,7 +154,7 @@ $(document).ready(function() {
         ordering: false,
         responsive: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     })
     $('#Tabla_General').on('page.dt', function () {
@@ -219,7 +219,7 @@ $('#Total_General').on('shown.bs.modal', function() {
         info: 0,
         ordering: 0,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#table-Total_Novedades').DataTable({
@@ -266,7 +266,7 @@ $('#Total_General').on('shown.bs.modal', function() {
         info: 0,
         ordering: 0,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#table-TotalNovTipo').DataTable({
@@ -302,7 +302,7 @@ $('#Total_General').on('shown.bs.modal', function() {
         info: 0,
         ordering: 0,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
 });
@@ -371,7 +371,7 @@ $(document).on("click", ".open-modal", function (e) {
         info: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetNovedades').DataTable({
@@ -408,7 +408,7 @@ $(document).on("click", ".open-modal", function (e) {
         info: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
     $('#GetHoras').DataTable({
@@ -528,7 +528,7 @@ $(document).on("click", ".open-modal", function (e) {
         info: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json?"+vjs()
         },
     });
 

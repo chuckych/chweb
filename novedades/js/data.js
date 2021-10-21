@@ -113,7 +113,7 @@ var GetPersonal = $('#GetPersonal').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 
@@ -208,7 +208,7 @@ $('#GetNovedades').DataTable({
     searching: false,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 
@@ -268,7 +268,7 @@ setTimeout(function () {
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     $('#GetNovedadesFecha').DataTable({
@@ -358,7 +358,7 @@ setTimeout(function () {
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
 }, 1000);

@@ -32,7 +32,7 @@ $where_condition = $sqlTot = $sqlRec = "";
 
 $Calculos = (!$Calculos==1) ? "AND TIPOHORA.THoColu > 0" : '';
 
- $sql_query="SELECT FICHAS01.FicHora AS 'FicHora', TIPOHORA.THoDesc AS 'THoDesc', SUM(dbo.fn_STRMinutos(FICHAS01.FicHsHeC)) AS 'FicHsHeC', SUM(dbo.fn_STRMinutos(FICHAS01.FicHsAuC)) AS 'FicHsAuC' FROM FICHAS01 INNER JOIN FICHAS ON FICHAS01.FicLega=FICHAS.FicLega AND FICHAS01.FicFech=FICHAS.FicFech AND FICHAS01.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS01.FicLega=PERSONAL.LegNume INNER JOIN TIPOHORA ON FICHAS01.FicHora=TIPOHORA.THoCodi WHERE FICHAS01.FicLega='$legajo' AND FICHAS01.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $Calculos $FilterEstruct $FiltrosFichas GROUP BY FICHAS01.FicHora, TIPOHORA.THoDesc";
+ $sql_query="SELECT FICHAS01.FicHora AS 'FicHora', TIPOHORA.THoDesc AS 'THoDesc', $agrupCol, $agrupDesc AS 'agrupDesc', SUM(dbo.fn_STRMinutos(FICHAS01.FicHsHeC)) AS 'FicHsHeC', SUM(dbo.fn_STRMinutos(FICHAS01.FicHsAuC)) AS 'FicHsAuC' FROM FICHAS01 INNER JOIN FICHAS ON FICHAS01.FicLega=FICHAS.FicLega AND FICHAS01.FicFech=FICHAS.FicFech AND FICHAS01.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS01.FicLega=PERSONAL.LegNume INNER JOIN TIPOHORA ON FICHAS01.FicHora=TIPOHORA.THoCodi $agrupJoin WHERE FICHAS01.FicLega='$legajo' AND FICHAS01.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND dbo.fn_STRMinutos(FICHAS01.FicHsAuC) > 0 $Calculos $FilterEstruct $FiltrosFichas GROUP BY FICHAS01.FicHora, TIPOHORA.THoDesc, $agrupCol, $agrupDesc, TIPOHORA.THoColu ORDER BY $agrupDesc, TIPOHORA.THoColu";
 
 // print_r($sql_query); exit;
 
@@ -61,15 +61,19 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $FicHsHeC  = MinHora($row['FicHsHeC']);
     $FicHora  = $row['FicHora'];
     $THoDesc  = $row['THoDesc'];
+    $agrupDesc = ceronull($row['agrupDesc']);
     $FicHsAuC  = MinHora($row['FicHsAuC']);
 
     $data[] = array(
         'FicHora'  => $FicHora,
-        'THoDesc'  => $THoDesc.'<br><span class="fw3">Autorizadas</span>',
+        'THoDesc'  => $THoDesc,
+        // 'THoDesc'  => $THoDesc.'<br><span class="fw3">Autorizadas</span>',
         'FicHsHeC'  => $FicHsHeC,
         'FicHsAuC'  => $FicHsAuC,
-        'CalcHoras'   => $FicHsHeC.'<br><b class="text-secondary">'.$FicHsAuC.'</b>',
+        'CalcHoras'   => '<b class="text-secondary">'.$FicHsAuC.'</b>',
+        // 'CalcHoras'   => $FicHsHeC.'<br><b class="text-secondary">'.$FicHsAuC.'</b>',
         'null'     => '',
+        'Agrup'     => $agrupDesc,
     );
 endwhile;
 

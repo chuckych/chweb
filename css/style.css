@@ -286,7 +286,7 @@
 
  td {
      font-size: 0.8em !important;
-     font-weight: 400 !important;
+     /* font-weight: 500 !important; */
      color: #333 !important;
      /* font-display: swap !important; */
  }
@@ -337,7 +337,7 @@
 
  th {
      vertical-align: middle!important;
-     font-weight: 400;
+     font-weight: 500;
      border-top: 0!important;
      white-space: nowrap!important
  }
@@ -731,7 +731,6 @@
      outline: 0!important;
      height: 35px!important
  }
-
  input[type=checkbox] {
      box-shadow: none!important;
      outline: 0!important;

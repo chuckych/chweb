@@ -26,6 +26,11 @@
             font-weight: 500 !important;
             background-color: #f8f9fa;
         }
+
+        .table td,
+        .table th {
+            border-top: 0px solid #dee2e6;
+        }
     </style>
 </head>
 
@@ -112,23 +117,15 @@
                                     <th class="" title="Planta">Planta</th>
                                     <th class="" title="Sucursal">Sucursal</th>
                                     <th class="" title="Grupo">Grupo</th>
-                                    <th class="" title="Sector">Sector</th>
-                                    <th class="" title="Secci&oacute;">Secci&oacute;n</th>
+                                    <th class="text-nowrap" title="Sector / Secci&oacute;n">Sector / Secci&oacute;n</th>
+                                    <!-- <th class="" title="Secci&oacute;">Secci&oacute;n</th> -->
                                 </tr>
                             </thead>
                         </table>
                     </div>
                     <div class="table-responsive pb-3 invisible" id="GetHorasTotalesTable">
-                        <p class="fontq mb-0 mt-2">Totales: </p>
+                        <p class="fontq mb-2 mt-2">TOTALES: </p>
                         <table class="table text-nowrap w-auto" id="GetHorasTotales">
-                            <thead class="border-bottom text-uppercase fontp d-none">
-                                <tr>
-                                    <th class="text-center">Horas</th>
-                                    <th class="">Descripción</th>
-                                    <th class="text-center" title="">Horas</th>
-                                    <!-- <th class="text-center" title="Total de Horas Autorizadas">Autor.</th> -->
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>
@@ -152,22 +149,14 @@
                                     <th class="" title="Planta">Planta</th>
                                     <th class="" title="Sucursal">Sucursal</th>
                                     <th class="" title="Grupo">Grupo</th>
-                                    <th class="" title="Sector">Sector</th>
-                                    <th class="" title="Secci&oacute;">Secci&oacute;n</th>
+                                    <th class="text-nowrap" title="Sector / Secci&oacute;n">Sector / Secci&oacute;n</th>
+                                    <!-- <th class="" title="Secci&oacute;">Secci&oacute;n</th> -->
                                 </tr>
                             </thead>
                         </table>
-                        <div class="table-responsive pb-3" id="GetHorasFechaTotalesTable">
-                            <p class="fontq mb-0 mt-2">Totales: </p>
+                        <div class="table-responsive pb-5" id="GetHorasFechaTotalesTable">
+                            <p class="fontq mb-2 mt-2">TOTALES: </p>
                             <table class="table text-nowrap w-auto" id="GetHorasFechaTotales">
-                                <thead class="border-bottom text-uppercase fontp d-none">
-                                    <tr>
-                                        <th class="text-center">Horas</th>
-                                        <th class="">Descripción</th>
-                                        <th class="text-center" title="">Horas</th>
-                                        <!-- <th class="text-center" title="Total de Horas Autorizadas">Autor.</th> -->
-                                    </tr>
-                                </thead>
                             </table>
                         </div>
                     </div>
@@ -190,10 +179,10 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/js-cookie/src/js.cookie.js"></script>
-    <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
-    <script src="js/HorXLS.js?v=<?=vjs()?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
+    <script src="js/HorXLS.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

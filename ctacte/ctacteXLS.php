@@ -20,7 +20,7 @@ require __DIR__ . '../../filtros/filtros.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='3';
+$Modulo='9';
 ExisteModRol($Modulo);
 E_ALL();
 

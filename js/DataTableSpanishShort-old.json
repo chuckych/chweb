@@ -3,7 +3,7 @@
     "sLengthMenu": "_MENU_",
     "sZeroRecords": "",
     "sEmptyTable": "",
-    "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
+    "sInfo": "Mostrando del _START_ al _END_ de _TOTAL_",
     "sInfoEmpty": "No se encontraron resultados",
     "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
     "sInfoPostFix": "",
@@ -12,10 +12,10 @@
     "sInfoThousands": ",",
     "sLoadingRecords": "<div class='spinner-border text-light'></div>",
     "oPaginate": {
-        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
-        "sLast": "<i class='bi bi-chevron-double-right'></i>",
-        "sNext": "<i class='bi bi-chevron-right'></i>",
-        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+        "sFirst": "<span data-icon=')' class='fontppp'></span>",
+        "sLast": "<span data-icon='(' class='fontppp'></span>",
+        "sNext": "<span data-icon='&#xe105;' class='fontppp'></span>",
+        "sPrevious": "<span data-icon='&#xe107;' class='fontppp'></span>"
     },
     "oAria": {
         "sSortAscending": ":Activar para ordenar la columna de manera ascendente",

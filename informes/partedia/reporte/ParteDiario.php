@@ -42,6 +42,7 @@
                     }
                     $padding='';
                 foreach ($dataParte as $key => $ValueDataParte) {
+                    $dataParte[$key-1]['Legajo'] = $dataParte[$key-1]['Legajo'] ?? '';
                     if ($ValueDataParte['Legajo'] === ($dataParte[$key-1]['Legajo'])) {
                         $ValueDataParte['Nombre']='-';
                         $ValueDataParte['Legajo']='-';
@@ -120,6 +121,15 @@
                         <th class="bold px-2 center">Cant.</th>
                     </tr>
                     <?php
+                    $tc['Llegada tarde']     = $tc['Llegada tarde'] ?? '';
+                    $sc['Salida anticipada'] = $sc['Salida anticipada'] ?? '';
+                    $ic['Incumplimiento']    = $ic['Incumplimiento'] ?? '';
+                    $ac['Ausencia']          = $ac['Ausencia'] ?? '';
+                    $lc['Licencia']          = $lc['Licencia'] ?? '';
+                    $acc['Accidente']        = $acc['Accidente'] ?? '';
+                    $vc['Vacaciones']        = $vc['Vacaciones'] ?? '';
+                    $suc['Suspensión']       = $suc['Suspensión'] ?? '';
+                    $arc['ART']              = $arc['ART'] ?? '';
                     if($tc['Llegada tarde']){
                         $style=($_resaltar== 'r_tar' ) ? $colorRes:'';
                     ?>

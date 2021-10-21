@@ -24,7 +24,42 @@ FusNuloPOST("Modulo",'');
 FusNuloPOST("Thora",'');
 FusNuloPOST("SHoras",'1');
 FusNuloPOST("Calculos",'2');
-
+FusNuloPOST("Agrup",'');
+$Agrup = test_input($_POST['Agrup']);
+switch ($Agrup) {
+    case 'Tarea':
+        $agrupCol = 'FICHAS01.FicTare';
+        $agrupDesc = 'TAREAS.TareDesc';
+        $agrupJoin = 'INNER JOIN TAREAS ON FICHAS01.FicTare = TAREAS.TareCodi';
+        break;
+    case 'Planta':
+        $agrupCol = 'FICHAS01.FicPlan';
+        $agrupDesc = 'PLANTAS.PlaDesc';
+        $agrupJoin = 'INNER JOIN PLANTAS ON FICHAS01.FicPlan = PLANTAS.PlaCodi';
+        break;
+    case 'Grupo':
+        $agrupCol = 'FICHAS01.FicGrup';
+        $agrupDesc = 'GRUPOS.GruDesc';
+        $agrupJoin = 'INNER JOIN GRUPOS ON FICHAS01.FicGrup = GRUPOS.GruCodi';
+        break;
+    case 'Sucursal':
+        $agrupCol = 'FICHAS01.FicSucu';
+        $agrupDesc = 'SUCURSALES.SucDesc';
+        $agrupJoin = 'INNER JOIN SUCURSALES ON FICHAS01.FicSucu = SUCURSALES.SucCodi';
+        break;
+    case 'Sector':
+        $agrupCol = 'FICHAS01.FicSect';
+        $agrupDesc = 'SECTORES.SecDesc';
+        $agrupJoin = 'INNER JOIN SECTORES ON FICHAS01.FicSect = SECTORES.SecCodi';
+        break;
+    default:
+        $agrupCol = 'FICHAS01.FicTare';
+        $agrupDesc = 'TAREAS.TareDesc';
+        $agrupJoin = 'INNER JOIN TAREAS ON FICHAS01.FicTare = TAREAS.TareCodi';
+        break;
+}
+$agrupCol = $agrupCol;
+$agrupDesc = $agrupDesc;
 
 $Per      = ($_POST['Per']);
 $Emp      = ($_POST['Emp']);

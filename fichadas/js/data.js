@@ -141,7 +141,7 @@ var GetPersonal = $('#GetPersonal').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort2.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 var GetFichadas = $('#GetFichadas').DataTable({
@@ -234,7 +234,7 @@ var GetFichadas = $('#GetFichadas').DataTable({
     searching: false,
     ordering: false,
     language: {
-        "url": "../js/DataTableSpanishShort.json"
+        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
 });
 setTimeout(function () {
@@ -294,7 +294,7 @@ setTimeout(function () {
         info: true,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort2.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
     $('#GetFichadasFecha').DataTable({
@@ -385,7 +385,7 @@ setTimeout(function () {
         searching: false,
         ordering: false,
         language: {
-            "url": "../js/DataTableSpanishShort.json"
+            "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
 }, 1000);

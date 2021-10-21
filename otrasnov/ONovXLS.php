@@ -21,7 +21,7 @@ require __DIR__ . '../valores.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='3';
+$Modulo='17';
 ExisteModRol($Modulo);
 E_ALL(); 
 

@@ -1,8 +1,9 @@
 <?php
+
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.200'; // Version
+    return 'v0.0.201'; // Version
 }
 function verDBLocal()
 {
@@ -155,6 +156,7 @@ function API_KEY_MAPS()
 {
     return 'AIzaSyCFs9lj9k7WZAyuwzDJwOiSiragUA9Xwg0';
 }
+// define("SQLSRV_CURSOR_KEYSET", '');
 $params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET, 'keyset');
 
@@ -1659,14 +1661,16 @@ function audito_ch($AudTipo, $AudDato)
             break;
     }
     require __DIR__ . '/config/conect_mssql.php';
-    $usuario    = explode("-", $_SESSION["user"]);
+    // $usuario    = explode("-", $_SESSION["user"]);
 
     // $AudUser   = substr($_SESSION["user"], 4, 10);
-    if (isset($usuario[1])) {
-        $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
-    } else {
-        $AudUser   = $_SESSION["user"];
-    }
+    // if (isset($usuario[1])) {
+    //     $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
+    // } else {
+    //     $AudUser   = $_SESSION["user"];
+    // }
+    $AudUser   = substr($_SESSION["NOMBRE_SESION"], 0, 10);
+    $ipCliente = substr($ipCliente, 0, 20);
     // $AudTerm   = gethostname();
     $AudTerm   = $ipCliente;
     $AudModu   = 21;
@@ -1725,12 +1729,13 @@ function audito_ch2($AudTipo, $AudDato)
             break;
     }
     require __DIR__ . '/config/conect_mssql.php';
-    $usuario    = explode("-", $_SESSION["user"]);
+    // $usuario    = explode("-", $_SESSION["user"]);
 
-    // $AudUser   = substr($_SESSION["user"], 4, 10);
-    $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
+    $AudUser   = substr($_SESSION["NOMBRE_SESION"], 0, 10);
+    // $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
     // $AudTerm   = gethostname();
-    $AudTerm   = $ipCliente . '-' . recid2(4);
+    // $AudTerm   = $ipCliente . '-' . recid2(4);
+    $ipCliente = substr($ipCliente, 0, 20);
     $AudTerm   = $ipCliente;
     $AudModu   = 21;
     // $FechaHora = date('Ymd H:i:s.u');
@@ -1927,9 +1932,7 @@ function super_unique($array, $key)
     $array = array_values($temp_array);
     return $array;
 }
-
 /** validar campos formmularios */
-
 function ValNumerico($val)
 {
     $val = is_numeric($val) ? true : false;
@@ -3278,7 +3281,20 @@ function borrarLogs($path, $dias, $ext) // borra los logs a partir de una cantid
 }
 function fechaHora()
 {
+    date_default_timezone_set('America/Argentina/Buenos_Aires');
     $t = explode(" ", microtime());
     $t = date("Ymd H:i:s", $t[1]) . substr((string)$t[0], 1, 4);
     return $t;
+}
+function fechaHora2()
+{
+    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    $t = date("Y-m-d H:i:s");
+    return $t;
+}
+
+function hostName()
+{
+    $nombre_host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+    return $nombre_host;
 }

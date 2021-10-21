@@ -9,7 +9,7 @@ $PorLegajo = ($_Por == 'Fech') ? "": "AND REGISTRO.RegLega = '$legajo'"; /** par
 $PorFecha = ($_Por == 'Fech') ? "WHERE REGISTRO.RegFeAs = '$fecha'": "WHERE REGISTRO.RegFeAs BETWEEN '$FechaIni' AND '$FechaFin'"; /** Para filtrra por Fecha desde o desde hasta */
 
     $FicFalta = ($FicFalta && $FicFalta !='null') ? " HAVING (MAX(rn) % 2) = 1" : ""; /** Fichadas Inconsistentes */
-
+    $FilterFicPer = $FilterFicPer ?? '';
     $sql_query = "WITH CTE AS(
         SELECT *,
             ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegHoRe) AS rn

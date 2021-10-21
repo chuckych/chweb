@@ -162,10 +162,13 @@ $PorFecha $PorLegajo $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICH
                         }
                     } /** FIN Mostramos Las Horas */
                 /** Fin HORAS */
-                
-                $entrada = color_fichada(array($primero));
-                $salida  = color_fichada(array($ultimo));
-                
+                // $primero = $primero ??'';
+                // $ultimo = $ultimo ??'';
+                // $entrada = color_fichada(array($primero));
+                // $salida  = color_fichada(array($ultimo));
+                $Novedades2 =$Novedades2 ??'';
+                $NoveHoras =$NoveHoras ??'';
+                $horas6 =$horas6 ??'';
                 $dataRegistros[] = array(
                        'LegNombre'   => $Gen_Nombre.'<br>'.$Gen_Lega,
                        'Gen_Lega'    => $Gen_Lega,
@@ -174,8 +177,8 @@ $PorFecha $PorLegajo $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICH
                        'Dia'         => $Gen_Dia_Semana,
                        'FechaDia'    => $Gen_Fecha.'<br />'.nombre_dia($Gen_Dia_Semana),
                        'Fechastr'    => $Gen_Fecha2,
-                       'Primera'     => $entrada['Fic'],
-                       'Ultima'      => $salida['Fic'],
+                    //    'Primera'     => $entrada['Fic'],
+                    //    'Ultima'      => $salida['Fic'],
                        'Novedades'   => ucwords(strtolower($Novedades2)),
                        'NovHor'      => $NoveHoras,
                        'DescHoras'   => $horas6,
