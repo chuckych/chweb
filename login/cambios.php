@@ -250,30 +250,7 @@ if ($verDB < 20211024) {
     pdoQuery("ALTER TABLE `modulos`	CHANGE COLUMN `nombre` `nombre` VARCHAR(20) NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci' AFTER `id`");
     fileLog("Se actualizo tabla \"modulos\"", $pathLog); // escribir en el log
 
-    $table_auditoria = "CREATE TABLE IF NOT EXISTS `auditoria` (
-        `id` INT(11) NOT NULL AUTO_INCREMENT,
-        `id_sesion` INT(11) NOT NULL,
-        `usuario` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-        `nombre` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
-        `cuenta` INT(11) NOT NULL,
-        `audcuenta` INT(11) NOT NULL,
-        `fecha` DATE NOT NULL,
-        `hora` TIME NOT NULL,
-        `tipo` ENUM('A','B','M','P') NULL DEFAULT NULL COLLATE 'utf8_general_ci',
-        `dato` VARCHAR(200) NOT NULL COLLATE 'utf8_general_ci',
-        `modulo` INT(11) NOT NULL,
-        `fechahora` DATETIME NOT NULL DEFAULT current_timestamp(),
-        PRIMARY KEY (`id`) USING BTREE,
-        INDEX `FK_auditoria_login_logs` (`id_sesion`) USING BTREE,
-        INDEX `FK_auditoria_clientes` (`cuenta`) USING BTREE,
-        INDEX `FK_auditoria_clientes_2` (`audcuenta`) USING BTREE,
-        CONSTRAINT `FK_auditoria_clientes` FOREIGN KEY (`cuenta`) REFERENCES `chweb`.`clientes` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT,
-        CONSTRAINT `FK_auditoria_clientes_2` FOREIGN KEY (`audcuenta`) REFERENCES `chweb`.`clientes` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT,
-        CONSTRAINT `FK_auditoria_login_logs` FOREIGN KEY (`id_sesion`) REFERENCES `chweb`.`login_logs` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT
-    )
-    COLLATE='utf8_general_ci'
-    ENGINE=InnoDB
-    AUTO_INCREMENT=0";
+    $table_auditoria="CREATE TABLE IF NOT EXISTS `auditoria` ( `id` INT(11) NOT NULL AUTO_INCREMENT, `id_sesion` INT(11) NOT NULL, `usuario` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci', `nombre` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci', `cuenta` INT(11) NOT NULL, `audcuenta` INT(11) NOT NULL, `fecha` DATE NOT NULL, `hora` TIME NOT NULL, `tipo` ENUM('A','B','M','P') NULL DEFAULT NULL COLLATE 'utf8_general_ci', `dato` VARCHAR(200) NOT NULL COLLATE 'utf8_general_ci', `modulo` INT(11) NOT NULL, `fechahora` DATETIME NOT NULL DEFAULT current_timestamp(), PRIMARY KEY (`id`) USING BTREE, INDEX `FK_auditoria_login_logs` (`id_sesion`) USING BTREE, INDEX `FK_auditoria_clientes` (`cuenta`) USING BTREE, INDEX `FK_auditoria_clientes_2` (`audcuenta`) USING BTREE, CONSTRAINT `FK_auditoria_clientes` FOREIGN KEY (`cuenta`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT, CONSTRAINT `FK_auditoria_clientes_2` FOREIGN KEY (`audcuenta`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT, CONSTRAINT `FK_auditoria_login_logs` FOREIGN KEY (`id_sesion`) REFERENCES `login_logs` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT ) COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
 
     pdoQuery($table_auditoria);
 
