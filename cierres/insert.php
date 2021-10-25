@@ -62,14 +62,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_cierre'] == 'true'))
         $legajo = $value;
         if (CountRegistrosMayorCero("SELECT CierreLega FROM PERCIERRE WHERE CierreLega = '$legajo' AND CierreFech != '$CierreFech'")) {
             $update = UpdateRegistro("UPDATE PERCIERRE SET CierreFech = '$CierreFech', FechaHora = '$FechaHora' Where CierreLega = '$legajo'");
-            audito_ch2("M", 'Cierre Legajo '.$legajo.'. Fecha: ' . strip_tags($CierreFech2));
+            audito_ch2("M", 'Cierre Legajo '.$legajo.'. Fecha: ' . strip_tags($CierreFech2), '14');
         } else {
             if (CountRegistrosMayorCero("SELECT CierreLega FROM PERCIERRE WHERE CierreLega = '$legajo'")) {
                 //$update = UpdateRegistro("UPDATE PERCIERRE SET CierreFech = '$CierreFech', FechaHora = '$FechaHora' Where CierreLega = '$legajo'");
                 // audito_ch2("M", 'Cierre Legajo '.$legajo.'. Fecha: ' . strip_tags($CierreFech2));
             }else{
                 $Insert = InsertRegistro("INSERT INTO PERCIERRE (CierreLega, CierreFech, FechaHora)VALUES('$legajo','$CierreFech', '$FechaHora')");
-                audito_ch2("A", 'Cierre Legajo '.$legajo.'. Fecha: ' . strip_tags($CierreFech2));
+                audito_ch2("A", 'Cierre Legajo '.$legajo.'. Fecha: ' . strip_tags($CierreFech2), '14');
             }
            
         }

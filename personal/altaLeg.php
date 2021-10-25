@@ -60,7 +60,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
             
                 $data = array("status" => "ok", "Mensaje" => $Dato, "Legajo" => $LegNume);
                 echo json_encode($data); /** retorno resultados en formato json */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
 
                 $sql2 = "INSERT INTO PERCIERRE (CierreLega,CierreFech,FechaHora) Values('$LegNume','17530101','$FechaHora')"; /** Query CierreFech */
                 $stmt2 = sqlsrv_prepare($link, $sql2); /** preparar la sentencia */

@@ -114,7 +114,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
 
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
@@ -206,7 +206,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
@@ -303,7 +303,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
@@ -402,7 +402,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
@@ -515,7 +515,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '33');
         // PrintRespuestaJson('ok', 'Asignación modificada correctamente.');
         exit;
     } else {
@@ -616,7 +616,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
 
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '33');
         // PrintRespuestaJson('ok', 'Asignación eliminada correctamente.');
         exit;
     } else {
@@ -713,7 +713,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $procesar = 'Fecha Posterior a la actual';
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '33');
         $tiempo_fin_proceso = microtime(true);
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación asignada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
@@ -820,7 +820,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');
@@ -912,7 +912,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '33');
         exit;
     } else {
         PrintRespuestaJson('error', 'Error');

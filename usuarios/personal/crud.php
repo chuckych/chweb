@@ -50,6 +50,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
             /* INSERTAMOS */
             $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, legajo, fecha_alta, fecha ) VALUES( '$recid', '$nombre', '$userauto', '$rol', '$contraauto', '$id_c_', '$legajo','$fecha', '$fecha')";
             $rs_insert = mysqli_query($link, $query);// or die(mysqli_error($link));
+
+            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
+
+            auditoria("Usuario ($dataUser[id_user]) $userauto. Nombre: $nombre. Legajo ($legajo). Rol ($rol) $dataUser[nombre_rol]", 'A', $id_c_, '1');
+
+
         }
 
         if ($rs_insert) {

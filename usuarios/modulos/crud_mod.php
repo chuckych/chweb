@@ -10,45 +10,43 @@ E_ALL();
 $data = array();
 
 /** Declaro variable si no existe */
-FusNuloPOST('TipoMod', ''); 
+FusNuloPOST('TipoMod', '');
 FusNuloPOST('amod', '');
 FusNuloPOST('recidRol', '');
 FusNuloPOST('IdRol', '');
 
 if (valida_campo($_POST['TipoMod'])) {
-    PrintError('TipoMod', 'No Hay TipoMod'); /** Imprimo json con resultado */
+    PrintError('TipoMod', 'No Hay TipoMod');
+    /** Imprimo json con resultado */
     exit;
 }
 if (valida_campo($_POST['recidRol'])) {
-    PrintError('recidRol', 'No Hay recidRol'); /** Imprimo json con resultado */
+    PrintError('recidRol', 'No Hay recidRol');
+    /** Imprimo json con resultado */
     exit;
 }
 /** CRUD MODULOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
-
-    function DeleteModRol($recidRol,$TipoMod){
+    function DeleteModRol($recidRol, $TipoMod)
+    {
         require __DIR__ . '../../../config/conect_mysql.php';
         $Query = "DELETE mod_roles FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
-        if (mysqli_query($link, $Query)) {  /** Hacemos el delete de todos los modulos del tipo */
+        if (mysqli_query($link, $Query)) {
+            /** Hacemos el delete de todos los modulos del tipo */
             return true;
             mysqli_close($link);
-        }else {
+        } else {
             return false;
             mysqli_close($link);
         }
     }
-    function InsertModRol($recidRol, $IdRol, $Modulo,$Fecha){
-        require __DIR__ . '../../../config/conect_mysql.php';
-        $Query = "INSERT INTO mod_roles(recid_rol, id_rol, modulo, fecha) VALUES('$recidRol', '$IdRol', '$Modulo', '$Fecha')";
-        // PrintError('ErrorInsert',$Query); exit;
-        $rs_insert = mysqli_query($link, $Query);
-        if ($rs_insert) { /** Si el insert se hizo correctamente */
+    function InsertModRol($recidRol, $IdRol, $Modulo, $Fecha)
+    {
+        if (pdoQuery("INSERT INTO mod_roles(recid_rol, id_rol, modulo, fecha) VALUES('$recidRol', '$IdRol', '$Modulo', '$Fecha')")) {
             return true;
-            mysqli_close($link);
-        } else { /** Si hubo error */
+        } else {
             return false;
-            mysqli_close($link);
         }
     }
     
@@ -58,54 +56,79 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $IdRol    = test_input($_POST['IdRol']);
     $Fecha    = date("Y-m-d H:i:s");
 
-    
-    $Query = "SELECT * FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'"; /** Hacemos Select para ver si existen modulos del tipo */
-    // PrintRespuestaJson('ok', $Query ); exit;
-    
-    if(CountRegMayorCeroMySql($Query)){ /** Si Hay modulos del tipo en la tabla mod_roles */
+    $audCuenta = simple_pdoQuery("SELECT clientes.id as 'id', clientes.nombre 'nombre', roles.nombre as 'nombre_rol' FROM roles INNER JOIN clientes on roles.cliente = clientes.id WHERE roles.id = $IdRol LIMIT 1");
 
-        if (DeleteModRol($recidRol,$TipoMod)) { /** Hacemos el delete de todos los modulos del tipo */
-            if (!valida_campo($_POST['amod'])) { /** Si recibimos datos de modulos. Hacemos el insert de los mismos */
-                foreach ($Modulo as $key => $ValueMod) { /** recorremos el array de los modulos recibido */
+    $obj_modulos=array_pdoQuery("SELECT modulos.id AS 'id_modulo', modulos.nombre AS 'nombre_modulo', tipo_modulo.descripcion AS 'tipo_modulo', modulos.idtipo as 'idtipo' FROM modulos INNER JOIN tipo_modulo ON modulos.idtipo=tipo_modulo.id WHERE modulos.idtipo=$TipoMod");
+
+    $Query = "SELECT * FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
+    /** Hacemos Select para ver si existen modulos del tipo */
+    // PrintRespuestaJson('ok', $Query ); exit;
+
+    if (CountRegMayorCeroMySql($Query)) {
+        /** Si Hay modulos del tipo en la tabla mod_roles */
+
+        if (DeleteModRol($recidRol, $TipoMod)) {
+
+            $nombre_modulo = filtrarObjeto($obj_modulos, 'idtipo', $TipoMod);
+            // print_r($nombre_modulo);exit;
+            auditoria("Rol ($IdRol) $audCuenta[nombre_rol]. Todos los Módulos. ($nombre_modulo[tipo_modulo])", 'B', $audCuenta['id'], '1');
+            /** Hacemos el delete de todos los modulos del tipo */
+            if (!valida_campo($_POST['amod'])) {
+                /** Si recibimos datos de modulos. Hacemos el insert de los mismos */
+                foreach ($Modulo as $key => $ValueMod) {
+                    /** recorremos el array de los modulos recibido */
                     /** Hacemos el insert de los modulos */
-                    if (!InsertModRol($recidRol,$IdRol,$ValueMod,$Fecha)) { /** Si hubo error */
-                        mysqli_error($link); PrintError('ErrorInsert',mysqli_error($link)); /** Imprimo json con resultado */
+                    if (!InsertModRol($recidRol, $IdRol, $ValueMod, $Fecha)) {
+                        /** Si hubo error */
+                        mysqli_error($link);
+                        PrintError('ErrorInsert', mysqli_error($link));
+                        /** Imprimo json con resultado */
                         // mysqli_close($link); /** Cerramos conexion con Mysql */
                         exit;
+                    } else {
+                        $nombre_modulo = filtrarObjeto($obj_modulos, 'id_modulo', $ValueMod);
+                        // print_r($nombre_modulo);exit;
+                        auditoria("Rol ($IdRol) $audCuenta[nombre_rol]. Módulo $nombre_modulo[nombre_modulo]. ($nombre_modulo[tipo_modulo])", 'M', $audCuenta['id'], '1');
                     }
                 }
                 //PrintOK('Datos Guardados'); /** Imprimo json con resultado */
                 PrintRespuestaJson('ok', 'Datos Guardados');
                 // mysqli_close($link); /** Cerramos conexion con Mysql */
                 exit;
-            } else { /** Si no recibimos datos de modulos devolvemos mensaje del delete de los modulos */
+            } else {
+                /** Si no recibimos datos de modulos devolvemos mensaje del delete de los modulos */
                 PrintRespuestaJson('ok', 'Datos Guardados');
                 // mysqli_close($link); /** Cerramos conexion con Mysql */
                 exit;
             }
         } else {
-            mysqli_error($link); 
-            PrintError('ErrorDelete',mysqli_errno($link)); /** Imprimo json con resultado */
+            mysqli_error($link);
+            PrintError('ErrorDelete', mysqli_errno($link));
+            /** Imprimo json con resultado */
             // mysqli_close($link); /** Cerramos conexion con Mysql */
             // PrintRespuestaJson('error', 'Error');
             exit;
         }
-
     } else {
-        if (!valida_campo($_POST['amod'])) { 
+        if (!valida_campo($_POST['amod'])) {
             /** Si recibimos datos de modulos. Hacemos el insert de los mismos */
-            foreach ($Modulo as $key => $ValueMod) { /** recorremos el array de los modulos recibido */
+            foreach ($Modulo as $key => $ValueMod) {
+                /** recorremos el array de los modulos recibido */
                 // PrintError('ErrorInsert',$IdRol); exit;
                 /** Hacemos el insert de los modulos */
-                if (!InsertModRol($recidRol, $IdRol, $ValueMod ,$Fecha)) { /** Si hubo error */
-                    mysqli_error($link); PrintError('ErrorInsert',mysqli_errno($link)); /** Imprimo json con resultado */
-                    mysqli_close($link); /** Cerramos conexion con Mysql */
+                if (!InsertModRol($recidRol, $IdRol, $ValueMod, $Fecha)) {
+                    /** Si hubo error */
+                    // mysqli_error($link);
+                    PrintError('ErrorInsert', 'Error');
+                    /** Imprimo json con resultado */
+                    // mysqli_close($link);
+                    /** Cerramos conexion con Mysql */
                     exit;
                 }
             }
             PrintRespuestaJson('ok', 'Datos Guardadoss');
             exit;
-        }else{
+        } else {
             PrintRespuestaJson('ok', 'Datos Guardados');
             exit;
         }

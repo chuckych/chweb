@@ -7,9 +7,8 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
 E_ALL();
-
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['d_user'] == 'true')) {
-
+  $audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes where clientes.tkmobile = '$_SESSION[TK_MOBILE]'");
   $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
   $nombre = $_POST['_nombre'];
 
@@ -28,6 +27,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['d_user'] == 'true')) {
     $MESSAGE = $array['MESSAGE'];
  }
  if($array['SUCCESS']=='YES'){
+    auditoria("Usuario Mobile ($id) $nombre", 'B', $audCuenta['id'], '26');
     $data = array('status' => 'ok', 'usuario' => $nombre, 'MESSAGE'=> $MESSAGE);
     echo json_encode($data);
     exit;

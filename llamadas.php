@@ -1,7 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Control Horario WEB HRProcess">
-<meta name="author" content="nch@outlook.com.ar">
+<meta name="author" content="Norberto CH  - nch@outlook.com.ar">
 <meta name="msapplication-TileColor" content="#2d89ef" />
 <link rel="apple-touch-icon" sizes="76x76" href="/<?= HOMEHOST ?>/img/favicon/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/<?= HOMEHOST ?>/img/favicon/favicon-32x32.png">

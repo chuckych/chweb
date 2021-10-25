@@ -4,10 +4,9 @@ require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-date_default_timezone_set('America/Argentina/Buenos_Aires');
-setlocale(LC_TIME, "es_ES");
+timeZone();
+timeZone_lang();
 secure_auth_ch_json();
-
 E_ALL();
 
 $params    = array();
@@ -127,7 +126,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
 
         if (UpdateRegistro("UPDATE REGISTRO Set RegTipo = '$RegTipo',RegLega = '$RegLega',RegFeAs = '$RegFeAs',RegFeRe = '$RegFeRe',RegHoRe = '$RegHoRe',RegTran = '$RegTran',RegSect = '$RegSect',RegRelo = '$RegRelo',RegLect = '$RegLect',FechaHora = '$FechaHora' WHERE RegTarj = '$RegTarj' and RegFech = '$RegFech' and RegHora = '$RegHora'")) {
 
-            audito_ch('A', $Dato);
+            audito_ch('A', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFeAs, $RegFeAs) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
@@ -148,7 +147,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         $Dato2    = 'Hora: <span class="ls1 fw5">' . $_POST['RegHora'] . '</span>Hs. Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd/m/Y');
 
         if (InsertRegistro("INSERT INTO REGISTRO (RegTarj,RegFech,RegHora,RegTipo,RegLega,RegFeAs,RegFeRe,RegHoRe,RegTran,RegSect,RegRelo,RegLect,FechaHora) Values('$RegTarj','$RegFech','$RegHora','$RegTipo','$RegLega','$RegFeAs','$RegFeRe','$RegHoRe','$RegTran','$RegSect','$RegRelo','$RegLect','$FechaHora')")) {
-            audito_ch('A', $Dato);
+            audito_ch('A', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFeAs, $RegFeAs) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
@@ -218,7 +217,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_fichada'] == 'true')
 
     if (UpdateRegistro("UPDATE REGISTRO SET RegTipo=1, RegLega=$RegLega, RegFeAs='$RegFeAs', RegFeRe='$RegFech', RegHoRe='$RegHora', RegTran='$RegTran', RegSect='$RegSect', RegRelo='$RegRelo', RegLect='$RegLect', FechaHora='$FechaHora' WHERE RegTarj='$RegTarj' AND RegFech='$RegFech' AND RegHora='$RegHora'")) {
 
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '4');
         $RegFech0 = date("Ymd", strtotime($RegFech . "- 1 days"));
         $RegFech1 = date("Ymd", strtotime($RegFech . "+ 1 days"));
         $RegFech1 = ($RegFech1 > date("Ymd")) ? date("Ymd") : $RegFech1;
@@ -317,7 +316,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
 
         if (UpdateRegistro("UPDATE REGISTRO SET RegTipo = $RegTipo, RegLega = '$RegLega',RegFeAs = '$RegFeAs', RegFeRe = '$RegFeRe', RegHoRe = '$RegHora',RegTran = $RegTran,RegSect = '$RegSect',RegRelo = '',RegLect = '',FechaHora = '$FechaHora' WHERE RegTarj='$RegTarj' AND RegFech='$RegFech1' AND RegHora = '$RegHora1'")) {
 
-            audito_ch('M', $Dato);
+            audito_ch('M', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFech1, $RegFech1) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 PrintRespuestaJson('ok', $Dato2 . $Procesado);
@@ -486,7 +485,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     }
     /** Leugo insertamos la novedad en Fichas3 */
     if (InsertRegistro("INSERT INTO FICHAS3 (FicLega,FicFech,FicTurn,FicNove,FicNoTi,FicHoras,FicJust,FicObse,FicCaus,FicEsta,FicCate,FicComp,FechaHora) Values('$FicLega','$FicFech',1,'$FicNove','$NovTipo','$FicHoras','$FicJust','$FicObse','$FicCaus',1,'$FicCate','00:00','$FechaHora')")) {
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
@@ -602,7 +601,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     $Dato2 = 'Nov: (' . $NovCodi . ') ' . $NovDesc;
 
     if (UpdateRegistro("UPDATE FICHAS3 SET FicNove = '$FicNove', FicNoTi='$NovTipo', FicHoras='$FicHoras', FicJust='$FicJust', FicObse='$FicObse', FicCaus='$FicCaus', FicCate='$FicCate', FicEsta= 1, FechaHora = '$FechaHora' WHERE FicNove = '$MNoveCod' AND FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn='1'")) {
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
@@ -654,7 +653,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_novedad'] == 'true')
     $Dato2    = 'Nov: (' . $FicNov . ') ' . $NovDes;
 
     if ((DeleteRegistro("DELETE FROM FICHAS3 WHERE FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn = 1 AND FicNove = '$FicNov'"))) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '4');
         /** Grabo en la tabla Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
@@ -752,7 +751,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
 
     if (InsertRegistro("INSERT INTO FICHAS1 (FicLega,FicFech,FicTurn,FicHora,FicHsHe,FicHsAu,FicHsAu2,FicEsta,FechaHora,FicObse,FicCaus) Values('$FicLega','$FicFech',1,'$Fic1Hora','$Fic1HsAu2','$Fic1HsAu2','$Fic1HsAu2',2,'$FechaHora','$Fic1Observ','$Fic1Caus ')")) {
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
@@ -803,7 +802,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Hora'] == 'true')) {
     $Dato2 = 'Hora: (' . $FicHora . ') ' . $HoraDesc;
 
     if ((DeleteRegistro("DELETE FROM FICHAS1 WHERE FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn = 1 AND FicHora = '$FicHora'"))) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '4');
         /** Grabo en la tabla Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
@@ -911,7 +910,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     //UPDATE FICHAS1 Set FicHsHe = '$FicHsAu', FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'
     if (UpdateRegistro("UPDATE FICHAS1 Set FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
         /** Grabamos en Auditor */
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '4');
 
         //setup request to send json via POST
         $extraHours[] = array(
@@ -1044,7 +1043,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
     /** Luego insertamos  */
     if (InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora) VALUES ('$FicLega','$FicFech',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora')")) {
         $data = array('status' => 'ok', 'Mensaje' => $Dato2, 'tipo' => '');
-        audito_ch('A', $Dato);
+        audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         echo json_encode($data);
         exit;
@@ -1088,7 +1087,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
     $Dato2 = 'Otra Novedad: (' . $FicONov . ') ' . $Descrip;
 
     if ((DeleteRegistro("DELETE FROM FICHAS2 WHERE FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn = 1 AND FicONov = '$FicONov'"))) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato, '4');
         /** Grabo en la tabla Auditor */
         $data = array('status' => 'ok', 'Mensaje' => $Dato2);
         echo json_encode($data);
@@ -1167,7 +1166,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
     /** Luego UPDATE  */
     if (UpdateRegistro("UPDATE FICHAS2 Set FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicONov = '$FicONov'")) {
         $data = array('status' => 'ok', 'Mensaje' => $Dato2, 'tipo' => 'mod');
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
         echo json_encode($data);
         exit;
@@ -1295,7 +1294,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
 
     if ($ExisteCitacion) {
         if (UpdateRegistro("UPDATE CITACION SET CitEntra = '$CitEntra', CitSale='$CitSale', CitDesc='$CitDesc', FechaHora ='$FechaHora' WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1")) {
-            audito_ch('M', $Dato);
+            audito_ch('M', $Dato, '4');
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod');
@@ -1309,7 +1308,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
     } else {
         $Dato = 'Alta Citación: ' . $CitEntra . ' - ' . $CitSale . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
         if (InsertRegistro("INSERT INTO CITACION (CitLega,CitFech,CitTurn,CitEntra,CitSale,CitDesc,FechaHora) VALUES ( '$FicLega','$FicFech','1','$CitEntra','$CitSale','$CitDesc','$FechaHora' )")) {
-            audito_ch('A', $Dato);
+            audito_ch('A', $Dato, '4');
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";
                 $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'alta');
@@ -1367,7 +1366,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
 
     if ($ExisteCitacion) {
         if ((DeleteRegistro("DELETE FROM CITACION WHERE CitLega='$FicLega' AND CitFech ='$FicFech' AND CitTurn = 1"))) {
-            audito_ch('B', $Dato);
+            audito_ch('B', $Dato, '4');
 
             if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
                 $Procesado = " - Procesado.";

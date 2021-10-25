@@ -121,7 +121,7 @@ $CierreFech = test_input($_POST['CierreFech']);
                             $Dato = 'Legajo.: '. $LegNume . '. '.$LegApNo.'. Fecha Cierre: '.$CierreFech;
                             
                             // sleep(1);
-                            // audito_ch('M', $DatoC);
+                            // audito_ch('M', $Dato,  '10'C);
                         };
                     }
                     
@@ -131,13 +131,13 @@ $CierreFech = test_input($_POST['CierreFech']);
                     sqlsrv_execute($stmt3);
                     $Dato = 'Legajo.: '. $LegNume . '. '.$LegApNo.'. Fecha Cierre: '.Fech_Format_Var($CierreFech, 'd/m/Y');
                     // sleep(1);
-                    // audito_ch('A', $DatoC);
+                    // audito_ch('A', $Dato,  '10'C);
                 }
 
                 $data = array("status" => "ok", "dato" => $Dato, "Lega" => $LegNume, "Nombre"=> $LegApNo, 'docu'=> $LegDocu);
                 echo json_encode($data); /** retorno resultados en formato json */
                 
-                audito_ch('M', $Dato); /** Grabo en la tabla Auditor */
+                audito_ch('M', $Dato,  '10'); /** Grabo en la tabla Auditor */
 
                 sqlsrv_free_stmt($resultCierre);
 

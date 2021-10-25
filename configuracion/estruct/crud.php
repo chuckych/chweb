@@ -95,7 +95,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             $query = "INSERT INTO EMPRESAS( [EmpCodi],[EmpRazon],[EmpTipo],[EmpCUIT],[EmpDomi],[EmpDoNu],[EmpPiso],[EmpDpto],[EmpCoPo],[EmpProv],[EmpLoca],[EmpTele],[EmpMail],[EmpCont],[EmpObse],[EmpEsta],[EmpCodActi],[EmpActividad],[EmpBanco],[EmpBanSuc],[EmpBanCta],[EmpLugPag],[EmpRecibo],[EmpLogo],[EmpReduc],[EmpForCta],[EmpTipoEmpl],[FechaHora],[EmpAFIPTipo],[EmpAFIPLiqui] ) VALUES ( '$EmpCodi','$Desc','$EmpTipo','$EmpCUIT','$EmpDomi','$EmpDoNu','$EmpPiso','$EmpDpto','$EmpCoPo','$EmpProv','$EmpLoca','$EmpTele','$EmpMail','$EmpCont','$EmpObse','$EmpEsta','$EmpCodActi','$EmpActividad','$EmpBanco','$EmpBanSuc','$EmpBanCta','$EmpLugPag','$EmpRecibo','$EmpLogo','$EmpReduc','$EmpForCta','$EmpTipoEmpl','$FechaHora','$EmpAFIPTipo','$EmpAFIPLiqui')";
             $result  = sqlsrv_query($link, $query);
             if ($result) {
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 // PrintRespuestaJson('ok', 'Empresa <strong>'.$Desc.'</strong> creada correctamente');
                 PrintRespuestaJson('ok', $Desc);
                 sqlsrv_close($link);
@@ -198,7 +198,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Empresa: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
         PrintRespuestaJson('ok', 'Empresa <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -245,7 +245,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Empresa: ' . $Desc . ': ' . $Cod;
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Empresa <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -312,7 +312,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 /** */
                 PrintRespuestaJson('ok', 'Planta: <strong>' . $Desc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -352,7 +352,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Planta: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
         PrintRespuestaJson('ok', 'Planta <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -394,7 +394,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Planta: ' . $Cod . ': ' . $Desc;
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Planta <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -461,7 +461,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 /** */
                 PrintRespuestaJson('ok', 'Sucursal: <strong>' . $Desc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -502,7 +502,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Sucursal: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
 
         PrintRespuestaJson('ok', 'Sucursal <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
@@ -543,7 +543,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $query = "DELETE FROM SUCURSALES WHERE SucCodi = $Cod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Sucursal <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -610,7 +610,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 /** */
                 PrintRespuestaJson('ok', 'Grupo: <strong>' . $Desc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -651,7 +651,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Grupo: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
 
         PrintRespuestaJson('ok', 'Grupo <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
@@ -692,7 +692,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $query = "DELETE FROM GRUPOS WHERE GruCodi = $Cod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Grupo <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -760,7 +760,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 /** */
                 PrintRespuestaJson('ok', 'Sector: <strong>' . $Desc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -801,7 +801,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Sector: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
 
         PrintRespuestaJson('ok', 'Sector <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
@@ -842,7 +842,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $query = "DELETE FROM SECTORES WHERE SecCodi = $Cod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Sector <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -910,7 +910,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato);
+                audito_ch('A', $Dato,  '31');
                 /** */
                 PrintRespuestaJson('ok', 'Tarea: <strong>' . $Desc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -951,7 +951,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Tarea: ' . $Desc . ': ' . $Cod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '31');
 
         PrintRespuestaJson('ok', 'Tarea <strong>' . $Desc . '</strong> modificada correctamente');
         /** Si se Guardo con exito */
@@ -992,7 +992,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     $query = "DELETE FROM TAREAS WHERE TareCodi = $Cod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '31');
         PrintRespuestaJson('ok', 'Tarea <strong>' . $Desc . '</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -1079,7 +1079,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         // $query = "UPDATE PERSONAL SET $Col = '$selectEstruc' WHERE LegNume = '$ChecksCod'";
         $rs = sqlsrv_query($link, $query);
         if ($rs) {
-            audito_ch2('M', $Dato);
+            audito_ch2('M', $Dato,  '31');
         } else {
             foreach (sqlsrv_errors() as $key => $v) {
                 $error = $v['SQLSTATE'];

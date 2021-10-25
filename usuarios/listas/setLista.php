@@ -11,6 +11,12 @@ require __DIR__ . '../../../config/conect_mysql.php';
 
 $fechaHora = date("Y-m-d H:i:s");
 
+$id_rol   = (test_input($_POST['id_rol']));
+if ($id_rol) {
+    $audCuenta = simple_pdoQuery("SELECT clientes.id 'id', roles.nombre as 'nombre_rol' FROM roles INNER JOIN clientes ON roles.cliente = clientes.id WHERE roles.id = $id_rol LIMIT 1");
+}
+$audCuenta['id'] = $audCuenta['id'] ?? '';
+
 if (array_key_exists('lista', $_POST)) {
     if (!empty($_POST['lista'])) {
 
@@ -25,12 +31,13 @@ if (array_key_exists('lista', $_POST)) {
         $lista     = (test_input($_POST['lista']));
 
         $NombreLista = listaRol($lista);
-
+        // $rLista = simple_pdoQuery("SELECT roles.id, roles.nombre FROM roles WHERE id = '$id_rol'");
         $validaRol = (ExisteRol4($recid_rol, $id_rol));
         if (empty($datos)) {
             $delete = "DELETE FROM lista_roles WHERE id_rol = '$id_rol' and lista = '$lista'";
             if (deleteRegistroMySql($delete)) {
                 PrintRespuestaJson('ok', 'Valores eliminados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Rol ($id_rol) $audCuenta[nombre_rol]", '2', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -45,12 +52,14 @@ if (array_key_exists('lista', $_POST)) {
             $update = "UPDATE lista_roles SET datos = '$datos', fecha = '$fechaHora' WHERE id_rol = '$id_rol' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
                 PrintRespuestaJson('ok', 'Valores guardados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Rol ($id_rol) $audCuenta[nombre_rol]", '3', $audCuenta['id'], '1');
                 exit;
             }
         } else {
             $insert = "INSERT INTO lista_roles (id_rol, lista, datos, fecha) VALUES ('$id_rol', '$lista', '$datos', '$fechaHora')";
             if (InsertRegistroMySql($insert)) {
                 PrintRespuestaJson('ok', 'Valores creados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Rol ($id_rol) $audCuenta[nombre_rol]", 'A', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -70,7 +79,7 @@ if (array_key_exists('listaRol', $_POST)) {
         $recid_rol = (test_input($_POST['recid_rol']));
         $id_rol    = (test_input($_POST['id_rol']));
         $lista     = (test_input($_POST['listaRol']));
-
+        $nRol = simple_pdoQuery("SELECT roles.nombre FROM roles WHERE id = '$id_rol'");
         $NombreLista = listaRol($lista);
 
         $validaRol = (ExisteRol4($recid_rol, $id_rol));
@@ -118,6 +127,8 @@ if (array_key_exists('listaRol', $_POST)) {
                     $insert = "INSERT INTO lista_roles (id_rol, lista, datos, fecha) VALUES ('$valueDatos', '$lista', '$datos', '$fechaHora')";
                     InsertRegistroMySql($insert);
                 }
+                $rLista = simple_pdoQuery("SELECT roles.id, roles.nombre FROM roles WHERE id = '$valueDatos'");
+                auditoria("Copia lista Rol ($id_rol) $nRol[nombre] a ($rLista[id]) $rLista[nombre]", 'A', $audCuenta['id'], '1');
             }
             $data = array('status' => 'ok', 'Mensaje' => 'Valores copiados correctamente a los roles:<br><span class="ls1">'.json_encode($arrDatos).'</span>', 'data' => ($arrDatos));
             echo json_encode($data);

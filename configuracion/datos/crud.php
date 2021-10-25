@@ -70,7 +70,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '30'); 
                 /** */
                 PrintRespuestaJson('ok', 'Nacionalidad: <strong>' .$NacDesc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -120,7 +120,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Nacionalidad: ' .$NacDesc . ': ' . $NacCod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '30');
         PrintRespuestaJson('ok', 'Nacionalidad <strong>'.$NacDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -161,7 +161,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Nacionalidad: ' .$NacDesc . ': ' . $NacCod;
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '30');
         PrintRespuestaJson('ok', 'Nacionalidad <strong>'.$NacDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -224,7 +224,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '30'); 
                 /** */
                 PrintRespuestaJson('ok', 'Provincia: <strong>' .$ProDesc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -274,7 +274,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Provincia: ' .$ProDesc . ': ' . $ProCod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '30');
         PrintRespuestaJson('ok', 'Provincia <strong>'.$ProDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
         sqlsrv_close($link);
@@ -315,7 +315,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Provincia: ' .$ProCod . ': ' . $ProDesc;
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '30');
         PrintRespuestaJson('ok', 'Provincia <strong>'.$ProDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;
@@ -378,7 +378,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '30'); 
                 /** */
                 PrintRespuestaJson('ok', 'Localidad: <strong>' .$LocDesc . '</strong> creada correctamente.');
                 sqlsrv_free_stmt($result);
@@ -428,7 +428,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
         $Dato     = 'Localidad: ' .$LocDesc . ': ' . $LocCod;
-        audito_ch('M', $Dato);
+        audito_ch('M', $Dato,  '30');
 
         PrintRespuestaJson('ok', 'Localidad <strong>'.$LocDesc.'</strong> modificada correctamente');
         /** Si se Guardo con exito */
@@ -468,7 +468,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
     $query="DELETE FROM LOCALIDA WHERE LocCodi = $LocCod";
     $rs = sqlsrv_query($link, $query);
     if ($rs) {
-        audito_ch('B', $Dato);
+        audito_ch('B', $Dato,  '30');
         PrintRespuestaJson('ok', 'Localidad <strong>'.$LocDesc.'</strong> eliminada correctamente');
         sqlsrv_close($link);
         exit;

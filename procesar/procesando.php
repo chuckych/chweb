@@ -126,7 +126,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
             $data = array('status' => 'ok', 'Mensaje' => 'Proceso enviado correctamente!<br>Legajo: (' . $LegaIni . ') ' . $_POST['nombreLegajo'] . ' <br/>Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y').$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
             /** Insertar en tabla Auditor */
             $Dato = dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin);
-            audito_ch('P', $Dato);
+            audito_ch('P', $Dato, '12');
             /** */
         } else {
             $textoLegajo = ($LegaIni == $LegaFin) ? 'Legajo: ' . $LegaIni . '' : 'Legajos: ' . $LegaIni . ' a ' . $LegaFin . '';
@@ -134,7 +134,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
             $data = array('status' => 'ok', 'Mensaje' => 'Proceso enviado correctamente!<br>' . $textoLegajo . '<br/>' . $textoFecha . $datas.$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
             /** Insertar en tabla Auditor */
             $Dato = dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin);
-            audito_ch('P', $Dato);
+            audito_ch('P', $Dato, '12');
             /** */
         }
 

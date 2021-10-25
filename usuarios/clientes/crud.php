@@ -12,7 +12,7 @@ FusNuloPOST('submit', '');
 $fecha = date("Y/m/d H:i:s");
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')) {
 
-    require __DIR__ . '../../../config/conect_mysql.php';
+    // require __DIR__ . '../../../config/conect_mysql.php';
 
     $nombre     = test_input($_POST['nombre']);
     $ident      = test_input($_POST['ident']);
@@ -21,7 +21,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     $WebService = test_input($_POST['WebService']);
     $identauto  = (empty($ident)) ? substr(strtoupper($n_ident), 0, 3) : $ident;
 
-    $CheckDuplicado = CountRegMayorCeroMySql("SELECT clientes.ident FROM clientes WHERE clientes.ident='$identauto'");
+    $CheckDuplicado = count_pdoQuery("SELECT clientes.ident FROM clientes WHERE clientes.ident='$identauto'");
     if ($CheckDuplicado) {
         $identauto  = Ident();
     }
@@ -40,20 +40,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     } else {
         /* INSERTAMOS CLIENTE EN TABLA CLIENTES */
         $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, fecha_alta, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService','$fecha', '$fecha')";
-        $rs_insert = mysqli_query($link, $query);
+        $rs_insert = pdoQuery($query);
  
         if ($rs_insert) {
             PrintRespuestaJson('ok', 'Cuenta Creada');
             /** Si se Guardo con exito */
-            mysqli_close($link);
+            $audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes WHERE clientes.nombre = '$nombre' LIMIT 1");
+            auditoria("Cuenta ($nombre)", '1', $audCuenta['id'], '1');
+            // mysqli_close($link);
             exit;
-        } elseif (mysqli_errno($link) == 1062) {
+        } elseif (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
             PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: '.$nombre);
-            mysqli_close($link);
+            // mysqli_close($link);
             exit;
         } else {
-            PrintRespuestaJson('error', mysqli_error($link));
-            mysqli_close($link);
+            PrintRespuestaJson('error', 'Error');
+            // mysqli_close($link);
             exit;
         }
     }
@@ -61,7 +63,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
 /** FIN ALTA DE CLIENTE */
 /** MODIFICACION DE CLIENTE */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')) {
-    require __DIR__ . '../../../config/conect_mysql.php';
+    // require __DIR__ . '../../../config/conect_mysql.php';
 
     $nombre     = test_input($_POST['nombre']);
     $host       = test_input($_POST['host']);
@@ -80,20 +82,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     } else {
 
         $query="UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', fecha='$fecha' WHERE recid='$recid' ";
+        
+        if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
+            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: '.$nombre);
+            exit;
+        }
 
-        $rs = mysqli_query($link, $query);
+        $r = simple_pdoQuery("SELECT id, nombre FROM clientes where recid = '$recid'");
+        $rs = pdoQuery($query);
         if ($rs) {
             PrintRespuestaJson('ok', 'Cuenta Modificada');
             /** Si se Guardo con exito */
-            mysqli_close($link);
+            auditoria("Cuenta ($nombre)", '3', $r['id'], '1');
+            // mysqli_close($link);
             exit;
-        } elseif (mysqli_errno($link) == 1062) {
-            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: '.$nombre);
-            mysqli_close($link);
-            exit;
-        } else {
-            PrintRespuestaJson('error', mysqli_error($link));
-            mysqli_close($link);
+        }  else {
+            PrintRespuestaJson('error', 'Error');
+            // mysqli_close($link);
             exit;
         }
     }

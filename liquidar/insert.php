@@ -127,7 +127,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_liquidacion'] == 'tr
         $data = array('status' => 'ok', 'Mensaje' => dato_proceso($LegajoDesde, $LegajoHasta, $FechaIni, $FechaFin, $FechaDesde, $FechaHasta) . $datas, 'Tipo de Personal' => $TipoDePersonal, 'body'=> $body );
         /** Insertar en tabla Auditor */
         $Dato = dato_proceso($LegajoDesde, $LegajoHasta, $FechaIni, $FechaFin, $FechaDesde, $FechaHasta);
-        audito_ch('P', $Dato);
+        audito_ch('P', $Dato, '15');
         /** */
         echo json_encode($data);
         exit;

@@ -173,6 +173,7 @@ $numeroDeFila = 2;
 /** Llamamos a la API */
 // $token = $_SESSION["TK_MOBILE"];
 $token = TokenMobile($_SESSION["TK_MOBILE"], 'token');
+$audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes where clientes.tkmobile = '$_SESSION[TK_MOBILE]'");
 
 $url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
 
@@ -276,6 +277,7 @@ try {
     // $writer->save('php://output');
 
     $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    auditoria("Exportar Excel Fichadas Mobile. Desde $start_date a $end_date", 'A', $audCuenta['id'], '5');
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {

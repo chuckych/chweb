@@ -50,6 +50,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         sqlsrv_free_stmt($stmt);
         sqlsrv_close($link);
     }
+    function dataNove($query)
+    {
+        $rows    = array();
+        $params    = array();
+        $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+        require __DIR__ . '../../config/conect_mssql.php';
+        $stmt  = sqlsrv_query($link, $query, $params, $options);
+        while ($row = sqlsrv_fetch_array($stmt))
+            $rows = array(
+                'NovCodi' => $row['NovCodi'],
+                'NovDesc' => $row['NovDesc'],
+            );
+        return $rows;
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($link);
+    }
 
     $tipoNov = checkTipoNov(FusNuloPOST('aFicNove', ''));
     $TipoIngreso  = FusNuloPOST('TipoIngreso', '');
@@ -156,6 +172,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         echo json_encode($data);
         exit;
     }
+
+    $queryNov = "SELECT NOVEDAD.NovCodi, NOVEDAD.NovDesc FROM NOVEDAD WHERE NOVEDAD.NovCodi = '$aFicNove'";
+
+    $objFicNove = dataNove($queryNov);
     $microtime  = FusNuloPOST('now', '');
 
     if ((valida_campo(($microtime)))) {
@@ -214,8 +234,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         if (($procesando) == 'Terminado') {
             //$mensaje = '(' . $count++ . ') Fin de Ingreso Novedad ' . $DescNovedad . '. <br>Legajo: ' . $value . ' desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-            //audito_ch2("A", 'Alta Novedad Legajos ' . $legajo . '. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
-            audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos varios. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+            foreach ($_POST['legajo'] as $v) {
+                audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') '.$objFicNove['NovDesc'].'. Legajo ('.$v.'). Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')), '2');
+            }
+            // audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos varios. Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')), '2');
         } else {
             $mensaje = 'Error No Enviado';
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);
@@ -233,7 +255,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         if (($procesando) == 'Terminado') {
             //$mensaje = '(' . $count++ . ') Fin de Ingreso NOVEDAD ' . $DescNovedad . '. <br>Desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' a ' . Fech_Format_Var($FechaFin, 'd/m/Y');
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, true, false);
-            audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos. ' . $DataFiltros . 'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')));
+            audito_ch2("A", 'Alta Novedad (' . $aFicNove . ') Legajos. ' . $DataFiltros . 'Desde: ' . FechaFormatVar($FechaIni, ('d/m/Y')) . ' a ' . FechaFormatVar($FechaFin, ('d/m/Y')), '2');
         } else {
             $mensaje = 'Error No Enviado';
             //EscribirArchivo("Ingreso_" . $microtime, "../novedades/logs/", $mensaje, false, false, false);

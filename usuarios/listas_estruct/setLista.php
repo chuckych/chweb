@@ -11,6 +11,19 @@ E_ALL();
 require __DIR__ . '../../../config/conect_mysql.php';
 
 $fechaHora = date("Y-m-d H:i:s");
+$_POST['_c'] = $_POST['_c'] ?? '';
+$_POST['uid'] = $_POST['uid'] ?? '';
+$cliente   = (test_input($_POST['_c']));
+$uid       = (test_input($_POST['uid']));
+if ($uid) {
+    $audUid = simple_pdoQuery("SELECT usuarios.nombre FROM usuarios WHERE usuarios.id = '$uid' LIMIT 1");
+}
+$audUid['nombre'] = $audUid['nombre'] ?? '';
+if ($cliente) {
+    $audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes WHERE clientes.recid = '$cliente' LIMIT 1");
+}
+$audCuenta['id'] = $audCuenta['id'] ?? '';
+
 
 if (array_key_exists('lista', $_POST)) {
     if (!empty($_POST['lista'])) {
@@ -32,6 +45,7 @@ if (array_key_exists('lista', $_POST)) {
             $delete = "DELETE FROM lista_estruct WHERE uid = '$uid' and lista = '$lista'";
             if (deleteRegistroMySql($delete)) {
                 PrintRespuestaJson('ok', 'Valores eliminados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '2', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -47,12 +61,15 @@ if (array_key_exists('lista', $_POST)) {
             $update = "UPDATE lista_estruct SET datos = '$datos', fecha = '$fechaHora' WHERE uid = '$uid' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
                 PrintRespuestaJson('ok', 'Valores guardados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '3', $audCuenta['id'], '1');
                 exit;
             }
         } else {
             $insert = "INSERT INTO lista_estruct (uid, lista, datos, fecha) VALUES ('$uid', '$lista', '$datos', '$fechaHora')";
             if (InsertRegistroMySql($insert)) {
                 PrintRespuestaJson('ok', 'Valores creados en lista de "' . $NombreLista . '."');
+                // auditoria("Valores creados en lista de ($NombreLista)", '1', $audCuenta['id'], '1');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '1', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -71,7 +88,6 @@ if (array_key_exists('lista2', $_POST)) {
         $uid              = (test_input($_POST['uid']));
         $cliente          = (test_input($_POST['_c']));
         $lista            = (test_input($_POST['lista2']));
-
         $NombreLista = listaEstruct($lista);
 
         $validaUser = (ExisteUser($cliente, $uid));
@@ -79,6 +95,7 @@ if (array_key_exists('lista2', $_POST)) {
             $delete = "DELETE FROM lista_estruct WHERE uid = '$uid' and lista = '$lista'";
             if (deleteRegistroMySql($delete)) {
                 PrintRespuestaJson('ok', 'Valores eliminados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '2', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -94,12 +111,14 @@ if (array_key_exists('lista2', $_POST)) {
             $update = "UPDATE lista_estruct SET datos = '$datos', fecha = '$fechaHora' WHERE uid = '$uid' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
                 PrintRespuestaJson('ok', 'Valores guardados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '3', $audCuenta['id'], '1');
                 exit;
             }
         } else {
             $insert = "INSERT INTO lista_estruct (uid, lista, datos, fecha) VALUES ('$uid', '$lista', '$datos', '$fechaHora')";
             if (InsertRegistroMySql($insert)) {
                 PrintRespuestaJson('ok', 'Valores creados en lista de "' . $NombreLista . '."');
+                auditoria("Valores lista ($NombreLista). Usuario ($uid) $audUid[nombre]", '1', $audCuenta['id'], '1');
                 exit;
             }
         }
@@ -156,6 +175,8 @@ if (array_key_exists('listaEstruct', $_POST)) {
             mysqli_free_result($stmt);
             mysqli_close($link);
 
+           $uLista = simple_pdoQuery("SELECT usuarios.id as 'id', usuarios.nombre as 'nombre', clientes.id as 'idc', clientes.nombre as 'nombrec' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id=$uid");
+
             foreach ($arrDatos as $key => $valueDatos) {
                 /** Recorremos los checks seleccionados */
                 foreach ($data as $key => $value) {
@@ -163,9 +184,10 @@ if (array_key_exists('listaEstruct', $_POST)) {
                     $uid = $value['uid'];
                     $lista  = $value['lista'];
                     $datos  = $value['datos'];
-
                     $insert = "INSERT INTO lista_estruct (uid, lista, datos, fecha) VALUES ('$valueDatos', '$lista', '$datos', '$fechaHora')";
                     InsertRegistroMySql($insert);
+                    $uCopy = simple_pdoQuery("SELECT usuarios.id as 'id', usuarios.nombre as 'nombre' FROM usuarios WHERE usuarios.id = $valueDatos");
+                    auditoria("Copia lista Estructura usuario ($uLista[id]) $uLista[nombre] a ($uCopy[id]) $uCopy[nombre]", '1', $audCuenta['id'], '1');
                 }
             }
             $data = array('status' => 'ok', 'Mensaje' => 'Valores copiados correctamente.', 'data' => ($arrDatos));
@@ -194,13 +216,14 @@ if (array_key_exists('listaInit', $_POST)) {
             exit;
         }
         $delete = "DELETE FROM lista_estruct WHERE uid = '$uid'";
-        if (deleteRegistroMySql($delete)) {
+        if (pdoQuery($delete)) {
             $data = array('status' => 'ok', 'Mensaje' => 'Estructura inicializada correctamente.');
+            auditoria("Estructura usuario ($uid) $audUid[nombre] inicializada correctamente", '2', $audCuenta['id'], '1');
             echo json_encode($data);
             exit;
         } else {
-            statusData('error', mysqli_error($link));
-            mysqli_close($link);
+            statusData('error', 'Error');
+            // mysqli_close($link);
             exit;
         }
     }

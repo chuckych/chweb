@@ -7,8 +7,9 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 
 E_ALL();
-
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_zona'] == 'true')) {
+
+   $audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes where clientes.tkmobile = '$_SESSION[TK_MOBILE]'");
 
    $tkcliente = TokenMobile($_SESSION["TK_MOBILE"], 'token');
 
@@ -35,6 +36,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_zona'] == 'true')) {
       # code...
    }
    if($array['SUCCESS']=='YES'){
+      auditoria("Zona Mobile $nombrezona. $lat, $lng. Radio: $metros", 'A', $audCuenta['id'], '25');
       $data = array('status' => 'ok', 'zona' => $nombrezona, 'lat'=>$lat, 'lng'=> $lng, 'radio'=>$metros);
       echo json_encode($data);
       exit;

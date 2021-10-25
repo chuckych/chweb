@@ -92,7 +92,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato, '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $NacCodi, 'desc' => $NacDesc);
@@ -169,7 +169,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov);
@@ -247,7 +247,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local);
@@ -325,7 +325,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
@@ -426,7 +426,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
             // }
             if (InsertRegistro("INSERT INTO EMPRESAS( [EmpCodi],[EmpRazon],[EmpTipo],[EmpCUIT],[EmpDomi],[EmpDoNu],[EmpPiso],[EmpDpto],[EmpCoPo],[EmpProv],[EmpLoca],[EmpTele],[EmpMail],[EmpCont],[EmpObse],[EmpEsta],[EmpCodActi],[EmpActividad],[EmpBanco],[EmpBanSuc],[EmpBanCta],[EmpLugPag],[EmpRecibo],[EmpLogo],[EmpReduc],[EmpForCta],[EmpTipoEmpl],[FechaHora],[EmpAFIPTipo],[EmpAFIPLiqui] ) values ( '$EmpCodi','$EmpRazon','$EmpTipo','$EmpCUIT','$EmpDomi','$EmpDoNu','$EmpPiso','$EmpDpto','$EmpCoPo','$EmpProv','$EmpLoca','$EmpTele','$EmpMail','$EmpCont','$EmpObse','$EmpEsta','$EmpCodActi','$EmpActividad','$EmpBanco','$EmpBanSuc','$EmpBanCta','$EmpLugPag','$EmpRecibo','$EmpLogo','$EmpReduc','$EmpForCta','$EmpTipoEmpl','$FechaHora','$EmpAFIPTipo','$EmpAFIPLiqui')")) {
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon);
@@ -504,7 +504,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector);
@@ -587,7 +587,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $Se2Codi, 'desc' => $Se2Desc);
@@ -673,7 +673,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo);
@@ -751,7 +751,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur);
@@ -831,7 +831,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea);
@@ -914,7 +914,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio, 'ConDias'=> $ConDias, 'ConTDias'=> $ConTDias);
@@ -1000,7 +1000,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('M', $Dato); 
+                audito_ch('M', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'okm', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio, 'ConDias'=> $ConDias, 'ConTDias'=> $ConTDias);
@@ -1068,7 +1068,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1114,7 +1114,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true'))
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1210,7 +1210,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $CFConv);
@@ -1255,7 +1255,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1384,7 +1384,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato2);
@@ -1428,7 +1428,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1493,7 +1493,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1537,7 +1537,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1602,7 +1602,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1647,7 +1647,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1711,7 +1711,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1755,7 +1755,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) 
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1842,7 +1842,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
             }
             if (($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1886,7 +1886,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('B', $Dato); 
+                audito_ch('B', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1926,7 +1926,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('M', $Dato); 
+                audito_ch('M', $Dato,  '10'); 
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'LegGrHa'=>$LegGrHa);
@@ -2008,7 +2008,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
             }
             if (sqlsrv_execute($stmt)) { /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato); 
+                audito_ch('A', $Dato,  '10'); 
                 $data = array('status' => 'ok', 'dato' => $Dato);
                 echo json_encode($data); /** retorno resultados en formato json */
             } else {

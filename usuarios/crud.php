@@ -43,7 +43,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
         $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, legajo, fecha_alta, fecha ) VALUES ( '$recid', '$a_nombre', '$userauto', '$a_rol', '$contraseña1', '$cliente', '$a_legajo','$fecha', '$fecha')";
 
         if ((mysqli_query($link, $query))) {
+
+            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
+
             PrintRespuestaJson('ok', 'Usuario creado correctamente');
+            auditoria("Usuario ($dataUser[id_user]) $userauto. Nombre: $a_nombre. Legajo ($a_legajo). Rol ($a_rol) $dataUser[nombre_rol]", 'A', $cliente, '1');
             /** Si se Guardo con exito */
             mysqli_close($link);
             exit;
@@ -81,6 +85,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
         $stmt = mysqli_query($link, $query);
         if (($stmt)) {
             PrintRespuestaJson('ok', 'Datos Guardados');
+
+            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol', usuarios.cliente AS 'idCliente' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.id='$e_uid' ORDER BY usuarios.fecha DESC LIMIT 1");
+
+            auditoria("Usuario ($e_uid) $e_usuario. Nombre: $e_nombre. Legajo ($e_legajo). Rol ($e_rol) $dataUser[nombre_rol]", 'M', $dataUser['idCliente'], '1');
             /** Si se Guardo con exito */
             mysqli_close($link);
             exit;
@@ -114,6 +122,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'estado')) {
     if ((mysqli_query($link, $query))) {
         PrintRespuestaJson('ok', 'Se '.$textEstado.' el usuario <span class="fw5">' . test_input($_POST["nombre"]) . '.</span>');
         /** Si se Guardo con exito */
+
+        $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
+
+        auditoria("Se $textEstado usuario ($id) $dataUser[usuario]. Nombre: $nombre.", 'M', $dataUser['idCliente'], '1');
+
         mysqli_close($link);
         exit;
     } else {
@@ -129,9 +142,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'delete')) {
     $id     = test_input($_POST["uid"]);
     $nombre = test_input($_POST["nombre"]);
     /* Comprobamos campos vacíos  */
+
+    $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
+
     $query = "DELETE FROM usuarios WHERE usuarios.id='$id'";
 
     if ((mysqli_query($link, $query))) {
+
+        auditoria("Usuario ($id) $dataUser[usuario]. Nombre: $nombre.", 'B', $dataUser['idCliente'], '1');
+
         PrintRespuestaJson('ok', 'Se eliminó el usuario <span class="fw5">' . ($nombre) . '.</span>');
         /** Si se Guardo con exito */
         mysqli_close($link);
@@ -155,6 +174,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'key')) {
     $contraauto = password_hash($usuario, PASSWORD_DEFAULT);
     $uid      = test_input($_POST["uid"]);
     $fecha      = date("Y/m/d H:i:s");
+    
     /* Comprobamos campos vacíos  */
     if ((valida_campo($uid)) or (valida_campo($usuario)) or (valida_campo($nombre))) {
         PrintRespuestaJson('error', 'Campos Requeridos');
@@ -169,6 +189,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'key')) {
 
             PrintRespuestaJson('ok', 'Clave de <span class="fw5">' . test_input($_POST["nombre"]) . '</span> generada correctamente.<br />Su nueva clave es: <span class="fw5">' . $usuario . '</span>');
             /** Si se Guardo con exito */
+            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$uid' ORDER BY usuarios.fecha DESC LIMIT 1");
+            auditoria("Clave de usuario ($uid) $dataUser[usuario]. Nombre: $_POST[nombre].", 'M', $dataUser['idCliente'], '1');
             mysqli_close($link);
             exit;
         } else {

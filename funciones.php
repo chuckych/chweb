@@ -3,11 +3,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.201'; // Version
+    return 'v0.0.202'; // Version
 }
 function verDBLocal()
 {
-    return 20211006; // Version
+    return 20211024; // Version
 }
 function E_ALL()
 {
@@ -21,6 +21,8 @@ function E_ALL()
 }
 function secure_auth_ch() // Funcion para validar si esta autenticado
 {
+    timeZone();
+    timeZone_lang();
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? ''; // Si no existe la variable la crea
     if (
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
@@ -61,6 +63,8 @@ function secure_auth_ch() // Funcion para validar si esta autenticado
 }
 function secure_auth_ch_json()
 {
+    timeZone();
+    timeZone_lang();
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
     if (
         $_SESSION["secure_auth_ch"] !== true
@@ -97,6 +101,8 @@ function secure_auth_ch_json()
 }
 function secure_auth_ch2()
 {
+    timeZone();
+    timeZone_lang();
     if (
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
@@ -462,7 +468,7 @@ function error_query($var, $var2)
         echo "<b>La sentencia " . $var2 . " no se pudo ejecutar</b><br />";
         // die(print_r(sqlsrv_errors(), true));
         if (($errors = sqlsrv_errors()) != null) {
-            date_default_timezone_set('America/Argentina/Buenos_Aires');
+            timeZone();
             $fechaarch = date('dmY');
             $fechaarch2 = date('d/m/Y H:i:s');
             $nombre_archivo = __DIR__ . "/logs/log_error_sql_" . $fechaarch . ".txt";
@@ -788,7 +794,7 @@ function nombre_dias($var, $abreviado)
 }
 function DiaSemana($Ymd)
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
     $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -798,7 +804,7 @@ function DiaSemana($Ymd)
 }
 function DiaSemana_Numero($Ymd)
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
     $days = [7, 1, 2, 3, 4, 5, 6];
@@ -861,7 +867,7 @@ function Nombre_MesNum($NumeroMes)
 }
 function DiaSemana2($Ymd)
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
     $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -871,7 +877,7 @@ function DiaSemana2($Ymd)
 }
 function DiaSemana4($Ymd)
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
     $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -881,7 +887,7 @@ function DiaSemana4($Ymd)
 }
 function DiaSemana3($Ymd)
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
     $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
@@ -1194,6 +1200,7 @@ function ExisteModRol($modulo)
      * verificamos si existe el modulo asociado a la session del rol de usuario. 
      * sino existe lo enviamos al incio.
      */
+    $_SESSION['ID_MODULO'] = $modulo;
     define('ID_MODULO', $modulo);
     $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
         return $e['modsrol'] === ID_MODULO;
@@ -1649,7 +1656,7 @@ function PeriLiq()
     exit;
 }
 
-function audito_ch($AudTipo, $AudDato)
+function audito_ch($AudTipo, $AudDato, $modulo = '')
 {
     $ipCliente = $_SERVER['REMOTE_ADDR'];
     switch ($ipCliente) {
@@ -1704,6 +1711,7 @@ function audito_ch($AudTipo, $AudDato)
         /** ejecuto la sentencia */
         $dataAud = array("auditor" => "ok");
         // echo json_encode($dataAud); 
+        auditoria($AudDato, $AudTipo, '', $modulo);
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -1717,7 +1725,7 @@ function audito_ch($AudTipo, $AudDato)
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
 }
-function audito_ch2($AudTipo, $AudDato)
+function audito_ch2($AudTipo, $AudDato, $modulo ='')
 {
     $ipCliente = $_SERVER['REMOTE_ADDR'];
     switch ($ipCliente) {
@@ -1774,6 +1782,7 @@ function audito_ch2($AudTipo, $AudDato)
         /** ejecuto la sentencia */
         $dataAud = array("auditor" => "ok");
         // echo json_encode($dataAud); 
+        auditoria($AudDato, $AudTipo, '', $modulo);
     } else {
 
         if (($errors = sqlsrv_errors()) != null) {
@@ -1790,6 +1799,49 @@ function audito_ch2($AudTipo, $AudDato)
     }
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
+}
+function auditoria($dato, $tipo, $audcuenta ='', $modulo ='')
+{
+    timeZone();
+    require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
+    $connpdo->beginTransaction();
+    try {
+    $sql='INSERT INTO auditoria( id, id_sesion, usuario, nombre, cuenta, audcuenta, fecha, hora, tipo, dato, modulo ) VALUES( :id, :id_sesion, :usuario, :nombre, :cuenta, :audcuenta, :fecha, :hora, :tipo, :dato, :modulo )';
+        $stmt = $connpdo->prepare($sql); // prepara la consulta
+        $data = [
+            'id'        => '',
+            'id_sesion' => $_SESSION['ID_SESION'],  // $_SESSION['ID_SESION'],
+            'usuario'   => ($_SESSION["user"]) ? $_SESSION["user"] : 'Sin usuario',
+            'nombre'    => ($_SESSION["NOMBRE_SESION"]) ? $_SESSION["NOMBRE_SESION"] : 'Sin nombre',
+            'cuenta'    => ($_SESSION["ID_CLIENTE"] ) ? $_SESSION["ID_CLIENTE"]  : '',
+            'audcuenta' => ($audcuenta) ? $audcuenta : $_SESSION["ID_CLIENTE"],
+            'fecha'     => date("Y-m-d "),
+            'hora'      => date("H:i:s"),
+            'tipo'      => ($tipo) ? $tipo :'Null' , // a:insert, b:update, m:delete; p: proceso
+            'dato'      => ($dato) ? $dato :'No se especificaron datos',
+            'modulo'    => ($modulo) ? $modulo :''
+        ];
+
+        $stmt->bindParam(':id', $data['id']);
+        $stmt->bindParam(':id_sesion', $data['id_sesion']);
+        $stmt->bindParam(':usuario', $data['usuario']);
+        $stmt->bindParam(':nombre', $data['nombre']);
+        $stmt->bindParam(':cuenta', $data['cuenta']);
+        $stmt->bindParam(':audcuenta', $data['audcuenta']);
+        $stmt->bindParam(':fecha', $data['fecha']);
+        $stmt->bindParam(':hora', $data['hora']);
+        $stmt->bindParam(':tipo', $data['tipo']);
+        $stmt->bindParam(':dato', $data['dato']);
+        $stmt->bindParam(':modulo', $data['modulo']);
+        $stmt->execute();
+        $connpdo->commit(); // si todo salio bien, confirma la transaccion
+    } catch (\Throwable $th) { // si hay error
+        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de exito
+        $connpdo->rollBack(); // revierte la transaccion
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorAudito.log'; // ruta del archivo de Log
+        fileLog($th->getMessage()."\n $message", $pathLog); // escribir en el log de errores
+    }
+    $connpdo = null; // cierra la conexion
 }
 function set_query_store($db)
 {
@@ -3257,7 +3309,7 @@ function getVerDBCH($link) // Obtiene la version de la base de datos
 function fileLog($text, $ruta_archivo)
 {
     $log    = fopen($ruta_archivo, 'a');
-    $date   = date('d-m-Y H:i:s');
+    $date   = fechaHora2();
     $text   = $date . ' ' . $text . "\n";
     fwrite($log, $text);
     fclose($log);
@@ -3281,20 +3333,115 @@ function borrarLogs($path, $dias, $ext) // borra los logs a partir de una cantid
 }
 function fechaHora()
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     $t = explode(" ", microtime());
     $t = date("Ymd H:i:s", $t[1]) . substr((string)$t[0], 1, 4);
     return $t;
 }
 function fechaHora2()
 {
-    date_default_timezone_set('America/Argentina/Buenos_Aires');
+    timeZone();
     $t = date("Y-m-d H:i:s");
     return $t;
+}
+
+function timeZone()
+{
+    return date_default_timezone_set('America/Argentina/Buenos_Aires');
+}
+function timeZone_lang()
+{
+    return setlocale(LC_TIME, "es_ES");
 }
 
 function hostName()
 {
     $nombre_host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
     return $nombre_host;
+}
+function simple_pdoQuery($sql)
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        $stmt->execute();
+        // $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        while (($row = $stmt->fetch(PDO::FETCH_ASSOC)) !== false) {
+            return $row;
+        }
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+    $stmt = null;
+}
+function count_pdoQuery($sql)
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        $stmt->execute();
+        return ($stmt->fetchColumn() > 0) ? true : false;
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+    $stmt = null;
+}
+function array_pdoQuery($sql)
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $result;
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+    $stmt = null;
+}
+
+function insert_pdoQuery($sql)
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        if($stmt->execute()) {
+            return true;
+        }else{
+            return false;
+        }
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+    $stmt = null;
+}
+function pdoQuery($sql)
+{
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        if($stmt->execute()) {
+            return true;
+        }else{
+            return false;
+        }
+        ($stmt->execute()) ? true : false;
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+    $stmt = null;
+}
+function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
+{
+    $r = array_filter($array, function ($e) use ($key, $valor) {
+        return $e[$key] === $valor;
+    });
+    foreach ($r as $key => $value) {
+        return ($value);
+    }
 }

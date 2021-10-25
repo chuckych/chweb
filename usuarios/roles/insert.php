@@ -53,29 +53,37 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['act_abm'] == 'true')) {
     $act_abm = (test_input($_POST['act_abm']) == 'on') ? '1' : '0';
 
     if (valida_campo($_POST['RecidRol'])) {
-        PrintRespuestaJson('Error' ,'Error.');
+        PrintRespuestaJson('Error', 'Error.');
         exit;
     };
 
-      $id_rol    = (test_input($_POST['IdRol']));
-      $recid_rol = (test_input($_POST['RecidRol']));
-      $FechaHora = date('Y-m-d H:i:s');
+    $id_rol    = (test_input($_POST['IdRol']));
+    $recid_rol = (test_input($_POST['RecidRol']));
+    $FechaHora = date('Y-m-d H:i:s');
+
+    if ($id_rol) {
+        $audCuenta = simple_pdoQuery("SELECT clientes.id 'id', roles.nombre as 'nombre_rol' FROM roles INNER JOIN clientes ON roles.cliente = clientes.id WHERE roles.id = $id_rol LIMIT 1");
+    }
+    $audCuenta['nombre_rol'] = $audCuenta['nombre_rol'] ?? '';
+    $audCuenta['id'] = $audCuenta['id'] ?? '';
 
     $ABM = CountRegMayorCeroMySql("SELECT recid_rol FROM abm_roles WHERE recid_rol = '$recid_rol' LIMIT 1");
     if ($ABM) {
-     $update=UpdateRegistroMySql("UPDATE `abm_roles` SET `aFic`='$aFic', `mFic`='$mFic', `bFic`='$bFic', `aNov`='$aNov', `mNov`='$mNov', `bNov`='$bNov', `aHor`='$aHor', `mHor`='$mHor', `bHor`='$bHor', `aONov`='$aONov', `mONov`='$mONov', `bONov`='$bONov', `Proc`='$Proc', `aCit`='$aCit', `mCit`='$mCit', `bCit`='$bCit', `aTur`='$aTur', `mTur`='$mTur', `bTur`='$bTur', `FechaHora`='$FechaHora' WHERE recid_rol='$recid_rol'");
-        if($update){
-            PrintRespuestaJson('ok' ,'Datos Actualizados.');
+        $update = UpdateRegistroMySql("UPDATE `abm_roles` SET `aFic`='$aFic', `mFic`='$mFic', `bFic`='$bFic', `aNov`='$aNov', `mNov`='$mNov', `bNov`='$bNov', `aHor`='$aHor', `mHor`='$mHor', `bHor`='$bHor', `aONov`='$aONov', `mONov`='$mONov', `bONov`='$bONov', `Proc`='$Proc', `aCit`='$aCit', `mCit`='$mCit', `bCit`='$bCit', `aTur`='$aTur', `mTur`='$mTur', `bTur`='$bTur', `FechaHora`='$FechaHora' WHERE recid_rol='$recid_rol'");
+        if ($update) {
+            PrintRespuestaJson('ok', 'Datos Actualizados.');
+            auditoria("ABM Rol ($id_rol) $audCuenta[nombre_rol]", 'M', $audCuenta['id'], '1');
             exit;
         }
-    }else {
-        $insert=InsertRegistroMySql("INSERT INTO abm_roles( `id_rol`, `recid_rol`, `aFic`, `mFic`, `bFic`, `aNov`, `mNov`, `bNov`, `aHor`, `mHor`, `bHor`, `aONov`, `mONov`, `bONov`, `Proc`, `aCit`, `mCit`, `bCit`, `aTur`, `mTur`, `bTur`, `FechaHora` ) VALUES ( '$id_rol', '$recid_rol', '$aFic', '$mFic', '$bFic', '$aNov', '$mNov', '$bNov', '$aHor', '$mHor', '$bHor', '$aONov', '$mONov', '$bONov', '$Proc', '$aCit', '$mCit', '$bCit', '$aTur', '$mTur', '$bTur', '$FechaHora' )");
-        if($insert){
-            PrintRespuestaJson('ok' ,'Datos Actualizados.');
+    } else {
+        $insert = InsertRegistroMySql("INSERT INTO abm_roles( `id_rol`, `recid_rol`, `aFic`, `mFic`, `bFic`, `aNov`, `mNov`, `bNov`, `aHor`, `mHor`, `bHor`, `aONov`, `mONov`, `bONov`, `Proc`, `aCit`, `mCit`, `bCit`, `aTur`, `mTur`, `bTur`, `FechaHora` ) VALUES ( '$id_rol', '$recid_rol', '$aFic', '$mFic', '$bFic', '$aNov', '$mNov', '$bNov', '$aHor', '$mHor', '$bHor', '$aONov', '$mONov', '$bONov', '$Proc', '$aCit', '$mCit', '$bCit', '$aTur', '$mTur', '$bTur', '$FechaHora' )");
+        if ($insert) {
+            PrintRespuestaJson('ok', 'Datos Actualizados.');
+            auditoria("ABM Rol ($id_rol) $audCuenta[nombre_rol]", 'A', $audCuenta['id'], '1');
             exit;
         }
     }
-}else {
-    PrintRespuestaJson('Error' ,'Error.');
+} else {
+    PrintRespuestaJson('Error', 'Error.');
     exit;
 }
