@@ -9,6 +9,14 @@ function verDBLocal()
 {
     return 20211024; // Version
 }
+function checkDBLocal()
+{
+    $v = simple_pdoQuery("SELECT valores as 'a' FROM params WHERE modulo = 0 AND cliente = 0 LIMIT 1");
+    if ($v['a'] != verDBLocal()) {
+        session_destroy();
+        header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login si la version de la base de datos es distinta a la version del servidor
+    }
+}
 function E_ALL()
 {
     if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
@@ -57,6 +65,7 @@ function secure_auth_ch() // Funcion para validar si esta autenticado
         } else {
             $_SESSION["ultimoAcceso"] = $ahora; // Actualizo la fecha de la sesión
         }
+        checkDBLocal();
     }
     session_regenerate_id(); // Regenera la sesión
     E_ALL(); // Funciones de error
@@ -132,6 +141,7 @@ function secure_auth_ch2()
         } else {
             $_SESSION["ultimoAcceso"] = $ahora;
         }
+        checkDBLocal();
     }
     session_regenerate_id();
     E_ALL();
@@ -630,7 +640,8 @@ function test_input2($data)
     return $value;
 }
 function hoy()
-{
+{   
+    timeZone();
     $hoy = date('Y-m-d');
     return rtrim($hoy);
 }
