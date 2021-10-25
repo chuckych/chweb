@@ -1806,10 +1806,9 @@ function auditoria($dato, $tipo, $audcuenta ='', $modulo ='')
     require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
     $connpdo->beginTransaction();
     try {
-    $sql='INSERT INTO auditoria( id, id_sesion, usuario, nombre, cuenta, audcuenta, fecha, hora, tipo, dato, modulo ) VALUES( :id, :id_sesion, :usuario, :nombre, :cuenta, :audcuenta, :fecha, :hora, :tipo, :dato, :modulo )';
+    $sql='INSERT INTO auditoria( id_sesion, usuario, nombre, cuenta, audcuenta, fecha, hora, tipo, dato, modulo ) VALUES( :id_sesion, :usuario, :nombre, :cuenta, :audcuenta, :fecha, :hora, :tipo, :dato, :modulo )';
         $stmt = $connpdo->prepare($sql); // prepara la consulta
         $data = [
-            'id'        => '',
             'id_sesion' => $_SESSION['ID_SESION'],  // $_SESSION['ID_SESION'],
             'usuario'   => ($_SESSION["user"]) ? $_SESSION["user"] : 'Sin usuario',
             'nombre'    => ($_SESSION["NOMBRE_SESION"]) ? $_SESSION["NOMBRE_SESION"] : 'Sin nombre',
@@ -1821,8 +1820,6 @@ function auditoria($dato, $tipo, $audcuenta ='', $modulo ='')
             'dato'      => ($dato) ? $dato :'No se especificaron datos',
             'modulo'    => ($modulo) ? $modulo :''
         ];
-
-        $stmt->bindParam(':id', $data['id']);
         $stmt->bindParam(':id_sesion', $data['id_sesion']);
         $stmt->bindParam(':usuario', $data['usuario']);
         $stmt->bindParam(':nombre', $data['nombre']);
