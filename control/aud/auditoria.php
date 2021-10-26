@@ -6,8 +6,14 @@ secure_auth_ch();
 <html lang="es">
 
 <head>
+    <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title>Auditoria</title>
+    <style>
+        .select2-container{
+            width: 100% !important;
+        }
+    </style>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -40,7 +46,7 @@ secure_auth_ch();
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
-    <script src="main.js?<?= vjs() ?>"></script>
+    <script src="main-min.js?<?= vjs() ?>"></script>
 </body>
 
 </html>

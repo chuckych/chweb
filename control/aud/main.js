@@ -23,8 +23,8 @@ $(function () {
   }
   let tableAuditoria = $("#tableAuditoria").dataTable({
     lengthMenu: [
-      [3, 5, 10, 25, 50, 100],
-      [3, 5, 10, 25, 50, 100],
+      [5, 10, 25, 50, 100],
+      [5, 10, 25, 50, 100],
     ],
     bProcessing: false,
     serverSide: true,
@@ -32,9 +32,10 @@ $(function () {
     // stateSave: true,
     // stateDuration: -1,
     dom:
-      "<'row'<'col-12 col-sm-6'l><'col-12 col-sm-6 d-flex justify-content-end'f<'ml-1 _dr'><'refresh'>>>" +
-      "<'row'<'col-12'tr>>" +
-      "<'row'<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
+      "<'row fila invisible animate__animated animate__fadeInDown'<'col-12 col-sm-6 d-flex justify-content-start'l<'filtros'>><'col-12 col-sm-6 d-flex justify-content-end'f<'ml-1 _dr'><'refresh'>>>" +
+      "<'row'<'col-12 divFiltros'>>" +
+      "<'row animate__animated animate__fadeIn'<'col-12'tr>>" +
+      "<'row animate__animated animate__fadeIn'<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
     ajax: {
       url: "getAuditoria.php?" + $.now(),
       type: "POST",
@@ -57,7 +58,7 @@ $(function () {
         title: "Usuario",
         render: function (data, type, row, meta) {
           let datacol =
-            `<div data-titler="Usuario: ` +
+            `<div class="pointer" data="`+row["id_sesion"]+`" data-titler="Usuario: ` +
             row["nombre"] +
             `"><span class="fw5">` +
             row["nombre"] +
@@ -135,14 +136,12 @@ $(function () {
     ordering: 0,
     responsive: 0,
     language: {
-      url: "../../js/DataTableSpanishShort2.json" + "?" + $.now(),
+      url: "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
     },
   });
   function inputFechas(start_date, end_date, newStart = "") {
-    // start_date = moment(start_date).format("DD/MM/YYYY");
-    let min_year = moment(start_date).format("YYYY");
-    // end_date = moment(end_date).format("DD/MM/YYYY");
-    let max_year = moment(end_date).format("YYYY");
+    let min_year = moment(start_date, "YYYY");
+    let max_year = moment(end_date, "YYYY");
 
     newStart = newStart ? newStart : end_date;
     $("#_dr").daterangepicker({
@@ -174,7 +173,7 @@ $(function () {
           moment().subtract(1, "month").startOf("month"),
           moment().subtract(1, "month").endOf("month"),
         ],
-        "Todo el Periodo" :[(start_date), (end_date)]
+        "Todo el Periodo": [start_date, end_date],
       },
       locale: {
         format: "DD/MM/YYYY",
@@ -209,7 +208,9 @@ $(function () {
       $("#tableAuditoria").DataTable().ajax.reload();
     });
   }
+
   tableAuditoria.on("init.dt", function (e, settings) {
+    $("#tableAuditoria_length select").addClass("h35");
     $("#tableAuditoria_filter input").attr("placeholder", "Buscar dato..");
 
     fetch("getFechas.php")
@@ -222,6 +223,17 @@ $(function () {
         $(".refresh").html(
           `<label><button data-titlel="Actualizar Grilla"class="btn ml-1 h35 btn-custom fontq" id="refresh"><i class="bi bi-arrow-repeat"></i></button></label>`
         );
+        $(".filtros").html(
+          `<div class="d-inline-flex align-items-center"><button data-titler="Filtros" class="btn ml-1 h35 btn-outline-custom border fontq" id="filtros" type="button" data-toggle="collapse" data-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros">Filtros</button><span id="trash_all" data-titler="Limpiar Filtros" class="mx-2 bi bi-trash fontq text-secondary pointer"></span></div>`
+        );
+
+        fetch("filtros.html?v=" + vjs())
+          .then((response) => response.text())
+          .then((data) => {
+            $(".divFiltros").html(data);
+            $(".fila").removeClass("invisible");
+          });
+
         inputFechas(
           moment(data.start_date).format("DD/MM/YYYY"),
           moment(data.end_date).format("DD/MM/YYYY")
@@ -230,7 +242,6 @@ $(function () {
         let iniEndDate = moment(
           $("#_dr").data("daterangepicker").endDate._d
         ).format("YYYYMMDD");
-        console.log("fecha inicial: " + iniEndDate);
 
         $("#refresh").on("click", function () {
           fetch("getFechas.php")
@@ -238,7 +249,7 @@ $(function () {
             .then((data) => {
               let _dr_start = moment(
                 $("#_dr").data("daterangepicker").startDate._d
-              ).format("DD/MM/YYYY"); 
+              ).format("DD/MM/YYYY");
 
               let end_db = moment(data.end_date).format("DD/MM/YYYY");
               let end_db_str = moment(data.end_date).format("YYYYMMDD");
@@ -253,7 +264,7 @@ $(function () {
                 iniEndDate = finEndDate;
                 $("#tableAuditoria").DataTable().ajax.reload();
               } else {
-                $("#tableAuditoria").DataTable().ajax.reload(null,false);
+                $("#tableAuditoria").DataTable().ajax.reload(null, false);
               }
             });
         });
@@ -266,4 +277,5 @@ $(function () {
     $("#tableAuditoria div").removeClass("bg-light text-light");
     $("#divTableAud").show();
   });
+onOpenSelect2()
 });
