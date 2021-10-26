@@ -911,7 +911,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     if (UpdateRegistro("UPDATE FICHAS1 Set FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
         /** Grabamos en Auditor */
         audito_ch('M', $Dato, '4');
-
         //setup request to send json via POST
         $extraHours[] = array(
             'name'       => $NombreLega,
@@ -966,9 +965,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
             }
 
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje));
+            // auditoria($Dato2 . $Procesado. ' Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, "d/m/Y"), 'P', '', '4');
         } else {
             $Procesado = " - <b>Sin procesar.</b>.";
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
+            // auditoria($Dato2 . $Procesado. ' Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, "d/m/Y"), 'P', '', '4');
         }
         echo json_encode($data);
         exit;
