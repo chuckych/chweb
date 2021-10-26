@@ -7,8 +7,11 @@ secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
 // sleep(1);
-$params = $columns = $totalRecords = $data = array();
+$totalRecords = $data = array();
 $params = $_REQUEST;
+$params['_dr'] = $params['_dr'] ?? '';
+
+
 $tiempo_inicio = microtime(true);
 $objCuentas = array_pdoQuery("SELECT clientes.id, clientes.nombre FROM clientes");
 $objModulo = array_pdoQuery("SELECT modulos.id, modulos.nombre FROM modulos");
@@ -16,42 +19,30 @@ $objModulo = array_pdoQuery("SELECT modulos.id, modulos.nombre FROM modulos");
 
 $where_condition = $sqlTot = $sqlRec = "";
 if (!empty($params['search']['value'])) {
-    $where_condition .=    " WHERE ";
+    $where_condition .=    " AND auditoria.dato LIKE '%" . $params['search']['value'] . "%'";
 }
-$query = "SELECT * FROM auditoria";
+if (empty($params['_dr'])) {
+    $where_condition .= " AND auditoria.fecha = (SELECT MAX(fecha) FROM auditoria)";
+}else{
+    $DateRange = explode(' al ', $params['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $where_condition .= " AND auditoria.fecha BETWEEN '$FechaIni' AND '$FechaFin'";
+}
+
+$query = "SELECT * FROM auditoria WHERE auditoria.id > 0";
+$queryCount = "SELECT COUNT(*) as 'count' FROM auditoria WHERE auditoria.id > 0";
 
 if (isset($where_condition) && $where_condition != '') {
     $query .= $where_condition;
-    $query .= $where_condition;
+    $queryCount .= $where_condition;
 }
-$query .=  " ORDER BY auditoria.id desc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 
-$totalRecords = simple_pdoQuery("SELECT count(*) as 'count' FROM auditoria");
-$totalRecords = $totalRecords['count'];
+$query .=  " ORDER BY auditoria.id desc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$totalRecords = simple_pdoQuery($queryCount);
+$count = $totalRecords['count'];
 $records = array_pdoQuery($query);
 // print_r($records); exit;
-
-function nombreTipoProceso($tipo)
-{
-    switch ($tipo) {
-        case 'P':
-            $tipo = 'Proceso';
-            break;
-        case 'M':
-            $tipo = 'Modificación';
-            break;
-        case 'A':
-            $tipo = 'Alta';
-            break;
-        case 'B':
-            $tipo = 'Baja';
-            break;
-        default:
-            $tipo = $tipo;
-            break;
-    }
-    return $tipo;
-}
 
 foreach ($records as $key => $row) {
 
@@ -91,10 +82,11 @@ $tiempo_fin = microtime(true);
 $tiempo = ($tiempo_fin - $tiempo_inicio);
 
 $json_data = array(
-    "draw"               => intval($params['draw']),
-    "recordsTotal"       => intval($totalRecords),
-    "recordsFiltered"    => intval($totalRecords),
-    "data"               => $data,
-    "tiempo"             => round($tiempo, 2)
+    "draw"            => intval($params['draw']),
+    "recordsTotal"    => intval($count),
+    "recordsFiltered" => intval($count),
+    "data"            => $data,
+    "tiempo"          => round($tiempo, 2),
+    "_dr" => $params['_dr']
 );
 echo json_encode($json_data);

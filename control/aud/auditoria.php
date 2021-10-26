@@ -33,7 +33,13 @@ secure_auth_ch();
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../../js/DataTable.php";
     ?>
-    <script src="../../js/moment.min.js"></script>
+    <!-- <script src="../../js/moment.min.js"></script> -->
+    <!-- moment.min.js -->
+    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
+    <!-- daterangepicker.min.js -->
+    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
+    <!-- daterangepicker.css -->
+    <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <script src="main.js?<?= vjs() ?>"></script>
 </body>
 

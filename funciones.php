@@ -3453,3 +3453,24 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
         return ($value);
     }
 }
+function tipoAud($tipo)
+{
+    switch ($tipo) {
+        case 'P':
+            $tipo = 'Proceso';
+            break;
+        case 'M':
+            $tipo = 'Modificación';
+            break;
+        case 'A':
+            $tipo = 'Alta';
+            break;
+        case 'B':
+            $tipo = 'Baja';
+            break;
+        default:
+            $tipo = $tipo;
+            break;
+    }
+    return $tipo;
+}
