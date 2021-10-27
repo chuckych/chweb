@@ -21,141 +21,7 @@ $(function () {
         }
         return a;
     }
-    let tableAuditoria = $("#tableAuditoria").dataTable({
-        lengthMenu: [
-            [5, 10, 25, 50, 100],
-            [5, 10, 25, 50, 100],
-        ],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        responsive: true,
-        // stateSave: true,
-        // stateDuration: -1,
-        dom:
-            "<'row fila invisible animate__animated animate__fadeInDown'<'col-12 col-sm-6 d-flex justify-content-start'<'filtros'>l><'col-12 col-sm-6 d-flex justify-content-end'<'ml-1 _dr'><'refresh'>>>" +
-            "<'row'<'col-12 divFiltros'>>" +
-            "<'row fila invisible animate__animated animate__fadeInDown'<'col-12'f>>" +
-            "<'row animate__animated animate__fadeIn'<'col-12'tr>>" +
-            "<'row animate__animated animate__fadeIn'<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
-        ajax: {
-            url: "getAuditoria.php?" + $.now(),
-            type: "POST",
-            dataType: "json",
-            data: function (data) {
-                // data._eg = $("input[name=_eg]:checked").val();
-                data._dr = $("#_dr").val();
-                data.nombreAud = $("#nombreAud").val();
-                data.tipoAud = $("#tipoAud").val();
-                data.userAud = $("#userAud").val();
-                data.idSesionAud = $("#idSesionAud").val();
-                data.horaAud = $("#horaAud").val();
-                data.horaAud2 = $("#horaAud2").val();
-                data.cuentaAud = $("#cuentaAud").val();
-            },
-            error: function () {
-                $("#tablePersonal").css("display", "none");
-            },
-        },
-        createdRow: function (row, data, dataIndex) {
-            $(row).addClass("animate__animated animate__fadeIn");
-        },
-        columns: [
-            {
-                className: "",
-                targets: "",
-                title: "Usuario",
-                render: function (data, type, row, meta) {
-                    let datacol =
-                        `<div class="pointer" data="` +
-                        row["id_sesion"] +
-                        `" data-titler="Usuario: ` +
-                        row["nombre"] +
-                        `"><span class="fw5">` +
-                        row["nombre"] +
-                        `</span><br><span class="">` +
-                        row["usuario"] +
-                        `</span></div>`;
-                    return datacol;
-                },
-            },
-            {
-                className: "text-center",
-                targets: "",
-                title: "ID Sesion",
-                render: function (data, type, row, meta) {
-                    let datacol = "<div>" + row["id_sesion"] + "</div>";
-                    return datacol;
-                },
-            },
-            {
-                className: "",
-                targets: "",
-                title: "Cuenta",
-                render: function (data, type, row, meta) {
-                    let datacol = "<div>" + row["audcuenta_nombre"] + "</div>";
-                    return datacol;
-                },
-            },
-            {
-                className: "ls1",
-                targets: "",
-                title: "Fecha",
-                render: function (data, type, row, meta) {
-                    let datacol =
-                        "<div>" +
-                        moment(row["fecha"]).format("DD/MM/YYYY") +
-                        "</div>";
-                    return datacol;
-                },
-            },
-            {
-                className: "ls1",
-                targets: "",
-                title: "Hora",
-                render: function (data, type, row, meta) {
-                    let datacol = "<div>" + row["hora"] + "</div>";
-                    return datacol;
-                },
-            },
-            {
-                className: "text-center",
-                targets: "",
-                title: "Tipo",
-                render: function (data, type, row, meta) {
-                    let datacol =
-                        `<div data-titlel="` +
-                        tipoAud(row["tipo"]) +
-                        `">` +
-                        row["tipo"] +
-                        `</div>`;
-                    return datacol;
-                },
-            },
-            {
-                className: "w-100",
-                targets: "",
-                title: "Dato",
-                render: function (data, type, row, meta) {
-                    let datacol =
-                        `<div data-titlel="` +
-                        row["dato"] +
-                        `">` +
-                        row["dato"] +
-                        `</div>`;
-                    return datacol;
-                },
-            },
-        ],
-        paging: true,
-        searching: true,
-        info: true,
-        ordering: 0,
-        responsive: 0,
-        language: {
-            url: "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
-        },
-    });
+
     function inputFechas(start_date, end_date, newStart = "") {
         let min_year = moment(start_date, "YYYY");
         let max_year = moment(end_date, "YYYY");
@@ -178,7 +44,7 @@ $(function () {
             alwaysShowCalendars: true,
             linkedCalendars: false,
             buttonClasses: "btn btn-sm fontq",
-            applyButtonClasses: "btn-custom fw4 px-3 opa8",
+            applyButtonClasses: "btn-custom  border fw4 px-3 opa8",
             cancelClass: "btn-link fw4 text-gris",
             ranges: {
                 Hoy: [moment(), moment()],
@@ -232,6 +98,137 @@ $(function () {
         });
     }
 
+    let tableAuditoria = $("#tableAuditoria").dataTable({
+        lengthMenu: [
+            [5, 10, 25, 50, 100],
+            [5, 10, 25, 50, 100],
+        ],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        responsive: true,
+        stateSave: true,
+        stateDuration: -1,
+        dom:
+            "<'row fila invisible animate__animated animate__fadeInDown'<'col-12 col-sm-6 d-flex justify-content-start'<'filtros'>l><'col-12 col-sm-6 d-flex justify-content-end'<'ml-1 _dr'><'refresh'>>>" +
+            "<'row'<'col-12 divFiltros'>>" +
+            "<'row fila invisible animate__animated animate__fadeInDown'<'col-12'f>>" +
+            "<'row animate__animated animate__fadeIn'<'col-12 table-responsive'tr>>" +
+            "<'row animate__animated animate__fadeIn'<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
+        ajax: {
+            url: "getAuditoria.php?" + $.now(),
+            type: "POST",
+            dataType: "json",
+            data: function (data) {
+                // data._eg = $("input[name=_eg]:checked").val();
+                data._dr = $("#_dr").val();
+                data.nombreAud = $("#nombreAud").val();
+                data.tipoAud = $("#tipoAud").val();
+                data.userAud = $("#userAud").val();
+                data.idSesionAud = $("#idSesionAud").val();
+                data.horaAud = $("#horaAud").val();
+                data.horaAud2 = $("#horaAud2").val();
+                data.cuentaAud = $("#cuentaAud").val();
+            },
+            error: function () {
+                $("#tablePersonal").css("display", "none");
+            },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass("animate__animated animate__fadeIn");
+        },
+        columns: [
+            {
+                className: "",
+                targets: "",
+                title: "<span data-titler='Nombre / Usuario'>Usuario</span>",
+                render: function (data, type, row, meta) {
+                    let datacol =
+                        `<div class="pointer view" data-idsesion="` +
+                        row["id_sesion"] +
+                        `"<div class="pointer" data-id="` +
+                        row["id"] +
+                        `" data-titler="Usuario: ` +
+                        row["nombre"] +
+                        `"><span class="fw5">` +
+                        row["nombre"] +
+                        `</span><br><span class="">` +
+                        row["usuario"] +
+                        `</span></div>`;
+                    return datacol;
+                },
+            },
+            {
+                className: "text-center",
+                targets: "",
+                title: "ID Sesion",
+                render: function (data, type, row, meta) {
+                    let datacol = "<div>" + row["id_sesion"] + "</div>";
+                    return datacol;
+                },
+            },
+            {
+                className: "",
+                targets: "",
+                title: "Cuenta",
+                render: function (data, type, row, meta) {
+                    let datacol = "<div>" + row["audcuenta_nombre"] + "</div>";
+                    return datacol;
+                },
+            },
+            {
+                className: "ls1",
+                targets: "",
+                title: "Fecha Hora",
+                render: function (data, type, row, meta) {
+                    let datacol =
+                        "<div>" +
+                        moment(row["fecha"]).format("DD/MM/YYYY") +
+                        "</div><div>" +
+                        row["hora"] +
+                        "</div>";
+                    return datacol;
+                },
+            },
+            {
+                className: "text-left",
+                targets: "",
+                title: "<span data-titlel='Tipo de registro'>Tipo</span>",
+                render: function (data, type, row, meta) {
+                    let datacol =
+                        `<div data-titlel="` +
+                        tipoAud(row["tipo"]) +
+                        `">` +
+                        row["tipo"] +
+                        `</div>`;
+                    return datacol;
+                },
+            },
+            {
+                className: "w-100",
+                targets: "",
+                title: "<span data-titlel='Información de la auditoría'>Dato</span>",
+                render: function (data, type, row, meta) {
+                    let datacol =
+                        `<div data-titlel="` +
+                        row["dato"] +
+                        `">` +
+                        row["dato"] +
+                        `</div>`;
+                    return datacol;
+                },
+            },
+        ],
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: 0,
+        responsive: 0,
+        language: {
+            url: "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
+        },
+    });
+
     tableAuditoria.on("init.dt", function (e, settings) {
         $("#tableAuditoria_length select").addClass("h35");
         $("#tableAuditoria_filter input").attr("placeholder", "Buscar dato..");
@@ -250,7 +247,7 @@ $(function () {
                     `<label><button data-titlel="Actualizar Grilla"class="btn ml-1 h35 btn-custom fontq" id="refresh"><i class="bi bi-arrow-repeat"></i></button></label>`
                 );
                 $(".filtros").html(
-                    `<div class="d-inline-flex align-items-center"><button data-titler="Filtros" class="btn h35 btn-outline-custom border fontq" id="filtros" type="button" data-toggle="collapse" data-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros">Filtros</button><span id="trash_all" data-titler="Limpiar Filtros" class="mx-2 bi bi-trash fontq text-secondary pointer"></span></div>`
+                    `<div class="d-inline-flex align-items-center"><button data-titler="Filtros" class="btn h35 btn-outline-custom border fontq" id="filtros" type="button" data-toggle="collapse" data-target="#collapseFiltros" aria-expanded="false" aria-controls="collapseFiltros"><i class="bi bi-funnel"></i></button><button id="trash_all" data-titler="Limpiar Filtros" class="bi bi-trash fontq text-secondary pointer btn h35 btn-outline-custom border fontq border-0"></button></div>`
                 );
 
                 fetch("filtros.php")
@@ -308,6 +305,76 @@ $(function () {
     tableAuditoria.on("draw.dt", function () {
         $("#tableAuditoria div").removeClass("bg-light text-light");
         $("#divTableAud").show();
+        $("#tableAuditoria_previous").attr("data-titlel", "Anterior");
+        $("#tableAuditoria_next").attr("data-titlel", "Siguiente");
     });
     onOpenSelect2();
+
+    // on click .view open modal
+    $("#tableAuditoria tbody").on("click", ".view", function () {
+        let id = $(this).attr("data-id");
+        let idsesion = $(this).attr("data-idsesion");
+
+        // alert("id: "+id+"\nidsesion: "+idsesion);
+        fetch("modal.php")
+            .then((response) => response.text())
+            .then((data) => {
+                $("#modalAuditoria").html(data);
+                $("#detalleAud").modal("show");
+                $("#modalAuditoria .modal-title").html("Detalle de Auditoría");
+                $("#detalleAud").on("hidden.bs.modal", function (e) {
+                    $("#modalAuditoria").html("");
+                });
+                fetch("getDetalle.php?i=" + id + "&s=" + idsesion)
+                    .then((response) => response.json())
+                    .then((d) => {
+                        function colorTipo(t, n) {
+                            let c = "";
+                            switch (t) {
+                                case "A":
+                                    c =
+                                        '<span class="fw5 text-success">' +
+                                        n +
+                                        "</span>";
+                                    break;
+                                case "M":
+                                    c =
+                                        '<span class="fw5 text-primary">' +
+                                        n +
+                                        "</span>";
+                                    break;
+                                case "B":
+                                    c =
+                                        '<span class="fw5 text-danger">' +
+                                        n +
+                                        "</span>";
+                                    break;
+                                default:
+                                    c =
+                                        '<span class="fw5 text-dark">' +
+                                        n +
+                                        "</span>";
+                                    break;
+                            }
+                            return c;
+                        }
+
+                        $("#modalAuditoria #aud_nomb").html(d.aud_nomb);
+                        $("#modalAuditoria #aud_user").html(d.aud_user);
+                        $("#modalAuditoria #aud_nacu").html(d.aud_nacu);
+                        $("#modalAuditoria #aud_fech").html(
+                            d.aud_fech + " " + d.aud_hora
+                        );
+                        $("#modalAuditoria #aud_tipo").html(d.aud_tipn);
+                        $("#modalAuditoria #aud_modu").html(d.aud_modu);
+                        $("#modalAuditoria #aud_dato").html(d.aud_dato);
+                        $("#modalAuditoria #log_feho").html(d.log_feho);
+                        $("#modalAuditoria #log_nrol").html(d.log_nrol);
+                        $("#modalAuditoria #log_d_ip").html(d.log_d_ip);
+                        $("#modalAuditoria #log_agen").html(
+                            d.log_age1 + ". " + d.log_age2 + ": " + d.log_age3
+                        );
+                    });
+            });
+    });
 });

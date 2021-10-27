@@ -71,6 +71,7 @@ foreach ($records as $key => $row) {
     $fechahora        = $row['fechahora'];
     $hora             = $row['hora'];
     $id_sesion        = $row['id_sesion'];
+    $id               = $row['id'];
     $modulo           = $row['modulo'];
     $modulo_nombre    = filtrarObjeto($objModulo, 'id', $modulo);
     $nombre           = $row['nombre'];
@@ -78,6 +79,7 @@ foreach ($records as $key => $row) {
     $usuario          = $row['usuario'];
 
     $data[] = array(
+        "id"               => $id,
         "id_sesion"        => $id_sesion,
         "usuario"          => $usuario,
         "nombre"           => $nombre,

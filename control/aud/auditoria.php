@@ -25,11 +25,12 @@ secure_auth_ch();
 
         <!-- Fin Encabezado -->
         <div class="row bg-white mt-2 py-3" id="divTableAud" style="display: none;">
-            <div class="col-12 table-responsive">
+            <div class="col-12">
                 <table id="tableAuditoria" class="table table-hover text-nowrap">
                 </table>
             </div>
         </div>
+        <div id="modalAuditoria"></div>
     </div>
     <!-- fin container -->
     <?php
@@ -45,7 +46,7 @@ secure_auth_ch();
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
-    <script src="main.js?<?= vjs() ?>"></script>
+    <script src="main.js?<?= microtime(true) ?>"></script>
 </body>
 
 </html>
