@@ -1828,7 +1828,7 @@ function auditoria($dato, $tipo, $audcuenta ='', $modulo ='')
             'fecha'     => date("Y-m-d "),
             'hora'      => date("H:i:s"),
             'tipo'      => ($tipo) ? $tipo :'Null' , // a:insert, b:update, m:delete; p: proceso
-            'dato'      => ($dato) ? $dato :'No se especificaron datos',
+            'dato'      => ($dato) ? trim($dato) :'No se especificaron datos',
             'modulo'    => ($modulo) ? $modulo :''
         ];
         $stmt->bindParam(':id_sesion', $data['id_sesion']);

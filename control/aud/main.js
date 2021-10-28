@@ -320,11 +320,7 @@ $(function () {
             .then((response) => response.text())
             .then((data) => {
                 $("#modalAuditoria").html(data);
-                $("#detalleAud").modal("show");
                 $("#modalAuditoria .modal-title").html("Detalle de Auditoría");
-                $("#detalleAud").on("hidden.bs.modal", function (e) {
-                    $("#modalAuditoria").html("");
-                });
                 fetch("getDetalle.php?i=" + id + "&s=" + idsesion)
                     .then((response) => response.json())
                     .then((d) => {
@@ -374,6 +370,10 @@ $(function () {
                         $("#modalAuditoria #log_agen").html(
                             d.log_age1 + ". " + d.log_age2 + ": " + d.log_age3
                         );
+                        $("#detalleAud").modal("show");
+                        $("#detalleAud").on("hidden.bs.modal", function (e) {
+                          $("#modalAuditoria").html("");
+                      });
                     });
             });
     });
