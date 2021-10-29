@@ -13,6 +13,9 @@ secure_auth_ch();
         .select2-container {
             width: 100% !important;
         }
+        #tableAuditoria tr {
+            cursor: pointer;
+        }
     </style>
 </head>
 

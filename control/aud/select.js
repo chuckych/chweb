@@ -1,6 +1,6 @@
 $(function () {
     "use strict";
-
+    onOpenSelect2();
     let opt2 = {
         MinLength: "0",
         SelClose: false,
@@ -395,6 +395,7 @@ $(function () {
     }
     // on click trash
     $(".filtros").on("click", "#trash_all", function () {
+        CheckSesion();
         LimpiarFiltros();
     });
     $("#collapseFiltros").on("change", "#horaAud", function () {

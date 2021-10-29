@@ -184,7 +184,6 @@
  label {
      cursor: pointer;
      font-size: .8em;
-     color: #2f2f2f!important;
      font-weight: 300 !important;
  }
 
@@ -731,6 +730,7 @@
      outline: 0!important;
      height: 35px!important
  }
+
  input[type=checkbox] {
      box-shadow: none!important;
      outline: 0!important;

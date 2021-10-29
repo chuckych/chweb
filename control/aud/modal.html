@@ -1,0 +1,56 @@
+<!-- Detalle Auditoria -->
+<style>
+  #detalleAud .modal-body span {
+    font-size: .8rem;
+  }
+
+  #detalleAud .modal-body label {
+    width: 90px;
+    margin: 0;
+  }
+
+  #detalleAud #aud_fech,
+  #aud_hora,
+  #log_fech,
+  #log_hora {
+    letter-spacing: 1px;
+  }
+</style>
+<div class="modal animate__animated animate__fadeIn" id="detalleAud" tabindex="-1" aria-labelledby="detalleAudLabel"
+  aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-12">
+            <div class="l">
+              <div class="mt-1 h6">Detalle de auditoría</div>
+              <div class="mt-1"><label>Nombre: </label><span id="aud_nomb"></span></div>
+              <div class="mt-1"><label>Usuario: </label><span id="aud_user"></span></div>
+              <div class="mt-1"><label>Cuenta: </label><span id="aud_nacu"></span></div>
+              <div class="mt-1"><label>Fecha: </label><span id="aud_fech"></span></div>
+              <div class="mt-1"><label>Hora: </label><span id="aud_hora"></span></div>
+              <div class="mt-1"><label>Tipo: </label><span id="aud_tipo"></span></div>
+              <div class="mt-1"><label>Módulo: </label><span id="aud_modu"></span></div>
+              <div class="mt-1"><label>Dato: </label><span id="aud_dato"></span></div>
+            </div>
+          </div>
+          <div class="col-12 mt-3">
+            <div class="l">
+              <div class="h6">Detalle de sesión</div>
+              <div class="mt-1"><label>ID Sesión: </label><span id="log_idse"></span></div>
+              <div class="mt-1"><label>Fecha: </label><span id="log_fech" class="ls1"></span></div>
+              <div class="mt-1"><label>Hora: </label><span id="log_hora" class="ls1"></span></div>
+              <div class="mt-1"><label>Rol: </label><span id="log_nrol"></span></div>
+              <div class="mt-1"><label>IP: </label><span id="log_d_ip"></span></div>
+              <div class="mt-1"><label>Agente: </label><span id="log_agen"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-custom border fontq opa8" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>

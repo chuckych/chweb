@@ -636,3 +636,6 @@ function onOpenSelect2() {
         e.stopPropagation();
     });
 }
+setInterval(() => {
+    CheckSesion();
+}, 60000);
