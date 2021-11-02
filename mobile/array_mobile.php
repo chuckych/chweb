@@ -88,7 +88,7 @@ $respuesta = array();
                 'Fecha4'         => DiaSemana4($dia),
                 // 'dia'           => DiaSemana($dia),
                 'face_url'      => '<span class="pic" datafoto="' . $valor['face_url'] . '" dataname="' . $name . '" datauid="' . $valor['u_id'] . '" datacerteza="' . $valor['similarity'] . '" datacerteza2="' . $certeza2 . '" datainout="' . $inout . '" datazone="' . $valor['zone'] . '" datahora="' . $valor['time'] . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ucfirst($valor['t_type']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>',
-                't_type'        => ucfirst($valor['t_type']).'<br><span class="pointer editaAlias btn btn-link fontq p-0" data-titlel="Editar Dispositivo">'.$alias.'</span>',
+                't_type'        => ucfirst($valor['t_type']).'<br><span class="text-left pointer editaAlias btn btn-link fontq p-0" data-titlel="Editar Dispositivo">'.$alias.'</span>',
                 // 'check_type' => $valor['check_type'],
                 // 'lat'        => $valor['lat'],
                 // 'lng'        => $valor['lng'],
