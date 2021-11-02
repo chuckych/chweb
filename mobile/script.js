@@ -132,6 +132,7 @@ $(document).ready(function() {
                     $(divModal).html(data);
                     $("#aliasActual").html(dataRow.alias);
                     $("#pointActual").html(dataRow.point);
+                    $("#NombreActual").html(dataRow.name);
 
                     dataRow.alias != "" ? $("#alias").val(dataRow.alias) : "";
 
