@@ -3474,3 +3474,49 @@ function tipoAud($tipo)
     }
     return $tipo;
 }
+function login_logs($estado)
+{
+	// estado = 1: Login correcto; 2: Login incorrecto
+	//require_once __DIR__ . '../../config/conect_pdo.php'; //Conexion a la base de datos
+	require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
+	$connpdo->beginTransaction();
+	try {
+		$sql = 'INSERT INTO login_logs(usuario,uid,estado,rol,cliente,ip,agent,fechahora) VALUES(:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)';
+		$stmt = $connpdo->prepare($sql); // prepara la consulta
+
+		$data = [ // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
+			'usuario'   => filter_input(INPUT_POST, 'user', FILTER_DEFAULT),
+			'uid'       => $_SESSION["UID"],
+			'estado'    => $estado,
+			'rol'       => $_SESSION["ID_ROL"],
+			'cliente'   => $_SESSION["ID_CLIENTE"],
+			'ip'        => ($_SERVER['REMOTE_ADDR'] == '::1') ? ip2long('127.0.0.1') : ip2long($_SERVER['REMOTE_ADDR']),
+			'agent'     => $_SERVER['HTTP_USER_AGENT'],
+			'fechahora' => fechaHora2()
+		];
+
+		$stmt->bindParam(':usuario', $data['usuario']);
+		$stmt->bindParam(':uid', $data['uid']);
+		$stmt->bindParam(':estado', $data['estado']); // 1: Login correcto; 2: Login incorrecto
+		$stmt->bindParam(':rol', $data['rol']);
+		$stmt->bindParam(':cliente', $data['cliente']);
+		$stmt->bindParam(':ip', $data['ip']);
+		$stmt->bindParam(':agent', $data['agent']);
+		$stmt->bindParam(':fechahora', $data['fechahora']);
+
+		if ($stmt->execute()) { // ejecuta la consulta
+			$_SESSION['ID_SESION'] = $connpdo->lastInsertId();
+			$message = "Sesion correcta \"($_SESSION[UID]) $data[usuario]\""; // mensaje de exito
+			if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+				$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_successSesion.log'; // ruta del archivo de log
+				fileLog($message, $pathLog); // escribir en el log de errores
+			}
+		}
+		$connpdo->commit(); // si todo salio bien, confirma la transaccion
+	} catch (\Throwable $th) { // si hay error
+		$connpdo->rollBack(); // revierte la transaccion
+		$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log
+		fileLog($th->getMessage(), $pathLog); // escribir en el log de errores
+	}
+	$connpdo = null; // cierra la conexion
+}

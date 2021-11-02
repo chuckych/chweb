@@ -542,7 +542,6 @@ $(document).ready(function () {
                 }
             }
         });
-
         e.stopImmediatePropagation();
     });
 
@@ -623,11 +622,11 @@ $(document).ready(function () {
             buttons: {
                 confirm: {
                     label: 'Confirmar',
-                    className: 'btn-custom btn-sm fontq btn-mobile'
+                    className: 'btn-danger btn-sm fontq btn-mobile'
                 },
                 cancel: {
                     label: 'Cancelar',
-                    className: 'btn-outline-custom border btn-sm fontq btn-mobile'
+                    className: 'btn-light btn-sm fontq btn-mobile'
                 }
             },
             callback: function (result) {
@@ -667,6 +666,7 @@ $(document).ready(function () {
                 }
             }
         });
+        $('.bootbox-confirm .modal-body').addClass('confirmDelete');
         e.stopImmediatePropagation();
     });
     $('#modalListas').on('hidden.bs.modal', function (e) {

@@ -79,6 +79,7 @@ $respuesta = array();
 
             $certeza2 = round($valor['similarity'], 0, PHP_ROUND_HALF_UP) . '%';
             // $respuesta = array();
+            $alias = empty($valor['alias']) ? $valor['point'] : $valor['alias'];
             $respuesta[] = array(
                 // '_id'        => $valor['_id'],
                 'timestamp'  => $valor['timestamp'],
@@ -87,18 +88,18 @@ $respuesta = array();
                 'Fecha4'         => DiaSemana4($dia),
                 // 'dia'           => DiaSemana($dia),
                 'face_url'      => '<span class="pic" datafoto="' . $valor['face_url'] . '" dataname="' . $name . '" datauid="' . $valor['u_id'] . '" datacerteza="' . $valor['similarity'] . '" datacerteza2="' . $certeza2 . '" datainout="' . $inout . '" datazone="' . $valor['zone'] . '" datahora="' . $valor['time'] . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ucfirst($valor['t_type']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>',
-                't_type'        => ucfirst($valor['t_type']),
+                't_type'        => ucfirst($valor['t_type']).'<br><span class="pointer editaAlias btn btn-link fontq p-0" data-titlel="Editar Dispositivo">'.$alias.'</span>',
                 // 'check_type' => $valor['check_type'],
                 // 'lat'        => $valor['lat'],
                 // 'lng'        => $valor['lng'],
                 'mapa'          => $iconMapa,
                 'u_id'          => $valor['u_id'],
-                // 'point'      => $valor['point'],
+                'point'      => $valor['point'],
                 'similarity'    => $certeza,
                 'IN_OUT'        => $inout,
                 'zone'          => $zone,
                 'zone2'          => $zone2,
-                // 'alias'      => $valor['alias'],
+                'alias'      => $valor['alias'],
                 'uid'           => $valor['u_id'],
                 'name'          => $name,
                 // 'date'       => $valor['date'],

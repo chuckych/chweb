@@ -45,6 +45,9 @@
             opacity: 0 !important;
             filter: alpha(opacity=0) !important;
         }
+        .bootbox {
+            backdrop-filter: blur(1px) !important;
+        }
 
         .bootbox-confirm {
             margin-top: 1.5rem !important;
@@ -89,7 +92,7 @@
                 </div>
                 <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center" data-titler='Activo : Solo días laborales; Inactivo: Todos'>
                     <input type="checkbox" class="custom-control-input" id="FicDiaL">
-                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;" >
+                    <label class="custom-control-label" for="FicDiaL" style="padding-top: 3px;">
                         <span class="text-dark d-none d-lg-block">D&iacute;a Laboral</span>
                         <span class="text-dark d-block d-lg-none">Laboral</span>
                     </label>
@@ -196,17 +199,24 @@
     require 'modal_Exportar.php';
     require __DIR__ . "../ModalGeneral.php";
     ?>
-    <script src="../js/bootbox.min.js"></script> 
-    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script> 
-    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script> 
+    <script src="../js/bootbox.min.js"></script>
+    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="js/data-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/proceso-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/proceso.js?v=<?= vjs() ?>"></script>
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/export-min.js?v=<?= vjs() ?>"></script>
     <script>
-    $(document).ready(function(){ $.get('/<?=HOMEHOST ?>/status_ws.php',{ status: 'ws',}) .done(function(data){ $.notifyClose(); notify(data.Mensaje, 'info', 2000, 'right')});});
+        $(document).ready(function() {
+            $.get('/<?= HOMEHOST ?>/status_ws.php', {
+                status: 'ws',
+            }).done(function(data) {
+                $.notifyClose();
+                notify(data.Mensaje, 'info', 2000, 'right')
+            });
+        });
     </script>
 </body>
 

@@ -1525,3 +1525,17 @@
      align-items: center !important;
      font-weight: 500 !important;
  }
+
+ .confirmDelete {
+     border-top: 2px solid #c13333 !important;
+ }
+
+ .modal {
+     -webkit-backdrop-filter: blur(2px);
+     backdrop-filter: blur(2px);
+ }
+
+ .blurtd {
+     filter: blur(2px);
+     color: #cecece !important;
+ }

@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 

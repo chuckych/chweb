@@ -102,7 +102,7 @@
                                 <th class="text-center">FACE</th>
                                 <th class="">ZONA</th>
                                 <th class="">MODO</th>
-                                <th class="">TIPO</th>
+                                <th class="">DISPOSITIVO</th>
                             </tr>
                         </thead>
                     </table>
@@ -128,6 +128,7 @@
             echo '<div class="alert alert-light mt-3">La Cuenta no tiene Token Mobile Asociado</div>';
         }
         /** Fin de check de token*/ ?>
+        <div id="divModalpoint"></div>
     </div>
     <!-- fin container -->
     <?php

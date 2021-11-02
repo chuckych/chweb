@@ -6,7 +6,6 @@ ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
-// sleep(1);
 $totalRecords = $data = array();
 $params = $_REQUEST;
 $params['_dr']         = $params['_dr'] ?? '';

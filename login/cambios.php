@@ -260,3 +260,12 @@ if ($verDB < 20211024) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+// if ($verDB < 20211102) {
+//     if (!checkColumn('usuarios', 'tarjeta')) { // verificar si existe la columna
+//         pdoQuery("ALTER TABLE `usuarios` ADD COLUMN `tarjeta` INT(11) NOT NULL AFTER `legajo`");
+//         fileLog("Se creo columna \"tarjeta\" en la tabla \"usuarios\"", $pathLog); // escribir en el log
+//     }
+//     $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+//     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+//     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+// }

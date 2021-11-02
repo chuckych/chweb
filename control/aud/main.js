@@ -226,11 +226,15 @@ $(function() {
     });
 
     table.on("init.dt", function(e, settings) {
-        $("#tableAuditoria_length select").addClass("h35");
-        $("#tableAuditoria_filter input").attr("placeholder", "Buscar dato..");
-        $("#tableAuditoria_filter input").attr("id", "datosAud");
-        $("#tableAuditoria_filter input").attr("autoc", "datosAud");
-        $("#tableAuditoria_filter input").attr("autocomplete", "off");
+        let idTable = "#" + e.target.id;
+        let lengthMenu = $(idTable + "_length select");
+        $(lengthMenu).addClass("h35");
+        let filterInput = $(idTable + "_filter input");
+        $(filterInput).attr({
+            placeholder: "Buscar dato..", //placeholder
+            id: "datosAud", //id
+            autocomplete: "off" //autocomplete
+        });
 
         fetch("getFechas.php").then(response => response.json()).then(data => {
             // console.log(max_year);
@@ -290,70 +294,77 @@ $(function() {
                     });
             });
         });
-        $("#" + e.target.id).children("tbody").on("click", "tr", function() {
+        $(idTable).children("tbody").on("click", "tr", function() {
             // Al hacer click en la fila de la tabla
             CheckSesion();
-            let dataRow = $("#" + e.target.id).DataTable().row($(this)).data();
-            fetch("modal.html?v="+vjs()).then(response => response.text()).then(data => {
-                $("#modalAuditoria").html(data);
-                $("#modalAuditoria .modal-title").html("Detalle de Auditoría");
-                // $("#detalleAud .modal-body span").addClass('bg-light w-100')
-                $("#detalleAud").modal("show");
-                $("#detalleAud .l div").addClass(
-                    "bg-light text-light"
-                );
-                fetch("getDetalle.php", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: "i=" + dataRow["id"] + "&s=" + dataRow["id_sesion"]
-                })
-                    .then(response => response.json())
-                    .then(d => {
-                        if (d.data == true) {
-                            $("#modalAuditoria #aud_nomb").html(d.aud_nomb);
-                            $("#modalAuditoria #aud_user").html(d.aud_user);
-                            $("#modalAuditoria #aud_nacu").html(d.aud_nacu);
-                            $("#modalAuditoria #aud_fech").html(d.aud_fech);
-                            $("#modalAuditoria #aud_hora").html(d.aud_hora);
-                            $("#modalAuditoria #aud_tipo").html(d.aud_tipn);
-                            $("#modalAuditoria #aud_modu").html(d.aud_modu);
-                            $("#modalAuditoria #aud_dato").html(d.aud_dato);
-                            $("#modalAuditoria #log_fech").html(d.log_fech);
-                            $("#modalAuditoria #log_hora").html(d.log_hora);
-                            $("#modalAuditoria #log_idse").html(d.log_idse);
-                            $("#modalAuditoria #log_nrol").html(d.log_nrol);
-                            $("#modalAuditoria #log_d_ip").html(d.log_d_ip);
-                            $("#modalAuditoria #log_agen").html(
-                                d.log_age1 +
-                                    ". " +
-                                    d.log_age2 +
-                                    ": " +
-                                    d.log_age3
-                            );
-                            $("#detalleAud").on("hidden.bs.modal", function(e) {
-                                $("#modalAuditoria").html("");
-                            });
-                            $("#detalleAud .l div").removeClass(
-                                "bg-light text-light"
-                            );
-                            $("#detalleAud .l div").addClass(
-                                "animate__animated animate__fadeIn"
-                            );
-                        }
-                    });
-            });
+            let dataRow = $(idTable).DataTable().row($(this)).data();
+            fetch("modal.html?v=" + vjs())
+                .then(response => response.text())
+                .then(data => {
+                    let divModal = "#modalAuditoria";
+                    let idModal = "#detalleAud";
+                    $(divModal).html(data);
+                    $(divModal + " .modal-title").html(
+                        "Información de Auditoría"
+                    );
+                    // $("#detalleAud .modal-body span").addClass('bg-light w-100')
+                    $(idModal).modal("show");
+                    $(idModal + " .l div").addClass("bg-light text-light");
+                    fetch("getDetalle.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body:
+                            "i=" + dataRow["id"] + "&s=" + dataRow["id_sesion"]
+                    })
+                        .then(response => response.json())
+                        .then(d => {
+                            if (d.data == true) {
+                                $(divModal + " #aud_nomb").html(d.aud_nomb);
+                                $(divModal + " #aud_user").html(d.aud_user);
+                                $(divModal + " #aud_nacu").html(d.aud_nacu);
+                                $(divModal + " #aud_fech").html(d.aud_fech);
+                                $(divModal + " #aud_hora").html(d.aud_hora);
+                                $(divModal + " #aud_tipo").html(d.aud_tipn);
+                                $(divModal + " #aud_modu").html(d.aud_modu);
+                                $(divModal + " #aud_dato").html(d.aud_dato);
+                                $(divModal + " #log_fech").html(d.log_fech);
+                                $(divModal + " #log_hora").html(d.log_hora);
+                                $(divModal + " #log_idse").html(d.log_idse);
+                                $(divModal + " #log_nrol").html(d.log_nrol);
+                                $(divModal + " #log_d_ip").html(d.log_d_ip);
+                                $(divModal + " #log_agen").html(
+                                    d.log_age1 +
+                                        ". " +
+                                        d.log_age2 +
+                                        ": " +
+                                        d.log_age3
+                                );
+                                $(idModal).on("hidden.bs.modal", function(e) {
+                                    $(divModal).html("");
+                                });
+                                $(idModal + " .l div").removeClass(
+                                    "bg-light text-light"
+                                );
+                                $(idModal + " .l div").addClass(
+                                    "animate__animated animate__fadeIn"
+                                );
+                            }
+                        });
+                });
         });
     });
     table.on("page.dt", function(e, settings) {
+        let idTable = "#" + e.target.id;
         CheckSesion();
-        $("#" + e.target.id + " div").addClass("bg-light text-light");
+        $(idTable + " div").addClass("blurtd");
     });
     table.on("draw.dt", function(e, settings) {
-        $("#" + e.target.id + " div").removeClass("bg-light text-light");
+        let idTable = "#" + e.target.id;
+        $(idTable + " div").removeClass("blurtd");
         $("#divTableAud").show();
-        $(e.target.id + "_previous").attr("data-titlel", "Anterior");
-        $(e.target.id + "_next").attr("data-titlel", "Siguiente");
+        $(idTable + "_previous").attr("data-titlel", "Anterior");
+        $(idTable + "_next").attr("data-titlel", "Siguiente");
     });
 });

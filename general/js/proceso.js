@@ -1548,12 +1548,12 @@ $(document).on("click", ".open-modal", function (e) {
         var Datos = $(this).attr('data');
 
         bootbox.confirm({
-            message: '<span class="fonth fw5">Eliminar Fichada</span><br><span class="fontq fw4">¿Confirma eliminar la Fichada: ' + RegHora + 'Hs.?</span>',
+            message: '<span class="fonth fw5 deleteFic">Eliminar Fichada</span><br><span class="fontq fw4">¿Confirma eliminar la Fichada: ' + RegHora + 'Hs.?</span>',
             // message: '',
             buttons: {
                 confirm: {
                     label: 'Aceptar',
-                    className: 'btn-custom text-white btn-sm fontq'
+                    className: 'btn-danger btn-sm fontq'
                 },
                 cancel: {
                     label: 'Cancelar',
@@ -1597,6 +1597,7 @@ $(document).on("click", ".open-modal", function (e) {
                 }
             }
         });
+        $('.bootbox-confirm .modal-body').addClass('confirmDelete');
         e.stopImmediatePropagation();
     });
     /** ALTA, MOD, BAJA NOVEDADES */
@@ -1705,7 +1706,7 @@ $(document).on("click", ".open-modal", function (e) {
                 buttons: {
                     confirm: {
                         label: 'Aceptar',
-                        className: 'btn-custom text-white btn-sm fontq'
+                        className: 'btn-danger btn-sm fontq'
                     },
                     cancel: {
                         label: 'Cancelar',
@@ -1749,6 +1750,7 @@ $(document).on("click", ".open-modal", function (e) {
                     }
                 }
             });
+            $('.bootbox-confirm .modal-body').addClass('confirmDelete');
             e.stopImmediatePropagation()
         });
         // });
@@ -1844,7 +1846,7 @@ $(document).on("click", ".open-modal", function (e) {
             buttons: {
                 confirm: {
                     label: 'Aceptar',
-                    className: 'btn-custom text-white btn-sm fontq'
+                    className: 'btn-danger btn-sm fontq'
                 },
                 cancel: {
                     label: 'Cancelar',
@@ -1888,6 +1890,7 @@ $(document).on("click", ".open-modal", function (e) {
                 }
             }
         });
+        $('.bootbox-confirm .modal-body').addClass('confirmDelete');
         e.stopImmediatePropagation();
     });
     // });
@@ -1970,7 +1973,7 @@ $(document).on("click", ".open-modal", function (e) {
             buttons: {
                 confirm: {
                     label: 'Aceptar',
-                    className: 'btn-custom text-white btn-sm fontq'
+                    className: 'btn-danger btn-sm fontq'
                 },
                 cancel: {
                     label: 'Cancelar',
@@ -2011,7 +2014,8 @@ $(document).on("click", ".open-modal", function (e) {
                 }
             }
         });
-        // e.stopImmediatePropagation();
+        $('.bootbox-confirm .modal-body').addClass('confirmDelete');
+        e.stopImmediatePropagation();
     });
     /** ALTA, CITACION */
     $(".Form_Citacion").bind("submit", function (e) {
@@ -2078,7 +2082,7 @@ $(document).on("click", ".open-modal", function (e) {
                 buttons: {
                     confirm: {
                         label: 'Aceptar',
-                        className: 'btn-custom text-white btn-sm fontq'
+                        className: 'btn-danger btn-sm fontq'
                     },
                     cancel: {
                         label: 'Cancelar',
@@ -2121,7 +2125,7 @@ $(document).on("click", ".open-modal", function (e) {
                     }
                 }
             });
-
+            $('.bootbox-confirm .modal-body').addClass('confirmDelete');
             e.stopImmediatePropagation()
         });
 

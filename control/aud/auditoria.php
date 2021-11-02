@@ -13,6 +13,7 @@ secure_auth_ch();
         .select2-container {
             width: 100% !important;
         }
+
         #tableAuditoria tr {
             cursor: pointer;
         }
@@ -25,7 +26,6 @@ secure_auth_ch();
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod2('bg-custom', 'white', 'journal-check',  'Auditoría', '25', 'text-white mr-2'); ?>
-
         <!-- Fin Encabezado -->
         <div class="row bg-white mt-2 py-3" id="divTableAud" style="display: none;">
             <div class="col-12">
@@ -49,6 +49,8 @@ secure_auth_ch();
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
+    <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="main.js?<?= microtime(true) ?>"></script>
 </body>
 

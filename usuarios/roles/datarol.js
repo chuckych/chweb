@@ -295,7 +295,7 @@ $(function () {
                 buttons: {
                     confirm: {
                         label: 'Confirmar',
-                        className: 'btn-custom btn-sm fontq btn-mobile'
+                        className: 'btn-danger btn-sm fontq btn-mobile'
                     },
                     cancel: {
                         label: 'Cancelar',
@@ -340,6 +340,7 @@ $(function () {
                     }
                 }
             });
+            $('.bootbox-confirm .modal-body').addClass('confirmDelete');
             e.stopImmediatePropagation();
         });
 

@@ -43,6 +43,4 @@
     </div>
   </div>
 </div>
-<script src="../../js/select2.min.js"></script>
-<script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 <script src="select-min.js?<?= microtime(true) ?>"></script>
