@@ -112,6 +112,10 @@ $(function() {
         });
 
         table.on("init.dt", function(e, settings) {
+            
+        });
+        table.on("draw.dt", function(e, settings) {
+            $("#DivLegaPass").show();
             $(".divCheck").html(`
                 <div class="d-flex align-items-center ml-2">
                     <button type="button" class="p-0 fontq btn btn-link text-secondary mr-2" id="marcar"><i class="bi bi-check2-square mr-2"></i>Marcar</button>
@@ -127,9 +131,6 @@ $(function() {
             $("#desmarcar").on("click", function() {
                 $(".LegaCheck").prop("checked", false);
             });
-        });
-        table.on("draw.dt", function(e, settings) {
-            $("#DivLegaPass").show();
         });
 
     }
