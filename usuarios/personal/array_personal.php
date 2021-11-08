@@ -4,7 +4,8 @@ $urln   = host() . "/" . HOMEHOST . "/data/GetUser_legajo.php?tk=" . token() . "
 
 $query = "SELECT usuarios.legajo AS 'legajo' FROM usuarios LEFT JOIN roles ON usuarios.rol=roles.id INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id>'0' AND clientes.recid='$_GET[_c]' AND usuarios.legajo > 0 ORDER BY usuarios.estado, usuarios.fecha DESC";
 // echo ($urln); exit;
-
+$data  = array();
+$respuesta  = array();
 // $array = json_decode(getRemoteFile($urln), TRUE);
 $array = array_pdoQuery($query);
 $legajos = implode(",", array_column($array, 'legajo'));
