@@ -21,6 +21,13 @@ define("ident", $ident);
         .dataTables_paginate {
             margin-top: 0px !Important;
         }
+        .pre-carga div{
+            background-color: #efefef !important;
+            color: #efefef !important;
+        }
+        .pre-carga .custom-control{
+            display: none;
+        }
     </style>
 </head>
 
@@ -58,17 +65,15 @@ define("ident", $ident);
                             <span class=""><i class="bi bi-people-fill mr-2"></i>Usuarios</span>
                         </a>
                     </div>
-                    <div class="col-12 pb-2 <?= dnone($rowcount) ?>">
+                    <!-- <div class="col-12 pb-2 <?= dnone($rowcount) ?>">
                         <div class="d-flex align-items-center">
                             <button type="button" class="p-0 fontq btn btn-link text-secondary mr-2" id="marcar"><i class="bi bi-check2-square mr-2"></i>Marcar</button>
                             <button type="button" class="p-0 fontq btn btn-link text-secondary" id="desmarcar">
-                                <svg class="bi mr-2" width="12" height="12" fill="currentColor">
-                                    <use xlink:href="../../img/bootstrap-icons.svg#dash-square" />
-                                </svg>
+                                <i class="bi bi-dash-square mr-2"></i>
                                 Desmarcar
                             </button>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <!-- <div class="col-12 col-sm-6 d-flex justify-content-end">
                         

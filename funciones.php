@@ -2196,9 +2196,17 @@ function simpleQueryDataMS($query)
         sqlsrv_free_stmt($stmt);
         return $a;
     } else {
+
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error) {
+                $mensaje = explode(']', $error['message']);
+            }
+        }
+
         $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-        return false;
+        fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje, $pathLog); // escribir en el log
+        return false;       
+
     }
 }
 function arrayQueryDataMS($query)
@@ -2207,6 +2215,7 @@ function arrayQueryDataMS($query)
     $params    = array();
     $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt  = sqlsrv_query($link, $query, $params, $options);
+    print_r($query);exit;
     if ($stmt) {
         while ($a  = sqlsrv_fetch_array($stmt)) {
             $data[] = $a;
@@ -3474,18 +3483,19 @@ function tipoAud($tipo)
     }
     return $tipo;
 }
-function login_logs($estado)
+function login_logs($estado, $usuario = '')
 {
 	// estado = 1: Login correcto; 2: Login incorrecto
-	//require_once __DIR__ . '../../config/conect_pdo.php'; //Conexion a la base de datos
 	require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
 	$connpdo->beginTransaction();
 	try {
 		$sql = 'INSERT INTO login_logs(usuario,uid,estado,rol,cliente,ip,agent,fechahora) VALUES(:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)';
 		$stmt = $connpdo->prepare($sql); // prepara la consulta
 
+        $usuario = ($usuario == '') ? filter_input(INPUT_POST, 'user', FILTER_DEFAULT) : $usuario;
+
 		$data = [ // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
-			'usuario'   => filter_input(INPUT_POST, 'user', FILTER_DEFAULT),
+			'usuario'   => $usuario,
 			'uid'       => $_SESSION["UID"],
 			'estado'    => $estado,
 			'rol'       => $_SESSION["ID_ROL"],
