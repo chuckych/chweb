@@ -1,11 +1,6 @@
 <?php
-// require __DIR__ . '/crud.php';
-// UnsetGet('id');
-ExisteCliente($_GET['_c']);
-list($id_c, $ident, $nombre_c) = Cliente_c($_GET['_c']);
-define("id_c", $id_c);
-define("nombre_c", $nombre_c);
-define("ident", $ident);
+$Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre' FROM clientes WHERE clientes.id > 0 AND clientes.recid='$_GET[_c]' LIMIT 1");
+($Cliente_c['id']) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
 ?>
 <!doctype html>
 <html lang="es">
@@ -39,13 +34,13 @@ define("ident", $ident);
     <div class="container shadow">
         <?php require __DIR__ . '../../../nav.php'; ?>
         <?=
-        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . nombre_c, '25', 'text-white mr-2');
+        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . $Cliente_c['nombre'], '25', 'text-white mr-2');
         ?>
         <div class="mt-1">
             <div class="row mt-3">
                 <?= notif_error_var('error', '<span class="fw5">Los campos legajo y Rol son obligatorios</span>') ?>
             </div>
-            <form action="<?= htmlspecialchars('crud.php')?>" name="f1" id="f1" method="POST" class="w-100">
+            <form action="<?= htmlspecialchars('crud.php?_c='.$_GET['_c'])?>" name="f1" id="f1" method="POST" class="w-100">
             <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()"> -->
                 <div class="row">
                     <div class="col-12 col-sm-9">
@@ -71,8 +66,8 @@ define("ident", $ident);
                 <div class="row pb-4">
                     <div class="col-12">
                         <input type="hidden" name="_c" value="<?= $_GET['_c'] ?>">
-                        <input type="hidden" name="id_c" value="<?= $id_c ?>">
-                        <input type="hidden" name="ident" value="<?= $ident ?>">
+                        <input type="hidden" name="id_c" value="<?= $Cliente_c['id'] ?>">
+                        <input type="hidden" name="ident" value="<?= $Cliente_c['ident'] ?>">
                         <table class="table table-hover w-100 text-wrap table-sm" id="table-personal">
                             <thead class="text-uppercase">
                                 <tr>

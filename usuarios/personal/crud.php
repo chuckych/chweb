@@ -29,7 +29,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
         $tiempo_ini = microtime(true); // Tiempo inicial
 
         $getFicLega = implode(",",$_POST['_l']); // Fichero con legajos 
-        $query="SELECT DISTINCT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni' FROM personal WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegFeEg='1753-01-01 00:00:00.000' AND PERSONAL.LegNume IN ($getFicLega) ORDER BY pers_nombre ASC";
+        $query="SELECT DISTINCT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni' FROM personal WHERE PERSONAL.LegNume > 0 AND PERSONAL.LegFeEg='1753-01-01 00:00:00.000' AND PERSONAL.LegNume IN ($getFicLega) ORDER BY pers_nombre ASC";
 
         $data =  arrayQueryDataMS($query); // traemos los datos del personal seleccionado en la lista
 

@@ -4,5 +4,5 @@ require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
 ExisteModRol('7');
 $Modulo='999';
-$bgcolor = 'bg-custom';
+// $bgcolor = 'bg-dark';
 require pagina('personal.php');

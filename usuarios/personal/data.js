@@ -101,6 +101,7 @@ $(function () {
 
         cargando_table();
         table.on("init.dt", function (e, settings) {
+
             let idTable = "#" + e.target.id;
             let lengthMenu = $(idTable + "_length select");
             $(lengthMenu).addClass("h35");
@@ -121,8 +122,8 @@ $(function () {
                     $("#LegaPass").prop("checked", true);
                     $("#table-personal").DataTable().ajax.reload();
                 }
-                    $(".LegaCheck ").attr('disabled', true);
-                    cargando_table();
+                $(".LegaCheck ").attr('disabled', true);
+                cargando_table();
             });
 
             if (settings.iDraw == 2) {
@@ -149,6 +150,13 @@ $(function () {
         table.on("draw.dt", function (e, settings) {
             if (settings.iDraw > 1) {
                 $('._cargando').remove();
+                let lengthData = JSON.parse(
+                    JSON.stringify(table.rows().data())
+                ).length;
+                if (lengthData === 0) {
+                    $("#submit").attr("disabled", true).hide();
+                }
+                console.log(lengthData);
             }
         });
 
@@ -247,7 +255,7 @@ $(function () {
             beforeSend: function (data) {
                 $.notifyClose();
                 notify("Aguarde. . .", "dark", 0, "right");
-                ActiveBTN(!0, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+                ActiveBTN(!0, "#submit", '<i class="bi-download font1 mr-2"></i>AGUARDE..', '<i class="bi-download font1 mr-2"></i>IMPORTAR');
             },
             success: function (data) {
                 if (data.status == "ok") {
@@ -259,10 +267,10 @@ $(function () {
                     $.notifyClose();
                     notify(data.Mensaje, "danger", 5000, "right");
                 }
-                ActiveBTN(!1, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+                ActiveBTN(!1, "#submit", '<i class="bi-download font1 mr-2"></i>AGUARDE..', '<i class="bi-download font1 mr-2"></i>IMPORTAR');
             },
             error: function (data) {
-                ActiveBTN(!1, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+                ActiveBTN(!1, "#submit", '<i class="bi-download font1 mr-2"></i>AGUARDE..', '<i class="bi-download font1 mr-2"></i>IMPORTAR');
                 $.notifyClose();
                 notify("Error", "danger", 5000, "right");
             }

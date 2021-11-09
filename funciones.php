@@ -1156,8 +1156,6 @@ function ExisteRol($recid)
 function Cliente_c($recid)
 {
     $url   = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
-    // $json         = file_get_contents($url);
-    // $array        = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
     $data         = $array[0]['clientes'];
     if (is_array($data)) :
@@ -2196,7 +2194,6 @@ function simpleQueryDataMS($query)
         sqlsrv_free_stmt($stmt);
         return $a;
     } else {
-
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
@@ -2212,10 +2209,10 @@ function simpleQueryDataMS($query)
 function arrayQueryDataMS($query)
 {
     require __DIR__ . './config/conect_mssql.php';
+    $data = array();
     $params    = array();
     $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt  = sqlsrv_query($link, $query, $params, $options);
-    // print_r($query);exit;
     if ($stmt) {
         while ($a  = sqlsrv_fetch_array($stmt)) {
             $data[] = $a;
