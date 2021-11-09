@@ -211,6 +211,18 @@ function ShowLoading(e) {
     document.body.
         appendChild(div); return true;
 }
+function cargando_table(e) {
+    let div = document.createElement('div');
+    div.setAttribute("class", "_cargando");
+    div.innerHTML = `
+    <div><style>.table div{opacity:0.4}</style>
+    <div class="animate__animated animate__fadeIn fixed-top mx-auto d-flex align-items-center justify-content-center text-white text-center bg-custom" style="top:30%;width:220px;text-align:center;z-index:1050;height:50px">
+        <span class="fontq">Aguarde por favor... 
+            <div class="spinner-border spinner-border-sm text-white" role="status" aria-hidden="true"></div>
+        </span>
+    </div></div>`;
+    document.body.appendChild(div); return true;
+}
 function goBack() {
     window.history.back();
 }
@@ -639,3 +651,14 @@ function onOpenSelect2() {
 setInterval(() => {
     CheckSesion();
 }, 60000);
+
+/**
+ * @param String name
+ * @return String
+ */
+ function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+    results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}

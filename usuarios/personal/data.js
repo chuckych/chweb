@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     "use strict";
     let testConnect = true;
     fetch("../clientes/testConnect.php?_c=" + $("#_c").val())
@@ -17,36 +17,24 @@ $(function() {
         });
 
     $("#table-personal thead tr").clone(true).appendTo("#table-personal thead");
-    $("#table-personal thead tr:eq(1) th").each(function(i) {
+    $("#table-personal thead tr:eq(1) th").each(function (i) {
         var title = $(this).text();
         $(this).html(
             '<input type="text" class="form-control" placeholder="" />'
         );
 
-        $("input", this).on("keyup change", function() {
+        $("input", this).on("keyup change", function () {
             if (table.column(i).search() !== this.value) {
                 table.column(i).search(this.value).draw();
             }
         });
     });
-    $("#DivLegaPass").hide();
-    $("#DivLegaPass").on("click", function() {
-        $("#DivLegaPass").hide();
-        if ($("#LegaPass").is(":checked")) {
-            $("#LegaPass").val("true");
-            $(".fila").addClass("pre-carga");
-            $("#table-personal").DataTable().ajax.reload();
-        } else {
-            $("#LegaPass").val("false");
-            $(".fila").addClass("pre-carga");
-            $("#table-personal").DataTable().ajax.reload();
-        }
-    });
 
-    let table = "";
+    $("#DivLegaPass").hide();
+
     if (testConnect) {
-        table = $("#table-personal").DataTable({
-            createdRow: function(row, data, index) {
+        let table = $("#table-personal").DataTable({
+            createdRow: function (row, data, index) {
                 $(row).addClass("animate__animated animate__fadeIn fila");
                 $("td", row).addClass("align-middle");
             },
@@ -57,7 +45,7 @@ $(function() {
                 url: "?p=array_personal.php",
                 type: "GET",
                 dataSrc: "personal",
-                data: function(data) {
+                data: function (data) {
                     data._c = $("#_crecid").val();
                     data.LegaPass = $("#LegaPass").val();
                 }
@@ -107,16 +95,39 @@ $(function() {
             info: true,
             ordering: 0,
             language: {
-                url: "../../js/DataTableSpanishShort2.json?"+vjs()
+                url: "../../js/DataTableSpanishShort2.json?" + vjs()
             }
         });
 
-        table.on("init.dt", function(e, settings) {
-            
-        });
-        table.on("draw.dt", function(e, settings) {
-            $("#DivLegaPass").show();
-            $(".divCheck").html(`
+        cargando_table();
+        table.on("init.dt", function (e, settings) {
+            let idTable = "#" + e.target.id;
+            let lengthMenu = $(idTable + "_length select");
+            $(lengthMenu).addClass("h35");
+            let filterInput = $(idTable + "_filter input");
+            $(filterInput).attr({
+                placeholder: "Buscar dato..", //placeholder
+                autocomplete: "off" //autocomplete
+            });
+
+            $("#DivLegaPass").on("click", function (e) {
+                e.preventDefault();
+                if ($("#LegaPass").is(":checked")) {
+                    $("#LegaPass").val("false");
+                    $("#LegaPass").prop("checked", false);
+                    $("#table-personal").DataTable().ajax.reload();
+                } else {
+                    $("#LegaPass").val("true");
+                    $("#LegaPass").prop("checked", true);
+                    $("#table-personal").DataTable().ajax.reload();
+                }
+                    $(".LegaCheck ").attr('disabled', true);
+                    cargando_table();
+            });
+
+            if (settings.iDraw == 2) {
+                $("#DivLegaPass").show();
+                $(".divCheck").html(`
                 <div class="d-flex align-items-center ml-2">
                     <button type="button" class="p-0 fontq btn btn-link text-secondary mr-2" id="marcar"><i class="bi bi-check2-square mr-2"></i>Marcar</button>
                     <button type="button" class="p-0 fontq btn btn-link text-secondary" id="desmarcar">
@@ -125,13 +136,138 @@ $(function() {
                     </button>
                 </div>
             `);
-            $("#marcar").on("click", function() {
-                $(".LegaCheck").prop("checked", true);
-            });
-            $("#desmarcar").on("click", function() {
-                $(".LegaCheck").prop("checked", false);
-            });
+                $("#marcar").on("click", function (e) {
+                    e.preventDefault();
+                    $(".LegaCheck").prop("checked", true);
+                });
+                $("#desmarcar").on("click", function (e) {
+                    e.preventDefault();
+                    $(".LegaCheck").prop("checked", false);
+                });
+            }
+        });
+        table.on("draw.dt", function (e, settings) {
+            if (settings.iDraw > 1) {
+                $('._cargando').remove();
+            }
         });
 
     }
+    onOpenSelect2();
+    let opt2 = {
+        MinLength: "0",
+        SelClose: false,
+        MaxInpLength: "10",
+        delay: "250",
+        allowClear: true,
+    };
+
+    $(".SelecRol").select2({
+        language: "es",
+        multiple: false,
+        allowClear: opt2["allowClear"],
+        language: "es",
+        placeholder: "Seleccionar Rol",
+        minimumInputLength: opt2["MinLength"],
+        minimumResultsForSearch: 10,
+        maximumInputLength: opt2["MaxInpLength"],
+        selectOnClose: opt2["SelClose"],
+        language: {
+            noResults: function () {
+                return "No hay resultados..";
+            },
+            inputTooLong: function (args) {
+                var message =
+                    "Máximo " +
+                    opt2["MaxInpLength"] +
+                    " caracteres. Elimine " +
+                    overChars +
+                    " caracter";
+                if (overChars != 1) {
+                    message += "es";
+                }
+                return message;
+            },
+            searching: function () {
+                return "Buscando..";
+            },
+            errorLoading: function () {
+                return "Sin datos..";
+            },
+            removeAllItems: function () {
+                return "Borrar";
+            },
+            inputTooShort: function () {
+                return "Ingresar " + opt2["MinLength"] + " o mas caracteres";
+            },
+            maximumSelected: function () {
+                return "Puede seleccionar solo una opción";
+            },
+            loadingMore: function () {
+                return "Cargando más resultados…";
+            },
+        },
+        ajax: {
+            url: "getRoles.php",
+            dataType: "json",
+            type: "POST",
+            delay: opt2["delay"],
+            data: function (params) {
+                return {
+                    q: params.term,
+                    _c: getParameterByName("_c")
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data,
+                };
+            },
+        },
+    });
+    $('.SelecRol').on("select2:select", function (e) {
+        $('.select2-container').removeClass("border border-danger");
+        $.notifyClose();
+    });
+
+    $("#f1").bind("submit", function (e) {
+        e.preventDefault();
+        console.log($(".SelecRol").val());
+        if (!$(".SelecRol").val()) {
+            $.notifyClose();
+            $('.select2-container').addClass("border border-danger");
+            let textErr = `<span class="">Debe seleccionar un rol<span>`;
+            notify(textErr, "danger", 0, "right");
+            return;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: $(this).attr("action"),
+            data: $(this).serialize() + '&submit=Importar',
+            beforeSend: function (data) {
+                $.notifyClose();
+                notify("Aguarde. . .", "dark", 0, "right");
+                ActiveBTN(!0, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+            },
+            success: function (data) {
+                if (data.status == "ok") {
+                    $.notifyClose();
+                    notify(data.Mensaje, "success", 5000, "right");
+                    cargando_table();
+                    $("#table-personal").DataTable().ajax.reload();
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, "danger", 5000, "right");
+                }
+                ActiveBTN(!1, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+            },
+            error: function (data) {
+                ActiveBTN(!1, "#submit", "Aguarde. . .", '<i class="bi-download font1 mr-2"></i>IMPORTAR');
+                $.notifyClose();
+                notify("Error", "danger", 5000, "right");
+            }
+        });
+        e.stopImmediatePropagation();
+    });
+
 });

@@ -1,35 +1,41 @@
 <?php
 ini_set('max_execution_time', 300);
+session_start();
+header('Content-type: text/html; charset=utf-8');
+require __DIR__ . '../../../config/index.php';
+ultimoacc();
+secure_auth_ch_json();
+header("Content-Type: application/json");
+ExisteModRol('7');
+E_ALL();
 /** Tiempo maximo de duracion del script 300 segundos=(5 Minutos) */
 $border = $ErrNombre = $ErrUsuario = $ErrRol = $ErrContraseña = $duplicado = $nombre = $usuario = $rol = $contraseña = $Errl = '';
 /** ALTA DE USUARIO */
 $_POST['LegaPass'] = $_POST['LegaPass'] ?? '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) {
-    require __DIR__ . '../../../config/conect_mysql.php';
 
     $rol    = test_input($_POST['rol']);
     $id_c_  = test_input($_POST['id_c']);
     $ident_ = test_input($_POST['ident']);
+
     $fecha  = date("Y/m/d H:i:s");
     /* Comprobamos campos vacios  */
-    // if ((valida_campo($nombre)) or (valida_campo($usuario)) or (valida_campo($rol)) or (valida_campo($contraseña))) {
-    if ((empty($_POST['_l']) or (valida_campo($rol)))) {
-        header("Location:/" . HOMEHOST . "/usuarios/personal/?_c=$_GET[_c]&error");
-    } else {
-
+    if (empty($_POST['_l'])) {
+        PrintRespuestaJson('error', 'Debe seleccionar al menos un legajo');
+        exit;
+    }
+    if (valida_campo($rol)) {
+        PrintRespuestaJson('error', 'Campo Rol es requerido');
+        exit;
+    }
         $tiempo_ini = microtime(true);
         $url   = host() . "/" . HOMEHOST . "/data/getImpoPerso.php?tk=" . token() . "&_c=" . $_POST['_c'] . "&_l%5B%5D%3D=" . implode("&_l%5B%5D%3D=", $_POST['_l']);
-        // echo $url;
-        // exit;
-        // $json  = file_get_contents($url);
-        // $array = json_decode($json, TRUE);
+
         $array = json_decode(getRemoteFile($url), true);
         if (is_array($array)) :
             $rowcount = (count($array['impo_personal']));
         endif;
         $data = $array['impo_personal'];
-        // echo '<pre>';
-        // print_r($data); exit;
 
         foreach ($data as $value) {
 
@@ -48,37 +54,20 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
             $recid       = recid();
 
             /* INSERTAMOS */
-            $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, legajo, fecha_alta, fecha ) VALUES( '$recid', '$nombre', '$userauto', '$rol', '$contraauto', '$id_c_', '$legajo','$fecha', '$fecha')";
-            $rs_insert = mysqli_query($link, $query);// or die(mysqli_error($link));
-
-            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
-
-            auditoria("Usuario ($dataUser[id_user]) $userauto. Nombre: $nombre. Legajo ($legajo). Rol ($rol) $dataUser[nombre_rol]", 'A', $id_c_, '1');
-
-
+            $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, legajo, fecha_alta, fecha ) VALUES( '$recid', '$nombre', '$userauto', '$rol', '$contraauto', '$id_c_', '$legajo','$fecha', '$fecha');";
+            // $rs_insert = mysqli_query($link, $query); // or die(mysqli_error($link));
+            if (insert_pdoQuery($query)) {
+                $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
+                auditoria("Usuario ($dataUser[id_user]) $userauto. Nombre: $nombre. Legajo ($legajo). Rol ($rol) $dataUser[nombre_rol]", 'A', $id_c_, '1');
+            } else {
+                PrintRespuestaJson('error', "Error al importar");
+                exit;
+            }
         }
-
-        if ($rs_insert) {
-            $count = count($data);
-            $tiempo_fini = microtime(true);
-            $duracion    = round($tiempo_fini - $tiempo_ini, 2);
-            header("Location:/" . HOMEHOST . "/usuarios/?_c=$_GET[_c]&okimpo&dur=&v=$duracion&ct=$count");
-        } else {
-            // echo '<h1>Error al importar datos</h1>';
-            header("Location:/" . HOMEHOST . "/usuarios/personal/?_c=$_GET[_c]&okimpo&dur=&v=$duracion&ct=$count&err=Error");
-            // print_r(mysqli_error_list($link));
-        }
-        // mysqli_error($link);
-        // // print_r($query);
-        // // print_r(mysqli_error_list($link));
-
-        // if (mysqli_errno($link) == 1062) {
-        //     $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>".mysqli_error($link)."</div>";
-        // } elseif(mysqli_errno($link) == 1452) {
-        //     $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Error: ".mysqli_errno($link)."<br />".mysqli_error($link)."</div>";
-        // }else{
-    }
-    mysqli_close($link);
-    exit;
+        $count       = count($data);
+        $tiempo_fini = microtime(true);
+        $duracion    = round($tiempo_fini - $tiempo_ini, 2);
+        PrintRespuestaJson('ok', "<b>Usuarios importados correctamente</b><br>Duración: $duracion Segundos.<br>Usuarios importados: $count");
+        exit;
 }
 /** FIN ALTA DE USUARIO */

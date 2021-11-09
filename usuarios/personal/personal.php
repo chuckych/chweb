@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/crud.php';
+// require __DIR__ . '/crud.php';
 // UnsetGet('id');
 ExisteCliente($_GET['_c']);
 list($id_c, $ident, $nombre_c) = Cliente_c($_GET['_c']);
@@ -11,6 +11,7 @@ define("ident", $ident);
 <html lang="es">
 
 <head>
+    <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title><?= MODULOS['cuentas'] ?> » Personal CH</title>
     <style>
@@ -21,11 +22,13 @@ define("ident", $ident);
         .dataTables_paginate {
             margin-top: 0px !Important;
         }
-        .pre-carga div{
+
+        .pre-carga div {
             background-color: #efefef !important;
             color: #efefef !important;
         }
-        .pre-carga .custom-control{
+
+        .pre-carga .custom-control {
             display: none;
         }
     </style>
@@ -42,17 +45,16 @@ define("ident", $ident);
             <div class="row mt-3">
                 <?= notif_error_var('error', '<span class="fw5">Los campos legajo y Rol son obligatorios</span>') ?>
             </div>
-            <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()">
+            <form action="<?= htmlspecialchars('crud.php')?>" name="f1" id="f1" method="POST" class="w-100">
+            <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()"> -->
                 <div class="row">
                     <div class="col-12 col-sm-9">
                         <div class="form-inline <?= dnone($rowcount) ?> mb-2">
                             <!-- <p class="p-1 m-0 fontq">Seleccionar Rol</p> -->
-                            <select required name="rol" id="rol" class="h40 form-control custom-select w250 mr-3">
-                                <option selected value="" disabled>Seleccionar Rol</option>
-                                <?= ListaRoles($_GET['_c']) ?>
+                            <select name="rol" id="rol" class="h40 form-control custom-select w250 SelecRol">
                             </select>
                             <input type="hidden" hidden id="_crecid" value="<?= ($_GET['_c']) ?>">
-                            <div class="mt-2 mt-sm-0 custom-control custom-switch custom-control-inline" id="DivLegaPass">
+                            <div class="mt-2 mt-sm-0 custom-control custom-switch custom-control-inline ml-2" id="DivLegaPass">
                                 <input id="LegaPass" class="custom-control-input" type="checkbox" name="LegaPass">
                                 <label for="LegaPass" class="custom-control-label" style="padding-top: 3px;">
                                     <span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<span class='w150 fw5 text-dark'>Legajo como Usuario<br>DNI como Contraseña.<br>Si el DNI esta vacío, no se importará.</span>">Importar Legajo y DNI</span>
@@ -65,19 +67,7 @@ define("ident", $ident);
                             <span class=""><i class="bi bi-people-fill mr-2"></i>Usuarios</span>
                         </a>
                     </div>
-                    <!-- <div class="col-12 pb-2 <?= dnone($rowcount) ?>">
-                        <div class="d-flex align-items-center">
-                            <button type="button" class="p-0 fontq btn btn-link text-secondary mr-2" id="marcar"><i class="bi bi-check2-square mr-2"></i>Marcar</button>
-                            <button type="button" class="p-0 fontq btn btn-link text-secondary" id="desmarcar">
-                                <i class="bi bi-dash-square mr-2"></i>
-                                Desmarcar
-                            </button>
-                        </div>
-                    </div> -->
                 </div>
-                <!-- <div class="col-12 col-sm-6 d-flex justify-content-end">
-                        
-                    </div> -->
                 <div class="row pb-4">
                     <div class="col-12">
                         <input type="hidden" name="_c" value="<?= $_GET['_c'] ?>">
@@ -98,7 +88,7 @@ define("ident", $ident);
                             </thead>
                         </table>
                         <div class="">
-                            <button type="submit" name="submit" class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile" value="Importar"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
+                            <button type="submit" name="submit" class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile" value="Importar" id="submit"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
                         </div>
                     </div>
                 </div>
@@ -112,7 +102,8 @@ define("ident", $ident);
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="data.js?v=<?= vjs() ?>"></script>
+    <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
+    <script src="data-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

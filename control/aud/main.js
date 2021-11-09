@@ -200,7 +200,7 @@ $(function() {
                 }
             },
             {
-                className: "w-100",
+                className: "w-100 text-wrap",
                 targets: "",
                 title:
                     "<span data-titlel='Información de la auditoría'>Dato</span>",
@@ -309,7 +309,7 @@ $(function() {
                     );
                     // $("#detalleAud .modal-body span").addClass('bg-light w-100')
                     $(idModal).modal("show");
-                    $(idModal + " .l div").addClass("bg-light text-light");
+                    $(idModal + " .l div").addClass("bg-white text-white");
                     fetch("getDetalle.php", {
                         method: "POST",
                         headers: {
@@ -345,7 +345,7 @@ $(function() {
                                     $(divModal).html("");
                                 });
                                 $(idModal + " .l div").removeClass(
-                                    "bg-light text-light"
+                                    "bg-white text-white"
                                 );
                                 $(idModal + " .l div").addClass(
                                     "animate__animated animate__fadeIn"
