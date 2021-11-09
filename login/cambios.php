@@ -259,8 +259,8 @@ if ($verDB < 20211024) {
     $verDB  = verDBLocal(); // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-}
-if ($verDB < 20211102) {
+// }
+// if ($verDB < 20211102) {
 
     if (checkTable('tipo_modulo')) {
         if (!count_pdoQuery("SELECT 1 FROM tipo_modulo where id = 6 LIMIT 1")) { // Si no existe el registro
@@ -281,6 +281,7 @@ if ($verDB < 20211102) {
             fileLog("Ya existe modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
         }
     }
+    
     if (!checkTable('uident')) {
         $table_ident = "CREATE TABLE IF NOT EXISTS `uident` (
         `usuario` INT(11) NOT NULL,
