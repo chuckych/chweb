@@ -2215,7 +2215,7 @@ function arrayQueryDataMS($query)
     $params    = array();
     $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt  = sqlsrv_query($link, $query, $params, $options);
-    print_r($query);exit;
+    // print_r($query);exit;
     if ($stmt) {
         while ($a  = sqlsrv_fetch_array($stmt)) {
             $data[] = $a;
