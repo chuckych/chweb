@@ -168,7 +168,7 @@
                                                 <input type="text" class="form-control FicObse h40 w400" name="FicObse" id="FicObse" maxlength="40" placeholder="Observaciones">
                                             </div>
                                             <div class="mb-2">
-                                                <div class="custom-control custom-switch pt-1 custom-control-inline">
+                                                <div class="custom-control custom-switch pt-1 custom-control-inline d-none">
                                                     <input type="checkbox" class="custom-control-input" name="FicJust" id="FicJust">
                                                     <label class="custom-control-label" for="FicJust" style="padding-top:3px;">Justificada</label>
                                                 </div>

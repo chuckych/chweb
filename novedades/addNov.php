@@ -102,7 +102,7 @@
                             <input type="checkbox" class="custom-control-input" name="aLaboral" id="aLaboral">
                             <label class="custom-control-label" for="aLaboral" style="padding-top:3px;">Cargar solo d&iacute;as laborales</label>
                         </div>
-                        <div class="custom-control custom-checkbox">
+                        <div class="custom-control custom-checkbox invisible">
                             <input type="checkbox" class="custom-control-input" name="aFicJust" id="aFicJust">
                             <label class="custom-control-label" for="aFicJust" style="padding-top:3px;">Justificada</label>
                         </div>

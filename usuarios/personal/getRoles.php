@@ -28,7 +28,8 @@ $r = array_pdoQuery($query);
 foreach ($r as $key => $row) {
     $data[] = array(
         'id'    => $row['id'],
-        'text'  => $row['nombre']
+        'text'  => $row['nombre'],
+        // 'html'  => '<div style="color:green">'.$row['nombre'].'</div>'
     );
 }
 

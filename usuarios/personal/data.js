@@ -170,12 +170,21 @@ $(function () {
         allowClear: true,
     };
 
+    function template(data) {
+        if ($(data.html).length === 0) {
+            return data.text;
+        }
+        return $(data.html);
+    }
+
     $(".SelecRol").select2({
         language: "es",
         multiple: false,
         allowClear: opt2["allowClear"],
         language: "es",
         placeholder: "Seleccionar Rol",
+        templateResult: template,
+        templateSelection: template,
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 10,
         maximumInputLength: opt2["MaxInpLength"],

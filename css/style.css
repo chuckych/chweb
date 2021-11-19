@@ -69,6 +69,12 @@
      background: -webkit-linear-gradient(0deg, rgba(250, 250, 250, 1) 0%, rgba(198, 198, 198, 1) 70%);
      background: linear-gradient(0deg, rgba(250, 250, 250, 1) 0%, rgba(198, 198, 198, 1) 70%);
      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fafafa", endColorstr="#c6c6c6", GradientType=1);
+     letter-spacing: 0;
+     touch-action: manipulation;
+     text-rendering: optimizeLegibility;
+     font-feature-settings: "liga" 0;
+     position: relative;
+     min-height: 100%;
  }
 
  #showuser {
@@ -1522,7 +1528,7 @@
      font-size: .8rem !important;
      min-height: 60px !important;
      display: flex !important;
-     align-items: center !important;
+     align-items: bottom !important;
      font-weight: 500 !important;
  }
 
