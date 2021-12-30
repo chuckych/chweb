@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.205'; // Version
+    return 'v0.0.206'; // Version
 }
 function verDBLocal()
 {
@@ -3421,11 +3421,7 @@ function insert_pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
+        return  ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -3437,12 +3433,7 @@ function pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        if ($stmt->execute()) {
-            return true;
-        } else {
-            return false;
-        }
-        ($stmt->execute()) ? true : false;
+        return  ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error

@@ -72,9 +72,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
         exit;
     };
     if ((FechaString($FechaFin) > date('Ymd'))) {
-        $data = array('status' => 'error', 'Mensaje' => 'Fecha superior a la Actual.');
-        echo json_encode($data);
-        exit;
+        // $data = array('status' => 'error', 'Mensaje' => 'Fecha superior a la Actual.');
+        // echo json_encode($data);
+        // exit;
+        $FechaFin = date('Ymd');
     };
 
     if ($CheckLegajos) {
@@ -123,14 +124,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['procesando'] == 'true')) 
         $textDuracion='<br>Duración: '.$duracion.'s.'; 
         if ($_POST['procesaLegajo']) {
             // sleep(1);
-            $data = array('status' => 'ok', 'Mensaje' => 'Proceso enviado correctamente!<br>Legajo: (' . $LegaIni . ') ' . $_POST['nombreLegajo'] . ' <br/>Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y').$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
+            $data = array('status' => 'ok', 'Mensaje' => 'Proceso enviado correctamente!<br>Legajo: (' . $LegaIni . ') ' . $_POST['nombreLegajo'] . ' <br/>Fecha: <b><span class="ls1">' . Fech_Format_Var($FechaIni, 'd/m/Y').'</span></b>'.$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
             /** Insertar en tabla Auditor */
             $Dato = dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin);
             audito_ch('P', $Dato, '12');
             /** */
         } else {
             $textoLegajo = ($LegaIni == $LegaFin) ? 'Legajo: ' . $LegaIni . '' : 'Legajos: ' . $LegaIni . ' a ' . $LegaFin . '';
-            $textoFecha = (FechaString($FechaIni) == FechaString($FechaFin)) ? 'Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . '' : 'Desde ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' hasta ' . Fech_Format_Var($FechaFin, 'd/m/Y' . '');
+            $textoFecha = (FechaString($FechaIni) == FechaString($FechaFin)) ? 'Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . '' : 'Desde <b><span class="ls1">' . Fech_Format_Var($FechaIni, 'd/m/Y') . '</span></b> hasta <b><span class="ls1">' . Fech_Format_Var($FechaFin, 'd/m/Y' . '</span></b>');
             $data = array('status' => 'ok', 'Mensaje' => 'Proceso enviado correctamente!<br>' . $textoLegajo . '<br/>' . $textoFecha . $datas.$textDuracion, 'EstadoProceso' => $procesando['EstadoProceso'], 'ProcesoId' => $procesando['ProcesoId'], 'Duracion'=> $duracion);
             /** Insertar en tabla Auditor */
             $Dato = dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin);
