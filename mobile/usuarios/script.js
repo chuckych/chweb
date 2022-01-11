@@ -11,6 +11,24 @@ function clean() {
     $("input[name=_email]").val('');
     $("input[name=_enable]").prop('checked', false);
 }
+function enableUser(selector) {
+    if ($(selector).is(':checked')) {
+        $('.text-estado').html('Usuario Activo');
+        $('.text-estado').addClass('text-success');
+        $('.text-estado').removeClass('text-danger');
+        $('.text-enable').html('Desactivar usuario');
+        $('.text-enable').addClass('btn btn-outline-danger');
+        $('.text-enable').removeClass('btn btn-outline-success');
+    } else {
+        $('.text-estado').html('Usuario Inactivo');
+        $('.text-estado').addClass('text-danger');
+        $('.text-estado').removeClass('text-success');
+        $('.text-enable').html('Activar usuario');
+        $('.text-enable').addClass('btn btn-outline-success');
+        $('.text-enable').removeClass('btn btn-outline-danger');
+    }
+}
+
 $("#Refresh").on("click", function () {
     CheckSesion()
 // $(document).on("click", "#Refresh", function (e) {
@@ -137,6 +155,7 @@ $(document).on("click", "#btnBack", function (e) {
 }); 
 
 $(document).on("click", "#NuevoUsuario", function (e) {
+    e.preventDefault();
     CheckSesion()
     $("#Titulo").html('Nuevo')
     $("#btnSubmitUser").html("Crear");
@@ -146,6 +165,7 @@ $(document).on("click", "#NuevoUsuario", function (e) {
     $('#rowNuevoUsuario').removeClass('d-none')
     fadeInOnly('#rowNuevoUsuario')
     clean()
+    $("#_enable").prop('checked', true);
 });
 
 $(document).on("click", "#cancelUsuario", function (e) {
@@ -165,7 +185,7 @@ $(document).on("click", ".ModificarUsuario", function (e) {
     $('#rowNuevoUsuario').removeClass('d-none')
     $("input[name=_id]").attr('readonly', false);
 
-    var id = $(this).attr('data');
+    var id     = $(this).attr('data');
     var nombre = $(this).attr('data1');
     $('#Encabezado').html('Editar usuario: '+nombre)
 
@@ -183,7 +203,7 @@ $(document).on("click", ".ModificarUsuario", function (e) {
                 $("input[name=_id]").attr('disabled', true);
                 $("input[name=_name]").attr('disabled', true);
                 $("input[name=_email]").attr('disabled', true);
-                $("input[name=_enable]").attr('disabled', true);
+                // $("input[name=_enable]").attr('disabled', true);
                 $("#btnSubmitUser").prop("disabled", true);
             },
             success: function (respuesta) {
@@ -193,12 +213,17 @@ $(document).on("click", ".ModificarUsuario", function (e) {
                 $("input[name=_id]").attr('readonly', true);
                 $("input[name=_name]").attr('disabled', false);
                 $("input[name=_email]").attr('disabled', false);
-                $("input[name=_enable]").attr('disabled', false);
+                // $("input[name=_enable]").attr('disabled', false);
                 $("input[name=_id]").val(respuesta.id);
                 $("input[name=_name]").val(respuesta.name);
                 $("input[name=_email]").val(respuesta.email);
                 $("input[name=_enable]").prop('checked', false);
-                (respuesta.enable == true) ?  $("input[name=_enable]").prop('checked', true) : $("input[name=_enable]").prop('checked', false);
+
+                if(respuesta.enable == true) {
+                    $("#_enable").prop('checked', true)
+                }else{
+                    $("#_disabled").prop('checked', true);
+                }  
             },
             error: function () {
                 $("input[name=_id]").val('');
@@ -289,10 +314,6 @@ $("#CrearUsuario").bind("submit", function (e) {
                     fadeInOnly('#VerUsuarios')
                     $('#rowNuevoUsuario').addClass('d-none')
                 }, 1000);
-
-                // setInterval(function(){ 
-                    
-                // }, 2500);
 
             } else {
                 // $('#table-usuarios').DataTable().ajax.reload();

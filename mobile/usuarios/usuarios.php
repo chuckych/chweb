@@ -37,17 +37,21 @@
             cursor: pointer;
             text-decoration: underline;
         }
-        .dtrg-level-1{
+
+        .dtrg-level-1 {
             font-size: .8rem !important;
         }
+
         table.dataTable tr.dtrg-group.dtrg-level-0 td {
-        font-weight: normal;
-        font-size: .8rem !important;
+            font-weight: normal;
+            font-size: .8rem !important;
         }
+
         table.dataTable tr.dtrg-group.dtrg-level-1 td {
-        font-weight: normal;
-        font-size: .8rem !important;
+            font-weight: normal;
+            font-size: .8rem !important;
         }
+
         table.dataTable tr.dtrg-group td {
             background-color: #fafafa;
         }
@@ -102,7 +106,7 @@
                 ?>
             </div>
             <div class="row d-none" id="divEntrenar">
-                
+
             </div>
             <div class="d-none p-3 mt-2 shadow-sm " id="rowNuevoUsuario">
                 <div class="row mb-2">
@@ -126,16 +130,29 @@
                                 <label for="_email" class="text-nowrap fontq w80">Email</label>
                                 <input type="email" class="form-control h40 w300" maxlength="50" placeholder="Correo electr&oacute;nico" id="_email" name="_email">
                             </div>
-                            <div class="form-group">
-                                <label for="_enable" class="text-nowrap fontq w80">Estado</label>
-                                <div class="custom-control custom-switch custom-control-inline ml-1 d-flex align-items-center">
-                                    <input type="checkbox" name="_enable" class="custom-control-input" id="_enable">
-                                    <label class="custom-control-label" for="_enable" style="padding-top: 3px;">Activo / Inactivo</label>
+                            <div class="form-group mt-2">
+                                <label for="" class="text-nowrap fontq w80">Estado</label>
+                                <!-- <div class="custom-control custom-radio custom-control d-flex align-items-center">
+                                    <input type="radio" name="_enable" class="custom-control-input" id="_enable" value="on">
+                                    <label class="custom-control-label" for="_enable" style="padding-top: 3px;">Activo</label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline d-flex align-items-center">
+                                    <input type="radio" name="_enable" class="custom-control-input" id="_disabled">
+                                    <label class="custom-control-label" for="_disabled" style="padding-top: 3px;" value="off">Inactivo</label>
+                                </div> -->
+
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="_enable" name="_enable" class="custom-control-input" value="on">
+                                    <label class="custom-control-label" for="_enable" style="padding-top: 3px;">Activo</label>
+                                </div>
+                                <div class="custom-control custom-radio">
+                                    <input type="radio" id="_disabled" name="_enable" class="custom-control-input" value="2">
+                                    <label class="custom-control-label" for="_disabled" style="padding-top: 3px;">Inactivo</label>
                                 </div>
                             </div>
                             <div class="form-group d-flex justify-content-end mr-3">
-                                <button type="button" class="float-right btn btn-link text-decoration-none text-secondary btn-sm px-3 fontq" id="cancelUsuario">Cancelar</button>
-                                <button type="submit" class="float-right btn btn-custom btn-sm px-3 opa8 fontq" name="submit" value="true" id="btnSubmitUser">Crear</button>
+                                <button type="button" class="float-right btn btn-light text-secondary btn-sm px-3 fontq mr-2" id="cancelUsuario">Cancelar</button>
+                                <button type="submit" class="float-right btn btn-custom btn-sm px-3 opa8 fontq w150" name="submit" value="true" id="btnSubmitUser">Crear</button>
                             </div>
                             <div class="mt-2 d-none" id="divRespuesta">
 
@@ -167,7 +184,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
     <script src="../../js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="../../js/select2.min.js"></script>
-    <script src="script-min.js?v=<?=vjs()?>"></script>
+    <script src="script-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>
