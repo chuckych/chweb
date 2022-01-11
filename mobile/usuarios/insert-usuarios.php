@@ -27,8 +27,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
    $_email    = test_input($_email);
    $_email    = filter_var($_email, FILTER_SANITIZE_EMAIL);
    $_enable   = test_input($_enable);
-   $_enable   = ($_enable == 'on') ? 'true' : 'false';
-   $_enable2   = ($_enable == 'on') ? 'Habiltado' : 'Inhabilitado';
+   $_enable   = ($_enable == 'on') ? true : false;
+   $_enable2   = ($_enable) ? 'Habilitado' : 'Inhabilitado';
    $cel       = '';
    $tel       = '';
    $p_type    = '';
@@ -84,8 +84,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta'] == 'true')) {
    $_email    = test_input($_email);
    $_email    = filter_var($_email, FILTER_SANITIZE_EMAIL);
    $_enable   = test_input($_enable);
-   $_enable   = ($_enable == 'on') ? 'true' : 'false';
-   $_enable2   = ($_enable == 'on') ? 'Habilitado' : 'Inhabilitado';
+   $_enable   = ($_enable == 'on') ? true : false;
+   $_enable2   = ($_enable) ? 'Habilitado' : 'Inhabilitado';
    $cel       = '';
    $tel       = '';
    $p_type    = '';
