@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.207'; // Version
+    return 'v0.0.208'; // Version
 }
 function verDBLocal()
 {
@@ -2746,14 +2746,17 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     if ($curl_errno > 0) {
         $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog('No hay conexión con WebService CH', __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
-        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        echo $respuesta;
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        // echo $respuesta;
+        PrintRespuestaJson('error', $respuesta);
         exit;
     }
     $processID = respuestaWebService($respuesta);
@@ -2763,8 +2766,9 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
         return EstadoProceso($url);
         exit;
     } else {
-        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+        $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
@@ -2785,6 +2789,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($curl_errno > 0) {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog('No hay conexión con WebService CH', __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
@@ -2792,6 +2797,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($httpCode == 404) {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'Mensaje' => $respuesta);
         echo json_encode($data);
         exit;
@@ -2805,6 +2811,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     } else {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion)
@@ -2825,14 +2832,17 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
     if ($curl_errno > 0) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog('No hay conexión con WebService CH', __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        $data = array('status' => 'error', 'dato' => $respuesta);
-        echo json_encode($data);
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        // $data = array('status' => 'error', 'Mensaje' => $respuesta);
+        PrintRespuestaJson('error', $respuesta);
+        // echo json_encode($data);
         exit;
     }
     $processID = respuestaWebService($respuesta);
@@ -2846,6 +2856,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         exit;
     } else {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 
@@ -3079,6 +3090,8 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     $file_contents = curl_exec($ch);
     curl_close($ch);
     // print_r($file_contents);exit;
@@ -3421,7 +3434,7 @@ function insert_pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return  ($stmt->execute()) ? true : false;
+        return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -3433,7 +3446,7 @@ function pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return  ($stmt->execute()) ? true : false;
+        return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error

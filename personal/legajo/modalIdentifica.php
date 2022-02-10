@@ -28,6 +28,31 @@
                                 <span id="trash_IDVence" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                             </div>
                         </div>
+                        <div class="col-12 fontq mt-3 mb-2">
+                            <div class="border p-3 bg-light">
+                                <label for="" class="fontq">Habilitar en Dispositivos</label>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" id="IDCap04" name="IDCap04" class="custom-control-input" checked>
+                                    <label class="custom-control-label" style="padding-top:6px;" for="IDCap04">ZKTeco</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" id="IDCap05" name="IDCap05" class="custom-control-input">
+                                    <label class="custom-control-label" style="padding-top:6px;" for="IDCap05">Suprema</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" id="IDCap06" name="IDCap06" class="custom-control-input">
+                                    <label class="custom-control-label" style="padding-top:6px;" for="IDCap06">HIKVision</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" id="IDCap01" name="IDCap01" class="custom-control-input">
+                                    <label class="custom-control-label" style="padding-top:6px;" for="IDCap01">Macronet</label>
+                                </div>
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" id="IDCap03" name="IDCap03" class="custom-control-input">
+                                    <label class="custom-control-label" style="padding-top:6px;" for="IDCap03">Silycon Bayres</label>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-12 my-3">
                             <div class="form-group d-flex justify-content-end">
                                 <button type="submit" class="btn btn-sm text-white fontq <?= $bgcolor ?>" id="btnidentifica">Aceptar</button>

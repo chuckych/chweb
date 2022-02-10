@@ -1266,7 +1266,7 @@
             $('#Identifica-table').DataTable({
                 deferRender: true,
                 "ajax": {
-                    url: "../../data/GetIdentifica.php",
+                    url: "../../data/getidentifica.php",
                     type: "GET",
                     'data': {
                         q2: LegNume
@@ -1287,10 +1287,32 @@
                     {
                         "class": "align-middle",
                         "data": "IDVence"
-                    }, {
+                    }, 
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDCap04"
+                    }, 
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDCap05"
+                    }, 
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDCap06"
+                    }, 
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDCap01"
+                    }, 
+                    {
+                        "class": "align-middle text-center",
+                        "data": "IDCap03"
+                    }, 
+                    {
                         "class": "align-middle text-center",
                         "data": "eliminar"
-                    }, {
+                    }, 
+                    {
                         "class": "align-middle w-100",
                         "data": "null"
                     }

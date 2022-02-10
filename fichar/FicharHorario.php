@@ -76,7 +76,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['FicharHorario'] == 'true'
     }
 
     if(($FicharHorario)=='Terminado'){
-        $data = array('status' => 'ok', 'dato' => '<b>Ingreso de Fichadas enviado correctamente!</b> <br>De Legajos <b>'.$_POST['FichLegaIni'].'</b> a <b>'.$_POST['FichLegaFin'].'</b><br/>Desde: <b>'.Fech_Format_Var($_POST['FichFechaIni'],'d/m/Y').'</b> hasta: <b>'.Fech_Format_Var($_POST['FichFechaFin'],'d/m/Y').'</b>'.$datas);
+        $data = array('status' => 'ok', 'Mensaje' => '<b>Ingreso de Fichadas enviado correctamente!</b> <br>De Legajos <b>'.$_POST['FichLegaIni'].'</b> a <b>'.$_POST['FichLegaFin'].'</b><br/>Desde: <b>'.Fech_Format_Var($_POST['FichFechaIni'],'d/m/Y').'</b> hasta: <b>'.Fech_Format_Var($_POST['FichFechaFin'],'d/m/Y').'</b>'.$datas);
         /** Insertar en tabla Auditor */
         $Dato=dato_proceso($LegaIni,$LegaFin,$FechaIni,$FechaFin);
         audito_ch('P', $Dato, '11');
@@ -84,12 +84,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['FicharHorario'] == 'true'
         echo json_encode($data);
         exit;
     }else{
-        $data = array('status' => 'error', 'dato' => 'Error');
+        $data = array('status' => 'error', 'Mensaje' => 'Error');
         echo json_encode($data);
         exit;
     };
 } else {
-    $data = array('status' => 'error', 'dato' => 'Error!');
+    $data = array('status' => 'error', 'Mensaje' => 'Error!');
     echo json_encode($data);
     exit;
 }

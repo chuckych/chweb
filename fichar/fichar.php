@@ -17,7 +17,7 @@
         <!-- Fin Encabezado -->
         <form action="FicharHorario.php" method="post" class="FicharHorario">
         <div class="row bg-white mt-2 p-3 radius">
-        <div class="w500">
+        <div class="border p-3">
             <div class="col-12 m-0">
                 <div class="form-inline mt-2">
                     <!-- Tipo personal -->
@@ -114,7 +114,7 @@
             </div>
             <div class="col-12 mt-2 d-flex justify-content-end">
                 <div class="form-inline mt-2">
-                    <button type="submit" class="btn bg-custom btn-sm text-white fontq w150" id="submit"></button>
+                    <button type="submit" class="btn bg-custom btn-sm text-white fontq w150 h40" id="submit"></button>
                 </div>
             </div>
             <input type="hidden" name="SelEmpresa" id="SelEmpresa">
@@ -123,12 +123,6 @@
             <input type="hidden" name="SelSeccion" id="SelSeccion">
             <input type="hidden" name="SelGrupo" id="SelGrupo">
             <input type="hidden" name="SelSucursal" id="SelSucursal">
-            <div class="col-12 mt-4">
-                <div id="respuesta" class="alert d-none fonth">
-                    <div id="respuetatext"></div>
-                    
-                </div>
-            </div>
         </div>
         </div>
         </form>
@@ -137,16 +131,13 @@
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "../../js/jquery.php";
-    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    // require __DIR__ . "../../js/DateRanger.php";
-    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    // require __DIR__ . "../../js/DataTable.php";
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select.js?v=<?=vjs()?>"></script>
+    <script src="js/procesar-min.js?v=<?=vjs()?>"></script>
+    <script src="js/select-min.js?v=<?=vjs()?>"></script>
+    <script src="js/trash-select-min.js?v=<?=vjs()?>"></script>
 
 </body>
 

@@ -1,5 +1,6 @@
 /** Select Empresas */
-$(document).ready(function () {
+$(function () {
+    "use strict";
     var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250" };
     $('.select2').select2({
         minimumResultsForSearch: -1
