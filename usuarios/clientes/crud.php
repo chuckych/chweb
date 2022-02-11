@@ -27,7 +27,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     }
     // $identauto = str_replace(" ", "", $identauto);
     $auth  = empty($_POST['auth']) ? '0' : '1';
-    $host  = test_input($_POST['host']);
+    $host  = ($_POST['host']);
+    $host  = escape_sql_wild($host);
     $db    = test_input($_POST['db']);
     $user  = test_input($_POST['user']);
     $pass  = test_input($_POST['pass']);
@@ -41,7 +42,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
         /* INSERTAMOS CLIENTE EN TABLA CLIENTES */
         $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, fecha_alta, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService','$fecha', '$fecha')";
         $rs_insert = pdoQuery($query);
- 
+
         if ($rs_insert) {
             PrintRespuestaJson('ok', 'Cuenta Creada');
             /** Si se Guardo con exito */
@@ -50,7 +51,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
             // mysqli_close($link);
             exit;
         } elseif (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
-            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: '.$nombre);
+            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);
             // mysqli_close($link);
             exit;
         } else {
@@ -66,7 +67,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     // require __DIR__ . '../../../config/conect_mysql.php';
 
     $nombre     = test_input($_POST['nombre']);
-    $host       = test_input($_POST['host']);
+    $host       = ($_POST['host']);
+    $host       = escape_sql_wild($host);
     $db         = test_input($_POST['db']);
     $user       = test_input($_POST['user']);
     $pass       = test_input($_POST['pass']);
@@ -74,17 +76,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     $WebService = test_input($_POST['WebService']);
     $auth       = empty($_POST['auth']) ? '0' : '1';
     $recid      = test_input($_POST['recid']);
-    
     /* Comprobamos campos vacios  */
     if ((valida_campo($nombre))) {
         PrintRespuestaJson('error', 'Campo Nombre de Cuenta Requerido');
         exit;
     } else {
 
-        $query="UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', fecha='$fecha' WHERE recid='$recid' ";
-        
-        if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
-            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: '.$nombre);
+        $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', fecha='$fecha' WHERE recid='$recid'";
+
+        if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' and recid != '$recid'LIMIT 1")) {
+            PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);
             exit;
         }
 
@@ -94,11 +95,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
             PrintRespuestaJson('ok', 'Cuenta Modificada');
             /** Si se Guardo con exito */
             auditoria("Cuenta ($nombre)", '3', $r['id'], '1');
-            // mysqli_close($link);
             exit;
-        }  else {
+        } else {
             PrintRespuestaJson('error', 'Error');
-            // mysqli_close($link);
             exit;
         }
     }

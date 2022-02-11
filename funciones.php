@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.208'; // Version
+    return 'v0.0.209'; // Version
 }
 function verDBLocal()
 {
@@ -3530,3 +3530,15 @@ function login_logs($estado, $usuario = '')
     }
     $connpdo = null; // cierra la conexion
 }
+function escape_sql_wild($s)
+{
+    $result = array();
+    foreach (str_split($s) as $ch) {
+        if ($ch == "\\" || $ch == "%" || $ch == "_") {
+            $result[] = "\\";
+        } /*if*/
+        $result[] = $ch;
+    } /*foreach*/
+    return
+        implode("", $result);
+} /*escape_sql_wild*/

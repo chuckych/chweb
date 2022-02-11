@@ -151,29 +151,24 @@ $(document).ready(function () {
             data: $(this).serialize(),
             // async : false,
             beforeSend: function (data) {
+                $.notifyClose()
                 ActiveBTN(true, '#submitAdd', 'Aguarde..', 'Aceptar')
             },
             success: function (data) {
                 if (data.status == "ok") {
                     document.getElementById('FormCuenta').reset();
                     ActiveBTN(false, '#submitAdd', 'Aguarde..', 'Aceptar')
-                    $('.respuesta').html('<div class="animate__animated animate__fadeInDown alert alert-success alert-dismissible fade show fontq" role="alert"><strong>' + data.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
-                    $('#GetClientes').DataTable().ajax.reload()
-                    setTimeout(() => {
-                        setTimeout(() => {
-                            classEfect('#modalFormCuenta', 'animate__animated animate__fadeOut')
-                            $('#modalFormCuenta').modal('hide')
-                            $('.respuesta').html('')
-                        }, 500);
-                    }, 1500);
+                    $('#GetClientes').DataTable().ajax.reload();
+                    $('#modalFormCuenta').modal('hide')
+                    notify(data.Mensaje, 'success', 5000, 'right')
                 } else {
                     ActiveBTN(false, '#submitAdd', 'Aguarde..', 'Aceptar')
-                    $('.respuesta').html('<div class="py-3 fontq text-danger fw5">' + data.Mensaje + '</div>')
+                    notify(data.Mensaje, 'danger', 5000, 'right')
                 }
             },
             error: function (data) {
                 ActiveBTN(false, '#submitAdd', 'Aguarde..', 'Aceptar')
-                $('.respuesta').html('<div class="py-3 fontq text-danger fw5">Error</div>')
+                notify('Error', 'danger', 5000, 'right')
             }
         });
         e.stopImmediatePropagation();
