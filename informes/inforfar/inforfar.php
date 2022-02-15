@@ -103,16 +103,16 @@
             <div class="row py-3">
                 <div class="col-12 d-flex justify-content-end">
                     <!-- Por Legajo -->
-                    <div class="custom-control custom-switch custom-control-inline mt-2">
+                    <div class="custom-control custom-switch custom-control-inline mt-2" data-titlet="Agrupar por Legajo">
                         <input checked="" type="radio" class="custom-control-input" id="agrupLegajo" name="agrup" value="1">
                         <label class="custom-control-label" for="agrupLegajo" style="padding-top: 3px;"><span class="text-dark">Por Legajo</span></label>
                     </div>
                     <!-- Por Estructura -->
-                    <div class="custom-control custom-switch custom-control-inline mt-2">
+                    <div class="custom-control custom-switch custom-control-inline mt-2" data-titlet="Agrupar por Estructura">
                         <input type="radio" class="custom-control-input" id="agrupEstruct" name="agrup" value="2">
                         <label class="custom-control-label" for="agrupEstruct" style="padding-top: 3px;"><span class="text-dark">Por Estructura</span></label>
                     </div>
-                    <button class="btn btn-light btn-sm fontq px-3 btn-mobile h40 border" type="submit" id="btnExportar">Exportar</button>
+                    <div class="border"><button class="btn btn-light btn-sm fontq px-3 btn-mobile h40 border-0 w150 text-dark" type="submit" id="btnExportar">Exportar</button></div>
                 </div>
             </div>
         </div>
