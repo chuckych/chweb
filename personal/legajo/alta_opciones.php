@@ -1823,7 +1823,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
                 exit;
             }
             /** Revisar que la tarjeta no este asignada a otro legajo */
-            if ((CountRegistrosMayorCero("SELECT TOP 1 IDTarjeta FROM IDENTIFICA WHERE IDTarjeta='$IDTarjeta'")))
+            if ((CountRegistrosMayorCero("SELECT TOP 1 IDTarjeta FROM IDENTIFICA WHERE IDTarjeta='$IDTarjeta' AND IDTarjeta !=''")))
             {
                 $data = array('status' => 'existe', 'dato' => 'El número de tarjeta ya fue asignado a otro legajo');
                 echo json_encode($data);
