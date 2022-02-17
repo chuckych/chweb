@@ -470,6 +470,9 @@
  .Mw150 {
      min-width: 150px !important
  }
+ .Mw40 {
+     min-width: 40px !important
+ }
 
  .Mw350 {
      min-width: 350px !important

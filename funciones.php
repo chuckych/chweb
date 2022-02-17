@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.210'; // Version
+    return 'v0.0.211'; // Version
 }
 function verDBLocal()
 {
@@ -618,6 +618,7 @@ function nombrearchivo()
 }
 function test_input($data)
 {
+    $data = $data ?? '';
     $data = trim($data);
     // $data = stripslashes($data);
     // $data = htmlspecialchars($data);

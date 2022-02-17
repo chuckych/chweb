@@ -173,14 +173,14 @@ function _Filtros() {
 }
 
 _Filtros()
+
 $("._filtroLegDeHa").change(function (e) {
     e.preventDefault();
-    $('.selectjs_personal').val(null).trigger("change");
+    $('#Per').val(null).trigger("change");
 });
 $("._filtro").change(function (e) {
     e.preventDefault();
     _Filtros()
-    ActualizaTablas2()
 });
 $("#SoloHCalc").change(function (e) {
     e.preventDefault();

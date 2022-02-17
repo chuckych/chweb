@@ -95,24 +95,32 @@
                             <!-- Legajos Desde/Hasta -->
                             <span for="" class="w-100 mb-2 p-2 d-none d-sm-block bg-light fontq">Legajos</span>
                             <div class="d-flex d-inline-flex align-items-center">
-                                <input autocomplete="off" type="tel"
+                                <!-- <input autocomplete="off" type="tel"
                                     class="h40 form-control text-center text-secondary MaskLega _filtro _filtroLegDeHa" id="LegDe"
-                                    name="LegDe" placeholder="Desde" value=""> <span class="fontq mx-2">a</span>
-                                <input autocomplete="off" type="tel"
+                                    name="LegDe" placeholder="Desde" value="">  -->
+                                    <div class="">
+                                        <select class="form-control selectjs_personalDeHA h40 _filtroLegDeHa _filtro" id="LegDe"
+                                        name="LegDe" placeholder="Desde" value="">
+                                        </select>
+                                    </div>
+                                    <span class="fontq mx-2">a</span>
+                                <!-- <input autocomplete="off" type="tel"
                                     class="h40 form-control text-center text-secondary MaskLega _filtro _filtroLegDeHa" id="LegHa"
-                                    name="LegHa" placeholder="Hasta" value="">
-                                <span data-titler="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-x text-secondary fontq"
-                                    id="trashDeHa"></span>
+                                    name="LegHa" placeholder="Hasta" value=""> -->
+                                    <div class="">
+                                        <select class="form-control selectjs_personalDeHA h40 _filtroLegDeHa _filtro" id="LegHa"
+                                        name="LegHa" placeholder="Hasta" value="">
+                                        </select>
+                                    </div>
+                                    <span data-titler="Limpiar Desde Hasta" class="btn btn-sm btn-link bi bi-eraser text-secondary fontq"
+                                        id="trashDeHa"></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="row d-flex align-items-center">
                         <div class="col-12 mt-2">
-                            <!-- Legajo -->
-                            <!-- <label for="Per" class="w100 my-1 d-none d-sm-block"><span class="fontq">Legajos</span> -->
-                            </label>
-                            <select class="form-control selectjs_personal" id="Per" name="Per">
-                            </select>
+                            <!-- Legajos Desde/Hasta -->
+                                </label>
+                                <select class="form-control selectjs_personal" id="Per" name="Per">
+                                </select>
                         </div>
                     </div>
                 </div>
@@ -155,7 +163,7 @@
                         </div>
                     </div>
                     <div class="row d-flex align-items-center">
-                        <div class="col-12 col-sm-4 mt-1 mt-sm-2">
+                        <div class="col-12 col-sm-6 mt-1 mt-sm-2">
                             <!-- Novedades -->
                             <select class="form-control" id="datoNovedad" name="datoNovedad">
                             </select>

@@ -40,6 +40,7 @@ if (sqlsrv_num_rows($result) > 0) {
             'id'    => $id2,
             'text'  => $text,
             'title' => $id.' - '.$text,
+            'html'  => "<label class='m-0 fontq'>$text</label><span class='float-right fontp'>$id</span>",
         );
     endwhile;
 }

@@ -28,8 +28,8 @@ function LimpiarFiltros() {
     $('#datoFicNovA').val('0')
     $('#SoloFic').prop('checked', false)
     $('#SoloHCalc').prop('checked', true)
-    $('#LegDe').val('')
-    $('#LegHa').val('')
+    $('#LegDe').val('').val(null).trigger("change");
+    $('#LegHa').val('').val(null).trigger("change");
     _Filtros()
     $('#FicNovA').prop('checked', false)
     $('#FicNovA').prop('disabled', false)
@@ -61,8 +61,8 @@ function LimpiarFiltros2() {
     $('#SoloFic').prop('checked', false)
     $('#SoloHCalc').prop('checked', true)
     $('#datoFicNovA').val('0')
-    $('#LegDe').val('')
-    $('#LegHa').val('')
+    $('#LegDe').val('').val(null).trigger("change");
+    $('#LegHa').val('').val(null).trigger("change");
     _Filtros()
     $('#FicNovA').prop('checked', false)
     $('#FicNovA').prop('disabled', false)
@@ -79,7 +79,9 @@ $("#trash_all").on("click", function () {
 });
 $("#trashDeHa").on("click", function () {
     $('#LegDe').val('')
+    $('#LegDe').val(null).trigger("change");
     $('#LegHa').val('')
+    $('#LegHa').val(null).trigger("change");
     $('.selectjs_personal').val(null).trigger("change");
     ActualizaTablas2()
 });

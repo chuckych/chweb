@@ -24,12 +24,14 @@ if ($NumRows > 0) {
     while ($row = sqlsrv_fetch_array($result)) {
         $NovCodi = $row['NovCodi'];
         $NovTipo = TipoNov($row['NovTipo']);
-        $NovDesc = $NovCodi . ' - ' . ($row['NovDesc']);
+        $NovDesc = utf8str($row['NovDesc']);
 
         $data[] = array(
             'id'      => intval($NovCodi),
             'NovTipo' => utf8str($NovTipo),
             'text'    => utf8str($NovDesc),
+            'title'    => $NovCodi.' - '.($NovDesc),
+            'html'  => "<label class='m-0 Mw40 fontq'>$NovCodi</label><label class='fontp m-0'>$NovDesc</label>",
         );
     }
 } else {

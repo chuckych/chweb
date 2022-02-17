@@ -38,6 +38,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $data[] = array(
             'id'    => $id,
             'text'  => $id.' - '.$text,
+            'html'  => "<label class='font-weight-bold fontp m-0'>$id</label><br><span class='fontq'>$text</span>",
             'title' => $id.' - '.$text,
         );
     endwhile;

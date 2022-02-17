@@ -12,14 +12,15 @@ require __DIR__ . '../../valores.php';
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
-$id       = 'FICHAS.FicGrup';
-$Desc     = 'GRUPOS.GruDesc';
-$DescCodi = 'GRUPOS.GruCodi';
-$Col      = 'GRUPOS';
+$id       = 'FICHAS.FicLega';
+$Desc     = 'PERSONAL.LegApNo';
+$DescCodi = 'PERSONAL.LegNume';
+$Col      = 'PERSONAL';
 $ColData  = 'FICHAS';
 $FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%'":'';
 
- $query="SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
+$query="SELECT TOP 20 $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 INNER JOIN $Col ON $id=$DescCodi $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $id";
+
 // print_r($query); exit;
 
 $params  = array();
@@ -36,9 +37,9 @@ if (sqlsrv_num_rows($result) > 0) {
 
         $data[] = array(
             'id'    => $id,
-            'text'  => $text,
+            'text'  => "$id - $text",
+            'html'  => "<label class='font-weight-bold m-0'>$id</label><br><span class='fontq'>$text</span>",
             'title' => $id.' - '.$text,
-            'html'  => "<label class='m-0 fontq'>$text</label><span class='float-right fontp'>$id</span>",
         );
     endwhile;
 }

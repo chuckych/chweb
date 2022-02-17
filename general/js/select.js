@@ -5,6 +5,20 @@ $(document).ready(function () {
     $('.form-control').css({ "width": "100%" });
     $('#Filtros').on('shown.bs.modal', function () {
         var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
+
+        function template(data) {
+            if ($(data.html).length === 0) {
+                return data.text;
+            }
+            return $(data.html);
+        }
+        function selectionTemplate (state) {
+            if (!state.id) { return state.id; }
+            let $state = $(
+                '<span class="fontp">' + state.title + '</span>'
+            );
+            return $state;
+        };
         $(".selectjs_empresa").select2({
             multiple: true,
             allowClear: opt2["allowClear"],
@@ -15,6 +29,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -41,7 +57,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -53,7 +69,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         // Emp    : $("#Emp").val(),
@@ -64,7 +80,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -90,6 +106,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -116,7 +134,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -128,7 +146,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -139,7 +157,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -165,6 +183,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -191,7 +211,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -203,7 +223,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -214,7 +234,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -240,6 +260,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -266,7 +288,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -278,7 +300,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -289,7 +311,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -315,6 +337,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -341,7 +365,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -353,7 +377,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -364,7 +388,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -390,6 +414,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -416,7 +442,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -428,7 +454,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -439,7 +465,7 @@ $(document).ready(function () {
                         // Sucur  : $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -465,6 +491,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            templateSelection: template,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -491,7 +519,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -503,7 +531,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         // Per    : $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -514,7 +542,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -530,6 +558,188 @@ $(document).ready(function () {
                 },
             }
         });
+        $("#LegDe").select2({
+            multiple: false,
+            allowClear: opt2["allowClear"],
+            language: "es",
+            dropdownParent: $('#Filtros'),
+            minimumInputLength: 0,
+            minimumResultsForSearch: 0,
+            maximumInputLength: opt2["MaxInpLength"],
+            selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            // templateSelection: selectionTemplate,
+            placeholder: "Desde",
+            tags: true,
+            width: "150px",
+            tokenSeparators: [',', ' '],
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
+                inputTooShort: function () {
+                    return ''
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                loadingMore: function () {
+                    return "Cargando más resultados…"
+                },
+            },
+            ajax: {
+                url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
+                dataType: "json",
+                type: "POST",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        Filtros: _Filtros(),
+                        // Per    : $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
+            }
+        })
+        $("#LegHa").select2({
+            multiple: false,
+            allowClear: opt2["allowClear"],
+            language: "es",
+            dropdownParent: $('#Filtros'),
+            placeholder: "Hasta",
+            minimumInputLength: 0,
+            minimumResultsForSearch: 0,
+            maximumInputLength: opt2["MaxInpLength"],
+            selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            // templateSelection: selectionTemplate,
+            tags: true,
+            width: "150px",
+            tokenSeparators: [',', ' '],
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                removeAllItems: function () {
+                    return 'Borrar'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + "1" + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                loadingMore: function () {
+                    return "Cargando más resultados…"
+                },
+            },
+            ajax: {
+                url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
+                dataType: "json",
+                type: "POST",
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        Filtros: _Filtros(),
+                        // Per    : $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
+                        FicFalta: $("#datoFicFalta").val(),
+                        FicNovT: $("#datoFicNovT").val(),
+                        FicNovI: $("#datoFicNovI").val(),
+                        FicNovS: $("#datoFicNovS").val(),
+                        FicNovA: $("#datoFicNovA").val(),
+                        Fic3Nov: $("#datoNovedad").val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+                createTag: function (params) {
+                    var term = $.trim(params.term);
+                    if (term === '') {
+                        return null;
+                    }
+                    return {
+                        id: term,
+                        text: term,
+                        newTag: true // add additional parameters
+                    }
+                }
+            }
+        })
         $(".selectjs_tipoper").select2({
             multiple: false,
             allowClear: opt2["allowClear"],
@@ -566,7 +776,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -578,7 +788,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         // Tipo   : $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -589,7 +799,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -615,6 +825,8 @@ $(document).ready(function () {
             minimumResultsForSearch: 2,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
+            templateResult: template,
+            // templateSelection: selectionTemplate,
             language: {
                 noResults: function () {
                     return 'No hay resultados..'
@@ -641,7 +853,7 @@ $(document).ready(function () {
                 maximumSelected: function () {
                     return 'Puede seleccionar solo una opción'
                 },
-                loadingMore: function() {
+                loadingMore: function () {
                     return "Cargando más resultados…"
                 },
             },
@@ -653,7 +865,7 @@ $(document).ready(function () {
                 data: function (params) {
                     return {
                         q: params.term,
-                        Filtros : _Filtros(),
+                        Filtros: _Filtros(),
                         Per: $("#Per").val(),
                         Tipo: $("#Tipo").val(),
                         Emp: $("#Emp").val(),
@@ -664,7 +876,7 @@ $(document).ready(function () {
                         Sucur: $("#Sucur").val(),
                         _dr: $("#_dr").val(),
                         _l: $("#_l").val(),
-                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1: 0,
+                        FicDiaL: ($("#FicDiaL").is(":checked")) ? 1 : 0,
                         FicFalta: $("#datoFicFalta").val(),
                         FicNovT: $("#datoFicNovT").val(),
                         FicNovI: $("#datoFicNovI").val(),
@@ -696,6 +908,26 @@ $(document).ready(function () {
             });
         }
 
+        function openSelect2(slectjs) {
+            $(slectjs).on('select2:open', function (e) {
+                setTimeout(() => {
+                    $(this).val(null).trigger('change')
+                }, 300);
+            });
+        }
+        function closeSelect2(slectjs) {
+            $(slectjs).on('select2:close', function (e) {
+                $('#Per2').val(null)
+                ActualizaTablas2()
+            });
+        }
+
+        openSelect2('#LegDe')
+        closeSelect2('#LegDe')
+        openSelect2('#LegHa')
+        closeSelect2('#LegHa')
+
+        // refreshSelected('#LegHa');
         refreshSelected('.selectjs_empresa');
         refreshSelected('.selectjs_plantas');
         refreshSelected('.select_seccion');
@@ -704,6 +936,7 @@ $(document).ready(function () {
         refreshSelected('.selectjs_personal');
         refreshSelected('.selectjs_tipoper');
         refreshSelected('#datoNovedad');
+
 
         refreshUnselected('.selectjs_empresa');
         refreshUnselected('#datoNovedad');
