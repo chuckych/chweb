@@ -58,7 +58,7 @@ $totalRecords = simple_pdoQuery($queryCount);
 $count = $totalRecords['count'];
 $records = array_pdoQuery($query);
 // print_r($records); exit;
-print_r($query);exit;
+// print_r($query);exit;
 foreach ($records as $key => $row) {
 
     $audcuenta        = $row['audcuenta'];
