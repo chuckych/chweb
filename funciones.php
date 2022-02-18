@@ -2556,9 +2556,9 @@ function EstadoProceso($url)
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $respuesta = curl_exec($ch);
+        curl_close($ch);
+        return respuestaWebService($respuesta);
     } while (respuestaWebService($respuesta) == 'Pendiente');
-    curl_close($ch);
-    return respuestaWebService($respuesta);
 }
 function PingWebServiceRRHH()
 {
@@ -2568,8 +2568,8 @@ function PingWebServiceRRHH()
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $respuesta = curl_exec($ch);
+        curl_close($ch);
     } while (($respuesta) == 'Pendiente');
-    curl_close($ch);
 }
 
 function pingWebService($textError) // Funcion para validar que el Webservice de Control Horario esta disponible

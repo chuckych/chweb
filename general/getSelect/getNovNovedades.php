@@ -31,7 +31,7 @@ if ($NumRows > 0) {
             'NovTipo' => utf8str($NovTipo),
             'text'    => utf8str($NovDesc),
             'title'    => $NovCodi.' - '.($NovDesc),
-            'html'  => "<label class='m-0 Mw40 fontq'>$NovCodi</label><label class='fontp m-0'>$NovDesc</label>",
+            'html'  => "<label class='m-0 Mw40 fontp'>$NovCodi</label><label class='fontq m-0'>$NovDesc</label>",
         );
     }
 } else {

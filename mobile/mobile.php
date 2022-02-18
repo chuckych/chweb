@@ -43,13 +43,30 @@
         table.dataTable tr.dtrg-group td {
             background-color: #fafafa;
         }
+
+        .gm-ui-hover-effect {
+            box-shadow: none !important;
+            outline: 0 !important;
+            top: 0px !important;
+            right: 0px !important;
+        }
+
+        .gm-style .gm-style-iw-c {
+            background-color: #efefef !important;
+            border-radius: 0px !important;
+            padding: 8px !important;
+        }
+
+        .gm-style .gm-style-iw-t::after {
+            background: #efefef !important;
+        }
     </style>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset">
-    
+
         <?php require __DIR__ . '../../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas ' . MODULOS['mobile'], '') ?>
@@ -86,7 +103,7 @@
             <!-- </form> -->
 
             <div class="row bg-white pb-3 radius" id="RowTableMobile">
-                
+
                 <div class="col-12 table-responsive">
                     <table class="table text-wrap w-100" id="table-mobile">
                         <thead class="text-uppercase border-top-0">
@@ -129,6 +146,14 @@
         }
         /** Fin de check de token*/ ?>
         <div id="divModalpoint"></div>
+
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div id="btnVerMarcadores" class="mb-2"></div>
+                <div id="map" class="p-3"></div>
+                <div id="positionMap"></div>
+            </div>
+        </div>
     </div>
     <!-- fin container -->
     <?php
@@ -142,14 +167,14 @@
     ?>
     <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
     <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script> -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&libraries=&v=weekly" async defer></script>
+
     <!-- <script src="../js/lib/geocomplete/jquery.geocomplete.js"></script> -->
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <!-- <script src="script-min.js"></script> -->
-    <script src="script-min.js?v=<?=vjs()?>"></script>
-    <script src="FicMobExcel.js?v=<?=vjs()?>"></script>
-
+    <script src="data-min.js?v=<?= vjs() ?>"></script>
+    <script src="FicMobExcel.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

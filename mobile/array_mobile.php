@@ -80,6 +80,15 @@ $respuesta = array();
             $certeza2 = round($valor['similarity'], 0, PHP_ROUND_HALF_UP) . '%';
             // $respuesta = array();
             $alias = empty($valor['alias']) ? $valor['point'] : $valor['alias'];
+            
+            $pic = 'class="pic" datafoto="' . $valor['face_url'] . '" dataname="' . $name . '" datauid="' . $valor['u_id'] . '" datacerteza="' . $valor['similarity'] . '" datacerteza2="' . $certeza2 . '" datainout="' . $inout . '" datazone="' . $valor['zone'] . '" datahora="' . $valor['time'] . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ucfirst($valor['t_type']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '"';
+
+            $face_url = '<span '.$pic.'>' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>';
+            
+
+            $faceMarker = '<span>' . Foto($imgfoto, '', "h60 radius img-fluid pointer") . '</span>';
+            $marker = "<div class='p-3 m-3 shadow-sm bg-white'><span class='mr-2'>$faceMarker</span><span class='font-weight-bold'>($valor[u_id]) $name</span><br><br><label class='w40 fontq'>Zona: </label> <span>$zone</span><br><label class='w40 fontq'>Fecha: </label> <span class='font-weight-bold'>". DiaSemana4($dia)." $valor[time]</span></div>";
+
             $respuesta[] = array(
                 // '_id'        => $valor['_id'],
                 'timestamp'  => $valor['timestamp'],
@@ -87,11 +96,11 @@ $respuesta = array();
                 'Fecha'         => DiaSemana3($dia),
                 'Fecha4'         => DiaSemana4($dia),
                 // 'dia'           => DiaSemana($dia),
-                'face_url'      => '<span class="pic" datafoto="' . $valor['face_url'] . '" dataname="' . $name . '" datauid="' . $valor['u_id'] . '" datacerteza="' . $valor['similarity'] . '" datacerteza2="' . $certeza2 . '" datainout="' . $inout . '" datazone="' . $valor['zone'] . '" datahora="' . $valor['time'] . '" datadia="' . DiaSemana4($dia) . '" datagps="' . $gps . '" datatype="' . ucfirst($valor['t_type']) . '" datalat="' . ($valor['lat']) . '" datalng="' . ($valor['lng']) . '" >' . Foto($imgfoto, '', "shadow-sm w40 h40 scale radius img-fluid pointer") . '</span>',
+                'face_url'      => $face_url,
                 't_type'        => ucfirst($valor['t_type']).'<br><span class="text-left pointer editaAlias btn btn-link fontq p-0" data-titlel="Editar Dispositivo">'.$alias.'</span>',
                 // 'check_type' => $valor['check_type'],
-                // 'lat'        => $valor['lat'],
-                // 'lng'        => $valor['lng'],
+                'lat'        => $valor['lat'],
+                'lng'        => $valor['lng'],
                 'mapa'          => $iconMapa,
                 'u_id'          => $valor['u_id'],
                 'point'      => $valor['point'],
@@ -104,7 +113,8 @@ $respuesta = array();
                 'name'          => $name,
                 // 'date'       => $valor['date'],
                 'time'          => $valor['time'],
-                'gps'           => $gps
+                'gps'           => $gps,
+                'marker'        => $marker
                 // 'time_o_f'   => $valor['time_o_f']
             );
         }
