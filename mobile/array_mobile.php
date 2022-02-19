@@ -87,7 +87,7 @@ $respuesta = array();
             
 
             $faceMarker = '<span>' . Foto($imgfoto, '', "h60 radius img-fluid pointer") . '</span>';
-            $marker = "<div class='p-3 m-3 shadow-sm bg-white'><span class='mr-2'>$faceMarker</span><span class='font-weight-bold'>($valor[u_id]) $name</span><br><br><label class='w40 fontq'>Zona: </label> <span>$zone</span><br><label class='w40 fontq'>Fecha: </label> <span class='font-weight-bold'>". DiaSemana4($dia)." $valor[time]</span></div>";
+            $marker = "<div class='p-3 shadow-sm bg-white'><span class='mr-2'>$faceMarker</span><span class='font-weight-bold'>($valor[u_id]) $name</span><br><br><label class='w40 fontq'>Zona: </label> <span>$zone</span><br><label class='w40 fontq'>Fecha: </label> <span class='font-weight-bold'>". DiaSemana4($dia)." $valor[time]</span></div>";
 
             $respuesta[] = array(
                 // '_id'        => $valor['_id'],
