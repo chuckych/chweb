@@ -34,21 +34,31 @@ $data = array();
 // }
 // exit;
 foreach ($array['DATA'] as $key => $valor) {
-
-    $name       = (($valor['name']));
+    $name       = $valor['name'];
     $map_size   = $valor['map_size'];
     $lat        = $valor['lat'];
     $lng        = $valor['lng'];
     $updated_on = $valor['updated_on'];
-    $eliminar= '<button type="button" class="icon btn btn-sm btn-link text-decoration-none EliminaZona" data-toggle="modal" data-target="#EliminaZona" data="'.$lat.'" data4="'.$tkcliente.'" data5="'.$name.'"><span data-icon="&#xe03d;" class="align-middle text-gris pt-1"></span></button>';
-    $modificar= '<button type="button" class="btn btn-sm rounded-circle btn-outline-success border ModificarZona" data="'.$lat.'" data1="'.$lng.'" data2="'.$name.'" data3="'.$map_size.'"><span data-icon="&#xe042;" class=""></span></button>';
+
+    $eliminar = '<button type="button" class="icon btn btn-sm btn-link text-decoration-none EliminaZona" data-toggle="modal" data-target="#EliminaZona" data="'.$lat.'" data4="'.$tkcliente.'" data5="'.$name.'"><span data-icon="&#xe03d;" class="align-middle text-gris pt-1"></span></button>';
+    $modificar = '<button type="button" class="btn btn-sm rounded-circle btn-outline-success border ModificarZona" data="'.$lat.'" data1="'.$lng.'" data2="'.$name.'" data3="'.$map_size.'"><span data-icon="&#xe042;" class=""></span></button>';
     $ver ='<button data="'.$lat.'" data1="'.$lng.'" data2="'.$name.'" data3="'.$map_size.'" type="button" class="verZone btn btn-outline-custom px-2 btn-sm fontq border-0">Ver</button>';
+    
+    $marker = "<div class='p-3 shadow-sm bg-white'><label class='w40 fontq'>Zona: </label> <span class='font-weight-bold'>$name</span><br><label class='w40 fontq'>Radio: </label> <span class='font-weight-bold'>$map_size</span></div>";
+    
+    $jsonMarcador = json_encode(array(
+        'name'     => $name,
+        'lat'      => $valor['lat'],
+        'lng'      => $valor['lng'],
+        'map_size' => $valor['map_size'],
+    ));
+    $marcador = "<span class='marcador' marcador='$jsonMarcador'>$map_size</span>";
 
             $data[] = array(
                 'updated_on' => $updated_on,
                 'ver'        => $ver,
                 'name'       => $name,
-                'map_size'   => $map_size,
+                'map_size'   => $marcador,
                 'lat'        => ($lat),
                 'lng'        => ($lng),
                 'eliminar'   => $eliminar,

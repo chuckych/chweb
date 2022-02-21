@@ -32,10 +32,24 @@
             cursor: pointer;
             text-decoration: underline;
         }
-    </style>
-    <script>
-    </script>
 
+        .gm-ui-hover-effect {
+            box-shadow: none !important;
+            outline: 0 !important;
+            top: 0px !important;
+            right: 0px !important;
+        }
+
+        .gm-style .gm-style-iw-c {
+            background-color: #efefef !important;
+            border-radius: 0px !important;
+            padding: 8px !important;
+        }
+
+        .gm-style .gm-style-iw-t::after {
+            background: #efefef !important;
+        }
+    </style>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -52,10 +66,13 @@
             <input type="hidden" id="zona">
             <input type="hidden" id="map_size">
             <div class="row bg-white py-2 radius" id="VerZonas">
-                <div class="col-12 m-0 pb-2">
-                    <button class="btn btn-outline-custom border-danger fontq float-left opa8" id="Zona"><i class="bi bi-plus-lg mr-2"></i>Nueva Zona</button>
+                <div class="col-12 m-0 pb-2 col-sm-8">
+                    <button class="btn btn-outline-custom border-danger fontq float-left opa8" id="Zona"><span class="d-inline-flex"><span class="bi bi-plus-lg"></span> <span class="ml-1 d-none d-sm-block">Nueva Zona</span></span></button>
                     <a class="btn btn-outline-custom border-danger ml-1 fontq opa8 text-decoration-none fontq" href="../"><i class="bi bi-clipboard-data mr-2"></i>Fichadas</a>
                     <a class="btn btn-outline-custom border-danger ml-1 fontq opa8 text-decoration-none fontq float-left" href="../usuarios/"><i class="bi bi-people-fill mr-2"></i>Usuarios</a>
+                    <span id="btnVerMarcadores" class="ml-2"></span>
+                </div>
+                <div class="col-12 col-sm-4 m-0 pb-2">
                     <button class="btn btn-sm btn-link text-decoration-none fontq text-secondary p-0 pb-1 m-0 float-right" id="Refresh">Actualizar Grilla</button>
                 </div>
                 <div class="col-12 table-responsive" id="divtable">
@@ -81,19 +98,23 @@
                     </div>
                 </div>
                 <?php
-                if (modulo_cuentas()):
+                if (modulo_cuentas()) :
                 ?>
-                <div class="col-12 m-0">
-                    <form action="../RefreshToken.php" method="POST" id="RefreshToken">
-                        <select class="selectjs_cuentaToken w200" id="tk" name="tk">
-                        </select>
-                    </form>
-                </div>
+                    <div class="col-12 m-0">
+                        <form action="../RefreshToken.php" method="POST" id="RefreshToken">
+                            <select class="selectjs_cuentaToken w200" id="tk" name="tk">
+                            </select>
+                        </form>
+                    </div>
                 <?php
                 endif;
                 ?>
+                <div class="col-12 my-4">
+                    <div id="mapTitle"></div>
+                    <div id="map" class="p-3"></div>
+                    <div id="positionMap"></div>
+                </div>
             </div>
-            
 
             <div class="d-none p-2 mt-2" id="rowNuevaZona">
                 <div class="row mb-2">
@@ -105,7 +126,7 @@
                     <div class="col-12">
                         <form>
                             <div class="form-group">
-                                <input id="geocomplete" type="text" class="form-control h40" placeholder="Ingrese un lugar o dirección" value="" />
+                                <input id="geocomplete" autocomplete="off" type="text" class="form-control h40" placeholder="Ingrese un lugar o dirección" value="">
                             </div>
                             <div class="pb-4">
                                 <input type="reset" value="Reset" class="float-right btn btn-outline-custom border btn-sm fontq">
@@ -127,7 +148,7 @@
                                     ?>
                                 </select>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row mt-3">
                                 <div class="col-12">
                                     <button type="submit" class="float-right btn btn-custom btn-sm px-3 opa8 fontq" name="submit" value="true" id="btnSubmitZone">Crear Zona</button>
                                     <button type="button" class="float-right btn btn-link text-decoration-none text-secondary btn-sm px-3 fontq" id="cancelZone">Cancelar</button>
@@ -165,10 +186,17 @@
     require __DIR__ . "../../../js/DataTable.php";
     ?>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?=API_KEY_MAPS()?>&sensor=false&amp;libraries=places" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
     <script src="../../js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="../../js/select2.min.js"></script>
-    <script src="script-min.js?v=<?=vjs()?>"></script>
+    <script src="data-min.js?v=<?= vjs() ?>"></script>
+    <script>
+        // $(document).ready(function() {
+        let some_id = $('#geocomplete');
+        some_id.prop('type', 'text');
+        some_id.removeAttr('autocomplete');
+        // });
+    </script>
 
 </body>
 

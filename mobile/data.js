@@ -187,7 +187,7 @@ $(document).ready(function () {
     table.on("draw.dt", function (e, settings) {
         $('#map').html('').removeClass('shadow').css('height', '0px');
         if (marcadores != '') {
-            $('#btnVerMarcadores').html(`<a href="#positionMap" class="btn btn-custom btn-sm fontq" id="VerMarcadores">Ver en Mapa <i class="ml-2 bi bi-pin-map-fill"></i></a>`)
+            $('#btnVerMarcadores').html(`<a href="#positionMap" class="btn btn-custom fontq" id="VerMarcadores"><span class="mr-1">Mapa</span><i class="bi bi-pin-map-fill"></i></a>`)
         }
     });
 
@@ -259,6 +259,7 @@ $(document).ready(function () {
         cityCircle = new google.maps.Circle(sunCircle);
         cityCircle.bindTo("center", marker, "position");
     }
+    
     $(".select2").select2({
         minimumResultsForSearch: -1,
         placeholder: "Seleccionar"

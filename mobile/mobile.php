@@ -84,12 +84,13 @@
                 $maxYear   = date('Y');
                 /** maxYear */
                 ?>
-                <div class="col-12 col-sm-4 mb-2 mb-sm-0">
+                <div class="col-12 col-sm-6 mb-2 mb-sm-0">
                     <a class="btn btn-outline-custom border-danger fontq opa8 float-left" href="zonas/"><i class="bi bi-pin-map-fill mr-2"></i>Zonas</a>
                     <a class="btn btn-outline-custom border-danger ml-1 fontq opa8 float-left " href="usuarios/"><i class="bi bi-people-fill mr-2"></i>Usuarios</a>
-                    <button type="button" class="ml-2 btn btn-light text-success fw5 border  fontq" title="Exportar Excel" id="btnExcel"> </button>
+                    <button type="button" class="ml-2 btn btn-light text-success fw5 border fontq" title="Exportar Excel" id="btnExcel"> </button>
+                    <span id="btnVerMarcadores" class="ml-2"></span>
                 </div>
-                <div class="col-12 col-sm-8">
+                <div class="col-12 col-sm-6">
                     <div class="d-flex justify-content-sm-end justify-content-center">
                         <input type="text" readonly class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob">
                         <button title="Actualizar Grilla" type="button" id="Refresh" class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
@@ -146,10 +147,8 @@
         }
         /** Fin de check de token*/ ?>
         <div id="divModalpoint"></div>
-
         <div class="row">
             <div class="col-12 mb-4">
-                <div id="btnVerMarcadores" class="mb-2"></div>
                 <div id="map" class="p-3"></div>
                 <div id="positionMap"></div>
             </div>
