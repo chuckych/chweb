@@ -65,6 +65,11 @@ foreach ($array['DATA'] as $key => $valor) {
                 'modificar'  => $modificar,
                 'null'       => ''
             );   
+            $data2[] = array(
+                'LATITUD'  => floatval($lat),
+                'LONGITUD' => floatval($lng),
+                'NOMBRE'   => $name,
+            );   
             usort($data, function ($a, $b) {
                 if ($a['name'] == $b['name']) {
                     return 0;
@@ -74,5 +79,5 @@ foreach ($array['DATA'] as $key => $valor) {
         }
         
 
-$data = array('zonas'=>$data);
+$data = array('zonas'=>$data, 'zonas2'=>$data2);
 echo json_encode($data);

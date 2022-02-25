@@ -8,7 +8,7 @@ secure_auth_ch_json();
 E_ALL();
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
-
+timeZone();
 $_POST['datos'] = $_POST['datos'] ?? '';
 
 $Datos = (json_decode($_POST['datos'], true));
@@ -144,7 +144,7 @@ switch ($Tabla) {
         }
         break;
     case 'Rotacion':
-        $sql_query = "SELECT ROTALEG.RoLLega, ROTALEG.RoLFech, ROTALEG.RoLRota, ROTACION.RotDesc, ROTALEG.RoLDias FROM ROTALEG
+        $sql_query = "SELECT ROTALEG.RoLLega, ROTALEG.RoLFech, ROTALEG.RoLRota, ROTACION.RotDesc, ROTALEG.RoLDias, ROTALEG.RoLVenc FROM ROTALEG
         INNER JOIN ROTACION ON ROTALEG.RoLRota = ROTACION.RotCodi WHERE ROTALEG.RoLLega = $Legajo ORDER BY ROTALEG.RoLFech DESC";
         // print_r($sql_query); exit;
         $sqlTot .= $sql_query;
@@ -159,19 +159,21 @@ switch ($Tabla) {
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
-
+        
         while ($r = sqlsrv_fetch_array($queryRecords)) {
             $RoLLega = $r['RoLLega'];
             $RoLFech = $r['RoLFech'];
             $RoLRota = $r['RoLRota'];
             $RotDesc = $r['RotDesc'];
             $RoLDias = $r['RoLDias'];
+            $RoLVenc = $r['RoLVenc'];
             $data[] = array(
                 'RoLLega' => $RoLLega,
                 'RoLFech' => $RoLFech->format('d/m/Y'),
                 'RoLRota' => $RoLRota,
                 'RotDesc' => $RotDesc,
                 'RoLDias' => $RoLDias,
+                'RoLVenc' => ($RoLVenc->format('d/m/Y') == '31/12/2099') ? '' : $RoLVenc->format('d/m/Y'),
                 'ApNo'    => $ApNo,
             );
         }
@@ -367,3 +369,4 @@ $json_data = array(
 
 );
 echo json_encode($json_data);
+exit;

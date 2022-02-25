@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.211'; // Version
+    return 'v0.0.212'; // Version
 }
 function verDBLocal()
 {
@@ -3453,6 +3453,19 @@ function pdoQuery($sql)
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
     }
     $stmt = null;
+}
+function rowCount_pdoQuery($sql)
+{
+	require __DIR__ . '/config/conect_pdo.php';
+	try {
+		$stmt = $connpdo->prepare($sql);
+		$stmt->execute();
+		return $stmt->rowCount();
+	} catch (\Throwable $th) { // si hay error en la consulta
+		$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+	}
+	$stmt = null;
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
 {

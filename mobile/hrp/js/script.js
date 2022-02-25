@@ -70,7 +70,7 @@ $('#divTableMobile').prepend(`<div class="pb-3 custom-control custom-switch cust
 
 tablemobile = $('#table-mobile').DataTable({
     "initComplete": function (settings, json) {
-        $('#table-mobile_filter').append('<button data-titlel="Usuarios"type="button" class="h35 mx-1 btn btn-custom btn-sm px-3 openModal"><i class="bi bi-people-fill"></i></button><button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3"><i class="bi bi-cloud-download"></i></button>')
+        $('#btnMenu').append('<button data-titlel="Usuarios"type="button" class="h35 mx-1 btn btn-outline-custom border btn-sm px-3 openModal fontq">Usuarios <i class="ml-2 bi bi-people-fill"></i></button><button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3"><i class="bi bi-cloud-download"></i></button>')
         $('.dr').append(`<div><input type="text" readonly  class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
         dateRange()
         $('#_drMob').on('apply.daterangepicker', function (ev, picker) {

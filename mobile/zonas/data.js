@@ -134,19 +134,26 @@ let table = $('#table-zonas').DataTable({
 
 });
 
-let getMarcadores = () => {
+let getMarcadores = (lat = '', lng = '') => {
     marcadores = [];
-    firstLat = '';
-    firstLng = '';
+    firstLat = lat;
+    firstLng = lng;
     $("#table-zonas td .marcador").each(function () {
         obj = JSON.parse($(this).attr("marcador"));
         let divMarker = `<div class='p-3 shadow-sm bg-white'><label class='w40 fontq'>Zona: </label> <span class='font-weight-bold'>${obj.name}</span><br><label class='w40 fontq'>Radio: </label> <span class='font-weight-bold'>${obj.map_size}</span></div>`
         marcadores.push(
             [obj.name, parseFloat(obj.lat), parseFloat(obj.lng), divMarker],
         );
-        firstLat = parseFloat(obj.lat);
-        firstLng = parseFloat(obj.lng);
+        if (!lat) {
+            firstLat = parseFloat(obj.lat);
+            firstLng = parseFloat(obj.lng);
+        }
     });
+
+    if (lat) {
+        firstLat = lat;
+        firstLng = lng;
+    }
     return marcadores;
 }
 
@@ -276,6 +283,54 @@ $(document).on("click", ".verZone", function (e) {
     $('.marker').attr('data-lng', _lng)
 
     initMap()
+
+    // $('#map').css('height', '400px').css('width', '100%').addClass('shadow');
+    // $('#VerMarcadores').hide(); //ocultar boton
+
+    // getMarcadores(parseFloat(_lat), parseFloat(_lng)); //llamar funcion para obtener marcadores
+    // $('#mapTitle').html('<div class="py-2 fontq">Total Zonas: ' + marcadores.length + '</div>'); //mostrar titulo del mapa con la cantidad de marcadores
+
+    // function initialize() {
+    //     var myLatLng = new google.maps.LatLng(firstLat, firstLng);
+    //     // var myLatLng = new google.maps.LatLng(-34.6036844, -58.3815591);
+    //     var mapOptions = {
+    //         zoom: 10,
+    //         center: myLatLng,
+    //         mapTypeId: google.maps.MapTypeId.TERRAIN,
+    //         zoomControl: true,
+    //         mapTypeControl: false,
+    //         scaleControl: false,
+    //         streetViewControl: false,
+    //         rotateControl: false,
+    //         fullscreenControl: true
+    //     }
+    //     var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+    //     setMarkers(map, marcadores);
+    // }
+    // var infowindow;
+
+    // function setMarkers(map, marcadores) {
+
+    //     for (var i = 0; i < marcadores.length; i++) {
+    //         var myLatLng = new google.maps.LatLng(marcadores[i][1], marcadores[i][2]);
+    //         var marker = new google.maps.Marker({
+    //             position: myLatLng,
+    //             map: map,
+    //             title: marcadores[i][0],
+    //         });
+    //         (function (i, marker) {
+    //             google.maps.event.addListener(marker, 'click', function () {
+    //                 if (!infowindow) {
+    //                     infowindow = new google.maps.InfoWindow();
+    //                 }
+    //                 infowindow.setContent(marcadores[i][3]);
+    //                 infowindow.open(map, marker);
+    //             });
+    //         })(i, marker);
+    //     }
+    // };
+    // initialize();
+
 });
 
 $("#DZona").bind("submit", function (e) {
@@ -500,6 +555,7 @@ $(document).on("click", "#VerMarcadores", function (e) {
         var map = new google.maps.Map(document.getElementById('map'), mapOptions);
         setMarkers(map, marcadores);
     }
+
     var infowindow;
 
     function setMarkers(map, marcadores) {

@@ -190,14 +190,6 @@
     <script src="../../js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="../../js/select2.min.js"></script>
     <script src="data-min.js?v=<?= vjs() ?>"></script>
-    <script>
-        // $(document).ready(function() {
-        let some_id = $('#geocomplete');
-        some_id.prop('type', 'text');
-        some_id.removeAttr('autocomplete');
-        // });
-    </script>
-
 </body>
 
 </html>

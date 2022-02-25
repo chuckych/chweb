@@ -481,7 +481,7 @@ $(function () {
                     } else if (key == 'TotalCit') {
                         if (value > 0) {
                             $('.cita').html('Citaciones (' + value + ')')
-                        }else{
+                        } else {
                             $('.cita').html('Citaciones (0)')
                         }
                     }
@@ -1018,7 +1018,7 @@ $(function () {
                     } else if (key == 'TotalCit') {
                         if (value > 0) {
                             $('.cita').html('Citaciones (' + value + ')')
-                        }else{
+                        } else {
                             $('.cita').html('Citaciones (0)')
                         }
                     }
@@ -1254,197 +1254,12 @@ $(function () {
         })
     }
     function getRotacion(datos, selector) {
-        $(selector).dataTable({
+        let table = $(selector).dataTable({
             initComplete: function (settings) {
                 $(selector + " thead").remove()
             },
             drawCallback: function (settings) {
-                $(selector + " thead").remove()
-                let titletabla = '<div>Rotaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_rotacion"><i class="bi bi-plus"></i></button>`
-                if (settings.aiDisplay.length == 0) {
-                    titletabla = '<div class="fw4">Sin Rotación asignada</div>';
-                    $('#titleRotaciones').html(titletabla + btnAdd)
-                    $(selector).hide()
-                } else {
-                    $(selector).show()
-                    $('#titleRotaciones').html(titletabla + btnAdd)
-                }
-                $(".viewRot").click(function () {
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    // console.log(data);
-                    let RoLRota = JSON.stringify({ 'RoLRota': data.RoLRota, 'nombre': '', 'legajo': '', 'tabla': 'RotaDeta' });
-                    getRotaDeta(RoLRota, data.RoLFech, data.RoLDias, data.RotDesc)
-                });
-                $(".c_rotacion").click(function () {
-                    $('.RotaDeta').toast('hide')
-                    CheckSesion()
-                    // let data = settings.json.data[0];
-                    $('#actModal .modal-title').html('Nueva asignación de Rotación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
-                    setTimeout(() => {
-                        $('#H1Horario label').html('Rotación')
-                        $('#H1Horario').prepend(`
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                        <label class="fontq w80">Fecha:</label>
-                            <input type="text" class="form-control text-center h40 w120 ml-2" name="RotFecha" id="inputRotFecha">
-                        </div>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                        <label class="fontq w80">Día de Comienzo:</label>
-                            <input type="tel" class="form-control text-center h40 w120 ml-2" name="RotDia" id="inputRotDia" value='1'>
-                        </div>
-                        `)
-                        singleDatePicker('#inputRotFecha', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('#divData .NumLega').text())
-                        $('#inputH1Codhor').mask('0000');
-                        $('#inputRotDia').mask('000');
-                        $('#inputTipo').val('c_rotacion');
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
-                        setTimeout(() => {
-                            getListRotaciones(datos, '#tableHorarios')
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                $('#inputH1Codhor').val(data.RotCodi)
-                                $('#inputH1horario').val(data.RotDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-                            });
-                        }, 100);
-                    }, 200);
-                });
-                $(".actModalRot").click(function () {
-                    CheckSesion()
-                    $('.RotaDeta').toast('hide')
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    // console.log(data);
 
-                    $('#actModal .modal-title').html('Editar Asignación de Rotación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
-                    setTimeout(() => {
-                        $('#H1Horario label').html('Rotación')
-                        $('#H1Horario').prepend(`
-                        <input type="hidden" readonly class="form-control text-center h40 w120 ml-2" name="RotFecha" id="inputRotFecha">
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                        <label class="fontq w80">Día de Comienzo:</label>
-                            <input type="tel" class="form-control text-center h40 w120 ml-2" name="RotDia" id="inputRotDia" value='1'>
-                        </div>
-                        `)
-                        $('#inputRotFecha').val(data.RoLFech);
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.RoLLega + ') ' + data.ApNo + `</span>`)
-                        $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.RoLFech + `</span>`)
-                        $('#inputH1Codhor').val(data.RoLRota)
-                        $('#inputH1Codhor2').val(data.RoLRota)
-                        $('#inputH1Legajo').val(data.RoLLega)
-                        $('#inputRotDia').val(data.RoLDias)
-                        $('#inputTipo').val('u_rotacion');
-                        $('#inputH1Codhor').mask('0000');
-                        $('#inputH1horario').val(data.RotDesc)
-
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
-                        setTimeout(() => {
-                            getListRotaciones(datos, '#tableHorarios')
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                $('#inputH1Codhor').val(data.RotCodi)
-                                $('#inputH1horario').val(data.RotDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-                            });
-                        }, 100);
-                    }, 200);
-                });
-                $(".RotDelete").click(function () {
-                    $('.RotaDeta').toast('hide')
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    // console.table(data);
-                    bootbox.confirm({
-                        message: `<span class="fonth fw5">¿Eliminar asignación de Rotación?</span><br>
-                        <div class="fontq mt-3">
-                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.RoLLega + `) ` + data.ApNo + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.RoLFech + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.RoLRota + `) ` + data.RotDesc + `</span></p>
-                        </div>
-                        `,
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq submit'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-                                $.ajax({
-                                    type: "POST",
-                                    url: "crud.php",
-                                    'data': {
-                                        NumLega: data.RoLLega,
-                                        Fecha: data.RoLFech,
-                                        Codhor: data.RoLRota,
-                                        tipo: 'd_rotacion'
-                                    },
-                                    beforeSend: function (data) {
-                                        $.notifyClose();
-                                        ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar')
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    },
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'success', 5000, 'right')
-                                            ActualizaTablas()
-                                        } else {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                });
-                submitForm('#form', 'crud.php')
-                $.each(settings.json, function (key, value) {
-                    if (key == '_aTur') {
-                        if (value === 1) {
-                            $('.c_rotacion').prop('disabled', false);
-                        } else {
-                            $('.c_rotacion').prop('disabled', true);
-                        }
-                    } else if (key == '_mTur') {
-                        if (value === 1) {
-                            $('.actModalRot').prop('disabled', false);
-                        } else {
-                            $('.actModalRot').prop('disabled', true);
-                        }
-                    } else if (key == '_bTur') {
-                        if (value === 1) {
-                            $('.RotDelete').prop('disabled', false);
-                        } else {
-                            $('.RotDelete').prop('disabled', true);
-                        }
-                    }
-                });
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
@@ -1472,14 +1287,22 @@ $(function () {
                 {
                     className: 'align-middle', targets: 'RoLRota', title: 'Fecha',
                     "render": function (data, type, row, meta) {
-                        let datacol = row['RoLRota']
+                        let datacol = '<span title="Código Rotación">' + row['RoLRota'] + '</span>'
                         return datacol;
                     },
                 },
                 {
-                    className: 'viewRot pointer w-100 align-middle', targets: 'RotDesc', title: '',
+                    className: 'align-middle', targets: 'RotDesc', title: '',
                     "render": function (data, type, row, meta) {
-                        let datacol = '<span title="Rotación">' + row['RotDesc'] + '</span>'
+                        let datacol = '<div class="d-inline-flex"><span title="Rotación">' + row['RotDesc'] + '</span><span data-titlel="Ver Detalle"><i class="ml-2 viewRot pointer bi bi-info-circle"></i></span></div>'
+                        return datacol;
+                    },
+                },
+                {
+                    className: 'w-100 align-middle', targets: 'RoLVenc', title: '',
+                    "render": function (data, type, row, meta) {
+                        let Vence = (row['RoLVenc']) ? row['RoLVenc'] : '<span class="">Sin Vencimiento</span>'
+                        let datacol = '<span title="Vencimiento">' + Vence + '</span>'
                         return datacol;
                     },
                 },
@@ -1515,6 +1338,246 @@ $(function () {
             language: {
                 "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
             }
+        });
+
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+            $(selector + " thead").remove()
+            let titletabla = '<div>Rotaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
+            let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_rotacion"><i class="bi bi-plus"></i></button>`
+            if (settings.aiDisplay.length == 0) {
+                titletabla = '<div class="fw4">Sin Rotación asignada</div>';
+                $('#titleRotaciones').html(titletabla + btnAdd)
+                $(selector).hide()
+            } else {
+                $(selector).show()
+                $('#titleRotaciones').html(titletabla + btnAdd)
+            }
+            $(".viewRot").click(function () {
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                // console.log(data);
+                let RoLRota = JSON.stringify({ 'RoLRota': data.RoLRota, 'nombre': '', 'legajo': '', 'tabla': 'RotaDeta' });
+                getRotaDeta(RoLRota, data.RoLFech, data.RoLDias, data.RotDesc)
+            });
+            $(".c_rotacion").click(function (e) {
+                e.preventDefault();
+                $('.RotaDeta').toast('hide')
+                CheckSesion()
+                $(".loader").show();
+                axios.get('bodyHorale1.html', {
+                    params: {
+                        'v': $('#_vjs').val(),
+                    }
+                }).then(function (response) {
+                    $('#actModalbody').html(response.data)
+                    $('#actModal .modal-title').html('Nueva asignación de Rotación')
+                }).then(() => {
+                    $('#H1Horario label').html('Rotación')
+                    $('#H1Horario').prepend(`
+                            <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <label class="fontq w100">Fecha:</label>
+                                <input type="text" class="form-control text-center h40 w120 ml-2" name="RotFecha" id="inputRotFecha">
+                            </div>
+                            <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <label class="fontq w100">Día de Comienzo:</label>
+                            <input type="tel" class="form-control text-center h40 w120 ml-2" name="RotDia" id="inputRotDia" value='1'>
+                            </div>
+                            <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <label class="fontq w100">Vencimiento:</label>
+                                <input type="text" class="form-control text-center h40 w120 ml-2" name="RoLVenc" id="inputRoLVenc">
+                                <span class="bi bi-eraser ml-2 pointer" data-titler="Borrar Fecha"></span>
+                            </div>
+                            `)
+                    singleDatePicker('#inputRotFecha', 'right', 'down')
+                    singleDatePicker('#inputRoLVenc', 'right', 'down')
+                    $('.bi-eraser').click(function (e) {
+                        e.preventDefault();
+                        $('#inputRoLVenc').val('')
+                    })
+                    $('#inputRoLVenc').val('');
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                    $('#inputH1Legajo').val($('#divData .NumLega').text())
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputRotDia').mask('000');
+                    $('#inputTipo').val('c_rotacion');
+                    $('#divtableHorarios').html('')
+                    $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
+                    getListRotaciones(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.RotCodi)
+                        $('#inputH1horario').val(data.RotDesc)
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+                }).then(() => {
+                    $(".loader").fadeOut("slow");
+                }).catch(function (error) {
+                    alert(error);
+                }).then(function () {
+                    $(".loader").fadeOut("slow");
+                });
+
+            });
+            $(".actModalRot").click(function (e) {
+                e.preventDefault();
+                CheckSesion()
+                $('.RotaDeta').toast('hide')
+                $(".loader").show();
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                axios.get('bodyHorale1.html', {
+                    params: {
+                        'v': $('#_vjs').val(),
+                    }
+                }).then(function (response) {
+                    // data = response.data
+                    $('#actModalbody').html(response.data)
+                    $('#actModal .modal-title').html('Editar Asignación de Rotación')
+
+                }).then(() => {
+
+                    $('#H1Horario label').html('Rotación')
+                    $('#H1Horario').prepend(`
+                        <input type="hidden" readonly class="form-control text-center h40 w120 ml-2" name="RotFecha" id="inputRotFecha">
+                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <label class="fontq w100">Día de Comienzo:</label>
+                            <input type="tel" class="form-control text-center h40 w120 ml-2" name="RotDia" id="inputRotDia" value='1'>
+                        </div>
+                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <label class="fontq w100">Vencimiento:</label>
+                            <input type="text" class="form-control text-center h40 w120 ml-2" name="RoLVenc" id="inputRoLVenc">
+                            <span class="bi bi-eraser ml-2 pointer" data-titler="Borrar Fecha"></span>
+                        </div>
+                        `)
+                    $('#inputRotFecha').val(data.RoLFech);
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.RoLLega + ') ' + data.ApNo + `</span>`)
+                    $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.RoLFech + `</span>`)
+                    $('#inputH1Codhor').val(data.RoLRota)
+                    $('#inputH1Codhor2').val(data.RoLRota)
+                    $('#inputH1Legajo').val(data.RoLLega)
+                    $('#inputRotDia').val(data.RoLDias)
+                    if (data.RoLVenc) {
+                        singleDatePickerValue('#inputRoLVenc', 'right', 'down', data.RoLVenc)
+                    }else{
+                        singleDatePicker('#inputRoLVenc', 'right', 'down')
+                        $('#inputRoLVenc').val('')
+                    }
+                    $('.bi-eraser').click(function (e) {
+                        e.preventDefault();
+                        $('#inputRoLVenc').val('')
+                    })
+                    $('#inputTipo').val('u_rotacion');
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputH1horario').val(data.RotDesc)
+
+                    $('#divtableHorarios').html('')
+                    $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
+                    getListRotaciones(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.RotCodi)
+                        $('#inputH1horario').val(data.RotDesc)
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+
+                }).then(() => {
+                    $(".loader").fadeOut("slow");
+                }).catch(function (error) {
+                    alert(error);
+                }).then(function () {
+                    $(".loader").fadeOut("slow");
+                });
+
+            });
+            $(".RotDelete").click(function () {
+                $('.RotaDeta').toast('hide')
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                // console.table(data);
+                bootbox.confirm({
+                    message: `<span class="fonth fw5">¿Eliminar asignación de Rotación?</span><br>
+                        <div class="fontq mt-3">
+                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.RoLLega + `) ` + data.ApNo + `</span></p>
+                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.RoLFech + `</span></p>
+                            <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.RoLRota + `) ` + data.RotDesc + `</span></p>
+                        </div>
+                        `,
+                    // message: '',
+                    buttons: {
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-custom text-white btn-sm fontq submit'
+                        },
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-light btn-sm fontq text-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+                            $.ajax({
+                                type: "POST",
+                                url: "crud.php",
+                                'data': {
+                                    NumLega: data.RoLLega,
+                                    Fecha: data.RoLFech,
+                                    Codhor: data.RoLRota,
+                                    tipo: 'd_rotacion'
+                                },
+                                beforeSend: function (data) {
+                                    $.notifyClose();
+                                    ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar')
+                                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                                },
+                                success: function (data) {
+                                    if (data.status == "ok") {
+                                        ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                        $.notifyClose();
+                                        notify(data.Mensaje, 'success', 5000, 'right')
+                                        ActualizaTablas()
+                                    } else {
+                                        ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                        $.notifyClose();
+                                        notify(data.Mensaje, 'danger', 5000, 'right')
+                                    }
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+            submitForm('#form', 'crud.php')
+            $.each(settings.json, function (key, value) {
+                if (key == '_aTur') {
+                    if (value === 1) {
+                        $('.c_rotacion').prop('disabled', false);
+                    } else {
+                        $('.c_rotacion').prop('disabled', true);
+                    }
+                } else if (key == '_mTur') {
+                    if (value === 1) {
+                        $('.actModalRot').prop('disabled', false);
+                    } else {
+                        $('.actModalRot').prop('disabled', true);
+                    }
+                } else if (key == '_bTur') {
+                    if (value === 1) {
+                        $('.RotDelete').prop('disabled', false);
+                    } else {
+                        $('.RotDelete').prop('disabled', true);
+                    }
+                }
+            });
         });
     }
     function getHorarioActual(legajo) {

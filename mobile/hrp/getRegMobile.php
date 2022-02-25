@@ -6,9 +6,10 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-require __DIR__ . '../../../config/conect_mysql.php';
+// require __DIR__ . '../../../config/conect_mysql.php';
 // sleep(2);
 $respuesta = array();
+$arrayData = array();
 
 function dr_f($ddmmyyyy)
 {
@@ -28,9 +29,14 @@ $where_condition = $sqlTot = $sqlRec = "";
 
 FusNuloPOST('SoloFic', '');
 
-$Filtros = ($_POST['SoloFic'] == '1') ? 'AND reg_.eventType=2' : '';
+$idCuenta = $_SESSION['ID_CLIENTE'];
+
+$Filtros = ($_POST['SoloFic'] == '1') ? 'AND reg_.eventType=2 ' : '';
+$Filtros .= "AND reg_.id_company = $idCuenta";
 
 $sql_query = "SELECT reg_.createdDate as 'createdDate', reg_.id_user as 'id_user', reg_.phoneid as 'phoneid', reg_user_.nombre as 'nombre', reg_.fechaHora 'fechaHora', reg_.lat as 'lat', reg_.lng as 'lng', reg_.gpsStatus as 'gpsStatus', reg_.eventType as 'eventType', reg_.operationType as 'operationType', reg_.operation as 'operation', reg_.appVersion as 'appVersion', reg_.attphoto as 'attphoto', reg_.regid as 'regid' FROM reg_ LEFT JOIN reg_user_ ON reg_.id_user=reg_user_.id_user WHERE reg_.fechaHora BETWEEN '$FechaIni' AND '$FechaFin' $Filtros";
+
+// print_r($sql_query);exit;
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
@@ -45,15 +51,18 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlRec .= $where_condition;
 }
 
+
 $sqlRec .=  " ORDER BY reg_.fechaHora DESC LIMIT " . $params['start'] . " ," . $params['length'];
-$queryTot = mysqli_query($link, $sqlTot);
-$totalRecords = mysqli_num_rows($queryTot);
-$queryRecords = mysqli_query($link, $sqlRec);
+// $queryTot = mysqli_query($link, $sqlTot);
+
+$queryRecords = array_pdoQuery($sqlRec);
+
+$totalRecords = rowCount_pdoQuery($sql_query);
 
 // print_r($sqlRec); exit;
 
 if ($totalRecords > 0) {
-    while ($r = mysqli_fetch_assoc($queryRecords)) {
+    foreach ($queryRecords as $r) {
         $arrayData[] = array(
             'appVersion'    => $r['appVersion'],
             'attphoto'      => $r['attphoto'],

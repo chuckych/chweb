@@ -34,16 +34,16 @@ if (($_POST['tipo'] == 'c_usuario')) {
         exit;
     };
     $CheckID_user = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE id_user = '$id_user' and id_company = '$id_company' LIMIT 1");
-    $CheckRegid = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE regid = '$regid' AND regid !=''");
+    // $CheckRegid = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE regid = '$regid' AND regid !=''");
 
     if ($CheckID_user) {
         PrintRespuestaJson('error', 'Ya existe el Legajo');
         exit;
     }
-    if ($CheckRegid) {
-        PrintRespuestaJson('error', 'Ya existe el Regid');
-        exit;
-    }
+    // if ($CheckRegid) {
+    //     PrintRespuestaJson('error', 'Ya existe el Regid');
+    //     exit;
+    // }
 
     $query = "INSERT INTO reg_user_(nombre,id_user,id_company,regid)VALUES('$nombre','$id_user',$id_company,'$regid')";
 

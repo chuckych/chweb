@@ -8,6 +8,10 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
 
+// require __DIR__ . '../../../vendor/autoload.php';
+
+// use Carbon\Carbon;
+
 E_ALL();
 
 require __DIR__ . '../../../config/conect_mssql.php';
@@ -628,16 +632,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
     };
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
-    $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['RotFecha']   = $_POST['RotFecha'] ?? '';
+    $_POST['Codhor']   = $_POST['Codhor'] ?? '';
+    $_POST['NumLega']  = $_POST['NumLega'] ?? '';
+    $_POST['RotFecha'] = $_POST['RotFecha'] ?? '';
     $_POST['RotDia']   = $_POST['RotDia'] ?? '';
+    $_POST['RoLVenc']  = $_POST['RoLVenc'] ?? '';
 
     $Codhor  = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $RotDia = test_input($_POST['RotDia']);
+    $RotDia  = test_input($_POST['RotDia']);
+    $RoLVenc = test_input($_POST['RoLVenc']);
     $Fecha   = test_input(dr_fecha($_POST['RotFecha']));
-
+    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])): '20991231';
+    
+    if (intval($RoLVenc) < intval($Fecha)) {
+        PrintRespuestaJson('error', 'El <b>Vencimiento</b> no puede ser menor a la <b>Fecha</b> de inicio de la Rotación.');
+        exit;
+    };
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'La rotación es requerida.');
         exit;
@@ -662,7 +673,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 
-    $query = "INSERT INTO ROTALEG (RolLega,RolFech,RolRota,RolDias,FechaHora) VALUES ('$NumLega','$Fecha','$Codhor','$RotDia','$FechaHora')";
+    $query = "INSERT INTO ROTALEG (RolLega,RolFech,RolRota,RolDias,FechaHora,RoLVenc) VALUES ('$NumLega','$Fecha','$Codhor','$RotDia','$FechaHora','$RoLVenc')";
 
     if (InsertRegistro($query)) {
 
@@ -733,6 +744,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $_POST['NumLega']  = $_POST['NumLega'] ?? '';
     $_POST['RotFecha'] = $_POST['RotFecha'] ?? '';
     $_POST['RotDia']   = $_POST['RotDia'] ?? '';
+    $_POST['RoLVenc']  = $_POST['RoLVenc'] ?? '';
+    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])): '20991231';
 
     $Codhor  = test_input($_POST['Codhor']);
     $Codhor2 = test_input($_POST['Codhor2']);
@@ -740,6 +753,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $RotDia  = test_input($_POST['RotDia']);
     $Fecha   = test_input(dr_fecha($_POST['RotFecha']));
 
+    if (intval($RoLVenc) < intval($Fecha)) {
+        PrintRespuestaJson('error', 'El <b>Vencimiento</b> no puede ser menor a la <b>Fecha</b> de inicio de la Rotación.');
+        exit;
+    };
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'La rotación es requerida.');
         exit;
@@ -764,9 +781,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 
-    $query = "INSERT INTO ROTALEG (RolLega,RolFech,RolRota,RolDias,FechaHora) VALUES ('$NumLega','$Fecha','$Codhor','$RotDia','$FechaHora')";
+    // $query = "INSERT INTO ROTALEG (RolLega,RolFech,RolRota,RolDias,FechaHora) VALUES ('$NumLega','$Fecha','$Codhor','$RotDia','$FechaHora')";
 
-    $query = "UPDATE ROTALEG SET RolRota = '$Codhor', RolDias = '$RotDia', FechaHora = '$FechaHora' WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
+    $query = "UPDATE ROTALEG SET RolRota = '$Codhor', RolDias = '$RotDia', FechaHora = '$FechaHora', RoLVenc = '$RoLVenc' WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
 
     if (UpdateRegistro($query)) {
         $tiempo_inicio_proceso = microtime(true);

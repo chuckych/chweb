@@ -502,6 +502,7 @@ function CheckUncheck(selector_check, selector_uncheck, selectorcheckbox, classa
     });
 }
 function singleDatePicker(selector, opens, drop) {
+    $(selector).attr('autocomplete', 'off')
     $(selector).daterangepicker({
         singleDatePicker: true,
         opens: opens,

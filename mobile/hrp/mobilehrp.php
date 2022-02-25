@@ -59,7 +59,12 @@
 
         ?>
         <input type="hidden" id="_drMob2">
-        <div class="row bg-white py-3 radius" id="RowTableMobile">
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="btnMenu"></div>
+            </div>
+        </div>
+        <div class="row bg-white pb-3 radius" id="RowTableMobile">
 
             <div class="col-12 table-responsive" id="divTableMobile">
                 <table class="table text-wrap w-100" id="table-mobile">

@@ -3,4 +3,5 @@
 <script src="/<?= HOMEHOST ?>/js/popper.min.js"></script>
 <!-- bootstrap.min.js -->
 <script src="/<?= HOMEHOST ?>/js/bootstrap.min.js"></script>
+<script src="/<?= HOMEHOST ?>/js/axios.min.js"></script>
 <script src="/<?= HOMEHOST ?>/js/funciones-min.js?v=<?= vjs() ?>"></script>
