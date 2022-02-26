@@ -2557,8 +2557,8 @@ function EstadoProceso($url)
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $respuesta = curl_exec($ch);
         curl_close($ch);
-        return respuestaWebService($respuesta);
     } while (respuestaWebService($respuesta) == 'Pendiente');
+    return respuestaWebService($respuesta);
 }
 function PingWebServiceRRHH()
 {
@@ -3220,11 +3220,11 @@ function regid_legajo($legajo)
 }
 function horarioCH($HorCodi)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $params  = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $query   = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
+    $stmt    = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     while ($a = sqlsrv_fetch_array($stmt)) {
         $data = array(
@@ -3234,7 +3234,6 @@ function horarioCH($HorCodi)
         return $data;
     }
     sqlsrv_close($link);
-    exit;
 }
 function listaRol($idLista  = '0')
 {
