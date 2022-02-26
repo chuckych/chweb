@@ -31,6 +31,7 @@ $(function () {
             $("#_eg").val('off').trigger('change')
             $('#tablePersonal').DataTable().ajax.reload();
         }
+        $('#divData').html('')
     });
     $("#_porApNo").click(function () {
         CheckSesion()
@@ -43,24 +44,9 @@ $(function () {
             $("#_porApNo").val('off').trigger('change')
             $('#tablePersonal').DataTable().ajax.reload();
         }
+        $('#divData').html('')
     });
-    $('#tablePersonal').dataTable({
-        "initComplete": function (settings) {
-            setTimeout(() => {
-                $("#PersonalTable").removeClass('invisible');
-            }, 100);
-            classEfect("#PersonalTable", 'animate__animated animate__fadeIn')
-            $("#tablePersonal_filter .form-control").attr('placeholder', 'Buscar')
-        },
-        "drawCallback": function (settings) {
-            $("td").tooltip({ container: 'table' });
-            $('[data-toggle="tooltip"]').tooltip();
-            if ($("#_eg").is(":checked")) {
-                $('td').addClass('text-danger')
-            } else {
-                $('td').removeClass('text-danger')
-            }
-        },
+    let tablePersonal = $('#tablePersonal').dataTable({
         bProcessing: true,
         serverSide: true,
         deferRender: true,
@@ -138,25 +124,35 @@ $(function () {
             }
         }
     });
+    tablePersonal.on('draw.dt', function (e, settings) {
+        e.preventDefault();
+        $("td").tooltip({ container: 'table' });
+        $('[data-toggle="tooltip"]').tooltip();
+        if ($("#_eg").is(":checked")) {
+            $('td').addClass('text-danger')
+        } else {
+            $('td').removeClass('text-danger')
+        }
+    });
+    tablePersonal.on('init.dt', function (e, settings) {
+        e.preventDefault();
+        setTimeout(() => {
+            $("#PersonalTable").removeClass('invisible');
+        }, 100);
+        classEfect("#PersonalTable", 'animate__animated animate__fadeIn')
+        $("#tablePersonal_filter .form-control").attr('placeholder', 'Buscar')
+    });
+    tablePersonal.on('xhr', function (e, settings, json) {
+        tablePersonal.off('xhr');
+    });
+    $.fn.DataTable.ext.pager.numbers_length = 5;
     function getListHorarios(datos, selector) {
-        $(selector).dataTable({
-            initComplete: function (settings) {
-                $("#tableHorarios_wrapper thead").remove()
-                $(selector).show()
-                $(selector + "_filter .form-control").attr('placeholder', 'Buscar Horario')
-            },
-            drawCallback: function (settings) {
-                $("#tableHorarios_wrapper thead").remove()
-                classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
-                setTimeout(() => {
-                    $('#actModal').modal('show')
-                }, 100);
-            },
+        let table = $(selector).dataTable({
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn pointer');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?v=horarios",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -166,7 +162,6 @@ $(function () {
                     $(selector).css("display", "none");
                 }
             },
-
             columns: [
                 {
                     className: 'text-center align-middle select', targets: 'HorCodi', title: '',
@@ -185,11 +180,23 @@ $(function () {
                 {
                     className: 'text-center align-middle select', targets: 'HorID', title: '',
                     "render": function (data, type, row, meta) {
-                        let datacol = `<span class="select" title="ID">` + row[`HorID`] + `</span>`
+                        let datacol = `<span class="select d-none" title="ID">` + row[`HorID`] + `</span>`
                         return datacol;
                     },
                 },
             ],
+            dom: `
+            <'row'
+                <'col-12 col-md-6 d-inline-flex'l>
+                <'col-12 col-md-6 d-inline-flex justify-content-end'f>
+            >
+            <'row' <'col-12't>>
+            <'row'
+                <'col-12 col-sm-6 pl-1'i>
+                <'col-12 col-sm-6'p>
+            >
+            `,
+            lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]], //mostrar cantidad de registros
             scrollY: '200px',
             scrollX: true,
             scrollCollapse: true,
@@ -207,7 +214,7 @@ $(function () {
                 "sLengthMenu": "_MENU_",
                 "sZeroRecords": "",
                 "sEmptyTable": "",
-                "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Horarios",
+                "sInfo": "Pag. _START_ a _END_ de _TOTAL_ Horarios",
                 "sInfoEmpty": "No se encontraron resultados",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ Horarios)",
                 "sInfoPostFix": "",
@@ -223,24 +230,28 @@ $(function () {
                 "sLoadingRecords": "<div class='spinner-border text-light'></div>",
             },
         });
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+            $("#tableHorarios_wrapper thead").remove()
+            classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
+        });
+        table.on('init.dt', function (e, settings) {
+            e.preventDefault();
+            $(selector).show()
+            $(selector + "_filter .form-control").attr('placeholder', 'Buscar Horario')
+        });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
+
     }
     function getListRotaciones(datos, selector) {
-        $(selector).dataTable({
-            initComplete: function (settings) {
-                $("#tableHorarios_wrapper thead").remove()
-                $(selector).show()
-                $(selector + "_filter .form-control").attr('placeholder', 'Buscar Rotación')
-            },
-            drawCallback: function (settings) {
-                $("#tableHorarios_wrapper thead").remove()
-                classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
-                $('#actModal').modal('show')
-            },
+        let table = $(selector).dataTable({
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn pointer');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?v=ListaRotaciones",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -284,7 +295,7 @@ $(function () {
                 "sLengthMenu": "_MENU_",
                 "sZeroRecords": "",
                 "sEmptyTable": "",
-                "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Horarios",
+                "sInfo": "Pag _START_ a _END_ de _TOTAL_ Horarios",
                 "sInfoEmpty": "No se encontraron resultados",
                 "sInfoFiltered": "(filtrado de un total de _MAX_ Horarios)",
                 "sInfoPostFix": "",
@@ -300,198 +311,28 @@ $(function () {
                 "sLoadingRecords": "<div class='spinner-border text-light'></div>",
             },
         });
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+            $("#tableHorarios_wrapper thead").remove()
+            classEfect('#tableHorarios_wrapper', 'animate__animated animate__fadeIn')
+        });
+        table.on('init.dt', function (e, settings) {
+            e.preventDefault();
+            $(selector).show()
+            $(selector + "_filter .form-control").attr('placeholder', 'Buscar Rotación')
+        });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
+
     }
-    function getHorale1(datos, selector) {
-        $(selector).dataTable({
-            initComplete: function (settings) {
-                $(selector + " thead").remove()
-            },
-            drawCallback: function (settings) {
-                $(selector + " thead").remove()
-                let titletabla = '<div>Horarios Desde: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_horale1"><i class="bi bi-plus"></i></button>`
-
-                if (settings.aiDisplay.length == 0) {
-                    let titletabla = '<div class="fw4">Sin Horario Desde asignado.</div>';
-                    $('#titleDesde').html(titletabla + btnAdd)
-                    $(selector).hide()
-                } else {
-                    $(selector).show()
-                    $('#titleDesde').html(titletabla + btnAdd)
-                }
-                $(".c_horale1").click(function () {
-                    CheckSesion()
-                    let data = settings.json.data[0];
-                    $('#actModal .modal-title').html('Nueva Asignación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
-
-                    setTimeout(() => {
-                        $('#H1Horario').prepend(`
-                        <label class="fontq">Fecha desde:</label>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                            <input type="text" class="form-control text-center h40 w150" name="FDesde" id="inputH1FDesde">
-                        </div>
-                        `)
-                        singleDatePicker('#inputH1FDesde', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('#divData .NumLega').text())
-                        $('#inputH1Codhor').mask('0000');
-                        $('#inputTipo').val('c_horale1');
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
-                        setTimeout(() => {
-                            getListHorarios(datos, '#tableHorarios')
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                $('#inputH1Codhor').val(data.HorCodi)
-                                $('#inputH1horario').val(data.HorDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-                            });
-                        }, 100);
-
-                    }, 300);
-                    submitForm('#form', 'crud.php')
-                });
-                $(".actModal").click(function () {
-                    CheckSesion()
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    $('#actModal .modal-title').html('Editar Asignación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
-
-                    setTimeout(() => {
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.Legajo + ') ' + data.ApNo + `</span>`)
-                        $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.Fecha + `</span>`)
-                        $('#inputH1Codhor').val(data.CodHor)
-                        $('#inputH1Codhor2').val(data.CodHor)
-                        $('#inputH1Legajo').val(data.Legajo)
-                        $('#inputTipo').val('u_horale1');
-                        $('#inputH1Fecha').val(data.FechaStr)
-                        $('#inputH1Codhor').mask('0000');
-                        $('#inputH1horario').val(data.Horario)
-                        // $('#tipo').val('u_horale1')
-
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
-                        setTimeout(() => {
-                            getListHorarios(datos, '#tableHorarios')
-
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                // $('tr').removeClass('table-active')
-                                // $(this).parents('tr').addClass('table-active')
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                // $("#H"+data.HorCodi+"H").parents('tr').addClass('table-active')
-                                // console.log(data);
-                                $('#inputH1Codhor').val(data.HorCodi)
-                                $('#inputH1horario').val(data.HorDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-
-                            });
-
-                        }, 100);
-                    }, 300);
-                    submitForm('#form', 'crud.php')
-                });
-                $(".horale1Delete").click(function () {
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    bootbox.confirm({
-                        message: `<span class="fonth fw5">¿Eliminar asignación Desde?</span><br>
-                        <div class="fontq mt-3">
-                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.Legajo + `) ` + data.ApNo + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.Fecha + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.CodHor + `) ` + data.Horario + `</span></p>
-                        </div>
-                        `,
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq submit'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-                                $.ajax({
-                                    type: "POST",
-                                    url: "crud.php",
-                                    'data': {
-                                        NumLega: data.Legajo,
-                                        Fecha: data.FechaStr,
-                                        Codhor: data.CodHor,
-                                        tipo: 'd_horale1'
-                                    },
-                                    beforeSend: function (data) {
-                                        $.notifyClose();
-                                        ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar')
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    },
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'success', 5000, 'right')
-                                            ActualizaTablas()
-                                        } else {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                });
-
-                $.each(settings.json, function (key, value) {
-                    if (key == '_aTur') {
-                        if (value === 1) {
-                            $('.c_horale1').prop('disabled', false);
-                        } else {
-                            $('.c_horale1').prop('disabled', true);
-                        }
-                    } else if (key == '_mTur') {
-                        if (value === 1) {
-                            $('.actModal').prop('disabled', false);
-                        } else {
-                            $('.actModal').prop('disabled', true);
-                        }
-                    } else if (key == '_bTur') {
-                        if (value === 1) {
-                            $('.horale1Delete').prop('disabled', false);
-                        } else {
-                            $('.horale1Delete').prop('disabled', true);
-                        }
-                    } else if (key == 'TotalCit') {
-                        if (value > 0) {
-                            $('.cita').html('Citaciones (' + value + ')')
-                        } else {
-                            $('.cita').html('Citaciones (0)')
-                        }
-                    }
-                });
-            },
+    function getHorale1(datos, selector) { // Tabla de Horarios desde
+        let table = $(selector).dataTable({
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?v=Desde",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -556,207 +397,227 @@ $(function () {
                 "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
             }
         });
-    }
-    function getHorale2(datos, selector) {
-        $(selector).dataTable({
-            initComplete: function (settings) {
-                $(selector + " thead").remove()
-            },
-            drawCallback: function (settings) {
-                $(selector + " thead").remove()
-                let titletabla = '<div>Horarios Desde Hasta: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 btn-custom pointer border c_horale2"><i class="bi bi-plus"></i></button>`
-                if (settings.aiDisplay.length == 0) {
-                    let titletabla = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
-                    $('#titleDesdeHasta').html(titletabla + btnAdd)
-                    $(selector).hide()
-                } else {
-                    $(selector).show()
-                    $('#titleDesdeHasta').html(titletabla + btnAdd)
-                }
-                $(".c_horale2").click(function () {
-                    CheckSesion()
-                    let data = settings.json.data[0];
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+
+            $(selector + " thead").remove()
+            let titletabla = '<div>Horarios Desde: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
+            let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 pointer border btn-custom c_horale1"><i class="bi bi-plus"></i></button>`
+
+            if (settings.aiDisplay.length == 0) {
+                let titletabla = '<div class="fw4">Sin Horario Desde asignado.</div>';
+                $('#titleDesde').html(titletabla + btnAdd)
+                $(selector).hide()
+            } else {
+                $(selector).show()
+                $('#titleDesde').html(titletabla + btnAdd)
+            }
+            $(".c_horale1").click(function (e) {
+                e.preventDefault();
+                $('#actModal').modal('show')
+                CheckSesion()
+                let data = settings.json.data[0];
+                $('.loader').show();
+
+                $('#actModal .modal-title').html('Nueva Asignación')
+                getHTML('bodyHorale1.html', '#actModalbody')
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=altaDesde'
+                }).then(function (response) {
+                    $('#actModalbody').html(response.data)
                     $('#actModal .modal-title').html('Nueva Asignación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
 
-                    setTimeout(() => {
-                        $('#H1Horario').prepend(`
-                        <label class="fontq">Fecha desde / hasta:</label>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                            <input type="text" class="form-control text-center h40 w250" name="FDesdeHasta" id="inputH1FDesdeHasta">
-                        </div>
+                    $('#H1Horario').prepend(`
+                    <label class="fontq">Fecha desde:</label>
+                    <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                        <input type="text" class="form-control text-center h40 w150" name="FDesde" id="inputH1FDesde">
+                    </div>
+                    `)
+                    singleDatePicker('#inputH1FDesde', 'right', 'down')
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                    $('#inputH1Legajo').val($('#divData .NumLega').text())
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputTipo').val('c_horale1');
+                    $('#divtableHorarios').html('')
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
                         `)
-                        dobleDatePicker('#inputH1FDesdeHasta', 'right', 'down')
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
-                        $('#inputH1Legajo').val($('#divData .NumLega').text())
-                        $('#inputH1Codhor').mask('0000');
-                        $('#inputTipo').val('c_horale2');
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
-                        setTimeout(() => {
-                            getListHorarios(datos, '#tableHorarios')
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                $('#inputH1Codhor').val(data.HorCodi)
-                                $('#inputH1horario').val(data.HorDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-                            });
-                        }, 100);
-                    }, 300);
-                });
-
-                $(".actModal2").click(function () {
-                    CheckSesion()
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    $('#actModal .modal-title').html('Editar Asignación')
-                    getHTML('bodyHorale1.html', '#actModalbody')
-
-                    setTimeout(() => {
-                        $('#H1Horario').prepend(`
-                        <label class="fontq">Fecha Hasta:</label>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
-                            <input type="hidden" class="" name="FDesde" id="inputH1FDesde">
-                            <input type="hidden" class="" name="FHasta2" id="inputH1FHasta2">
-                            <input type="text" class="form-control text-center h40 w150" name="FHasta" id="inputH1FHasta">
-                        </div>
-                        `)
-                        singleDatePicker('#inputH1FHasta', 'right', 'down')
-                        $('#inputH1FHasta').data('daterangepicker').setStartDate(data.Ho2Fec2);
-                        $('#inputH1FHasta').data('daterangepicker').setEndDate(data.Ho2Fec2);
-
-                        $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.Legajo + ') ' + data.ApNo + `</span>`)
-                        $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.Ho2Fec1 + `</span>`)
-                        $('#inputH1Codhor').val(data.Ho2Hora)
-                        $('#inputH1Codhor2').val(data.Ho2Hora)
-                        $('#inputH1Legajo').val(data.Legajo)
-                        $('#inputH1FDesde').val(data.Ho2Fec1)
-                        $('#inputH1FHasta2').val(data.Ho2Fec2)
-                        $('#inputTipo').val('u_horale2');
-                        $('#inputH1Fecha').val(data.FechaStr)
-                        $('#inputH1Codhor').mask('0000');
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
+                    getListHorarios(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.HorCodi)
                         $('#inputH1horario').val(data.HorDesc)
-                        // $('#tipo').val('u_horale1')
-
-                        $('#divtableHorarios').html('')
-                        $('#divtableHorarios').html(`
-                                <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
-                            `)
-                        let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
-                        setTimeout(() => {
-                            getListHorarios(datos, '#tableHorarios')
-
-                            $("#tableHorarios tbody").on('click', '.select', function (e) {
-                                e.preventDefault();
-                                // $('tr').removeClass('table-active')
-                                // $(this).parents('tr').addClass('table-active')
-                                let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
-                                // $("#H"+data.HorCodi+"H").parents('tr').addClass('table-active')
-                                // console.log(data);
-                                $('#inputH1Codhor').val(data.HorCodi)
-                                $('#inputH1horario').val(data.HorDesc)
-                                classEfect('#inputH1Codhor', 'fw5 border-info')
-                                classEfect('#inputH1horario', 'fw5 border-info')
-                                e.stopImmediatePropagation();
-
-                            });
-
-                        }, 200);
-                        // $('#actModal').modal('show')
-                    }, 300);
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+                    $('.loader').fadeOut('slow');
+                }).catch(function (error) {
+                    alert('ERROR\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
+                    submitForm('#form', 'crud.php')
                 });
 
-                $.each(settings.json, function (key, value) {
-                    if (key == '_aTur') {
-                        if (value === 1) {
-                            $('.c_horale2').prop('disabled', false);
-                        } else {
-                            $('.c_horale2').prop('disabled', true);
+            });
+            $(".actModal").click(function (e) {
+                e.preventDefault();
+                $('#actModal').modal('show')
+                CheckSesion()
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                $('.loader').show();
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=EditarDesde'
+                }).then(function (response) {
+                    $('#actModalbody').html(response.data)
+                    $('#actModal .modal-title').html('Editar Asignación')
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.Legajo + ') ' + data.ApNo + `</span>`)
+                    $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.Fecha + `</span>`)
+                    $('#inputH1Codhor').val(data.CodHor)
+                    $('#inputH1Codhor2').val(data.CodHor)
+                    $('#inputH1Legajo').val(data.Legajo)
+                    $('#inputTipo').val('u_horale1');
+                    $('#inputH1Fecha').val(data.FechaStr)
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputH1horario').val(data.Horario)
+                    // $('#divtableHorarios').html('')
+                    // $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border table-hover"></table>`)
+
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
+                        `)
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
+                    getListHorarios(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.HorCodi)
+                        $('#inputH1horario').val(data.HorDesc)
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+                    $('.loader').fadeOut('slow');
+                    submitForm('#form', 'crud.php')
+                }).catch(function (error) {
+                    alert('ERROR\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
+                });
+
+            });
+            $(".horale1Delete").click(function () {
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                bootbox.confirm({
+                    message: `<span class="fonth fw5">¿Eliminar asignación Desde?</span><br>
+                    <div class="fontq mt-3">
+                        <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.Legajo + `) ` + data.ApNo + `</span></p>
+                        <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.Fecha + `</span></p>
+                        <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.CodHor + `) ` + data.Horario + `</span></p>
+                    </div>
+                    `,
+                    // message: '',
+                    buttons: {
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-custom text-white btn-sm fontq submit'
+                        },
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-light btn-sm fontq text-secondary'
                         }
-                    } else if (key == '_mTur') {
-                        if (value === 1) {
-                            $('.actModal2').prop('disabled', false);
-                        } else {
-                            $('.actModal2').prop('disabled', true);
-                        }
-                    } else if (key == '_bTur') {
-                        if (value === 1) {
-                            $('.horale2Delete').prop('disabled', false);
-                        } else {
-                            $('.horale2Delete').prop('disabled', true);
+                    },
+                    callback: function (result) {
+                        if (result) {
+
+
+                            let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+                            $.notifyClose(); // close any notifications
+                            ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar') // Desactivo el boton de submit
+                            notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right') // Notifico que esta procesando
+                            let sendFormData = new FormData(); //instancia para enviar datos
+                            sendFormData.append("NumLega", data.Legajo) //agrega el dato a enviar
+                            sendFormData.append("Fecha", data.FechaStr) //agrega el dato a enviar
+                            sendFormData.append("Codhor", data.CodHor) //agrega el dato a enviar
+                            sendFormData.append("tipo", 'd_horale1') //agrega el dato a enviar
+
+                            axios({
+                                method: 'post', //tipo de envio
+                                url: 'crud.php?v=deleteDesde', //url del controlador
+                                data: sendFormData //datos que se envian
+                            }).then(function (response) { //funcion que se ejecuta cuando el servidor retorna una respuesta
+                                let data = response.data; //guarda los datos enviados desde el servidor
+                                if (data.status == "ok") {
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'success', 5000, 'right')
+                                    ActualizaTablas()
+                                } else {
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'danger', 5000, 'right')
+                                }
+                            }).then(() => {
+                            }).catch(function (error) {
+                                alert('ERROR AL ELIMINAREL HORARIO\n' + error); // Si ocurrio un error
+                                ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar') // desactivo el boton
+                                $.notifyClose(); // Cierro la notificacion
+                            }).then(function () { // Luego de ejecutarse
+
+                            });
                         }
                     }
                 });
+            });
 
-                submitForm('#form', 'crud.php')
-                $(".horale2Delete").click(function () {
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    bootbox.confirm({
-                        message: `<span class="fonth fw5">¿Eliminar asignación Desde Hasta?</span><br>
-                        <div class="fontq mt-3">
-                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.Legajo + `) ` + data.ApNo + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.Ho2Fec1 + ` al ` + data.Ho2Fec2 + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.Ho2Hora + `) ` + data.HorDesc + `</span></p>
-                        </div>
-                        `,
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq submit'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
-                        },
-                        callback: function (result) {
-                            if (result) {
-                                let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-                                $.ajax({
-                                    type: "POST",
-                                    url: "crud.php",
-                                    'data': {
-                                        NumLega: data.Legajo,
-                                        FechaIni: data.Ho2Fec1,
-                                        FechaFin: data.Ho2Fec2,
-                                        Codhor: data.Ho2Hora,
-                                        tipo: 'd_horale2'
-                                    },
-                                    beforeSend: function (data) {
-                                        $.notifyClose();
-                                        ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar')
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    },
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'success', 5000, 'right')
-                                            ActualizaTablas()
-                                        } else {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                    });
-                });
-            },
+            $.each(settings.json, function (key, value) {
+                if (key == '_aTur') {
+                    if (value === 1) {
+                        $('.c_horale1').prop('disabled', false);
+                    } else {
+                        $('.c_horale1').prop('disabled', true);
+                    }
+                } else if (key == '_mTur') {
+                    if (value === 1) {
+                        $('.actModal').prop('disabled', false);
+                    } else {
+                        $('.actModal').prop('disabled', true);
+                    }
+                } else if (key == '_bTur') {
+                    if (value === 1) {
+                        $('.horale1Delete').prop('disabled', false);
+                    } else {
+                        $('.horale1Delete').prop('disabled', true);
+                    }
+                } else if (key == 'TotalCit') {
+                    if (value > 0) {
+                        $('.cita').html('Citaciones (' + value + ')')
+                    } else {
+                        $('.cita').html('Citaciones (0)')
+                    }
+                }
+            });
+        });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
+
+    }
+    function getHorale2(datos, selector) { // Tabla de Horarios desde hasta
+        let table = $(selector).dataTable({
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?t=DesdeHasta",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -766,7 +627,6 @@ $(function () {
                     $(selector).css("display", "none");
                 }
             },
-
             columns: [
                 {
                     className: 'align-middle', targets: 'Ho2Fec1', title: 'Desde',
@@ -829,208 +689,233 @@ $(function () {
                 "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
             }
         });
-    }
-    function getCitacion(datos, selector) {
-        $(selector).dataTable({
-            initComplete: function (settings) {
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+            $(selector + " thead").remove()
+            let titletabla = '<div>Horarios Desde Hasta: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
+            let btnAdd = `<button title="Nueva asignación" class="btn btn-sm px-2 btn-custom pointer border c_horale2"><i class="bi bi-plus"></i></button>`
+            if (settings.aiDisplay.length == 0) {
+                let titletabla = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
+                $('#titleDesdeHasta').html(titletabla + btnAdd)
+                $(selector).hide()
+            } else {
+                $(selector).show()
+                $('#titleDesdeHasta').html(titletabla + btnAdd)
+            }
+            $(".c_horale2").click(function (e) {
+                e.preventDefault();
+                $('#actModal').modal('show')
+                $('.loader').show();
+                CheckSesion()
+                let data = settings.json.data[0];
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=altaDesdeHasta'
+                }).then(function (response) {
+                    $('#actModalbody').html(response.data)
+                    $('#actModal .modal-title').html('Nueva Asignación')
+                    $('#H1Horario').prepend(`
+                    <label class="fontq">Fecha desde / hasta:</label>
+                    <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                        <input type="text" class="form-control text-center h40 w250" name="FDesdeHasta" id="inputH1FDesdeHasta">
+                    </div>
+                    `)
+                    dobleDatePicker('#inputH1FDesdeHasta', 'right', 'down')
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                    $('#inputH1Legajo').val($('#divData .NumLega').text())
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputTipo').val('c_horale2');
+                    $('#divtableHorarios').html('')
+                    // $('#divtableHorarios').html(`
+                    //         <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>
+                    //     `)
 
-            },
-            drawCallback: function (settings) {
-                $(selector + " thead").remove()
-                let titletabla = '<div>Citaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
-                let btnAdd = `<button title="Nueva citación" class="btn btn-sm btn-custom px-2 pointer border c_citacion"><i class="bi bi-plus"></i></button>`
-                if (settings.aiDisplay.length == 0) {
-                    let titletabla = '<div class="fw4">Sin Citaciones</div>';
-                    $('#titleCitaciones').html(titletabla + btnAdd)
-                    $(selector).hide()
-                } else {
-                    $(selector).show()
-                    $('#titleCitaciones').html(titletabla + btnAdd)
-                }
-
-                $(".c_citacion").click(function () {
-                    CheckSesion()
-                    $('#actModalCit .modal-title').html('Nueva Citación')
-                    getHTML('bodyHorale1.html', '#actModalCitbody')
-                    setTimeout(() => {
-                        $('#actModalCitbody #divtableHorarios').remove()
-                        $('#actModalCitbody #H1Horario label').remove()
-                        $('#actModalCitbody #inputH1Codhor').remove()
-                        $('#actModalCitbody #inputH1horario').remove()
-                        $('#actModalCitbody #inputH1Fecha').remove()
-                        // $('#H1Legajo').remove()
-                        $('#actModalCitbody #H1Fecha').remove()
-                        $('#actModalCitbody #H1Horario').prepend(`
-                        <label class="fontq">Fecha:</label>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn mb-2">
-                            <input type="text" class="form-control text-center h40 w150" name="Fecha" id="Fecha">
-                            <input type="hidden" class="form-control text-center h40 w150" name="alta_Citación" id="alta_Citación" value="true">
-                        </div>
-                        <label class="fontq mt-2">Entra / Sale / Descanso</label>
-                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn">
-                            <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitEntra" id="CitEntra" placeholder="00:00" autocomplete=off >
-                            <input type="tel" class="mx-1 form-control text-center h40 w100 HoraMask" name="CitSale" id="CitSale" placeholder="00:00" autocomplete=off >
-                            <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitDesc" id="CitDesc" value="00:00" autocomplete=off >
-                        </div>
-                        <input type="hidden" class="" name="datos_Citacion" id="datos_Citacion">
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
                         `)
-                        singleDatePicker('#Fecha', 'right', 'down')
-                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
-                        $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
-                        $('#actModalCitbody #inputTipo').val('c_citacion');
-                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
-                        $("#actModalCitbody #Fecha").change(function () {
-                            $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
-                        });
-                        $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
-                        $('#actModalCit').modal('show')
-                    }, 200);
-                    submitFormCit()
-                });
-                $(".actModalCit").click(function () {
-                    CheckSesion()
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    $('#actModalCit .modal-title').html('Editar Citación')
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
+                    getListHorarios(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.HorCodi)
+                        $('#inputH1horario').val(data.HorDesc)
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+                    $('.loader').fadeOut('slow');
+                }).catch(function (error) {
+                    alert('ERROR\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
 
-                    getHTML('bodyHorale1.html', '#actModalCitbody')
-                    setTimeout(() => {
-                        $('#actModalCitbody #divtableHorarios').remove()
-                        $('#actModalCitbody #H1Horario label').remove()
-                        $('#actModalCitbody #inputH1Codhor').remove()
-                        $('#actModalCitbody #inputH1horario').remove()
-                        $('#actModalCitbody #inputH1Fecha').remove()
-                        // $('#H1Legajo').remove()
-                        $('#actModalCitbody #H1Fecha').remove()
-                        $('#actModalCitbody #H1Horario').prepend(`
-                                <label class="fontq">Fecha:</label>
-                                <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn mb-2">
-                                    <input type="text" class="form-control text-center h40 w150" name="Fecha" id="Fecha">
-                                    <input type="hidden" class="form-control text-center h40 w150" name="alta_Citación" id="alta_Citación" value="true">
-                                </div>
-                                <label class="fontq mt-2">Entra / Sale / Descanso</label>
-                                <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn">
-                                    <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitEntra" id="CitEntra" placeholder="00:00" autocomplete=off>
-                                    <input type="tel" class="mx-1 form-control text-center h40 w100 HoraMask" name="CitSale" id="CitSale" placeholder="00:00" autocomplete=off>
-                                    <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitDesc" id="CitDesc" value="00:00" autocomplete=off>
-                                </div>
-                                <input type="hidden" class="" name="datos_Citacion" id="datos_Citacion">
-                                `)
-                        singleDatePicker('#Fecha', 'right', 'down')
-                        // $('#actModalCitbody #Fecha').data('daterangepicker').setStartDate(data.CitFech);
-                        $('#Fecha').data('daterangepicker').setStartDate(data.CitFech);
-                        $('#Fecha').data('daterangepicker').setEndDate(data.CitFech);
-
-                        $('#actModalCitbody #CitEntra').val(data.CitEntra)
-                        $('#actModalCitbody #CitSale').val(data.CitSale)
-                        $('#actModalCitbody #CitDesc').val(data.CitDesc)
-                        $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
-                        $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
-                        $('#actModalCitbody #inputTipo').val('c_citacion');
-                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
-                        $("#actModalCitbody #Fecha").change(function () {
-                            $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
-                        });
-                        $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
-                        $('#actModalCit').modal('show')
-                    }, 200);
-                    submitFormCit()
                 });
-                $(".CitDelete").click(function () {
-                    let data = $(selector).DataTable().row($(this).parents('tr')).data();
-                    // console.table(data);
-                    bootbox.confirm({
-                        message: `<span class="fonth fw5">¿Eliminar citación?</span><br>
+            });
+
+            $(".actModal2").click(function (e) {
+                e.preventDefault();
+                $('#actModal').modal('show')
+                CheckSesion()
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                $('.loader').show();
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=EditarDesdeHasta'
+                }).then(function (response) {
+                    $('#actModalbody').html(response.data)
+                    $('#actModal .modal-title').html('Editar Asignación')
+                    $('#H1Horario').prepend(`
+                        <label class="fontq">Fecha Hasta:</label>
+                        <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeInDown mb-2">
+                            <input type="hidden" class="" name="FDesde" id="inputH1FDesde">
+                            <input type="hidden" class="" name="FHasta2" id="inputH1FHasta2">
+                            <input type="text" class="form-control text-center h40 w150" name="FHasta" id="inputH1FHasta">
+                        </div>
+                        `)
+                    singleDatePicker('#inputH1FHasta', 'right', 'down')
+                    $('#inputH1FHasta').data('daterangepicker').setStartDate(data.Ho2Fec2);
+                    $('#inputH1FHasta').data('daterangepicker').setEndDate(data.Ho2Fec2);
+
+                    $('#H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + data.Legajo + ') ' + data.ApNo + `</span>`)
+                    $('#H1Fecha').html(`<label class="w60 fontq">Desde:</label><span class="fw5 ls1">` + data.Ho2Fec1 + `</span>`)
+                    $('#inputH1Codhor').val(data.Ho2Hora)
+                    $('#inputH1Codhor2').val(data.Ho2Hora)
+                    $('#inputH1Legajo').val(data.Legajo)
+                    $('#inputH1FDesde').val(data.Ho2Fec1)
+                    $('#inputH1FHasta2').val(data.Ho2Fec2)
+                    $('#inputTipo').val('u_horale2');
+                    $('#inputH1Fecha').val(data.FechaStr)
+                    $('#inputH1Codhor').mask('0000');
+                    $('#inputH1horario').val(data.HorDesc)
+                    $('#divtableHorarios').html('')
+                    // $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
+                        `)
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
+                }).then(() => {
+                    let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListHorarios' });
+                    getListHorarios(datos, '#tableHorarios')
+                    $("#tableHorarios tbody").on('click', '.select', function (e) {
+                        e.preventDefault();
+                        let data = $("#tableHorarios").DataTable().row($(this).parents('tr')).data();
+                        $('#inputH1Codhor').val(data.HorCodi)
+                        $('#inputH1horario').val(data.HorDesc)
+                        classEfect('#inputH1Codhor', 'fw5 border-info')
+                        classEfect('#inputH1horario', 'fw5 border-info')
+                        e.stopImmediatePropagation();
+                    });
+                    $('.loader').fadeOut('slow');
+                }).catch(function (error) {
+                    alert('ERROR\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
+
+                });
+            });
+
+            $.each(settings.json, function (key, value) {
+                if (key == '_aTur') {
+                    if (value === 1) {
+                        $('.c_horale2').prop('disabled', false);
+                    } else {
+                        $('.c_horale2').prop('disabled', true);
+                    }
+                } else if (key == '_mTur') {
+                    if (value === 1) {
+                        $('.actModal2').prop('disabled', false);
+                    } else {
+                        $('.actModal2').prop('disabled', true);
+                    }
+                } else if (key == '_bTur') {
+                    if (value === 1) {
+                        $('.horale2Delete').prop('disabled', false);
+                    } else {
+                        $('.horale2Delete').prop('disabled', true);
+                    }
+                }
+            });
+            submitForm('#form', 'crud.php')
+            $(".horale2Delete").click(function (e) {
+                e.preventDefault();
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                bootbox.confirm({
+                    message: `<span class="fonth fw5">¿Eliminar asignación Desde Hasta?</span><br>
                         <div class="fontq mt-3">
-                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.CitLega + `) ` + data.ApNo + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.CitFech + `</span></p>
-                            <p class="p-0 m-0"><label class="w60 fontq">Citación: </label><span class="fw5">` + data.CitEntra + ` a ` + data.CitSale + `</span></p>
+                            <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.Legajo + `) ` + data.ApNo + `</span></p>
+                            <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.Ho2Fec1 + ` al ` + data.Ho2Fec2 + `</span></p>
+                            <p class="p-0 m-0"><label class="w60 fontq">Horario:</label><span class="fw5">(` + data.Ho2Hora + `) ` + data.HorDesc + `</span></p>
                         </div>
                         `,
-                        // message: '',
-                        buttons: {
-                            confirm: {
-                                label: 'Aceptar',
-                                className: 'btn-custom text-white btn-sm fontq submit'
-                            },
-                            cancel: {
-                                label: 'Cancelar',
-                                className: 'btn-light btn-sm fontq text-secondary'
-                            }
+                    // message: '',
+                    buttons: {
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-custom text-white btn-sm fontq submit'
                         },
-                        callback: function (result) {
-                            if (result) {
-                                let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-                                $.ajax({
-                                    type: "POST",
-                                    url: '../../general/insert.php',
-                                    'data': {
-                                        NumLega: data.CitLega,
-                                        Fecha: data.CitFech,
-                                        tipo: 'd_citacion',
-                                        Datos: data.CitLega + '-' + data.CitFech,
-                                        baja_Cit: 'true'
-                                    },
-                                    beforeSend: function (data) {
-                                        $.notifyClose();
-                                        ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar')
-                                        notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                                    },
-                                    success: function (data) {
-                                        if (data.status == "ok") {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'success', 5000, 'right')
-                                            $("#Citacion").DataTable().ajax.reload(null, false)
-                                            $('#actModalCit').modal('hide')
-                                            let numLega = $('#divData .NumLega').text()
-                                            getHorarioActual((numLega))
-                                        } else {
-                                            ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
-                                            $.notifyClose();
-                                            notify(data.Mensaje, 'danger', 5000, 'right')
-                                        }
-                                    }
-                                });
-                            }
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-light btn-sm fontq text-secondary'
                         }
-                    });
-                });
+                    },
+                    callback: function (result) {
+                        if (result) {
 
-                $.each(settings.json, function (key, value) {
-                    if (key == '_aCit') {
-                        if (value === 1) {
-                            $('.c_citacion').prop('disabled', false);
-                        } else {
-                            $('.c_citacion').prop('disabled', true);
-                        }
-                    } else if (key == '_mCit') {
-                        if (value === 1) {
-                            $('.actModalCit').prop('disabled', false);
-                        } else {
-                            $('.actModalCit').prop('disabled', true);
-                        }
-                    } else if (key == '_bCit') {
-                        if (value === 1) {
-                            $('.CitDelete').prop('disabled', false);
-                        } else {
-                            $('.CitDelete').prop('disabled', true);
-                        }
-                    } else if (key == 'TotalCit') {
-                        if (value > 0) {
-                            $('.cita').html('Citaciones (' + value + ')')
-                        } else {
-                            $('.cita').html('Citaciones (0)')
+                            let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+                            $.notifyClose(); // close any notifications
+                            ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar') // Desactivo el boton de submit
+                            notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right') // Notifico que esta procesando
+                            let sendFormData = new FormData(); //instancia para enviar datos
+                            sendFormData.append("NumLega", data.Legajo) //agrega el dato a enviar
+                            sendFormData.append("FechaIni", data.Ho2Fec1) //agrega el dato a enviar
+                            sendFormData.append("FechaFin", data.Ho2Fec2) //agrega el dato a enviar
+                            sendFormData.append("Codhor", data.Ho2Hora) //agrega el dato a enviar
+                            sendFormData.append("tipo", 'd_horale2') //agrega el dato a enviar
+
+                            axios({
+                                method: 'post', //tipo de envio
+                                url: 'crud.php', //url del controlador
+                                data: sendFormData //datos que se envian
+                            }).then(function (response) { //funcion que se ejecuta cuando el servidor retorna una respuesta
+                                let data = response.data; //guarda los datos enviados desde el servidor
+                                if (data.status == "ok") { //verifica si la respuesta es satisfactoria
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'success', 5000, 'right')
+                                    ActualizaTablas()
+                                } else { // Si no fue satisfactorio
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')
+                                    $.notifyClose();
+                                    notify(data.Mensaje, 'danger', 5000, 'right')
+                                }
+                            }).then(() => {
+                            }).catch(function (error) {
+                                alert('ERROR AL ELIMINAR LA ASIGNACION\n' + error); // Si ocurrio un error
+                                ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar') // desactivo el boton
+                                $.notifyClose(); // Cierro la notificacion
+                            }).then(function () { // Luego de ejecutarse
+
+                            });
                         }
                     }
                 });
-
-
-            },
+            });
+        });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
+    }
+    function getCitacion(datos, selector) { // Tabla de Citaciones
+        let table = $(selector).dataTable({
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?t=citaciones",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -1096,24 +981,242 @@ $(function () {
                 "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
             }
         });
+        table.on('draw.dt', function (e, settings) {
+            e.preventDefault();
+            $(selector + " thead").remove()
+            let titletabla = '<div>Citaciones: <span class="ls1">(' + (settings.aiDisplay.length) + ')</span></div>';
+            let btnAdd = `<button title="Nueva citación" class="btn btn-sm btn-custom px-2 pointer border c_citacion"><i class="bi bi-plus"></i></button>`
+            if (settings.aiDisplay.length == 0) {
+                let titletabla = '<div class="fw4">Sin Citaciones</div>';
+                $('#titleCitaciones').html(titletabla + btnAdd)
+                $(selector).hide()
+            } else {
+                $(selector).show()
+                $('#titleCitaciones').html(titletabla + btnAdd)
+            }
+
+            $(".c_citacion").click(function (e) {
+                e.preventDefault();
+                $('#actModalCit').modal('show')
+                $('.loader').show();
+                CheckSesion()
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=altaCitacion'
+                }).then(function (response) {
+                    $('#actModalCitbody').html(response.data)
+                    $('#actModalCit .modal-title').html('Nueva Citación')
+                    $('#actModalCitbody #divtableHorarios').remove()
+                    $('#actModalCitbody #H1Horario label').remove()
+                    $('#actModalCitbody #inputH1Codhor').remove()
+                    $('#actModalCitbody #inputH1horario').remove()
+                    $('#actModalCitbody #inputH1Fecha').remove()
+                    // $('#H1Legajo').remove()
+                    $('#actModalCitbody #H1Fecha').remove()
+                    $('#actModalCitbody #H1Horario').prepend(`
+                    <label class="fontq">Fecha:</label>
+                    <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn mb-2">
+                        <input type="text" class="form-control text-center h40 w150" name="Fecha" id="Fecha">
+                        <input type="hidden" class="form-control text-center h40 w150" name="alta_Citación" id="alta_Citación" value="true">
+                    </div>
+                    <label class="fontq mt-2">Entra / Sale / Descanso</label>
+                    <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn">
+                        <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitEntra" id="CitEntra" placeholder="00:00" autocomplete=off >
+                        <input type="tel" class="mx-1 form-control text-center h40 w100 HoraMask" name="CitSale" id="CitSale" placeholder="00:00" autocomplete=off >
+                        <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitDesc" id="CitDesc" value="00:00" autocomplete=off >
+                    </div>
+                    <input type="hidden" class="" name="datos_Citacion" id="datos_Citacion">
+                    `)
+                    singleDatePicker('#Fecha', 'right', 'down')
+                    $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                    $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
+                    $('#actModalCitbody #inputTipo').val('c_citacion');
+                    $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
+                    $("#actModalCitbody #Fecha").change(function () {
+                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
+                    });
+                    $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
+                    $('.loader').fadeOut('slow');
+                }).then(() => {
+                    submitFormCit()
+                }).catch(function (error) {
+                    alert('ERROR AL CREAR CITACION\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
+                });
+            });
+            $(".actModalCit").click(function (e) {
+                e.preventDefault();
+                $('.loader').show();
+                $('#actModalCit').modal('show')
+                CheckSesion()
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                axios({
+                    method: 'get',
+                    url: 'bodyHorale1.html?v=' + vjs() + '&t=editarCitacion'
+                }).then(function (response) {
+                    $('#actModalCitbody').html(response.data)
+                    $('#actModalCit .modal-title').html('Editar Citación')
+                    $('#actModalCitbody #divtableHorarios').remove()
+                    $('#actModalCitbody #H1Horario label').remove()
+                    $('#actModalCitbody #inputH1Codhor').remove()
+                    $('#actModalCitbody #inputH1horario').remove()
+                    $('#actModalCitbody #inputH1Fecha').remove()
+                    // $('#H1Legajo').remove()
+                    $('#actModalCitbody #H1Fecha').remove()
+                    $('#actModalCitbody #H1Horario').prepend(`
+                            <label class="fontq">Fecha:</label>
+                            <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn mb-2">
+                                <input type="text" class="form-control text-center h40 w150" name="Fecha" id="Fecha">
+                                <input type="hidden" class="form-control text-center h40 w150" name="alta_Citación" id="alta_Citación" value="true">
+                            </div>
+                            <label class="fontq mt-2">Entra / Sale / Descanso</label>
+                            <div class="d-inline-flex align-items-center w-100 animate__animated animate__fadeIn">
+                                <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitEntra" id="CitEntra" placeholder="00:00" autocomplete=off>
+                                <input type="tel" class="mx-1 form-control text-center h40 w100 HoraMask" name="CitSale" id="CitSale" placeholder="00:00" autocomplete=off>
+                                <input type="tel" class="form-control text-center h40 w100 HoraMask" name="CitDesc" id="CitDesc" value="00:00" autocomplete=off>
+                            </div>
+                            <input type="hidden" class="" name="datos_Citacion" id="datos_Citacion">
+                            `)
+                    singleDatePicker('#Fecha', 'right', 'down')
+                    // $('#actModalCitbody #Fecha').data('daterangepicker').setStartDate(data.CitFech);
+                    $('#Fecha').data('daterangepicker').setStartDate(data.CitFech);
+                    $('#Fecha').data('daterangepicker').setEndDate(data.CitFech);
+
+                    $('#actModalCitbody #CitEntra').val(data.CitEntra)
+                    $('#actModalCitbody #CitSale').val(data.CitSale)
+                    $('#actModalCitbody #CitDesc').val(data.CitDesc)
+                    $('#actModalCitbody #H1Legajo').html('<label class="w60 fontq">Legajo:</label><span class="fw5">(' + $('#divData .NumLega').text() + ') ' + $('#divData .ApNo').text() + `</span>`)
+                    $('#actModalCitbody #inputH1Legajo').val($('#divData .NumLega').text())
+                    $('#actModalCitbody #inputTipo').val('c_citacion');
+                    $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
+                    $("#actModalCitbody #Fecha").change(function () {
+                        $('#actModalCitbody #datos_Citacion').val($('#divData .NumLega').text() + '-' + $("#Fecha").val())
+                    });
+                    $('#actModalCitbody .HoraMask').mask(maskBehavior, spOptions);
+                    $('.loader').fadeOut('slow');
+                }).then(() => {
+                    submitFormCit()
+                }).catch(function (error) {
+                    alert('ERROR AL EDITAR CITACION\n' + error);
+                    $('.loader').fadeOut('slow');
+                }).then(function () {
+                });
+
+            });
+            $(".CitDelete").click(function (e) {
+                e.preventDefault();
+                let data = $(selector).DataTable().row($(this).parents('tr')).data();
+                // console.table(data);
+                bootbox.confirm({
+                    message: `<span class="fonth fw5">¿Eliminar citación?</span><br>
+                    <div class="fontq mt-3">
+                        <p class="p-0 m-0"><label class="w60 fontq">Legajo:</label><span class="fw5">(` + data.CitLega + `) ` + data.ApNo + `</span></p>
+                        <p class="p-0 m-0"><label class="w60 fontq">Fecha:</label><span class="fw5">` + data.CitFech + `</span></p>
+                        <p class="p-0 m-0"><label class="w60 fontq">Citación: </label><span class="fw5">` + data.CitEntra + ` a ` + data.CitSale + `</span></p>
+                    </div>
+                    `,
+                    // message: '',
+                    buttons: {
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-custom text-white btn-sm fontq submit'
+                        },
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-light btn-sm fontq text-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+                            $.notifyClose(); // close any notifications
+                            ActiveBTN(true, '.submit', 'Aguarde..', 'Aceptar') // Desactivo el boton de submit
+                            notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right') // Notifico que esta procesando
+
+                            let sendFormData = new FormData(); //instancia para enviar datos
+                            sendFormData.append("Fecha", data.CitFech) //agrega el dato a enviar
+                            sendFormData.append("NumLega", data.CitLega) //agrega el dato a enviar
+                            sendFormData.append("tipo", 'd_citacion') //agrega el dato a enviar
+                            sendFormData.append("Datos", data.CitLega + '-' + data.CitFech) //agrega el dato a enviar
+                            sendFormData.append("baja_Cit", 'true') //agrega el dato a enviar
+
+                            axios({
+                                method: 'post', //tipo de envio
+                                url: '../../general/insert.php', //url del controlador
+                                data: sendFormData //datos que se envian
+                            }).then(function (response) { //funcion que se ejecuta cuando el servidor retorna una respuesta
+                                let data = response.data; //guarda los datos enviados desde el servidor
+                                if (data.status == "ok") { //verifica si la respuesta es satisfactoria
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar') // Activo el boton
+                                    $.notifyClose(); // Cierro la notificacion
+                                    notify(data.Mensaje, 'success', 5000, 'right') // Muestro la notificacion
+                                    $("#Citacion").DataTable().ajax.reload(null, false) // Recargo la tabla
+                                    $('#actModalCit').modal('hide') // Cierro el modal
+                                    let numLega = $('#divData .NumLega').text() // Obtengo el legajo
+                                    getHorarioActual((numLega)) // Obtengo el horario actual
+                                } else { // Si no fue satisfactorio
+                                    ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar')  // desactivo el boton
+                                    $.notifyClose(); // Cierro la notificacion
+                                    notify(data.Mensaje, 'danger', 5000, 'right') // Muestro la notificacion
+                                }
+                            }).then(() => {
+                            }).catch(function (error) {
+                                alert('ERROR AL ELIMINAR LA CITACION\n' + error); // Si ocurrio un error
+                            }).then(function () { // Luego de ejecutarse
+                                ActiveBTN(false, '.submit', 'Aguarde..', 'Aceptar') // desactivo el boton
+                                $.notifyClose(); // Cierro la notificacion
+                            });
+                        }
+                    }
+                });
+            });
+            $.each(settings.json, function (key, value) {
+                if (key == '_aCit') {
+                    if (value === 1) {
+                        $('.c_citacion').prop('disabled', false);
+                    } else {
+                        $('.c_citacion').prop('disabled', true);
+                    }
+                } else if (key == '_mCit') {
+                    if (value === 1) {
+                        $('.actModalCit').prop('disabled', false);
+                    } else {
+                        $('.actModalCit').prop('disabled', true);
+                    }
+                } else if (key == '_bCit') {
+                    if (value === 1) {
+                        $('.CitDelete').prop('disabled', false);
+                    } else {
+                        $('.CitDelete').prop('disabled', true);
+                    }
+                } else if (key == 'TotalCit') {
+                    if (value > 0) {
+                        $('.cita').html('Citaciones (' + value + ')')
+                    } else {
+                        $('.cita').html('Citaciones (0)')
+                    }
+                }
+            });
+        });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
     }
     function getRotaDeta(RoLRota, fechar, dia, RotDesc) {
-        $.ajax({
-            dataType: "json",
-            type: "POST",
-            url: "getHorale.php",
-            'data': {
-                datos: RoLRota
-            },
-            beforeSend: function (data) {
+        let sendFormData = new FormData();
+        sendFormData.append("datos", RoLRota)
+        axios({
+            method: 'post',
+            url: 'getHorale.php?t=detalleRotacion',
+            data: sendFormData
+        }).then(function (response) {
+            let data = response.data;
+            let rotacion = RotDesc
+            let comenzando = dia
+            let fecha = fechar
 
-            },
-            success: function (data) {
-                let rotacion = RotDesc
-                let comenzando = dia
-                let fecha = fechar
-
-                $('.RotaDeta').html(`
+            $('.RotaDeta').html(`
                 <div class="toast-header d-flex justify-content-between animate__animated animate__fadeIn py-2 text-dark">
                     <div class'w-100 fw5'>
                         <div class="mr-auto fw5 fonth animate__animated animate__fadeIn">`+ rotacion + `</div>
@@ -1128,144 +1231,32 @@ $(function () {
                 </div>
                 <div class="toast-body animate__animated animate__fadeIn"></div>
                 `)
-                $('.RotaDeta').toast('show')
-                $.each(data, function (key, value) {
-                    let index = key + 1
-                    $('.RotaDeta .toast-body').append(`
+            $('.RotaDeta').toast('show')
+            $.each(data, function (key, value) {
+                let index = key + 1
+                $('.RotaDeta .toast-body').append(`
                         <div class="fontq mb-1">
                             <span class="fw5">`+ index + `. Horario. (` + value.RotHora + `) ` + value.HorDesc + `</span><br>
                             <span class="">Durante `+ value.RotDias + ` días.</span><br>
                         </div>
                     `)
-                });
-            }
-        })
+            });
+        }).then(() => {
+        }).catch(function (error) {
+            alert('ERROR AL OBTENER DETALLE DE LA ROTACION\n' + error);
+        }).then(function () {
+        });
     }
-    function getHorario(datos) {
-        $.ajax({
-            dataType: "json",
-            type: "POST",
-            url: "getHorale.php",
-            'data': {
-                datos: datos
-            },
-            beforeSend: function (data) {
-
-            },
-            success: function (data) {
-
-                // console.log(HoraMin(data.HorLuDe));
-                function percentHoraUno(uno) {
-                    let TotDia = 1440
-                    let parteUno = HoraMin(uno)
-                    let porcentajeUno = ((parteUno / TotDia) * 100)
-                    return (porcentajeUno).toFixed(1)
-                }
-                function percentHoraDos(Uno, Dos) {
-                    let TotDia = 1440
-                    let parteUno = HoraMin(Uno)
-                    let parteDos = (HoraMin(Dos) - parteUno)
-                    let porcentajeDos = ((parteDos / TotDia) * 100)
-                    return (porcentajeDos).toFixed(1)
-                }
-                function percentHoraTres(Dos) {
-                    let TotDia = 1440
-                    let parteTres = (TotDia - HoraMin(Dos))
-                    let porcentajeTres = ((parteTres / TotDia) * 100)
-                    return (porcentajeTres).toFixed(1)
-                }
-
-
-                console.log(percentHoraUno(data.HorLuDe));
-                console.log(percentHoraDos(data.HorLuDe, data.HorLuHa));
-                console.log(percentHoraTres(data.HorLuHa));
-
-                getHTML('grillaHorario.html', '#divGrillaHorario');
-
-                function progressBar(uno, dos, tres) {
-                    let unos = percentHoraUno(uno)
-                    let doss = percentHoraDos(uno, dos)
-                    let tress = percentHoraTres(tres)
-                    return `
-                    <div class="progress fontq shadow-sm" style="height: 25px;">
-                        <div class="progress-bar bg-light" role="progressbar" style="width: `+ unos + `%" aria-valuenow="` + unos + `" aria-valuemin="0" aria-valuemax="100"></div>
-                        <div class="progress-bar btn-custom opa8" role="progressbar" style="width: `+ doss + `%" aria-valuenow="` + doss + `" aria-valuemin="` + doss + `" aria-valuemax="100">` + uno + ` a ` + dos + `</div>
-                        <div class="progress-bar bg-light" role="progressbar" style="width: `+ tress + `%" aria-valuenow="` + tress + `" aria-valuemin="` + tress + `" aria-valuemax="100">
-                        </div>
-                    </div>
-                    `
-                }
-
-                setTimeout(() => {
-                    if (data.HorLune) {
-                        $('#checkLunes').prop('checked', true)
-                        $('#ProgressLunes').html(progressBar(data.HorLuDe, data.HorLuHa, data.HorLuHa))
-                    }
-                    $('#HorLuHa').html(data.HorLuHa)
-                    $('#HorLuDe').html(data.HorLuDe)
-                    $('#HorLuHs').html(data.HorLuHs)
-
-                    $('#HorMaHa').html(data.HorMaHa)
-                    $('#HorMaDe').html(data.HorMaDe)
-                    $('#HorMaHs').html(data.HorMaHs)
-                    $('#ProgressMartes').html(progressBar(data.HorMaDe, data.HorMaHa, data.HorMaHa))
-                    $('#HorMiHa').html(data.HorMiHa)
-                    $('#HorMiDe').html(data.HorMiDe)
-                    $('#HorMiHs').html(data.HorMiHs)
-                    $('#ProgressMiercoles').html(progressBar(data.HorMiDe, data.HorMiHa, data.HorMiHa))
-                    $('#HorJuHa').html(data.HorJuHa)
-                    $('#HorJuDe').html(data.HorJuDe)
-                    $('#HorJuHs').html(data.HorJuHs)
-                    $('#ProgressJueves').html(progressBar(data.HorJuDe, data.HorJuHa, data.HorJuHa))
-                    $('#HorViHa').html(data.HorViHa)
-                    $('#HorViDe').html(data.HorViDe)
-                    $('#HorViHs').html(data.HorViHs)
-                    $('#ProgressViernes').html(progressBar(data.HorViDe, data.HorViHa, data.HorViHa))
-                }, 500);
-
-
-
-                // $('.RotaDeta').html(`
-                // <div class="toast-header d-flex justify-content-between animate__animated animate__fadeIn py-2 text-dark">
-                //     <div class'w-100 fw5'>
-                //         <div class="mr-auto fw5 fonth animate__animated animate__fadeIn">`+ rotacion + `</div>
-                //         <div class="fontq text-dark">Desde el día ` + fecha + `</div>
-                //         <div class="fontq text-dark">Comenzando el día ` + comenzando + ` de la rotación</div>
-                //     </div>
-                //     <div>
-                //         <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                //             <span aria-hidden="true"> <i class="bi bi-x"></i> </span>
-                //         </button>
-                //     </div>
-                // </div>
-                // <div class="toast-body animate__animated animate__fadeIn"></div>
-                // `)
-                // $('.RotaDeta').toast('show')
-                // $.each(data, function (key, value) {
-                //     let index = key+1
-                //     $('.RotaDeta .toast-body').append(`
-                //         <div class="fontq mb-1">
-                //             <span class="fw5">`+index+`. Horario. (` + value.RotHora + `) ` + value.HorDesc + `</span><br>
-                //             <span class="">Durante `+ value.RotDias + ` días.</span><br>
-                //         </div>
-                //     `)
-                // });
-            }
-        })
-    }
-    function getRotacion(datos, selector) {
+    function getRotacion(datos, selector) { // Tabla de rotaciones
         let table = $(selector).dataTable({
             initComplete: function (settings) {
                 $(selector + " thead").remove()
-            },
-            drawCallback: function (settings) {
-
             },
             createdRow: function (row, data, dataIndex) {
                 $(row).addClass('animate__animated animate__fadeIn');
             },
             "ajax": {
-                url: "getHorale.php",
+                url: "getHorale.php?v=Rotaciones",
                 type: "POST",
                 dataType: "json",
                 "data": function (data) {
@@ -1339,7 +1330,6 @@ $(function () {
                 "url": "/" + _homehost + "/js/DataTableSpanishShort2.json"
             }
         });
-
         table.on('draw.dt', function (e, settings) {
             e.preventDefault();
             $(selector + " thead").remove()
@@ -1361,6 +1351,7 @@ $(function () {
             });
             $(".c_rotacion").click(function (e) {
                 e.preventDefault();
+                $('#actModal').modal('show')
                 $('.RotaDeta').toast('hide')
                 CheckSesion()
                 $(".loader").show();
@@ -1401,7 +1392,11 @@ $(function () {
                     $('#inputRotDia').mask('000');
                     $('#inputTipo').val('c_rotacion');
                     $('#divtableHorarios').html('')
-                    $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+                    // $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
+                        `)
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
                 }).then(() => {
                     let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
                     getListRotaciones(datos, '#tableHorarios')
@@ -1425,6 +1420,7 @@ $(function () {
             });
             $(".actModalRot").click(function (e) {
                 e.preventDefault();
+                $('#actModal').modal('show')
                 CheckSesion()
                 $('.RotaDeta').toast('hide')
                 $(".loader").show();
@@ -1462,7 +1458,7 @@ $(function () {
                     $('#inputRotDia').val(data.RoLDias)
                     if (data.RoLVenc) {
                         singleDatePickerValue('#inputRoLVenc', 'right', 'down', data.RoLVenc)
-                    }else{
+                    } else {
                         singleDatePicker('#inputRoLVenc', 'right', 'down')
                         $('#inputRoLVenc').val('')
                     }
@@ -1475,7 +1471,12 @@ $(function () {
                     $('#inputH1horario').val(data.RotDesc)
 
                     $('#divtableHorarios').html('')
-                    $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+                    // $('#divtableHorarios').html(`<table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover"></table>`)
+
+                    $('#divtableHorarios').html(`
+                            <table id="tableHorarios" class="table text-nowrap mt-2 w-100 border border-top-0 table-hover bg-white"></table>
+                        `)
+                    $('#divtableHorarios').addClass('p-2 mt-2 border')
 
                 }).then(() => {
                     let datos = JSON.stringify({ 'nombre': '', 'legajo': '', 'tabla': 'ListRotaciones' });
@@ -1579,34 +1580,35 @@ $(function () {
                 }
             });
         });
+        table.on('xhr', function (e, settings, json) {
+            table.off('xhr');
+        });
     }
     function getHorarioActual(legajo) {
-        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-        $.ajax({
-            dataType: "json",
-            type: "POST",
-            url: "getHorario.php",
-            'data': {
-                Legajo: legajo
-            },
-            beforeSend: function (data) {
-                $('#divHorarioActual').html(`
-                <div class="d-inline-flex w-100 align-items-center h40 shadow-sm border">
-                    <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-light fw4 text-dark border">Horario Actual: </div>
-                    <div class="fontq w-100 h40 d-flex align-items-center px-2"></div>
-                </div>
-            `)
-            },
-            success: function (data) {
-                // console.table(data);
-                $('#divHorarioActual').html(`
+        $('#divHorarioActual').html(`
+        <div class="d-inline-flex w-100 align-items-center h40 shadow-sm border">
+            <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-ddd fw4 text-dark border">Horario Actual: </div>
+            <div class="fontq w-100 h40 d-flex align-items-center px-2"></div>
+        </div>
+        `)
+        let sendFormData = new FormData();
+        sendFormData.append("Legajo", legajo)
+        axios({
+            method: 'post',
+            url: 'getHorario.php',
+            data: sendFormData
+        }).then(function (response) {
+            $('#divHorarioActual').html(`
                     <div class="d-inline-flex w-100 align-items-center h40 shadow-sm border">
-                        <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-light fw4 text-dark border">Horario Actual: </div>
-                        <div class="fontq w-100 h40 d-flex align-items-center fw4 px-2 animate__animated animate__fadeIn">`+ data.Mensaje + `</div>
+                        <div class="w150 fontq h40 d-flex align-items-center justify-content-center bg-ddd fw4 text-dark border">Horario Actual: </div>
+                        <div class="fontq w-100 h40 d-flex align-items-center fw4 px-2 animate__animated animate__fadeIn">`+ response.data.Mensaje + `</div>
                     </div>
-                `)
-            }
-        })
+                    `)
+        }).then(() => {
+        }).catch(function (error) {
+            alert('ERROR AL OBTENER HORARIO ACTUAL\n' + error);
+        }).then(function () {
+        });
     }
     $("#tablePersonal tbody").on('click', '.view', function (e) {
         e.preventDefault();
@@ -1621,18 +1623,18 @@ $(function () {
         $("#detalleHorario").html(`
         <div class="divTablas">
             <div class="shadow-sm border mb-2">
-                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleDesde">Horarios Desde</div>
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-ddd text-dark fw4" id="titleDesde">Horarios Desde</div>
                 <div class="overflow-auto w-100 table-responsive" style="max-height:150px">
                     <table class="table w-100 text-wrap" id="Horale1"></table>
                 </div>
             </div>
             <div class="shadow-sm border mb-2">
-                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleDesdeHasta">Horarios Desde Hasta</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-ddd text-dark fw4" id="titleDesdeHasta">Horarios Desde Hasta</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
                     <table class="table text-wrap w-100" id="Horale2"></table>
                 </div>
             </div>
             <div class="shadow-sm border mb-2">
-                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleRotaciones">Rotaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-ddd text-dark fw4" id="titleRotaciones">Rotaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
                     <table class="table text-wrap w-100" id="Rotacion"></table>
                 </div>
             </div>
@@ -1653,12 +1655,13 @@ $(function () {
         getHorale1(Horale1, '#Horale1')
         getHorale2(Horale2, '#Horale2')
         getRotacion(Rotacion, '#Rotacion')
-        $(".cita").click(function () {
+        $(".cita").click(function (e) {
+            e.preventDefault();
             CheckSesion()
             $('#divCitaciones').remove()
             $('.divTablas').append(`
             <div class="shadow-sm border" id="divCitaciones" style="display:none">
-                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-light text-dark fw4" id="titleCitaciones">Citaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
+                <div class="p-2 border-bottom-0 fontq d-inline-flex w-100 justify-content-between align-items-center bg-ddd text-dark fw4" id="titleCitaciones">Citaciones</div><div class="overflow-auto w-100 table-responsive" style="max-height:150px">
                     <table class="table text-wrap w-100" id="Citacion"></table>
                 </div>
             </div>
@@ -1669,7 +1672,6 @@ $(function () {
                 $('#divCitaciones').show()
             }, 200);
         });
-
         setTimeout(() => {
             $("#detalleHorario").show()
             $("#divHorarioActual").show()

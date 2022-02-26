@@ -11,6 +11,11 @@ require __DIR__ . '../../../config/conect_mssql.php';
 timeZone();
 $_POST['datos'] = $_POST['datos'] ?? '';
 
+if(empty($_POST['datos'])){
+    echo json_encode(['error' => 'No se recibieron datos']);
+    exit;
+}
+
 $Datos = (json_decode($_POST['datos'], true));
 $Legajo = $Datos['legajo'];
 $ApNo   = $Datos['nombre'];
@@ -25,7 +30,7 @@ $mCit = intval($_SESSION["ABM_ROL"]['mCit']);
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
-$where_condition = $sqlTot = $sqlRec = $TotalCit = "";
+$where_condition = $sqlTot = $sqlRec = $TotalCit = $sql_query = $queryRecords = "";
 
 $ListaHorarios = $_SESSION['ListaHorarios'];
 $filtroListaHorarios = '';

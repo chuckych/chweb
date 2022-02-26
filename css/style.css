@@ -36,6 +36,9 @@
      background-color: var(--main-bg-modcolor) !important;
      border-color: var(--main-bg-modcolor) !important;
  }
+ .bg-ddd {
+    background-color: #efefef!important;
+}
 
  @font-face {
      font-family: 'Montserrat';
