@@ -1,23 +1,16 @@
-$(document).ready(function () {
-    // $('#modalUsuarios').modal('show')
-});
 $('#Encabezado').addClass('pointer')
-function loadingTable(selectortable) {
-    $(selectortable + ' td div').addClass('bg-light text-light')
+$('#RowTableUsers').hide()
+const loadingTable = (selectortable) => {
+    $(selectortable + ' td div').addClass('bg-light text-light border-0 h50')
     $(selectortable + ' td img').addClass('invisible')
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
-}
-function loadingTableRemove(selectortable) {
-    $(selectortable + ' td div').removeClass('bg-light text-light')
-    $(selectortable + ' td img').removeClass('invisible')
-    $(selectortable + ' td i').removeClass('invisible')
-    $(selectortable + ' td span').removeClass('invisible')
+
 }
 function dateRange() {
     $('#_drMob').daterangepicker({
         singleDatePicker: false,
-        showDropdowns: false,
+        showDropdowns: true,
         minYear: $('#aniomin').val(),
         maxYear: $('#aniomax').val(),
         showWeekNumbers: false,
@@ -28,7 +21,7 @@ function dateRange() {
         startDate: $('#min').val(),
         maxDate: $('#max').val(),
         endDate: $('#max').val(),
-        autoApply: false,
+        autoApply: true,
         alwaysShowCalendars: true,
         linkedCalendars: false,
         buttonClasses: "btn btn-sm fontq",
@@ -61,34 +54,23 @@ function dateRange() {
         },
     });
 }
-
+$.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
 let drmob2 = $('#min').val() + ' al ' + $('#max').val()
 $('#_drMob2').val(drmob2)
 
-$('#divTableMobile').prepend(`<div class="pb-3 custom-control custom-switch custom-control-inline d-flex align-items-center justify-content-end m-0"><input checked type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="1"><label class="custom-control-label" for="SoloFic" style="padding-top: 3px;"><span class="text-dark d-none d-lg-block">Solo Fichadas</span><span class="text-dark d-block d-lg-none">Fichadas</span></label></div>`)
+function doesFileExist(urlToFile) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('HEAD', urlToFile, false);
+    xhr.send();
+    return (xhr.status == "404") ? false : true;
+}
 
 tablemobile = $('#table-mobile').DataTable({
-    "initComplete": function (settings, json) {
-        $('#btnMenu').append('<button data-titlel="Usuarios"type="button" class="h35 mx-1 btn btn-outline-custom border btn-sm px-3 openModal fontq">Usuarios <i class="ml-2 bi bi-people-fill"></i></button><button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3"><i class="bi bi-cloud-download"></i></button>')
-        $('.dr').append(`<div><input type="text" readonly  class="mx-2 form-control text-center w250 ls1" name="_dr" id="_drMob"></div>`)
-        dateRange()
-        $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
-            $('#_drMob2').val($('#_drMob').val())
-            $('#table-mobile').DataTable().ajax.reload();
-        });
-        $('.form-control-sm').attr('placeholder', 'Buscar')
-    },
-    "drawCallback": function (settings) {
-        // CheckSesion()
-        classEfect("#table-mobile tbody", 'animate__animated animate__fadeIn')
-        setTimeout(function () {
-            loadingTableRemove('#table-mobile')
-        }, 100);
-    },
     // iDisplayLength: -1,
-    dom: "<'row'<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-flex align-items-start justify-content-end'f>>" +
-        "<'row'<'col-12'tr>>" +
+    dom: "<'row mt-2'" +
+        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-center justify-content-end'<'SoloFic'>f>>" +
+        "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto't>>" +
         "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>",
     ajax: {
         url: "getRegMobile.php",
@@ -101,55 +83,113 @@ tablemobile = $('#table-mobile').DataTable({
         },
     },
     createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn align-middle');
+        // $(row).addClass('animate__animated animate__fadeIn align-middle');
     },
     columns: [
-        {
-            "class": "text-center",
-            "data": "face_url"
+        { 
+            className: 'align-middle text-center', targets: 'regPhoto', title: 'Foto',
+            "render": function (data, type, row, meta) {
+                let urlToFile = `fotos/${row.regPhoto}`;
+                let nameuser = (row.userName) ? ': ' + row.userName : '';
+                let nameuser2 = (row.userName) ? '' + row.userName : '';
+                let gps = (row.gpsStatus != '0') ? 'Ok' : 'Sin GPS';
+                let evento = row.eventType + row.operationType + row.operation;
+                let foto = '';
+                let url_foto = '';
+                if (row.regPhoto) {
+                    url_foto = `fotos/${row.regPhoto}`;
+                    foto = `<img loading="lazy" src="fotos/${row.regPhoto}" class="scale w40 h40 radius img-fluid"></img>`;
+                } else {
+                    url_foto = ``;
+                    foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                }
+
+                let datacol = `<div class="pic w50 h50 border d-flex justify-content-center align-items-center pointer" datafoto="${url_foto}" data-iduser="${row.userID}" dataname="${nameuser2}" datauid="${row.phoneid}" datahora="${row.regTime}" datadia="${row.regDay}" datagps="${gps}" datatype="${evento}" datalat="${row.regLat}" datalng="${row.regLng}">${foto}</div>`
+                return datacol;
+            },
         },
         {
-            "class": '',
-            "data": "id_user"
+            className: 'align-middle', targets: '', title: 'ID',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="w90"><span class="searchID pointer">${row.userID}</span></div>`
+                return datacol;
+            },
         },
         {
-            "class": '',
-            "data": "name"
+            className: 'align-middle', targets: '', title: 'Nombre',
+            "render": function (data, type, row, meta) {
+                let nameuser = (row['userName']) ? row['userName'] : '-';
+                let datacol = `<div class="Mw150"><span class="searchName pointer">${nameuser}</span></div>`
+                return datacol;
+            },
         },
         {
-            "class": '',
-            "data": "Fecha"
+            className: 'align-middle', targets: '', title: 'Día',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="w70">${row.regDay}</div>`
+                return datacol;
+            },
         },
         {
-            "class": "ls1",
-            "data": "Fecha2"
+            className: 'align-middle', targets: '', title: 'Fecha',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="ls1">${row.regDate}</div>`
+                return datacol;
+            },
         },
         {
-            "class": "ls1 fw5 text-center",
-            "data": "time"
+            className: 'align-middle text-center', targets: '', title: 'Hora',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
+                return datacol;
+            },
         },
         {
-            "class": "text-center",
-            "data": "mapa"
+            className: 'align-middle', targets: '', title: 'Mapa',
+            "render": function (data, type, row, meta) {
+                let LinkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
+                let iconMapa = (row.regLat != '0') ? `<a href="${LinkMapa}" target="_blank" rel="noopener noreferrer" data-titler="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-success border-0 fontt"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0"></i>`
+                let datacol = `<div>${iconMapa}</div>`
+                return datacol;
+            },
         },
         {
-            "class": "text-center ls1",
-            "data": "eventType"
+            className: 'align-middle', targets: '', title: 'Tipo',
+            "render": function (data, type, row, meta) {
+                // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
+                let evento ='';
+                switch (row.operationType) {
+                    case '-1':
+                        evento = 'Fichada';
+                        break;
+                    case '1':
+                        evento = 'Ronda';
+                        break;
+                    case '3':
+                        evento = 'Evento';
+                        break;
+                    default:
+                        evento = 'Desconocido';
+                        break;
+                }
+                if(row.operationType == '0' && row.eventType == '2'){
+                    evento = 'Fichada';
+                }
+                let datacol = `<div class="">${evento}</div>`
+                return datacol;
+            },
         },
         {
-            "class": "ls1",
-            "data": "phoneid"
-        },
-        {
-            "class": "text-center",
-            "data": "sendch"
-        },
-        {
-            "class": "text-center",
-            "data": "regid"
+            className: 'align-middle w-100', targets: '', title: '',
+            "render": function (data, type, row, meta) {
+                row.operation = (row.operation == '0') ? '' : row.operation;
+                let datacol = `<div class="">${row.operation}</div>`
+                return datacol;
+            },
         },
     ],
-    bProcessing: true,
+    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+    bProcessing: false,
     serverSide: true,
     deferRender: true,
     searchDelay: 1000,
@@ -158,19 +198,77 @@ tablemobile = $('#table-mobile').DataTable({
     info: true,
     ordering: false,
     language: {
-        "url": "../../js/DataTableSpanishShort2.json"
+        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
     },
 });
+// on draw dt
+tablemobile.on('init.dt', function () {
 
-$('#SoloFic').change(function () {
-    if ($('#SoloFic').is(':not(:checked)')) {
-        if ($('#SoloFic').val() != '') {
-            $('#SoloFic').val('0')
+    $('#btnMenu').html(`
+        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq w150">
+            Usuarios <i class="ml-2 bi bi-people-fill"></i>
+        </button>
+        <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
+            <i class="bi bi-cloud-download"></i>
+        </button>`);
+    $('.dr').append(`
+        <div class="mx-2">
+            <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
+        </div>`);
+
+    dateRange()
+
+    $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
+        $('#_drMob2').val($('#_drMob').val())
+        loadingTable('#table-mobile');
+        $('#table-mobile').DataTable().ajax.reload();
+    });
+
+    $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end pb-2">
+        <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
+        <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
+            <span class="text-dark d-none d-lg-block">Solo Fichadas</span>
+            <span class="text-dark d-block d-lg-none">Fichadas</span>
+        </label>
+    </div>`)
+    $('#RowTableMobile').removeClass('invisible')
+    $('#table-mobile_filter input').addClass('w250')
+    $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
+});
+tablemobile.on('draw.dt', function () {
+    // $('#table-mobile thead').remove()
+});
+tablemobile.on('page.dt', function () {
+    loadingTable('#table-mobile')
+});
+// tablemobile.on('search.dt', function () {
+//     loadingTable('#table-mobile')
+// });
+tablemobile.on('xhr', function (e, settings, json) {
+    tablemobile.off('xhr');
+});
+
+$(document).on('click', '.searchID', function (e) {
+    e.preventDefault();
+    tablemobile.search($(this).text()).draw();
+    classEfect('#table-mobile_filter input', 'border-custom')
+});
+$(document).on('click', '.searchName', function (e) {
+    e.preventDefault();
+    tablemobile.search($(this).text()).draw();
+    classEfect('#table-mobile_filter input', 'border-custom')
+});
+$(document).on('change', '#SoloFic', function (e) {
+    e.preventDefault()
+    loadingTable('#table-mobile')
+    if ($(this).is(':not(:checked)')) {
+        if ($(this).val() != '') {
+            $(this).val('0')
             $('#table-mobile').DataTable().ajax.reload()
         }
     } else {
-        if ($('#SoloFic').val() != '') {
-            $('#SoloFic').val('1')
+        if ($(this).val() != '') {
+            $(this).val('1')
             $('#table-mobile').DataTable().ajax.reload()
         }
     }
@@ -389,20 +487,20 @@ function initMap() {
 $(document).on("click", ".pic", function (e) {
 
     $('#pic').modal('show')
-    var picfoto = $(this).attr('datafoto');
-    var picnombre = $(this).attr('dataname');
-    var picuid = $(this).attr('datauid');
-    var picIDUser = $(this).attr('data-iduser');
-    var piccerteza = $(this).attr('datacerteza');
-    var piccerteza2 = $(this).attr('datacerteza2');
-    var picinout = $(this).attr('datainout');
-    var piczone = $(this).attr('datazone');
-    var pichora = $(this).attr('datahora');
-    var picgps = $(this).attr('datagps');
-    var pictype = $(this).attr('datatype');
-    var picdia = $(this).attr('datadia');
-    var _lat = $(this).attr('datalat');
-    var _lng = $(this).attr('datalng');
+    let picfoto = $(this).attr('datafoto');
+    let picnombre = $(this).attr('dataname');
+    let picuid = $(this).attr('datauid');
+    let picIDUser = $(this).attr('data-iduser');
+    let piccerteza = $(this).attr('datacerteza');
+    let piccerteza2 = $(this).attr('datacerteza2');
+    let picinout = $(this).attr('datainout');
+    let piczone = $(this).attr('datazone');
+    let pichora = $(this).attr('datahora');
+    let picgps = $(this).attr('datagps');
+    let pictype = $(this).attr('datatype');
+    let picdia = $(this).attr('datadia');
+    let _lat = $(this).attr('datalat');
+    let _lng = $(this).attr('datalng');
 
     $('#latitud').val(_lat)
     $('#longitud').val(_lng)
@@ -520,7 +618,6 @@ $('#pic').on('hidden.bs.modal', function (e) {
 
 function clean() {
     $('#mapzone').addClass('d-none');
-    // $('.select2').val('200').trigger("change");
     $("#map_size").val('5')
 }
 
@@ -563,17 +660,31 @@ $(document).on("click", "#Encabezado", function (e) {
     tablemobile.ajax.reload();
 });
 
-
-tablemobile.on('processing.dt', function (e, settings, processing) {
-    e.preventDefault()
+$(document).on("click", ".showUsers", function (e) {
     CheckSesion()
-    loadingTable('#table-mobile')
-    e.stopImmediatePropagation();
+    $('#btnMenu').html(`
+        <button data-titlet="Fichadas" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showReg fontq w150">
+            Fichadas <i class="ml-2 bi bi-clipboard-data-fill"></i>
+        </button>`);
+    document.title = "Usuarios - Mobile HR"
+    $('#Encabezado').html("Usuarios - Mobile HR");
+    $('#RowTableMobile').hide();
+    $('#RowTableUsers').show();
 });
-
-$(document).on("click", ".openModal", function (e) {
+$(document).on("click", ".showReg", function (e) {
     CheckSesion()
-    $('#modalUsuarios').modal('show')
+    $('#btnMenu').html(`
+        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq w150">
+            Usuarios <i class="ml-2 bi bi-people-fill"></i>
+        </button>
+        <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
+            <i class="bi bi-cloud-download"></i>
+        </button>`);
+    // set document title
+    document.title = "Fichadas - Mobile HR"
+    $('#Encabezado').html("Fichadas - Mobile HR")
+    $('#RowTableUsers').hide();
+    $('#RowTableMobile').show();
 });
 $(document).on("click", ".sendCH", function (e) {
     CheckSesion()
@@ -631,5 +742,4 @@ function minmaxDate() {
         },
     });
 }
-
 // });

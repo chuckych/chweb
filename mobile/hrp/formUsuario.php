@@ -1,20 +1,20 @@
-<form action="" method="post" id="formUsuario">
+<form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formUsuario">
     <div class="row">
-        <div class="col-12 pb-2 py-2">
+        <div class="col-12 py-2">
             <span class="fw4 fonth" id="titleForm">Nuevo usuario</span>
         </div>
-        <div class="col-12 pb-2 col-sm-6" id="divid_user">
-            <label for="id_user">Legajo</label>
-            <input class="form-control h40" type="tel" name="id_user" id="id_user" placeholder="N° de Legajo">
+        <div class="col-12 py-2 col-sm-6" id="divid_user">
+            <label for="id_user">ID</label>
+            <input class="form-control h40" type="tel" name="id_user" id="id_user" placeholder="ID de Usuario">
             <input class="" type="hidden" readonly name="tipo" id="tipo" value="c_usuario">
         </div>
-        <div class="col-12 pb-2 col-sm-6">
+        <div class="col-12 py-2 col-sm-6">
             <label for="nombre">Nombre</label>
             <input class="form-control h40" type="text" name="nombre" id="nombre" placeholder="Nombre y Apellido">
         </div>
         <div class="col-12 pb-2">
             <label for="regid">Reg ID</label>
-            <textarea class="form-control p-3" name="regid" id="regid" style="height: 85px !important;" placeholder="Regid proporcionado desde la App"></textarea>
+            <textarea class="form-control p-3" name="regid" id="regid" style="height: 100px !important;" placeholder="Regid proporcionado desde la App"></textarea>
             <!-- <input class="form-control h40" type="text" name="regid" id="regid" placeholder="Regid proporcionado desde la App"> -->
         </div>
         <div class="col-12 pt-3">
@@ -33,26 +33,26 @@ if ($_POST['value']) :
     switch ($_POST['action']) {
         case 'update':
             $tipo = 'u_usuario';
-            $titleForm = 'Editar Legajo';
+            $titleForm = 'Editar Usuario';
             $disableNombre = 'false';
             $disableregid = 'false';
             break;
         case 'delete':
             $tipo = 'd_usuario';
-            $titleForm = 'Eliminar Legajo';
+            $titleForm = 'Eliminar Usuario';
             $disableNombre = 'true';
             $disableregid = 'true';
             break;
     }
-    
+
 ?>
     <script>
-        $('#titleForm').html('<?=$titleForm?>')
-        $('#tipo').val('<?=$tipo?>')
+        $('#titleForm').html('<?= $titleForm ?>')
+        $('#tipo').val('<?= $tipo ?>')
         $('#id_user').attr('readonly', true)
         $('#id_user').attr('hidden', true)
-        $('#nombre').prop('disabled', <?=$disableNombre?>)
-        $('#regid').prop('disabled', <?=$disableregid?>)
+        $('#nombre').prop('disabled', <?= $disableNombre ?>)
+        $('#regid').prop('disabled', <?= $disableregid ?>)
         $('#divid_user').hide()
         // $('#id_user').attr('hidden')
         $.ajax({
@@ -62,10 +62,10 @@ if ($_POST['value']) :
             dataType: "json",
             beforeSend: function(data) {},
             success: function(data) {
-                $('#titleForm').append(': '+data.id_user)
+                $('#titleForm').append(': ' + data.id_user)
                 $('#id_user').val(data.id_user),
-                $('#nombre').val(data.nombre),
-                $('#regid').val(data.regid)
+                    $('#nombre').val(data.nombre),
+                    $('#regid').val(data.regid)
             },
             error: function() {}
         });

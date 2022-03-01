@@ -3,7 +3,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.212'; // Version
+    return 'v0.0.213'; // Version
 }
 function verDBLocal()
 {
@@ -3094,9 +3094,20 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
     curl_close($ch);
-    // print_r($file_contents);exit;
-    return ($file_contents) ? $file_contents : false;
+    if ($file_contents){
+        return $file_contents;
+    }else{
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+    }
     exit;
 }
 function mod_roles($recid_rol)
@@ -3428,7 +3439,6 @@ function array_pdoQuery($sql)
     }
     $stmt = null;
 }
-
 function insert_pdoQuery($sql)
 {
     require __DIR__ . '/config/conect_pdo.php';

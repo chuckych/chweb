@@ -36,9 +36,22 @@
      background-color: var(--main-bg-modcolor) !important;
      border-color: var(--main-bg-modcolor) !important;
  }
+
+ .border-custom, .border-custom:hover {
+     border: 1px solid var(--main-bg-modcolor) !important;
+ }
+
  .bg-ddd {
-    background-color: #efefef!important;
-}
+     background-color: #efefef !important;
+ }
+
+ .text-ddd {
+     color: #efefef !important;
+ }
+
+ .border-ddd {
+     border: 1px solid #ddd !important;
+ }
 
  @font-face {
      font-family: 'Montserrat';
@@ -473,6 +486,7 @@
  .Mw150 {
      min-width: 150px !important
  }
+
  .Mw40 {
      min-width: 40px !important
  }
@@ -536,6 +550,9 @@
  .w30 {
      width: 30px !important
  }
+ .w20 {
+     width: 20px !important
+ }
 
  .w35 {
      width: 35px !important
@@ -545,8 +562,28 @@
      min-width: 50px !important
  }
 
+ .Mw150 {
+     min-width: 150px !important
+ }
+
  .w40 {
      width: 40px !important
+ }
+
+ .max-h-200 {
+     max-height: 200px !important;
+ }
+
+ .max-h-300 {
+     max-height: 300px !important;
+ }
+
+ .max-h-400 {
+     max-height: 400px !important;
+ }
+
+ .max-h-500 {
+     max-height: 500px !important;
  }
 
  .Mw40 {
@@ -1417,8 +1454,8 @@
 
  @media (min-width:768px) {
      [data-titlel]:hover:after {
-         opacity: 1 !important;
-         transition: all 0.5s ease 0.2s !important;
+         opacity: 0.9;
+         transition: all 0.1s ease 0.2s;
          visibility: visible;
      }
 
@@ -1429,16 +1466,16 @@
          font-size: 12px;
          position: absolute;
          padding: 5px 20px;
-         bottom: -.4em;
+         bottom: -0em;
          right: 110%;
          white-space: nowrap;
          box-shadow: 1px 1px 3px #cecece;
-         opacity: 1 !important;
-         border: 1px solid #474747;
+         opacity: 0.9;
+         border: 1px solid #cecece;
          z-index: 9999999;
          visibility: hidden;
          border-radius: 0px;
-         font-weight: 500 !important;
+         font-weight: 400;
      }
 
      [data-titlel] {
@@ -1446,8 +1483,8 @@
      }
 
      [data-titler]:hover:after {
-         opacity: 1 !important;
-         transition: all 0.5s ease 0.2s !important;
+         opacity: 0.9;
+         transition: all 0.1s ease 0.2s;
          visibility: visible;
      }
 
@@ -1462,12 +1499,12 @@
          left: 110%;
          white-space: nowrap;
          box-shadow: 1px 1px 3px #cecece;
-         opacity: 1 !important;
-         border: 1px solid #474747;
+         opacity: 0.9;
+         border: 1px solid #cecece;
          z-index: 9999999;
          visibility: hidden;
          border-radius: 0px;
-         font-weight: 500 !important;
+         font-weight: 400;
      }
 
      [data-titler] {

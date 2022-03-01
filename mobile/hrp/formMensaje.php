@@ -1,4 +1,4 @@
-<form action="" method="post" id="formMensaje">
+<form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formMensaje">
     <div class="row">
         <div class="col-12 pb-2 py-2">
             <span class="fw4 fonth" id="titleForm">Enviar Mensaje a <span id="nombre"></span></span>

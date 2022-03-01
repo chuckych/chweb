@@ -103,9 +103,9 @@ if (!empty($arrayData)) {
         $regid         = $valor['regid'];
         $speed         = $valor['speed'];
         $sync          = $valor['sync'];
-        $operationType = $valor['operationType'] ?? '';
-        $operation     = $valor['operation'] ?? '';
-
+        $operationType = $valor['operationType'];
+        $operation     = $valor['operation'];
+        $checkPhoto = ($attphoto) ? '0' : '1';
         /** Guardamos la foto del base64 */
         if ($eventType == '2') {
             $f = fopen('fotos/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
@@ -114,7 +114,7 @@ if (!empty($arrayData)) {
         }
 
         /** */
-        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion')";
+        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
         (mysqli_query($link, $query));
     }
     header("Content-Type: application/json");

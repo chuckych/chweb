@@ -1,21 +1,23 @@
 // $(document).ready(function () {
-
+const loadingTableUser = (selectortable) => {
+    $(selectortable + ' td div').addClass('bg-light text-light border-0')
+    $(selectortable + ' td div').css('height', '31px')
+    $(selectortable + ' td img').addClass('invisible')
+    $(selectortable + ' td i').addClass('invisible')
+    $(selectortable + ' td span').addClass('invisible')
+}
 tableUsuarios = $('#tableUsuarios').DataTable({
     "initComplete": function (settings, json) {
         $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-person-plus-fill"></i></button>')
     },
     "drawCallback": function (settings) {
-        classEfect("#tableUsuarios tbody", 'animate__animated animate__fadeIn')
-        setTimeout(function () {
-            loadingTableRemove('#modalUsuarios')
-        }, 100);
-        $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')
+
     },
-    dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row'<'col-12'tr>>" +
+    dom: "<'row mt-1'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+        "<'row'<'col-12 border shadow-sm't>>" +
         "<'row'<'col-12 d-flex align-items-center justify-content-between'ip>>",
     ajax: {
-        url: "getUsuariosMobile.php?v=" + vjs(),
+        url: "getUsuariosMobile.php",
         type: "POST",
         "data": function (data) { },
         error: function () { },
@@ -23,31 +25,76 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     createdRow: function (row, data, dataIndex) {
         $(row).addClass('animate__animated animate__fadeIn align-middle');
     },
-    columnDefs: [
-        { title: 'Legajo', className: '', targets: 0 },
-        { title: 'Nombre', className: 'w-100', targets: 1 },
-        { title: 'Fichadas', className: 'text-center', targets: 2 },
-        { title: '', className: 'text-center', targets: 3 },
-        // { title: '', className: 'text-center', targets: 4 },
+    columns: [
+        {
+            className: 'align-middle', targets: '', title: 'ID',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="w90">${row.userID}</div>`
+                return datacol;
+            },
+        },
+        {
+            className: 'align-middle', targets: '', title: 'Nombre',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="">${row.userName}</div>`
+                return datacol;
+            },
+        },
+        {
+            className: 'align-middle text-center', targets: '', title: 'Fichadas',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="ls1">${row.userChecks}</div>`
+                return datacol;
+            },
+        },
+        {
+            className: 'align-middle w-100', targets: '', title: '',
+            "render": function (data, type, row, meta) {
+                let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
+
+                if (row.userRegId.length > '100') {
+                    activar = `<span data-regid="${row.userRegId}" data-userid="${row.userID}" data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                }
+                if (row.userRegId.length > '100') {
+                    mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                }
+                let datacol = `
+                <div class="d-flex justify-content-end">
+                    <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
+                    ${mensaje}
+                    ${activar}
+                    <span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>
+                </div>
+                `
+                return datacol;
+            },
+        },
+
     ],
-    bProcessing: true,
+    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+    bProcessing: false,
     serverSide: true,
     deferRender: true,
-    searchDelay: 1500,
+    searchDelay: 1000,
     paging: true,
     searching: true,
     info: true,
     ordering: false,
     language: {
-        "url": "../../js/DataTableSpanishShort2.json"
+        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },
 
 });
-tableUsuarios.on('processing.dt', function (e, settings, processing) {
-    e.preventDefault()
-    loadingTable('#tableUsuarios')
-    CheckSesion()
-    e.stopImmediatePropagation();
+tableUsuarios.on('draw.dt', function (e, settings) {
+    // $('#modalUsuarios').modal('show')
+    $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')
+});
+tableUsuarios.on('page.dt', function (e, settings) {
+    loadingTableUser('#tableUsuarios')
+});
+tableUsuarios.on('xhr', function (e, settings, json) {
+    tableUsuarios.off('xhr');
 });
 
 function printFormUsuario(selectorAction, data, action) {
