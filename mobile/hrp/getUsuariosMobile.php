@@ -35,8 +35,10 @@ foreach ($paramsApi as $key => $value) {
 $api = "api/v1/users/$parametros";
 // echo $api; exit;
 $url   = host() . "/" . HOMEHOST . "/mobile/hrp/" . $api;
-$api = getRemoteFile($url, $timeout = 10);
-$api = json_decode($api, true);
+$json = file_get_contents($url);
+$api  = json_decode($json, true);
+// $api = getRemoteFile($url, $timeout = 10);
+// $api = json_decode($api, true);
 
 $totalRecords = $api['TOTAL'];
 
