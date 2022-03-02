@@ -51,7 +51,10 @@
         $maxDate   = date('Y-m-d');
         $maxYear   = date('Y');
         /** Para dateRangePicker */
-        $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
+        // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
+        $query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
+        $arrayFech = simple_pdoQuery($query);
+
         $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');

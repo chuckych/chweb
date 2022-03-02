@@ -107,8 +107,14 @@ if (!empty($arrayData)) {
         $operation     = $valor['operation'];
         $checkPhoto = ($attphoto) ? '0' : '1';
         /** Guardamos la foto del base64 */
+
         if ($eventType == '2') {
-            $f = fopen('fotos/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
+            $filename = 'fotos/' . $companyCode . '/index.php';
+            $dirname = dirname($filename);
+            if (!is_dir($dirname)) {
+                mkdir($dirname, 0755, true);
+            }
+            $f = fopen('fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
             fwrite($f, base64_decode($attphoto));
             fclose($f);
         }
@@ -119,7 +125,7 @@ if (!empty($arrayData)) {
     }
     header("Content-Type: application/json");
     // PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData));
-    $data = array('status' => 'ok', 'Mensaje' => 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData), 'data'=>$arrayData);
+    $data = array('status' => 'ok', 'Mensaje' => 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData), 'data' => $arrayData);
     echo json_encode($data);
     mysqli_close($link);
     exit;

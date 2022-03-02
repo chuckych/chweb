@@ -1,13 +1,12 @@
 <?php
-
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.213'; // Version
+    return 'v0.0.214'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20211024; // Version
+    return 20220301; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -3102,9 +3101,9 @@ function getRemoteFile($url, $timeout = 10)
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
     curl_close($ch);
-    if ($file_contents){
+    if ($file_contents) {
         return $file_contents;
-    }else{
+    } else {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
     }
@@ -3465,16 +3464,16 @@ function pdoQuery($sql)
 }
 function rowCount_pdoQuery($sql)
 {
-	require __DIR__ . '/config/conect_pdo.php';
-	try {
-		$stmt = $connpdo->prepare($sql);
-		$stmt->execute();
-		return $stmt->rowCount();
-	} catch (\Throwable $th) { // si hay error en la consulta
-		$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+    require __DIR__ . '/config/conect_pdo.php';
+    try {
+        $stmt = $connpdo->prepare($sql);
+        $stmt->execute();
+        return $stmt->rowCount();
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
-	}
-	$stmt = null;
+    }
+    $stmt = null;
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
 {
@@ -3565,3 +3564,59 @@ function escape_sql_wild($s)
     return
         implode("", $result);
 } /*escape_sql_wild*/
+
+function defaultConfigData() // default config data
+
+{
+    $datos = array(
+        'mssql' => array('srv' => '', 'db' => '', 'user' => '', 'pass' => ''), 'logConexion' => array('success' => false, 'error' => true), 'api' => array('url' => "https://hr-process.com/hrctest/api/novedades/", 'user' => 'admin', 'pass' => 'admin'), 'webService' => array('url' => "http://localhost:6400/RRHHWebService/"), 'logNovedades' => array('success' => true, 'error' => true), 'proxy' => array('ip' => '', 'port' => '', 'enabled' => false), 'borrarLogs' => array('estado' => true, 'dias' => 31), // 'interrumpirSolicitud'=>array('carga'=>true, 'anulacion'=>true)
+    );
+    return $datos;
+}
+
+function write_apiKeysFile()
+{
+    $q = "SELECT id as 'idCompany', nombre as 'nameCompany', recid as 'recidCompany', 'key' as 'key' FROM clientes";
+    $assoc_arr = array_pdoQuery($q);
+
+    foreach ($assoc_arr as $key => $value) {
+        $assoc[] = (array('idCompany' => $value['idCompany'], 'nameCompany' => $value['nameCompany'], 'recidCompany' => $value['recidCompany']));
+    }
+    // $assoc[] = (array('idCompany' => '100', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
+    // $assoc[] = (array('idCompany' => '300', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
+
+    $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
+    foreach ($assoc as $key => $elem) {
+        $content .= "[" . $key . "]\n";
+        foreach ($elem as $key2 => $elem2) {
+            if (is_array($elem2)) {
+                for ($i = 0; $i < count($elem2); $i++) {
+                    $content .= $key2 . "[] =\"" . $elem2[$i] . "\"\n";
+                }
+            } else if ($elem2 == "") $content .= $key2 . " =\n";
+            else $content .= $key2 . " = \"" . $elem2 . "\"\n";
+        }
+    }
+    $path = __DIR__ . '/mobileApikey.php';
+    if (!$handle = fopen($path, 'w')) {
+        return false;
+    }
+    $success = fwrite($handle, $content);
+    fclose($handle);
+    return $success;
+}
+function getDataIni($url) // obtiene el json de la url
+{
+    if (file_exists($url)) { // si existe el archivo
+        $data = file_get_contents($url); // obtenemos el contenido del archivo
+        if ($data) { // si el contenido no está vacío
+            $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
+            return $data; // devolvemos el json
+        } else { // si el contenido está vacío
+            fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
+        }
+    } else { // si no existe el archivo
+        fileLog("No existe archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
+        return false; // devolvemos false
+    }
+}

@@ -14,12 +14,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
 
     // require __DIR__ . '../../../config/conect_mysql.php';
 
-    $nombre     = test_input($_POST['nombre']);
-    $ident      = test_input($_POST['ident']);
-    $n_ident    = str_replace(" ", "", $nombre);
-    $tkmobile   = test_input($_POST['tkmobile']);
-    $WebService = test_input($_POST['WebService']);
-    $identauto  = (empty($ident)) ? substr(strtoupper($n_ident), 0, 3) : $ident;
+    $nombre       = test_input($_POST['nombre']);
+    $ApiMobileHRP = test_input($_POST['ApiMobileHRP']);
+    $ident        = test_input($_POST['ident']);
+    $n_ident      = str_replace(" ", "", $nombre);
+    $tkmobile     = test_input($_POST['tkmobile']);
+    $WebService   = test_input($_POST['WebService']);
+    $identauto    = (empty($ident)) ? substr(strtoupper($n_ident), 0, 3) : $ident;
 
     $CheckDuplicado = count_pdoQuery("SELECT clientes.ident FROM clientes WHERE clientes.ident='$identauto'");
     if ($CheckDuplicado) {
@@ -34,13 +35,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     $pass  = test_input($_POST['pass']);
     $recid = recid();
 
+    $tkmobilehrp = sha1($recid);
+
     /* Comprobamos campos vacíos  */
     if ((valida_campo($nombre))) {
         PrintRespuestaJson('error', 'Campo Nombre de Cuenta Requerido');
         exit;
     } else {
         /* INSERTAMOS CLIENTE EN TABLA CLIENTES */
-        $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, fecha_alta, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService','$fecha', '$fecha')";
+        $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, ApiMobileHRP, fecha_alta, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService', '$ApiMobileHRP', '$fecha', '$fecha')";
         $rs_insert = pdoQuery($query);
 
         if ($rs_insert) {
@@ -48,6 +51,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
             /** Si se Guardo con exito */
             $audCuenta = simple_pdoQuery("SELECT clientes.id FROM clientes WHERE clientes.nombre = '$nombre' LIMIT 1");
             auditoria("Cuenta ($nombre)", '1', $audCuenta['id'], '1');
+            write_apiKeysFile();
             // mysqli_close($link);
             exit;
         } elseif (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
@@ -95,6 +99,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
             PrintRespuestaJson('ok', 'Cuenta Modificada');
             /** Si se Guardo con exito */
             auditoria("Cuenta ($nombre)", '3', $r['id'], '1');
+            write_apiKeysFile();
             exit;
         } else {
             PrintRespuestaJson('error', 'Error');

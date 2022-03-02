@@ -205,6 +205,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$_SESSION["RECID_USER"]     = $row["recid_user"];
 	$_SESSION["ID_ROL"]         = $row["id_rol"];
 	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+	$q = simple_pdoQuery("SELECT ApiMobileHRP FROM clientes WHERE id = '$row[id_cliente]' LIMIT 1"); 
+	$_SESSION["APIMOBILEHRP"]   = $q["ApiMobileHRP"];
 	$_SESSION["CLIENTE"]        = $row["cliente"];
 	$_SESSION["ROL"]            = $row["rol"];
 	$_SESSION["RECID_ROL"]      = $row["recid_rol"];

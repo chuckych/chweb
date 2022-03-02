@@ -1,34 +1,5 @@
 $(document).ready(function () {
-    function ClassTBody() {
-        $('.open-modal').removeClass('btn-outline-custom')
-        $('.contentd').addClass('text-light bg-light')
-        $('.botones').hide()
-    }
-    var table = $('#GetClientes').DataTable({
-        initComplete: function (settings, json) {
-            $('.form-control-sm').attr('placeholder', 'Buscar Cuenta')
-            $("thead").remove()
-            // $('#GetClientes_filter').prepend('<button tittle="Agregar Cuenta" class="btn btn-outline-custom add fontq border"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/></svg></button>')
-            $('#GetClientes_filter').prepend('<button title="Nueva Cuenta" class="px-2 btn btn-outline-custom addCuenta fontq border" id="addCuenta"><span><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span></button>')
-            $('.table-responsive').show()
-            fadeInOnly('#GetRoles')
-            $(".addCuenta").hover(
-                function () {
-                    $(this).find("span").html('<span class="animate__animated animate__fadeIn"><svg class="mr-2" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg>Nueva Cuenta</span>');
-                },
-                function () {
-                    $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
-                }
-            );
-        },
-        drawCallback: function (settings) {
-            $(".dataTables_info").addClass('text-secondary');
-            $(".custom-select").addClass('text-secondary');
-            $('.contentd').removeClass('text-light bg-light')
-            fadeInOnly('.table-responsive')
-            $('.table-responsive').removeClass('invisible')
-            $('.dataTables_length').addClass('d-none d-sm-block')
-        },
+    let table = $('#GetClientes').DataTable({
         bProcessing: true,
         deferRender: true,
         // searchDelay: 1500,
@@ -127,8 +98,32 @@ $(document).ready(function () {
             "url": "../../js/DataTableSpanishShort2.json"
         },
     });
-    table.on('page.dt', function () {
-        ClassTBody()
+    table.on('init.dt', function (e, settings, json) {
+        $('.form-control-sm').attr('placeholder', 'Buscar Cuenta')
+        $("thead").remove()
+        // $('#GetClientes_filter').prepend('<button tittle="Agregar Cuenta" class="btn btn-outline-custom add fontq border"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/></svg></button>')
+        $('#GetClientes_filter').prepend('<button title="Nueva Cuenta" class="px-2 btn btn-outline-custom addCuenta fontq border" id="addCuenta"><span><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span></button>')
+        $('.table-responsive').show()
+        fadeInOnly('#GetRoles')
+        $(".addCuenta").hover(
+            function () {
+                $(this).find("span").html('<span class="animate__animated animate__fadeIn"><svg class="mr-2" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg>Nueva Cuenta</span>');
+            },
+            function () {
+                $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
+            }
+        );
+    });
+    table.on('draw.dt', function (e, settings, json) {
+        e.preventDefault();
+        $(".dataTables_info").addClass('text-secondary');
+        $(".custom-select").addClass('text-secondary');
+        fadeInOnly('.table-responsive')
+        $('.table-responsive').removeClass('invisible')
+        $('.dataTables_length').addClass('d-none d-sm-block')
+    });
+    table.on('xhr.dt', function (e, settings, json) {
+        table.off('xhr');
     });
 
     $(document).on('click', '.addCuenta', function (e) {

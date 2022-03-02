@@ -260,6 +260,30 @@ if ($verDB < 20211024) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220301) {
+    pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `attphoto` `attphoto` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci' AFTER `appVersion`");
+    fileLog("Se actualizo tabla \"reg_\"", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `operation` `operation` VARCHAR(50) NOT NULL DEFAULT '' AFTER `operationType`");
+    fileLog("Se actualizo tabla \"reg_\"", $pathLog); // escribir en el log
+   
+    pdoQuery("ALTER TABLE `clientes` ADD COLUMN `ApiMobileHRP` VARCHAR(30) NOT NULL AFTER `WebService`");
+    fileLog("Se creo tabla \"ApiMobileHRP\"", $pathLog); // escribir en el log
+
+    pdoQuery("UPDATE reg_ SET reg_.attphoto = '0' WHERE reg_.eventType = 2");
+    fileLog("Se actualizo tabla \"reg_\" columna \"attphoto\"", $pathLog); // escribir en el log
+
+    pdoQuery("UPDATE reg_ SET reg_.attphoto = '1' WHERE reg_.operationType = 3");
+    fileLog("Se actualizo tabla \"reg_\" columna \"attphoto\"", $pathLog); // escribir en el log
+
+    pdoQuery("UPDATE reg_ SET reg_.attphoto = '1' WHERE reg_.operationType = 1");
+    fileLog("Se actualizo tabla \"reg_\" columna \"attphoto\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+
 // if ($verDB < 20211102) {
 
 //     if (checkTable('tipo_modulo')) {

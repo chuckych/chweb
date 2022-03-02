@@ -2,14 +2,20 @@
 require __DIR__ . '../../../../../../config/index.php';
 // require __DIR__ . '../../../../../vendor/autoload.php';
 // use Carbon\Carbon;
+session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
 timeZone();
 timeZone_lang();
 
+$iniKeys = (getDataIni(__DIR__ . '../../../../../../mobileApikey.php'));
+// echo json_encode($iniKeys);
+// exit;
+
 $total = 0;
-$params = $_REQUEST;
+// $params = $_REQUEST;
+$params = ($_REQUEST);
 $params['checks'] = $params['checks'] ?? '';
 
 $iniScript = microtime(true);
@@ -63,38 +69,31 @@ function userIDName()
     $userIDName = empty($p['userIDName']) ? '' : $p['userIDName'];
     return urldecode($userIDName);
 }
-function idCuenta()
-{
-    $p = $_REQUEST;
-    $p['idCuenta'] = $p['idCuenta'] ?? '';
-    $idCuenta = empty($p['idCuenta']) ? '' : $p['idCuenta'];
-    return intval($idCuenta);
-}
 function validaKey()
 {
-    $p = $_REQUEST;
-    $key = $p['key'] ?? false;
-    return ($key);
+    $p = $_REQUEST['key'];
+    $validaKey = empty($p) ? '' : $p;
+    return ($validaKey);
 }
+$idCompany = 0;
+
 if (!isset($params['key'])) {
     http_response_code(400);
-    (response(array(), 0, 'The Key is required', 400));
+    (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
 }
 $textParams = '';
 
-empty(validaKey()) ? (response(array(), 0, 'Parameter error', 400)) . exit : '';
-empty(idCuenta()) ? (response(array(), 0, 'Parameter error', 400)) . exit : '';
-
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'idCuenta' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName') {
+    $key = urldecode($key);
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName') {
         continue;
     } else {
-        (response(array(), 0, 'Parameter error', 400));
+        (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
         exit;
     }
 }
 
-function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $count = 0)
+function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $count = 0, $idCompany)
 {
     $start  = ($code != '400') ? start() : 0;
     $length  = ($code != '400') ? length() : 0;
@@ -122,7 +121,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCuenta    = idCuenta();
+    $idCompany    = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -135,7 +134,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '../../logs/' . date('Ymd') . '_checks_api_'.$idCuenta.'.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../logs/' . date('Ymd') . '_checks_api_' . $idCompany . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -144,61 +143,61 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
     exit;
 }
 $queryRecords = array();
-$start      = start();
-$length     = length();
-$userID     = userID();
-$userName   = userName();
-$userIDName = userIDName();
+$start        = start();
+$length       = length();
+$userID       = userID();
+$userName     = userName();
+$userIDName   = userIDName();
+$FechaIni     = startDate();
+$FechaFin     = endDate();
 
-$key = validaKey();
-
-if (!$key) {
-    http_response_code(400);
-    (response(array(), 0, 'The key is empty', 400));
+$validaKey = validaKey();
+$vkey = '';
+foreach ($iniKeys as $key => $value) {
+    if ($value['recidCompany'] == $validaKey) {
+        $idCompany = $value['idCompany'];
+        $vkey      = $value['recidCompany'];
+        break;
+    }
 }
-
-if (startDate() > endDate()) {
-    http_response_code(400);
-    (response(array(), 0, 'The start date is greater than the end date', 400));
-}
-
-$vkey = ($key == 'e69af662a9d2dc5fe7f110bf6a8a4eb7b68d17bc') ? true : false;
-// $vkey .= ($key == '123485') ? true : false;
-
 if (!$vkey) {
     http_response_code(400);
-    (response(array(), 0, 'Invalid Key', 400));
+    (response(array(), 0, 'Inavlid Key', 400, 0, 0, $idCompany));
 }
-$FechaIni = startDate();
-$FechaFin = endDate();
-$idCuenta = idCuenta();
+
+if ($FechaIni > $FechaFin) {
+    http_response_code(400);
+    (response(array(), 0, 'The start date is greater than the end date', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
 $sql_query = "SELECT 
-r.createdDate AS 'createdDate', 
-r.id_user AS 'id_user', 
-r.phoneid AS 'phoneid', 
-ru.nombre AS 'name', 
-r.fechaHora 'fechaHora', 
-r.lat AS 'lat', 
-r.lng AS 'lng', 
-r.gpsStatus AS 'gpsStatus', 
-r.eventType AS 'eventType', 
-r.operationType AS 'operationType', 
-r.operation AS 'operation', 
-r.appVersion AS 'appVersion', 
-r.attphoto AS 'attPhoto', 
-CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
-r.regid AS 'regid' 
-FROM reg_ r
-LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
-WHERE r.rid >0";
+    r.createdDate AS 'createdDate', 
+    r.id_user AS 'id_user', 
+    r.phoneid AS 'phoneid', 
+    ru.nombre AS 'name', 
+    r.fechaHora 'fechaHora', 
+    r.lat AS 'lat', 
+    r.lng AS 'lng', 
+    r.gpsStatus AS 'gpsStatus', 
+    r.eventType AS 'eventType', 
+    r.operationType AS 'operationType', 
+    r.operation AS 'operation', 
+    r.appVersion AS 'appVersion', 
+    r.attphoto AS 'attPhoto', 
+    r.id_company AS 'id_company',
+    CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
+    r.regid AS 'regid' 
+    FROM reg_ r
+    LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
+    WHERE r.rid >0";
+
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
 $filtro_query .= ($params['checks'] == '1') ? " AND r.eventType = 2" : '';
-$filtro_query .= ($idCuenta) ? " AND r.id_company = $idCuenta" : '';
+$filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
@@ -214,7 +213,7 @@ if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
         $appVersion = explode('-', $r['appVersion']);
-        $appVersion = trim($appVersion[0].'-'.$appVersion[1]);
+        $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
         $regPhoto = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
         $arrayData[] = array(
@@ -233,6 +232,7 @@ if (($queryRecords)) {
             'regLng'        => floatval($r['lng']),
             'regPhoto'      => $regPhoto,
             'regTime'       => (HoraFormat($r['fechaHora'], false)),
+            'userCompany'   => $r['id_company'],
             'userID'        => intval($r['id_user']),
             'userName'      => $r['name'],
             'userRegId'     => $r['regid'],
@@ -247,5 +247,5 @@ if (($queryRecords)) {
 $finScript    = microtime(true);
 $tiempoScript = round($finScript - $iniScript, 2);
 $countData    = count($arrayData);
-(response($arrayData, intval($total), 'OK', '', $tiempoScript, $countData));
+(response($arrayData, intval($total), 'OK', '', $tiempoScript, $countData, $idCompany));
 exit;

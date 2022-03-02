@@ -89,7 +89,7 @@ tablemobile = $('#table-mobile').DataTable({
         { 
             className: 'align-middle text-center', targets: 'regPhoto', title: 'Foto',
             "render": function (data, type, row, meta) {
-                let urlToFile = `fotos/${row.regPhoto}`;
+                let urlToFile = `fotos/${row.userCompany}/${row.regPhoto}`;
                 let nameuser = (row.userName) ? ': ' + row.userName : '';
                 let nameuser2 = (row.userName) ? '' + row.userName : '';
                 let gps = (row.gpsStatus != '0') ? 'Ok' : 'Sin GPS';
@@ -97,8 +97,8 @@ tablemobile = $('#table-mobile').DataTable({
                 let foto = '';
                 let url_foto = '';
                 if (row.regPhoto) {
-                    url_foto = `fotos/${row.regPhoto}`;
-                    foto = `<img loading="lazy" src="fotos/${row.regPhoto}" class="scale w40 h40 radius img-fluid"></img>`;
+                    url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                    foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="scale w40 h40 radius img-fluid"></img>`;
                 } else {
                     url_foto = ``;
                     foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
