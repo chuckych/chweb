@@ -96,6 +96,7 @@ endif
                     $.notifyClose();
                     notify(data.Mensaje, 'success', 5000, 'right')
                     $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload();
                     $('#divformUsuario').html('')
                 } else {
                     $.notifyClose();

@@ -95,7 +95,29 @@ tablemobile = $('#table-mobile').DataTable({
                 let nameuser = (row.userName) ? ': ' + row.userName : '';
                 let nameuser2 = (row.userName) ? '' + row.userName : '';
                 let gps = (row.gpsStatus != '0') ? 'Ok' : 'Sin GPS';
-                let evento = row.eventType + row.operationType + row.operation;
+                // let evento = row.eventType + row.operationType + row.operation;
+
+                operation = (row.operation == 0) ? '' : ': ' + row.operation;
+                let evento = '';
+                switch (row.operationType) {
+                    case '-1':
+                        evento = 'Fichada';
+                        break;
+                    case '1':
+                        evento = 'Ronda';
+                        break;
+                    case '3':
+                        evento = 'Evento';
+                        break;
+                    default:
+                        evento = 'Desconocido';
+                        break;
+                }
+                if (row.operationType == '0' && row.eventType == '2') {
+                    evento = 'Fichada';
+                }
+                evento = evento + operation;
+
                 let foto = '';
                 let url_foto = '';
                 if (row.regPhoto) {
@@ -120,7 +142,7 @@ tablemobile = $('#table-mobile').DataTable({
         {
             className: 'align-middle', targets: '', title: 'Nombre',
             "render": function (data, type, row, meta) {
-                let nameuser = (row['userName']) ? row['userName'] : '-';
+                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario invalido</span>';
                 let datacol = `<div class="Mw150"><span class="searchName pointer">${nameuser}</span></div>`
                 return datacol;
             },
@@ -528,90 +550,90 @@ $(document).on("click", ".pic", function (e) {
 
     var position = (parseFloat(_lat) + parseFloat(_lng))
 
-    if (piccerteza > 70) {
-        $('.picCerteza').html('<img src="../img/check.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-success">(' + piccerteza2 + ')</span>');
-    } else {
-        $('.picCerteza').html('<img src="../img/uncheck.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-danger">(' + piccerteza2 + ')</span>');
-    }
-    if (position != '0') {
-        if (piczone) {
-            $('#btnCrearZona').addClass('d-none')
-        } else {
-            $('#btnCrearZona').removeClass('d-none')
-        }
-        var zone = (piczone) ? '<span class="text-success">' + piczone + '</span>' : '<span class="text-danger">Fuera de Zona</span>';
-        $('.picZona').html(zone);
-    } else {
-        $('.picZona').html('Sin ubicaci&oacute;n');
-    }
+    // if (piccerteza > 70) {
+    //     $('.picCerteza').html('<img src="../img/check.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-success">(' + piccerteza2 + ')</span>');
+    // } else {
+    //     $('.picCerteza').html('<img src="../img/uncheck.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-danger">(' + piccerteza2 + ')</span>');
+    // }
+    // if (position != '0') {
+    //     if (piczone) {
+    //         $('#btnCrearZona').addClass('d-none')
+    //     } else {
+    //         $('#btnCrearZona').removeClass('d-none')
+    //     }
+    //     let zone = (piczone) ? '<span class="text-success">' + piczone + '</span>' : '<span class="text-danger">Fuera de Zona</span>';
+    //     $('.picZona').html(zone);
+    // } else {
+    //     $('.picZona').html('Sin ubicaci&oacute;n');
+    // }
     // console.log(position);
     if (position != '0') {
         $('#mapzone').removeClass('d-none');
         initMap()
     } else {
         $('#mapzone').addClass('d-none');
-        $('#btnCrearZona').addClass('d-none')
+        // $('#btnCrearZona').addClass('d-none')
     }
 
-    $(document).on("click", "#btnCrearZona", function (e) {
-        fadeInOnly('#rowCreaZona')
-        $("#rowRespuesta").addClass("d-none");
+    // $(document).on("click", "#btnCrearZona", function (e) {
+    //     fadeInOnly('#rowCreaZona')
+    //     $("#rowRespuesta").addClass("d-none");
 
-        $("#map_size").val('200')
-        initMap()
-        fadeInOnly('#mapzone')
+    //     $("#map_size").val('200')
+    //     initMap()
+    //     fadeInOnly('#mapzone')
 
-        $('.select2').on('select2:select', function (e) {
-            var select_val = $(e.currentTarget).val();
-            $("#map_size").val(select_val)
-            initMap()
-            fadeInOnly('#mapzone')
-        });
+    //     $('.select2').on('select2:select', function (e) {
+    //         var select_val = $(e.currentTarget).val();
+    //         $("#map_size").val(select_val)
+    //         initMap()
+    //         fadeInOnly('#mapzone')
+    //     });
 
-        $('#rowCreaZona').removeClass('d-none')
+    //     $('#rowCreaZona').removeClass('d-none')
 
-        $("#CrearZona").bind("submit", function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: $(this).attr("method"),
-                url: $(this).attr("action"),
-                data: $(this).serialize(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    $("#btnSubmitZone").prop("disabled", true);
-                    $("#btnSubmitZone").html("Creando Zona.!");
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $('#btnCrearZona').addClass('d-none')
-                        $("#btnSubmitZone").prop("disabled", false);
-                        $("#btnSubmitZone").html("Aceptar");
-                        $("#rowRespuesta").removeClass("d-none");
-                        $("#respuesta").html('<div class="alert alert-success fontq"><b>¡Zona creada correctamente!<br>La misma se ver&aacute; reflejada en futuras marcaciones.</b></div>')
-                        $("#rowCreaZona").addClass("d-none");
-                        setTimeout(function () {
-                            $('#rowRespuesta').addClass('d-none')
-                        }, 4000);
-                        $("#map_size").val(data.radio)
-                        initMap()
-                    } else {
-                        $("#btnSubmitZone").prop("disabled", false);
-                        $("#btnSubmitZone").html("Aceptar");
-                    }
-                },
-                error: function () {
-                    $("#btnSubmitZone").prop("disabled", false);
-                    $("#btnSubmitZone").html("Aceptar");
-                    // $("#rowCreaZona").hide();
-                }
-            });
-        });
+    //     $("#CrearZona").bind("submit", function (e) {
+    //         e.preventDefault();
+    //         $.ajax({
+    //             type: $(this).attr("method"),
+    //             url: $(this).attr("action"),
+    //             data: $(this).serialize(),
+    //             // dataType: "json",
+    //             beforeSend: function (data) {
+    //                 $("#btnSubmitZone").prop("disabled", true);
+    //                 $("#btnSubmitZone").html("Creando Zona.!");
+    //             },
+    //             success: function (data) {
+    //                 if (data.status == "ok") {
+    //                     $('#btnCrearZona').addClass('d-none')
+    //                     $("#btnSubmitZone").prop("disabled", false);
+    //                     $("#btnSubmitZone").html("Aceptar");
+    //                     $("#rowRespuesta").removeClass("d-none");
+    //                     $("#respuesta").html('<div class="alert alert-success fontq"><b>¡Zona creada correctamente!<br>La misma se ver&aacute; reflejada en futuras marcaciones.</b></div>')
+    //                     $("#rowCreaZona").addClass("d-none");
+    //                     setTimeout(function () {
+    //                         $('#rowRespuesta').addClass('d-none')
+    //                     }, 4000);
+    //                     $("#map_size").val(data.radio)
+    //                     initMap()
+    //                 } else {
+    //                     $("#btnSubmitZone").prop("disabled", false);
+    //                     $("#btnSubmitZone").html("Aceptar");
+    //                 }
+    //             },
+    //             error: function () {
+    //                 $("#btnSubmitZone").prop("disabled", false);
+    //                 $("#btnSubmitZone").html("Aceptar");
+    //                 // $("#rowCreaZona").hide();
+    //             }
+    //         });
+    //     });
 
-    });
-    $(document).on("click", "#cancelZone", function (e) {
-        clean()
-        initMap()
-    });
+    // });
+    // $(document).on("click", "#cancelZone", function (e) {
+    //     clean()
+    //     initMap()
+    // });
 });
 
 $('#pic').on('hidden.bs.modal', function (e) {
@@ -624,37 +646,40 @@ function clean() {
 }
 
 function actualizar(noti = true) {
-    $.ajax({
-        type: 'POST',
-        url: 'actualizar.php',
-        beforeSend: function (data) {
+
+    if (noti) {
+        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+    };
+
+    axios({
+        method: 'post',
+        url: 'actualizar.php'
+    }).then(function (response) {
+        let data = response.data
+        if (data.status == "ok") {
             if (noti) {
-                ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                notify(data.Mensaje, 'success', 2000, 'right')
             }
-        },
-        success: function (data) {
-            if (data.status == "ok") {
-                if (noti) {
-                    $.notifyClose();
-                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                    notify(data.Mensaje, 'success', 2000, 'right')
-                }
-                minmaxDate()
-            } else {
-                if (noti) {
-                    $.notifyClose();
-                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                    notify(data.Mensaje, 'info', 2000, 'right')
-                }
-                // minmaxDate()
+            minmaxDate()
+        } else {
+            if (noti) {
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                notify(data.Mensaje, 'info', 2000, 'right')
             }
-        },
-        error: function () {
-            $.notifyClose();
-            ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, 'Actualizar <i class="bi bi-cloud-download"></i>')
-            notify('Error', 'danger', 2000, 'right')
         }
+
+    }).catch(function (error) {
+        alert('ERROR actualizar\n' + error);
+    }).then(function () {
+        // setTimeout(() => {
+        //     actualizar(false)
+        // }, 60000);
+        $.notifyClose();
+        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download"></i>')
     });
 }
 

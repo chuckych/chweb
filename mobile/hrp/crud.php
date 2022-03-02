@@ -240,11 +240,11 @@ if (($_POST['tipo'] == 'c_usuario')) {
         'cancellationReasons' => $cancellationReasons,
         'operations'          => $operations,
     );
+
     $data = array(
         'to' => $regid,
         'data' => array('data' => $data)
     );
-
     $payload = json_encode($data);
 
     function sendMessaje($url, $payload, $timeout = 10)
