@@ -5,8 +5,10 @@ const loadingTable = (selectortable) => {
     $(selectortable + ' td img').addClass('invisible')
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
-
 }
+let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+actualizar(false);
+
 function dateRange() {
     $('#_drMob').daterangepicker({
         singleDatePicker: false,
@@ -86,7 +88,7 @@ tablemobile = $('#table-mobile').DataTable({
         // $(row).addClass('animate__animated animate__fadeIn align-middle');
     },
     columns: [
-        { 
+        {
             className: 'align-middle text-center', targets: 'regPhoto', title: 'Foto',
             "render": function (data, type, row, meta) {
                 let urlToFile = `fotos/${row.userCompany}/${row.regPhoto}`;
@@ -157,7 +159,7 @@ tablemobile = $('#table-mobile').DataTable({
             className: 'align-middle', targets: '', title: 'Tipo',
             "render": function (data, type, row, meta) {
                 // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
-                let evento ='';
+                let evento = '';
                 switch (row.operationType) {
                     case '-1':
                         evento = 'Fichada';
@@ -172,7 +174,7 @@ tablemobile = $('#table-mobile').DataTable({
                         evento = 'Desconocido';
                         break;
                 }
-                if(row.operationType == '0' && row.eventType == '2'){
+                if (row.operationType == '0' && row.eventType == '2') {
                     evento = 'Fichada';
                 }
                 let datacol = `<div class="">${evento}</div>`
@@ -621,26 +623,30 @@ function clean() {
     $("#map_size").val('5')
 }
 
-let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-
-function actualizar() {
+function actualizar(noti = true) {
     $.ajax({
         type: 'POST',
         url: 'actualizar.php',
         beforeSend: function (data) {
-            ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-            notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+            if (noti) {
+                ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+            }
         },
         success: function (data) {
             if (data.status == "ok") {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                notify(data.Mensaje, 'success', 2000, 'right')
+                if (noti) {
+                    $.notifyClose();
+                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                    notify(data.Mensaje, 'success', 2000, 'right')
+                }
                 minmaxDate()
             } else {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
+                if (noti) {
+                    $.notifyClose();
+                    ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                    notify(data.Mensaje, 'info', 2000, 'right')
+                }
                 // minmaxDate()
             }
         },
@@ -658,7 +664,10 @@ $(document).on("click", ".actualizar", function (e) {
 
 $(document).on("click", "#Encabezado", function (e) {
     CheckSesion()
+    loadingTableUser('#tableUsuarios')
+    loadingTable('#table-mobile');
     tablemobile.ajax.reload();
+    $('#tableUsuarios').DataTable().ajax.reload();
 });
 
 $(document).on("click", ".showUsers", function (e) {
@@ -725,23 +734,27 @@ $(document).on("click", ".sendCH", function (e) {
 
 function minmaxDate() {
 
-    $.ajax({
-        type: 'POST',
-        url: 'minmaxdate.php',
-        success: function (data) {
-            let t = data
-            let min = t.min
-            let max = t.max
-            let dr = min + ' al ' + max
-            $('#min').val(min)
-            $('#max').val(max)
-            $('#_drMob2').val(dr)
-            $('#_drMob').val(dr)
-            dateRange()
-            // CheckSesion()
-            tablemobile.ajax.reload();
-            $('#tableUsuarios').DataTable().ajax.reload();
-        },
+    axios({
+        method: 'post',
+        url: 'minmaxdate.php'
+    }).then(function (response) {
+        let data = response.data
+        let t = data
+        let min = t.min
+        let max = t.max
+        let dr = min + ' al ' + max
+        $('#min').val(min)
+        $('#max').val(max)
+        $('#_drMob2').val(dr)
+        $('#_drMob').val(dr)
+        dateRange()
+
+    }).then(() => {
+        tablemobile.ajax.reload();
+        $('#tableUsuarios').DataTable().ajax.reload();
+    }).catch(function (error) {
+        alert('ERROR minmaxDate\n' + error);
+    }).then(function () {
     });
 }
 // });
