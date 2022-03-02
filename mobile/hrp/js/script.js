@@ -675,10 +675,6 @@ function actualizar(noti = true) {
     }).catch(function (error) {
         alert('ERROR actualizar\n' + error);
     }).then(function () {
-        // setTimeout(() => {
-        //     actualizar(false)
-        // }, 60000);
-        $.notifyClose();
         ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download"></i>')
     });
 }

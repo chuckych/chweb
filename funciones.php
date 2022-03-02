@@ -2406,6 +2406,17 @@ function InsertRegistroMS($query)
         sqlsrv_close($link);
     }
 }
+function InsertRegistroCH($query)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    if (($stmt)) {
+        return true;
+        sqlsrv_close($link);
+    }
+}
 function UpdateRegistro($query)
 {
     $params    = array();

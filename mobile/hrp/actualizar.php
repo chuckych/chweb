@@ -7,9 +7,7 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-// $foto = file_get_contents("https://server.xenio.uy/bucket_1/5c991ff84b5d89b23de9caa6/M_20891138_120520211425_3290.png");
-// echo'<img src= "data:image/png;base64,' . base64_encode($foto) . '" />';
-// exit;
+borrarLogs(__DIR__ . '', 30, '.log');
 
 function getEvents($url, $timeout = 10)
 {
@@ -17,32 +15,39 @@ function getEvents($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     $headers = [
         'Content-Type: application/json',
         'Authorization: 7BB3A26C25687BCD56A9BAF353A78'
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+
     curl_close($ch);
-    return ($file_contents) ? $file_contents : false;
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+        return false;
+    }
     exit;
 }
 
 require __DIR__ . '../../../config/conect_mysql.php';
 
-// sleep(6); 
-// header("Content-Type: application/json");
-// PrintRespuestaJson('ok', 'Se actualizaron registros');
-// exit;
-
-
-$query = "SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1";
-$rs = mysqli_query($link, $query);
-$createdDate = mysqli_fetch_assoc($rs);
+$createdDate = simple_pdoQuery("SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1");
 $createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $createdDate['createdDate'];
-mysqli_free_result($rs);
 
-// PrintRespuestaJson('error', $createdDate); exit;
 $url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
@@ -81,8 +86,9 @@ if (!empty($arrayData)) {
         $dates     = new \DateTime();
         $dates     = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
         $dates->setTimestamp($timestamp);
-        $fechaHora = $dates->format('Y-m-d H:i:s');
-
+        $fechaHora = $dates->format('Y-m-d H:i');
+        $fechaHoraCH = $dates->format('Y-m-d');
+        $hora = $dates->format('H:i');
         $__v           = $valor['__v'];
         $_id           = $valor['_id'];
         $accuracy      = $valor['accuracy'];
@@ -121,13 +127,30 @@ if (!empty($arrayData)) {
 
         /** */
         $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
-        (mysqli_query($link, $query));
+
+        if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
+            $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
+
+            $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
+
+            if (InsertRegistroCH($query)) {
+                $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
+                $pathLog = date('Ymd') . '_FichadasCH.log'; // ruta del archivo de Log de errores
+                fileLog($text, $pathLog); // escribir en el log de errores el error
+            }else{
+                $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo, $fechaHoraCH, $hora 9999 9999 0";
+                $pathLog = date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
+                fileLog($text, $pathLog); // escribir en el log de errores el error
+            }
+        } else {
+            $text = 'No se pudo insertar el registro ' . $employeId . ' ' . $fechaHora;
+            $pathLog = date('Ymd') . '_logActualizar.log'; // ruta del archivo de Log de errores
+            fileLog($text, $pathLog); // escribir en el log de errores el error
+        }
     }
     header("Content-Type: application/json");
-    // PrintRespuestaJson('ok', 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData));
     $data = array('status' => 'ok', 'Mensaje' => 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData), 'data' => $arrayData);
     echo json_encode($data);
-    mysqli_close($link);
     exit;
 } else {
     header("Content-Type: application/json");
