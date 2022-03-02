@@ -12,7 +12,7 @@ $q = $_POST['q'];
 $recid = $recid ?? '';
 $id = $id ?? '';
 
-$query = "SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre', clientes.host as 'host', clientes.db as 'db', clientes.user as 'user', clientes.pass as 'pass', clientes.auth as 'auth', clientes.fecha_alta as 'fecha_alta', clientes.fecha as 'fecha_mod', clientes.tkmobile as 'tkmobile', clientes.WebService as 'WebService', ( SELECT COUNT(usuarios.cliente) FROM usuarios WHERE clientes.id=usuarios.cliente ) AS cant_usuarios, ( SELECT COUNT(roles.id) FROM roles WHERE roles.cliente=clientes.id ) AS 'cant_roles' FROM clientes WHERE clientes.id >'0' $recid $id ORDER BY clientes.fecha DESC";
+$query = "SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre', clientes.host as 'host', clientes.db as 'db', clientes.user as 'user', clientes.pass as 'pass', clientes.auth as 'auth', clientes.fecha_alta as 'fecha_alta', clientes.fecha as 'fecha_mod', clientes.tkmobile as 'tkmobile', clientes.WebService as 'WebService', clientes.ApiMobileHRP as 'ApiMobileHRP', ( SELECT COUNT(usuarios.cliente) FROM usuarios WHERE clientes.id=usuarios.cliente ) AS cant_usuarios, ( SELECT COUNT(roles.id) FROM roles WHERE roles.cliente=clientes.id ) AS 'cant_roles' FROM clientes WHERE clientes.id >'0' $recid $id ORDER BY clientes.fecha DESC";
 // print_r($query); exit;
 $datos = array_pdoQuery($query);
 $data  = array();
@@ -41,6 +41,7 @@ foreach ($datos as $row) {
   /** 1 = no ; 2 = Si */
   $tkmobile      = $row['tkmobile'];
   $WebService    = $row['WebService'];
+  $ApiMobileHRP    = $row['ApiMobileHRP'];
   $fecha_alta    = fechformat($row['fecha_alta']);
   $fecha         = $row['fecha_mod'];
   $cant_usuarios = $row['cant_usuarios'];
@@ -53,7 +54,7 @@ foreach ($datos as $row) {
     $btnUsers = '<button title="" href="#" class="btn border btn-outline-custom w80 fontq"><span class=""><span class="mr-2">' . $IconUsuarios . '</span>' . $cant_usuarios . ' </span></button>';
   }
   $btnRoles = '<a title="Roles" href="/' . HOMEHOST . '/usuarios/roles/?_c=' . $recid . '&alta" class="btn border btn-outline-custom w80 fontq ml-1"><span class="mr-2">' . $IconRoles . '</span>' . $cant_roles . ' </span></a>';
-  $btnEditar = '<button type="button" title="Editar Cuenta:' . $nombre . '" dataNombre="' . $nombre . '" dataIdent="' . $ident . '" dataRecid="' . $recid . '" dataId="' . $id . '" dataHost="' . $host . '" dataDB="' . $db . '" dataUser="' . $user . '" dataPass="' . $pass . '" dataAuth="' . $auth2 . '" dataTkmobile="' . $tkmobile . '" dataWebService="' . $WebService . '" class="btn border btn-outline-custom fontq ml-1 editCuenta">' . $IconEditar . '</span></button>';
+  $btnEditar = '<button type="button" title="Editar Cuenta:' . $nombre . '" dataNombre="' . $nombre . '" dataIdent="' . $ident . '" dataRecid="' . $recid . '" dataId="' . $id . '" dataHost="' . $host . '" dataDB="' . $db . '" dataUser="' . $user . '" dataPass="' . $pass . '" dataAuth="' . $auth2 . '" dataTkmobile="' . $tkmobile . '" dataWebService="' . $WebService . '" dataApiMobileHRP="' . $ApiMobileHRP . '" class="btn border btn-outline-custom fontq ml-1 editCuenta">' . $IconEditar . '</span></button>';
   // $btnEditar = '<a title="Editar Cuenta: '.$nombre.'" href="index.php?id='.$recid.'&mod" class="btn border btn-outline-custom fontp">'.$IconEditar.'</span></a>';
   $Botones = $btnUsers . $btnRoles . $btnEditar;
   $data[] = array(

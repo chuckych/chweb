@@ -641,6 +641,7 @@ function actualizar() {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
                 notify(data.Mensaje, 'info', 2000, 'right')
+                // minmaxDate()
             }
         },
         error: function () {
@@ -739,6 +740,7 @@ function minmaxDate() {
             dateRange()
             // CheckSesion()
             tablemobile.ajax.reload();
+            $('#tableUsuarios').DataTable().ajax.reload();
         },
     });
 }

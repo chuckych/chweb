@@ -71,6 +71,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     // require __DIR__ . '../../../config/conect_mysql.php';
 
     $nombre     = test_input($_POST['nombre']);
+    $ApiMobileHRP = test_input($_POST['ApiMobileHRP']);
     $host       = ($_POST['host']);
     $host       = escape_sql_wild($host);
     $db         = test_input($_POST['db']);
@@ -86,7 +87,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
         exit;
     } else {
 
-        $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', fecha='$fecha' WHERE recid='$recid'";
+        $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', ApiMobileHRP = '$ApiMobileHRP', fecha='$fecha' WHERE recid='$recid'";
 
         if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' and recid != '$recid'LIMIT 1")) {
             PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);

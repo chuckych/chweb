@@ -183,6 +183,7 @@ $(document).ready(function () {
         let dataAuth = $(this).attr('dataAuth');
         let dataTkmobile = $(this).attr('dataTkmobile');
         let dataWebService = $(this).attr('dataWebService');
+        let ApiMobileHRP = $(this).attr('dataapimobilehrp');
         $('#nombreCuenta').html('Editar Cuenta: ' + dataNombre)
         $('#nombre').val(dataNombre)
         $('#ident').val(dataIdent)
@@ -198,6 +199,7 @@ $(document).ready(function () {
         }
         $('#tkmobile').val(dataTkmobile)
         $('#WebService').val(dataWebService)
+        $('#ApiMobileHRP').val(ApiMobileHRP)
     });
     $('#modalFormCuenta').on('hidden.bs.modal', function (e) {
         document.getElementById('FormCuenta').reset();

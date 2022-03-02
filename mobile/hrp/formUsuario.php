@@ -14,7 +14,7 @@
         </div>
         <div class="col-12 pb-2">
             <label for="regid">Reg ID</label>
-            <textarea class="form-control p-3" name="regid" id="regid" style="height: 100px !important;" placeholder="Regid proporcionado desde la App"></textarea>
+            <textarea class="form-control p-3" name="regid" id="regid" style="height: 120px !important;" placeholder="Regid proporcionado desde la App"></textarea>
             <!-- <input class="form-control h40" type="text" name="regid" id="regid" placeholder="Regid proporcionado desde la App"> -->
         </div>
         <div class="col-12 pt-3">

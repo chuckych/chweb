@@ -62,7 +62,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $_POST['id_user'] = $_POST['id_user'] ?? '';
     $id_user          = test_input($_POST['id_user']);
 
-    $query = "SELECT id_user, nombre, id_company, regid FROM reg_user_ where id_user = '$id_user' LIMIT 1";
+    $query = "SELECT id_user, nombre, id_company, regid FROM reg_user_ where id_user = '$id_user' AND id_company = '$_SESSION[ID_CLIENTE]' LIMIT 1";
 
     $rs = mysqli_query($link, $query);
 
@@ -101,14 +101,14 @@ if (($_POST['tipo'] == 'c_usuario')) {
         PrintRespuestaJson('error', 'El nombre de tener contener mínimo 3 caracteres');
         exit;
     };
-    $CheckRegid = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE regid = '$regid' and id_user != '$id_user' AND regid !=''");
+    // $CheckRegid = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE regid = '$regid' and id_user != '$id_user' AND regid !='' AND id_company = '$_SESSION[ID_CLIENTE]'");
 
-    if ($CheckRegid) {
-        PrintRespuestaJson('error', 'Ya existe el Reg ID');
-        exit;
-    }
+    // if ($CheckRegid) {
+    //     PrintRespuestaJson('error', 'Ya existe el Reg ID');
+    //     exit;
+    // }
 
-    $query = "UPDATE reg_user_ SET nombre = '$nombre', regid = '$regid' WHERE id_user = '$id_user' LIMIT 1";
+    $query = "UPDATE reg_user_ SET nombre = '$nombre', regid = '$regid' WHERE id_user = '$id_user' AND id_company = '$_SESSION[ID_CLIENTE]' LIMIT 1";
 
     $result  = mysqli_query($link, $query);
     if ($result) {
@@ -134,7 +134,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
         PrintRespuestaJson('error', 'Campo Legajo requerido');
         exit;
     };
-    $CheckReg = CountRegMayorCeroMySql("SELECT 1 FROM reg_ WHERE id_user = '$id_user' LIMIT 1");
+    $CheckReg = CountRegMayorCeroMySql("SELECT 1 FROM reg_ WHERE id_user = '$id_user' AND id_company = '$_SESSION[ID_CLIENTE]' LIMIT 1");
 
     if ($CheckReg) {
         PrintRespuestaJson('error', 'No se puede elimnar. Existe información en registros');
