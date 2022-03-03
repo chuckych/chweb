@@ -178,7 +178,6 @@ function CheckedInputValChange(selector, valcheck, valuncheck, namecheck, nameun
         }
     });
 }
-
 function DisabledInput(selector) {
     if ($(selector).is(':not(:disabled)')) {
         $(selector).prop('disabled', true)

@@ -19,8 +19,8 @@
         ?>
             <div class="col-12 pt-3">
                 <div class="float-right">
-                    <button type="button" class="btn btn-light border-0 btn-sm fontq h35 btn-mobile text-secondary" id="CancelarFormMensaje">Cancelar</button>
-                    <button type="submit" class="btn btn-sm btn-custom fontq h35 btn-mobile">Aceptar</button>
+                    <button type="button" class="btn btn-light border-0 btn-sm fontq h40 w100 text-secondary" id="CancelarFormMensaje">Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-custom fontq h40 w100">Aceptar</button>
                 </div>
             </div>
         <?php

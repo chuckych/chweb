@@ -88,7 +88,6 @@
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require 'modal.php';
-    require __DIR__ . "/usuarios.html";
     require __DIR__ . "../../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "../../../js/DateRanger.php";
@@ -105,9 +104,9 @@
     <script src="../../js/clipboardjs/dist/clipboard.min.js"></script>
     <!-- <script src="../../js/select2.min.js"></script> -->
     <!-- <script src="script-min.js"></script> -->
-    <script src="js/script.js?v=<?= vjs() ?>"></script>
-    <script src="js/script_user.js?v=<?= vjs() ?>"></script>
-    <!-- <script src="FicMobExcel.js?v=<?= vjs() ?>"></script> -->
+    <script src="js/script.js?v=<?= time() ?>"></script>
+    <script src="js/script_user.js?v=<?= time() ?>"></script>
+    <!-- <script src="FicMobExcel.js?v=<?= time() ?>"></script> -->
 
 </body>
 

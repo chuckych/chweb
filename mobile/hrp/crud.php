@@ -22,7 +22,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $regid      = test_input($_POST['regid']);
 
     if (valida_campo($id_user)) {
-        PrintRespuestaJson('error', 'Campo Legajo requerido');
+        PrintRespuestaJson('error', 'Campo ID requerido');
         exit;
     };
     if (valida_campo($nombre)) {
@@ -37,7 +37,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     // $CheckRegid = CountRegMayorCeroMySql("SELECT 1 FROM reg_user_ WHERE regid = '$regid' AND regid !=''");
 
     if ($CheckID_user) {
-        PrintRespuestaJson('error', 'Ya existe el Legajo');
+        PrintRespuestaJson('error', 'Ya existe el ID de usuario');
         exit;
     }
     // if ($CheckRegid) {
@@ -90,7 +90,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $regid      = test_input($_POST['regid']);
 
     if (valida_campo($id_user)) {
-        PrintRespuestaJson('error', 'Campo Legajo requerido');
+        PrintRespuestaJson('error', 'Campo ID es requerido');
         exit;
     };
     if (valida_campo($nombre)) {
@@ -131,7 +131,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $regid      = test_input($_POST['regid']);
 
     if (valida_campo($id_user)) {
-        PrintRespuestaJson('error', 'Campo Legajo requerido');
+        PrintRespuestaJson('error', 'Campo ID es requerido');
         exit;
     };
     $CheckReg = CountRegMayorCeroMySql("SELECT 1 FROM reg_ WHERE id_user = '$id_user' AND id_company = '$_SESSION[ID_CLIENTE]' LIMIT 1");
@@ -287,11 +287,11 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $hora    = test_input($legFech[2]);
 
     if (valida_campo($legajo)) {
-        PrintRespuestaJson('error', 'Falta Legajo');
+        PrintRespuestaJson('error', 'Falta ID');
         exit;
     };
     if (($legajo=='0')) {
-        PrintRespuestaJson('error', 'Falta Legajo');
+        PrintRespuestaJson('error', 'Falta ID');
         exit;
     };
     if (valida_campo($fecha)) {
@@ -308,7 +308,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     if (InsertRegistroMS($query)) {
         $data = array(
             'status' => 'ok', 
-            'Mensaje' => 'Se tranfirio el registro.<br>Legajo: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora, 
+            'Mensaje' => 'Se tranfirio el registro.<br>ID: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora, 
             'Legajo' => ($legajo),
             'Fecha' => ($fecha),
         );
@@ -331,7 +331,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
         exit;
     };
     if (valida_campo($userid)) {
-        PrintRespuestaJson('error', 'Falta Legajo');
+        PrintRespuestaJson('error', 'Falta ID');
         exit;
     };
 

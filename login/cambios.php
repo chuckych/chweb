@@ -283,6 +283,26 @@ if ($verDB < 20220301) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220303) {
+
+    pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `id_company` `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `id_user`");
+    fileLog("Se actualizo tabla \"reg_\" columna \"id_company\"", $pathLog); // escribir en el log
+   
+    if (!checkTable('reg_phone_')) {
+        $table_reg_phone_ = "CREATE TABLE IF NOT EXISTS `reg_phone_` ( `id` INT NOT NULL AUTO_INCREMENT, `phoneid` VARCHAR(20) NOT NULL, `nombre` VARCHAR(50) NOT NULL, `evento` SMALLINT NOT NULL, `fechahora` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE currENT_TIMESTAMP(), PRIMARY KEY (`id`) ) COLLATE='utf8_general_ci'";
+        pdoQuery($table_reg_phone_);
+        fileLog("Se creo la tabla \"reg_phone_\"", $pathLog); // escribir en el log
+    } else {
+        fileLog("No se creo tabla: \"reg_phone_\". ya existe", $pathLog); // escribir en el log
+    }
+
+    pdoQuery("ALTER TABLE `reg_phone_` ADD COLUMN `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `phoneid`;");
+    fileLog("Se creo columna \"id_company\" en tabla \"reg_phone_\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
 
 // if ($verDB < 20211102) {
 

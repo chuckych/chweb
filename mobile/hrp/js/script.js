@@ -73,7 +73,9 @@ tablemobile = $('#table-mobile').DataTable({
     dom: "<'row mt-2'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-center justify-content-end'<'SoloFic'>f>>" +
         "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto't>>" +
-        "<'row'<'col-sm-12 col-md-6 d-flex align-items-start'i><'col-sm-12 col-md-6 d-flex justify-content-end'p>>",
+        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
+        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
+        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getRegMobile.php",
         type: "POST",
@@ -204,10 +206,17 @@ tablemobile = $('#table-mobile').DataTable({
             },
         },
         {
-            className: 'align-middle w-100', targets: '', title: '',
+            className: 'align-middle', targets: '', title: '',
             "render": function (data, type, row, meta) {
                 row.operation = (row.operation == '0') ? '' : row.operation;
                 let datacol = `<div class="">${row.operation}</div>`
+                return datacol;
+            },
+        },
+        {
+            className: 'align-middle w-100', targets: '', title: 'Dispositivo',
+            "render": function (data, type, row, meta) {
+                let datacol = `<div class="">${row.phoneid}</div>`
                 return datacol;
             },
         },
@@ -229,8 +238,9 @@ tablemobile = $('#table-mobile').DataTable({
 tablemobile.on('init.dt', function () {
 
     $('#btnMenu').html(`
-        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq w150">
-            Usuarios <i class="ml-2 bi bi-people-fill"></i>
+        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
+            <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
+            <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
         </button>
         <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
             <i class="bi bi-cloud-download"></i>
@@ -252,7 +262,7 @@ tablemobile.on('init.dt', function () {
         <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
         <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
             <span class="text-dark d-none d-lg-block">Solo Fichadas</span>
-            <span class="text-dark d-block d-lg-none">Fichadas</span>
+            <span class="text-dark d-block d-lg-none fontp" style="padding-top:2px">Fichadas</span>
         </label>
     </div>`)
     $('#RowTableMobile').removeClass('invisible')
@@ -694,8 +704,9 @@ $(document).on("click", "#Encabezado", function (e) {
 $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     $('#btnMenu').html(`
-        <button data-titlet="Fichadas" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showReg fontq w150">
-            Fichadas <i class="ml-2 bi bi-clipboard-data-fill"></i>
+        <button data-titlet="Fichadas" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showReg fontq">
+            <span class="d-none d-sm-block w100">Fichadas <i class="ml-2 bi-clipboard-data-fill"></i></span>
+            <span class="d-block d-sm-none"><i class="bi bi-clipboard-data-fill"></i></span>
         </button>`);
     document.title = "Usuarios - Mobile HR"
     $('#Encabezado').html("Usuarios - Mobile HR");
@@ -705,8 +716,9 @@ $(document).on("click", ".showUsers", function (e) {
 $(document).on("click", ".showReg", function (e) {
     CheckSesion()
     $('#btnMenu').html(`
-        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq w150">
-            Usuarios <i class="ml-2 bi bi-people-fill"></i>
+        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
+            <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
+            <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
         </button>
         <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
             <i class="bi bi-cloud-download"></i>

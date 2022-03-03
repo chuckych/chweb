@@ -135,10 +135,10 @@ if (!empty($arrayData)) {
 
             if (InsertRegistroCH($query)) {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = date('Ymd') . '_FichadasCH.log'; // ruta del archivo de Log de errores
+                $pathLog = date('Ymd') . '_FichadasCH_'.$companyCode.'.log'; // ruta del archivo de Log de errores
                 fileLog($text, $pathLog); // escribir en el log de errores el error
             }else{
-                $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo, $fechaHoraCH, $hora 9999 9999 0";
+                $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
                 $pathLog = date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
                 fileLog($text, $pathLog); // escribir en el log de errores el error
             }
