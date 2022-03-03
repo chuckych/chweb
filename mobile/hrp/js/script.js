@@ -708,8 +708,8 @@ $(document).on("click", ".showUsers", function (e) {
             <span class="d-none d-sm-block w100">Fichadas <i class="ml-2 bi-clipboard-data-fill"></i></span>
             <span class="d-block d-sm-none"><i class="bi bi-clipboard-data-fill"></i></span>
         </button>`);
-    document.title = "Usuarios - Mobile HR"
-    $('#Encabezado').html("Usuarios - Mobile HR");
+    document.title = "Usuarios Mobile HR"
+    $('#Encabezado').html("Usuarios Mobile HR");
     $('#RowTableMobile').hide();
     $('#RowTableUsers').show();
 });
@@ -724,8 +724,8 @@ $(document).on("click", ".showReg", function (e) {
             <i class="bi bi-cloud-download"></i>
         </button>`);
     // set document title
-    document.title = "Fichadas - Mobile HR"
-    $('#Encabezado').html("Fichadas - Mobile HR")
+    document.title = "Fichadas Mobile HR"
+    $('#Encabezado').html("Fichadas Mobile HR")
     $('#RowTableUsers').hide();
     $('#RowTableMobile').show();
 });
@@ -790,4 +790,82 @@ function minmaxDate() {
     }).then(function () {
     });
 }
+
+$(".selectjs_cuentaToken").select2({
+    multiple: false,
+    language: "es",
+    placeholder: "Cambiar de Cuenta",
+    minimumInputLength: "0",
+    minimumResultsForSearch: -1,
+    maximumInputLength: "10",
+    selectOnClose: false,
+    language: {
+        noResults: function () {
+            return "No hay resultados..";
+        },
+        inputTooLong: function (args) {
+            var message =
+                "Máximo " +
+                "10" +
+                " caracteres. Elimine " +
+                overChars +
+                " caracter";
+            if (overChars != 1) {
+                message += "es";
+            }
+            return message;
+        },
+        searching: function () {
+            return "Buscando..";
+        },
+        errorLoading: function () {
+            return "Sin datos..";
+        },
+        inputTooShort: function () {
+            return "Ingresar " + "0" + " o mas caracteres";
+        },
+        maximumSelected: function () {
+            return "Puede seleccionar solo una opción";
+        }
+    },
+    ajax: {
+        url: "getCuentasApi.php",
+        dataType: "json",
+        type: "POST",
+        data: function (params) {
+            return {};
+        },
+        processResults: function (data) {
+            return {
+                results: data
+            };
+        }
+    }
+});
+
+$(".selectjs_cuentaToken").on("select2:select", function (e) {
+    CheckSesion();
+    $("#RefreshToken").submit();
+    // $('#map').html('').removeClass('shadow').css('height', '0px');
+});
+$("#RefreshToken").bind("submit", function (e) {
+    e.preventDefault();
+    $.ajax({
+        type: $(this).attr("method"),
+        url: $(this).attr("action"),
+        data: $(this).serialize(),
+        beforeSend: function (data) {
+            CheckSesion();
+        },
+        success: function (data) {
+            if (data.status == "ok") {
+                loadingTable('#table-mobile');
+                loadingTableUser('#tableUsuarios');
+                minmaxDate()
+                actualizar(false);
+            }
+        },
+        error: function () { }
+    });
+});
 // });

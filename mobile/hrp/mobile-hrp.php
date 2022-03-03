@@ -5,7 +5,7 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"> -->
-    <title>Fichadas - Mobile HR</title>
+    <title>Fichadas Mobile HR</title>
     <style type="text/css" media="screen">
         .datos {
             margin-left: 5px;
@@ -42,7 +42,11 @@
 
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas - ' . MODULOS['mobile'] . ' HR', '') ?>
+        <?php // encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas - ' . MODULOS['mobile'] . ' HR', '') ?>
+        <?php 
+                encabezado_mod3('bg-mob mt-3', 'white', '../../img/mobile-hrp-2.svg', 'Fichadas ' . MODULOS['mobile'] . ' HR', 'color: #fff; width:30px', 'mr-2');
+        ?>
+
         <!-- Fin Encabezado -->
         <?php
 
@@ -78,9 +82,21 @@
                     </thead>
                 </table>
             </div>
+            <?php
+            if (modulo_cuentas()) :
+            ?>
+                <div class="col-12 m-0 mt-2">
+                    <form action="changeCuentaApi.php" method="POST" id="RefreshToken">
+                        <select class="selectjs_cuentaToken w200" id="recid" name="recid">
+                        </select>
+                    </form>
+                </div>
+            <?php
+            endif;
+            ?>
         </div>
         <div class="bg-white pb-3 radius" id="RowTableUsers">
-            <?php require_once __DIR__ . "/usuarios.html";?>
+            <?php require_once __DIR__ . "/usuarios.html"; ?>
         </div>
 
     </div>
@@ -102,8 +118,7 @@
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/clipboardjs/dist/clipboard.min.js"></script>
-    <!-- <script src="../../js/select2.min.js"></script> -->
-    <!-- <script src="script-min.js"></script> -->
+    <script src="../../js/select2.min.js"></script>
     <script src="js/script.js?v=<?= time() ?>"></script>
     <script src="js/script_user.js?v=<?= time() ?>"></script>
     <!-- <script src="FicMobExcel.js?v=<?= time() ?>"></script> -->

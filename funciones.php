@@ -404,6 +404,56 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
         </div>
     </div>';
 }
+function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
+{
+
+    $countModRol = (count($_SESSION['MODS_ROL']));
+    $userLogout = $version = $icon_clock_history = $icon_person_circle = '';
+
+    if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/usuarios/perfil/index.php') {
+        $icono = '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<b>MIS HORAS</b>" aria-describedby="tooltip" >
+    <a href="/' . HOMEHOST . '/mishoras/" class="btn btn-sm btn-custom text-white">
+        ' . $icon_clock_history . '
+    </a></span>';
+    } else {
+        $icono = '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<b>MI PERFIL</b>" aria-describedby="tooltip" >
+    <a href="/' . HOMEHOST . '/usuarios/perfil/" class="btn btn-sm btn-custom text-white">
+        ' . $icon_person_circle . '
+    </a></span>';
+    }
+    $icon_box_arrow_right ='';
+
+    if ($countModRol == '1') {
+        $userLogout = '
+<span class="p-2 float-right" >' . $icono . '
+<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<b>SALIR</b>" aria-describedby="tooltip" >
+<a href="/' . HOMEHOST . '/logout.php" title="Salir" class="btn btn-sm btn-custom">' . $icon_box_arrow_right . '</a></span>
+</span>';
+    }
+    if ($countModRol != '1') {
+        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
+    }
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
+    } elseif ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/usuarios/perfil/index.php') {
+    } else {
+        $svg = '<img class="img-fluid ' . $class . '" style="'.$style.'" src="'.$svg.'"></img>';
+    }
+    echo '
+    <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
+        <div class="col-8 d-flex align-items-center">
+            <div class="h6 fw4 py-2 m-0 d-inline-flex">
+                <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
+                    ' . $svg . '
+                </a>
+                <div class="text-nowrap d-flex align-items-center" style="font-size: 0.9rem;margin-top: 3px;" id="Encabezado">' . $titulo . '</div>
+            </div>
+        </div>
+        <div class="col-4 d-flex align-items-center justify-content-end pr-1">
+            ' . $userLogout . $version . '
+        </div>
+    </div>';
+}
 /** Función HOST */
 function host()
 {

@@ -271,6 +271,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                             && ($Modulo2 != 'Mobile HRP')
                             && ($Modulo2 != 'Dashboard')
                             && ($Modulo2 != 'Horarios')
+                            && ($Modulo2 != 'Proyectos')
                             // &&($Modulo2 != 'Mis Horas')
                             && ($Modulo2 != 'Horas Costeadas')
                         ) { ?>
