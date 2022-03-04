@@ -1,5 +1,6 @@
 <?php
 require __DIR__ . '../../../config/index.php';
+ini_set('max_execution_time', 1800); //1800 seconds = 30 minutes
 session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -8,6 +9,14 @@ secure_auth_ch_json();
 E_ALL();
 
 borrarLogs(__DIR__ . '', 30, '.log');
+
+$company = array();
+$employe = array();
+$arrayData = array();
+$insertCH = array();
+$insertCH_Fail = array();
+
+$start = microtime(true);
 
 function getEvents($url, $timeout = 10)
 {
@@ -78,8 +87,9 @@ if (!empty($array['payload'])) {
         );
     }
 }
-// print_r(json_encode($arrayData));exit;
+
 if (!empty($arrayData)) {
+
     foreach ($arrayData as $key => $valor) {
         $timestamp = $valor['dateTime'];
         $timestamp = substr($timestamp, 0, 10);
@@ -114,6 +124,12 @@ if (!empty($arrayData)) {
         $checkPhoto = ($attphoto) ? '0' : '1';
         /** Guardamos la foto del base64 */
 
+        $company[]      = "$companyCode";
+        if (($companyCode == $_SESSION['ID_CLIENTE'])) {
+            $totalSession[] = ($companyCode);
+        }
+        $employe[]      = "Employe $employeId - Company $companyCode";
+
         if ($eventType == '2') {
             $filename = 'fotos/' . $companyCode . '/index.php';
             $dirname = dirname($filename);
@@ -130,17 +146,31 @@ if (!empty($arrayData)) {
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
             $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
-
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
-
             if (InsertRegistroCH($query)) {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = date('Ymd') . '_FichadasCH_'.$companyCode.'.log'; // ruta del archivo de Log de errores
-                fileLog($text, $pathLog); // escribir en el log de errores el error
-            }else{
+                $pathLog = date('Ymd') . '_FichadasCH_' . $companyCode . '.log'; // ruta del archivo de Log de errores
+                $insertCH[] = array(
+                    'Estado' => '0',
+                    'Fecha'  => $fechaHoraCH,
+                    'Hora'   => $hora,
+                    'Lector' => '9999',
+                    'Legajo' => $Legajo,
+                    'Reloj'  => '9999',
+                );
+                fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+            } else {
                 $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
                 $pathLog = date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
                 fileLog($text, $pathLog); // escribir en el log de errores el error
+                $insertCH_Fail[] = array(
+                    'Estado' => '0',
+                    'Fecha'  => $fechaHoraCH,
+                    'Hora'   => $hora,
+                    'Lector' => '9999',
+                    'Legajo' => $Legajo,
+                    'Reloj'  => '9999',
+                );
             }
         } else {
             $text = 'No se pudo insertar el registro ' . $employeId . ' ' . $fechaHora;
@@ -148,11 +178,30 @@ if (!empty($arrayData)) {
             fileLog($text, $pathLog); // escribir en el log de errores el error
         }
     }
+    $totalSession = array_count_values($totalSession);
+    $end  = microtime(true);
+    $time = round($end - $start, 2);
     header("Content-Type: application/json");
-    $data = array('status' => 'ok', 'Mensaje' => 'Se actualizaron registros<br/>Cantidad de registros nuevos: ' . count($arrayData), 'data' => $arrayData);
-    echo json_encode($data);
+    $data = array(
+        'Mensaje'      => 'Se actualizaron registros',
+        'company'      => array_count_values($company),
+        'date'         => date('Y-m-d H:i:s'),
+        'employe'      => array_count_values($employe),
+        'iCH_Fail'     => ($insertCH_Fail),
+        'iCH_OK'       => ($insertCH),
+        'status'       => 'ok',
+        'time'         => ($time),
+        'total'        => count($arrayData),
+        'totalSession' => reset($totalSession),
+        // 'data'      => $arrayData,
+    );
+    echo json_encode(array('Response' => $data));
     exit;
 } else {
-    header("Content-Type: application/json");
-    PrintRespuestaJson('no', 'No hay registros nuevos');
+    $end = microtime(true);
+    $time = round($end - $start, 2);
+    // header("Content-Type: application/json");
+    $data = array('status' => 'no', 'Mensaje' => 'No hay registros nuevos', 'total' => count($arrayData), 'time' => ($time));
+    echo json_encode(array('Response' => $data));
+    exit;
 }

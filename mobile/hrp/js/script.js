@@ -73,8 +73,8 @@ tablemobile = $('#table-mobile').DataTable({
     dom: "<'row mt-2'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-center justify-content-end'<'SoloFic'>f>>" +
         "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
+        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getRegMobile.php",
@@ -269,8 +269,9 @@ tablemobile.on('init.dt', function () {
     $('#table-mobile_filter input').addClass('w250')
     $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
 });
-tablemobile.on('draw.dt', function () {
-    // $('#table-mobile thead').remove()
+tablemobile.on('draw.dt', function (e, settings) {
+    e.preventDefault();
+    return true
 });
 tablemobile.on('page.dt', function () {
     loadingTable('#table-mobile')
@@ -654,7 +655,6 @@ function clean() {
     $('#mapzone').addClass('d-none');
     $("#map_size").val('5')
 }
-
 function actualizar(noti = true) {
 
     if (noti) {
@@ -662,18 +662,28 @@ function actualizar(noti = true) {
         notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
     };
 
+
     axios({
         method: 'post',
         url: 'actualizar.php'
     }).then(function (response) {
-        let data = response.data
+        let data = response.data.Response
+        // set session storage
+        let date = new Date()
+        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: '+ date, JSON.stringify(data));
         if (data.status == "ok") {
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
-                notify(data.Mensaje, 'success', 2000, 'right')
+                minmaxDate()
+                if (data.totalSession > 0) {
+                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
+                } else {
+                    notify('No hay registros nuevos', 'info', 2000, 'right')
+                }
+            } else {
+                minmaxDate()
             }
-            minmaxDate()
         } else {
             if (noti) {
                 $.notifyClose();
@@ -766,7 +776,6 @@ $(document).on("click", ".sendCH", function (e) {
 });
 
 function minmaxDate() {
-
     axios({
         method: 'post',
         url: 'minmaxdate.php'
@@ -868,4 +877,3 @@ $("#RefreshToken").bind("submit", function (e) {
         error: function () { }
     });
 });
-// });

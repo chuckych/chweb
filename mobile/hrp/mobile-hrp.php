@@ -42,14 +42,9 @@
 
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php // encabezado_mod('bg-mob', 'white', 'mobile.png', 'Fichadas - ' . MODULOS['mobile'] . ' HR', '') ?>
-        <?php 
-                encabezado_mod3('bg-mob mt-3', 'white', '../../img/mobile-hrp-2.svg', 'Fichadas ' . MODULOS['mobile'] . ' HR', 'color: #fff; width:30px', 'mr-2');
-        ?>
-
+        <?= encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-2.svg', 'Fichadas ' . MODULOS['mobile'] . ' HR', 'color: #fff; width:30px', 'mr-2'); ?>
         <!-- Fin Encabezado -->
         <?php
-
         $FirstDate = "2019/01/01";
         $FirstYear = '2019';
         $maxDate   = date('Y-m-d');

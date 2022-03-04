@@ -15,8 +15,8 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-white row d-flex align-items-center" style="z-index:1040;">
     <?php if (HOMEHOST == 'chweb') { ?>
-        <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
-            <img src="/<?= HOMEHOST ?>/img/Logo-HRP.jpg?v=<?= vjs() ?>" alt="<?= CUSTOMER ?>">
+        <a class="navbar-brand m-0 p-0 d-flex align-items-center" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
+            <img src="/<?= HOMEHOST ?>/img/logos/logoHRP.svg?v=<?= vjs() ?>" class="m-0 p-0 w110 img-fluid" alt="<?= CUSTOMER ?>">
         </a>
     <?php } elseif (HOMEHOST == 'seguimiento') { ?>
         <a class="navbar-brand" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
