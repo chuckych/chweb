@@ -9,6 +9,7 @@ secure_auth_ch_json();
 E_ALL();
 
 borrarLogs(__DIR__ . '', 30, '.log');
+borrarLogs(__DIR__ . '', 1, '.json');
 
 $company = array();
 $employe = array();
@@ -128,7 +129,7 @@ if (!empty($arrayData)) {
         if (($companyCode == $_SESSION['ID_CLIENTE'])) {
             $totalSession[] = ($companyCode);
         }
-        $employe[]      = "Employe $employeId - Company $companyCode";
+        $employe[]      = "$employeId";
 
         if ($eventType == '2') {
             $filename = 'fotos/' . $companyCode . '/index.php';
@@ -196,12 +197,23 @@ if (!empty($arrayData)) {
         // 'data'      => $arrayData,
     );
     echo json_encode(array('Response' => $data));
+    // $pathLog = date('Ymd') . '_Transfer.json';
+    // $dataJson = array(
+    //     'Response' => $data
+    // );
+    // fileLogJson((($dataJson)), $pathLog);
     exit;
 } else {
     $end = microtime(true);
     $time = round($end - $start, 2);
     // header("Content-Type: application/json");
-    $data = array('status' => 'no', 'Mensaje' => 'No hay registros nuevos', 'total' => count($arrayData), 'time' => ($time));
+    $data = array(
+        'Mensaje' => 'No hay registros nuevos',
+        'date'    => date('Y-m-d H:i:s'),
+        'status'  => 'no',
+        'time'    => ($time),
+        'total'   => count($arrayData),
+    );
     echo json_encode(array('Response' => $data));
     exit;
 }

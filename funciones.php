@@ -3411,6 +3411,13 @@ function fileLog($text, $ruta_archivo)
     fwrite($log, $text);
     fclose($log);
 }
+function fileLogJson($text, $ruta_archivo)
+{
+    $log    = fopen(date('YmdHis').'_'.$ruta_archivo, 'w');
+    $text   = json_encode($text, JSON_PRETTY_PRINT). "\n";
+    fwrite($log, $text);
+    fclose($log);
+}
 function dateDifference($date_1, $date_2, $differenceFormat = '%a') // diferencia en días entre dos fechas
 {
     $datetime1 = date_create($date_1); // creo la fecha 1
