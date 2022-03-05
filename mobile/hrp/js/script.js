@@ -1,5 +1,6 @@
 $('#Encabezado').addClass('pointer')
-$('#RowTableUsers').hide()
+$('#RowTableUsers').hide();
+$('#RowTableDevices').hide();
 const loadingTable = (selectortable) => {
     $(selectortable + ' td div').addClass('bg-light text-light border-0 h50')
     $(selectortable + ' td img').addClass('invisible')
@@ -173,8 +174,8 @@ tablemobile = $('#table-mobile').DataTable({
         {
             className: 'align-middle', targets: '', title: 'Mapa',
             "render": function (data, type, row, meta) {
-                let LinkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
-                let iconMapa = (row.regLat != '0') ? `<a href="${LinkMapa}" target="_blank" rel="noopener noreferrer" data-titler="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-success border-0 fontt"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0"></i>`
+                let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
+                let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
                 let datacol = `<div>${iconMapa}</div>`
                 return datacol;
             },
@@ -201,22 +202,18 @@ tablemobile = $('#table-mobile').DataTable({
                 if (row.operationType == '0' && row.eventType == '2') {
                     evento = 'Fichada';
                 }
-                let datacol = `<div class="">${evento}</div>`
-                return datacol;
-            },
-        },
-        {
-            className: 'align-middle', targets: '', title: '',
-            "render": function (data, type, row, meta) {
                 row.operation = (row.operation == '0') ? '' : row.operation;
-                let datacol = `<div class="">${row.operation}</div>`
+                let datacol = `<div class="">${evento}<br>${row.operation}</div>`
                 return datacol;
             },
         },
         {
             className: 'align-middle w-100', targets: '', title: 'Dispositivo',
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="">${row.phoneid}</div>`
+                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : row.deviceName; 
+
+                let datacol = `<div class="">${device}</div>`
                 return datacol;
             },
         },
@@ -237,14 +234,14 @@ tablemobile = $('#table-mobile').DataTable({
 // on draw dt
 tablemobile.on('init.dt', function () {
 
-    $('#btnMenu').html(`
-        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
-            <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
-            <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
-        </button>
-        <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
-            <i class="bi bi-cloud-download"></i>
-        </button>`);
+    // $('#btnMenu').html(`
+    //     <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
+    //         <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
+    //         <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
+    //     </button>
+    //     <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
+    //         <i class="bi bi-cloud-download-fill"></i>
+    //     </button>`);
     $('.dr').append(`
         <div class="mx-2">
             <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
@@ -658,7 +655,7 @@ function clean() {
 function actualizar(noti = true) {
 
     if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
         notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
     };
 
@@ -670,11 +667,11 @@ function actualizar(noti = true) {
         let data = response.data.Response
         // set session storage
         let date = new Date()
-        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: '+ date, JSON.stringify(data));
+        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: ' + date, JSON.stringify(data));
         if (data.status == "ok") {
             if (noti) {
                 $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
                 minmaxDate()
                 if (data.totalSession > 0) {
                     notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
@@ -687,7 +684,7 @@ function actualizar(noti = true) {
         } else {
             if (noti) {
                 $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download"></i>')
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
                 notify(data.Mensaje, 'info', 2000, 'right')
             }
         }
@@ -695,7 +692,7 @@ function actualizar(noti = true) {
     }).catch(function (error) {
         alert('ERROR actualizar\n' + error);
     }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download"></i>')
+        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
     });
 }
 
@@ -711,32 +708,52 @@ $(document).on("click", "#Encabezado", function (e) {
     $('#tableUsuarios').DataTable().ajax.reload();
 });
 
+const enableBtnMenu = (e) => {
+    $('#btnMenu .btn').prop('readonly', false)
+}
+
+const focusBtn = (selector) => {
+    $('#btnMenu .btn').removeClass('btn-custom');
+    $('#btnMenu .btn').addClass('btn-outline-custom');
+    $(selector).removeClass('btn-outline-custom').addClass('btn-custom');
+}
+
+
+const focusRowTables = () => {
+    $('#RowTableMobile').hide();
+    $('#RowTableUsers').hide();
+    $('#RowTableDevices').hide();
+}
+
 $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
-    $('#btnMenu').html(`
-        <button data-titlet="Fichadas" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showReg fontq">
-            <span class="d-none d-sm-block w100">Fichadas <i class="ml-2 bi-clipboard-data-fill"></i></span>
-            <span class="d-block d-sm-none"><i class="bi bi-clipboard-data-fill"></i></span>
-        </button>`);
+    enableBtnMenu()
+    $(this).prop('readonly', true)
+    focusBtn(this);
     document.title = "Usuarios Mobile HR"
     $('#Encabezado').html("Usuarios Mobile HR");
-    $('#RowTableMobile').hide();
+    focusRowTables()
     $('#RowTableUsers').show();
 });
-$(document).on("click", ".showReg", function (e) {
+$(document).on("click", ".showDevices", function (e) {
     CheckSesion()
-    $('#btnMenu').html(`
-        <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
-            <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
-            <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
-        </button>
-        <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
-            <i class="bi bi-cloud-download"></i>
-        </button>`);
-    // set document title
+    enableBtnMenu()
+    $(this).prop('readonly', true)
+    focusBtn(this);
+    document.title = "Dispositivos Mobile HR"
+    $('#Encabezado').html("Dispositivos Mobile HR");
+    focusRowTables()
+    $('#RowTableDevices').show();
+});
+$(document).on("click", ".showChecks", function (e) {
+    CheckSesion()
+    enableBtnMenu()
+    $(this).addClass('btn-custom');
+    $(this).prop('readonly', true)
+    focusBtn(this);
     document.title = "Fichadas Mobile HR"
     $('#Encabezado').html("Fichadas Mobile HR")
-    $('#RowTableUsers').hide();
+    focusRowTables()
     $('#RowTableMobile').show();
 });
 $(document).on("click", ".sendCH", function (e) {

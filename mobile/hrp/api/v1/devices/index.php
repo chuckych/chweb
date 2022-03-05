@@ -35,33 +35,33 @@ function length()
     $length = empty($p['length']) ? 10 : $p['length'];
     return intval($length);
 }
-function userID()
+function deviceID()
 {
     $p = $_REQUEST;
-    $p['userID'] = $p['userID'] ?? '';
-    $userID = empty($p['userID']) ? '' : $p['userID'];
-    return intval($userID);
+    $p['deviceID'] = $p['deviceID'] ?? '0';
+    $deviceID  = empty($p['deviceID']) ? 0 : $p['deviceID'];
+    return intval($deviceID);
 }
-function userName()
+function deviceEvent()
 {
     $p = $_REQUEST;
-    $p['userName'] = $p['userName'] ?? '';
-    $userName = empty($p['userName']) ? '' : $p['userName'];
-    return urldecode($userName);
+    $p['deviceEvent'] = $p['deviceEvent'] ?? '0';
+    $deviceEvent  = empty($p['deviceEvent']) ? 0 : $p['deviceEvent'];
+    return intval($deviceEvent);
 }
-function userIDName()
+function deviceName()
 {
     $p = $_REQUEST;
-    $p['userIDName'] = $p['userIDName'] ?? '';
-    $userIDName = empty($p['userIDName']) ? '' : $p['userIDName'];
-    return urldecode($userIDName);
+    $p['deviceName'] = $p['deviceName'] ?? '';
+    $deviceName = empty($p['deviceName']) ? '' : $p['deviceName'];
+    return urldecode($deviceName);
 }
-function status()
+function deviceIDName()
 {
     $p = $_REQUEST;
-    $p['status'] = $p['status'] ?? '0';
-    $status = empty($p['status']) ? 0 : ($p['status']);
-    return intval($status);
+    $p['deviceIDName'] = $p['deviceIDName'] ?? '';
+    $deviceIDName = empty($p['deviceIDName']) ? '' : $p['deviceIDName'];
+    return urldecode($deviceIDName);
 }
 function validaKey()
 {
@@ -76,7 +76,7 @@ if (!isset($params['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'userID' || $key == 'userName' || $key == 'status' || $key == 'userIDName') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'deviceID' || $key == 'deviceName' || $key == 'deviceIDName' || $key == 'deviceEvent') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0,0, $idCompany));
@@ -125,7 +125,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '../../logs/' . date('Ymd') . '_log_user'.$idCompany.'.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../logs/' . date('Ymd') . '_log_device'.$idCompany.'.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -136,9 +136,10 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 $queryRecords = array();
 $start        = start();
 $length       = length();
-$userID       = userID();
-$userName     = userName();
-$userIDName   = userIDName();
+$deviceName   = deviceName();
+$deviceIDName = deviceIDName();
+$deviceID     = deviceID();
+$deviceEvent  = deviceEvent();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -153,33 +154,25 @@ foreach ($iniKeys as $key => $value) {
         continue;
     }
 }
+
+// echo json_encode($iniKeys, JSON_PRETTY_PRINT);exit;
+
 if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
 
-$status = status();
-($status > 1) ? (response(array(), 0, 'Parameter status invalid', 400, 0, 0, $idCompany)) . exit  : '';
-
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$sql_query = "SELECT 
-ru.id_user AS 'id_user', 
-ru.nombre AS 'nombre', 
-ru.regid AS 'regid', 
-ru.fechahora AS 'fechaHora', 
-(SELECT COUNT(1) FROM reg_ r WHERE r.id_user = ru.id_user AND r.eventType=2 AND r.id_company = '$idCompany') AS 'cant' 
-FROM reg_user_ ru WHERE ru.uid > 0";
-
+$sql_query = "SELECT *, (SELECT COUNT(1) FROM reg_ r WHERE r.phoneid = rd.phoneid AND r.id_company = '$idCompany') AS 'totalChecks'  FROM `reg_device_` `rd` WHERE `rd`.`id` > 0";
 $filtro_query = '';
-$filtro_query .= ($idCompany) ? " AND ru.id_company = $idCompany" : '';
-$filtro_query .= (!empty($status)) ? " AND ru.estado = '$status'" : " AND ru.estado = '0'";
-$filtro_query .= (!empty($userID)) ? " AND ru.id_user = $userID" : '';
-$filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
-$filtro_query .= (!empty($userIDName)) ? " AND CONCAT(ru.nombre, ru.id_user) LIKE '%$userIDName%'" : '';
+$filtro_query .= ($idCompany) ? " AND `rd`.`id_company` = '$idCompany'" : '';
+$filtro_query .= (!empty($deviceID)) ? " AND `rd`.`id` = '$deviceID'" : '';
+$filtro_query .= (!empty($deviceEvent)) ? " AND `rd`.`evento` = '$deviceEvent'" : '';
+$filtro_query .= (!empty($deviceName)) ? " AND `rd`.`nombre` LIKE '%$deviceName%'" : '';
 $sql_query .= $filtro_query;
-$sql_query .= " ORDER BY ru.nombre ASC";
+$sql_query .= " ORDER BY `rd`.`nombre` ASC";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;
@@ -189,14 +182,16 @@ if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         // $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
         $arrayData[] = array(
-            'lastUpdate' => ($r['fechaHora']),
-            'userID'     => intval($r['id_user']),
-            'userName'   => $r['nombre'],
-            'userRegId'  => $r['regid'],
-            'userChecks'     => intval($r['cant']),
+            'deviceEvent' => $r['evento'],
+            'deviceID'    => intval($r['id']),
+            'deviceName'  => $r['nombre'],
+            'idCompany'   => $r['id_company'],
+            'lastUpdate'  => ($r['fechahora']),
+            'phoneID'     => $r['phoneid'],
+            'totalChecks' => ($r['totalChecks']),
         );
     }
-    $q = "SELECT COUNT(*) AS 'count' FROM reg_user_ ru WHERE ru.uid > 0";
+    $q = "SELECT COUNT(*) AS 'count' FROM `reg_device_` `rd` WHERE `rd`.`id` > 0";
     $q .= $filtro_query;
     $total = simple_pdoQuery($q)['count'];
 }

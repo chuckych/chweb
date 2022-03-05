@@ -54,6 +54,7 @@ if ($api['COUNT'] > 0) {
             'appVersion'    => $r['appVersion'],
             'attPhoto'      => $r['attPhoto'],
             'createdDate'   => $r['createdDate'],
+            'deviceName'    => $r['deviceName'],
             'eventType'     => $r['eventType'],
             'gpsStatus'     => $r['gpsStatus'],
             'operation'     => $r['operation'],
@@ -62,14 +63,14 @@ if ($api['COUNT'] > 0) {
             'regDate'       => FechaFormatVar($r['regDate'], 'd/m/Y'),
             'regDateTime'   => $r['regDateTime'],
             'regDay'        => $r['regDay'],
-            'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
             'regLat'        => $r['regLat'],
             'regLng'        => $r['regLng'],
+            'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
             'regTime'       => $r['regTime'],
+            'userCompany'   => $r['userCompany'],
             'userID'        => $r['userID'],
             'userName'      => $r['userName'],
             'userRegId'     => $r['userRegId'],
-            'userCompany'   => $r['userCompany'],
         );
     }
 }

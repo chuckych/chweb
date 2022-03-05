@@ -199,7 +199,7 @@ if (!empty($arrayData)) {
     echo json_encode(array('Response' => $data));
     // $pathLog = date('Ymd') . '_Transfer.json';
     // $dataJson = array(
-    //     'Response' => $data
+    //     $data
     // );
     // fileLogJson((($dataJson)), $pathLog);
     exit;

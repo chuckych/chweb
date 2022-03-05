@@ -3,7 +3,7 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
-secure_auth_ch();
+secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
 
@@ -208,11 +208,11 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $sendMensaje = sendMessaje($url, $payload, 10);
 
     if (json_decode($sendMensaje)->success == '1') {
-        $data = array('status' => 'ok', 'Mensaje' => 'Mensaje enviado correctamente', 'respuesta' => json_decode($sendMensaje), 'payload'=>json_decode($payload));
+        $data = array('status' => 'ok', 'Mensaje' => 'Mensaje enviado correctamente', 'respuesta' => json_decode($sendMensaje), 'payload' => json_decode($payload));
         echo json_encode($data);
         exit;
     } else {
-        $data = array('status' => 'error', 'Mensaje' => 'No se pudo enviar el mensaje', 'respuesta' => json_decode($sendMensaje), 'payload'=>json_decode($payload));
+        $data = array('status' => 'error', 'Mensaje' => 'No se pudo enviar el mensaje', 'respuesta' => json_decode($sendMensaje), 'payload' => json_decode($payload));
         echo json_encode($data);
         exit;
     }
@@ -277,10 +277,10 @@ if (($_POST['tipo'] == 'c_usuario')) {
         echo json_encode($data);
         exit;
     }
-} else if ($_POST['tipo'] == 'transferir'){
+} else if ($_POST['tipo'] == 'transferir') {
 
-    $_POST['legFech'] = $_POST['legFech']??'';
-    
+    $_POST['legFech'] = $_POST['legFech'] ?? '';
+
     $legFech = explode('@', $_POST['legFech']);
     $legajo  = test_input($legFech[0]);
     $fecha   = test_input($legFech[1]);
@@ -290,7 +290,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
         PrintRespuestaJson('error', 'Falta ID');
         exit;
     };
-    if (($legajo=='0')) {
+    if (($legajo == '0')) {
         PrintRespuestaJson('error', 'Falta ID');
         exit;
     };
@@ -307,19 +307,18 @@ if (($_POST['tipo'] == 'c_usuario')) {
 
     if (InsertRegistroMS($query)) {
         $data = array(
-            'status' => 'ok', 
-            'Mensaje' => 'Se tranfirio el registro.<br>ID: '.$legajo.'<br>Fecha: '.fechformat($fecha).' Hora: '.$hora, 
+            'status' => 'ok',
+            'Mensaje' => 'Se tranfirio el registro.<br>ID: ' . $legajo . '<br>Fecha: ' . fechformat($fecha) . ' Hora: ' . $hora,
             'Legajo' => ($legajo),
             'Fecha' => ($fecha),
         );
         echo json_encode($data);
         exit;
-    }else{
+    } else {
         PrintRespuestaJson('error', 'Error al transferir');
         exit;
     }
-
-}else if ($_POST['tipo'] == 'c_setUserEmp') {
+} else if ($_POST['tipo'] == 'c_setUserEmp') {
 
     $_POST['regid']  = $_POST['regid'] ?? '';
     $_POST['userid'] = $_POST['userid'] ?? '';
@@ -337,7 +336,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
 
     $cancellationReasons[] = '';
     $operations[] = '';
-  
+
     $data = array(
         'eventType'           => 101,
         'apiKey'              => '7BB3A26C25687BCD56A9BAF353A78',
@@ -381,6 +380,59 @@ if (($_POST['tipo'] == 'c_usuario')) {
         echo json_encode($data);
         exit;
     }
+} else if ($_POST['tipo'] == 'c_device') {
+    
+    $post = $_POST;
+
+    $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
+    $post['formDeviceEvento']  = $post['formDeviceEvento'] ?? '';
+    $post['formDevicePhoneID'] = $post['formDevicePhoneID'] ?? '';
+
+    $formDeviceNombre  = test_input($post['formDeviceNombre']);
+    $formDeviceEvento  = test_input($post['formDeviceEvento']);
+    $formDevicePhoneID = test_input($post['formDevicePhoneID']);
+
+    if (valida_campo($formDeviceNombre)) {
+        PrintRespuestaJson('error', 'Falta Nombre');
+        exit;
+    };
+    if (valida_campo($formDevicePhoneID)) {
+        PrintRespuestaJson('error', 'Falta Phone ID');
+        exit;
+    };
+
+    $idCompany = $_SESSION['ID_CLIENTE'];
+
+    $paramsApi = array(
+        'key'           => $_SESSION["RECID_CLIENTE"],
+        'deviceName'    => urlencode($formDeviceNombre),
+        'deviceEvent'   => ($formDeviceEvento),
+        'devicePhoneID' => ($formDevicePhoneID)
+    );
+    // $api = "api/v1/devices/upd/$parametros";
+    // $api = "api/v1/devices/del/$parametros";
+    $api = "api/v1/devices/add/";
+    $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+    $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+    
+    $api = json_decode($api, true);
+
+    $totalRecords = $api['TOTAL'];
+
+    if ($api['COUNT'] > 0) {
+        $status = 'ok';
+        $arrayData = $api['RESPONSE_DATA'];
+    }
+    else {
+        $status = 'error';
+        $arrayData = $api['MESSAGE'];
+    }
+    $json_data = array(
+        "Mensaje" => $arrayData,
+        'status'  => $status,
+    );
+    echo json_encode($json_data);
+    exit;
 }
 mysqli_close($link);
 exit;

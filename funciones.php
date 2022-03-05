@@ -6,7 +6,7 @@ function version()
 }
 function verDBLocal()
 {
-    return 20220303; // Version de la base de datos local
+    return 20220304; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -421,7 +421,7 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
         ' . $icon_person_circle . '
     </a></span>';
     }
-    $icon_box_arrow_right ='';
+    $icon_box_arrow_right = '';
 
     if ($countModRol == '1') {
         $userLogout = '
@@ -437,7 +437,7 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
     } elseif ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/usuarios/perfil/index.php') {
     } else {
-        $svg = '<img class="img-fluid ' . $class . '" style="'.$style.'" src="'.$svg.'"></img>';
+        $svg = '<img class="img-fluid ' . $class . '" style="' . $style . '" src="' . $svg . '"></img>';
     }
     echo '
     <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
@@ -3170,6 +3170,39 @@ function getRemoteFile($url, $timeout = 10)
     }
     exit;
 }
+// https://programacion.net/articulo/como_enviar_y_recibir_datos_json_mediante_php_curl_1885
+function sendRemoteData($url, $payload, $timeout = 10)
+{
+   
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    //     'Content-Type: application/json',
+    //     'Content-Length: ' . strlen($payload)
+    // ));
+    // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+    curl_close($ch);
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+    }
+    exit;
+}
 function mod_roles($recid_rol)
 {
     require 'config/conect_mysql.php';
@@ -3413,8 +3446,8 @@ function fileLog($text, $ruta_archivo)
 }
 function fileLogJson($text, $ruta_archivo)
 {
-    $log    = fopen(date('YmdHis').'_'.$ruta_archivo, 'w');
-    $text   = json_encode($text, JSON_PRETTY_PRINT). "\n";
+    $log    = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
+    $text   = json_encode($text, JSON_PRETTY_PRINT) . "\n";
     fwrite($log, $text);
     fclose($log);
 }

@@ -303,6 +303,14 @@ if ($verDB < 20220303) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220304) {
+    pdoQuery("RENAME TABLE `reg_phone_` TO `reg_device_`");
+    fileLog("Se renombro tabla \"reg_phone_\" por \"reg_device_\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
 
 // if ($verDB < 20211102) {
 

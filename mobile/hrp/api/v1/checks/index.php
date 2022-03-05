@@ -8,11 +8,15 @@ header('Access-Control-Allow-Origin: *');
 E_ALL();
 timeZone();
 timeZone_lang();
+borrarLogs(__DIR__ . '../../logs/', 1, '.log');
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../mobileApikey.php'));
 // echo json_encode($iniKeys);
 // exit;
-
+if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+    (response(array(), 0, 'Invalid Request Method', 400, 0, 0, 0));
+    exit;
+}
 $total = 0;
 // $params = $_REQUEST;
 $params = ($_REQUEST);
@@ -162,7 +166,7 @@ foreach ($iniKeys as $key => $value) {
 }
 if (!$vkey) {
     http_response_code(400);
-    (response(array(), 0, 'Inavlid Key', 400, 0, 0, $idCompany));
+    (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
 
 if ($FechaIni > $FechaFin) {
@@ -188,10 +192,12 @@ $sql_query = "SELECT
     r.appVersion AS 'appVersion', 
     r.attphoto AS 'attPhoto', 
     r.id_company AS 'id_company',
+    rd.nombre AS 'deviceName',
     CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
     r.regid AS 'regid' 
     FROM reg_ r
     LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
+    LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
     WHERE r.rid >0";
 
 $filtro_query = '';
@@ -220,6 +226,7 @@ if (($queryRecords)) {
             'appVersion'    => $appVersion,
             'attPhoto'      => intval($r['attPhoto']),
             'createdDate'   => intval($r['createdDate']),
+            'deviceName'    => $r['deviceName'],
             'eventType'     => $r['eventType'],
             'gpsStatus'     => $r['gpsStatus'],
             'operation'     => $r['operation'],
