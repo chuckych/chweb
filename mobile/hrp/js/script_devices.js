@@ -10,10 +10,10 @@ tableDevices = $('#tableDevices').DataTable({
     "initComplete": function (settings, json) {
         // $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h35 px-3 addDevice"><i class="bi bi-plus-lg"></i></button>')
     },
-    dom: "<'row mt-1'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+    dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row px-3'<'col-12 border shadow-sm table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
+        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getDevicesMobile.php",
@@ -52,8 +52,8 @@ tableDevices = $('#tableDevices').DataTable({
             "render": function (data, type, row, meta) {
                 let datacol = `
                 <div class="d-flex justify-content-end">
-                    <button data-titlet="Editar Dispositivo" class="btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button>
-                    <button data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button>
+                    <button data-titlet="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button>
+                    <button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button>
                 </div>
                 `
                 return datacol;
@@ -62,6 +62,7 @@ tableDevices = $('#tableDevices').DataTable({
     ],
     lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
     bProcessing: false,
+
     serverSide: true,
     deferRender: true,
     searchDelay: 1000,
@@ -77,6 +78,7 @@ tableDevices = $('#tableDevices').DataTable({
 tableDevices.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableDevices_filter .form-control-sm').attr('placeholder', 'Buscar Dispositivos')
+    $('#RowTableDevices').removeClass('invisible')
 });
 tableDevices.on('page.dt', function (e, settings) {
     loadingTableDevices('#tableDevices')

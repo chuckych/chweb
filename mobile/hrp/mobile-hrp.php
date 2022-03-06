@@ -34,6 +34,18 @@
 
         table.dataTable td {
             vertical-align: middle;
+            /* height: 50px; */
+        }
+
+        #table-mobile.dataTable td {
+            vertical-align: middle;
+            height: 50px;
+        }
+
+        .smtd {
+            display: flex;
+            align-items: center;
+            height: 100%;
         }
 
         table.dataTable {
@@ -50,6 +62,54 @@
         .linkMapa {
             border-radius: 2px !important;
         }
+
+        .radisu2 {
+            border-radius: 2px !important;
+        }
+
+        #btnMenu button {
+            line-height: 1.1rem;
+            /* border: 1px solid #cecece !important; */
+        }
+
+        @media all and (max-width:480px) {
+            #btnMenu {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
+        }
+
+        .loading {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: 0s all;
+            margin-top: 100px;
+        }
+
+        .loading .show {
+            opacity: 0.8;
+        }
+
+        .loading .spin {
+            border: 3px solid #4a5461;
+            border-top-color: #fff;
+            border-radius: 50%;
+            width: 2em;
+            height: 2em;
+            animation: spin 2s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -59,7 +119,9 @@
 
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-2.svg', 'Fichadas ' . MODULOS['mobile'] . ' HR', 'color: #fff; width:30px', 'mr-2'); ?>
+        <div id="encabezado" class="sticky-top">
+            <?= encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', 'Fichadas ' . MODULOS['mobile'], 'color: #fff; width:30px', 'mr-2'); ?>
+        </div>
         <!-- Fin Encabezado -->
         <?php
         $FirstDate = "2019/01/01";
@@ -83,101 +145,54 @@
         ?>
         <input type="hidden" id="_drMob2">
 
-        <div class="row mt-2">
-            <div class="col-12 px-1">
-                <nav class="navbar navbar-expand-lg p-0 py-1 m-0">
-                    <div class="p-0">
-                        <button class="navbar-toggler btn btn-outline-custom border-ddd ml-3" type="button"
-                            data-toggle="collapse" data-target="#navbarBtnMenu" aria-controls="navbarBtnMenu"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                            <i class="bi bi-list"></i>
-                        </button>
+        <?php require __DIR__ . '../menuBtn.html' ?>
+
+        <div class="wrapper">
+            <div class="loading show">
+                <div class="spin"></div>
+            </div>
+            <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
+                <div class="col-12 table-responsive" id="divTableMobile">
+                    <table class="table text-nowrap w-100" id="table-mobile">
+                        <thead class="fontq shadow-sm">
+                        </thead>
+                    </table>
+                </div>
+                <?php
+                if (modulo_cuentas()) :
+                ?>
+                    <div class="col-12 m-0 mt-2">
+                        <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
+                            <select class="selectjs_cuentaToken w200" id="recid" name="recid">
+                            </select>
+                        </form>
                     </div>
-                    <div class="collapse navbar-collapse w-100 float-left ml-2 ml-sm-1" id="navbarBtnMenu">
-                        <ul class="navbar-nav mr-auto px-2 w-100" id="btnMenu">
-                            <div class="d-sm-inline-flex">
-                                <li class="nav-item mt-2 mt-sm-0">
-                                    <button readonly data-titlet="Fichadas" type="button"
-                                        class="h35 mr-1 btn btn-custom border btn-sm px-3 showChecks fontq">
-                                        <span class="d-block d-sm-none w100">
-                                            <div class="d-flex alig-items-center justify-content-between">
-                                                <div class="">Fichadas</div>
-                                                <div class=""><i class="ml-3 bi bi-clipboard-data-fill"></i></div>
-                                            </div>
-                                        </span>
-                                        <span class="d-none d-sm-block"><i class="bi bi-clipboard-data-fill"></i></span>
-                                    </button>
-                                </li>
-                                <li class="nav-item mt-2 mt-sm-0">
-                                    <button data-titlet="Gestión de usuarios" type="button"
-                                        class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
-                                        <span class="d-none d-sm-block"><i class="bi bi-people-fill"></i></span>
-                                        <span class="d-block d-sm-none w100">
-                                            <div class="d-flex alig-items-center justify-content-between">
-                                                <div class="">Usuarios</div>
-                                                <div class=""><i class="ml-3 bi bi-people-fill"></i></div>
-                                            </div>
-                                        </span>
-                                    </button>
-                                </li>
-                                <li class="nav-item mt-2 mt-sm-0">
-                                    <button data-titlet="Dispositivos"
-                                        class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 showDevices fontq">
-                                        <span class="d-block d-sm-none w100">
-                                            <div class="d-flex alig-items-center justify-content-between">
-                                                <div class="">Dispositivos</div>
-                                                <div class=""><i class="ml-3 bi bi-tablet-fill"></i></div>
-                                            </div>
-                                        </span>
-                                        <span class="d-none d-sm-block"><i class="bi bi-tablet-fill"></i></span>
-                                    </button>
-                                </li>
-                            </div>
-                            <div class="w-100">
-                                <li class="nav-item mt-2 mt-sm-0">
-                                    <button data-titlel="Descargar registros"
-                                        class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 actualizar fontq float-right d-none d-sm-block">
-                                        <span class="d-block d-sm-none w100">
-                                            <div class="d-flex alig-items-center justify-content-between">
-                                                <div class="">Actualizar</div>
-                                                <div class=""><i class="ml-3 bi bi-cloud-download-fill"></i></div>
-                                            </div>
-                                        </span>
-                                        <span class="d-none d-sm-block"><i class="bi bi-cloud-download-fill"></i></span>
-                                    </button>
-                                </li>
-                                <button id="expandContainer" type="button" class="h35 float-right d-none d-sm-block btn btn-sm btn-outline-custom border-0 w35 fontq mr-1 text-secondary linkMapa"><i class="bi bi-arrows-angle-expand "></i></button>
-                            </div>
-                        </ul>
+                <?php
+                endif;
+                ?>
+            </div>
+            <div class="bg-white pb-3 radius invisible" id="RowTableUsers">
+                <div class="form-row">
+                    <div class="col-12 col-sm-7">
+                        <table class="table text-nowrap w-100" id="tableUsuarios">
+                            <thead class="fontq"></thead>
+                        </table>
                     </div>
-                </nav>
+                    <div class="col-12 col-sm-5">
+                        <div id="divformUsuario">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
-            <div class="col-12 table-responsive" id="divTableMobile">
-                <table class="table text-nowrap w-100" id="table-mobile">
-                    <thead class="fontq shadow-sm">
-                    </thead>
-                </table>
+            <div class="bg-white pb-3 invisible" id="RowTableDevices">
+                <div class="row">
+                    <div class="col-12 col-sm-6">
+                        <table class="table text-nowrap w-auto" id="tableDevices">
+                            <thead class="fontq"></thead>
+                        </table>
+                    </div>
+                </div>
             </div>
-            <?php
-            if (modulo_cuentas()) :
-            ?>
-            <div class="col-12 m-0 mt-2">
-                <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
-                    <select class="selectjs_cuentaToken w200" id="recid" name="recid">
-                    </select>
-                </form>
-            </div>
-            <?php
-            endif;
-            ?>
-        </div>
-        <div class="bg-white pb-3 radius" id="RowTableUsers">
-            <?php require_once __DIR__ . "/users.html"; ?>
-        </div>
-        <div class="bg-white pb-3 radius" id="RowTableDevices">
-            <?php require_once __DIR__ . "/devices.html"; ?>
         </div>
 
     </div>
@@ -195,8 +210,7 @@
     ?>
     <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
     <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script> -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places"
-        defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
     <!-- <script src="../js/lib/geocomplete/jquery.geocomplete.js"></script> -->
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>

@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.215'; // Version de la aplicación
+    return 'v0.0.216'; // Version de la aplicación
 }
 function verDBLocal()
 {

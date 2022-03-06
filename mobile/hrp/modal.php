@@ -44,7 +44,7 @@
                 <span id="noGPS"></span>
             </div>
             <div class="modal-footer d-sm-none d-block">
-                <button type="button" class="btn btn-custom btn-sm fontq" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-outline-custom border btn-sm fontq float-right" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

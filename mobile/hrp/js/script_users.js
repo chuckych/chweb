@@ -13,7 +13,7 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     "drawCallback": function (settings) {
 
     },
-    dom: "<'row mt-1'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+    dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row px-3'<'col-12 border shadow-sm table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
@@ -91,6 +91,7 @@ tableUsuarios = $('#tableUsuarios').DataTable({
 tableUsuarios.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')
+    $('#RowTableUsers').removeClass('invisible')
 });
 tableUsuarios.on('page.dt', function (e, settings) {
     loadingTableUser('#tableUsuarios')

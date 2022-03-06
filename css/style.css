@@ -385,7 +385,6 @@
      opacity: 1;
      background-size: 90px
  }
-
  .loader2 {
      display: inline-table;
      position: fixed;
@@ -550,6 +549,7 @@
  .w30 {
      width: 30px !important
  }
+
  .w20 {
      width: 20px !important
  }
@@ -1441,6 +1441,34 @@
 
  ::-webkit-scrollbar-thumb:hover {
      background: #888;
+     cursor: grab;
+ }
+
+ @media all and (max-width:480px) {
+     /* width */
+
+     ::-webkit-scrollbar {
+         width: 2px !important;
+         height: 2px !important;
+     }
+
+     /* Track */
+
+     ::-webkit-scrollbar-track {
+         background: #f1f1f1;
+     }
+
+     /* Handle */
+
+     ::-webkit-scrollbar-thumb {
+         background: #c4c3c3;
+     }
+
+     /* Handle on hover */
+
+     ::-webkit-scrollbar-thumb:hover {
+         background: #c4c3c3;
+     }
  }
 
  .bi2::before {

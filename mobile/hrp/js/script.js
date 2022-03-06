@@ -1,6 +1,10 @@
 $('#Encabezado').addClass('pointer')
 $('#RowTableUsers').hide();
 $('#RowTableDevices').hide();
+// windows on load
+$(window).on('load', function () {
+    $('.loading').hide()
+});
 const loadingTable = (selectortable) => {
     $(selectortable + ' td div').addClass('bg-light text-light border-0 h50')
     $(selectortable + ' td img').addClass('invisible')
@@ -71,9 +75,9 @@ function doesFileExist(urlToFile) {
 
 tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: -1,
-    dom: "<'row mt-2'" +
-        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-center justify-content-end'<'SoloFic'>f>>" +
-        "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto't>>" +
+    dom: "<'row'" +
+        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic'>f>>" +
+        "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -88,11 +92,11 @@ tablemobile = $('#table-mobile').DataTable({
         },
     },
     createdRow: function (row, data, dataIndex) {
-        // $(row).addClass('animate__animated animate__fadeIn align-middle');
+        $(row).addClass('animate__animated animate__fadeIn');
     },
     columns: [
         {
-            className: 'align-middle text-center', targets: 'regPhoto', title: 'Foto',
+            className: 'text-center', targets: 'regPhoto', title: 'Foto',
             "render": function (data, type, row, meta) {
                 operation = (row.operation == 0) ? '' : ': ' + row.operation;
                 let evento = '';
@@ -118,54 +122,91 @@ tablemobile = $('#table-mobile').DataTable({
                 let foto = '';
                 if (row.regPhoto) {
                     url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                    foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="scale w40 h40 radius img-fluid"></img>`;
+                    foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
                 } else {
                     url_foto = ``;
                     foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                 }
 
-                let datacol = `<div class="pic w50 h50 border d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                 return datacol;
             },
         },
         {
-            className: 'align-middle', targets: '', title: 'ID',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="w90"><span class="searchID pointer">${row.userID}</span></div>`
-                return datacol;
-            },
-        },
-        {
-            className: 'align-middle', targets: '', title: 'Nombre',
+            className: '', targets: '', title: `
+            <span class="d-none d-sm-block">ID</span>
+            <span class="d-sm-none d-block">Usuario</span>
+            `,
             "render": function (data, type, row, meta) {
                 let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
-                let datacol = `<div class="Mw150"><span class="searchName pointer">${nameuser}</span></div>`
+                let datacol = `
+                    <div class="d-none d-sm-block">
+                        <span class="searchID pointer">${row.userID}</span>
+                    </div>
+                    <div class="d-block d-sm-none">
+                        <div class="pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
+                        <div class="searchID pointer text-secondary fontp">${row.userID}</div>
+                    </div>
+                    `
                 return datacol;
             },
         },
         {
-            className: 'align-middle', targets: '', title: 'Día',
+            className: 'd-none d-sm-block', targets: '', title: '<div class="text-truncate" style="max-width: 120px;">Nombre</div>',
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="w70">${row.regDay}</div>`
+                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
+
+                let datacol = `
+                    <div class="text-truncate smtd">
+                        <div class="searchName pointer text-truncate" style="max-width: 120px;">${nameuser}</div>
+                    </div>`
                 return datacol;
             },
         },
         {
-            className: 'align-middle', targets: '', title: 'Fecha',
+            // className: '', targets: '', title: 'Día',
+            // "render": function (data, type, row, meta) {
+            //     let datacol = `<div class="w70">${row.regDay}</div>`
+            //     return datacol;
+            // },
+            className: '', targets: '', title: `
+            <span class="d-none d-sm-block">Día</span>
+            <span class="d-sm-none d-block">Fecha</span>
+            `,
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1">${row.regDate}</div>`
+                let datacol = `
+                    <div class="w70 d-none d-sm-block">
+                        <span class="pointer">${row.regDay}</span>
+                    </div>
+                    <div class="w70 d-block d-sm-none">
+                        <span class="">${row.regDate}</span><br>
+                        <span class="text-secondary fontp">${row.regDay}</span>
+                    </div>
+                    `
                 return datacol;
             },
         },
         {
-            className: 'align-middle text-center', targets: '', title: 'Hora',
+            className: 'd-none d-sm-block', targets: '', title: 'Fecha',
+            "render": function (data, type, row, meta) {
+                // let datacol = `<div class="ls1">${row.regDate}</div>`
+                // return datacol;
+                let datacol = `
+                <div class="smtd">
+                    <span class="">${row.regDate}</span>
+                </div>`
+            return datacol;
+            },
+        },
+        {
+            className: '', targets: '', title: 'Hora',
             "render": function (data, type, row, meta) {
                 let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
                 return datacol;
             },
         },
         {
-            className: 'align-middle', targets: '', title: 'Mapa',
+            className: '', targets: '', title: 'Mapa',
             "render": function (data, type, row, meta) {
                 let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
                 let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
@@ -174,7 +215,17 @@ tablemobile = $('#table-mobile').DataTable({
             },
         },
         {
-            className: 'align-middle', targets: '', title: 'Tipo',
+            className: '', targets: '', title: 'Dispositivo',
+            "render": function (data, type, row, meta) {
+                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : row.deviceName;
+
+                let datacol = `<div class="">${device}</div>`
+                return datacol;
+            },
+        },
+        {
+            className: ' w-100', targets: '', title: 'Tipo',
             "render": function (data, type, row, meta) {
                 // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
                 let evento = '';
@@ -200,16 +251,6 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
-        {
-            className: 'align-middle w-100', targets: '', title: 'Dispositivo',
-            "render": function (data, type, row, meta) {
-                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
-                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : row.deviceName; 
-
-                let datacol = `<div class="">${device}</div>`
-                return datacol;
-            },
-        },
     ],
     lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
     bProcessing: false,
@@ -227,14 +268,6 @@ tablemobile = $('#table-mobile').DataTable({
 // on draw dt
 tablemobile.on('init.dt', function () {
 
-    // $('#btnMenu').html(`
-    //     <button data-titlet="Gestión de usuarios" type="button" class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
-    //         <span class="d-none d-sm-block w100">Usuarios <i class="ml-2 bi bi-people-fill"></i></span>
-    //         <span class="d-block d-sm-none"><i class="bi bi-people-fill"></i></span>
-    //     </button>
-    //     <button data-titlel="Actualizar registros" class="btn btn-sm btn-custom fontq actualizar h35 px-3 float-right">
-    //         <i class="bi bi-cloud-download-fill"></i>
-    //     </button>`);
     $('.dr').append(`
         <div class="mx-2">
             <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
@@ -513,16 +546,16 @@ $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     // console.log(data);
     $('#pic').modal('show')
-    let picfoto = (data.regPhoto) ? 'fotos/'+data.userCompany+'/'+data.regPhoto : '';
+    let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
-    let pichora   = data.regTime
-    let picdia    = data.regDay
-    let _lat      = data.regLat
-    let _lng      = data.regLng
+    let pichora = data.regTime
+    let picdia = data.regDay
+    let _lat = data.regLat
+    let _lng = data.regLng
 
-    picDevice = (!picDevice) ? `${data.phoneid}` : picDevice; 
+    picDevice = (!picDevice) ? `${data.phoneid}` : picDevice;
 
     $('#latitud').val(_lat)
     $('#longitud').val(_lng)
@@ -581,22 +614,26 @@ $('#pic').on('hidden.bs.modal', function (e) {
 $('#expandContainer').attr('data-titlet', 'Expandir')
 $('#expandContainer').on('click', function (e) {
     e.preventDefault()
-    if($('#container').hasClass('container-fluid')){
+    if ($('#container').hasClass('container-fluid')) {
         $(this).html('<i class="bi bi-arrows-angle-expand"></i>')
         $(this).attr('data-titlet', 'Expandir')
         $('#container').removeClass('container-fluid')
         $('#container').addClass('container')
+        $('#navBarPrimary').show()
+        // $('#encabezado').removeClass('sticky-top');
         setTimeout(() => {
-            $('#table-mobile').DataTable().columns.adjust().draw(); 
+            $('#table-mobile').DataTable().columns.adjust().draw();
         }, 500);
-        
-    }else{
+
+    } else {
         $(this).html('<i class="bi bi-arrows-angle-contract"></i>')
         $(this).attr('data-titlet', 'Contraer')
         $('#container').addClass('container-fluid')
         $('#container').removeClass('container')
+        $('#navBarPrimary').hide()
+        // $('#encabezado').addClass('sticky-top');
         setTimeout(() => {
-            $('#table-mobile').DataTable().columns.adjust().draw(); 
+            $('#table-mobile').DataTable().columns.adjust().draw();
         }, 500);
     }
     // $( "#container" ).toogleClass('container-fluid')
@@ -673,11 +710,11 @@ const focusBtn = (selector) => {
     $(selector).removeClass('btn-outline-custom').addClass('btn-custom');
 }
 
-
 const focusRowTables = () => {
     $('#RowTableMobile').hide();
     $('#RowTableUsers').hide();
     $('#RowTableDevices').hide();
+    // $('.loading').show()
 }
 
 $(document).on("click", ".showUsers", function (e) {
@@ -685,9 +722,10 @@ $(document).on("click", ".showUsers", function (e) {
     enableBtnMenu()
     $(this).prop('readonly', true)
     focusBtn(this);
-    document.title = "Usuarios Mobile HR"
-    $('#Encabezado').html("Usuarios Mobile HR");
+    document.title = "Usuarios Mobile"
+    $('#Encabezado').html("Usuarios Mobile");
     focusRowTables()
+    // $('.loading').hide()
     $('#RowTableUsers').show();
 });
 $(document).on("click", ".showDevices", function (e) {
@@ -695,10 +733,12 @@ $(document).on("click", ".showDevices", function (e) {
     enableBtnMenu()
     $(this).prop('readonly', true)
     focusBtn(this);
-    document.title = "Dispositivos Mobile HR"
-    $('#Encabezado').html("Dispositivos Mobile HR");
+    document.title = "Dispositivos Mobile"
+    $('#Encabezado').html("Dispositivos Mobile");
     focusRowTables()
+    // $('.loading').hide()
     $('#RowTableDevices').show();
+
 });
 $(document).on("click", ".showChecks", function (e) {
     CheckSesion()
@@ -706,9 +746,10 @@ $(document).on("click", ".showChecks", function (e) {
     $(this).addClass('btn-custom');
     $(this).prop('readonly', true)
     focusBtn(this);
-    document.title = "Fichadas Mobile HR"
-    $('#Encabezado').html("Fichadas Mobile HR")
+    document.title = "Fichadas Mobile"
+    $('#Encabezado').html("Fichadas Mobile")
     focusRowTables()
+    // $('.loading').hide()
     $('#RowTableMobile').show();
 });
 $(document).on("click", ".sendCH", function (e) {
@@ -849,3 +890,5 @@ $("#RefreshToken").bind("submit", function (e) {
         error: function () { }
     });
 });
+// focusRowTables()
+// $('#RowTableDevices').show();
