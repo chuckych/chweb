@@ -38,7 +38,7 @@ function length()
 function devicePhoneID()
 {
     $p = $_POST;
-    $p['devicePhoneID'] = $p['devicePhoneID'] ?? '0';
+    $p['devicePhoneID'] = $p['devicePhoneID'] ?? 0;
     $devicePhoneID  = empty($p['devicePhoneID']) ? 0 : $p['devicePhoneID'];
     return intval($devicePhoneID);
 }
@@ -69,7 +69,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'deviceID' || $key == 'deviceName' || $key == 'deviceEvent' || $key == 'devicePhoneID') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'deviceName' || $key == 'deviceEvent' || $key == 'devicePhoneID') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -117,7 +117,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../../logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../../logs/delDevice/' . date('Ymd') . '_log_delDevice_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -151,29 +151,26 @@ if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
+if (empty($devicePhoneID)) {
+    http_response_code(400);
+    (response(array(), 0, 'devicePhoneID es requerido', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$q = "SELECT * FROM `reg_device_` WHERE `id_company` = '$idCompany' AND `nombre` = '$deviceName'";
-$a = count_pdoQuery($q);
+$a = simple_pdoQuery("SELECT * FROM `reg_device_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1");
+$MESSAGE = 'OK';
 
-if ($a > 0) {
+if (!$a) {
     $arrayData = array();
-    $MESSAGE = 'El nombre del dispositivo ya existe';
+    $MESSAGE = 'El dispositivo no existe';
     $finScript    = microtime(true);
     $tiempoScript = round($finScript - $iniScript, 2);
     $countData    = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $tiempoScript, $countData, $idCompany));
     exit;
-}
-
-$sql_query = "INSERT INTO `reg_device_` (`phoneid`, `id_company`, `nombre`, `evento`) VALUES ('$devicePhoneID', '$idCompany', '$deviceName', '$deviceEvent')";
-
-$insert = pdoQuery($sql_query);
-if ($insert) {
-    $a = simple_pdoQuery("SELECT * FROM `reg_device_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1");
-    $MESSAGE = 'OK';
+} else {
     $arrayData = array(
         'deviceID'      => $a['id'],
         'devicePhoneID' => $a['phoneid'],
@@ -181,10 +178,21 @@ if ($insert) {
         'deviceName'    => $a['nombre'],
         'deviceEvent'   => $a['evento'],
     );
-    $text = "Alta Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
-    fileLog($text, __DIR__ . '../../../logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
+}
+
+// delet query 
+$sql_query_delete = "DELETE FROM `reg_device_` WHERE `id_company` = '$idCompany' AND `phoneid` = '$devicePhoneID'";
+
+$delete = pdoQuery($sql_query_delete);
+if ($delete) {
+    $text = "Eliminacion Dispositivo \"$arrayData[deviceName]\" ID = $arrayData[deviceID] Evento = $arrayData[deviceEvent] PhoneID = $arrayData[devicePhoneID]";
+    fileLog($text, __DIR__ . '../../../logs/delDevice/' . date('Ymd') . '_log_delDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
 } else {
     $MESSAGE = 'ERROR';
+    $finScript    = microtime(true);
+    $tiempoScript = round($finScript - $iniScript, 2);
+    $countData    = count($arrayData);
+    (response($arrayData, 0, $MESSAGE, '', $tiempoScript, 0, $idCompany));
 }
 $finScript    = microtime(true);
 $tiempoScript = round($finScript - $iniScript, 2);

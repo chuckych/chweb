@@ -9,6 +9,12 @@
     <style type="text/css" media="screen">
         .datos {
             margin-left: 5px;
+            margin-top: 0px;
+            padding-top: 0px;
+        }
+
+        .datos div {
+            font-weight: bold;
         }
 
         .datos p {
@@ -39,7 +45,9 @@
             box-shadow: none !important;
             outline: 0 !important;
         }
-        .addDevice, .linkMapa{
+
+        .addDevice,
+        .linkMapa {
             border-radius: 2px !important;
         }
     </style>
@@ -47,7 +55,7 @@
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
-    <div class="container shadow pb-2" style="animation-fill-mode: unset">
+    <div class="container shadow pb-2" style="animation-fill-mode: unset" id="container">
 
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
@@ -86,55 +94,60 @@
                         </button>
                     </div>
                     <div class="collapse navbar-collapse w-100 float-left ml-2 ml-sm-1" id="navbarBtnMenu">
-                        <ul class="navbar-nav mr-auto px-2" id="btnMenu">
-                            <li class="nav-item mt-2 mt-sm-0">
-                                <button readonly data-titlet="Fichadas" type="button"
-                                    class="h35 mr-1 btn btn-custom border btn-sm px-3 showChecks fontq">
-                                    <span class="d-block d-sm-none w100">
-                                        <div class="d-flex alig-items-center justify-content-between">
-                                            <div class="">Fichadas</div>
-                                            <div class=""><i class="ml-3 bi bi-clipboard-data-fill"></i></div>
-                                        </div>
-                                    </span>
-                                    <span class="d-none d-sm-block"><i class="bi bi-clipboard-data-fill"></i></span>
-                                </button>
-                            </li>
-                            <li class="nav-item mt-2 mt-sm-0">
-                                <button data-titlet="Gestión de usuarios" type="button"
-                                    class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
-                                    <span class="d-none d-sm-block"><i class="bi bi-people-fill"></i></span>
-                                    <span class="d-block d-sm-none w100">
-                                        <div class="d-flex alig-items-center justify-content-between">
-                                            <div class="">Usuarios</div>
-                                            <div class=""><i class="ml-3 bi bi-people-fill"></i></div>
-                                        </div>
-                                    </span>
-                                </button>
-                            </li>
-                            <li class="nav-item mt-2 mt-sm-0">
-                                <button data-titlet="Dispositivos"
-                                    class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 showDevices fontq">
-                                    <span class="d-block d-sm-none w100">
-                                        <div class="d-flex alig-items-center justify-content-between">
-                                            <div class="">Dispositivos</div>
-                                            <div class=""><i class="ml-3 bi bi-tablet-fill"></i></div>
-                                        </div>
-                                    </span>
-                                    <span class="d-none d-sm-block"><i class="bi bi-tablet-fill"></i></span>
-                                </button>
-                            </li>
-                            <li class="nav-item mt-2 mt-sm-0">
-                                <button data-titlet="Descargar registros"
-                                    class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 actualizar fontq">
-                                    <span class="d-block d-sm-none w100">
-                                        <div class="d-flex alig-items-center justify-content-between">
-                                            <div class="">Actualizar</div>
-                                            <div class=""><i class="ml-3 bi bi-cloud-download-fill"></i></div>
-                                        </div>
-                                    </span>
-                                    <span class="d-none d-sm-block"><i class="bi bi-cloud-download-fill"></i></span>
-                                </button>
-                            </li>
+                        <ul class="navbar-nav mr-auto px-2 w-100" id="btnMenu">
+                            <div class="d-sm-inline-flex">
+                                <li class="nav-item mt-2 mt-sm-0">
+                                    <button readonly data-titlet="Fichadas" type="button"
+                                        class="h35 mr-1 btn btn-custom border btn-sm px-3 showChecks fontq">
+                                        <span class="d-block d-sm-none w100">
+                                            <div class="d-flex alig-items-center justify-content-between">
+                                                <div class="">Fichadas</div>
+                                                <div class=""><i class="ml-3 bi bi-clipboard-data-fill"></i></div>
+                                            </div>
+                                        </span>
+                                        <span class="d-none d-sm-block"><i class="bi bi-clipboard-data-fill"></i></span>
+                                    </button>
+                                </li>
+                                <li class="nav-item mt-2 mt-sm-0">
+                                    <button data-titlet="Gestión de usuarios" type="button"
+                                        class="h35 mr-1 btn btn-outline-custom border-ddd btn-sm px-3 showUsers fontq">
+                                        <span class="d-none d-sm-block"><i class="bi bi-people-fill"></i></span>
+                                        <span class="d-block d-sm-none w100">
+                                            <div class="d-flex alig-items-center justify-content-between">
+                                                <div class="">Usuarios</div>
+                                                <div class=""><i class="ml-3 bi bi-people-fill"></i></div>
+                                            </div>
+                                        </span>
+                                    </button>
+                                </li>
+                                <li class="nav-item mt-2 mt-sm-0">
+                                    <button data-titlet="Dispositivos"
+                                        class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 showDevices fontq">
+                                        <span class="d-block d-sm-none w100">
+                                            <div class="d-flex alig-items-center justify-content-between">
+                                                <div class="">Dispositivos</div>
+                                                <div class=""><i class="ml-3 bi bi-tablet-fill"></i></div>
+                                            </div>
+                                        </span>
+                                        <span class="d-none d-sm-block"><i class="bi bi-tablet-fill"></i></span>
+                                    </button>
+                                </li>
+                            </div>
+                            <div class="w-100">
+                                <li class="nav-item mt-2 mt-sm-0">
+                                    <button data-titlel="Descargar registros"
+                                        class="h35 mr-1 btn btn-sm btn-outline-custom border-ddd fontq h35 px-3 actualizar fontq float-right d-none d-sm-block">
+                                        <span class="d-block d-sm-none w100">
+                                            <div class="d-flex alig-items-center justify-content-between">
+                                                <div class="">Actualizar</div>
+                                                <div class=""><i class="ml-3 bi bi-cloud-download-fill"></i></div>
+                                            </div>
+                                        </span>
+                                        <span class="d-none d-sm-block"><i class="bi bi-cloud-download-fill"></i></span>
+                                    </button>
+                                </li>
+                                <button id="expandContainer" type="button" class="h35 float-right d-none d-sm-block btn btn-sm btn-outline-custom border-0 w35 fontq mr-1 text-secondary linkMapa"><i class="bi bi-arrows-angle-expand "></i></button>
+                            </div>
                         </ul>
                     </div>
                 </nav>

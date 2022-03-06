@@ -433,6 +433,104 @@ if (($_POST['tipo'] == 'c_usuario')) {
     );
     echo json_encode($json_data);
     exit;
+} else if ($_POST['tipo'] == 'u_device') {
+    
+    $post = $_POST;
+
+    $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
+    $post['formDeviceEvento']  = $post['formDeviceEvento'] ?? '';
+    $post['formDevicePhoneID'] = $post['formDevicePhoneID'] ?? '';
+
+    $formDeviceNombre  = test_input($post['formDeviceNombre']);
+    $formDeviceEvento  = test_input($post['formDeviceEvento']);
+    $formDevicePhoneID = test_input($post['formDevicePhoneID']);
+
+    if (valida_campo($formDeviceNombre)) {
+        PrintRespuestaJson('error', 'Falta Nombre');
+        exit;
+    };
+    if (valida_campo($formDevicePhoneID)) {
+        PrintRespuestaJson('error', 'Falta Phone ID');
+        exit;
+    };
+
+    $idCompany = $_SESSION['ID_CLIENTE'];
+
+    $paramsApi = array(
+        'key'           => $_SESSION["RECID_CLIENTE"],
+        'deviceName'    => urlencode($formDeviceNombre),
+        'deviceEvent'   => ($formDeviceEvento),
+        'devicePhoneID' => ($formDevicePhoneID)
+    );
+    $api = "api/v1/devices/upd/";
+    $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+    $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+    
+    $api = json_decode($api, true);
+
+    $totalRecords = $api['TOTAL'];
+
+    if ($api['COUNT'] > 0) {
+        $status = 'ok';
+        $arrayData = $api['RESPONSE_DATA'];
+    }
+    else {
+        $status = 'error';
+        $arrayData = $api['MESSAGE'];
+    }
+    $json_data = array(
+        "Mensaje" => $arrayData,
+        'status'  => $status,
+    );
+    echo json_encode($json_data);
+    exit;
+} else if ($_POST['tipo'] == 'd_device') {
+    
+    $post = $_POST;
+
+    $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
+    $post['formDeviceEvento']  = $post['formDeviceEvento'] ?? '';
+    $post['formDevicePhoneID'] = $post['formDevicePhoneID'] ?? '';
+
+    $formDeviceNombre  = test_input($post['formDeviceNombre']);
+    $formDeviceEvento  = test_input($post['formDeviceEvento']);
+    $formDevicePhoneID = test_input($post['formDevicePhoneID']);
+
+    if (valida_campo($formDevicePhoneID)) {
+        PrintRespuestaJson('error', 'Falta Phone ID');
+        exit;
+    };
+
+    $idCompany = $_SESSION['ID_CLIENTE'];
+
+    $paramsApi = array(
+        'key'           => $_SESSION["RECID_CLIENTE"],
+        'deviceName'    => urlencode($formDeviceNombre),
+        'deviceEvent'   => ($formDeviceEvento),
+        'devicePhoneID' => ($formDevicePhoneID)
+    );
+    $api = "api/v1/devices/del/";
+    $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+    $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+    
+    $api = json_decode($api, true);
+
+    $totalRecords = $api['TOTAL'];
+
+    if ($api['COUNT'] > 0) {
+        $status = 'ok';
+        $arrayData = $api['RESPONSE_DATA'];
+    }
+    else {
+        $status = 'error';
+        $arrayData = $api['MESSAGE'];
+    }
+    $json_data = array(
+        "Mensaje" => $arrayData,
+        'status'  => $status,
+    );
+    echo json_encode($json_data);
+    exit;
 }
 mysqli_close($link);
 exit;

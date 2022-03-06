@@ -3721,3 +3721,7 @@ function getDataIni($url) // obtiene el json de la url
         return false; // devolvemos false
     }
 }
+function padLeft($str, $len, $pad = ' ')
+{
+    return str_pad($str, $len, $pad, STR_PAD_LEFT);
+}

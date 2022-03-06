@@ -94,12 +94,6 @@ tablemobile = $('#table-mobile').DataTable({
         {
             className: 'align-middle text-center', targets: 'regPhoto', title: 'Foto',
             "render": function (data, type, row, meta) {
-                let urlToFile = `fotos/${row.userCompany}/${row.regPhoto}`;
-                let nameuser = (row.userName) ? ': ' + row.userName : '';
-                let nameuser2 = (row.userName) ? '' + row.userName : '';
-                let gps = (row.gpsStatus != '0') ? 'Ok' : 'Sin GPS';
-                // let evento = row.eventType + row.operationType + row.operation;
-
                 operation = (row.operation == 0) ? '' : ': ' + row.operation;
                 let evento = '';
                 switch (row.operationType) {
@@ -122,7 +116,6 @@ tablemobile = $('#table-mobile').DataTable({
                 evento = evento + operation;
 
                 let foto = '';
-                let url_foto = '';
                 if (row.regPhoto) {
                     url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
                     foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="scale w40 h40 radius img-fluid"></img>`;
@@ -131,7 +124,7 @@ tablemobile = $('#table-mobile').DataTable({
                     foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                 }
 
-                let datacol = `<div class="pic w50 h50 border d-flex justify-content-center align-items-center pointer" datafoto="${url_foto}" data-iduser="${row.userID}" dataname="${nameuser2}" datauid="${row.phoneid}" datahora="${row.regTime}" datadia="${row.regDay}" datagps="${gps}" datatype="${evento}" datalat="${row.regLat}" datalng="${row.regLng}">${foto}</div>`
+                let datacol = `<div class="pic w50 h50 border d-flex justify-content-center align-items-center pointer">${foto}</div>`
                 return datacol;
             },
         },
@@ -145,7 +138,7 @@ tablemobile = $('#table-mobile').DataTable({
         {
             className: 'align-middle', targets: '', title: 'Nombre',
             "render": function (data, type, row, meta) {
-                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario invalido</span>';
+                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                 let datacol = `<div class="Mw150"><span class="searchName pointer">${nameuser}</span></div>`
                 return datacol;
             },
@@ -517,30 +510,25 @@ function initMap() {
 // });
 
 $(document).on("click", ".pic", function (e) {
-
+    let data = tablemobile.row($(this).parents("tr")).data();
+    // console.log(data);
     $('#pic').modal('show')
-    let picfoto = $(this).attr('datafoto');
-    let picnombre = $(this).attr('dataname');
-    let picuid = $(this).attr('datauid');
-    let picIDUser = $(this).attr('data-iduser');
-    let piccerteza = $(this).attr('datacerteza');
-    let piccerteza2 = $(this).attr('datacerteza2');
-    let picinout = $(this).attr('datainout');
-    let piczone = $(this).attr('datazone');
-    let pichora = $(this).attr('datahora');
-    let picgps = $(this).attr('datagps');
-    let pictype = $(this).attr('datatype');
-    let picdia = $(this).attr('datadia');
-    let _lat = $(this).attr('datalat');
-    let _lng = $(this).attr('datalng');
+    let picfoto = (data.regPhoto) ? 'fotos/'+data.userCompany+'/'+data.regPhoto : '';
+    let picnombre = data.userName;
+    let picDevice = data.deviceName
+    let picIDUser = data.userID
+    let pichora   = data.regTime
+    let picdia    = data.regDay
+    let _lat      = data.regLat
+    let _lng      = data.regLng
+
+    picDevice = (!picDevice) ? `${data.phoneid}` : picDevice; 
 
     $('#latitud').val(_lat)
     $('#longitud').val(_lng)
-
     $("input[name=lat]").val(_lat);
     $("input[name=lng]").val(_lng);
 
-    $('#zona').val(piczone)
     if (picfoto) {
         $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
         $('.divFoto').show()
@@ -549,108 +537,75 @@ $(document).on("click", ".pic", function (e) {
     }
 
     $('.picName').html(picnombre);
-    $('.picUid').html(picuid);
+    $('.picDevice').html(picDevice);
     $('.picIDUser').html(picIDUser);
     $('.picHora').html('<b>' + pichora + '</b>');
-    $('.picModo').html(picinout);
-    $('.picTipo').html(pictype);
+
+    let evento = '';
+    switch (data.operationType) {
+        case '-1':
+            evento = 'Fichada';
+            break;
+        case '1':
+            evento = 'Ronda';
+            break;
+        case '3':
+            evento = 'Evento';
+            break;
+        default:
+            evento = 'Desconocido';
+            break;
+    }
+    if (data.operationType == '0' && data.eventType == '2') {
+        evento = 'Fichada';
+    }
+    data.operation = (data.operation == '0') ? '' : data.operation;
+    let picTipo = `${evento} ${data.operation}`
+    $('.picTipo').html(picTipo);
     $('.picDia').html(picdia);
 
-    var position = (parseFloat(_lat) + parseFloat(_lng))
-
-    // if (piccerteza > 70) {
-    //     $('.picCerteza').html('<img src="../img/check.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-success">(' + piccerteza2 + ')</span>');
-    // } else {
-    //     $('.picCerteza').html('<img src="../img/uncheck.png" class="w15" alt="' + piccerteza + '" title="' + piccerteza + '">&nbsp;<span class="fontp fw4 text-danger">(' + piccerteza2 + ')</span>');
-    // }
-    // if (position != '0') {
-    //     if (piczone) {
-    //         $('#btnCrearZona').addClass('d-none')
-    //     } else {
-    //         $('#btnCrearZona').removeClass('d-none')
-    //     }
-    //     let zone = (piczone) ? '<span class="text-success">' + piczone + '</span>' : '<span class="text-danger">Fuera de Zona</span>';
-    //     $('.picZona').html(zone);
-    // } else {
-    //     $('.picZona').html('Sin ubicaci&oacute;n');
-    // }
-    // console.log(position);
+    let position = (parseFloat(_lat) + parseFloat(_lng))
     if (position != '0') {
-        $('#mapzone').removeClass('d-none');
+        $('#mapzone').show()
+        $('.modal-body #noGPS').html('')
         initMap()
     } else {
-        $('#mapzone').addClass('d-none');
-        // $('#btnCrearZona').addClass('d-none')
+        $('#mapzone').hide();
+        $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 p-0 fontq"><span>Ubicación GPS no disponible</span></div>')
     }
-
-    // $(document).on("click", "#btnCrearZona", function (e) {
-    //     fadeInOnly('#rowCreaZona')
-    //     $("#rowRespuesta").addClass("d-none");
-
-    //     $("#map_size").val('200')
-    //     initMap()
-    //     fadeInOnly('#mapzone')
-
-    //     $('.select2').on('select2:select', function (e) {
-    //         var select_val = $(e.currentTarget).val();
-    //         $("#map_size").val(select_val)
-    //         initMap()
-    //         fadeInOnly('#mapzone')
-    //     });
-
-    //     $('#rowCreaZona').removeClass('d-none')
-
-    //     $("#CrearZona").bind("submit", function (e) {
-    //         e.preventDefault();
-    //         $.ajax({
-    //             type: $(this).attr("method"),
-    //             url: $(this).attr("action"),
-    //             data: $(this).serialize(),
-    //             // dataType: "json",
-    //             beforeSend: function (data) {
-    //                 $("#btnSubmitZone").prop("disabled", true);
-    //                 $("#btnSubmitZone").html("Creando Zona.!");
-    //             },
-    //             success: function (data) {
-    //                 if (data.status == "ok") {
-    //                     $('#btnCrearZona').addClass('d-none')
-    //                     $("#btnSubmitZone").prop("disabled", false);
-    //                     $("#btnSubmitZone").html("Aceptar");
-    //                     $("#rowRespuesta").removeClass("d-none");
-    //                     $("#respuesta").html('<div class="alert alert-success fontq"><b>¡Zona creada correctamente!<br>La misma se ver&aacute; reflejada en futuras marcaciones.</b></div>')
-    //                     $("#rowCreaZona").addClass("d-none");
-    //                     setTimeout(function () {
-    //                         $('#rowRespuesta').addClass('d-none')
-    //                     }, 4000);
-    //                     $("#map_size").val(data.radio)
-    //                     initMap()
-    //                 } else {
-    //                     $("#btnSubmitZone").prop("disabled", false);
-    //                     $("#btnSubmitZone").html("Aceptar");
-    //                 }
-    //             },
-    //             error: function () {
-    //                 $("#btnSubmitZone").prop("disabled", false);
-    //                 $("#btnSubmitZone").html("Aceptar");
-    //                 // $("#rowCreaZona").hide();
-    //             }
-    //         });
-    //     });
-
-    // });
-    // $(document).on("click", "#cancelZone", function (e) {
-    //     clean()
-    //     initMap()
-    // });
 });
 
 $('#pic').on('hidden.bs.modal', function (e) {
     clean()
 })
-
+$('#expandContainer').attr('data-titlet', 'Expandir')
+$('#expandContainer').on('click', function (e) {
+    e.preventDefault()
+    if($('#container').hasClass('container-fluid')){
+        $(this).html('<i class="bi bi-arrows-angle-expand"></i>')
+        $(this).attr('data-titlet', 'Expandir')
+        $('#container').removeClass('container-fluid')
+        $('#container').addClass('container')
+        setTimeout(() => {
+            $('#table-mobile').DataTable().columns.adjust().draw(); 
+        }, 500);
+        
+    }else{
+        $(this).html('<i class="bi bi-arrows-angle-contract"></i>')
+        $(this).attr('data-titlet', 'Contraer')
+        $('#container').addClass('container-fluid')
+        $('#container').removeClass('container')
+        setTimeout(() => {
+            $('#table-mobile').DataTable().columns.adjust().draw(); 
+        }, 500);
+    }
+    // $( "#container" ).toogleClass('container-fluid')
+    //  
+});
 function clean() {
-    $('#mapzone').addClass('d-none');
+    $('#mapzone').hide();
     $("#map_size").val('5')
+    $('.modal-body #noGPS').html('')
 }
 function actualizar(noti = true) {
 
