@@ -13,7 +13,6 @@ const loadingTable = (selectortable) => {
 }
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 actualizar(false);
-
 function dateRange() {
     $('#_drMob').daterangepicker({
         singleDatePicker: false,

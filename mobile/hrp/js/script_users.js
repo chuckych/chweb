@@ -99,7 +99,6 @@ tableUsuarios.on('xhr.dt', function (e, settings, json) {
 tableUsuarios.on('init.dt', function (e, settings, json) {
     $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-person-plus-fill"></i></button>')
 });
-
 function printFormUsuario(selectorAction, data, action) {
     CheckSesion()
     $.ajax({

@@ -12,7 +12,6 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 ?>
 <input type="hidden" hidden id="_referer" value="<?=urlencode($_SERVER['REQUEST_URI'])?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?=ID_MODULO?>">
-
 <div id="navBarPrimary" class="sticky-top" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
         <?php if (HOMEHOST == 'chweb') { ?>
