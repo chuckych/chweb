@@ -802,9 +802,11 @@ function minmaxDate() {
     }).then(() => {
         tablemobile.ajax.reload();
         $('#tableUsuarios').DataTable().ajax.reload();
+        $('#tableDevices').DataTable().ajax.reload();
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
     }).then(function () {
+
     });
 }
 
@@ -878,6 +880,7 @@ $("#RefreshToken").bind("submit", function (e) {
             if (data.status == "ok") {
                 loadingTable('#table-mobile');
                 loadingTableUser('#tableUsuarios');
+                loadingTableDevices('#tableDevices');
                 minmaxDate()
                 actualizar(false);
             }
