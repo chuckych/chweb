@@ -47,6 +47,12 @@
             align-items: center;
             height: 100%;
         }
+        .smtdcol {
+            display: flex;
+            align-items: left;
+            flex-direction: column;
+            /* height: 100%; */
+        }
 
         table.dataTable {
             margin-top: 0px !important;
@@ -78,36 +84,6 @@
                 overflow-x: auto;
                 white-space: nowrap;
                 padding-bottom: 5px;
-            }
-        }
-
-        .loading {
-            background-color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: 0s all;
-            margin-top: 100px;
-        }
-
-        .loading .show {
-            opacity: 0.8;
-        }
-
-        .loading .spin {
-            border: 3px solid #4a5461;
-            border-top-color: #fff;
-            border-radius: 50%;
-            width: 2em;
-            height: 2em;
-            animation: spin 2s linear infinite;
-            opacity: 0.7;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
             }
         }
     </style>

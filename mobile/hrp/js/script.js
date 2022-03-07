@@ -72,14 +72,14 @@ function doesFileExist(urlToFile) {
     xhr.send();
     return (xhr.status == "404") ? false : true;
 }
-
+// max-h-500 overflow-auto
 tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: -1,
     dom: "<'row'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic'>f>>" +
-        "<'row'<'col-12 border shadow-sm max-h-500 overflow-auto table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
+        "<'row'<'col-12 border shadow-sm table-responsive't>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-white pr-3 align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white pr-3 d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getRegMobile.php",
@@ -96,7 +96,7 @@ tablemobile = $('#table-mobile').DataTable({
     },
     columns: [
         {
-            className: 'text-center', targets: 'regPhoto', title: 'Foto',
+            className: 'text-center', targets: 'regPhoto', title: '<div class="w50">Foto</div>',
             "render": function (data, type, row, meta) {
                 operation = (row.operation == 0) ? '' : ': ' + row.operation;
                 let evento = '';
@@ -134,17 +134,15 @@ tablemobile = $('#table-mobile').DataTable({
         },
         {
             className: '', targets: '', title: `
-            <span class="d-none d-sm-block">ID</span>
-            <span class="d-sm-none d-block">Usuario</span>
+            <div class="d-none d-sm-block w150">Usuario</div>
+            <div class="d-block d-sm-none w100">Usuario</div>
             `,
             "render": function (data, type, row, meta) {
                 let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                 let datacol = `
-                    <div class="d-none d-sm-block">
-                        <span class="searchID pointer">${row.userID}</span>
-                    </div>
-                    <div class="d-block d-sm-none">
-                        <div class="pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
+                    <div class="smtdcol">
+                        <div class="searchName pointer text-truncate d-none d-sm-block" style="max-width: 150px;">${nameuser}</div>
+                        <div class="pointer text-truncate d-block d-sm-none" style="max-width: 100px;">${nameuser}</div>
                         <div class="searchID pointer text-secondary fontp">${row.userID}</div>
                     </div>
                     `
@@ -152,26 +150,9 @@ tablemobile = $('#table-mobile').DataTable({
             },
         },
         {
-            className: 'd-none d-sm-block', targets: '', title: '<div class="text-truncate" style="max-width: 120px;">Nombre</div>',
-            "render": function (data, type, row, meta) {
-                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
-
-                let datacol = `
-                    <div class="text-truncate smtd">
-                        <div class="searchName pointer text-truncate" style="max-width: 120px;">${nameuser}</div>
-                    </div>`
-                return datacol;
-            },
-        },
-        {
-            // className: '', targets: '', title: 'Día',
-            // "render": function (data, type, row, meta) {
-            //     let datacol = `<div class="w70">${row.regDay}</div>`
-            //     return datacol;
-            // },
             className: '', targets: '', title: `
-            <span class="d-none d-sm-block">Día</span>
-            <span class="d-sm-none d-block">Fecha</span>
+            <span class="d-none d-sm-block w70">Día</span>
+            <span class="d-sm-none d-block w70">Fecha</span>
             `,
             "render": function (data, type, row, meta) {
                 let datacol = `
@@ -187,7 +168,7 @@ tablemobile = $('#table-mobile').DataTable({
             },
         },
         {
-            className: 'd-none d-sm-block', targets: '', title: 'Fecha',
+            className: 'd-none d-sm-block', targets: '', title: '<div class="w70">Fecha</div>',
             "render": function (data, type, row, meta) {
                 // let datacol = `<div class="ls1">${row.regDate}</div>`
                 // return datacol;
@@ -195,18 +176,18 @@ tablemobile = $('#table-mobile').DataTable({
                 <div class="smtd">
                     <span class="">${row.regDate}</span>
                 </div>`
-            return datacol;
+                return datacol;
             },
         },
         {
-            className: '', targets: '', title: 'Hora',
+            className: '', targets: '', title: '<div class="w40">Hora</div>',
             "render": function (data, type, row, meta) {
                 let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
                 return datacol;
             },
         },
         {
-            className: '', targets: '', title: 'Mapa',
+            className: '', targets: '', title: '<div class="w40">Mapa</div>',
             "render": function (data, type, row, meta) {
                 let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
                 let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
@@ -215,17 +196,7 @@ tablemobile = $('#table-mobile').DataTable({
             },
         },
         {
-            className: '', targets: '', title: 'Dispositivo',
-            "render": function (data, type, row, meta) {
-                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
-                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : row.deviceName;
-
-                let datacol = `<div class="">${device}</div>`
-                return datacol;
-            },
-        },
-        {
-            className: ' w-100', targets: '', title: 'Tipo',
+            className: '', targets: '', title: '<div class="w70">Tipo</div>',
             "render": function (data, type, row, meta) {
                 // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
                 let evento = '';
@@ -251,6 +222,16 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        {
+            className: 'w-100', targets: '', title: '<div class="" style="max-width: 170px; min-width:170px;" >Dispositivo</div>',
+            "render": function (data, type, row, meta) {
+                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
+
+                let datacol = `<div class="">${device}</div>`
+                return datacol;
+            },
+        },
     ],
     lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
     bProcessing: false,
@@ -261,13 +242,15 @@ tablemobile = $('#table-mobile').DataTable({
     searching: true,
     info: true,
     ordering: false,
+    scrollY: '50vh',
+    scrollCollapse: true,
+    // fixedHeader: true,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
     },
 });
 // on draw dt
 tablemobile.on('init.dt', function () {
-
     $('.dr').append(`
         <div class="mx-2">
             <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
@@ -544,14 +527,14 @@ function initMap() {
 
 $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
-    // console.log(data);
+    console.log(data);
     $('#pic').modal('show')
     let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
     let pichora = data.regTime
-    let picdia = data.regDay
+    let picdia = data.regDay + ' ' + data.regDate
     let _lat = data.regLat
     let _lng = data.regLng
 
@@ -611,7 +594,18 @@ $(document).on("click", ".pic", function (e) {
 $('#pic').on('hidden.bs.modal', function (e) {
     clean()
 })
-$('#expandContainer').attr('data-titlet', 'Expandir')
+
+// if ($('#container').hasClass('container-fluid')) {
+//     $('#expandContainer').attr('data-titlet', 'Expandir')
+// } else {
+//     $('#expandContainer').attr('data-titlet', 'Contraer')
+// }
+
+// $('#expandContainer').html('<i class="bi bi-arrows-angle-contract"></i>')
+// $('#container').addClass('container-fluid')
+// $('#container').removeClass('container')
+// $('#navBarPrimary').hide()
+
 $('#expandContainer').on('click', function (e) {
     e.preventDefault()
     if ($('#container').hasClass('container-fluid')) {
@@ -620,10 +614,7 @@ $('#expandContainer').on('click', function (e) {
         $('#container').removeClass('container-fluid')
         $('#container').addClass('container')
         $('#navBarPrimary').show()
-        // $('#encabezado').removeClass('sticky-top');
-        setTimeout(() => {
-            $('#table-mobile').DataTable().columns.adjust().draw();
-        }, 500);
+        // cancelFullScreen()
 
     } else {
         $(this).html('<i class="bi bi-arrows-angle-contract"></i>')
@@ -631,13 +622,10 @@ $('#expandContainer').on('click', function (e) {
         $('#container').addClass('container-fluid')
         $('#container').removeClass('container')
         $('#navBarPrimary').hide()
-        // $('#encabezado').addClass('sticky-top');
-        setTimeout(() => {
-            $('#table-mobile').DataTable().columns.adjust().draw();
-        }, 500);
+        // tablemobile.columns.adjust().draw();
+        tablemobile.ajax.reload(null, false);
+        // launchFullScreen(document.documentElement)
     }
-    // $( "#container" ).toogleClass('container-fluid')
-    //  
 });
 function clean() {
     $('#mapzone').hide();

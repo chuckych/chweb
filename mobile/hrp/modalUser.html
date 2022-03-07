@@ -1,0 +1,42 @@
+<!-- Modal -->
+<form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formUser">
+    <div class="modal fade" id="modalUser" tabindex="-1" aria-labelledby="modalUserLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <p class="modal-title h6" id="modalUserLabel">Modal title</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <input type="hidden" hidden id="formUserTipo" name="formUserTipo">
+                <div class="modal-body pt-0">
+                    <div class="row">
+                        <div class="col-12 py-2 col-sm-6" id="divid_user">
+                            <label for="formUserID">ID</label>
+                            <input class="form-control h40" type="tel" name="formUserID" id="formUserID"
+                                placeholder="ID de Usuario">
+                            <input class="" type="hidden" readonly name="tipo" id="tipo" value="c_usuario">
+                        </div>
+                        <div class="col-12 py-2 col-sm-6">
+                            <label for="formUserName">Nombre</label>
+                            <input class="form-control h40" type="text" name="formUserName" id="formUserName"
+                                placeholder="Nombre y Apellido">
+                        </div>
+                        <div class="col-12 pb-2">
+                            <label for="formUserRegid">Reg ID</label>
+                            <textarea class="form-control p-3" name="formUserRegid" id="formUserRegid" style="height: 120px !important;"
+                                placeholder="Regid proporcionado desde la App"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border-0 btn-sm fontq h40 w100 text-secondary"
+                        data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-custom fontq h40 w100"
+                        id="submitUser">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -7,9 +7,6 @@ const loadingTableUser = (selectortable) => {
     $(selectortable + ' td span').addClass('invisible')
 }
 tableUsuarios = $('#tableUsuarios').DataTable({
-    "initComplete": function (settings, json) {
-        $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-person-plus-fill"></i></button>')
-    },
     "drawCallback": function (settings) {
 
     },
@@ -96,8 +93,11 @@ tableUsuarios.on('draw.dt', function (e, settings) {
 tableUsuarios.on('page.dt', function (e, settings) {
     loadingTableUser('#tableUsuarios')
 });
-tableUsuarios.on('xhr', function (e, settings, json) {
-    tableUsuarios.off('xhr');
+tableUsuarios.on('xhr.dt', function (e, settings, json) {
+    tableUsuarios.off('xhr.dt');
+});
+tableUsuarios.on('init.dt', function (e, settings, json) {
+    $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-person-plus-fill"></i></button>')
 });
 
 function printFormUsuario(selectorAction, data, action) {
@@ -181,5 +181,82 @@ $(document).on("click", ".sendSettings", function (e) {
     });
     e.stopImmediatePropagation();
 });
+
+// $(document).on("click", "#addUser", function (e) {
+//     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
+//     axios({
+//         method: 'post',
+//         url: 'modalUser.html?v=' + $.now(),
+//     }).then(function (response) {
+//         $('#modales').html(response.data)
+//     }).then(function () {
+//         $('#modalUser .modal-title').html('Nuevo Usuario')
+//         $('#modalUser').modal('show');
+//         // $('#formUser .requerido').html('(*)')
+//         $('#formUser .form-control').attr('autocomplete', 'off')
+//         $('#formUser #formUserTipo').val('c_user')
+//         $('#formUser #formUserID').mask('00000000000', { reverse: false });
+//         setTimeout(() => {
+//             $('#formUser #formUserID').focus();
+//         }, 500);
+
+//     }).then(function () {
+
+//     }).catch(function (error) {
+//         alert(error)
+//     }).then(function () {
+//         $("#formUser").bind("submit", function (e) {
+//             e.preventDefault();
+//             let tipoStatus ='';
+//             switch ($('#formUser #formUserTipo').val()) {
+//                 case 'd_device':
+//                     tipoStatus = 'eliminado';
+//                     break;
+//                 case 'u_device':
+//                     tipoStatus = 'actualizado';
+//                     break;
+//                 case 'c_device':
+//                     tipoStatus = 'creado';
+//                     break;            
+//                 default:
+//                     tipoStatus = '';
+//                     break;
+//             }
+//             $.ajax({
+//                 type: $(this).attr("method"),
+//                 url: 'crud.php',
+//                 data: $(this).serialize() + '&tipo='+ $('#formUser #formUserTipo').val(),
+//                 // dataType: "json",
+//                 beforeSend: function (data) {
+//                     CheckSesion()
+//                     $.notifyClose();
+//                     notify('Aguarde..', 'info', 0, 'right')
+//                     ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+//                 },
+//                 success: function (data) {
+//                     if (data.status == "ok") {
+//                         $.notifyClose();
+//                         let deviceName = data.Mensaje.deviceName
+//                         notify('Dispositivo ' + deviceName + ' '+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+//                         // $('#tableUsuarios').DataTable().ajax.reload();
+//                         $('#table-mobile').DataTable().ajax.reload(null, false);
+//                         $('#tableDevices').DataTable().ajax.reload();
+//                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+//                         $('#modalUser').modal('hide');
+//                     } else {
+//                         $.notifyClose();
+//                         notify(data.Mensaje, 'danger', 5000, 'right')
+//                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+//                     }
+//                 },
+//                 error: function () { }
+//             });
+//         });
+//         $('#modalUser').on('hidden.bs.modal', function () {
+//             $('#modales').html(' ');
+//         });
+//     });
+
+// });
 
 // });

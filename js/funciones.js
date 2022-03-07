@@ -662,3 +662,23 @@ setInterval(() => {
     results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+function launchFullScreen(element) {
+    if(element.requestFullScreen) {
+      element.requestFullScreen();
+    } else if(element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullScreen) {
+      element.webkitRequestFullScreen();
+    }
+    // example: launchFullScreen(document.documentElement)
+  }
+  function cancelFullScreen() {
+    if(document.cancelFullScreen) {
+        document.cancelFullScreen();
+    } else if(document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if(document.webkitCancelFullScreen) {
+        document.webkitCancelFullScreen();
+    }
+    // example: cancelFullScreen()
+}

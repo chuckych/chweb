@@ -13,8 +13,8 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 <input type="hidden" hidden id="_referer" value="<?=urlencode($_SERVER['REQUEST_URI'])?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?=ID_MODULO?>">
 
-<div id="navBarPrimary" class="sticky-top">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center" style="z-index:1040;">
+<div id="navBarPrimary" class="sticky-top" style="z-index:1040;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
         <?php if (HOMEHOST == 'chweb') { ?>
             <a class="navbar-brand m-0 p-0 d-flex align-items-center" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
                 <img src="/<?= HOMEHOST ?>/img/logos/logoHRP.svg?v=<?= vjs() ?>" class="m-0 p-0 w110 img-fluid" alt="<?= CUSTOMER ?>">
