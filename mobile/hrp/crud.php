@@ -11,7 +11,7 @@ require __DIR__ . '../../../config/conect_mysql.php';
 // sleep(1);
 $id_company = $_SESSION["ID_CLIENTE"];
 
-if (($_POST['tipo'] == 'c_usuario')) {
+if (($_POST['tipo'] == 'c_usuario-old')) {
 
     $_POST['id_user'] = $_POST['id_user'] ?? '';
     $_POST['nombre']  = $_POST['nombre'] ?? '';
@@ -381,7 +381,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
         exit;
     }
 } else if ($_POST['tipo'] == 'c_device') {
-    
+
     $post = $_POST;
 
     $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
@@ -414,7 +414,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $api = "api/v1/devices/add/";
     $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
     $api = sendRemoteData($url, $paramsApi, $timeout = 10);
-    
+
     $api = json_decode($api, true);
 
     $totalRecords = $api['TOTAL'];
@@ -422,8 +422,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     if ($api['COUNT'] > 0) {
         $status = 'ok';
         $arrayData = $api['RESPONSE_DATA'];
-    }
-    else {
+    } else {
         $status = 'error';
         $arrayData = $api['MESSAGE'];
     }
@@ -434,7 +433,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     echo json_encode($json_data);
     exit;
 } else if ($_POST['tipo'] == 'u_device') {
-    
+
     $post = $_POST;
 
     $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
@@ -465,7 +464,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $api = "api/v1/devices/upd/";
     $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
     $api = sendRemoteData($url, $paramsApi, $timeout = 10);
-    
+
     $api = json_decode($api, true);
 
     $totalRecords = $api['TOTAL'];
@@ -473,8 +472,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     if ($api['COUNT'] > 0) {
         $status = 'ok';
         $arrayData = $api['RESPONSE_DATA'];
-    }
-    else {
+    } else {
         $status = 'error';
         $arrayData = $api['MESSAGE'];
     }
@@ -485,7 +483,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     echo json_encode($json_data);
     exit;
 } else if ($_POST['tipo'] == 'd_device') {
-    
+
     $post = $_POST;
 
     $post['formDeviceNombre']  = $post['formDeviceNombre'] ?? '';
@@ -512,7 +510,7 @@ if (($_POST['tipo'] == 'c_usuario')) {
     $api = "api/v1/devices/del/";
     $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
     $api = sendRemoteData($url, $paramsApi, $timeout = 10);
-    
+
     $api = json_decode($api, true);
 
     $totalRecords = $api['TOTAL'];
@@ -520,8 +518,59 @@ if (($_POST['tipo'] == 'c_usuario')) {
     if ($api['COUNT'] > 0) {
         $status = 'ok';
         $arrayData = $api['RESPONSE_DATA'];
+    } else {
+        $status = 'error';
+        $arrayData = $api['MESSAGE'];
     }
-    else {
+    $json_data = array(
+        "Mensaje" => $arrayData,
+        'status'  => $status,
+    );
+    echo json_encode($json_data);
+    exit;
+} else if (($_POST['tipo'] == 'c_usuario')) {
+
+    $post = $_POST;
+
+    $post['formUserName']  = $post['formUserName'] ?? '';
+    $post['formUserID']    = $post['formUserID'] ?? '';
+    $post['formUserRegid'] = $post['formUserRegid'] ?? '';
+
+    $formUserName  = test_input($post['formUserName']);
+    $formUserID    = test_input($post['formUserID']);
+    $formUserRegid = test_input($post['formUserRegid']);
+
+    if (valida_campo($formUserName)) {
+        PrintRespuestaJson('error', 'Falta Nombre');
+        exit;
+    };
+    if (valida_campo($formUserID)) {
+        PrintRespuestaJson('error', 'Falta ID');
+        exit;
+    };
+
+    $idCompany = $_SESSION['ID_CLIENTE'];
+
+    $paramsApi = array(
+        'key'       => $_SESSION["RECID_CLIENTE"],
+        'userName'  => urlencode($formUserName),
+        'userID'    => ($formUserID),
+        'userRegid' => ($formUserRegid)
+    );
+    // $api = "api/v1/devices/upd/$parametros";
+    // $api = "api/v1/devices/del/$parametros";
+    $api = "api/v1/users/add/";
+    $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+    $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+    $api = json_decode($api, true);
+
+    $totalRecords = $api['TOTAL'];
+
+    if ($api['COUNT'] > 0) {
+        $status = 'ok';
+        $arrayData = $api['RESPONSE_DATA'];
+    } else {
         $status = 'error';
         $arrayData = $api['MESSAGE'];
     }

@@ -134,9 +134,9 @@ function printFormMensaje(selectorAction, data, action) {
     });
 }
 
-$(document).on("click", "#addUser", function (e) {
-    printFormUsuario('#divformUsuario', '')
-});
+// $(document).on("click", "#addUser", function (e) {
+//     printFormUsuario('#divformUsuario', '')
+// });
 $(document).on("click", ".updateUser", function (e) {
     let dataiduser = $(this).attr('data-iduser')
     printFormUsuario('#divformUsuario', dataiduser, 'update')
@@ -181,81 +181,79 @@ $(document).on("click", ".sendSettings", function (e) {
     e.stopImmediatePropagation();
 });
 
-// $(document).on("click", "#addUser", function (e) {
-//     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
-//     axios({
-//         method: 'post',
-//         url: 'modalUser.html?v=' + $.now(),
-//     }).then(function (response) {
-//         $('#modales').html(response.data)
-//     }).then(function () {
-//         $('#modalUser .modal-title').html('Nuevo Usuario')
-//         $('#modalUser').modal('show');
-//         // $('#formUser .requerido').html('(*)')
-//         $('#formUser .form-control').attr('autocomplete', 'off')
-//         $('#formUser #formUserTipo').val('c_user')
-//         $('#formUser #formUserID').mask('00000000000', { reverse: false });
-//         setTimeout(() => {
-//             $('#formUser #formUserID').focus();
-//         }, 500);
+$(document).on("click", "#addUser", function (e) {
+    let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
+    axios({
+        method: 'post',
+        url: 'modalUser.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+    }).then(function () {
+        $('#modalUser .modal-title').html('Nuevo Usuario')
+        $('#modalUser').modal('show');
+        // $('#formUser .requerido').html('(*)')
+        $('#formUser .form-control').attr('autocomplete', 'off')
+        $('#formUser #tipo').val('c_usuario')
+        $('#formUser #formUserID').mask('00000000000', { reverse: false });
+        setTimeout(() => {
+            $('#formUser #formUserID').focus();
+        }, 500);
 
-//     }).then(function () {
+    }).then(function () {
 
-//     }).catch(function (error) {
-//         alert(error)
-//     }).then(function () {
-//         $("#formUser").bind("submit", function (e) {
-//             e.preventDefault();
-//             let tipoStatus ='';
-//             switch ($('#formUser #formUserTipo').val()) {
-//                 case 'd_device':
-//                     tipoStatus = 'eliminado';
-//                     break;
-//                 case 'u_device':
-//                     tipoStatus = 'actualizado';
-//                     break;
-//                 case 'c_device':
-//                     tipoStatus = 'creado';
-//                     break;            
-//                 default:
-//                     tipoStatus = '';
-//                     break;
-//             }
-//             $.ajax({
-//                 type: $(this).attr("method"),
-//                 url: 'crud.php',
-//                 data: $(this).serialize() + '&tipo='+ $('#formUser #formUserTipo').val(),
-//                 // dataType: "json",
-//                 beforeSend: function (data) {
-//                     CheckSesion()
-//                     $.notifyClose();
-//                     notify('Aguarde..', 'info', 0, 'right')
-//                     ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-//                 },
-//                 success: function (data) {
-//                     if (data.status == "ok") {
-//                         $.notifyClose();
-//                         let deviceName = data.Mensaje.deviceName
-//                         notify('Dispositivo ' + deviceName + ' '+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
-//                         // $('#tableUsuarios').DataTable().ajax.reload();
-//                         $('#table-mobile').DataTable().ajax.reload(null, false);
-//                         $('#tableDevices').DataTable().ajax.reload();
-//                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-//                         $('#modalUser').modal('hide');
-//                     } else {
-//                         $.notifyClose();
-//                         notify(data.Mensaje, 'danger', 5000, 'right')
-//                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-//                     }
-//                 },
-//                 error: function () { }
-//             });
-//         });
-//         $('#modalUser').on('hidden.bs.modal', function () {
-//             $('#modales').html(' ');
-//         });
-//     });
-
-// });
-
-// });
+    }).catch(function (error) {
+        alert(error)
+    }).then(function () {
+        $("#formUser").bind("submit", function (e) {
+            e.preventDefault();
+            let tipoStatus ='';
+            switch ($('#formUser #tipo').val()) {
+                case 'd_usuario':
+                    tipoStatus = 'eliminado';
+                    break;
+                case 'u_usuario':
+                    tipoStatus = 'actualizado';
+                    break;
+                case 'c_usuario':
+                    tipoStatus = 'creado';
+                    break;            
+                default:
+                    tipoStatus = '';
+                    break;
+            }
+            $.ajax({
+                type: $(this).attr("method"),
+                url: 'crud.php',
+                data: $(this).serialize(),
+                // dataType: "json",
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        let userName = data.Mensaje.userName
+                        let userID = data.Mensaje.userID
+                        notify('ID '+userID+ ' '+tipoStatus+' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
+                        // $('#tableUsuarios').DataTable().ajax.reload();
+                        $('#table-mobile').DataTable().ajax.reload(null, false);
+                        $('#tableUsuarios').DataTable().ajax.reload();
+                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                        $('#modalUser').modal('hide');
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+        });
+        $('#modalUser').on('hidden.bs.modal', function () {
+            $('#modales').html(' ');
+        });
+    });
+});

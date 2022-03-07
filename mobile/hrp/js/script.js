@@ -94,6 +94,7 @@ tablemobile = $('#table-mobile').DataTable({
         $(row).addClass('animate__animated animate__fadeIn');
     },
     columns: [
+        /** Columna Foto */
         {
             className: 'text-center', targets: 'regPhoto', title: '<div class="w50">Foto</div>',
             "render": function (data, type, row, meta) {
@@ -131,6 +132,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Usuario */
         {
             className: '', targets: '', title: `
             <div class="d-none d-sm-block w150">Usuario</div>
@@ -148,6 +150,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Fecha DIA */
         {
             className: '', targets: '', title: `
             <span class="d-none d-sm-block w70">Día</span>
@@ -166,6 +169,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Fecha */
         {
             className: 'd-none d-sm-block', targets: '', title: '<div class="w70">Fecha</div>',
             "render": function (data, type, row, meta) {
@@ -178,6 +182,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna HORA */
         {
             className: '', targets: '', title: '<div class="w40">Hora</div>',
             "render": function (data, type, row, meta) {
@@ -185,6 +190,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Mapa */
         {
             className: '', targets: '', title: '<div class="w40">Mapa</div>',
             "render": function (data, type, row, meta) {
@@ -194,6 +200,7 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Tipo */
         {
             className: '', targets: '', title: '<div class="w70">Tipo</div>',
             "render": function (data, type, row, meta) {
@@ -221,13 +228,14 @@ tablemobile = $('#table-mobile').DataTable({
                 return datacol;
             },
         },
+        /** Columna Dispositivo */
         {
             className: 'w-100', targets: '', title: '<div class="" style="max-width: 170px; min-width:170px;" >Dispositivo</div>',
             "render": function (data, type, row, meta) {
                 let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                 let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
 
-                let datacol = `<div class="">${device}</div>`
+                let datacol = `<div class="smtdcol">${device}</div>`
                 return datacol;
             },
         },
@@ -878,4 +886,4 @@ $("#RefreshToken").bind("submit", function (e) {
     });
 });
 // focusRowTables()
-// $('#RowTableDevices').show();
+// $('#RowTableUsers').show();
