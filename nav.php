@@ -6,12 +6,12 @@
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <input type="hidden" hidden id="_sesion" value="0">
-<!-- <input type="" id="" value="<?=$_SESSION['ConvRol']?>"> -->
+<!-- <input type="" id="" value="<?= $_SESSION['ConvRol'] ?>"> -->
 <?php
 $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 ?>
-<input type="hidden" hidden id="_referer" value="<?=urlencode($_SERVER['REQUEST_URI'])?>">
-<input type="hidden" hidden id="ID_MODULO" value="<?=ID_MODULO?>">
+<input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
+<input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?>">
 <div id="navBarPrimary" class="sticky-top" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
         <?php if (HOMEHOST == 'chweb') { ?>
@@ -32,14 +32,14 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                 //$url   = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $_SESSION["RECID_ROL"];
                 // $json  = file_get_contents(($url));
                 // $array = json_decode($json, TRUE);
-    
+
                 $array = (array(mod_roles($_SESSION['RECID_ROL'])));
-    
+
                 if (is_array($array)) :
                     if (!$array[0]['error']) {
                         $rowcount = (count($array[0]['mod_roles']));
                         $dataROL  = $array[0]['mod_roles'];
-    
+
                         $arrIdTipo = super_unique($dataROL, 'idtipo');
                         // exit;
                         function checkTipoMod($array, $idtipo)
@@ -114,7 +114,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                             </li>
                         <?php endif  # Fin 1 Operaciones
                         ?>
-    
+
                         <?php if (checkTipoMod($arrIdTipo, '2')) : # 2 Informes
                         ?>
                             <!--Informes-->
@@ -184,7 +184,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                             </li>
                         <?php endif  # Fin 1 Operaciones
                         ?>
-    
+
                         <?php if (checkTipoMod($arrIdTipo, '4')) : # 4 Mobile
                         ?>
                             <!--Mobile-->
@@ -223,7 +223,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                         foreach ($dataROL as $value) :
                             $Modulo = $value['modulo'];
                             $Modulo2 = $value['modulo'];
-    
+
                             if ($Modulo2 == 'Mi Cuenta') {
                                 if (checkTipoMod($arrIdTipo, '5')) {
                         ?>
@@ -298,14 +298,14 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
             <a href="/<?= HOMEHOST ?>/logout.php" title="Salir" class="btn btn-sm border-0 btn-light px-3 py-2" data-toggle="modal" data-target="#salir"><?= imgIcon('exit', 'Salir', '') ?></a>
         </div>
     </nav>
-    <div id="salir" class="modal" tabindex="-1" role="dialog" aria-labelledby="salir-title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered animate__animated animate__fadeIn" role="document">
-            <div class="modal-content" style="z-index:9999;">
-                <div class="modal-body text-center my-3 mx-auto">
-                    <p class="lead">¿Desea Salir?</p>
-                    <div class="form-inline">
-                        <form action="/<?= HOMEHOST ?>/logout.php" class="mx-auto"><button class="border btn px-5 btn-round fontq" data-dismiss="modal" type="button">NO</button><button type="submit" class="ml-2 btn btn-info px-5 btn-round fontq btn-custom">SI</button></form>
-                    </div>
+</div>
+<div id="salir" class="modal" tabindex="-1" role="dialog" aria-labelledby="salir-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered animate__animated animate__fadeIn" role="document">
+        <div class="modal-content" style="z-index:9999;">
+            <div class="modal-body text-center my-3 mx-auto">
+                <p class="lead">¿Desea Salir?</p>
+                <div class="form-inline">
+                    <form action="/<?= HOMEHOST ?>/logout.php" class="mx-auto"><button class="border btn px-5 btn-round fontq" data-dismiss="modal" type="button">NO</button><button type="submit" class="ml-2 btn btn-info px-5 btn-round fontq btn-custom">SI</button></form>
                 </div>
             </div>
         </div>

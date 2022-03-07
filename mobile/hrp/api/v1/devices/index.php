@@ -45,7 +45,7 @@ function deviceID()
 function deviceEvent()
 {
     $p = $_REQUEST;
-    $p['deviceEvent'] = $p['deviceEvent'] ?? '0';
+    $p['deviceEvent'] = $p['deviceEvent'] ?? 0;
     $deviceEvent  = empty($p['deviceEvent']) ? 0 : $p['deviceEvent'];
     return intval($deviceEvent);
 }
@@ -55,13 +55,6 @@ function deviceName()
     $p['deviceName'] = $p['deviceName'] ?? '';
     $deviceName = empty($p['deviceName']) ? '' : $p['deviceName'];
     return urldecode($deviceName);
-}
-function deviceIDName()
-{
-    $p = $_REQUEST;
-    $p['deviceIDName'] = $p['deviceIDName'] ?? '';
-    $deviceIDName = empty($p['deviceIDName']) ? '' : $p['deviceIDName'];
-    return urldecode($deviceIDName);
 }
 function validaKey()
 {
@@ -76,7 +69,7 @@ if (!isset($params['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'deviceID' || $key == 'deviceName' || $key == 'deviceIDName' || $key == 'deviceEvent') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'deviceID' || $key == 'deviceName' || $key == 'deviceEvent') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0,0, $idCompany));
@@ -137,7 +130,6 @@ $queryRecords = array();
 $start        = start();
 $length       = length();
 $deviceName   = deviceName();
-$deviceIDName = deviceIDName();
 $deviceID     = deviceID();
 $deviceEvent  = deviceEvent();
 
