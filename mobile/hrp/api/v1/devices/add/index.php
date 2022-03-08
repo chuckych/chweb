@@ -9,7 +9,7 @@ timeZone();
 timeZone_lang();
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../../mobileApikey.php'));
-
+borrarLogs(__DIR__ . '../../../_logs/addDevice/', 30, '.log');
 $total = 0;
 $params = $_POST;
 
@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     exit;
 }
 
-$iniScript = microtime(true);
+$startScript = microtime(true);
 $idCompany = 0;
 
 function start()
@@ -40,7 +40,7 @@ function devicePhoneID()
     $p = $_POST;
     $p['devicePhoneID'] = $p['devicePhoneID'] ?? '0';
     $devicePhoneID  = empty($p['devicePhoneID']) ? 0 : $p['devicePhoneID'];
-    return intval($devicePhoneID);
+    return urldecode($devicePhoneID);
 }
 function deviceEvent()
 {
@@ -77,7 +77,7 @@ foreach ($params as $key => $value) {
     }
 }
 
-function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $count = 0, $idCompany)
+function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $count = 0, $idCompany)
 {
     $start  = ($code != '400') ? start() : 0;
     $length  = ($code != '400') ? length() : 0;
@@ -88,7 +88,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         'TOTAL'         => intval($total),
         'COUNT'         => intval($count),
         'MESSAGE'       => $msg,
-        'TIME'          => $tiempoScript,
+        'TIME'          => $timeScript,
         'RESPONSE_DATA' => $data,
     );
 
@@ -108,7 +108,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
     $idCompany = $idCompany;
 
     if ($agent) {
-        require_once __DIR__ . '../../../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
+        require_once __DIR__ . '../../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
         $parsedagent[] = parse_user_agent($agent);
         foreach ($parsedagent as $key => $value) {
             $platform = $value['platform'];
@@ -117,7 +117,8 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../../logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    
+    $pathLog  = __DIR__ . '../../../_logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -152,19 +153,52 @@ if (!$vkey) {
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
 
+if (empty($devicePhoneID)) {
+    http_response_code(400);
+    (response(array(), 0, 'devicePhoneID required', 400, 0, 0, $idCompany));
+}
+if (strlen($devicePhoneID) > 20) {
+    http_response_code(400);
+    (response(array(), 0, 'devicePhoneID max length 20', 400, 0, 0, $idCompany));
+}
+if (empty($deviceName)) {
+    http_response_code(400);
+    (response(array(), 0, 'deviceName required', 400, 0, 0, $idCompany));
+}
+if (strlen($deviceName) > 30) {
+    http_response_code(400);
+    (response(array(), 0, 'deviceName max length 30', 400, 0, 0, $idCompany));
+}
+if (strlen($deviceEvent) > 4) {
+    http_response_code(400);
+    (response(array(), 0, 'deviceEvent max length 4', 400, 0, 0, $idCompany));
+}
+
 $MESSAGE = 'OK';
 $arrayData = array();
 
+$q = "SELECT * FROM `reg_device_` WHERE `id_company` = '$idCompany' AND `phoneid` = '$devicePhoneID'";
+$a = count_pdoQuery($q);
+
+if ($a > 0) {
+    $arrayData = array();
+    $MESSAGE = 'devicePhoneID already exists';
+    $endScript    = microtime(true);
+    $timeScript = round($endScript - $startScript, 2);
+    $countData    = count($arrayData);
+    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
+    exit;
+}
 $q = "SELECT * FROM `reg_device_` WHERE `id_company` = '$idCompany' AND `nombre` = '$deviceName'";
 $a = count_pdoQuery($q);
 
 if ($a > 0) {
     $arrayData = array();
-    $MESSAGE = 'El nombre del dispositivo ya existe';
-    $finScript    = microtime(true);
-    $tiempoScript = round($finScript - $iniScript, 2);
+    $MESSAGE = 'deviceName already exists';
+    $endScript    = microtime(true);
+    $timeScript = round($endScript - $startScript, 2);
     $countData    = count($arrayData);
-    (response($arrayData, intval($countData), $MESSAGE, '', $tiempoScript, $countData, $idCompany));
+    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 }
 
@@ -182,12 +216,12 @@ if ($insert) {
         'deviceEvent'   => $a['evento'],
     );
     $text = "Alta Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
-    fileLog($text, __DIR__ . '../../../logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
+    fileLog($text, __DIR__ . '../../../_logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
 } else {
     $MESSAGE = 'ERROR';
 }
-$finScript    = microtime(true);
-$tiempoScript = round($finScript - $iniScript, 2);
+$endScript    = microtime(true);
+$timeScript = round($endScript - $startScript, 2);
 $countData    = count($arrayData);
-(response($arrayData, intval($countData), $MESSAGE, '', $tiempoScript, $countData, $idCompany));
+(response($arrayData, 1, $MESSAGE, '', $timeScript, 1, $idCompany));
 exit;

@@ -85,6 +85,12 @@
                 white-space: nowrap;
                 padding-bottom: 5px;
             }
+            .lengthFilterTable{
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 5px;
+            }
         }
     </style>
 </head>
@@ -148,13 +154,13 @@
                 ?>
             </div>
             <div class="bg-white pb-3 radius invisible" id="RowTableUsers">
-                <div class="form-row">
-                    <div class="col-12 col-sm-7">
+                <div class="row">
+                    <div class="col-12 col-lg-8">
                         <table class="table text-nowrap w-100" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-sm-5">
+                    <div class="col-12 col-lg-4">
                         <div id="divformUsuario">
                         </div>
                     </div>
@@ -162,7 +168,7 @@
             </div>
             <div class="bg-white pb-3 invisible" id="RowTableDevices">
                 <div class="row">
-                    <div class="col-12 col-sm-6">
+                    <div class="col-12 col-sm-6 w-100">
                         <table class="table text-nowrap w-auto" id="tableDevices">
                             <thead class="fontq"></thead>
                         </table>

@@ -9,13 +9,14 @@ secure_auth_ch_json();
 E_ALL();
 
 borrarLogs(__DIR__ . '', 30, '.log');
-borrarLogs(__DIR__ . '', 1, '.json');
+// borrarLogs(__DIR__ . '', 1, '.json');
 
-$company = array();
-$employe = array();
-$arrayData = array();
-$insertCH = array();
+$company       = array();
+$employe       = array();
+$arrayData     = array();
+$insertCH      = array();
 $insertCH_Fail = array();
+$totalSession  = array();
 
 $start = microtime(true);
 

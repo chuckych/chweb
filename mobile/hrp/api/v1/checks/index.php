@@ -8,7 +8,7 @@ header('Access-Control-Allow-Origin: *');
 E_ALL();
 timeZone();
 timeZone_lang();
-borrarLogs(__DIR__ . '../../logs/', 1, '.log');
+borrarLogs(__DIR__ . '../../_logs/getChecks/', 30, '.log');
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../mobileApikey.php'));
 // echo json_encode($iniKeys);
@@ -138,7 +138,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '../../logs/getChecks/' . date('Ymd') . '_getChecks_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../_logs/getChecks/' . date('Ymd') . '_getChecks_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/

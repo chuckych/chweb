@@ -10,7 +10,7 @@ tableDevices = $('#tableDevices').DataTable({
     "initComplete": function (settings, json) {
         // $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h35 px-3 addDevice"><i class="bi bi-plus-lg"></i></button>')
     },
-    dom: "<'row'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+    dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row px-3'<'col-12 border shadow-sm table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
@@ -25,6 +25,7 @@ tableDevices = $('#tableDevices').DataTable({
         $(row).addClass('animate__animated animate__fadeIn align-middle');
     },
     columns: [
+        /** Columna Nombre */
         {
             className: 'align-middle', targets: '', title: 'Nombre',
             "render": function (data, type, row, meta) {
@@ -32,6 +33,7 @@ tableDevices = $('#tableDevices').DataTable({
                 return datacol;
             },
         },
+        /** Columna Evento */
         {
             className: 'align-middle', targets: '', title: 'Evento',
             "render": function (data, type, row, meta) {
@@ -40,6 +42,7 @@ tableDevices = $('#tableDevices').DataTable({
                 return datacol;
             },
         }, 
+        /** Columna TotalChecks */
         {
             className: 'align-middle', targets: '', title: 'Fichadas',
             "render": function (data, type, row, meta) {
@@ -47,13 +50,18 @@ tableDevices = $('#tableDevices').DataTable({
                 return datacol;
             },
         },
+        /** Columna Acciones */
         {
             className: 'align-middle w-100', targets: '', title: '',
             "render": function (data, type, row, meta) {
+                let del = `<button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button>`
+                if (row.totalChecks > 1) {
+                    del = `<button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button>`
+                }
                 let datacol = `
                 <div class="d-flex justify-content-end">
                     <button data-titlet="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button>
-                    <button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button>
+                    ${del}
                 </div>
                 `
                 return datacol;
@@ -74,6 +82,9 @@ tableDevices = $('#tableDevices').DataTable({
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },
 
+});
+tableDevices.on('init.dt', function (e, settings) {
+    $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h35 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
 });
 tableDevices.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
@@ -100,7 +111,7 @@ $(document).on("click", ".addDevice", function (e) {
         $('#formDevice .requerido').html('(*)')
         $('#formDevice .form-control').attr('autocomplete', 'off')
         $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
-        $('#formDevice #formDeviceTipo').val('c_device')
+        $('#formDevice #formDeviceTipo').val('add_device')
 
         setTimeout(() => {
             $('#formDevice #formDeviceNombre').focus();
@@ -115,14 +126,14 @@ $(document).on("click", ".addDevice", function (e) {
             e.preventDefault();
             let tipoStatus ='';
             switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'd_device':
+                case 'del_device':
                     tipoStatus = 'eliminado';
                     break;
-                case 'u_device':
+                case 'upd_device':
                     tipoStatus = 'actualizado';
                     break;
-                case 'c_device':
-                    tipoStatus = 'creado';
+                case 'add_device':
+                    tipoStatus = 'Creado';
                     break;            
                 default:
                     tipoStatus = '';
@@ -143,7 +154,7 @@ $(document).on("click", ".addDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + ' '+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableDevices').DataTable().ajax.reload();
@@ -179,7 +190,7 @@ $(document).on("click", ".updDevice", function (e) {
         $('#formDevice .requerido').html('(*)')
         $('#formDevice .form-control').attr('autocomplete', 'off')
         $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
-        $('#formDevice #formDeviceTipo').val('u_device')
+        $('#formDevice #formDeviceTipo').val('upd_device')
         $('#formDevice #formDevicePhoneID').val(data.phoneID)
         $('#formDevice #formDeviceNombre').val(data.deviceName)
         $('#formDevice #formDeviceEvento').val(data.deviceEvent)
@@ -196,14 +207,14 @@ $(document).on("click", ".updDevice", function (e) {
             e.preventDefault();
             let tipoStatus ='';
             switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'd_device':
-                    tipoStatus = 'eliminado';
+                case 'del_device':
+                    tipoStatus = 'eEliminado';
                     break;
-                case 'u_device':
-                    tipoStatus = 'actualizado';
+                case 'upd_device':
+                    tipoStatus = 'Actualizado';
                     break;
-                case 'c_device':
-                    tipoStatus = 'creado';
+                case 'add_device':
+                    tipoStatus = 'Creado';
                     break;            
                 default:
                     tipoStatus = '';
@@ -224,9 +235,10 @@ $(document).on("click", ".updDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + ' '+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
+                        // $('#table-mobile').DataTable().columns.adjust().draw();
                         $('#tableDevices').DataTable().ajax.reload();
                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
                         $('#modalDevice').modal('hide');
@@ -255,10 +267,10 @@ $(document).on("click", ".delDevice", function (e) {
         $('#modales').html(response.data)
     }).then(function () {
         $('#modalDevice .modal-title').html('¿Eliminar Dispositivo '+data.deviceName+'?')
-        $('#modalDevice .modal-title').addClass('text-danger font-weight-bold')
+        $('#modalDevice .modal-title').addClass('text-danger')
         $('#formDevicePhoneID').val(data.phoneID)
         $('#modalDevice').modal('show');
-        $('#formDevice #formDeviceTipo').val('d_device');
+        $('#formDevice #formDeviceTipo').val('del_device');
         $('#formDevice #formDevicePhoneID').val(data.phoneID).attr('hidden', 'hidden')
         $('#formDevice #formDeviceNombre').val(data.deviceName).attr('disabled', 'disabled')
         $('#formDevice #formDeviceEvento').val(data.deviceEvent).attr('disabled', 'disabled')
@@ -272,14 +284,14 @@ $(document).on("click", ".delDevice", function (e) {
             e.preventDefault();
             let tipoStatus ='';
             switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'd_device':
-                    tipoStatus = 'eliminado';
+                case 'del_device':
+                    tipoStatus = 'Eliminado';
                     break;
-                case 'u_device':
-                    tipoStatus = 'actualizado';
+                case 'upd_device':
+                    tipoStatus = 'Actualizado';
                     break;
-                case 'c_device':
-                    tipoStatus = 'creado';
+                case 'add_device':
+                    tipoStatus = 'Creado';
                     break;            
                 default:
                     tipoStatus = '';
@@ -300,7 +312,85 @@ $(document).on("click", ".delDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + ' '+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        // $('#tableUsuarios').DataTable().ajax.reload();
+                        $('#table-mobile').DataTable().ajax.reload(null, false);
+                        $('#tableDevices').DataTable().ajax.reload();
+                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                        $('#modalDevice').modal('hide');
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+        });
+        $('#modalDevice').on('hidden.bs.modal', function () {
+            $('#modales').html(' ');
+        });
+    });
+
+});
+$(document).on("click", "#addDevice", function (e) {
+    axios({
+        method: 'post',
+        url: 'modalDevice.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+    }).then(function () {
+        $('#modalDevice .modal-title').html('Nuevo Dispositivo')
+        $('#modalDevice').modal('show');
+        $('#formDevice .requerido').html('(*)')
+        $('#formDevice .form-control').attr('autocomplete', 'off')
+        $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
+        $('#formDevice #formDevicePhoneID').mask('00000000000000000000', { reverse: false });
+        $('#formDevice #formDeviceTipo').val('add_device')
+        
+        setTimeout(() => {
+            $('#formDevice #formDevicePhoneID').focus();
+            $('#formDevice #formDevicePhoneID').removeAttr('readonly')
+        }, 500);
+
+    }).then(function () {
+
+    }).catch(function (error) {
+        alert(error)
+    }).then(function () {
+        $("#formDevice").bind("submit", function (e) {
+            e.preventDefault();
+            let tipoStatus ='';
+            switch ($('#formDevice #formDeviceTipo').val()) {
+                case 'del_device':
+                    tipoStatus = 'eliminado';
+                    break;
+                case 'upd_device':
+                    tipoStatus = 'actualizado';
+                    break;
+                case 'add_device':
+                    tipoStatus = 'Creado';
+                    break;            
+                default:
+                    tipoStatus = '';
+                    break;
+            }
+            $.ajax({
+                type: $(this).attr("method"),
+                url: 'crud.php',
+                data: $(this).serialize() + '&tipo='+ $('#formDevice #formDeviceTipo').val(),
+                // dataType: "json",
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        let deviceName = data.Mensaje.deviceName
+                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableDevices').DataTable().ajax.reload();

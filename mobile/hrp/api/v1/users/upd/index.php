@@ -9,7 +9,7 @@ timeZone();
 timeZone_lang();
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../../mobileApikey.php'));
-borrarLogs(__DIR__ . '../../../_logs/delDevice/', 30, '.log');
+borrarLogs(__DIR__ . '../../../_logs/updUser/', 30, '.log');
 $total = 0;
 $params = $_POST;
 
@@ -34,26 +34,26 @@ function length()
     $length = empty($p['length']) ? 0 : $p['length'];
     return intval($length);
 }
-function devicePhoneID()
+function userID()
 {
     $p = $_POST;
-    $p['devicePhoneID'] = $p['devicePhoneID'] ?? 0;
-    $devicePhoneID  = empty($p['devicePhoneID']) ? 0 : $p['devicePhoneID'];
-    return urldecode($devicePhoneID);
+    $p['userID'] = $p['userID'] ?? '';
+    $userID  = empty($p['userID']) ? '' : $p['userID'];
+    return intval($userID);
 }
-function deviceEvent()
+function userName()
 {
     $p = $_POST;
-    $p['deviceEvent'] = $p['deviceEvent'] ?? '0';
-    $deviceEvent  = empty($p['deviceEvent']) ? 0 : $p['deviceEvent'];
-    return intval($deviceEvent);
+    $p['userName'] = $p['userName'] ?? '';
+    $userName = empty($p['userName']) ? '' : $p['userName'];
+    return urldecode($userName);
 }
-function deviceName()
+function userRegid()
 {
     $p = $_POST;
-    $p['deviceName'] = $p['deviceName'] ?? '';
-    $deviceName = empty($p['deviceName']) ? '' : $p['deviceName'];
-    return urldecode($deviceName);
+    $p['userRegid'] = $p['userRegid'] ?? '';
+    $userRegid = empty($p['userRegid']) ? '' : $p['userRegid'];
+    return urldecode($userRegid);
 }
 function validaKey()
 {
@@ -68,7 +68,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'devicePhoneID' || $key == 'deviceEvent' || $key == 'deviceName') {
+    if ($key == 'key' || $key == 'userName' || $key == 'userID' || $key == 'userRegid') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -103,7 +103,8 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     $textParams = implode('&', $textParams); // convert to string
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-    $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $_SERVER['HTTP_USER_AGENT'] = ($_SERVER['HTTP_USER_AGENT']) ?? '';
+    $agent    = urldecode($_SERVER['HTTP_USER_AGENT']);
     $idCompany = $idCompany;
 
     if ($agent) {
@@ -116,7 +117,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../../_logs/delDevice/' . date('Ymd') . '_log_delDevice_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../../_logs/updUser/' . date('Ymd') . '_log_updUser_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -125,11 +126,10 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     exit;
 }
 
-$queryRecords  = array();
-$start         = start();
-$length        = length();
-$deviceName    = deviceName();
-$devicePhoneID = devicePhoneID();
+$queryRecords = array();
+$userName     = userName();
+$userRegid    = userRegid();
+$userID       = userID();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -149,64 +149,75 @@ if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
-if (empty($devicePhoneID)) {
+
+if (empty($userID)) {
     http_response_code(400);
-    (response(array(), 0, 'devicePhoneID required', 400, 0, 0, $idCompany));
+    (response(array(), 0, 'userID required', 400, 0, 0, $idCompany));
+}
+if (strlen($userID) > 11) {
+    http_response_code(400);
+    (response(array(), 0, 'userID max length 11', 400, 0, 0, $idCompany));
+}
+if (strlen($userName) < 1) {
+    http_response_code(400);
+    (response(array(), 0, 'userName required', 400, 0, 0, $idCompany));
+}
+if (strlen($userName) > 50) {
+    http_response_code(400);
+    (response(array(), 0, 'userName max length 50', 400, 0, 0, $idCompany));
+}
+
+$q = "SELECT * FROM `reg_user_` WHERE `id_user` = '$userID' AND `id_company` = '$idCompany' LIMIT 1";
+$a = simple_pdoQuery($q);
+$MESSAGE = 'OK';
+
+if (!$a) {
+    $arrayData  = array();
+    $MESSAGE    = 'userID does not exist';
+    $endScript  = microtime(true);
+    $timeScript = round($endScript - $startScript, 2);
+    $countData  = count($arrayData);
+    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
+    exit;
 }
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$q = "SELECT * FROM `reg_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1";
+$q = "SELECT 1 FROM `reg_user_` WHERE `id_company` = '$idCompany' AND `nombre` = '$userName' AND `id_user` != '$userID'";
 $a = count_pdoQuery($q);
 
-if ($a) { // si tiene registros en la tbla de reg_
-    $arrayData  = array();
-    $MESSAGE    = 'This devicePhoneID cannot be deleted.';
-    $endScript  = microtime(true);
-    $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
-    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
-    exit;
-}
 
-$a = simple_pdoQuery("SELECT * FROM `reg_device_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1");
-$MESSAGE = 'OK';
-
-if (!$a) {
-    $arrayData  = array();
-    $MESSAGE    = 'phoneID does not exist';
-    $endScript  = microtime(true);
-    $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
-    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
-    exit;
-} else {
-    $arrayData = array(
-        'deviceID'      => $a['id'],
-        'devicePhoneID' => $a['phoneid'],
-        'id_company'    => $a['id_company'],
-        'deviceName'    => $a['nombre'],
-        'deviceEvent'   => $a['evento'],
-    );
-}
-
-// delet query 
-$sql_query_delete = "DELETE FROM `reg_device_` WHERE `id_company` = '$idCompany' AND `phoneid` = '$devicePhoneID'";
-
-$delete = pdoQuery($sql_query_delete);
-if ($delete) {
-    $text = "Eliminacion Dispositivo \"$arrayData[deviceName]\" ID = $arrayData[deviceID] Evento = $arrayData[deviceEvent] PhoneID = $arrayData[devicePhoneID]";
-    fileLog($text, __DIR__ . '../../../_logs/delDevice/' . date('Ymd') . '_log_delDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
-} else {
-    $MESSAGE = 'ERROR';
+if ($a > 0) {
+    $arrayData = array();
+    $MESSAGE = 'userName already exists';
     $endScript    = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
     $countData    = count($arrayData);
-    (response($arrayData, 0, $MESSAGE, '', $timeScript, 0, $idCompany));
+    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
+    exit;
+}
+
+// update query 
+$sql_query = "UPDATE `reg_user_` SET `nombre` = '$userName', `regid` = '$userRegid' WHERE `id_user` = '$userID' AND `id_company` = '$idCompany'";
+
+$update = pdoQuery($sql_query);
+if ($update) {
+    $a = simple_pdoQuery("SELECT * FROM `reg_user_` WHERE `id_user` = '$userID' AND `id_company` = '$idCompany' LIMIT 1");
+    $MESSAGE = 'OK';
+    $arrayData = array(
+        'userID'     => $a['id_user'],
+        'id_company' => $a['id_company'],
+        'userName'   => $a['nombre'],
+        'userRegid'  => $a['regid'],
+    );
+    $text = "Modificacion Usuario \"$a[nombre]\" ID = $a[id_user]";
+    fileLog($text, __DIR__ . '../../../_logs/updUser/' . date('Ymd') . '_log_updUser_' . padLeft($idCompany, 3, 0) . '.log'); // 
+} else {
+    $MESSAGE = 'ERROR';
 }
 $endScript    = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
 $countData    = count($arrayData);
-(response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
+(response($arrayData, 1, $MESSAGE, '', $timeScript, 1, $idCompany));
 exit;

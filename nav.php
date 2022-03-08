@@ -12,8 +12,10 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?>">
+<!-- navBar -->
 <div id="navBarPrimary" class="sticky-top" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
+        <!-- brandLogo -->
         <?php if (HOMEHOST == 'chweb') { ?>
             <a class="navbar-brand m-0 p-0 d-flex align-items-center" href="/<?= HOMEHOST ?>/inicio/" onclick="ShowLoading()">
                 <img src="/<?= HOMEHOST ?>/img/logos/logoHRP.svg?v=<?= vjs() ?>" class="m-0 p-0 w110 img-fluid" alt="<?= CUSTOMER ?>">
@@ -105,7 +107,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/op/horarios/>" . $Modulo2 . "</a>";
                                                 break;
                                             case 'Auditoría':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/auditor/>" . $Modulo2 . "</a>";
+                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/control/aud/>" . $Modulo2 . "</a>";
                                                 break;
                                         }
                                     }
@@ -299,6 +301,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
         </div>
     </nav>
 </div>
+<!-- Salir -->
 <div id="salir" class="modal" tabindex="-1" role="dialog" aria-labelledby="salir-title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered animate__animated animate__fadeIn" role="document">
         <div class="modal-content" style="z-index:9999;">

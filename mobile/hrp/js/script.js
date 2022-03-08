@@ -74,8 +74,8 @@ function doesFileExist(urlToFile) {
 // max-h-500 overflow-auto
 tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: -1,
-    dom: "<'row'" +
-        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic'>f>>" +
+    dom: "<'row lengthFilterTable'" +
+        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
         "<'row'<'col-12 border shadow-sm table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white pr-3 align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white pr-3 d-flex align-items-center justify-content-center'p>>" +
@@ -271,15 +271,15 @@ tablemobile.on('init.dt', function () {
         $('#table-mobile').DataTable().ajax.reload();
     });
 
-    $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end pb-2">
+    $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end">
         <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
         <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
             <span class="text-dark d-none d-lg-block">Solo Fichadas</span>
-            <span class="text-dark d-block d-lg-none fontp" style="padding-top:2px">Fichadas</span>
+            <span class="text-dark d-block d-lg-none" style="padding-top:1px">Fichadas</span>
         </label>
     </div>`)
     $('#RowTableMobile').removeClass('invisible')
-    $('#table-mobile_filter input').addClass('w250')
+    // $('#table-mobile_filter input').addClass('w250')
     $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
 });
 tablemobile.on('draw.dt', function (e, settings) {
@@ -689,10 +689,11 @@ $(document).on("click", ".actualizar", function (e) {
 
 $(document).on("click", "#Encabezado", function (e) {
     CheckSesion()
-    loadingTableUser('#tableUsuarios')
     loadingTable('#table-mobile');
-    tablemobile.ajax.reload();
-    $('#tableUsuarios').DataTable().ajax.reload();
+    loadingTableUser('#tableUsuarios');
+    loadingTableDevices('#tableDevices');
+    minmaxDate()
+    // actualizar(false);
 });
 
 const enableBtnMenu = (e) => {
@@ -733,7 +734,6 @@ $(document).on("click", ".showDevices", function (e) {
     focusRowTables()
     // $('.loading').hide()
     $('#RowTableDevices').show();
-
 });
 $(document).on("click", ".showChecks", function (e) {
     CheckSesion()
@@ -746,6 +746,9 @@ $(document).on("click", ".showChecks", function (e) {
     focusRowTables()
     // $('.loading').hide()
     $('#RowTableMobile').show();
+    loadingTable('#table-mobile');
+    $('#table-mobile').DataTable().columns.adjust().draw();
+    // minmaxDate()
 });
 $(document).on("click", ".sendCH", function (e) {
     CheckSesion()

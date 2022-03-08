@@ -13,24 +13,27 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12" id="divPhoneID">
-                            <input class="form-control h40 bg-light" type="tel" readonly name="formDevicePhoneID" id="formDevicePhoneID">
+                            <label for="formDevicePhoneID">PhoneID <span class="requerido"></span></label>
+                            <input class="form-control h40 bg-light" type="tel" readonly name="formDevicePhoneID"
+                                id="formDevicePhoneID" maxlength="20" placeholder="Ingrese el PhoneID">
                         </div>
                         <div class="col-8 py-2 col-sm-8">
                             <label for="formDeviceNombre">Nombre <span class="requerido"></span></label>
                             <input class="form-control h40" type="text" name="formDeviceNombre" id="formDeviceNombre"
-                                placeholder="Nombre">
+                                placeholder="Nombre" maxlength="50">
                         </div>
                         <div class="col-4 py-2 col-sm-4">
                             <label for="formDeviceEvento">Evento</label>
                             <input class="form-control h40" type="tel" name="formDeviceEvento" id="formDeviceEvento"
-                                placeholder="Evento">
+                                placeholder="Evento" maxlength="4">
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light border-0 btn-sm fontq h40 w100 text-secondary"
                         data-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-sm btn-custom fontq h40 w100" id="submitDevice">Aceptar</button>
+                    <button type="submit" class="btn btn-sm btn-custom fontq h40 w100"
+                        id="submitDevice">Aceptar</button>
                 </div>
             </div>
         </div>
