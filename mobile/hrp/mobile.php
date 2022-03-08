@@ -47,6 +47,7 @@
             align-items: center;
             height: 100%;
         }
+
         .smtdcol {
             display: flex;
             align-items: left;
@@ -85,12 +86,29 @@
                 white-space: nowrap;
                 padding-bottom: 5px;
             }
-            .lengthFilterTable{
+
+            .lengthFilterTable {
                 display: block;
                 overflow-x: auto;
                 white-space: nowrap;
                 padding-bottom: 5px;
             }
+        }
+        .gm-ui-hover-effect {
+            box-shadow: none !important;
+            outline: 0 !important;
+            top: 0px !important;
+            right: 0px !important;
+        }
+
+        .gm-style .gm-style-iw-c {
+            background-color: #efefef !important;
+            border-radius: 0px !important;
+            padding: 8px !important;
+        }
+
+        .gm-style .gm-style-iw-t::after {
+            background: #efefef !important;
         }
     </style>
 </head>
@@ -175,6 +193,15 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-12">
+                    <span id="mapTitle"></span>
+                </div>
+                <div class="col-12 mb-4 pb-4">
+                    <div id="map" class="p-3" style="border:4px solid #ddd; display:none"></div>
+                    <div id="positionMap"></div>
+                </div>
+            </div>
         </div>
 
     </div>
@@ -201,6 +228,7 @@
     <script src="js/script.js?v=<?= time() ?>"></script>
     <script src="js/script_users.js?v=<?= time() ?>"></script>
     <script src="js/script_devices.js?v=<?= time() ?>"></script>
+    <script src="js/script_mapa.js?v=<?= time() ?>"></script>
     <!-- <script src="FicMobExcel.js?v=<?= time() ?>"></script> -->
 
 </body>
