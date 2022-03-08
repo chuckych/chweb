@@ -13,53 +13,6 @@ const loadingTable = (selectortable) => {
 }
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 actualizar(false);
-function dateRange() {
-    $('#_drMob').daterangepicker({
-        singleDatePicker: false,
-        showDropdowns: true,
-        minYear: $('#aniomin').val(),
-        maxYear: $('#aniomax').val(),
-        showWeekNumbers: false,
-        autoUpdateInput: true,
-        opens: "right",
-        drops: "down",
-        minDate: $('#min').val(),
-        startDate: $('#min').val(),
-        maxDate: $('#max').val(),
-        endDate: $('#max').val(),
-        autoApply: true,
-        alwaysShowCalendars: true,
-        linkedCalendars: false,
-        buttonClasses: "btn btn-sm fontq",
-        applyButtonClasses: "btn-custom fw4 px-3 opa8",
-        cancelClass: "btn-link fw4 text-gris",
-        ranges: {
-            'Hoy': [moment(), moment()],
-            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Esta semana': [moment().day(1), moment().day(7)],
-            'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
-            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
-            'Este mes': [moment().startOf('month'), moment().endOf('month')],
-            'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
-        },
-        locale: {
-            format: "DD/MM/YYYY",
-            separator: " al ",
-            applyLabel: "Aplicar",
-            cancelLabel: "Cancelar",
-            fromLabel: "Desde",
-            toLabel: "Para",
-            customRangeLabel: "Personalizado",
-            weekLabel: "Sem",
-            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
-            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-            firstDay: 1,
-            alwaysShowCalendars: true,
-            applyButtonClasses: "btn-custom fw5 px-3 opa8",
-        },
-    });
-}
 $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
 let drmob2 = $('#min').val() + ' al ' + $('#max').val()
@@ -262,15 +215,13 @@ tablemobile.on('init.dt', function () {
         <div class="mx-2">
             <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
         </div>`);
-
     dateRange()
-
     $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
         $('#_drMob2').val($('#_drMob').val())
+        // $('#_drMob').daterangepicker({startDate: $('#min').val(), endDate: $('#max').val()});
         loadingTable('#table-mobile');
         $('#table-mobile').DataTable().ajax.reload();
     });
-
     $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end">
         <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
         <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
@@ -292,8 +243,8 @@ tablemobile.on('page.dt', function () {
 // tablemobile.on('search.dt', function () {
 //     loadingTable('#table-mobile')
 // });
-tablemobile.on('xhr', function (e, settings, json) {
-    tablemobile.off('xhr');
+tablemobile.on('xhr.dt', function (e, settings, json) {
+    tablemobile.off('xhr.dt');
 });
 
 $(document).on('click', '.searchID', function (e) {
@@ -602,17 +553,6 @@ $('#pic').on('hidden.bs.modal', function (e) {
     clean()
 })
 
-// if ($('#container').hasClass('container-fluid')) {
-//     $('#expandContainer').attr('data-titlet', 'Expandir')
-// } else {
-//     $('#expandContainer').attr('data-titlet', 'Contraer')
-// }
-
-// $('#expandContainer').html('<i class="bi bi-arrows-angle-contract"></i>')
-// $('#container').addClass('container-fluid')
-// $('#container').removeClass('container')
-// $('#navBarPrimary').hide()
-
 $('#expandContainer').on('click', function (e) {
     e.preventDefault()
     if ($('#container').hasClass('container-fluid')) {
@@ -785,34 +725,81 @@ $(document).on("click", ".sendCH", function (e) {
         }
     });
 });
-
-function minmaxDate() {
+const dateRange = () => {
+    $('#_drMob').daterangepicker({
+        singleDatePicker: false,
+        showDropdowns: true,
+        minYear: $('#aniomin').val(),
+        maxYear: $('#aniomax').val(),
+        showWeekNumbers: false,
+        autoUpdateInput: true,
+        opens: "right",
+        drops: "down",
+        minDate: $('#min').val(),
+        startDate: $('#min').val(),
+        maxDate: $('#max').val(),
+        endDate: $('#max').val(),
+        autoApply: true,
+        alwaysShowCalendars: true,
+        linkedCalendars: false,
+        buttonClasses: "btn btn-sm fontq",
+        applyButtonClasses: "btn-custom fw4 px-3 opa8",
+        cancelClass: "btn-link fw4 text-gris",
+        ranges: {
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Esta semana': [moment().day(1), moment().day(7)],
+            'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+            'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+        },
+        locale: {
+            format: "DD/MM/YYYY",
+            separator: " al ",
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Para",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+            alwaysShowCalendars: true,
+            applyButtonClasses: "btn-custom fw5 px-3 opa8",
+        },
+    });
+}
+const minmaxDate = () => {
     axios({
         method: 'post',
         url: 'minmaxdate.php'
     }).then(function (response) {
         let data = response.data
         let t = data
+        console.log(t);
         let min = t.min
+        let minFormat = t.minFormat
         let max = t.max
-        let dr = min + ' al ' + max
-        $('#min').val(min)
-        $('#max').val(max)
+        let maxFormat = t.maxFormat
+        let dr = minFormat + ' al ' + maxFormat
+        $('#min').val(minFormat)
+        $('#max').val(maxFormat)
         $('#_drMob2').val(dr)
-        $('#_drMob').val(dr)
-        dateRange()
-
+        $('#_drMob').val(dr)        
     }).then(() => {
         tablemobile.ajax.reload();
         $('#tableUsuarios').DataTable().ajax.reload();
         $('#tableDevices').DataTable().ajax.reload();
+        // dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
     }).then(function () {
 
     });
 }
-
 $(".selectjs_cuentaToken").select2({
     multiple: false,
     language: "es",
@@ -864,20 +851,18 @@ $(".selectjs_cuentaToken").select2({
         }
     }
 });
-
 $(".selectjs_cuentaToken").on("select2:select", function (e) {
     CheckSesion();
     $("#RefreshToken").submit();
     // $('#map').html('').removeClass('shadow').css('height', '0px');
 });
-$("#RefreshToken").bind("submit", function (e) {
+$("#RefreshToken").on("submit", function (e) {
     e.preventDefault();
     $.ajax({
         type: $(this).attr("method"),
         url: $(this).attr("action"),
         data: $(this).serialize(),
         beforeSend: function (data) {
-            CheckSesion();
         },
         success: function (data) {
             if (data.status == "ok") {

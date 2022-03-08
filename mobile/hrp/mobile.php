@@ -103,7 +103,7 @@
 
         .gm-style .gm-style-iw-c {
             background-color: #efefef !important;
-            border-radius: 0px !important;
+            border-radius: 4px !important;
             padding: 8px !important;
         }
 
@@ -137,13 +137,13 @@
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
         $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
-        echo '<input type="hidden" id="min" value="' . $min . '">';
-        echo '<input type="hidden" id="max" value="' . $max . '">';
-        echo '<input type="hidden" id="aniomin" value="' . $aniomin . '">';
-        echo '<input type="hidden" id="aniomax" value="' . $aniomax . '">';
+        echo '<input type="hidden" hidden id="min" value="' . $min . '">';
+        echo '<input type="hidden" hidden id="max" value="' . $max . '">';
+        echo '<input type="hidden" hidden id="aniomin" value="' . $aniomin . '">';
+        echo '<input type="hidden" hidden id="aniomax" value="' . $aniomax . '">';
 
         ?>
-        <input type="hidden" id="_drMob2">
+        <input type="hidden" hidden id="_drMob2">
 
         <?php require __DIR__ . '../menuBtn.html' ?>
 

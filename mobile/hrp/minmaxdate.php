@@ -14,15 +14,19 @@ $query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHER
 $arrayFech = simple_pdoQuery($query);
 
 $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
+$minFormat = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd/m/Y') : date('d/m/Y');
 $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
+$maxFormat = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd/m/Y') : date('d/m/Y');
 $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
 $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
 
 $data = array(
-    'min'     => $min,
-    'max'     => $max,
-    'aniomin' => $aniomin,
-    'aniomax' => $aniomax
+    'aniomax'   => $aniomax,
+    'aniomin'   => $aniomin,
+    'max'       => $max,
+    'maxFormat' => $maxFormat,
+    'min'       => $min,
+    'minFormat' => $minFormat,
 );
 
 echo json_encode($data);
