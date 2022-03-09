@@ -13,9 +13,11 @@
             <div class="modal-body pt-0 mb-sm-3">
                 <div class="row">
                     <input type="hidden" id="latitud">
+                    <input type="hidden" id="modalNombre">
                     <input type="hidden" id="longitud">
                     <input type="hidden" id="zona">
                     <input type="hidden" id="map_size" value='5'>
+                    <input type="hidden" id="modalFoto">
                     <div class="col-auto pr-1 w150 divFoto"><span class="picFoto"></span></div>
                     <div class="col pl-2 text-left text-secondary font-weight-normal">
                         <div class="datos">

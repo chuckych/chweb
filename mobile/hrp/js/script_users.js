@@ -58,7 +58,7 @@ tableUsuarios = $('#tableUsuarios').DataTable({
                 let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
 
                 if (row.userRegId.length > '100') {
-                    activar = `<span data-regid="${row.userRegId}" data-userid="${row.userID}" data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                    activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
                 }
                 if (row.userRegId.length > '100') {
                     mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
@@ -109,16 +109,16 @@ tableUsuarios.on('init.dt', function (e, settings, json) {
 });
 $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
-    let regid = $(this).attr('data-regid')
-    let userid = $(this).attr('data-userid')
+    // data datatable
+    let data = tableUsuarios.row($(this).parents('tr')).data();
     CheckSesion()
     $.ajax({
         type: 'post',
         url: 'crud.php',
         data: {
-            tipo: 'c_setUserEmp',
-            regid: regid,
-            userid: userid,
+            tipo: 'send_UserSet',
+            regid: data.userRegId,
+            userid: data.userID,
         },
         beforeSend: function (data) {
             $.notifyClose();
@@ -127,11 +127,10 @@ $(document).on("click", ".sendSettings", function (e) {
         success: function (data) {
             if (data.status == "ok") {
                 $.notifyClose();
-                notify(data.Mensaje, 'success', 5000, 'right')
-                // $('#divformUsuario').html('')
+                notify('Dispositivo configurado correctamente.', 'success', 5000, 'right')
             } else {
                 $.notifyClose();
-                notify(data.Mensaje, 'danger', 5000, 'right')
+                notify('No se puedo configurar el dispositivo', 'danger', 5000, 'right')
             }
         },
         error: function () { }

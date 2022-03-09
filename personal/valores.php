@@ -17,7 +17,7 @@ FusNuloPOST("estruct",'');
 FusNuloPOST("_eg",'');
 FusNuloPOST("_porApNo",'');
 FusNuloPOST("toexcel",'');
-
+$estado ='';
 $estruct  = test_input($_POST['estruct']);
 $Per      = ($_POST['Per']);
 $Emp      = ($_POST['Emp']);

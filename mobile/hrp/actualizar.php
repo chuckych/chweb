@@ -54,7 +54,7 @@ function getEvents($url, $timeout = 10)
     exit;
 }
 
-require __DIR__ . '../../../config/conect_mysql.php';
+// require __DIR__ . '../../../config/conect_mysql.php';
 
 $createdDate = simple_pdoQuery("SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1");
 $createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $createdDate['createdDate'];

@@ -68,18 +68,25 @@ $(function () {
                 $("#table-personal").css("display", "none");
             }
         },
-        columns: [{
+        columns: [
+        {
             "class": "",
             "data": 'editar'
         },
         {
-            "class": "",
-            "data": 'pers_legajo'
+            className: '', targets: '', title: 'LEGAJO',
+            "render": function (data, type, row, meta) {
+                return '<span class="text-secondary fontq">'+row.pers_legajo+'</span>' + '<br />' + row.pers_nombre;
+            },
         },
-        {
-            "class": "",
-            "data": 'pers_nombre'
-        },
+        // {
+        //     "class": "",
+        //     "data": 'pers_legajo'
+        // },
+        // {
+        //     "class": "",
+        //     "data": 'pers_nombre'
+        // },
         {
             "class": "text-center ",
             "data": 'pers_tipo'

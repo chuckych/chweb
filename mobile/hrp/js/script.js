@@ -12,7 +12,16 @@ const loadingTable = (selectortable) => {
     $(selectortable + ' td span').addClass('invisible')
 }
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-actualizar(false);
+let host = $('#_host').val()
+
+if ((host == 'https://localhost')) {
+    console.log(host)
+} else if ((host == 'http://localhost')) {
+    console.log(host)
+} else {
+    actualizar(false);
+}
+
 $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
 let drmob2 = $('#min').val() + ' al ' + $('#max').val()
@@ -273,7 +282,7 @@ $(document).on('change', '#SoloFic', function (e) {
         }
     }
 });
-{/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */}
+{/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
 // let copyRegig = new ClipboardJS('.copyRegig');
 // copyRegig.on('success', function (e) {
 //     $.notifyClose();
@@ -299,7 +308,9 @@ function initMap() {
     var long = parseFloat($('#longitud').val())
     var zona = ($('#zona').val())
     var zona = (zona) ? zona : 'Fuera de Zona';
+    var nombre = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Sin Nombre';
     var radio = parseFloat($('#map_size').val())
+    let modalFoto = ($('#modalFoto').val()) ? $('#modalFoto').val() : '../../img/iconMarker.svg';
 
     const styledMapType = new google.maps.StyledMapType(
         [
@@ -445,20 +456,28 @@ function initMap() {
 
     map.mapTypes.set("styled_map", styledMapType);
     map.setMapTypeId("styled_map");
-    const contentString = '<div id="content"><span>' + zona + "</span></div>";
+    const contentString = '<div id="content"><span>' + nombre + "</span></div>";
 
     const infowindow = new google.maps.InfoWindow({
         content: contentString,
     });
 
-    const image = "../../img/marker.png";
+    const image = "../../img/iconMarker.svg";
+    // const image = modalFoto;
+
+    let icon = {
+        url: image, // url
+        scaledSize: new google.maps.Size(40, 40), // scaled size
+        // origin: new google.maps.Point(0,0), // origin
+        // anchor: new google.maps.Point(0, 0) // anchor
+    };
     const marker = new google.maps.Marker({
         position: myLatLng,
         map,
-        // animation: google.maps.Animation.DROP,
+        animation: google.maps.Animation.DROP,
         // draggable: true,
-        icon: image,
-        title: zona
+        icon: icon,
+        title: nombre
     })
 
     marker.addListener("click", () => {
@@ -500,6 +519,8 @@ $(document).on("click", ".pic", function (e) {
 
     $('#latitud').val(_lat)
     $('#longitud').val(_lng)
+    $('#modalFoto').val(picfoto)
+    $('#modalNombre').val(picnombre)
     $("input[name=lat]").val(_lat);
     $("input[name=lng]").val(_lng);
 
@@ -790,7 +811,7 @@ const minmaxDate = () => {
         $('#min').val(minFormat)
         $('#max').val(maxFormat)
         $('#_drMob2').val(dr)
-        $('#_drMob').val(dr)        
+        $('#_drMob').val(dr)
     }).then(() => {
         tablemobile.ajax.reload();
         $('#tableUsuarios').DataTable().ajax.reload();

@@ -16,24 +16,24 @@
         <!-- Fin Encabezado -->
         <div class="row bg-white pt-3">
             <div class="col-12">
-                <button type="button" class="border btn btn-sm fontq px-3 btn-outline-custom" data-toggle="modal" data-target="#altaNuevoLeg">
-                    <span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<b>Nuevo Legajo</b>">Nuevo</span>
+                <button type="button" data-titlet="Nuevo Legajo" class="border btn btn-sm fontq px-3 btn-outline-custom" data-toggle="modal" data-target="#altaNuevoLeg">
+                    <span>Nuevo</span>
                 </button>
                 <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
                     Filtros
                 </button>
                 <span id="trash_all" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Limpiar Filtros</b>" class="fontq text-secondary mx-1 pointer"><i class="bi bi-trash"></i></span>
-                <button type="button" class="btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Exportar todos los legajos. Incluyendo De Baja</b>">
+                <button type="button" class="btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel" data-titler="Exportar todos los legajos. Incluyendo De Baja">
                     Excel
                 </button>
                 <!-- </div> -->
-                <div class="custom-control custom-switch float-right pt-1">
+                <div class="custom-control custom-switch float-right pt-1" data-titlet="Filtrar Legajos Inactivos">
                     <input type="checkbox" class="custom-control-input" name="_eg" id="_eg">
-                    <label class="custom-control-label" for="_eg" style="padding-top: 3px;" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Filtrar Legajos Inactivos</b>">De Baja</label>
+                    <label class="custom-control-label" for="_eg" style="padding-top: 3px;">De Baja</label>
                 </div>
-                <div class="custom-control custom-switch float-right pt-1 mr-2">
+                <div class="custom-control custom-switch float-right pt-1 mr-2" data-titlet="Ordenar por Nombre">
                     <input type="checkbox" class="custom-control-input" name="_porApNo" id="_porApNo">
-                    <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Ordenar por Nombre</b>">Por Nombre</label>
+                    <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;">Por Nombre</label>
                 </div>
             </div>
         </div>
@@ -42,9 +42,9 @@
                 <table class="table table-hover text-nowrap w-100" id="table-personal">
                     <thead class="text-uppercase border-top-0">
                         <tr>
-                            <th class="text-center p-2"><i class="bi bi-pencil-square"></i></th>
+                            <th class="text-center p-2"><i class="bi bi-pencil"></i></th>
                             <th><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Legajo</strong>">LEG.</span></th>
-                            <th>NOMBRE y APELLIDO</th>
+                            <!-- <th>NOMBRE y APELLIDO</th> -->
                             <th class="text-center"><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Tipo de personal</strong>">TIPO</span></th>
                             <th>EMPRESA / PLANTA</th>
                             <th>SECTOR / SECCION</th>
@@ -66,7 +66,7 @@
     require __DIR__ . '/modalNuevoLeg.php';
     ?>
     <script src="altaLeg-min.js?v=<?= vjs() ?>"></script>
-    <script src="data-min.js?v=<?= vjs() ?>"></script>
+    <script src="script-min.js?v=<?= vjs() ?>"></script>
     <script src="perExcel-min.js?v=<?= vjs() ?>"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>

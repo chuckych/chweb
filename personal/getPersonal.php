@@ -86,13 +86,13 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
 
     $data[] = array(
         'pers_legajo'   => '<span class="d-inline-block text-truncate" style="min-width: 50px;">'.$pers_legajo.'</span>',
-        'pers_nombre'   => '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="'.$tooltipNombre.'" class="d-inline-block text-truncate pointer" style="width: 250px;">'.$pers_nombre.'</span>',
+        'pers_nombre'   => '<span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="'.$tooltipNombre.'" class="d-inline-block text-truncate pointer" style="width: 150px;">'.$pers_nombre.'</span>',
         'pers_tipo'     => '<span '.tooltipTittle('Tipo', $pers_tipo_nombre).' class=" pointer">'.$pers_tipo.'</span>',
         'pers_empresa'  => '<span '.tooltipTittle2('Empresa', $pers_empresa, 'Planta', $pers_planta).'>'.$pers_empresa.'<br>'.$pers_planta.'</span>',
         'pers_convenio' => '<span '.tooltipTittle2('Convenio', $pers_convenio, 'Regla', $RCHDesc).'>'.$pers_convenio.'<br>'.$RCHDesc.'</span>',
         'pers_sector'   => '<span '.tooltipTittle2('Sector', $pers_sector, 'Sección', $pers_seccion).'>'.$pers_sector.'<br>'.$pers_seccion.'</span>',
         'pers_grupo'    => '<span '.tooltipTittle2('Grupo', $pers_grupo, 'Sucursal', $pers_sucur).'>'.$pers_grupo.'<br>'.$pers_sucur.'</span>',
-        'editar'        => '<a data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Editar</strong>" href="/' . HOMEHOST . '/personal/legajo/?_leg=' . $pers_legajo . '" id="editar" class="btn btn-sm btn-outline-custom border-0 text-decoration-none"><i class="bi bi-pencil-square"></i></a>',
+        'editar'        => '<a data-titlet="Editar" href="/' . HOMEHOST . '/personal/legajo/?_leg=' . $pers_legajo . '" id="editar" class="btn btn-sm btn-outline-custom border-ddd text-decoration-none"><i class="bi bi-pencil"></i></a>',
     );
 }
 
