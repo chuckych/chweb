@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 $id_company = $_SESSION["ID_CLIENTE"];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['tipo'] == 'c_mensaje') {
+    if ($_POST['tipo'] == 'c_mensaje-old') {
 
         $_POST['regid']   = $_POST['regid'] ?? '';
         $_POST['mensaje'] = $_POST['mensaje'] ?? '';
@@ -535,7 +535,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    }else{
+    } else if ($_POST['tipo'] == 'send_mensaje') {
+
+        $_POST['modalMsgRegID']   = $_POST['modalMsgRegID'] ?? '';
+        $_POST['modalMsgMensaje'] = $_POST['modalMsgMensaje'] ?? '';
+
+        $modalMsgRegID   = test_input($_POST['modalMsgRegID']);
+        $modalMsgMensaje = test_input($_POST['modalMsgMensaje']);
+
+        if (valida_campo($modalMsgRegID)) {
+            PrintRespuestaJson('error', 'Falta Reg ID');
+            exit;
+        };
+
+        if (valida_campo($modalMsgMensaje)) {
+            PrintRespuestaJson('error', 'El Mensaje es requerido');
+            exit;
+        };
+
+        $paramsApi = array(
+            'key'     => $_SESSION["RECID_CLIENTE"],
+            'regID'   => urlencode($modalMsgRegID),
+            'message' => urlencode($modalMsgMensaje),
+        );
+        // $api = "api/v1/devices/upd/$parametros";
+        // $api = "api/v1/devices/del/$parametros";
+        $api = "api/v1/msg/";
+        $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
+    } else {
         $json_data = array(
             "Mensaje" => 'Invalid Request Type',
             'status'  => 'Error',
@@ -543,7 +589,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode($json_data);
         exit;
     }
-}else{
+} else {
     $json_data = array(
         "Mensaje" => 'Invalid Request Method',
         'status'  => 'Error',

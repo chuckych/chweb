@@ -1,6 +1,4 @@
-
-tablemobile.on('draw.dt', function (e, settings) {
-    e.preventDefault();
+let hideMapMarcadores = () => {
     $('#map').html('').removeClass('shadow').css('height', '0px').hide();
     $('#mapTitle').html(' ');
     if (getMarcadores() != '') {
@@ -16,6 +14,10 @@ tablemobile.on('draw.dt', function (e, settings) {
         </a>
         </li>`)
     }
+}
+tablemobile.on('draw.dt', function (e, settings) {
+    e.preventDefault();
+    hideMapMarcadores();
     return true
 });
 let marcadores = new Array();
@@ -49,55 +51,17 @@ let getMarcadores = (lat = '', lng = '') => {
     }
     return marcadores;
 }
-// $(document).on("click", "#positionMap", function (e) {
-//     $('#map').css('height', '400px').css('width', '100%').addClass('shadow');
-//     $('#positionMap').hide(); //ocultar boton
-//     getMarcadores(); //llamar funcion para obtener marcadores
-//     $('#mapTitle').html('<div class="py-2 fontq">Total Fichadas: ' + marcadores.length + '</div>'); //mostrar titulo del mapa con la cantidad de marcadores
-
-//     function initialize() {
-//         var myLatLng = new google.maps.LatLng(firstLat, firstLng);
-//         // var myLatLng = new google.maps.LatLng(-34.6036844, -58.3815591);
-//         var mapOptions = {
-//             zoom: 10,
-//             center: myLatLng,
-//             mapTypeId: google.maps.MapTypeId.TERRAIN,
-//             zoomControl: true,
-//             mapTypeControl: false,
-//             scaleControl: false,
-//             streetViewControl: false,
-//             rotateControl: false,
-//             fullscreenControl: true
-//         }
-//         var map = new google.maps.Map(document.getElementById('map'), mapOptions);
-//         setMarkers(map, marcadores);
-//     }
-
-//     var infowindow;
-
-//     function setMarkers(map, marcadores) {
-
-//         for (var i = 0; i < marcadores.length; i++) {
-//             var myLatLng = new google.maps.LatLng(marcadores[i][1], marcadores[i][2]);
-//             var marker = new google.maps.Marker({
-//                 position: myLatLng,
-//                 map: map,
-//                 title: marcadores[i][0],
-//             });
-//             (function (i, marker) {
-//                 google.maps.event.addListener(marker, 'click', function () {
-//                     if (!infowindow) {
-//                         infowindow = new google.maps.InfoWindow();
-//                     }
-//                     infowindow.setContent(marcadores[i][3]);
-//                     infowindow.open(map, marker);
-//                 });
-//             })(i, marker);
-//         }
-//     };
-//     initialize();
-// });
 $(document).on("click", "#VerMarcadores", function (e) {
+
+    enableBtnMenu()
+    document.title = "Fichadas Mobile"
+    $('#Encabezado').html("Fichadas Mobile")
+    focusRowTables()
+    $('#btnMenu .btn').removeClass('btn-custom');
+    $('#btnMenu .btn').addClass('btn-outline-custom');
+    $('.showChecks').removeClass('btn-outline-custom').addClass('btn-custom');
+    $('#RowTableMobile').show();
+
     $('#map').css('height', '400px').css('width', '100%').addClass('shadow').show();
     $('#VerMarcadores').addClass('disabled'); //ocultar boton
     getMarcadores(); //llamar funcion para obtener marcadores

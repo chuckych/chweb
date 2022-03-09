@@ -76,9 +76,12 @@
 
         #btnMenu button {
             line-height: 1.1rem;
-            /* border: 1px solid #cecece !important; */
+            /* border: 5px solid #cecece !important; */
         }
-
+        #btnMenu a {
+            line-height: 1.1rem;
+            /* border: 5px solid #cecece !important; */
+        }
         @media all and (max-width:480px) {
             #btnMenu {
                 display: block;
@@ -146,7 +149,6 @@
         <input type="hidden" hidden id="_drMob2">
 
         <?php require __DIR__ . '../menuBtn.html' ?>
-
         <div class="wrapper">
             <div class="loading show">
                 <div class="spin"></div>

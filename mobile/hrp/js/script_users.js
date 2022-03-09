@@ -12,8 +12,8 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     },
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row px-3'<'col-12 border shadow-sm table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
+        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getUsuariosMobile.php",
@@ -63,7 +63,7 @@ tableUsuarios = $('#tableUsuarios').DataTable({
                 if (row.userRegId.length > '100') {
                     mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
                 }
-                if(row.userChecks < 1){
+                if (row.userChecks < 1) {
                     del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
                 }
                 let datacol = `
@@ -107,56 +107,6 @@ tableUsuarios.on('xhr.dt', function (e, settings, json) {
 tableUsuarios.on('init.dt', function (e, settings, json) {
     $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>')
 });
-function printFormUsuario(selectorAction, data, action) {
-    CheckSesion()
-    $.ajax({
-        type: 'post',
-        dataType: "html",
-        url: "formUsuario.php?v=" + vjs(),
-        data: {
-            value: data,
-            action: action
-        },
-        beforeSend: function (xhr) {
-            $(selectorAction).html('<div class="p-3 text-secondary animate__animated animate__fadeIn">Cargando..</div>')
-        }
-    }).done(function (data) {
-        $(selectorAction).html(data)
-    });
-}
-function printFormMensaje(selectorAction, data, action) {
-    CheckSesion()
-    $.ajax({
-        type: 'post',
-        dataType: "html",
-        url: "formMensaje.php?v=" + vjs(),
-        data: {
-            value: data,
-            action: action
-        },
-        beforeSend: function (xhr) {
-            $(selectorAction).html('<div class="p-3 text-secondary animate__animated animate__fadeIn">Cargando..</div>')
-        }
-    }).done(function (data) {
-        $(selectorAction).html(data)
-    });
-}
-
-// $(document).on("click", "#addUser", function (e) {
-//     printFormUsuario('#divformUsuario', '')
-// });
-// $(document).on("click", ".updateUser", function (e) {
-//     let dataiduser = $(this).attr('data-iduser')
-//     printFormUsuario('#divformUsuario', dataiduser, 'update')
-// });
-// $(document).on("click", ".deleteUser", function (e) {
-//     let dataiduser = $(this).attr('data-iduser')
-//     printFormUsuario('#divformUsuario', dataiduser, 'delete')
-// });
-$(document).on("click", ".sendMensaje", function (e) {
-    let data = $(this).attr('data-regid') + '@' + $(this).attr('data-nombre')
-    printFormMensaje('#divformUsuario', data, 'mensaje')
-});
 $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
     let regid = $(this).attr('data-regid')
@@ -188,7 +138,6 @@ $(document).on("click", ".sendSettings", function (e) {
     });
     e.stopImmediatePropagation();
 });
-
 $(document).on("click", "#addUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
     axios({
@@ -214,7 +163,7 @@ $(document).on("click", "#addUser", function (e) {
     }).then(function () {
         $("#formUser").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formUser #tipo').val()) {
                 case 'del_usuario':
                     tipoStatus = 'eliminado';
@@ -224,7 +173,7 @@ $(document).on("click", "#addUser", function (e) {
                     break;
                 case 'add_usuario':
                     tipoStatus = 'creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -245,7 +194,7 @@ $(document).on("click", "#addUser", function (e) {
                         $.notifyClose();
                         let userName = data.Mensaje.userName
                         let userID = data.Mensaje.userID
-                        notify('ID '+userID+ ' '+tipoStatus+' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
+                        notify('ID ' + userID + ' ' + tipoStatus + ' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableUsuarios').DataTable().ajax.reload();
@@ -302,7 +251,7 @@ $(document).on("click", ".updateUser", function (e) {
     }).then(function () {
         $("#formUser").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formUser #tipo').val()) {
                 case 'del_usuario':
                     tipoStatus = 'eliminado';
@@ -312,7 +261,7 @@ $(document).on("click", ".updateUser", function (e) {
                     break;
                 case 'add_usuario':
                     tipoStatus = 'creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -333,7 +282,7 @@ $(document).on("click", ".updateUser", function (e) {
                         $.notifyClose();
                         let userName = data.Mensaje.userName
                         let userID = data.Mensaje.userID
-                        notify('ID '+userID+ ' '+tipoStatus+' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
+                        notify('ID ' + userID + ' ' + tipoStatus + ' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableUsuarios').DataTable().ajax.reload();
@@ -388,7 +337,7 @@ $(document).on("click", ".deleteUser", function (e) {
     }).then(function () {
         $("#formUser").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formUser #tipo').val()) {
                 case 'del_usuario':
                     tipoStatus = 'eliminado';
@@ -398,7 +347,7 @@ $(document).on("click", ".deleteUser", function (e) {
                     break;
                 case 'add_usuario':
                     tipoStatus = 'creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -419,7 +368,7 @@ $(document).on("click", ".deleteUser", function (e) {
                         $.notifyClose();
                         let userName = data.Mensaje.userName
                         let userID = data.Mensaje.userID
-                        notify('ID '+userID+ ' '+tipoStatus+' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
+                        notify('ID ' + userID + ' ' + tipoStatus + ' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableUsuarios').DataTable().ajax.reload();
@@ -435,6 +384,69 @@ $(document).on("click", ".deleteUser", function (e) {
             });
         });
         $('#modalUser').on('hidden.bs.modal', function () {
+            $('#modales').html(' ');
+        });
+    });
+});
+$(document).on("click", ".sendMensaje", function (e) {
+    let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
+    console.log(data);
+    // return false;
+    axios({
+        method: 'post',
+        url: 'modalMsg.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+    }).then(function () {
+
+        $('#modalMsg .modal-title').html(`
+            <div>Enviar Mensaje</div>
+            <div class="text-secondary fontq">${data.userName}</div>
+        `)
+        $('#modalMsg').modal('show');
+        // $('#formMsg .requerido').html('(*)')
+        $('#formMsg .form-control').attr('autocomplete', 'off')
+        $('#formMsg #tipo').val('send_mensaje')
+        $('#formMsg #modalMsgRegID').val(data.userRegId)
+        setTimeout(() => {
+            $('#formMsg #modalMsgMensaje').focus();
+        }, 500);
+
+    }).then(function () {
+
+    }).catch(function (error) {
+        alert(error)
+    }).then(function () {
+        $("#formMsg").bind("submit", function (e) {
+            e.preventDefault();
+            let tipoStatus = '';
+            $.ajax({
+                type: $(this).attr("method"),
+                url: 'crud.php',
+                data: $(this).serialize(),
+                // dataType: "json",
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitMsg", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        notify('Mensaje enviado correctamente', 'success', 5000, 'right')
+                        ActiveBTN(false, "#submitMsg", 'Aguarde ' + loading, 'Aceptar')
+                        $('#modalMsg').modal('hide');
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitMsg", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+        });
+        $('#modalMsg').on('hidden.bs.modal', function () {
             $('#modales').html(' ');
         });
     });

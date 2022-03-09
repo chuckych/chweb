@@ -1,0 +1,58 @@
+<!-- Modal -->
+<form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formMsg">
+    <div class="modal fade" id="modalMsg" tabindex="-1" aria-labelledby="modalMsgLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <p class="modal-title h6" id="modalMsgLabel">Modal title</p>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+                <input type="hidden" hidden id="tipo" name="tipo">
+                <div class="modal-body pt-0">
+                    <div class="row">
+                        <div class="col-12">
+                            <input class="" type="hidden" hidden readonly name="tipo" id="tipo" value="send_mensaje">
+                            <input type="hidden" hidden name="modalMsgRegID" id="modalMsgRegID" value="">
+                            <textarea class="form-control p-3" name="modalMsgMensaje" id="modalMsgMensaje"
+                                style="height: 85px !important;" placeholder="Escriba su mensaje aquí" maxlength="200"
+                                onKeyDown="valida_longitud()" onKeyUp="valida_longitud()"></textarea>
+                            <div class="d-inline-flex align-items-center w-100 justify-content-between">
+                                <input type="text" class="form-control bg-white border-0 w50 fontp text-secondary" readonly name=caracteres maxlength="4">
+                                <div class="float-right text-secondary fontp">Max.: 100 Caracteres</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light border-0 btn-sm fontq h40 w100 text-secondary"
+                        data-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-sm btn-custom fontq h40 w100" id="submitMsg">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    let contenido_textarea = ''
+    let num_caracteres_permitidos = 100
+
+    function valida_longitud() {
+        num_caracteres = document.forms.formMsg.modalMsgMensaje.value.length
+        if (num_caracteres <= num_caracteres_permitidos) {
+            contenido_textarea = document.forms.formMsg.modalMsgMensaje.value
+        } else {
+            document.forms.formMsg.modalMsgMensaje.value = contenido_textarea
+        }
+        if (num_caracteres >= num_caracteres_permitidos) {
+            document.forms.formMsg.caracteres.style.color = "#ff0000";
+        } else {
+            document.forms.formMsg.caracteres.style.color = "#000000";
+        }
+        cuenta()
+    }
+    function cuenta() {
+        document.forms.formMsg.caracteres.value = document.forms.formMsg.modalMsgMensaje.value.length
+    }
+</script>

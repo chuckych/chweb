@@ -214,7 +214,8 @@ tablemobile.on('init.dt', function () {
     $('.dr').append(`
         <div class="mx-2">
             <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
-        </div>`);
+        </div>
+    `);
     dateRange()
     $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
         $('#_drMob2').val($('#_drMob').val())
@@ -272,26 +273,25 @@ $(document).on('change', '#SoloFic', function (e) {
         }
     }
 });
+{/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */}
+// let copyRegig = new ClipboardJS('.copyRegig');
+// copyRegig.on('success', function (e) {
+//     $.notifyClose();
+//     notify('Copiado', 'warning', 1000, 'right')
+//     setTimeout(function () {
+//         $.notifyClose();
+//     }, 1000);
+//     e.clearSelection();
+// });
 
-let copyRegig = new ClipboardJS('.copyRegig');
-
-copyRegig.on('success', function (e) {
-    $.notifyClose();
-    notify('Copiado', 'warning', 1000, 'right')
-    setTimeout(function () {
-        $.notifyClose();
-    }, 1000);
-    e.clearSelection();
-});
-
-copyRegig.on('error', function (e) {
-    $.notifyClose();
-    notify('Error al copiar', 'danger', 1000, 'right')
-    setTimeout(function () {
-        $.notifyClose();
-    }, 1000);
-    e.clearSelection();
-});
+// copyRegig.on('error', function (e) {
+//     $.notifyClose();
+//     notify('Error al copiar', 'danger', 1000, 'right')
+//     setTimeout(function () {
+//         $.notifyClose();
+//     }, 1000);
+//     e.clearSelection();
+// });
 
 function initMap() {
 
@@ -485,7 +485,7 @@ function initMap() {
 
 $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
-    console.log(data);
+    // console.log(data);
     $('#pic').modal('show')
     let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
     let picnombre = data.userName;
@@ -638,6 +638,8 @@ $(document).on("click", "#Encabezado", function (e) {
 
 const enableBtnMenu = (e) => {
     $('#btnMenu .btn').prop('readonly', false)
+    $('#btnMenu #positionMap').prop('disabled', false)
+    hideMapMarcadores();
 }
 
 const focusBtn = (selector) => {
@@ -779,7 +781,7 @@ const minmaxDate = () => {
     }).then(function (response) {
         let data = response.data
         let t = data
-        console.log(t);
+        // console.log(t);
         let min = t.min
         let minFormat = t.minFormat
         let max = t.max
