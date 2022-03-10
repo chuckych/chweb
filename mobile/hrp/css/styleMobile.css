@@ -69,10 +69,12 @@ table.dataTable {
     line-height: 1.1rem;
     /* border: 5px solid #cecece !important; */
 }
+
 #btnMenu a {
     line-height: 1.1rem;
     /* border: 5px solid #cecece !important; */
 }
+
 @media all and (max-width:480px) {
     #btnMenu {
         display: block;
@@ -88,6 +90,15 @@ table.dataTable {
         padding-bottom: 5px;
     }
 }
+
+@media all and (max-width:480px) {
+    .tableResponsive {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
 .gm-ui-hover-effect {
     box-shadow: none !important;
     outline: 0 !important;

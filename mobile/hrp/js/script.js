@@ -38,9 +38,9 @@ tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: -1,
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row'<'col-12 border shadow-sm table-responsive't>>" +
+        "<'row'<'col-12 border shadow-sm tableResponsive p-2't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white pr-3 align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white pr-3 d-flex align-items-center justify-content-center'p>>" +
+        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white pr-3 d-flex align-items-center shadow justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getRegMobile.php",
@@ -88,6 +88,7 @@ tablemobile = $('#table-mobile').DataTable({
                 } else {
                     url_foto = ``;
                     foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                    // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
                 }
 
                 let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
@@ -484,18 +485,18 @@ function initMap() {
         infowindow.open(map, marker);
     });
 
-    var sunCircle = {
-        strokeColor: "#0388D1",
-        strokeOpacity: 1,
-        strokeWeight: 1,
-        fillColor: "#0388D1",
-        fillOpacity: 0.25,
-        map: map,
-        center: myLatLng,
-        radius: radio // en metros
-    };
-    cityCircle = new google.maps.Circle(sunCircle)
-    cityCircle.bindTo('center', marker, 'position');
+    // var sunCircle = {
+    //     strokeColor: "#0388D1",
+    //     strokeOpacity: 1,
+    //     strokeWeight: 1,
+    //     fillColor: "#0388D1",
+    //     fillOpacity: 0.25,
+    //     map: map,
+    //     center: myLatLng,
+    //     radius: 200 // en metros
+    // };
+    // cityCircle = new google.maps.Circle(sunCircle)
+    // cityCircle.bindTo('center', marker, 'position');
 }
 // $('.select2').select2({
 //     minimumResultsForSearch: -1,
@@ -604,7 +605,7 @@ function actualizar(noti = true) {
 
     if (noti) {
         ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
+        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
     };
 
 
@@ -641,10 +642,15 @@ function actualizar(noti = true) {
         alert('ERROR actualizar\n' + error);
     }).then(function () {
         ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
+        $(".actualizar").attr("data-titlel","Descargar registros");
+        setTimeout(() => {
+            $.notifyClose();
+        }, 2000);
     });
 }
 
 $(document).on("click", ".actualizar", function (e) {
+    $(this).attr("data-titlel","Descargando...")
     actualizar()
 });
 
@@ -686,6 +692,7 @@ $(document).on("click", ".showUsers", function (e) {
     focusRowTables()
     // $('.loading').hide()
     $('#RowTableUsers').show();
+    // $('#tableUsuarios').DataTable().ajax.reload();
 });
 $(document).on("click", ".showDevices", function (e) {
     CheckSesion()
