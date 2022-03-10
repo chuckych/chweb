@@ -80,11 +80,11 @@ tablemobile = $('#table-mobile').DataTable({
                     evento = 'Fichada';
                 }
                 evento = evento + operation;
-                console.log('foto: '+row.regPhoto);
+
                 let foto = '';
                 if (row.regPhoto) {
-                    url_foto = `${row.regPhoto}`;
-                    foto = `<img loading="lazy" src="${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                    foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
                 } else {
                     url_foto = ``;
                     foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -506,8 +506,7 @@ $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     // console.log(data);
     $('#pic').modal('show')
-    // let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
-    let picfoto = (data.regPhoto) ? data.regPhoto : '';
+    let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
