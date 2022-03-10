@@ -312,6 +312,21 @@ if ($verDB < 20220304) {
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 
+if ($verDB < 20220310) {
+    pdoQuery("ALTER IGNORE TABLE `reg_` ADD UNIQUE INDEX(id_user, phoneid, fechaHora)");
+    fileLog("Se crea indice \"id_user\" Unique de columnas id_user, phoneid, fechaHora. Se eliminaron registros duplicados en tabla \"reg_\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` DROP INDEX `id_user`, ADD UNIQUE INDEX `unique-reg` (`id_user`, `phoneid`, `fechaHora`) USING BTREE");
+    fileLog("Se renombra indice \"id_user\" a \"`unique-reg\" en tabla \"reg_\"", $pathLog); // escribir en el log
+
+    pdoQuery("SET @num := 0; UPDATE reg_ SET rid = @num := (@num+1); ALTER TABLE reg_ AUTO_INCREMENT = 1");
+    fileLog("se reestablece el autoincrement de tabla \"reg_\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+
 // if ($verDB < 20211102) {
 
 //     if (checkTable('tipo_modulo')) {

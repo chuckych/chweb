@@ -208,7 +208,7 @@ $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $filtro_query .= " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'";
-$filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
+// $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
 $total = rowCount_pdoQuery($sql_query);
 $sql_query .= " ORDER BY r.fechaHora DESC";

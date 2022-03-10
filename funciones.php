@@ -6,7 +6,7 @@ function version()
 }
 function verDBLocal()
 {
-    return 20220304; // Version de la base de datos local
+    return 20220310; // Version de la base de datos local
 }
 function checkDBLocal()
 {

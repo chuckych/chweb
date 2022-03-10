@@ -170,7 +170,6 @@ ru.regid AS 'regid',
 ru.fechahora AS 'fechaHora', 
 (SELECT COUNT(1) FROM reg_ r WHERE r.id_user = ru.id_user AND r.eventType=2 AND r.id_company = '$idCompany') AS 'cant' 
 FROM reg_user_ ru WHERE ru.uid > 0";
-
 $filtro_query = '';
 $filtro_query .= ($idCompany) ? " AND ru.id_company = $idCompany" : '';
 $filtro_query .= (!empty($status)) ? " AND ru.estado = '$status'" : " AND ru.estado = '0'";
