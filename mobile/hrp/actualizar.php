@@ -9,17 +9,42 @@ secure_auth_ch_json();
 E_ALL();
 
 borrarLogs(__DIR__ . '', 30, '.log');
-// borrarLogs(__DIR__ . '', 1, '.json');
 
-$company       = array();
-$employe       = array();
-$arrayData     = array();
-$insertCH      = array();
-$insertCH_Fail = array();
-$totalSession  = array();
-
-$start = microtime(true);
-
+function writeFlags($assoc, $path)
+{
+    $content = "";
+    foreach ($assoc as $key => $elem) {
+        $content .= "[" . $key . "]\n";
+        foreach ($elem as $key2 => $elem2) {
+            if (is_array($elem2)) {
+                for ($i = 0; $i < count($elem2); $i++) {
+                    $content .= $key2 . "[] =\"" . $elem2[$i] . "\"\n";
+                }
+            } else if ($elem2 == "") $content .= $key2 . " =\n";
+            else $content .= $key2 . " = \"" . $elem2 . "\"\n";
+        }
+    }
+    // $path = __DIR__ . '/flags.ini';
+    if (!$handle = fopen($path, 'w')) {
+        return false;
+    }
+    $success = fwrite($handle, $content);
+    fclose($handle);
+    return $success;
+}
+function statusFlags($statusFlags, $pathFlags, $createdDate){
+    $assoc = array(
+        'flags' => array(
+            'lastDate' => $createdDate,
+            'download' => $statusFlags,
+            'datetime' => date('Y-m-d H:i:s'),
+        ),
+    );
+    writeFlags($assoc, $pathFlags);
+    $text = ($statusFlags == '2') ? "Se marco Bandera de espera": "Se marco Bandera de descarga";
+    $pathLog = date('Ymd') . '_FlagsLog_.log';
+    fileLog($text, $pathLog);
+}
 function getEvents($url, $timeout = 10)
 {
     $ch = curl_init();
@@ -54,14 +79,51 @@ function getEvents($url, $timeout = 10)
     exit;
 }
 
-// require __DIR__ . '../../../config/conect_mysql.php';
+$pathFlags = 'flags.ini'; // ruta del archivo de Log de errores
+$flags = (getDataIni($pathFlags));
 
-$createdDate = simple_pdoQuery("SELECT createdDate FROM reg_ ORDER BY createdDate DESC LIMIT 1");
-$createdDate = (empty($createdDate['createdDate'])) ? '1620506140879' : $createdDate['createdDate'];
+if (!$flags) {
+    $assoc = array(
+        'flags' => array(
+            'lastDate' => '1646871812712',
+            'download' => 1,
+            'datetime' => date('Y-m-d H:i:s'),
+        ),
+    );
+    writeFlags($assoc, $pathFlags);
+    $flags = (getDataIni($pathFlags));
+    $flags_lastDate = $flags['flags']['lastDate'];
+    $flags_download = $flags['flags']['download'];
+} else {
+    // $flags = (getDataIni($pathFlags));
+    $flags_lastDate = $flags['flags']['lastDate'];
+    $flags_download = $flags['flags']['download'];
+}
+$company       = array();
+$employe       = array();
+$arrayData     = array();
+$insertCH      = array();
+$insertCH_Fail = array();
+$totalSession  = array();
 
-$url   = "http://190.7.56.83/attention/api/punch-event/" . $createdDate;
+$start = microtime(true);
+
+if($flags_download == 2){
+    $data = array(
+        'Mensaje' => 'Aguarde. Hay procesos de descarga en ejecucion.',
+        'date'    => date('Y-m-d H:i:s'),
+        'status'  => 'no',
+        'time'    => '',
+        'total'   => 0
+    );
+    echo json_encode(array('Response' => $data));
+    exit;
+}
+statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
+$url   = "http://190.7.56.83/attention/api/punch-event/" . $flags_lastDate;
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
+
     foreach ($array['payload'] as $key => $v) {
         $operation = $v['operation']['observations'] ?? '';
         $arrayData[] = array(
@@ -92,26 +154,85 @@ if (!empty($array['payload'])) {
 
 if (!empty($arrayData)) {
 
-    foreach ($arrayData as $key => $valor) {
-        $timestamp = $valor['dateTime'];
-        $timestamp = substr($timestamp, 0, 10);
-        $dates     = new \DateTime();
-        $dates     = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
+    foreach ($arrayData as $key => $v) {
+        $timestamp     = $v['dateTime'];
+        $timestamp     = substr($timestamp, 0, 10);
+        $dates         = new \DateTime();
+        $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
         $dates->setTimestamp($timestamp);
-        $fechaHora = $dates->format('Y-m-d H:i');
-        $fechaHoraCH = $dates->format('Y-m-d');
-        $hora = $dates->format('H:i');
-        $__v           = $valor['__v'];
-        $_id           = $valor['_id'];
-        $accuracy      = $valor['accuracy'];
+        $fechaHora     = $dates->format('Y-m-d H:i');
+        $fechaHoraCH   = $dates->format('Y-m-d');
+        $hora          = $dates->format('H:i');
+        $__v           = $v['__v'];
+        $_id           = $v['_id'];
+        $accuracy      = $v['accuracy'];
+        $appVersion    = $v['appVersion'];
+        $attphoto      = $v['attphoto'];
+        $batteryLevel  = $v['batteryLevel'];
+        $bearing       = $v['bearing'];
+        $companyCode   = $v['companyCode'];
+        $createdDate   = $v['createdDate'];
+        $dateTime      = $v['dateTime'];
+        $dateTime      = substr($dateTime, 0, 10);
+        $employeId     = $v['employeId'];
+        $eventType     = $v['eventType'];
+        $gpsStatus     = $v['gpsStatus'];
+        $lat           = $v['lat'];
+        $lng           = $v['lng'];
+        $phoneid       = $v['phoneid'];
+        $regid         = $v['regid'];
+        $speed         = $v['speed'];
+        $sync          = $v['sync'];
+        $operationType = $v['operationType'];
+        $operation     = $v['operation'];
+        $checkPhoto    = ($attphoto) ? '0' : '1';
+
+        $arrayObj[] = array(
+            'fechaHora'     => $fechaHora,
+            'fechaHoraCH'   => $fechaHoraCH,
+            'hora'          => $hora,
+            'appVersion'    => $appVersion,
+            'attphoto'      => $attphoto,
+            'companyCode'   => $companyCode,
+            'createdDate'   => $createdDate,
+            'dateTime'      => $dateTime,
+            'employeId'     => $employeId,
+            'eventType'     => $eventType,
+            'gpsStatus'     => $gpsStatus,
+            'lat'           => $lat,
+            'lng'           => $lng,
+            'phoneid'       => $phoneid,
+            'regid'         => $regid,
+            'operationType' => $operationType,
+            'operation'     => $operation,
+            'checkPhoto'    => $checkPhoto,
+        );
+    }
+
+    (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
+    $first_element = reset($arrayObj);
+
+    $assoc = array(
+        'flags' => array(
+            'lastDate' => $first_element['createdDate'],
+            'fechHora' => $first_element['fechaHora'],
+            'download' => 2,
+            'datetime' => date('Y-m-d H:i:s'),
+        ),
+    );
+
+    $arrGroup = (_group_by_keys($arrayObj, array('employeId', 'fechaHora', 'phoneid')));
+
+    foreach ($arrGroup as $key => $valor) {
+
+        $fechaHora     = $valor['fechaHora'];
+        $fechaHoraCH   = $valor['fechaHoraCH'];
+        $hora          = $valor['hora'];
         $appVersion    = $valor['appVersion'];
         $attphoto      = $valor['attphoto'];
-        $batteryLevel  = $valor['batteryLevel'];
-        $bearing       = $valor['bearing'];
         $companyCode   = $valor['companyCode'];
         $createdDate   = $valor['createdDate'];
         $dateTime      = $valor['dateTime'];
-        $dateTime      = substr($dateTime, 0, 10);
         $employeId     = $valor['employeId'];
         $eventType     = $valor['eventType'];
         $gpsStatus     = $valor['gpsStatus'];
@@ -119,12 +240,9 @@ if (!empty($arrayData)) {
         $lng           = $valor['lng'];
         $phoneid       = $valor['phoneid'];
         $regid         = $valor['regid'];
-        $speed         = $valor['speed'];
-        $sync          = $valor['sync'];
         $operationType = $valor['operationType'];
         $operation     = $valor['operation'];
-        $checkPhoto = ($attphoto) ? '0' : '1';
-        /** Guardamos la foto del base64 */
+        $checkPhoto    = $valor['checkPhoto'];
 
         $company[]      = "$companyCode";
         if (($companyCode == $_SESSION['ID_CLIENTE'])) {
@@ -132,6 +250,7 @@ if (!empty($arrayData)) {
         }
         $employe[]      = "$employeId";
 
+        /** Guardamos la foto del base64 */
         if ($eventType == '2') {
             $filename = 'fotos/' . $companyCode . '/index.php';
             $dirname = dirname($filename);
@@ -155,7 +274,7 @@ if (!empty($arrayData)) {
             /**  */
 
             $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
-            
+
             if (InsertRegistroCH($query)) {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
                 $pathLog = date('Ymd') . '_FichadasCH_' . $companyCode . '.log'; // ruta del archivo de Log de errores
@@ -205,13 +324,12 @@ if (!empty($arrayData)) {
         // 'data'      => $arrayData,
     );
     echo json_encode(array('Response' => $data));
-    // $pathLog = date('Ymd') . '_Transfer.json';
-    // $dataJson = array(
-    //     $data
-    // );
-    // fileLogJson((($dataJson)), $pathLog);
+    statusFlags(1, $pathFlags, $first_element['createdDate']); // marcar bandera de descarga
     exit;
 } else {
+    $flags = (getDataIni($pathFlags));
+    $flags_lastDate = $flags['flags']['lastDate'];
+    statusFlags(1, $pathFlags, $flags_lastDate); // marcar bandera de espera
     $end = microtime(true);
     $time = round($end - $start, 2);
     // header("Content-Type: application/json");

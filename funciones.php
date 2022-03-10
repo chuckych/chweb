@@ -3725,3 +3725,43 @@ function padLeft($str, $len, $pad = ' ')
 {
     return str_pad($str, $len, $pad, STR_PAD_LEFT);
 }
+/**
+ * Function that groups an array of associative arrays by some key.
+ * 
+ * @param {String} $key Property to sort by.
+ * @param {Array} $data Array that stores multiple associative arrays.
+ */
+function group_by($key, $data) {
+    $result = array();
+
+    foreach($data as $val) {
+        if(array_key_exists($key, $val)){
+            $result[$val[$key]][] = $val;
+        }else{
+            $result[""][] = $val;
+        }
+    }
+
+    return $result;
+}
+function _group_by_keys($array, $keys=array()) {
+    $return = array();
+    $append = (sizeof($keys) > 1 ? "_" : null);
+    foreach($array as $val){
+        $final_key = "";
+        foreach($keys as $theKey){
+            $final_key .= $val[$theKey] . $append;
+        }
+        $return[$final_key][] = $val;
+    }
+    // return $return;
+    foreach ($return as $key => $value) {
+        $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
+    }
+    
+    foreach ($arrGroup2 as $key => $value2) {
+        $arrGroup3[] = $value2[0];
+    }
+    return $arrGroup3;
+    
+}

@@ -101,6 +101,7 @@ class ComposerStaticInitdd864584055e1e9285eba99daf995a51
         array (
             'MyCLabs\\Enum\\' => 13,
             'Mpdf\\' => 5,
+            'Minwork\\Helper\\' => 15,
             'Matrix\\' => 7,
         ),
         'D' => 
@@ -171,6 +172,10 @@ class ComposerStaticInitdd864584055e1e9285eba99daf995a51
         'Mpdf\\' => 
         array (
             0 => __DIR__ . '/..' . '/mpdf/mpdf/src',
+        ),
+        'Minwork\\Helper\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/minwork/array/src',
         ),
         'Matrix\\' => 
         array (

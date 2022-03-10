@@ -61,7 +61,7 @@ if ($api['COUNT'] > 0) {
             // 'map_size' => $r['map_size'],
         ));
         $hora = "<span class='marcador' marcador='$jsonMarcador'>$r[regTime]</span>";
-
+        $pathPhoto = "$_SESSION[APIMOBILEHRP]/chweb/mobile/hrp/fotos/$r[userCompany]/$r[regPhoto]";
         $arrayData[] = array(
             'appVersion'    => $r['appVersion'],
             'attPhoto'      => $r['attPhoto'],
@@ -77,7 +77,10 @@ if ($api['COUNT'] > 0) {
             'regDay'        => $r['regDay'],
             'regLat'        => $r['regLat'],
             'regLng'        => $r['regLng'],
-            'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
+            // 'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
+            // 'regPhoto'      => (is_file($pathPhoto)) ? $pathPhoto : '',
+            'regPhoto'      => $pathPhoto,
+            'pathPhoto'     => $pathPhoto,
             'regHora'       => $r['regTime'],
             'regTime'       => $hora,
             'userCompany'   => $r['userCompany'],

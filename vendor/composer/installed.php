@@ -6,7 +6,7 @@
     'aliases' => 
     array (
     ),
-    'reference' => '1fa5b2e7ad185fde0e83d35c08eb7e875dea8ff8',
+    'reference' => 'a1453faf84bc87f9bef3a9d032772d9df113274e',
     'name' => '__root__',
   ),
   'versions' => 
@@ -18,7 +18,7 @@
       'aliases' => 
       array (
       ),
-      'reference' => '1fa5b2e7ad185fde0e83d35c08eb7e875dea8ff8',
+      'reference' => 'a1453faf84bc87f9bef3a9d032772d9df113274e',
     ),
     'igorescobar/jquery-mask-plugin' => 
     array (
@@ -55,6 +55,15 @@
       array (
       ),
       'reference' => '182d44c3b2e3b063468f7481ae3ef71c69dc1409',
+    ),
+    'minwork/array' => 
+    array (
+      'pretty_version' => 'v1.13.5',
+      'version' => '1.13.5.0',
+      'aliases' => 
+      array (
+      ),
+      'reference' => 'ccb3f84d10b2ccd327e0196e374edd12aacfe74c',
     ),
     'mpdf/mpdf' => 
     array (
