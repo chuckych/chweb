@@ -208,7 +208,9 @@ $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $filtro_query .= " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'";
+$filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
+$total = rowCount_pdoQuery($sql_query);
 $sql_query .= " ORDER BY r.fechaHora DESC";
 $sql_query .= " LIMIT $start, $length";
 
@@ -245,10 +247,10 @@ if (($queryRecords)) {
             'userRegId'     => $r['regid'],
         );
     }
-    $q = "SELECT COUNT(*) AS 'count' FROM reg_ r LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company WHERE r.rid >0";
-    $q .= $filtro_query;
-    // echo $q; exit;
-    $total = simple_pdoQuery($q)['count'];
+    // $q = "SELECT COUNT(*) AS 'count', id_user, fechaHora, phoneid FROM reg_ r LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company WHERE r.rid >0";
+    // $q .= $filtro_query;
+    // // echo $q; exit;
+    // $total = simple_pdoQuery($q)['count'];
 }
 
 $finScript    = microtime(true);

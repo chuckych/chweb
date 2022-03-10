@@ -147,8 +147,15 @@ if (!empty($arrayData)) {
         $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
-            $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
+            /** Guardo Log de las Fichadas descargadas */
+            $text = "$Legajo $createdDate $fechaHora $lat $lng";
+            $pathLog = date('Ymd') . '_DescargasAPI_' . $companyCode . '.log'; // ruta del archivo de Log de errores
+            fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+            /**  */
+
+            $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
+            
             if (InsertRegistroCH($query)) {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
                 $pathLog = date('Ymd') . '_FichadasCH_' . $companyCode . '.log'; // ruta del archivo de Log de errores
