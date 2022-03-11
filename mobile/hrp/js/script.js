@@ -683,7 +683,7 @@ $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     enableBtnMenu()
     // $('#RowTableUsers').addClass('invisible');
-    loadingTableUser('#tableUsuarios');
+    // loadingTableUser('#tableUsuarios');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Usuarios Mobile"
@@ -691,19 +691,19 @@ $(document).on("click", ".showUsers", function (e) {
     focusRowTables()
     // $('.loading').hide()
     $('#RowTableUsers').show();
-    $('#tableUsuarios').DataTable().ajax.reload();
+    // $('#tableUsuarios').DataTable().ajax.reload();
 });
 $(document).on("click", ".showDevices", function (e) {
     CheckSesion()
     enableBtnMenu()
-    loadingTableDevices('#tableDevices');
+    // loadingTableDevices('#tableDevices');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Dispositivos Mobile"
     $('#Encabezado').html("Dispositivos Mobile");
     focusRowTables()
     // $('.loading').hide()
-    $('#tableDevices').DataTable().ajax.reload();
+    // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableDevices').show();
 });
 $(document).on("click", ".showChecks", function (e) {

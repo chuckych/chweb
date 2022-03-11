@@ -54,13 +54,13 @@ tableDevices = $('#tableDevices').DataTable({
         {
             className: 'align-middle w-100', targets: '', title: '',
             "render": function (data, type, row, meta) {
-                let del = `<button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button>`
+                let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button></span>`
                 if (row.totalChecks > 1) {
-                    del = `<button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button>`
+                    del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button></span>`
                 }
                 let datacol = `
                 <div class="d-flex justify-content-end">
-                    <button data-titlet="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button>
+                    <span><button data-titlet="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button></span>
                     ${del}
                 </div>
                 `
