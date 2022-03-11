@@ -12,8 +12,8 @@ tableDevices = $('#tableDevices').DataTable({
     },
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row '<'col-12 border shadow-sm tableResponsive p-2't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>"+
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>"+
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getDevicesMobile.php",
@@ -27,24 +27,24 @@ tableDevices = $('#tableDevices').DataTable({
     columns: [
         /** Columna Nombre */
         {
-            className: 'align-middle', targets: '', title: 'Nombre',
+            className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="">${row.deviceName}</div>`
+                let datacol = `<div data-titlet="" class="text-truncate" style="max-width: 120px;">${row.deviceName}</div>`
                 return datacol;
             },
         },
         /** Columna Evento */
         {
-            className: 'align-middle', targets: '', title: 'Evento',
+            className: 'align-middle', targets: '', title: `<div class="w60">Evento</div>`,
             "render": function (data, type, row, meta) {
                 let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
-                let datacol = `<div class="ls1">${deviceEvent}</div>`
+                let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
                 return datacol;
             },
         }, 
-        /** Columna TotalChecks */
-        {
-            className: 'align-middle', targets: '', title: 'Fichadas',
+         /** Columna cant TotalChecks */
+         {
+            className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
             "render": function (data, type, row, meta) {
                 let datacol = `<div class="ls1">${row.totalChecks}</div>`
                 return datacol;

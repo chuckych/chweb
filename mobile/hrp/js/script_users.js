@@ -12,8 +12,8 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     },
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
         "<'row '<'col-12 border shadow-sm tableResponsive p-2't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'p>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getUsuariosMobile.php",
@@ -27,23 +27,23 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     columns: [
         /** Columna ID */
         {
-            className: 'align-middle', targets: '', title: 'ID',
+            className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="w90">${row.userID}</div>`
+                let datacol = `<div class="w80">${row.userID}</div>`
                 return datacol;
             },
         },
         /** Columna Nombre */
         {
-            className: 'align-middle', targets: '', title: 'Nombre',
+            className: 'align-middle', targets: '', title: `<div class="w150">Nombre</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="">${row.userName}</div>`
+                let datacol = `<div class="text-truncate" style="max-width: 150px;">${row.userName}</div>`
                 return datacol;
             },
         },
         /** Columna cant Fichadas */
         {
-            className: 'align-middle text-center', targets: '', title: 'Fichadas',
+            className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
             "render": function (data, type, row, meta) {
                 let datacol = `<div class="ls1">${row.userChecks}</div>`
                 return datacol;
@@ -88,6 +88,8 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     searching: true,
     info: true,
     ordering: false,
+    // scrollY: '45vh',
+    // scrollCollapse: true,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },

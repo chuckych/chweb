@@ -24,7 +24,7 @@ if ((host == 'https://localhost')) {
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
-let drmob2 = $('#min').val() + ' al ' + $('#max').val()
+let drmob2 = $('#max').val() + ' al ' + $('#max').val()
 $('#_drMob2').val(drmob2)
 
 function doesFileExist(urlToFile) {
@@ -35,12 +35,12 @@ function doesFileExist(urlToFile) {
 }
 // max-h-500 overflow-auto
 tablemobile = $('#table-mobile').DataTable({
-    // iDisplayLength: -1,
+    iDisplayLength: 5,
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row'<'col-12 border shadow-sm tableResponsive p-2't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-white pr-3 align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white pr-3 d-flex align-items-center shadow justify-content-center'p>>" +
+        "<'row'<'col-12'<'tableResponsive border shadow-sm p-2't>>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
         url: "getRegMobile.php",
@@ -50,6 +50,8 @@ tablemobile = $('#table-mobile').DataTable({
             data._drMob = $("#_drMob").val();
             data._drMob2 = $("#_drMob2").val();
             data.SoloFic = $("#SoloFic").val();
+            console.log($("#_drMob").val());
+            console.log($("#_drMob2").val());
         },
     },
     createdRow: function (row, data, dataIndex) {
@@ -212,7 +214,7 @@ tablemobile = $('#table-mobile').DataTable({
     searching: true,
     info: true,
     ordering: false,
-    scrollY: '50vh',
+    scrollY: '52vh',
     scrollCollapse: true,
     // fixedHeader: true,
     language: {
@@ -220,6 +222,7 @@ tablemobile = $('#table-mobile').DataTable({
     },
 });
 // on draw dt
+
 tablemobile.on('init.dt', function () {
     $('.dr').append(`
         <div class="mx-2">
@@ -227,12 +230,6 @@ tablemobile.on('init.dt', function () {
         </div>
     `);
     dateRange()
-    $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
-        $('#_drMob2').val($('#_drMob').val())
-        // $('#_drMob').daterangepicker({startDate: $('#min').val(), endDate: $('#max').val()});
-        loadingTable('#table-mobile');
-        $('#table-mobile').DataTable().ajax.reload();
-    });
     $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end">
         <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
         <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
@@ -642,7 +639,7 @@ function actualizar(noti = true) {
         alert('ERROR actualizar\n' + error);
     }).then(function () {
         ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel","Descargar registros");
+        $(".actualizar").attr("data-titlel", "Descargar registros");
         setTimeout(() => {
             $.notifyClose();
         }, 2000);
@@ -650,7 +647,7 @@ function actualizar(noti = true) {
 }
 
 $(document).on("click", ".actualizar", function (e) {
-    $(this).attr("data-titlel","Descargando...")
+    $(this).attr("data-titlel", "Descargando...")
     actualizar()
 });
 
@@ -663,19 +660,19 @@ $(document).on("click", "#Encabezado", function (e) {
     // actualizar(false);
 });
 
-const enableBtnMenu = (e) => {
+let enableBtnMenu = (e) => {
     $('#btnMenu .btn').prop('readonly', false)
     $('#btnMenu #positionMap').prop('disabled', false)
     hideMapMarcadores();
 }
 
-const focusBtn = (selector) => {
+let focusBtn = (selector) => {
     $('#btnMenu .btn').removeClass('btn-custom');
     $('#btnMenu .btn').addClass('btn-outline-custom');
     $(selector).removeClass('btn-outline-custom').addClass('btn-custom');
 }
 
-const focusRowTables = () => {
+let focusRowTables = () => {
     $('#RowTableMobile').hide();
     $('#RowTableUsers').hide();
     $('#RowTableDevices').hide();
@@ -685,6 +682,8 @@ const focusRowTables = () => {
 $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     enableBtnMenu()
+    // $('#RowTableUsers').addClass('invisible');
+    loadingTableUser('#tableUsuarios');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Usuarios Mobile"
@@ -692,17 +691,19 @@ $(document).on("click", ".showUsers", function (e) {
     focusRowTables()
     // $('.loading').hide()
     $('#RowTableUsers').show();
-    // $('#tableUsuarios').DataTable().ajax.reload();
+    $('#tableUsuarios').DataTable().ajax.reload();
 });
 $(document).on("click", ".showDevices", function (e) {
     CheckSesion()
     enableBtnMenu()
+    loadingTableDevices('#tableDevices');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Dispositivos Mobile"
     $('#Encabezado').html("Dispositivos Mobile");
     focusRowTables()
     // $('.loading').hide()
+    $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableDevices').show();
 });
 $(document).on("click", ".showChecks", function (e) {
@@ -755,7 +756,7 @@ $(document).on("click", ".sendCH", function (e) {
         }
     });
 });
-const dateRange = () => {
+let dateRange = () => {
     $('#_drMob').daterangepicker({
         singleDatePicker: false,
         showDropdowns: true,
@@ -766,8 +767,8 @@ const dateRange = () => {
         opens: "right",
         drops: "down",
         minDate: $('#min').val(),
-        startDate: $('#min').val(),
         maxDate: $('#max').val(),
+        startDate: $('#max').val(),
         endDate: $('#max').val(),
         autoApply: true,
         alwaysShowCalendars: true,
@@ -801,8 +802,13 @@ const dateRange = () => {
             applyButtonClasses: "btn-custom fw5 px-3 opa8",
         },
     });
+    $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
+        $('#_drMob2').val($('#_drMob').val())
+        loadingTable('#table-mobile');
+        $('#table-mobile').DataTable().ajax.reload();
+    });
 }
-const minmaxDate = () => {
+let minmaxDate = () => {
     axios({
         method: 'post',
         url: 'minmaxdate.php'
@@ -814,7 +820,7 @@ const minmaxDate = () => {
         let minFormat = t.minFormat
         let max = t.max
         let maxFormat = t.maxFormat
-        let dr = minFormat + ' al ' + maxFormat
+        let dr = maxFormat + ' al ' + maxFormat
         $('#min').val(minFormat)
         $('#max').val(maxFormat)
         $('#_drMob2').val(dr)
@@ -823,7 +829,7 @@ const minmaxDate = () => {
         tablemobile.ajax.reload();
         $('#tableUsuarios').DataTable().ajax.reload();
         $('#tableDevices').DataTable().ajax.reload();
-        // dateRange()
+        dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
     }).then(function () {

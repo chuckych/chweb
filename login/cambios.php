@@ -326,6 +326,29 @@ if ($verDB < 20220310) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220311) {
+    pdoQuery("ALTER TABLE `reg_user_` CHANGE COLUMN `id_user` `id_user` BIGINT(11) NOT NULL DEFAULT 0 AFTER `nombre`");
+    fileLog("ALTER TABLE \"reg_user_\" CHANGE COLUMN \"id_user\"  BIGINT(11)", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_user_` CHANGE COLUMN `id_company` `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `id_user`");
+    fileLog("ALTER TABLE \"reg_user_\" CHANGE COLUMN \"id_company\" \"id_company\" SMALLINT", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `id_user` `id_user` BIGINT NOT NULL DEFAULT 0 AFTER `rid`");
+    fileLog("ALTER TABLE \"reg_\" CHANGE COLUMN \"id_user\" BIGINT", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ENGINE=MyISAM");
+    fileLog("ALTER TABLE \"reg_\" ENGINE=MyISAM", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_user_` ENGINE=MyISAM");
+    fileLog("ALTER TABLE \"reg_user_\" ENGINE=MyISAM", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_device_` ENGINE=MyISAM");
+    fileLog("ALTER TABLE \"reg_device_\" ENGINE=MyISAM", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
 
 // if ($verDB < 20211102) {
 

@@ -33,13 +33,13 @@
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
         $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
-        echo '<input type="hidden" hidden id="min" value="' . $min . '">';
-        echo '<input type="hidden" hidden id="max" value="' . $max . '">';
-        echo '<input type="hidden" hidden id="aniomin" value="' . $aniomin . '">';
-        echo '<input type="hidden" hidden id="aniomax" value="' . $aniomax . '">';
+        echo '<input type="hidden"  id="min" value="' . $min . '">';
+        echo '<input type="hidden"  id="max" value="' . $max . '">';
+        echo '<input type="hidden"  id="aniomin" value="' . $aniomin . '">';
+        echo '<input type="hidden"  id="aniomax" value="' . $aniomax . '">';
 
         ?>
-        <input type="hidden" hidden id="_drMob2">
+        <input type="hidden"  id="_drMob2">
 
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
@@ -49,7 +49,7 @@
             <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
                 <div class="col-12 table-responsive " id="divTableMobile">
                     <table class="table text-nowrap w-100 " id="table-mobile">
-                        <thead class="fontq shadow-sm">
+                        <thead class="fontq">
                         </thead>
                     </table>
                 </div>
@@ -68,12 +68,12 @@
             </div>
             <div class="bg-white pb-3 radius invisible" id="RowTableUsers">
                 <div class="row">
-                    <div class="col-12 col-lg-8 table-responsive">
+                    <div class="col-12 col-lg-6 table-responsive">
                         <table class="table text-nowrap w-100" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-lg-4">
+                    <div class="col-12 col-lg-6">
                     </div>
                 </div>
             </div>
