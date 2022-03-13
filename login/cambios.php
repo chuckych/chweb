@@ -263,10 +263,10 @@ if ($verDB < 20211024) {
 if ($verDB < 20220301) {
     pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `attphoto` `attphoto` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci' AFTER `appVersion`");
     fileLog("Se actualizo tabla \"reg_\"", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `operation` `operation` VARCHAR(50) NOT NULL DEFAULT '' AFTER `operationType`");
     fileLog("Se actualizo tabla \"reg_\"", $pathLog); // escribir en el log
-   
+
     pdoQuery("ALTER TABLE `clientes` ADD COLUMN `ApiMobileHRP` VARCHAR(30) NOT NULL AFTER `WebService`");
     fileLog("Se creo tabla \"ApiMobileHRP\"", $pathLog); // escribir en el log
 
@@ -287,7 +287,7 @@ if ($verDB < 20220303) {
 
     pdoQuery("ALTER TABLE `reg_` CHANGE COLUMN `id_company` `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `id_user`");
     fileLog("Se actualizo tabla \"reg_\" columna \"id_company\"", $pathLog); // escribir en el log
-   
+
     if (!checkTable('reg_phone_')) {
         $table_reg_phone_ = "CREATE TABLE IF NOT EXISTS `reg_phone_` ( `id` INT NOT NULL AUTO_INCREMENT, `phoneid` VARCHAR(20) NOT NULL, `nombre` VARCHAR(50) NOT NULL, `evento` SMALLINT NOT NULL, `fechahora` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE currENT_TIMESTAMP(), PRIMARY KEY (`id`) ) COLLATE='utf8_general_ci'";
         pdoQuery($table_reg_phone_);
@@ -349,6 +349,34 @@ if ($verDB < 20220311) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20220313) {
+
+    pdoQuery("CREATE TABLE IF NOT EXISTS `reg_zones` (
+        `id` INT(11) NOT NULL AUTO_INCREMENT,
+        `id_company` SMALLINT(6) NOT NULL DEFAULT '0',
+        `nombre` VARCHAR(50) NOT NULL COLLATE 'utf8_general_ci',
+        `lat` DECIMAL(10, 7) NOT NULL,
+        `lng` DECIMAL(10, 7) NOT NULL,
+        `radio` SMALLINT(6) NOT NULL,
+        `fechahora` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+        PRIMARY KEY (`id`) USING BTREE,
+        UNIQUE INDEX `nameZone` (`id_company`, `nombre`),
+        UNIQUE INDEX `positionZone` (`id_company`, `lat`, `lng`)
+    ) COLLATE 'utf8_general_ci' ENGINE = MyISAM");
+    fileLog("CREATE TABLE \"reg_zones\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `idZone` INT NOT NULL AFTER `lng`");
+    fileLog("ALTER TABLE \"reg_\" ADD COLUMN \"idZone\" INT", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD CONSTRAINT `refZone` FOREIGN KEY (`idZone`) REFERENCES `reg_zones` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION");
+    fileLog("ALTER TABLE \"reg_\" ADD CONSTRAINT \"refZone\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+
 
 // if ($verDB < 20211102) {
 

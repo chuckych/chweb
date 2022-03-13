@@ -187,6 +187,11 @@ $("#SoloHCalc").change(function (e) {
     _Filtros()
     ActualizaTablas()
 });
+$("#SoloFic").change(function (e) {
+    e.preventDefault();
+    _Filtros()
+    ActualizaTablas()
+});
 
 let GetPersonal = $('#GetPersonal').DataTable({
     initComplete: function (settings, json) {
