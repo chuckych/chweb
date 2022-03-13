@@ -27,7 +27,7 @@ tableDevices = $('#tableDevices').DataTable({
     columns: [
         /** Columna Nombre */
         {
-            className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
+            className: 'align-middle', targets: '', title: `<div class="w120">Dispositivo</div>`,
             "render": function (data, type, row, meta) {
                 let datacol = `<div data-titlet="" class="text-truncate" style="max-width: 120px;">${row.deviceName}</div>`
                 return datacol;

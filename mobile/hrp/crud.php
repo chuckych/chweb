@@ -442,6 +442,189 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
+    } else if ($_POST['tipo'] == 'add_zone') {
+
+        $post = $_POST;
+
+        // PrintRespuestaJson('error', 'Zona');
+        // exit;
+
+        $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
+        $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
+        $post['lat']            = $post['lat'] ?? '';
+        $post['lng']            = $post['lng'] ?? '';
+
+        $nombre = test_input($post['formZoneNombre']);
+        $radio  = test_input($post['formZoneRadio']);
+        $lat    = test_input($post['lat']);
+        $lng    = test_input($post['lng']);
+
+
+        if (valida_campo($nombre)) {
+            PrintRespuestaJson('error', 'Falta Nombre');
+            exit;
+        };
+        if (valida_campo($radio)) {
+            PrintRespuestaJson('error', 'Falta Nombre');
+            exit;
+        };
+        if (valida_campo($lat)) {
+            PrintRespuestaJson('error', 'Falta Latitud');
+            exit;
+        };
+        if (valida_campo($lng)) {
+            PrintRespuestaJson('error', 'Falta Longitud');
+            exit;
+        };
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        $paramsApi = array(
+            'key'       => $_SESSION["RECID_CLIENTE"],
+            'zoneName'  => urlencode($nombre),
+            'zoneRadio' => ($radio),
+            'zoneLat'   => ($lat),
+            'zoneLng'   => ($lng)
+        );
+
+        $api = "api/v1/zones/add/";
+        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
+    } else if ($_POST['tipo'] == 'upd_zone') {
+
+        $post = $_POST;
+
+        // PrintRespuestaJson('error', 'Zona');
+        // exit;
+
+        $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
+        $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
+        $post['lat']            = $post['lat'] ?? '';
+        $post['lng']            = $post['lng'] ?? '';
+        $post['idZone']            = $post['idZone'] ?? '';
+
+        $nombre = test_input($post['formZoneNombre']);
+        $radio  = test_input($post['formZoneRadio']);
+        $lat    = test_input($post['lat']);
+        $lng    = test_input($post['lng']);
+        $idZone = test_input($post['idZone']);
+
+
+        if (valida_campo($nombre)) {
+            PrintRespuestaJson('error', 'Falta Nombre');
+            exit;
+        };
+        if (valida_campo($radio)) {
+            PrintRespuestaJson('error', 'Falta Nombre');
+            exit;
+        };
+        if (valida_campo($lat)) {
+            PrintRespuestaJson('error', 'Falta Latitud');
+            exit;
+        };
+        if (valida_campo($lng)) {
+            PrintRespuestaJson('error', 'Falta Longitud');
+            exit;
+        };
+        if (valida_campo($idZone)) {
+            PrintRespuestaJson('error', 'Falta ID de Zona');
+            exit;
+        };
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        $paramsApi = array(
+            'key'       => $_SESSION["RECID_CLIENTE"],
+            'zoneName'  => urlencode($nombre),
+            'zoneRadio' => ($radio),
+            'zoneLat'   => ($lat),
+            'zoneLng'   => ($lng),
+            'idZone'    => ($idZone)
+        );
+
+        $api = "api/v1/zones/upd/";
+        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
+    } else if ($_POST['tipo'] == 'del_zone') {
+
+        $post = $_POST;
+
+        // PrintRespuestaJson('error', 'Del Zona');
+        // exit;
+
+        $post['idZone']            = $post['idZone'] ?? '';
+
+        $idZone = test_input($post['idZone']);
+
+        if (valida_campo($idZone)) {
+            PrintRespuestaJson('error', 'Falta ID de Zona');
+            exit;
+        };
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        $paramsApi = array(
+            'key'       => $_SESSION["RECID_CLIENTE"],
+            'idZone'    => ($idZone)
+        );
+
+        $api = "api/v1/zones/del/";
+        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
     } else {
         $json_data = array(
             "Mensaje" => 'Invalid Request Type',

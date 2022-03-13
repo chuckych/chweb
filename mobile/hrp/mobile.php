@@ -86,6 +86,16 @@
                     </div>
                 </div>
             </div>
+            <div class="bg-white pb-3 invisible" id="RowTableZones">
+                <div class="row">
+                    <div class="col-12 col-lg-8 table-responsive">
+                        <table class="table text-nowrap w-100" id="tableZones">
+                            <thead class="fontq"></thead>
+                        </table>
+                    </div>
+                    <div class="col-12 col-lg-4"></div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <span id="mapTitle"></span>
@@ -111,9 +121,9 @@
 
     ?>
     <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
-    <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script> -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
-    <!-- <script src="../js/lib/geocomplete/jquery.geocomplete.js"></script> -->
+    <script src="../../js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/clipboardjs/dist/clipboard.min.js"></script>
@@ -121,6 +131,7 @@
     <script src="js/script.js?v=<?= time() ?>"></script>
     <script src="js/script_users.js?v=<?= time() ?>"></script>
     <script src="js/script_devices.js?v=<?= time() ?>"></script>
+    <script src="js/script_zones.js?v=<?= time() ?>"></script>
     <script src="js/script_mapa.js?v=<?= time() ?>"></script>
     <!-- <script src="FicMobExcel.js?v=<?= time() ?>"></script> -->
 

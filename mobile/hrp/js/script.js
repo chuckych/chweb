@@ -17,7 +17,7 @@ let host = $('#_host').val()
 if ((host == 'https://localhost')) {
     console.log(host)
 } else if ((host == 'http://localhost')) {
-    console.log(host)
+    // console.log(host)
 } else {
     actualizar(false);
 }
@@ -35,7 +35,7 @@ function doesFileExist(urlToFile) {
 }
 // max-h-500 overflow-auto
 tablemobile = $('#table-mobile').DataTable({
-    iDisplayLength: 5,
+    // iDisplayLength: 5,
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
         "<'row'<'col-12'<'tableResponsive border shadow-sm p-2't>>>" +
@@ -50,8 +50,8 @@ tablemobile = $('#table-mobile').DataTable({
             data._drMob = $("#_drMob").val();
             data._drMob2 = $("#_drMob2").val();
             data.SoloFic = $("#SoloFic").val();
-            console.log($("#_drMob").val());
-            console.log($("#_drMob2").val());
+            // console.log($("#_drMob").val());
+            // console.log($("#_drMob2").val());
         },
     },
     createdRow: function (row, data, dataIndex) {
@@ -200,7 +200,7 @@ tablemobile = $('#table-mobile').DataTable({
                 let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                 let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
 
-                let datacol = `<div class="smtdcol">${device}</div>`
+                let datacol = `<div class="smtdcol" title="Versión App: ${row.appVersion}">${device}</div>`
                 return datacol;
             },
         },
@@ -221,8 +221,6 @@ tablemobile = $('#table-mobile').DataTable({
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
     },
 });
-// on draw dt
-
 tablemobile.on('init.dt', function () {
     $('.dr').append(`
         <div class="mx-2">
@@ -656,6 +654,7 @@ $(document).on("click", "#Encabezado", function (e) {
     loadingTable('#table-mobile');
     loadingTableUser('#tableUsuarios');
     loadingTableDevices('#tableDevices');
+    loadingTableZones('#tableZones');
     minmaxDate()
     // actualizar(false);
 });
@@ -676,6 +675,7 @@ let focusRowTables = () => {
     $('#RowTableMobile').hide();
     $('#RowTableUsers').hide();
     $('#RowTableDevices').hide();
+    $('#RowTableZones').hide();
     // $('.loading').show()
 }
 
@@ -705,6 +705,18 @@ $(document).on("click", ".showDevices", function (e) {
     // $('.loading').hide()
     // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableDevices').show();
+});
+$(document).on("click", ".showZones", function (e) {
+    CheckSesion()
+    enableBtnMenu()
+    $(this).prop('readonly', true)
+    focusBtn(this);
+    document.title = "Zonas Mobile"
+    $('#Encabezado').html("Zonas Mobile");
+    focusRowTables()
+    // $('.loading').hide()
+    // $('#tableDevices').DataTable().ajax.reload();
+    $('#RowTableZones').show();
 });
 $(document).on("click", ".showChecks", function (e) {
     CheckSesion()
@@ -829,6 +841,7 @@ let minmaxDate = () => {
         tablemobile.ajax.reload();
         $('#tableUsuarios').DataTable().ajax.reload();
         $('#tableDevices').DataTable().ajax.reload();
+        $('#tableZones').DataTable().ajax.reload();
         dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
@@ -913,4 +926,4 @@ $("#RefreshToken").on("submit", function (e) {
     });
 });
 // focusRowTables()
-// $('#RowTableUsers').show();
+// $('#RowTableZones').show();

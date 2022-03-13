@@ -115,3 +115,30 @@ table.dataTable {
 .gm-style .gm-style-iw-t::after {
     background: #efefef !important;
 }
+
+.map_canvas {
+    border: 4px solid #efefef !important;
+    width: 100%;
+    height: 300px;
+}
+
+.gm-ui-hover-effect {
+    box-shadow: none !important;
+    outline: 0 !important;
+    top: 0px !important;
+    right: 0px !important;
+}
+
+.pac-container {
+    background-color: #FFF;
+    z-index: 1050;
+    position: fixed;
+    display: inline-block;
+}
+
+/* .modal{
+    z-index: 20;   
+} */
+/* .modal-backdrop{
+    z-index: 10;        
+}​ */
