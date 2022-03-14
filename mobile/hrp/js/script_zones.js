@@ -295,7 +295,7 @@ $(document).on("click", "#addZone", function (e) {
 
         let defaulLat = -38.416097;
         let defaulLng = -63.616671;
-        mapZone(defaulLat, defaulLng);
+        mapZoneNear(defaulLat, defaulLng);
 
     }).catch(function (error) {
         alert(error)
@@ -373,7 +373,7 @@ $(document).on("click", ".updZone", function (e) {
         $('#modales').html(response.data)
         // $('#RowTableZones').html(response.data)
     }).then(function () {
-        $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">'+zoneName+'</div>')
+        $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
         $('#modalZone').modal('show');
         $('#formZone .requerido').html('(*)')
         // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
@@ -395,7 +395,7 @@ $(document).on("click", ".updZone", function (e) {
 
         let defaulLat = zoneLat;
         let defaulLng = zoneLng;
-        mapZone(defaulLat, defaulLng, 16);
+        mapZoneNear(defaulLat, defaulLng, 16);
 
     }).catch(function (error) {
         alert(error)
@@ -420,7 +420,7 @@ $(document).on("click", ".updZone", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val()+'&idZone='+idZone,
+                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -471,7 +471,7 @@ $(document).on("click", ".delZone", function (e) {
         $('#modales').html(response.data)
         // $('#RowTableZones').html(response.data)
     }).then(function () {
-        $('#modalZone .modal-title').html('<div class="text-danger">¿Eliminar Zona?</div><div class="">'+zoneName+'</div>')
+        $('#modalZone .modal-title').html('<div class="text-danger">¿Eliminar Zona?</div><div class="">' + zoneName + '</div>')
         $('#modalZone').modal('show');
         // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
         $('#formZone #formZoneTipo').val('del_zone').attr('disabled', 'disabled')
@@ -512,7 +512,7 @@ $(document).on("click", ".delZone", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val()+'&idZone='+idZone,
+                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -527,6 +527,249 @@ $(document).on("click", ".delZone", function (e) {
                         notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
+                        $('#tableZones').DataTable().ajax.reload();
+                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                        $('#modalZone').modal('hide');
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+        });
+        $('#modalZone').on('hidden.bs.modal', function () {
+            $('#modales').html(' ');
+        });
+    });
+
+});
+function getNearZonesTable($lat, $lng) {
+    $('#formZone #divNearZone').html(`
+        <div class="bg-white pb-3 invisible" id="RowTableNearZones">
+            <div class="">
+            <table class="table table-sm text-nowrap w-100 border table-boderless" id="tableNearZones">
+                <thead class="fontq"></thead>
+            </table>
+            </div>
+        </div>
+        `)
+    tableNearZones = $('#tableNearZones').DataTable({
+        dom: "<'row '<'col-12 tableResponsive't>>",
+        ajax: {
+            url: "getNearZones.php?zoneLat=" + $lat + "&zoneLng=" + $lng,
+            type: "GET",
+            "data": function (data) { },
+            error: function () { },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
+        },
+        columns: [
+            /** Columna Nombre */
+            {
+                className: 'align-middle pl-2 fontq', targets: '', title: `Zonas en cercanía`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div title="${row.zoneName}" class="text-truncate" style="max-width: 180px;">${row.zoneName}</div>`
+                    return datacol;
+                },
+            },
+            {
+                className: 'align-middle pr-2 fontq w-100 text-right', targets: '', title: `En Km`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div data-titlet="${row.distance} km." class="float-right">${row.distance} km.</div>`
+                    return datacol;
+                },
+            },
+        ],
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 500,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '52vh',
+        // scrollCollapse: true,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+        },
+
+    });
+    tableNearZones.on('draw.dt', function (e, settings) {
+        // console.log(settings);
+        if (settings._iRecordsTotal > 0) {
+            $('#RowTableNearZones').removeClass('invisible')
+            // $('#tableNearZones thead').remove();
+        }
+    });
+    tableNearZones.on('xhr.dt', function (e, settings, json) {
+        tableNearZones.off('xhr');
+    });
+}
+let mapZoneNear = (latitud, longitud, zoom = 4) => {
+    $("input[name=lat]").val(latitud);
+    $("input[name=lng]").val(longitud);
+    var center = new google.maps.LatLng(latitud, longitud);
+    const image = '../../img/iconMarker.svg'
+    getNearZonesTable(center.lat(), center.lng());
+    $("#geocomplete").geocomplete({
+        map: ".map_canvas",
+        details: "form",
+        autoselect: true,
+        blur: true,
+        markerOptions: {
+            position: center,
+            draggable: true,
+            icon: image
+        },
+        location: center,
+        types: ["geocode", 'establishment'],
+        country: 'ar',  //restricciones de paises
+
+        mapOptions: {
+            scrollwheel: true,
+            scaleControl: true,
+            zoomControl: true,
+            fullscreenControl: true,
+            disableDefaultUI: true,
+            geocodeAfterResult: true,
+            mapTypeId: "roadmap",
+            styles: [
+                {
+                    "featureType": "administrative",
+                    "elementType": "labels.text.fill",
+                    "stylers": [
+                        {
+                            "color": "#4a5461"
+                        }
+                    ]
+                }
+            ]
+        },
+        
+    });
+
+    var map = $("#geocomplete").geocomplete("map")
+
+    // map.setCenter(center);
+    map.setZoom(zoom);
+    // autoselect: true
+    $("#reset").hide();
+    $("#geocomplete").bind("geocode:dragged", function (event, latLng) {
+        $("input[name=lat]").val(latLng.lat());
+        $("input[name=lng]").val(latLng.lng());
+        if ($('#geocomplete').val() != '') {
+            $("#reset").show();
+        }
+        getNearZonesTable(latLng.lat(), latLng.lng());
+    });
+
+    $("#geocomplete").on("change", function () {
+        setTimeout(() => {
+            getNearZonesTable($("input[name=lat]").val(), $("input[name=lng]").val());
+        }, 500);
+    });
+
+    $("#reset").on("click", function () {
+        $("#geocomplete").geocomplete("resetMarker");
+        $("#geocomplete").geocomplete("map");
+        $("#reset").hide();
+        return false;
+    });
+
+    $("#find").on("click", function () {
+        $("input[name=lat]").val(center.lat());
+        $("input[name=lng]").val(center.lng());
+        $("#geocomplete").trigger("geocode");
+    })
+}
+$(document).on("click", ".createZoneOut", function (e) {
+    // alert('Aca estamos')
+    // get data datatable row
+    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+    // console.log(data);
+    // return false;
+    let zoneLat = data.regLat;
+    let zoneLng = data.regLng;
+    let zoneRadio = 100;
+    let zoneName = '';
+    let idZone = '';
+    // return false;
+    axios({
+        method: 'post',
+        url: 'modalZone.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+        // $('#RowTableZones').html(response.data)
+    }).then(function () {
+        $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+        $('#modalZone').modal('show');
+        $('#formZone .requerido').html('(*)')
+        // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
+        $('#formZone #formZoneTipo').val('add_zone')
+        $('#formZone #formZoneNombre').val(zoneName)
+        $('#formZone #formZoneLat').val(zoneLat)
+        $('#formZone #formZoneLng').val(zoneLng)
+        $('#formZone #formZoneRadio').val(zoneRadio)
+        getNearZonesTable(zoneLat, zoneLng);
+        select2Radio("#formZone #formZoneRadio");
+
+        setTimeout(() => {
+            $('#formZone .form-control').attr('autocomplete', '_chweb_off')
+            focusEndText('#formZone #formZoneNombre')
+            $('#formZone #geocomplete').removeAttr('readonly')
+        }, 500);
+
+    }).then(function () {
+
+        let defaulLat = zoneLat;
+        let defaulLng = zoneLng;
+        mapZoneNear(defaulLat, defaulLng, 16);
+
+    }).catch(function (error) {
+        alert(error)
+    }).then(function () {
+        $("#formZone").bind("submit", function (e) {
+            e.preventDefault();
+            let tipoStatus = '';
+            switch ($('#formZone #formZoneTipo').val()) {
+                case 'del_zone':
+                    tipoStatus = 'eliminada';
+                    break;
+                case 'upd_zone':
+                    tipoStatus = 'actualizada';
+                    break;
+                case 'add_zone':
+                    tipoStatus = 'Creada';
+                    break;
+                default:
+                    tipoStatus = '';
+                    break;
+            }
+            $.ajax({
+                type: $(this).attr("method"),
+                url: 'crud.php',
+                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
+                // dataType: "json",
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        let zoneName = data.Mensaje.zoneName
+                        notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                        // $('#tableUsuarios').DataTable().ajax.reload();
+                        $('#table-mobile').DataTable().ajax.reload(null, false);
+                        $('#tableZones').DataTable().search(zoneName).draw();
+                        classEfect('#tableZones_filter input', 'border-custom')
                         $('#tableZones').DataTable().ajax.reload();
                         ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
                         $('#modalZone').modal('hide');

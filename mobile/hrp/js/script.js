@@ -141,13 +141,22 @@ tablemobile = $('#table-mobile').DataTable({
         },
         /** Columna Zona */
         {
-            className: '', targets: '', title: '<div class="w100">Zona</div>',
+            className: '', targets: '', title: '<div class="" style="max-width: 100px; min-width:100px;" >Zona</div>',
             "render": function (data, type, row, meta) {
-                let zoneName = (row.zoneID > 0) ? row.zoneName : '<span class="text-danger">Fuera de Zona</span>'
+                // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                let btnAdd = ''
+                let zoneName = (row.zoneID > 0) ? '<span class="text-success">'+row.zoneName+'</span>' : '<span class="text-danger">Fuera de Zona</span>'
                 let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                 let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                 let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
-                let datacol = `<div class="text-truncate text-success" title="${zoneName2}${Distance}" style="max-width: 100px;">${zoneName}<br /><span class="text-secondary fontp">${Distance2}<span></div>`
+                
+                btnAdd = `<br><span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut">Crear Zona <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                if(row.regLat == 0){
+                    btnAdd = `<br><span class="text-secondary fontp p-0 m-0">Sin datos GPS</span>`;
+                }
+                let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 w100 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
+
+                let datacol = `<div class="smtdcol" title="${zoneName2}">${device}</div>`
                 return datacol;
             },
         },
@@ -191,10 +200,12 @@ tablemobile = $('#table-mobile').DataTable({
         },
         /** Columna Dispositivo */
         {
-            className: 'w-100', targets: '', title: '<div class="" style="max-width: 170px; min-width:170px;" >Dispositivo</div>',
+            className: 'w-100', targets: '', title: '<div class="" style="max-width: 140px; min-width:140px;" >Dispositivo</div>',
             "render": function (data, type, row, meta) {
-                let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
-                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w130 fontq">${row.phoneid}</label>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
+                // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                
+                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
 
                 let datacol = `<div class="smtdcol" title="Versión App: ${row.appVersion}">${device}</div>`
                 return datacol;
