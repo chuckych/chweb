@@ -162,7 +162,7 @@ tablemobile = $('#table-mobile').DataTable({
             "render": function (data, type, row, meta) {
                 let zoneName = (row.zoneID > 0) ? row.zoneName : '<span class="text-danger">Fuera de Zona</span>'
                 let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
-                let Distance = (row.zoneID > 0) ? '. Distancia: '+ row.zoneDistance +' metros': ''
+                let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' metros' : ''
                 let datacol = `<div class="text-truncate" title="${zoneName2}${Distance}" style="max-width: 100px;">${zoneName}</div>`
                 return datacol;
             },
@@ -523,6 +523,10 @@ $(document).on("click", ".pic", function (e) {
     let _lat = data.regLat
     let _lng = data.regLng
 
+    let zoneName = (data.zoneID > 0) ? data.zoneName : '<span class="text-danger">Fuera de Zona</span>'
+    let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
+    let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
+
     picDevice = (!picDevice) ? `${data.phoneid}` : picDevice;
 
     $('#latitud').val(_lat)
@@ -543,6 +547,7 @@ $(document).on("click", ".pic", function (e) {
     $('.picDevice').html(picDevice);
     $('.picIDUser').html(picIDUser);
     $('.picHora').html('<b>' + pichora + '</b>');
+    $('.picZona').html(zoneName);
 
     let evento = '';
     switch (data.operationType) {

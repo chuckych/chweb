@@ -33,9 +33,13 @@
                                 <label class="w70 fontp text-secondary">Dispositivo: </label>
                                 <div class="fontq text-dark text-wrap picDevice"></div>
                             </p>
-                            <p class="p-0">
+                            <!-- <p class="p-0">
                                 <label class="w70 fontp text-secondary">Tipo: </label>
                                 <div class="fontq text-dark text-wrap picTipo ls1"></div>
+                            </p> -->
+                            <p class="p-0">
+                                <label class="w70 fontp text-secondary">Zona: </label>
+                                <div class="fontq text-dark text-wrap picZona ls1"></div>
                             </p>
                         </div>
                     </div>
