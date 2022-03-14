@@ -78,8 +78,8 @@ if ($api['COUNT'] > 0) {
             'regLat'        => $r['regLat'],
             'regLng'        => $r['regLng'],
             'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
-            // 'regPhoto'      => (is_file($pathPhoto)) ? $pathPhoto : '',
-            // 'regPhoto'      => $pathPhoto,
+            // 'regPhoto'   => (is_file($pathPhoto)) ? $pathPhoto : '',
+            // 'regPhoto'   => $pathPhoto,
             'pathPhoto'     => $pathPhoto,
             'regHora'       => $r['regTime'],
             'regTime'       => $hora,
@@ -87,6 +87,9 @@ if ($api['COUNT'] > 0) {
             'userID'        => $r['userID'],
             'userName'      => $r['userName'],
             'userRegId'     => $r['userRegId'],
+            'zoneID'        => $r['zoneID'],
+            'zoneName'      => $r['zoneName'],
+            'zoneDistance'  => round(floatval($r['zoneDistance'])*1000,2)
         );
     }
 }

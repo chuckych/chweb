@@ -1,6 +1,7 @@
 $('#Encabezado').addClass('pointer')
 $('#RowTableUsers').hide();
 $('#RowTableDevices').hide();
+$('#RowTableZones').hide();
 // windows on load
 $(window).on('load', function () {
     $('.loading').hide()
@@ -152,6 +153,17 @@ tablemobile = $('#table-mobile').DataTable({
             className: '', targets: '', title: '<div class="w40">Hora</div>',
             "render": function (data, type, row, meta) {
                 let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
+                return datacol;
+            },
+        },
+        /** Columna Zona */
+        {
+            className: '', targets: '', title: '<div class="w100">Zona</div>',
+            "render": function (data, type, row, meta) {
+                let zoneName = (row.zoneID > 0) ? row.zoneName : '<span class="text-danger">Fuera de Zona</span>'
+                let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
+                let Distance = (row.zoneID > 0) ? '. Distancia: '+ row.zoneDistance +' metros': ''
+                let datacol = `<div class="text-truncate" title="${zoneName2}${Distance}" style="max-width: 100px;">${zoneName}</div>`
                 return datacol;
             },
         },

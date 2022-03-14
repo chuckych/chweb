@@ -193,12 +193,16 @@ $sql_query = "SELECT
     r.attphoto AS 'attPhoto', 
     r.id_company AS 'id_company',
     rd.nombre AS 'deviceName',
+    r.idZone AS 'zoneID',
+    rz.nombre AS 'zoneName',
+    r.distance AS 'zoneDistance',
     CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
     r.regid AS 'regid' 
     FROM reg_ r
     LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
-    WHERE r.rid >0";
+    LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
+    WHERE r.rid > 0";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
@@ -245,6 +249,9 @@ if (($queryRecords)) {
             'userID'        => intval($r['id_user']),
             'userName'      => $r['name'],
             'userRegId'     => $r['regid'],
+            'zoneID'        => $r['zoneID'],
+            'zoneName'      => $r['zoneName'],
+            'zoneDistance'  => $r['zoneDistance'],
         );
     }
     // $q = "SELECT COUNT(*) AS 'count', id_user, fechaHora, phoneid FROM reg_ r LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company WHERE r.rid >0";

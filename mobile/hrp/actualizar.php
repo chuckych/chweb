@@ -78,6 +78,26 @@ function getEvents($url, $timeout = 10)
     }
     exit;
 }
+function queryCalcZone($lat, $lng, $idCompany){
+    $query = "
+            SELECT
+            `rg`.*,
+        (
+                (
+                    (
+                        acos(
+                            sin(($lat * pi() / 180)) * sin((`rg`.`lat` * pi() / 180)) + cos(($lat * pi() / 180)) * cos((`rg`.`lat` * pi() / 180)) * cos((($lng - `rg`.`lng`) * pi() / 180))
+                        )
+                    ) * 180 / pi()
+                ) * 60 * 1.1515 * 1.609344
+            ) as distancia
+        FROM
+            reg_zones rg WHERE `rg`.`id_company` = $idCompany
+        -- HAVING (distancia <= 0.1)
+        ORDER BY distancia ASC, rg.id DESC LIMIT 1
+    ";
+    return $query;
+}
 
 $pathFlags = 'flags.ini'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
@@ -262,8 +282,19 @@ if (!empty($arrayData)) {
             fclose($f);
         }
 
-        /** */
-        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng,gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
+        /** Calculamos la Zona */
+        $query       = queryCalcZone($lat, $lng, $companyCode);
+        $zona        = simple_pdoQuery($query);
+        if ($zona) {
+            $radio       = round(intval($zona['radio'])/1000, 2);
+            $distancia = ($zona['distancia']) ? round($zona['distancia'], 2) : 0;
+            $idZone = ($distancia <= $radio) ? $zona['id'] : '0';
+        }else{
+            $idZone = '0';
+        }
+        /** Fin calculo Zona */
+
+        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng, idZone, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);

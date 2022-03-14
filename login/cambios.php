@@ -376,6 +376,16 @@ if ($verDB < 20220313) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220314) {
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`");
+    fileLog("ALTER TABLE `reg_` ADD COLUMN `distance`", $pathLog); // escribir en el log
+    
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+
+ // ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`;
 
 
 // if ($verDB < 20211102) {
