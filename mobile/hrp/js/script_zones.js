@@ -571,14 +571,20 @@ function getNearZonesTable($lat, $lng) {
             {
                 className: 'align-middle pl-2 fontq', targets: '', title: `Zonas en cercanía`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div title="${row.zoneName}" class="text-truncate" style="max-width: 180px;">${row.zoneName}</div>`
+                    let syncZone = '';
+                    if ($('#formZoneTipo').val() != 'upd_zone') {
+                        syncZone = ((row.distance) <= (row.zoneRadio)) ? '<button type="button" class="syncZone fontp p-0 ml-1 btn btn-sm btn-link"><span class="text-success">Vincular Zona</span></button>' : '';
+                    }
+                    let datacol = `<div title="${row.zoneName}" class="text-truncate" style="max-width: 180px;">${row.zoneName} ${syncZone}</div>`
                     return datacol;
                 },
             },
+            /** Columna Distancia */
             {
-                className: 'align-middle pr-2 fontq w-100 text-right', targets: '', title: `En Km`,
+                className: 'align-middle pr-2 fontq w-100 text-right', targets: '', title: ``,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div data-titlet="${row.distance} km." class="float-right">${row.distance} km.</div>`
+                    let distance = (row.distance >= 1000) ? (row.distance/1000).toFixed(2)+' Km.' : row.distance+ ' Mts.';
+                    let datacol = `<div data-titlel="${row.distance} Mts." class="float-right">${distance}</div>`
                     return datacol;
                 },
             },
@@ -610,12 +616,16 @@ function getNearZonesTable($lat, $lng) {
         tableNearZones.off('xhr');
     });
 }
-let mapZoneNear = (latitud, longitud, zoom = 4) => {
+let mapZoneNear = (latitud, longitud, zoom = 4, createZoneOut = false) => {
     $("input[name=lat]").val(latitud);
     $("input[name=lng]").val(longitud);
     var center = new google.maps.LatLng(latitud, longitud);
     const image = '../../img/iconMarker.svg'
-    getNearZonesTable(center.lat(), center.lng());
+    if (createZoneOut == false) {
+        getNearZonesTable(center.lat(), center.lng());
+    }
+    $('#RowTableNearZones').addClass('invisible')
+    // getNearZonesTable(center.lat(), center.lng());
     $("#geocomplete").geocomplete({
         map: ".map_canvas",
         details: "form",
@@ -650,7 +660,7 @@ let mapZoneNear = (latitud, longitud, zoom = 4) => {
                 }
             ]
         },
-        
+
     });
 
     var map = $("#geocomplete").geocomplete("map")
@@ -665,11 +675,13 @@ let mapZoneNear = (latitud, longitud, zoom = 4) => {
         if ($('#geocomplete').val() != '') {
             $("#reset").show();
         }
+        $('#RowTableNearZones').addClass('invisible')
         getNearZonesTable(latLng.lat(), latLng.lng());
     });
 
     $("#geocomplete").on("change", function () {
         setTimeout(() => {
+            $('#RowTableNearZones').addClass('invisible')
             getNearZonesTable($("input[name=lat]").val(), $("input[name=lng]").val());
         }, 500);
     });
@@ -728,7 +740,7 @@ $(document).on("click", ".createZoneOut", function (e) {
 
         let defaulLat = zoneLat;
         let defaulLng = zoneLng;
-        mapZoneNear(defaulLat, defaulLng, 16);
+        mapZoneNear(defaulLat, defaulLng, 16, true);
 
     }).catch(function (error) {
         alert(error)

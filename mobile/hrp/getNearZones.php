@@ -42,11 +42,11 @@ if ($api['COUNT'] > 0) {
         $arrayData[] = array(
             'zoneID'    => $r['zoneID'],
             'zoneName'  => $r['zoneName'],
-            'zoneRadio' => $r['zoneRadio'],
+            'zoneRadio' => intval($r['zoneRadio']),
             'zoneLat'   => $r['zoneLat'],
             'zoneLng'   => $r['zoneLng'],
             'idCompany' => $r['idCompany'],
-            'distance'  => round(floatval($r['zoneDistance']),2)
+            'distance'  => round(floatval($r['zoneDistance'])*1000,2)
         );
     }
 }
