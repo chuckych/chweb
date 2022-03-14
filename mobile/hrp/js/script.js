@@ -119,32 +119,15 @@ tablemobile = $('#table-mobile').DataTable({
         /** Columna Fecha DIA */
         {
             className: '', targets: '', title: `
-            <span class="d-none d-sm-block w70">Día</span>
-            <span class="d-sm-none d-block w70">Fecha</span>
+            <div class="w70">Fecha</div>
             `,
             "render": function (data, type, row, meta) {
                 let datacol = `
-                    <div class="w70 d-none d-sm-block">
-                        <span class="pointer">${row.regDay}</span>
-                    </div>
-                    <div class="w70 d-block d-sm-none">
+                    <div class="w70">
                         <span class="">${row.regDate}</span><br>
                         <span class="text-secondary fontp">${row.regDay}</span>
                     </div>
                     `
-                return datacol;
-            },
-        },
-        /** Columna Fecha */
-        {
-            className: 'd-none d-sm-block', targets: '', title: '<div class="w70">Fecha</div>',
-            "render": function (data, type, row, meta) {
-                // let datacol = `<div class="ls1">${row.regDate}</div>`
-                // return datacol;
-                let datacol = `
-                <div class="smtd">
-                    <span class="">${row.regDate}</span>
-                </div>`
                 return datacol;
             },
         },
@@ -162,8 +145,9 @@ tablemobile = $('#table-mobile').DataTable({
             "render": function (data, type, row, meta) {
                 let zoneName = (row.zoneID > 0) ? row.zoneName : '<span class="text-danger">Fuera de Zona</span>'
                 let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
-                let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' metros' : ''
-                let datacol = `<div class="text-truncate" title="${zoneName2}${Distance}" style="max-width: 100px;">${zoneName}</div>`
+                let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
+                let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
+                let datacol = `<div class="text-truncate text-success" title="${zoneName2}${Distance}" style="max-width: 100px;">${zoneName}<br /><span class="text-secondary fontp">${Distance2}<span></div>`
                 return datacol;
             },
         },
