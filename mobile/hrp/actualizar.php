@@ -288,13 +288,14 @@ if (!empty($arrayData)) {
         if ($zona) {
             $radio       = round(intval($zona['radio'])/1000, 2);
             $distancia = ($zona['distancia']) ? round($zona['distancia'], 2) : 0;
+            $distancia2 = ($zona['distancia']) ? ($zona['distancia']) : 0;
             $idZone = ($distancia <= $radio) ? $zona['id'] : '0';
         }else{
             $idZone = '0';
         }
         /** Fin calculo Zona */
 
-        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng, idZone, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
+        $query = "INSERT INTO reg_ (phoneid,id_user, id_company,createdDate,fechaHora,lat,lng, idZone, distance, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES('$phoneid', '$employeId', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
