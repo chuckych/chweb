@@ -75,6 +75,7 @@ if ($api['COUNT'] > 0) {
             'regDate'       => FechaFormatVar($r['regDate'], 'd/m/Y'),
             'regDateTime'   => $r['regDateTime'],
             'regDay'        => $r['regDay'],
+            'regUID'        => ($r['regUID']),
             'regLat'        => $r['regLat'],
             'regLng'        => $r['regLng'],
             'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
@@ -86,7 +87,7 @@ if ($api['COUNT'] > 0) {
             'userCompany'   => $r['userCompany'],
             'userID'        => $r['userID'],
             'userName'      => $r['userName'],
-            'userRegId'     => $r['userRegId'],
+            'phoneRegId'    => $r['phoneRegID'],
             'zoneID'        => $r['zoneID'],
             'zoneName'      => $r['zoneName'],
             'zoneDistance'  => round(floatval($r['zoneDistance'])*1000,2)

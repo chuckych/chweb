@@ -40,12 +40,12 @@ function userID()
     $userID = empty($p['userID']) ? '' : $p['userID'];
     return intval($userID);
 }
-function regID()
+function phoneRegId()
 {
     $p = $_REQUEST;
-    $p['regID'] = $p['regID'] ?? '';
-    $regID = empty($p['regID']) ? '' : $p['regID'];
-    return urldecode($regID);
+    $p['phoneRegId'] = $p['phoneRegId'] ?? '';
+    $phoneRegId = empty($p['phoneRegId']) ? '' : $p['phoneRegId'];
+    return urldecode($phoneRegId);
 }
 function validaKey()
 {
@@ -60,7 +60,7 @@ if (!isset($params['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'userID' || $key == 'regID') {
+    if ($key == 'key' || $key == 'userID' || $key == 'phoneRegId') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -119,7 +119,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
 $queryRecords = array();
 $start        = start();
 $length       = length();
-$regID        = regID();
+$phoneRegId   = phoneRegId();
 $userID       = userID();
 
 $validaKey = validaKey();
@@ -143,9 +143,9 @@ if (!$vkey) {
 $MESSAGE = 'OK';
 $arrayData = array();
 
-if (empty($regID)) {
+if (empty($phoneRegId)) {
     http_response_code(400);
-    (response(array(), 0, 'regID required', 400, 0, 0, $idCompany));
+    (response(array(), 0, 'phoneRegID required', 400, 0, 0, $idCompany));
 }
 if (empty($userID)) {
     http_response_code(400);
@@ -167,7 +167,7 @@ $dataSend = array(
     'employeId'            => $userID,
 );
 $data2 = array(
-    'to' => $regID,
+    'to' => $phoneRegId,
     'data' => array('data' => $dataSend)
 );
 

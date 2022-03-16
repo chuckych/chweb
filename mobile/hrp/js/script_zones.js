@@ -545,11 +545,11 @@ $(document).on("click", ".delZone", function (e) {
     });
 
 });
-function getNearZonesTable($lat, $lng) {
+function getNearZonesTable($lat, $lng, createZone = false) {
     $('#formZone #divNearZone').html(`
-        <div class="bg-white pb-3 invisible" id="RowTableNearZones">
+        <div class="bg-white pb-3 invisible" id="RowTableNearZones" style="min-height:252px">
             <div class="">
-            <table class="table table-sm text-nowrap w-100 border table-boderless" id="tableNearZones">
+            <table class="table text-nowrap w-100 border table-boderless p-2" id="tableNearZones">
                 <thead class="fontq"></thead>
             </table>
             </div>
@@ -569,22 +569,29 @@ function getNearZonesTable($lat, $lng) {
         columns: [
             /** Columna Nombre */
             {
-                className: 'align-middle pl-2 fontq', targets: '', title: `Zonas en cercanía`,
+                className: 'align-middle py-2 fontq w-100', targets: '', title: `Zonas en cercanía`,
                 "render": function (data, type, row, meta) {
                     let syncZone = '';
-                    if ($('#formZoneTipo').val() != 'upd_zone') {
-                        syncZone = ((row.distance) <= (row.zoneRadio)) ? '<button type="button" class="syncZone fontp p-0 ml-1 btn btn-sm btn-link"><span class="text-success">Vincular Zona</span></button>' : '';
+                    let className = '';
+                    if (createZone) {
+                        syncZone = ((row.distance) <= (row.zoneRadio)) ? `<br><button title="Vincular a ${row.zoneName}" type="button" class="syncZone fontp p-0 mt-1 btn btn-sm btn-link"><span class="text-success">Vincular a Zona</span></button>` : '';
+                        className = ((row.distance) <= (row.zoneRadio)) ? 'font-weight-bold' : '';
                     }
-                    let datacol = `<div title="${row.zoneName}" class="text-truncate" style="max-width: 180px;">${row.zoneName} ${syncZone}</div>`
+                    syncZone = '';
+                    let datacol = `<div title="${row.zoneName}" class="text-truncate ${className}" style="max-width: 180px;">${row.zoneName} ${syncZone}</div>`
                     return datacol;
                 },
             },
             /** Columna Distancia */
             {
-                className: 'align-middle pr-2 fontq w-100 text-right', targets: '', title: ``,
+                className: 'align-middle py-2 fontq text-right', targets: '', title: ``,
                 "render": function (data, type, row, meta) {
-                    let distance = (row.distance >= 1000) ? (row.distance/1000).toFixed(2)+' Km.' : row.distance+ ' Mts.';
-                    let datacol = `<div data-titlel="${row.distance} Mts." class="float-right">${distance}</div>`
+                    let className = '';
+                    if (createZone) {
+                        className = ((row.distance) <= (row.zoneRadio)) ? 'font-weight-bold' : '';
+                    }
+                    let distance = (row.distance >= 1000) ? (row.distance / 1000).toFixed(2) + ' Km.' : row.distance + ' Mts.';
+                    let datacol = `<div class="float-right ${className}">${distance}</div>`
                     return datacol;
                 },
             },
@@ -625,7 +632,6 @@ let mapZoneNear = (latitud, longitud, zoom = 4, createZoneOut = false) => {
         getNearZonesTable(center.lat(), center.lng());
     }
     $('#RowTableNearZones').addClass('invisible')
-    // getNearZonesTable(center.lat(), center.lng());
     $("#geocomplete").geocomplete({
         map: ".map_canvas",
         details: "form",
@@ -662,54 +668,95 @@ let mapZoneNear = (latitud, longitud, zoom = 4, createZoneOut = false) => {
         },
 
     });
+    // on change result geocomplete
+    $("#geocomplete").on("geocode:result", function (event, result) {
+        let lat = result.geometry.location.lat();
+        let lng = result.geometry.location.lng();
+        $('#RowTableNearZones').addClass('invisible')
+        getNearZonesTable(lat, lng);
+        focusEndText('#formZone #formZoneNombre');
+    });
 
     var map = $("#geocomplete").geocomplete("map")
-
-    // map.setCenter(center);
     map.setZoom(zoom);
-    // autoselect: true
-    $("#reset").hide();
+
+    $("#formZone #reset").hide();
+
     $("#geocomplete").bind("geocode:dragged", function (event, latLng) {
         $("input[name=lat]").val(latLng.lat());
         $("input[name=lng]").val(latLng.lng());
         if ($('#geocomplete').val() != '') {
-            $("#reset").show();
+            $("#formZone #reset").show();
         }
         $('#RowTableNearZones').addClass('invisible')
         getNearZonesTable(latLng.lat(), latLng.lng());
+        focusEndText('#formZone #formZoneNombre');
     });
 
-    $("#geocomplete").on("change", function () {
-        setTimeout(() => {
-            $('#RowTableNearZones').addClass('invisible')
-            getNearZonesTable($("input[name=lat]").val(), $("input[name=lng]").val());
-        }, 500);
-    });
-
-    $("#reset").on("click", function () {
+    $("#formZone #reset").on("click", function () {
         $("#geocomplete").geocomplete("resetMarker");
         $("#geocomplete").geocomplete("map");
-        $("#reset").hide();
+        $("#formZone #reset").hide();
         return false;
     });
 
-    $("#find").on("click", function () {
-        $("input[name=lat]").val(center.lat());
-        $("input[name=lng]").val(center.lng());
-        $("#geocomplete").trigger("geocode");
-    })
+    // $("#find").on("click", function () {
+    //     $("input[name=lat]").val(center.lat());
+    //     $("input[name=lng]").val(center.lng());
+    //     $("#geocomplete").trigger("geocode");
+    // })
 }
+
+let processRegZone = (lat, lng, reguid) => {
+    $.ajax({
+        type: 'POST',
+        url: 'crud.php',
+        data: 'tipo=proccesZone' + '&lat=' + lat + '&lng=' + lng + '&reguid=' + reguid,
+        // dataType: "json",
+        beforeSend: function (data) {
+            CheckSesion()
+            $.notifyClose();
+            notify('Aguarde..', 'info', 0, 'right')
+            ActiveBTN(true, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+        },
+        success: function (data) {
+            if (data.status == "ok") {
+                $.notifyClose();
+                let zoneName = data.Mensaje.zoneName
+                let result = data.Mensaje.result
+                let zoneDistance = (parseFloat(data.Mensaje.zoneDistance) * 1000).toFixed(2)
+                if (result) {
+                    notify('Registro Procesado correctamente.<br>Zona: <b>'+zoneName+'</b><br>Distancia: <b>'+zoneDistance+' Mts</b>', 'success', 5000, 'right')
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                }else{
+                    notify('Zona no encontrada', 'info', 5000, 'right')
+                }
+                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+                $('#modalZone').modal('hide');
+            } else {
+                $.notifyClose();
+                if (data.Mensaje == "There are no areas available") {
+                    notify('No hay Zonas disponibles', 'danger', 5000, 'right')
+                }else{
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                }
+                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+            }
+        },
+        error: function () { }
+    });
+}
+
 $(document).on("click", ".createZoneOut", function (e) {
-    // alert('Aca estamos')
-    // get data datatable row
+    e.preventDefault();
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-    // console.log(data);
-    // return false;
     let zoneLat = data.regLat;
     let zoneLng = data.regLng;
     let zoneRadio = 100;
     let zoneName = '';
     let idZone = '';
+    let regUID = data.regUID;
+
     // return false;
     axios({
         method: 'post',
@@ -721,13 +768,13 @@ $(document).on("click", ".createZoneOut", function (e) {
         $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
         $('#modalZone').modal('show');
         $('#formZone .requerido').html('(*)')
+        $('#formZone #divGeocomplete').hide();
         // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-        $('#formZone #formZoneTipo').val('add_zone')
+        $('#formZone #formZoneTipo').val('create_zone')
         $('#formZone #formZoneNombre').val(zoneName)
         $('#formZone #formZoneLat').val(zoneLat)
         $('#formZone #formZoneLng').val(zoneLng)
         $('#formZone #formZoneRadio').val(zoneRadio)
-        getNearZonesTable(zoneLat, zoneLng);
         select2Radio("#formZone #formZoneRadio");
 
         setTimeout(() => {
@@ -737,10 +784,17 @@ $(document).on("click", ".createZoneOut", function (e) {
         }, 500);
 
     }).then(function () {
-
+        getNearZonesTable(zoneLat, zoneLng, 'createZoneOut');
         let defaulLat = zoneLat;
         let defaulLng = zoneLng;
         mapZoneNear(defaulLat, defaulLng, 16, true);
+
+                
+        $('#formZone .modal-body').append(`
+        <input type="hidden" value="${zoneLat}" id="vlat">
+        <input type="hidden" value="${zoneLng}" id="vlng">
+        <input type="hidden" value="${regUID}" id="vregUID">
+        `)
 
     }).catch(function (error) {
         alert(error)
@@ -800,3 +854,18 @@ $(document).on("click", ".createZoneOut", function (e) {
     });
 
 });
+
+$(document).on("click", ".syncZone", function (e) {
+    e.preventDefault();
+    processRegZone($('#vlat').val(), $('#vlng').val(), $('#vregUID').val(), 'syncZone');
+    return false;
+});
+$(document).on("click", ".proccessZone", function (e) {
+    e.preventDefault();
+    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+    let zoneLat = data.regLat;
+    let zoneLng = data.regLng;
+    let regUID = data.regUID;
+    processRegZone(zoneLat, zoneLng, regUID, 'proccessZone');
+});
+

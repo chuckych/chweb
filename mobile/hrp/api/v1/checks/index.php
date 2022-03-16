@@ -196,6 +196,7 @@ $sql_query = "SELECT
     r.idZone AS 'zoneID',
     rz.nombre AS 'zoneName',
     r.distance AS 'zoneDistance',
+    r.reg_uid AS 'reg_uid',
     CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
     r.regid AS 'regid' 
     FROM reg_ r
@@ -240,6 +241,7 @@ if (($queryRecords)) {
             'phoneid'       => intval($r['phoneid']),
             'regDate'       => FechaFormatVar($r['fechaHora'], 'Y-m-d'),
             'regDateTime'   => ($r['fechaHora']),
+            'regUID'        => ($r['reg_uid']),
             'regDay'        => DiaSemana3(FechaString($r['fechaHora'])),
             'regLat'        => floatval($r['lat']),
             'regLng'        => floatval($r['lng']),
@@ -248,7 +250,7 @@ if (($queryRecords)) {
             'userCompany'   => $r['id_company'],
             'userID'        => intval($r['id_user']),
             'userName'      => $r['name'],
-            'userRegId'     => $r['regid'],
+            'phoneRegID'    => $r['regid'],
             'zoneID'        => $r['zoneID'],
             'zoneName'      => $r['zoneName'],
             'zoneDistance'  => $r['zoneDistance'],

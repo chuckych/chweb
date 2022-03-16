@@ -40,12 +40,12 @@ function message()
     $message = empty($p['message']) ? '' : $p['message'];
     return urldecode($message);
 }
-function regID()
+function phoneRegId()
 {
     $p = $_REQUEST;
-    $p['regID'] = $p['regID'] ?? '';
-    $regID = empty($p['regID']) ? '' : $p['regID'];
-    return urldecode($regID);
+    $p['phoneRegId'] = $p['phoneRegId'] ?? '';
+    $phoneRegId = empty($p['phoneRegId']) ? '' : $p['phoneRegId'];
+    return urldecode($phoneRegId);
 }
 function validaKey()
 {
@@ -60,7 +60,7 @@ if (!isset($params['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'message' || $key == 'regID') {
+    if ($key == 'key' || $key == 'message' || $key == 'phoneRegId') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -120,7 +120,7 @@ $queryRecords = array();
 $start   = start();
 $length  = length();
 $message = message();
-$regID   = regID();
+$phoneRegId   = phoneRegId();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -143,9 +143,9 @@ if (!$vkey) {
 $MESSAGE = 'OK';
 $arrayData = array();
 
-if (empty($regID)) {
+if (empty($phoneRegId)) {
     http_response_code(400);
-    (response(array(), 0, 'regID required', 400, 0, 0, $idCompany));
+    (response(array(), 0, 'phoneRegId required', 400, 0, 0, $idCompany));
 }
 if (strlen($message) > 100) {
     http_response_code(400);
@@ -161,7 +161,7 @@ $data = array(
 );
 $data = array(
     'data' => array('data' => $data),
-    'to' => $regID
+    'to' => $phoneRegId
 );
 
 $payload = json_encode($data);

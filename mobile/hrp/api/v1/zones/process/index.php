@@ -8,12 +8,12 @@ E_ALL();
 timeZone();
 timeZone_lang();
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../../mobileApikey.php'));
-borrarLogs(__DIR__ . '../../_logs/nearZones/', 30, '.log');
+borrarLogs(__DIR__ . '../../_logs/procZones/', 30, '.log');
 
 $total = 0;
 $params = $_REQUEST;
 
-if ($_SERVER['REQUEST_METHOD'] != 'GET') {
+if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     (response(array(), 0, 'Invalid Request Method', 400, 0, 0, 0));
     exit;
 }
@@ -32,22 +32,29 @@ function length()
 {
     $p = $_REQUEST;
     $p['length'] = $p['length'] ?? '';
-    $length = empty($p['length']) ? 10 : $p['length'];
+    $length = empty($p['length']) ? 1 : $p['length'];
     return intval($length);
 }
 function zoneLat()
 {
-    $p = $_GET;
+    $p = $_REQUEST;
     $p['zoneLat'] = $p['zoneLat'] ?? '';
     $zoneLat  = empty($p['zoneLat']) ? '' : test_input($p['zoneLat']);
     return floatval($zoneLat);
 }
 function zoneLng()
 {
-    $p = $_GET;
+    $p = $_REQUEST;
     $p['zoneLng'] = $p['zoneLng'] ?? '';
     $zoneLng  = empty($p['zoneLng']) ? '' : test_input($p['zoneLng']);
     return floatval($zoneLng);
+}
+function regUID()
+{
+    $p = $_REQUEST;
+    $p['regUID'] = $p['regUID'] ?? '';
+    $regUID  = empty($p['regUID']) ? '' : test_input($p['regUID']);
+    return ($regUID);
 }
 function validaKey()
 {
@@ -57,15 +64,15 @@ function validaKey()
 }
 if (!isset($params['key'])) {
     http_response_code(400);
-    (response(array(), 0, 'The Key is required', 400, 0,0, $idCompany));
+    (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
 }
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'zoneName') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'regUID') {
         continue;
     } else {
-        (response(array(), 0, 'Parameter error', 400, 0,0, $idCompany));
+        (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
         exit;
     }
 }
@@ -111,7 +118,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '../../../_logs/nearZones/' . date('Ymd') . '_log_nearZones_'.padLeft($idCompany, 3, 0).'.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../../_logs/procZones/' . date('Ymd') . '_log_procZones_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -120,10 +127,11 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
     exit;
 }
 $queryRecords = array();
-$start    = start();
-$length   = length();
-$zoneLat   = zoneLat();
-$zoneLng   = zoneLng();
+$start   = start();
+$length  = length();
+$zoneLat = zoneLat();
+$zoneLng = zoneLng();
+$regUID  = regUID();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -151,6 +159,14 @@ if (empty($zoneLng)) {
     http_response_code(400);
     (response(array(), 0, 'zoneLng required', 400, 0, 0, $idCompany));
 }
+if (empty($regUID)) {
+    http_response_code(400);
+    (response(array(), 0, 'regUID required', 400, 0, 0, $idCompany));
+}
+if (strlen($regUID) > 8) {
+    http_response_code(400);
+    (response(array(), 0, 'regUID max 8 characters', 400, 0, 0, $idCompany));
+}
 if (!is_float($zoneLat)) {
     http_response_code(400);
     (response(array(), 0, 'zoneLat invalid format', 400, 0, 0, $idCompany));
@@ -159,11 +175,23 @@ if (!is_float($zoneLng)) {
     http_response_code(400);
     (response(array(), 0, 'zoneLng invalid format', 400, 0, 0, $idCompany));
 }
+$qZones = "SELECT * FROM `reg_zones` WHERE `id_company` = '$idCompany' LIMIT 1";
+$a = count_pdoQuery($qZones);
+if (!$a) { // si tiene registros en la tbla de reg_
+    $arrayData  = array();
+    $MESSAGE    = 'There are no areas available'; // no hay Zonas Disponibles
+    $endScript  = microtime(true);
+    $timeScript = round($endScript - $startScript, 2);
+    $countData  = count($arrayData);
+    (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
+    exit;
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-function queryCalcZone($lat, $lng, $idCompany){
+function queryCalcZone($lat, $lng, $idCompany)
+{
     $query = "
             SELECT
             `rg`.*,
@@ -196,7 +224,7 @@ $queryRecords = array_pdoQuery($sql_query);
 
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
-        // $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
+        $resultRadioDistance = (floatval($r['distancia']) * 1000) <= (intval($r['radio'])) ? true : false;
         $arrayData[] = array(
             'zoneID'       => intval($r['id']),
             'zoneName'     => trim($r['nombre']),
@@ -205,15 +233,24 @@ if (($queryRecords)) {
             'zoneLng'      => $r['lng'],
             'idCompany'    => $r['id_company'],
             'zoneDistance' => ($r['distancia']),
+            'result' => ($resultRadioDistance),
         );
     }
-    $q = "SELECT COUNT(*) AS 'count' FROM `reg_zones` `rz` WHERE `rz`.`id` > 0 AND `rz`.`id_company` = $idCompany";
-    $q .= $filtro_query;
-    $total = simple_pdoQuery($q)['count'];
 }
-
-$finScript    = microtime(true);
-$tiempoScript = round($finScript - $iniScript, 2);
-$countData    = count($arrayData);
-(response($arrayData, intval($total), 'OK', '', $tiempoScript, $countData, $idCompany));
-exit;
+$result = reset($arrayData);
+if (($result['result']) == true) {
+    $updateReg = "UPDATE `reg_` SET `idZone` = '$result[zoneID]', `distance` = '$result[zoneDistance]' WHERE `reg_uid` = '$regUID'";
+} else {
+    $updateReg = "UPDATE `reg_` SET `idZone` = '0', `distance` = '0' WHERE `reg_uid` = '$regUID'";
+}
+if (pdoquery($updateReg)) {
+    $finScript    = microtime(true);
+    $tiempoScript = round($finScript - $iniScript, 2);
+    $countData    = count($arrayData);
+    (response(reset($arrayData), 1, 'OK', '', $tiempoScript, $countData, $idCompany));
+    exit;
+} else {
+    http_response_code(400);
+    (response(array(), 0, 'Error process zone', 400, 0, 0, $idCompany));
+    exit;
+}

@@ -384,6 +384,22 @@ if ($verDB < 20220314) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20220316) {
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `reg_uid` BINARY(8) NOT NULL AFTER `rid`");
+    fileLog("ALTER TABLE `reg_` ADD COLUMN `reg_uid`", $pathLog); // escribir en el log
+    
+    pdoQuery("UPDATE `reg_` set `reg_uid` = UUID()"); // seteo el uid de los registros
+    fileLog("UPDATE `reg_uid`", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid` (`reg_uid`)"); // agregar un indice unico
+    fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid`", $pathLog); // escribir en el log
+        
+    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+    
+}
 
  // ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`;
 

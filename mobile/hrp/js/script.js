@@ -150,13 +150,14 @@ tablemobile = $('#table-mobile').DataTable({
                 let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                 let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
                 
-                btnAdd = `<br><span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut">Crear Zona <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                btnAdd = `<br><span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                <span data-titlet="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>`;
                 if(row.regLat == 0){
                     btnAdd = `<br><span class="text-secondary fontp p-0 m-0">Sin datos GPS</span>`;
                 }
                 let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 w100 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
 
-                let datacol = `<div class="smtdcol" title="${zoneName2}">${device}</div>`
+                let datacol = `<div class="smtdcol">${device}</div>`
                 return datacol;
             },
         },

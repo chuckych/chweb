@@ -135,6 +135,9 @@ table.dataTable {
     position: fixed;
     display: inline-block;
 }
+.syncZone:hover{
+    font-weight: 600 !important;
+}
 
 /* .modal{
     z-index: 20;   
