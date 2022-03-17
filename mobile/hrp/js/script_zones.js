@@ -791,9 +791,9 @@ $(document).on("click", ".createZoneOut", function (e) {
 
                 
         $('#formZone .modal-body').append(`
-        <input type="hidden" value="${zoneLat}" id="vlat">
-        <input type="hidden" value="${zoneLng}" id="vlng">
-        <input type="hidden" value="${regUID}" id="vregUID">
+        <input type="hidden" name="regLat" value="${zoneLat}" id="vlat">
+        <input type="hidden" name="regLng" value="${zoneLng}" id="vlng">
+        <input type="hidden" name="regUID" value="${regUID}" id="vregUID">
         `)
 
     }).catch(function (error) {
@@ -831,11 +831,11 @@ $(document).on("click", ".createZoneOut", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let zoneName = data.Mensaje.zoneName
-                        notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                        notify('Zona <b>' + zoneName + '</b>.<br />Creada correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableZones').DataTable().search(zoneName).draw();
-                        classEfect('#tableZones_filter input', 'border-custom')
+                        // $('#tableZones').DataTable().search(zoneName).draw();
+                        // classEfect('#tableZones_filter input', 'border-custom')
                         $('#tableZones').DataTable().ajax.reload();
                         ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
                         $('#modalZone').modal('hide');

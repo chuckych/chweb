@@ -3170,7 +3170,6 @@ function getRemoteFile($url, $timeout = 10)
     }
     exit;
 }
-// https://programacion.net/articulo/como_enviar_y_recibir_datos_json_mediante_php_curl_1885
 function sendRemoteData($url, $payload, $timeout = 10)
 {
    

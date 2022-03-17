@@ -512,14 +512,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $post = $_POST;
 
-        // PrintRespuestaJson('error', 'Zona');
-        // exit;
+      
 
         $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
         $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
         $post['lat']            = $post['lat'] ?? '';
         $post['lng']            = $post['lng'] ?? '';
+        $post['regUID']         = $post['regUID'] ?? '';
+        $post['regLat']         = $post['regLat'] ?? '';
+        $post['regLng']         = $post['regLng'] ?? '';
 
+        /** data de lazona a crear */
         $nombre = test_input($post['formZoneNombre']);
         $radio  = test_input($post['formZoneRadio']);
         $lat    = test_input($post['lat']);
@@ -545,6 +548,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE'];
 
+        // PrintRespuestaJson('error', 'procesarZonas.php?company='.$idCompany);
+        // exit;
+
         $paramsApi = array(
             'key'       => $_SESSION["RECID_CLIENTE"],
             'zoneName'  => urlencode($nombre),
@@ -562,8 +568,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $totalRecords = $api['TOTAL'];
 
         if ($api['COUNT'] > 0) {
+
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+
+            /** data del registro */
+            $regLat    = test_input($post['regLat']);
+            $regLng    = test_input($post['regLng']);
+            $regUID    = test_input($post['regUID']);
+
+            $paramsApi = array(
+                'key'       => $_SESSION["RECID_CLIENTE"],
+                'zoneLat'    => ($regLat),
+                'zoneLng'    => ($regLng),
+                'regUID'     => ($regUID)
+            );
+            
+            // $u = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/procesarZonas.php?company=".$idCompany;
+            // $g = json_decode(file_get_contents("$u"));
+            // procear url de la api
+
+
+            // PrintRespuestaJson('error', $g);
+            // exit;
+
+            $api = "api/v1/zones/process/";
+            $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+            $api = json_decode($api, true);
+
+            $totalRecords = $api['TOTAL'];
+
+            if ($api['COUNT'] > 0) {
+                $status2 = 'ok';
+                $arrayData2 = $api['RESPONSE_DATA'];
+            } else {
+                $status2 = 'error';
+                $arrayData2 = $api['MESSAGE'];
+            }
+
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
