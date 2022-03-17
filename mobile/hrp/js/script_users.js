@@ -110,7 +110,7 @@ tableUsuarios.on('xhr.dt', function (e, settings, json) {
     tableUsuarios.off('xhr.dt');
 });
 tableUsuarios.on('init.dt', function (e, settings, json) {
-    $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h35 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>')
+    $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h40 opa8 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>')
     $('#tableUsuarios_filter input').removeClass('form-control-sm')
     $('#tableUsuarios_filter input').attr("style","height: 40px !important");
     select2Simple('#tableUsuarios_length select', '', false, false)

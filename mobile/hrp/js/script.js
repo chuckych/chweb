@@ -149,15 +149,15 @@ tablemobile = $('#table-mobile').DataTable({
                 let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
                 
                 btnAdd = `<div>
-                    <span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                    <span data-titlet="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                    <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                    <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
                 </div>`;
                 if(row.regLat == 0){
                     btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
                 }
                 let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
 
-                let datacol = `<div title="${row.zoneName}" class="smtdcol w120 text-truncate py-2">${device}</div>`
+                let datacol = `<div title="${zoneName2}" class="w120 text-truncate py-2">${device}</div>`
                 return datacol;
             },
         },
@@ -251,6 +251,7 @@ tablemobile.on('init.dt', function () {
     $('#table-mobile_filter input').removeClass('form-control-sm')
     $('#table-mobile_filter input').attr("style","height: 40px !important");
     select2Simple('#table-mobile_length select', '', false, false)
+    $('.SoloFic').hide()
 });
 tablemobile.on('draw.dt', function (e, settings) {
     // e.preventDefault();
