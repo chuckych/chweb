@@ -74,7 +74,8 @@ tableDevices = $('#tableDevices').DataTable({
     searching: true,
     info: true,
     ordering: false,
-    scrollY: '52vh',
+    // scrollY: '52vh',
+    scrollY: '281px',
     scrollCollapse: true,
     scrollX: true,
     fixedHeader: false,
@@ -85,6 +86,9 @@ tableDevices = $('#tableDevices').DataTable({
 });
 tableDevices.on('init.dt', function (e, settings) {
     $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h35 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
+    $('#tableDevices_filter input').removeClass('form-control-sm')
+    $('#tableDevices_filter input').attr("style","height: 40px !important");
+    select2Simple('#tableDevices_length select', '', false, false)
 });
 tableDevices.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')

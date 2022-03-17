@@ -43,9 +43,9 @@
 
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
-            <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
+            <div class="row bg-white invisible mt-2" id="RowTableMobile">
                 <div class="col-12" id="divTableMobile">
-                    <table class="table text-nowrap w-100 border shadow-sm p-2" id="table-mobile">
+                    <table class="table text-nowrap w-100 border shadow p-2" id="table-mobile">
                         <thead class="fontq">
                         </thead>
                     </table>
@@ -63,10 +63,10 @@
                 endif;
                 ?>
             </div>
-            <div class="bg-white pb-3 radius invisible" id="RowTableUsers">
+            <div class="bg-white invisible mt-2" id="RowTableUsers">
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <table class="table text-nowrap w-100 border shadow-sm p-2" id="tableUsuarios">
+                        <table class="table text-nowrap w-100 border shadow p-2" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
@@ -74,10 +74,10 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white pb-3 invisible" id="RowTableDevices">
+            <div class="bg-white invisible mt-2" id="RowTableDevices">
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <table class="table text-nowrap w-100 border shadow-sm p-2" id="tableDevices">
+                        <table class="table text-nowrap w-100 border shadow p-2" id="tableDevices">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
@@ -85,10 +85,10 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-white pb-3 invisible" id="RowTableZones">
+            <div class="bg-white invisible mt-2" id="RowTableZones">
                 <div class="row">
                     <div class="col-12 col-lg-6">
-                        <table class="table text-nowrap w-100 border shadow-sm p-2" id="tableZones">
+                        <table class="table text-nowrap w-100 border shadow p-2" id="tableZones">
                             <thead class="fontq"></thead>
                         </table>
                     </div>

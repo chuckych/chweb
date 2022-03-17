@@ -89,17 +89,20 @@ tableZones = $('#tableZones').DataTable({
     searching: true,
     info: true,
     ordering: false,
-    scrollY: '52vh',
+    // scrollY: '52vh',
+    scrollY: '286px',
     scrollCollapse: true,
     scrollX: true,
     fixedHeader: false,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },
-
 });
 tableZones.on('init.dt', function (e, settings) {
-    $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h35 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>')
+    $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h40 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>')
+    $('#tableZones_filter input').removeClass('form-control-sm')
+    $('#tableZones_filter input').attr("style","height: 40px !important");
+    select2Simple('#tableZones_length select', '', false, false)
 });
 tableZones.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')

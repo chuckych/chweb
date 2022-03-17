@@ -40,7 +40,7 @@ tablemobile = $('#table-mobile').DataTable({
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
         "<'row '<'col-12 table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
     ajax: {
@@ -222,7 +222,8 @@ tablemobile = $('#table-mobile').DataTable({
     searching: true,
     info: true,
     ordering: false,
-    scrollY: '52vh',
+    // scrollY: '43vh',
+    scrollY: '415px',
     scrollCollapse: true,
     scrollX: true,
     fixedHeader: false,
@@ -233,7 +234,7 @@ tablemobile = $('#table-mobile').DataTable({
 tablemobile.on('init.dt', function () {
     $('.dr').append(`
         <div class="mx-2">
-            <input type="text" readonly class="pointer form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
+            <input type="text" readonly class="pointer h40 form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
         </div>
     `);
     dateRange()
@@ -247,10 +248,12 @@ tablemobile.on('init.dt', function () {
     $('#RowTableMobile').removeClass('invisible')
     // $('#table-mobile_filter input').addClass('w250')
     $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
+    $('#table-mobile_filter input').removeClass('form-control-sm')
+    $('#table-mobile_filter input').attr("style","height: 40px !important");
+    select2Simple('#table-mobile_length select', '', false, false)
 });
 tablemobile.on('draw.dt', function (e, settings) {
     // e.preventDefault();
-    $('#table-mobile .dataTables_scrollBody').css('height', 'calc(100vh - 200px)')
     return true
 });
 tablemobile.on('page.dt', function () {
