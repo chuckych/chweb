@@ -71,6 +71,34 @@ table.dataTable td {
 #tableZones_wrapper .dataTables_scrollBody .table thead {
     display: none !important;   
 }
+#tableDevices_wrapper .dataTables_scrollHead .table  {
+    border-bottom: 0px solid #dee2e6 !important;
+}
+#tableDevices_wrapper .dataTables_scrollHead .table thead th {
+    border-bottom: 3px solid #dee2e6 !important;
+}
+#tableDevices_wrapper .dataTables_scrollBody .table  {
+    border-top: 0px solid #dee2e6 !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+#tableDevices_wrapper .dataTables_scrollBody .table thead {
+    display: none !important;   
+}
+#tableUsuarios_wrapper .dataTables_scrollHead .table  {
+    border-bottom: 0px solid #dee2e6 !important;
+}
+#tableUsuarios_wrapper .dataTables_scrollHead .table thead th {
+    border-bottom: 3px solid #dee2e6 !important;
+}
+#tableUsuarios_wrapper .dataTables_scrollBody .table  {
+    border-top: 0px solid #dee2e6 !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
+#tableUsuarios_wrapper .dataTables_scrollBody .table thead {
+    display: none !important;   
+}
 
 .smtd {
     display: flex;

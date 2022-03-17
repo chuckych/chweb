@@ -8,7 +8,7 @@ const loadingTableDevices = (selectortable) => {
 }
 tableDevices = $('#tableDevices').DataTable({
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12't>>" +
+        "<'row '<'col-12 table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -26,7 +26,7 @@ tableDevices = $('#tableDevices').DataTable({
         {
             className: 'align-middle', targets: '', title: `<div class="w120">Dispositivo</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div data-titlet="" class="text-truncate" style="max-width: 120px;">${row.deviceName}</div>`
+                let datacol = `<div data-titlet="" class="text-truncate w120">${row.deviceName}</div>`
                 return datacol;
             },
         },
@@ -43,7 +43,7 @@ tableDevices = $('#tableDevices').DataTable({
          {
             className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1">${row.totalChecks}</div>`
+                let datacol = `<div class="ls1 w50">${row.totalChecks}</div>`
                 return datacol;
             },
         },
@@ -56,7 +56,7 @@ tableDevices = $('#tableDevices').DataTable({
                     del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
                 }
                 let datacol = `
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end w-100">
                     <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></span>
                     ${del}
                 </div>
@@ -74,6 +74,10 @@ tableDevices = $('#tableDevices').DataTable({
     searching: true,
     info: true,
     ordering: false,
+    scrollY: '52vh',
+    scrollCollapse: true,
+    scrollX: true,
+    fixedHeader: false,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },

@@ -11,7 +11,7 @@ tableUsuarios = $('#tableUsuarios').DataTable({
 
     },
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12't>>" +
+        "<'row '<'col-12 table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -88,6 +88,10 @@ tableUsuarios = $('#tableUsuarios').DataTable({
     searching: true,
     info: true,
     ordering: false,
+    scrollY: '52vh',
+    scrollCollapse: true,
+    scrollX: true,
+    fixedHeader: false,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },

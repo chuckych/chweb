@@ -39,7 +39,7 @@ tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: 5,
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row '<'col-12't>>" +
+        "<'row '<'col-12 table-responsive't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -224,7 +224,8 @@ tablemobile = $('#table-mobile').DataTable({
     ordering: false,
     scrollY: '52vh',
     scrollCollapse: true,
-    // fixedHeader: true,
+    scrollX: true,
+    fixedHeader: false,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
     },
@@ -249,6 +250,7 @@ tablemobile.on('init.dt', function () {
 });
 tablemobile.on('draw.dt', function (e, settings) {
     // e.preventDefault();
+    $('#table-mobile .dataTables_scrollBody').css('height', 'calc(100vh - 200px)')
     return true
 });
 tablemobile.on('page.dt', function () {
@@ -696,13 +698,15 @@ $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     enableBtnMenu()
     // $('#RowTableUsers').addClass('invisible');
-    // loadingTableUser('#tableUsuarios');
+    $('#RowTableUsers').addClass('invisible')
+        // loadingTableUser('#tableUsuarios');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Usuarios Mobile"
     $('#Encabezado').html("Usuarios Mobile");
     focusRowTables()
     // $('.loading').hide()
+    $('#tableUsuarios').DataTable().ajax.reload(null, false)
     $('#RowTableUsers').show();
     // $('#tableUsuarios').DataTable().ajax.reload();
 });
@@ -710,6 +714,7 @@ $(document).on("click", ".showDevices", function (e) {
     CheckSesion()
     enableBtnMenu()
     // loadingTableDevices('#tableDevices');
+    $('#RowTableDevices').addClass('invisible')
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Dispositivos Mobile"
@@ -718,10 +723,12 @@ $(document).on("click", ".showDevices", function (e) {
     // $('.loading').hide()
     // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableDevices').show();
+    $('#tableDevices').DataTable().ajax.reload(null, false)
 });
 $(document).on("click", ".showZones", function (e) {
     CheckSesion()
     enableBtnMenu()
+    $('#RowTableZones').addClass('invisible')
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Zonas Mobile"
@@ -731,7 +738,8 @@ $(document).on("click", ".showZones", function (e) {
     // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableZones').show();
     // datatable column adjust
-    $('#tableZones').DataTable().columns.adjust().draw();
+    // $('#tableZones').DataTable().columns.adjust().draw();
+    $('#tableZones').DataTable().ajax.reload(null, false)
 });
 $(document).on("click", ".showChecks", function (e) {
     CheckSesion()
