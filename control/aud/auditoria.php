@@ -27,9 +27,10 @@ secure_auth_ch();
         <!-- Encabezado -->
         <?= encabezado_mod2('bg-custom', 'white', 'journal-check',  'Auditoría', '25', 'text-white mr-2'); ?>
         <!-- Fin Encabezado -->
-        <div class="row bg-white mt-2 py-3" id="divTableAud" style="display: none;">
+        <div class="row bg-white" id="divTableAud" style="display: none;">
             <div class="col-12">
-                <table id="tableAuditoria" class="table table-hover text-nowrap">
+                <table id="tableAuditoria" class="table table-hover w-100 text-nowrap p-2">
+                    <thead class="fontq"></thead>
                 </table>
             </div>
         </div>
@@ -51,7 +52,7 @@ secure_auth_ch();
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="main.js?<?= microtime(true) ?>"></script>
+    <script src="main-min.js?<?= microtime(true) ?>"></script>
 </body>
 
 </html>

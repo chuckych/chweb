@@ -107,10 +107,10 @@ $(function() {
         // stateSave: true,
         // stateDuration: -1,
         dom:
-            "<'row fila invisible animate__animated animate__fadeInDown'<'col-12 col-sm-6 d-flex justify-content-start'<'filtros'>l><'col-12 col-sm-6 d-flex justify-content-end'<'ml-1 _dr'><'refresh'>>>" +
+            "<'row mt-3 fila invisible animate__animated animate__fadeInDown'<'col-12 col-sm-6 d-flex justify-content-start'<'filtros'>l><'col-12 col-sm-6 d-flex justify-content-end'<'ml-1 _dr'><'refresh'>>>" +
             "<'row'<'col-12 divFiltros'>>" +
             "<'row fila invisible animate__animated animate__fadeInDown'<'col-12'f>>" +
-            "<'row animate__animated animate__fadeIn'<'col-12 table-responsive'tr>>" +
+            "<'row '<'col-12'<'border table-responsive't>>>" +
             "<'row animate__animated animate__fadeIn'<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
         ajax: {
             url: "getAuditoria.php?" + $.now(),
@@ -200,7 +200,7 @@ $(function() {
                 }
             },
             {
-                className: "w-100 text-wrap",
+                className: "w-100",
                 targets: "",
                 title:
                     "<span data-titlel='Información de la auditoría'>Dato</span>",
@@ -366,5 +366,8 @@ $(function() {
         $("#divTableAud").show();
         $(idTable + "_previous").attr("data-titlel", "Anterior");
         $(idTable + "_next").attr("data-titlel", "Siguiente");
+    });
+    table.on("xhr.dt", function(e, settings) {
+        table.off('xhr.dt');
     });
 });
