@@ -35,9 +35,9 @@ tableUsuarios = $('#tableUsuarios').DataTable({
         },
         /** Columna Nombre */
         {
-            className: 'align-middle', targets: '', title: `<div class="w150">Nombre</div>`,
+            className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="text-truncate" style="max-width: 150px;">${row.userName}</div>`
+                let datacol = `<div class="text-truncate w120">${row.userName}</div>`
                 return datacol;
             },
         },
