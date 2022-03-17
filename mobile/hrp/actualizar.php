@@ -125,6 +125,7 @@ $arrayData     = array();
 $insertCH      = array();
 $insertCH_Fail = array();
 $totalSession  = array();
+$distancia2 = '';
 
 $start = microtime(true);
 

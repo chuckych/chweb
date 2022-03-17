@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?=vjs()?>" type="text/css">
 <!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons-1.5.0/bootstrap-icons.css" type="text/css"> -->
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/icons/font/bootstrap-icons.css" type="text/css">
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"> -->

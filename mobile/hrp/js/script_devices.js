@@ -7,11 +7,8 @@ const loadingTableDevices = (selectortable) => {
     $(selectortable + ' td span').addClass('invisible')
 }
 tableDevices = $('#tableDevices').DataTable({
-    "initComplete": function (settings, json) {
-        // $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h35 px-3 addDevice"><i class="bi bi-plus-lg"></i></button>')
-    },
     dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12 border shadow-sm tableResponsive p-2't>>" +
+        "<'row '<'col-12't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -54,13 +51,13 @@ tableDevices = $('#tableDevices').DataTable({
         {
             className: 'align-middle w-100', targets: '', title: '',
             "render": function (data, type, row, meta) {
-                let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delDevice"></button></span>`
+                let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
                 if (row.totalChecks > 1) {
-                    del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button></span>`
+                    del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
                 }
                 let datacol = `
                 <div class="d-flex justify-content-end">
-                    <span><button data-titlet="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></button></span>
+                    <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></span>
                     ${del}
                 </div>
                 `
@@ -70,7 +67,6 @@ tableDevices = $('#tableDevices').DataTable({
     ],
     lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
     bProcessing: false,
-
     serverSide: true,
     deferRender: true,
     searchDelay: 1000,
@@ -94,8 +90,8 @@ tableDevices.on('draw.dt', function (e, settings) {
 tableDevices.on('page.dt', function (e, settings) {
     loadingTableDevices('#tableDevices')
 });
-tableDevices.on('xhr', function (e, settings, json) {
-    tableDevices.off('xhr');
+tableDevices.on('xhr.dt', function (e, settings, json) {
+    tableDevices.off('xhr.dt');
 });
 $(document).on("click", ".addDevice", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();

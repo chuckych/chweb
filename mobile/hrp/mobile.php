@@ -16,7 +16,7 @@
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
-            <?= encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', 'Fichadas ' . MODULOS['mobile'], 'color: #fff; width:30px', 'mr-2'); ?>
+            <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', 'Fichadas ' . MODULOS['mobile'], 'color: #fff; width:30px', 'mr-2'); ?>
         </div>
         <!-- Fin Encabezado -->
         <?php
@@ -43,11 +43,8 @@
 
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
-            <div class="loading show">
-                <div class="spin"></div>
-            </div>
             <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
-                <div class="col-12 table-responsive " id="divTableMobile">
+                <div class="col-12" id="divTableMobile">
                     <table class="table text-nowrap w-100 " id="table-mobile">
                         <thead class="fontq">
                         </thead>
@@ -68,8 +65,8 @@
             </div>
             <div class="bg-white pb-3 radius invisible" id="RowTableUsers">
                 <div class="row">
-                    <div class="col-12 col-lg-6 table-responsive">
-                        <table class="table text-nowrap w-100" id="tableUsuarios">
+                    <div class="col-12 col-lg-6">
+                        <table class="table text-nowrap w-100 border shadow-sm p-2 table-responsive" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
@@ -79,17 +76,19 @@
             </div>
             <div class="bg-white pb-3 invisible" id="RowTableDevices">
                 <div class="row">
-                    <div class="col-12 col-sm-6 table-responsive">
-                        <table class="table text-nowrap w-100" id="tableDevices">
+                    <div class="col-12 col-lg-6">
+                        <table class="table text-nowrap w-100 border shadow-sm p-2 table-responsive" id="tableDevices">
                             <thead class="fontq"></thead>
                         </table>
+                    </div>
+                    <div class="col-12 col-lg-6">
                     </div>
                 </div>
             </div>
             <div class="bg-white pb-3 invisible" id="RowTableZones">
                 <div class="row">
-                    <div class="col-12 col-lg-8 table-responsive">
-                        <table class="table text-nowrap w-100" id="tableZones">
+                    <div class="col-12 col-lg-8">
+                        <table class="table text-nowrap w-100 border shadow-sm p-2 table-responsive" id="tableZones">
                             <thead class="fontq"></thead>
                         </table>
                     </div>

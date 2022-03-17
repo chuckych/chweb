@@ -938,5 +938,5 @@ $("#RefreshToken").on("submit", function (e) {
         error: function () { }
     });
 });
-// focusRowTables()
-// $('#RowTableZones').show();
+focusRowTables()
+$('#RowTableDevices').show();
