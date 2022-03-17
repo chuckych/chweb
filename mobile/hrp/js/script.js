@@ -39,7 +39,7 @@ tablemobile = $('#table-mobile').DataTable({
     // iDisplayLength: 5,
     dom: "<'row lengthFilterTable'" +
         "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row'<'col-12'<'tableResponsive border shadow-sm p-2't>>>" +
+        "<'row '<'col-12't>>" +
         "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
         "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
         "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
@@ -100,16 +100,14 @@ tablemobile = $('#table-mobile').DataTable({
         },
         /** Columna Usuario */
         {
-            className: '', targets: '', title: `
-            <div class="d-none d-sm-block w150">Usuario</div>
-            <div class="d-block d-sm-none w100">Usuario</div>
+            className: 'text-left', targets: '', title: `
+            <div class="w100">Usuario</div>
             `,
             "render": function (data, type, row, meta) {
                 let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                 let datacol = `
                     <div class="smtdcol">
-                        <div class="searchName pointer text-truncate d-none d-sm-block" style="max-width: 150px;">${nameuser}</div>
-                        <div class="pointer text-truncate d-block d-sm-none" style="max-width: 100px;">${nameuser}</div>
+                        <div class="searchName pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
                         <div class="searchID pointer text-secondary fontp">${row.userID}</div>
                     </div>
                     `
@@ -141,23 +139,25 @@ tablemobile = $('#table-mobile').DataTable({
         },
         /** Columna Zona */
         {
-            className: '', targets: '', title: '<div class="" style="max-width: 100px; min-width:100px;" >Zona</div>',
+            className: '', targets: '', title: '<div class="w120">Zona</div>',
             "render": function (data, type, row, meta) {
                 // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                 let btnAdd = ''
-                let zoneName = (row.zoneID > 0) ? '<span class="text-success">'+row.zoneName+'</span>' : '<span class="text-danger">Fuera de Zona</span>'
+                let zoneName = (row.zoneID > 0) ? '<div class="text-success">'+row.zoneName+'</div>' : '<div class="text-danger">Fuera de Zona</div>'
                 let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                 let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                 let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
                 
-                btnAdd = `<br><span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                <span data-titlet="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>`;
+                btnAdd = `<div>
+                    <span data-titlet="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                    <span data-titlet="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                </div>`;
                 if(row.regLat == 0){
-                    btnAdd = `<br><span class="text-secondary fontp p-0 m-0">Sin datos GPS</span>`;
+                    btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
                 }
-                let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 w100 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
+                let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
 
-                let datacol = `<div class="smtdcol">${device}</div>`
+                let datacol = `<div title="${row.zoneName}" class="smtdcol w120 text-truncate py-2">${device}</div>`
                 return datacol;
             },
         },
@@ -167,7 +167,7 @@ tablemobile = $('#table-mobile').DataTable({
             "render": function (data, type, row, meta) {
                 let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
                 let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
-                let datacol = `<div>${iconMapa}</div>`
+                let datacol = `<div class="w40">${iconMapa}</div>`
                 return datacol;
             },
         },
@@ -195,20 +195,20 @@ tablemobile = $('#table-mobile').DataTable({
                     evento = 'Fichada';
                 }
                 row.operation = (row.operation == '0') ? '' : row.operation;
-                let datacol = `<div class="">${evento}<br>${row.operation}</div>`
+                let datacol = `<div class="w70 text-truncate">${evento}<br>${row.operation}</div>`
                 return datacol;
             },
         },
         /** Columna Dispositivo */
         {
-            className: 'w-100', targets: '', title: '<div class="" style="max-width: 140px; min-width:140px;" >Dispositivo</div>',
+            className: 'w-100', targets: '', title: '<div class="w140" >Dispositivo</div>',
             "render": function (data, type, row, meta) {
                 // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                 let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
                 
                 let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
 
-                let datacol = `<div class="smtdcol" title="Versión App: ${row.appVersion}">${device}</div>`
+                let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
                 return datacol;
             },
         },
@@ -248,7 +248,7 @@ tablemobile.on('init.dt', function () {
     $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
 });
 tablemobile.on('draw.dt', function (e, settings) {
-    e.preventDefault();
+    // e.preventDefault();
     return true
 });
 tablemobile.on('page.dt', function () {
@@ -730,6 +730,8 @@ $(document).on("click", ".showZones", function (e) {
     // $('.loading').hide()
     // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableZones').show();
+    // datatable column adjust
+    $('#tableZones').DataTable().columns.adjust().draw();
 });
 $(document).on("click", ".showChecks", function (e) {
     CheckSesion()
@@ -938,5 +940,5 @@ $("#RefreshToken").on("submit", function (e) {
         error: function () { }
     });
 });
-focusRowTables()
-$('#RowTableDevices').show();
+// focusRowTables()
+// $('#RowTableDevices').show();

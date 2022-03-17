@@ -19,46 +19,46 @@ tableZones = $('#tableZones').DataTable({
         error: function () { },
     },
     createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn align-middle');
+        // $(row).addClass('animate__animated animate__fadeIn align-middle');
     },
     columns: [
         /** Columna Nombre */
         {
-            className: 'align-middle', targets: '', title: `<div class="w180">Zona</div>`,
+            className: 'align-middle', targets: '', title: `<div class="w160">Zona</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div title="${row.zoneName}" class="text-truncate" style="max-width: 180px;">${row.zoneName}</div>`
+                let datacol = `<div title="${row.zoneName}" class="text-truncate w160">${row.zoneName}</div>`
                 return datacol;
             },
         },
         /** Columna Radio */
         {
-            className: 'align-middle text-center', targets: '', title: `<div class="w50">Radio</div>`,
+            className: 'align-middle', targets: '', title: `<div class="w40">Radio</div>`,
             "render": function (data, type, row, meta) {
-                let datacol = `<div data-titlet="" class="text-truncate" style="max-width: 50px;">${row.zoneRadio}</div>`
+                let datacol = `<div class="w40">${row.zoneRadio}</div>`
                 return datacol;
             },
         },
-        /** Columna Latitud */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w90">Latitud</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div data-titlet="" class="text-truncate ls1" style="max-width: 90px;">${row.zoneLat}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Longitud */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div data-titlet="" class="text-truncate ls1" style="max-width: 90px;">${row.zoneLng}</div>`
-                return datacol;
-            },
-        },
+        // /** Columna Latitud */
+        // {
+        //     className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
+        //     "render": function (data, type, row, meta) {
+        //         let datacol = `<div data-titlet="" class="text-truncate w90">${row.zoneLat}<br>${row.zoneLng}</div>`
+        //         return datacol;
+        //     },
+        // },
+        // /** Columna Longitud */
+        // {
+        //     className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
+        //     "render": function (data, type, row, meta) {
+        //         let datacol = `<div data-titlet="" class="text-truncate ls1 w90">${row.zoneLng}</div>`
+        //         return datacol;
+        //     },
+        // },
         /** Columna cant TotalZones */
         {
             className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
             "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1">${row.totalZones}</div>`
+                let datacol = `<div class="ls1 w50">${row.totalZones}</div>`
                 return datacol;
             },
         },
@@ -89,8 +89,8 @@ tableZones = $('#tableZones').DataTable({
     searching: true,
     info: true,
     ordering: false,
-    // scrollY: '52vh',
-    // scrollCollapse: true,
+    scrollY: '52vh',
+    scrollCollapse: true,
     language: {
         "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
     },

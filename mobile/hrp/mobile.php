@@ -45,7 +45,7 @@
         <div class="wrapper">
             <div class="row bg-white pb-3 radius invisible" id="RowTableMobile">
                 <div class="col-12" id="divTableMobile">
-                    <table class="table text-nowrap w-100 " id="table-mobile">
+                    <table class="table text-nowrap w-100 border shadow-sm p-2 table-responsive" id="table-mobile">
                         <thead class="fontq">
                         </thead>
                     </table>
@@ -87,12 +87,12 @@
             </div>
             <div class="bg-white pb-3 invisible" id="RowTableZones">
                 <div class="row">
-                    <div class="col-12 col-lg-8">
+                    <div class="col-12 col-lg-6">
                         <table class="table text-nowrap w-100 border shadow-sm p-2 table-responsive" id="tableZones">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-lg-4"></div>
+                    <div class="col-12 col-lg-6"></div>
                 </div>
             </div>
             <div class="row">
