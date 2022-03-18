@@ -88,7 +88,7 @@ chunk
                 $padding = '';
                 foreach ($dataNovedades as $key => $ValueDataNovedades) {
                     if ($_Por != 'Fech') {
-                        if ($ValueDataNovedades['Fecha'] === ($dataNovedades[$key - 1]['Fecha'])) {
+                        if ($ValueDataNovedades['Fecha'] === ($dataNovedades[$key - 1]['Fecha'] ?? '')) {
                             $ValueDataNovedades['Fecha'] = '-';
                             $ValueDataNovedades['Horario'] = '-';
                             $ValueDataNovedades['Dia'] = '-';
@@ -157,7 +157,7 @@ chunk
                     <th class="bold px-2 center">Cant.</th>
                 </tr>
                 <?php
-                if ($tc['Llegada tarde']) {
+                if ($tc['Llegada tarde'] ?? '') {
                     $style = ($_resaltar == 'r_tar') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -168,7 +168,7 @@ chunk
                 <?php
                     unset($t);
                 }
-                if ($sc['Salida anticipada']) {
+                if ($sc['Salida anticipada'] ??'') {
                     $style = ($_resaltar == 'r_sal') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -179,7 +179,7 @@ chunk
                 <?php
                     unset($s);
                 }
-                if ($ic['Incumplimiento']) {
+                if ($ic['Incumplimiento']?? '') {
                     $style = ($_resaltar == 'r_inc') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -190,7 +190,7 @@ chunk
                 <?php
                     unset($i);
                 }
-                if ($ac['Ausencia']) {
+                if ($ac['Ausencia'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -201,7 +201,7 @@ chunk
                 <?php
                     unset($a);
                 }
-                if ($lc['Licencia']) {
+                if ($lc['Licencia'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -212,7 +212,7 @@ chunk
                 <?php
                     unset($l);
                 }
-                if ($acc['Accidente']) {
+                if ($acc['Accidente'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -223,7 +223,7 @@ chunk
                 <?php
                     unset($ac1);
                 }
-                if ($vc['Vacaciones']) {
+                if ($vc['Vacaciones'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -234,7 +234,7 @@ chunk
                 <?php
                     unset($v);
                 }
-                if ($suc['Suspensión']) {
+                if ($suc['Suspensión'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>
@@ -245,7 +245,7 @@ chunk
                 <?php
                     unset($sus);
                 }
-                if ($arc['ART']) {
+                if ($arc['ART'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
                 ?>
                     <tr <?= $style ?>>

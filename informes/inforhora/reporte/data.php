@@ -5,6 +5,7 @@ require __DIR__ . '../../../../filtros/filtros.php';
 require __DIR__ . '../../../../config/conect_mssql.php';
 
 $dataLegajo = array();
+$dataAgrup = array();
 
 if(empty($DateRange)){
     $json_data = array(

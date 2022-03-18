@@ -97,8 +97,8 @@ foreach ($dataNovedades as $key => $ValueData) {
     $a[]  = ($ValueData['TipoN']=='3') ? (HoraMin($ValueData['Horas'])):'';
 }
 
-$todoc = ($dataNovedades['Codigo']);
-$todo = HoraMin($dataNovedades['Horas']);
+$todoc = ($dataNovedades['Codigo'] ?? array());
+$todo = HoraMin($dataNovedades['Horas'] ?? '');
 
 $tc    = (array_count_values($tc));
 $ac    = (array_count_values($ac));

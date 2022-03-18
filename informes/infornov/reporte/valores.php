@@ -108,5 +108,5 @@ $FilterEstruct  .= $Grup;
 $FilterEstruct  .= $Sucur;
 $FilterEstruct  .= $Per;
 $FilterEstruct  .= $Tipo;
-$FilterEstruct .= $FicNoTi;
+$FilterEstruct .= $FicNoTi ?? '';
 $FilterEstruct  .= $FicNove;

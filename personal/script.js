@@ -29,7 +29,11 @@ $(function () {
         "initComplete": function (settings) {
             $("#PersonalTable").removeClass('invisible');
             classEfect("#PersonalTable", 'animate__animated animate__fadeIn')
-            $("#table-personal_filter .form-control").attr('placeholder', 'Buscar')
+            // $("#table-personal_filter .form-control").attr('placeholder', 'Buscar')
+            $('#table-personal_filter input').removeClass('form-control-sm')
+            $('#table-personal_filter input').attr("style", "height: 40px !important; width:250px;");
+            $('#table-personal_filter input').attr('placeholder', 'Filtrar Legajo / Nombre')
+            select2Simple('#table-personal_length select', '', false, false)
         },
         "drawCallback": function (settings) {
             $("td").tooltip({container:'table'});
@@ -39,12 +43,18 @@ $(function () {
             } else {
                 $('td').removeClass('text-danger')
             }
+        
         },
         bProcessing: true,
         serverSide: true,
         deferRender: true,
-        stateSave: true,
-        stateDuration: -1,
+        // stateSave: true,
+        // stateDuration: -1,
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        dom: "<'row'" +
+            "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'row'<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         "ajax": {
             url: "getPersonal.php",
             type: "POST",

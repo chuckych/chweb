@@ -12,11 +12,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
     // sleep(1);
     $Franco    = test_input($_POST['Franco']);
     $Feriados  = test_input($_POST['Feriados']);
-    $presentes = $_POST['presentes'];
-    $ausentes  = $_POST['ausentes'];
+    $presentes = $_POST['presentes'] ?? '';
+    $ausentes  = $_POST['ausentes'] ?? '';
     $cliente   = $_SESSION['ID_CLIENTE'];
-    $presentes = test_input(implode(',', $presentes));
-    $presentes .= '@' . $Franco . '@' . $Feriados;
+    if($presentes){
+        $presentes = test_input(implode(',', $presentes));
+        $presentes .= '@' . $Franco . '@' . $Feriados;
+    }else{
+        $presentes = '';
+    }
     $ausentes  = test_input(implode(',', $ausentes));
     // $ausentes .= '@'.$Franco.','.$Feriados;
 

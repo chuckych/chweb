@@ -94,15 +94,15 @@
                 if (!$ValueDataParte['Novedad']) {
                 ?>
                 <tr>
-                    <td class="px-2"><?= $ValueDataParte['Legajo'] ?></td>
-                    <td class="px-2"><?= $ValueDataParte['Nombre'] ?></td>
-                    <td class="px-2"><?= $ValueDataParte['Horario'] ?></td>
-                    <td class="px-2"><?= $ValueDataParte['Codigo'] ?></td>
-                    <td class="px-2" <?=$padding?>><?= $ValueDataParte['Novedad'] ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Legajo'] ?? '' ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Nombre'] ?? '' ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Horario'] ?? '' ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Codigo'] ?? '' ?></td>
+                    <td class="px-2" <?=$padding?>><?= $ValueDataParte['Novedad'] ?? '' ?></td>
                     <!-- <td class="px-2"><?= $ValueDataParte['Tipo'] ?></td> -->
-                    <td class="px-2"><?= $ValueDataParte['Horas'] ?></td>
-                    <td class="px-2"><?= $ValueDataParte['Causa'] ?></td>
-                    <td class="px-2"><?= $ValueDataParte['Observacion'] ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Horas'] ?? '' ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Causa'] ?? '' ?></td>
+                    <td class="px-2"><?= $ValueDataParte['Observacion'] ?? '' ?></td>
                 </tr>
                 <?php
                         }

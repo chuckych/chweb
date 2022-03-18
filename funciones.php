@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.216'; // Version de la aplicación
+    return 'v0.0.217'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3059,7 +3059,7 @@ function HoraMin($var)
 {
     $var = explode(":", $var);
     $MinHora = intval($var[0]) * 60;
-    $Min = intval($var[1]);
+    $Min = intval($var[1] ??'');
     $Minutos = $MinHora + $Min;
     return $Minutos;
 }
