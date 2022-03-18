@@ -400,8 +400,21 @@ if ($verDB < 20220316) {
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
     
 }
-
- // ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`;
+if ($verDB < 20220318) {
+    pdoQuery("CREATE TABLE IF NOT EXIStS `reg_faces` (
+        `id` INT(11) NOT NULL AUTO_INCREMENT,
+        `createdDate` VARCHAR(20) NOT NULL COLLATE 'utf8_general_ci',
+        `id_user` BIGINT(20) NOT NULL,
+        `id_company` SMALLINT(6) NOT NULL,
+        `photo` BLOB NOT NULL,
+        PRIMARY KEY (`id`) USING BTREE
+    ) COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=0");
+    fileLog("CREATE TABLE \"reg_faces\"", $pathLog); // escribir en el log
+        
+    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
 
 
 // if ($verDB < 20211102) {
