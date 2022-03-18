@@ -8,7 +8,7 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-borrarLogs(__DIR__ . '', 30, '.log');
+borrarLogs(__DIR__ . '/logs/', 30, '.log');
 
 function writeFlags($assoc, $path)
 {
@@ -42,7 +42,7 @@ function statusFlags($statusFlags, $pathFlags, $createdDate){
     );
     writeFlags($assoc, $pathFlags);
     $text = ($statusFlags == '2') ? "Se marco Bandera de espera": "Se marco Bandera de descarga";
-    $pathLog = date('Ymd') . '_FlagsLog_.log';
+    $pathLog = __DIR__ . '/logs/'.date('Ymd') . '_FlagsLog_.log';
     fileLog($text, $pathLog);
 }
 function getEvents($url, $timeout = 10)
@@ -182,7 +182,7 @@ if (!empty($arrayData)) {
         $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
         $dates->setTimestamp($timestamp);
         $fechaHora     = $dates->format('Y-m-d H:i');
-        $fechaHoraCH   = $dates->format('Y-m-d');
+        $fechaHoraCH   = $dates->format('Ymd');
         $hora          = $dates->format('H:i');
         $__v           = $v['__v'];
         $_id           = $v['_id'];
@@ -302,7 +302,7 @@ if (!empty($arrayData)) {
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
             /** Guardo Log de las Fichadas descargadas */
             $text = "$Legajo $createdDate $fechaHora $lat $lng";
-            $pathLog = date('Ymd') . '_DescargasAPI_' . $companyCode . '.log'; // ruta del archivo de Log de errores
+            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_DescargasAPI_' . $companyCode . '.log';
             fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
             /**  */
 
@@ -310,7 +310,7 @@ if (!empty($arrayData)) {
 
             if (InsertRegistroCH($query)) {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = date('Ymd') . '_FichadasCH_' . $companyCode . '.log'; // ruta del archivo de Log de errores
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
                 $insertCH[] = array(
                     'Estado' => '0',
                     'Fecha'  => $fechaHoraCH,
@@ -322,7 +322,7 @@ if (!empty($arrayData)) {
                 fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
             } else {
                 $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
+                $pathLog = __DIR__ . '/logs/'. date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
                 fileLog($text, $pathLog); // escribir en el log de errores el error
                 $insertCH_Fail[] = array(
                     'Estado' => '0',
@@ -335,7 +335,7 @@ if (!empty($arrayData)) {
             }
         } else {
             $text = 'No se pudo insertar el registro ' . $employeId . ' ' . $fechaHora;
-            $pathLog = date('Ymd') . '_logActualizar.log'; // ruta del archivo de Log de errores
+            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logActualizar.log';
             fileLog($text, $pathLog); // escribir en el log de errores el error
         }
     }

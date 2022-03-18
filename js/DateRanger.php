@@ -1,13 +1,4 @@
 <?php
-// $PeriLiq = PeriLiq();
-// $MensDesde=$PeriLiq['MensDesde'];
-// $MensHasta=$PeriLiq['MensHasta'];
-// $FechaIni  = $FechaIni ?? '';
-// $FechaFin  = $FechaFin ?? '';
-// $FirstYear = $FirstYear ?? '';
-// $FirstDate = $FirstDate ?? '';
-// $maxDate   = $maxDate ?? '';
-// $maxYear   = $maxYear ?? '';
 $date        = date('Y-m-d');
 $FirstYear   = $FirstYear ?? date('Y');
 $maxYear     = $maxYear ?? date('Y');

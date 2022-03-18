@@ -8,8 +8,6 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-borrarLogs(__DIR__ . '', 30, '.log');
-
 function queryCalcZone($lat, $lng, $idCompany)
 {
     $query = "

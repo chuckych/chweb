@@ -30,9 +30,9 @@ $('#_drMob2').val(drmob2)
 if ($(window).width() < 540) {
     tablemobile = $('#table-mobile').DataTable({
         dom: "<'row lengthFilterTable'" +
-        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row '<'col-12 table-responsive't>>" +
-        "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+            "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getRegMobile.php",
             type: "POST",
@@ -71,7 +71,7 @@ if ($(window).width() < 540) {
                         evento = 'Fichada';
                     }
                     evento = evento + operation;
-    
+
                     let foto = '';
                     if (row.regPhoto) {
                         url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
@@ -81,7 +81,7 @@ if ($(window).width() < 540) {
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                         // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
                     }
-    
+
                     let datacol = `<div class="pic w70 h70 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
                 },
@@ -96,16 +96,16 @@ if ($(window).width() < 540) {
                     let btnAdd = ''
                     let nameZone = (row.zoneName == null) ? 'Fuera de Zona' : row.zoneName;
                     nameZone = (row.regLat == 0) ? '' : nameZone;
-                    let zoneName = (row.zoneID > 0) ? '<span class="text-success">'+nameZone+'</span>' : '<div class="text-danger pt-1">'+nameZone+'</div>'
+                    let zoneName = (row.zoneID > 0) ? '<span class="text-success">' + nameZone + '</span>' : '<div class="text-danger pt-1">' + nameZone + '</div>'
                     let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                     let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                     let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
-                    
+
                     btnAdd = `<span class="ml-2">
                         <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
                         <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
                     </span>`;
-                    if(row.regLat == 0){
+                    if (row.regLat == 0) {
                         btnAdd = `<span class="text-danger p-0 m-0">Sin datos GPS</span>`;
                     }
                     let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<span class="">${zoneName}</span><span class="text-secondary fontp ml-2">${Distance2}</span>`;
@@ -191,7 +191,7 @@ if ($(window).width() < 540) {
                         evento = 'Fichada';
                     }
                     evento = evento + operation;
-    
+
                     let foto = '';
                     if (row.regPhoto) {
                         url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
@@ -201,7 +201,7 @@ if ($(window).width() < 540) {
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                         // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
                     }
-    
+
                     let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
                 },
@@ -251,20 +251,20 @@ if ($(window).width() < 540) {
                 "render": function (data, type, row, meta) {
                     // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                     let btnAdd = ''
-                    let zoneName = (row.zoneID > 0) ? '<div class="text-success">'+row.zoneName+'</div>' : '<div class="text-danger">Fuera de Zona</div>'
+                    let zoneName = (row.zoneID > 0) ? '<div class="text-success">' + row.zoneName + '</div>' : '<div class="text-danger">Fuera de Zona</div>'
                     let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                     let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                     let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
-                    
+
                     btnAdd = `<div>
                         <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
                         <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
                     </div>`;
-                    if(row.regLat == 0){
+                    if (row.regLat == 0) {
                         btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
                     }
                     let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
-    
+
                     let datacol = `<div title="${zoneName2}" class="w120 text-truncate py-2">${device}</div>`
                     return datacol;
                 },
@@ -313,9 +313,9 @@ if ($(window).width() < 540) {
                 "render": function (data, type, row, meta) {
                     // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                     let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
-                    
+
                     let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
-    
+
                     let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
                     return datacol;
                 },
@@ -367,7 +367,7 @@ tablemobile.on('init.dt', function () {
     // $('#table-mobile_filter input').addClass('w250')
     $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
     $('#table-mobile_filter input').removeClass('form-control-sm')
-    $('#table-mobile_filter input').attr("style","height: 40px !important");
+    $('#table-mobile_filter input').attr("style", "height: 40px !important");
     select2Simple('#table-mobile_length select', '', false, false)
     $('.SoloFic').hide()
 });
@@ -625,10 +625,6 @@ function initMap() {
     // cityCircle = new google.maps.Circle(sunCircle)
     // cityCircle.bindTo('center', marker, 'position');
 }
-// $('.select2').select2({
-//     minimumResultsForSearch: -1,
-//     placeholder: "Seleccionar"
-// });
 
 $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
@@ -819,48 +815,37 @@ let focusRowTables = () => {
 $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     enableBtnMenu()
-    // $('#RowTableUsers').addClass('invisible');
-    $('#RowTableUsers').addClass('invisible')
-        // loadingTableUser('#tableUsuarios');
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Usuarios Mobile"
     $('#Encabezado').html("Usuarios Mobile");
     focusRowTables()
-    // $('.loading').hide()
+    $('#RowTableUsers').addClass('invisible')
     $('#tableUsuarios').DataTable().ajax.reload(null, false)
     $('#RowTableUsers').show();
-    // $('#tableUsuarios').DataTable().ajax.reload();
 });
 $(document).on("click", ".showDevices", function (e) {
     CheckSesion()
     enableBtnMenu()
-    // loadingTableDevices('#tableDevices');
-    $('#RowTableDevices').addClass('invisible')
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Dispositivos Mobile"
     $('#Encabezado').html("Dispositivos Mobile");
     focusRowTables()
-    // $('.loading').hide()
-    // $('#tableDevices').DataTable().ajax.reload();
-    $('#RowTableDevices').show();
+    $('#RowTableDevices').addClass('invisible')
     $('#tableDevices').DataTable().ajax.reload(null, false)
+    $('#RowTableDevices').show();
 });
 $(document).on("click", ".showZones", function (e) {
     CheckSesion()
     enableBtnMenu()
-    $('#RowTableZones').addClass('invisible')
     $(this).prop('readonly', true)
     focusBtn(this);
     document.title = "Zonas Mobile"
     $('#Encabezado').html("Zonas Mobile");
     focusRowTables()
-    // $('.loading').hide()
-    // $('#tableDevices').DataTable().ajax.reload();
     $('#RowTableZones').show();
-    // datatable column adjust
-    // $('#tableZones').DataTable().columns.adjust().draw();
+    $('#RowTableZones').addClass('invisible')
     $('#tableZones').DataTable().ajax.reload(null, false)
 });
 $(document).on("click", ".showChecks", function (e) {
@@ -872,11 +857,9 @@ $(document).on("click", ".showChecks", function (e) {
     document.title = "Fichadas Mobile"
     $('#Encabezado').html("Fichadas Mobile")
     focusRowTables()
-    // $('.loading').hide()
     $('#RowTableMobile').show();
     loadingTable('#table-mobile');
     $('#table-mobile').DataTable().columns.adjust().draw();
-    // minmaxDate()
 });
 $(document).on("click", ".sendCH", function (e) {
     CheckSesion()

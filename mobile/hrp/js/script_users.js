@@ -169,7 +169,6 @@ const loadingTableUser = (selectortable) => {
         });
     }
 
-
 tableUsuarios.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')

@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
-    <link rel="stylesheet" href="css/styleMobile.css?=<?=time()?>">
+    <link rel="stylesheet" href="css/styleMobile.css?=<?= time() ?>">
     <!-- <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"> -->
     <title>Fichadas Mobile HR</title>
 </head>
@@ -39,7 +39,7 @@
         echo '<input type="hidden"  id="aniomax" value="' . $aniomax . '">';
 
         ?>
-        <input type="hidden"  id="_drMob2">
+        <input type="hidden" id="_drMob2">
 
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
@@ -113,27 +113,24 @@
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require 'modal.php';
     require __DIR__ . "../../../js/jquery.php";
-    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../../js/DataTable.php";
 
     ?>
     <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
+    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
-    <script src="../../js/lib/geocomplete/jquery.geocomplete.js"></script>
-    <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <script src="../../js/clipboardjs/dist/clipboard.min.js"></script>
-    <script src="../../js/select2.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/lib/geocomplete/jquery.geocomplete.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="js/script.js?v=<?= time() ?>"></script>
     <script src="js/script_users.js?v=<?= time() ?>"></script>
     <script src="js/script_devices.js?v=<?= time() ?>"></script>
     <script src="js/script_zones.js?v=<?= time() ?>"></script>
     <script src="js/script_mapa.js?v=<?= time() ?>"></script>
-    <!-- <script src="FicMobExcel.js?v=<?= time() ?>"></script> -->
-
 </body>
 
 </html>
