@@ -6,84 +6,142 @@ const loadingTableDevices = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
-tableDevices = $('#tableDevices').DataTable({
-    dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12 table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-    ajax: {
-        url: "getDevicesMobile.php",
-        type: "POST",
-        "data": function (data) { },
-        error: function () { },
-    },
-    createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn align-middle');
-    },
-    columns: [
-        /** Columna Nombre */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w120">Dispositivo</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div data-titlet="" class="text-truncate w120">${row.deviceName}</div>`
-                return datacol;
-            },
+if ($(window).width() < 540) {
+    tableDevices = $('#tableDevices').DataTable({
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+                "<'row '<'col-12 table-responsive't>>" +
+                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        ajax: {
+            url: "getDevicesMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
         },
-        /** Columna Evento */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w60">Evento</div>`,
-            "render": function (data, type, row, meta) {
-                let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
-                let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
-                return datacol;
-            },
-        }, 
-         /** Columna cant TotalChecks */
-         {
-            className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1 w50">${row.totalChecks}</div>`
-                return datacol;
-            },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
         },
-        /** Columna Acciones */
-        {
-            className: 'align-middle w-100', targets: '', title: '',
-            "render": function (data, type, row, meta) {
-                let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
-                if (row.totalChecks > 1) {
-                    del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
-                }
-                let datacol = `
-                <div class="d-flex justify-content-end w-100">
-                    <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></span>
-                    ${del}
-                </div>
-                `
-                return datacol;
+        columns: [
+            /** Columna Nombre Mobile*/
+            {
+                className: 'align-middle w-100', targets: '', title: `<div class="w-100">Dispositivos</div>`,
+                "render": function (data, type, row, meta) {
+                    let del = `<span class="ml-1 btn btn-outline-custom border bi bi-trash delDevice"></span>`
+                    if (row.totalChecks > 1) {
+                        del = `<span class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`
+                    }
+                    let deviceEvent = (row.deviceEvent == '0') ? 'Sin Evento' : `Evento: <span class="ls1">${row.deviceEvent}</span>`
+                    let datacol = `
+                    <div class="text-uppercase font-weight-bold text-secondary">${row.deviceName}</div>
+                    <div class="text-secondary">${deviceEvent}</div>
+                    <div class="d-flex justify-content-end w-100">
+                        <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom border bi bi-pen updDevice"></span>
+                        ${del}
+                    </div>
+                    `
+                    return datacol;
+                },
             },
+        ],
+        lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        scrollY: '320px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-    ],
-    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
-    bProcessing: false,
-    serverSide: true,
-    deferRender: true,
-    searchDelay: 1000,
-    paging: true,
-    searching: true,
-    info: true,
-    ordering: false,
-    // scrollY: '52vh',
-    scrollY: '281px',
-    scrollCollapse: true,
-    scrollX: true,
-    fixedHeader: false,
-    language: {
-        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-    },
+    
+    });
+} else {
+    tableDevices = $('#tableDevices').DataTable({
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
+            "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
+        ajax: {
+            url: "getDevicesMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
+        },
+        columns: [
+            /** Columna Nombre */
+            {
+                className: 'align-middle', targets: '', title: `<div class="w120">Dispositivo</div>`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div data-titlet="" class="text-truncate w120">${row.deviceName}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Evento */
+            {
+                className: 'align-middle', targets: '', title: `<div class="w60">Evento</div>`,
+                "render": function (data, type, row, meta) {
+                    let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
+                    let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
+                    return datacol;
+                },
+            }, 
+             /** Columna cant TotalChecks */
+             {
+                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="ls1 w50">${row.totalChecks}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Acciones */
+            {
+                className: 'align-middle w-100', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
+                    if (row.totalChecks > 1) {
+                        del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
+                    }
+                    let datacol = `
+                    <div class="d-flex justify-content-end w-100">
+                        <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></span>
+                        ${del}
+                    </div>
+                    `
+                    return datacol;
+                },
+            },
+        ],
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '52vh',
+        scrollY: '281px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+        },
+    
+    });
+}
 
-});
+
 tableDevices.on('init.dt', function (e, settings) {
     $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h40 opa8 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
     $('#tableDevices_filter input').removeClass('form-control-sm')

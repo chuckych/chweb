@@ -1,103 +1,158 @@
 // $(document).ready(function () {
 const loadingTableZones = (selectortable) => {
     $(selectortable + ' td div').addClass('bg-light text-light border-0')
-    // $(selectortable + ' td div').css('height', '')
+    $(selectortable + ' td p').addClass('bg-light text-light border-0')
     $(selectortable + ' td img').addClass('invisible')
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
+    $(selectortable + ' td p').addClass('invisible')
 }
-tableZones = $('#tableZones').DataTable({
-    dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-    "<'row '<'col-12 table-responsive't>>" +
-    "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
-    "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
-    "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-    ajax: {
-        url: "getZonesMobile.php",
-        type: "POST",
-        "data": function (data) { },
-        error: function () { },
-    },
-    createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn align-middle');
-    },
-    columns: [
-        /** Columna Nombre */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w160">Zona</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div title="${row.zoneName}" class="text-truncate w160">${row.zoneName}</div>`
-                return datacol;
-            },
+if ($(window).width() < 540) {
+    tableZones = $('#tableZones').DataTable({
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+                "<'row '<'col-12 table-responsive't>>" +
+                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        ajax: {
+            url: "getZonesMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
         },
-        /** Columna Radio */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w40">Radio</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="w40">${row.zoneRadio}</div>`
-                return datacol;
-            },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
         },
-        // /** Columna Latitud */
-        // {
-        //     className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
-        //     "render": function (data, type, row, meta) {
-        //         let datacol = `<div data-titlet="" class="text-truncate w90">${row.zoneLat}<br>${row.zoneLng}</div>`
-        //         return datacol;
-        //     },
-        // },
-        // /** Columna Longitud */
-        // {
-        //     className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
-        //     "render": function (data, type, row, meta) {
-        //         let datacol = `<div data-titlet="" class="text-truncate ls1 w90">${row.zoneLng}</div>`
-        //         return datacol;
-        //     },
-        // },
-        /** Columna cant TotalZones */
-        {
-            className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1 w50">${row.totalZones}</div>`
-                return datacol;
-            },
+        columns: [
+            /** Columna Nombre */
+            {
+                className: 'align-middle w-100', targets: '', title: `Zonas`,
+                "render": function (data, type, row, meta) {
+                    let del = `<span data-titlel="Eliminar" class="btn btn-outline-custom border bi bi-trash delZone"></span>`
+                    if (row.totalZones > 1) {
+                        del = `<span data-titlel="No se puede eliminar" class="btn btn-outline-custom border bi bi-trash disabled"></span>`
+                    }
+                    let datacol = `
+                            <p class="text-uppercase font-weight-bold text-secondary my-0 py-0">${row.zoneName}</p>
+                            <span class="text-secondary">Radio: ${row.zoneRadio} Mts.</span>
+                            <div class="d-flex justify-content-end w-100">
+                            <span data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom border bi bi-pen updZone"></span>
+                            ${del}
+                            </div>
+                        `
+                    return datacol;
+                },
+            }
+        ],
+        lengthMenu: [[3, 10, 23, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 500,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        scrollY: '320px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-        /** Columna Acciones */
-        {
-            className: 'align-middle w-100', targets: '', title: '',
-            "render": function (data, type, row, meta) {
-                let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delZone"></button></span>`
-                if (row.totalZones > 1) {
-                    del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button></span>`
-                }
-                let datacol = `
-                <div class="d-flex justify-content-end">
-                    <span><button data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updZone"></button></span>
-                    ${del}
-                </div>
-                `
-                return datacol;
-            },
+    });
+} else {
+    tableZones = $('#tableZones').DataTable({
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+        "<'row '<'col-12 table-responsive't>>" +
+        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>",
+        ajax: {
+            url: "getZonesMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
         },
-    ],
-    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
-    bProcessing: false,
-    serverSide: true,
-    deferRender: true,
-    searchDelay: 500,
-    paging: true,
-    searching: true,
-    info: true,
-    ordering: false,
-    // scrollY: '52vh',
-    scrollY: '286px',
-    scrollCollapse: true,
-    scrollX: true,
-    fixedHeader: false,
-    language: {
-        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-    },
-});
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
+        },
+        columns: [
+            /** Columna Nombre */
+            {
+                className: 'align-middle', targets: '', title: `<div class="w160">Zona</div>`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div title="${row.zoneName}" class="text-truncate w160">${row.zoneName}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Radio */
+            {
+                className: 'align-middle', targets: '', title: `<div class="w40">Radio</div>`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="w40">${row.zoneRadio}</div>`
+                    return datacol;
+                },
+            },
+            // /** Columna Latitud */
+            // {
+            //     className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
+            //     "render": function (data, type, row, meta) {
+            //         let datacol = `<div data-titlet="" class="text-truncate w90">${row.zoneLat}<br>${row.zoneLng}</div>`
+            //         return datacol;
+            //     },
+            // },
+            // /** Columna Longitud */
+            // {
+            //     className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
+            //     "render": function (data, type, row, meta) {
+            //         let datacol = `<div data-titlet="" class="text-truncate ls1 w90">${row.zoneLng}</div>`
+            //         return datacol;
+            //     },
+            // },
+            /** Columna cant TotalZones */
+            {
+                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="ls1 w50">${row.totalZones}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Acciones */
+            {
+                className: 'align-middle w-100', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delZone"></button></span>`
+                    if (row.totalZones > 1) {
+                        del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button></span>`
+                    }
+                    let datacol = `
+                    <div class="d-flex justify-content-end">
+                        <span><button data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updZone"></button></span>
+                        ${del}
+                    </div>
+                    `
+                    return datacol;
+                },
+            },
+        ],
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 500,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '52vh',
+        scrollY: '286px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+        },
+    });
+}
+
+
 tableZones.on('init.dt', function (e, settings) {
     $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h40 opa8 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>')
     $('#tableZones_filter input').removeClass('form-control-sm')
@@ -379,6 +434,7 @@ $(document).on("click", ".updZone", function (e) {
         // $('#RowTableZones').html(response.data)
     }).then(function () {
         $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+        $('#formZone #divGeocomplete').hide();
         $('#modalZone').modal('show');
         $('#formZone .requerido').html('(*)')
         // $('#formZone #formZoneRadio').mask('000000', { reverse: false });

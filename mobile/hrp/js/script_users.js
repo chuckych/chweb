@@ -6,98 +6,170 @@ const loadingTableUser = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
-tableUsuarios = $('#tableUsuarios').DataTable({
-    "drawCallback": function (settings) {
-
-    },
-    dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12 table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
-        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-    ajax: {
-        url: "getUsuariosMobile.php",
-        type: "POST",
-        "data": function (data) { },
-        error: function () { },
-    },
-    createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn align-middle');
-    },
-    columns: [
-        /** Columna ID */
-        {
-            className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="w80">${row.userID}</div>`
-                return datacol;
+    if ($(window).width() < 540) {
+        tableUsuarios = $('#tableUsuarios').DataTable({
+            "drawCallback": function (settings) {
+        
             },
-        },
-        /** Columna Nombre */
-        {
-            className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="text-truncate w120">${row.userName}</div>`
-                return datacol;
+            dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+                "<'row '<'col-12 table-responsive't>>" +
+                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+            ajax: {
+                url: "getUsuariosMobile.php",
+                type: "POST",
             },
-        },
-        /** Columna cant Fichadas */
-        {
-            className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="ls1">${row.userChecks}</div>`
-                return datacol;
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('animate__animated animate__fadeIn align-middle');
             },
-        },
-        /** Columna Acciones */
-        {
-            className: 'align-middle w-100', targets: '', title: '',
-            "render": function (data, type, row, meta) {
-                let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
-                let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
-                let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
+            columns: [
+                /** Columna Usuario Mobile */
+                {
+                    className: 'align-middle w-100', targets: '', title: '<div class="">Usuarios</div>',
+                    "render": function (data, type, row, meta) {
 
-                if (row.userRegId.length > '100') {
-                    activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
-                }
-                if (row.userRegId.length > '100') {
-                    mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
-                }
-                if (row.userChecks < 1) {
-                    del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
-                }
-                let datacol = `
-                <div class="d-flex justify-content-end">
-                    <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
-                    ${mensaje}
-                    ${activar}
-                    ${del}
-                </div>
-                `
-                return datacol;
+                        let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                        let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
+                        let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
+        
+                        if (row.userRegId.length > '100') {
+                            activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                        }
+                        if (row.userRegId.length > '100') {
+                            mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                        }
+                        if (row.userChecks < 1) {
+                            del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
+                        }
+
+                        let datacol = `
+                            <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
+                            <div class="text-secondary">ID: ${row.userID}</div>
+                            <div class="d-flex justify-content-end">
+                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border bi bi-pen updateUser"></span>
+                            ${mensaje}
+                            ${activar}
+                            ${del}
+                            </div>
+                            `
+                        return datacol;
+                    },
+                },        
+            ],
+            lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+            bProcessing: false,
+            serverSide: true,
+            deferRender: true,
+            searchDelay: 1000,
+            paging: true,
+            searching: true,
+            info: true,
+            ordering: false,
+            // scrollY: '52vh',
+            scrollY: '320px',
+            scrollCollapse: true,
+            scrollX: true,
+            fixedHeader: false,
+            language: {
+                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
             },
-        },
+        
+        });
+    } else {
+        tableUsuarios = $('#tableUsuarios').DataTable({
+            "drawCallback": function (settings) {
+        
+            },
+            dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+                "<'row '<'col-12 table-responsive't>>" +
+                "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+                "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
+                "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
+            ajax: {
+                url: "getUsuariosMobile.php",
+                type: "POST",
+                "data": function (data) { },
+                error: function () { },
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('animate__animated animate__fadeIn align-middle');
+            },
+            columns: [
+                /** Columna ID */
+                {
+                    className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
+                    "render": function (data, type, row, meta) {
+                        let datacol = `<div class="w80">${row.userID}</div>`
+                        return datacol;
+                    },
+                },
+                /** Columna Nombre */
+                {
+                    className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
+                    "render": function (data, type, row, meta) {
+                        let datacol = `<div class="text-truncate w120">${row.userName}</div>`
+                        return datacol;
+                    },
+                },
+                /** Columna cant Fichadas */
+                {
+                    className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                    "render": function (data, type, row, meta) {
+                        let datacol = `<div class="ls1">${row.userChecks}</div>`
+                        return datacol;
+                    },
+                },
+                /** Columna Acciones */
+                {
+                    className: 'align-middle w-100', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                        let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
+                        let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
+        
+                        if (row.userRegId.length > '100') {
+                            activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                        }
+                        if (row.userRegId.length > '100') {
+                            mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                        }
+                        if (row.userChecks < 1) {
+                            del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
+                        }
+                        let datacol = `
+                        <div class="d-flex justify-content-end">
+                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
+                            ${mensaje}
+                            ${activar}
+                            ${del}
+                        </div>
+                        `
+                        return datacol;
+                    },
+                },
+        
+            ],
+            lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+            bProcessing: false,
+            serverSide: true,
+            deferRender: true,
+            searchDelay: 1000,
+            paging: true,
+            searching: true,
+            info: true,
+            ordering: false,
+            // scrollY: '52vh',
+            scrollY: '281px',
+            scrollCollapse: true,
+            scrollX: true,
+            fixedHeader: false,
+            language: {
+                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+            },
+        
+        });
+    }
 
-    ],
-    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
-    bProcessing: false,
-    serverSide: true,
-    deferRender: true,
-    searchDelay: 1000,
-    paging: true,
-    searching: true,
-    info: true,
-    ordering: false,
-    // scrollY: '52vh',
-    scrollY: '281px',
-    scrollCollapse: true,
-    scrollX: true,
-    fixedHeader: false,
-    language: {
-        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-    },
 
-});
 tableUsuarios.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')

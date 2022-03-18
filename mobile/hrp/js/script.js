@@ -27,6 +27,319 @@ $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
 let drmob2 = $('#max').val() + ' al ' + $('#max').val()
 $('#_drMob2').val(drmob2)
+if ($(window).width() < 540) {
+    tablemobile = $('#table-mobile').DataTable({
+        dom: "<'row lengthFilterTable'" +
+        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+        "<'row '<'col-12 table-responsive't>>" +
+        "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        ajax: {
+            url: "getRegMobile.php",
+            type: "POST",
+            // dataSrc: "mobile",
+            "data": function (data) {
+                data._drMob = $("#_drMob").val();
+                data._drMob2 = $("#_drMob2").val();
+                data.SoloFic = $("#SoloFic").val();
+            },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn');
+        },
+        columns: [
+            /** Columna Foto */
+            {
+                className: 'text-center', targets: 'regPhoto', title: '<div class="w70">Fichadas</div>',
+                "render": function (data, type, row, meta) {
+                    operation = (row.operation == 0) ? '' : ': ' + row.operation;
+                    let evento = '';
+                    switch (row.operationType) {
+                        case '-1':
+                            evento = 'Fichada';
+                            break;
+                        case '1':
+                            evento = 'Ronda';
+                            break;
+                        case '3':
+                            evento = 'Evento';
+                            break;
+                        default:
+                            evento = 'Desconocido';
+                            break;
+                    }
+                    if (row.operationType == '0' && row.eventType == '2') {
+                        evento = 'Fichada';
+                    }
+                    evento = evento + operation;
+    
+                    let foto = '';
+                    if (row.regPhoto) {
+                        url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                        foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w60 h60 radius img-fluid"></img>`;
+                    } else {
+                        url_foto = ``;
+                        foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                        // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    }
+    
+                    let datacol = `<div class="pic w70 h70 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Usuario */
+            {
+                className: 'text-left w-100', targets: '', title: `
+                <div class="w-100"></div>
+                `,
+                "render": function (data, type, row, meta) {
+
+                    let btnAdd = ''
+                    let nameZone = (row.zoneName == null) ? 'Fuera de Zona' : row.zoneName;
+                    nameZone = (row.regLat == 0) ? '' : nameZone;
+                    let zoneName = (row.zoneID > 0) ? '<span class="text-success">'+nameZone+'</span>' : '<div class="text-danger pt-1">'+nameZone+'</div>'
+                    let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
+                    let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
+                    let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
+                    
+                    btnAdd = `<span class="ml-2">
+                        <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                        <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                    </span>`;
+                    if(row.regLat == 0){
+                        btnAdd = `<span class="text-danger p-0 m-0">Sin datos GPS</span>`;
+                    }
+                    let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<span class="">${zoneName}</span><span class="text-secondary fontp ml-2">${Distance2}</span>`;
+
+
+                    let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
+                    let datacol = `
+                        <div class="smtdcol">
+                            <div class="searchName pointer">${nameuser}</div>
+                            <div class="searchID pointer text-secondary d-none">${row.userID}</div>
+                            <span class="">${row.regDay} ${row.regDate} <span class="font-weight-bold ls1">${row.regTime}</span></span>
+                            <span title="${zoneName2}" class="">${device}</span>
+                        </div>
+                        `
+                    return datacol;
+                },
+            },
+        ],
+        lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '43vh',
+        scrollY: '415px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
+        },
+    });
+} else {
+    tablemobile = $('#table-mobile').DataTable({
+        // iDisplayLength: 5,
+        dom: "<'row lengthFilterTable'" +
+            "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'row d-none d-sm-block'<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>" +
+            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
+            "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
+        ajax: {
+            url: "getRegMobile.php",
+            type: "POST",
+            // dataSrc: "mobile",
+            "data": function (data) {
+                data._drMob = $("#_drMob").val();
+                data._drMob2 = $("#_drMob2").val();
+                data.SoloFic = $("#SoloFic").val();
+                // console.log($("#_drMob").val());
+                // console.log($("#_drMob2").val());
+            },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn');
+        },
+        columns: [
+            /** Columna Foto */
+            {
+                className: 'text-center', targets: 'regPhoto', title: '<div class="w50">Foto</div>',
+                "render": function (data, type, row, meta) {
+                    operation = (row.operation == 0) ? '' : ': ' + row.operation;
+                    let evento = '';
+                    switch (row.operationType) {
+                        case '-1':
+                            evento = 'Fichada';
+                            break;
+                        case '1':
+                            evento = 'Ronda';
+                            break;
+                        case '3':
+                            evento = 'Evento';
+                            break;
+                        default:
+                            evento = 'Desconocido';
+                            break;
+                    }
+                    if (row.operationType == '0' && row.eventType == '2') {
+                        evento = 'Fichada';
+                    }
+                    evento = evento + operation;
+    
+                    let foto = '';
+                    if (row.regPhoto) {
+                        url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                        foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    } else {
+                        url_foto = ``;
+                        foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                        // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    }
+    
+                    let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Usuario */
+            {
+                className: 'text-left', targets: '', title: `
+                <div class="w100">Usuario</div>
+                `,
+                "render": function (data, type, row, meta) {
+                    let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
+                    let datacol = `
+                        <div class="smtdcol">
+                            <div class="searchName pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
+                            <div class="searchID pointer text-secondary fontp">${row.userID}</div>
+                        </div>
+                        `
+                    return datacol;
+                },
+            },
+            /** Columna Fecha DIA */
+            {
+                className: '', targets: '', title: `
+                <div class="w70">Fecha</div>
+                `,
+                "render": function (data, type, row, meta) {
+                    let datacol = `
+                        <div class="w70">
+                            <span class="">${row.regDate}</span><br>
+                            <span class="text-secondary fontp">${row.regDay}</span>
+                        </div>
+                        `
+                    return datacol;
+                },
+            },
+            /** Columna HORA */
+            {
+                className: '', targets: '', title: '<div class="w40">Hora</div>',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Zona */
+            {
+                className: '', targets: '', title: '<div class="w120">Zona</div>',
+                "render": function (data, type, row, meta) {
+                    // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                    let btnAdd = ''
+                    let zoneName = (row.zoneID > 0) ? '<div class="text-success">'+row.zoneName+'</div>' : '<div class="text-danger">Fuera de Zona</div>'
+                    let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
+                    let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
+                    let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
+                    
+                    btnAdd = `<div>
+                        <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                        <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                    </div>`;
+                    if(row.regLat == 0){
+                        btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
+                    }
+                    let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
+    
+                    let datacol = `<div title="${zoneName2}" class="w120 text-truncate py-2">${device}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Mapa */
+            {
+                className: '', targets: '', title: '<div class="w40">Mapa</div>',
+                "render": function (data, type, row, meta) {
+                    let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
+                    let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
+                    let datacol = `<div class="w40">${iconMapa}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Tipo */
+            {
+                className: '', targets: '', title: '<div class="w70">Tipo</div>',
+                "render": function (data, type, row, meta) {
+                    // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
+                    let evento = '';
+                    switch (row.operationType) {
+                        case '-1':
+                            evento = 'Fichada';
+                            break;
+                        case '1':
+                            evento = 'Ronda';
+                            break;
+                        case '3':
+                            evento = 'Evento';
+                            break;
+                        default:
+                            evento = 'Desconocido';
+                            break;
+                    }
+                    if (row.operationType == '0' && row.eventType == '2') {
+                        evento = 'Fichada';
+                    }
+                    row.operation = (row.operation == '0') ? '' : row.operation;
+                    let datacol = `<div class="w70 text-truncate">${evento}<br>${row.operation}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Dispositivo */
+            {
+                className: 'w-100', targets: '', title: '<div class="w140" >Dispositivo</div>',
+                "render": function (data, type, row, meta) {
+                    // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                    let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                    
+                    let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
+    
+                    let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
+                    return datacol;
+                },
+            },
+        ],
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '43vh',
+        scrollY: '415px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
+        },
+    });
+}
 
 function doesFileExist(urlToFile) {
     var xhr = new XMLHttpRequest();
@@ -35,202 +348,7 @@ function doesFileExist(urlToFile) {
     return (xhr.status == "404") ? false : true;
 }
 // max-h-500 overflow-auto
-tablemobile = $('#table-mobile').DataTable({
-    // iDisplayLength: 5,
-    dom: "<'row lengthFilterTable'" +
-        "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-        "<'row '<'col-12 table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>" +
-        "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
-        "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-    ajax: {
-        url: "getRegMobile.php",
-        type: "POST",
-        // dataSrc: "mobile",
-        "data": function (data) {
-            data._drMob = $("#_drMob").val();
-            data._drMob2 = $("#_drMob2").val();
-            data.SoloFic = $("#SoloFic").val();
-            // console.log($("#_drMob").val());
-            // console.log($("#_drMob2").val());
-        },
-    },
-    createdRow: function (row, data, dataIndex) {
-        $(row).addClass('animate__animated animate__fadeIn');
-    },
-    columns: [
-        /** Columna Foto */
-        {
-            className: 'text-center', targets: 'regPhoto', title: '<div class="w50">Foto</div>',
-            "render": function (data, type, row, meta) {
-                operation = (row.operation == 0) ? '' : ': ' + row.operation;
-                let evento = '';
-                switch (row.operationType) {
-                    case '-1':
-                        evento = 'Fichada';
-                        break;
-                    case '1':
-                        evento = 'Ronda';
-                        break;
-                    case '3':
-                        evento = 'Evento';
-                        break;
-                    default:
-                        evento = 'Desconocido';
-                        break;
-                }
-                if (row.operationType == '0' && row.eventType == '2') {
-                    evento = 'Fichada';
-                }
-                evento = evento + operation;
 
-                let foto = '';
-                if (row.regPhoto) {
-                    url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                    foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
-                } else {
-                    url_foto = ``;
-                    foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
-                    // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
-                }
-
-                let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Usuario */
-        {
-            className: 'text-left', targets: '', title: `
-            <div class="w100">Usuario</div>
-            `,
-            "render": function (data, type, row, meta) {
-                let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
-                let datacol = `
-                    <div class="smtdcol">
-                        <div class="searchName pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
-                        <div class="searchID pointer text-secondary fontp">${row.userID}</div>
-                    </div>
-                    `
-                return datacol;
-            },
-        },
-        /** Columna Fecha DIA */
-        {
-            className: '', targets: '', title: `
-            <div class="w70">Fecha</div>
-            `,
-            "render": function (data, type, row, meta) {
-                let datacol = `
-                    <div class="w70">
-                        <span class="">${row.regDate}</span><br>
-                        <span class="text-secondary fontp">${row.regDay}</span>
-                    </div>
-                    `
-                return datacol;
-            },
-        },
-        /** Columna HORA */
-        {
-            className: '', targets: '', title: '<div class="w40">Hora</div>',
-            "render": function (data, type, row, meta) {
-                let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Zona */
-        {
-            className: '', targets: '', title: '<div class="w120">Zona</div>',
-            "render": function (data, type, row, meta) {
-                // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
-                let btnAdd = ''
-                let zoneName = (row.zoneID > 0) ? '<div class="text-success">'+row.zoneName+'</div>' : '<div class="text-danger">Fuera de Zona</div>'
-                let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
-                let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
-                let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
-                
-                btnAdd = `<div>
-                    <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                    <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
-                </div>`;
-                if(row.regLat == 0){
-                    btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
-                }
-                let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
-
-                let datacol = `<div title="${zoneName2}" class="w120 text-truncate py-2">${device}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Mapa */
-        {
-            className: '', targets: '', title: '<div class="w40">Mapa</div>',
-            "render": function (data, type, row, meta) {
-                let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
-                let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
-                let datacol = `<div class="w40">${iconMapa}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Tipo */
-        {
-            className: '', targets: '', title: '<div class="w70">Tipo</div>',
-            "render": function (data, type, row, meta) {
-                // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
-                let evento = '';
-                switch (row.operationType) {
-                    case '-1':
-                        evento = 'Fichada';
-                        break;
-                    case '1':
-                        evento = 'Ronda';
-                        break;
-                    case '3':
-                        evento = 'Evento';
-                        break;
-                    default:
-                        evento = 'Desconocido';
-                        break;
-                }
-                if (row.operationType == '0' && row.eventType == '2') {
-                    evento = 'Fichada';
-                }
-                row.operation = (row.operation == '0') ? '' : row.operation;
-                let datacol = `<div class="w70 text-truncate">${evento}<br>${row.operation}</div>`
-                return datacol;
-            },
-        },
-        /** Columna Dispositivo */
-        {
-            className: 'w-100', targets: '', title: '<div class="w140" >Dispositivo</div>',
-            "render": function (data, type, row, meta) {
-                // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
-                let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
-                
-                let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
-
-                let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
-                return datacol;
-            },
-        },
-    ],
-    lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
-    bProcessing: false,
-    serverSide: true,
-    deferRender: true,
-    searchDelay: 1000,
-    paging: true,
-    searching: true,
-    info: true,
-    ordering: false,
-    // scrollY: '43vh',
-    scrollY: '415px',
-    scrollCollapse: true,
-    scrollX: true,
-    fixedHeader: false,
-    language: {
-        "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
-    },
-});
 tablemobile.on('init.dt', function () {
     $('.dr').append(`
         <div class="mx-2">
