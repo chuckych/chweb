@@ -209,13 +209,13 @@ if ($(window).width() < 540) {
             /** Columna Usuario */
             {
                 className: 'text-left', targets: '', title: `
-                <div class="w100">Usuario</div>
+                <div class="w150">Usuario</div>
                 `,
                 "render": function (data, type, row, meta) {
                     let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                     let datacol = `
                         <div class="smtdcol">
-                            <div class="searchName pointer text-truncate" style="max-width: 100px;">${nameuser}</div>
+                            <div class="searchName pointer text-truncate" style="width: 150px;">${nameuser}</div>
                             <div class="searchID pointer text-secondary fontp">${row.userID}</div>
                         </div>
                         `
