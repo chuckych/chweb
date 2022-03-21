@@ -22,9 +22,9 @@ if (is_array($array['MESSAGE']) || $array instanceof Traversable) {
 foreach ($array['MESSAGE'] as $key => $valor) {
 
     $_id              = $valor['_id'];
-    $enable2           = ($valor['enable']=='true')? 'Activos':'Inactivos';
-    $enable           = ($valor['enable']=='true')? 'Activo':'Inactivo';
-    $colorText        = ($valor['enable']=='true')? 'text-success':'text-danger';
+    $enable2           = ($valor['enable']==true)? 'Activos':'Inactivos';
+    $enable           = ($valor['enable']==true)? 'Activo':'Inactivo';
+    $colorText        = ($valor['enable']==true)? 'text-success':'text-danger';
     $date             = $valor['date'];
     $timestamp        = $valor['timestamp'];
     $name             = $valor['name'];
@@ -71,5 +71,5 @@ foreach ($array['MESSAGE'] as $key => $valor) {
         }
     }
         
-$data = array('usuarios'=>$data);
+$data = array('usuarios'=>$data, 'dataxmart'=>$array['MESSAGE']);
 echo json_encode($data);
