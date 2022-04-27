@@ -99,7 +99,7 @@ function queryCalcZone($lat, $lng, $idCompany){
     return $query;
 }
 
-$pathFlags = 'flags.php'; // ruta del archivo de Log de errores
+$pathFlags = 'flags2.php'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
 
 if (!$flags) {
@@ -141,8 +141,9 @@ if($flags_download == 2){
     exit;
 }
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
-$url   = "http://190.7.56.83/attention/api/punch-event/" . $flags_lastDate;
-
+$url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
+// echo ($url);
+// exit;
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {    
 

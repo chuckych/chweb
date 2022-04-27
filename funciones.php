@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.217'; // Version de la aplicación
+    return 'v0.0.218'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3710,7 +3710,7 @@ function getDataIni($url) // obtiene el json de la url
     if (file_exists($url)) { // si existe el archivo
         $data = file_get_contents($url); // obtenemos el contenido del archivo
         if ($data) { // si el contenido no está vacío
-            $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
+            $data = parse_ini_file($url, true); // Obtenemos los datos del archivo
             return $data; // devolvemos el json
         } else { // si el contenido está vacío
             fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log

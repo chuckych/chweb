@@ -4,7 +4,7 @@ session_start();
 require __DIR__ . '../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
-$datehis=date('YmdHis');
+$datehis = date('YmdHis');
 // header('Content-Disposition: attachment;filename="Reporte_Fichadas_'.$datehis.'.xls"');
 // If you're serving to IE 9, then the following may be needed
 header('Cache-Control: max-age=1');
@@ -19,11 +19,11 @@ require __DIR__ . '../../config/conect_mssql.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='3';
+$Modulo = '3';
 ExisteModRol($Modulo);
 E_ALL();
-
-require_once __DIR__ . '../../vendor/autoload.php'; 
+$UltimaFic = $PrimeraFic = '';
+require_once __DIR__ . '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -86,7 +86,7 @@ $spreadsheet->getStyle('A1:V1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
 $spreadsheet->setAutoFilter('A1:V1');
-/** El último argumento es por defecto A1 */ 
+/** El último argumento es por defecto A1 */
 $spreadsheet->fromArray($encabezado, null, 'A1');
 /** Establecer la orientación y el tamaño de la página */
 $spreadsheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE);
@@ -123,11 +123,11 @@ $spreadsheet->getColumnDimension('E')->setWidth(13);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
-$Letras = range("H","U");
+$Letras = range("H", "U");
 foreach ($Letras as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(10);
 }
-$Letras = range("F","G");
+$Letras = range("F", "G");
 foreach ($Letras as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(12);
 }
@@ -159,7 +159,7 @@ $spreadsheet->getStyle('V')
 $spreadsheet->getStyle('A')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-    
+
 $spreadsheet->getStyle('A1')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
@@ -179,8 +179,9 @@ $spreadsheet->getComment('G1')->getText()->createTextRun("\r\nUltima Fichada\r\n
 $numeroDeFila = 2;
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../valores.php';
-$FicFalta = ($FicFalta && $FicFalta !='null') ? " HAVING (MAX(rn) % 2) = 1" : ""; /** Fichadas Inconsistentes */
-$query="WITH CTE AS(
+$FicFalta = ($FicFalta && $FicFalta != 'null') ? " HAVING (MAX(rn) % 2) = 1" : "";
+/** Fichadas Inconsistentes */
+$query = "WITH CTE AS(
     SELECT *,
         ROW_NUMBER() OVER (PARTITION BY RegLega, RegFeAs ORDER BY RegHoRe) AS rn
     FROM REGISTRO
@@ -190,6 +191,7 @@ $query="WITH CTE AS(
 SELECT CTE.RegLega AS 'FicLega', PERSONAL.LegApNo AS 'Nombre',
     (CTE.RegFeAs) AS 'FicFechaAs', 
                 dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS 'Horario' , 
+                FICHAS.FicHorE AS 'FicHorE', FICHAS.FicHorS AS 'FicHorS', FICHAS.FicDiaL AS 'FicDiaL', FICHAS.FicDiaF AS 'FicDiaF',
                 dbo.fn_DiaDeLaSemana(CTE.RegFeAs) AS 'Dia',
     COUNT(rn)AS  'Fic_Cant',
     MAX(CASE WHEN rn = 1 THEN RegHoRe END)AS  'Primera',
@@ -221,23 +223,30 @@ GROUP BY CTE.RegLega,
          FICHAS.FicDiaF
          $FicFalta
 ORDER BY CTE.RegFeAs desc, CTE.RegLega";
-// h4($query); exit;
-$result = sqlsrv_query($link, $query,$param, $options);
+// print_r($query); exit;
+$result = sqlsrv_query($link, $query, $param, $options);
 
-function FormatoHoraToExcel($Hora){
-    $Hora      = !empty($Hora) ? $Hora:'00:00:00' ;
+function FormatoHoraToExcel($Hora)
+{
+    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
-    $Hora = ($excelTimestamp - $excelDate)==0 ? '': $excelTimestamp - $excelDate;
+    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
     return $Hora;
 }
-function FormatoFechaToExcel($Fecha){
+function FormatoFechaToExcel($Fecha)
+{
     $timestamp = new \DateTime($Fecha);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
     $Fecha = ($excelTimestamp);
     return $Fecha;
+}
+function HoraVal($hora){
+    $hora = str_replace(':', '', $hora);
+    $hora = str_replace(' ', '', $hora);
+    return intval($hora);
 }
 while ($row = sqlsrv_fetch_array($result)) {
     # Obtener los datos de la base de datos
@@ -246,12 +255,72 @@ while ($row = sqlsrv_fetch_array($result)) {
     $FicFechaAs = $row['FicFechaAs']->format('Y-m-d');
     $FicFechaAs = FormatoFechaToExcel($FicFechaAs);
     $Horario    = $row['Horario'];
+    $FicHorE   = $row['FicHorE'];
+    $FicHorS   = $row['FicHorS'];
     $Dia        = $row['Dia'];
     $Fic_Cant   = $row['Fic_Cant'];
     $Primera    = $row['Primera'];
     $Ultima     = $row['Ultima'];
 
-    $Ultima = ($Ultima==$Primera) ? '':$Ultima;
+    $Pri = intval(str_replace(':', '', $Primera));
+    $Ult  = intval(str_replace(':', '', $Ultima));
+
+    $horEnt = intval(str_replace(':', '', $FicHorE));
+    $horSal  = intval(str_replace(':', '', $FicHorS));
+
+    $Ultima = ($Ultima == $Primera) ? '' : $Ultima;
+
+    if (($horEnt) > ($horSal)) {
+        $PrimeraFic = $Ultima;
+    } 
+    if (($horEnt) < ($horSal)) {
+        $UltimaFic = $Primera;
+    }
+
+    $arrFic = array(
+        'Fic_1'  => (HoraVal($row['Fic_1'])),
+        'Fic_2'  => (HoraVal($row['Fic_2'])),
+        'Fic_3'  => (HoraVal($row['Fic_3'])),
+        'Fic_4'  => (HoraVal($row['Fic_4'])),
+        'Fic_5'  => (HoraVal($row['Fic_5'])),
+        'Fic_6'  => (HoraVal($row['Fic_6'])),
+        'Fic_7'  => (HoraVal($row['Fic_7'])),
+        'Fic_8'  => (HoraVal($row['Fic_8'])),
+        'Fic_9'  => (HoraVal($row['Fic_9'])),
+        'Fic_10' => (HoraVal($row['Fic_10'])),
+        'Fic_11' => (HoraVal($row['Fic_11'])),
+        'Fic_12' => (HoraVal($row['Fic_12'])),
+        'Fic_13' => (HoraVal($row['Fic_13'])),
+        'Fic_14' => (HoraVal($row['Fic_14']))
+    );
+    // order
+    $arrFic = array_values($arrFic);
+    $arrFic = array_filter($arrFic);
+    // ksort($arrFic);
+    // order reverse
+    // $arrFic = array_reverse($arrFic);
+    arsort($arrFic);
+
+
+    
+
+    $arr[] = array(
+        'FicLega'    => $FicLega,
+        'Nombre'     => $Nombre,
+        'FicFechaAs' => $FicFechaAs,
+        'Horario'    => $Horario,
+        'entrada'    => ($horEnt),
+        'salida'     => ($horSal),
+        'Dia'        => $Dia,
+        'Fic_Cant'   => $Fic_Cant,
+        'Primera'    => $Primera,
+        'Ultima'     => $Ultima,
+        'Primera2'    => ($horEnt) > ($horSal) ? $Ultima : $Primera,
+        'Ultima2'     => ($horEnt) > ($horSal) ? $Primera : $Ultima,
+        'arrFic'      => $arrFic,
+    );
+    print_r($arr);
+    exit;
 
     $Primera = FormatoHoraToExcel($Primera);
     $Ultima  = FormatoHoraToExcel($Ultima);
@@ -270,6 +339,12 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Fic_12  = FormatoHoraToExcel($row['Fic_12']);
     $Fic_13  = FormatoHoraToExcel($row['Fic_13']);
     $Fic_14  = FormatoHoraToExcel($row['Fic_14']);
+
+    // $Primera = (str_replace('', ':', $Primera));
+    // $Ultima  = (str_replace('', ':', $Ultima));
+
+
+
 
     # Escribirlos en el documento
     $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $FicLega);
@@ -296,24 +371,25 @@ while ($row = sqlsrv_fetch_array($result)) {
     $spreadsheet->setCellValueByColumnAndRow(22, $numeroDeFila, $Fic_Cant);
     $numeroDeFila++;
 }
+
 sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 # Crear un "escritor"
 try {
-BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
-$MicroTime=microtime(true);
-$NombreArchivo="Reporte_Fichadas_".$MicroTime.".xls";
+    BorrarArchivosPDF('archivos/*.xls');
+    /** Borra los archivos anteriores a la fecha actual */
+    $MicroTime = microtime(true);
+    $NombreArchivo = "Reporte_Fichadas_" . $MicroTime . ".xls";
 
-$writer = new Xls($documento);
-# Le pasamos la ruta de guardado
-$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-$writer->save('archivos/'.$NombreArchivo);
-// $writer->save('php://output');
+    $writer = new Xls($documento);
+    # Le pasamos la ruta de guardado
+    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    $writer->save('archivos/' . $NombreArchivo);
+    // $writer->save('php://output');
 
-$data = array('status' => 'ok', 'archivo'=> 'archivos/'.$NombreArchivo);
-echo json_encode($data);
-exit;
-
+    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    echo json_encode($data);
+    exit;
 } catch (\Exception $e) {
     $data = array('status' => 'error');
     echo json_encode($data);

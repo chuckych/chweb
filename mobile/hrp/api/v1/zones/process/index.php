@@ -181,7 +181,7 @@ if (!$a) { // si tiene registros en la tbla de reg_
     $arrayData  = array();
     $MESSAGE    = 'There are no areas available'; // no hay Zonas Disponibles
     $endScript  = microtime(true);
-    $timeScript = round($endScript - $startScript, 2);
+    $timeScript = round($endScript - $iniScript, 2);
     $countData  = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;

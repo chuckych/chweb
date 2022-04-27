@@ -28,9 +28,6 @@ $Rol     = ExisteRol2($_GET['_r'])
                 <div class="form-inline">
                     <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $Cliente ?></span>
                 </div>
-                <!-- <div class="form-inline">
-                    <label class="w70 fontq">Usuarios </label><span class="fw4 fontq"><?= ceronull($UsuariosRol) ?></span>
-                </div> -->
             </div>
             <div class="col-12 col-sm-6">
                 <a href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_GET['_c'] ?>" class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
