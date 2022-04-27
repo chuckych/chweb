@@ -319,8 +319,8 @@ while ($row = sqlsrv_fetch_array($result)) {
         'Ultima2'     => ($horEnt) > ($horSal) ? $Primera : $Ultima,
         'arrFic'      => $arrFic,
     );
-    print_r($arr);
-    exit;
+    // print_r($arr);
+    // exit;
 
     $Primera = FormatoHoraToExcel($Primera);
     $Ultima  = FormatoHoraToExcel($Ultima);

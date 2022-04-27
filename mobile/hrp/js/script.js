@@ -22,6 +22,10 @@ if ((host == 'https://localhost')) {
 } else {
     actualizar(false);
     actualizar2(false);
+    setInterval(() => {
+        actualizar(false);
+        actualizar2(false);
+    }, 30000);
 }
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
