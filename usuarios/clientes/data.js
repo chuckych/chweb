@@ -165,7 +165,7 @@ $(document).ready(function () {
         let dataWebService = $(this).attr('dataWebService');
         let ApiMobileHRPApp = $(this).attr('dataMobileHRPApp');
         let ApiMobileHRP = $(this).attr('dataapimobilehrp');
-        let LocalCH = $(this).attr('dataLocalCH');
+        let LocalCH = $(this).attr('datalocalch');
         $('#nombreCuenta').html('Editar Cuenta: ' + dataNombre)
         $('#nombre').val(dataNombre)
         $('#ident').val(dataIdent)
@@ -180,13 +180,13 @@ $(document).ready(function () {
             $('#auth').prop('checked', false)
         }
         if(LocalCH == '1'){
-            $('#labelActivo').removeClass('activo')
-            $('#labelInactivo').addClass('activo')
+            $('#labelInactivo').addClass('active')
+            $('#labelActivo').removeClass('active')
             $('#localCHSI').prop('checked', false)
             $('#localCHNO').prop('checked', true)
         }else{
-            $('#labelInactivo').removeClass('activo')
-            $('#labelActivo').addClass('activo')
+            $('#labelActivo').addClass('active')
+            $('#labelInactivo').removeClass('active')
             $('#localCHNO').prop('checked', false)
             $('#localCHSI').prop('checked', true)
         }
