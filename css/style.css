@@ -385,6 +385,7 @@
      opacity: 1;
      background-size: 90px
  }
+
  .loader2 {
      display: inline-table;
      position: fixed;
@@ -1658,4 +1659,17 @@
  .blurtd {
      filter: blur(2px);
      color: #cecece !important;
+ }
+
+ .hr1 {
+     border-bottom: 1px solid #cecece !important;
+     padding-top: 5px !important;
+     padding-bottom: 5px !important;
+     width: 100% !important;
+ }
+ .hr2 {
+     border-bottom: 2px solid #cecece !important;
+     padding-top: 5px !important;
+     padding-bottom: 5px !important;
+     width: 100% !important;
  }

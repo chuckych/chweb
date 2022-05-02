@@ -249,24 +249,6 @@ if (!empty($arrayData)) {
         );
     }
 
-    /**
-     * ALTER TABLE `reg_`
-	ADD COLUMN `locked` CHAR(5) NOT NULL DEFAULT '0' AFTER `gpsStatus`,
-	ADD COLUMN `error` VARCHAR(200) NOT NULL AFTER `locked`,
-	ADD COLUMN `confidence` DECIMAL(10,7) NOT NULL DEFAULT '0.0000000' AFTER `error`;
-	ADD COLUMN `id_api` INT(11) NOT NULL AFTER `gpsStatus`;
-
-    ALTER TABLE `reg_user_`
-	ADD COLUMN `expiredStart` DATE NULL DEFAULT NULL AFTER `estado`,
-	ADD COLUMN `expiredEnd` DATE NULL DEFAULT NULL AFTER `expiredStart`,
-	ADD COLUMN `motivo` VARCHAR(75) NOT NULL AFTER `expiredEnd`;
-
-    ALTER TABLE `clientes`
-	ADD COLUMN `UrlAppMobile` VARCHAR(30) NOT NULL AFTER `ApiMobileHRP`;
-	ADD COLUMN `localCH` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `auth`;
-     * 
-     */
-
     (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
 

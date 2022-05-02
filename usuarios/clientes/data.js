@@ -52,23 +52,7 @@ $(document).ready(function () {
             },
             {
                 "class": "border-top-0",
-                "data": "db"
-            },
-            {
-                "class": "border-top-0",
                 "data": "user"
-            },
-            {
-                "class": "border-top-0",
-                "data": "pass"
-            },
-            {
-                "class": "border-top-0",
-                "data": "auth_windows"
-            },
-            {
-                "class": "border-top-0",
-                "data": "tkmobile"
             },
             {
                 "class": "border-top-0",
@@ -76,16 +60,12 @@ $(document).ready(function () {
             },
             {
                 "class": "border-top-0",
+                "data": "MobileHRP"
+            },
+            {
+                "class": "border-top-0 w-100 text-right",
                 "data": "fecha_alta"
             },
-            // {
-            //     "class": "",
-            //     "data": ""
-            // }, 
-            // {
-            //     "class": "",
-            //     "data": "null"
-            // }, 
         ],
         scrollX: true,
         scrollCollapse: true,
@@ -183,7 +163,9 @@ $(document).ready(function () {
         let dataAuth = $(this).attr('dataAuth');
         let dataTkmobile = $(this).attr('dataTkmobile');
         let dataWebService = $(this).attr('dataWebService');
+        let ApiMobileHRPApp = $(this).attr('dataMobileHRPApp');
         let ApiMobileHRP = $(this).attr('dataapimobilehrp');
+        let LocalCH = $(this).attr('dataLocalCH');
         $('#nombreCuenta').html('Editar Cuenta: ' + dataNombre)
         $('#nombre').val(dataNombre)
         $('#ident').val(dataIdent)
@@ -197,9 +179,21 @@ $(document).ready(function () {
         } else {
             $('#auth').prop('checked', false)
         }
+        if(LocalCH == '1'){
+            $('#labelActivo').removeClass('activo')
+            $('#labelInactivo').addClass('activo')
+            $('#localCHSI').prop('checked', false)
+            $('#localCHNO').prop('checked', true)
+        }else{
+            $('#labelInactivo').removeClass('activo')
+            $('#labelActivo').addClass('activo')
+            $('#localCHNO').prop('checked', false)
+            $('#localCHSI').prop('checked', true)
+        }
         $('#tkmobile').val(dataTkmobile)
         $('#WebService').val(dataWebService)
         $('#ApiMobileHRP').val(ApiMobileHRP)
+        $('#ApiMobileHRPApp').val(ApiMobileHRPApp)
     });
     $('#modalFormCuenta').on('hidden.bs.modal', function (e) {
         document.getElementById('FormCuenta').reset();

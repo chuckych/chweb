@@ -20,6 +20,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     $n_ident      = str_replace(" ", "", $nombre);
     $tkmobile     = test_input($_POST['tkmobile']);
     $WebService   = test_input($_POST['WebService']);
+    $localCH = test_input($_POST['localCH']?? '0');
+    $ApiMobileHRPApp = test_input($_POST['ApiMobileHRPApp'] ?? '');
     $identauto    = (empty($ident)) ? substr(strtoupper($n_ident), 0, 3) : $ident;
 
     $CheckDuplicado = count_pdoQuery("SELECT clientes.ident FROM clientes WHERE clientes.ident='$identauto'");
@@ -43,7 +45,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
         exit;
     } else {
         /* INSERTAMOS CLIENTE EN TABLA CLIENTES */
-        $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, ApiMobileHRP, fecha_alta, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService', '$ApiMobileHRP', '$fecha', '$fecha')";
+        $query = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, tkmobile, WebService, ApiMobileHRP, fecha_alta, localCH, UrlAppMobile, fecha ) VALUES( '$recid', '$identauto','$nombre', '$host', '$db', '$user', '$pass', '$auth', '$tkmobile', '$WebService', '$ApiMobileHRP', '$fecha', '$localCH', '$ApiMobileHRPApp', '$fecha')";
         $rs_insert = pdoQuery($query);
 
         if ($rs_insert) {
@@ -79,6 +81,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     $pass       = test_input($_POST['pass']);
     $tkmobile   = test_input($_POST['tkmobile']);
     $WebService = test_input($_POST['WebService']);
+    $localCH = test_input($_POST['localCH']?? '0');
+    $ApiMobileHRPApp = test_input($_POST['ApiMobileHRPApp'] ?? '');
     $auth       = empty($_POST['auth']) ? '0' : '1';
     $recid      = test_input($_POST['recid']);
     /* Comprobamos campos vacios  */
@@ -87,7 +91,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
         exit;
     } else {
 
-        $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', ApiMobileHRP = '$ApiMobileHRP', fecha='$fecha' WHERE recid='$recid'";
+        $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', ApiMobileHRP = '$ApiMobileHRP', localCH = '$localCH', UrlAppMobile = '$ApiMobileHRPApp', fecha='$fecha' WHERE recid='$recid'";
 
         if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' and recid != '$recid'LIMIT 1")) {
             PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);
