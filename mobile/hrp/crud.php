@@ -199,13 +199,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $post = $_POST;
 
-        $post['formUserName']  = $post['formUserName'] ?? '';
-        $post['formUserID']    = $post['formUserID'] ?? '';
-        $post['formUserRegid'] = $post['formUserRegid'] ?? '';
+        $post['formUserName']    = $post['formUserName'] ?? '';
+        $post['formUserID']      = $post['formUserID'] ?? '';
+        $post['formUserRegid']   = $post['formUserRegid'] ?? '';
+        $post['formUserExpired'] = $post['formUserExpired'] ?? '';
+        $post['formUserEstado']  = $post['formUserEstado'] ?? '0';
+        $post['formUserMotivo']  = $post['formUserMotivo'] ?? '';
+        
+        $formUserName    = test_input($post['formUserName']);
+        $formUserID      = test_input($post['formUserID']);
+        $formUserRegid   = test_input($post['formUserRegid']);
+        $formUserExpired = test_input($post['formUserExpired']);
+        $formUserMotivo  = test_input($post['formUserMotivo']);
+        $formUserEstado  = test_input($post['formUserEstado']);
 
-        $formUserName  = test_input($post['formUserName']);
-        $formUserID    = test_input($post['formUserID']);
-        $formUserRegid = test_input($post['formUserRegid']);
 
         if (valida_campo($formUserName)) {
             PrintRespuestaJson('error', 'Falta Nombre');
@@ -216,13 +223,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         };
 
+        if ($formUserExpired) {
+            $DateRange = explode(' al ', $formUserExpired);
+            $FechaIni  = test_input(dr_fecha($DateRange[0]));
+            $FechaFin  = test_input(dr_fecha($DateRange[1]));
+        } else {
+            $FechaIni = '';
+            $FechaFin = '';
+        }
+
         $idCompany = $_SESSION['ID_CLIENTE'];
 
         $paramsApi = array(
-            'key'       => $_SESSION["RECID_CLIENTE"],
-            'userName'  => urlencode($formUserName),
-            'userID'    => ($formUserID),
-            'userRegid' => ($formUserRegid)
+            'key'          => $_SESSION["RECID_CLIENTE"],
+            'userName'     => urlencode($formUserName),
+            'userID'       => ($formUserID),
+            'userRegid'    => ($formUserRegid),
+            'status'       => ($formUserEstado),
+            'expiredStart' => ($FechaIni),
+            'expiredEnd'   => ($FechaFin),
+            'textLock'     => ($formUserMotivo),
         );
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
@@ -237,6 +257,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -254,10 +275,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post['formUserName']  = $post['formUserName'] ?? '';
         $post['formUserID']    = $post['formUserID'] ?? '';
         $post['formUserRegid'] = $post['formUserRegid'] ?? '';
+        $post['formUserExpired'] = $post['formUserExpired'] ?? '';
+        $post['formUserEstado'] = $post['formUserEstado'] ?? '0';
+        $post['formUserMotivo'] = $post['formUserMotivo'] ?? '';
 
         $formUserName  = test_input($post['formUserName']);
         $formUserID    = test_input($post['formUserID']);
         $formUserRegid = test_input($post['formUserRegid']);
+        $formUserExpired = test_input($post['formUserExpired']);
+        $formUserMotivo = test_input($post['formUserMotivo']);
+        $formUserEstado = test_input($post['formUserEstado']);
 
         if (valida_campo($formUserName)) {
             PrintRespuestaJson('error', 'Falta Nombre');
@@ -268,13 +295,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         };
 
+        if ($formUserExpired) {
+            $DateRange = explode(' al ', $formUserExpired);
+            $FechaIni  = test_input(dr_fecha($DateRange[0]));
+            $FechaFin  = test_input(dr_fecha($DateRange[1]));
+        } else {
+            $FechaIni = '';
+            $FechaFin = '';
+        }
+
         $idCompany = $_SESSION['ID_CLIENTE'];
 
         $paramsApi = array(
-            'key'       => $_SESSION["RECID_CLIENTE"],
-            'userName'  => urlencode($formUserName),
-            'userID'    => ($formUserID),
-            'userRegid' => ($formUserRegid)
+            'key'          => $_SESSION["RECID_CLIENTE"],
+            'userName'     => urlencode($formUserName),
+            'userID'       => ($formUserID),
+            'userRegid'    => ($formUserRegid),
+            'status'       => ($formUserEstado),
+            'expiredStart' => ($FechaIni),
+            'expiredEnd'   => ($FechaFin),
+            'textLock'     => ($formUserMotivo),
         );
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
@@ -289,6 +329,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -337,6 +378,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -512,7 +554,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $post = $_POST;
 
-      
+
 
         $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
         $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
@@ -583,7 +625,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'zoneLng'    => ($regLng),
                 'regUID'     => ($regUID)
             );
-            
+
             // $u = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/procesarZonas.php?company=".$idCompany;
             // $g = json_decode(file_get_contents("$u"));
             // procear url de la api
@@ -607,7 +649,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status2 = 'error';
                 $arrayData2 = $api['MESSAGE'];
             }
-
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];

@@ -379,7 +379,7 @@ if ($verDB < 20220313) {
 if ($verDB < 20220314) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `distance`", $pathLog); // escribir en el log
-    
+
     $verDB  = verDBLocal(); // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
@@ -388,17 +388,17 @@ if ($verDB < 20220316) {
 
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `reg_uid` BINARY(8) NOT NULL AFTER `rid`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `reg_uid`", $pathLog); // escribir en el log
-    
+
     pdoQuery("UPDATE `reg_` set `reg_uid` = UUID()"); // seteo el uid de los registros
     fileLog("UPDATE `reg_uid`", $pathLog); // escribir en el log
 
     pdoQuery("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid` (`reg_uid`)"); // agregar un indice unico
     fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid`", $pathLog); // escribir en el log
-        
+
     $verDB  = verDBLocal(); // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-    
+
 }
 if ($verDB < 20220318) {
     pdoQuery("CREATE TABLE IF NOT EXIStS `reg_faces` (
@@ -410,7 +410,39 @@ if ($verDB < 20220318) {
         PRIMARY KEY (`id`) USING BTREE
     ) COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=0");
     fileLog("CREATE TABLE \"reg_faces\"", $pathLog); // escribir en el log
-        
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+if ($verDB < 20220502) {
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `locked` CHAR(5) NOT NULL DEFAULT '0' AFTER `gpsStatus`");
+    fileLog("ADD COLUMN \"locked\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `error` VARCHAR(200) NOT NULL AFTER `locked`");
+    fileLog("ADD COLUMN \"error\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `confidence` DECIMAL(10,7) NOT NULL DEFAULT '0.0000000' AFTER `error`");
+    fileLog("ADD COLUMN \"confidence\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `id_api` INT(11) NOT NULL AFTER `gpsStatus`");
+    fileLog("ADD COLUMN \"id_api\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_user_` ADD COLUMN `expiredStart` DATE NULL DEFAULT NULL AFTER `estado` ");
+    fileLog("ADD COLUMN \"expiredStart\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_user_` ADD COLUMN `expiredEnd` DATE NULL DEFAULT NULL AFTER `expiredStart`");
+    fileLog("ADD COLUMN \"expiredEnd\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_user_` ADD COLUMN `motivo` VARCHAR(75) NOT NULL AFTER `expiredEnd`");
+    fileLog("ADD COLUMN \"motivo\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `clientes` ADD COLUMN `UrlAppMobile` VARCHAR(30) NOT NULL AFTER `ApiMobileHRP`");
+    fileLog("ADD COLUMN \"UrlAppMobile\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `clientes` ADD COLUMN `localCH` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `auth`");
+    fileLog("ADD COLUMN \"localCH\"", $pathLog); // escribir en el log
+
     $verDB  = verDBLocal(); // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log

@@ -2,11 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.218'; // Version de la aplicación
+    return 'v0.0.219'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20220318; // Version de la base de datos local
+    return 20220502; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -3059,7 +3059,7 @@ function HoraMin($var)
 {
     $var = explode(":", $var);
     $MinHora = intval($var[0]) * 60;
-    $Min = intval($var[1] ??'');
+    $Min = intval($var[1] ?? '');
     $Minutos = $MinHora + $Min;
     return $Minutos;
 }
@@ -3172,7 +3172,7 @@ function getRemoteFile($url, $timeout = 10)
 }
 function sendRemoteData($url, $payload, $timeout = 10)
 {
-   
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -3676,11 +3676,17 @@ function defaultConfigData() // default config data
 
 function write_apiKeysFile()
 {
-    $q = "SELECT id as 'idCompany', nombre as 'nameCompany', recid as 'recidCompany', 'key' as 'key' FROM clientes";
+    $q = "SELECT id as 'idCompany', nombre as 'nameCompany', recid as 'recidCompany', 'key' as 'key', urlAppMobile AS 'urlAppMobile', localCH as 'localCH' FROM clientes";
     $assoc_arr = array_pdoQuery($q);
 
     foreach ($assoc_arr as $key => $value) {
-        $assoc[] = (array('idCompany' => $value['idCompany'], 'nameCompany' => $value['nameCompany'], 'recidCompany' => $value['recidCompany']));
+        $assoc[] = (array(
+            'idCompany'    => $value['idCompany'],
+            'nameCompany'  => $value['nameCompany'],
+            'recidCompany' => $value['recidCompany'],
+            'urlAppMobile' => $value['urlAppMobile'],
+            'localCH'      => ($value['localCH'])
+        ));
     }
     // $assoc[] = (array('idCompany' => '100', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
     // $assoc[] = (array('idCompany' => '300', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
@@ -3730,25 +3736,27 @@ function padLeft($str, $len, $pad = ' ')
  * @param {String} $key Property to sort by.
  * @param {Array} $data Array that stores multiple associative arrays.
  */
-function group_by($key, $data) {
+function group_by($key, $data)
+{
     $result = array();
 
-    foreach($data as $val) {
-        if(array_key_exists($key, $val)){
+    foreach ($data as $val) {
+        if (array_key_exists($key, $val)) {
             $result[$val[$key]][] = $val;
-        }else{
+        } else {
             $result[""][] = $val;
         }
     }
 
     return $result;
 }
-function _group_by_keys($array, $keys=array()) {
+function _group_by_keys($array, $keys = array())
+{
     $return = array();
     $append = (sizeof($keys) > 1 ? "_" : null);
-    foreach($array as $val){
+    foreach ($array as $val) {
         $final_key = "";
-        foreach($keys as $theKey){
+        foreach ($keys as $theKey) {
             $final_key .= $val[$theKey] . $append;
         }
         $return[$final_key][] = $val;
@@ -3757,10 +3765,51 @@ function _group_by_keys($array, $keys=array()) {
     foreach ($return as $key => $value) {
         $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
     }
-    
+
     foreach ($arrGroup2 as $key => $value2) {
         $arrGroup3[] = $value2[0];
     }
     return $arrGroup3;
-    
+}
+function pingApiMobileHRP($urlAppMobile)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $urlAppMobile.'/attention/api/test/ping');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    $headers = [
+        'Content-Type: application/json',
+        'Authorization: 7BB3A26C25687BCD56A9BAF353A78',
+        'Connection' => 'keep-alive'
+    ];
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    $file_contents = curl_exec($ch);
+    curl_close($ch);
+    return ($file_contents) ? $file_contents : false;
+    exit;
+}
+function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $urlApp .'/'. $paramsUrl);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+    $headers = [
+        'Content-Type: application/json',
+        'Authorization: 7BB3A26C25687BCD56A9BAF353A78',
+        'Connection' => 'keep-alive'
+    ];
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, ($payload));
+    $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $MESSAGE = 'Error al enviar al servidor. (' . $curl_error . ')';
+        (response(0, 1, $MESSAGE, '', 0, 1, $idCompany));
+        exit; // salimos del script
+    }
+    curl_close($ch);
+    return ($file_contents) ? $file_contents : false;
 }

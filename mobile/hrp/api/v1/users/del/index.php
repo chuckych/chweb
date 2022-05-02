@@ -137,12 +137,16 @@ $vkey = '';
 
 foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
-        $idCompany = $value['idCompany'];
-        $vkey      = $value['recidCompany'];
+        $idCompany    = $value['idCompany'];
+        $vkey         = $value['recidCompany'];
+        $nameCompany  = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
-        $idCompany = 0;
-        $vkey      = '';
+        $idCompany    = 0;
+        $vkey         = '';
+        $nameCompany  = '';
+        $urlAppMobile = '';
         continue;
     }
 }
@@ -151,6 +155,16 @@ if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
+if (empty($urlAppMobile)) {
+    http_response_code(400);
+    (response(array(), 0, 'Empty URL API', 400, 0, 0, $idCompany));
+}
+$ping = pingApiMobileHRP($urlAppMobile);
+if (empty($ping)) {
+    http_response_code(400);
+    (response(array(), 0, 'Error conection API', 400, 0, 0, $idCompany));
+}
+
 if (empty($userID)) {
     http_response_code(400);
     (response(array(), 0, 'userID required', 400, 0, 0, $idCompany));
@@ -194,6 +208,7 @@ if (!$a) {
         'id_company' => $a['id_company'],
         'userName'   => $a['nombre'],
         'userRegid'  => $a['regid'],
+        'textAud'    => "Eliminacion Usuario $a[nombre]. ID = $a[id_user]"
     );
 }
 
@@ -202,6 +217,32 @@ $sql_query_delete = "DELETE FROM `reg_user_` WHERE `id_company` = '$idCompany' A
 
 $delete = pdoQuery($sql_query_delete);
 if ($delete) {
+
+    $user[] = array(
+        'idUser'           => $userID,
+        'name'             => '',
+        'status'           => 'Eliminado',
+        'comments'         => '',
+        'locked'           => true,
+        'expiredDateStart' => null,
+        'expiredDateEnd'   => null,
+    );
+    $body = [
+        array(
+            "id"               => intval($idCompany),
+            "recid"            => "$vkey",
+            "name"            => "$nameCompany",
+            "locked"           => false,
+            "expiredDateStart" => null,
+            "expiredDateEnd"   => null,
+            "users"            => $user
+        )
+    ];
+
+    $payload = json_encode($body);
+    $sendApi = sendApiMobileHRP($payload, $urlAppMobile, 'attention/api/access/update-users', $idCompany);
+    $responseApi = (json_decode($sendApi));
+
     $text = "Eliminacion Usuario \"$arrayData[userName]\" ID = $arrayData[userID]";
     fileLog($text, __DIR__ . '../../../_logs/delUser/' . date('Ymd') . '_log_delUser_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
 } else {
@@ -214,5 +255,6 @@ if ($delete) {
 $endScript    = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
 $countData    = count($arrayData);
+array_push($arrayData, $responseApi);
 (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
 exit;

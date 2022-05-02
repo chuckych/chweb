@@ -98,7 +98,6 @@ function queryCalcZone($lat, $lng, $idCompany){
     ";
     return $query;
 }
-
 $pathFlags = 'flags.php'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
 

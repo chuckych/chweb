@@ -6,42 +6,42 @@ const loadingTableUser = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
-    if ($(window).width() < 540) {
-        tableUsuarios = $('#tableUsuarios').DataTable({
-            "drawCallback": function (settings) {
-        
-            },
-            dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-                "<'row '<'col-12 table-responsive't>>" +
-                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
-            ajax: {
-                url: "getUsuariosMobile.php",
-                type: "POST",
-            },
-            createdRow: function (row, data, dataIndex) {
-                $(row).addClass('animate__animated animate__fadeIn align-middle');
-            },
-            columns: [
-                /** Columna Usuario Mobile */
-                {
-                    className: 'align-middle w-100', targets: '', title: '<div class="">Usuarios</div>',
-                    "render": function (data, type, row, meta) {
+if ($(window).width() < 540) {
+    tableUsuarios = $('#tableUsuarios').DataTable({
+        "drawCallback": function (settings) {
 
-                        let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
-                        let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
-                        let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
-        
-                        if (row.userRegId.length > '100') {
-                            activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
-                        }
-                        if (row.userRegId.length > '100') {
-                            mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
-                        }
-                        if (row.userChecks < 1) {
-                            del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
-                        }
+        },
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        ajax: {
+            url: "getUsuariosMobile.php",
+            type: "POST",
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('animate__animated animate__fadeIn align-middle');
+        },
+        columns: [
+            /** Columna Usuario Mobile */
+            {
+                className: 'align-middle w-100', targets: '', title: '<div class="">Usuarios</div>',
+                "render": function (data, type, row, meta) {
 
-                        let datacol = `
+                    let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                    let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
+                    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
+
+                    if (row.userRegId.length > '100') {
+                        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                    }
+                    if (row.userRegId.length > '100') {
+                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                    }
+                    if (row.userChecks < 1) {
+                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
+                    }
+
+                    let datacol = `
                             <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
                             <div class="text-secondary">ID: ${row.userID}</div>
                             <div class="d-flex justify-content-end">
@@ -51,91 +51,103 @@ const loadingTableUser = (selectortable) => {
                             ${del}
                             </div>
                             `
-                        return datacol;
-                    },
-                },        
-            ],
-            lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
-            bProcessing: false,
-            serverSide: true,
-            deferRender: true,
-            searchDelay: 1000,
-            paging: true,
-            searching: true,
-            info: true,
-            ordering: false,
-            // scrollY: '52vh',
-            scrollY: '320px',
-            scrollCollapse: true,
-            scrollX: true,
-            fixedHeader: false,
-            language: {
-                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-            },
-        
-        });
-    } else {
-        tableUsuarios = $('#tableUsuarios').DataTable({
-            "drawCallback": function (settings) {
-        
-            },
-            dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-                "<'row '<'col-12 table-responsive't>>" +
-                "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
-                "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
-                "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-            ajax: {
-                url: "getUsuariosMobile.php",
-                type: "POST",
-                "data": function (data) { },
-                error: function () { },
-            },
-            createdRow: function (row, data, dataIndex) {
-                $(row).addClass('animate__animated animate__fadeIn align-middle');
-            },
-            columns: [
-                /** Columna ID */
-                {
-                    className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
-                    "render": function (data, type, row, meta) {
-                        let datacol = `<div class="w80">${row.userID}</div>`
-                        return datacol;
-                    },
+                    return datacol;
                 },
-                /** Columna Nombre */
-                {
-                    className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
-                    "render": function (data, type, row, meta) {
-                        let datacol = `<div class="text-truncate w120">${row.userName}</div>`
-                        return datacol;
-                    },
+            },
+        ],
+        lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '52vh',
+        scrollY: '320px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+        },
+
+    });
+} else {
+    tableUsuarios = $('#tableUsuarios').DataTable({
+        "drawCallback": function (settings) {
+
+        },
+        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
+            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
+            "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
+        ajax: {
+            url: "getUsuariosMobile.php",
+            type: "POST",
+            "data": function (data) { },
+            error: function () { },
+        },
+        createdRow: function (row, data, dataIndex) {
+            $(row).addClass('align-middle');
+        },
+        columns: [
+            /** Columna ID */
+            {
+                className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
+                "render": function (data, type, row, meta) {
+                    let bloqueado = '';
+                    if (row.bloqueado == true) {
+                        bloqueado = 'text-danger font-weight-bold';
+                    }
+                    let datacol = `<div class="w80 ${bloqueado}">${row.userID}</div>`
+                    return datacol;
                 },
-                /** Columna cant Fichadas */
-                {
-                    className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
-                    "render": function (data, type, row, meta) {
-                        let datacol = `<div class="ls1">${row.userChecks}</div>`
-                        return datacol;
-                    },
+            },
+            /** Columna Nombre */
+            {
+                className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
+                "render": function (data, type, row, meta) {
+                    let bloqueado = '';
+                    if (row.bloqueado == true) {
+                        bloqueado = 'text-danger font-weight-bold';
+                    }
+                    let datacol = `<div class="text-truncate w120 ${bloqueado}">${row.userName}</div>`
+                    return datacol;
                 },
-                /** Columna Acciones */
-                {
-                    className: 'align-middle w-100', targets: '', title: '',
-                    "render": function (data, type, row, meta) {
-                        let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
-                        let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
-                        let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
-        
-                        if (row.userRegId.length > '100') {
-                            activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
-                        }
-                        if (row.userRegId.length > '100') {
-                            mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
-                        }
-                        if (row.userChecks < 1) {
-                            del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
-                        }
-                        let datacol = `
+            },
+            /** Columna cant Fichadas */
+            {
+                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                "render": function (data, type, row, meta) {
+                    let bloqueado = '';
+                    if (row.bloqueado == true) {
+                        bloqueado = 'text-danger font-weight-bold';
+                    }
+                    let datacol = `<div class="ls1 ${bloqueado}">${row.userChecks}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Acciones */
+            {
+                className: 'align-middle w-100', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                    let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled "></span></span>`;
+                    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
+
+                    if (row.userRegId.length > '100') {
+                        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                    }
+                    if (row.userRegId.length > '100') {
+                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                    }
+                    if (row.userChecks < 1) {
+                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
+                    }
+                    let datacol = `
                         <div class="d-flex justify-content-end">
                             <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
                             ${mensaje}
@@ -143,31 +155,31 @@ const loadingTableUser = (selectortable) => {
                             ${del}
                         </div>
                         `
-                        return datacol;
-                    },
+                    return datacol;
                 },
-        
-            ],
-            lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
-            bProcessing: false,
-            serverSide: true,
-            deferRender: true,
-            searchDelay: 1000,
-            paging: true,
-            searching: true,
-            info: true,
-            ordering: false,
-            // scrollY: '52vh',
-            scrollY: '281px',
-            scrollCollapse: true,
-            scrollX: true,
-            fixedHeader: false,
-            language: {
-                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
             },
-        
-        });
-    }
+
+        ],
+        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        bProcessing: false,
+        serverSide: true,
+        deferRender: true,
+        searchDelay: 1000,
+        paging: true,
+        searching: true,
+        info: true,
+        ordering: false,
+        // scrollY: '52vh',
+        scrollY: '281px',
+        scrollCollapse: true,
+        scrollX: true,
+        fixedHeader: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
+        },
+
+    });
+}
 
 tableUsuarios.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
@@ -183,7 +195,7 @@ tableUsuarios.on('xhr.dt', function (e, settings, json) {
 tableUsuarios.on('init.dt', function (e, settings, json) {
     $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h40 opa8 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>')
     $('#tableUsuarios_filter input').removeClass('form-control-sm')
-    $('#tableUsuarios_filter input').attr("style","height: 40px !important");
+    $('#tableUsuarios_filter input').attr("style", "height: 40px !important");
     select2Simple('#tableUsuarios_length select', '', false, false)
 });
 $(document).on("click", ".sendSettings", function (e) {
@@ -233,6 +245,43 @@ $(document).on("click", "#addUser", function (e) {
         setTimeout(() => {
             $('#formUser #formUserID').focus();
         }, 500);
+
+        $('#_drUser').daterangepicker({
+            singleDatePicker: false,
+            opens: 'right',
+            drops: 'auto',
+            autoUpdateInput: true,
+            autoApply: true,
+            linkedCalendars: false,
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Esta semana': [moment().day(1), moment().day(7)],
+                'Próxima Semana': [moment().add(1, 'week').day(1), moment().add(1, 'week').day(7)],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Próximo Mes': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')],
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                firstDay: 1,
+                alwaysShowCalendars: true,
+                applyButtonClasses: "text-white bg-custom",
+            },
+        });
+        $('#_drUser').val(''); // Set the start date
+        $('#labelInactivo').removeClass('active');
+        $('#labelActivo').addClass('active');
+        $('#formUserEstadoAct').prop('checked', true);
+        $('#formUserEstadoBloc').prop('checked', false);
+
 
     }).then(function () {
 
@@ -293,17 +342,22 @@ $(document).on("click", "#addUser", function (e) {
     });
 });
 $(document).on("click", ".updateUser", function (e) {
+    e.preventDefault();
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
-    console.log(data);
+    // alert((data.locked));
     axios({
         method: 'post',
         url: 'modalUser.html?v=' + $.now(),
     }).then(function (response) {
         $('#modales').html(response.data)
     }).then(function () {
+        let bloqueado = '';
+        if (data.tipoBloqueo == 'Fecha') {
+            bloqueado = `<span class="text-danger font-weight-bold">| Bloqueado Por Fechas</span>`
+        }
         $('#modalUser .modal-title').html(`
             <div>Editar Usuario</div>
-            <div class="text-muted fontq">ID: ${data.userID}</div> 
+            <div class="text-muted fontq">ID: ${data.userID} ${bloqueado}</div> 
         `)
         $('#modalUser').modal('show');
         // $('#formUser .requerido').html('(*)')
@@ -316,6 +370,55 @@ $(document).on("click", ".updateUser", function (e) {
         $('#formUser #formUserID').attr('readonly', 'readonly')
         $('#formUser #formUserName').val(data.userName);
         $('#formUser #formUserRegid').val(data.userRegId);
+        $('#formUser #formUserMotivo').val(data.motivo);
+
+        $('#_drUser').daterangepicker({
+            singleDatePicker: false,
+            opens: 'right',
+            drops: 'auto',
+            autoUpdateInput: true,
+            autoApply: true,
+            linkedCalendars: false,
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Esta semana': [moment().day(1), moment().day(7)],
+                'Próxima Semana': [moment().add(1, 'week').day(1), moment().add(1, 'week').day(7)],
+                'Este mes': [moment().startOf('month'), moment().endOf('month')],
+                'Próximo Mes': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')],
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                firstDay: 1,
+                alwaysShowCalendars: true,
+                applyButtonClasses: "text-white bg-custom",
+            },
+        });
+        if (data.locked == '1') {
+            $('#labelInactivo').addClass('active');
+            $('#labelActivo').removeClass('active');
+            $('#formUserEstadoBloc').prop('checked', true);
+            $('#formUserEstadoAct').prop('checked', false);
+        } else {
+            $('#labelInactivo').removeClass('active');
+            $('#labelActivo').addClass('active');
+            $('#formUserEstadoAct').prop('checked', true);
+            $('#formUserEstadoBloc').prop('checked', false);
+        }
+        if (data.expiredEnd) {
+            $('#_drUser').data('daterangepicker').setStartDate(data.expiredStart); // Set the start date
+            $('#_drUser').data('daterangepicker').setEndDate(data.expiredEnd); // Set the end date
+        } else {
+            $('#_drUser').val(''); // Set the start date
+        }
 
         $('#formUser #divid_user').hide()
         setTimeout(() => {
@@ -363,7 +466,7 @@ $(document).on("click", ".updateUser", function (e) {
                         notify('ID ' + userID + ' ' + tipoStatus + ' correctamente<br>Nombre: ' + userName + '.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableUsuarios').DataTable().ajax.reload();
+                        $('#tableUsuarios').DataTable().ajax.reload(null, false);
                         ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
                         $('#modalUser').modal('hide');
                     } else {
@@ -380,6 +483,10 @@ $(document).on("click", ".updateUser", function (e) {
         });
     });
 });
+$(document).on("click", ".cleanDate", function (e) {
+    clearInput('#_drUser')
+});
+
 $(document).on("click", ".deleteUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
     console.log(data);
@@ -407,6 +514,7 @@ $(document).on("click", ".deleteUser", function (e) {
         $('#formUser #formUserName').val(data.userName);
         $('#formUser #formUserRegid').val(data.userRegId);
         $('#formUser #divid_user').hide()
+        $('.hide').hide()
 
     }).then(function () {
 

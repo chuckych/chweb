@@ -37,11 +37,29 @@ $api = json_decode($api, true);
 $totalRecords = $api['TOTAL'];
 if ($api['COUNT'] > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
+
+        if ($r['locked'] == '1') {
+            $bloqueado = true;
+            $tipoBloqueo = '';
+        } else if (!empty($r['expiredEnd']) && FechaFormatVar($r['expiredEnd'], 'Ymd') >= date('Ymd')) {
+            $bloqueado = true;
+            $tipoBloqueo = 'Fecha';
+        } else {
+            $bloqueado = false;
+            $tipoBloqueo = '';
+        }
+
         $arrayData[] = array(
-            'userID'     => $r['userID'],
-            'userName'   => $r['userName'],
-            'userChecks' => $r['userChecks'],
-            'userRegId'  => $r['userRegId'],
+            'userID'       => $r['userID'],
+            'userName'     => $r['userName'],
+            'userChecks'   => $r['userChecks'],
+            'userRegId'    => $r['userRegId'],
+            'expiredEnd'   => ($r['expiredEnd']!= '0000-00-00') ? FechaFormatVar($r['expiredEnd'], 'd/m/Y'): null,
+            'expiredStart' => ($r['expiredStart'] != '0000-00-00') ? FechaFormatVar($r['expiredStart'], 'd/m/Y') : null,
+            'locked'       => $r['locked'],
+            'motivo'       => $r['motivo'],
+            'bloqueado'    => $bloqueado,
+            'tipoBloqueo'  => $tipoBloqueo
         );
     }
 }

@@ -11,7 +11,7 @@ function formatDate(date) {
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();
-        
+
     if (month.length < 2)
         month = '0' + month;
     if (day.length < 2)
@@ -588,6 +588,38 @@ function dobleDatePicker(selector, opens, drop) {
 
     });
 }
+function dobleDatePickerAuto(selector, opens, drop) {
+
+    $(selector).daterangepicker({
+        singleDatePicker: false,
+        opens: opens,
+        drops: drop,
+        autoUpdateInput: true,
+        autoApply: true,
+        linkedCalendars: false,
+        ranges: {
+            'Esta semana': [moment().day(1), moment().day(7)],
+            'Próxima Semana': [moment().add(1, 'week').day(1), moment().add(1, 'week').day(7)],
+            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+            'Próximo Mes': [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')],
+        },
+        locale: {
+            format: "DD/MM/YYYY",
+            separator: " al ",
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Para",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            "monthNames": ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+            alwaysShowCalendars: true,
+            applyButtonClasses: "text-white bg-custom",
+        },
+    });
+}
 function CheckSesion() {
     $.ajax({
         dataType: "json",
@@ -648,36 +680,40 @@ function onOpenSelect2() {
         e.stopPropagation();
     });
 }
+function clearInput(selector) {
+    $(selector).val('');
+    $(selector).trigger('change');
+}
 setInterval(() => {
     CheckSesion();
-}, 60000);
+}, 120000);
 
 /**
  * @param String name
  * @return String
  */
- function getParameterByName(name) {
+function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-    results = regex.exec(location.search);
+        results = regex.exec(location.search);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 function launchFullScreen(element) {
-    if(element.requestFullScreen) {
-      element.requestFullScreen();
-    } else if(element.mozRequestFullScreen) {
-      element.mozRequestFullScreen();
-    } else if(element.webkitRequestFullScreen) {
-      element.webkitRequestFullScreen();
+    if (element.requestFullScreen) {
+        element.requestFullScreen();
+    } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if (element.webkitRequestFullScreen) {
+        element.webkitRequestFullScreen();
     }
     // example: launchFullScreen(document.documentElement)
-  }
-  function cancelFullScreen() {
-    if(document.cancelFullScreen) {
+}
+function cancelFullScreen() {
+    if (document.cancelFullScreen) {
         document.cancelFullScreen();
-    } else if(document.mozCancelFullScreen) {
+    } else if (document.mozCancelFullScreen) {
         document.mozCancelFullScreen();
-    } else if(document.webkitCancelFullScreen) {
+    } else if (document.webkitCancelFullScreen) {
         document.webkitCancelFullScreen();
     }
     // example: cancelFullScreen()

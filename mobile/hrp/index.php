@@ -9,5 +9,4 @@ if ($_SERVER['SERVER_NAME'] == 'localhost') {
 } else {
     borrarLogs(__DIR__ . '/logs/', 30, '.log');
 }
-
 require pagina('mobile.php');

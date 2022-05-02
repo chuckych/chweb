@@ -168,11 +168,15 @@ ru.id_user AS 'id_user',
 ru.nombre AS 'nombre', 
 ru.regid AS 'regid', 
 ru.fechahora AS 'fechaHora', 
+ru.expiredStart AS 'expiredStart', 
+ru.expiredEnd AS 'expiredEnd',
+ru.estado AS 'estado',
+ru.motivo AS 'motivo',
 (SELECT COUNT(1) FROM reg_ r WHERE r.id_user = ru.id_user AND r.eventType=2 AND r.id_company = '$idCompany') AS 'cant' 
 FROM reg_user_ ru WHERE ru.uid > 0";
 $filtro_query = '';
 $filtro_query .= ($idCompany) ? " AND ru.id_company = $idCompany" : '';
-$filtro_query .= (!empty($status)) ? " AND ru.estado = '$status'" : " AND ru.estado = '0'";
+$filtro_query .= (!empty($status)) ? " AND ru.estado = '$status'" : "";
 $filtro_query .= (!empty($userID)) ? " AND ru.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName)) ? " AND CONCAT(ru.nombre, ru.id_user) LIKE '%$userIDName%'" : '';
@@ -187,11 +191,15 @@ if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         // $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
         $arrayData[] = array(
-            'lastUpdate' => ($r['fechaHora']),
-            'userID'     => intval($r['id_user']),
-            'userName'   => $r['nombre'],
-            'userRegId'  => $r['regid'],
-            'userChecks'     => intval($r['cant']),
+            'lastUpdate'   => ($r['fechaHora']),
+            'userID'       => intval($r['id_user']),
+            'userName'     => $r['nombre'],
+            'userRegId'    => $r['regid'],
+            'userChecks'   => intval($r['cant']),
+            'expiredStart' => ($r['expiredStart']),
+            'expiredEnd'   => ($r['expiredEnd']),
+            'locked'       => ($r['estado']),
+            'motivo'       => ($r['motivo']),
         );
     }
     $q = "SELECT COUNT(*) AS 'count' FROM reg_user_ ru WHERE ru.uid > 0";

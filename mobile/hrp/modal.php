@@ -22,12 +22,8 @@
                     <div class="col pl-2 text-left text-secondary font-weight-normal">
                         <div class="datos">
                             <p class="p-0 m-0">
-                                <label class="w70 fontp text-secondary">Fecha: </label>
+                                <label class="w100 fontp text-secondary">Fecha / Hora: </label>
                                 <div class="fontq text-dark text-wrap picDia"></div>
-                            </p>
-                            <p class="p-0">
-                                <label class="w70 fontp text-secondary">Hora: </label>
-                                <div class="fontq text-dark text-wrap picHora"></div>
                             </p>
                             <p class="p-0">
                                 <label class="w70 fontp text-secondary">Dispositivo: </label>
@@ -41,8 +37,16 @@
                                 <label class="w70 fontp text-secondary">Zona: </label>
                                 <div class="fontq text-dark text-wrap picZona"></div>
                             </p>
+                             <p class="p-0">
+                                <label class="fontp text-secondary">Reconocimiento Facial: </label>
+                                <div class="fontq text-dark text-wrap picFace"></div>
+                            </p>
                         </div>
                     </div>
+                </div>
+
+                <div id="divError">
+                    
                 </div>
                 <div class="row bg-white">
                     <div id="mapzone" class="img-fluid rounded m-3"></div>

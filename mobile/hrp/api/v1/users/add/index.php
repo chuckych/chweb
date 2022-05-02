@@ -62,6 +62,34 @@ function validaKey()
     $validaKey = empty($p) ? '' : $p;
     return ($validaKey);
 }
+function expiredStart()
+{
+    $p = $_POST;
+    $p['expiredStart'] = $p['expiredStart'] ?? '';
+    $expiredStart = empty($p['expiredStart']) ? '' : $p['expiredStart'];
+    return ($expiredStart);
+}
+function expiredEnd()
+{
+    $p = $_POST;
+    $p['expiredEnd'] = $p['expiredEnd'] ?? '';
+    $expiredEnd = empty($p['expiredEnd']) ? '' : $p['expiredEnd'];
+    return ($expiredEnd);
+}
+function textLock()
+{
+    $p = $_POST;
+    $p['textLock'] = $p['textLock'] ?? '';
+    $textLock = empty($p['textLock']) ? '' : $p['textLock'];
+    return urldecode($textLock);
+}
+function status()
+{
+    $p = $_POST;
+    $p['status'] = $p['status'] ?? '';
+    $status = empty($p['status']) ? '0' : $p['status'];
+    return ($status);
+}
 if (!isset($_POST['key'])) {
     http_response_code(400);
     (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
@@ -69,7 +97,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'userRegid' || $key == 'userName' || $key == 'userID') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'userRegid' || $key == 'userName' || $key == 'userID' || $key == 'expiredStart' || $key == 'expiredEnd' || $key == 'textLock' || $key == 'status') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -132,6 +160,10 @@ $length       = length();
 $userName     = userName();
 $userID       = userID();
 $userRegid    = userRegid();
+$expiredStart = expiredStart();
+$expiredEnd   = expiredEnd();
+$textLock     = textLock();
+$status       = status();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -140,10 +172,14 @@ foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
         $vkey      = $value['recidCompany'];
+        $nameCompany = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
         $vkey      = '';
+        $nameCompany = '';
+        $urlAppMobile = '';
         continue;
     }
 }
@@ -152,6 +188,17 @@ if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
+if (empty($urlAppMobile)) {
+    http_response_code(400);
+    (response(array(), 0, 'Empty URL API', 400, 0, 0, $idCompany));
+}
+$ping = pingApiMobileHRP($urlAppMobile);
+
+if (empty($ping)) {
+    http_response_code(400);
+    (response(array(), 0, 'Error conection API', 400, 0, 0, $idCompany));
+}
+
 if (empty($userID)) {
     http_response_code(400);
     (response(array(), 0, 'userID required', 400, 0, 0, $idCompany));
@@ -168,11 +215,23 @@ if (strlen($userName) > 50) {
     http_response_code(400);
     (response(array(), 0, 'userName max length 50', 400, 0, 0, $idCompany));
 }
+if (strlen($status) > 1) {
+    http_response_code(400);
+    (response(array(), 0, 'status max length 1', 400, 0, 0, $idCompany));
+}
+if (($status) != 1 && ($status) != 0) {
+    http_response_code(400);
+    (response(array(), 0, 'status format Error', 400, 0, 0, $idCompany));
+}
+if (intval($expiredStart) > intval($expiredEnd)) {
+    http_response_code(400);
+    (response(array(), 0, 'date error', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-/** Validar que el ID no exitas */
+/** Validar que el ID no exita */
 $q = "SELECT * FROM `reg_user_` WHERE `id_company` = '$idCompany' AND `id_user` = '$userID'";
 $a = count_pdoQuery($q);
 
@@ -186,32 +245,61 @@ if ($a > 0) {
     exit;
 }
 /** Validar que el nombre no exista */
-$q = "SELECT * FROM `reg_user_` WHERE `id_company` = '$idCompany' AND `nombre` = '$userName'";
-$a = count_pdoQuery($q);
+// $q = "SELECT * FROM `reg_user_` WHERE `id_company` = '$idCompany' AND `nombre` = '$userName'";
+// $a = count_pdoQuery($q);
 
-if ($a > 0) {
-    $arrayData = array();
-    $MESSAGE = 'userName already exists';
-    $finScript    = microtime(true);
-    $tiempoScript = round($finScript - $iniScript, 2);
-    $countData    = count($arrayData);
-    (response($arrayData, intval($countData), $MESSAGE, 400, $tiempoScript, $countData, $idCompany));
-    exit;
-}
+// if ($a > 0) {
+//     $arrayData = array();
+//     $MESSAGE = 'userName already exists';
+//     $finScript    = microtime(true);
+//     $tiempoScript = round($finScript - $iniScript, 2);
+//     $countData    = count($arrayData);
+//     (response($arrayData, intval($countData), $MESSAGE, 400, $tiempoScript, $countData, $idCompany));
+//     exit;
+// }
 
-$sql_query = "INSERT INTO `reg_user_` (`id_user`, `id_company`, `nombre`, `regid`) VALUES ('$userID', '$idCompany', '$userName', '$userRegid')";
+$sql_query = "INSERT INTO `reg_user_` (`id_user`, `id_company`, `nombre`, `regid`, `estado`,`expiredStart`, `expiredEnd`, `motivo`) VALUES ('$userID', '$idCompany', '$userName', '$userRegid', '$status', '$expiredStart', '$expiredEnd', '$textLock')";
 $insert = pdoQuery($sql_query);
 if ($insert) {
     $a = simple_pdoQuery("SELECT * FROM `reg_user_` WHERE `id_user` = '$userID' AND `id_company` = '$idCompany' LIMIT 1");
     $MESSAGE = 'OK';
-    $arrayData = array(
-        'userID'     => $a['id_user'],
-        'id_company' => $a['id_company'],
-        'userName'   => $a['nombre'],
-        'userRegid'  => $a['regid'],
+    $user[] = array(
+        'idUser'           => $a['id_user'],
+        'name'             => $a['nombre'],
+        'status'           => 'OK',
+        'comments'         => $a['motivo'],
+        'locked'           => ($a['estado'] == 1) ? true : false,
+        'expiredDateStart' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
+        'expiredDateEnd'   => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
     );
-    $text = "Alta Usuario \"$a[nombre]\" ID = $a[id_user]";
+    $body = [
+        array(
+            "id"               => intval($idCompany),
+            "recid"            => "$vkey",
+            "name"            => "$nameCompany",
+            "locked"           => false,
+            "expiredDateStart" => null,
+            "expiredDateEnd"   => null,
+            "users"            => $user
+        )
+    ];
+    $payload = json_encode($body);
+    $sendApi = sendApiMobileHRP($payload, $urlAppMobile, 'attention/api/access/update-users', $idCompany);
+    $responseApi = (json_decode($sendApi));
+    $text = "Alta Usuario $a[nombre]. ID = $a[id_user]";
     fileLog($text, __DIR__ . '../../../_logs/addUser/' . date('Ymd') . '_log_addUser_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addUser_
+    $arrayData = array(
+        'userID'           => $a['id_user'],
+        'id_company'       => $a['id_company'],
+        'userName'         => $a['nombre'],
+        'userRegid'        => $a['regid'],
+        'comments'         => $a['motivo'],
+        'locked'           => ($a['estado'] == 1) ? true : false,
+        'expiredDateStart' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
+        'expiredDateEnd'   => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
+        'textAud'          => $text,
+        'responseApi'      => $responseApi,
+    );
 } else {
     $MESSAGE = 'ERROR';
 }

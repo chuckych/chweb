@@ -32,7 +32,8 @@ function writeFlags($assoc, $path)
     fclose($handle);
     return $success;
 }
-function statusFlags($statusFlags, $pathFlags, $createdDate){
+function statusFlags($statusFlags, $pathFlags, $createdDate)
+{
     $assoc = array(
         'flags' => array(
             'lastDate' => $createdDate,
@@ -41,8 +42,8 @@ function statusFlags($statusFlags, $pathFlags, $createdDate){
         ),
     );
     writeFlags($assoc, $pathFlags);
-    $text = ($statusFlags == '2') ? "Se marco Bandera de espera": "Se marco Bandera de descarga";
-    $pathLog = __DIR__ . '/logs/'.date('Ymd') . '_FlagsLog_.log';
+    $text = ($statusFlags == '2') ? "Se marco Bandera de espera" : "Se marco Bandera de descarga";
+    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FlagsLog_.log';
     fileLog($text, $pathLog);
 }
 function getEvents($url, $timeout = 10)
@@ -78,7 +79,8 @@ function getEvents($url, $timeout = 10)
     }
     exit;
 }
-function queryCalcZone($lat, $lng, $idCompany){
+function queryCalcZone($lat, $lng, $idCompany)
+{
     $query = "
             SELECT
             `rg`.*,
@@ -98,6 +100,7 @@ function queryCalcZone($lat, $lng, $idCompany){
     ";
     return $query;
 }
+$iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
 $pathFlags = 'flags2.php'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
@@ -129,7 +132,7 @@ $distancia2 = '';
 
 $start = microtime(true);
 
-if($flags_download == 2){
+if ($flags_download == 2) {
     $data = array(
         'Mensaje' => 'Aguarde. Hay procesos de descarga en ejecucion.',
         'date'    => date('Y-m-d H:i:s'),
@@ -145,7 +148,7 @@ $url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDat
 // echo ($url);
 // exit;
 $array = json_decode(getEvents($url), true);
-if (!empty($array['payload'])) {    
+if (!empty($array['payload'])) {
 
     foreach ($array['payload'] as $key => $v) {
         $operation = $v['operation']['observations'] ?? '';
@@ -171,9 +174,15 @@ if (!empty($array['payload'])) {
             'sync'          => $v['sync'],
             'operationType' => $v['operationType'],
             'operation'     => $operation,
+            'confidence'    => $v['confidence'] ?? '',
+            'locked'        => $v['locked'] ?? '0',
+            'error'         => $v['error'] ?? '',
+            'id_api'        => $v['id'] ?? ''
         );
     }
 }
+// print_r($arrayData);
+// exit;
 
 if (!empty($arrayData)) {
 
@@ -209,6 +218,10 @@ if (!empty($arrayData)) {
         $operationType = $v['operationType'];
         $operation     = $v['operation'];
         $checkPhoto    = ($attphoto) ? '0' : '1';
+        $confidence    = $v['confidence'] ?? '';
+        $locked        = $v['locked'];
+        $error         = $v['error'];
+        $id_api         = $v['id_api'];
 
         $arrayObj[] = array(
             'fechaHora'     => $fechaHora,
@@ -229,8 +242,30 @@ if (!empty($arrayData)) {
             'operationType' => $operationType,
             'operation'     => $operation,
             'checkPhoto'    => $checkPhoto,
+            'confidence'    => $confidence,
+            'locked'        => $locked,
+            'error'         => $error,
+            'id_api'        => $id_api
         );
     }
+
+    /**
+     * ALTER TABLE `reg_`
+	ADD COLUMN `locked` CHAR(5) NOT NULL DEFAULT '0' AFTER `gpsStatus`,
+	ADD COLUMN `error` VARCHAR(200) NOT NULL AFTER `locked`,
+	ADD COLUMN `confidence` DECIMAL(10,7) NOT NULL DEFAULT '0.0000000' AFTER `error`;
+	ADD COLUMN `id_api` INT(11) NOT NULL AFTER `gpsStatus`;
+
+    ALTER TABLE `reg_user_`
+	ADD COLUMN `expiredStart` DATE NULL DEFAULT NULL AFTER `estado`,
+	ADD COLUMN `expiredEnd` DATE NULL DEFAULT NULL AFTER `expiredStart`,
+	ADD COLUMN `motivo` VARCHAR(75) NOT NULL AFTER `expiredEnd`;
+
+    ALTER TABLE `clientes`
+	ADD COLUMN `UrlAppMobile` VARCHAR(30) NOT NULL AFTER `ApiMobileHRP`;
+	ADD COLUMN `localCH` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `auth`;
+     * 
+     */
 
     (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
@@ -251,8 +286,8 @@ if (!empty($arrayData)) {
         $fechaHora     = $valor['fechaHora'];
         $fechaHoraCH   = $valor['fechaHoraCH'];
         $hora          = $valor['hora'];
-        $appVersion    = $valor['appVersion'];
-        $attphoto      = $valor['attphoto'];
+        $appVersion    = addslashes($valor['appVersion']);
+        $attphoto      = addslashes($valor['attphoto']);
         $companyCode   = $valor['companyCode'];
         $createdDate   = $valor['createdDate'];
         $dateTime      = $valor['dateTime'];
@@ -262,10 +297,14 @@ if (!empty($arrayData)) {
         $lat           = $valor['lat'];
         $lng           = $valor['lng'];
         $phoneid       = $valor['phoneid'];
-        $regid         = $valor['regid'];
+        $regid         = addslashes($valor['regid']);
         $operationType = $valor['operationType'];
         $operation     = $valor['operation'];
         $checkPhoto    = $valor['checkPhoto'];
+        $confidence    = $valor['confidence'];
+        $locked        = empty($valor['locked']) ? '0' : $valor['locked'];
+        $error         = addslashes($valor['error']);
+        $id_api        = ($valor['id_api']);
 
         $company[]      = "$companyCode";
         if (($companyCode == $_SESSION['ID_CLIENTE'])) {
@@ -289,20 +328,19 @@ if (!empty($arrayData)) {
         $query       = queryCalcZone($lat, $lng, $companyCode);
         $zona        = simple_pdoQuery($query);
         if ($zona) {
-            $radio       = round(intval($zona['radio'])/1000, 2);
+            $radio       = round(intval($zona['radio']) / 1000, 2);
             $distancia = ($zona['distancia']) ? round($zona['distancia'], 2) : 0;
             $distancia2 = ($zona['distancia']) ? ($zona['distancia']) : 0;
             $idZone = ($distancia <= $radio) ? $zona['id'] : '0';
-        }else{
+        } else {
             $idZone = '0';
         }
         /** Fin calculo Zona */
 
-        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto')";
+        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$locked', '$error', '$id_api')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
-
-            if(!empty($attphoto)){
+            if (!empty($attphoto)) {
                 $query = "INSERT INTO `reg_faces`(`createdDate`, `id_user`, `id_company`, `photo`) VALUES('$createdDate', '$employeId', '$companyCode', '$attphoto')";
                 pdoQuery($query);
             }
@@ -313,38 +351,52 @@ if (!empty($arrayData)) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_DescargasAPI_' . $companyCode . '.log';
             fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
             /**  */
+            $localCH = filtrarObjeto($iniKeys, 'idCompany', $companyCode); // Buscamos si la empresa tiene local CH
+            $nameCompany = str_replace(" ", "-", $localCH['nameCompany']);
 
-            $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')";
+            if ($localCH['localCH'] == '1') {
+                $text = "$Legajo $fechaHoraCH $hora";
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegExternalCH_'.$nameCompany.'.log';
+                fileLog($text, $pathLog); // escribir en el log de errores el error
+            } 
+            if ($locked == '1') {
+                $text = "Usuario Bloqueado $Legajo $fechaHoraCH $hora";
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegLocked_'.$nameCompany.'.log';
+                fileLog($text, $pathLog); // escribir en el log de errores el error
+            }
 
-            if (InsertRegistroCH($query)) {
+            if ($locked != '1' && $localCH['localCH'] == '0') { // Si no esta bloqueado y tiene local CH
+                $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')"; // Insertamos en la tabla Fichadas de control horario
+                if (InsertRegistroCH($query)) {
+                    $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
+                    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
+                    $insertCH[] = array(
+                        'Estado' => '0',
+                        'Fecha'  => $fechaHoraCH,
+                        'Hora'   => $hora,
+                        'Lector' => '9999',
+                        'Legajo' => $Legajo,
+                        'Reloj'  => '9999',
+                    );
+                    fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+                } else {
+                    $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
+                    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
+                    fileLog($text, $pathLog); // escribir en el log de errores el error
+                    $insertCH_Fail[] = array(
+                        'Estado' => '0',
+                        'Fecha'  => $fechaHoraCH,
+                        'Hora'   => $hora,
+                        'Lector' => '9999',
+                        'Legajo' => $Legajo,
+                        'Reloj'  => '9999',
+                    );
+                }
+            } else {
                 $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
                 $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
-                $insertCH[] = array(
-                    'Estado' => '0',
-                    'Fecha'  => $fechaHoraCH,
-                    'Hora'   => $hora,
-                    'Lector' => '9999',
-                    'Legajo' => $Legajo,
-                    'Reloj'  => '9999',
-                );
                 fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
-            } else {
-                $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = __DIR__ . '/logs/'. date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
-                fileLog($text, $pathLog); // escribir en el log de errores el error
-                $insertCH_Fail[] = array(
-                    'Estado' => '0',
-                    'Fecha'  => $fechaHoraCH,
-                    'Hora'   => $hora,
-                    'Lector' => '9999',
-                    'Legajo' => $Legajo,
-                    'Reloj'  => '9999',
-                );
             }
-        } else {
-            $text = 'No se pudo insertar el registro ' . $employeId . ' ' . $fechaHora;
-            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logActualizar.log';
-            fileLog($text, $pathLog); // escribir en el log de errores el error
         }
     }
     $totalSession = array_count_values($totalSession);

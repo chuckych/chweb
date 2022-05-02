@@ -198,7 +198,11 @@ $sql_query = "SELECT
     r.distance AS 'zoneDistance',
     r.reg_uid AS 'reg_uid',
     CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
-    r.regid AS 'regid' 
+    r.regid AS 'regid',
+    r.id_api AS 'id_api',
+    r.locked AS 'locked',
+    r.error AS 'error',
+    r.confidence AS 'confidence'
     FROM reg_ r
     LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
@@ -216,7 +220,7 @@ $filtro_query .= " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'";
 // $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
 $total = rowCount_pdoQuery($sql_query);
-$sql_query .= " ORDER BY r.fechaHora DESC";
+$sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;
@@ -229,31 +233,45 @@ if (($queryRecords)) {
         $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
         $regPhoto = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
+        $confidence = '';
+        if ($r['confidence'] <= 30 && $r['confidence'] > 0) {
+            $confidence = 'Identificado';
+        } else if ($r['confidence'] <= 0) {
+            $confidence = 'No Enrolado';
+        } else if ($r['confidence'] > 30) {
+            $confidence = 'No Identificado';
+        }
+
         $arrayData[] = array(
-            'appVersion'    => $appVersion,
-            'attPhoto'      => intval($r['attPhoto']),
-            'createdDate'   => intval($r['createdDate']),
-            'deviceName'    => $r['deviceName'],
-            'eventType'     => $r['eventType'],
-            'gpsStatus'     => $r['gpsStatus'],
-            'operation'     => $r['operation'],
-            'operationType' => $r['operationType'],
-            'phoneid'       => intval($r['phoneid']),
-            'regDate'       => FechaFormatVar($r['fechaHora'], 'Y-m-d'),
-            'regDateTime'   => ($r['fechaHora']),
-            'regUID'        => ($r['reg_uid']),
-            'regDay'        => DiaSemana3(FechaString($r['fechaHora'])),
-            'regLat'        => floatval($r['lat']),
-            'regLng'        => floatval($r['lng']),
-            'regPhoto'      => $regPhoto,
-            'regTime'       => (HoraFormat($r['fechaHora'], false)),
-            'userCompany'   => $r['id_company'],
-            'userID'        => intval($r['id_user']),
-            'userName'      => $r['name'],
-            'phoneRegID'    => $r['regid'],
-            'zoneID'        => $r['zoneID'],
-            'zoneName'      => $r['zoneName'],
-            'zoneDistance'  => $r['zoneDistance'],
+            'appVersion'        => $appVersion,
+            'attPhoto'          => intval($r['attPhoto']),
+            'createdDate'       => intval($r['createdDate']),
+            'deviceName'        => $r['deviceName'],
+            'eventType'         => $r['eventType'],
+            'gpsStatus'         => $r['gpsStatus'],
+            'operation'         => $r['operation'],
+            'operationType'     => $r['operationType'],
+            'phoneid'           => ($r['phoneid']),
+            'regDate'           => FechaFormatVar($r['fechaHora'], 'Y-m-d'),
+            'regDateTime'       => ($r['fechaHora']),
+            'regUID'            => ($r['reg_uid']),
+            'regDay'            => DiaSemana3(FechaString($r['fechaHora'])),
+            'regLat'            => floatval($r['lat']),
+            'regLng'            => floatval($r['lng']),
+            'regPhoto'          => $regPhoto,
+            'regTime'           => (HoraFormat($r['fechaHora'], false)),
+            'userCompany'       => $r['id_company'],
+            'userID'            => intval($r['id_user']),
+            'userName'          => $r['name'],
+            'phoneRegID'        => $r['regid'],
+            'zoneID'            => $r['zoneID'],
+            'zoneName'          => $r['zoneName'],
+            'zoneDistance'      => $r['zoneDistance'],
+            'locked'            => $r['locked'],
+            'error'             => $r['error'],
+            'confidenceFaceVal' => floatval($r['confidence']),
+            'confidenceFaceStr' => ($confidence),
+            'id_api'            => intval($r['id_api']),
         );
     }
     // $q = "SELECT COUNT(*) AS 'count', id_user, fechaHora, phoneid FROM reg_ r LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company WHERE r.rid >0";

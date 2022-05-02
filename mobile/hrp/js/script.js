@@ -250,6 +250,22 @@ if ($(window).width() < 540) {
                     return datacol;
                 },
             },
+            /** Columna FACE */
+            {
+                className: 'text-center', targets: '', title: '<div class="w40">Rostro</div>',
+                "render": function (data, type, row, meta) {
+                    let confidenceFaceStr = '';
+                    if (row.confidenceFaceStr == 'Identificado') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-success bi bi-person-bounding-box"></span>`
+                    } else if (row.confidenceFaceStr == 'No Identificado') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-danger bi bi-person-bounding-box"></span>`
+                    } else if (row.confidenceFaceStr == 'No Enrolado') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
+                    }
+                    let datacol = `<div class="w40">${confidenceFaceStr}</div>`
+                    return datacol;
+                },
+            },
             /** Columna Zona */
             {
                 className: '', targets: '', title: '<div class="w120">Zona</div>',
@@ -314,7 +330,7 @@ if ($(window).width() < 540) {
             },
             /** Columna Dispositivo */
             {
-                className: 'w-100', targets: '', title: '<div class="w140" >Dispositivo</div>',
+                className: '', targets: '', title: '<div class="w140" >Dispositivo</div>',
                 "render": function (data, type, row, meta) {
                     // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
                     let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
@@ -322,6 +338,23 @@ if ($(window).width() < 540) {
                     let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
 
                     let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Flag */
+            {
+                className: 'w-100 text-right', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let locked = '';
+                    switch (row.locked) {
+                        case '1':
+                            locked = '<span data-titlel="' + row.error + '" class="font1 pointer bi bi-clipboard-x-fill text-danger"></span>';
+                            break;
+                        default:
+                            locked = '<span class="font1 bi bi-clipboard-check-fill text-success"></span>';
+                            break;
+                    }
+                    let datacol = `<div class="">${locked}</div>`
                     return datacol;
                 },
             },
@@ -640,9 +673,13 @@ $(document).on("click", ".pic", function (e) {
     let picDevice = data.deviceName
     let picIDUser = data.userID
     let pichora = data.regTime
-    let picdia = data.regDay + ' ' + data.regDate
+    let picdia = data.regDay + ' ' + data.regDate + ' ' + data.regTime
     let _lat = data.regLat
     let _lng = data.regLng
+    let locked = data.locked
+    let id_api = data.id_api
+    let error = data.error
+    let confidenceFaceStr = data.confidenceFaceStr;
 
     let zoneName = (data.zoneID > 0) ? data.zoneName : '<span class="text-danger">Fuera de Zona</span>'
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
@@ -664,6 +701,28 @@ $(document).on("click", ".pic", function (e) {
         $('.divFoto').hide()
     }
 
+    if (locked == '1') {
+        $('#divError').show()
+        $('#divError').html(`
+            <div class="col-12 text-danger mt-3 mb-0 fontq shadow-sm p-2" role="alert">
+                <label class="w70 fontp text-secondary">Error: </label>
+                <div class="font-weight-bold">${error}</div>
+            </div>
+        `)
+    } else {
+        $('#divError').hide();
+        $('#divError').html('');
+    }
+
+    if (confidenceFaceStr == 'Identificado') {
+        confidenceFaceStr = `<span class="text-success">${confidenceFaceStr}</span>`
+    } else if (confidenceFaceStr == 'No identificado') {
+        confidenceFaceStr = `<span class="text-danger">${confidenceFaceStr}</span>`
+    } else if (confidenceFaceStr == 'No Enrolado') {
+        confidenceFaceStr = `<span class="text-primary">${confidenceFaceStr}</span>`
+    }
+
+    $('.picFace').html(confidenceFaceStr);
     $('.picName').html(picnombre);
     $('.picDevice').html(picDevice);
     $('.picIDUser').html(picIDUser);

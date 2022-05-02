@@ -62,35 +62,49 @@ if ($api['COUNT'] > 0) {
         ));
         $hora = "<span class='marcador' marcador='$jsonMarcador'>$r[regTime]</span>";
         $pathPhoto = "$_SESSION[APIMOBILEHRP]/chweb/mobile/hrp/fotos/$r[userCompany]/$r[regPhoto]";
+        // $confidenceFaceStr = '';
+        // if ($r['confidenceFaceVal'] <= 30 && $r['confidenceFaceVal'] > 0) {
+        //     $confidenceFaceStr = '<span class="text-success">Identificado</span>';
+        // } else if ($r['confidenceFaceVal'] < 0) {
+        //     $confidenceFaceStr = '<span class="text-primary">No Enrolado</span>';
+        // } else if ($r['confidenceFaceVal'] > 30) {
+        //     $confidenceFaceStr = '<span class="text-danger">No Identificado</span>';
+        // }
+
         $arrayData[] = array(
-            'appVersion'    => $r['appVersion'],
-            'attPhoto'      => $r['attPhoto'],
-            'createdDate'   => $r['createdDate'],
-            'deviceName'    => $r['deviceName'],
-            'eventType'     => $r['eventType'],
-            'gpsStatus'     => $r['gpsStatus'],
-            'operation'     => $r['operation'],
-            'operationType' => $r['operationType'],
-            'phoneid'       => $r['phoneid'],
-            'regDate'       => FechaFormatVar($r['regDate'], 'd/m/Y'),
-            'regDateTime'   => $r['regDateTime'],
-            'regDay'        => $r['regDay'],
-            'regUID'        => ($r['regUID']),
-            'regLat'        => $r['regLat'],
-            'regLng'        => $r['regLng'],
-            'regPhoto'      => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
-            // 'regPhoto'   => (is_file($pathPhoto)) ? $pathPhoto : '',
-            // 'regPhoto'   => $pathPhoto,
-            'pathPhoto'     => $pathPhoto,
-            'regHora'       => $r['regTime'],
-            'regTime'       => $hora,
-            'userCompany'   => $r['userCompany'],
-            'userID'        => $r['userID'],
-            'userName'      => $r['userName'],
-            'phoneRegId'    => $r['phoneRegID'],
-            'zoneID'        => $r['zoneID'],
-            'zoneName'      => $r['zoneName'],
-            'zoneDistance'  => round(floatval($r['zoneDistance'])*1000,2)
+            'appVersion'        => $r['appVersion'],
+            'attPhoto'          => $r['attPhoto'],
+            'createdDate'       => $r['createdDate'],
+            'deviceName'        => $r['deviceName'],
+            'eventType'         => $r['eventType'],
+            'gpsStatus'         => $r['gpsStatus'],
+            'operation'         => $r['operation'],
+            'operationType'     => $r['operationType'],
+            'phoneid'           => $r['phoneid'],
+            'regDate'           => FechaFormatVar($r['regDate'], 'd/m/Y'),
+            'regDateTime'       => $r['regDateTime'],
+            'regDay'            => $r['regDay'],
+            'regUID'            => ($r['regUID']),
+            'regLat'            => $r['regLat'],
+            'regLng'            => $r['regLng'],
+            'regPhoto'          => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
+            // 'regPhoto'       => (is_file($pathPhoto)) ? $pathPhoto : '',
+            // 'regPhoto'       => $pathPhoto,
+            'pathPhoto'         => $pathPhoto,
+            'regHora'           => $r['regTime'],
+            'regTime'           => $hora,
+            'userCompany'       => $r['userCompany'],
+            'userID'            => $r['userID'],
+            'userName'          => $r['userName'],
+            'phoneRegId'        => $r['phoneRegID'],
+            'zoneID'            => $r['zoneID'],
+            'zoneName'          => $r['zoneName'],
+            'zoneDistance'      => round(floatval($r['zoneDistance'])*1000,2),
+            'locked'            => $r['locked'],
+            'error'             => $r['error'],
+            'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
+            'confidenceFaceVal' => $r['confidenceFaceVal'],
+            'id_api'            => $r['id_api'],
         );
     }
 }

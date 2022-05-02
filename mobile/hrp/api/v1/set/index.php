@@ -161,10 +161,15 @@ $cancellationReasons[] = '';
 $operations[] = '';
 
 $dataSend = array(
-    'eventType'           => 101,
-    'apiKey'              => '7BB3A26C25687BCD56A9BAF353A78',
-    'companyCode'          => $idCompany,
-    'employeId'            => $userID,
+    'eventType'       => 101,
+    'apiKey'          => '7BB3A26C25687BCD56A9BAF353A78',
+    'companyCode'     => $idCompany,
+    'employeId'       => $userID,
+    'notificationId'  => 195,
+    'locationIp'      => "http://190.7.56.83",
+    'serverIp'        => "http://207.191.165.3:7500",
+    'updateInterval'  => 90,
+    'fastestInterval' => 60,
 );
 $data2 = array(
     'to' => $phoneRegId,
@@ -181,7 +186,8 @@ function sendMessaje($url, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     $headers = [
         'Content-Type: application/json',
-        'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
+        'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8',
+        'Connection' => 'keep-alive'
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
