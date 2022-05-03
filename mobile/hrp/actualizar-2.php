@@ -314,8 +314,15 @@ if (!empty($arrayData)) {
             $idZone = '0';
         }
         /** Fin calculo Zona */
+        $eventZone = '0';
+        if($idZone != '0'){ // Si la Zona es diferente a 0 entonces se calcula el evento consultando la tabla de zona y evento
+            $a = simple_pdoQuery("SELECT evento FROM reg_zones WHERE id_company = '$companyCode' AND evento != '0' AND id = '$idZone' LIMIT 1");
+            $eventZone = $a['evento']; // Evento de la zona
+        }
+            $b = simple_pdoQuery("SELECT evento FROM reg_device_ WHERE id_company = '$companyCode' AND evento != '0' AND phoneid = '$phoneid' LIMIT 1");
+            $eventDevice = $b['evento'] ?? ''; // Evento del dispositivo
 
-        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2','$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$locked', '$error', '$id_api')";
+        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$locked', '$error', '$id_api')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
             if (!empty($attphoto)) {
@@ -344,15 +351,16 @@ if (!empty($arrayData)) {
             }
 
             if ($locked != '1' && $localCH['localCH'] == '0') { // Si no esta bloqueado y tiene local CH
-                $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '9999', '0')"; // Insertamos en la tabla Fichadas de control horario
+                $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '$eventZone', '0')"; // Insertamos en la tabla Fichadas de control horario
                 if (InsertRegistroCH($query)) {
-                    $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
+                    $eventZone = str_pad($eventZone, 4, "0", STR_PAD_LEFT);
+                    $text = "$Legajo $fechaHoraCH $hora 9999 $eventZone 0";
                     $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
                     $insertCH[] = array(
                         'Estado' => '0',
                         'Fecha'  => $fechaHoraCH,
                         'Hora'   => $hora,
-                        'Lector' => '9999',
+                        'Lector' => $eventZone,
                         'Legajo' => $Legajo,
                         'Reloj'  => '9999',
                     );
@@ -365,7 +373,7 @@ if (!empty($arrayData)) {
                         'Estado' => '0',
                         'Fecha'  => $fechaHoraCH,
                         'Hora'   => $hora,
-                        'Lector' => '9999',
+                        'Lector' => $eventZone,
                         'Legajo' => $Legajo,
                         'Reloj'  => '9999',
                     );
@@ -377,7 +385,7 @@ if (!empty($arrayData)) {
             }
         }
     }
-    
+
     $totalSession = array_count_values($totalSession);
     $end  = microtime(true);
     $time = round($end - $start, 2);
