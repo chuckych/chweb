@@ -36,7 +36,7 @@ $Cliente = ExisteCliente($_GET['_c']);
         <span id="respuesta"></span>
         <input type="hidden" id="recid_cRol" value="<?= $_GET['_c'] ?>">
         <!-- Fin Encabezado -->
-        <div class="row mt-3">
+        <div class="row my-3">
             <div class="col-12">
                 <?php if (modulo_cuentas() == '1') { ?>
                     <a href="../clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
@@ -44,8 +44,8 @@ $Cliente = ExisteCliente($_GET['_c']);
                 <a href="../?_c=<?= $_GET['_c'] ?>" class="btn mr-1 fontq float-right m-0 opa7 btn-custom"><i class="bi bi-people-fill mr-2"></i>Usuarios</a>
             </div>
         </div>
-        <div class="row mt-2">
-            <div class="col-12 mt-2 table-responsive" style="display: none;">
+        <div class="row">
+            <div class="col-12">
             <?php $classSKF = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'w-auto text-nowrap':'w-100 text-wrap';?>
                 <table class="table border p-2 <?=$classSKF?>" id="GetRoles">
                     <thead class="text-uppercase">

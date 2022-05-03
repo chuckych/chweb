@@ -17,7 +17,7 @@
 
                 <input type="hidden" name="submit" id="submitFormCuenta" value="altaCuenta">
                 <div class="modal-body mt-n3">
-                    <div class="p-1 border">
+                    <div class="p-2 border shadow-sm">
                         <ul class="nav nav-tabs fontq" id="myTab" role="tablist">
                             <li class="nav-item text-secondary" role="presentation">
                                 <a class="nav-link text-secondary active" id="Cuenta-tab" data-toggle="tab" href="#Cuenta"
@@ -39,31 +39,42 @@
                         </ul>
                         <div class="tab-content p-2" id="myTabContent">
                             <div class="tab-pane fade show active" id="Cuenta" role="tabpanel" aria-labelledby="Cuenta-tab">
-                                <div class="d-inline-flex w-100">
-                                    <input type="text" title="campo obligatorio" name="nombre" id="nombre"
-                                        placeholder="Nombre de Cuenta (*)" class="h40 form-control mr-sm-2">
-                                    <input
+                                <div class="form-row">  
+                                    <div class="col-12 col-sm-7">
+                                        <p class="fontq mb-1">Nombre de la Cuenta: </p>
+                                        <input type="text" title="campo obligatorio" name="nombre" id="nombre"
+                                        placeholder="Nombre de Cuenta (*)" class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-12 col-sm-5">
+                                        <p class="fontq mb-1">Identificador: </p>
+                                        <input
                                         title="El identificador puede quedar en blanco. El mismo se genera automáticamente"
                                         type="text" maxlength="3" name="ident" id="ident"
-                                        placeholder="Identificador de Cuenta" class="mt-2 mt-sm-0 h40 form-control mr-sm-2">
+                                        placeholder="Identificador de Cuenta" class="my-2 h40 form-control">
+                                    </div>  
                                 </div>
                             </div>
                             <div class="tab-pane fade" id="ConexionSQL" role="tabpanel" aria-labelledby="ConexionSQL-tab">
-                                <div class="row">
-                                    <div class="col-12 mt-2">
-                                        <p class="fontq m-0 mb-1 fw4">Datos de conexion SQL: </p>
-                                    </div>
-                                    <div class="col-12 d-inline-flex w-100">
+                                <div class="form-row">
+                                    <div class="col-12 col-sm-6">
+                                        <p class="fontq mb-1">Host: </p>
                                         <input type="text" name="host" id="host" placeholder="Host"
-                                            class="h40 form-control mr-sm-2">
-                                        <input type="text" name="db" id="db" placeholder="Base de Datos"
-                                            class="h40 form-control mr-sm-2 mt-2 mt-sm-0">
+                                            class="h40 form-control my-2">
                                     </div>
-                                    <div class="col-12 d-inline-flex w-100 mt-0 mt-sm-2">
+                                    <div class="col-12 col-sm-6">
+                                        <p class="fontq mb-1">Base de Datos: </p>
+                                        <input type="text" name="db" id="db" placeholder="Base de Datos"
+                                            class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-6 col-sm-6 mt-sm-2">
+                                        <p class="fontq mb-1">Usuario: </p>
                                         <input type="text" name="user" id="user" placeholder="Usuario"
-                                            class="h40 form-control mr-sm-2 mt-2 mt-sm-0">
+                                            class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-6 col-sm-6 mt-sm-2">
+                                        <p class="fontq mb-1">Password: </p>
                                         <input type="text" name="pass" id="pass" placeholder="Password"
-                                            class="h40 form-control mr-sm-2 mt-2 mt-sm-0">
+                                            class="h40 form-control my-2">
                                         <input type="hidden" name="recid" id="recid" placeholder="recid" class="">
                                     </div>
                                     <div class="col-12 d-inline-flex w-100 mt-2">
@@ -76,12 +87,10 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <p class="fontq m-0 mb-1 fw4">Path WebService CH:</p>
-                                    </div>
-                                    <div class="col-12">
+                                        <p class="fontq mb-1">Path WebService CH:</p>
                                         <input type="text" title="WebService" name="WebService" id="WebService"
                                             placeholder="Ejemplo: http://192.168.1.202:6400"
-                                            class="h40 form-control mr-sm-2">
+                                            class="h40 form-control my-2">
                                     </div>
                                 </div>
                             </div>
@@ -90,13 +99,13 @@
                                     <div class="col-12">
                                         <div class="row">
                                             <div class="col-12 col-sm-6 mt-2">
-                                                <p class="fontq m-0 mb-1 fw4">Path API Mobile Frontend:</p>
+                                                <p class="fontq mb-1">Path API Mobile Frontend:</p>
                                                 <input type="text" title="Api Mobile HRP" name="ApiMobileHRP" id="ApiMobileHRP"
                                                     placeholder="Ejemplo: http://192.168.1.220:8050"
                                                     class="h40 form-control mr-sm-2">
                                             </div>
                                             <div class="col-12 col-sm-6 mt-2">
-                                                <p class="fontq m-0 mb-1 fw4">Path API Mobile App:</p>
+                                                <p class="fontq mb-1">Path API Mobile App:</p>
                                                 <input type="text" title="Path API Mobile App:" name="ApiMobileHRPApp"
                                                     id="ApiMobileHRPApp" placeholder="Ejemplo: http://207.191.165.3:7500"
                                                     class="h40 form-control mr-sm-2">
@@ -120,10 +129,8 @@
                             </div>
                             <div class="tab-pane fade" id="XmartClock" role="tabpanel" aria-labelledby="XmartClock-tab">
                                 <div class="row">
-                                    <div class="col-12 mt-2">
-                                        <p class="fontq m-0 mb-1 fw4">Token Mobile XClock:</p>
-                                    </div>
                                     <div class="col-12">
+                                        <p class="fontq mb-1">Token Mobile XClock:</p>
                                         <input type="text" title="" name="tkmobile" id="tkmobile" placeholder="Token Mobile"
                                             class="h40 form-control mr-sm-2">
                                     </div>

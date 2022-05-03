@@ -6,7 +6,7 @@
     <title><?= MODULOS['cuentas'] ?></title>
     <style>
     .dtrg-level-0 td{
-        border-top: 1px solid #DEE2E6 !important;
+        border-bottom: 1px solid #DEE2E6 !important;
     }
     thead{
         display: none;
@@ -23,8 +23,8 @@
             encabezado_mod2('bg-custom', 'white', 'diagram-3-fill',  MODULOS['cuentas'], '25', 'text-white mr-2');
         ?>
             <div class="row mt-3">
-                <div class="col-12 table-responsive invisible">
-                    <table class="table text-nowrap w-100" id="GetClientes">
+                <div class="col-12 col-sm-6">
+                    <table class="table table-borderless text-nowrap w-100 border p-sm-3" id="GetClientes">
                         
                     </table>
                 </div>

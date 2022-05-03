@@ -83,6 +83,10 @@ $(document).ready(function () {
         deferRender: true,
         iDisplayLenght: 5,
         searchDelay: 1500,
+        dom: `<'row'<'col-sm-3 d-none d-sm-block'l><'col-sm-9 col-12 d-inline-flex w-100 justify-content-end'f>>` +
+            `<'row'<'col-12 table-responsive invisible'tr>>` +
+            `<'row'<'col-sm-5 d-none d-sm-block'i><'col-sm-7 col-12 d-none d-sm-block'p>>`+
+            `<'row d-sm-none d-block'<'d-flex justify-content-center fixed-bottom col-12 bg-white'p>>`,
         ajax: {
             url: "GetUsuarios.php",
             type: "POST",

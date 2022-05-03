@@ -25,10 +25,14 @@ $(document).ready(function () {
                 "targets": 2
             },
         ],
-        lengthMenu: [3, 5, 10, 25, 50, 100],
+        lengthMenu: [5, 10, 25, 50, 100],
         rowGroup: {
             dataSrc: ['nombre']
         },
+        dom: `<'row'<'col-sm-3 d-none d-sm-block'l><'col-sm-9 col-12 d-inline-flex w-100 justify-content-end'f>>` +
+            `<'row'<'col-12 table-responsive invisible'tr>>` +
+            `<'row'<'col-sm-5 d-none d-sm-block'i><'col-sm-7 col-12 d-none d-sm-block'p>>`+
+            `<'row d-sm-none d-block'<'d-flex justify-content-center fixed-bottom col-12 bg-white'p>>`,
         columns: [
             {
                 "class": "",
@@ -42,34 +46,34 @@ $(document).ready(function () {
                 "class": "border-top-0",
                 "data": "cant_roles"
             },
-            {
-                "class": "border-top-0",
-                "data": "ident"
-            },
-            {
-                "class": "border-top-0",
-                "data": "host"
-            },
-            {
-                "class": "border-top-0",
-                "data": "user"
-            },
-            {
-                "class": "border-top-0",
-                "data": "WebService"
-            },
-            {
-                "class": "border-top-0",
-                "data": "MobileHRP"
-            },
-            {
-                "class": "border-top-0 w-100 text-right",
-                "data": "fecha_alta"
-            },
+            // {
+            //     "class": "border-top-0",
+            //     "data": "ident"
+            // },
+            // {
+            //     "class": "border-top-0",
+            //     "data": "host"
+            // },
+            // {
+            //     "class": "border-top-0",
+            //     "data": "user"
+            // },
+            // {
+            //     "class": "border-top-0",
+            //     "data": "WebService"
+            // },
+            // {
+            //     "class": "border-top-0",
+            //     "data": "MobileHRP"
+            // },
+            // {
+            //     "class": "border-top-0 w-100 text-right",
+            //     "data": "fecha_alta"
+            // },
         ],
-        scrollX: true,
-        scrollCollapse: true,
-        scrollY: '50vmax',
+        // scrollX: true,
+        // scrollCollapse: true,
+        // scrollY: '50vmax',
         paging: true,
         info: true,
         searching: true,
@@ -79,20 +83,11 @@ $(document).ready(function () {
         },
     });
     table.on('init.dt', function (e, settings, json) {
-        $('.form-control-sm').attr('placeholder', 'Buscar Cuenta')
+        $('#GetClientes_filter input').attr('placeholder', 'Buscar Cuenta').removeClass('form-control-sm').addClass('h50');
         $("thead").remove()
-        // $('#GetClientes_filter').prepend('<button tittle="Agregar Cuenta" class="btn btn-outline-custom add fontq border"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/></svg></button>')
-        $('#GetClientes_filter').prepend('<button title="Nueva Cuenta" class="px-2 btn btn-outline-custom addCuenta fontq border" id="addCuenta"><span><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span></button>')
+        $('#GetClientes_filter').prepend('<button title="Nueva Cuenta" class="px-2 btn btn-outline-custom addCuenta fontq border-ddd" id="addCuenta"><span class="bi bi-plus-lg mr-2"></span>Nueva</button>')
         $('.table-responsive').show()
         fadeInOnly('#GetRoles')
-        $(".addCuenta").hover(
-            function () {
-                $(this).find("span").html('<span class="animate__animated animate__fadeIn"><svg class="mr-2" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg>Nueva Cuenta</span>');
-            },
-            function () {
-                $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
-            }
-        );
     });
     table.on('draw.dt', function (e, settings, json) {
         e.preventDefault();
@@ -109,6 +104,7 @@ $(document).ready(function () {
     $(document).on('click', '.addCuenta', function (e) {
         $('#submitFormCuenta').val('AltaCuenta')
         $('#modalFormCuenta').modal('show')
+        $('#modalFormCuenta input').attr('autocomplate', 'off')
     });
 
     $(document).on('click', '#cancelarAlta', function (e) {
@@ -151,6 +147,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.editCuenta', function (e) {
         $('#modalFormCuenta').modal('show')
+        $('#modalFormCuenta input').attr('autocomplate', 'off')
         $('#submitFormCuenta').val('EditCuenta')
         let dataNombre = $(this).attr('dataNombre');
         let dataIdent = $(this).attr('dataIdent');

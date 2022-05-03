@@ -15,23 +15,19 @@ $(function () {
         initComplete: function (settings, json) {
             $('.form-control-sm').attr('placeholder', 'Buscar Rol')
             $('.LabelSearchDT').html('')
-            $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-outline-custom addRol fontq border" id="AltaRol"><span><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span></button>')
-            $('.table-responsive').show()
+            $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-outline-custom addRol fontq border" id="AltaRol"><span class="bi bi-plus-lg mr-2">Nuevo rol</span></button>')
+            $('.table-responsive').removeClass('invisible')
             fadeInOnly('#GetRoles')
-            $(".addRol").hover(
-                function () {
-                    $(this).find("span").html('<span class="animate__animated animate__fadeIn"><svg class="mr-2" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg>Nuevo Rol</span>');
-                },
-                function () {
-                    $(this).find("span").last().html('<span class="animate__animated animate__fadeIn"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#plus-circle-fill"/></svg></span>');
-                }
-            );
         },
         drawCallback: function (settings) {
             $('.contentd').removeClass('text-light bg-light border-0')
             // $('.ListaRol').prop('disabled', false)
         },
         lengthMenu: [5, 10, 25, 50, 100],
+        dom: `<'row'<'col-12 d-inline-flex justify-content-start'f>>` +
+            `<'row'<'col-12 table-responsive invisible pb-2'tr>>` +
+            `<'row'<'col-sm-5 d-none d-sm-block'i><'col-sm-7 col-12 d-none d-sm-block'p>>`+
+            `<'row d-sm-none d-block'<'d-flex justify-content-center fixed-bottom col-12 bg-white'p>>`,
         columnDefs: [
             {
                 "visible": false,
