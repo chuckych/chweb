@@ -149,7 +149,6 @@ $url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDat
 // exit;
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
-
     foreach ($array['payload'] as $key => $v) {
         $operation = $v['operation']['observations'] ?? '';
         $arrayData[] = array(
@@ -181,9 +180,6 @@ if (!empty($array['payload'])) {
         );
     }
 }
-// print_r($arrayData);
-// exit;
-
 if (!empty($arrayData)) {
 
     foreach ($arrayData as $key => $v) {
@@ -381,6 +377,7 @@ if (!empty($arrayData)) {
             }
         }
     }
+    
     $totalSession = array_count_values($totalSession);
     $end  = microtime(true);
     $time = round($end - $start, 2);

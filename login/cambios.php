@@ -458,7 +458,7 @@ if ($verDB < 20220503) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventZone` SMALLINT(6) NOT NULL AFTER `distance`");
     fileLog("ADD COLUMN \"eventZone\"", $pathLog); // escribir en el log
 
-    pdoQuery("ALTER TABLE `reg_` DD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
     fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
     
     $verDB  = verDBLocal(); // nueva version de la DB // 20220318

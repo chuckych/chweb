@@ -233,12 +233,12 @@ if (($queryRecords)) {
         $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
         $regPhoto = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
-        $confidence = '';
-        if ($r['confidence'] <= 30 && $r['confidence'] > 0) {
+        $confidence = 'No Identificado';
+        if ($r['confidence'] <= 35 && $r['confidence'] > 0) {
             $confidence = 'Identificado';
         } else if ($r['confidence'] <= 0) {
             $confidence = 'No Enrolado';
-        } else if ($r['confidence'] > 30) {
+        } else if ($r['confidence'] > 35) {
             $confidence = 'No Identificado';
         }
 

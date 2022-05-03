@@ -262,7 +262,7 @@ if ($(window).width() < 540) {
                     } else if (row.confidenceFaceStr == 'No Enrolado') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
                     }
-                    let datacol = `<div class="w40">${confidenceFaceStr}</div>`
+                    let datacol = `<div class="w40" title="${row.confidenceFaceVal}">${confidenceFaceStr}</div>`
                     return datacol;
                 },
             },
