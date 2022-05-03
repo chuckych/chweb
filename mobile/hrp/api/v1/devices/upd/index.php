@@ -225,14 +225,15 @@ $update = pdoQuery($sql_query);
 if ($update) {
     $a = simple_pdoQuery("SELECT * FROM `reg_device_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1");
     $MESSAGE = 'OK';
+    $text = "Modificacion Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
     $arrayData = array(
         'id'            => $a['id'],
         'devicePhoneID' => $a['phoneid'],
         'id_company'    => $a['id_company'],
         'deviceName'    => $a['nombre'],
         'deviceEvent'   => $a['evento'],
+        'textAud'    => $text,
     );
-    $text = "Modificacion Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
     fileLog($text, __DIR__ . '../../../_logs/updDevice/' . date('Ymd') . '_log_updDevice_' . padLeft($idCompany, 3, 0) . '.log'); // 
 } else {
     $MESSAGE = 'ERROR';

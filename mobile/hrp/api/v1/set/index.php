@@ -128,10 +128,14 @@ foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
         $vkey      = $value['recidCompany'];
+        $nameCompany = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
         $vkey      = '';
+        $nameCompany = '';
+        $urlAppMobile = '';
         continue;
     }
 }
@@ -159,17 +163,20 @@ if (strlen($userID)> 11 ) {
 
 $cancellationReasons[] = '';
 $operations[] = '';
-
 $dataSend = array(
-    'eventType'       => 101,
-    'apiKey'          => '7BB3A26C25687BCD56A9BAF353A78',
-    'companyCode'     => $idCompany,
-    'employeId'       => $userID,
-    'notificationId'  => 195,
-    'locationIp'      => "http://190.7.56.83",
-    'serverIp'        => "http://207.191.165.3:7500",
-    'updateInterval'  => 90,
-    'fastestInterval' => 60,
+    'eventType'           => 0,
+    'apiKey'              => '7BB3A26C25687BCD56A9BAF353A78',
+    'companyCode'         => $idCompany,
+    'employeId'           => $userID,
+    "recid"               => $vkey,
+    'notificationId'      => 195,
+    'locationIp'          => "http://190.7.56.83",
+    'serverIp'            => $urlAppMobile,
+    'updateInterval'      => 90,
+    'fastestInterval'     => 60,
+    'cancellationReasons' => $cancellationReasons,
+    'operations'          => $operations,
+    
 );
 $data2 = array(
     'to' => $phoneRegId,
@@ -185,6 +192,8 @@ function sendMessaje($url, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     $headers = [
+        'Accept' => '*/*',
+        'Accept-Encoding' => 'gzip, deflate, br',
         'Content-Type: application/json',
         'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8',
         'Connection' => 'keep-alive'
@@ -205,9 +214,9 @@ if (json_decode($sendMensaje)->success == 1) {
     http_response_code(200);
     $MESSAGE = 'Config sent successfully';
     $endScript    = microtime(true);
-    $timeScript = round($endScript - $startScript, 2);
+    $timeScript   = round($endScript - $startScript, 2);
     $countData    = count($arrayData);
-    (response(json_decode($sendMensaje), 1, 'OK', 200, $timeScript, 1, $idCompany));
+    (response(json_decode($sendMensaje), 1, $MESSAGE, 200, $timeScript, 1, $idCompany));
     exit;
 } else {
     // $data = array('status' => 'error', 'Mensaje' => 'The message could not be sent', 'respuesta' => json_decode($sendMensaje), 'payload' => json_decode($payload));
@@ -215,14 +224,6 @@ if (json_decode($sendMensaje)->success == 1) {
     $MESSAGE = 'The config could not be sent';
     $endScript    = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    (response(
-        json_decode($sendMensaje)->results[0]->error,
-        0,
-        $MESSAGE,
-        400,
-        $timeScript,
-        0,
-        $idCompany
-    ));
+    (response( json_decode($sendMensaje)->results[0]->error, 0, $MESSAGE, 400, $timeScript, 0, $idCompany ));
     exit;
 }

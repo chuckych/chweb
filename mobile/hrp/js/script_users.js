@@ -609,7 +609,7 @@ $(document).on("click", ".sendMensaje", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize(),
+                data: $(this).serialize()+'&userID='+ data.userID,
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()

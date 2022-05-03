@@ -171,6 +171,7 @@ if (($queryRecords)) {
             'lastUpdate' => ($r['fechahora']),
             'idCompany'  => $r['id_company'],
             'totalZones' => ($r['totalZones']),
+            'zoneEvent' => ($r['evento']),
         );
     }
     $q = "SELECT COUNT(*) AS 'count' FROM `reg_zones` `rz` WHERE `rz`.`id` > 0";

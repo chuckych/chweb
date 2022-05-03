@@ -69,6 +69,13 @@ function validaKey()
     $validaKey = empty($p) ? '' : $p;
     return ($validaKey);
 }
+function zoneEvent()
+{
+    $p = $_REQUEST;
+    $p['zoneEvent'] = $p['zoneEvent'] ?? 0;
+    $zoneEvent  = empty($p['zoneEvent']) ? 0 : $p['zoneEvent'];
+    return intval($zoneEvent);
+}
 if (!isset($_POST['key'])) {
     http_response_code(400);
     (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
@@ -76,7 +83,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'zoneRadio' || $key == 'zoneName') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'zoneRadio' || $key == 'zoneName' || $key == 'zoneEvent') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -141,6 +148,7 @@ $zoneName  = (zoneName());
 $zoneLat   = (zoneLat());
 $zoneLng   = (zoneLng());
 $zoneRadio = (zoneRadio());
+$zoneEvent = (zoneEvent());
 
 $validaKey = validaKey();
 $vkey = '';
@@ -149,10 +157,14 @@ foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
         $vkey      = $value['recidCompany'];
+        $nameCompany = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
         $vkey      = '';
+        $nameCompany = '';
+        $urlAppMobile = '';
         continue;
     }
 }
@@ -197,6 +209,14 @@ if (strlen($zoneRadio) > 4) {
     http_response_code(400);
     (response(array(), 0, 'zoneRadio max length 4', 400, 0, 0, $idCompany));
 }
+if (!is_int($zoneEvent)) {
+    http_response_code(400);
+    (response(array(), 0, 'zoneEvent invalid format', 400, 0, 0, $idCompany));
+}
+if (strlen($zoneEvent) > 4) {
+    http_response_code(400);
+    (response(array(), 0, 'zoneEvent max length 4', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
@@ -227,12 +247,13 @@ if ($a > 0) {
     exit;
 }
 
-$sql_query = "INSERT INTO `reg_zones` (`id_company`, `nombre`, `lat` , `lng` , `radio` ) VALUES ('$idCompany', '$zoneName', '$zoneLat' , '$zoneLng' , '$zoneRadio' )";
+$sql_query = "INSERT INTO `reg_zones` (`id_company`, `nombre`, `lat` , `lng` , `radio`, `evento` ) VALUES ('$idCompany', '$zoneName', '$zoneLat' , '$zoneLng' , '$zoneRadio', '$zoneEvent')";
 
 $insert = pdoQuery($sql_query);
 if ($insert) {
     $a = simple_pdoQuery("SELECT * FROM `reg_zones` WHERE `nombre` = '$zoneName' AND `id_company` = '$idCompany' LIMIT 1");
     $MESSAGE = 'OK';
+    $text = "Alta Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
     $arrayData = array(
         'id_company' => $a['id_company'],
         'zoneID'     => $a['id'],
@@ -240,8 +261,9 @@ if ($insert) {
         'zoneLng'    => $a['lng'],
         'zoneName'   => $a['nombre'],
         'zoneRadio'  => $a['radio'],
+        'zoneEvent'=> $a['evento'],
+        'textAud' => $text,
     );
-    $text = "Alta Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng]";
     fileLog($text, __DIR__ . '../../../_logs/addZones/' . date('Ymd') . '_log_addZones_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addZones_
 } else {
     $MESSAGE = 'ERROR';

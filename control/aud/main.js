@@ -200,7 +200,7 @@ $(function() {
                 }
             },
             {
-                className: "w-100",
+                className: "w-100 text-wrap",
                 targets: "",
                 title:
                     "<span data-titlel='Información de la auditoría'>Dato</span>",

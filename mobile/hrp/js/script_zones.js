@@ -425,6 +425,7 @@ $(document).on("click", ".updZone", function (e) {
     let zoneRadio = data.zoneRadio;
     let zoneName = data.zoneName;
     let idZone = data.zoneID;
+    let zoneEvent = data.zoneEvent;
     // return false;
     axios({
         method: 'post',
@@ -443,6 +444,7 @@ $(document).on("click", ".updZone", function (e) {
         $('#formZone #formZoneLat').val(zoneLat)
         $('#formZone #formZoneLng').val(zoneLng)
         $('#formZone #formZoneRadio').val(zoneRadio)
+        $('#formZone #formZoneEvento').val(zoneEvent)
 
         select2Radio("#formZone #formZoneRadio");
 

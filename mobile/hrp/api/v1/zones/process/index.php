@@ -234,6 +234,7 @@ if (($queryRecords)) {
             'idCompany'    => $r['id_company'],
             'zoneDistance' => ($r['distancia']),
             'result' => ($resultRadioDistance),
+            'textAud' => "Zona $r[nombre] Procesada Correctamente",
         );
     }
 }

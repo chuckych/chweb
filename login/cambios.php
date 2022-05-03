@@ -446,8 +446,26 @@ if ($verDB < 20220502) {
     $verDB  = verDBLocal(); // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+    
+   
 }
 
+if ($verDB < 20220503) {
+
+    pdoQuery("ALTER TABLE `reg_zones` ADD COLUMN `evento` SMALLINT(6) NOT NULL AFTER `radio`");
+    fileLog("ADD COLUMN \"evento\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventZone` SMALLINT(6) NOT NULL AFTER `distance`");
+    fileLog("ADD COLUMN \"eventZone\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `reg_` DD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
+    fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
+    
+    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+
+}
 
 // if ($verDB < 20211102) {
 

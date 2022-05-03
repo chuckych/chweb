@@ -171,6 +171,7 @@ if (!$a) {
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 } else {
+    $text = "Eliminacion Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
     $arrayData = array(
         'id_company' => $a['id_company'],
         'zoneID'     => $a['id'],
@@ -178,6 +179,7 @@ if (!$a) {
         'zoneLng'    => $a['lng'],
         'zoneName'   => $a['nombre'],
         'zoneRadio'  => $a['radio'],
+        'textAud'    => $text,
     );
 }
 

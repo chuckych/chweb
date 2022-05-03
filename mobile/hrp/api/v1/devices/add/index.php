@@ -208,14 +208,15 @@ $insert = pdoQuery($sql_query);
 if ($insert) {
     $a = simple_pdoQuery("SELECT * FROM `reg_device_` WHERE `phoneid` = '$devicePhoneID' AND `id_company` = '$idCompany' LIMIT 1");
     $MESSAGE = 'OK';
+    $text = "Alta Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
     $arrayData = array(
         'deviceID'      => $a['id'],
         'devicePhoneID' => $a['phoneid'],
         'id_company'    => $a['id_company'],
         'deviceName'    => $a['nombre'],
         'deviceEvent'   => $a['evento'],
+        'textAud'    => $text,
     );
-    $text = "Alta Dispositivo \"$a[nombre]\" ID = $a[id] Evento = $a[evento] PhoneID = $a[phoneid]";
     fileLog($text, __DIR__ . '../../../_logs/addDevice/' . date('Ymd') . '_log_addDevice_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
 } else {
     $MESSAGE = 'ERROR';

@@ -48,6 +48,7 @@ if ($api['COUNT'] > 0) {
             'lastUpdate' => $r['lastUpdate'],
             'idCompany'  => $r['idCompany'],
             'totalZones' => $r['totalZones'],
+            'zoneEvent' => $r['zoneEvent'],
         );
     }
 }

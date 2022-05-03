@@ -188,6 +188,7 @@ if (!$a) {
         'id_company'    => $a['id_company'],
         'deviceName'    => $a['nombre'],
         'deviceEvent'   => $a['evento'],
+        'textAud'    => "Dispositivo Eliminado. Nombre = $a[nombre]. PhoneID = $a[phoneid]",
     );
 }
 

@@ -70,6 +70,13 @@ function zoneName()
     $zoneName = empty($p['zoneName']) ? '' : test_input($p['zoneName']);
     return urldecode($zoneName);
 }
+function zoneEvent()
+{
+    $p = $_REQUEST;
+    $p['zoneEvent'] = $p['zoneEvent'] ?? 0;
+    $zoneEvent  = empty($p['zoneEvent']) ? 0 : $p['zoneEvent'];
+    return intval($zoneEvent);
+}
 function validaKey()
 {
     $p = $_POST['key'];
@@ -83,7 +90,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'zoneRadio' || $key == 'zoneName' || $key == 'idZone') {  
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'zoneLat' || $key == 'zoneLng' || $key == 'zoneRadio' || $key == 'zoneName' || $key == 'idZone' || $key == 'zoneEvent') {  
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -148,21 +155,27 @@ $zoneLat   = (zoneLat());
 $zoneLng   = (zoneLng());
 $zoneRadio = (zoneRadio());
 $idZone    = (idZone());
+$zoneEvent = (zoneEvent());
 
 $validaKey = validaKey();
 $vkey = '';
 
 foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
-        $idCompany = $value['idCompany'];
-        $vkey      = $value['recidCompany'];
+        $idCompany    = $value['idCompany'];
+        $vkey         = $value['recidCompany'];
+        $nameCompany  = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
-        $idCompany = 0;
-        $vkey      = '';
+        $idCompany    = 0;
+        $vkey         = '';
+        $nameCompany  = '';
+        $urlAppMobile = '';
         continue;
     }
 }
+
 if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
@@ -191,6 +204,14 @@ if (empty($zoneRadio)) {
 if (!is_int($zoneRadio)) {
     http_response_code(400);
     (response(array(), 0, 'zoneRadio invalid format', 400, 0, 0, $idCompany));
+}
+if (!is_int($zoneEvent)) {
+    http_response_code(400);
+    (response(array(), 0, 'zoneEvent invalid format', 400, 0, 0, $idCompany));
+}
+if (strlen($zoneEvent) > 4) {
+    http_response_code(400);
+    (response(array(), 0, 'zoneEvent max length 4', 400, 0, 0, $idCompany));
 }
 if (!is_float($zoneLat)) {
     http_response_code(400);
@@ -243,12 +264,13 @@ if ($a > 0) {
 }
 
 // update query 
-$sql_query = "UPDATE `reg_zones` SET `nombre` = '$zoneName', `lat` = '$zoneLat', `lng` = '$zoneLng', `radio` = '$zoneRadio' WHERE `id_company` = '$idCompany' AND `id` = '$idZone'";
+$sql_query = "UPDATE `reg_zones` SET `nombre` = '$zoneName', `lat` = '$zoneLat', `lng` = '$zoneLng', `radio` = '$zoneRadio' , `evento` = '$zoneEvent' WHERE `id_company` = '$idCompany' AND `id` = '$idZone' ";
 
 $update = pdoQuery($sql_query);
 if ($update) {
     $a = simple_pdoQuery("SELECT * FROM `reg_zones` WHERE `id` = '$idZone' LIMIT 1");
     $MESSAGE = 'OK';
+    $text = "Modificacion Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
     $arrayData = array(
         'id_company' => $a['id_company'],
         'zoneID'     => $a['id'],
@@ -256,8 +278,9 @@ if ($update) {
         'zoneLng'    => $a['lng'],
         'zoneName'   => $a['nombre'],
         'zoneRadio'  => $a['radio'],
+        'zoneEvent'  => $a['evento'],
+        'textAud'    => $text,
     );
-    $text = "Modificacion Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng]";
     fileLog($text, __DIR__ . '../../../_logs/updZones/' . date('Ymd') . '_log_updZones_' . padLeft($idCompany, 3, 0) . '.log'); // 
 } else {
     $MESSAGE = 'ERROR';

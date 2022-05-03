@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             PrintRespuestaJson('error', 'Error al transferir');
             exit;
         }
-    } else if ($_POST['tipo'] == 'add_device') {
+    } else if ($_POST['tipo'] == 'add_device') { // auditado
 
         $post = $_POST;
 
@@ -89,6 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'upd_device') {
+    } else if ($_POST['tipo'] == 'upd_device') { // auditado
 
         $post = $_POST;
 
@@ -139,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -149,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'del_device') {
+    } else if ($_POST['tipo'] == 'del_device') { // auditado
 
         $post = $_POST;
 
@@ -185,6 +187,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -195,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'add_usuario') {
+    } else if ($_POST['tipo'] == 'add_usuario') { //auditado
 
         $post = $_POST;
 
@@ -268,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'upd_usuario') {
+    } else if ($_POST['tipo'] == 'upd_usuario') { //auditado
 
         $post = $_POST;
 
@@ -340,7 +343,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'del_usuario') {
+    } else if ($_POST['tipo'] == 'del_usuario') { //auditado
 
         $post = $_POST;
 
@@ -389,13 +392,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'send_mensaje') {
+    } else if ($_POST['tipo'] == 'send_mensaje') { // auditado
 
         $_POST['modalMsgRegID']   = $_POST['modalMsgRegID'] ?? '';
         $_POST['modalMsgMensaje'] = $_POST['modalMsgMensaje'] ?? '';
+        $_POST['userID'] = $_POST['userID'] ?? '';
 
         $modalMsgRegID   = test_input($_POST['modalMsgRegID']);
         $modalMsgMensaje = test_input($_POST['modalMsgMensaje']);
+        $userID = test_input($_POST['userID']);
 
         if (valida_campo($modalMsgRegID)) {
             PrintRespuestaJson('error', 'Falta Reg ID');
@@ -412,8 +417,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'phoneRegId' => urlencode($modalMsgRegID),
             'message'    => urlencode($modalMsgMensaje),
         );
-        // $api = "api/v1/devices/upd/$parametros";
-        // $api = "api/v1/devices/del/$parametros";
+
         $api = "api/v1/msg/";
         $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
@@ -425,6 +429,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
+            auditoria("Mensaje Mobile Enviado. Mensaje = $modalMsgMensaje - Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
+
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -435,7 +442,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'send_UserSet') {
+    } else if ($_POST['tipo'] == 'send_UserSet') { // auditado
 
         $_POST['regid']  = $_POST['regid'] ?? '';
         $_POST['userid'] = $_POST['userid'] ?? '';
@@ -455,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             PrintRespuestaJson('error', 'El userID no puede ser mayor a 11 caracteres');
             exit;
         };
-
+    
         $paramsApi = array(
             'key'        => $_SESSION["RECID_CLIENTE"],
             'userID'     => $userID,
@@ -469,11 +476,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
+        
         $totalRecords = $api['TOTAL'];
-
+        
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
+            auditoria("Seteo Mobile Enviado. Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -484,20 +494,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'add_zone') {
+    } else if ($_POST['tipo'] == 'add_zone') { // auditado
 
         $post = $_POST;
 
-        // PrintRespuestaJson('error', 'Zona');
-        // exit;
-
         $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
         $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
+        $post['formZoneEvento']  = $post['formZoneEvento'] ?? '';
         $post['lat']            = $post['lat'] ?? '';
         $post['lng']            = $post['lng'] ?? '';
 
         $nombre = test_input($post['formZoneNombre']);
         $radio  = test_input($post['formZoneRadio']);
+        $evento  = test_input($post['formZoneEvento']);
         $lat    = test_input($post['lat']);
         $lng    = test_input($post['lng']);
 
@@ -526,7 +535,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'zoneName'  => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat'   => ($lat),
-            'zoneLng'   => ($lng)
+            'zoneLng'   => ($lng),
+            'zoneEvent' => ($evento)
         );
 
         $api = "api/v1/zones/add/";
@@ -540,6 +550,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -550,14 +561,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'create_zone') {
+    } else if ($_POST['tipo'] == 'create_zone') { // auditado
 
         $post = $_POST;
 
-
-
         $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
         $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
+        $post['formZoneEvento']  = $post['formZoneEvento'] ?? '';
         $post['lat']            = $post['lat'] ?? '';
         $post['lng']            = $post['lng'] ?? '';
         $post['regUID']         = $post['regUID'] ?? '';
@@ -569,6 +579,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $radio  = test_input($post['formZoneRadio']);
         $lat    = test_input($post['lat']);
         $lng    = test_input($post['lng']);
+        $evento = test_input($post['formZoneEvento']);
 
 
         if (valida_campo($nombre)) {
@@ -598,7 +609,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'zoneName'  => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat'   => ($lat),
-            'zoneLng'   => ($lng)
+            'zoneLng'   => ($lng),
+            'zoneEvent' => ($evento),
         );
 
         $api = "api/v1/zones/add/";
@@ -613,7 +625,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
-
+            auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
             /** data del registro */
             $regLat    = test_input($post['regLat']);
             $regLng    = test_input($post['regLng']);
@@ -645,6 +657,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($api['COUNT'] > 0) {
                 $status2 = 'ok';
                 $arrayData2 = $api['RESPONSE_DATA'];
+                auditoria($api['RESPONSE_DATA']['textAud'], 'P', $idCompany, '32');
             } else {
                 $status2 = 'error';
                 $arrayData2 = $api['MESSAGE'];
@@ -659,15 +672,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'upd_zone') {
+    } else if ($_POST['tipo'] == 'upd_zone') { // auditado
 
         $post = $_POST;
 
-        // PrintRespuestaJson('error', 'Zona');
-        // exit;
-
         $post['formZoneNombre'] = $post['formZoneNombre'] ?? '';
         $post['formZoneRadio']  = $post['formZoneRadio'] ?? '';
+        $post['formZoneEvento']  = $post['formZoneEvento'] ?? '';
         $post['lat']            = $post['lat'] ?? '';
         $post['lng']            = $post['lng'] ?? '';
         $post['idZone']            = $post['idZone'] ?? '';
@@ -677,6 +688,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $lat    = test_input($post['lat']);
         $lng    = test_input($post['lng']);
         $idZone = test_input($post['idZone']);
+        $evento = test_input($post['formZoneEvento']);
 
 
         if (valida_campo($nombre)) {
@@ -708,7 +720,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'zoneRadio' => ($radio),
             'zoneLat'   => ($lat),
             'zoneLng'   => ($lng),
-            'idZone'    => ($idZone)
+            'idZone'    => ($idZone),
+            'zoneEvent'    => ($evento)
         );
 
         $api = "api/v1/zones/upd/";
@@ -722,6 +735,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -732,7 +746,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'del_zone') {
+    } else if ($_POST['tipo'] == 'del_zone') { // auditado
 
         $post = $_POST;
 
@@ -766,6 +780,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -776,7 +791,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
-    } else if ($_POST['tipo'] == 'proccesZone') {
+    } else if ($_POST['tipo'] == 'proccesZone') { // auditado
 
         $post = $_POST;
 
