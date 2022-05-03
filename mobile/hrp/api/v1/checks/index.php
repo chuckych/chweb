@@ -236,6 +236,8 @@ if (($queryRecords)) {
         $confidence = 'No Identificado';
         if ($r['confidence'] <= 35 && $r['confidence'] > 0) {
             $confidence = 'Identificado';
+        } else if ($r['confidence'] == -3) {
+            $confidence = 'Foto Inválida';
         } else if ($r['confidence'] <= 0) {
             $confidence = 'No Enrolado';
         } else if ($r['confidence'] > 35) {

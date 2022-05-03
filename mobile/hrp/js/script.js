@@ -261,6 +261,8 @@ if ($(window).width() < 540) {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-danger bi bi-person-bounding-box"></span>`
                     } else if (row.confidenceFaceStr == 'No Enrolado') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
+                    } else if (row.confidenceFaceStr == 'Foto Inválida') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-info bi bi-person-bounding-box"></span>`
                     }
                     let datacol = `<div class="w40" title="${row.confidenceFaceVal}">${confidenceFaceStr}</div>`
                     return datacol;
