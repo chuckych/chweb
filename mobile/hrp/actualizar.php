@@ -281,6 +281,11 @@ if (!empty($arrayData)) {
             $f = fopen('fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
             fwrite($f, base64_decode($attphoto));
             fclose($f);
+            $rutaImagenOriginal = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png';
+            $imagenOriginal = imagecreatefromjpeg($rutaImagenOriginal); //Abrimos la imagen de origen
+            $rutaImagenComprimida = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png'; //Ruta de la imagen a comprimir
+            $calidad = 20; // Valor entre 0 y 100. Mayor calidad, mayor peso
+            imagejpeg($imagenOriginal, $rutaImagenComprimida, $calidad); //Guardamos la imagen comprimida
         }
 
         /** Calculamos la Zona */
