@@ -626,7 +626,8 @@ function CheckSesion() {
         url: "/" + $("#_homehost").val() + "/sesion.php",
         context: document.body
     }).done(function (data) {
-        if (data.status == 'sesion') {
+        let status = data.status ?? false;
+        if (status == 'sesion') {
             $('#_sesion').val('1')
             window.location.href = "/" + $('#_homehost').val() + "/login/?l=" + $('#_referer').val()
         } else {

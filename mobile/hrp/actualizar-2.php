@@ -124,6 +124,7 @@ if (!$flags) {
 
 $company       = array();
 $employe       = array();
+$data          = array();
 $arrayData     = array();
 $insertCH      = array();
 $insertCH_Fail = array();
@@ -300,6 +301,11 @@ if (!empty($arrayData)) {
             $f = fopen('fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
             fwrite($f, base64_decode($attphoto));
             fclose($f);
+            $rutaImagenOriginal = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png';
+            $imagenOriginal = imagecreatefromjpeg($rutaImagenOriginal); //Abrimos la imagen de origen
+            $rutaImagenComprimida = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png'; //Ruta de la imagen a comprimir
+            $calidad = 20; // Valor entre 0 y 100. Mayor calidad, mayor peso
+            imagejpeg($imagenOriginal, $rutaImagenComprimida, $calidad); //Guardamos la imagen comprimida
         }
 
         /** Calculamos la Zona */
@@ -315,12 +321,12 @@ if (!empty($arrayData)) {
         }
         /** Fin calculo Zona */
         $eventZone = '0';
-        if($idZone != '0'){ // Si la Zona es diferente a 0 entonces se calcula el evento consultando la tabla de zona y evento
+        if ($idZone != '0') { // Si la Zona es diferente a 0 entonces se calcula el evento consultando la tabla de zona y evento
             $a = simple_pdoQuery("SELECT evento FROM reg_zones WHERE id_company = '$companyCode' AND evento != '0' AND id = '$idZone' LIMIT 1");
             $eventZone = $a['evento']; // Evento de la zona
         }
-            $b = simple_pdoQuery("SELECT evento FROM reg_device_ WHERE id_company = '$companyCode' AND evento != '0' AND phoneid = '$phoneid' LIMIT 1");
-            $eventDevice = $b['evento'] ?? ''; // Evento del dispositivo
+        $b = simple_pdoQuery("SELECT evento FROM reg_device_ WHERE id_company = '$companyCode' AND evento != '0' AND phoneid = '$phoneid' LIMIT 1");
+        $eventDevice = $b['evento'] ?? ''; // Evento del dispositivo
 
         $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$locked', '$error', '$id_api')";
 
@@ -341,12 +347,12 @@ if (!empty($arrayData)) {
 
             if ($localCH['localCH'] == '1') {
                 $text = "$Legajo $fechaHoraCH $hora";
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegExternalCH_'.$nameCompany.'.log';
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegExternalCH_' . $nameCompany . '.log';
                 fileLog($text, $pathLog); // escribir en el log de errores el error
-            } 
+            }
             if ($locked == '1') {
                 $text = "Usuario Bloqueado $Legajo $fechaHoraCH $hora";
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegLocked_'.$nameCompany.'.log';
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegLocked_' . $nameCompany . '.log';
                 fileLog($text, $pathLog); // escribir en el log de errores el error
             }
 

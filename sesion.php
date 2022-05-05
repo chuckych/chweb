@@ -5,6 +5,8 @@ header("Content-Type: application/json");
 ultimoacc();
 if (!secure_auth_ch_json()) {
     PrintRespuestaJson('activa', 'Sesión Activa');
+} else {
+    PrintRespuestaJson('inactiva', 'Sesión Inactiva');
 }
 E_ALL();
 exit;
