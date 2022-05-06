@@ -891,7 +891,7 @@ function actualizar(noti = true) {
         }
 
     }).catch(function (error) {
-        alert('ERROR actualizar\n' + error);
+        console.log('ERROR actualizar\n' + error);
     }).then(function () {
         ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
         $(".actualizar").attr("data-titlel", "Descargar registros");
@@ -937,7 +937,7 @@ function actualizar2(noti = true) {
         }
 
     }).catch(function (error) {
-        alert('ERROR actualizar\n' + error);
+        console.log('ERROR actualizar\n' + error);
     }).then(function () {
         ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
         $(".actualizar").attr("data-titlel", "Descargar registros");
