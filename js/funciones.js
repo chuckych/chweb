@@ -717,5 +717,4 @@ function cancelFullScreen() {
     } else if (document.webkitCancelFullScreen) {
         document.webkitCancelFullScreen();
     }
-    // example: cancelFullScreen()
 }

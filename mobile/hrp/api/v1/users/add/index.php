@@ -47,7 +47,7 @@ function userName()
     $p = $_POST;
     $p['userName'] = $p['userName'] ?? '';
     $userName = empty($p['userName']) ? '' : $p['userName'];
-    return urldecode($userName);
+    return (urldecode($userName));
 }
 function userRegid()
 {

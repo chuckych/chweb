@@ -255,6 +255,9 @@ if ($(window).width() < 540) {
                 className: 'text-center', targets: '', title: '<div class="w40">Rostro</div>',
                 "render": function (data, type, row, meta) {
                     let confidenceFaceStr = '';
+                    let datacol ='';
+                    let processRegFace ='processRegFace pointer';
+                    // console.log(row.confidenceFaceStr);
                     if (row.confidenceFaceStr == 'Identificado') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-success bi bi-person-bounding-box"></span>`
                     } else if (row.confidenceFaceStr == 'No Identificado') {
@@ -263,8 +266,12 @@ if ($(window).width() < 540) {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
                     } else if (row.confidenceFaceStr == 'Foto Inválida') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-info bi bi-person-bounding-box"></span>`
+                    } else if (row.confidenceFaceStr == 'No Disponible') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-primary bi bi-person-bounding-box"></span>`
+                        datacol = `<div class="w40">${confidenceFaceStr}</div>`
+                        return datacol;
                     }
-                    let datacol = `<div class="w40" title="${row.confidenceFaceVal}">${confidenceFaceStr}</div>`
+                    datacol = `<div class="w40 ${processRegFace}" title="${row.confidenceFaceVal}">${confidenceFaceStr}</div>`
                     return datacol;
                 },
             },
@@ -343,6 +350,21 @@ if ($(window).width() < 540) {
                     return datacol;
                 },
             },
+            /** Columna Dispositivo */
+            {
+                className: '', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="w40">${row.id_api}</div>`
+                    if ((host == 'https://localhost')) {
+                        return datacol;
+                    } else if ((host == 'http://localhost')) {
+                        return datacol;
+                    } else {
+                        return '';
+                    }
+                }
+
+            },
             /** Columna Flag */
             {
                 className: 'w-100 text-right', targets: '', title: '',
@@ -386,6 +408,37 @@ function doesFileExist(urlToFile) {
     xhr.open('HEAD', urlToFile, false);
     xhr.send();
     return (xhr.status == "404") ? false : true;
+}
+
+let processRegFace = (id_api) => {
+    $.ajax({
+        type: 'POST',
+        url: 'crud.php',
+        data: 'tipo=proccesRegFace' + '&id_api=' + id_api,
+        // dataType: "json",
+        beforeSend: function (data) {
+            CheckSesion()
+            // $.notifyClose();
+            // notify('Aguarde..', 'info', 0, 'right')
+        },
+        success: function (data) {
+            if (data.status == "ok") {
+                // $.notifyClose();
+                // loadingTable('#table-mobile')
+                notify(data.Mensaje.textAud, 'success', 3000, 'right')
+                $('#table-mobile').DataTable().ajax.reload(null, false);
+            } else {
+                // $.notifyClose();
+                // loadingTable('#table-mobile')
+                $('#table-mobile').DataTable().ajax.reload(null, false);
+                notify(data.Mensaje, 'danger', 3000, 'right')
+            }
+        },
+        error: function () {
+            $.notifyClose();
+            $('#table-mobile').DataTable().ajax.reload(null, false);
+         }
+    });
 }
 // max-h-500 overflow-auto
 
@@ -764,7 +817,13 @@ $(document).on("click", ".pic", function (e) {
         $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 p-0 fontq"><span>Ubicación GPS no disponible</span></div>')
     }
 });
-
+$(document).on("click", ".processRegFace", function (e) {
+    // ActiveBTN(true, ".processRegFace", loading, '')
+    $(this).prop('disabled', true);
+    $(this).html(loading);
+    let data = tablemobile.row($(this).parents("tr")).data();
+    processRegFace(data.id_api)
+});
 $('#pic').on('hidden.bs.modal', function (e) {
     clean()
 })
@@ -1167,3 +1226,34 @@ $("#RefreshToken").on("submit", function (e) {
 });
 // focusRowTables()
 // $('#RowTableDevices').show();
+// var tasks = [
+
+//     {
+
+//         'name': 'Write for Envato Tuts+',
+
+//         'duration': 120
+
+//     },
+
+//     {
+
+//         'name': 'Work out',
+
+//         'duration': 60
+
+//     },
+
+//     {
+
+//         'name': 'Procrastinate on Duolingo',
+
+//         'duration': 240
+
+//     }
+
+// ];
+// var task_names = tasks.map(function (tasks, index, array) {
+//     console.log(tasks.name);
+// });
+// console.log((tasks.map((task) => task.name))); 

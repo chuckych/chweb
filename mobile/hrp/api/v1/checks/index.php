@@ -224,25 +224,13 @@ $sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;
-
 $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
-        $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
+        $Fecha      = FechaFormatVar($r['fechaHora'], 'Y-m-d');
         $appVersion = explode('-', $r['appVersion']);
         $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
-        $regPhoto = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
-
-        $confidence = 'No Identificado';
-        if ($r['confidence'] <= 35 && $r['confidence'] > 0) {
-            $confidence = 'Identificado';
-        } else if ($r['confidence'] == -3) {
-            $confidence = 'Foto Inválida';
-        } else if ($r['confidence'] <= 0) {
-            $confidence = 'No Enrolado';
-        } else if ($r['confidence'] > 35) {
-            $confidence = 'No Identificado';
-        }
+        $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
         $arrayData[] = array(
             'appVersion'        => $appVersion,
@@ -272,14 +260,10 @@ if (($queryRecords)) {
             'locked'            => $r['locked'],
             'error'             => $r['error'],
             'confidenceFaceVal' => floatval($r['confidence']),
-            'confidenceFaceStr' => ($confidence),
+            'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'])),
             'id_api'            => intval($r['id_api']),
         );
     }
-    // $q = "SELECT COUNT(*) AS 'count', id_user, fechaHora, phoneid FROM reg_ r LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company WHERE r.rid >0";
-    // $q .= $filtro_query;
-    // // echo $q; exit;
-    // $total = simple_pdoQuery($q)['count'];
 }
 
 $finScript    = microtime(true);

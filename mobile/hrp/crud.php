@@ -845,6 +845,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
+    } else if ($_POST['tipo'] == 'proccesRegFace') { //auditado
+
+        $post = $_POST;
+
+        $post['id_api']    = $post['id_api'] ?? '';
+        
+        $id_api = test_input($post['id_api']);
+
+        if (valida_campo($id_api)) {
+            PrintRespuestaJson('error', 'Falta ID');
+            exit;
+        };
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        $paramsApi = array(
+            'key'          => $_SESSION["RECID_CLIENTE"],
+            'idApi'       => ($id_api),
+        );
+        $api = "api/v1/enroll/process/";
+        $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+            auditoria($api['RESPONSE_DATA']['textAud'], 'P', $idCompany, '32');
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
     } else {
         $json_data = array(
             "Mensaje" => 'Invalid Request Type',

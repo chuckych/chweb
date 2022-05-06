@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.225'; // Version de la aplicación
+    return 'v0.0.226'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3774,7 +3774,7 @@ function _group_by_keys($array, $keys = array())
 function pingApiMobileHRP($urlAppMobile)
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $urlAppMobile.'/attention/api/test/ping');
+    curl_setopt($ch, CURLOPT_URL, $urlAppMobile . '/attention/api/test/ping');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     $headers = [
@@ -3788,10 +3788,10 @@ function pingApiMobileHRP($urlAppMobile)
     return ($file_contents) ? $file_contents : false;
     exit;
 }
-function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany)
+function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
 {
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $urlApp .'/'. $paramsUrl);
+    curl_setopt($ch, CURLOPT_URL, $urlApp . '/' . $paramsUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     $headers = [
@@ -3800,8 +3800,10 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany)
         'Connection' => 'keep-alive'
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, ($payload));
+    if($post){
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, ($payload));
+    }
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -3812,4 +3814,34 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany)
     }
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
+}
+function confidenceFaceStr($confidence, $id_api)
+{
+    $i = intval($id_api) ?? 0;
+    if ($i > 1) {
+        switch ($i) {
+            case $confidence == -99:
+                $c = 'Registro Sin Foto';
+                break;
+            case $confidence == -3:
+                $c = 'Foto Inválida';
+                break;
+            case $confidence == -2:
+                $c = 'No Enrolado';
+                break;
+            case $confidence == -1:
+                $c = 'Entrenamiento Inválido';
+                break;
+            case $confidence >= 0 && $confidence <= 35:
+                $c = 'Identificado';
+                break;
+            case $confidence > 35:
+                $c = 'No Identificado';
+                break;
+            default:
+                $c = 'No Disponible';
+                break;
+        }
+    }
+    return $c ?? 'No Disponible';
 }
