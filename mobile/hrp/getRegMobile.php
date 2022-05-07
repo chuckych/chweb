@@ -43,7 +43,7 @@ foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
 }
 $api = "api/v1/checks/$parametros";
-$url  = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+$url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 $totalRecords = $api['TOTAL'];
@@ -61,16 +61,8 @@ if ($api['COUNT'] > 0) {
             // 'map_size' => $r['map_size'],
         ));
         $hora = "<span class='marcador' marcador='$jsonMarcador'>$r[regTime]</span>";
-        $pathPhoto = "$_SESSION[APIMOBILEHRP]/chweb/mobile/hrp/fotos/$r[userCompany]/$r[regPhoto]";
-        // $confidenceFaceStr = '';
-        // if ($r['confidenceFaceVal'] <= 30 && $r['confidenceFaceVal'] > 0) {
-        //     $confidenceFaceStr = '<span class="text-success">Identificado</span>';
-        // } else if ($r['confidenceFaceVal'] < 0) {
-        //     $confidenceFaceStr = '<span class="text-primary">No Enrolado</span>';
-        // } else if ($r['confidenceFaceVal'] > 30) {
-        //     $confidenceFaceStr = '<span class="text-danger">No Identificado</span>';
-        // }
-
+        $pathPhoto = "$r[img]";
+        $img = $r['img'];
         $arrayData[] = array(
             'appVersion'        => $r['appVersion'],
             'attPhoto'          => $r['attPhoto'],
@@ -87,7 +79,8 @@ if ($api['COUNT'] > 0) {
             'regUID'            => ($r['regUID']),
             'regLat'            => $r['regLat'],
             'regLng'            => $r['regLng'],
-            'regPhoto'          => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
+            // 'regPhoto'          => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
+            'regPhoto'          => (is_file($img)) ? $img : '',
             // 'regPhoto'       => (is_file($pathPhoto)) ? $pathPhoto : '',
             // 'regPhoto'       => $pathPhoto,
             'pathPhoto'         => $pathPhoto,
@@ -105,6 +98,7 @@ if ($api['COUNT'] > 0) {
             'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
             'confidenceFaceVal' => $r['confidenceFaceVal'],
             'id_api'            => $r['id_api'],
+            'img'               => $img,
         );
     }
 }

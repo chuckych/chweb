@@ -293,17 +293,26 @@ if (!empty($arrayData)) {
 
         /** Guardamos la foto del base64 */
         if ($eventType == '2') {
-            $filename = 'fotos/' . $companyCode . '/index.php';
+            $eplodeFechaHora = explode(' ', $fechaHora);
+            $eplodeFecha = explode('-', $eplodeFechaHora[0]);
+            $PathAnio    = $eplodeFecha[0];
+            $PathMes     = $eplodeFecha[1];
+            $PathDia     = $eplodeFecha[2];
+            $filename = "fotos/$companyCode/$PathAnio/$PathMes/$PathDia/index.php";
             $dirname = dirname($filename);
             if (!is_dir($dirname)) {
                 mkdir($dirname, 0755, true);
+                $log    = fopen($dirname . '/index.php', 'a');
+                $text   = '<?php exit;';
+                fwrite($log, $text);
+                fclose($log);
             }
-            $f = fopen('fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png', "w") or die("Unable to open file!");
+            $f = fopen($dirname . '/' . $createdDate . '_' . $phoneid . '.jpg', "w") or die("Unable to open file!");
             fwrite($f, base64_decode($attphoto));
             fclose($f);
-            $rutaImagenOriginal = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png';
+            $rutaImagenOriginal = $dirname . '/' . $createdDate . '_' . $phoneid . '.jpg';
             $imagenOriginal = imagecreatefromjpeg($rutaImagenOriginal); //Abrimos la imagen de origen
-            $rutaImagenComprimida = 'fotos/' . $companyCode . '/' . $createdDate . '_' . $phoneid . '.png'; //Ruta de la imagen a comprimir
+            $rutaImagenComprimida = $dirname . '/' . $createdDate . '_' . $phoneid . '.jpg'; //Ruta de la imagen a comprimir
             $calidad = 20; // Valor entre 0 y 100. Mayor calidad, mayor peso
             imagejpeg($imagenOriginal, $rutaImagenComprimida, $calidad); //Guardamos la imagen comprimida
         }
@@ -312,10 +321,10 @@ if (!empty($arrayData)) {
         $query       = queryCalcZone($lat, $lng, $companyCode);
         $zona        = simple_pdoQuery($query);
         if ($zona) {
-            $radio       = round(intval($zona['radio']) / 1000, 2);
-            $distancia = ($zona['distancia']) ? round($zona['distancia'], 2) : 0;
+            $radio      = round(intval($zona['radio']) / 1000, 2);
+            $distancia  = ($zona['distancia']) ? round($zona['distancia'], 2) : 0;
             $distancia2 = ($zona['distancia']) ? ($zona['distancia']) : 0;
-            $idZone = ($distancia <= $radio) ? $zona['id'] : '0';
+            $idZone     = ($distancia <= $radio) ? $zona['id'] : '0';
         } else {
             $idZone = '0';
         }

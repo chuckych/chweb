@@ -232,6 +232,16 @@ if (($queryRecords)) {
         $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
         $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
+            $eplodeFecha = explode('-', $Fecha);
+            $PathAnio    = $eplodeFecha[0];
+            $PathMes     = $eplodeFecha[1];
+            $PathDia     = $eplodeFecha[2];
+            $filename = "fotos/$idCompany/$PathAnio/$PathMes/$PathDia/";
+            $filenameOld = "fotos/$idCompany/";
+
+            $img = $filename.intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
+            $imgOld = $filenameOld.intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
+
         $arrayData[] = array(
             'appVersion'        => $appVersion,
             'attPhoto'          => intval($r['attPhoto']),
@@ -262,6 +272,7 @@ if (($queryRecords)) {
             'confidenceFaceVal' => floatval($r['confidence']),
             'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'])),
             'id_api'            => intval($r['id_api']),
+            'img'               => (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld
         );
     }
 }

@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.226'; // Version de la aplicación
+    return 'v0.0.227'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3832,10 +3832,10 @@ function confidenceFaceStr($confidence, $id_api)
             case $confidence == -1:
                 $c = 'Entrenamiento Inválido';
                 break;
-            case $confidence >= 0 && $confidence <= 35:
+            case $confidence >= 0 && $confidence <= 80:
                 $c = 'Identificado';
                 break;
-            case $confidence > 35:
+            case $confidence > 80:
                 $c = 'No Identificado';
                 break;
             default:

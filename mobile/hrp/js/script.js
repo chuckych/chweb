@@ -78,9 +78,10 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.regPhoto) {
-                        url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w60 h60 radius img-fluid"></img>`;
+                    if (row.pathPhoto) {
+                        // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                        url_foto = `${row.pathPhoto}`;
+                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w60 h60 radius img-fluid"></img>`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -198,13 +199,13 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.regPhoto) {
-                        url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        foto = `<img loading="lazy" src="fotos/${row.userCompany}/${row.regPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    if (row.pathPhoto) {
+                        // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
+                        url_foto = `${row.pathPhoto}`;
+                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid">`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
-                        // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
                     }
 
                     let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
@@ -723,7 +724,8 @@ $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     // console.log(data);
     $('#pic').modal('show')
-    let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
+    // let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
+    let picfoto = data.pathPhoto ? data.pathPhoto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
