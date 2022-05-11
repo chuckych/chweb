@@ -79,6 +79,14 @@ function validaKey()
     $validaKey = empty($p) ? '' : $p;
     return ($validaKey);
 }
+function createdDate()
+{
+    $p = $_REQUEST;
+    $p['createdDate'] = $p['createdDate'] ?? '';
+    $createdDate  = empty($p['createdDate']) ? '' : $p['createdDate'];
+    return intval($createdDate);
+}
+
 $idCompany = 0;
 
 if (!isset($params['key'])) {
@@ -89,7 +97,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'createdDate') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -154,6 +162,8 @@ $userName     = userName();
 $userIDName   = userIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
+$createdDate   = createdDate();
+// checkEmpty($createdDate, 'createdDate');
 
 $validaKey = validaKey();
 $vkey = '';
@@ -202,7 +212,9 @@ $sql_query = "SELECT
     r.id_api AS 'id_api',
     r.locked AS 'locked',
     r.error AS 'error',
-    r.confidence AS 'confidence'
+    r.confidence AS 'confidence', 
+    r.eventZone AS 'eventZone', 
+    r.eventDevice AS 'eventDevice'
     FROM reg_ r
     LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
@@ -216,9 +228,11 @@ $filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
-$filtro_query .= " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'";
+$filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'":'';
+$filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'":'';
 // $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
+// echo $filtro_query;exit;
 $total = rowCount_pdoQuery($sql_query);
 $sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
@@ -248,6 +262,8 @@ if (($queryRecords)) {
             'createdDate'       => intval($r['createdDate']),
             'deviceName'        => $r['deviceName'],
             'eventType'         => $r['eventType'],
+            'eventZone'         => $r['eventZone'],
+            'eventDevice'       => $r['eventDevice'],
             'gpsStatus'         => $r['gpsStatus'],
             'operation'         => $r['operation'],
             'operationType'     => $r['operationType'],
