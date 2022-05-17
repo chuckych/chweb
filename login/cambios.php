@@ -461,10 +461,23 @@ if ($verDB < 20220503) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
     fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
     
-    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    $verDB  = verDBLocal(); // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
+}
+
+if ($verDB < 20220517) {
+
+    pdoQuery("ALTER TABLE `clientes`
+	CHANGE COLUMN `WebService` `WebService` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `tkmobile`,
+	CHANGE COLUMN `ApiMobileHRP` `ApiMobileHRP` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `WebService`,
+	CHANGE COLUMN `UrlAppMobile` `UrlAppMobile` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `ApiMobileHRP`");
+    fileLog("CHANGE COLUMN \"WebService, ApiMobileHRP, UrlAppMobile\"", $pathLog); // escribir en el log
+    
+    $verDB  = verDBLocal(); // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 
 // if ($verDB < 20211102) {
