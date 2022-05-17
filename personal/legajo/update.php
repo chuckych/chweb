@@ -10,8 +10,16 @@ E_ALL();
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) {
 
+    $_POST['LegEmpr'] = $_POST['LegEmpr'] ?? '';
+    $_POST['LegApNo'] = $_POST['LegApNo'] ?? '';
+
     if(valida_campo(test_input($_POST['LegApNo']))){
         $data = array('status' => 'error', 'dato' => '<strong>Campo Apellido y Nombre Obligatorio</strong>.');
+        echo json_encode($data);
+        exit;
+    };
+    if(valida_campo(test_input($_POST['LegEmpr']))){
+        $data = array('status' => 'error', 'dato' => '<strong>El campo empresa Obligatorio</strong>.');
         echo json_encode($data);
         exit;
     };

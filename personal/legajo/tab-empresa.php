@@ -3,7 +3,7 @@
         <div class="col-12 py-3">
             <div class="form-inline mt-2">
                 <!-- Empresa -->
-                <label for="LegEmpr" class="mr-2 w80">Empresa</label>
+                <label for="LegEmpr" class="mr-2 w80 ReqLegEmpr">Empresa <span class="requerido ml-1"></span></label>
                 <select class="form-control selectjs_empresas w200" id="LegEmpr" name="LegEmpr">
                 </select>
                 <span data-toggle="modal" data-target="#altaEmpresa" class="pointer">

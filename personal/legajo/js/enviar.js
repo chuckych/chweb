@@ -2,6 +2,15 @@ $(document).ready(function () {
     ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
     $(".Update_Leg").bind("submit", function (e) {
         e.preventDefault();
+        if(($('#LegEmpr').val() == null) || ($('#LegEmpr').val() == '' || $('#LegEmpr').val() == '0')){
+            $.notifyClose();
+            notify(`<span class="font-weight-bold">Campo empresa es requerido.</span>`, 'danger', 5000, 'right')
+            $(".ReqLegEmpr").addClass('text-danger font-weight-bold')
+            $('#empresa-tab').tab('show');
+            return false;
+        }else{
+            $(".ReqLegEmpr").removeClass('text-danger font-weight-bold')
+        }
         let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
         $.ajax({
             type: $(this).attr("method"),
@@ -13,7 +22,6 @@ $(document).ready(function () {
                 notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
                 $("#alerta_UpdateLega").addClass("d-none")
                 ActiveBTN(true, "#btnGuardar", 'Aguarde..', 'Aceptar')
-
             },
             success: function (data) {
                 // console.log(data.status);
@@ -39,7 +47,7 @@ $(document).ready(function () {
                     $("#alerta_UpdateLega").removeClass("d-none").removeClass("text-success").addClass("text-danger")
                     $(".respuesta_UpdateLega").html("¡Error!")
                     $(".mensaje_UpdateLega").html(`Mensaje: ${data.dato}`);
-                    notify(`Error: ${data.dato}`, 'success', 3000, 'right')
+                    notify(`Error: ${data.dato}`, 'danger', 3000, 'right')
                 }
             }
         });
@@ -248,8 +256,8 @@ $(document).ready(function () {
 /** LOCALIDADES */
 $(document).ready(function () {
 
-    $(".form-localidad").bind("submit", function () {
-        event.preventDefault();
+    $(".form-localidad").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             contetnType: "application_json; charset=utf-8",
@@ -852,8 +860,8 @@ $('#altaconvenio').on('hidden.bs.modal', function (e) {
     $("#ConvFeriTabla").addClass("d-none");
 })
 $(document).ready(function () {
-    $(".form-convenio").bind("submit", function () {
-        event.preventDefault();
+    $(".form-convenio").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             contetnType: "application_json; charset=utf-8",
