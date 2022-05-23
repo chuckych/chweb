@@ -210,10 +210,10 @@ $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         $arrayData[] = array(
-            'ID'       => $r['ID'],
-            'Usuario'  => $r['Usuario'],
-            'Estado'   => $r['Estado'],
-            'Fichadas' => $r['Fichadas'],
+            'userID'     => $r['ID'],
+            'userName'   => $r['Usuario'],
+            'userStatus' => $r['Estado'],
+            'countReg'   => $r['Fichadas'],
         );
     }
 }
