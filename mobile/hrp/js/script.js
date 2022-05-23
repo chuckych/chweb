@@ -353,7 +353,7 @@ if ($(window).width() < 540) {
                     return datacol;
                 },
             },
-            /** Columna Dispositivo */
+            /** Columna id_api */
             {
                 className: '', targets: '', title: '',
                 "render": function (data, type, row, meta) {
