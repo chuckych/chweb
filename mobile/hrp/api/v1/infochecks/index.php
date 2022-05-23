@@ -1,14 +1,12 @@
 <?php
 require __DIR__ . '../../../../../../config/index.php';
-// require __DIR__ . '../../../../../vendor/autoload.php';
-// use Carbon\Carbon;
 session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
 timeZone();
 timeZone_lang();
-borrarLogs(__DIR__ . '../../_logs/getChecks/', 30, '.log');
+borrarLogs(__DIR__ . '../../_logs/infoChecks/', 30, '.log');
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../mobileApikey.php'));
 // echo json_encode($iniKeys);
@@ -79,13 +77,6 @@ function validaKey()
     $validaKey = empty($p) ? '' : $p;
     return ($validaKey);
 }
-function createdDate()
-{
-    $p = $_REQUEST;
-    $p['createdDate'] = $p['createdDate'] ?? '';
-    $createdDate  = empty($p['createdDate']) ? '' : $p['createdDate'];
-    return intval($createdDate);
-}
 function validUser()
 {
     $p = $_REQUEST;
@@ -104,7 +95,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'createdDate' || $key == 'validUser') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'validUser') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -118,8 +109,8 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
     $length  = ($code != '400') ? length() : 0;
     $array = array(
         'RESPONSE_CODE' => http_response_code(intval($code)),
-        'START'         => intval($start),
-        'LENGTH'        => intval($length),
+        'START'         => intval(0),
+        'LENGTH'        => intval(0),
         'TOTAL'         => intval($total),
         'COUNT'         => intval($count),
         'MESSAGE'       => $msg,
@@ -153,7 +144,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '../../_logs/getChecks/' . date('Ymd') . '_getChecks_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../_logs/infoChecks/' . date('Ymd') . '_infoChecks_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -169,7 +160,6 @@ $userName     = userName();
 $userIDName   = userIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
-$createdDate   = createdDate();
 $validUser   = validUser();
 // checkEmpty($createdDate, 'createdDate');
 
@@ -177,8 +167,10 @@ $validaKey = validaKey();
 $vkey = '';
 foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
-        $idCompany = $value['idCompany'];
-        $vkey      = $value['recidCompany'];
+        $idCompany    = $value['idCompany'];
+        $vkey         = $value['recidCompany'];
+        $nameCompany  = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     }
 }
@@ -194,141 +186,34 @@ if ($FechaIni > $FechaFin) {
 
 $MESSAGE = 'OK';
 $arrayData = array();
+
 $joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
-$sql_query = "SELECT 
-    r.createdDate AS 'createdDate', 
-    r.id_user AS 'id_user', 
-    r.phoneid AS 'phoneid', 
-    ru.nombre AS 'name', 
-    r.fechaHora 'fechaHora', 
-    r.lat AS 'lat', 
-    r.lng AS 'lng', 
-    r.gpsStatus AS 'gpsStatus', 
-    r.eventType AS 'eventType', 
-    r.operationType AS 'operationType', 
-    r.operation AS 'operation', 
-    r.appVersion AS 'appVersion', 
-    r.attphoto AS 'attPhoto', 
-    r.id_company AS 'id_company',
-    rd.nombre AS 'deviceName',
-    r.idZone AS 'zoneID',
-    rz.nombre AS 'zoneName',
-    r.distance AS 'zoneDistance',
-    r.reg_uid AS 'reg_uid',
-    CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
-    r.regid AS 'regid',
-    r.id_api AS 'id_api',
-    r.locked AS 'locked',
-    r.error AS 'error',
-    r.confidence AS 'confidence', 
-    r.eventZone AS 'eventZone', 
-    r.eventDevice AS 'eventDevice'
-    FROM reg_ r
-    $joinUser
-    LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
-    LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
-    WHERE r.rid > 0";
+
+$sql_query = "SELECT r.id_user as 'ID', ru.nombre AS 'Usuario', (CASE WHEN ru.estado='0' THEN 'Activo' WHEN ru.estado='1' THEN 'Inactivo' ELSE 'No determinado' END) as 'Estado', 
+(SELECT COUNT(1) FROM reg_ r WHERE ru.id_user=r.id_user AND r.eventType=2 AND r.id_company = $idCompany AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin') AS 'Fichadas' FROM reg_ r $joinUser WHERE r.rid > 0 AND r.eventType = 2";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
-$filtro_query .= ($params['checks'] == '1') ? " AND r.eventType = 2" : '';
+// $filtro_query .= ($params['checks'] == '1') ? " AND r.eventType = 2" : '';
 $filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
-$filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
-$filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'" : '';
-// $filtro_query .= (($validUser==1)) ? "AND ru.nombre != ''" : '';
-// $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
+$filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $sql_query .= $filtro_query;
-// echo $filtro_query;exit;
+$sql_query .= " GROUP BY r.id_user ORDER BY ru.nombre";
 $total = rowCount_pdoQuery($sql_query);
-$sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
-$sql_query .= " LIMIT $start, $length";
-$imageTypeArray = array(
-    0  => 'UNKNOWN',
-    1  => 'GIF',
-    2  => 'JPEG',
-    3  => 'PNG',
-    4  => 'SWF',
-    5  => 'PSD',
-    6  => 'BMP',
-    7  => 'TIFF_II',
-    8  => 'TIFF_MM',
-    9  => 'JPC',
-    10 => 'JP2',
-    11 => 'JPX',
-    12 => 'JB2',
-    13 => 'SWC',
-    14 => 'IFF',
-    15 => 'WBMP',
-    16 => 'XBM',
-    17 => 'ICO',
-    18 => 'COUNT'
-);
-// print_r($sql_query);exit;
+// $sql_query .= " LIMIT $start, $length";
+// echo $sql_query;exit;
+
 $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
-        $Fecha      = FechaFormatVar($r['fechaHora'], 'Y-m-d');
-        $appVersion = explode('-', $r['appVersion']);
-        $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
-        $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
-
-        $eplodeFecha = explode('-', $Fecha);
-        $PathAnio    = $eplodeFecha[0];
-        $PathMes     = $eplodeFecha[1];
-        $PathDia     = $eplodeFecha[2];
-        $filename = "fotos/$idCompany/$PathAnio/$PathMes/$PathDia/";
-        $filenameOld = "fotos/$idCompany/";
-
-        $img = $filename . intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
-        $imgOld = $filenameOld . intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
-        $urlImg = (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld;
-        $size = getimagesize("../../../" . $urlImg);
-        $size[2] = $imageTypeArray[$size[2]];
-        list($ancho, $alto, $tipo, $atributos) = $size;
-
         $arrayData[] = array(
-            'appVersion'        => $appVersion,
-            'attPhoto'          => intval($r['attPhoto']),
-            'createdDate'       => intval($r['createdDate']),
-            'deviceName'        => $r['deviceName'],
-            'eventType'         => $r['eventType'],
-            'eventZone'         => $r['eventZone'],
-            'eventDevice'       => $r['eventDevice'],
-            'gpsStatus'         => $r['gpsStatus'],
-            'operation'         => $r['operation'],
-            'operationType'     => $r['operationType'],
-            'phoneid'           => ($r['phoneid']),
-            'regDate'           => FechaFormatVar($r['fechaHora'], 'Y-m-d'),
-            'regDateTime'       => ($r['fechaHora']),
-            'regUID'            => ($r['reg_uid']),
-            'regDay'            => DiaSemana3(FechaString($r['fechaHora'])),
-            'regLat'            => floatval($r['lat']),
-            'regLng'            => floatval($r['lng']),
-            'regPhoto'          => $regPhoto,
-            'regTime'           => (HoraFormat($r['fechaHora'], false)),
-            'userCompany'       => $r['id_company'],
-            'userID'            => intval($r['id_user']),
-            'userName'          => $r['name'],
-            'phoneRegID'        => $r['regid'],
-            'zoneID'            => $r['zoneID'],
-            'zoneName'          => $r['zoneName'],
-            'zoneDistance'      => (intval($r['zoneID']>0)) ? floatval($r['zoneDistance']) : '',
-            'zoneDistanceStr'   => (intval($r['zoneID']>0)) ? round(floatval($r['zoneDistance'])*1000 , 2) ." Mts." : '',
-            'locked'            => $r['locked'],
-            'error'             => $r['error'],
-            'confidenceFaceVal' => floatval($r['confidence']),
-            'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'])),
-            'id_api'            => intval($r['id_api']),
-            'img'               => $urlImg,
-            'imageData'         => array(
-                'ancho'             => $ancho,
-                'alto'              => $alto,
-                'tipo'              => $size[2],
-                'img'               => $urlImg,
-            ),
+            'ID'       => $r['ID'],
+            'Usuario'  => $r['Usuario'],
+            'Estado'   => $r['Estado'],
+            'Fichadas' => $r['Fichadas'],
         );
     }
 }
