@@ -202,11 +202,14 @@ $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' A
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $sql_query .= $filtro_query;
 $sql_query .= " GROUP BY r.id_user ORDER BY ru.nombre";
-$total = rowCount_pdoQuery($sql_query);
+// $total = rowCount_pdoQuery($sql_query);
 // $sql_query .= " LIMIT $start, $length";
 // echo $sql_query;exit;
 
 $queryRecords = array_pdoQuery($sql_query);
+
+$total = count($queryRecords);
+
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         $arrayData[] = array(
@@ -214,9 +217,11 @@ if (($queryRecords)) {
             'userName'   => $r['Usuario'],
             'userStatus' => $r['Estado'],
             'countReg'   => $r['Fichadas'],
+            'total'      => $total,
         );
     }
 }
+// $total = count($arrayData);
 
 $finScript    = microtime(true);
 $tiempoScript = round($finScript - $iniScript, 2);
