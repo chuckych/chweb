@@ -99,6 +99,7 @@ if ($api['COUNT'] > 0) {
             'confidenceFaceVal' => $r['confidenceFaceVal'],
             'id_api'            => $r['id_api'],
             'img'               => $img,
+            'imageData' => $r['imageData'],
         );
     }
 }

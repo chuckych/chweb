@@ -86,6 +86,13 @@ function createdDate()
     $createdDate  = empty($p['createdDate']) ? '' : $p['createdDate'];
     return intval($createdDate);
 }
+function validUser()
+{
+    $p = $_REQUEST;
+    $p['validUser'] = $p['validUser'] ?? '';
+    $validUser  = empty($p['validUser']) ? '' : $p['validUser'];
+    return intval($validUser);
+}
 
 $idCompany = 0;
 
@@ -97,7 +104,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'createdDate') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'createdDate' || $key == 'validUser') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -163,6 +170,7 @@ $userIDName   = userIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
 $createdDate   = createdDate();
+$validUser   = validUser();
 // checkEmpty($createdDate, 'createdDate');
 
 $validaKey = validaKey();
@@ -186,7 +194,7 @@ if ($FechaIni > $FechaFin) {
 
 $MESSAGE = 'OK';
 $arrayData = array();
-
+$joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
 $sql_query = "SELECT 
     r.createdDate AS 'createdDate', 
     r.id_user AS 'id_user', 
@@ -216,7 +224,7 @@ $sql_query = "SELECT
     r.eventZone AS 'eventZone', 
     r.eventDevice AS 'eventDevice'
     FROM reg_ r
-    LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company
+    $joinUser
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
     LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
     WHERE r.rid > 0";
@@ -228,15 +236,36 @@ $filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
-$filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'":'';
-$filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'":'';
+$filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
+$filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'" : '';
+// $filtro_query .= (($validUser==1)) ? "AND ru.nombre != ''" : '';
 // $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
 // echo $filtro_query;exit;
 $total = rowCount_pdoQuery($sql_query);
 $sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
-
+$imageTypeArray = array(
+    0  => 'UNKNOWN',
+    1  => 'GIF',
+    2  => 'JPEG',
+    3  => 'PNG',
+    4  => 'SWF',
+    5  => 'PSD',
+    6  => 'BMP',
+    7  => 'TIFF_II',
+    8  => 'TIFF_MM',
+    9  => 'JPC',
+    10 => 'JP2',
+    11 => 'JPX',
+    12 => 'JB2',
+    13 => 'SWC',
+    14 => 'IFF',
+    15 => 'WBMP',
+    16 => 'XBM',
+    17 => 'ICO',
+    18 => 'COUNT'
+);
 // print_r($sql_query);exit;
 $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
@@ -246,15 +275,19 @@ if (($queryRecords)) {
         $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
         $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
-            $eplodeFecha = explode('-', $Fecha);
-            $PathAnio    = $eplodeFecha[0];
-            $PathMes     = $eplodeFecha[1];
-            $PathDia     = $eplodeFecha[2];
-            $filename = "fotos/$idCompany/$PathAnio/$PathMes/$PathDia/";
-            $filenameOld = "fotos/$idCompany/";
+        $eplodeFecha = explode('-', $Fecha);
+        $PathAnio    = $eplodeFecha[0];
+        $PathMes     = $eplodeFecha[1];
+        $PathDia     = $eplodeFecha[2];
+        $filename = "fotos/$idCompany/$PathAnio/$PathMes/$PathDia/";
+        $filenameOld = "fotos/$idCompany/";
 
-            $img = $filename.intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
-            $imgOld = $filenameOld.intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
+        $img = $filename . intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
+        $imgOld = $filenameOld . intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
+        $urlImg = (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld;
+        $size = getimagesize("../../../" . $urlImg);
+        $size[2] = $imageTypeArray[$size[2]];
+        list($ancho, $alto, $tipo, $atributos) = $size;
 
         $arrayData[] = array(
             'appVersion'        => $appVersion,
@@ -288,7 +321,12 @@ if (($queryRecords)) {
             'confidenceFaceVal' => floatval($r['confidence']),
             'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'])),
             'id_api'            => intval($r['id_api']),
-            'img'               => (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld
+            'img'               => $urlImg,
+            'imageData'         => array(
+                'ancho'             => $ancho,
+                'alto'              => $alto,
+                'tipo'              => $size[2]
+            ),
         );
     }
 }
