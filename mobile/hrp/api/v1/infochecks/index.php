@@ -40,14 +40,14 @@ function startDate()
 {
     $p = $_REQUEST;
     $p['startDate'] = $p['startDate'] ?? date('Ymd');
-    $startDate  = empty($p['startDate']) ? date('Ymd') : intval($p['startDate']);
+    $startDate  = empty($p['startDate']) ? date('Ymd') : ($p['startDate']);
     return (FechaFormatVar($startDate, 'Y-m-d 00:00:00'));
 }
 function endDate()
 {
     $p = $_REQUEST;
     $p['endDate'] = $p['endDate'] ?? date('Ymd');
-    $endDate  = empty($p['endDate']) ? date('Ymd') : intval($p['endDate']);
+    $endDate  = empty($p['endDate']) ? date('Ymd') : ($p['endDate']);
     return (FechaFormatVar($endDate, 'Y-m-d 23:59:59'));
 }
 function userID()
@@ -169,6 +169,9 @@ $FechaIni     = startDate();
 $FechaFin     = endDate();
 $validUser    = validUser();
 $userStatus   = userStatus();
+
+// echo $FechaIni.PHP_EOL;
+// echo $FechaFin;exit;
 // checkEmpty($createdDate, 'createdDate');
 
 $validaKey = validaKey();
@@ -211,6 +214,7 @@ $filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
+
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 switch ($userStatus) {
     case '1':
