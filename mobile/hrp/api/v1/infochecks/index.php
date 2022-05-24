@@ -84,6 +84,13 @@ function validUser()
     $validUser  = empty($p['validUser']) ? '' : $p['validUser'];
     return intval($validUser);
 }
+function userStatus()
+{
+    $p = $_REQUEST;
+    $p['userStatus'] = $p['userStatus'] ?? '';
+    $userStatus  = empty($p['userStatus']) ? '0' : $p['userStatus'];
+    return ($userStatus);
+}
 
 $idCompany = 0;
 
@@ -95,7 +102,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'validUser') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'validUser' || $key == 'userStatus') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -160,7 +167,8 @@ $userName     = userName();
 $userIDName   = userIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
-$validUser   = validUser();
+$validUser    = validUser();
+$userStatus   = userStatus();
 // checkEmpty($createdDate, 'createdDate');
 
 $validaKey = validaKey();
@@ -183,11 +191,15 @@ if ($FechaIni > $FechaFin) {
     http_response_code(400);
     (response(array(), 0, 'The start date is greater than the end date', 400, 0, 0, $idCompany));
 }
+if ($userStatus != '1' && $userStatus != '2' && !empty($userStatus)) {
+    http_response_code(400);
+    (response(array(), 0, 'The status code is incorrect', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
+$joinUser = (($validUser == 1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
 
 $sql_query = "SELECT r.id_user as 'ID', ru.nombre AS 'Usuario', (CASE WHEN ru.estado='0' THEN 'Activo' WHEN ru.estado='1' THEN 'Inactivo' ELSE 'No determinado' END) as 'Estado', 
 (SELECT COUNT(1) FROM reg_ r WHERE ru.id_user=r.id_user AND r.eventType=2 AND r.id_company = $idCompany AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin') AS 'Fichadas' FROM reg_ r $joinUser WHERE r.rid > 0 AND r.eventType = 2";
@@ -200,6 +212,17 @@ $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
+switch ($userStatus) {
+    case '1':
+        $filtro_query .= " AND ru.estado = '0'"; // Activo
+        break;
+    case '2':
+        $filtro_query .= " AND ru.estado = '1'"; // Inactivo
+        break;
+    default:
+        $filtro_query .= ""; // Todos
+        break;
+}
 $sql_query .= $filtro_query;
 $sql_query .= " GROUP BY r.id_user ORDER BY ru.nombre";
 // $total = rowCount_pdoQuery($sql_query);
