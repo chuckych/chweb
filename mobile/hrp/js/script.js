@@ -21,9 +21,7 @@ let host = $('#_host').val()
 //     // console.log(host)
 // } else {
 
-setInterval(() => {
-    fetchCreatedDate('createdDate.json?v=' + Math.random())
-}, 5000);
+
 
 if ($("#actMobile").val() == '1') {
     actualizar(false);
@@ -34,6 +32,10 @@ if ($("#actMobile").val() == '1') {
         actualizar2(false);
         actualizar3(false);
     }, 10000);
+}else{
+    setInterval(() => {
+        fetchCreatedDate('createdDate.json?v=' + Math.random())
+    }, 5000);
 }
 // }
 
