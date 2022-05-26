@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.233'; // Version de la aplicación
+    return 'v0.0.234'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -1264,6 +1264,8 @@ function ExisteModRol($modulo)
     $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
         return $e['modsrol'] === ID_MODULO;
     });
+    $modulo_actual = (filtrarObjeto($_SESSION['MODULOS'], 'id', $modulo))['modulo']; // Nombre del modulo actual
+    access_log($modulo_actual);
     if (!$r) {
         header("Location:/" . HOMEHOST . "/");
         exit;
@@ -3445,9 +3447,9 @@ function fileLog($text, $ruta_archivo)
 }
 function fileLogJson($text, $ruta_archivo, $date = true)
 {
-    if($date){
+    if ($date) {
         $log    = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
-    }else{
+    } else {
         $log    = fopen($ruta_archivo, 'w');
     }
     $text   = json_encode($text, JSON_PRETTY_PRINT) . "\n";
@@ -3804,7 +3806,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
         'Connection' => 'keep-alive'
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    if($post){
+    if ($post) {
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, ($payload));
     }
@@ -3848,4 +3850,23 @@ function confidenceFaceStr($confidence, $id_api)
         }
     }
     return $c ?? 'No Disponible';
+}
+function access_log($Modulo)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
+        borrarLogs(__DIR__, 5, $pathLog);
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
+        $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
+        $_SESSION['IP_CLIENTE']     = $_SESSION['IP_CLIENTE'] ?? '';
+        $_SESSION['secure_auth_ch'] = $_SESSION['secure_auth_ch'] ?? false;
+
+        $log  = fopen($pathLog, 'a');
+        $t    = date("Y-m-d H:i:s");
+        $text = "$t - u : \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SESSION[IP_CLIENTE]\"  m: \"$Modulo\" auth: \"$_SESSION[secure_auth_ch]\" \n";
+        fwrite($log, $text);
+        fclose($log);
+        exit;
+    }
 }

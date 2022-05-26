@@ -9,7 +9,6 @@ document.addEventListener("visibilitychange", function () {
     state = document.visibilityState;
     sessionStorage.setItem('tab_32', state);
 });
-
 $(window).on('load', function () {
     $('.loading').hide()
 });

@@ -718,3 +718,9 @@ function cancelFullScreen() {
         document.webkitCancelFullScreen();
     }
 }
+navigator.sendBeacon('');
+document.addEventListener('visibilitychange', function logData() {
+    if (document.visibilityState === 'visible') {
+        navigator.sendBeacon('');
+    }
+});

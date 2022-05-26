@@ -220,6 +220,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$_SESSION['DIA_ACTUAL']     = hoy();
 	$_SESSION['VER_DB_CH']      = false;
 	$_SESSION['CONECT_MSSQL']   = false;
+	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'"); 
+	$_SESSION['MODULOS'] = $modRol;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
 	session_regenerate_id();
