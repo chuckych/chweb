@@ -31,7 +31,7 @@ if ($("#actMobile").val() == '1') {
         actualizar(false);
         actualizar2(false);
         actualizar3(false);
-    }, 10000);
+    }, 15000);
 }else{
     setInterval(() => {
         fetchCreatedDate('createdDate.json?v=' + Math.random())
@@ -495,8 +495,9 @@ tablemobile.on('page.dt', function () {
 //     loadingTable('#table-mobile')
 // });
 tablemobile.on('xhr.dt', function (e, settings, json) {
-    // console.log(json.data[0]['createdDate']);
-    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (json.data[0]['createdDate']));
+    // sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (json.data[0]['createdDate']));
+    fetchCreatedDate('createdDate.json?v=' + Math.random())
+    // setStorageDate(json.data[0]['createdDate'])
     tablemobile.off('xhr.dt');
 });
 
@@ -893,10 +894,10 @@ function actualizar(noti = true) {
         url: 'actualizar.php'
     }).then(function (response) {
         let data = response.data.Response
-        // set session storage
         let date = new Date()
-        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: ' + date, JSON.stringify(data));
         if (data.status == "ok") {
+            // set session storage
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -939,10 +940,10 @@ function actualizar2(noti = true) {
         url: 'actualizar-2.php'
     }).then(function (response) {
         let data = response.data.Response
-        // set session storage
         let date = new Date()
-        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: ' + date, JSON.stringify(data));
         if (data.status == "ok") {
+            // set session storage
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -985,10 +986,10 @@ function actualizar3(noti = true) {
         url: 'actualizar-3.php'
     }).then(function (response) {
         let data = response.data.Response
-        // set session storage
         let date = new Date()
-        sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile: ' + date, JSON.stringify(data));
         if (data.status == "ok") {
+            // set session storage
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -1019,7 +1020,6 @@ function actualizar3(noti = true) {
         }, 2000);
     });
 }
-
 $(document).on("click", ".actualizar", function (e) {
     $(this).attr("data-titlel", "Descargando...")
     actualizar()
@@ -1298,19 +1298,22 @@ $("#RefreshToken").on("submit", function (e) {
         error: function () { }
     });
 });
+let setStorageDate = (date) => {
+    let lastdate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
+    if (lastdate < parseInt(date)) { // si la fecha del json es mayor a la del localstorage
+        sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (date)); // actualizar la fecha del localstorage
+        minmaxDate(); // actualizar las tablas
+    } else {
+        sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (date)); // actualizar la fecha del localstorage
+    }
+}
 let fetchCreatedDate = (url) => {
     return new Promise((resolve, reject) => {
         fetch(url)
             .then(res => res.json()) //in case of json
             .then(data => {
                 resolve(data);
-                let lastdate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
-                if (lastdate < parseInt(data)) { // si la fecha del json es mayor a la del localstorage
-                    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (data)); // actualizar la fecha del localstorage
-                    minmaxDate(); // actualizar las tablas
-                } else {
-                    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (data)); // actualizar la fecha del localstorage
-                }
+                setStorageDate(data)
             })
             .catch(err => reject(err));
     });
