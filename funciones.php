@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.234'; // Version de la aplicación
+    return 'v0.0.235'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3855,18 +3855,31 @@ function access_log($Modulo)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
-        borrarLogs(__DIR__, 5, $pathLog);
+        borrarLogs(__DIR__, 30, $pathLog);
         date_default_timezone_set('America/Argentina/Buenos_Aires');
         $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
         $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
-        $_SESSION['IP_CLIENTE']     = $_SESSION['IP_CLIENTE'] ?? '';
+        $_SERVER['REMOTE_ADDR']     = $_SERVER['REMOTE_ADDR'] ?? '';
         $_SESSION['secure_auth_ch'] = $_SESSION['secure_auth_ch'] ?? false;
+        $_REQUEST['state']             = $_REQUEST['state'] ?? false;
+
+        switch ($_REQUEST['state']) {
+            case '1':
+                $state = 'visible tab';
+                break;
+            case '2':
+                $state = 'hidden tab';
+                break;
+            default:
+                $state = 'none tab';
+                break;
+        }
 
         $log  = fopen($pathLog, 'a');
         $t    = date("Y-m-d H:i:s");
-        $text = "$t - u : \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SESSION[IP_CLIENTE]\"  m: \"$Modulo\" auth: \"$_SESSION[secure_auth_ch]\" \n";
+        $text = "$t - u : \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
         fwrite($log, $text);
         fclose($log);
-        exit;
+        // exit;
     }
 }

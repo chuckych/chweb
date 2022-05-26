@@ -718,9 +718,17 @@ function cancelFullScreen() {
         document.webkitCancelFullScreen();
     }
 }
-navigator.sendBeacon('');
+
+let formDataVisibilityChange = new FormData();
+formDataVisibilityChange.append('state', '1');
+navigator.sendBeacon('', formDataVisibilityChange)
+
 document.addEventListener('visibilitychange', function logData() {
+    let formData = new FormData();
     if (document.visibilityState === 'visible') {
-        navigator.sendBeacon('');
+        formData.append('state', '1');
+    } else {
+        formData.append('state', '2');
     }
+    navigator.sendBeacon('', formData);
 });

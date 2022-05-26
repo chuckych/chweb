@@ -240,11 +240,13 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	} else {
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
+	access_log('Login correcto');
 }
 /** Si es incorrecto */
 else {
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');
+	access_log('Login incorrecto');
 }
 
 mysqli_close($link);

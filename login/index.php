@@ -5,3 +5,4 @@ $Modulo  = '999';
 $_datos  = 'login_logs';
 $bgcolor = 'bg-custom';
 require pagina('login.php');
+access_log('Login');

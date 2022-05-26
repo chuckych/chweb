@@ -305,6 +305,6 @@ $json_data = array(
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $data,
-    "nombre"          => $Gen_Nombre
+    "nombre"          => $Gen_Nombre ?? '',
 );
 echo json_encode($json_data);
