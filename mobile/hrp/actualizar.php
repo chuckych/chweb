@@ -378,6 +378,7 @@ if (!empty($arrayData)) {
     );
     echo json_encode(array('Response' => $data));
     statusFlags(1, $pathFlags, $first_element['createdDate']); // marcar bandera de descarga
+    fileLogJson($first_element['createdDate'], 'createdDate.json', false); // un json con la fecha de la ultima descarga
     exit;
 } else {
     $flags = (getDataIni($pathFlags));

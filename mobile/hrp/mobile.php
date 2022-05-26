@@ -40,6 +40,7 @@
 
         ?>
         <input type="hidden" id="_drMob2">
+        <input type="hidden" id="actMobile" value="<?=$_GET['act'] ?? 0 ?>">
 
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">

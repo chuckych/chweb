@@ -15,11 +15,17 @@ const loadingTable = (selectortable) => {
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 let host = $('#_host').val()
 
-if ((host == 'https://localhost')) {
-    // console.log(host)
-} else if ((host == 'http://localhost')) {
-    // console.log(host)
-} else {
+// if ((host == 'https://localhost')) {
+//     // console.log(host)
+// } else if ((host == 'http://localhost')) {
+//     // console.log(host)
+// } else {
+
+setInterval(() => {
+    fetchCreatedDate('createdDate.json?v=' + Math.random())
+}, 5000);
+
+if ($("#actMobile").val() == '1') {
     actualizar(false);
     actualizar2(false);
     actualizar3(false);
@@ -27,8 +33,9 @@ if ((host == 'https://localhost')) {
         actualizar(false);
         actualizar2(false);
         actualizar3(false);
-    }, 30000);
+    }, 10000);
 }
+// }
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
@@ -88,6 +95,10 @@ if ($(window).width() < 540) {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                         // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                    }
+
+                    if (row.attPhoto == 1) {
+                        foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                     }
 
                     let datacol = `<div class="pic w70 h70 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
@@ -209,7 +220,9 @@ if ($(window).width() < 540) {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                     }
-
+                    if (row.attPhoto == 1) {
+                        foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                    }
                     let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
                 },
@@ -258,8 +271,8 @@ if ($(window).width() < 540) {
                 className: 'text-center', targets: '', title: '<div class="w40">Rostro</div>',
                 "render": function (data, type, row, meta) {
                     let confidenceFaceStr = '';
-                    let datacol ='';
-                    let processRegFace ='processRegFace pointer';
+                    let datacol = '';
+                    let processRegFace = 'processRegFace pointer';
                     // console.log(row.confidenceFaceStr);
                     if (row.confidenceFaceStr == 'Identificado') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-success bi bi-person-bounding-box"></span>`
@@ -440,7 +453,7 @@ let processRegFace = (id_api) => {
         error: function () {
             $.notifyClose();
             $('#table-mobile').DataTable().ajax.reload(null, false);
-         }
+        }
     });
 }
 // max-h-500 overflow-auto
@@ -469,6 +482,8 @@ tablemobile.on('init.dt', function () {
 });
 tablemobile.on('draw.dt', function (e, settings) {
     // e.preventDefault();
+    tablemobile.off('draw.dt');
+    // console.log(settings);
     return true
 });
 tablemobile.on('page.dt', function () {
@@ -478,6 +493,8 @@ tablemobile.on('page.dt', function () {
 //     loadingTable('#table-mobile')
 // });
 tablemobile.on('xhr.dt', function (e, settings, json) {
+    // console.log(json.data[0]['createdDate']);
+    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (json.data[0]['createdDate']));
     tablemobile.off('xhr.dt');
 });
 
@@ -757,6 +774,10 @@ $(document).on("click", ".pic", function (e) {
         $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
         $('.divFoto').show()
     } else {
+        $('.divFoto').hide()
+    }
+
+    if (data.attPhoto == 1) {
         $('.divFoto').hide()
     }
 
@@ -1188,10 +1209,10 @@ let minmaxDate = () => {
         $('#_drMob2').val(dr)
         $('#_drMob').val(dr)
     }).then(() => {
-        tablemobile.ajax.reload();
-        $('#tableUsuarios').DataTable().ajax.reload();
-        $('#tableDevices').DataTable().ajax.reload();
-        $('#tableZones').DataTable().ajax.reload();
+        tablemobile.ajax.reload(null, false);
+        $('#tableUsuarios').DataTable().ajax.reload(null, false);
+        $('#tableDevices').DataTable().ajax.reload(null, false);
+        $('#tableZones').DataTable().ajax.reload(null, false);
         dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
@@ -1275,36 +1296,20 @@ $("#RefreshToken").on("submit", function (e) {
         error: function () { }
     });
 });
-// focusRowTables()
-// $('#RowTableDevices').show();
-// var tasks = [
-
-//     {
-
-//         'name': 'Write for Envato Tuts+',
-
-//         'duration': 120
-
-//     },
-
-//     {
-
-//         'name': 'Work out',
-
-//         'duration': 60
-
-//     },
-
-//     {
-
-//         'name': 'Procrastinate on Duolingo',
-
-//         'duration': 240
-
-//     }
-
-// ];
-// var task_names = tasks.map(function (tasks, index, array) {
-//     console.log(tasks.name);
-// });
-// console.log((tasks.map((task) => task.name))); 
+let fetchCreatedDate = (url) => {
+    return new Promise((resolve, reject) => {
+        fetch(url)
+            .then(res => res.json()) //in case of json
+            .then(data => {
+                resolve(data);
+                let lastdate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
+                if (lastdate < parseInt(data)) { // si la fecha del json es mayor a la del localstorage
+                    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (data)); // actualizar la fecha del localstorage
+                    minmaxDate(); // actualizar las tablas
+                } else {
+                    sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (data)); // actualizar la fecha del localstorage
+                }
+            })
+            .catch(err => reject(err));
+    });
+}

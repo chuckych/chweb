@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.230'; // Version de la aplicación
+    return 'v0.0.231'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3443,9 +3443,13 @@ function fileLog($text, $ruta_archivo)
     fwrite($log, $text);
     fclose($log);
 }
-function fileLogJson($text, $ruta_archivo)
+function fileLogJson($text, $ruta_archivo, $date = true)
 {
-    $log    = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
+    if($date){
+        $log    = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
+    }else{
+        $log    = fopen($ruta_archivo, 'w');
+    }
     $text   = json_encode($text, JSON_PRETTY_PRINT) . "\n";
     fwrite($log, $text);
     fclose($log);
