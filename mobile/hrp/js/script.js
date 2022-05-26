@@ -15,14 +15,6 @@ const loadingTable = (selectortable) => {
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 let host = $('#_host').val()
 
-// if ((host == 'https://localhost')) {
-//     // console.log(host)
-// } else if ((host == 'http://localhost')) {
-//     // console.log(host)
-// } else {
-
-
-
 if ($("#actMobile").val() == '1') {
     actualizar(false);
     actualizar2(false);
@@ -32,12 +24,13 @@ if ($("#actMobile").val() == '1') {
         actualizar2(false);
         actualizar3(false);
     }, 15000);
-}else{
-    setInterval(() => {
-        fetchCreatedDate('createdDate.json?v=' + Math.random())
-    }, 5000);
+} else {
+    if ((host != 'https://localhost') && (host != 'http://localhost')) {
+        setInterval(() => {
+            fetchCreatedDate('createdDate.json?v=' + Math.random())
+        }, 5000);
+    }
 }
-// }
 
 $.fn.DataTable.ext.pager.numbers_length = 5;
 // $('#btnFiltrar').removeClass('d-sm-block');
