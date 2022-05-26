@@ -2,7 +2,14 @@ $('#Encabezado').addClass('pointer')
 $('#RowTableUsers').hide();
 $('#RowTableDevices').hide();
 $('#RowTableZones').hide();
-// windows on load
+
+sessionStorage.setItem('tab_32', 'visible');
+
+document.addEventListener("visibilitychange", function () {
+    state = document.visibilityState;
+    sessionStorage.setItem('tab_32', state);
+});
+
 $(window).on('load', function () {
     $('.loading').hide()
 });
@@ -27,8 +34,10 @@ if ($("#actMobile").val() == '1') {
 } else {
     if ((host != 'https://localhost') && (host != 'http://localhost')) {
         setInterval(() => {
-            fetchCreatedDate('createdDate.json?v=' + Math.random())
-        }, 5000);
+            if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
+                fetchCreatedDate('createdDate.json?v=' + Math.random())
+            }
+        }, 5000); // cada 5 segundos
     }
 }
 
@@ -890,7 +899,7 @@ function actualizar(noti = true) {
         let date = new Date()
         if (data.status == "ok") {
             // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_1: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -936,7 +945,7 @@ function actualizar2(noti = true) {
         let date = new Date()
         if (data.status == "ok") {
             // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_2: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -982,7 +991,7 @@ function actualizar3(noti = true) {
         let date = new Date()
         if (data.status == "ok") {
             // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_: ' + date, JSON.stringify(data));
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
