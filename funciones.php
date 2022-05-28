@@ -3883,3 +3883,24 @@ function access_log($Modulo)
         // exit;
     }
 }
+function createDir($path, $gitignore = true)
+{
+    $dirname = dirname($path . '/index.php');
+    if (!is_dir($dirname)) {
+        mkdir($dirname, 0755, true);
+
+        if($gitignore){
+            $git = dirname($path . '/.gitignore');
+            mkdir($git, 0755, true);
+            $logGit    = fopen($git . '/.gitignore', 'a');
+            $textGit   = '*';
+            fwrite($logGit, $textGit);
+            fclose($logGit);
+        }
+
+        $log    = fopen($dirname . '/index.php', 'a');
+        $text   = '<?php exit;';
+        fwrite($log, $text);
+        fclose($log);
+    }
+}

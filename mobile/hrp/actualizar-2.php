@@ -8,7 +8,7 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-borrarLogs(__DIR__ . '/logs/', 30, '.log');
+// borrarLogs(__DIR__ . '/logs/', 30, '.log');
 function writeFlags($assoc, $path)
 {
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! -->\n";
@@ -42,8 +42,10 @@ function statusFlags($statusFlags, $pathFlags, $createdDate)
     );
     writeFlags($assoc, $pathFlags);
     $text = ($statusFlags == '2') ? "Se marco Bandera de espera" : "Se marco Bandera de descarga";
-    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FlagsLog_.log';
-    fileLog($text, $pathLog);
+    $pathLog = __DIR__ . '/logs/flagsLog';
+    createDir($pathLog);
+    fileLog($text, $pathLog . '/flagsLog_2.log');
+    borrarLogs($pathLog.'/', 1, '.log');
 }
 function getEvents($url, $timeout = 10)
 {
@@ -290,13 +292,13 @@ if (!empty($arrayData)) {
         }
         $employe[]      = "$employeId";
 
+        $eplodeFechaHora = explode(' ', $fechaHora);
+        $eplodeFecha = explode('-', $eplodeFechaHora[0]);
+        $PathAnio    = $eplodeFecha[0];
+        $PathMes     = $eplodeFecha[1];
+        $PathDia     = $eplodeFecha[2];
         /** Guardamos la foto del base64 */
         if ($eventType == '2') {
-            $eplodeFechaHora = explode(' ', $fechaHora);
-            $eplodeFecha = explode('-', $eplodeFechaHora[0]);
-            $PathAnio    = $eplodeFecha[0];
-            $PathMes     = $eplodeFecha[1];
-            $PathDia     = $eplodeFecha[2];
             $filename = "fotos/$companyCode/$PathAnio/$PathMes/$PathDia/index.php";
             $dirname = dirname($filename);
             if (!is_dir($dirname)) {
@@ -345,23 +347,38 @@ if (!empty($arrayData)) {
             }
 
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
+
             /** Guardo Log de las Fichadas descargadas */
-            $text = "$Legajo $createdDate $fechaHora $lat $lng";
-            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_DescargasAPI_' . $companyCode . '.log';
-            fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+            $iniKeys     = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
+            $obj         = filtrarObjeto($iniKeys, 'idCompany', $companyCode);
+            $nameCompany = (str_replace(' ', '_', $obj['nameCompany']));
+
+            $pathLog = __DIR__ . '/logs/descargas/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
+            createDir($pathLog);
+            $text = "$Legajo $createdDate $fechaHora $lat $lng api-2";
+            fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log'); // Guardo Log de las Fichadas descargadas
             /**  */
+
             $localCH = filtrarObjeto($iniKeys, 'idCompany', $companyCode); // Buscamos si la empresa tiene local CH
             $nameCompany = str_replace(" ", "-", $localCH['nameCompany']);
 
             if ($localCH['localCH'] == '1') {
                 $text = "$Legajo $fechaHoraCH $hora";
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegExternalCH_' . $nameCompany . '.log';
-                fileLog($text, $pathLog); // escribir en el log de errores el error
+                // $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegExternalCH_' . $nameCompany . '.log';
+                //fileLog($text, $pathLog); // escribir en el log de errores el error
+                $pathLog = __DIR__ . '/logs/reg_external_CH/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
+                createDir($pathLog);
+                fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log'); // Guardo Log de las Fichadas descargadas
+
             }
             if ($locked == '1') {
                 $text = "Usuario Bloqueado $Legajo $fechaHoraCH $hora";
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegLocked_' . $nameCompany . '.log';
-                fileLog($text, $pathLog); // escribir en el log de errores el error
+                //$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_logRegLocked_' . $nameCompany . '.log';
+                //fileLog($text, $pathLog); // escribir en el log de errores el error
+
+                $pathLog = __DIR__ . '/logs/reg_locked_CH/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
+                createDir($pathLog);
+                fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log');
             }
 
             if ($locked != '1' && $localCH['localCH'] == '0') { // Si no esta bloqueado y tiene local CH
@@ -369,7 +386,7 @@ if (!empty($arrayData)) {
                 if (InsertRegistroCH($query)) {
                     $eventZone = str_pad($eventZone, 4, "0", STR_PAD_LEFT);
                     $text = "$Legajo $fechaHoraCH $hora 9999 $eventZone 0";
-                    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
+                    //$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
                     $insertCH[] = array(
                         'Estado' => '0',
                         'Fecha'  => $fechaHoraCH,
@@ -378,11 +395,20 @@ if (!empty($arrayData)) {
                         'Legajo' => $Legajo,
                         'Reloj'  => '9999',
                     );
-                    fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+                    //fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+
+                    $pathLog = __DIR__ . '/logs/insert_CH/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
+                    createDir($pathLog);
+                    fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log');
                 } else {
                     $text = "No se pudo insertar el registro en TABLA FICHADAS CH: $Legajo $fechaHoraCH $hora 9999 9999 0";
-                    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
-                    fileLog($text, $pathLog); // escribir en el log de errores el error
+                    //$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_ErrorInsertCH.log'; // ruta del archivo de Log de errores
+                    //fileLog($text, $pathLog); // escribir en el log de errores el error
+
+                    $pathLog = __DIR__ . '/logs/error_insert_CH/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
+                    createDir($pathLog);
+                    fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log');
+
                     $insertCH_Fail[] = array(
                         'Estado' => '0',
                         'Fecha'  => $fechaHoraCH,
@@ -393,9 +419,9 @@ if (!empty($arrayData)) {
                     );
                 }
             } else {
-                $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
-                fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
+                // $text = "$Legajo $fechaHoraCH $hora 9999 9999 0";
+                // $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
+                // fileLog($text, $pathLog); // escribir en el log de Fichadas insertadas en control horario
             }
         }
     }
