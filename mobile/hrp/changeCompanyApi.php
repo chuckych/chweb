@@ -9,12 +9,13 @@ E_ALL();
 
 $recid = $_POST['recid'];
 
-$sql = "SELECT clientes.id as 'id', clientes.recid 'recid' FROM clientes WHERE clientes.recid = '$recid'";
+$sql = "SELECT clientes.id as 'id', clientes.recid as 'recid', clientes.ApiMobileHRP as 'ApiMobileHRP' FROM clientes WHERE clientes.recid = '$recid'";
 $data = simple_pdoQuery($sql);
 
 $_SESSION['ID_CLIENTE']    = $data['id'];
 $_SESSION['RECID_CLIENTE'] = $data['recid'];
+$_SESSION["APIMOBILEHRP"]  = $data['ApiMobileHRP'];
 
-$data = array('status' => 'ok');
+$data = array('status' => 'ok', 'api' => $data['ApiMobileHRP']);
 echo json_encode($data);
 exit;

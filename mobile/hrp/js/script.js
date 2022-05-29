@@ -34,7 +34,8 @@ if ($("#actMobile").val() == '1') {
     if ((host != 'https://localhost') && (host != 'http://localhost')) {
         setInterval(() => {
             if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
-                fetchCreatedDate('createdDate.json?v=' + Math.random())
+                let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+                fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.json?v=' + Math.random())
             }
         }, 5000); // cada 5 segundos
     }
@@ -90,10 +91,10 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.pathPhoto) {
+                    if (row.img) {
                         // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.pathPhoto}`;
-                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w60 h60 radius img-fluid"></img>`;
+                        url_foto = `${row.img}`;
+                        foto = `<img loading="lazy" src="${row.img}" class="w60 h60 radius img-fluid"></img>`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -215,10 +216,10 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.pathPhoto) {
+                    if (row.img) {
                         // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.pathPhoto}`;
-                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid">`;
+                        url_foto = `${row.img}`;
+                        foto = `<img loading="lazy" src="${row.img}" class="w40 h40 radius img-fluid">`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -496,9 +497,8 @@ tablemobile.on('page.dt', function () {
 //     loadingTable('#table-mobile')
 // });
 tablemobile.on('xhr.dt', function (e, settings, json) {
-    // sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (json.data[0]['createdDate']));
-    fetchCreatedDate('createdDate.json?v=' + Math.random())
-    // setStorageDate(json.data[0]['createdDate'])
+    let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+    fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.json?v=' + Math.random())
     tablemobile.off('xhr.dt');
 });
 
@@ -1289,6 +1289,7 @@ $("#RefreshToken").on("submit", function (e) {
         },
         success: function (data) {
             if (data.status == "ok") {
+                sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
                 loadingTable('#table-mobile');
                 loadingTableUser('#tableUsuarios');
                 loadingTableDevices('#tableDevices');
@@ -1309,13 +1310,12 @@ let setStorageDate = (date) => {
     }
 }
 let fetchCreatedDate = (url) => {
-    return new Promise((resolve, reject) => {
-        fetch(url)
-            .then(res => res.json()) //in case of json
-            .then(data => {
-                resolve(data);
-                setStorageDate(data)
-            })
-            .catch(err => reject(err));
+    return new Promise((resolve) => {
+        fetch(url, {
+            mode: 'no-cors'
+        }).then(data => {
+            resolve(data);
+            setStorageDate(data)
+        }).catch(err => console.log(err));
     });
 }

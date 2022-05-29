@@ -40,8 +40,8 @@
 
         ?>
         <input type="hidden" id="_drMob2">
-        <input type="hidden" id="actMobile" value="<?=$_GET['act'] ?? 0 ?>">
-
+        <input type="hidden" id="actMobile" value="<?= $_GET['act'] ?? 0 ?>">
+        <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP"] ?? 0 ?>">
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
             <div class="row bg-white invisible mt-2" id="RowTableMobile">
@@ -132,6 +132,9 @@
     <script src="js/script_devices.js?v=<?= time() ?>"></script>
     <script src="js/script_zones.js?v=<?= time() ?>"></script>
     <script src="js/script_mapa.js?v=<?= time() ?>"></script>
+    <script>
+        sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
+    </script>
 </body>
 
 </html>

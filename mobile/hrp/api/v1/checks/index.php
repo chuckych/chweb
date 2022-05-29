@@ -169,8 +169,8 @@ $userName     = userName();
 $userIDName   = userIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
-$createdDate   = createdDate();
-$validUser   = validUser();
+$createdDate  = createdDate();
+$validUser    = validUser();
 // checkEmpty($createdDate, 'createdDate');
 
 $validaKey = validaKey();

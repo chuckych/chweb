@@ -3889,13 +3889,15 @@ function createDir($path, $gitignore = true)
     if (!is_dir($dirname)) {
         mkdir($dirname, 0755, true);
 
-        if($gitignore){
+        if ($gitignore) {
             $git = dirname($path . '/.gitignore');
-            mkdir($git, 0755, true);
-            $logGit    = fopen($git . '/.gitignore', 'a');
-            $textGit   = '*';
-            fwrite($logGit, $textGit);
-            fclose($logGit);
+            if (!is_dir($git)) {
+                mkdir($git, 0755, true);
+                $logGit    = fopen($git . '/.gitignore', 'a');
+                $textGit   = '*';
+                fwrite($logGit, $textGit);
+                fclose($logGit);
+            }
         }
 
         $log    = fopen($dirname . '/index.php', 'a');
