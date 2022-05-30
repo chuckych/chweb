@@ -34,7 +34,7 @@ if ($("#actMobile").val() == '1') {
         setInterval(() => {
             if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
                 let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-                fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.php')
+                fetchCreatedDate('createdDate.php')
             }
         }, 5000); // cada 5 segundos
     }
@@ -497,7 +497,7 @@ tablemobile.on('page.dt', function () {
 // });
 tablemobile.on('xhr.dt', function (e, settings, json) {
     let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-    fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.php')
+    fetchCreatedDate('createdDate.php')
     tablemobile.off('xhr.dt');
 });
 
