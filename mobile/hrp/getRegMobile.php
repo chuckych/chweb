@@ -98,7 +98,8 @@ if ($api['COUNT'] > 0) {
             'confidenceFaceVal' => $r['confidenceFaceVal'],
             'id_api'            => $r['id_api'],
             // 'img'               => $img,
-            'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
+            'img'               => $img,
+            // 'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
             'imageData' => $r['imageData'],
         );
     }

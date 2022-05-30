@@ -90,10 +90,10 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.img) {
+                    if (row.pathPhoto) {
                         // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.img}`;
-                        foto = `<img loading="lazy" src="${row.img}" class="w60 h60 radius img-fluid"></img>`;
+                        url_foto = `${row.pathPhoto}`;
+                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w60 h60 radius img-fluid"></img>`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -215,10 +215,10 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.img) {
+                    if (row.pathPhoto) {
                         // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.img}`;
-                        foto = `<img loading="lazy" src="${row.img}" class="w40 h40 radius img-fluid">`;
+                        url_foto = `${row.pathPhoto}`;
+                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid">`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
