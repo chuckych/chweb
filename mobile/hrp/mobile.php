@@ -136,5 +136,4 @@
         sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
     </script>
 </body>
-
 </html>

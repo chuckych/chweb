@@ -6,13 +6,9 @@ ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
-
 $q = FusNuloPOST('q', '');
-
 $FiltroQ  = (!empty($q)) ? "AND clientes.nombre LIKE '%$q%'" : '';
-
 $sql="SELECT clientes.recid as 'id', clientes.nombre 'text' FROM clientes WHERE clientes.ApiMobileHRP !='' $FiltroQ";
-
 $arrayData = array_pdoQuery($sql);
 
 if (count($arrayData) > 0) {

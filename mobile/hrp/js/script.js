@@ -2,7 +2,6 @@ $('#Encabezado').addClass('pointer')
 $('#RowTableUsers').hide();
 $('#RowTableDevices').hide();
 $('#RowTableZones').hide();
-
 sessionStorage.setItem('tab_32', 'visible');
 
 document.addEventListener("visibilitychange", function () {
@@ -35,7 +34,7 @@ if ($("#actMobile").val() == '1') {
         setInterval(() => {
             if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
                 let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-                fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.json?v=' + Math.random())
+                fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.php')
             }
         }, 5000); // cada 5 segundos
     }
@@ -498,7 +497,7 @@ tablemobile.on('page.dt', function () {
 // });
 tablemobile.on('xhr.dt', function (e, settings, json) {
     let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-    fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.json?v=' + Math.random())
+    fetchCreatedDate(apiMobile + '/chweb/mobile/hrp/createdDate.php')
     tablemobile.off('xhr.dt');
 });
 
@@ -1294,7 +1293,6 @@ $("#RefreshToken").on("submit", function (e) {
                 loadingTableUser('#tableUsuarios');
                 loadingTableDevices('#tableDevices');
                 minmaxDate()
-                actualizar(false);
             }
         },
         error: function () { }
@@ -1309,13 +1307,25 @@ let setStorageDate = (date) => {
         sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (date)); // actualizar la fecha del localstorage
     }
 }
-let fetchCreatedDate = (url) => {
+tryGetJson = async (resp) => {
     return new Promise((resolve) => {
-        fetch(url, {
-            mode: 'no-cors'
-        }).then(data => {
+      if (resp) {
+        resp.json().then(json => resolve(json)).catch(() => resolve(null))
+      } else {
+        resolve(null)
+      }
+    })
+  }
+function fetchCreatedDate(url) {
+    return new Promise((resolve) => {
+    fetch(url, {
+        method: 'get',
+        mode: 'no-cors'
+    }).then(response => response.json())
+        .then(data => {
             resolve(data);
             setStorageDate(data)
-        }).catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
     });
 }

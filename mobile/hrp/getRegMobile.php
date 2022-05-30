@@ -5,7 +5,6 @@ header("Content-Type: application/json");
 ultimoacc();
 secure_auth_ch_json();
 E_ALL();
-
 $respuesta = array();
 $arrayData = array();
 $error = '';

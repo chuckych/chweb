@@ -7,7 +7,6 @@ header('Access-Control-Allow-Origin: *');
 ultimoacc();
 secure_auth_ch_json();
 E_ALL();
-
 // borrarLogs(__DIR__ . '/logs/', 30, '.log');
 function writeFlags($assoc, $path)
 {

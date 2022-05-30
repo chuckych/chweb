@@ -8,7 +8,6 @@ header("Content-Type: application/json");
 $data = array();
 /** Para dateRangePicker */
 // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
-
 $query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
 
 $arrayFech = simple_pdoQuery($query);

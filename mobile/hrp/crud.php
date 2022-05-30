@@ -6,6 +6,7 @@ ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
+
 $id_company = $_SESSION["ID_CLIENTE"];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['tipo'] == 'transferir') {

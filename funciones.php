@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.235'; // Version de la aplicación
+    return 'v0.0.236'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3876,8 +3876,8 @@ function access_log($Modulo)
         }
 
         $log  = fopen($pathLog, 'a');
-        $t    = date("Y-m-d H:i:s");
-        $text = "$t - u : \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
+        $t    = (new DateTime())->format('Y-m-d H:i:s.v');
+        $text = "$t - u: \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
         fwrite($log, $text);
         fclose($log);
         // exit;
@@ -3891,13 +3891,13 @@ function createDir($path, $gitignore = true)
 
         if ($gitignore) {
             $git = dirname($path . '/.gitignore');
-            if (!is_dir($git)) {
+            // if (!is_dir($git)) {
                 mkdir($git, 0755, true);
                 $logGit    = fopen($git . '/.gitignore', 'a');
                 $textGit   = '*';
                 fwrite($logGit, $textGit);
                 fclose($logGit);
-            }
+            // }
         }
 
         $log    = fopen($dirname . '/index.php', 'a');
