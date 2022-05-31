@@ -1222,82 +1222,6 @@ let minmaxDate = () => {
 
     });
 }
-$(".selectjs_cuentaToken").select2({
-    multiple: false,
-    language: "es",
-    placeholder: "Cambiar de Cuenta",
-    minimumInputLength: "0",
-    minimumResultsForSearch: -1,
-    maximumInputLength: "10",
-    selectOnClose: false,
-    language: {
-        noResults: function () {
-            return "No hay resultados..";
-        },
-        inputTooLong: function (args) {
-            var message =
-                "Máximo " +
-                "10" +
-                " caracteres. Elimine " +
-                overChars +
-                " caracter";
-            if (overChars != 1) {
-                message += "es";
-            }
-            return message;
-        },
-        searching: function () {
-            return "Buscando..";
-        },
-        errorLoading: function () {
-            return "Sin datos..";
-        },
-        inputTooShort: function () {
-            return "Ingresar " + "0" + " o mas caracteres";
-        },
-        maximumSelected: function () {
-            return "Puede seleccionar solo una opción";
-        }
-    },
-    ajax: {
-        url: "getCuentasApi.php",
-        dataType: "json",
-        type: "POST",
-        data: function (params) {
-            return {};
-        },
-        processResults: function (data) {
-            return {
-                results: data
-            };
-        }
-    }
-});
-$(".selectjs_cuentaToken").on("select2:select", function (e) {
-    CheckSesion();
-    $("#RefreshToken").submit();
-    // $('#map').html('').removeClass('shadow').css('height', '0px');
-});
-$("#RefreshToken").on("submit", function (e) {
-    e.preventDefault();
-    $.ajax({
-        type: $(this).attr("method"),
-        url: $(this).attr("action"),
-        data: $(this).serialize(),
-        beforeSend: function (data) {
-        },
-        success: function (data) {
-            if (data.status == "ok") {
-                sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
-                loadingTable('#table-mobile');
-                loadingTableUser('#tableUsuarios');
-                loadingTableDevices('#tableDevices');
-                minmaxDate()
-            }
-        },
-        error: function () { }
-    });
-});
 let setStorageDate = (date) => {
     let lastdate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
     if (lastdate < parseInt(date)) { // si la fecha del json es mayor a la del localstorage
@@ -1309,23 +1233,23 @@ let setStorageDate = (date) => {
 }
 tryGetJson = async (resp) => {
     return new Promise((resolve) => {
-      if (resp) {
-        resp.json().then(json => resolve(json)).catch(() => resolve(null))
-      } else {
-        resolve(null)
-      }
+        if (resp) {
+            resp.json().then(json => resolve(json)).catch(() => resolve(null))
+        } else {
+            resolve(null)
+        }
     })
-  }
+}
 function fetchCreatedDate(url) {
     return new Promise((resolve) => {
-    fetch(url, {
-        method: 'get',
-        mode: 'no-cors'
-    }).then(response => response.json())
-        .then(data => {
-            resolve(data);
-            setStorageDate(data)
-        })
-        .catch(err => console.log(err));
+        fetch(url, {
+            method: 'get',
+            mode: 'no-cors'
+        }).then(response => response.json())
+            .then(data => {
+                resolve(data);
+                setStorageDate(data)
+            })
+            .catch(err => console.log(err));
     });
 }

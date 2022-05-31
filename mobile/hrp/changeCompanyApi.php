@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 $recid = $_POST['recid'];
 
-$sql = "SELECT clientes.id as 'id', clientes.recid as 'recid', clientes.ApiMobileHRP as 'ApiMobileHRP' FROM clientes WHERE clientes.recid = '$recid'";
+$sql = "SELECT clientes.id as 'id', clientes.recid as 'recid', clientes.ApiMobileHRP as 'ApiMobileHRP' FROM clientes WHERE clientes.id = '$recid'";
 $data = simple_pdoQuery($sql);
 
 $_SESSION['ID_CLIENTE']    = $data['id'];

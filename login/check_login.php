@@ -1,5 +1,5 @@
 <?php
-$_POST["guarda"] = $_POST["guarda"] ??'';
+$_POST["guarda"] = $_POST["guarda"] ?? '';
 
 if ($_POST["guarda"] == "on") {
 	##  GUARDAR COOKIE ## 
@@ -45,13 +45,13 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
 
 	if (!checkTable('params')) {
-        pdoQuery("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
-        if (checkTable('params')) {
-            fileLog("Se creo la tabla \"params\"", $pathLog); // escribir en el log
-        } else {
-            fileLog("No se creo tabla: \"listaparams_estruct\"", $pathLog); // escribir en el log
-        }
-    }
+		pdoQuery("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
+		if (checkTable('params')) {
+			fileLog("Se creo la tabla \"params\"", $pathLog); // escribir en el log
+		} else {
+			fileLog("No se creo tabla: \"listaparams_estruct\"", $pathLog); // escribir en el log
+		}
+	}
 
 	if (!count_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1")) { // Si no existe el registro
 		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, 0)");
@@ -170,13 +170,24 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 
 	$_SESSION['EstrUser'] =  estructUsuario(intval($row['id']), 8);
 	if ($row["recid_cliente"] == 'kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
-		$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
-		$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
-		$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
-		$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
-		$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
-		$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
-		$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
+		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
+			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
+			$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
+			$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
+			$_SESSION['SectRol'] = estructUsuario(intval($row['id']), 4);
+			$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
+			$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
+			$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
+		} else {
+			$_SESSION['EmprRol'] = (estructura_recid_rol($row['recid_rol'], 'empresas', 'empresa'));
+			$_SESSION['PlanRol'] = (estructura_recid_rol($row['recid_rol'], 'plantas', 'planta'));
+			$_SESSION['ConvRol'] = (estructura_recid_rol($row['recid_rol'], 'convenios', 'convenio'));
+			$_SESSION['SectRol'] = (estructura_recid_rol($row['recid_rol'], 'sectores', 'sector'));
+			$_SESSION['Sec2Rol'] = (estructura_recid_rol($row['recid_rol'], 'secciones', 'seccion'));
+			$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
+			$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
+		}
 	else :
 		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
@@ -186,6 +197,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
 		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
 	endif;
+	// fileLog($_SESSION['Sec2Rol'], 'Sec2Rol');
 
 	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
 	// $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
@@ -205,7 +217,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$_SESSION["RECID_USER"]     = $row["recid_user"];
 	$_SESSION["ID_ROL"]         = $row["id_rol"];
 	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
-	$q = simple_pdoQuery("SELECT ApiMobileHRP FROM clientes WHERE id = '$row[id_cliente]' LIMIT 1"); 
+	$q = simple_pdoQuery("SELECT ApiMobileHRP FROM clientes WHERE id = '$row[id_cliente]' LIMIT 1");
 	$_SESSION["APIMOBILEHRP"]   = $q["ApiMobileHRP"];
 	$_SESSION["CLIENTE"]        = $row["cliente"];
 	$_SESSION["ROL"]            = $row["rol"];
@@ -220,7 +232,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$_SESSION['DIA_ACTUAL']     = hoy();
 	$_SESSION['VER_DB_CH']      = false;
 	$_SESSION['CONECT_MSSQL']   = false;
-	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'"); 
+	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
 	$_SESSION['MODULOS'] = $modRol;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 
@@ -229,8 +241,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	// mysqli_close($link);
 	if ($_POST['lasturl']) {
 		header('Location:' . urldecode($_POST['lasturl']));
-	// } else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
-	// 	header('Location:/' . HOMEHOST . '/dashboard/');
+		// } else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
+		// 	header('Location:/' . HOMEHOST . '/dashboard/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
