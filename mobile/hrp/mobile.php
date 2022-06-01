@@ -1,18 +1,14 @@
 <!doctype html>
 <html lang="es">
-
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <link rel="stylesheet" href="css/styleMobile.css?=<?= time() ?>">
-    <!-- <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.1.2/css/rowGroup.dataTables.min.css"> -->
     <title>Fichadas Mobile HR</title>
 </head>
-
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset" id="container">
-
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
@@ -37,7 +33,6 @@
         echo '<input type="hidden"  id="max" value="' . $max . '">';
         echo '<input type="hidden"  id="aniomin" value="' . $aniomin . '">';
         echo '<input type="hidden"  id="aniomax" value="' . $aniomax . '">';
-
         ?>
         <input type="hidden" id="_drMob2">
         <input type="hidden" id="actMobile" value="<?= $_GET['act'] ?? 0 ?>">
@@ -116,9 +111,7 @@
     require __DIR__ . "../../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../../js/DataTable.php";
-
     ?>
-    <!-- <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script> -->
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />

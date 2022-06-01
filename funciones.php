@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.238'; // Version de la aplicación
+    return 'v0.0.239'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -36,7 +36,7 @@ function secure_auth_ch() // Funcion para validar si esta autenticado
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
-        || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si el dia actual no es el mismo
+        // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si el dia actual no es el mismo
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
@@ -79,7 +79,7 @@ function secure_auth_ch_json()
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+        // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         $f = 'Sesión Expirada. Incie sesión nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesión</a>';
         PrintRespuestaJson('sesion', $f);
@@ -116,7 +116,7 @@ function secure_auth_ch2()
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-        || ($_SESSION['DIA_ACTUAL'] !== hoy())
+        // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         // PrintRespuestaJson('error', 'Session Expirada');
         echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';

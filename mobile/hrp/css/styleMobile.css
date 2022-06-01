@@ -208,10 +208,9 @@ table.dataTable {
 .syncZone:hover{
     font-weight: 600 !important;
 }
-
-/* .modal{
-    z-index: 20;   
-} */
-/* .modal-backdrop{
-    z-index: 10;        
-}​ */
+.page-link{
+    padding: 12px !important;   
+    padding-right: 16px !important;   
+    padding-left: 16px !important;   
+    border-radius: 0px !important;
+}
