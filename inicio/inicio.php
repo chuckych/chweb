@@ -3,7 +3,7 @@
 
 <head>
     <?php require __DIR__ . "../../llamadas.php"; ?>
-    <title>Control Horario Web</title>
+    <title>CH Web</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">

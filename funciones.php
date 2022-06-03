@@ -1256,19 +1256,22 @@ function modulo_cuentas()
 function ExisteModRol($modulo)
 {
     /**
+     * 
      * verificamos si existe el modulo asociado a la session del rol de usuario. 
      * sino existe lo enviamos al incio.
      */
     $_SESSION['ID_MODULO'] = $modulo;
     define('ID_MODULO', $modulo);
-    $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
-        return $e['modsrol'] === ID_MODULO;
-    });
-    $modulo_actual = (filtrarObjeto($_SESSION['MODULOS'], 'id', $modulo))['modulo']; // Nombre del modulo actual
-    access_log($modulo_actual);
-    if (!$r) {
-        header("Location:/" . HOMEHOST . "/");
-        exit;
+    if (intval($modulo) > 0) {
+        $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
+            return $e['modsrol'] === ID_MODULO;
+        });
+        $modulo_actual = (filtrarObjeto($_SESSION['MODULOS'], 'id', $modulo))['modulo']; // Nombre del modulo actual
+        access_log($modulo_actual);
+        if (!$r) {
+            header("Location:/" . HOMEHOST . "/");
+            exit;
+        }
     }
     /** redirect */
 }
@@ -3892,11 +3895,11 @@ function createDir($path, $gitignore = true)
         if ($gitignore) {
             $git = dirname($path . '/.gitignore');
             // if (!is_dir($git)) {
-                mkdir($git, 0755, true);
-                $logGit    = fopen($git . '/.gitignore', 'a');
-                $textGit   = '*';
-                fwrite($logGit, $textGit);
-                fclose($logGit);
+            mkdir($git, 0755, true);
+            $logGit    = fopen($git . '/.gitignore', 'a');
+            $textGit   = '*';
+            fwrite($logGit, $textGit);
+            fclose($logGit);
             // }
         }
 

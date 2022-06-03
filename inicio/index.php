@@ -4,6 +4,7 @@ require __DIR__ . '../../config/index.php';
 secure_auth_ch();
 $Modulo='999';
 access_log('Inicio');
+ExisteModRol(0);
 $bgcolor = 'bg-custom';
 if ($_SESSION['MODS_ROL']) {
     $countModRol = (count($_SESSION['MODS_ROL']));
