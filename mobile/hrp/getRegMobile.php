@@ -8,7 +8,7 @@ E_ALL();
 $respuesta = array();
 $arrayData = array();
 $error = '';
-
+$_SESSION["APIMOBILEHRP"] = $_SESSION["APIMOBILEHRP"] ?? '';
 function dr_f($ddmmyyyy)
 {
     $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));

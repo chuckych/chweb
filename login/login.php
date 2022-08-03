@@ -8,7 +8,7 @@ $_GET['l'] = $_GET['l'] ?? false;
 // session_destroy();
 ?>
 <?php if (inicio() == 0) {
-    header("Location:/" . HOMEHOST . "/conf/");
+    header("Location:/" . HOMEHOST . "/op/");
 }
 ?>
 <!DOCTYPE html>

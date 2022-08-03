@@ -137,8 +137,8 @@ switch ($Modulo) {
 		break;
 }
 ?>
-<!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=vjs()?>"> -->
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=microtime(true)?>">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=vjs()?>">
+<!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=microtime(true)?>"> -->
 <?php
 if (getBrowser($_SERVER['HTTP_USER_AGENT'])=='Internet explorer') {
 	echo '<link rel="stylesheet" type="text/css" href="/'. HOMEHOST .'/css/ie.css?v='.vjs().'" />';

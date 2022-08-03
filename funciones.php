@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.239'; // Version de la aplicación
+    return 'v0.0.240'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -2368,23 +2368,6 @@ function dataListaEstruct($lista, $uid)
         fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
         return false;
     }
-    // print_r($query); exit;
-    // if (($stmt)) {
-    //     if (mysqli_num_rows($stmt) > 0) {
-    //         while ($row = mysqli_fetch_assoc($stmt)) {
-    //             return array($row['datos']);
-    //         }
-    //     } else {
-    //         return array('-');
-    //     }
-
-    //     mysqli_free_result($stmt);
-    //     mysqli_close($link);
-    // } else {
-    //     statusData('error', mysqli_error($link));
-    //     mysqli_close($link);
-    //     exit;
-    // }
 }
 /** Fin Query MYSQL */
 /**Query MS-SQL */
@@ -3019,6 +3002,11 @@ function dr_fecha($ddmmyyyy)
     $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
     return $fecha;
 }
+function dr_($ddmmyyyy)
+{
+    $fecha = date("Y-m-d", strtotime((str_replace("/", "-", $ddmmyyyy))));
+    return $fecha;
+}
 function datosGetIn($Get, $Col)
 {
     $v = ($Get >= '0') ? true : false;
@@ -3036,12 +3024,12 @@ function datosGet($Get, $Col)
 function MinHora($Min)
 {
     $segundos = $Min * 60;
-    $horas = floor($segundos / 3600);
-    $minutos = floor(($segundos - ($horas * 3600)) / 60);
+    $horas    = floor($segundos / 3600);
+    $minutos  = floor(($segundos - ($horas * 3600)) / 60);
     $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
-    $horas = str_pad($horas, 2, "0", STR_PAD_LEFT);
-    $minutos = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora = $horas . ':' . $minutos;
+    $horas    = str_pad($horas, 2, "0", STR_PAD_LEFT);
+    $minutos  = str_pad($minutos, 2, "0", STR_PAD_LEFT);
+    $hora     = $horas . ':' . $minutos;
     switch ($hora) {
         case '00:00':
             $hora = "-";
@@ -3177,7 +3165,7 @@ function getRemoteFile($url, $timeout = 10)
 }
 function sendRemoteData($url, $payload, $timeout = 10)
 {
-
+    // print_r($payload).exit;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -3185,11 +3173,7 @@ function sendRemoteData($url, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    // curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    //     'Content-Type: application/json',
-    //     'Content-Length: ' . strlen($payload)
-    // ));
-    // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -3627,10 +3611,10 @@ function login_logs($estado, $usuario = '')
 
         $data = [ // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
             'usuario'   => $usuario,
-            'uid'       => $_SESSION["UID"],
+            'uid'       => $_SESSION["UID"] ?? '',
             'estado'    => $estado,
-            'rol'       => $_SESSION["ID_ROL"],
-            'cliente'   => $_SESSION["ID_CLIENTE"],
+            'rol'       => $_SESSION["ID_ROL"] ?? '',
+            'cliente'   => $_SESSION["ID_CLIENTE"] ?? '',
             'ip'        => ($_SERVER['REMOTE_ADDR'] == '::1') ? ip2long('127.0.0.1') : ip2long($_SERVER['REMOTE_ADDR']),
             'agent'     => $_SERVER['HTTP_USER_AGENT'],
             'fechahora' => fechaHora2()
@@ -3644,8 +3628,8 @@ function login_logs($estado, $usuario = '')
         $stmt->bindParam(':ip', $data['ip']);
         $stmt->bindParam(':agent', $data['agent']);
         $stmt->bindParam(':fechahora', $data['fechahora']);
-
         if ($stmt->execute()) { // ejecuta la consulta
+            $_SESSION['UID'] = $_SESSION['UID'] ?? '';
             $_SESSION['ID_SESION'] = $connpdo->lastInsertId();
             $message = "Sesion correcta \"($_SESSION[UID]) $data[usuario]\""; // mensaje de exito
             if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
@@ -3673,16 +3657,13 @@ function escape_sql_wild($s)
     return
         implode("", $result);
 } /*escape_sql_wild*/
-
 function defaultConfigData() // default config data
-
 {
     $datos = array(
         'mssql' => array('srv' => '', 'db' => '', 'user' => '', 'pass' => ''), 'logConexion' => array('success' => false, 'error' => true), 'api' => array('url' => "https://hr-process.com/hrctest/api/novedades/", 'user' => 'admin', 'pass' => 'admin'), 'webService' => array('url' => "http://localhost:6400/RRHHWebService/"), 'logNovedades' => array('success' => true, 'error' => true), 'proxy' => array('ip' => '', 'port' => '', 'enabled' => false), 'borrarLogs' => array('estado' => true, 'dias' => 31), // 'interrumpirSolicitud'=>array('carga'=>true, 'anulacion'=>true)
     );
     return $datos;
 }
-
 function write_apiKeysFile()
 {
     $q = "SELECT id as 'idCompany', nombre as 'nameCompany', recid as 'recidCompany', 'key' as 'key', urlAppMobile AS 'urlAppMobile', localCH as 'localCH' FROM clientes";
@@ -3886,6 +3867,38 @@ function access_log($Modulo)
         // exit;
     }
 }
+function access_log_proy($Modulo)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
+        borrarLogs(__DIR__, 30, $pathLog);
+        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
+        $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
+        $_SERVER['REMOTE_ADDR']     = $_SERVER['REMOTE_ADDR'] ?? '';
+        $_SESSION['secure_auth_ch'] = $_SESSION['secure_auth_ch'] ?? false;
+        $_REQUEST['state']             = $_REQUEST['state'] ?? false;
+
+        switch ($_REQUEST['state']) {
+            case '1':
+                $state = 'visible tab';
+                break;
+            case '2':
+                $state = 'hidden tab';
+                break;
+            default:
+                $state = 'none tab';
+                break;
+        }
+
+        $log  = fopen($pathLog, 'a');
+        $t    = (new DateTime())->format('Y-m-d H:i:s.v');
+        $text = "$t - u: \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
+        fwrite($log, $text);
+        fclose($log);
+        // exit;
+    }
+}
 function createDir($path, $gitignore = true)
 {
     $dirname = dirname($path . '/index.php');
@@ -3907,5 +3920,60 @@ function createDir($path, $gitignore = true)
         $text   = '<?php exit;';
         fwrite($log, $text);
         fclose($log);
+    }
+}
+
+require __DIR__ . '/vendor/autoload.php';
+
+use Carbon\Carbon;
+
+function tareDiff($start, $end)
+{
+    Carbon::setLocale('es');
+    setlocale(LC_TIME, 'es_ES.UTF-8');
+    $f      = Carbon::parse($start);
+    $f2     = Carbon::parse($end);
+    $d2 = $f->diffForHumans(null, false, false, 2);
+    $totalDuration = $f2->diffInSeconds($f);
+    $totalDuration = gmdate("H:i:s", $totalDuration);
+    $totalDuration = ($end == '0000-00-00 00:00:00') ? '' : $totalDuration;
+    $tareDiff = trim(str_replace('hace', '', $d2));
+    return $tareDiff;
+}
+function implode_keys_values($array = array(), $key, $separator)
+{
+    if (!$array) : return $array;
+    endif;
+    $key = array_column($array, $key);
+    $key = array_unique($key);
+    $key = implode($separator, $key);
+    return $key;
+}
+function simple_MSQuery($query)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    // print_r($query);
+    // exit;
+    if (($stmt)) {
+        while ($r = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) {
+            $registros = $r;
+        }
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($link);
+        return $registros ?? false;
+    } else {
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error) {
+                $mensaje = explode(']', $error['message']);
+                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+            }
+        }
+        sqlsrv_free_stmt($stmt);
+        echo json_encode($data[0]);
+        sqlsrv_close($link);
+        exit;
     }
 }

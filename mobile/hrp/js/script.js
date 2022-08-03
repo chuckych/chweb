@@ -24,10 +24,12 @@ if ($("#actMobile").val() == '1') {
     actualizar(false);
     actualizar2(false);
     actualizar3(false);
+    actualizar4(false);
     setInterval(() => {
         actualizar(false);
         actualizar2(false);
         actualizar3(false);
+        actualizar4(false);
     }, 15000);
 } else {
     if ((host != 'https://localhost') && (host != 'http://localhost')) {
@@ -287,6 +289,10 @@ if ($(window).width() < 540) {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-info bi bi-person-bounding-box"></span>`
                     } else if (row.confidenceFaceStr == 'No Disponible') {
                         confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-primary bi bi-person-bounding-box"></span>`
+                        datacol = `<div class="w40">${confidenceFaceStr}</div>`
+                        return datacol;
+                    } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
+                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
                         datacol = `<div class="w40">${confidenceFaceStr}</div>`
                         return datacol;
                     }
@@ -984,6 +990,52 @@ function actualizar3(noti = true) {
     axios({
         method: 'post',
         url: 'actualizar-3.php'
+    }).then(function (response) {
+        let data = response.data.Response
+        let date = new Date()
+        if (data.status == "ok") {
+            // set session storage
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
+            if (noti) {
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+                minmaxDate()
+                if (data.totalSession > 0) {
+                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
+                } else {
+                    notify('No hay registros nuevos', 'info', 2000, 'right')
+                }
+            } else {
+                minmaxDate()
+            }
+        } else {
+            if (noti) {
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+                notify(data.Mensaje, 'info', 2000, 'right')
+            }
+        }
+
+    }).catch(function (error) {
+        console.log('ERROR actualizar\n' + error);
+    }).then(function () {
+        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
+        $(".actualizar").attr("data-titlel", "Descargar registros");
+        setTimeout(() => {
+            $.notifyClose();
+        }, 2000);
+    });
+}
+function actualizar4(noti = true) {
+
+    if (noti) {
+        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
+    };
+
+    axios({
+        method: 'post',
+        url: 'actualizar-4.php'
     }).then(function (response) {
         let data = response.data.Response
         let date = new Date()
