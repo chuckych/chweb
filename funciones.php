@@ -3167,7 +3167,6 @@ function getRemoteFile($url, $timeout = 10)
 }
 function sendRemoteData($url, $payload, $timeout = 10)
 {
-    // print_r($payload).exit;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -3186,9 +3185,6 @@ function sendRemoteData($url, $payload, $timeout = 10)
     }
     curl_close($ch);
     if ($file_contents) {
-        $text = "$url $payload"; // set error message
-        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
-        fileLog($text, $pathLog); // escribir en el log de errores el error
         return $file_contents;
     } else {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
@@ -3708,8 +3704,6 @@ function write_apiKeysFile()
 }
 function getDataIni($url) // obtiene el json de la url
 {
-    fileLog("url \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
-
     if (($url)) { // si existe el archivo
         $data = file_get_contents($url); // obtenemos el contenido del archivo
         if ($data) { // si el contenido no está vacío
@@ -4035,13 +4029,7 @@ function getConfTar()
 {
     $confRequest['conf'] = 1;
     $confRequest['getConf'] = 1;    
-    //$urlConf = host() . "/" . HOMEHOST . "/proy/op/crud.php?".microtime(true); // Url para obtener la configuracion de tareas pendientes
-    // $urlConf = "/" . HOMEHOST . "/proy/op/crud.php?v=".vjs(); // Url para obtener la configuracion de tareas pendientes
-    //$getConf = sendRemoteData($urlConf, ($confRequest)); // Obtenemos el array de tareas pendientes
-    // $getConf = json_decode($getConf, true); // Lo decodificamos en un array
-    // $confTar = (getDataIni("proy/op/confTarea.php"));
     $confTar = (getDataIni(__DIR__ . '\proy\op\confTarea.php'));
-    // $getConf = json_decode($confTar, true); // Lo decodificamos en un array
     return $confTar;
 }
 function calcLimitTar($start, $end)
