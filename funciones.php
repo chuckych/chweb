@@ -4036,7 +4036,8 @@ function getConfTar()
 }
 function calcLimitTar($start, $end)
 {
-    $limitTar = (intval(getConfTar()['confTar']['LimitTar'])) * 60; // Obtenemos el limite de tiempo de la tarea en minutos
+    $limitTar = ((getConfTar()['confTar']['LimitTar'])); // Obtenemos el limite de tiempo de la tarea en minutos
+    $limitTar = intval($limitTar) * 60; // Convertimos el limite de tiempo a segundos
     $diffStartEnd  = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
     $obj =  array(
         'status'   => ($diffStartEnd > $limitTar) ? 1 : 0,
