@@ -6,7 +6,6 @@ function createTable($tableName, $fields, $engine, $pathLog) {
         $sql = "CREATE TABLE `$tableName` (";
         $sql .= $fields;
         $sql .= ") $engine";
-        pdoQuery($sql);
         if (pdoQuery($sql)) {
             fileLog("Se creo la tabla \"$tableName\"", $pathLog); // escribir en el log
         } else {
