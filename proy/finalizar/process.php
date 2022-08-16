@@ -259,9 +259,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$TareFinTipo = ($FechaHoraFin != $r['TareFin']) ? 'modificada' : $TareFinTipo; // Si la fecha de fin es diferente a la de la tarea, la tarea fue modificada
 
 
-	$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin); // Calculamos el limite de tiempo de la tarea
-	$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
-	($calcLimitTar['status']) ? PrintRespuestaJson('error', $textErrorCalc). exit : ''; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
+	//$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin); // Calculamos el limite de tiempo de la tarea
+	//$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
+	//($calcLimitTar['status']) ? PrintRespuestaJson('error', $textErrorCalc). exit : ''; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
 	 
 
 	$u = "UPDATE `proy_tareas` SET `TareProy` = '$TareProy', `TareProc` = '$TareProc', `TarePlano` = '$TarePlano', `TareResp` = '$TareResp', `TareCost`= '$rCost'  ,`TareIni` = '$FechaHoraIni', `TareFin` = '$FechaHoraFin', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$tareID'";
