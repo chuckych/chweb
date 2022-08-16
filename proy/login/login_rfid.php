@@ -3,7 +3,7 @@
         <div class="card-body">
             <!-- <p class="card-title text-center h3">Iniciar Sesi&oacuten</p> -->
             <div class="form-floating mb-3">
-                <input type="tel" class="form-control text-center" id="tarjeta" name="tarjeta" value="11354701">
+                <input type="password" class="form-control text-center" id="tarjeta" name="tarjeta" value="">
                 <label for="clave">Su Tarjeta</label>
             </div>
             <div class="mt-3">
