@@ -10,20 +10,12 @@ $(function () {
     let p = '';
     p = get_proy_pasos();
 
-
     $('.ProyNom').html(p.ProyNom);
     $('.ProyDesc').html(p.ProyDesc);
     $('.ProcDesc').html(p.ProcDesc);
     $('.PlanoDesc').html(p.PlanoDesc);
     $('.PlanoCod').html(p.PlanoCod);
 
-    // console.log(p);
-    // console.log(proy_info);
-
-    // sessionStorage.setItem(
-    //     location.pathname.substring(1) + "proy_page",
-    //     'Finalizar'
-    // );
     $("#mainTitleBar").html(('Finalizar'));
     $(document).prop("title", ('Finalizar'));
 
@@ -33,6 +25,7 @@ $(function () {
         e.preventDefault();
         e.stopImmediatePropagation();
         // form data 
+        ActiveBTN(true, this, "Aguarde <span class='animated-dots'></span>", 'Confirmar');
         let datos = new FormData();
         datos.append('data', JSON.stringify(p));
         datos.append('tarSubmit', 'tarSubmit');
@@ -97,17 +90,9 @@ $(function () {
                 datos.delete('data');
                 notify(data.Mensaje, 'danger', 0, 'right')
             }
-            // sessionStorage.setItem(
-            //     location.pathname.substring(1) + "proy_page",
-            //     pag
-            // );
-            // $("#contenedor").html(response.data);
         }).then(() => {
             datos.delete('data');
-            // $("#mainTitleBar").html(capitalize(pag));
-            // const p = selector;
-            // $("#mainTitleBar").addClass(p.replace('.', ''));
-            // $(document).prop("title", capitalize(pag));
+            ActiveBTN(false, this, "Aguarde <span class='animated-dots'></span>", 'Confirmar');
         }).catch(function (error) {
             alert(error);
         })

@@ -731,7 +731,6 @@ if ($verDB < 20220816) {
     ENGINE=InnoDB";
     createTable($tableName, $fields, $engine, $pathLog);
 
-
     $verDB  = verDBLocal(); // nueva version de la DB // 20220816
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log

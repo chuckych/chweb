@@ -234,6 +234,7 @@ function completeTar(selector, datetime = false) {
         if (datetime) {
             datos.append('datetime', datetime);
         }
+        ActiveBTN(true, this, "AGUARDE <span class='animated-dots'></span>", 'COMPLETAR');
         datos.append('tareID', tareID);
         datos.append('tarComplete', 'tarComplete');
         axios({
@@ -253,6 +254,7 @@ function completeTar(selector, datetime = false) {
                 notify(data.Mensaje, 'danger', 1000, 'right')
             }
         }).then(() => {
+            ActiveBTN(false, this, "AGUARDE <span class='animated-dots'></span>", 'COMPLETAR');
         }).catch(function (error) {
             alert(error);
         })
