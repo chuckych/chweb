@@ -17,7 +17,6 @@ $_POST['conf']          = ($_POST['conf']) ?? '';
 $FechaHora = FechaHora2();
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
-
     if ($_POST['conf']) {
         $_POST['getConf']     = $_POST['getConf'] ?? '';
         $_POST['setConf']     = $_POST['setConf'] ?? '';
@@ -26,7 +25,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $_POST['LimitTar']    = $_POST['LimitTar'] ?? '00:00';
 
         if ($_POST['getConf']) {
-            $confTar = (getDataIni('confTar.php'));
+            $confTar = (getDataIni('confTarea.php'));
             echo json_encode($confTar);
             exit;
         }
@@ -38,7 +37,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                     'LimitTar'    => $_POST['LimitTar'],
                 ),
             );
-            confTar($assoc, 'confTar.php');
+            confTar($assoc, 'confTarea.php');
             PrintRespuestaJson('ok', 'Datos Guardados correctamente.');
             exit;
         }

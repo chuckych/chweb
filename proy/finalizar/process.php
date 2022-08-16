@@ -165,8 +165,11 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$FechaHora = ($_POST['fromTareas']) ? $fechaFin : $FechaHora;
 	$calcLimitTar = calcLimitTar($dataTar['TareIni'], $FechaHora); // Calculamos el limite de tiempo de la tarea
 	$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
-	($calcLimitTar['status']) ? PrintRespuestaJson('error', $textErrorCalc). exit : ''; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
-
+	if($calcLimitTar['status']) {
+		$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar'=> ($calcLimitTar));
+	    echo json_encode($data);
+		exit; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
+	}
 
 	$cost = floatval($dataTar['TareCost']) ?? '';
 	$cost = ($cost / 60) * $minutos;
@@ -189,7 +192,15 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 	$update = "UPDATE `proy_tareas` SET `TareFin` = '$FechaHora', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$_POST[tareID]'"; // Actualizamos la tarea
 
-	(pdoQuery($update)) ? PrintRespuestaJson('ok', "Tarea (#$tareID) completada correctamente") . exit : PrintRespuestaJson('error', "Error al finalizar la tarea (#$tareID)") . exit; // Si se pudo actualizar la tarea, Salimos del script
+	if(pdoQuery($update)){
+		$data = array('status' => 'ok', 'Mensaje' => "Tarea (#$tareID) completada correctamente", 'confTar'=> ($calcLimitTar));
+	    echo json_encode($data);
+		exit;
+	} else{
+		$data = array('status' => 'error', 'Mensaje' => "Error al finalizar la tarea (#$tareID)", 'confTar'=> ($calcLimitTar));
+	    echo json_encode($data);
+		exit;
+	}
 
 } else if (($_POST['ediTar'])) { // Editar Tarea
 
@@ -258,10 +269,15 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 
 	$TareFinTipo = ($FechaHoraFin != $r['TareFin']) ? 'modificada' : $TareFinTipo; // Si la fecha de fin es diferente a la de la tarea, la tarea fue modificada
 
-
-	//$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin); // Calculamos el limite de tiempo de la tarea
-	//$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
-	//($calcLimitTar['status']) ? PrintRespuestaJson('error', $textErrorCalc). exit : ''; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
+	if ($FechaHoraFin != "0000-00-00 00:00:00") { // Si la fecha de fin no es 0000-00-00 00:00:00 (si la tarea esta pendiente)
+		$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin);  // Calculamos el limite de tiempo de la tarea
+		$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
+		if($calcLimitTar['status']) {
+			$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar'=> ($calcLimitTar));
+			echo json_encode($data);
+			exit; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
+		}
+	}
 	 
 
 	$u = "UPDATE `proy_tareas` SET `TareProy` = '$TareProy', `TareProc` = '$TareProc', `TarePlano` = '$TarePlano', `TareResp` = '$TareResp', `TareCost`= '$rCost'  ,`TareIni` = '$FechaHoraIni', `TareFin` = '$FechaHoraFin', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$tareID'";
@@ -308,9 +324,6 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	// exit;
 
 	/**  */
-
-
-
 	(pdoQuery($i)) ? PrintRespuestaJson('ok', "Tarea (#$tareID) editada correctamente.") . exit : PrintRespuestaJson('error', "Error al editar la tarea (#$tareID)") . exit; // Fin del script. Si se inserta la tarea en proy_tare_horas, se termina el script. Si no, se muestra un error.
 } else if (($_POST['openTar'])) {
 

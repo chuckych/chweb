@@ -4029,7 +4029,7 @@ function getConfTar()
 {
     $confRequest['conf'] = 1;
     $confRequest['getConf'] = 1;
-    $urlConf = host() . "/" . HOMEHOST . "/proy/op/crud.php"; // Url para obtener la configuracion de tareas pendientes
+    $urlConf = host() . "/" . HOMEHOST . "/proy/op/crud.php?".microtime(true); // Url para obtener la configuracion de tareas pendientes
     $getConf = sendRemoteData($urlConf, ($confRequest)); // Obtenemos el array de tareas pendientes
     $getConf = json_decode($getConf, true); // Lo decodificamos en un array
     return $getConf;
