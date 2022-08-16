@@ -1,0 +1,130 @@
+:root {
+    --main-radius: 0px;
+    --main-radius0: .0px;
+    --main-transition: .5s;
+    --animate-duration: .6s;
+}
+
+.daterangepicker {
+    font-family: 'Montserrat' !important;
+    font-weight: 400;
+    font-display: swap;
+    box-shadow: 0 .1rem .5rem rgba(0, 0, 0, .15)!important;
+    background: #fff!important
+}
+
+.calendar-table {
+    font-weight: 400!important;
+    font-display: swap!important
+}
+
+.daterangepicker .ranges li {
+    font-size: 0.9rem !important;
+    padding: 10px !important;
+}
+
+.daterangepicker .ranges li:hover {
+    transition: var(--main-transition)!important;
+    background-color: var(--tblr-info)!important;
+    border-radius: var(--main-radius) !important;
+    color: #ffffff;
+    opacity: 1 !important;
+}
+
+@media only screen and (min-width: 564px) {
+    .daterangepicker .ranges ul {
+        width: 200px !important;
+    }
+}
+
+.daterangepicker .ranges li.active {
+    background-color: var(--tblr-info)!important;
+    border-radius: var(--main-radius) !important;
+    border-radius: var(--main-radius) !important;
+}
+
+.daterangepicker td.active, .daterangepicker td.active:hover {
+    background-color: var(--tblr-info)!important;
+    transition: var(--main-transition)!important;
+    color: #fff !important;
+}
+.daterangepicker .calendar-table th, .daterangepicker .calendar-table td {
+    font-size: 0.8rem !important;
+}
+
+.drp-selected {
+    letter-spacing: 1px;
+}
+
+/* .daterangepicker.show-calendar .ranges {
+    margin-top: 0px !important;
+} */
+
+.daterangepicker .calendar-table .next span, .daterangepicker .calendar-table .prev span {
+    color: #fff;
+    border: solid black;
+    border-width: 0 1px 1px 0 !important;
+    border-radius: var(--main-radius) !important;
+    display: inline-block;
+    padding: 2px;
+}
+
+.daterangepicker .available {
+    padding: 3px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    font-weight: 500 !important;
+}
+
+.daterangepicker .disabled {
+    padding: 3px !important;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+    font-weight: 300 !important;
+}
+
+.ranges {
+    padding: 8px !important;
+}
+
+.drp-calendar {
+    padding: 2px !important;
+    border: 1px solid #efefef !important;
+    margin: 2px !important;
+    border-radius: var(--main-radius) !important;
+    max-width: 300px !important;
+}
+
+.daterangepicker .available {
+    padding: 5px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+.monthselect, .yearselect {
+    padding: 5px 25px 5px 5px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 0 !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+    height: 35px !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background: url('../../css/bootstrap-icons-1.5.0/chevron-down.svg') 96% / 15% no-repeat #fafafa !important;
+}
+
+/* CAUTION: Internet Explorer hackery ahead */
+
+.monthselect, .yearselect::-ms-expand {
+    display: none;
+    /* Remove default arrow in Internet Explorer 10 and 11 */
+}
+
+/* Target Internet Explorer 9 to undo the custom arrow */
+@media screen and (min-width:0\0) {
+    .monthselect, .yearselect {
+        background: none\9;
+        padding: 5px\9;
+    }
+}

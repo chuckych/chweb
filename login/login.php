@@ -6,6 +6,8 @@ $Modulo  = '999';
 $bgcolor = 'bg-custom ';
 $_GET['l'] = $_GET['l'] ?? false;
 // session_destroy();
+$self = explode('/', $_SERVER['PHP_SELF']);
+$self = $self[1];
 ?>
 <?php if (inicio() == 0) {
     header("Location:/" . HOMEHOST . "/op/");
@@ -37,6 +39,7 @@ $_GET['l'] = $_GET['l'] ?? false;
     <div class="vh-100 p-4 fw4 animate__animated animate__fadeIn">
         <form action="?p=check_login.php" method="POST" autocomplete=off class="w-100" onsubmit="ShowLoading()">
         <input type="hidden" value="<?=$_GET['l']?>" name="lasturl">
+        <input type="hidden" value="<?=$self?>" id="selfHome">
             <div class="row">
                 <div class="mx-auto col-12 col-md-6 col-sm-8 col-lg-5 col-xl-4 p-0 border-0">
                     <div class="mx-auto shadow ancho">
@@ -80,7 +83,7 @@ $_GET['l'] = $_GET['l'] ?? false;
         </form>
     </div>
     <?php require __DIR__ . "../../js/jquery.php"; ?>
-    <script src="login-min.js?v=<?=vjs()?>"></script>
+    <script src="login.js?v=<?=vjs()?>"></script>
 </body>
 
 </html>

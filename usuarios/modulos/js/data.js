@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(function () {
     function getModulos(tipo) {
         $.ajax({
             type: 'POST',
@@ -38,6 +38,7 @@ $(document).ready(function () {
 
             },
             success: function (data) {
+            
                 if (data.status == "ok") {
                     $.each(data.datos, function (key, value) {
                         // console.log(value);

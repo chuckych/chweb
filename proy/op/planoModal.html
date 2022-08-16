@@ -1,0 +1,32 @@
+<form action="" method="post" autocomplete="off" id="planoForm">
+    <div class="modal modal-blur fade" id="planoModal" tabindex="-1" aria-labelledby="planoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">ALTA PLANO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                       <input type="text" class="form-control" name="PlanoDesc" id="PlanoDesc" placeholder="Descripción del plano">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Código</label>
+                        <input type="text" class="form-control" name="PlanoCod" id="PlanoCod" placeholder="Código">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea class="form-control h120 p-3" name="PlanoObs" id="PlanoObs" placeholder="Observaciones"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto btn-light h50" data-bs-dismiss="modal">Cerrar</button>
+                    <div id="divSubmit">
+                        <button type="submit" class="btn btn-teal h50" id="PlanoSubmit"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

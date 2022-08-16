@@ -216,7 +216,7 @@ $sql_query = "SELECT
     r.distance AS 'zoneDistance',
     r.reg_uid AS 'reg_uid',
     CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto',
-    r.regid AS 'regid',
+    LEFT(r.regid, 10) AS 'regid',
     r.id_api AS 'id_api',
     r.locked AS 'locked',
     r.error AS 'error',

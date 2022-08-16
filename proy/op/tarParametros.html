@@ -1,0 +1,51 @@
+<div class="collapse w-100 card-body mt-2 bg-indigo-lt" id="tarParametros">
+    <div class="">
+        <label class="form-check form-switch flex-center-start">
+            <input class="form-check-input ProcPendTar" type="checkbox">
+            <div class="form-check-label font08 pt-1 ms-2">Completar tareas automaticamente.</div>
+        </label>
+    </div>
+    <div class="flex-center-start">
+        <div class="me-2 font08 w120">Hora de Cierre: </div>
+        <input style="height:30px" type="tel" class="w90 border-0 font08 text-center form-control HoraCierre" placeholder="00:00" maxlength="5">
+        <div class="ms-2 font08">Hs. </div>
+    </div>
+    <div class="flex-center-start mt-2">
+        <div class="me-2 font08 w120">Límite de horas: </div>
+        <input style="height:30px" type="tel" class="w90 border-0 font08 text-center form-control LimitTar" placeholder="Ej: 12" maxlength="5">
+        <div class="ms-2 font08">Hs. </div>
+    </div>
+    <span class="text-muted font07">! Es el límite de duración en horas por cada tarea.</span>
+    <div class="mt-2">
+        <small class="form-hint">
+            <div class="mb-1">Se completaran tareas.</div>
+            <ul>
+                <li>A día vencido.</li>
+                <li>Día actual con hora de inicio menor a la hora de cierre.</li>
+                <li>Siempre que la hora de cierre sea menor a la actual.</li>
+            </ul>
+        </small>
+    </div>
+    <div class="mt-2">
+        <small class="form-hint">
+            <div class="mb-1">Hora de fin de completado:</div>
+            <ul>
+                <li>(Prioridad) Última fichada del día en control horario al día de inicio de la tarea.</li>
+                <li>Hora de salida del turno en control horario al día de inicio de la tarea.</li>
+                <li>Si no existe fichada ni turno. No se completa</li>
+            </ul>
+        </small>
+    </div>
+    <div class="mt-2">
+        <small class="form-hint">
+            <div class="mb-2">Tipo Fin de Tarea:</div>
+            <div class="flex-center-start">
+                <span class="badge mx-1 bg-dark-lt">Normal</span>
+                <span class="badge mx-1 bg-primary-lt">Manual</span>
+                <span class="badge mx-1 bg-red-lt">Modificada</span>
+                <span class="badge mx-1 bg-success-lt">Fichada CH</span>
+                <span class="badge mx-1 bg-warning-lt">Turno CH</span>
+            </div>
+        </small>
+    </div>
+</div>

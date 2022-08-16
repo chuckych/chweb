@@ -8,3 +8,5 @@ $("#uc_mostrar").on("click", function(e) {
         $("#uc_mostrar").html('<i class="bi bi-eye-slash-fill text-secondary"></i>')
     }
 });
+let selfthome  = ($('#selfHome').val());
+sessionStorage.removeItem(selfthome+'/proy/proy_info');

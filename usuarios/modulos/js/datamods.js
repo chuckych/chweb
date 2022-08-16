@@ -1,5 +1,5 @@
 
-$(document).ready(function () {
+$(function () {
 
     Array.prototype.unique = function (a) {
         return function () { return this.filter(a) }

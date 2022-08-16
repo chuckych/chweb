@@ -20,7 +20,11 @@ $recid_c = test_input($_POST['recid_c']);
 // print_r($recid_c).PHP_EOL; exit;
 // $recid_c = 'Hh9tzrQZ';
 
-$sql_query="SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access' FROM usuarios LEFT JOIN roles ON usuarios.rol=roles.id INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id>'1' AND clientes.recid='$recid_c'";
+$sql_query="SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access', uident.ident as 'tarjeta' FROM usuarios 
+LEFT JOIN roles ON usuarios.rol=roles.id 
+INNER JOIN clientes ON usuarios.cliente=clientes.id
+LEFT JOIN uident ON  usuarios.id = uident.usuario
+WHERE usuarios.id>'1' AND clientes.recid='$recid_c'";
 
 // print_r($sql_query).PHP_EOL; exit;
 
@@ -62,6 +66,7 @@ if ($totalRecords > 0) {
         $recid         = $row['recid'];
         $nombre        = $row['nombre'];
         $usuario       = $row['usuario'];
+        $tarjeta       = $row['tarjeta'];
         $rol           = $row['rol'];
         $rol_n         = $row['rol_n'];
         $legajo        = $row['legajo'];
@@ -79,7 +84,7 @@ if ($totalRecords > 0) {
         $TitleEstado2 = ($estado) ? 'alta' : 'baja';
         $ColorEstado = ($estado) ? 'text-danger' : 'text-secondary';
 
-        $ButtonEditar='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data_rol="'.$rol.'" data_legajo="'.$legajo.'" data_estado_n="'.$estado_n.'" data_estado="'.$estado.'" data_fecha_alta="'.$fecha_alta .'" data_fecha_mod="'.$fecha_mod .'" data_cliente="'.$cliente .'" data-titlel="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
+        $ButtonEditar='<button type="button" data_tarjeta="'.$tarjeta.'" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data_rol_n="'.$rol_n.'" data_rol="'.$rol.'" data_legajo="'.$legajo.'" data_estado_n="'.$estado_n.'" data_estado="'.$estado.'" data_fecha_alta="'.$fecha_alta .'" data_fecha_mod="'.$fecha_mod .'" data_cliente="'.$cliente .'" data-titlel="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
         $ButtonClave='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_usuario="'.$usuario.'" data-titlel="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_'.$uid.'">' . $IconClave . '</button>';
         $ButtonBaja='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data_estado="'.$estado.'" data-titlel="'.$TitleEstado.': ' . $nombre . '" data_title="'.$TitleEstado2.'" class="' . $classButton . ' estado" id="estado_'.$uid.'">' . $IconEstado . '</button>';
         $ButtonTrash='<button type="button" data_uid="'.$uid .'" data_nombre="'.$nombre.'" data-titlel="Eliminar ' . $nombre . '" class="' . $classButton . ' delete" id="delete_'.$uid.'">' . $IconTrash . '</button>';

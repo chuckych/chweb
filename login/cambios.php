@@ -1,5 +1,20 @@
 <?php
 $pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
+
+function createTable($tableName, $fields, $engine, $pathLog) {
+    if (!checkTable($tableName)) {
+        $sql = "CREATE TABLE `$tableName` (";
+        $sql .= $fields;
+        $sql .= ") $engine";
+        pdoQuery($sql);
+        if (pdoQuery($sql)) {
+            fileLog("Se creo la tabla \"$tableName\"", $pathLog); // escribir en el log
+        } else {
+            fileLog("no se creo tabla: \"$tableName\"", $pathLog); // escribir en el log
+        }
+    }
+}
+
 if ($verDB < 20210102) {
     if (checkTable('modulos')) { // Si la tabla existe
         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 29 LIMIT 1")) { // Si no existe el registro
@@ -446,8 +461,8 @@ if ($verDB < 20220502) {
     $verDB  = verDBLocal(); // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-    
-   
+
+
 }
 
 if ($verDB < 20220503) {
@@ -460,7 +475,7 @@ if ($verDB < 20220503) {
 
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
     fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
-    
+
     $verDB  = verDBLocal(); // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
@@ -474,57 +489,251 @@ if ($verDB < 20220517) {
 	CHANGE COLUMN `ApiMobileHRP` `ApiMobileHRP` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `WebService`,
 	CHANGE COLUMN `UrlAppMobile` `UrlAppMobile` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `ApiMobileHRP`");
     fileLog("CHANGE COLUMN \"WebService, ApiMobileHRP, UrlAppMobile\"", $pathLog); // escribir en el log
-    
+
     $verDB  = verDBLocal(); // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 
-// if ($verDB < 20211102) {
+if ($verDB < 20220816) {
 
-//     if (checkTable('tipo_modulo')) {
-//         if (!count_pdoQuery("SELECT 1 FROM tipo_modulo where id = 6 LIMIT 1")) { // Si no existe el registro
-//             $insert_tipo_modulos = "INSERT INTO `tipo_modulo` (`id`, `descripcion`, `estado`) VALUES (6, 'Proyectos', '0')";
-//             pdoQuery($insert_tipo_modulos);
-//             fileLog("Se creo tipo modulo \"Proyectos\" en la tabla \"tipo_modulo\"", $pathLog); // escribir en el log
-//         } else { // Si existe el registro
-//             fileLog("Ya existe tipo modulo \"Proyectos\" en la tabla \"tipo_modulo\"", $pathLog); // escribir en el log
-//         }
-//     }
+    if (checkTable('tipo_modulo')) {
+        if (!count_pdoQuery("SELECT 1 FROM tipo_modulo where id = 6 LIMIT 1")) { // Si no existe el registro
+            $insert_tipo_modulos = "INSERT INTO `tipo_modulo` (`id`, `descripcion`, `estado`) VALUES (6, 'Proyectos', '0')";
+            pdoQuery($insert_tipo_modulos);
+            fileLog("Se creo tipo modulo \"Proyectos\" en la tabla \"tipo_modulo\"", $pathLog); // escribir en el log
+        } else { // Si existe el registro
+            fileLog("Ya existe tipo modulo \"Proyectos\" en la tabla \"tipo_modulo\"", $pathLog); // escribir en el log
+        }
+    }
 
-//     if (checkTable('modulos')) {
-//         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 35 LIMIT 1")) { // Si no existe el registro
-//             $insert_modulos = "INSERT INTO `modulos` (`id`, `recid`, `nombre`, `orden`, `estado`, `idtipo`) VALUES (35, 'Pr0t3c70', 'Proyectos', 1, '0', 6)";
-//             pdoQuery($insert_modulos);
-//             fileLog("Se creo modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
-//         } else { // Si existe el registro
-//             fileLog("Ya existe modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
-//         }
-//     }
-    
-//     if (!checkTable('uident')) {
-//         $table_ident = "CREATE TABLE IF NOT EXISTS `uident` (
-//         `usuario` INT(11) NOT NULL,
-//         `ident` VARCHAR(255) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci',
-//         `login` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci',
-//         `descripcion` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci',
-//         `vence` DATE NOT NULL,
-//         `fechahora` DATETIME NOT NULL DEFAULT current_timestamp(),
-//         UNIQUE INDEX `unique_ident` (`ident`) USING BTREE,
-//         INDEX `FK__usuarios` (`usuario`) USING BTREE,
-//         INDEX `indice_fecha` (`fechahora`) USING BTREE,
-//         CONSTRAINT `FK__usuarios` FOREIGN KEY (`usuario`) REFERENCES `chweb`.`usuarios` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE
-//     ) COLLATE='utf8_general_ci' ENGINE=InnoDB";
+    if (checkTable('modulos')) {
 
-//         pdoQuery($table_ident);
-//         if (checkTable('uident')) {
-//             fileLog("Se creo la tabla \"uident\"", $pathLog); // escribir en el log
-//         } else {
-//             fileLog("no se creo tabla: \"uident\"", $pathLog); // escribir en el log
-//         }
-//     }
+            $insert_modulos = "INSERT INTO `modulos` VALUES (35, 'Pr0t3c70', 'Proyectos', 1, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-//     $verDB  = verDBLocal(); // nueva version de la DB // 20211006
-//     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
-//     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-// }
+            $insert_modulos = "INSERT INTO `modulos` VALUES (36, 'Mis Tareas', 'm1sT4r3a' , 2, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Mis Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (37, 'Tareas', 'T4r3a5' , 3, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (38, 'Estados', '3s74d0s' , 4, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Estados\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (39, 'Procesos', 'pr0s3s0s' , 5, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (40, 'Plantilla Procesos', 'p14npr0s' , 6, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Plantilla Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (41, 'Planos', 'p14n0s' , 7, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Planos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (42, 'Empresas', '3mpr354s' , 8, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Empresas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+
+            $insert_modulos = "INSERT INTO `modulos` VALUES (43, 'Inicio', '1n1c10' , 0, '0', 6)";
+            pdoQuery($insert_modulos);
+            fileLog("Se creo modulo \"Inicio\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+    }
+
+    $tableName = "uident";
+    $fields = "`usuario` INT(11) NOT NULL,
+    `ident` VARCHAR(255) NOT NULL COLLATE 'utf8_general_ci',
+    `login` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci',
+    `descripcion` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci',
+    `expira` DATE NOT NULL,
+    `fechahora` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+    UNIQUE INDEX `unique_ident` (`ident`) USING BTREE,
+    INDEX `FK__usuarios` (`usuario`) USING BTREE,
+    INDEX `indice_fecha` (`fechahora`) USING BTREE,
+    INDEX `Índice_ident` (`ident`) USING BTREE,
+    CONSTRAINT `FK__usuarios` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE";
+    $engine = "COLLATE='utf8_general_ci' ENGINE=InnoDB;";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_empresas";
+    $fields = "`EmpID` SMALLINT(6) NOT NULL AUTO_INCREMENT,
+	`EmpDesc` VARCHAR(200) NOT NULL COLLATE 'utf8_general_ci',
+	`EmpTel` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`EmpObs` TEXT NOT NULL COLLATE 'utf8_general_ci',
+	`EmpAlta` DATETIME NOT NULL,
+	`EmpFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`EmpID`) USING BTREE,
+	INDEX `FK_proy_empresas_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_empresas_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_estados";
+    $fields = "`EstID` SMALLINT(6) NOT NULL AUTO_INCREMENT,
+	`EstDesc` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`EstColor` CHAR(8) NOT NULL DEFAULT '' COLLATE 'utf8_general_ci',
+	`EstTipo` ENUM('Abierto','Pausado','Cerrado') NOT NULL DEFAULT 'Abierto' COLLATE 'utf8_general_ci',
+	`EstAlta` DATETIME NOT NULL,
+	`EstFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`EstID`) USING BTREE,
+	INDEX `FK_proy_estados_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_estados_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_planos";
+    $fields = "`PlanoID` INT(11) NOT NULL AUTO_INCREMENT,
+	`PlanoDesc` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`PlanoCod` VARCHAR(20) NOT NULL COLLATE 'utf8_general_ci',
+	`PlanoObs` TEXT NOT NULL COLLATE 'utf8_general_ci',
+	`PlanoAlta` DATETIME NOT NULL,
+	`PlanoFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`PlanoID`) USING BTREE,
+	INDEX `FK_proy_planos_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_planos_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB
+    AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_plantillas";
+    $fields = "`PlantID` SMALLINT(6) NOT NULL AUTO_INCREMENT,
+	`PlantDesc` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`PlantAlta` DATETIME NOT NULL,
+	`PlantFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`PlantID`) USING BTREE,
+	INDEX `FK_proy_plantillas_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_plantillas_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB
+    AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_plantilla_proc";
+    $fields = "`PlaProPlan` SMALLINT(6) NOT NULL,
+	`PlaProcesos` TEXT NOT NULL COLLATE 'utf8_general_ci',
+	`PlaProtAlta` DATETIME NOT NULL,
+	`PlaProFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	PRIMARY KEY (`PlaProPlan`) USING BTREE,
+	CONSTRAINT `FK_proy_plantilla_proc_proy_plantillas` FOREIGN KEY (`PlaProPlan`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE CASCADE";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_proceso";
+    $fields = "`ProcID` SMALLINT(6) NOT NULL AUTO_INCREMENT,
+	`ProcDesc` VARCHAR(100) NOT NULL COLLATE 'utf8_general_ci',
+	`ProcObs` TEXT NOT NULL COLLATE 'utf8_general_ci',
+	`ProcCost` DECIMAL(20,2) NOT NULL DEFAULT '0.00',
+	`ProcAlta` DATETIME NOT NULL,
+	`ProcFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`ProcID`) USING BTREE,
+	INDEX `FK_proy_proceso_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_proceso_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB
+    AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_proyectos";
+    $fields = "`ProyID` INT(11) NOT NULL AUTO_INCREMENT,
+	`ProyDesc` VARCHAR(200) NOT NULL COLLATE 'utf8_general_ci',
+	`ProyNom` VARCHAR(200) NOT NULL COLLATE 'utf8_general_ci',
+	`ProyEmpr` SMALLINT(6) NOT NULL,
+	`ProyPlant` SMALLINT(6) NOT NULL,
+	`ProyResp` INT(11) NOT NULL,
+	`ProyEsta` SMALLINT(6) NOT NULL,
+	`ProyObs` TEXT NOT NULL COLLATE 'utf8_general_ci',
+	`ProyIni` DATE NOT NULL,
+	`ProyFin` DATE NOT NULL,
+	`ProyAlta` DATETIME NOT NULL,
+	`ProyFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`ProyID`) USING BTREE,
+	INDEX `FK_proy_proyectos_proy_empresas` (`ProyEmpr`) USING BTREE,
+	INDEX `FK_proy_proyectos_proy_plantillas` (`ProyPlant`) USING BTREE,
+	INDEX `FK_proy_proyectos_usuarios` (`ProyResp`) USING BTREE,
+	INDEX `FK_proy_proyectos_proy_estados` (`ProyEsta`) USING BTREE,
+	INDEX `FK_proy_proyectos_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_proyectos_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_proyectos_proy_empresas` FOREIGN KEY (`ProyEmpr`) REFERENCES `proy_empresas` (`EmpID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_proyectos_proy_estados` FOREIGN KEY (`ProyEsta`) REFERENCES `proy_estados` (`EstID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_proyectos_proy_plantillas` FOREIGN KEY (`ProyPlant`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_proyectos_usuarios` FOREIGN KEY (`ProyResp`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB
+    AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_tareas";
+    $fields = "`TareID` INT(11) NOT NULL AUTO_INCREMENT,
+	`TareEmp` SMALLINT(6) NOT NULL,
+	`TareProy` INT(11) NOT NULL DEFAULT '0',
+	`TareResp` INT(11) NOT NULL,
+	`TareProc` SMALLINT(6) NOT NULL,
+	`TarePlano` INT(11) NULL DEFAULT '0',
+	`TareCost` DECIMAL(20,2) NOT NULL DEFAULT '0.00',
+	`TareIni` DATETIME NOT NULL,
+	`TareFin` DATETIME NOT NULL,
+	`TareFinTipo` ENUM('normal','fichada','turno','manual','modificada') NOT NULL DEFAULT 'normal' COLLATE 'utf8_general_ci',
+	`TareFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	`TareEsta` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8_general_ci',
+	`Cliente` INT(11) NOT NULL,
+	PRIMARY KEY (`TareID`) USING BTREE,
+	INDEX `FK_proy_tareas_proy_empresas` (`TareEmp`) USING BTREE,
+	INDEX `FK_proy_tareas_proy_proyectos` (`TareProy`) USING BTREE,
+	INDEX `FK_proy_tareas_usuarios` (`TareResp`) USING BTREE,
+	INDEX `FK_proy_tareas_proy_proceso` (`TareProc`) USING BTREE,
+	INDEX `FK_proy_tareas_proy_planos` (`TarePlano`) USING BTREE,
+	INDEX `FK_proy_tareas_clientes` (`Cliente`) USING BTREE,
+	CONSTRAINT `FK_proy_tareas_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_tareas_proy_empresas` FOREIGN KEY (`TareEmp`) REFERENCES `proy_empresas` (`EmpID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_tareas_proy_planos` FOREIGN KEY (`TarePlano`) REFERENCES `proy_planos` (`PlanoID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_tareas_proy_proceso` FOREIGN KEY (`TareProc`) REFERENCES `proy_proceso` (`ProcID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_tareas_proy_proyectos` FOREIGN KEY (`TareProy`) REFERENCES `proy_proyectos` (`ProyID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `FK_proy_tareas_usuarios` FOREIGN KEY (`TareResp`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB
+    AUTO_INCREMENT=0";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_tare_horas";
+    $fields = "`TareHorID` INT(11) NOT NULL,
+	`TareHorProy` INT(11) NOT NULL,
+	`TareHorCost` DECIMAL(20,2) NOT NULL DEFAULT '0.00',
+	`TareHorHoras` TIME NOT NULL,
+	`TareHorMin` INT(11) NOT NULL,
+	`TareHorFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	INDEX `FK_proy_tare_horas_proy_tareas` (`TareHorID`) USING BTREE";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+    $tableName = "proy_tare_horas";
+    $fields = "`TareHorID` INT(11) NOT NULL,
+	`TareHorProy` INT(11) NOT NULL,
+	`TareHorCost` DECIMAL(20,2) NOT NULL DEFAULT '0.00',
+	`TareHorHoras` TIME NOT NULL,
+	`TareHorMin` INT(11) NOT NULL,
+	`TareHorFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+	INDEX `FK_proy_tare_horas_proy_tareas` (`TareHorID`) USING BTREE";
+    $engine="COLLATE='utf8_general_ci'
+    ENGINE=InnoDB";
+    createTable($tableName, $fields, $engine, $pathLog);
+
+
+    $verDB  = verDBLocal(); // nueva version de la DB // 20220816
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

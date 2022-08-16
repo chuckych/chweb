@@ -1,0 +1,39 @@
+<div class="animate__animated animate__fadeInUp d-flex justify-content-between">
+    <div class="form-selectgroup">
+        <label class="form-selectgroup-item">
+            <input type="radio" name="FiltroEstTipo" id="FiilroAbierto" value="Abierto" class="form-selectgroup-input"
+                checked>
+            <span class="form-selectgroup-label w120 text-center">
+                <div class="d-flex align-items-center font08 "><i class="bi bi-play-fill font12 me-1"></i> Abiertos</div>
+            </span>
+        </label>
+        <label class="form-selectgroup-item">
+            <input type="radio" name="FiltroEstTipo" id="FiltroPausado" value="Pausado" class="form-selectgroup-input">
+            <span class="form-selectgroup-label w120 text-center">
+                <div class="d-flex align-items-center font08"><i class="bi bi-pause-fill font12 me-1"></i> Pausados
+                </div>
+            </span>
+        </label>
+        <label class="form-selectgroup-item">
+            <input type="radio" name="FiltroEstTipo" id="FiltroCerrado" value="Cerrado" class="form-selectgroup-input">
+            <span class="form-selectgroup-label w120 text-center">
+                <div class="d-flex align-items-center font08"><i class="bi bi-stop-fill font12 me-1"></i> Cerrados</div>
+            </span>
+        </label>
+        <label class="form-selectgroup-item">
+            <input type="radio" name="FiltroEstTipo" id="FiltroTodos" value="Todos" class="form-selectgroup-input">
+            <span class="form-selectgroup-label w100 d-flex align-items-center justify-content-center">
+                <div class="font08  d-flex align-items-center"><i class="bi bi-check-all font12 me-1"></i> Todos</div>
+            </span>
+        </label>
+    </div>
+    <div class="input-icon">
+        <div class="d-flex align-items-center">
+            <span class="input-icon-addon">
+                <i class="bi bi-calendar3-range"></i>
+            </span>
+            <input readonly type="text" class="form-control text-center h40 px-5 bg-white" id="FiltroFechas" name="FiltroFechas" placeholder="Filtrar Fechas">
+            <button type="button" class="btn-close p-2 ms-2" aria-label="Close" title="Limpiar Fecha" id="LimpiarFecha" style="display: none;"></button>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
     $a_nombre  = test_input($_POST["a_nombre"]);
     $a_usuario = test_input($_POST["a_usuario"]);
     $a_legajo  = test_input($_POST["a_legajo"]);
+    $a_tarjeta  = test_input($_POST["a_tarjeta"]);
     $a_rol     = test_input($_POST["a_rol"]);
     $a_recid   = test_input($_POST["a_recid"]);
 
@@ -44,7 +45,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
 
         if ((mysqli_query($link, $query))) {
 
-            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
+            $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$recid' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
+
+            if ($a_tarjeta) {
+                $q = "INSERT INTO `uident` (`usuario`, `ident`,`login`,`descripcion`, `expira`) VALUES ( '$dataUser[id_user]', '$a_tarjeta', '0', '', '2099-11-11')";
+                pdoQuery($q);
+            }
 
             PrintRespuestaJson('ok', 'Usuario creado correctamente');
             auditoria("Usuario ($dataUser[id_user]) $userauto. Nombre: $a_nombre. Legajo ($a_legajo). Rol ($a_rol) $dataUser[nombre_rol]", 'A', $cliente, '1');
@@ -73,6 +79,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
     $e_nombre  = test_input($_POST["e_nombre"]);
     $e_usuario = test_input($_POST["e_usuario"]);
     $e_legajo  = test_input($_POST["e_legajo"]);
+    $e_tarjeta  = test_input($_POST["e_tarjeta"]);
     $e_rol     = test_input($_POST["e_rol"]);
     $e_uid     = test_input($_POST["e_uid"]);
     /* Comprobamos campos vacíos  */
@@ -84,10 +91,34 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
         $query = "UPDATE usuarios SET nombre='$e_nombre', usuario='$e_usuario', legajo='$e_legajo', rol='$e_rol', fecha='$fecha' WHERE id ='$e_uid'";
         $stmt = mysqli_query($link, $query);
         if (($stmt)) {
-            PrintRespuestaJson('ok', 'Datos Guardados');
 
-            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol', usuarios.cliente AS 'idCliente' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.id='$e_uid' ORDER BY usuarios.fecha DESC LIMIT 1");
+            $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol', usuarios.cliente AS 'idCliente' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.id='$e_uid' ORDER BY usuarios.fecha DESC LIMIT 1");
 
+            $textError = '';
+
+            (!$e_tarjeta) ? pdoQuery("DELETE FROM `uident` WHERE usuario='$dataUser[id_user]'"):''; // Eliminamos la tarjeta si no se ingreso ninguna
+
+            if ($e_tarjeta) {
+
+                $qmysql = "SELECT ui.ident, ui.usuario, u.nombre, u.legajo FROM uident ui LEFT JOIN usuarios u ON ui.usuario=u.id WHERE ui.ident=$e_tarjeta AND ui.usuario != '$dataUser[id_user]' LIMIT 1"; // chequeamos si la tarjeta ya existe en la base de datos
+                $a = simple_pdoQuery($qmysql);
+                
+                if (($a)) { // si existe
+                    $a['legajo'] = " Leg: $a[legajo]" ?? '';
+                    $textError .= "<br><span class='text-danger font-weight-bold'>Tarjeta ($e_tarjeta) registrada a $a[nombre].$a[legajo]</span>";
+                }else{
+                    $r = simple_pdoQuery("SELECT * FROM uident WHERE usuario = '$dataUser[id_user]' LIMIT 1");
+                    if ($r) {
+                        $q = "UPDATE `uident` SET `ident`='$e_tarjeta' WHERE usuario='$dataUser[id_user]'";
+                    } else {
+                        $q = "INSERT INTO `uident` (`usuario`, `ident`,`login`,`descripcion`, `expira`) VALUES ( '$dataUser[id_user]', '$e_tarjeta', '0', '', '2099-11-11')";
+                    }
+                    pdoQuery($q);
+                }
+
+            }
+
+            PrintRespuestaJson('ok', "Datos Guardados.$textError");
             auditoria("Usuario ($e_uid) $e_usuario. Nombre: $e_nombre. Legajo ($e_legajo). Rol ($e_rol) $dataUser[nombre_rol]", 'M', $dataUser['idCliente'], '1');
             /** Si se Guardo con exito */
             mysqli_close($link);
@@ -120,10 +151,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'estado')) {
     $query = "UPDATE usuarios SET usuarios.estado='$estado', usuarios.fecha='$fecha' WHERE usuarios.id='$id'";
 
     if ((mysqli_query($link, $query))) {
-        PrintRespuestaJson('ok', 'Se '.$textEstado.' el usuario <span class="fw5">' . test_input($_POST["nombre"]) . '.</span>');
+        PrintRespuestaJson('ok', 'Se ' . $textEstado . ' el usuario <span class="fw5">' . test_input($_POST["nombre"]) . '.</span>');
         /** Si se Guardo con exito */
 
-        $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
+        $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
 
         auditoria("Se $textEstado usuario ($id) $dataUser[usuario]. Nombre: $nombre.", 'M', $dataUser['idCliente'], '1');
 
@@ -143,7 +174,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'delete')) {
     $nombre = test_input($_POST["nombre"]);
     /* Comprobamos campos vacíos  */
 
-    $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
+    $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$id' ORDER BY usuarios.fecha DESC LIMIT 1");
 
     $query = "DELETE FROM usuarios WHERE usuarios.id='$id'";
 
@@ -155,11 +186,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'delete')) {
         /** Si se Guardo con exito */
         mysqli_close($link);
         exit;
-    } elseif (mysqli_errno($link) == 1451){
+    } elseif (mysqli_errno($link) == 1451) {
         PrintRespuestaJson('error', 'Existe Información en usuarios.');
         mysqli_close($link);
         exit;
-    }else{
+    } else {
         PrintRespuestaJson('error', mysqli_error($link));
         mysqli_close($link);
         exit;
@@ -174,7 +205,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'key')) {
     $contraauto = password_hash($usuario, PASSWORD_DEFAULT);
     $uid      = test_input($_POST["uid"]);
     $fecha      = date("Y/m/d H:i:s");
-    
+
     /* Comprobamos campos vacíos  */
     if ((valida_campo($uid)) or (valida_campo($usuario)) or (valida_campo($nombre))) {
         PrintRespuestaJson('error', 'Campos Requeridos');
@@ -189,7 +220,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'key')) {
 
             PrintRespuestaJson('ok', 'Clave de <span class="fw5">' . test_input($_POST["nombre"]) . '</span> generada correctamente.<br />Su nueva clave es: <span class="fw5">' . $usuario . '</span>');
             /** Si se Guardo con exito */
-            $dataUser=simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$uid' ORDER BY usuarios.fecha DESC LIMIT 1");
+            $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', usuarios.usuario AS 'usuario', usuarios.cliente AS 'idCliente' FROM usuarios WHERE usuarios.id='$uid' ORDER BY usuarios.fecha DESC LIMIT 1");
             auditoria("Clave de usuario ($uid) $dataUser[usuario]. Nombre: $_POST[nombre].", 'M', $dataUser['idCliente'], '1');
             mysqli_close($link);
             exit;

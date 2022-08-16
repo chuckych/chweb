@@ -1,0 +1,46 @@
+<form action="" method="post" autocomplete="off" id="estForm">
+    <div class="modal modal-blur fade" id="estModal" tabindex="-1" aria-labelledby="estModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">ALTA ESTADO</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre</label>
+                        <div class="d-flex d-inline-flex w-100">
+                            <input type="text" class="form-control w-100 me-1" name="EstDesc" id="EstDesc"
+                                placeholder="Estado">
+                            <input type="color" class="form-control form-control-color" name="EstColor" id="EstColor"
+                                value="#206bc4" title="Seleccionar color">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Comportamiento</label>
+                        <div class="form-selectgroup">
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="EstTipo" id="EstTipoAbierto" value="Abierto" class="form-selectgroup-input" checked>
+                                <span class="form-selectgroup-label w120"><div class="d-flex align-items-center"><i class="bi bi-play-fill font12 me-1"></i> Abierto</span></div></span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="EstTipo" id="EstTipoPausado" value="Pausado" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label w120"><div class="d-flex align-items-center"><i class="bi bi-pause-fill font12 me-1"></i> Pausado</div></span>
+                            </label>
+                            <label class="form-selectgroup-item">
+                                <input type="radio" name="EstTipo" id="EstTipoCerrado" value="Cerrado" class="form-selectgroup-input">
+                                <span class="form-selectgroup-label w120"><div class="d-flex align-items-center"><i class="bi bi-stop-fill font12 me-1"></i> Cerrado</div></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn me-auto btn-light h50" data-bs-dismiss="modal">Cerrar</button>
+                    <div id="divSubmit">
+                        <button type="submit" class="btn btn-teal h50" id="EstSubmit"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

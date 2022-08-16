@@ -9,6 +9,7 @@
 <!-- <input type="" id="" value="<?= $_SESSION['ConvRol'] ?>"> -->
 <?php
 $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
+// ExisteModRol(0)
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?>">
@@ -34,10 +35,8 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                 //$url   = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $_SESSION["RECID_ROL"];
                 // $json  = file_get_contents(($url));
                 // $array = json_decode($json, TRUE);
-
                 $array = (array(mod_roles($_SESSION['RECID_ROL'])));
-
-                if (is_array($array)) :
+                if (($array[0])) :
                     if (!$array[0]['error']) {
                         $rowcount = (count($array[0]['mod_roles']));
                         $dataROL  = $array[0]['mod_roles'];
@@ -59,6 +58,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                          *  3 Configuracion
                          *  4 Mobile
                          *  5 Cuentas
+                         *  6 Proyectos
                          */
                 ?>
                         <?php if (checkTipoMod($arrIdTipo, '1')) : # 1 Operaciones
@@ -109,6 +109,9 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                             case 'Auditoría':
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/control/aud/>" . $Modulo2 . "</a>";
                                                 break;
+                                                // case 'Proyectos':
+                                                //     echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/proy/>" . $Modulo2 . "</a>";
+                                                //     break;
                                         }
                                     }
                                     ?>
@@ -164,7 +167,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                         ?>
                         <?php if (checkTipoMod($arrIdTipo, '3')) : # 3 Configuración
                         ?>
-                            <!--Operaciones-->
+                            <!--Configuración-->
                             <li class="nav-item mx-1 dropdown">
                                 <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownconfiguracion" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Configuración</a>
                                 <div class="dropdown-menu radius" aria-labelledby="navbarDropdownconfiguracion">
@@ -184,7 +187,23 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                     ?>
                                 </div>
                             </li>
-                        <?php endif  # Fin 1 Operaciones
+                        <?php endif  # Fin 3 Configuración
+                        ?>
+
+                        <?php if (checkTipoMod($arrIdTipo, '6')) : # 3 proyectos
+                        ?>
+                            <!--Proyectos-->
+                            <?php
+                            foreach ($dataROL as $values) {
+                                $Modulo2 = $values['modulo'];
+                                switch ($Modulo2) {
+                                    case 'Inicio':
+                                        echo "<li class='nav-item mx-1'><a class='nav-link fontq fw4 text-dark'  href='/" . HOMEHOST . "/proy/'>Proyectos</a></li>";
+                                        break;
+                                }
+                            }
+                            ?>
+                        <?php endif  # Fin 3 proyectos
                         ?>
 
                         <?php if (checkTipoMod($arrIdTipo, '4')) : # 4 Mobile
@@ -222,7 +241,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                         <?php endif # Fin 4 Mobile
                         ?>
                         <?php  # 4 Cuentas
-                        foreach ($dataROL as $value) :
+                        foreach ($dataROL as $value) {
                             $Modulo = $value['modulo'];
                             $Modulo2 = $value['modulo'];
 
@@ -274,12 +293,20 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                 && ($Modulo2 != 'Dashboard')
                                 && ($Modulo2 != 'Horarios')
                                 && ($Modulo2 != 'Proyectos')
+                                && ($Modulo2 != 'Mis Tareas')
+                                && ($Modulo2 != 'Tareas')
+                                && ($Modulo2 != 'Estados')
+                                && ($Modulo2 != 'Procesos')
+                                && ($Modulo2 != 'Plantilla Procesos')
+                                && ($Modulo2 != 'Planos')
+                                && ($Modulo2 != 'Inicio')
+                                && ($Modulo2 != 'Empresas')
                                 // &&($Modulo2 != 'Mis Horas')
                                 && ($Modulo2 != 'Horas Costeadas')
                             ) { ?>
                                 <li class="nav-item mx-1"><a class="nav-link fontq fw4 text-dark" href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/"><?= $Modulo2 ?></a></li>
                 <?php }
-                        endforeach;
+                        };
                     } else {
                         echo '<a class="nav-link fontq hob" href="#">No hay Módulos</a>';
                     }

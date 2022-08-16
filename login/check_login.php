@@ -90,7 +90,12 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	} else { // Si no hay permisos
 		$ABMRol = array('aFic'  => '0', 'mFic'  => '0', 'bFic'  => '0', 'aNov'  => '0', 'mNov'  => '0', 'bNov'  => '0', 'aHor'  => '0', 'mHor'  => '0', 'bHor'  => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc'  => '0', 'aCit'  => '0', 'mCit'  => '0', 'bCit'  => '0', 'aTur'  => '0', 'mTur'  => '0', 'bTur'  => '0');
 	}
-	$data_mod = array_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
+	$data_mod = array_pdoQuery("SELECT 
+	`mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden`
+	FROM `mod_roles` 
+	INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id`
+	WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
+
 	$_SESSION["MODS_ROL"] = $data_mod; // Guardo en la session los módulos asociados al rol
 	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
 
@@ -249,6 +254,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		header('Location:/' . HOMEHOST . '/mobile/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '32'")) {
 		header('Location:/' . HOMEHOST . '/mobile/hrp/');
+	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '43'")) {
+		header('Location:/' . HOMEHOST . '/proy/');
 	} else {
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}

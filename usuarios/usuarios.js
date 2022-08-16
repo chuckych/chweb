@@ -222,23 +222,25 @@ $(document).ready(function () {
         $('#modalEditUser').modal('show');
         // $('#e_nombre').focus()
 
-        var data_uid = $(this).attr('data_uid');
-        var data_nombre = $(this).attr('data_nombre');
-        var data_usuario = $(this).attr('data_usuario');
-        var data_rol_n = $(this).attr('data_rol_n');
-        var data_rol = $(this).attr('data_rol');
-        var data_legajo = $(this).attr('data_legajo');
-        var data_estado_n = $(this).attr('data_estado_n');
-        var data_estado = $(this).attr('data_estado');
-        var data_fecha_alta = $(this).attr('data_fecha_alta');
-        var data_fecha_mod = $(this).attr('data_fecha_mod');
-        var data_cliente = $(this).attr('data_cliente');
-
+        let data_uid = $(this).attr('data_uid');
+        let data_tarjeta = $(this).attr('data_tarjeta');
+        let data_nombre = $(this).attr('data_nombre');
+        let data_usuario = $(this).attr('data_usuario');
+        let data_rol_n = $(this).attr('data_rol_n');
+        let data_rol = $(this).attr('data_rol');
+        let data_legajo = $(this).attr('data_legajo');
+        let data_estado_n = $(this).attr('data_estado_n');
+        let data_estado = $(this).attr('data_estado');
+        let data_fecha_alta = $(this).attr('data_fecha_alta');
+        let data_fecha_mod = $(this).attr('data_fecha_mod');
+        let data_cliente = $(this).attr('data_cliente');
+        
         $('#data_nombre').html(data_nombre);
         $('#e_nombre').val(data_nombre);
         $('#e_usuario').val(data_usuario);
         $('#e_legajo').val(data_legajo);
         $('#e_uid').val(data_uid);
+        $('#e_tarjeta').val(data_tarjeta);
 
         var opt2 = {
             MinLength: "0",

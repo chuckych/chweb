@@ -2,11 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.240'; // Version de la aplicación
+    return 'v0.0.241'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20220517; // Version de la base de datos local
+    return 20220816; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -31,12 +31,14 @@ function secure_auth_ch() // Funcion para validar si esta autenticado
     timeZone();
     timeZone_lang();
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? ''; // Si no existe la variable la crea
+    $_SESSION['VER_DB_LOCAL'] = $_SESSION['VER_DB_LOCAL'] ?? ''; // Si no existe la variable la crea
     if (
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
         || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
-        // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si el dia actual no es el mismo
+        || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
+        // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si eliminar dia actual no es el mismo
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
@@ -1260,7 +1262,7 @@ function ExisteModRol($modulo)
      * verificamos si existe el modulo asociado a la session del rol de usuario. 
      * sino existe lo enviamos al incio.
      */
-    $_SESSION['ID_MODULO'] = $modulo;
+    $_SESSION['ID_MODULO'] = $modulo ?? '';
     define('ID_MODULO', $modulo);
     if (intval($modulo) > 0) {
         $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
@@ -3173,7 +3175,7 @@ function sendRemoteData($url, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-    
+
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -3940,6 +3942,27 @@ function tareDiff($start, $end)
     $tareDiff = trim(str_replace('hace', '', $d2));
     return $tareDiff;
 }
+function diffStartEnd($start, $end)
+{
+    Carbon::setLocale('es');
+    setlocale(LC_TIME, 'es_ES.UTF-8');
+    $f      = Carbon::parse($start);
+    $f2     = Carbon::parse($end);
+    $d2 = $f->diffForHumans(null, false, false, 2);
+    $diffInSeconds = $f2->diffInSeconds($f);
+    $diffInMinutes = $f2->diffInMinutes($f);
+    $totalDuration = $diffInSeconds;
+    $totalDuration = gmdate("H:i:s", $totalDuration);
+    $totalDuration = ($end == '0000-00-00 00:00:00') ? '' : $totalDuration;
+    $tareDiff = trim(str_replace('hace', '', $d2));
+    $t = array(
+        'diffIni' => $tareDiff,
+        'duration' => $totalDuration,
+        'diffInSeconds' => $diffInSeconds,
+        'diffInMinutes' => $diffInMinutes
+    );
+    return $t;
+}
 function implode_keys_values($array = array(), $key, $separator)
 {
     if (!$array) : return $array;
@@ -3958,7 +3981,7 @@ function simple_MSQuery($query)
     // print_r($query);
     // exit;
     if (($stmt)) {
-        while ($r = sqlsrv_fetch_array( $stmt, SQLSRV_FETCH_ASSOC)) {
+        while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
             $registros = $r;
         }
         sqlsrv_free_stmt($stmt);
@@ -3976,4 +3999,51 @@ function simple_MSQuery($query)
         sqlsrv_close($link);
         exit;
     }
+}
+function confTar($assoc, $path)
+{
+    $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! -->\n";
+    foreach ($assoc as $key => $elem) {
+        $content .= "[" . $key . "]\n";
+        foreach ($elem as $key2 => $elem2) {
+            if (is_array($elem2)) {
+                for ($i = 0; $i < count($elem2); $i++) {
+                    $content .= $key2 . "[] =\"" . $elem2[$i] . "\"\n";
+                }
+            } else if ($elem2 == "") $content .= $key2 . " =\n";
+            else $content .= $key2 . " = \"" . $elem2 . "\"\n";
+        }
+    }
+    if (!$handle = fopen($path, 'w')) {
+        return false;
+    }
+    $content .= "## REFERENCIAS: ##\n";
+    $content .= ";ProcPendTar : Procesar Tareas Pendientes. \"1\" = Si, \"0\" = No \n";
+    $content .= ";HoraCierre  : Hora de cierre del día para cerrar tareas pendientes. De \"00:00\" a \"23:59\"\n";
+    $content .= ";LimitTar    : Hora límite para cerrar tareas pendientes. De \"0\" a \"9999\"\n";
+    $success = fwrite($handle, $content);
+    fclose($handle);
+    return $success;
+}
+function getConfTar()
+{
+    $confRequest['conf'] = 1;
+    $confRequest['getConf'] = 1;
+    $urlConf = host() . "/" . HOMEHOST . "/proy/op/crud.php"; // Url para obtener la configuracion de tareas pendientes
+    $getConf = sendRemoteData($urlConf, ($confRequest)); // Obtenemos el array de tareas pendientes
+    $getConf = json_decode($getConf, true); // Lo decodificamos en un array
+    return $getConf;
+}
+function calcLimitTar($start, $end)
+{
+    $limitTar = (intval(getConfTar()['confTar']['LimitTar'])) * 60; // Obtenemos el limite de tiempo de la tarea en minutos
+    $diffStartEnd  = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
+    $obj =  array(
+        'status'   => ($diffStartEnd > $limitTar) ? 1 : 0,
+        'limitMin' => $limitTar,
+        'limitHor' => MinHora($limitTar),
+        'diffMin'  => $diffStartEnd,
+        'diffHor'  => MinHora($diffStartEnd)
+    );
+    return $obj;
 }
