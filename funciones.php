@@ -3179,8 +3179,9 @@ function sendRemoteData($url, $payload, $timeout = 10)
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
+    $payload = json_encode($payload);
     if ($curl_errno > 0) { // si hay error
-        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        $text = "cURL Error ($curl_errno) : $curl_error $url $payload"; // set error message
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
@@ -4030,6 +4031,7 @@ function getConfTar()
     $confRequest['conf'] = 1;
     $confRequest['getConf'] = 1;
     $urlConf = host() . "/" . HOMEHOST . "/proy/op/crud.php?".microtime(true); // Url para obtener la configuracion de tareas pendientes
+    // $urlConf = "/" . HOMEHOST . "/proy/op/crud.php?v=".vjs(); // Url para obtener la configuracion de tareas pendientes
     $getConf = sendRemoteData($urlConf, ($confRequest)); // Obtenemos el array de tareas pendientes
     $getConf = json_decode($getConf, true); // Lo decodificamos en un array
     return $getConf;
