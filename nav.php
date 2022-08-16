@@ -190,21 +190,6 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                         <?php endif  # Fin 3 Configuración
                         ?>
 
-                        <?php if (checkTipoMod($arrIdTipo, '6')) : # 3 proyectos
-                        ?>
-                            <!--Proyectos-->
-                            <?php
-                            foreach ($dataROL as $values) {
-                                $Modulo2 = $values['modulo'];
-                                switch ($Modulo2) {
-                                    case 'Inicio':
-                                        echo "<li class='nav-item mx-1'><a class='nav-link fontq fw4 text-dark'  href='/" . HOMEHOST . "/proy/'>Proyectos</a></li>";
-                                        break;
-                                }
-                            }
-                            ?>
-                        <?php endif  # Fin 3 proyectos
-                        ?>
 
                         <?php if (checkTipoMod($arrIdTipo, '4')) : # 4 Mobile
                         ?>
@@ -239,6 +224,21 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                 </div>
                             </li>
                         <?php endif # Fin 4 Mobile
+                        ?>
+                        <?php if (checkTipoMod($arrIdTipo, '6')) : # 3 proyectos
+                        ?>
+                            <!--Proyectos-->
+                            <?php
+                            foreach ($dataROL as $values) {
+                                $Modulo2 = $values['modulo'];
+                                switch ($Modulo2) {
+                                    case 'Inicio':
+                                        echo "<li class='nav-item mx-1'><a class='nav-link fontq fw4 text-dark'  href='/" . HOMEHOST . "/proy/'>Proyectos</a></li>";
+                                        break;
+                                }
+                            }
+                            ?>
+                        <?php endif  # Fin 3 proyectos
                         ?>
                         <?php  # 4 Cuentas
                         foreach ($dataROL as $value) {
