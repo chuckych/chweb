@@ -15,7 +15,7 @@ $(function () {
         initComplete: function (settings, json) {
             $('.form-control-sm').attr('placeholder', 'Buscar Rol')
             $('.LabelSearchDT').html('')
-            $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-outline-custom addRol fontq border" id="AltaRol"><span class="bi bi-plus-lg mr-2">Nuevo rol</span></button>')
+            $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-custom addRol fontq border" id="AltaRol"><span class="bi bi-plus-lg mr-2">Nuevo rol</span></button>')
             $('.table-responsive').removeClass('invisible')
             fadeInOnly('#GetRoles')
         },

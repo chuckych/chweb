@@ -165,9 +165,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$FechaHora = ($_POST['fromTareas']) ? $fechaFin : $FechaHora;
 	$calcLimitTar = calcLimitTar($dataTar['TareIni'], $FechaHora); // Calculamos el limite de tiempo de la tarea
 	$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
-	if($calcLimitTar['status']) {
-		$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar'=> ($calcLimitTar));
-	    echo json_encode($data);
+	if ($calcLimitTar['status']) {
+		$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar' => ($calcLimitTar));
+		echo json_encode($data);
 		exit; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
 	}
 
@@ -179,7 +179,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 
 	$i = "INSERT INTO `proy_tare_horas` (`TareHorID`, `TareHorProy`, `TareHorCost`, `TareHorHoras`, `TareHorMin`) VALUES ('$_POST[tareID]', '$ProyID', '$cost', '$total', '$minutos')";
 
-	
+
 
 	(!pdoQuery($i)) ? PrintRespuestaJson('error', 'Error al finalizar la tarea') . exit : ''; // Sino se pudo insertar la tarea, Salimos del script
 	$TareFinTipo = $_POST['finTipo'] ? $_POST['finTipo'] : 'normal';
@@ -192,16 +192,15 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 	$update = "UPDATE `proy_tareas` SET `TareFin` = '$FechaHora', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$_POST[tareID]'"; // Actualizamos la tarea
 
-	if(pdoQuery($update)){
-		$data = array('status' => 'ok', 'Mensaje' => "Tarea (#$tareID) completada correctamente", 'confTar'=> ($calcLimitTar));
-	    echo json_encode($data);
+	if (pdoQuery($update)) {
+		$data = array('status' => 'ok', 'Mensaje' => "Tarea (#$tareID) completada correctamente", 'confTar' => ($calcLimitTar));
+		echo json_encode($data);
 		exit;
-	} else{
-		$data = array('status' => 'error', 'Mensaje' => "Error al finalizar la tarea (#$tareID)", 'confTar'=> ($calcLimitTar));
-	    echo json_encode($data);
+	} else {
+		$data = array('status' => 'error', 'Mensaje' => "Error al finalizar la tarea (#$tareID)", 'confTar' => ($calcLimitTar));
+		echo json_encode($data);
 		exit;
 	}
-
 } else if (($_POST['ediTar'])) { // Editar Tarea
 
 	$_POST['TareResp']     = $_POST['TareResp'] ?? '';
@@ -272,13 +271,13 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	if ($FechaHoraFin != "0000-00-00 00:00:00") { // Si la fecha de fin no es 0000-00-00 00:00:00 (si la tarea esta pendiente)
 		$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin);  // Calculamos el limite de tiempo de la tarea
 		$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
-		if($calcLimitTar['status']) {
-			$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar'=> ($calcLimitTar));
+		if ($calcLimitTar['status']) {
+			$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar' => ($calcLimitTar));
 			echo json_encode($data);
 			exit; // Si el limite de tiempo de la tarea es mayor a la diferencia de tiempo de la tarea. Salimos del script
 		}
 	}
-	 
+
 
 	$u = "UPDATE `proy_tareas` SET `TareProy` = '$TareProy', `TareProc` = '$TareProc', `TarePlano` = '$TarePlano', `TareResp` = '$TareResp', `TareCost`= '$rCost'  ,`TareIni` = '$FechaHoraIni', `TareFin` = '$FechaHoraFin', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$tareID'";
 
@@ -411,6 +410,8 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
 	emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
 
+	$urlHost  = getIniCuenta($_POST['_c'], 'hostCHWeb');
+
 	$getConf = getConfTar();
 
 	$getConf = ($getConf['confTar'] ?? []) ? $getConf['confTar'] : PrintRespuestaJson('error', 'No hay datos de configuracion') . exit;
@@ -432,7 +433,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$dataRequest['procPendientes'] = 1;
 	$dataRequest['HoraLimit'] = $getConf['HoraCierre'];
 
-	$urlTar = host() . "/" . HOMEHOST . "/proy/data/getTareas.php?" . microtime(true); // Url para obtener las tareas pendientes
+	$urlTar = $urlHost . "/" . HOMEHOST . "/proy/data/getTareas.php?" . microtime(true); // Url para obtener las tareas pendientes
 	$tareasPendientes = sendRemoteData($urlTar, ($dataRequest)); // Obtenemos el array de tareas pendientes
 	$tareasPendientes = json_decode($tareasPendientes, true); // Lo decodificamos en un array
 	$dataPendientes = ($tareasPendientes['data'] ?? []) ? $tareasPendientes['data'] : PrintRespuestaJson('ok', 'No Hay Tareas para procesar') . exit; // Obtenemos el array de tareas pendientes y validamos que exista algo de lo contrario salimos
@@ -458,7 +459,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 				'finTipo'      => 'fichada',
 			);
 
-			$urlSet   = host() . "/" . HOMEHOST . "/proy/finalizar/process.php";
+			$urlSet   = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
 			$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 			$textLog = "Tarea $data[tareID] completada. Hora de Fin: $data[TareFechaFin] $data[TareHoraFin]. Tipo: $data[finTipo]";
 			fileLog($textLog, $pathLog); // Escribimos en el log la respuesta de la tarea
@@ -476,7 +477,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 						'TareHoraFin'  => $FicHorS,
 						'finTipo'      => 'turno',
 					);
-					$urlSet  = host() . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
+					$urlSet  = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
 					$set     = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 					$textLog = "Tarea $data[tareID] completada. Hora de Fin: $data[TareFechaFin] $data[TareHoraFin]. Tipo: $data[finTipo]";
 					fileLog($textLog, $pathLog); // Escribimos en el log la respuesta de la tarea

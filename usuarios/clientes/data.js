@@ -83,13 +83,15 @@ $(document).ready(function () {
         },
     });
     table.on('init.dt', function (e, settings, json) {
-        $('#GetClientes_filter input').attr('placeholder', 'Buscar Cuenta').removeClass('form-control-sm').addClass('h50');
+        $('#GetClientes_filter input').attr('placeholder', 'Buscar Cuenta').removeClass('form-control-sm');
         $("thead").remove()
-        $('#GetClientes_filter').prepend('<button title="Nueva Cuenta" class="px-2 btn btn-outline-custom addCuenta fontq border-ddd" id="addCuenta"><span class="bi bi-plus-lg mr-2"></span>Nueva</button>')
+        $('#GetClientes_filter').addClass('d-flex justify-content-end align-items-start');
+        $('#GetClientes_filter').prepend('<button data-titlel="Nueva Cuenta" class="px-2 btn btn-custom addCuenta fontq border-ddd" id="addCuenta"><span class="bi bi-plus-lg mr-1"></span>Nueva</button>')
         $('.table-responsive').show()
         fadeInOnly('#GetRoles')
+        // console.log(json.dataClientes);
     });
-    table.on('draw.dt', function (e, settings, json) {
+    table.on('draw.dt', function (e, settings) {
         e.preventDefault();
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary');
@@ -150,6 +152,7 @@ $(document).ready(function () {
         $('#modalFormCuenta input').attr('autocomplate', 'off')
         $('#submitFormCuenta').val('EditCuenta')
         let dataNombre = $(this).attr('dataNombre');
+        let datahostchweb = $(this).attr('datahostchweb');
         let dataIdent = $(this).attr('dataIdent');
         let dataRecid = $(this).attr('dataRecid');
         let dataId = $(this).attr('dataId');
@@ -171,6 +174,8 @@ $(document).ready(function () {
         $('#db').val(dataDB)
         $('#user').val(dataUser)
         $('#pass').val(dataPass)
+        $('#hostCHWeb').val(datahostchweb)
+        
         if ((dataAuth == '2')) {
             $('#auth').prop('checked', true)
         } else {

@@ -1,4 +1,7 @@
 <?php
+
+use Minwork\Helper\Arr;
+
 session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
@@ -12,7 +15,7 @@ $q = $_POST['q'];
 $recid = $recid ?? '';
 $id = $id ?? '';
 
-$query = "SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre', clientes.host as 'host', clientes.db as 'db', clientes.user as 'user', clientes.pass as 'pass', clientes.auth as 'auth', clientes.fecha_alta as 'fecha_alta', clientes.fecha as 'fecha_mod', clientes.tkmobile as 'tkmobile', clientes.WebService as 'WebService', clientes.ApiMobileHRP as 'ApiMobileHRP', clientes.UrlAppMobile as 'UrlAppMobile', clientes.localCH as 'localCH', ( SELECT COUNT(usuarios.cliente) FROM usuarios WHERE clientes.id=usuarios.cliente ) AS cant_usuarios, ( SELECT COUNT(roles.id) FROM roles WHERE roles.cliente=clientes.id ) AS 'cant_roles' FROM clientes WHERE clientes.id >'0' $recid $id ORDER BY clientes.fecha DESC";
+$query = "SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre', clientes.host as 'host', clientes.db as 'db', clientes.user as 'user', clientes.pass as 'pass', clientes.auth as 'auth', clientes.fecha_alta as 'fecha_alta', clientes.fecha as 'fecha_mod', clientes.tkmobile as 'tkmobile', clientes.WebService as 'WebService', clientes.ApiMobileHRP as 'ApiMobileHRP', clientes.UrlAppMobile as 'UrlAppMobile', clientes.localCH as 'localCH', ( SELECT COUNT(usuarios.cliente) FROM usuarios WHERE clientes.id=usuarios.cliente ) AS cant_usuarios, ( SELECT COUNT(roles.id) FROM roles WHERE roles.cliente=clientes.id ) AS 'cant_roles', (SELECT valores FROM params p WHERE p.modulo = 1 AND p.descripcion = 'host' AND p.cliente = clientes.id LIMIT 1) AS 'hostCHWeb' FROM clientes WHERE clientes.id >'0' $recid $id ORDER BY clientes.fecha DESC";
 // print_r($query); exit;
 $datos = array_pdoQuery($query);
 $data  = array();
@@ -37,8 +40,7 @@ foreach ($datos as $row) {
   $user          = $row['user'];
   $pass          = $row['pass'];
   $auth          = ($row['auth'] == 0) ? 'No' : 'Sí';
-  $auth2         = ($row['auth'] == 0) ? '1' : '2';
-  /** 1          = no ; 2 = Si */
+  $auth2         = ($row['auth'] == 0) ? '1' : '2'; //  1 = no ; 2 = Si
   $tkmobile      = $row['tkmobile'];
   $WebService    = $row['WebService'];
   $ApiMobileHRP  = $row['ApiMobileHRP'];
@@ -48,20 +50,47 @@ foreach ($datos as $row) {
   $fecha         = $row['fecha_mod'];
   $cant_usuarios = $row['cant_usuarios'];
   $cant_roles    = $row['cant_roles'];
+  $hostCHWeb    = $row['hostCHWeb'];
+
+  $dataClientes[] = array(
+    "Cuenta" => array(
+      "recid"     => $recid,
+      "ident"     => $ident,
+      "id"        => intval($id),
+      "nombre"    => $nombre,
+      "usuarios"  => intval($cant_usuarios),
+      "roles"     => intval($cant_roles),
+      "hostCHWeb" => $hostCHWeb,
+    ),
+    "db" => array(
+      "host"       => $host,
+      "db"         => $db,
+      "user"       => $user,
+      "pass"       => $pass,
+      "auth"       => $auth,
+      "auth2"      => intval($auth2),
+      "WebService" => $WebService,
+    ),
+    "mobile" => array(
+      "ApiMobileHRP" => $ApiMobileHRP,
+      "UrlAppMobile" => $UrlAppMobile,
+      "localCH"      => intval($localCH),
+    )
+  );
 
   if ($cant_roles) {
-    $btnUsers = '<a title="Usuarios" href="/' . HOMEHOST . '/usuarios/?_c=' . $recid . '&alta" class="btn border btn-outline-custom w80 fontq"><span class=""> <span class="mr-2">' . $IconUsuarios . '</span>' . $cant_usuarios . ' </span>
+    $btnUsers = '<a data-titlel="Ir a Usuarios" href="/' . HOMEHOST . '/usuarios/?_c=' . $recid . '&alta" class="btn border btn-outline-custom w80 fontq"><span class=""> <span class="mr-2">' . $IconUsuarios . '</span>' . $cant_usuarios . ' </span>
                     </a>';
   } else {
-    $btnUsers = '<button title="" href="#" class="btn border btn-outline-custom w80 fontq"><span class=""><span class="mr-2">' . $IconUsuarios . '</span>' . $cant_usuarios . ' </span></button>';
+    $btnUsers = '<button data-titlel="No hay Usuarios" href="#" class="btn border btn-outline-custom w80 fontq"><span class=""><span class="mr-2">' . $IconUsuarios . '</span>' . $cant_usuarios . ' </span></button>';
   }
-  $btnRoles = '<a title="Roles" href="/' . HOMEHOST . '/usuarios/roles/?_c=' . $recid . '&alta" class="btn border btn-outline-custom w80 fontq ml-1"><span class="mr-2">' . $IconRoles . '</span>' . $cant_roles . ' </span></a>';
-  $btnEditar = '<button type="button" title="Editar Cuenta:' . $nombre . '" dataNombre="' . $nombre . '" dataIdent="' . $ident . '" dataRecid="' . $recid . '" dataId="' . $id . '" dataHost="' . $host . '" dataDB="' . $db . '" dataUser="' . $user . '" dataPass="' . $pass . '" dataAuth="' . $auth2 . '" dataTkmobile="' . $tkmobile . '" dataWebService="' . $WebService . '" dataApiMobileHRP="' . $ApiMobileHRP . '" dataMobileHRPApp="' . $UrlAppMobile . '" dataLocalCH="'.$localCH.'" class="btn border btn-outline-custom fontq ml-1 editCuenta">' . $IconEditar . '</span></button>';
-  // $btnEditar = '<a title="Editar Cuenta: '.$nombre.'" href="index.php?id='.$recid.'&mod" class="btn border btn-outline-custom fontp">'.$IconEditar.'</span></a>';
+  $btnRoles = '<a data-titlet="ir a Roles" href="/' . HOMEHOST . '/usuarios/roles/?_c=' . $recid . '&alta" class="btn border btn-outline-custom w80 fontq ml-1"><span class="mr-2">' . $IconRoles . '</span>' . $cant_roles . ' </span></a>';
+  $btnEditar = '<button type="button" data-titlel="Editar Cuenta: ' . $nombre . '" dataNombre="' . $nombre . '" dataHostCHWeb="'.$hostCHWeb.'" dataIdent="' . $ident . '" dataRecid="' . $recid . '" dataId="' . $id . '" dataHost="' . $host . '" dataDB="' . $db . '" dataUser="' . $user . '" dataPass="' . $pass . '" dataAuth="' . $auth2 . '" dataTkmobile="' . $tkmobile . '" dataWebService="' . $WebService . '" dataApiMobileHRP="' . $ApiMobileHRP . '" dataMobileHRPApp="' . $UrlAppMobile . '" dataLocalCH="' . $localCH . '" class="btn border btn-outline-custom fontq ml-1 editCuenta">' . $IconEditar . '</span></button>';
+  // $btnEditar = '<a data-titlel="Editar Cuenta: '.$nombre.'" href="index.php?id='.$recid.'&mod" class="btn border btn-outline-custom fontp">'.$IconEditar.'</span></a>';
   $Botones = $btnUsers . $btnRoles . $btnEditar;
   $data[] = array(
     'recid'         => '<div class="">' . $recid . '</div>',
-    'ident'         => '<div class="" title="Identificador de la cuenta"><span class="mr-2 text-info">' . $IconHash . '</span><span class="user-select-all">' . $ident . '</span></span>',
+    'ident'         => '<div class="" data-titlel="Identificador de la cuenta"><span class="mr-2 text-info">' . $IconHash . '</span><span class="user-select-all">' . $ident . '</span></span>',
     'id'            => '<div class="">' . $id . '</div>',
     'nombre'        => '<div class=" text-nowrap pt-2 text-secondary"><b class=" text-secondary mr-2" title="Nombre de la Cuenta">' . '<span class="mr-2 text-info">' . $IconCuenta . '</span><span class="user-select-all">' . $nombre . '</span></b><button class="btn btn-sm fontp btn-link testConnect text-secondary" dataRecid="' . $recid . '">Test Conexión</button><div class="float-right">' . $Botones . '</div></div>',
     'host'          => '<div class="" title="Servidor de Base de Datos">' . '<span class="mr-2 text-info">' . $IconServer . '</span><span class="user-select-all">' . $host . '</span></div><div class="" title="Nombre de la Base de Datos">' . '<span class="mr-2 text-info">' . $IconHDD . '</span><span class="user-select-all">' . $db . '</span></div>',
@@ -78,5 +107,5 @@ foreach ($datos as $row) {
     //    <span data-icon="" class="icon ml-2 align-middle mt-1 text-gris"></span>
   );
 }
-echo json_encode(array('data' => $data));
+echo json_encode(array('data' => $data, 'dataClientes' => $dataClientes));
 exit;

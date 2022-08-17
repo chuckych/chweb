@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.242'; // Version de la aplicación
+    return 'v0.0.243'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3667,7 +3667,7 @@ function defaultConfigData() // default config data
 }
 function write_apiKeysFile()
 {
-    $q = "SELECT id as 'idCompany', nombre as 'nameCompany', recid as 'recidCompany', 'key' as 'key', urlAppMobile AS 'urlAppMobile', localCH as 'localCH' FROM clientes";
+    $q = "SELECT c.id as 'idCompany', c.nombre as 'nameCompany', c.recid as 'recidCompany', 'key' as 'key', c.urlAppMobile AS 'urlAppMobile', c.localCH as 'localCH', (SELECT valores FROM params p WHERE p.modulo = 1 AND p.descripcion = 'host' AND p.cliente = c.id LIMIT 1) AS 'hostCHWeb' FROM clientes c";
     $assoc_arr = array_pdoQuery($q);
 
     foreach ($assoc_arr as $key => $value) {
@@ -3676,12 +3676,10 @@ function write_apiKeysFile()
             'nameCompany'  => $value['nameCompany'],
             'recidCompany' => $value['recidCompany'],
             'urlAppMobile' => $value['urlAppMobile'],
-            'localCH'      => ($value['localCH'])
+            'localCH'      => ($value['localCH']),
+            'hostCHWeb'    => $value['hostCHWeb']
         ));
     }
-    // $assoc[] = (array('idCompany' => '100', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
-    // $assoc[] = (array('idCompany' => '300', 'nameCompany' => 'prueba', 'recidCompany' => 'das4ds5'));
-
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
     foreach ($assoc as $key => $elem) {
         $content .= "[" . $key . "]\n";
@@ -3701,6 +3699,18 @@ function write_apiKeysFile()
     $success = fwrite($handle, $content);
     fclose($handle);
     return $success;
+}
+function getIniCuenta($recidCuenta, $key = false)
+{
+    $urlHost = '';
+    $d = (getDataIni(__DIR__ . '/mobileApikey.php'));
+    foreach ($d as $k => $value) {
+        if ($value['recidCompany'] == $recidCuenta) {
+            $urlHost = array($k => $value);
+            break;
+        }
+    }
+    return ($key) ? $urlHost[0][$key] : $urlHost[0];
 }
 function getDataIni($url) // obtiene el json de la url
 {
