@@ -50,15 +50,13 @@ $api = json_decode($api, true);
 $totalRecords = $api['TOTAL'];
 $tm = (microtime(true));
 $routeFile = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.txt';
+$routeFileXls = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.xls';
 $routeFile2 = 'archivos/export_' . $idCompany . '_' . $tm . '.txt';
+$routeFile3 = 'archivos/export_' . $idCompany . '_' . $tm . '.xls';
 $startScript = microtime(true);
-borrarLogs($routeFile, 10, '.txt');
+borrarLogs($routeFile, 1, '.txt');
+borrarLogs($routeFile, 1, '.xls');
 if ($api['COUNT'] > 0) {
-    // if ($params['typeDownload'] ?? '' == 'downloadTxt') {
-    //     $line = "ID,FECHA HORA,NOMBRE";
-    //     fileLog($line, $routeFile, 'export');
-    // }
-
     foreach ($api['RESPONSE_DATA'] as $r) {
 
         $jsonMarcador = json_encode(array(
@@ -113,7 +111,7 @@ if ($api['COUNT'] > 0) {
             // 'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
             'imageData' => $r['imageData'],
         );
-        if ($params['typeDownload'] ?? '' == 'downloadTxt') {
+        if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(
                 'userID'            => (padLeft($r['userID'], 11, '0')),
                 'userName'          => trim($r['userName']),
@@ -129,11 +127,40 @@ if ($api['COUNT'] > 0) {
                 fileLog($line, $routeFile, 'export');
             }
         }
+        if ($params['typeDownload'] ?? '' == 'downloadXls') { //xls
+            if ($r['userName']) {
+                $xlsData[] = array(
+                    'userID'            => (($r['userID'])),
+                    'userName'          => trim($r['userName']),
+                    'zoneID'            => $r['zoneID'],
+                    'regDay'            => $r['regDay'],
+                    'regHora'           => $r['regTime'],
+                    'regDate'           => FechaFormatVar($r['regDateTime'], 'Y-m-d'),
+                    'zoneName'          => trim($r['zoneName']),
+                    'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
+                    'locked'            => $r['locked'],
+                    'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
+                    'regDateTime'       => $r['regDateTime'],
+                    'regLat'            => $r['regLat'],
+                    'regLng'            => $r['regLng'],
+                    'device'            => ($r['deviceName']),
+                    'phoneid'            => ($r['phoneid']),
+                    'operationType'     => $r['operationType'],
+                    'timestamp'         => $r['createdDate'],
+                );
+            }
+        }
     }
+}
+if ($params['typeDownload'] ?? '' == 'downloadXls') {
+    require __DIR__ . './exportXls.php';
 }
 if ($api['COUNT'] == 0) {
     if ($params['typeDownload'] ?? '' == 'downloadTxt') {
         $routeFile2 = '';
+    }
+    if ($params['typeDownload'] ?? '' == 'downloadXls') {
+        $routeFile3 = '';
     }
 }
 
@@ -142,7 +169,7 @@ switch ($params['typeDownload'] ?? '') {
         $arrayData = $routeFile2;
         break;
     case 'downloadXls':
-        $arrayData = '';
+        $arrayData = $routeFile3;
         break;
     default:
         $arrayData = $arrayData;
@@ -150,8 +177,6 @@ switch ($params['typeDownload'] ?? '') {
 }
 $endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
-// sleep(3);
-// restore_error_handler();
 $json_data = array(
     "draw"            => intval($params['draw']),
     "recordsTotal"    => intval($totalRecords),

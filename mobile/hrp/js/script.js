@@ -17,6 +17,29 @@ const loadingTable = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
+/**
+ * @param {table} boolean 1: table, 0: nada
+ * @param {typeDownload} string tipo de descarga
+ */
+const filterData = (table = false, typeDownload = '') => {
+    let f = new FormData();
+    f.append('typeDownload', typeDownload);
+    f.append('_drMob', $("#_drMob").val());
+    f.append('_drMob2', $("#_drMob2").val());
+    f.append('SoloFic', $("#SoloFic").val());
+    f.append('start', 0);
+    f.append('length', 10000);
+    f.append('search[value]', $('#table-mobile_filter input').val());
+    f.append('draw', '');
+    if (table) {
+        let data = [];
+        data._drMob = $("#_drMob").val() ?? '';
+        data._drMob2 = $("#_drMob2").val() ?? '';
+        data.SoloFic = $("#SoloFic").val() ?? '';
+        return data;
+    }
+    return f;
+}
 let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 let host = $('#_host').val()
 
@@ -55,7 +78,6 @@ if ($(window).width() < 540) {
         ajax: {
             url: "getRegMobile.php",
             type: "POST",
-            // dataSrc: "mobile",
             "data": function (data) {
                 data._drMob = $("#_drMob").val();
                 data._drMob2 = $("#_drMob2").val();
@@ -178,13 +200,11 @@ if ($(window).width() < 540) {
         ajax: {
             url: "getRegMobile.php",
             type: "POST",
-            // dataSrc: "mobile",
+            // data: filterData(1),
             "data": function (data) {
                 data._drMob = $("#_drMob").val();
                 data._drMob2 = $("#_drMob2").val();
                 data.SoloFic = $("#SoloFic").val();
-                // console.log($("#_drMob").val());
-                // console.log($("#_drMob2").val());
             },
         },
         createdRow: function (row, data, dataIndex) {
@@ -476,9 +496,10 @@ tablemobile.on('init.dt', function (e, settings, json) {
             <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </button>
-            <div class="dropdown-menu shadow border-0">
-                <ul class="list-group fontq m-0">
-                    <li class="btn btn-sm btn-outline-custom border-0 radius p-1" id="downloadTxt" >Exportar .txt</li>
+            <div class="dropdown-menu shadow border-0 p-0">
+                <ul class="list-group">
+                    <button class="btn btn-sm btn-outline-custom border-0 radius fontq" id="downloadTxt" ><div class="ml-1"><span>Exportar</span> .txt</div></button>
+                    <button class="btn btn-sm btn-outline-custom border-0 radius fontq" id="downloadXls" ><div class="ml-1">Exportar .xls</div></button>
                 </ul>
             </div>
         </div>
@@ -500,33 +521,24 @@ tablemobile.on('init.dt', function (e, settings, json) {
     $('.SoloFic').hide()
     // click event
 });
+
 $(document).on('click', '#downloadTxt', function (e) {
     e.preventDefault();
     ActiveBTN(true, this, 'Descargando ' + loading, 'Exportar .txt')
-    // new forma data
-    let formData = new FormData();
-    formData.append('typeDownload', 'downloadTxt');
-    formData.append('_drMob', $("#_drMob").val());
-    formData.append('_drMob2', $("#_drMob2").val());
-    formData.append('SoloFic', $("#SoloFic").val());
-    formData.append('start', 0);
-    formData.append('length', 100000);
-    formData.append('search[value]', $('#table-mobile_filter input').val());
-    formData.append('draw', '');
     $.notifyClose();
     notify('Exportando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
     axios({
         method: 'post',
         url: 'getRegMobile.php',
-        data: formData,
+        data: filterData('','downloadTxt'),
     }).then(function (response) {
         let file = response.data
         // window.location = file.data
         $.notifyClose();
-        if(!file.data){
+        if (!file.data) {
             notify('No hay datos a exportar', 'danger', 3000, 'right');
         } else {
-            notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: '+file.timeScript+' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadTxt" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+            notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadTxt" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
         }
         $(".downloadTxt").click(function () {
             $.notifyClose();
@@ -536,7 +548,33 @@ $(document).on('click', '#downloadTxt', function (e) {
     }).then(function () {
         ActiveBTN(false, '#downloadTxt', 'Descargando ' + loading, 'Exportar .txt')
     });
-})
+}).on('click', '#downloadXls', function (e) {
+    e.preventDefault();
+    ActiveBTN(true, this, 'Descargando ' + loading, 'Exportar .xls')
+    $.notifyClose();
+    notify('Exportando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+    axios({
+        method: 'post',
+        url: 'getRegMobile.php',
+        data: filterData('','downloadXls'),
+    }).then(function (response) {
+        let file = response.data
+        // window.location = file.data
+        $.notifyClose();
+        if (!file.data) {
+            notify('No hay datos a exportar', 'danger', 3000, 'right');
+        } else {
+            notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadXls" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+        }
+        $(".downloadXls").click(function () {
+            $.notifyClose();
+        });
+    }).catch(function (error) {
+        console.log('ERROR al descargar\n' + error);
+    }).then(function () {
+        ActiveBTN(false, '#downloadXls', 'Descargando ' + loading, 'Exportar .xls')
+    });
+});
 tablemobile.on('draw.dt', function (e, settings, json) {
     tablemobile.off('draw.dt');
     return true
@@ -1286,7 +1324,7 @@ let dateRange = () => {
         },
     });
     $('#_drMob').on('apply.daterangepicker', function (ev, picker) {
-        $('#_drMob2').val($('#_drMob').val())
+        $('#_drMob2').val($('#_drMob').val()).trigger('change');
         loadingTable('#table-mobile');
         $('#table-mobile').DataTable().ajax.reload();
     });
@@ -1306,8 +1344,8 @@ let minmaxDate = () => {
         let dr = maxFormat + ' al ' + maxFormat
         $('#min').val(minFormat)
         $('#max').val(maxFormat)
-        $('#_drMob2').val(dr)
-        $('#_drMob').val(dr)
+        $('#_drMob2').val(dr).trigger('change')
+        $('#_drMob').val(dr).trigger('change')
     }).then(() => {
         tablemobile.ajax.reload(null, false);
         $('#tableUsuarios').DataTable().ajax.reload(null, false);

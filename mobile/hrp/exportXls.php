@@ -1,7 +1,6 @@
 <?php
+// print_r($xlsData).exit;
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-session_start();
-require __DIR__ . '../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -15,15 +14,14 @@ header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 
-require __DIR__ . '../../config/conect_mssql.php';
-
+// require __DIR__ . '../../../config/conect_mssql.php';
 ultimoacc();
 secure_auth_ch();
-$Modulo = '3';
+$Modulo = '32';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '../../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -36,24 +34,34 @@ $documento
     ->getProperties()
     ->setCreator("CHWEB")
     ->setLastModifiedBy('CHWEB')
-    ->setTitle('Archivo exportado desde CHWEB')
-    ->setDescription('Reporte desde CHWEB');
+    ->setTitle('Archivo exportado desde CHWeb')
+    ->setDescription('Reporte Fichadas Mobile');
 
 # Como ya hay una hoja por defecto, la obtenemos, no la creamos
 $spreadsheet = $documento->getActiveSheet();
 $spreadsheet->setTitle("FICHADAS MOBILE");
 # Escribir encabezado de los productos
 $encabezado = [
-    'ID', /** u_id A*/
-    'Nombre', /** name B*/
-    'Dia', /** dia C*/
-    'Fecha', /** Fecha D*/
-    'Hora', /** time E*/
-    'Zona', /** zone F*/
-    'LinkMapa', /** LinkMapa G*/
-    'Certeza', /** certeza H*/
-    'Tipo', /** IN_OUT I*/
-    'Dispositivo', /** t_type J*/
+    'ID',
+    /** u_id A*/
+    'Nombre',
+    /** name B*/
+    'Dia',
+    /** dia C*/
+    'Fecha',
+    /** Fecha D*/
+    'Hora',
+    /** time E*/
+    'Zona',
+    /** zone F*/
+    'Posición',
+    /** Posición G*/
+    'Certeza',
+    /** certeza H*/
+    'Tipo',
+    /** Tipo I*/
+    'Dispositivo',
+    /** t_type J*/
 ];
 
 $styleArray = [
@@ -93,42 +101,35 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Encabezado y Pie de Pagina */
 // $spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS MOBILE');
 
-$DateRange  = explode(' al ', $_POST['_dr']);
+$DateRange  = explode(' al ', $_POST['_drMob2']);
 $start_date = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[0]))));
 $end_date   = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
 
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS MOBILE. DESDE '. ($start_date).' A '.$end_date );
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS MOBILE. DESDE ' . ($start_date) . ' A ' . $end_date);
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
 $spreadsheet->getStyle('A:J')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 $spreadsheet->getStyle('A1:J1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
 /** cálculo automático de ancho de columna */
 // foreach (range('A:E', $spreadsheet->getHighestDataColumn()) as $col) {
 //     $spreadsheet->getColumnDimension($col)->setAutoSize(true);
 // }
-$spreadsheet->getColumnDimension('A')->setWidth(10);
+$spreadsheet->getColumnDimension('A')->setWidth(14);
 $spreadsheet->getColumnDimension('B')->setWidth(27);
-$spreadsheet->getColumnDimension('C')->setWidth(12);
+$spreadsheet->getColumnDimension('C')->setWidth(10);
 $spreadsheet->getColumnDimension('D')->setWidth(12);
 $spreadsheet->getColumnDimension('E')->setWidth(8);
 $spreadsheet->getColumnDimension('F')->setWidth(27);
-$spreadsheet->getColumnDimension('G')->setWidth(58);
-$spreadsheet->getColumnDimension('H')->setWidth(10);
-$spreadsheet->getColumnDimension('I')->setWidth(12);
-$spreadsheet->getColumnDimension('J')->setWidth(13);
+$spreadsheet->getColumnDimension('G')->setWidth(20);
+$spreadsheet->getColumnDimension('H')->setWidth(25);
+$spreadsheet->getColumnDimension('I')->setWidth(10);
+$spreadsheet->getColumnDimension('J')->setWidth(20);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
-// $Letras = range("H", "U");
-// foreach ($Letras as $col) {
-//     $spreadsheet->getColumnDimension($col)->setWidth(10);
-// }
-// $Letras = range("F", "G");
-// foreach ($Letras as $col) {
-//     $spreadsheet->getColumnDimension($col)->setWidth(12);
-// }
 
 /** establecer el nivel de zoom de la hoja */
 $spreadsheet->getSheetView()->setZoomScale(100);
@@ -136,13 +137,10 @@ $spreadsheet->getSheetView()->setZoomScale(100);
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
 
 // $spreadsheet->getStyle('A1:J1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-$LetrasCENTER = range("E", "H");
-foreach ($LetrasCENTER as $col) {
-    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-}
-
+$spreadsheet->getStyle("E")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 $spreadsheet->getStyle("F")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 $spreadsheet->getStyle("G")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+$spreadsheet->getStyle("H")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 
 $spreadsheet->getStyle('D')
     ->getNumberFormat()
@@ -156,31 +154,25 @@ $spreadsheet->getStyle('A')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 
-$spreadsheet->getStyle('H')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-
 $spreadsheet->getStyle('A1')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
 
-$spreadsheet->freezePane('A2');
+// $spreadsheet->freezePane('A2');
 
+$ColNume = array("A","B","C","D","E","F","G","H","I","J");
+foreach ($ColNume as $colN) {
+    $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setIndent(1);
+}
+$ColumnCount=3;
+$RowIndex=2;
+$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
 // $spreadsheet->getColumnDimension('F')->setVisible(true);
 
 $numeroDeFila = 2;
-
-/** Llamamos a la API */
-// $token = $_SESSION["TK_MOBILE"];
-$token = TokenMobile($_SESSION["TK_MOBILE"], 'token');
-
-$url   = "https://server.xenio.uy/metrics.php?TYPE=GET_CHECKS&tk=" . $token . "&start_date=" . $start_date . "&end_date=" . $end_date;
-
-$json  = file_get_contents($url);
-$array = json_decode($json, TRUE);
-// $array = json_decode(getRemoteFile($url), true);
 $respuesta = array();
 
 function FormatoHoraToExcel($Hora)
@@ -200,66 +192,66 @@ function FormatoFechaToExcel($Fecha)
     $Fecha = ($excelTimestamp);
     return $Fecha;
 }
-// print_r($url);exit;
-
-if ($array['SUCCESS'] == 'YES' && (!empty($array['MESSAGE']))) {
-    foreach ($array['MESSAGE'] as $key => $valor) {
+if ($xlsData) {
+    foreach ($xlsData as $key => $valor) {
         $timestamp = $valor['timestamp'];
-        /* CONVERTIMOS TIMESTAMP Y LE DAMOS FORMATO AÑO/DIA/MES */
         $datetimeFormat = 'd/m/Y';
-        /** Formato de fecha */
         $datetimeFormat2 = 'Y-m-d';
-        /** Formato de fecha2 */
-        $dates           = new \DateTime();
-        $dates           = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
-        $dates->setTimestamp($timestamp);
-        $Fecha           = $dates->format($datetimeFormat2);
-        $LinkMapa        = "https://www.google.com/maps/place/" . $valor['lat'] . "," . $valor['lng'];
-        $gps             = ($valor['lat'] != '0') ? '' : 'Sin GPS';
-        $zone            = (!empty($valor['zone'])) ? $valor['zone'] : 'Fuera de Zona';
-        $name            = $valor['name'];
-        $valor['IN_OUT'] = $valor['IN_OUT'] ?? '';
-        switch ($valor['IN_OUT']) {
-            case 'OUT':
-                $inout = 'Salida';
+        $dates           = new \DateTime(); // current date/time
+        $dates           = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')); // current date/time
+        $dates->setTimestamp($timestamp); // set new timestamp
+        $Fecha           = $dates->format($datetimeFormat2); // output = 2012-03-15
+        $LinkMapa        = "https://www.google.com/maps/place/" . $valor['regLat'] . "," . $valor['regLng']; // Link Maps google
+        $gps             = ($valor['regLat'] != '0') ? '' : 'Sin GPS';
+        switch ($valor['operationType'] ?? '') {
+            case '-1':
+                $operationType = 'Fichada';
                 break;
-            case 'IN':
-                $inout = 'Entrada';
+            case '1':
+                $operationType = 'Ronda';
                 break;
-            case 'AUTOMATIC':
-                $inout = 'Automático';
+            case '3':
+                $operationType = 'Evento';
                 break;
-
             default:
-                $inout = $valor['IN_OUT'];
+                $operationType = 'Desconocido';
                 break;
         }
+        $userID     = $valor['userID']; // ID del usuario
+        $userName   = $valor['userName']; // Nombre del usuario
+        $regDay     = $valor['regDay']; // Dia de la fichada
+        $Fecha      = FormatoFechaToExcel($valor['regDate']); // Fecha de la fichada
+        // $Fecha      = FormatoFechaToExcel($Fecha); // Fecha de la fichada
+        $regHora    = FormatoHoraToExcel($valor['regHora']); // Hora de la fichada
+        $zoneName   = (!empty($valor['zoneName'])) ? $valor['zoneName'] : 'Fuera de Zona'; // Zona de la fichada
+        $confidence = $valor['confidenceFaceStr'];
+        $tipo       = $operationType;
+        $device     = $valor['device'];
 
-        $certeza = round($valor['similarity'], 0, PHP_ROUND_HALF_UP);
+        if (empty($device)) {
+            $spreadsheet->getStyle('J' . $numeroDeFila)
+                ->getNumberFormat()
+                ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+            $device = $valor['phoneid'];
+        } else {
+            $spreadsheet->getStyle('J' . $numeroDeFila)
+                ->getNumberFormat()
+                ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+        }
+        $textMap = $valor['regLat'] != 0 ? 'Ver en Google Maps' : 'Sin GPS';
 
-        $u_id     = $valor['u_id'];
-        $name     = $name;
-        $dia      = DiaSemana3($Fecha);
-        $Fecha    = FormatoFechaToExcel($Fecha);
-        $time     = FormatoHoraToExcel($valor['time']);
-        $zone     = $zone;
-        $LinkMapa = $LinkMapa;
-        $certeza  = $certeza;
-        $IN_OUT   = $inout;
-        $t_type   = ucfirst($valor['t_type']);
-
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $u_id);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $name);
-        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $dia);
+        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $userID);
+        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $userName);
+        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $regDay);
         $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Fecha);
-        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $time);
-        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $zone);
-        $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $LinkMapa);
-        $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $certeza);
-        $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $IN_OUT);
-        $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $t_type);
+        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $regHora);
+        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $zoneName);
+        $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $textMap);
+        $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $confidence);
+        $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $tipo);
+        $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $device);
 
-        $spreadsheet->getCell('G'.$numeroDeFila)->getHyperlink()->setUrl($LinkMapa);
+        ($valor['regLat'] != 0) ? $spreadsheet->getCell('G' . $numeroDeFila)->getHyperlink()->setUrl($LinkMapa):''; // Si no hay GPS no se puede ver el link mapa 
 
         $numeroDeFila++;
     }
@@ -269,17 +261,11 @@ try {
     BorrarArchivosPDF('archivos/*.xls');
     /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_Fichadas_Mobile_" . $MicroTime . ".xls";
-
     $writer = new Xls($documento);
     # Le pasamos la ruta de guardado
     $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-    $writer->save('archivos/' . $NombreArchivo);
+    $writer->save($routeFile3); // Guardamos el archivo en la ruta especificada
     // $writer->save('php://output');
-
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
-    echo json_encode($data);
-    exit;
 } catch (\Exception $e) {
     $data = array('status' => 'error');
     echo json_encode($data);
