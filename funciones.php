@@ -3843,6 +3843,9 @@ function confidenceFaceStr($confidence, $id_api)
             case $confidence == -1:
                 $c = 'Entrenamiento Inválido';
                 break;
+            case $confidence == 0:
+                $c = 'No Identificado';
+                break;
             case $confidence >= 0 && $confidence <= 80:
                 $c = 'Identificado';
                 break;
