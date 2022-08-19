@@ -120,7 +120,7 @@ if ($api['COUNT'] > 0) {
                 'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
                 'locked'            => $r['locked'],
                 'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
-                'regDateTime'       => FechaFormatVar($r['regDateTime'], 'Y-m-d H:i'),
+                'regDateTime'       => ($r['regDateTime']),
             );
             if ($txtData['userName']) {
                 $line = "$txtData[userID],$txtData[regDateTime],$txtData[userName]";
