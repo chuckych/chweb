@@ -167,9 +167,11 @@ if ($api['COUNT'] == 0) {
 switch ($params['typeDownload'] ?? '') {
     case 'downloadTxt':
         $arrayData = $routeFile2;
+        auditoria("Exportar TXT Fichadas Mobile HRP. Desde $start_date a $end_date", 'A', $idCompany, '32');
         break;
     case 'downloadXls':
         $arrayData = $routeFile3;
+        auditoria("Exportar Excel Fichadas Mobile HRP. Desde $start_date a $end_date", 'A', $idCompany, '32');
         break;
     default:
         $arrayData = $arrayData;

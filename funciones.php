@@ -1870,6 +1870,12 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
     sqlsrv_execute($stmt);
     sqlsrv_close($link);
 }
+/**
+ * @param {$dato} string texto de auditoria
+ * @param {$tipo} string a:insert, b:update, m:delete; p: proceso
+ * @param {$audcuenta} integer id de cuenta
+ * @param {$modulo} modulo de la aplicacion
+ */
 function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
 {
     timeZone();
