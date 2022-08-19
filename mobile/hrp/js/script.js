@@ -496,10 +496,10 @@ tablemobile.on('init.dt', function (e, settings, json) {
             <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </button>
-            <div class="dropdown-menu shadow border-0 p-0">
+            <div class="dropdown-menu shadow border-0 p-0 radius">
                 <ul class="list-group">
-                    <button class="btn btn-sm btn-outline-custom border-0 radius fontq" id="downloadTxt" ><div class="ml-1"><span>Exportar</span> .txt</div></button>
-                    <button class="btn btn-sm btn-outline-custom border-0 radius fontq" id="downloadXls" ><div class="ml-1">Exportar .xls</div></button>
+                    <button class="btn btn-outline-custom border-0 radius fontq" id="downloadTxt" ><div class="ml-1"><span>Exportar</span> .txt</div></button>
+                    <button class="btn btn-outline-custom border-0 radius fontq" id="downloadXls" ><div class="ml-1">Exportar .xls</div></button>
                 </ul>
             </div>
         </div>
