@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.243'; // Version de la aplicación
+    return 'v0.0.244'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -153,6 +153,10 @@ function ultimoacc() // Funcion para obtener la fecha hora del ultimo acceso
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
 }
 /** Seguridad injections SQL */
+/**
+ * @param $key string
+ * @return string
+ */
 function secureVar($key)
 {
     $key = htmlspecialchars(stripslashes($key)); // Limpio la variable
@@ -3425,11 +3429,11 @@ function getVerDBCH($link) // Obtiene la version de la base de datos
     sqlsrv_free_stmt($stmt); // Libera el query
     return $path; // Retorna el valor
 }
-function fileLog($text, $ruta_archivo)
+function fileLog($text, $ruta_archivo, $type = false)
 {
     $log    = fopen($ruta_archivo, 'a');
     $date   = fechaHora2();
-    $text   = $date . ' ' . $text . "\n";
+    $text   = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
     fwrite($log, $text);
     fclose($log);
 }
@@ -3728,9 +3732,14 @@ function getDataIni($url) // obtiene el json de la url
     }
     
 }
-function padLeft($str, $len, $pad = ' ')
+/**
+ * @param $str = string a escapar
+ * @param $length = cantidad de caracteres a devolver
+ * @param $pad  = caracteres de autocompletado
+ */
+function padLeft($str, $length, $pad = ' ')
 {
-    return str_pad($str, $len, $pad, STR_PAD_LEFT);
+    return str_pad($str, $length, $pad, STR_PAD_LEFT);
 }
 /**
  * Function that groups an array of associative arrays by some key.
@@ -4042,6 +4051,11 @@ function getConfTar()
     $confTar = (getDataIni(__DIR__ . '\proy\op\confTarea.php'));
     return $confTar;
 }
+/**
+ * @param {String} Start Fecha y hora de incio de la tarea
+ * @param {String} End Fecha y hora de finalización de la tarea
+ * @return {Array} Devuelve un arregle con la diferencia de tiempo entre las dos fechas, status = 0 si hay error, status = 1 si no hay error, limitMin = límite de la tarea en minutos, limitHor = límite de la tarea en Horas (18:00), diffMin = diferencia de tiempo en minutos, diffHor = diferencia de tiempo en Horas (18:00), confTar = arregle con la configuración de las tareas
+ */
 function calcLimitTar($start, $end)
 {
     $getConfTar = ((getConfTar()['confTar'])); // Obtenemos el limite de tiempo de la tarea en minutos

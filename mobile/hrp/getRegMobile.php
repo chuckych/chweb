@@ -25,6 +25,7 @@ $params = $columns = $totalRecords = '';
 $params = ($_REQUEST);
 
 FusNuloPOST('SoloFic', '');
+FusNuloPOST('typeDownload', '');
 
 $idCompany = $_SESSION['ID_CLIENTE'];
 
@@ -45,9 +46,19 @@ $api = "api/v1/checks/$parametros";
 $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
-$totalRecords = $api['TOTAL'];
 
+$totalRecords = $api['TOTAL'];
+$tm = (microtime(true));
+$routeFile = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.txt';
+$routeFile2 = 'archivos/export_' . $idCompany . '_' . $tm . '.txt';
+$startScript = microtime(true);
+borrarLogs($routeFile, 10, '.txt');
 if ($api['COUNT'] > 0) {
+    // if ($params['typeDownload'] ?? '' == 'downloadTxt') {
+    //     $line = "ID,FECHA HORA,NOMBRE";
+    //     fileLog($line, $routeFile, 'export');
+    // }
+
     foreach ($api['RESPONSE_DATA'] as $r) {
 
         $jsonMarcador = json_encode(array(
@@ -91,7 +102,7 @@ if ($api['COUNT'] > 0) {
             'phoneRegId'        => $r['phoneRegID'],
             'zoneID'            => $r['zoneID'],
             'zoneName'          => $r['zoneName'],
-            'zoneDistance'      => round(floatval($r['zoneDistance'])*1000,2),
+            'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
             'locked'            => $r['locked'],
             'error'             => $r['error'],
             'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
@@ -102,15 +113,52 @@ if ($api['COUNT'] > 0) {
             // 'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
             'imageData' => $r['imageData'],
         );
+        if ($params['typeDownload'] ?? '' == 'downloadTxt') {
+            $txtData = array(
+                'userID'            => (padLeft($r['userID'], 11, '0')),
+                'userName'          => trim($r['userName']),
+                'zoneID'            => $r['zoneID'],
+                'zoneName'          => trim($r['zoneName']),
+                'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
+                'locked'            => $r['locked'],
+                'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
+                'regDateTime'       => $r['regDateTime'],
+            );
+            if ($txtData['userName']) {
+                $line = "$txtData[userID],$txtData[regDateTime],$txtData[userName]";
+                fileLog($line, $routeFile, 'export');
+            }
+        }
     }
 }
+if ($api['COUNT'] == 0) {
+    if ($params['typeDownload'] ?? '' == 'downloadTxt') {
+        $routeFile2 = '';
+    }
+}
+
+switch ($params['typeDownload'] ?? '') {
+    case 'downloadTxt':
+        $arrayData = $routeFile2;
+        break;
+    case 'downloadXls':
+        $arrayData = '';
+        break;
+    default:
+        $arrayData = $arrayData;
+        break;
+}
+$endScript = microtime(true);
+$timeScript = round($endScript - $startScript, 2);
+// sleep(3);
 // restore_error_handler();
 $json_data = array(
     "draw"            => intval($params['draw']),
     "recordsTotal"    => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data"            => $arrayData,
-    "e"           => $error,
+    "e"               => $error,
+    "timeScript"      => $timeScript,
 );
 // sleep(2);
 echo json_encode($json_data);

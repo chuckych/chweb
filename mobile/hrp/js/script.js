@@ -467,10 +467,20 @@ let processRegFace = (id_api) => {
 }
 // max-h-500 overflow-auto
 
-tablemobile.on('init.dt', function () {
+tablemobile.on('init.dt', function (e, settings, json) {
     $('.dr').append(`
         <div class="mx-2">
             <input type="text" readonly class="pointer h40 form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
+        </div>
+        <div class="btn-group dropright">
+            <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <div class="dropdown-menu shadow border-0">
+                <ul class="list-group fontq m-0">
+                    <li class="btn btn-sm btn-outline-custom border-0 radius p-1" id="downloadTxt" >Exportar .txt</li>
+                </ul>
+            </div>
         </div>
     `);
     dateRange()
@@ -488,11 +498,47 @@ tablemobile.on('init.dt', function () {
     $('#table-mobile_filter input').attr("style", "height: 40px !important");
     select2Simple('#table-mobile_length select', '', false, false)
     $('.SoloFic').hide()
+    // click event
 });
-tablemobile.on('draw.dt', function (e, settings) {
-    // e.preventDefault();
+$(document).on('click', '#downloadTxt', function (e) {
+    e.preventDefault();
+    ActiveBTN(true, this, 'Descargando ' + loading, 'Exportar .txt')
+    // new forma data
+    let formData = new FormData();
+    formData.append('typeDownload', 'downloadTxt');
+    formData.append('_drMob', $("#_drMob").val());
+    formData.append('_drMob2', $("#_drMob2").val());
+    formData.append('SoloFic', $("#SoloFic").val());
+    formData.append('start', 0);
+    formData.append('length', 100000);
+    formData.append('search[value]', $('#table-mobile_filter input').val());
+    formData.append('draw', '');
+    $.notifyClose();
+    notify('Exportando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+    axios({
+        method: 'post',
+        url: 'getRegMobile.php',
+        data: formData,
+    }).then(function (response) {
+        let file = response.data
+        // window.location = file.data
+        $.notifyClose();
+        if(!file.data){
+            notify('No hay datos a exportar', 'danger', 3000, 'right');
+        } else {
+            notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: '+file.timeScript+' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadTxt" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+        }
+        $(".downloadTxt").click(function () {
+            $.notifyClose();
+        });
+    }).catch(function (error) {
+        console.log('ERROR al descargar\n' + error);
+    }).then(function () {
+        ActiveBTN(false, '#downloadTxt', 'Descargando ' + loading, 'Exportar .txt')
+    });
+})
+tablemobile.on('draw.dt', function (e, settings, json) {
     tablemobile.off('draw.dt');
-    // console.log(settings);
     return true
 });
 tablemobile.on('page.dt', function () {
