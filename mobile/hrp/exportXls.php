@@ -119,7 +119,7 @@ $spreadsheet->getStyle('A1:J1')->getAlignment()->setVertical(\PhpOffice\PhpSprea
 // }
 $spreadsheet->getColumnDimension('A')->setWidth(14);
 $spreadsheet->getColumnDimension('B')->setWidth(27);
-$spreadsheet->getColumnDimension('C')->setWidth(10);
+$spreadsheet->getColumnDimension('C')->setWidth(12);
 $spreadsheet->getColumnDimension('D')->setWidth(12);
 $spreadsheet->getColumnDimension('E')->setWidth(8);
 $spreadsheet->getColumnDimension('F')->setWidth(27);
