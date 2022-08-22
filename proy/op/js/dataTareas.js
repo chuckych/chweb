@@ -521,14 +521,14 @@ $(function () {
                         delay: "250",
                         allowClear: true,
                     };
-                
+
                     function template(data) {
                         if ($(data.html).length === 0) {
                             return data.text;
                         }
                         return $(data.html);
                     }
-                
+
                     $("#TareProy").select2({
                         language: "es",
                         multiple: false,
@@ -607,7 +607,7 @@ $(function () {
                     $("#TareProy").on('select2:unselecting', function (e) {
                         $("#TareProc").val('').trigger("change");
                     });
-                
+
                     $("#TareResp").select2({
                         language: "es",
                         multiple: false,
@@ -668,7 +668,7 @@ $(function () {
                             },
                         },
                     });
-                
+
                     if ($("#TareProy").val()) {
                         $("#TareProc").select2({
                             language: "es",
@@ -793,7 +793,7 @@ $(function () {
                             },
                         });
                     }
-                
+
                     select2EmptyRemove("#TareProy");
                     select2EmptyRemove("#TareProc");
                     select2EmptyRemove("#TareResp");
@@ -804,7 +804,7 @@ $(function () {
                     // $('#TareProy').on('select2:select', function (e) {
                     //     $("#select2-TareProy-container").removeClass("border border-danger border-wide");
                     // });
-                
+
                     $("#ProyEmpr").select2({
                         language: "es",
                         multiple: false,
@@ -995,7 +995,7 @@ $(function () {
                             },
                         },
                     });
-                
+
                     $('.date').on('show.daterangepicker', function (ev, picker) {
                         // $.notifyClose();
                         // notify("Seleccione una Fecha de Inicio y Fin", "info", 0, "right");
@@ -1003,9 +1003,9 @@ $(function () {
                     $('.date').on('hide.daterangepicker', function (ev, picker) {
                         // $.notifyClose();
                     });
-                
+
                     $('.HoraMask').mask(maskBehavior, spOptions);
-                
+
                     $('.date').daterangepicker({
                         singleDatePicker: true,
                         showDropdowns: false,
@@ -1276,7 +1276,7 @@ $(function () {
             });
 
         });
-        const filters = () => {
+        const filters = (custom = '') => {
             let proy_info = sessionStorage.getItem(
                 location.pathname.substring(1) + "proy_info"
             );
@@ -1294,6 +1294,14 @@ $(function () {
             d.append("tarRespFiltro", $("#tarRespFiltro").val() ?? '');
             d.append("FiltroTarFechas", $("#FiltroTarFechas").val() ?? '');
             d.append("TareNum", $("#tableTareas_filter input").val() ?? '');
+            if (custom) {
+                d.append(custom[0], custom[1]);
+                d.append('procPendientes', '');
+                d.append('ProcPendTar', '');
+                d.append('start', 0);
+                d.append('length', 9999);
+                d.append('draw', 1);
+            }
             return d;
         }
 
@@ -1337,6 +1345,7 @@ $(function () {
         $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 calCosto" data-titler="Recalcular costos segun filtro"><i class="bi bi-calculator font1"></i></button>'); // Se agrega el boton de Recalcular costos
         $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 procPend" data-titler="Procesar Tareas Pendientes"><i class="bi bi-arrow-down-up font1"></i></button>'); // Se agrega el boton de Recalcular costos
         $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08" data-titler="Parametros" data-bs-toggle="collapse" data-bs-target="#tarParametros" aria-expanded="false" aria-controls="tarParametros"><i class="bi bi-three-dots font1"></i></button>'); // Se agrega el boton de parametros
+        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-teal h40 font08 toExcel" data-titlel="Exportar a Excel"><i class="bi bi-filetype-xls font1"></i></button>'); // Se agrega el boton de parametros
         // $(".tarParametros").html(``); 
 
         fetch(`op/tarParametros.html?${Date.now()}`) // Se hace la peticion ajax para obtener el div de estados
@@ -1426,6 +1435,31 @@ $(function () {
         setTimeout(() => {
             $(".divBtnTotales").fadeIn('slow');
         }, 500);
+
+        $(".toExcel").on("click", function (e) {
+            let t = ['toExcel', true];
+            axios({
+                method: "post",
+                url: 'op/crud.php',
+                data: filters(t),
+                headers: { "Content-Type": "multipart/form-data" },
+            }).then(function (response) {
+                let file = response.data
+                // window.location = file.data
+                $.notifyClose();
+                if (file.status == 'error') {
+                    notify('No hay datos a exportar', 'danger', 3000, 'right');
+                } else {
+                    notify('Archivo exportado correctamente.<br><div class="shadow-sm w100"><a href="op/' + file.Mensaje + '" class="btn btn-blue px-4 btn-sm mt-3 font08 h40 downloadXls" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ms-1 font1"></i></div></a></div>', 'success', 0, 'right')
+                }
+                $(".downloadXls").click(function () {
+                    $.notifyClose();
+                });
+            }).catch(function (error) {
+                alert(error);
+            })
+        });
+
     });
     tableTareas.on("page.dt", function (e, settings) {
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla

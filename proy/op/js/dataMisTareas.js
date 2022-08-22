@@ -113,7 +113,6 @@ $(function () {
                         `
                             <span data-titler="${row.proceso.nombre}">
                                 <div class="text-truncate" style="max-width:200px">${row.proceso.nombre}</div>
-                                <div>${cost}</div>
                             </span>
                         `;
                     return '<div class="datacol">' + datacol + '</div>';
@@ -134,15 +133,15 @@ $(function () {
                     return '<div class="datacol">' + datacol + '</div>';
                 }
             },
-            /** Usuario */
+            /** Plano */
             {
                 className: "",
                 targets: "",
-                title: "Responsable",
+                title: "Plano",
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                        <div class="text-truncate" style="max-width:100px">${row.responsable.nombre}</div>
+                        <div class="text-truncate" style="max-width:100px">${row.plano.nombre}</div>
                                     `;
                     return '<div class="datacol">' + datacol + '</div>';
                 }

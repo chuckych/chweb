@@ -111,6 +111,7 @@ if (!$params['tarTotales']) {
             'estado' => $estado,
             'fechas' => array(
                 "TareIni"        => $TareIni,
+                "TareFin"        => $TareFin,
                 "inicio"        => $Fecha,
                 "inicioHora"    => $Hora,
                 "inicioDia"     => $dia,

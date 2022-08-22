@@ -355,7 +355,9 @@ textarea.form-control {
 .w200 {
     width: 200px !important;
 }
-
+.w250 {
+    width: 250px !important;
+}
 .w300 {
     width: 300px !important;
 }

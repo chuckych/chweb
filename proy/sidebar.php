@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['page'] == 'sidebar')) {
     exit;
 }
 ?>
-<div class="offcanvas offcanvas-start" tabindex="-1" id="mainCanva" aria-labelledby="mainCanvaLabel">
+<div class="offcanvas offcanvas-start w250" tabindex="-1" id="mainCanva" aria-labelledby="mainCanvaLabel">
     <div class="offcanvas-header m-0">
         <h2 class="offcanvas-title" id="mainCanvaLabel">Operaciones</h2>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>

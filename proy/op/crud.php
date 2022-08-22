@@ -4,6 +4,10 @@ header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
+function emptyData($data, $err)
+{
+    return empty($data) ? PrintRespuestaJson('error', $err) . exit : '';
+}
 // sleep(1);
 $_POST['EmpSubmit']     = ($_POST['EmpSubmit']) ?? '';
 $_POST['EstSubmit']     = ($_POST['EstSubmit']) ?? '';
@@ -44,7 +48,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         exit;
     }
 
-
+    $_POST['toExcel']   = ($_POST['toExcel']) ?? '';
     $_POST['EmpDesc']   = ($_POST['EmpDesc']) ?? '';
     $_POST['EmpTel']    = ($_POST['EmpTel']) ?? '';
     $_POST['EmpObs']    = ($_POST['EmpObs']) ?? '';
@@ -468,5 +472,24 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             PrintRespuestaJson('ERROR', 'Error al eliminar el proyecto');
             exit;
         }
+    } else if ($_POST['toExcel'] == true) {
+        $_POST['_c'] = ($_POST['_c']) ?? '';
+        $_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
+        emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
+        $dataCuenta  = getIniCuenta($_POST['_c']); // Obtener el host de la cuenta
+        $urlHost  = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
+        $idCliente  = $dataCuenta['idCompany']; // Obtener el host de la cuenta
+
+        $dataRequest = $_REQUEST;
+        $dataRequest['idCliente'] = $idCliente;
+        $urlTar = $urlHost . "/" . HOMEHOST . "/proy/data/getTareas.php?" . microtime(true); // Url para obtener las tareas pendientes
+        $tareasPendientes = sendRemoteData($urlTar, ($dataRequest)); // Obtenemos el array de tareas pendientes
+        $xlsData = json_decode($tareasPendientes, true); // Lo decodificamos en un array
+        $xlsData = $xlsData['data']; // Obtenemos el array de tareas pendientes
+        
+        require __DIR__ . './tarToXls.php';
+
+        echo PrintRespuestaJson('ok', $routeFile);
+        exit;
     }
 }

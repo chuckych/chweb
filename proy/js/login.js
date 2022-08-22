@@ -18,10 +18,10 @@ $(function () {
         let route = "";
         switch (val) {
             case "rfid":
-                route = "routes.php/?log_rfid";
+                route = "routes.php/?page=log_rfid";
                 break;
             case "user":
-                route = "routes.php/?log_user";
+                route = "routes.php/?page=log_user";
                 break;
         }
         fetch(route).then(response => response.text()).then(data => {

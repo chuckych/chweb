@@ -4,6 +4,7 @@ session_start();
 E_ALL();
 $_SESSION["RECID_ROL"] = $_SESSION["RECID_ROL"] ?? '';
 $_SESSION["MODS_ROL"] = $_SESSION["MODS_ROL"] ?? '';
+$_GET['page'] = $_GET['page'] ?? '';
 ($_SESSION["RECID_ROL"]) ? '' : require __DIR__ . '/salir.php';
 
 function progressBar($step)

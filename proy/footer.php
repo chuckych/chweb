@@ -8,7 +8,7 @@
 <script src="/<?= HOMEHOST ?>/js/bootstrap5/jquery.dataTables.min.js"></script>
 <script src="/<?= HOMEHOST ?>/js/bootstrap5/dataTables.bootstrap5.min.js"></script>
 <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> 
+<script src="/<?= HOMEHOST ?>/js/axios.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>

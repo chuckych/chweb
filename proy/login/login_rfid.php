@@ -11,10 +11,10 @@
             </div>
             <div class="flex-center-between">
                 <div class="mt-3">
-                    <button type="button" data-titlel="Salir" class="font07 btn btn-sm btn-outline-info" id="logoutLogin">Salir</button>
+                    <button type="button" class="font07 btn btn-sm btn-outline-info" id="logoutLogin">Salir</button>
                 </div>
-                <div class="mt-3 d-none">
-                    <button type="button" class="btn btn-sm btn-outline-info" value="user" id="changeLogin"><i class="bi bi-person"></i></button>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-outline-info" value="user" id="changeLogin"><i class="bi bi-person"></i></button>
                 </div>
             </div>
         </div>

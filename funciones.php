@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.245'; // Version de la aplicación
+    return 'v0.0.246'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -1000,9 +1000,13 @@ function HoraFormat($FechaHora, $second = true)
 }
 function FechaFormatVar($FechaHora, $var)
 {
-    $dato = date_create($FechaHora);
-    $var  = date_format($dato, $var);
-    return $var;
+    if ($FechaHora != '0000-00-00 00:00:00') {
+        $dato = date_create($FechaHora);
+        $var  = date_format($dato, $var);
+        return $var;
+    } else {
+        return '';
+    }
 }
 function fechformatM($var)
 {
@@ -3736,7 +3740,6 @@ function getDataIni($url) // obtiene el json de la url
         fileLog("No existe archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
         return false; // devolvemos false
     }
-    
 }
 /**
  * @param $str = string a escapar
@@ -4056,7 +4059,7 @@ function confTar($assoc, $path)
 function getConfTar()
 {
     $confRequest['conf'] = 1;
-    $confRequest['getConf'] = 1;    
+    $confRequest['getConf'] = 1;
     $confTar = (getDataIni(__DIR__ . '\proy\op\confTarea.php'));
     return $confTar;
 }
