@@ -1,11 +1,5 @@
-<style>
-    .container-fluid {
-        display: flex;
-        align-items: center;
-    }
-</style>
 <div class="form-signin animate__animated animate__fadeIn mb-5 pt-5">
-    <form class="card card-md border-0 shadow-lg" action="." method="get" autocomplete="off">
+<form class="card card-md shadow-lg border-0" action="login/validaSesion2.php" method="POST" autocomplete="off" id="formUser">
         <div class="card-body">
             <!-- <p class="card-title text-center h3">Iniciar Sesi&oacute;n</p> -->
             <div class="form-floating mb-3">
@@ -17,7 +11,7 @@
                 <label for="clave">Contrase&ntilde;a</label>
             </div>
             <div class="">
-                <button type="submit" class="btn btn-primary w-100">INGRESAR</button>
+                <button type="submit" class="btn btn-primary w-100" id="submitLogin">INGRESAR</button>
             </div>
             <div class="mt-3 flex-center-between">
                 <div class="">

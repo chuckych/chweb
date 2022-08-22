@@ -1,5 +1,56 @@
 $(function () {
-    //"use strict"; // Start of use strict
+    "use strict"; // Start of use strict
+
+    function bindForm(tipo) { //bindear formulario de alta/edicion
+        $("#planoForm").bind("submit", function (e) {
+            e.preventDefault();
+            if ($("#PlanoDesc").val() == "") {
+                $.notifyClose();
+                $("#PlanoDesc").focus().addClass("is-invalid");
+                let textErr = `<span class="text-danger font-weight-bold">Ingrese una descripción.<span>`;
+                notify(textErr, "danger", 2000, "right");
+                return;
+            }
+            let dataForm = $(this).serialize();
+            let PlanoDesc = {};
+            dataForm.split("&").forEach(function (item) {
+                var parts = item.split("=");
+                PlanoDesc[parts[0]] = decodeURIComponent(parts[1]);
+            });
+            $.ajax({
+                type: $(this).attr("method"),
+                url: "op/crud.php",
+                data: $(this).serialize() + "&PlanoSubmit=" + tipo,
+                beforeSend: function (data) {
+                    $.notifyClose();
+                    notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
+                    ActiveBTN(true, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-plus-lg me-2" id="PlanoSubmit"></i>Crear Plano');
+                    $(".is-invalid").removeClass("is-invalid");
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        notify(data.Mensaje, "success", 2000, "right")
+                        $("#selectPlano").DataTable().search( PlanoDesc['PlanoDesc'] ).draw();
+                        $("#planoModal").modal("hide");
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, "danger", 2000, "right");
+                    }
+                    ActiveBTN(false, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-plus-lg me-2" id="PlanoSubmit"></i>Crear Plano');
+                },
+                error: function (data) {
+                    ActiveBTN(false, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-plus-lg me-2" id="PlanoSubmit"></i>Crear Plano');
+                    $.notifyClose();
+                    notify("Error", "danger", 3000, "right");
+                }
+            });
+            e.stopImmediatePropagation();
+            document.getElementById('planoModal').addEventListener('hidden.bs.modal', function (event) { // Se agrega el evento hidden.bs.modal al Modal
+                $("#modales").html('');
+            })
+        });
+    } //fin bindForm
 
     let proy_info = sessionStorage.getItem(
         location.pathname.substring(1) + "proy_info"
@@ -105,6 +156,26 @@ $(function () {
         </div>
     `)
         $('#listSelPlano').fadeIn();
+
+        $("#btnAltaPlano").click(function () { // Se agrega el evento click al boton de alta de plano
+            $.notifyClose() // Se cierra el notify
+            fetch("op/planoModal.html?" + $.now()) // Se hace la peticion ajax para obtener el modal
+                .then(response => response.text())  // Se obtiene la respuesta  
+                .then(data => { // Se obtiene el html del modal
+                    $("#modales").html(data); // Se agrega el html al modal
+                    $("#modales .form-control").attr("autocomplete", "off"); // Se desactiva el autocomplete
+                    var planoModal = new bootstrap.Modal(document.getElementById("planoModal"), { keyboard: true }); // Se inicializa el modal
+                    ActiveBTN(false, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-plus-lg me-2" id="PlanoSubmit"></i>Crear Plano'); // Se desactiva el boton de submit
+                    planoModal.show(); // Se muestra el modal
+                    setTimeout(() => {
+                        $("#PlanoDesc").focus();
+                    }, 500); // Se agrega un setTimeout para que el focus se haga despues de 0.5 segundos
+                    bindForm('alta') // Se llama la funcion bindForm para hacer el submit del formulario
+                    document.getElementById('planoModal').addEventListener('hidden.bs.modal', function (event) { // Se agrega el evento hidden.bs.modal al Modal
+                        $("#modales").html('');
+                    })
+                });
+        });
     });
     tablePlano.on('draw.dt', function (e, settings) {
         e.preventDefault();

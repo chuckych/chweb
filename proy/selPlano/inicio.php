@@ -6,7 +6,10 @@
             <div class="row mt-3" id="listSelPlanoRow">
 
             </div>
-            <button class="mt-2 btn btn-green float-end px-4" id="omitePlano">Omitir</button>
+            <div class="mt-4">
+                <button class="mt-2 btn btn-green float-end px-4" id="omitePlano">Omitir</button>
+                <button class="mt-2 btn btn-azure float-end px-3 me-2" id="btnAltaPlano">+ Nuevo Plano</button>
+            </div>
         </div>
     </div>
     <?= progressBar(3) ?>

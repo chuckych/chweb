@@ -61,11 +61,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
 
             if ($IDTarjeta) {
 
-                $qmysql = "SELECT ui.ident, ui.usuario, u.nombre, u.legajo FROM uident ui LEFT JOIN usuarios u ON ui.usuario=u.id WHERE ui.ident=$IDTarjeta LIMIT 1"; // chequeamos si la tarjeta ya existe en la base de datos
+                $qmysql = "SELECT ui.ident, ui.usuario, u.nombre, u.legajo FROM uident ui LEFT JOIN usuarios u ON ui.usuario=u.id WHERE ui.ident='$IDTarjeta' LIMIT 1"; // chequeamos si la tarjeta ya existe en la base de datos
                 $a = simple_pdoQuery($qmysql);
-                $a['legajo'] = $a['legajo'] ?? '-';
+                $a['legajo'] = $a['legajo'] ?? '';
 
-                if (count($a) > 0) { // si existe
+                if (!empty($a['legajo'])) { // si existe
                     $textError .= "<br>La tarjeta $IDTarjeta se encuentra registrada al usuario $a[usuario] ($a[nombre]). Legajo: $a[legajo]";
                 }else {
                     $q2 = "INSERT INTO `uident` (`usuario`, `ident`,`login`,`descripcion`, `expira`) VALUES ( '$dataUser[id_user]', '$IDTarjeta', '0', '', '2099-11-11')";

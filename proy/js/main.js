@@ -34,7 +34,7 @@ $(function () {
         .then(response => response.text())
         .then(data => {
             $("#mainNav").html(data);
-            $("#navLogout").click(function () { // Logout
+            $(".navLogout").click(function () { // Logout
                 fetch("routes.php/?page=log_rfid")
                     .then(response => response.text())
                     .then(data => {

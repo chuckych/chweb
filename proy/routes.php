@@ -4,6 +4,7 @@ session_start();
 E_ALL();
 $_SESSION["RECID_ROL"] = $_SESSION["RECID_ROL"] ?? '';
 $_SESSION["MODS_ROL"] = $_SESSION["MODS_ROL"] ?? '';
+$_SESSION["MODS_ROL_PROY"] = $_SESSION["MODS_ROL_PROY"] ?? '';
 $_GET['page'] = $_GET['page'] ?? '';
 ($_SESSION["RECID_ROL"]) ? '' : require __DIR__ . '/salir.php';
 
@@ -49,6 +50,12 @@ function checkModulo($modulo)
         return false;
     }
 }
+// echo '<pre>';
+// print_r($_SESSION["MODS_ROL_PROY"]);
+// echo '</pre>';
+// exit;
+($_SESSION["MODS_ROL_PROY"] == 'error') ? require __DIR__ . '/errMod.php':'';
+($_SESSION["MODS_ROL_PROY"] == 'error') ? exit:'';
 
 $rutas = array(
     'log_rfid'   => array(
