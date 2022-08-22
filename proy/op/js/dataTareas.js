@@ -1438,6 +1438,9 @@ $(function () {
 
         $(".toExcel").on("click", function (e) {
             let t = ['toExcel', true];
+            $.notifyClose();
+            ActiveBTN(true, ".toExcel", "<span class='animated-dots p-1'></span>", '<i class="bi bi-filetype-xls font1"></i>');
+            notify('Exportando <span class = "dotting mr-1"> </span> <span class="animated-dots"></span>', 'info', 0, 'right')
             axios({
                 method: "post",
                 url: 'op/crud.php',
@@ -1457,7 +1460,9 @@ $(function () {
                 });
             }).catch(function (error) {
                 alert(error);
-            })
+            }).then(function () {
+                ActiveBTN(false, ".toExcel", "<span class='animated-dots'></span>", '<i class="bi bi-filetype-xls font1"></i>');
+            });
         });
 
     });
