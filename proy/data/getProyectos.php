@@ -37,8 +37,8 @@ if ($params['FiltroEstTipo'] != 'Todos') {
 }
 
 $query = "SELECT `ProyID`, `ProyNom`, `ProyDesc`, `ProyEmpr`, `EmpDesc`, `ProyPlant`, `PlantDesc`, `ProyResp`, `nombre` AS 'RespDesc', `ProyEsta`, `EstTipo`, `EstDesc`, `EstColor`, `ProyObs`, `ProyIni`, `ProyFin`, 
-(SELECT (SUM(proy_tare_horas.TareHorMin)) FROM proy_tare_horas INNER JOIN .proy_tareas ON proy_tare_horas.TareHorID = proy_tareas.TareID WHERE proy_tare_horas.TareHorProy = proy_proyectos.ProyID AND proy_tareas.TareEsta = '0') AS 'ProyMin' 
-FROM proy_proyectos INNER JOIN proy_empresas ON proy_proyectos.ProyEmpr=proy_empresas.EmpID INNER JOIN proy_plantillas ON proy_proyectos.ProyPlant=proy_plantillas.PlantID LEFT JOIN usuarios ON proy_proyectos.ProyResp=usuarios.id INNER JOIN proy_estados ON proy_proyectos.ProyEsta=proy_estados.EstID WHERE proy_proyectos.ProyID >0";
+(SELECT (SUM(`proy_tare_horas`.`TareHorMin`)) FROM `proy_tare_horas` INNER JOIN `proy_tareas` ON `proy_tare_horas`.`TareHorID` = `proy_tareas`.`TareID` WHERE `proy_tare_horas`.`TareHorProy` = `proy_proyectos`.`ProyID` AND `proy_tareas`.`TareEsta` = '0') AS 'ProyMin' 
+FROM `proy_proyectos` INNER JOIN `proy_empresas` ON `proy_proyectos`.`ProyEmpr`=`proy_empresas`.`EmpID` INNER JOIN `proy_plantillas` ON `proy_proyectos`.`ProyPlant`=`proy_plantillas`.`PlantID` LEFT JOIN `usuarios` ON `proy_proyectos`.`ProyResp`=`usuarios`.`id` INNER JOIN `proy_estados` ON `proy_proyectos`.`ProyEsta`=`proy_estados`.`EstID` WHERE `proy_proyectos`.`ProyID` > 0";
 
 $queryCount = "SELECT COUNT(*) as 'count' FROM proy_proyectos INNER JOIN proy_estados ON proy_proyectos.ProyEsta=proy_estados.EstID WHERE proy_proyectos.ProyID > 0";
 
