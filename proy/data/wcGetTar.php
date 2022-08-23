@@ -35,10 +35,13 @@ $w_c .= " AND proy_tareas.Cliente = '$_SESSION[ID_CLIENTE]'";
 $w_c .= " AND TareEsta = '0'";
 $w_c .= (test_input($params['TareResp'] ?? '')) ? " AND proy_tareas.TareResp = '$params[TareResp]'" : ''; // Tarea Responsable
 $w_c .= (test_input($params['TareID'] ?? '')) ? " AND proy_tareas.TareID = '$params[TareID]'" : ''; // Tarea ID
-$w_c .= (test_input($params['TarePend'] ?? '')) ? " AND proy_tareas.TareFin = '0000-00-00 00:00:00'" : ''; // Tarea Pendiente
+// $w_c .= (test_input($params['TarePend'] ?? '')) ? " AND proy_tareas.TareFin = '0000-00-00 00:00:00'" : ''; // Tarea Pendiente
+$w_c .= (test_input($params['TarePend'] ?? '')) ? " AND `proy_tare_horas`.`TareHorMin` IS NULL" : ''; // Tarea Pendiente
 $w_c .= (test_input($params['TareEstado'] == 'todos')) ? "" : ""; // Todas las Tareas
-$w_c .= (test_input($params['TareEstado'] == 'pendientes')) ? " AND proy_tareas.TareFin = '0000-00-00 00:00:00'" : ""; // Tareas Pendientes
-$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND proy_tareas.TareFin != '0000-00-00 00:00:00'" : ""; // Tareas Completadas
+// $w_c .= (test_input($params['TareEstado'] == 'pendientes')) ? " AND proy_tareas.TareFin = '0000-00-00 00:00:00'" : ""; // Tareas Pendientes
+$w_c .= (test_input($params['TareEstado'] == 'pendientes')) ? " AND `proy_tare_horas`.`TareHorMin` IS NULL" : ""; // Tareas Pendientes
+//$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND proy_tareas.TareFin != '0000-00-00 00:00:00'" : ""; // Tareas Completadas
+$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND `proy_tare_horas`.`TareHorMin` IS NULL" : ""; // Tareas Completadas
 $w_c .= (test_input($params['tarProyNomFiltro'] ?? '')) ? " AND TareProy = '$params[tarProyNomFiltro]'" : ''; // Filtrar Proyecto
 $w_c .= (test_input($params['tarEmprFiltro'] ?? '')) ? " AND TareEmp = '$params[tarEmprFiltro]'" : ''; // Filtrar Empresa
 $w_c .= (test_input($params['tarProcNomFiltro'] ?? '')) ? " AND TareProc = '$params[tarProcNomFiltro]'" : ''; // Filtrar Proceso

@@ -12,9 +12,9 @@ timeZone();
 // sleep(1);
 
 (!$_SERVER['REQUEST_METHOD'] == 'POST') ? PrintRespuestaJson('error', 'Invalid Request Method') . exit : '';
-
+// $qtar = '';
 require __DIR__ . '../../data/wcGetTar.php'; //  require where_conditions y variables
-
+// $qtar = "SET sql_mode =;";
 $qTar = "SELECT `proy_tareas`.`TareID`, `proy_empresas`.`EmpDesc`, `proy_tareas`.`TareEmp`, `proy_tareas`.`TareProy`, `proy_proyectos`.`ProyDesc`, `proy_proyectos`.`ProyNom`, `proy_proyectos`.`ProyPlant`, `proy_tareas`.`TareResp`, `resp`.`nombre`, `resp`.`legajo`, `proy_tareas`.`TareProc`, `proy_tareas`.`TareCost`, `proy_proceso`.`ProcDesc`, `proy_tareas`.`TarePlano`, `proy_planos`.`PlanoDesc`, `proy_tareas`.`TareIni`, `proy_tareas`.`TareFin`, `proy_tareas`.`TareFinTipo`, `proy_tareas`.`TareEsta`, `proy_tareas`.`Cliente`, `proy_tare_horas`.`TareHorMin`, `proy_tare_horas`.`TareHorCost`, `proy_tare_horas`.`TareHorHoras` FROM `proy_tareas` 
 LEFT JOIN `proy_tare_horas` ON `proy_tareas`.`TareID` = `proy_tare_horas`.`TareHorID` 
 INNER JOIN `proy_empresas` ON `proy_tareas`.`TareEmp`=`proy_empresas`.`EmpID` 
@@ -39,7 +39,9 @@ if (!$params['tarTotales']) {
     $count = $totalRecords['count'];
     $r = array_pdoQuery($qTar);
     // print_r($qTar).exit;
-
+    // $pathLog = "qTar_" . date('Ymd') . ".log";
+    // fileLog($qTar, $pathLog); 
+    
     foreach ($r as $key => $row) {
 
         $Cliente      = $row['Cliente'];
