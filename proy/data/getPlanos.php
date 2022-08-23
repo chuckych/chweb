@@ -10,6 +10,7 @@ $params = $_REQUEST;
 $params['start'] = $params['start'] ?? 0;
 $params['length'] = $params['length'] ?? 9999;
 $params['draw'] = $params['draw'] ?? 0;
+$params['PlanoEsta'] = $params['PlanoEsta'] ?? '';
 
 $tiempo_inicio = microtime(true);
 $where_condition = $sqlTot = $sqlRec = "";
@@ -22,8 +23,11 @@ if (!empty($_POST['selectPlano'])) {
         $where_condition .= (!empty($_POST['q'])) ? " AND CONCAT(PlanoID, PlanoDesc) LIKE '%$_POST[q]%'" : '';
     }
 }
+if (($params['PlanoEsta'] == '0')) {
+    $where_condition .= " AND proy_planos.PlanoEsta = '0'";
+}
 
-$query = "SELECT PlanoID, PlanoDesc, PlanoCod, PlanoObs FROM proy_planos WHERE proy_planos.PlanoID > 0";
+$query = "SELECT PlanoID, PlanoDesc, PlanoCod, PlanoObs, PlanoEsta FROM proy_planos WHERE proy_planos.PlanoID > 0";
 $queryCount = "SELECT COUNT(*) as 'count' FROM proy_planos WHERE proy_planos.PlanoID > 0";
 
 $where_condition .= " AND proy_planos.Cliente = '$_SESSION[ID_CLIENTE]'";
@@ -33,7 +37,7 @@ if (isset($where_condition) && $where_condition != '') {
     $queryCount .= $where_condition;
 }
 
-$query .=  " ORDER BY proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$query .=  " ORDER BY proy_planos.PlanoEsta, proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 if (empty($_POST['selectPlano'])) { // sino viene de un select
     $totalRecords = simple_pdoQuery($queryCount);
     $count = $totalRecords['count'];
@@ -43,14 +47,15 @@ foreach ($records as $key => $row) {
 
     $PlanoID   = $row['PlanoID'];
     $PlanoDesc = utf8str($row['PlanoDesc']);
-    $PlanoCod = $row['PlanoCod'];
+    $PlanoCod  = $row['PlanoCod'];
     $PlanoObs  = $row['PlanoObs'];
+    $PlanoEsta = $row['PlanoEsta'];
 
     if (!empty($_POST['selectPlano'])) {
         $text = '(' . $PlanoID . ') ' . $PlanoDesc;
-        if($PlanoCod != '') {
+        if ($PlanoCod != '') {
             $html = "<span>$PlanoDesc</span><span class='badge bg-indigo-lt'>$PlanoCod</span>";
-        }else{
+        } else {
             $html = "<span>$PlanoDesc</span><span class='badge bg-indigo-lt'>-</span>";
         }
         $data[] = array(
@@ -65,6 +70,7 @@ foreach ($records as $key => $row) {
             "PlanoDesc" => $PlanoDesc,
             "PlanoCod" => $PlanoCod,
             "PlanoObs"  => $PlanoObs,
+            "PlanoEsta"  => $PlanoEsta
         );
     }
 }

@@ -3,13 +3,12 @@
         <div class="col-12">
 
             <div class="bg-white py-3">
-                <div class="">
+                <div class="mt-2 mt-sm-0">
                     <h3 class="card-title font12 font-weight-bold text-tabler w-100 text-center">¿Confirma los datos seleccionados?</h3>
                 </div>
                 <div class="card-body d-flex justify-content-center">
                     <ul class="list list-timeline">
                         <li>
-
                             <div class="list-timeline-icon bg-success">
                                 <i class="bi bi-check-lg"></i>
                             </div>
@@ -41,7 +40,7 @@
                     </ul>
                 </div>
                 <div class="text-center">
-                    <div class=""></div>
+                    <div class="mt-5 mt-sm-0"></div>
                     <button type="button" class="btn btn-lg font09 btn-light border-0" id="tarCancelar">Cancelar</button>
                     <button type="button" class="btn btn-lg font09 btn-green border-0 ms-4" id="tarSubmit">Confirmar</button>
                 </div>

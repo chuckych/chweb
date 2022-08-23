@@ -735,3 +735,13 @@ if ($verDB < 20220816) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20220822) {
+    pdoQuery("ALTER TABLE `proy_planos`
+	ADD COLUMN `PlanoEsta` ENUM('0','1') NOT NULL AFTER `PlanoObs`");
+    fileLog("ADD COLUMN \"proy_planos\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

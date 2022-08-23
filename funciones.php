@@ -2,11 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.247'; // Version de la aplicación
+    return 'v0.0.248'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20220816; // Version de la base de datos local
+    return 20220822; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -3721,6 +3721,7 @@ function getIniCuenta($recidCuenta, $key = false)
     foreach ($d as $k => $value) {
         if ($value['recidCompany'] == $recidCuenta) {
             $urlHost = array($k => $value);
+            return $urlHost[$k];
             break;
         }
     }

@@ -74,10 +74,10 @@ $(function () {
             let textHS = data.ProyCalc.Minutos < 60 ? 'Min' : 'Hs'
             horasProy = data.ProyCalc.Minutos < 60 ? data.ProyCalc.Minutos : horasProy
             if (data.ProyCalc.Minutos > 0) {
-                divHoras = `<span class="font08 px-2 badge bg-azure ms-1 font-weight-normal">${horasProy}<span class="text-capitalize font07 ms-1">${(textHS)}</span></span>`
+                divHoras = `<span class="font08 px-3 d-none d-sm-block radius-0 badge bg-azure font-weight-normal">${horasProy}<span class="text-capitalize font07">${(textHS)}</span></span>`
             }
             $('#listSelProyRow').append(`
-                <div class="col-6 col-sm-6">
+                <div class="col-12 col-sm-6">
                     <div 
                         data-EmpID="${data.ProyEmpr.ID}" 
                         data-EmpDesc="${data.ProyEmpr.Nombre}" 
@@ -88,7 +88,7 @@ $(function () {
                         data-PlantDesc="${data.ProyPlant.Nombre}"
                         data-ProyResp="${data.ProyResp.ID}"
                         data-RespDesc="${data.ProyResp.Nombre}"
-                        class="card p-3 mt-3 animate__animated animate__fadeIn pointer checkProy">
+                        class="card p-3 mt-2 mt-sm-3 animate__animated animate__fadeIn pointer checkProy">
                         <div class="form-check pointer">
                             <input class="form-check-input" type="checkbox" value="" id="proy_${data.ProyData.ID}">
                             <div class="d-inline-flex w-100">
@@ -152,11 +152,11 @@ $(function () {
         $("#selectProy thead").remove();
         $(".dataTables_scrollHead").remove();
         $('#selectProy_filter input').attr('placeholder', 'Buscar proyecto').addClass('p-3 w300');
-        setTimeout(() => {
-            $('#selectProy_filter input').focus();
-        }, 1500);
+        // setTimeout(() => {
+            // $('#selectProy_filter input').focus();
+        // }, 1500);
         $('.title').prepend(`
-            <div class="w-100">
+            <div class="w-100 d-sm-block d-none">
                 <h3 class="display-6 text-tabler">Seleccionar Proyecto</h3>
             </div>
         `)

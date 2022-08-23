@@ -1,7 +1,7 @@
 <div class="animate__animated animate__fadeIn">
     <div class="row">
         <div class="col-12" id="btnSelProy">
-            <div class="border-0">
+            <div class="border-0 mt-sm-0 mt-4">
                 <div class="text-center p-sm-4">
                     <p class="m-0 p-0 display-4 animate__animated animate__fadeInUp" id="inicioNombre"></p>
                 </div>
@@ -22,7 +22,7 @@
         <div class="col-12" id="listSelProy" style="display: none;">
             <table class="table w-100 text-nowrap" id="selectProy">
             </table>
-            <div class="row mt-3" id="listSelProyRow">
+            <div class="row mt-sm-3 mt-1 mb-4" id="listSelProyRow">
             </div>
             <?= progressBar(1) ?>
         </div>

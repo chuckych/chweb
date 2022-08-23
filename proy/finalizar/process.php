@@ -410,7 +410,8 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
 	emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
 
-	$urlHost  = getIniCuenta($_POST['_c'], 'hostCHWeb');
+	$dataCuenta  = getIniCuenta($_POST['_c']);
+	$urlHost  = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
 
 	$getConf = getConfTar();
 

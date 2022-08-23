@@ -42,13 +42,13 @@ $(function () {
         createdRow: function (row, data, dataIndex) {
             $(row).addClass("");
             $('#listSelProcRow').append(`
-                <div class="col-6 col-sm-6">
+                <div class="col-12 col-sm-6">
                     <div 
                         data-ProcID="${data.ProcID}" 
                         data-ProcDesc="${data.ProcDesc}" 
                         data-ProcCost="${data.ProcCost}"
                         data-ProcObs="${data.ProcObs}"
-                        class="card p-3 mt-3 animate__animated animate__fadeIn pointer checkProc">
+                        class="card p-3 mt-2 mt-sm-3 animate__animated animate__fadeIn pointer checkProc">
                         <div class="form-check pointer">
                             <input class="form-check-input" type="checkbox" value="" id="proc_${data.ProcID}">
                             <label class="form-check-label h3" for="proc_${data.ProcID}">
@@ -94,11 +94,11 @@ $(function () {
         $("#selectProc thead").remove();
         $(".dataTables_scrollHead").remove();
         $('#selectProc_filter input').attr('placeholder', 'Buscar proceso').addClass('p-3 w300');
-        setTimeout(() => {
-            $('#selectProc_filter input').focus();
-        }, 1500);
+        // setTimeout(() => {
+        //     $('#selectProc_filter input').focus();
+        // }, 1500);
         $('.title').prepend(`
-        <div class="w-100">
+        <div class="w-100 d-none d-sm-block">
             <h3 class="display-6 text-tabler">Seleccionar Proceso</h3>
         </div>
     `)

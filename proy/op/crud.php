@@ -93,6 +93,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $_POST['PlanoDesc'] = test_input($_POST['PlanoDesc']) ?? '';
     $_POST['PlanoCod']  = test_input($_POST['PlanoCod']) ?? '';
     $_POST['PlanoObs']  = test_input($_POST['PlanoObs']) ?? '';
+    $_POST['PlanoEsta']  = ($_POST['PlanoEsta']) ?? '';
+    $PlanoEsta = ($_POST['PlanoEsta'] == 'on') ? '0' : '1';
 
     $_POST['EstDesc']  = test_input($_POST['EstDesc']) ?? '';
     $_POST['EstColor'] = test_input($_POST['EstColor']) ?? '';
@@ -274,7 +276,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             PrintRespuestaJson('ERROR', 'Ya existe un plano con ese nombre');
             exit;
         }
-        $query = "INSERT INTO proy_planos (PlanoDesc, PlanoCod, PlanoObs, PlanoAlta, Cliente) VALUES ('$_POST[PlanoDesc]', '$_POST[PlanoCod]', '$_POST[PlanoObs]', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
+        $query = "INSERT INTO proy_planos (PlanoDesc, PlanoCod, PlanoObs, PlanoEsta, PlanoAlta, Cliente) VALUES ('$_POST[PlanoDesc]', '$_POST[PlanoCod]', '$_POST[PlanoObs]', '$PlanoEsta', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
         $insertPlano = pdoQuery($query);
 
         if ($insertPlano) {
@@ -293,7 +295,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             PrintRespuestaJson('ERROR', 'Ya existe un plano con ese nombre');
             exit;
         }
-        $query = "UPDATE proy_planos SET PlanoDesc = '$_POST[PlanoDesc]', PlanoCod = '$_POST[PlanoCod]', PlanoObs = '$_POST[PlanoObs]' WHERE PlanoID = '$_POST[PlanoID]'";
+        $query = "UPDATE `proy_planos` SET PlanoDesc = '$_POST[PlanoDesc]', PlanoCod = '$_POST[PlanoCod]', PlanoObs = '$_POST[PlanoObs]', PlanoEsta = '$PlanoEsta' WHERE PlanoID = '$_POST[PlanoID]'";
         $updatePlano = pdoQuery($query);
 
         if ($updatePlano) {
@@ -477,6 +479,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
         emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
         $dataCuenta  = getIniCuenta($_POST['_c']); // Obtener el host de la cuenta
+        // print_r($dataCuenta).exit;
         $urlHost  = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
         $idCliente  = $dataCuenta['idCompany']; // Obtener el host de la cuenta
 

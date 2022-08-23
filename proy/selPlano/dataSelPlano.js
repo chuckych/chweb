@@ -84,8 +84,7 @@ $(function () {
             type: "POST",
             dataType: "json",
             data: function (data) {
-                // data.Plant = proy_pasos.ProyPlant;
-                // data.length = 9999;
+                data.PlanoEsta = '0';
             },
             error: function () {
                 $("#selectPlano").css("display", "none");
@@ -94,13 +93,13 @@ $(function () {
         createdRow: function (row, data, dataIndex) {
             $(row).addClass("");
             $('#listSelPlanoRow').append(`
-                <div class="col-6 col-sm-6">
+                <div class="col-12 col-sm-6">
                     <div 
                         data-PlanoID="${data.PlanoID}" 
                         data-PlanoDesc="${data.PlanoDesc}" 
                         data-PlanoObs="${data.PlanoObs}"
                         data-PlanoCod="${data.PlanoCod}"
-                        class="card p-3 mt-3 animate__animated animate__fadeIn pointer checkPlano">
+                        class="card p-3 mt-2 mt-sm-3 animate__animated animate__fadeIn pointer checkPlano">
                         <div class="form-check pointer mb-1">
                             <input class="form-check-input" type="checkbox" value="" id="plano_${data.PlanoID}">
                             <label class="form-check-label h3 mb-0" for="plano_${data.PlanoID}">
@@ -147,11 +146,8 @@ $(function () {
         $("#selectPlano thead").remove();
         $(".dataTables_scrollHead").remove();
         $('#selectPlano_filter input').attr('placeholder', 'Buscar Plano').addClass('p-3 w300');
-        setTimeout(() => {
-            $('#selectPlano_filter input').focus();
-        }, 1500);
         $('.title').prepend(`
-        <div class="w-100">
+        <div class="w-100 d-none d-sm-block">
             <h3 class="display-6 text-tabler">Seleccionar Plano</h3>
         </div>
     `)

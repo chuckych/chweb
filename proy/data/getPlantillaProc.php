@@ -15,6 +15,7 @@ $where_condition = $sqlTot = $sqlRec = "";
 if (!empty($params['search']['value'])) {
     $where_condition .=    " AND proy_proceso.ProcDesc LIKE '%" . $params['search']['value'] . "%'";  // busqueda general
 }
+$where_condition .= " AND proy_proceso.Cliente = '$_SESSION[ID_CLIENTE]'";
 
 $params['Plantilla'] = $params['Plantilla'] ?? '0';
 if ($params['Plantilla']) {

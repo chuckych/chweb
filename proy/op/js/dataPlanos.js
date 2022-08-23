@@ -31,12 +31,14 @@ $(function () {
                 targets: "",
                 title: "",
                 render: function (data, type, row, meta) {
+                    let PlanoEsta = row.PlanoEsta
+                    PlanoEsta = (PlanoEsta == '1') ? '<span class="ms-2 font-weight-normal radius-0 badge bg-red">Inactivo</span>' : '';
                     let datacol =
                     `
                     <div class="form-selectgroup-item flex-fill">
                         <div class="card-body border p-3 animate__animated animate__fadeIn ">
                             <div class='d-flex justify-content-between'>
-                                <div class="viewPlano cursor-pointer btn-link"><span>${row["PlanoDesc"]}</span></div>
+                                <div class="viewPlano cursor-pointer btn-link"><span>${row["PlanoDesc"]}</span>${PlanoEsta}</div>
                                 <div><span><button type="button" class="btn p-2 btn-outline-teal bi bi-pencil editPlano"></button></span></div>
                             </div>
                         <div><span>Código: ${row["PlanoCod"]}</span></div>
@@ -131,6 +133,11 @@ $(function () {
                     $("#planoModal #PlanoDesc").val(decodeEntities(dataRow.PlanoDesc)); // Se agrega el valor del plano
                     $("#planoModal #PlanoCod").val(decodeEntities(dataRow.PlanoCod));
                     $("#planoModal #PlanoObs").val(decodeEntities(dataRow.PlanoObs)); // Se agrega el valor de la observacion
+
+                    let PlanoEsta = dataRow.PlanoEsta
+                    PlanoEsta = (PlanoEsta == '0') ? true : false;
+                    $("#planoModal #PlanoEsta").prop('checked', PlanoEsta)
+
                     ActiveBTN(false, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-pencil me-2"></i>Editar Plano'); // Se desactiva el boton de submit
                     planoModal.show(); // Se muestra el modal
                     setTimeout(() => {
@@ -222,6 +229,9 @@ $(function () {
                     let PlanoObs = dataRow.PlanoObs; // Se obtiene la observacion del plano
                     let renderPlanoObs = PlanoObs.replace(/(?:\r\n|\r|\n)/g, "<br>"); // Se reemplaza el salto de linea por una etiqueta de salto de linea html
                     $("#planoModal .modal-body").html(`<div class="card"><div class="card-body"><p>Código: ${dataRow.PlanoCod}</p><p><div class="mb-2">Observaciones:</div>${renderPlanoObs}</p></div></div>`);
+                    let PlanoEsta = dataRow.PlanoEsta
+                    PlanoEsta = (PlanoEsta == '0') ? '<div class="badge radius-0 bg-green mt-3 p-2 font-weight-normal">Plano Activo</div>' : '<div class="badge radius-0 bg-red mt-3 p-2 font-weight-normal">Plano Inactivo</div>';
+                    $("#planoModal .modal-body").append(PlanoEsta)
                     $("#planoModal #PlanoSubmit").remove(); // Se remueve el boton de submit
                     ActiveBTN(true, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-pencil me-2"></i>Editar Plano'); // Se desactiva el boton de submit
                     planoModal.show(); // Se muestra el modal

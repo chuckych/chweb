@@ -15,7 +15,7 @@ $(function () {
         deferRender: true,
         responsive: true,
         dom:
-            "<'row rowFilters invisible'<'col-12 col-sm-6 flex-end-start'l<'divFiltrosTar'>><'col-12 col-sm-6 flex-center-end'<'divAltaTar'>f<'.divLimpiarSearch'>>>" +
+            "<'row rowFilters invisible'<'col-12 col-sm-6 flex-start-start'l<'divFiltrosTar flex-start-end'>><'col-12 col-sm-6 flex-center-end'<'divAltaTar'>f<'.divLimpiarSearch'>>>" +
             "<'row' <'col-12 flex-end-start'<'tarParametros'>>>" +
             "<'row' <'col-12 mt-2 divEstadoTar mh40'>>" +
             "<'row '<'col-12 table-responsive mt-2't>>" +
@@ -304,7 +304,8 @@ $(function () {
     tableTareas.on("init.dt", function (e, settings) { // Cuando se inicializa la tabla
         let idTable = `#${e.target.id}`; // Se obtiene el id de la tabla
         let lengthMenu = $(`${idTable}_length select`); // Se obtiene el select del lengthMenu
-        $(lengthMenu).addClass("h40"); // Se agrega la clase h40 height: 50px
+        $(lengthMenu).css("height","48px"); // Se agrega la clase h40 height: 50px
+        $(lengthMenu).css("margin-top","4px"); // Se agrega la clase h40 height: 50px
         let filterInput = $(`${idTable}_filter input`); // Se obtiene el input del filtro
         $(filterInput).attr({ placeholder: "N° Tarea" }).addClass("p-2 pe-3 text-end w100").mask('0000');
         //$(`${idTable}_filter`).append("<div class=''><select class='selectTar form-control w300'></select></div>").addClass('w200'); // Se agrega la clase flex-center-center
@@ -1323,8 +1324,6 @@ $(function () {
                 $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
             });
         });
-
-
         $("#btnActualizarGrillaTar").click(function (e) {
             e.preventDefault();
             classEfect("#btnActualizarGrillaTar .bi", "animate__animated animate__rotateIn")
@@ -1340,13 +1339,26 @@ $(function () {
                     $("#tableTareas").DataTable().ajax.reload();
                 });
             });
-        $(".divFiltrosTar").append('<button type="button" data-titlel="Filtros" class="shadow-sm ms-1 btn btn-outline-tabler h40 shadow" id="tarShowFiltros" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltrosTar" aria-controls="offcanvasFiltrosTar"><i class="bi bi-filter font12"></i></button>'); // Se agrega el boton de filtros
-        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 tarLimpiaFiltro" data-titler="Limpiar Filtros"><i class="bi bi-eraser font1"></i></button>'); // Se agrega el boton de limpiar filtros
-        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 calCosto" data-titler="Recalcular costos segun filtro"><i class="bi bi-calculator font1"></i></button>'); // Se agrega el boton de Recalcular costos
-        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 procPend" data-titler="Procesar Tareas Pendientes"><i class="bi bi-arrow-down-up font1"></i></button>'); // Se agrega el boton de Recalcular costos
-        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08" data-titler="Parametros" data-bs-toggle="collapse" data-bs-target="#tarParametros" aria-expanded="false" aria-controls="tarParametros"><i class="bi bi-three-dots font1"></i></button>'); // Se agrega el boton de parametros
-        $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-teal h40 font08 toExcel" data-titlel="Exportar a Excel"><i class="bi bi-filetype-xls font1"></i></button>'); // Se agrega el boton de parametros
-        // $(".tarParametros").html(``); 
+        //navbar-expand-lg
+        $(".divFiltrosTar").append(`
+        <nav class="navbar navbar-expand-lg">
+            <button class="navbar-toggler ms-3 mt-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedFiltrosTar" aria-controls="navbarSupportedFiltrosTar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon text-secondary"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedFiltrosTar">
+                <ul class="navbar-nav divFiltrosTarNav"></ul>
+            </div>
+        </nav>
+        `)
+        $(".divFiltrosTarNav").append(`
+            <button class="shadow-sm ms-1 mt-3 mt-sm-0 btn btn-outline-tabler shadow" type="button" data-titlel="Filtros"  id="tarShowFiltros" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltrosTar" aria-controls="offcanvasFiltrosTar"><i class="bi bi-filter font1 d-none d-sm-block"></i><span class="d-block d-sm-none font08">Filtros</span></button>
+            <button class="shadow-sm ms-1 mt-1 mt-sm-0 btn btn-outline-info font08 tarLimpiaFiltro" data-titler="Limpiar Filtros"><i class="bi bi-eraser font1 d-none d-sm-block"></i><span class="d-block d-sm-none">Borrar Filtros</span></button>
+            <button class="shadow-sm ms-1 mt-1 mt-sm-0 btn btn-outline-info font08 calCosto" data-titler="Recalcular costos segun filtro"><i class="bi bi-calculator font1 d-none d-sm-block"></i><span class="d-block d-sm-none">Recalcular Costos</span></button>
+            <button class="shadow-sm ms-1 mt-1 mt-sm-0 btn btn-outline-info font08 procPend" data-titler="Procesar Tareas Pendientes"><i class="bi bi-arrow-down-up font1 d-none d-sm-block"></i><span class="d-block d-sm-none">Procesar Tareas</span></button>
+            <button class="shadow-sm ms-1 mt-1 mt-sm-0 btn btn-outline-info font08" data-titler="Parametros" data-bs-toggle="collapse" data-bs-target="#tarParametros" aria-expanded="false" aria-controls="tarParametros"><i class="bi bi-three-dots font1 d-none d-sm-block"></i><span class="d-block d-sm-none">Parametros</span></button>
+            <button class="shadow-sm ms-1 mt-1 mt-sm-0 btn btn-outline-teal font08 toExcel" data-titlel="Exportar a Excel"><i class="bi bi-filetype-xls font1 d-none d-sm-block"></i><span class="d-block d-sm-none">Exportar Excel</span></button>
+        `)
+        $(".divFiltrosTarNav").addClass('ms-2')
 
         fetch(`op/tarParametros.html?${Date.now()}`) // Se hace la peticion ajax para obtener el div de estados
             .then(response => response.text()) // Se obtiene la respuesta

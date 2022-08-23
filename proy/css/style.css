@@ -266,8 +266,14 @@ textarea.form-control {
     background-image: url("../../img/user.png")
 }
 
+.h35 {
+    height: 35px !important;
+}
 .h40 {
     height: 40px !important;
+}
+.h45 {
+    height: 45px !important;
 }
 
 .mh40 {
@@ -795,4 +801,7 @@ ul .page-link {
 .tableTotales th{
     text-align: center;
     font-size: .8rem;
+}
+.radius-0 {
+    border-radius: 0px !important;
 }

@@ -196,7 +196,7 @@ if ($params['tarTotales']) {
     INNER JOIN `proy_proyectos` ON `proy_tareas`.`TareProy`=`proy_proyectos`.`ProyID` 
     INNER JOIN `usuarios` AS `resp` ON `proy_tareas`.`TareResp`=`resp`.`id` 
     INNER JOIN `proy_proceso` ON `proy_tareas`.`TareProc`=`proy_proceso`.`ProcID` 
-    INNER JOIN proy_estados ON proy_proyectos.ProyEsta=proy_estados.EstID
+    INNER JOIN `proy_estados` ON `proy_proyectos`.`ProyEsta`=`proy_estados`.`EstID`
     WHERE `proy_tareas`.`TareID` > 0";
 
     if ($w_c ?? '') {

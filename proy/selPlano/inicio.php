@@ -3,7 +3,7 @@
         <div class="col-12" id="listSelPlano" style="display: none;">
             <table class="table w-100 text-nowrap" id="selectPlano">
             </table>
-            <div class="row mt-3" id="listSelPlanoRow">
+            <div class="row mt-sm-3 mt-1 mb-4" id="listSelPlanoRow">
 
             </div>
             <div class="mt-4">

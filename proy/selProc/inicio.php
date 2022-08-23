@@ -3,7 +3,7 @@
         <div class="col-12" id="listSelProc" style="display: none;">
             <table class="table w-100 text-nowrap" id="selectProc">
             </table>
-            <div class="row mt-3" id="listSelProcRow">
+            <div class="row mt-sm-3 mt-1 mb-4" id="listSelProcRow">
             </div>
             <?= progressBar(2) ?>
         </div>
