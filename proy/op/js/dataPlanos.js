@@ -32,7 +32,7 @@ $(function () {
                 title: "",
                 render: function (data, type, row, meta) {
                     let PlanoEsta = row.PlanoEsta
-                    PlanoEsta = (PlanoEsta == '1') ? '<span class="ms-2 font-weight-normal radius-0 badge bg-red">Inactivo</span>' : '';
+                    PlanoEsta = (PlanoEsta == '1') ? '<span class="ms-2 radius-0 badge bg-red-lt">Inactivo</span>' : '';
                     let datacol =
                     `
                     <div class="form-selectgroup-item flex-fill">
@@ -230,7 +230,7 @@ $(function () {
                     let renderPlanoObs = PlanoObs.replace(/(?:\r\n|\r|\n)/g, "<br>"); // Se reemplaza el salto de linea por una etiqueta de salto de linea html
                     $("#planoModal .modal-body").html(`<div class="card"><div class="card-body"><p>Código: ${dataRow.PlanoCod}</p><p><div class="mb-2">Observaciones:</div>${renderPlanoObs}</p></div></div>`);
                     let PlanoEsta = dataRow.PlanoEsta
-                    PlanoEsta = (PlanoEsta == '0') ? '<div class="badge radius-0 bg-green mt-3 p-2 font-weight-normal">Plano Activo</div>' : '<div class="badge radius-0 bg-red mt-3 p-2 font-weight-normal">Plano Inactivo</div>';
+                    PlanoEsta = (PlanoEsta == '0') ? '<div class="badge radius-0 bg-green-lt mt-3 p-2">Plano Activo</div>' : '<div class="badge radius-0 bg-red-lt mt-3 p-2">Plano Inactivo</div>';
                     $("#planoModal .modal-body").append(PlanoEsta)
                     $("#planoModal #PlanoSubmit").remove(); // Se remueve el boton de submit
                     ActiveBTN(true, "#PlanoSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-pencil me-2"></i>Editar Plano'); // Se desactiva el boton de submit
