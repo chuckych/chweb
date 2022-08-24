@@ -51,6 +51,10 @@ $(function () {
                             liIcon = 'house'
                             liId = 'sidebarInicio'
                             break;
+                        case '44':
+                            liIcon = 'map'
+                            liId = 'sidebarPlantillasPlanos'
+                            break;
                         default:
                             liIcon = ''
                             liId = ''

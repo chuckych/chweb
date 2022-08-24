@@ -106,7 +106,21 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                        <span class="font08 text-secondary">Plantilla: </span><br><span class="font09">${row.ProyPlant.Nombre}</span>
+                        <span class="font08 text-secondary">Plantilla Procesos: </span><br><span class="font09">${row.ProyPlant.Nombre}</span>
+                        `;
+                    return datacol;
+                }
+            },
+            /** Plantilla Planos*/
+            {
+                className: "align-middle border-bottom px-3",
+                targets: "",
+                title: "",
+                render: function (data, type, row, meta) {
+                    let nombre = (row.ProyPlantPlano.Nombre) ? row.ProyPlantPlano.Nombre : '-'
+                    let datacol =
+                        `
+                        <span class="font08 text-secondary">Plantilla Planos: </span><br><span class="font09">${nombre}</span>
                         `;
                     return datacol;
                 }
@@ -167,6 +181,7 @@ $(function () {
                 checkEmpty("#ProyEmpr", "#select2-ProyEmpr-container");
                 checkEmpty("#ProyResp", "#select2-ProyResp-container");
                 checkEmpty("#ProyPlant", "#select2-ProyPlant-container");
+                // checkEmpty("#ProyPlantPlanos", "#select2-ProyPlantPlanos-container");
                 checkEmpty("#ProyEsta", "#select2-ProyEsta-container");
 
                 let textErr = `<span class="text-danger">Campos requeridos<span>`;
@@ -242,6 +257,9 @@ $(function () {
                     select2Value(dataRow.ProyEmpr.ID, decodeEntities(dataRow.ProyEmpr.Nombre), '#ProyEmpr');
                     select2Value(dataRow.ProyResp.ID, decodeEntities(dataRow.ProyResp.Nombre), '#ProyResp');
                     select2Value(dataRow.ProyPlant.ID, decodeEntities(dataRow.ProyPlant.Nombre), '#ProyPlant');
+                    if (dataRow.ProyPlantPlano.ID) {
+                        select2Value(dataRow.ProyPlantPlano.ID, decodeEntities(dataRow.ProyPlantPlano.Nombre), '#ProyPlantPlanos');
+                    }
                     select2Value(dataRow.ProyEsta.ID, decodeEntities(dataRow.ProyEsta.Nombre), '#ProyEsta');
                     $("#proyModal #ProyIniFin").prop('disabled', true);
                     $("#proyModal #ProyEmpr").prop('disabled', true);
@@ -418,6 +436,71 @@ $(function () {
                             },
                             ajax: {
                                 url: "../proy/data/select/selPlantilla.php",
+                                dataType: "json",
+                                type: "POST",
+                                delay: opt2["delay"],
+                                data: function (params) {
+                                    return {
+                                        q: params.term
+                                    };
+                                },
+                                processResults: function (data) {
+                                    return {
+                                        results: data,
+                                    };
+                                },
+                            },
+                        });
+                        $("#ProyPlantPlanos").select2({
+                            language: "es",
+                            multiple: false,
+                            allowClear: opt2["allowClear"],
+                            language: "es",
+                            placeholder: "Plantilla planos",
+                            dropdownParent: $('#proyModal'),
+                            templateResult: template,
+                            // templateSelection: template,
+                            minimumInputLength: opt2["MinLength"],
+                            minimumResultsForSearch: 10,
+                            maximumInputLength: opt2["MaxInpLength"],
+                            selectOnClose: opt2["SelClose"],
+                            language: {
+                                noResults: function () {
+                                    return "No hay resultados..";
+                                },
+                                inputTooLong: function (args) {
+                                    var message =
+                                        "Máximo " +
+                                        opt2["MaxInpLength"] +
+                                        " caracteres. Elimine " +
+                                        overChars +
+                                        " caracter";
+                                    if (overChars != 1) {
+                                        message += "es";
+                                    }
+                                    return message;
+                                },
+                                searching: function () {
+                                    return "Buscando..";
+                                },
+                                errorLoading: function () {
+                                    return "Sin datos..";
+                                },
+                                removeAllItems: function () {
+                                    return "Borrar";
+                                },
+                                inputTooShort: function () {
+                                    return "Ingresar " + opt2["MinLength"] + " o mas caracteres";
+                                },
+                                maximumSelected: function () {
+                                    return "Puede seleccionar solo una opción";
+                                },
+                                loadingMore: function () {
+                                    return "Cargando más resultados…";
+                                },
+                            },
+                            ajax: {
+                                url: "../proy/data/select/selPlantillaPlano.php",
                                 dataType: "json",
                                 type: "POST",
                                 delay: opt2["delay"],
@@ -796,6 +879,71 @@ $(function () {
                         },
                         ajax: {
                             url: "../proy/data/select/selPlantilla.php",
+                            dataType: "json",
+                            type: "POST",
+                            delay: opt2["delay"],
+                            data: function (params) {
+                                return {
+                                    q: params.term
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data,
+                                };
+                            },
+                        },
+                    });
+                    $("#ProyPlantPlanos").select2({
+                        language: "es",
+                        multiple: false,
+                        allowClear: opt2["allowClear"],
+                        language: "es",
+                        placeholder: "Plantilla planos",
+                        dropdownParent: $('#proyModal'),
+                        templateResult: template,
+                        // templateSelection: template,
+                        minimumInputLength: opt2["MinLength"],
+                        minimumResultsForSearch: 10,
+                        maximumInputLength: opt2["MaxInpLength"],
+                        selectOnClose: opt2["SelClose"],
+                        language: {
+                            noResults: function () {
+                                return "No hay resultados..";
+                            },
+                            inputTooLong: function (args) {
+                                var message =
+                                    "Máximo " +
+                                    opt2["MaxInpLength"] +
+                                    " caracteres. Elimine " +
+                                    overChars +
+                                    " caracter";
+                                if (overChars != 1) {
+                                    message += "es";
+                                }
+                                return message;
+                            },
+                            searching: function () {
+                                return "Buscando..";
+                            },
+                            errorLoading: function () {
+                                return "Sin datos..";
+                            },
+                            removeAllItems: function () {
+                                return "Borrar";
+                            },
+                            inputTooShort: function () {
+                                return "Ingresar " + opt2["MinLength"] + " o mas caracteres";
+                            },
+                            maximumSelected: function () {
+                                return "Puede seleccionar solo una opción";
+                            },
+                            loadingMore: function () {
+                                return "Cargando más resultados…";
+                            },
+                        },
+                        ajax: {
+                            url: "../proy/data/select/selPlantillaPlano.php",
                             dataType: "json",
                             type: "POST",
                             delay: opt2["delay"],

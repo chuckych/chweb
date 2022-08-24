@@ -230,7 +230,7 @@ $(function () {
         multiple: false,
         allowClear: opt2["allowClear"],
         language: "es",
-        placeholder: "Filtrar Plantilla",
+        placeholder: "Filtrar Plantilla Proceso",
         dropdownParent: $('#offcanvasFiltros'),
         templateResult: template,
         // templateSelection: template,

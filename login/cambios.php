@@ -745,3 +745,37 @@ if ($verDB < 20220822) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20220824) {
+    pdoQuery("ALTER TABLE `proy_plantillas`
+	ADD COLUMN `PlantMod` INT(10) NULL AFTER `PlantDesc`,
+	ADD CONSTRAINT `FK_proy_plantillas_modulos` FOREIGN KEY (`PlantMod`) REFERENCES `modulos` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION;");
+    fileLog("ADD COLUMN \"PlantMod\" en la tabla \"proy_plantillas\"", $pathLog); // escribir en el log
+
+    pdoQuery("UPDATE `proy_plantillas` SET `PlantMod`='40'");
+    fileLog("UPDATE \"proy_plantillas PlantMod\"", $pathLog); // escribir en el log
+
+    pdoQuery("INSERT INTO `modulos` (`id`, `nombre`, `recid`, `orden`, `idtipo`) VALUES ('44', 'Plantilla Planos', 'p14np1n0', '6', '6')");
+    fileLog("Se creo modulo \"Plantilla Planos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+    
+    pdoQuery("CREATE TABLE IF NOT EXISTS  `proy_plantilla_plano` (
+        `PlaPlanoID` SMALLINT(5) NOT NULL,
+        `PlaPlanos` TEXT NOT NULL COLLATE 'utf8mb3_general_ci',
+        `PlaPlanoAlta` DATETIME NOT NULL,
+        `PlaPlanoFeHo` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`PlaPlanoID`) USING BTREE,
+        CONSTRAINT `FK_proy_plantilla_plano` FOREIGN KEY (`PlaPlanoID`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE CASCADE
+    )
+    COLLATE='utf8mb3_general_ci'
+    ENGINE=InnoDB");
+    fileLog("CREATE TABLE \"proy_plantilla_plano\"", $pathLog); // escribir en el log
+
+    pdoQuery("ALTER TABLE `proy_proyectos`
+	ADD COLUMN `ProyPlantPlano` SMALLINT(5) NULL AFTER `ProyPlant`,
+	ADD CONSTRAINT `FK_proy_proyectos_proy_plantillas_2` FOREIGN KEY (`ProyPlantPlano`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE NO ACTION");
+    fileLog("ADD COLUMN \"ProyPlantPlano\" en la tabla \"proy_proyectos\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

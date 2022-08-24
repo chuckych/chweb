@@ -16,10 +16,10 @@ if (!empty($params['search']['value'])) {
 }
 
 $where_condition .= " AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]'";
-$where_condition .= " AND proy_plantillas.PlantMod = 40";
+$where_condition .= " AND proy_plantillas.PlantMod = 44";
 
-$query = "SELECT PlantID, PlantDesc, PlaProcesos  FROM proy_plantillas 
-LEFT JOIN proy_plantilla_proc ON proy_plantillas.PlantID = proy_plantilla_proc.PlaProPlan
+$query = "SELECT PlantID, PlantDesc, PlaPlanos  FROM proy_plantillas 
+LEFT JOIN proy_plantilla_plano ON proy_plantillas.PlantID = proy_plantilla_plano.PlaPlanoID
 WHERE proy_plantillas.PlantID > 0";
 $queryCount = "SELECT COUNT(*) as 'count' FROM proy_plantillas WHERE proy_plantillas.PlantID > 0";
 
@@ -32,20 +32,21 @@ $query .=  " ORDER BY proy_plantillas.PlantDesc LIMIT " . $params['start'] . " ,
 $totalRecords = simple_pdoQuery($queryCount);
 $count = $totalRecords['count'];
 $records = array_pdoQuery($query);
-
+// print_r($query);
+// exit;
 foreach ($records as $key => $row) {
 
     $PlantID      = $row['PlantID'];
     $PlantDesc    = $row['PlantDesc'];
-    $PlaProcesos  = $row['PlaProcesos'];
-    $countProc    = explode(",", $PlaProcesos);
-    $PlaCountProc = (!empty($PlaProcesos)) ? count($countProc): 0;
+    $PlaPlanos  = $row['PlaPlanos'];
+    $PlaPlanos    = explode(",", $PlaPlanos);
+    $PlaCountPlano = (!empty($PlaPlanos)) ? count($PlaPlanos): 0;
 
     $data[] = array(
         "PlantID"      => $PlantID,
         "PlantDesc"    => $PlantDesc,
-        "PlaProcesos"  => $PlaProcesos,
-        "PlaCountProc" => $PlaCountProc,
+        "PlaPlanos"  => $PlaPlanos,
+        "PlaCountPlano" => $PlaCountPlano,
     );
 }
 

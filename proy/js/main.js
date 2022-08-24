@@ -60,7 +60,8 @@ $(function () {
             getPag(".sidebarEstados", "estados");
             getPag(".sidebarProcesos", "procesos");
             getPag(".sidebarPlanos", "planos");
-            getPag(".sidebarPlantillas", "plantillas");
+            getPag(".sidebarPlantillas", "plantillas procesos");
+            getPag(".sidebarPlantillasPlanos", "plantillas planos");
             getPag(".sidebarMisTareas", "mistareas");
             getPag(".sidebarProyectos", "proyectos");
             getPag(".sidebarTareas", "tareas");

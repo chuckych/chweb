@@ -351,7 +351,7 @@ $(function () {
                     $("#tarModal .modal-title").html("<div>TAREA #" + dataRow.TareID + "</div>"); // Se agrega el titulo del modal
                     $("#tarModal .modal-header").addClass('py-3'); // Se agrega la clase al titulo del modal
                     $("#tarModal .modal-footer").addClass('py-3'); // Se agrega la clase al titulo del modal
-                    $("#tarModal .modal-body").prepend("<div class='mb-3 font09'>Empresa: " + dataRow.EmpDesc + "</div>"); // Se agrega la clase al titulo del modal
+                    $("#tarModal .modal-body").prepend("<div class='mb-3 font09 badge bg-cyan-lt radius-0 p-3'>" + dataRow.empresa.nombre + "</div>");
                     $("#tarModal #TareProy").attr("data-plant", dataRow.proyecto.plantilla); // Se agrega el atributo data-plant
                     select2Val(dataRow.proyecto.ID, dataRow.proyecto.nombre, "#tarModal #TareProy");
                     select2Val(dataRow.responsable.ID, dataRow.responsable.nombre, "#tarModal #TareResp");

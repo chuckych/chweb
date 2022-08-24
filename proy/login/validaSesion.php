@@ -12,7 +12,7 @@ if (valida_campo($tarjetaLogin)) {
     exit;
 }
 session_start();
-
+$tarjetaLogin = intval($tarjetaLogin);
 require_once __DIR__ . '../../../config/conect_pdo.php'; //Conexion a la base de datos
 try {
     $sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user', uident.expira as 'expira', uident.login as 'login', usuarios.estado as 'estado' FROM usuarios 

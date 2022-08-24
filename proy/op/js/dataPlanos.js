@@ -180,7 +180,7 @@ $(function () {
                                     $.ajax({ // Se hace la peticion ajax para eliminar el plano
                                         type: 'POST', // Se envia como POST
                                         url: "op/crud.php",  // Se envia a la ruta del crud
-                                        data: `PlanoSubmit=baja&PlanoID=${dataRow.PlanoID}&PlanoDesc=${dataRow.PlanoDesc}`,
+                                        data: `PlanoSubmit=baja&PlanoID=${dataRow.PlanoID}&PlanoDesc=${dataRow.PlanoDesc}&PlantMod=44`,
                                         beforeSend: function (data) { // Antes de enviar la peticion
                                             $.notifyClose(); // Se cierra el notify
                                             notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right"); // Se muestra el notify

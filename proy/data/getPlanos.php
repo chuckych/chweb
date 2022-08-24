@@ -11,17 +11,33 @@ $params['start'] = $params['start'] ?? 0;
 $params['length'] = $params['length'] ?? 9999;
 $params['draw'] = $params['draw'] ?? 0;
 $params['PlanoEsta'] = $params['PlanoEsta'] ?? '';
-
+$params['ProyID'] = $params['ProyID'] ?? '';
+$ProyID = test_input($params['ProyID']);
+$dataPlantilla = '';
 $tiempo_inicio = microtime(true);
-$where_condition = $sqlTot = $sqlRec = "";
+$where_condition = $sqlTot = $sqlRec = $planos = "";
+
+if ($params['ProyID']) {
+    $r = "SELECT ProyPlantPlano FROM proy_proyectos p where p.ProyID = $ProyID LIMIT 1";
+    $dataPlantilla = simple_pdoQuery($r)['ProyPlantPlano'];
+
+    $r = "SELECT PlaPlanos FROM proy_plantilla_plano where PlaPlanoID = $dataPlantilla";
+    $planos = simple_pdoQuery($r)['PlaPlanos'];
+    if ($planos) {
+        $where_condition .= " AND proy_planos.PlanoID IN ($planos)";
+    } else{
+        $where_condition .= " AND proy_planos.PlanoID IN ('')";
+    }
+}
 
 if (!empty($params['search']['value'])) {
-    $where_condition .=    " AND proy_planos.PlanoDesc LIKE '%" . $params['search']['value'] . "%'";
+    $where_condition .= " AND proy_planos.PlanoDesc LIKE '%" . $params['search']['value'] . "%'";
 }
 if (!empty($_POST['selectPlano'])) {
     if (!empty($_POST['q'])) {
         $where_condition .= (!empty($_POST['q'])) ? " AND CONCAT(PlanoID, PlanoDesc) LIKE '%$_POST[q]%'" : '';
     }
+    $where_condition .= " AND proy_planos.PlanoEsta ='0'";
 }
 if (($params['PlanoEsta'] == '0')) {
     $where_condition .= " AND proy_planos.PlanoEsta = '0'";
@@ -31,6 +47,7 @@ $query = "SELECT PlanoID, PlanoDesc, PlanoCod, PlanoObs, PlanoEsta FROM proy_pla
 $queryCount = "SELECT COUNT(*) as 'count' FROM proy_planos WHERE proy_planos.PlanoID > 0";
 
 $where_condition .= " AND proy_planos.Cliente = '$_SESSION[ID_CLIENTE]'";
+// $where_condition .= " AND PlanoEsta = '0'";
 
 if (isset($where_condition) && $where_condition != '') {
     $query .= $where_condition;
@@ -43,6 +60,7 @@ if (empty($_POST['selectPlano'])) { // sino viene de un select
     $count = $totalRecords['count'];
 }
 $records = array_pdoQuery($query);
+// print_r($query);exit;
 foreach ($records as $key => $row) {
 
     $PlanoID   = $row['PlanoID'];
@@ -70,7 +88,8 @@ foreach ($records as $key => $row) {
             "PlanoDesc" => $PlanoDesc,
             "PlanoCod" => $PlanoCod,
             "PlanoObs"  => $PlanoObs,
-            "PlanoEsta"  => $PlanoEsta
+            "PlanoEsta"  => $PlanoEsta,
+            "dataPlantilla" => $planos
         );
     }
 }

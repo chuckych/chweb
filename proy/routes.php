@@ -90,9 +90,13 @@ $rutas = array(
         "url" => 'op/planos.php',
         "mod" => 41,
     ),
-    'plantillas' => array(
+    'plantillas procesos' => array(
         "url" => 'op/plantillas.php',
         "mod" => 40,
+    ),
+    'plantillas planos' => array(
+        "url" => 'op/plantillasPlanos.php',
+        "mod" => 44,
     ),
     'proyectos'  => array(
         "url" => 'op/proyectos.php',

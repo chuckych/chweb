@@ -12,7 +12,7 @@ $(function () {
             "<'col-12 d-flex justify-content-end'p>"+
             "<'col-12 d-flex justify-content-end'i>>",
         ajax: {
-            url: `data/getPlantillas.php?${Date.now()}`,
+            url: `data/getPlantillasPl.php?${Date.now()}`,
             type: "POST",
             dataType: "json",
             data: function (data) {
@@ -41,7 +41,7 @@ $(function () {
                                         <span>${row["PlantDesc"]}</span>
                                     </div>
                                     <div>
-                                        <button data-titlel="Asignar Procesos" type="button" class="ms-1 btn p-2 btn-outline-tabler bi bi-list asignProc" value="${row.PlantID}"><span class="font08"></span></button>
+                                        <button data-titlel="Asignar Planos" type="button" class="ms-1 btn p-2 btn-outline-tabler bi bi-list asignPlano" value="${row.PlantID}"><span class="font08"></span></button>
                                         <span class="ms-1">
                                             <button type="button" class="btn p-2 btn-outline-teal bi bi-pencil editPlant"></button>
                                         </span>
@@ -78,7 +78,7 @@ $(function () {
             $.ajax({
                 type: $(this).attr("method"),
                 url: "op/crud.php",
-                data: $(this).serialize() + "&PlantSubmit=" + tipo+ "&PlantMod=40",
+                data: $(this).serialize() + "&PlantSubmit=" + tipo+ "&PlantMod=44",
                 beforeSend: function (data) {
                     $.notifyClose();
                     notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
@@ -119,7 +119,7 @@ $(function () {
         $(lengthMenu).addClass("h50"); // Se agrega la clase h40 height: 50px
         let filterInput = $(`${idTable}_filter input`); // Se obtiene el input del filtro
         $(filterInput).attr({ placeholder: "Buscar Plantilla.." }).addClass("p-3");  // Se agrega placeholder al input y se agrega clase p-3.
-        $(".divAltaPlant").html( // Se agrega el boton de alta de proceso
+        $(".divAltaPlant").html( // Se agrega el boton de alta de plano
             `<button type="button" data-titlel="Nueva Plantilla" class="btn btn-tabler h50 shadow" id="btnAltaPlantilla"><i class="bi bi-plus font12"></i></button>`
         );
         $(idTable).removeClass("invisible"); // Se remueve la clase invisible de la tabla
@@ -131,19 +131,19 @@ $(function () {
             fetch(`op/PlantModal.html?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
                 .then(response => response.text()) // Se obtiene la respuesta
                 .then(data => {  // Se obtiene el html del modal
-                    // console.log(HtmlEncode(dataRow.ProcObs));
+                    // console.log(HtmlEncode(dataRow.planoObs));
                     $("#modales").html(data); // Se agrega el html al modal
                     $("#modales .form-control").attr("autocomplete", "off"); // Se agrega el atributo autocomplete
                     let plantModal = new bootstrap.Modal(document.getElementById("plantModal"), { keyboard: true }); // Se inicializa el modal
                     $("#plantModal .modal-title").html("Editar Plantilla"); // Se agrega el titulo del modal
-                    $("#plantModal #PlantDesc").val(decodeEntities(dataRow.PlantDesc)); // Se agrega el valor del proceso
+                    $("#plantModal #PlantDesc").val(decodeEntities(dataRow.PlantDesc)); // Se agrega el valor del plano
                     ActiveBTN(false, "#PlantSubmit", "Aguarde <span class='animated-dots'></span>", '<i class="bi bi-pencil me-2"></i>Editar Plantilla'); // Se desactiva el boton de submit
                     plantModal.show(); // Se muestra el modal
                     setTimeout(() => {
-                        $("#PlantDesc").focus(); // Se posiciona el cursor en el input de la descripcion del proceso
+                        $("#PlantDesc").focus(); // Se posiciona el cursor en el input de la descripcion del plano
                     }, 500);
                     $('#plantModal .modal-footer #divSubmit').prepend(`<button type="button" class="btn btn-outline-pinterest h50 me-2" id="PlantSubmitdelete"><i class="bi bi-trash"></i></button>`); // Se agrega el boton de eliminar
-                    bindForm('mod&PlantID=' + dataRow.PlantID)  // Se bindea el formulario
+                    bindForm('mod&PlantID=' + dataRow.PlantID + '&PlantMod=44')  // Se bindea el formulario
                     $('#PlantSubmitdelete').click(function () { // Se agrega el evento click al boton de eliminar
                         $("#plantModal").modal("hide"); // Se oculta el modal
                         fetch(`op/PlantModal.html?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
@@ -176,10 +176,10 @@ $(function () {
                                 plantModal.show(); // Se muestra el modal
                                 $('#plantConfirmDelete').click(function (e) { // Se agrega el evento click al boton de confirmar eliminar
                                     e.preventDefault(); // Se evita el evento click
-                                    $.ajax({ // Se hace la peticion ajax para eliminar el proceso
+                                    $.ajax({ // Se hace la peticion ajax para eliminar el plano
                                         type: 'POST', // Se envia como POST
                                         url: "op/crud.php",  // Se envia a la ruta del crud
-                                        data: `PlantSubmit=baja&PlantID=${dataRow.PlantID}&PlantDesc=${dataRow.PlantDesc}`,
+                                        data: `PlantSubmit=baja&PlantID=${dataRow.PlantID}&PlantDesc=${dataRow.PlantDesc}&PlantMod=44`,
                                         beforeSend: function (data) { // Antes de enviar la peticion
                                             $.notifyClose(); // Se cierra el notify
                                             notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right"); // Se muestra el notify
@@ -196,7 +196,7 @@ $(function () {
                                                 $("#tablePlantillas").DataTable().ajax.reload(null, false); // Se recarga la tabla
                                                 $('#selPlantilla').val('');
                                                 if ($('#selPlantilla').val() == '') {
-                                                    $("#tablePlantProcesos").DataTable().ajax.reload();
+                                                    $("#tablePlantPlanos").DataTable().ajax.reload();
                                                 }
                                             } else {  // Si el status no es ok
                                                 $.notifyClose(); // Se cierra el notify
@@ -218,7 +218,7 @@ $(function () {
                     });
                 });
         });
-        $("#btnAltaPlantilla").click(function () { // Se agrega el evento click al boton de alta de proceso
+        $("#btnAltaPlantilla").click(function () { // Se agrega el evento click al boton de alta de plano
             $.notifyClose() // Se cierra el notify
             fetch(`op/PlantModal.html?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
                 .then(response => response.text())  // Se obtiene la respuesta  
@@ -238,14 +238,14 @@ $(function () {
                 });
         });
 
-        $(`${idTable} tbody`).on("click", ".asignProc", function (e) { // Se agrega el evento click al hacer click en la descripción del proceso
+        $(`${idTable} tbody`).on("click", ".asignPlano", function (e) { // Se agrega el evento click al hacer click en la descripción del plano
             e.preventDefault();
-            $('.asignProc').attr("checked", false);
-            $(".asignProc").removeClass('btn-tabler')
-            $(".asignProc").addClass('btn-outline-tabler')
+            $('.asignPlano').attr("checked", false);
+            $(".asignPlano").removeClass('btn-tabler')
+            $(".asignPlano").addClass('btn-outline-tabler')
             $(this).toggleClass('btn-outline-tabler btn-tabler')
             $('.card-body').removeClass('bg-blue-lt');
-            $(this).parents(".card-body").addClass("bg-blue-lt"); // Se agrega la clase selected al tr que contiene el proceso
+            $(this).parents(".card-body").addClass("bg-blue-lt"); // Se agrega la clase selected al tr que contiene el plano
             let dataRow = $(idTable).DataTable().row($(this).parents("tr")).data(); // Se obtiene el dato de la fila
             $('#selPlantilla').val(dataRow.PlantID);
             $('#selPlantillaNombre').html(`
@@ -261,14 +261,14 @@ $(function () {
                 </div>
             </label>
             `);
-            $("#tablePlantProcesos").DataTable().ajax.reload();
+            $("#tablePlantPlanos").DataTable().ajax.reload();
         });
 
     });
     tablePlantillas.on("page.dt", function (e, settings) { // Se agrega el evento page.dt para que se ejecute cuando se cambie de pagina
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla
         $('#selPlantilla').val('')
-        $('#tablePlantProcesos').DataTable().ajax.reload();
+        $('#tablePlantPlanos').DataTable().ajax.reload();
         $(idTable + " div").addClass("pre-div"); // Se agrega la clase pre-div a la div de la tabla
     });
     tablePlantillas.on("draw.dt", function (e, settings) { // Se agrega el evento draw.dt para que se ejecute cuando se redibuje la tabla

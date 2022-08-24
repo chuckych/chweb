@@ -298,6 +298,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                 && ($Modulo2 != 'Estados')
                                 && ($Modulo2 != 'Procesos')
                                 && ($Modulo2 != 'Plantilla Procesos')
+                                && ($Modulo2 != 'Plantilla Planos')
                                 && ($Modulo2 != 'Planos')
                                 && ($Modulo2 != 'Inicio')
                                 && ($Modulo2 != 'Empresas')

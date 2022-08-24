@@ -416,7 +416,7 @@ $(function () {
                     $("#tarModal .modal-title").html("<div>TAREA #" + dataRow.TareID + "</div>"); // Se agrega el titulo del modal
                     $("#tarModal .modal-header").addClass('py-3'); // Se agrega la clase al titulo del modal
                     $("#tarModal .modal-footer").addClass('py-3'); // Se agrega la clase al titulo del modal
-                    $("#tarModal .modal-body").prepend("<div class='mb-3 font09'>Empresa: " + dataRow.EmpDesc + "</div>"); // Se agrega la clase al titulo del modal
+                    $("#tarModal .modal-body").prepend("<div class='mb-3 font09 badge bg-cyan-lt radius-0 p-3'>" + dataRow.empresa.nombre + "</div>"); // Se agrega la clase al titulo del modal
                     $("#tarModal #TareProy").attr("data-plant", dataRow.proyecto.plantilla); // Se agrega el atributo data-plant
                     select2Val(dataRow.proyecto.ID, dataRow.proyecto.nombre, "#tarModal #TareProy");
                     select2Val(dataRow.responsable.ID, dataRow.responsable.nombre, "#tarModal #TareResp");
@@ -603,10 +603,12 @@ $(function () {
                     });
                     $("#TareProy").on('select2:select', function (e) {
                         $("#TareProc").val('').trigger("change");
+                        $("#TarePlano").val('').trigger("change");
                         $('#TareProc').select2('open');
                     });
                     $("#TareProy").on('select2:unselecting', function (e) {
                         $("#TareProc").val('').trigger("change");
+                        $("#TarePlano").val('').trigger("change");
                     });
 
                     $("#TareResp").select2({
@@ -737,7 +739,7 @@ $(function () {
                             multiple: false,
                             allowClear: opt2["allowClear"],
                             language: "es",
-                            placeholder: "Plano",
+                            placeholder: "Planos",
                             dropdownParent: $('#tarModal'),
                             templateResult: template,
                             // templateSelection: template,
@@ -784,6 +786,7 @@ $(function () {
                                     return {
                                         q: params.term,
                                         selectPlano: true,
+                                        ProyID: $("#TareProy").val(),
                                     };
                                 },
                                 processResults: function (data) {

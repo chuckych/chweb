@@ -13,7 +13,7 @@ $where_condition = '';
 
 $where_condition .= (!empty($params['_c'])) ? " AND clientes.recid = '$params[_c]'" : "";
 $where_condition .= " AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]'";
-$where_condition .= " AND proy_plantillas.PlantMod = 40";
+$where_condition .= " AND proy_plantillas.PlantMod = 44";
 
 $FiltroQ = (!empty($q)) ? " AND proy_plantillas.PlantDesc LIKE '%$q%'" : '';
 $query = "SELECT PlantID, PlantDesc FROM proy_plantillas WHERE proy_plantillas.PlantID > 0 AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]'";

@@ -140,19 +140,20 @@ $(function () {
         let p = get_proy_pasos();
 
         let proy_pasos = JSON.stringify({
-            'EmpID'     : p.EmpID,
-            'EmpDesc'   : p.EmpDesc,
-            'ProyID'    : p.ProyID,
-            'ProyNom'   : p.ProyNom,
-            'ProyDesc'  : p.ProyDesc,
-            'ProyPlant' : p.ProyPlant,
-            'PlantDesc' : p.PlantDesc,
-            'ProyResp'  : p.ProyResp,
-            'RespDesc'  : p.RespDesc,
-            'ProcID'    : dataProcID,
-            'ProcDesc'  : dataProcDesc,
-            'ProcCost'  : dataProcCost,
-            'ProcObs'   : dataProcObs
+            'EmpID'          : p.EmpID,
+            'EmpDesc'        : p.EmpDesc,
+            'ProyID'         : p.ProyID,
+            'ProyNom'        : p.ProyNom,
+            'ProyDesc'       : p.ProyDesc,
+            'ProyPlant'      : p.ProyPlant,
+            'PlantDesc'      : p.PlantDesc,
+            'ProyResp'       : p.ProyResp,
+            'RespDesc'       : p.RespDesc,
+            'ProyPlantPlano' : p.ProyPlantPlano,
+            'ProcID'         : dataProcID,
+            'ProcDesc'       : dataProcDesc,
+            'ProcCost'       : dataProcCost,
+            'ProcObs'        : dataProcObs
         });
 
         sessionStorage.setItem(location.pathname.substring(1) + 'proy_pasos', proy_pasos)

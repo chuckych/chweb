@@ -88,6 +88,7 @@ $(function () {
                         data-PlantDesc="${data.ProyPlant.Nombre}"
                         data-ProyResp="${data.ProyResp.ID}"
                         data-RespDesc="${data.ProyResp.Nombre}"
+                        data-ProyPlantPlano="${data.ProyPlantPlano.ID}"
                         class="card p-3 mt-2 mt-sm-3 animate__animated animate__fadeIn pointer checkProy">
                         <div class="form-check pointer">
                             <input class="form-check-input" type="checkbox" value="" id="proy_${data.ProyData.ID}">
@@ -194,6 +195,7 @@ $(function () {
         let dataPlantDesc = $(this).attr('data-PlantDesc');
         let dataProyResp = $(this).attr('data-ProyResp');
         let dataRespDesc = $(this).attr('data-RespDesc');
+        let ProyPlantPlano = $(this).attr('data-ProyPlantPlano');
 
         let titlePag = 'Seleccionar Proceso';
         let proy_pasos = JSON.stringify({
@@ -205,7 +207,8 @@ $(function () {
             'ProyPlant': dataProyPlant,
             'PlantDesc': dataPlantDesc,
             'ProyResp': dataProyResp,
-            'RespDesc': dataRespDesc
+            'RespDesc': dataRespDesc,
+            'ProyPlantPlano': ProyPlantPlano
         });
         sessionStorage.setItem(location.pathname.substring(1) + 'proy_pasos', proy_pasos)
 

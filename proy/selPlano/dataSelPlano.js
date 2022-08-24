@@ -4,6 +4,10 @@ $(function () {
     function bindForm(tipo) { //bindear formulario de alta/edicion
         $("#planoForm").bind("submit", function (e) {
             e.preventDefault();
+            let proy_pasos = sessionStorage.getItem(
+                location.pathname.substring(1) + "proy_pasos"
+            );
+            proy_pasos = JSON.parse(proy_pasos);
             if ($("#PlanoDesc").val() == "") {
                 $.notifyClose();
                 $("#PlanoDesc").focus().addClass("is-invalid");
@@ -20,7 +24,7 @@ $(function () {
             $.ajax({
                 type: $(this).attr("method"),
                 url: "op/crud.php",
-                data: $(this).serialize() + "&PlanoSubmit=" + tipo,
+                data: $(this).serialize() + "&PlanoSubmit=" + tipo + "&PlantPlano=" + proy_pasos.ProyPlantPlano,
                 beforeSend: function (data) {
                     $.notifyClose();
                     notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
@@ -31,7 +35,7 @@ $(function () {
                     if (data.status == "ok") {
                         $.notifyClose();
                         notify(data.Mensaje, "success", 2000, "right")
-                        $("#selectPlano").DataTable().search( PlanoDesc['PlanoDesc'] ).draw();
+                        $("#selectPlano").DataTable().search(PlanoDesc['PlanoDesc']).draw();
                         $("#planoModal").modal("hide");
                     } else {
                         $.notifyClose();
@@ -61,7 +65,6 @@ $(function () {
         location.pathname.substring(1) + "proy_pasos"
     );
     proy_pasos = JSON.parse(proy_pasos);
-    // console.log(proy_info);
 
     if (proy_info) {
         $("#inicioNombre").html(`Hola ${proy_info.name}`);
@@ -85,6 +88,7 @@ $(function () {
             dataType: "json",
             data: function (data) {
                 data.PlanoEsta = '0';
+                data.ProyID = proy_pasos.ProyID;
             },
             error: function () {
                 $("#selectPlano").css("display", "none");
@@ -148,9 +152,15 @@ $(function () {
         $('#selectPlano_filter input').attr('placeholder', 'Buscar Plano').addClass('p-3 w300');
         $('.title').prepend(`
         <div class="w-100 d-none d-sm-block">
-            <h3 class="display-6 text-tabler">Seleccionar Plano</h3>
+            <h3 class="display-6 text-tabler titlePlanos">Seleccionar Plano</h3>
         </div>
     `)
+
+        if (proy_pasos.ProyPlantPlano == '0') {
+            $('#btnAltaPlano').remove()
+            $(".titlePlanos").html('<div class="mt-4">No hay Planos.</div>')
+            $("#omitePlano").html('<div class="">Siguiente</div>')
+        }
         $('#listSelPlano').fadeIn();
 
         $("#btnAltaPlano").click(function () { // Se agrega el evento click al boton de alta de plano

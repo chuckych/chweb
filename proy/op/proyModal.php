@@ -38,7 +38,7 @@
                         </div>
                         <div class="col-sm-6 col-lg-4 col-12 mb-3">
                             <div class="form-group">
-                                <label class="form-label">Plantilla</label>
+                                <label class="form-label">Plantilla Procesos</label>
                                 <select class="form-control w-100" name="ProyPlant" id="ProyPlant"></select>
                             </div>
                         </div>
@@ -55,6 +55,12 @@
                                 <label class="form-label">Inicio</label>
                                 <input type="text" class="form-control text-center tracking-wide ProyIniFin" name="ProyIniFin"
                                     id="ProyIniFin" placeholder="Inicio">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4 col-12 mb-3">
+                            <div class="form-group">
+                                <label class="form-label">Plantilla Planos</label>
+                                <select class="form-control w-100" name="ProyPlantPlanos" id="ProyPlantPlanos"></select>
                             </div>
                         </div>
                     </div>

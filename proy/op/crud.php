@@ -15,6 +15,7 @@ $_POST['ProcSubmit']    = ($_POST['ProcSubmit']) ?? '';
 $_POST['PlanoSubmit']   = ($_POST['PlanoSubmit']) ?? '';
 $_POST['PlantSubmit']   = ($_POST['PlantSubmit']) ?? '';
 $_POST['plantillaProc'] = ($_POST['plantillaProc']) ?? '';
+$_POST['plantillaPlano'] = ($_POST['plantillaPlano']) ?? '';
 $_POST['ProySubmit']    = ($_POST['ProySubmit']) ?? '';
 $_POST['conf']          = ($_POST['conf']) ?? '';
 
@@ -66,6 +67,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
     $_POST['PlantID']   = ($_POST['PlantID']) ?? '';
     $_POST['PlantDesc'] = ($_POST['PlantDesc']) ?? '';
+    $_POST['PlantMod'] = ($_POST['PlantMod']) ?? '';
+
+    $_POST['PlaPlanoID'] = ($_POST['PlaPlanoID']) ?? '';
+    $_POST['PlanPlaDesc'] = ($_POST['PlanPlaDesc']) ?? '';
+    $_POST['checkPlanos'] = ($_POST['checkPlanos']) ?? '';
 
     $_POST['EstDesc']  = ($_POST['EstDesc']) ?? '';
     $_POST['EstColor'] = ($_POST['EstColor']) ?? '';
@@ -105,14 +111,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $_POST['PlaProPlan'] = test_input($_POST['PlaProPlan']) ?? '';
     $_POST['PlaProDesc'] = test_input($_POST['PlaProDesc']) ?? '';
 
-    $_POST['ProyIniFin'] = $_POST['ProyIniFin'] ?? '';
-    $_POST['ProyDesc']   = $_POST['ProyDesc'] ?? '';
-    $_POST['ProyNom']    = $_POST['ProyNom'] ?? '';
-    $_POST['ProyEmpr']   = $_POST['ProyEmpr'] ?? '';
-    $_POST['ProyPlant']  = $_POST['ProyPlant'] ?? '';
-    $_POST['ProyResp']   = $_POST['ProyResp'] ?? '';
-    $_POST['ProyEsta']   = $_POST['ProyEsta'] ?? '';
-    $_POST['ProyObs']    = $_POST['ProyObs'] ?? '';
+    $_POST['ProyIniFin']      = $_POST['ProyIniFin'] ?? '';
+    $_POST['ProyDesc']        = $_POST['ProyDesc'] ?? '';
+    $_POST['ProyNom']         = $_POST['ProyNom'] ?? '';
+    $_POST['ProyEmpr']        = $_POST['ProyEmpr'] ?? '';
+    $_POST['ProyPlant']       = $_POST['ProyPlant'] ?? '';
+    $_POST['ProyResp']        = $_POST['ProyResp'] ?? '';
+    $_POST['ProyEsta']        = $_POST['ProyEsta'] ?? '';
+    $_POST['ProyObs']         = $_POST['ProyObs'] ?? '';
+    $_POST['ProyPlantPlanos'] = $_POST['ProyPlantPlanos'] ?? 'NULL';
+    $_POST['PlantPlano'] = $_POST['PlantPlano'] ?? '';
+    // $_POST['ProyPlantPlanos'] = empty($_POST['ProyPlantPlanos']) ? 'NULL' : $_POST['ProyPlantPlanos'];
 
     $_POST['ProyIniFin'] = test_input($_POST['ProyIniFin']);
     $_POST['ProyDesc']   = test_input($_POST['ProyDesc']);
@@ -121,7 +130,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $_POST['ProyPlant']  = test_input($_POST['ProyPlant']);
     $_POST['ProyResp']   = test_input($_POST['ProyResp']);
     $_POST['ProyEsta']   = test_input($_POST['ProyEsta']);
-    $_POST['ProyObs ']   = test_input($_POST['ProyObs']);
+    $_POST['ProyObs']    = test_input($_POST['ProyObs']);
+    $_POST['PlantPlano'] = test_input($_POST['PlantPlano']);
 
 
     $dataUser = simple_pdoQuery("SELECT usuarios.id AS 'id_user', roles.nombre AS 'nombre_rol' FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid='$_SESSION[RECID_USER]' ORDER BY usuarios.fecha_alta DESC LIMIT 1");
@@ -137,7 +147,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         if ($insertEmpresa) {
             $dataEmpresa = simple_pdoQuery("SELECT proy_empresas.EmpID AS 'id_empresa', proy_empresas.EmpDesc AS 'nombre_empresa' FROM proy_empresas WHERE proy_empresas.EmpDesc = '$_POST[EmpDesc]' AND proy_empresas.Cliente = '$_SESSION[ID_CLIENTE]' ORDER BY proy_empresas.EmpAlta DESC LIMIT 1");
-            auditoria("Proyectos - Empresa: ($dataEmpresa[id_empresa]) $_POST[EmpDesc].", 'A', '', '35');
+            auditoria("Proyectos - Empresa: ($dataEmpresa[id_empresa]) $_POST[EmpDesc].", 'A', '', '42');
             PrintRespuestaJson('ok', 'Empresa agregada correctamente.');
             exit;
         } else {
@@ -154,7 +164,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $updateEmpresa = pdoQuery($query);
 
         if ($updateEmpresa) {
-            auditoria("Proyectos - Empresa: ($_POST[EmpID]) $_POST[EmpDesc].", 'B', '', '35');
+            auditoria("Proyectos - Empresa: ($_POST[EmpID]) $_POST[EmpDesc].", 'B', '', '42');
             PrintRespuestaJson('ok', 'Empresa modificada correctamente.');
             exit;
         } else {
@@ -165,7 +175,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $query = "DELETE FROM proy_empresas WHERE EmpID = '$_POST[EmpID]'";
         $deleteEmpresa = pdoQuery($query);
         if ($deleteEmpresa) {
-            auditoria("Proyectos - Empresa: ($_POST[EmpID]) $_POST[EmpDesc].", 'B', '', '35');
+            auditoria("Proyectos - Empresa: ($_POST[EmpID]) $_POST[EmpDesc].", 'B', '', '42');
             PrintRespuestaJson('ok', "Empresa eliminada correctamente.<div class='pt-1 font-weight-bold'>$_POST[EmpDesc]<div>");
             exit;
         } else {
@@ -234,7 +244,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         if ($insertProceso) {
             $dataProcesos = simple_pdoQuery("SELECT proy_proceso.ProcID AS 'id_proceso', proy_proceso.ProcDesc AS 'nombre_proceso' FROM proy_proceso WHERE proy_proceso.ProcDesc = '$_POST[ProcDesc]' AND proy_proceso.Cliente = '$_SESSION[ID_CLIENTE]' ORDER BY proy_proceso.ProcAlta DESC LIMIT 1");
-            auditoria("Proyectos - Proceso: ($dataProcesos[id_proceso]) $_POST[ProcDesc].", 'A', '', '35');
+            auditoria("Proyectos - Proceso: ($dataProcesos[id_proceso]) $_POST[ProcDesc].", 'A', '', '38');
             PrintRespuestaJson('ok', 'Proceso agregado correctamente.');
             exit;
         } else {
@@ -252,7 +262,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $updateProceso = pdoQuery($query);
 
         if ($updateProceso) {
-            auditoria("Proyectos - Proceso: ($_POST[ProcID]) $_POST[ProcDesc].", 'M', '', '35');
+            auditoria("Proyectos - Proceso: ($_POST[ProcID]) $_POST[ProcDesc].", 'M', '', '38');
             PrintRespuestaJson('ok', 'Proceso modificado correctamente.');
             exit;
         } else {
@@ -263,7 +273,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $query = "DELETE FROM proy_proceso WHERE ProcID = '$_POST[ProcID]'";
         $deleteProceso = pdoQuery($query);
         if ($deleteProceso) {
-            auditoria("Proyectos - Proceso: ($_POST[ProcID]) $_POST[ProcDesc].", 'B', '', '35');
+            auditoria("Proyectos - Proceso: ($_POST[ProcID]) $_POST[ProcDesc].", 'B', '', '38');
             PrintRespuestaJson('ok', "Proceso eliminado correctamente.<div class='pt-1 font-weight-bold'>$_POST[ProcDesc]<div>");
             exit;
         } else {
@@ -281,7 +291,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         if ($insertPlano) {
             $dataPlanos = simple_pdoQuery("SELECT proy_planos.PlanoID AS 'id_plano', proy_planos.PlanoDesc AS 'nombre_plano' FROM proy_planos WHERE proy_planos.PlanoDesc = '$_POST[PlanoDesc]' AND proy_planos.Cliente = '$_SESSION[ID_CLIENTE]' ORDER BY proy_planos.PlanoAlta DESC LIMIT 1");
-            auditoria("Proyectos - Planos: ($dataPlanos[id_plano]) $_POST[PlanoDesc].", 'A', '', '35');
+
+            auditoria("Proyectos - Planos: ($dataPlanos[id_plano]) $_POST[PlanoDesc].", 'A', '', '41');
+            
+            if ($_POST['PlantPlano']) { // Si viene el ID de plantilla Plano
+                $readPlantilla=simple_pdoQuery("SELECT PlaPlanos, PlaPlanoID, PlantDesc FROM proy_plantilla_plano
+                INNER JOIN proy_plantillas ON proy_plantilla_plano.PlaPlanoID = proy_plantillas.PlantID WHERE PlaPlanoID='$_POST[PlantPlano]' LIMIT 1");
+                $PlaPlanos = $readPlantilla['PlaPlanos'].','.$dataPlanos['id_plano']; // concateno el id a la plantilla
+                pdoQuery("UPDATE proy_plantilla_plano SET PlaPlanos='$PlaPlanos' WHERE PlaPlanoID = '$_POST[PlantPlano]'");
+                auditoria("Proyectos - Plantillas Planos: ($readPlantilla[PlaPlanoID]) $readPlantilla[PlantDesc].", 'M', '', '44');
+            }
             PrintRespuestaJson('ok', 'Plano agregado correctamente.');
             exit;
         } else {
@@ -299,7 +318,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $updatePlano = pdoQuery($query);
 
         if ($updatePlano) {
-            auditoria("Proyectos - Planos: ($_POST[PlanoID]) $_POST[PlanoDesc].", 'M', '', '35');
+            auditoria("Proyectos - Planos: ($_POST[PlanoID]) $_POST[PlanoDesc].", 'M', '', '41');
             PrintRespuestaJson('ok', 'Plano modificado correctamente.');
             exit;
         } else {
@@ -310,7 +329,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $query = "DELETE FROM proy_planos WHERE PlanoID = '$_POST[PlanoID]'";
         $deletePlano = pdoQuery($query);
         if ($deletePlano) {
-            auditoria("Proyectos - Planos: ($_POST[PlanoID]) $_POST[PlanoDesc].", 'B', '', '35');
+            auditoria("Proyectos - Planos: ($_POST[PlanoID]) $_POST[PlanoDesc].", 'B', '', '41');
             PrintRespuestaJson('ok', "Plano eliminado correctamente.<div class='pt-1 font-weight-bold'>$_POST[PlanoDesc]<div>");
             exit;
         } else {
@@ -318,18 +337,35 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             exit;
         }
     } else if ($_POST['PlantSubmit'] == 'alta') {
-        $checkPlanDesc = count_pdoQuery("SELECT 1 FROM proy_plantillas WHERE proy_plantillas.PlantDesc = '$_POST[PlantDesc]' AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]' LIMIT 1");
+
+        if (empty($_POST['PlantMod'])) {
+            PrintRespuestaJson('error', "Debe seleccionar un módulo");
+            exit;
+        }
+
+        $checkPlanDesc = count_pdoQuery("SELECT 1 FROM proy_plantillas WHERE proy_plantillas.PlantDesc = '$_POST[PlantDesc]' AND proy_plantillas.PlantMod = '$_POST[PlantMod]' AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]' LIMIT 1");
+
         if ($checkPlanDesc) {
             PrintRespuestaJson('ERROR', 'Ya existe una plantilla con ese nombre');
             exit;
         }
-        $query = "INSERT INTO proy_plantillas (PlantDesc, PlantAlta, Cliente) VALUES ('$_POST[PlantDesc]', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
+
+        $query = "INSERT INTO proy_plantillas (PlantDesc, PlantMod, PlantAlta, Cliente) VALUES ('$_POST[PlantDesc]', '$_POST[PlantMod]', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
         $insertPlantilla = pdoQuery($query);
+
+        switch ($_POST['PlantMod']) {
+            case '44':
+                $PlantillaModulo = 'Plantilla Planos';
+                break;
+            case '40':
+                $PlantillaModulo = 'Plantilla Procesos';
+                break;
+        }
 
         if ($insertPlantilla) {
             $dataPlantilla = simple_pdoQuery("SELECT proy_plantillas.PlantID AS 'id_plantilla', proy_plantillas.PlantDesc AS 'nombre_plantilla' FROM proy_plantillas WHERE proy_plantillas.PlantDesc = '$_POST[PlantDesc]' AND proy_plantillas.Cliente = '$_SESSION[ID_CLIENTE]' ORDER BY proy_plantillas.PlantAlta DESC LIMIT 1");
-            auditoria("Proyectos - Plantillas: ($dataPlantilla[id_plantilla]) $_POST[PlantDesc].", 'A', '', '35');
-            PrintRespuestaJson('ok', 'Plantilla agregada correctamente.');
+            auditoria("Proyectos - $PlantillaModulo: ($dataPlantilla[id_plantilla]) $_POST[PlantDesc].", 'A', '', $_POST['PlantMod']);
+            PrintRespuestaJson('ok', "$PlantillaModulo creada correctamente.");
             exit;
         } else {
             PrintRespuestaJson('ERROR', 'Error al cargar la plantilla');
@@ -345,9 +381,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $query = "UPDATE proy_plantillas SET PlantDesc = '$_POST[PlantDesc]' WHERE PlantID = '$_POST[PlantID]'";
         $updatePlano = pdoQuery($query);
 
+        switch ($_POST['PlantMod']) {
+            case '44':
+                $PlantillaModulo = 'Plantilla Planos';
+                break;
+            case '40':
+                $PlantillaModulo = 'Plantilla Procesos';
+                break;
+        }
+
         if ($updatePlano) {
-            auditoria("Proyectos - Plantillas: ($_POST[PlantID]) $_POST[PlantDesc].", 'M', '', '35');
-            PrintRespuestaJson('ok', 'Plantilla modificado correctamente.');
+            auditoria("Proyectos - $PlantillaModulo: ($_POST[PlantID]) $_POST[PlantDesc].", 'M', '', $_POST['PlantMod']);
+            PrintRespuestaJson('ok', "Plantillas modificado correctamente.");
             exit;
         } else {
             PrintRespuestaJson('ERROR', 'Error al modificar la plantilla.');
@@ -356,9 +401,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     } else if ($_POST['PlantSubmit'] == 'baja') {
         $query = "DELETE FROM proy_plantillas WHERE PlantID = '$_POST[PlantID]'";
         $deletePlantilla = pdoQuery($query);
+        switch ($_POST['PlantMod']) {
+            case '44':
+                $PlantillaModulo = 'Plantilla Planos';
+                break;
+            case '40':
+                $PlantillaModulo = 'Plantilla Procesos';
+                break;
+        }
         if ($deletePlantilla) {
-            auditoria("Proyectos - Plantillas: ($_POST[PlantID]) $_POST[PlantDesc].", 'B', '', '35');
-            PrintRespuestaJson('ok', "Plantilla eliminado correctamente.<div class='pt-1 font-weight-bold'>$_POST[PlantDesc]<div>");
+            auditoria("Proyectos - $PlantillaModulo: ($_POST[PlantID]) $_POST[PlantDesc].", 'B', '', $_POST['PlantMod']);
+            PrintRespuestaJson('ok', "Plantilla eliminada correctamente.<div class='pt-1 font-weight-bold'>$_POST[PlantDesc]<div>");
             exit;
         } else {
             PrintRespuestaJson('ERROR', 'Error al eliminar la plantilla');
@@ -382,7 +435,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             $update = pdoQuery($query);
             if ($update) {
                 ($_POST['actualizar'] == 'true') ? exit : '';
-                auditoria("Proyectos - Procesos Plantilla: ($_POST[PlaProPlan]) $_POST[PlaProDesc]. Se actualizaron valores", 'M', '', '35');
+                auditoria("Proyectos - Procesos Plantilla: ($_POST[PlaProPlan]) $_POST[PlaProDesc]. Se actualizaron valores", 'M', '', '40');
                 PrintRespuestaJson('ok', "Procesos asignados correctamente a la plantilla<div class='font-weight-bold lh-lg'>$_POST[PlaProDesc].</div>");
                 exit;
             } else {
@@ -396,8 +449,48 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
                 ($_POST['actualizar'] == 'true') ? exit : '';
 
-                auditoria("Proyectos - Procesos Plantilla: ($_POST[PlaProPlan]) $_POST[PlaProDesc]. Se agregaron valores", 'A', '', '35');
+                auditoria("Proyectos - Procesos Plantilla: ($_POST[PlaProPlan]) $_POST[PlaProDesc]. Se agregaron valores", 'A', '', '40');
                 PrintRespuestaJson('ok', "Procesos asignados correctamente a la plantilla<div class='font-weight-bold lh-lg'>$_POST[PlaProDesc].</div>");
+                exit;
+            } else {
+                PrintRespuestaJson('ERROR', 'Error al modificar la plantilla.');
+                exit;
+            }
+        }
+    } else if ($_POST['plantillaPlano'] == true) {
+
+        $_POST['actualizar'] = ($_POST['actualizar']) ?? '';
+
+        if (empty($_POST['PlaPlanoID'])) {
+            PrintRespuestaJson('error', "Debe Seleccionar un Plantilla");
+            exit;
+        }
+
+        $checkPlanos = count_pdoQuery("SELECT 1 FROM proy_plantilla_plano WHERE proy_plantilla_plano.PlaPlanoID = '$_POST[PlaPlanoID]' LIMIT 1");
+        $valores = json_decode($_POST['checkPlanos']);
+        $valores = implode(',', ($valores));
+
+        if ($checkPlanos) {
+            $query = "UPDATE proy_plantilla_plano SET proy_plantilla_plano.PlaPlanos = '$valores' WHERE proy_plantilla_plano.PlaPlanoID = '$_POST[PlaPlanoID]'";
+            $update = pdoQuery($query);
+            if ($update) {
+                ($_POST['actualizar'] == 'true') ? exit : '';
+                auditoria("Proyectos - Planos Plantilla: ($_POST[PlaPlanoID]) $_POST[PlanPlaDesc]. Se actualizaron valores", 'M', '', '44');
+                PrintRespuestaJson('ok', "Planos asignados correctamente a la plantilla<div class='font-weight-bold lh-lg'>$_POST[PlanPlaDesc].</div>");
+                exit;
+            } else {
+                PrintRespuestaJson('ERROR', 'Error al modificar la plantilla.');
+                exit;
+            }
+        } else {
+            $query = "INSERT INTO proy_plantilla_plano(PlaPlanoID, PlaPlanos, PlaPlanoAlta) VALUES ('$_POST[PlaPlanoID]', '$valores', '$FechaHora')";
+            $insert = pdoQuery($query);
+            if ($insert) {
+
+                ($_POST['actualizar'] == 'true') ? exit : '';
+
+                auditoria("Proyectos - Planos Plantilla: ($_POST[PlaPlanoID]) $_POST[PlanPlaDesc]. Se agregaron valores", 'A', '', '44');
+                PrintRespuestaJson('ok', "Planos asignados correctamente a la plantilla<div class='font-weight-bold lh-lg'>$_POST[PlanPlaDesc].</div>");
                 exit;
             } else {
                 PrintRespuestaJson('ERROR', 'Error al modificar la plantilla.');
@@ -428,7 +521,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             $ProyFin  = date('Ymd');
         }
 
-        $query = "INSERT INTO proy_proyectos (ProyNom, ProyDesc, ProyEmpr, ProyPlant, ProyResp, ProyEsta, ProyObs, ProyIni, ProyFin, ProyAlta, Cliente) VALUES ( '$_POST[ProyNom]', '$_POST[ProyDesc]', '$_POST[ProyEmpr]', '$_POST[ProyPlant]', '$_POST[ProyResp]', '$_POST[ProyEsta]', '$_POST[ProyObs]', '$ProyIni', '$ProyFin', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
+        $query = "INSERT INTO proy_proyectos (ProyNom, ProyDesc, ProyEmpr, ProyPlant, ProyPlantPlano, ProyResp, ProyEsta, ProyObs, ProyIni, ProyFin, ProyAlta, Cliente) VALUES ( '$_POST[ProyNom]', '$_POST[ProyDesc]', '$_POST[ProyEmpr]', '$_POST[ProyPlant]', '$_POST[ProyPlantPlanos]', '$_POST[ProyResp]', '$_POST[ProyEsta]', '$_POST[ProyObs]', '$ProyIni', '$ProyFin', '$FechaHora', '$_SESSION[ID_CLIENTE]')";
         $insertEmpresa = pdoQuery($query);
 
         if ($insertEmpresa) {
@@ -448,12 +541,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             PrintRespuestaJson('ERROR', 'Ya existe un proyecto con ese nombre');
             exit;
         }
+        $ProyPlantPlanos = $_POST['ProyPlantPlanos'];
 
         $DateRange = explode(' al ', $_POST['ProyIniFin']);
         $ProyIni   = test_input(dr_fecha($DateRange[0]));
         $ProyFin   = test_input(dr_fecha($DateRange[1]));
         $proyObs   = test_input($_POST['ProyObs']);
-        $query = "UPDATE proy_proyectos SET ProyDesc='$_POST[ProyDesc]', ProyNom='$_POST[ProyNom]', ProyPlant='$_POST[ProyPlant]', ProyResp='$_POST[ProyResp]', ProyEsta='$_POST[ProyEsta]', ProyObs='$proyObs', ProyIni = '$ProyIni', ProyFin = '$ProyFin' WHERE ProyID='$_POST[ProyID]'";
+        $query = "UPDATE proy_proyectos SET ProyDesc='$_POST[ProyDesc]', ProyNom='$_POST[ProyNom]', ProyPlant='$_POST[ProyPlant]', ProyPlantPlano=$ProyPlantPlanos, ProyResp='$_POST[ProyResp]', ProyEsta='$_POST[ProyEsta]', ProyObs='$proyObs', ProyIni = '$ProyIni', ProyFin = '$ProyFin' WHERE ProyID='$_POST[ProyID]'";
         $updateProyecto = pdoQuery($query);
         if ($updateProyecto) {
             auditoria("Proyectos - Proyecto: ($_POST[ProcID]) $_POST[ProcDesc].", 'M', '', '35');
@@ -489,10 +583,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $tareasPendientes = sendRemoteData($urlTar, ($dataRequest)); // Obtenemos el array de tareas pendientes
         $xlsData = json_decode($tareasPendientes, true); // Lo decodificamos en un array
         $xlsData = $xlsData['data']; // Obtenemos el array de tareas pendientes
-        
+
         require __DIR__ . './tarToXls.php';
 
         echo PrintRespuestaJson('ok', $routeFile);
+        auditoria("Proyectos - Tareas: Se exporto excel", 'A', '', '37');
         exit;
     }
 }

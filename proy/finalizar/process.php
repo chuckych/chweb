@@ -203,17 +203,18 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 } else if (($_POST['ediTar'])) { // Editar Tarea
 
-	$_POST['TareResp']     = $_POST['TareResp'] ?? '';
-	$_POST['TareProy']     = $_POST['TareProy'] ?? '';
-	$_POST['TareProc']     = $_POST['TareProc'] ?? '';
-	$_POST['TarePlano']    = $_POST['TarePlano'] ?? '';
-	$_POST['TareFechaIni'] = $_POST['TareFechaIni'] ?? '';
-	$_POST['TareHoraIni']  = $_POST['TareHoraIni'] ?? '';
-	$_POST['TareFechaFin'] = $_POST['TareFechaFin'] ?? '';
-	$_POST['TareHoraFin']  = $_POST['TareHoraFin'] ?? '';
-	$_POST['tareID']       = $_POST['tareID'] ?? '';
-	$_POST['fromTareas']   = $_POST['fromTareas'] ?? '';
-	$_POST['pendTar']      = $_POST['pendTar'] ?? '';
+    $_POST['TareResp']     = $_POST['TareResp'] ?? '';
+    $_POST['TareProy']     = $_POST['TareProy'] ?? '';
+    $_POST['TareProc']     = $_POST['TareProc'] ?? '';
+    $_POST['TarePlano']    = $_POST['TarePlano'] ?? 'NULL';
+    $_POST['TarePlano']    = ($_POST['TarePlano'] == '0') ? 'NULL' : $_POST['TarePlano'];
+    $_POST['TareFechaIni'] = $_POST['TareFechaIni'] ?? '';
+    $_POST['TareHoraIni']  = $_POST['TareHoraIni'] ?? '';
+    $_POST['TareFechaFin'] = $_POST['TareFechaFin'] ?? '';
+    $_POST['TareHoraFin']  = $_POST['TareHoraFin'] ?? '';
+    $_POST['tareID']       = $_POST['tareID'] ?? '';
+    $_POST['fromTareas']   = $_POST['fromTareas'] ?? '';
+    $_POST['pendTar']      = $_POST['pendTar'] ?? '';
 
 	$TareFechaFin = test_input($_POST['TareFechaFin']) ?? '';
 	$TareHoraFin  = test_input($_POST['TareHoraFin']) ?? '';
@@ -221,7 +222,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$TareHoraIni  = test_input($_POST['TareHoraIni']) ?? '';
 	$TareProy     = test_input($_POST['TareProy']) ?? '';
 	$TareProc     = test_input($_POST['TareProc']) ?? '';
-	$TarePlano    = test_input($_POST['TarePlano']) ?? NULL;
+	$TarePlano    = test_input($_POST['TarePlano']) ?? '';
 	$TareResp     = test_input($_POST['TareResp']) ?? '';
 	$tareID       = test_input($_POST['tareID']) ?? '';
 	$fromTareas   = test_input($_POST['fromTareas']) ?? '';
@@ -279,9 +280,10 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 
 
-	$u = "UPDATE `proy_tareas` SET `TareProy` = '$TareProy', `TareProc` = '$TareProc', `TarePlano` = '$TarePlano', `TareResp` = '$TareResp', `TareCost`= '$rCost'  ,`TareIni` = '$FechaHoraIni', `TareFin` = '$FechaHoraFin', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$tareID'";
+	$u = "UPDATE `proy_tareas` SET `TareProy` = '$TareProy', `TareProc` = '$TareProc', `TarePlano` = $TarePlano, `TareResp` = '$TareResp', `TareCost`= '$rCost'  ,`TareIni` = '$FechaHoraIni', `TareFin` = '$FechaHoraFin', `TareFinTipo` = '$TareFinTipo' WHERE `TareID` = '$tareID'";
 
 	(!pdoQuery($u)) ? PrintRespuestaJson('error', "Error al editar la tarea (#$tareID)") . exit : ''; // Si no se pudo editar la tarea, salimos del script
+	//(!pdoQuery($u)) ? PrintRespuestaJson('error', $u) . exit : ''; // Si no se pudo editar la tarea, salimos del script
 	(($pendTar)) ? PrintRespuestaJson('ok', "Tarea (#$tareID) editada correctamente.") . exit : ''; // Si la tarea esta pendiente, salimos del script
 
 	$f       = Carbon::parse($FechaHoraIni); // Fecha de inicio
