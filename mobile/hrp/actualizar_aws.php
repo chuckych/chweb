@@ -43,7 +43,7 @@ function statusFlags($statusFlags, $pathFlags, $createdDate)
     $text = ($statusFlags == '2') ? "Se marco Bandera de espera" : "Se marco Bandera de descarga";
     $pathLog = __DIR__ . '/logs/flagsLog';
     createDir($pathLog);
-    fileLog($text, $pathLog . '/flagsLog_4.log');
+    fileLog($text, $pathLog . '/flagsLog_5.log');
     borrarLogs($pathLog.'/', 1, '.log');
 }
 function getEvents($url, $timeout = 10)
@@ -102,7 +102,7 @@ function queryCalcZone($lat, $lng, $idCompany)
 }
 $iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
-$pathFlags = 'flags4.php'; // ruta del archivo de Log de errores
+$pathFlags = 'flags_aws.php'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
 
 if (!$flags) {
@@ -145,7 +145,7 @@ if ($flags_download == 2) {
     exit;
 }
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
-$url   = "http://207.191.165.3:7575/attention/api/punch-event/" . $flags_lastDate;
+$url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
 // echo ($url);
 // exit;
 $array = json_decode(getEvents($url), true);

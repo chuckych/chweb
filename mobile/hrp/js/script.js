@@ -48,11 +48,13 @@ if ($("#actMobile").val() == '1') {
     actualizar2(false);
     actualizar3(false);
     actualizar4(false);
+    actualizar_aws(false);
     setInterval(() => {
         actualizar(false);
         actualizar2(false);
         actualizar3(false);
         actualizar4(false);
+        actualizar_aws(false);
     }, 15000);
 } else {
     if ((host != 'https://localhost') && (host != 'http://localhost')) {
@@ -1120,6 +1122,52 @@ function actualizar4(noti = true) {
     axios({
         method: 'post',
         url: 'actualizar-4.php'
+    }).then(function (response) {
+        let data = response.data.Response
+        let date = new Date()
+        if (data.status == "ok") {
+            // set session storage
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
+            if (noti) {
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+                minmaxDate()
+                if (data.totalSession > 0) {
+                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
+                } else {
+                    notify('No hay registros nuevos', 'info', 2000, 'right')
+                }
+            } else {
+                minmaxDate()
+            }
+        } else {
+            if (noti) {
+                $.notifyClose();
+                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+                notify(data.Mensaje, 'info', 2000, 'right')
+            }
+        }
+
+    }).catch(function (error) {
+        console.log('ERROR actualizar\n' + error);
+    }).then(function () {
+        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
+        $(".actualizar").attr("data-titlel", "Descargar registros");
+        setTimeout(() => {
+            $.notifyClose();
+        }, 2000);
+    });
+}
+function actualizar_aws(noti = true) {
+
+    if (noti) {
+        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
+        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
+    };
+
+    axios({
+        method: 'post',
+        url: 'actualizar_aws.php'
     }).then(function (response) {
         let data = response.data.Response
         let date = new Date()

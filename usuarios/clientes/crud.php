@@ -45,8 +45,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
 
     $tkmobilehrp = sha1($recid);
 
-    if (count_pdoQuery("SELECT * FROM clientes where nombre = '$nombre' LIMIT 1")) {
+    if (count_pdoQuery("SELECT 1 FROM clientes where nombre = '$nombre' LIMIT 1")) {
         PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);
+        exit;
+    }
+    if (count_pdoQuery("SELECT 1 FROM clientes where ident = '$identauto' LIMIT 1")) {
+        PrintRespuestaJson('error', "Identificador de cuenta ya existe. Ingrese otro por favor");
         exit;
     }
     /* Comprobamos campos vacíos  */

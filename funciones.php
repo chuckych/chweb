@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.249'; // Version de la aplicación
+    return 'v0.0.250'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3941,13 +3941,14 @@ function createDir($path, $gitignore = true)
 
         if ($gitignore) {
             $git = dirname($path . '/.gitignore');
-            // if (!is_dir($git)) {
-            mkdir($git, 0755, true);
-            $logGit    = fopen($git . '/.gitignore', 'a');
-            $textGit   = '*';
-            fwrite($logGit, $textGit);
-            fclose($logGit);
-            // }
+            if (!file_exists($git)) {
+                mkdir($path, 0700);
+                mkdir($git, 0755, true);
+                $logGit    = fopen($git . '/.gitignore', 'a');
+                $textGit   = '*';
+                fwrite($logGit, $textGit);
+                fclose($logGit);
+            }
         }
 
         $log    = fopen($dirname . '/index.php', 'a');
