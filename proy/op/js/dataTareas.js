@@ -304,8 +304,8 @@ $(function () {
     tableTareas.on("init.dt", function (e, settings) { // Cuando se inicializa la tabla
         let idTable = `#${e.target.id}`; // Se obtiene el id de la tabla
         let lengthMenu = $(`${idTable}_length select`); // Se obtiene el select del lengthMenu
-        $(lengthMenu).css("height","48px"); // Se agrega la clase h40 height: 50px
-        $(lengthMenu).css("margin-top","4px"); // Se agrega la clase h40 height: 50px
+        $(lengthMenu).css("height", "48px"); // Se agrega la clase h40 height: 50px
+        $(lengthMenu).css("margin-top", "4px"); // Se agrega la clase h40 height: 50px
         let filterInput = $(`${idTable}_filter input`); // Se obtiene el input del filtro
         $(filterInput).attr({ placeholder: "N° Tarea" }).addClass("p-2 pe-3 text-end w100").mask('0000');
         //$(`${idTable}_filter`).append("<div class=''><select class='selectTar form-control w300'></select></div>").addClass('w200'); // Se agrega la clase flex-center-center
@@ -1311,7 +1311,8 @@ $(function () {
 
         $('.divFiltrosTar').on("click", ".procPend", function (e) { // Se agrega el evento click al boton procPend
             $('.procPend').prop('disabled', true);
-
+            $.notifyClose()
+            notify('Procesando tareas...', "info", 0, "right");
             axios({
                 method: "post",
                 url: 'finalizar/process.php',
@@ -1319,7 +1320,20 @@ $(function () {
                 headers: { "Content-Type": "multipart/form-data" },
             }).then(function (response) {
                 $.notifyClose()
-                notify(response.data.Mensaje, "success", 2000, "right");
+                if (response.data.Info) {
+                    notify('<p>' + response.data.Mensaje + '<p>', "success", 0, "right");
+                    setTimeout(() => {
+                        $('[data-notify = "message"]').append('<div class="notifInfo p-2 card border"></div>')
+                        $('.notifInfo').addClass('maxh450 overflow-auto')
+                        $.each(response.data.Info, function (index, reg) {
+                            // console.log(reg);
+                            $('.notifInfo').append('<p class="font08 p-0 mt-1"><span class="lh1">' + reg + '</span></p>')
+                        })
+                    }, 500);
+                } else {
+                    notify(response.data.Mensaje, "success", 2000, "right");
+                }
+
             }).catch(function (error) {
                 alert(error);
             }).then(function () {

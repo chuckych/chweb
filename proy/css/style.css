@@ -146,6 +146,12 @@ textarea.form-control {
 .lh15 {
     line-height: 1.5;
 }
+.lh12 {
+    line-height: 1.2;
+}
+.lh1 {
+    line-height: 1;
+}
 
 .form-signin {
     display: flex;
@@ -286,6 +292,12 @@ textarea.form-control {
 
 .mh50 {
     min-height: 50px !important;
+}
+.maxh350 {
+    max-height: 150px !important;
+}
+.maxh450 {
+    max-height: 450px !important;
 }
 
 .h60 {

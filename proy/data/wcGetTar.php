@@ -41,7 +41,7 @@ $w_c .= (test_input($params['TareEstado'] == 'todos')) ? "" : ""; // Todas las T
 // $w_c .= (test_input($params['TareEstado'] == 'pendientes')) ? " AND proy_tareas.TareFin = '0000-00-00 00:00:00'" : ""; // Tareas Pendientes
 $w_c .= (test_input($params['TareEstado'] == 'pendientes')) ? " AND `proy_tare_horas`.`TareHorMin` IS NULL" : ""; // Tareas Pendientes
 //$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND proy_tareas.TareFin != '0000-00-00 00:00:00'" : ""; // Tareas Completadas
-$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND `proy_tare_horas`.`TareHorMin` IS NULL" : ""; // Tareas Completadas
+$w_c .= (test_input($params['TareEstado'] == 'completadas')) ? " AND `proy_tare_horas`.`TareHorMin` IS NOT NULL" : ""; // Tareas Completadas
 $w_c .= (test_input($params['tarProyNomFiltro'] ?? '')) ? " AND TareProy = '$params[tarProyNomFiltro]'" : ''; // Filtrar Proyecto
 $w_c .= (test_input($params['tarEmprFiltro'] ?? '')) ? " AND TareEmp = '$params[tarEmprFiltro]'" : ''; // Filtrar Empresa
 $w_c .= (test_input($params['tarProcNomFiltro'] ?? '')) ? " AND TareProc = '$params[tarProcNomFiltro]'" : ''; // Filtrar Proceso
