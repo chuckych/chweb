@@ -110,6 +110,7 @@ if ($api['COUNT'] > 0) {
             'img'               => $img,
             // 'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
             'imageData' => $r['imageData'],
+            'basePhoto' => $r['basePhoto']
         );
         if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(

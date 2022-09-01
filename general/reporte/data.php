@@ -145,7 +145,7 @@ if (test_input($_POST['Fic3Nov']) == 'null') {
     $joinFichas3 = '';
 }
 
-$sql_query="SELECT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FilterEstruct3 GROUP BY FICHAS.FicLega, PERSONAL.LegApNo, PERSONAL.LegCUIT ORDER BY FICHAS.FicLega";
+$sql_query="SELECT FICHAS.FicLega AS 'Legajo', TRIM(PERSONAL.LegApNo) AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil', FicHsTr, FicNovA, FicNovS, FicNovI, FicNovT FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas $FilterEstruct3 GROUP BY FICHAS.FicLega, PERSONAL.LegApNo, PERSONAL.LegCUIT,FicHsTr, FicNovA, FicNovS, FicNovI, FicNovT ORDER BY FICHAS.FicLega";
 
 // print_r($sql_query); exit;
 
@@ -155,14 +155,16 @@ $queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
 
 while ($row = sqlsrv_fetch_array($queryRecords)) {
     $Cuil   = $row['Cuil'];
-    $Legajo   = $row['Legajo'];
-    $Nombre   = empty($row['Nombre']) ? 'Sin Nombre' : $row['Nombre'];
+    $Legajo = $row['Legajo'];
+    $Nombre = empty($row['Nombre']) ? 'Sin Nombre' : $row['Nombre'];
     $dataLegajo[] = array(
         'Cuil'   => $Cuil,
         'Legajo' => $Legajo,
-        'Nombre' => $Nombre,
+        'Nombre' => trim($Nombre),
+        'FicHsTr' => ($row['FicHsTr']),
+        'FicNov' => array_sum(array($row['FicNovA'],$row['FicNovS'],$row['FicNovI'],$row['FicNovT'])),
     );
 }
+// echo json_encode($dataLegajo, true);exit;
 sqlsrv_free_stmt($queryRecords);
-sqlsrv_close($link);
-// print_r($dataLegajo);exit;
+// sqlsrv_close($link);

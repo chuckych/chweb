@@ -195,6 +195,8 @@ if ($FechaIni > $FechaFin) {
 $MESSAGE = 'OK';
 $arrayData = array();
 $joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
+$joinFaces = (date('Y-m-d')>= '2022-09-31') ? "LEFT JOIN reg_faces rf ON r.id_user = rf.id_user AND r.id_company = rf.id_company AND r.createdDate = rf.createdDate" : '';
+$basePhoto = (date('Y-m-d')>= '2022-09-31') ? " rf.photo as 'basePhoto'," : '';
 $sql_query = "SELECT 
     r.createdDate AS 'createdDate', 
     r.id_user AS 'id_user', 
@@ -221,10 +223,13 @@ $sql_query = "SELECT
     r.locked AS 'locked',
     r.error AS 'error',
     r.confidence AS 'confidence', 
+    r.threshold AS 'threshold', 
     r.eventZone AS 'eventZone', 
+    $basePhoto
     r.eventDevice AS 'eventDevice'
     FROM reg_ r
     $joinUser
+    $joinFaces
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
     LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
     WHERE r.rid > 0";
@@ -293,10 +298,10 @@ if (($queryRecords)) {
             'appVersion'        => $appVersion,
             'attPhoto'          => intval($r['attPhoto']),
             'createdDate'       => intval($r['createdDate']),
-            'deviceName'        => $r['deviceName'],
+            'deviceName'        => trim($r['deviceName']),
             'eventType'         => $r['eventType'],
             'eventZone'         => $r['eventZone'],
-            'eventDevice'       => $r['eventDevice'],
+            'eventDevice'       => intval($r['eventDevice']),
             'gpsStatus'         => $r['gpsStatus'],
             'operation'         => $r['operation'],
             'operationType'     => $r['operationType'],
@@ -311,16 +316,17 @@ if (($queryRecords)) {
             'regTime'           => (HoraFormat($r['fechaHora'], false)),
             'userCompany'       => $r['id_company'],
             'userID'            => intval($r['id_user']),
-            'userName'          => $r['name'],
-            'phoneRegID'        => $r['regid'],
-            'zoneID'            => $r['zoneID'],
+            'userName'          => trim($r['name']),
+            'phoneRegID'        => trim($r['regid']),
+            'zoneID'            => intval($r['zoneID']),
             'zoneName'          => $r['zoneName'],
             'zoneDistance'      => (intval($r['zoneID']>0)) ? floatval($r['zoneDistance']) : '',
             'zoneDistanceStr'   => (intval($r['zoneID']>0)) ? round(floatval($r['zoneDistance'])*1000 , 2) ." Mts." : '',
-            'locked'            => $r['locked'],
+            'locked'            => intval($r['locked']),
             'error'             => $r['error'],
             'confidenceFaceVal' => floatval($r['confidence']),
-            'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'])),
+            'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'], intval($r['threshold']))),
+            'threshold'         => intval($r['threshold']),
             'id_api'            => intval($r['id_api']),
             'img'               => $urlImg,
             'imageData'         => array(
@@ -329,6 +335,7 @@ if (($queryRecords)) {
                 'tipo'              => $size[2],
                 'img'               => $urlImg,
             ),
+            'basePhoto' => $r['basePhoto'] ?? ''
         );
     }
 }

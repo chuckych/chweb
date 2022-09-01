@@ -9,7 +9,7 @@ $legajo = $valueLegajo['Legajo'];
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICHAS.FicLega";
+$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario', FicHsTr, FicNovA, FicNovS, FicNovI, FicNovT FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas ORDER BY FICHAS.FicFech, FICHAS.FicLega";
 // print_r($sql_query); exit;
 
 $queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
@@ -25,6 +25,8 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $Gen_Dia_Semana = $row['Gen_dia'];
     $Gen_Dia_Semana2 = ($row['Gen_dia']);
     $Gen_Horario    = $row['Gen_Horario'];
+    $Gen_FicHsTr = HoraMin($row['FicHsTr']);
+    $Gen_FicNov = array_sum(array($row['FicNovA'], $row['FicNovS'], $row['FicNovI'], $row['FicNovT']));
 
     /** FICHADAS */
     if ($_VerFic == '1') {
@@ -71,52 +73,65 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     if ($_VerNove == '1') {
         /** Mostramos Las Novedades */
         $query_Nov = "SELECT FICHAS3.FicNove AS nov_novedad, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas FROM FICHAS3,NOVEDAD WHERE FICHAS3.FicLega='$Gen_Lega' AND FICHAS3.FicFech='$Gen_Fecha2' AND FICHAS3.FicNove=NOVEDAD.NovCodi AND FICHAS3.FicNove >0 AND FICHAS3.FicNoTi >=0 $FilterEstruct2 ORDER BY FICHAS3.FICFech";
-        $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
-        // print_r($query_Nov); exit;
+        // print_r($dataLegajo['FicNov']).exit;
+        if (($Gen_FicNov) > 0) {
+            $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
+            // print_r($query_Nov); exit;
 
-        $Novedad = array();
-        if (sqlsrv_num_rows($result_Nov) > 0) {
-            while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
-                $Novedad[] = array(
-                    'Cod'         => $row_Nov['nov_novedad'],
-                    'Descripcion' => $row_Nov['nov_descripcion'],
-                    'Horas'       => $row_Nov['nov_horas'],
-                    'Tipo'        => $row_Nov['nov_tipo']
-                );
-            endwhile;
-            sqlsrv_free_stmt($result_Nov);
-        }
-        
-        $desc = array();
-        $desc2 = array();
-        $desc3 = array();
-
-        if (is_array($Novedad)) {
-            foreach ($Novedad as $fila) {
-                $desc[]  = ($fila["Cod"]);
-                $desc2[] = ($fila["Descripcion"]);
-                $desc3[] = ($fila["Horas"]);
-            }
-           
-            if (is_array($desc)) {
-                $Novedades  = implode("", $desc);
-            }
-            /** Codigo de la novedad */
-            // $Novedades2 = implode("<hr>", $desc2);
-            if (is_array($desc2)) {
-                $Novedades2 = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", ($desc2));
+            $Novedad = array();
+            if (sqlsrv_num_rows($result_Nov) > 0) {
+                while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
+                    $Novedad[] = array(
+                        'Cod'         => $row_Nov['nov_novedad'],
+                        'Descripcion' => $row_Nov['nov_descripcion'],
+                        'Horas'       => $row_Nov['nov_horas'],
+                        'Tipo'        => $row_Nov['nov_tipo']
+                    );
+                endwhile;
+                sqlsrv_free_stmt($result_Nov);
             }
 
-            /** Descripción de la novedad */
-            // $NoveHoras  = implode("<hr>", $desc3);
-            if (is_array($desc3)) {
-                $NoveHoras  = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", $desc3);
-            }
+            $desc = array();
+            $desc2 = array();
+            $desc3 = array();
 
-            /** Horas de la novedad */
-            unset($desc);
-            unset($desc2);
-            unset($desc3);
+            if (is_array($Novedad)) {
+                foreach ($Novedad as $fila) {
+                    $desc[]  = ($fila["Cod"]);
+                    $desc2[] = ($fila["Descripcion"]);
+                    $desc3[] = ($fila["Horas"]);
+                }
+
+                if (is_array($desc)) {
+                    $Novedades  = implode("", $desc);
+                }
+                /** Codigo de la novedad */
+                // $Novedades2 = implode("<hr>", $desc2);
+                if (is_array($desc2)) {
+                    $Novedades2 = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", ($desc2));
+                }
+
+                /** Descripción de la novedad */
+                // $NoveHoras  = implode("<hr>", $desc3);
+                if (is_array($desc3)) {
+                    $NoveHoras  = implode("<hr style='height: 1px; color: #fff; background-color: #fff; border: none; margin:0px;margin-top:2px'>", $desc3);
+                }
+
+                /** Horas de la novedad */
+                unset($desc);
+                unset($desc2);
+                unset($desc3);
+            }
+        } else {
+            $Novedad = array(
+                'Cod'         => '',
+                'Descripcion' => '',
+                'Horas'       => '',
+                'Tipo'        => ''
+            );
+            $Novedades = '';
+            $Novedades2 = '';
+            $NoveHoras = '';
         }
     }
     /** FIN Mostramos Las Novedades */
@@ -130,50 +145,63 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     // WHERE FICHAS1.FicLega = '$Gen_Lega' AND FICHAS1.FicFech = '$Gen_Fecha2'
     // AND TIPOHORA.THoColu > 0
     // ORDER BY TIPOHORA.THoColu, FICHAS1.FicLega, FICHAS1.FicFech, FICHAS1.FicTurn, FICHAS1.FicHora";
-    $query_Horas="SELECT TIPOHORA.THoCodi AS Hora, TIPOHORA.THoDesc2 AS 'HoraDesc2', TIPOHORA.THoDesc AS 'HoraDesc', (SELECT FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND FICHAS1.FicHora=TIPOHORA.THoCodi) AS 'HsAutorizadas' FROM TIPOHORA WHERE TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu";
+    $query_Horas = "SELECT TIPOHORA.THoCodi AS Hora, TIPOHORA.THoDesc2 AS 'HoraDesc2', TIPOHORA.THoDesc AS 'HoraDesc', (SELECT FICHAS1.FicHsAu2 AS HsAutorizadas FROM FICHAS1 WHERE FICHAS1.FicLega='$Gen_Lega' AND FICHAS1.FicFech='$Gen_Fecha2' AND FICHAS1.FicHora=TIPOHORA.THoCodi) AS 'HsAutorizadas' FROM TIPOHORA WHERE TIPOHORA.THoColu >0 ORDER BY TIPOHORA.THoColu";
     // print_r($query_Horas);exit;
     $Horas = array();
     if ($_VerHoras == '1') {
         /** Mostramos Las Horas */
-        $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
-        // print_r($query_Horas); exit;
-        if (sqlsrv_num_rows($result_Hor) > 0) {
-            while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
-                $Horas[] = array(
-                    'Cod'          => $row_Hor['Hora'],
-                    'Descripcion'  => $row_Hor['HoraDesc'],
-                    'Descripcion2' => $row_Hor['HoraDesc2'],
-                    'HsAuto'       => $row_Hor['HsAutorizadas']
-                );
-            endwhile;
-            sqlsrv_free_stmt($result_Hor);
-        }
-        if (is_array($Horas)) {
-            foreach ($Horas as $fila) {
-                $hor[] = ceronull($fila["Cod"]);
-                $hor2[] = $fila["Descripcion"];
-                $hor6[] = $fila["Descripcion2"];
-                // $HsHechas[] = ceronull($fila["HsHechas"]);
-                //   $HsCalc[] = ceronull($fila["HsCalc"]);
-                $HsAuto[] = '<td class="px-2 vtop center ls1">' . ceronull($fila["HsAuto"]) . '</td>';
+        if (($Gen_FicHsTr) > 0) {
+            $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
+            // print_r($query_Horas); exit;
+            if (sqlsrv_num_rows($result_Hor) > 0) {
+                while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
+                    $Horas[] = array(
+                        'Cod'          => $row_Hor['Hora'],
+                        'Descripcion'  => $row_Hor['HoraDesc'],
+                        'Descripcion2' => $row_Hor['HoraDesc2'],
+                        'HsAuto'       => $row_Hor['HsAutorizadas']
+                    );
+                endwhile;
+                sqlsrv_free_stmt($result_Hor);
             }
+            if (is_array($Horas)) {
+                foreach ($Horas as $fila) {
+                    $hor[] = ceronull($fila["Cod"]);
+                    $hor2[] = $fila["Descripcion"];
+                    $hor6[] = $fila["Descripcion2"];
+                    // $HsHechas[] = ceronull($fila["HsHechas"]);
+                    //   $HsCalc[] = ceronull($fila["HsCalc"]);
+                    $HsAuto[] = '<td class="px-2 vtop center ls1">' . ceronull($fila["HsAuto"]) . '</td>';
+                }
 
-            $horas  = implode("", $hor);
-            $horas2 = implode("<br/>", $hor2);
-            /** Descripcion 1 del tipo de hora */
-            $horas6 = implode("<br/>", $hor6);
-            /** Descripcion 2 del tipo de hora */
-            // $horas3 = implode("<br/>", $HsHechas);
-            // $horas4 = implode("<br/>", $HsCalc);
-            $horas5 = implode('', $HsAuto);
+                $horas  = implode("", $hor);
+                $horas2 = implode("<br/>", $hor2);
+                /** Descripcion 1 del tipo de hora */
+                $horas6 = implode("<br/>", $hor6);
+                /** Descripcion 2 del tipo de hora */
+                // $horas3 = implode("<br/>", $HsHechas);
+                // $horas4 = implode("<br/>", $HsCalc);
+                $horas5 = implode('', $HsAuto);
 
-            unset($hor);
-            unset($hor2);
-            unset($hor6);
-            // unset($HsHechas);
-            // unset($HsCalc);
-            unset($HsAuto);
-            // var_export($Novedades); 
+                unset($hor);
+                unset($hor2);
+                unset($hor6);
+                // unset($HsHechas);
+                // unset($HsCalc);
+                unset($HsAuto);
+                // var_export($Novedades); 
+            }
+        } else {
+            $Horas = array(
+                'Cod'          => '',
+                'Descripcion'  => '',
+                'Descripcion2' => '',
+                'HsAuto'       => ''
+            );
+            $horas  = '';
+            $horas2 = '';
+            $horas6 = '';
+            $horas5 = '';
         }
     }
     /** FIN Mostramos Las Horas */

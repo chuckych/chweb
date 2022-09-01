@@ -2,11 +2,11 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.251'; // Version de la aplicación
+    return 'v0.0.252'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20220824; // Version de la base de datos local
+    return 202200901; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -3592,6 +3592,16 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
         return ($value);
     }
 }
+function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
+{
+    $r = array_filter($array, function ($e) use ($key, $valor) {
+        return $e[$key] === $valor;
+    });
+    foreach ($r as $key => $value) {
+        $v[] = $value;
+    }
+    return $v;
+}
 function tipoAud($tipo)
 {
     switch ($tipo) {
@@ -3773,22 +3783,26 @@ function group_by($key, $data)
 }
 function _group_by_keys($array, $keys = array())
 {
-    $return = array();
-    $append = (sizeof($keys) > 1 ? "_" : null);
-    foreach ($array as $val) {
-        $final_key = "";
-        foreach ($keys as $theKey) {
-            $final_key .= $val[$theKey] . $append;
+    if (($array)) {
+        $return = array();
+        $append = (count($keys) > 1 ? "_" : null);
+        foreach ($array as $val) {
+            $final_key = "";
+            foreach ($keys as $theKey) {
+                $final_key .= $val[$theKey] . $append;
+            }
+            $return[$final_key][] = $val;
         }
-        $return[$final_key][] = $val;
-    }
-    // return $return;
-    foreach ($return as $key => $value) {
-        $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
-    }
+        // return $return;
+        foreach ($return as $key => $value) {
+            $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
+        }
 
-    foreach ($arrGroup2 as $key => $value2) {
-        $arrGroup3[] = $value2[0];
+        foreach ($arrGroup2 as $key => $value2) {
+            $arrGroup3[] = $value2[0];
+        }
+    } else {
+        $arrGroup3[] = array();
     }
     return $arrGroup3;
 }
@@ -3836,7 +3850,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
 }
-function confidenceFaceStr($confidence, $id_api)
+function confidenceFaceStr($confidence, $id_api, $threshold)
 {
     $i = intval($id_api) ?? 0;
     if ($i > 1) {
@@ -3856,10 +3870,10 @@ function confidenceFaceStr($confidence, $id_api)
             case $confidence == 0:
                 $c = 'No Identificado';
                 break;
-            case $confidence >= 0 && $confidence <= 80:
+            case $confidence >= $threshold:
                 $c = 'Identificado';
                 break;
-            case $confidence > 80:
+            case $confidence < $threshold:
                 $c = 'No Identificado';
                 break;
             default:
@@ -4028,6 +4042,35 @@ function simple_MSQuery($query)
             }
         }
         sqlsrv_free_stmt($stmt);
+        echo json_encode($data[0]);
+        sqlsrv_close($link);
+        exit;
+    }
+}
+function arrMSQuery($query)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $stmt  = sqlsrv_query($link, $query);
+    if (($stmt)) {
+        while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            $registros[] = $r;
+        }
+        sqlsrv_free_stmt($stmt);
+        sqlsrv_close($link);
+        return $registros ?? false;
+        // return false;
+    } else {
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error) {
+                $mensaje = explode(']', $error['message']);
+                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
+                fileLog(PHP_EOL.'Message: '.json_encode($mensaje, JSON_UNESCAPED_UNICODE).PHP_EOL.'Source: '.'"'.$_SERVER['REQUEST_URI'].'"', $pathLog); // escribir en el log de errores el error
+            }
+        }
+        // sqlsrv_free_stmt($stmt);
         echo json_encode($data[0]);
         sqlsrv_close($link);
         exit;

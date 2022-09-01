@@ -779,3 +779,24 @@ if ($verDB < 20220824) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20220901) {
+
+    pdoQuery("ALTER TABLE `reg_faces`
+	DROP PRIMARY KEY,
+	ADD PRIMARY KEY (`id`, `createdDate`, `id_user`) USING BTREE");
+    fileLog("ALTER TABLE \"reg_faces\"", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_`
+	ADD COLUMN `threshold` TINYINT NOT NULL DEFAULT '75' AFTER `confidence`");
+    fileLog("ALTER TABLE ADD COLUMN \"threshold\"", $pathLog); // escribir en el log
+
+    pdoQuery("UPDATE reg_ r SET r.confidence = (100-r.confidence) WHERE r.confidence > 0");
+    fileLog("UPDATE TABLE reg_ \"confidence\"", $pathLog); // escribir en el log
+
+    $verDB  = verDBLocal(); // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+
+}
+

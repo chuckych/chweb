@@ -129,6 +129,9 @@ if ($(window).width() < 540) {
                     if (row.attPhoto == 1) {
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                     }
+                    if (row.basePhoto) {
+                        foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
+                    }
 
                     let datacol = `<div class="pic w70 h70 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
@@ -249,6 +252,9 @@ if ($(window).width() < 540) {
                     }
                     if (row.attPhoto == 1) {
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                    }
+                    if (row.basePhoto) {
+                        foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
                     }
                     let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
@@ -851,12 +857,17 @@ $(document).on("click", ".pic", function (e) {
     let id_api = data.id_api
     let error = data.error
     let confidenceFaceStr = data.confidenceFaceStr;
+    let basePhoto = data.basePhoto;
 
     let zoneName = (data.zoneID > 0) ? data.zoneName : '<span class="text-danger">Fuera de Zona</span>'
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
     let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
 
     picDevice = (!picDevice) ? `${data.phoneid}` : picDevice;
+
+    // if (data.basePhoto) {
+    //     picfoto = `<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w40 h40 radius img-fluid" />`
+    // }
 
     $('#latitud').val(_lat)
     $('#longitud').val(_lng)
@@ -866,7 +877,11 @@ $(document).on("click", ".pic", function (e) {
     $("input[name=lng]").val(_lng);
 
     if (picfoto) {
-        $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
+        if (data.basePhoto) {
+            $('.picFoto').html(`<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w150 img-fluid rounded" />`)
+        } else {
+            $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
+        }
         $('.divFoto').show()
     } else {
         $('.divFoto').hide()

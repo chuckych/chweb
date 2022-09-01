@@ -297,6 +297,8 @@ if (!empty($arrayData)) {
             $rutaImagenComprimida = $dirname . '/' . $createdDate . '_' . $phoneid . '.jpg'; //Ruta de la imagen a comprimir
             $calidad = 20; // Valor entre 0 y 100. Mayor calidad, mayor peso
             imagejpeg($imagenOriginal, $rutaImagenComprimida, $calidad); //Guardamos la imagen comprimida
+            $contenidoBinario = file_get_contents($rutaImagenComprimida);
+            $imagenComoBase64 = base64_encode($contenidoBinario);
         }
         /** Calculamos la Zona */
         $query       = queryCalcZone($lat, $lng, $companyCode);
@@ -316,7 +318,7 @@ if (!empty($arrayData)) {
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de control horarios
 
             if (!empty($attphoto)) {
-                $query = "INSERT INTO `reg_faces`(`createdDate`, `id_user`, `id_company`, `photo`) VALUES('$createdDate', '$employeId', '$companyCode', '$attphoto')";
+                $query = "INSERT INTO `reg_faces`(`createdDate`, `id_user`, `id_company`, `photo`) VALUES('$createdDate', '$employeId', '$companyCode', '$imagenComoBase64')";
                 pdoQuery($query);
             }
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
