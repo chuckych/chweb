@@ -67,6 +67,7 @@ function getEvents($url, $timeout = 10)
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
+        borrarLogs($pathLog.'/', 1, '.log');
     }
 
     curl_close($ch);
@@ -102,13 +103,13 @@ function queryCalcZone($lat, $lng, $idCompany)
 }
 $iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
-$pathFlags = 'flags4.php'; // ruta del archivo de Log de errores
+$pathFlags = 'flags_4.php';
 $flags = (getDataIni($pathFlags));
 
 if (!$flags) {
     $assoc = array(
         'flags' => array(
-            'lastDate' => '1646871812711',
+            'lastDate' => '1661990250818',
             'download' => 1,
             'datetime' => date('Y-m-d H:i:s'),
         ),

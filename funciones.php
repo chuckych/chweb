@@ -3887,7 +3887,7 @@ function access_log($Modulo)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
-        borrarLogs(__DIR__, 30, $pathLog);
+        borrarLogs(__DIR__ . '/logs/access/', 30, '.log');
         date_default_timezone_set('America/Argentina/Buenos_Aires');
         $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
         $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
