@@ -195,8 +195,8 @@ if ($FechaIni > $FechaFin) {
 $MESSAGE = 'OK';
 $arrayData = array();
 $joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
-$joinFaces = (date('Y-m-d')>= '2022-09-01') ? "LEFT JOIN reg_faces rf ON r.id_user = rf.id_user AND r.id_company = rf.id_company AND r.createdDate = rf.createdDate" : '';
-$basePhoto = (date('Y-m-d')>= '2022-09-01') ? " rf.photo as 'basePhoto'," : '';
+$joinFaces = (date('Y-m-d')>= '2022-09-02') ? "LEFT JOIN reg_faces rf ON r.id_user = rf.id_user AND r.id_company = rf.id_company AND r.createdDate = rf.createdDate" : '';
+$basePhoto = (date('Y-m-d')>= '2022-09-02') ? " rf.photo as 'basePhoto'," : '';
 $sql_query = "SELECT 
     r.createdDate AS 'createdDate', 
     r.id_user AS 'id_user', 
