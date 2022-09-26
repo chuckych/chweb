@@ -1143,7 +1143,7 @@ function actualizar4(noti = true) {
         let date = new Date()
         if (data.status == "ok") {
             // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_4: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
@@ -1189,7 +1189,7 @@ function actualizar_aws(noti = true) {
         let date = new Date()
         if (data.status == "ok") {
             // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
+            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_AWS: ' + date, JSON.stringify(data));
             if (noti) {
                 $.notifyClose();
                 ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')

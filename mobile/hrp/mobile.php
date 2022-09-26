@@ -27,10 +27,11 @@
         //$query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
         // $arrayFech = simple_pdoQuery($query);
         
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        // $idCompany = $_SESSION['ID_CLIENTE'];
         $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = getRemoteFile($url, $timeout = 10);
+        // print_r($url);
         $api = json_decode($api, true);
         $arrayFech = $api['RESPONSE_DATA'];
 
@@ -45,7 +46,15 @@
         ?>
         <input type="hidden" id="_drMob2">
         <input type="hidden" id="actMobile" value="<?= $_GET['act'] ?? 0 ?>">
-        <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP"] ?? 0 ?>">
+        <!-- <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP"] ?? 0 ?>"> -->
+        <?php
+        if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+
+            echo '<input type="hidden" id="apiMobile" value="'.$_SESSION["APIMOBILEHRP"].'">';
+        } else {
+            echo '<input type="hidden" id="apiMobile" value="http://chweb.ar">';
+        }
+        ?>
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
             <div class="row bg-white invisible mt-2" id="RowTableMobile">
