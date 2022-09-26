@@ -245,7 +245,7 @@ if ($(window).width() < 540) {
                     if (row.imageData.img) {
                         // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
                         url_foto = `${row.imageData.img}`;
-                        let path = document.getElementById('apiMobile').value+'/chweb/mobile/hrp/'
+                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                         foto = `<img loading="lazy" src="${path}${url_foto}" class="w40 h40 radius img-fluid">`;
                     } else {
                         url_foto = ``;
@@ -539,7 +539,7 @@ $(document).on('click', '#downloadTxt', function (e) {
     axios({
         method: 'post',
         url: 'getRegMobile.php',
-        data: filterData('','downloadTxt'),
+        data: filterData('', 'downloadTxt'),
     }).then(function (response) {
         let file = response.data
         // window.location = file.data
@@ -565,7 +565,7 @@ $(document).on('click', '#downloadTxt', function (e) {
     axios({
         method: 'post',
         url: 'getRegMobile.php',
-        data: filterData('','downloadXls'),
+        data: filterData('', 'downloadXls'),
     }).then(function (response) {
         let file = response.data
         // window.location = file.data
@@ -843,10 +843,10 @@ function initMap() {
 
 $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
-    // console.log(data);
     $('#pic').modal('show')
-    // let picfoto = (data.imageData.imgimageData.img) ? 'fotos/' + data.userCompany + '/' + data.imageData.img : '';
-    let picfoto = data.imageData.img ? data.imageData.img : '';
+    url_foto = `${data.imageData.img}`;
+    let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+    let picfoto = data.imageData.img ? path+url_foto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
