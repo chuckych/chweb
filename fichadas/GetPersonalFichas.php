@@ -77,7 +77,8 @@ $dataParametros = array(
 
 // $parametros = http_build_query($dataParametros, '', '&');
 // $url = "http://localhost/chweb/api/ficdata/";
-$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficdata/";
+// $url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficdata/";
+$url = gethostCHWeb()."/".HOMEHOST."/api/ficdata/";
 // print_r($url).exit;
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';

@@ -35,7 +35,7 @@ $dataParametros = array(
 );
 $u = (explode('/',$_SERVER['PHP_SELF']));
 
-$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficnovhor/";
+$url = gethostCHWeb()."/".HOMEHOST."/api/ficnovhor/";
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';

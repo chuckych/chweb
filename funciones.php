@@ -3768,6 +3768,20 @@ function getDataIni($url) // obtiene el json de la url
         return false; // devolvemos false
     }
 }
+function gethostCHWeb(){
+    $token     = sha1($_SESSION['RECID_CLIENTE']);
+    $iniData = (getDataIni(__DIR__ . './mobileApikey.php'));
+
+    foreach ($iniData as $v) {
+        if ($v['Token'] == $token) {
+            $data = array(
+                $v
+            );
+            return $data[0]['hostCHWeb'];
+            break;
+        }
+    }
+};
 /**
  * @param $str = string a escapar
  * @param $length = cantidad de caracteres a devolver

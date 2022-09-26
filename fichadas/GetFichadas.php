@@ -61,10 +61,8 @@ $dataParametros = array(
     'getReg'  => 1,
     'onlyReg'  => $params['onlyReg']
 );
-
-// $parametros = http_build_query($dataParametros, '', '&');
-// $url = "http://localhost/chweb/api/ficnovhor/";
-$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficnovhor/";
+$url = gethostCHWeb()."/".HOMEHOST."/api/ficnovhor/";
+// file_put_contents('url.log', $url."\n", FILE_APPEND | LOCK_EX);
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
@@ -72,6 +70,7 @@ $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 // print_r($dataParametros);
 // print_r($dataApi).exit;
+
 
 if ($dataApi['DATA']) {
     foreach ($dataApi['DATA'] as $v) {
