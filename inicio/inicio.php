@@ -10,7 +10,7 @@
     <div class="container shadow pb-2">
         <div class="row">
             <div class="col-12">
-                <?php require __DIR__ . '../../nav.php'; 
+                <?php require __DIR__ . '../../nav.php';
                 ?>
             </div>
         </div>

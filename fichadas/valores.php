@@ -2,10 +2,6 @@
 FusNuloPOST('q', '');
 $q = test_input($_POST['q']);
 
-// $DateRange = explode(' al ', $_POST['_dr']);
-// $FechaIni  = test_input(dr_fecha($DateRange[0]));
-// $FechaFin  = test_input(dr_fecha($DateRange[1]));
-
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));

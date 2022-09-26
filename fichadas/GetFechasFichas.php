@@ -9,12 +9,12 @@ E_ALL();
 
 $params    = $_REQUEST;
 $data      = array();
-
-$params['length'] = $params['length'] ?? '';
-(!$params['length']) ? exit : '';
-
 $authBasic = base64_encode('chweb:'.HOMEHOST);
 $token     = sha1($_SESSION['RECID_CLIENTE']);
+// print_r($token).exit;
+$params['length'] = $params['length'] ?? '';
+$_POST['_dr'] = $_POST['_dr'] ?? '';
+(!$_POST['_dr']) ? exit : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
@@ -24,9 +24,8 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni  = date('Ymd');
     $FechaFin  = date('Ymd');
 }
-$params['_f']      = $params['_f'] ?? '';
 $params['Per']      = $params['Per'] ?? '';
-$params['Per2']      = $params['Per2'] ?? '';
+$params['Per2']     = $params['Per2'] ?? '';
 $params['Emp']      = $params['Emp'] ?? '';
 $params['Plan']     = $params['Plan'] ?? '';
 $params['Sect']     = $params['Sect'] ?? '';
@@ -50,11 +49,13 @@ $Sec2     = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol'
 $FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
 $LegTipo  = $params['Tipo'] ? $params['Tipo'] : array();
 
+// $Per = ($Per2) ? array($Per2): $Per;
+
 $Legajos = ($Per2) ? ($Per2) : $Per;
 $Legajos = ($Per) ? ($Per) : $Legajos;
 
 $dataParametros = array(
-    'Lega'    => $Legajos,
+    'Lega'    => ($Legajos),
     'Falta'   => $FicFalta,
     'Empr'    => ($Empr),
     'Plan'    => ($Plan),
@@ -63,49 +64,45 @@ $dataParametros = array(
     'Sucu'    => ($Sucu),
     'Sec2'    => ($Sec2),
     'LegTipo' => ($LegTipo),
-    'FechIni' => FechaFormatVar($params['_f'], 'Y-m-d'),
-    'FechFin' => FechaFormatVar($params['_f'], 'Y-m-d'),
+    'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
+    'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
+    // 'start'   => 0,
+    // 'length'  => 9999,
     'start'   => intval($params['start']),
     'length'  => intval($params['length']),
     'getReg'  => 1,
-    'onlyReg'  => intval($params['onlyReg'])
+    'onlyReg'  => $params['onlyReg']
 );
 
 // $parametros = http_build_query($dataParametros, '', '&');
-// $url = "http://localhost/chweb/api/ficnovhor/";
-$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficnovhor/";
+// $url = "http://localhost/chweb/api/ficdatafech/";
+$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficdatafech/";
+// print_r($url).exit;
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
 
-if ($params['_l']) {
-    $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
-}
+// if ($params['_l']) {
+$dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
+// }
 // print_r($dataParametros);
-// print_r($dataApi);
-// exit;
-if ($dataApi['DATA']) {
-    foreach ($dataApi['DATA'] as $v) {
-        $ficHorario = $v['Tur']['ent'] . ' a ' . $v['Tur']['sal'];
-        $ficHorario = ($v['Labo'] == '0') ? 'Franco' : $ficHorario;
-        $ficHorario = ($v['Feri'] == '1') ? 'Feriado' : $ficHorario;
+// print_r($dataApi).exit;
 
+if ($dataApi['DATA']) {
+    foreach ($dataApi['DATA'] as $row) {
+        // $pers_legajo   = $row['Lega'];
+        // $pers_nombre   = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
+        // $data[] = array(
+        //     'pers_legajo' =>  $pers_legajo,
+        //     'pers_nombre' => $pers_nombre,
+        // );
         $data[] = array(
-            'Fic_Lega'    => $v['Lega'],
-            'Fic_Nombre'  => $v['ApNo'],
-            'Fic_Fecha'   => FechaFormatVar($v['Fech'], 'd/m/Y'),
-            'Fic_Dia'     => DiaSemana3($v['Fech']),
-            'Fic_Horario' => $ficHorario,
-            // 'Fic_FichC'   => $v['FichC'],
-            'Fic_Labo'   => $v['Labo'],
-            // 'Fichadas'    => implodeArrayByKey($v['Fich'], 'HoRe', ','),
-            'Fich'        => $v['Fich']
+            'FechaFormat' => FechaFormatVar($row['Fecha'], 'd/m/Y'),
+            'Dia'         => DiaSemana3($row['Fecha']),
+            'Fecha'       => FechaFormatVar($row['Fecha'], 'Y-m-d'),
         );
     }
 }
-// echo json_encode($dataParametros, JSON_PRETTY_PRINT);
-// exit;
-// sleep(1);
 $json_data = array(
     "draw"            => intval($params['draw'] ?? 0),
     "recordsTotal"    => intval($dataApi['TOTAL'] ?? 0),

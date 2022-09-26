@@ -39,7 +39,7 @@
         </div>
         <div class="row bg-white py-3 radius invisible" id="PersonalTable">
             <div class="col-12 table-responsive">
-                <table class="table table-hover text-nowrap w-100" id="table-personal">
+                <table class="table table-hover text-nowrap w-100 p-2 border" id="table-personal">
                     <thead class="text-uppercase border-top-0">
                         <tr>
                             <th class="text-center p-2"><i class="bi bi-pencil"></i></th>

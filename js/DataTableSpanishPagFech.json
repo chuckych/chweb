@@ -1,0 +1,24 @@
+{
+    "sProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "",
+    "sEmptyTable": "",
+    "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ días",
+    "sInfoEmpty": "No hay resultados",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sSearch": "",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+        "sLast": "<i class='bi bi-chevron-double-right'></i>",
+        "sNext": "<i class='bi bi-chevron-right'></i>",
+        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+}

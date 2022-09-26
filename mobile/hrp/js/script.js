@@ -92,7 +92,7 @@ if ($(window).width() < 540) {
         columns: [
             /** Columna Foto */
             {
-                className: 'text-center', targets: 'regPhoto', title: '<div class="w70">Fichadas</div>',
+                className: 'text-center', targets: 'imageData', title: '<div class="w70">Fichadas</div>',
                 "render": function (data, type, row, meta) {
                     operation = (row.operation == 0) ? '' : ': ' + row.operation;
                     let evento = '';
@@ -116,14 +116,14 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.pathPhoto) {
-                        // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.pathPhoto}`;
-                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w60 h60 radius img-fluid"></img>`;
+                    if (row.imageData.img) {
+                        // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
+                        url_foto = `${row.imageData.img}`;
+                        foto = `<img loading="lazy" src="${row.imageData.img}" class="w60 h60 radius img-fluid"></img>`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
-                        // foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid"></img>`;
+                        // foto = `<img loading="lazy" src="${row.imageData.img}" class="w40 h40 radius img-fluid"></img>`;
                     }
 
                     if (row.attPhoto == 1) {
@@ -218,7 +218,7 @@ if ($(window).width() < 540) {
         columns: [
             /** Columna Foto */
             {
-                className: 'text-center', targets: 'regPhoto', title: '<div class="w50">Foto</div>',
+                className: 'text-center', targets: 'imageData', title: '<div class="w50">Foto</div>',
                 "render": function (data, type, row, meta) {
                     operation = (row.operation == 0) ? '' : ': ' + row.operation;
                     let evento = '';
@@ -242,10 +242,11 @@ if ($(window).width() < 540) {
                     evento = evento + operation;
 
                     let foto = '';
-                    if (row.pathPhoto) {
-                        // url_foto = `fotos/${row.userCompany}/${row.regPhoto}`;
-                        url_foto = `${row.pathPhoto}`;
-                        foto = `<img loading="lazy" src="${row.pathPhoto}" class="w40 h40 radius img-fluid">`;
+                    if (row.imageData.img) {
+                        // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
+                        url_foto = `${row.imageData.img}`;
+                        let path = document.getElementById('apiMobile').value+'/chweb/mobile/hrp/'
+                        foto = `<img loading="lazy" src="${path}${url_foto}" class="w40 h40 radius img-fluid">`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -844,8 +845,8 @@ $(document).on("click", ".pic", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     // console.log(data);
     $('#pic').modal('show')
-    // let picfoto = (data.regPhoto) ? 'fotos/' + data.userCompany + '/' + data.regPhoto : '';
-    let picfoto = data.pathPhoto ? data.pathPhoto : '';
+    // let picfoto = (data.imageData.imgimageData.img) ? 'fotos/' + data.userCompany + '/' + data.imageData.img : '';
+    let picfoto = data.imageData.img ? data.imageData.img : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID

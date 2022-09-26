@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="es">
+
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <link rel="stylesheet" href="css/styleMobile.css?=<?= time() ?>">
     <title>Fichadas Mobile HR</title>
 </head>
+
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset" id="container">
@@ -22,8 +24,15 @@
         $maxYear   = date('Y');
         /** Para dateRangePicker */
         // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
-        $query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
-        $arrayFech = simple_pdoQuery($query);
+        //$query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
+        // $arrayFech = simple_pdoQuery($query);
+        
+        $idCompany = $_SESSION['ID_CLIENTE'];
+        $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
+        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = getRemoteFile($url, $timeout = 10);
+        $api = json_decode($api, true);
+        $arrayFech = $api['RESPONSE_DATA'];
 
         $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');

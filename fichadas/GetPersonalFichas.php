@@ -1,83 +1,111 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-header("Content-Type: application/json");
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
-// header("Content-Type: application/json");
+header("Content-Type: application/json");
 E_ALL();
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../config/conect_mssql.php';
+$params    = $_REQUEST;
+$data      = array();
+$authBasic = base64_encode('chweb:'.HOMEHOST);
+$token     = sha1($_SESSION['RECID_CLIENTE']);
+$params['length'] = $params['length'] ?? '';
+$_POST['_dr'] = $_POST['_dr'] ?? '';
+(!$_POST['_dr']) ? exit : '';
 
-$data = array();
-require __DIR__ . '../valores.php';
+// print_r($_SESSION['EmprRol']).exit;
 
-$params = $columns = $totalRecords ='';
-$params = $_REQUEST;
-$where_condition = $sqlTot = $sqlRec = "";
-
-$sql_query="SELECT FICHAS.FicLega AS 'pers_legajo',
-    PERSONAL.LegApNo AS 'pers_nombre'
-FROM FICHAS
-    INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs
-    INNER JOIN PERSONAL ON FICHAS.FicLega =  PERSONAL.LegNume
-WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $filtros $FilterEstruct
-GROUP BY FICHAS.FicLega,
-    PERSONAL.LegApNo ";
-
-// print_r($sql_query); exit;
-
-$sqlTot .= $sql_query;
-$sqlRec .= $sql_query;
-
-if( !empty($params['search']['value']) ) {
-    $where_condition .=	" AND ";
-    $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
+if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
+    $DateRange = explode(' al ', $_POST['_dr']);
+    $FechaIni  = test_input(dr_fecha($DateRange[0]));
+    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+} else {
+    $FechaIni  = date('Ymd');
+    $FechaFin  = date('Ymd');
 }
+$params['Per']      = $params['Per'] ?? '';
+$params['Per2']      = $params['Per2'] ?? '';
+$params['Emp']      = $params['Emp'] ?? '';
+$params['Plan']     = $params['Plan'] ?? '';
+$params['Sect']     = $params['Sect'] ?? '';
+$params['Sec2']     = $params['Sec2'] ?? '';
+$params['Grup']     = $params['Grup'] ?? '';
+$params['Sucur']    = $params['Sucur'] ?? '';
+$params['_l']       = $params['_l'] ?? $data = array();
+$params['draw']     = $params['draw'] ?? '';
+$params['FicFalta'] = $params['FicFalta'] ?? '';
+$params['Tipo']     = ($params['Tipo']) ?? '';
+$params['onlyReg']  = ($params['onlyReg']) ?? '';
 
-if(isset($where_condition) && $where_condition != '') {
-$sqlTot .= $where_condition;
-$sqlRec .= $where_condition;
-}
-$param  = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  "ORDER BY FICHAS.FicLega OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
-$queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
-$totalRecords = sqlsrv_num_rows($queryTot);
-$queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
+$Empr     = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
+$Per      = $params['Per'] ? ($params['Per']) : array();
+$Per2     = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
+$Plan     = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
+$Sect     = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
+$Grup     = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
+$Sucu     = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
+$Sec2     = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
+$FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
+$LegTipo  = $params['Tipo'] ? $params['Tipo'] : array();
 
-// print_r($sqlRec); exit;
+$Legajos = ($Per2) ? ($Per2) : $Per;
+$Legajos = ($Per) ? ($Per) : $Legajos;
 
-while ($row = sqlsrv_fetch_array($queryRecords)) {
-    $pers_legajo   = $row['pers_legajo'];
-    $pers_nombre   = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
-    $data[] = array(
-        'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $pers_legajo . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
-        'pers_nombre' => '<span class="animate__animated animate__fadeIn">' . $pers_nombre . '</span>',
-        'null'        => '',
-    );
-}
-if (!empty($Per2)) {
-    if (!CountRegistrosMayorCero("SELECT DISTINCT FICHAS.FicLega FROM FICHAS
-    INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-    INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs
-    WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")) {
+// print_r($Per); exit;
+
+$dataParametros = array(
+    'Lega'    => ($Legajos),
+    'Falta'   => $FicFalta,
+    'Empr'    => ($Empr),
+    'Plan'    => ($Plan),
+    'Sect'    => ($Sect),
+    'Grup'    => ($Grup),
+    'Sucu'    => ($Sucu),
+    'Sec2'    => ($Sec2),
+    'LegTipo' => ($LegTipo),
+    'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
+    'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
+    // 'start'   => 0,
+    // 'length'  => 9999,
+    'start'   => intval($params['start']),
+    'length'  => intval($params['length']),
+    'getReg'  => 1,
+    'onlyReg'  => $params['onlyReg']
+);
+
+// $parametros = http_build_query($dataParametros, '', '&');
+// $url = "http://localhost/chweb/api/ficdata/";
+$url = "$_SERVER[HTTP_ORIGIN]/".HOMEHOST."/api/ficdata/";
+// print_r($url).exit;
+
+$dataApi['DATA'] = $dataApi['DATA'] ?? '';
+$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+
+// if ($params['_l']) {
+$dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
+// }
+// print_r($dataParametros);
+// print_r($dataApi).exit;
+
+if ($dataApi['DATA']) {
+    foreach ($dataApi['DATA'] as $row) {
+        $pers_legajo   = $row['Lega'];
+        $pers_nombre   = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
         $data[] = array(
-            'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $Per3 . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
-            'pers_nombre' => '<span class="animate__animated animate__fadeIn text-danger fw5">Legajo inválido</span>',
-            'null'        => '',
+            'pers_legajo' =>  $pers_legajo,
+            'pers_nombre' => $pers_nombre,
         );
     }
 }
-
-sqlsrv_free_stmt($queryRecords);
-sqlsrv_close($link);
 $json_data = array(
-"draw"            => intval( $params['draw'] ),   
-"recordsTotal"    => intval( $totalRecords ),  
-"recordsFiltered" => intval($totalRecords),
-"data"            => $data
+    "draw"            => intval($params['draw'] ?? 0),
+    "recordsTotal"    => intval($dataApi['TOTAL'] ?? 0),
+    "recordsFiltered" => intval($dataApi['TOTAL'] ?? 0),
+    "data"            => $data,
+    "dataParametros"  => $dataParametros,
+    "Mensaje" => $dataApi['MESSAGE'] 
 );
+
 echo json_encode($json_data);

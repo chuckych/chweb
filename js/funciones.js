@@ -19,6 +19,10 @@ function formatDate(date) {
 
     return [year, month, day].join('-');
 }
+function formatDate2(date) {
+    let d = date.split("/")
+    return [d[2], d[1], d[0]].join('-');
+}
 function NombreMesJS(Mes) {
     switch (Mes) {
         case "01":
@@ -229,7 +233,7 @@ $(window).on('load', function () {
     $(".loader").fadeOut("slow");
 });
 
-var _homehost = $("#_homehost").val();
+let _homehost = $("#_homehost").val();
 
 var getUrlParameter = function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1),
@@ -500,16 +504,18 @@ function CheckUncheck(selector_check, selector_uncheck, selectorcheckbox, classa
         $(selectorcheckbox).parents('tr').removeClass('table-active')
     });
 }
-function singleDatePicker(selector, opens, drop) {
+function singleDatePicker(selector, opens, drop, maxDate = '') {
     $(selector).attr('autocomplete', 'off')
     $(selector).daterangepicker({
         singleDatePicker: true,
         opens: opens,
         drops: drop,
         autoUpdateInput: true,
+        autoApply: false,
         buttonClasses: "btn btn-sm fontq",
         applyButtonClasses: "btn-custom fw4 px-3 opa8",
         cancelClass: "btn-link fw4 text-gris",
+        maxDate: maxDate,
         ranges: {
             'Hoy': [moment(), moment()],
             'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -529,8 +535,13 @@ function singleDatePicker(selector, opens, drop) {
             alwaysShowCalendars: true,
             applyButtonClasses: "text-white bg-custom",
         },
-
     });
+    // $(selector).on('show.daterangepicker', function (ev, picker) {
+    //     $('.drp-buttons').show()
+    // });
+    // $(selector).on('hide.daterangepicker', function (ev, picker) {
+    //     $('.drp-buttons').hide()
+    // });
 }
 function singleDatePickerValue(selector, opens, drop, value) {
     $(selector).daterangepicker({
@@ -732,3 +743,56 @@ document.addEventListener('visibilitychange', function logData() {
     }
     navigator.sendBeacon('', formData);
 });
+// console.log($('#_host').val()+'/'+$('#_homehost').val());
+
+const getFicNovHor = (selector, date1, date2, lega) => {
+    let = d = new FormData()
+    d.append('fechaIni', date1)
+    d.append('fechaFin', date2)
+    d.append('legajo', lega)
+    axios({
+        method: 'POST',
+        url: $('#_host').val() + '/' + $('#_homehost').val() + '/data/getFicNovHor.php',
+        data: d
+    }).then(function (response) {
+        if (response.data.data) {
+            let container = document.getElementById(selector)
+            container.innerHTML = `<div class="fontq mb-2 alert alert-info alertDataClean">La siguiente información posterior a la fecha de egreso será eliminada.</div>`
+
+            container.innerHTML += `
+            <div class="p-2">
+                <table class="table w-100 animate__animated animate__fadeIn">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th class="text-center">Fichadas</th>
+                            <th class="text-center">Novedades</th>
+                            <th class="text-center">Horas</th>
+                            <th class="text-center">Otras Nove</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyData"></tbody>
+                </table>
+            </div>
+        `
+            response.data.data.forEach(function callback(value, index) {
+                // console.log(`${value.Lega}`);
+                let tbodyData = document.getElementById('tbodyData');
+                tbodyData.innerHTML += `
+            <tr>
+                <td>${moment(value.Fech).format("DD/MM/YYYY")}</td>
+                <td class="text-center">${(value.Fich.length) ? value.Fich.length : '-'}</td>
+                <td class="text-center">${(value.Nove.length) ? value.Nove.length : '-'}</td>
+                <td class="text-center">${(value.Horas.length) ? value.Horas.length : '-'}</td>
+                <td class="text-center">${(value.ONove.length) ? value.ONove.length : '-'}</td>
+            </tr>
+            `
+            });
+        } else {
+            $('.alertDataClean').addClass('d-none')
+        }
+
+    }).catch(function (error) {
+        console.log(error);
+    });
+}

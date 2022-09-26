@@ -326,7 +326,6 @@ if (($queryRecords)) {
             'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'], intval($r['threshold']))),
             'threshold'         => intval($r['threshold']),
             'id_api'            => intval($r['id_api']),
-            'img'               => $urlImg,
             'imageData'         => array(
                 'ancho'             => $ancho,
                 'alto'              => $alto,

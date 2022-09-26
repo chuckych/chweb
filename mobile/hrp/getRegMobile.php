@@ -69,8 +69,6 @@ if ($api['COUNT'] > 0) {
             // 'map_size' => $r['map_size'],
         ));
         $hora = "<span class='marcador' marcador='$jsonMarcador'>$r[regTime]</span>";
-        $pathPhoto = "$r[img]";
-        $img = $r['img'];
         $arrayData[] = array(
             'appVersion'        => $r['appVersion'],
             'attPhoto'          => $r['attPhoto'],
@@ -87,11 +85,6 @@ if ($api['COUNT'] > 0) {
             'regUID'            => ($r['regUID']),
             'regLat'            => $r['regLat'],
             'regLng'            => $r['regLng'],
-            // 'regPhoto'          => (is_file('fotos/'.$r['userCompany'].'/' . $r['regPhoto'])) ? $r['regPhoto'] : '',
-            'regPhoto'          => (is_file($img)) ? $img : '',
-            // 'regPhoto'       => (is_file($pathPhoto)) ? $pathPhoto : '',
-            // 'regPhoto'       => $pathPhoto,
-            'pathPhoto'         => $pathPhoto,
             'regHora'           => $r['regTime'],
             'regTime'           => $hora,
             'userCompany'       => $r['userCompany'],
@@ -106,11 +99,8 @@ if ($api['COUNT'] > 0) {
             'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
             'confidenceFaceVal' => $r['confidenceFaceVal'],
             'id_api'            => $r['id_api'],
-            // 'img'               => $img,
-            'img'               => $img,
-            // 'img'               => $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" .$img,
-            'imageData' => $r['imageData'],
-            'basePhoto' => $r['basePhoto']
+            'imageData'         => $r['imageData'],
+            'basePhoto'         => $r['basePhoto']
         );
         if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(
@@ -145,7 +135,7 @@ if ($api['COUNT'] > 0) {
                     'regLat'            => $r['regLat'],
                     'regLng'            => $r['regLng'],
                     'device'            => ($r['deviceName']),
-                    'phoneid'            => ($r['phoneid']),
+                    'phoneid'           => ($r['phoneid']),
                     'operationType'     => $r['operationType'],
                     'timestamp'         => $r['createdDate'],
                 );

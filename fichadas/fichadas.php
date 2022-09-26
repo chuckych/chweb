@@ -4,6 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
+    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.bootstrap4.min.css">
     <title><?= MODULOS['fichadas'] ?></title>
 </head>
 
@@ -42,6 +43,7 @@
         </div>
         <?php
         $FechaMinMax = (fecha_min_max('REGISTRO', 'REGISTRO.RegFeAs'));
+        // print_r($FechaMinMax).exit;
         $FirstDate = $FechaMinMax['min'];
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
@@ -55,52 +57,25 @@
         ?>
         <div id="tablas">
             <div class="row bg-white pb-sm-3" id="pagLega">
-                <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
-                    <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
+                <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn table-responsive">
                     <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal"></table>
                 </div>
             </div>
             <div class="row bg-white pb-sm-3" id="pagFech">
-                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
+                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn table-responsive">
                     <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetFechas"></table>
                 </div>
             </div>
             <div class="row bg-white radius mt-sm-n5">
                 <div class="col-12 animate__animated animate__fadeIn">
                     <div class="table-responsive" id="GetFichadasTable" style="display: none;">
-                        <table class="table table-hover text-nowrap w-100" id="GetFichadas">
-                            <thead class="">
-                                <tr>
-                                    <th class="fw4">LEGAJO</th>
-                                    <th class="fw4">NOMBRE</th>
-                                    <th class="fw4 text-center" title="Primer Fichada">PRIMERA</th>
-                                    <th class="fw4 text-center" title="Última Fichada">ULTIMA</th>
-                                    <th class="fw4">DIA</th>
-                                    <th class="fw4">FECHA</th>
-                                    <th class="fw4">HORARIO</th>
-                                    <th class="fw4 pl-3" title="Todas las Fichadas">FICHADAS</th>
-                                    <th class="fw4 pl-3"></th>
-                                </tr>
-                            </thead>
+                        <table class="table text-nowrap w-100 border shadow table-hover p-2" id="GetFichadas">
                         </table>
                     </div>
                 </div>
                 <div class="col-12 animate__animated animate__fadeIn">
                     <div class="table-responsive invisible" id="GetFichadasFechaTable">
-                        <table class="table table-hover text-nowrap w-100" id="GetFichadasFecha">
-                            <thead class="">
-                                <tr>
-                                    <th class="fw4">LEGAJO</th>
-                                    <th class="fw4">NOMBRE</th>
-                                    <th class="fw4 text-center" title="Primer Fichada">PRIMERA</th>
-                                    <th class="fw4 text-center" title="Última Fichada">ULTIMA</th>
-                                    <th class="fw4">DIA</th>
-                                    <th class="fw4">FECHA</th>
-                                    <th class="fw4">HORARIO</th>
-                                    <th class="fw4 pl-3" title="Todas las Fichadas">FICHADAS</th>
-                                    <th class="fw4 pl-3"></th>
-                                </tr>
-                            </thead>
+                        <table class="table text-nowrap w-100 border shadow p-2 table-hover" id="GetFichadasFecha">
                         </table>
                     </div>
                 </div>
@@ -117,14 +92,13 @@
     require __DIR__ . "../../js/DataTable.php";
     require 'modal_Filtros.html';
     ?>
+    <script src="https://cdn.datatables.net/fixedheader/3.2.4/js/dataTables.fixedHeader.min.js"></script>
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?=vjs()?>"></script>
-    <script src="js/select-min.js?v=<?=vjs()?>"></script>
-    <script src="js/trash-select-min.js?v=<?=vjs()?>"></script>
-    <script src="js/FicExcel-min.js?v=<?=vjs()?>"></script>
+    <script src="js/data.js?v=<?= microtime(true) ?>"></script>
+    <script src="js/FicExcel-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>

@@ -570,6 +570,7 @@
  .w40 {
      width: 40px !important
  }
+
  .max-h-200 {
      max-height: 200px !important;
  }
@@ -1666,9 +1667,18 @@
      padding-bottom: 5px !important;
      width: 100% !important;
  }
+
  .hr2 {
      border-bottom: 2px solid #cecece !important;
      padding-top: 5px !important;
      padding-bottom: 5px !important;
      width: 100% !important;
+ }
+
+ #GetPersonal_wrapper .page-link {
+     border: 0px solid #333;
+ }
+
+ #GetFechas_wrapper .page-link {
+     border: 0px solid #333;
  }

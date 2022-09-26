@@ -2,7 +2,7 @@
 // use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.252'; // Version de la aplicación
+    return 'v0.0.253'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3179,6 +3179,15 @@ function getRemoteFile($url, $timeout = 10)
     }
     exit;
 }
+function implodeArrayByKey(array $array, $key, $separator = ',')
+{
+    if ($array && $key) {
+        $i = array_unique(array_column($array, $key));
+        $i = implode("$separator", $i);
+        return $i;
+    }
+    return false;
+}
 function sendRemoteData($url, $payload, $timeout = 10)
 {
     $ch = curl_init();
@@ -3691,8 +3700,9 @@ function defaultConfigData() // default config data
 }
 function write_apiKeysFile()
 {
-    $q = "SELECT c.id as 'idCompany', c.nombre as 'nameCompany', c.recid as 'recidCompany', 'key' as 'key', c.urlAppMobile AS 'urlAppMobile', c.localCH as 'localCH', (SELECT valores FROM params p WHERE p.modulo = 1 AND p.descripcion = 'host' AND p.cliente = c.id LIMIT 1) AS 'hostCHWeb' FROM clientes c";
+    $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb' FROM `clientes` `c`";
     $assoc_arr = array_pdoQuery($q);
+    // $assoc = $assoc_arr;
 
     foreach ($assoc_arr as $key => $value) {
         $assoc[] = (array(
@@ -3701,7 +3711,13 @@ function write_apiKeysFile()
             'recidCompany' => $value['recidCompany'],
             'urlAppMobile' => $value['urlAppMobile'],
             'localCH'      => ($value['localCH']),
-            'hostCHWeb'    => $value['hostCHWeb']
+            'hostCHWeb'    => $value['hostCHWeb'],
+            'DBHost'       => $value['hostDB'],
+            'DBUser'       => $value['userDB'],
+            'DBPass'       => $value['passDB'],
+            'DBName'       => $value['DB'],
+            'DBAuth'       => $value['authDB'],
+            'Token'        => sha1($value['recidCompany']),
         ));
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
@@ -4047,6 +4063,28 @@ function simple_MSQuery($query)
         exit;
     }
 }
+function MSQuery($query)
+{
+    $params    = array();
+    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '/config/conect_mssql.php';
+    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    if (($stmt)) {
+        return true;
+    } else {
+        if (($errors = sqlsrv_errors()) != null) {
+            foreach ($errors as $error) {
+                $mensaje = explode(']', $error['message']);
+                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+            }
+        }
+        sqlsrv_free_stmt($stmt);
+        echo json_encode($data[0]);
+        sqlsrv_close($link);
+        return false;
+        exit;
+    }
+}
 function arrMSQuery($query)
 {
     $params    = array();
@@ -4067,7 +4105,7 @@ function arrMSQuery($query)
                 $mensaje = explode(']', $error['message']);
                 $data[] = array("status" => "error", "dato" => $mensaje[3]);
                 $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
-                fileLog(PHP_EOL.'Message: '.json_encode($mensaje, JSON_UNESCAPED_UNICODE).PHP_EOL.'Source: '.'"'.$_SERVER['REQUEST_URI'].'"', $pathLog); // escribir en el log de errores el error
+                fileLog(PHP_EOL . 'Message: ' . json_encode($mensaje, JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
             }
         }
         // sqlsrv_free_stmt($stmt);
@@ -4128,4 +4166,38 @@ function calcLimitTar($start, $end)
         'confTar'  => $getConfTar
     );
     return $obj;
+}
+function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+        "Accept: */*",
+        'Content-Type: application/json',
+        'Authorization: Basic ' . $authBasic, // Basic Authentication
+        "Token: $token",
+    ));
+    $file_contents = curl_exec($ch);
+    $curl_errno    = curl_errno($ch); // get error code
+    $curl_error    = curl_error($ch); // get error information
+
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+
+    curl_close($ch);
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+        return false;
+    }
 }

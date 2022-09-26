@@ -5,4 +5,4 @@
 <!-- bootstrap.min.js -->
 <script src="/<?= HOMEHOST ?>/js/bootstrap.min.js"></script>
 <script src="/<?= HOMEHOST ?>/js/axios.min.js"></script>
-<script src="/<?= HOMEHOST ?>/js/funciones-min.js?v=<?= time() ?>"></script>
+<script src="/<?= HOMEHOST ?>/js/funciones.js?v=<?= vjs() ?>"></script>

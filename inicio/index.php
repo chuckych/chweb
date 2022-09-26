@@ -13,4 +13,14 @@ if ($_SESSION['MODS_ROL']) {
         header('Location:../mishoras/');
     }
 }
+// // echo '<pre>';
+// echo 'EstrUser : '.$_SESSION['EstrUser'].'<br>';
+// echo 'PlanRol : '.$_SESSION['PlanRol'].'<br>';
+// echo 'ConvRol : '.$_SESSION['ConvRol'].'<br>';
+// echo 'SectRol : '.$_SESSION['SectRol'].'<br>';
+// echo 'Sec2Rol : '.$_SESSION['Sec2Rol'].'<br>';
+// echo 'GrupRol : '.$_SESSION['GrupRol'].'<br>';
+// echo 'SucuRol : '.$_SESSION['SucuRol'].'<br>';
+
+// exit;
 require pagina('inicio.php');

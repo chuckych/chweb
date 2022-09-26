@@ -96,6 +96,7 @@
     require __DIR__ . "../../../js/DateRanger.php";
     ?>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="../../js/bootbox.min.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="js/enviar.js?v=<?= vjs() ?>"></script>
@@ -125,7 +126,7 @@
     
         $('#label_LegMail').tooltip('show');
         singleDatePicker('#LegFeIn', 'center', 'down')
-        singleDatePicker('#LegFeEg', 'center', 'down')
+        singleDatePicker('#LegFeEg', 'center', 'down', moment())
         singleDatePicker('#IDVence', 'center', 'down')
         singleDatePicker('#LegFeNa', 'center', 'down')
         singleDatePicker('#CierreFech', 'center', 'down')

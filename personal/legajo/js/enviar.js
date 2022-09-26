@@ -2,55 +2,99 @@ $(document).ready(function () {
     ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
     $(".Update_Leg").bind("submit", function (e) {
         e.preventDefault();
-        if(($('#LegEmpr').val() == null) || ($('#LegEmpr').val() == '' || $('#LegEmpr').val() == '0')){
+
+        // alert($('#LegFeEg').val());
+        function submitForm() {
+            let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+            $.ajax({
+                type: $(".Update_Leg").attr("method"),
+                contetnType: "application_json; charset=utf-8",
+                url: $(".Update_Leg").attr("action"),
+                data: $(".Update_Leg").serialize(),
+                beforeSend: function (data) {
+                    $.notifyClose();
+                    notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+                    $("#alerta_UpdateLega").addClass("d-none")
+                    ActiveBTN(true, "#btnGuardar", 'Aguarde..', 'Aceptar')
+                },
+                success: function (data) {
+                    // console.log(data.status);
+                    if (data.status == 'ok') {
+                        $.notifyClose();
+                        ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
+                        var dt = new Date();
+                        var Minutos = ("0" + dt.getMinutes()).substr(-2);
+                        var Segundos = ("0" + dt.getSeconds()).substr(-2);
+                        var Horas = ("0" + dt.getHours()).substr(-2);
+                        var HoraActual = Horas + ":" + Minutos + ":" + Segundos + "Hs.";
+                        $("#alerta_UpdateLega").removeClass("d-none").removeClass("d-none").removeClass("text-danger").addClass("text-success")
+                        // $(".respuesta_UpdateLega").html(`Datos Guardados.! ${HoraActual}`)
+                        $(".mensaje_UpdateLega").html('');
+                        $("#Encabezado").html(`Legajo: ${data.Lega} &#8250 ${data.Nombre}`);
+                        $("#LegDocu").val(`${data.docu}`)
+
+                        notify(`Datos Guardados.<br /><span class="fw5">Legajo: ${data.Lega} <br>Nombre:  ${data.Nombre}</span>`, 'success', 5000, 'right')
+
+                    } else {
+                        $.notifyClose();
+                        ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
+                        $("#alerta_UpdateLega").removeClass("d-none").removeClass("text-success").addClass("text-danger")
+                        $(".respuesta_UpdateLega").html("¡Error!")
+                        $(".mensaje_UpdateLega").html(`Mensaje: ${data.dato}`);
+                        notify(`Error: ${data.dato}`, 'danger', 3000, 'right')
+                    }
+                }
+            });
+        }
+
+
+        if (($('#LegEmpr').val() == null) || ($('#LegEmpr').val() == '' || $('#LegEmpr').val() == '0')) {
             $.notifyClose();
             notify(`<span class="font-weight-bold">Campo empresa es requerido.</span>`, 'danger', 5000, 'right')
             $(".ReqLegEmpr").addClass('text-danger font-weight-bold')
             $('#empresa-tab').tab('show');
             return false;
-        }else{
+        } else {
             $(".ReqLegEmpr").removeClass('text-danger font-weight-bold')
         }
-        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $.notifyClose();
-                notify('Procesando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-                $("#alerta_UpdateLega").addClass("d-none")
-                ActiveBTN(true, "#btnGuardar", 'Aguarde..', 'Aceptar')
-            },
-            success: function (data) {
-                // console.log(data.status);
-                if (data.status == 'ok') {
-                    $.notifyClose();
-                    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
-                    var dt = new Date();
-                    var Minutos = ("0" + dt.getMinutes()).substr(-2);
-                    var Segundos = ("0" + dt.getSeconds()).substr(-2);
-                    var Horas = ("0" + dt.getHours()).substr(-2);
-                    var HoraActual = Horas + ":" + Minutos + ":" + Segundos + "Hs.";
-                    $("#alerta_UpdateLega").removeClass("d-none").removeClass("d-none").removeClass("text-danger").addClass("text-success")
-                    // $(".respuesta_UpdateLega").html(`Datos Guardados.! ${HoraActual}`)
-                    $(".mensaje_UpdateLega").html('');
-                    $("#Encabezado").html(`Legajo: ${data.Lega} &#8250 ${data.Nombre}`);
-                    $("#LegDocu").val(`${data.docu}`)
-                    
-                    notify(`Datos Guardados.<br /><span class="fw5">Legajo: ${data.Lega} <br>Nombre:  ${data.Nombre}</span>`, 'success', 5000, 'right')
 
-                } else {
-                    $.notifyClose();
-                    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
-                    $("#alerta_UpdateLega").removeClass("d-none").removeClass("text-success").addClass("text-danger")
-                    $(".respuesta_UpdateLega").html("¡Error!")
-                    $(".mensaje_UpdateLega").html(`Mensaje: ${data.dato}`);
-                    notify(`Error: ${data.dato}`, 'danger', 3000, 'right')
+
+        if ($('#LegFeEg').val()) {
+
+            // console.log(dataClean);
+
+            bootbox.confirm({
+                // centerVertical: true,
+                title: '<span class="fontq font-weight-bold"><i class="bi bi-exclamation-circle"></i> Se está dando de baja el legajo. Fecha de egreso: <span class="ls1">' + $('#LegFeEg').val() + '</span></span>',
+                className: 'animate__animated  animate__fadeIn',
+                message: '<div id="dataClean"></div>',
+                buttons: {
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-custom btn-sm fontq'
+                    },
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-light btn-sm fontq text-secondary'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+
+                        submitForm();
+                    }
                 }
-            }
-        });
+            });
+            $('.modal-dialog').addClass('modal-dialog-scrollable')
+            $('.modal-header').addClass('border-0')
+            $('.modal-body').addClass('mt-n1 p-0')
+            getFicNovHor('dataClean', formatDate2($('#LegFeEg').val()), '2099-01-01', $('#LegNume').val());
+            e.stopImmediatePropagation();
+        } else {
+            submitForm();
+        }
+
     });
 });
 
@@ -1500,8 +1544,8 @@ $(document).ready(function () {
         $('.form-Identifica')[0].reset();
     })
 
-    $(".form-Identifica").bind("submit", function () {
-        event.preventDefault();
+    $(".form-Identifica").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             contetnType: "application_json; charset=utf-8",
@@ -1514,6 +1558,7 @@ $(document).ready(function () {
             },
 
             success: function (data) {
+                $.notifyClose();
                 if (data.status == "ok") {
                     $('#Identifica-table').DataTable().ajax.reload();
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
@@ -1523,6 +1568,7 @@ $(document).ready(function () {
                     $("#btnidentifica").html('Aceptar');
                     $("#btnidentifica").prop('disabled', false);
                     $('#altaidentifica').modal('hide');
+                    notify('Datos guardados correctamente<br>' + data.dato, 'success', 3000, 'right')
 
                 } else if (data.status == "existe") {
                     $('#Identifica-table').DataTable().ajax.reload();
@@ -1531,7 +1577,7 @@ $(document).ready(function () {
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
                     $("#btnidentifica").html('Aceptar');
                     $("#btnidentifica").prop('disabled', false);
-                    // $('#ConvVaca').DataTable().ajax.reload();
+                    notify(data.dato, 'info', 3000, 'right')
                 } else {
                     $('#Identifica-table').DataTable().ajax.reload();
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
@@ -1539,6 +1585,7 @@ $(document).ready(function () {
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
                     $("#btnidentifica").html('Aceptar');
                     $("#btnidentifica").prop('disabled', false);
+                    notify(data.dato, 'danger', 3000, 'right')
                 }
             }
         });
