@@ -680,7 +680,7 @@ function test_input($data)
     $data = utf8str($data);
     $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
     $data = str_ireplace("script", '', $data);
-    // $data = htmlentities($data, ENT_QUOTES);
+    $data = htmlentities($data, ENT_QUOTES);
     return ($data);
 }
 function test_input2($data)
