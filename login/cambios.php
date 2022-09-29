@@ -238,11 +238,11 @@ if ($verDB < 20210102) {
     } else { // si existe la clave foranea
         fileLog("Ya existe la clave foranea \"FK_usuario_roles\" de la tabla \"usuarios\"", $pathLog); // escribir en el log
     }
-    // $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20210102; // nueva version de la DB
     // simpleQuery("UPDATE params set valores = $verDB WHERE modulo = 0", $link); // seteo la fecha de actualización de la version de DB
     // fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-    $a = simpleQueryData("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1", $link); // Traigo el valor de la version de la DB mysql
-    $verDB = intval($a['valores']); // valor de la version de la DB mysql
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20211006) {
     if (!checkKey('FK_lista_estruct_usuarios', 'lista_estruct')) {
@@ -254,7 +254,7 @@ if ($verDB < 20211006) {
         pdoQuery("ALTER TABLE `lista_estruct` ADD CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE");
         fileLog("Se agrego clave foranea \"FK_lista_estruct_usuarios\" de la tabla \"lista_estruct\"", $pathLog); // escribir en el log 
     }
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20211006;
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -270,7 +270,7 @@ if ($verDB < 20211024) {
     } else {
         fileLog("No se creo tabla: \"auditoria\". ya existe", $pathLog); // escribir en el log
     }
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20211024; 
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -293,7 +293,7 @@ if ($verDB < 20220301) {
     pdoQuery("UPDATE reg_ SET reg_.attphoto = '1' WHERE reg_.operationType = 1");
     fileLog("Se actualizo tabla \"reg_\" columna \"attphoto\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220301; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -313,7 +313,7 @@ if ($verDB < 20220303) {
     pdoQuery("ALTER TABLE `reg_phone_` ADD COLUMN `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `phoneid`;");
     fileLog("Se creo columna \"id_company\" en tabla \"reg_phone_\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220303; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -321,11 +321,10 @@ if ($verDB < 20220304) {
     pdoQuery("RENAME TABLE `reg_phone_` TO `reg_device_`");
     fileLog("Se renombro tabla \"reg_phone_\" por \"reg_device_\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220304; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220310) {
     pdoQuery("ALTER IGNORE TABLE `reg_` ADD UNIQUE INDEX(id_user, phoneid, fechaHora)");
     fileLog("Se crea indice \"id_user\" Unique de columnas id_user, phoneid, fechaHora. Se eliminaron registros duplicados en tabla \"reg_\"", $pathLog); // escribir en el log
@@ -336,7 +335,7 @@ if ($verDB < 20220310) {
     pdoQuery("SET @num := 0; UPDATE reg_ SET rid = @num := (@num+1); ALTER TABLE reg_ AUTO_INCREMENT = 1");
     fileLog("se reestablece el autoincrement de tabla \"reg_\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220310; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -359,11 +358,10 @@ if ($verDB < 20220311) {
     pdoQuery("ALTER TABLE `reg_device_` ENGINE=MyISAM");
     fileLog("ALTER TABLE \"reg_device_\" ENGINE=MyISAM", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220311; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220313) {
 
     pdoQuery("CREATE TABLE IF NOT EXISTS `reg_zones` (
@@ -386,7 +384,7 @@ if ($verDB < 20220313) {
     pdoQuery("ALTER TABLE `reg_` ADD CONSTRAINT `refZone` FOREIGN KEY (`idZone`) REFERENCES `reg_zones` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION");
     fileLog("ALTER TABLE \"reg_\" ADD CONSTRAINT \"refZone\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220313; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -394,7 +392,7 @@ if ($verDB < 20220314) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `distance`", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220314; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -409,7 +407,7 @@ if ($verDB < 20220316) {
     pdoQuery("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid` (`reg_uid`)"); // agregar un indice unico
     fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid`", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20211006
+    $verDB  = 20220316; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
@@ -425,7 +423,7 @@ if ($verDB < 20220318) {
     ) COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=0");
     fileLog("CREATE TABLE \"reg_faces\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    $verDB  = 20220318; // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -457,13 +455,12 @@ if ($verDB < 20220502) {
     pdoQuery("ALTER TABLE `clientes` ADD COLUMN `localCH` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `auth`");
     fileLog("ADD COLUMN \"localCH\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20220318
+    $verDB  = 20220502; // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
 
 }
-
 if ($verDB < 20220503) {
 
     pdoQuery("ALTER TABLE `reg_zones` ADD COLUMN `evento` SMALLINT(6) NOT NULL AFTER `radio`");
@@ -475,12 +472,11 @@ if ($verDB < 20220503) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
     fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20220503; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
 }
-
 if ($verDB < 20220517) {
 
     pdoQuery("ALTER TABLE `clientes`
@@ -489,11 +485,10 @@ if ($verDB < 20220517) {
 	CHANGE COLUMN `UrlAppMobile` `UrlAppMobile` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `ApiMobileHRP`");
     fileLog("CHANGE COLUMN \"WebService, ApiMobileHRP, UrlAppMobile\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20220517; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220816) {
 
     if (checkTable('tipo_modulo')) {
@@ -731,21 +726,19 @@ if ($verDB < 20220816) {
     ENGINE=InnoDB";
     createTable($tableName, $fields, $engine, $pathLog);
 
-    $verDB  = verDBLocal(); // nueva version de la DB // 20220816
+    $verDB  = 20220816; // nueva version de la DB // 20220816
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220822) {
     pdoQuery("ALTER TABLE `proy_planos`
 	ADD COLUMN `PlanoEsta` ENUM('0','1') NOT NULL AFTER `PlanoObs`");
     fileLog("ADD COLUMN \"proy_planos\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20220822; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220824) {
     pdoQuery("ALTER TABLE `proy_plantillas`
 	ADD COLUMN `PlantMod` INT(10) NULL AFTER `PlantDesc`,
@@ -775,13 +768,11 @@ if ($verDB < 20220824) {
 	ADD CONSTRAINT `FK_proy_proyectos_proy_plantillas_2` FOREIGN KEY (`ProyPlantPlano`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE NO ACTION");
     fileLog("ADD COLUMN \"ProyPlantPlano\" en la tabla \"proy_proyectos\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20220824; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20220901) {
-
     pdoQuery("ALTER TABLE `reg_faces`
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`id`, `createdDate`, `id_user`) USING BTREE");
@@ -797,6 +788,4 @@ if ($verDB < 20220901) {
     $verDB  = verDBLocal(); // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
-
 }
-

@@ -49,8 +49,8 @@ define("TIPO_PER", [
    'Jornal' => '1',
 ]);
 define("TIPO_ASIGN", [
-   'Según Asignación'  => '0',
-   'Alternativa según Fichadas' => '1',
+   'Según asignación'  => '0',
+   'Alternativo según fichadas' => '1',
 ]);
 define("INCUMPLIMIENTO", [
    'Estándar sin control de descanso'  => '0',

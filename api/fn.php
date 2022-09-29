@@ -14,7 +14,7 @@ $_SERVER['PHP_AUTH_USER'] = $_SERVER['PHP_AUTH_USER'] ?? '';
 $_SERVER['PHP_AUTH_PW']   = $_SERVER['PHP_AUTH_PW'] ?? '';
 $validData = '';
 
-$passAuth = explode('/',$_SERVER['PHP_SELF']);
+$passAuth = explode('/', $_SERVER['PHP_SELF']);
 /**
  * Valida el authenticate header
  */
@@ -89,6 +89,18 @@ function tipoFic($regTipo)
             break;
     }
     return $t;
+}
+function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
+{
+    $a = array();
+    if ($array && $key && $valor) {
+        foreach ($array as $v) {
+            if ($v[$key] === $valor) {
+                $a[] = $v;
+            }
+        }
+    }
+    return $a;
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
 {
@@ -298,7 +310,7 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
     } catch (Exception $e) {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
-        writeLog(PHP_EOL . 'Query: '.$query, $pathLog); // escribir en el log de errores el error
+        writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
         (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
@@ -359,7 +371,7 @@ function length()
     $p = file_get_contents("php://input");
     $p = json_decode($p, true);
     $p['length'] = $p['length'] ?? '';
-    $length = empty($p['length']) ? 0 : $p['length'];
+    $length = empty($p['length']) ? 10 : $p['length'];
     return intval($length);
 }
 /** 
@@ -708,4 +720,77 @@ function isValidJSON($str)
 {
     json_decode($str);
     return json_last_error() == JSON_ERROR_NONE;
+}
+function calculaEdad($fecha)
+{
+    if ($fecha) {
+        if ($fecha != '1753-01-01') {            
+            $dia_actual = date("Y-m-d");
+            $edad_diff = date_diff(date_create($fecha), date_create($dia_actual));
+            return $edad_diff;
+        }
+    }
+    return '';
+}
+function calculaEdadStr($fecha) {
+    if ($fecha) {
+        if ($fecha != '1753-01-01') {
+            $EdadStr = '';
+            $Edad      = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%y'));
+            $EdadMeses = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%m'));
+            $EdadDias  = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%d'));
+            $EdadStr .= ($Edad) ? $Edad.(($Edad>1)? ' Años':' Año'):'';
+            $EdadStr .= ($EdadMeses) ? ' '.(($EdadMeses>1)? $EdadMeses.' Meses':$EdadMeses.' Mes'):'';
+            $EdadStr .= ($EdadDias) ? ' '.(($EdadDias>1)? $EdadDias.' Días':$EdadDias.' Día'):'';
+            return trim($EdadStr);
+        }
+    }
+    return '';
+}
+function IncTiStr($LegIncTi){
+    if($LegIncTi){
+        switch ($LegIncTi) {
+            case '0':
+                return "Estándar sin control de descanso";
+                break;
+            case '1':
+                return "Estándar con control de descanso";
+                break;
+            case '2':
+                return "(Hs. a Trabajar - Hs. Trabajadas)";
+                break;
+            case '3':
+                return "(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia";
+                break;
+            case '4':
+                return "(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso";
+                break;
+            case '5':
+                return "Recortado sin control de descanso";
+                break;
+            case '6':
+                return "Recortado con control de descanso";
+                break;
+            default:
+                return "Sin definir";
+                break;
+        }
+    }
+    return '';
+}
+function LegHoAlStr($LegHoAl){
+    if($LegHoAl){
+        switch ($LegHoAl) {
+            case '0':
+                return "Según Asignación";
+                break;
+            case '1':
+                return "Alternativo según fichadas";
+                break;
+            default:
+                return "Sin definir";
+                break;
+        }
+    }
+    return '';
 }
