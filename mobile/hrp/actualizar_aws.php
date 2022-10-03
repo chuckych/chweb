@@ -353,6 +353,7 @@ if (!empty($arrayData)) {
             $iniKeys     = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
             $obj         = filtrarObjeto($iniKeys, 'idCompany', $companyCode);
             $nameCompany = (str_replace(' ', '_', $obj['nameCompany']));
+            $recidCompany = $obj['recidCompany'];
 
             $pathLog = __DIR__ . '/logs/descargas/' . $nameCompany . '/' . $PathAnio . '/' . $PathMes;
             createDir($pathLog);
@@ -383,8 +384,12 @@ if (!empty($arrayData)) {
             }
 
             if ($locked != '1' && $localCH['localCH'] == '0') { // Si no esta bloqueado y tiene local CH
+                $eventZone = $eventZone ?? '0';
                 $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '$eventZone', '0')"; // Insertamos en la tabla Fichadas de control horario
-                if (InsertRegistroCH($query)) {
+
+                $_GET['_c'] = $recidCompany;
+
+                if (MSQuery($query)) {
                     $eventZone = str_pad($eventZone, 4, "0", STR_PAD_LEFT);
                     $text = "$Legajo $fechaHoraCH $hora 9999 $eventZone 0";
                     //$pathLog = __DIR__ . '/logs/' . date('Ymd') . '_FichadasCH_' . $companyCode . '.log';
