@@ -26,7 +26,7 @@
         // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
         //$query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
         // $arrayFech = simple_pdoQuery($query);
-        
+
         // $idCompany = $_SESSION['ID_CLIENTE'];
         $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -50,7 +50,7 @@
         <?php
         if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
 
-            echo '<input type="hidden" id="apiMobile" value="'.$_SESSION["APIMOBILEHRP"].'">';
+            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
         } else {
             echo '<input type="hidden" id="apiMobile" value="http://chweb.ar">';
         }
@@ -72,6 +72,12 @@
                             <select class="selectjs_cuentaToken w200" id="recid" name="recid" style="display:none">
                             </select>
                         </form>
+                    </div>
+                    <div class="col-12">
+                        <div class="fontq mt-2 p-2">
+                            <div>ID: <span id="dataIdCompany" class="ml-1"></span></div>
+                            <div>AppCode: <span id="dataRecidCompany" class="ml-1"></span></div>
+                        </div>
                     </div>
                 <?php
                 endif;
@@ -168,8 +174,7 @@
                             searching: false,
                             closeOnSelect: true,
                         });
-                    })
-                    .catch(err => console.log(err));
+                    }).catch(err => console.log(err));
             });
             $(".selectjs_cuentaToken").on("select2:select", function(e) {
                 CheckSesion();
@@ -181,19 +186,25 @@
                     type: $(this).attr("method"),
                     url: $(this).attr("action"),
                     data: $(this).serialize(),
-                    beforeSend: function(data) {},
+                    beforeSend: function(data) {
+                        loadingTable('#table-mobile');
+                        loadingTableUser('#tableUsuarios');
+                        loadingTableDevices('#tableDevices');
+                    },
                     success: function(data) {
                         if (data.status == "ok") {
                             sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
-                            loadingTable('#table-mobile');
-                            loadingTableUser('#tableUsuarios');
-                            loadingTableDevices('#tableDevices');
+                            $('#dataIdCompany').html(data.idCompany)
+                            $('#dataRecidCompany').html(data.recidCompany)
                             minmaxDate()
                         }
                     },
                     error: function() {}
                 });
             });
+            $('#dataIdCompany').html('<?= $_SESSION['ID_CLIENTE'] ?>')
+            $('#dataRecidCompany').html('<?= $_SESSION['RECID_CLIENTE'] ?>')
+            Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken")
         </script>
     <?php
     endif;

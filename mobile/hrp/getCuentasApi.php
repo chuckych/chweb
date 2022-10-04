@@ -8,17 +8,19 @@ header("Content-Type: application/json");
 E_ALL();
 $q = FusNuloPOST('q', '');
 $FiltroQ  = (!empty($q)) ? "AND clientes.nombre LIKE '%$q%'" : '';
-$sql="SELECT clientes.id as 'id', clientes.nombre 'text' FROM clientes WHERE clientes.ApiMobileHRP !='' $FiltroQ";
+$sql="SELECT clientes.id as 'id', clientes.nombre 'text', clientes.recid FROM clientes WHERE clientes.ApiMobileHRP !='' $FiltroQ";
 $arrayData = array_pdoQuery($sql);
 
 if (count($arrayData) > 0) {
     foreach ($arrayData as $row) {
         $id   = $row['id'];
         $text = $row['text'];
+        $recid = $row['recid'];
 
         $data[] = array(
             'id'    => $id,
             'text'  => $text,
+            'recid'  => $recid,
         );
     }
 }
