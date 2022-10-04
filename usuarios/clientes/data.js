@@ -175,6 +175,7 @@ $(document).ready(function () {
         $('#user').val(dataUser)
         $('#pass').val(dataPass)
         $('#hostCHWeb').val(datahostchweb)
+        $('#AppCode').val(dataRecid)
         
         if ((dataAuth == '2')) {
             $('#auth').prop('checked', true)

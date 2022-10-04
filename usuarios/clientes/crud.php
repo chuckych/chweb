@@ -14,6 +14,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
 
     // require __DIR__ . '../../../config/conect_mysql.php';
 
+    $AppCode      = test_input($_POST['AppCode']);
     $nombre       = test_input($_POST['nombre']);
     $ApiMobileHRP = test_input($_POST['ApiMobileHRP']);
     $ident        = test_input($_POST['ident']);
@@ -30,6 +31,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     (valida_campo($nombre)) ? PrintRespuestaJson('error', 'Campo Nombre de Cuenta Requerido') . exit : '';
     (valida_campo($hostCHWeb)) ? PrintRespuestaJson('error', 'Campo Host de Cuenta Requerido') . exit : '';
 
+    if ($AppCode) {
+        if (strlen($AppCode) < 8) {
+            PrintRespuestaJson('error', 'Campo App Code debe ser de 8 digitos');
+            exit;
+        }
+    }
+
     $CheckDuplicado = count_pdoQuery("SELECT clientes.ident FROM clientes WHERE clientes.ident='$identauto'");
     if ($CheckDuplicado) {
         $identauto  = Ident();
@@ -41,7 +49,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'AltaCuenta')
     $db    = test_input($_POST['db']);
     $user  = test_input($_POST['user']);
     $pass  = test_input($_POST['pass']);
-    $recid = recid();
+    $recid = (!empty($AppCode)) ? $AppCode : recid();
 
     $tkmobilehrp = sha1($recid);
 
@@ -87,34 +95,48 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
     // require __DIR__ . '../../../config/conect_mysql.php';
     $_POST['hostCHWeb'] = $_POST['hostCHWeb'] ?? '';
 
-    $nombre     = test_input($_POST['nombre']);
-    $ApiMobileHRP = test_input($_POST['ApiMobileHRP']);
-    $host       = ($_POST['host']);
-    $hostCHWeb = ($_POST['hostCHWeb']);
-    $hostCHWeb =  escape_sql_wild($hostCHWeb);
-    $host       = escape_sql_wild($host);
-    $db         = test_input($_POST['db']);
-    $user       = test_input($_POST['user']);
-    $pass       = test_input($_POST['pass']);
-    $tkmobile   = test_input($_POST['tkmobile']);
-    $WebService = test_input($_POST['WebService']);
-    $localCH = test_input($_POST['localCH'] ?? '0');
+    $nombre          = test_input($_POST['nombre']);
+    $AppCode         = test_input($_POST['AppCode']);
+    $ApiMobileHRP    = test_input($_POST['ApiMobileHRP']);
+    $host            = ($_POST['host']);
+    $hostCHWeb       = ($_POST['hostCHWeb']);
+    $hostCHWeb       = escape_sql_wild($hostCHWeb);
+    $host            = escape_sql_wild($host);
+    $db              = test_input($_POST['db']);
+    $user            = test_input($_POST['user']);
+    $pass            = test_input($_POST['pass']);
+    $tkmobile        = test_input($_POST['tkmobile']);
+    $WebService      = test_input($_POST['WebService']);
+    $localCH         = test_input($_POST['localCH'] ?? '0');
     $ApiMobileHRPApp = test_input($_POST['ApiMobileHRPApp'] ?? '');
-    $auth       = empty($_POST['auth']) ? '0' : '1';
-    $recid      = test_input($_POST['recid']);
+    $auth            = empty($_POST['auth']) ? '0' : '1';
+    $recid           = test_input($_POST['recid']);
+    $recid2          = test_input($_POST['recid']);
+    $recid = (!empty($AppCode)) ? $AppCode : $recid2;
     /* Comprobamos campos vacios  */
     (valida_campo($nombre)) ? PrintRespuestaJson('error', 'Campo Nombre de Cuenta Requerido') . exit : '';
     (valida_campo($hostCHWeb)) ? PrintRespuestaJson('error', 'Campo Host de Cuenta Requerido') . exit : '';
 
-    if (count_pdoQuery("SELECT 1 FROM clientes where nombre = '$nombre' and recid != '$recid' LIMIT 1")) {
+    if ($recid) {
+        if (strlen($recid) < 8) {
+            PrintRespuestaJson('error', 'Campo App Code debe ser de 8 digitos');
+            exit;
+        }
+    }
+
+    if (count_pdoQuery("SELECT 1 FROM clientes where nombre = '$nombre' and recid != '$recid2' LIMIT 1")) {
         PrintRespuestaJson('error', 'Ya existe una cuenta con el nombre: ' . $nombre);
         exit;
     }
 
-    $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', ApiMobileHRP = '$ApiMobileHRP', localCH = '$localCH', UrlAppMobile = '$ApiMobileHRPApp', fecha='$fecha' WHERE recid='$recid'";
+    $query = "UPDATE clientes SET nombre='$nombre', host='$host', db='$db', user='$user', pass='$pass', auth='$auth', tkmobile='$tkmobile', WebService='$WebService', ApiMobileHRP = '$ApiMobileHRP', localCH = '$localCH', UrlAppMobile = '$ApiMobileHRPApp', fecha='$fecha', recid='$recid' WHERE recid='$recid2'";
+
     $rs = pdoQuery($query);
     if ($rs) {
-        $r = simple_pdoQuery("SELECT id, nombre FROM clientes where recid = '$recid'");
+
+        $recid2 = ($recid2 != $recid) ? $recid : $recid2; // Si el appcode es distinto al recid. El recid2 es el Appcode
+
+        $r = simple_pdoQuery("SELECT id, nombre FROM clientes where recid = '$recid2'");
         $readHost = simple_pdoQuery("SELECT * FROM `params` where `descripcion` = 'host' and `modulo` = 1 and `cliente` = '$r[id]'");
         if ($readHost) {
             $query = "UPDATE `params` SET `valores` = '$hostCHWeb' WHERE `params`.`descripcion` = 'host' and `params`.`modulo` = 1 and `params`.`cliente` = '$r[id]'";
@@ -126,7 +148,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'EditCuenta')
             PrintRespuestaJson('ok', 'Cuenta Editada');
         }
         /** Si se Guardo con exito */
-        auditoria("Cuenta ($nombre)", '3', $r['id'], '1');
+        auditoria("Cuenta ($nombre). AppCode: $recid2", '3', $r['id'], '1');
         write_apiKeysFile();
         exit;
     } else {
