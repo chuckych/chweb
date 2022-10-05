@@ -75,6 +75,7 @@ if ($api['COUNT'] > 0) {
             'createdDate'       => $r['createdDate'],
             'deviceName'        => $r['deviceName'],
             'eventType'         => $r['eventType'],
+            'eventZone'         => $r['eventZone'],
             'gpsStatus'         => $r['gpsStatus'],
             'operation'         => $r['operation'],
             'operationType'     => $r['operationType'],
@@ -104,7 +105,7 @@ if ($api['COUNT'] > 0) {
         );
         if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(
-                'userID'            => (padLeft($r['userID'], 11, '0')),
+                'userID'            => (padLeft($r['userID'], 11, ' ')),
                 'userName'          => trim($r['userName']),
                 'zoneID'            => $r['zoneID'],
                 'zoneName'          => trim($r['zoneName']),
@@ -112,9 +113,10 @@ if ($api['COUNT'] > 0) {
                 'locked'            => $r['locked'],
                 'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
                 'regDateTime'       => ($r['regDateTime']),
+                'eventZone'         => ($r['eventZone']),
             );
             if ($txtData['userName']) {
-                $line = "$txtData[userID],$txtData[regDateTime],$txtData[userName]";
+                $line = "$txtData[userID],$txtData[regDateTime],$txtData[eventZone],$txtData[userName]";
                 fileLog($line, $routeFile, 'export');
             }
         }
@@ -138,6 +140,8 @@ if ($api['COUNT'] > 0) {
                     'phoneid'           => ($r['phoneid']),
                     'operationType'     => $r['operationType'],
                     'timestamp'         => $r['createdDate'],
+                    'eventZone'         => ($r['eventZone']),
+                    'eventDevice'       => ($r['eventDevice']),
                 );
             }
         }

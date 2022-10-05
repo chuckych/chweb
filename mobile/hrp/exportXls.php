@@ -54,14 +54,18 @@ $encabezado = [
     /** time E*/
     'Zona',
     /** zone F*/
-    'Posición',
+    'Posición GPS',
     /** Posición G*/
-    'Certeza',
+    'Reconocimiento Facial',
     /** certeza H*/
     'Tipo',
     /** Tipo I*/
     'Dispositivo',
     /** t_type J*/
+    'Evento Zona',
+    /** t_type K*/
+    'Evento Dispositivo',
+    /** t_type L*/
 ];
 
 $styleArray = [
@@ -78,10 +82,10 @@ $styleArray = [
     ],
 ];
 
-$spreadsheet->getStyle('A1:J1')->applyFromArray($styleArray);
+$spreadsheet->getStyle('A1:L1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
-$spreadsheet->setAutoFilter('A1:J1');
+$spreadsheet->setAutoFilter('A1:L1');
 /** El último argumento es por defecto A1 */
 $spreadsheet->fromArray($encabezado, null, 'A1');
 /** Establecer la orientación y el tamaño de la página */
@@ -110,8 +114,8 @@ $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . 
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
-$spreadsheet->getStyle('A:J')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->getStyle('A1:J1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+$spreadsheet->getStyle('A:L')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+$spreadsheet->getStyle('A1:L1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
 /** cálculo automático de ancho de columna */
 // foreach (range('A:E', $spreadsheet->getHighestDataColumn()) as $col) {
@@ -127,9 +131,11 @@ $spreadsheet->getColumnDimension('G')->setWidth(20);
 $spreadsheet->getColumnDimension('H')->setWidth(25);
 $spreadsheet->getColumnDimension('I')->setWidth(10);
 $spreadsheet->getColumnDimension('J')->setWidth(20);
+$spreadsheet->getColumnDimension('K')->setWidth(10);
+$spreadsheet->getColumnDimension('L')->setWidth(14);
 
 /** La altura de una fila. Fila 1 de encabezados */
-$spreadsheet->getRowDimension('1')->setRowHeight(25);
+$spreadsheet->getRowDimension('1')->setRowHeight(33);
 
 /** establecer el nivel de zoom de la hoja */
 $spreadsheet->getSheetView()->setZoomScale(100);
@@ -141,6 +147,8 @@ $spreadsheet->getStyle("E")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreads
 $spreadsheet->getStyle("F")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 $spreadsheet->getStyle("G")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 $spreadsheet->getStyle("H")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+$spreadsheet->getStyle("K")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle("L")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 $spreadsheet->getStyle('D')
     ->getNumberFormat()
@@ -160,10 +168,11 @@ $spreadsheet->getStyle('A1')
 
 // $spreadsheet->freezePane('A2');
 
-$ColNume = array("A","B","C","D","E","F","G","H","I","J");
+$ColNume = array("A","B","C","D","E","F","G","H","I","J","K","L");
 foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
     $spreadsheet->getStyle($colN.'1')->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($colN.'1')->getAlignment()->setWrapText(true);
 }
 $ColumnCount=3;
 $RowIndex=2;
@@ -217,16 +226,18 @@ if ($xlsData) {
                 $operationType = 'Desconocido';
                 break;
         }
-        $userID     = $valor['userID']; // ID del usuario
-        $userName   = $valor['userName']; // Nombre del usuario
-        $regDay     = $valor['regDay']; // Dia de la fichada
-        $Fecha      = FormatoFechaToExcel($valor['regDate']); // Fecha de la fichada
-        // $Fecha      = FormatoFechaToExcel($Fecha); // Fecha de la fichada
-        $regHora    = FormatoHoraToExcel($valor['regHora']); // Hora de la fichada
-        $zoneName   = (!empty($valor['zoneName'])) ? $valor['zoneName'] : 'Fuera de Zona'; // Zona de la fichada
-        $confidence = $valor['confidenceFaceStr'];
-        $tipo       = $operationType;
-        $device     = $valor['device'];
+        $userID      = $valor['userID']; // ID del usuario
+        $userName    = $valor['userName']; // Nombre del usuario
+        $regDay      = $valor['regDay']; // Dia de la fichada
+        $Fecha       = FormatoFechaToExcel($valor['regDate']); // Fecha de la fichada
+        // $Fecha    = FormatoFechaToExcel($Fecha); // Fecha de la fichada
+        $regHora     = FormatoHoraToExcel($valor['regHora']); // Hora de la fichada
+        $zoneName    = (!empty($valor['zoneName'])) ? $valor['zoneName'] : 'Fuera de Zona'; // Zona de la fichada
+        $confidence  = $valor['confidenceFaceStr'];
+        $tipo        = $operationType;
+        $device      = $valor['device'];
+        $eventDevice = $valor['eventDevice'];
+        $eventZone   = $valor['eventZone'];
 
         if (empty($device)) {
             $spreadsheet->getStyle('J' . $numeroDeFila)
@@ -250,6 +261,8 @@ if ($xlsData) {
         $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $confidence);
         $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $tipo);
         $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $device);
+        $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $eventZone);
+        $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $eventDevice);
 
         ($valor['regLat'] != 0) ? $spreadsheet->getCell('G' . $numeroDeFila)->getHyperlink()->setUrl($LinkMapa):''; // Si no hay GPS no se puede ver el link mapa 
 

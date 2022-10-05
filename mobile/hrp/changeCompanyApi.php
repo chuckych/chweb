@@ -16,7 +16,8 @@ $_SESSION['RECID_CLIENTE'] = $data['recid'];
 $_SESSION["APIMOBILEHRP"]  = $data['ApiMobileHRP'];
 $_SESSION["CLIENTE"]  = $data['cliente'];
 
-usleep(500000);
+// usleep(500000);
+sleep(1);
 
 $data = array(
     'status'       => 'ok',
