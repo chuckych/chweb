@@ -44,16 +44,16 @@ let loading = `<div class="spinner-border fontppp" role="status" style="width: 1
 let host = $('#_host').val()
 
 if ($("#actMobile").val() == '1') {
-    actualizar(false);
-    actualizar2(false);
-    actualizar3(false);
-    actualizar4(false);
+    // actualizar(false);
+    // actualizar2(false);
+    // actualizar3(false);
+    // actualizar4(false);
     actualizar_aws(false);
     setInterval(() => {
-        actualizar(false);
-        actualizar2(false);
-        actualizar3(false);
-        actualizar4(false);
+        // actualizar(false);
+        // actualizar2(false);
+        // actualizar3(false);
+        // actualizar4(false);
         actualizar_aws(false);
     }, 15000);
 } else {
