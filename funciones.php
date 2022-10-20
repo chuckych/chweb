@@ -1,8 +1,7 @@
 <?php
-// use PhpOffice\PhpSpreadsheet\Worksheet\Row;
 function version()
 {
-    return 'v0.0.256'; // Version de la aplicación
+    return 'v0.0.257'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3497,7 +3496,6 @@ function fechaHora2()
     $t = date("Y-m-d H:i:s");
     return $t;
 }
-
 function timeZone()
 {
     return date_default_timezone_set('America/Argentina/Buenos_Aires');
@@ -3506,7 +3504,6 @@ function timeZone_lang()
 {
     return setlocale(LC_TIME, "es_ES");
 }
-
 function hostName()
 {
     $nombre_host = gethostbyaddr($_SERVER['REMOTE_ADDR']);

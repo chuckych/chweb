@@ -1256,7 +1256,6 @@ let focusRowTables = () => {
     $('#RowTableZones').hide();
     // $('.loading').show()
 }
-
 $(document).on("click", ".showUsers", function (e) {
     CheckSesion()
     enableBtnMenu()

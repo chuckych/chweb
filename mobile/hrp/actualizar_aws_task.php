@@ -6,15 +6,15 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 // ultimoacc();
 // secure_auth_ch_json();
-$_GET['act'] = $_GET['act'] ?? '';
+$_SERVER["argv"][1] = $_SERVER["argv"][1] ?? '';
 
-if (!$_GET['act']== true) {
+if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
     $data = array(
-        'Mensaje' => 'Parametro no válido',
+        'Mensaje' => 'Parametro no valido',
         'date'    => date('Y-m-d H:i:s'),
         'status'  => 'error',
     );
-    echo json_encode(array('Response' => $data), JSON_PRETTY_PRINT);
+    print_r($data);
     exit;
 }
 
@@ -23,7 +23,6 @@ function E_ALL()
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 }
-
 E_ALL();
 
 function MSQuery($query)
@@ -64,7 +63,7 @@ function pdoQuery($sql)
         $stmt = $connpdo->prepare($sql);
         return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
-        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
     }
     $stmt = null;
@@ -80,7 +79,7 @@ function simple_pdoQuery($sql)
             return $row;
         }
     } catch (\Throwable $th) { // si hay error en la consulta
-        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
     }
     $stmt = null;
@@ -307,7 +306,7 @@ function statusFlags($statusFlags, $pathFlags, $createdDate)
     $text = ($statusFlags == '2') ? "Se marco Bandera de espera" : "Se marco Bandera de descarga";
     $pathLog = __DIR__ . '/logs/flagsLog';
     createDir($pathLog);
-    fileLog($text, $pathLog . '/flagsLog_5.log');
+    fileLog($text, $pathLog . '/flagsLog_aws.log');
     borrarLogs($pathLog . '/', 1, '.log');
 }
 function getEvents($url, $timeout = 10)
@@ -647,7 +646,6 @@ if (!empty($arrayData)) {
                 createDir($pathLog);
                 fileLog($text, $pathLog . '/' . date('Ymd') . '_cuenta_' . $nameCompany . '.log');
             }
-
             if ($locked != '1' && $localCH['localCH'] == '0') { // Si no esta bloqueado y tiene local CH
                 $eventZone = $eventZone ?? '0';
                 $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$employeId', '$fechaHoraCH', '$hora', '9999', '$eventZone', '0')"; // Insertamos en la tabla Fichadas de control horario
