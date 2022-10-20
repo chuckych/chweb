@@ -1364,7 +1364,7 @@
      height: 0px;
  }
 
- a[href^="http://maps.google.com/maps"] {
+ /* a[href^="http://maps.google.com/maps"] {
      display: none !important
  }
 
@@ -1380,12 +1380,13 @@
  .gmnoprint div {
      background: none !important;
  }
+ */
 
  .gm-fullscreen-control {
-     background: #fafafa !important;
-     opacity: 0.5 !important;
+    background: #fafafa !important;
+    opacity: 0.5 !important;
  }
-
+ 
  input::placeholder {
      color: #999;
      opacity: 0.7 !important;

@@ -29,10 +29,10 @@ try {
 	$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 	$connpdo =  new PDO($dsn, $user, $pw, $options);
 	if ($connpdo) {
-		if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+		// if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
 			//$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionPDO.log';
 			//fileLog($_SERVER['PHP_SELF'] . ' -> Conexion Exitosa', $pathLog); // escribir en el log de errores
-		}
+		// }
 	}
 } catch (PDOException $e) {
 	$msj = die($e->getMessage());

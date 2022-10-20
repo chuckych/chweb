@@ -23,11 +23,6 @@
         $maxDate   = date('Y-m-d');
         $maxYear   = date('Y');
         /** Para dateRangePicker */
-        // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
-        //$query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
-        // $arrayFech = simple_pdoQuery($query);
-
-        // $idCompany = $_SESSION['ID_CLIENTE'];
         $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = getRemoteFile($url, $timeout = 10);
@@ -139,16 +134,16 @@
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&sensor=false&amp;libraries=places" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&amp;libraries=places" defer></script>
     <script src="/<?= HOMEHOST ?>/js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="js/script.js?v=<?= time() ?>"></script>
-    <script src="js/script_users.js?v=<?= time() ?>"></script>
-    <script src="js/script_devices.js?v=<?= time() ?>"></script>
-    <script src="js/script_zones.js?v=<?= time() ?>"></script>
-    <script src="js/script_mapa.js?v=<?= time() ?>"></script>
+    <script src="js/script.js?v=<?= vjs() ?>"></script>
+    <script src="js/script_users.js?v=<?= vjs() ?>"></script>
+    <script src="js/script_devices.js?v=<?= vjs() ?>"></script>
+    <script src="js/script_zones.js?v=<?= vjs() ?>"></script>
+    <script src="js/script_mapa.js?v=<?= vjs() ?>"></script>
     <script>
         sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
     </script>
@@ -197,6 +192,7 @@
                             $('#dataIdCompany').html(data.idCompany)
                             $('#dataRecidCompany').html(data.recidCompany)
                             minmaxDate()
+                            tablemobile.columns.adjust().draw()
                         }
                     },
                     error: function() {}

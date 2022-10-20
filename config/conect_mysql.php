@@ -12,10 +12,10 @@ try {
 			exit();
 		} else {
 			printf("", mysqli_character_set_name($link));
-			if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+			// if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
 				//$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionDB.log';
 				//fileLog($_SERVER['PHP_SELF'] . ' -> Conexion Exitosa', $pathLog); // escribir en el log de errores
-			}
+			// }
 		}
 	} else {
 		throw new Exception(mysqli_connect_error($link));
