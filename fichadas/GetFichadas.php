@@ -62,7 +62,6 @@ $dataParametros = array(
     'onlyReg'  => $params['onlyReg']
 );
 $url = gethostCHWeb()."/".HOMEHOST."/api/ficnovhor/";
-// file_put_contents('url.log', $url."\n", FILE_APPEND | LOCK_EX);
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';

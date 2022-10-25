@@ -53,7 +53,7 @@ $LegTipo  = $params['Tipo'] ? $params['Tipo'] : array();
 $Legajos = ($Per2) ? ($Per2) : $Per;
 $Legajos = ($Per) ? ($Per) : $Legajos;
 
-// print_r($Per); exit;
+// print_r($Legajos); exit;
 
 $dataParametros = array(
     'Lega'    => ($Legajos),

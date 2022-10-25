@@ -97,8 +97,8 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= microtime(true) ?>"></script>
-    <script src="js/FicExcel-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/toExcel-min.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>
