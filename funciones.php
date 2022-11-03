@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.258'; // Version de la aplicación
+    return 'v0.0.259'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -3038,6 +3038,9 @@ function datosGet($Get, $Col)
 };
 function MinHora($Min)
 {
+    if(!$Min || !is_int($Min) ) {
+        return false;
+    };
     $segundos = $Min * 60;
     $horas    = floor($segundos / 3600);
     $minutos  = floor(($segundos - ($horas * 3600)) / 60);
@@ -3608,6 +3611,24 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     }
     return $v;
 }
+function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
+{
+    $a = array();
+    if ($array && $key && $key2 && $valor && $valor2) {
+        foreach ($array as $v) {
+            if ($v[$key] === $valor && $v[$key2] === $valor2) {
+                $a[] = $v;
+            }
+        }
+        // $a = array_filter($array, function ($e) use ($key, $key2, $valor, $valor2) {
+        //     return $e[$key] === $valor && $e[$key2] === $valor2;
+        // });
+        // foreach ($a as $key => $x) {
+        //     $a[] = $x;
+        // }
+    }
+    return $a;
+}
 function tipoAud($tipo)
 {
     switch ($tipo) {
@@ -3765,7 +3786,8 @@ function getDataIni($url) // obtiene el json de la url
         return false; // devolvemos false
     }
 }
-function gethostCHWeb(){
+function gethostCHWeb()
+{
     $token     = sha1($_SESSION['RECID_CLIENTE']);
     $iniData = (getDataIni(__DIR__ . './mobileApikey.php'));
 
@@ -4211,4 +4233,19 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
+}
+function horarioApi($ent, $sal, $labo, $Feri)
+{
+    $h = $ent . ' a ' . $sal;
+    $h = ($labo == '0') ? 'Franco' : $h;
+    $h = ($Feri == '1') ? 'Feriado' : $h;
+    return $h;
+}
+function mergeArrayIfValue($arr1,$arr2,$key){
+    if ($arr1 && $arr2) {
+        $d = (array_merge($arr1, $arr2));
+        foreach($d as $i) $n[$i[$key]] = $i;
+        return $n;
+    }
+    return false;
 }

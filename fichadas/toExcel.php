@@ -222,12 +222,7 @@ $url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
 
-
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
-
-// echo json_encode($dataApi);
-// exit;
-
 
 if ($dataApi['DATA']) {
     foreach ($dataApi['DATA'] as $row) {

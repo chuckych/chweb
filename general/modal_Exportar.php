@@ -9,7 +9,7 @@
                             <span class="text-dark">Rango de Fecha a Exportar: </span><b><span class="text-dark ls1" id="RangoDr"></span></b><br /><span class="fontp text-secondary">M&aacute;ximo 31 días</span>
                             <span class="float-right text-dark fontq btn btn-outline-custom btn-sm border" id="FiltroReporte">Filtros</span>
                         </div>
-                        <div class="col-12 form-inline mt-1 mt-0">
+                        <div class="col-12 form-inline mt-1 mt-0 d-none">
                             <label class="" for="_plantilla"><span class="w80 d-none d-sm-none d-md-none d-lg-block">Plantilla:</span> </label>
                             <span class="w200">
                                 <select name="" id="_plantilla" class="select2Plantilla form-control">
@@ -34,7 +34,7 @@
                         </div>
                         <div class="collapse" id="Permisos">
                             <div class="col-12 d-inline-flex pt-2">
-                                <label for="_format"><span class="w80 d-none d-sm-none d-md-none d-lg-block">Hoja: </span></label>
+                                <label for="_format"><span class="w100 d-none d-sm-none d-md-none d-lg-block">Hoja: </span></label>
                                 <select name="_format" id="_format" class="select2 form-control">
                                     <?php
                                     foreach (TIPO_HOJA as $key => $value) {
@@ -61,11 +61,11 @@
                                 </span>
                             </div>
                             <div class="col-12 form-inline pt-1">
-                                <label for="_format"><span class="w80 d-none d-sm-block">Nombre: </span></label>
+                                <label for="_format"><span class="w100 d-none d-sm-block">Nombre: </span></label>
                                 <input class="form-control w250 h40" type="text" name="_nombre" id="_nombre" placeholder="Nombre del archivo. (Opcional)">
                             </div>
                             <div class="col-12 form-inline pt-1">
-                                <label for="_format"><span class="w80 d-none d-sm-block">T&iacute;tulo:: </span></label>
+                                <label for="_format"><span class="w100 d-none d-sm-block">T&iacute;tulo:: </span></label>
                                 <input class="form-control w250 h40" type="text" name="_titulo" id="_titulo" placeholder="T&iacute;tulo del Reporte. (Opcional)">
                             </div>
                             <div class="col-12 pt-2 d-none">
@@ -90,8 +90,8 @@
                                 <input type="text" class="form-control w200" maxlength="10" name="_password">
                             </div>
                             <div class="col-12 pt-1 form-inline">
-                                <label for="_watermark"><span class="mr-2 d-none d-sm-block">Marca de agua: </span></label>
-                                <input type="text" class="form-control w200 h40" name="_watermark" placeholder="Marca de agua">
+                                <label for="_watermark"><span class="d-none d-sm-block w100">Marca de agua: </span></label>
+                                <input type="text" class="form-control w200 h40" id="_watermark" name="_watermark" placeholder="Marca de agua">
                             </div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row d-none">
                         <div class="pt-2 col-12">
                             <div class="custom-control custom-switch custom-control-inline ml-1">
                                 <input type="checkbox" class="custom-control-input" id="VerHoras">
@@ -123,7 +123,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row d-none">
                         <div class="pt-2 col-12">
                             <div class="custom-control custom-switch custom-control-inline ml-1">
                                 <input type="checkbox" class="custom-control-input" id="TotHoras">

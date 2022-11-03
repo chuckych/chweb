@@ -76,9 +76,9 @@ if ($(window).width() < 540) {
         columns: [
             /** Columna Nombre */
             {
-                className: 'align-middle', targets: '', title: `<div class="w160">Zona</div>`,
+                className: 'align-middle', targets: '', title: `<div class="w250">Zona</div>`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div title="${row.zoneName}" class="text-truncate w160">${row.zoneName}</div>`
+                    let datacol = `<div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div>`
                     return datacol;
                 },
             },

@@ -34,7 +34,7 @@ if ($wcHoras) {
     $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech ";
 }
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
-$qFic = "SELECT $FicCountSelect FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
+$qFic = "SELECT $FicCountSelect FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1
 WHERE FICHAS.FicLega > 0 $wcFicFech";
 
@@ -252,6 +252,8 @@ foreach ($stmtFic as $key => $v) {
     $data[] = array(
         'Lega'     => $v['FicLega'],
         'ApNo'     => trim(str_replace(' ', '', $v['LegApNo'])),
+        'Docu'     => ($v['LegDocu'] > 0) ?$v['LegDocu']:'',
+        'Cuil'     => $v['LegCUIT'],
         'Fech'     => fechFormat($v['FicFech'], 'Y-m-d' ),
         'Labo'     => $v['FicDiaL'],
         'Feri'     => $v['FicDiaF'],

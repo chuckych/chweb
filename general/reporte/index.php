@@ -10,6 +10,7 @@ $Modulo='4';
 ExisteModRol($Modulo);
 require_once __DIR__ . '../../../vendor/autoload.php'; 
 E_ALL();
+
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $start_time = microtime(true);
 
@@ -64,7 +65,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         ini_set("pcre.backtrack_limit", "5000000");
 
         ob_start();
-        require_once  'FicNovHor.php';
+        require_once  'reporte_general.php';
         $buffer = ob_get_clean();
         $mpdf = new \Mpdf\Mpdf([
         'mode' => 'c',

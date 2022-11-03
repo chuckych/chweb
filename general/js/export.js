@@ -238,75 +238,161 @@ $(document).ready(function () {
 
     let ficDial = ($("#FicDiaL").is(":checked")) ? 1 : 0;
     $(document).on("change", "#FicDiaL", function (e) {
-        ficDial = ($("#FicDiaL").is(":checked")) ? 1 : 0;
-        console.log(ficDial);
+        FicDiaLFiltro = ($("#FicDiaL").is(":checked")) ? 1 : 0;
+        // console.log(ficDial);
+    });
+
+    let FicDiaLFiltro = ($("#FicDiaLFiltro").is(":checked")) ? 1 : 0;
+    $(document).on("change", "#FicDiaLFiltro", function (e) {
+        FicDiaLFiltro = ($("#FicDiaLFiltro").is(":checked")) ? 1 : 0;
+        // console.log(FicDiaLFiltro);
     });
 
     $("#btnExportar").html(btnPDF);
-    
-    $("#FormExportar").bind("submit", function (e) {
-        e.preventDefault();
+    const FormExportar = document.getElementById('FormExportar');
+    // $("#FormExportar").bind("submit", function (e) {
+    FormExportar.addEventListener('submit', (e) => {
+        e.preventDefault()
         CheckSesion();
-        $.ajax({
-            type: $(this).attr("method"),
-            url: $(this).attr("action"),
-            data: $(this).serialize() +
-                "&_l= " + $("#_l").val() +
-                "&Filtros= " + _Filtros() +
-                "&Per= " + $("#Per").val() +
-                "&Tipo= " + $("#Tipo").val() +
-                "&Emp= " + $("#Emp").val() +
-                "&Plan= " + $("#Plan").val() +
-                "&Sect= " + $("#Sect").val() +
-                "&Sec2= " + $("#Sec2").val() +
-                "&Grup= " + $("#Grup").val() +
-                "&Sucur= " + $("#Sucur").val() +
-                "&_dr= " + $("#_dr").val() +
-                "&FicDiaL= " + ficDial +
-                "&FicFalta= " + $("#datoFicFalta").val() +
-                "&FicNovT= " + $("#datoFicNovT").val() +
-                "&FicNovI= " + $("#datoFicNovI").val() +
-                "&FicNovS= " + $("#datoFicNovS").val() +
-                "&FicNovA= " + $("#datoFicNovA").val() +
-                "&Fic3Nov= " + $("#datoNovedad").val(),
-            dataType: "json",
-            beforeSend: function (data) {
-                ActiveBTN(true, "#btnExportar", 'Generando.!', btnPDF)
-                $('#IFrame').addClass('d-none');
-                $('#Permisos').collapse('hide')
+
+        let sendData = new FormData()
+        sendData.append('_l', $("#_l").val())
+        sendData.append('Filtros', _Filtros())
+        sendData.append('Per', ($("#Per").val() != null) ? $("#Per").val() : '')
+        sendData.append('Tipo', ($("#Tipo").val()))
+        sendData.append('Emp', ($("#Emp").val() != null) ? $("#Emp").val() : '')
+        sendData.append('Plan', ($("#Plan").val()!= null) ? $("#Plan").val() : '')
+        sendData.append('Sect', ($("#Sect").val()!= null) ? $("#Sect").val() : '')
+        sendData.append('Sec2', ($("#Sec2").val()!= null) ? $("#Sec2").val() : '')
+        sendData.append('Grup', ($("#Grup").val()!= null) ? $("#Grup").val() : '')
+        sendData.append('Sucur', ($("#Sucur").val()!= null) ? $("#Sucur").val() : '')
+        sendData.append('_dr', $("#_dr").val())
+        sendData.append('FicDiaL', FicDiaLFiltro)
+        sendData.append('FicFalta', $("#datoFicFalta").val())
+        sendData.append('FicNovT', $("#datoFicNovT").val())
+        sendData.append('FicNovI', $("#datoFicNovI").val())
+        sendData.append('FicNovS', $("#datoFicNovS").val())
+        sendData.append('FicNovA', $("#datoFicNovA").val())
+        sendData.append('Fic3Nov', ($("#datoNovedad").val()!= null) ? $("#Sucur").val() : '')
+        sendData.append('_VerFic', $("#VerFic").val())
+        sendData.append('_VerNove', $("#VerNove").val())
+        sendData.append('_VerHoras', $("#VerHoras").val())
+        sendData.append('_SaltoPag', $("#datoSaltoPag").val())
+        sendData.append('_destino', $("#_destino").val())
+        sendData.append('_orientation', $("#_orientation").val())
+        sendData.append('_nombre', $("#_nombre").val())
+        sendData.append('_titulo', $("#_titulo").val())
+        sendData.append('_watermark', $("#_watermark").val())
+        sendData.append('_format', $("#_format").val())
+
+        ActiveBTN(true, "#btnExportar", 'Generando.!', btnPDF)
+        $('#IFrame').addClass('d-none');
+        $('#Permisos').collapse('hide')
+        $.notifyClose();
+        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+        notify('Generando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+
+        axios({
+            method: 'post',
+            url: 'reporte/index.php',
+            data: sendData,
+            headers: { "Content-Type": "multipart/form-data" },
+        }).then(function (response) {
+            let data = response.data
+            if (data.destino == "V") {
+                $('#Exportar').modal('hide');
+                var homehost = $("#_homehost").val();
+                var host = $("#_host").val();
+                window.open(host + '/' + homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
+                // window.location = 'reporte/archivos/' + data.archivo
                 $.notifyClose();
-                let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-                notify('Generando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
-                    if (data.destino == "V") {
-                        var homehost = $("#_homehost").val();
-                        var host = $("#_host").val();
-                        window.open(host + '/' + homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
-                        $.notifyClose();
-                        notify('Reporte Generado', 'success', 2000, 'right')
-                        ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
-                    } else {
-                        $('#IFrame').removeClass('d-none');
-                        $('#IFrame').html('<div class="col-12 pt-2"><iframe id="IframeID" src="reporte/archivos/' + `${data.archivo}` + '" width="100%" height="600" style="border:none;"></iframe></div>');
-                        ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
-                        $.notifyClose();
-                        notify('Reporte Generado', 'success', 2000, 'right')
-                    }
-                } else {
-                    ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
-                    $.notifyClose();
-                    notify(`${data.Mensaje}`, 'danger', 5000, 'right')
-                }
-            },
-            error: function () {
-                $.notifyClose();
-                notify('Error', 'danger', 5000, 'right')
+                notify('Reporte Generado', 'success', 2000, 'right')
                 ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+            } else {
+                // $('#Exportar').modal('hide');
+                // window.location='reporte/archivos/'+data.archivo
+                $('#IFrame').removeClass('d-none');
+                $('#IFrame').html('<div class="col-12 pt-2"><iframe id="IframeID" src="reporte/archivos/' + `${data.archivo}` + '" width="100%" height="600" style="border:none;"></iframe></div>');
+                ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+                $.notifyClose();
+                // notify('Reporte Generado', 'success', 2000, 'right')
+                notify('<b>Reporte Generado correctamente</b>.<br><div class="shadow-sm w100"><a href="reporte/archivos/' + data.archivo + '" class="btn btn-custom px-3 btn-sm mt-2 fontq" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
             }
-        });
+
+        }).catch(function (error) {
+            console.log('ERROR al descargar\n' + error);
+            ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+            $.notifyClose();
+            notify(`${data.Mensaje}`, 'danger', 5000, 'right')
+        })
+
+
+        // $.ajax({
+        //     type: $(this).attr("method"),
+        //     url: $(this).attr("action"),
+        //     data: $(this).serialize() + FormData,
+        //     // data: $(this).serialize() +
+        //     // "&_l       = " + $("#_l").val() +
+        //     // "&Filtros  = " + _Filtros() +
+        //     // "&Per      = " + $("#Per").val() +
+        //     // "&Tipo     = " + $("#Tipo").val() +
+        //     // "&Emp      = " + $("#Emp").val() ?? +
+        //     // "&Plan     = " + $("#Plan").val() +
+        //     // "&Sect     = " + $("#Sect").val() +
+        //     // "&Sec2     = " + $("#Sec2").val() +
+        //     // "&Grup     = " + $("#Grup").val() +
+        //     // "&Sucur    = " + $("#Sucur").val() +
+        //     // "&_dr      = " + $("#_dr").val() +
+        //     // "&FicDiaL  = " + ficDial +
+        //     // "&FicFalta = " + $("#datoFicFalta").val() +
+        //     // "&FicNovT  = " + $("#datoFicNovT").val() +
+        //     // "&FicNovI  = " + $("#datoFicNovI").val() +
+        //     // "&FicNovS  = " + $("#datoFicNovS").val() +
+        //     // "&FicNovA  = " + $("#datoFicNovA").val() +
+        //     // "&Fic3Nov  = " + $("#datoNovedad").val(),
+        //     dataType: "json",
+        //     beforeSend: function (data) {
+        //         ActiveBTN(true, "#btnExportar", 'Generando.!', btnPDF)
+        //         $('#IFrame').addClass('d-none');
+        //         $('#Permisos').collapse('hide')
+        //         $.notifyClose();
+        //         let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
+        //         notify('Generando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
+        //     },
+        //     success: function (data) {
+        //         if (data.status == "ok") {
+        //             ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+        //             if (data.destino == "V") {
+        //                 $('#Exportar').modal('hide');
+        //                 var homehost = $("#_homehost").val();
+        //                 var host = $("#_host").val();
+        //                 //window.open(host + '/' + homehost + '/general/reporte/archivos/' + data.archivo, '_blank');
+        //                 window.location = 'reporte/archivos/' + data.archivo
+        //                 $.notifyClose();
+        //                 notify('Reporte Generado', 'success', 2000, 'right')
+        //                 ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+        //             } else {
+        //                 $('#Exportar').modal('hide');
+        //                 // window.location='reporte/archivos/'+data.archivo
+        //                 // $('#IFrame').removeClass('d-none');
+        //                 // $('#IFrame').html('<div class="col-12 pt-2"><iframe id="IframeID" src="reporte/archivos/' + `${data.archivo}` + '" width="100%" height="600" style="border:none;"></iframe></div>');
+        //                 ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+        //                 $.notifyClose();
+        //                 // notify('Reporte Generado', 'success', 2000, 'right')
+        //                 notify('<b>Reporte Generado correctamente</b>.<br><div class="shadow-sm w100"><a href="reporte/archivos/' + data.archivo + '" class="btn btn-custom px-3 btn-sm mt-2 fontq" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+        //             }
+        //         } else {
+        //             ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+        //             $.notifyClose();
+        //             notify(`${data.Mensaje}`, 'danger', 5000, 'right')
+        //         }
+        //     },
+        //     error: function () {
+        //         $.notifyClose();
+        //         notify('Error', 'danger', 5000, 'right')
+        //         ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
+        //     }
+        // });
         // e.stopImmediatePropagation();
     });
 });

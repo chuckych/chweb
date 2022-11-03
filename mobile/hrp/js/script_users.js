@@ -108,13 +108,13 @@ if ($(window).width() < 540) {
             },
             /** Columna Nombre */
             {
-                className: 'align-middle', targets: '', title: `<div class="w120">Nombre</div>`,
+                className: 'align-middle', targets: '', title: `<div class="w250">Nombre</div>`,
                 "render": function (data, type, row, meta) {
                     let bloqueado = '';
                     if (row.bloqueado == true) {
                         bloqueado = 'text-danger font-weight-bold';
                     }
-                    let datacol = `<div class="text-truncate w120 ${bloqueado}">${row.userName}</div>`
+                    let datacol = `<div class="text-truncate w250 ${bloqueado}">${row.userName}</div>`
                     return datacol;
                 },
             },

@@ -79,34 +79,34 @@
             </div>
             <div class="bg-white invisible mt-2" id="RowTableUsers">
                 <div class="row">
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-8">
                         <table class="table text-nowrap w-100 border shadow p-2" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-4">
                     </div>
                 </div>
             </div>
             <div class="bg-white invisible mt-2" id="RowTableDevices">
                 <div class="row">
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-8">
                         <table class="table text-nowrap w-100 border shadow p-2" id="tableDevices">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-4">
                     </div>
                 </div>
             </div>
             <div class="bg-white invisible mt-2" id="RowTableZones">
                 <div class="row">
-                    <div class="col-12 col-lg-6">
+                    <div class="col-12 col-lg-8">
                         <table class="table text-nowrap w-100 border shadow p-2" id="tableZones">
                             <thead class="fontq"></thead>
                         </table>
                     </div>
-                    <div class="col-12 col-lg-6"></div>
+                    <div class="col-12 col-lg-4"></div>
                 </div>
             </div>
             <div class="row">

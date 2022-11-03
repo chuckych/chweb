@@ -2,7 +2,6 @@
 var IconExcel = '.xls <img src="../img/xls.png" class="w15" alt="Exportar Excel">'
 ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
 
-
 function GetFicExcel() {
     $.ajax({
         type: 'POST',

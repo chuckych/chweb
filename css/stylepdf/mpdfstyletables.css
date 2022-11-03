@@ -45,11 +45,15 @@ th {
 	padding: 2px;
 	font-weight: Normal;
 	text-align: left;
+	padding-top: 2px !important;
+	padding-bottom: 3px !important;
 }
 
 td {
-	padding-bottom: 3px;
 	font-weight: Normal;
+	height: 18px;
+	padding-top: 3px;
+	padding-bottom: 3px;
 }
 
 th p {
@@ -72,11 +76,19 @@ table.tallcells td {
 
 hr {
 	width: 100%;
-	height: 1px;
+	height: 0px;
 	text-align: center;
 	color: #999999;
 	margin-top: 5pt;
 	margin-bottom: 5pt;
+}
+
+.lineEspaciada {
+	width: 100% !important;
+	height: 0px !important;
+	color: #fff !important;
+	margin-top: 0pt !important;
+	margin-bottom: 5pt !important;
 }
 
 a {
@@ -178,7 +190,8 @@ h6 {
 	font-style: normal;
 	margin-bottom: 6pt;
 }
-.bg-light{
+
+.bg-light {
 	background-color: #efefef;
 }
 
@@ -349,6 +362,9 @@ h6 {
 	padding-left: 6px;
 	padding-right: 6px;
 }
+.pr-2 {
+	padding-right: 6px;
+}
 
 .mt-1 {
 	margin-top: 5px;
@@ -361,6 +377,7 @@ h6 {
 .mb-1 {
 	margin-bottom: 5px;
 }
+
 .mb-2 {
 	margin-bottom: 10px;
 }
@@ -411,6 +428,9 @@ h6 {
 .vtop {
 	vertical-align: top;
 }
+.vmiddle {
+	vertical-align: middle !important;
+}
 
 .center {
 	text-align: center;
@@ -427,15 +447,19 @@ h6 {
 .w-100 {
 	width: 100%;
 }
-.w80{
+
+.w80 {
 	width: 80px;
 }
-.w40{
+
+.w40 {
 	width: 40px;
 }
-.h30{
-	height:30px;
+
+.h30 {
+	height: 30px;
 }
-.h20{
-	height:20px;
+
+.h20 {
+	height: 20px;
 }
