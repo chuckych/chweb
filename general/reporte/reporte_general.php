@@ -272,4 +272,4 @@ if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales gener
 }
 
 echo '</body>';
-exit;
+// exit;
