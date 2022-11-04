@@ -52,8 +52,15 @@ foreach ($groupLega as $key => $encabezado) {
     $f1 .= '</tr>';
     echo $f1;
     $cuerpoLegajo  = filtrarObjetoArr($dataApi['DATA'], 'Lega', $encabezado['Lega']); // Filtramos los datos por legajo
-    // print_r($cuerpoLegajo).exit;
+    // echo '<pre>';
+    // print_r($groupLega) . exit;
     $arrNove = array();
+    // $arrNoveCant[] = '';
+    foreach ($cuerpoLegajo as $key => $ss) {
+        if ($ss['Nove']) {
+            $arrNoveCant[$n['Desc']] = 0;
+        }
+    }
     foreach ($cuerpoLegajo as $key => $valueLegajo) {
 
         $ent     = $valueLegajo['Tur']['ent'];
@@ -118,7 +125,7 @@ foreach ($groupLega as $key => $encabezado) {
             echo "<td class='vtop'></td>";
         }
         if ($valueLegajo['Nove']) { // Mostramos novedades
-            // $iNove = 0;
+
             $TotalNovedades = count($valueLegajo['Nove']);
             if ($TotalNovedades > 0) {
                 echo '<td>';
@@ -208,7 +215,7 @@ foreach ($groupLega as $key => $encabezado) {
         }
     }
 }
-if ($_SaltoPag != '1' && $TotalLegajos > 1) { 
+if ($_SaltoPag != '1' && $TotalLegajos > 1) {
     echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina 
 }
 if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales generales
@@ -221,19 +228,19 @@ if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales gener
         echo '</tr>';
         echo '</table>';
         echo '<table border=0>';
-        $chunks = array_chunk($arrNoveGeneral, 5, true);
-        foreach ($chunks as $index => $chunk) {
-            foreach ($chunk as $key => $value) {
-                foreach ($arrNoveCantGeneral as $indexCant => $valueCant) {
-                    if ($key == $indexCant) {
-                        echo '<tr>';
-                        echo "<td class='pr-2 vtop'>$key:</td>";
-                        echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
-                        echo '</tr>';
-                    }
+        // $chunks = array_chunk($arrNoveGeneral, 5, true);
+        // foreach ($chunks as $index => $chunk) {
+        foreach ($arrNoveGeneral as $key => $value) {
+            foreach ($arrNoveCantGeneral as $indexCant => $valueCant) {
+                if ($key == $indexCant) {
+                    echo '<tr>';
+                    echo "<td class='pr-2 vtop'>$key:</td>";
+                    echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
+                    echo '</tr>';
                 }
             }
         }
+        // }
         echo '</table>';
         echo '<br>';
     }
@@ -250,8 +257,6 @@ if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales gener
         foreach ($TotalHorasGeneral as $key => $tt) {
             $TotalHorasGeneral[$key] = array_sum(($tt));
         }
-        // echo '<pre>';
-        // print_r($TotalHorasGeneral).exit;
         foreach ($TotalHorasGeneral as $key => $ColHorasGeneral) {
             if ($ColHorasGeneral) {
                 echo '<tr>';
@@ -267,4 +272,4 @@ if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales gener
 }
 
 echo '</body>';
-// exit;
+exit;
