@@ -4,6 +4,12 @@ ini_set('display_errors', '0');
 echo '<body class="fontq" backtop="5mm" backbottom="10mm">';
 require __DIR__ . '/dataApi.php';
 $groupLega = _group_by_keys($dataApi['DATA'], $keys = array('Lega')); // Agrupamos los datos obtenidos de la api por legajo. 
+if ($THColu) {
+    foreach ($THColu as $cc) {
+        $TotalHorasGeneral[$cc['Desc']] = array(); // creamos array vacios de los codigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
+    }
+}
+$TotalLegajos = count($groupLega);
 foreach ($groupLega as $key => $encabezado) {
     $ResumenNovedades = array();
     if ($THColu) {
@@ -30,18 +36,18 @@ foreach ($groupLega as $key => $encabezado) {
     $f1 .= '<th class="px-2 bold">Día</th>';
     $f1 .= '<th class="px-2 bold">Horario</th>';
     // if ($_VerFic == '1') { // Mostramos Las columnas de Fichadas E/S
-        $f1 .= '<th class="px-2 bold">Entra</th>';
-        $f1 .= '<th></th>';
-        $f1 .= '<th class="px-2 bold">Sale</th>';
-        $f1 .= '<th></th>';
+    $f1 .= '<th class="px-2 bold">Entra</th>';
+    $f1 .= '<th></th>';
+    $f1 .= '<th class="px-2 bold">Sale</th>';
+    $f1 .= '<th></th>';
     // }
     // if ($_VerNove == '1') { // Mostramos Las columnas Novedades
-        $f1 .= '<th class="px-2 bold">Novedades</th>';
+    $f1 .= '<th class="px-2 bold">Novedades</th>';
     // }
     // if ($_VerHoras == '1') { // Mostramos Las columnas Horas
-        foreach ($THColu as $dataTHoDesc2) {
-            $f1 .= "<th class='px-2 bold center'>$dataTHoDesc2[Desc2]</th>";
-        }
+    foreach ($THColu as $dataTHoDesc2) {
+        $f1 .= "<th class='px-2 bold center'>$dataTHoDesc2[Desc2]</th>";
+    }
     // }
     $f1 .= '</tr>';
     echo $f1;
@@ -127,6 +133,9 @@ foreach ($groupLega as $key => $encabezado) {
                     echo "</td>";
                     echo '</tr>';
                     $arrNove[$n['Desc']] += horaMin($n['Horas']);
+                    $arrNoveGeneral[$n['Desc']] += horaMin($n['Horas']);
+                    $arrNoveCant[$n['Desc']] += 1;
+                    $arrNoveCantGeneral[$n['Desc']] += 1;
                 }
                 echo '</table>';
                 echo '</td>';
@@ -147,6 +156,7 @@ foreach ($groupLega as $key => $encabezado) {
                 if (($h['Auto']) && $h['Auto'] != '00:00') {
                     echo $h['Auto'];
                     array_push($TotalHoras[$h['Hora']], horaMin($h['Auto']));
+                    array_push($TotalHorasGeneral[$h['Desc']], horaMin($h['Auto']));
                 } else {
                     echo '.';
                 }
@@ -179,8 +189,12 @@ foreach ($groupLega as $key => $encabezado) {
         foreach ($chunks as $index => $chunk) {
             echo '<tr>';
             foreach ($chunk as $key => $value) {
-                echo "<td class='pr-2 vtop'>$key:</td>";
-                echo "<td class='pr-2 vtop bold'>" . MinHora($value) . "</td>";
+                foreach ($arrNoveCant as $indexCant => $valueCant) {
+                    if ($key == $indexCant) {
+                        echo "<td class='pr-2 vtop'>$key:</td>";
+                        echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
+                    }
+                }
             }
             echo '</tr>';
         }
@@ -188,13 +202,69 @@ foreach ($groupLega as $key => $encabezado) {
         echo '<br>';
     }
     echo '</div>';
-    if ($_SaltoPag == '1') {
-        /** Si se activa el salto de pagina por legajo */
-        if ($valueLegajo != end($valueLegajo)) {
-        // Este código se ejecutará para todos menos el último
-        echo '<div style="page-break-before: always; clear:both"></div>';
+    if ($_SaltoPag == '1' && $TotalLegajos > 1) {
+        if (($groupLega[$TotalLegajos - 1])) {
+            echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina 
         }
     }
 }
+if ($_SaltoPag != '1' && $TotalLegajos > 1) { 
+    echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina 
+}
+if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales generales
+
+    if ($arrNoveGeneral) {
+        echo '<hr>';
+        echo '<table border=0 width=100%>';
+        echo '<tr>';
+        echo '<td class="bold py-1"><u>Resumen general de Novedades: </u></td>';
+        echo '</tr>';
+        echo '</table>';
+        echo '<table border=0>';
+        $chunks = array_chunk($arrNoveGeneral, 5, true);
+        foreach ($chunks as $index => $chunk) {
+            foreach ($chunk as $key => $value) {
+                foreach ($arrNoveCantGeneral as $indexCant => $valueCant) {
+                    if ($key == $indexCant) {
+                        echo '<tr>';
+                        echo "<td class='pr-2 vtop'>$key:</td>";
+                        echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
+                        echo '</tr>';
+                    }
+                }
+            }
+        }
+        echo '</table>';
+        echo '<br>';
+    }
+
+    if ($TotalHorasGeneral) {
+        echo '<hr>';
+        echo '<table border=0 width=100%>';
+        echo '<tr>';
+        echo '<td class="bold py-1"><u>Resumen general de Horas: </u></td>';
+        echo '</tr>';
+        echo '</table>';
+        echo '<table border=0>';
+
+        foreach ($TotalHorasGeneral as $key => $tt) {
+            $TotalHorasGeneral[$key] = array_sum(($tt));
+        }
+        // echo '<pre>';
+        // print_r($TotalHorasGeneral).exit;
+        foreach ($TotalHorasGeneral as $key => $ColHorasGeneral) {
+            if ($ColHorasGeneral) {
+                echo '<tr>';
+                echo "<td class='pr-2 vtop'>" . ($key) . "</td>";
+                echo "<td class='pr-2 vtop bold'>" . MinHora($ColHorasGeneral) . "</td>";
+                echo '</tr>';
+            }
+        }
+
+        echo '</table>';
+        echo '<br>';
+    }
+}
+
 echo '</body>';
 // exit;
