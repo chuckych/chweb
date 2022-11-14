@@ -365,7 +365,7 @@ timeZone();
 
 $iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
-$pathFlags = __DIR__ . '/flags_aws.php'; // ruta del archivo de Log de errores
+$pathFlags = __DIR__ . '/flags_aws_punch.php'; // ruta del archivo de Log de errores
 $flags = (getDataIni($pathFlags));
 
 if (!$flags) {
@@ -407,7 +407,7 @@ if ($flags_download == 2) {
     echo json_encode(array('Response' => $data));
     exit;
 }
-statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
+statusFlags(1, $pathFlags, $flags_lastDate); // marcar bandera de espera
 // $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
 $url   = "http://207.191.165.3:7500/attention/api/punch-event/get/" . $_GET['idPunch'];
 
