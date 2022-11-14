@@ -409,7 +409,8 @@ if ($flags_download == 2) {
     exit;
 }
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
-$url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
+// $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
+$url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
 // echo ($url);
 // exit;
 $array = json_decode(getEvents($url), true);
