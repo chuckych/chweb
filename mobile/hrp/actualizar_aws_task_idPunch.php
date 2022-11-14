@@ -411,8 +411,17 @@ statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
 // $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
 $url   = "http://207.191.165.3:7500/attention/api/punch-event/get/" . $_GET['idPunch'];
 
-$array = json_decode(getEvents($url), true);
-if (!empty($array['payload'])) {
+$array2 = json_decode(getEvents($url), true);
+
+$payload[] = ($array2['payload']); 
+
+$array = array(
+    'type'          => $array2['type'],
+    'message'       => $array2['message'],
+    'payload'       => $payload,
+);
+
+if (!empty($array)) {
     foreach ($array['payload'] as $key => $v) {
         $operation = $v['operation']['observations'] ?? '';
         $arrayData[] = array(
@@ -444,6 +453,7 @@ if (!empty($array['payload'])) {
         );
     }
 }
+
 if (!empty($arrayData)) {
 
     foreach ($arrayData as $key => $v) {
