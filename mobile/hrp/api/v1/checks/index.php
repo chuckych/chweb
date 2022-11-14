@@ -292,6 +292,13 @@ if (($queryRecords)) {
         $size[2] = $imageTypeArray[$size[2]];
         list($ancho, $alto, $tipo, $atributos) = $size;
 
+        if ($r['id_company'] == '19') {
+            $timestamp_19     = substr(intval($r['createdDate']), 0, 10);
+            $dates = new DateTime("@" . $timestamp_19);  // will snap to UTC because of the 
+            $dates->setTimezone(new DateTimeZone('America/Argentina/Buenos_Aires'));
+            $r['fechaHora'] = $dates->format('Y-m-d H:i:s');  // Buenos_Aires time
+        }
+
         $arrayData[] = array(
             'appVersion'        => $appVersion,
             'attPhoto'          => intval($r['attPhoto']),

@@ -186,9 +186,12 @@ if (!empty($arrayData)) {
     foreach ($arrayData as $key => $v) {
         $timestamp     = $v['dateTime'] ?? 0;
         $timestamp     = substr($timestamp, 0, 10);
-        $dates         = new \DateTime();
-        $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
-        $dates->setTimestamp($timestamp);
+        // $dates         = new \DateTime();
+        // $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
+        // $dates->setTimestamp($timestamp);
+        $dates = new DateTime("@" . $timestamp);  // will snap to UTC because of the 
+        $dates->setTimezone(new DateTimeZone('America/Argentina/Buenos_Aires'));
+        echo $dates->format('Y-m-d H:i:s') . PHP_EOL;  // Buenos_Aires time 
         $fechaHora     = $dates->format('Y-m-d H:i:s');
         $fechaHoraCH   = $dates->format('Ymd');
         $hora          = $dates->format('H:i');

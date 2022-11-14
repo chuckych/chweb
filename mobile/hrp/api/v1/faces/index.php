@@ -2,24 +2,26 @@
 require __DIR__ . '../../../../../../config/index.php';
 // require __DIR__ . '../../../../../vendor/autoload.php';
 // use Carbon\Carbon;
+session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
 timeZone();
 timeZone_lang();
+borrarLogs(__DIR__ . '../../_logs/getFaces/', 30, '.log');
 
 $iniKeys = (getDataIni(__DIR__ . '../../../../../../mobileApikey.php'));
-borrarLogs(__DIR__ . '../../_logs/getUsers/', 30, '.log');
-$total = 0;
-$params = $_REQUEST;
-
+// echo json_encode($iniKeys);
+// exit;
 if ($_SERVER['REQUEST_METHOD'] != 'GET') {
     (response(array(), 0, 'Invalid Request Method', 400, 0, 0, 0));
     exit;
 }
+$total = 0;
+// $params = $_REQUEST;
+$params = ($_REQUEST);
 
 $iniScript = microtime(true);
-$idCompany = 0;
 
 function start()
 {
@@ -42,44 +44,27 @@ function userID()
     $userID = empty($p['userID']) ? '' : $p['userID'];
     return intval($userID);
 }
-function userName()
-{
-    $p = $_REQUEST;
-    $p['userName'] = $p['userName'] ?? '';
-    $userName = empty($p['userName']) ? '' : $p['userName'];
-    return urldecode($userName);
-}
-function userIDName()
-{
-    $p = $_REQUEST;
-    $p['userIDName'] = $p['userIDName'] ?? '';
-    $userIDName = empty($p['userIDName']) ? '' : $p['userIDName'];
-    return urldecode($userIDName);
-}
-function status()
-{
-    $p = $_REQUEST;
-    $p['status'] = $p['status'] ?? '0';
-    $status = empty($p['status']) ? 0 : ($p['status']);
-    return intval($status);
-}
 function validaKey()
 {
     $p = $_REQUEST['key'];
     $validaKey = empty($p) ? '' : $p;
     return ($validaKey);
 }
+
+$idCompany = 0;
+
 if (!isset($params['key'])) {
     http_response_code(400);
-    (response(array(), 0, 'The Key is required', 400, 0,0, $idCompany));
+    (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
 }
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'userID' || $key == 'userName' || $key == 'status' || $key == 'userIDName') {
+    $key = urldecode($key);
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'userID') {
         continue;
     } else {
-        (response(array(), 0, 'Parameter error', 400, 0,0, $idCompany));
+        (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
         exit;
     }
 }
@@ -112,7 +97,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany = $idCompany;
+    $idCompany    = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -124,7 +109,8 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../_logs/getUsers/' . date('Ymd') . '_getUsers_'.padLeft($idCompany, 3, 0).'.log'; // path Log Api
+
+    $pathLog  = __DIR__ . '../../_logs/getFaces/' . date('Ymd') . '_getFaces_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -136,8 +122,6 @@ $queryRecords = array();
 $start        = start();
 $length       = length();
 $userID       = userID();
-$userName     = userName();
-$userIDName   = userIDName();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -146,10 +130,6 @@ foreach ($iniKeys as $key => $value) {
         $idCompany = $value['idCompany'];
         $vkey      = $value['recidCompany'];
         break;
-    } else {
-        $idCompany = 0;
-        $vkey      = '';
-        continue;
     }
 }
 if (!$vkey) {
@@ -157,57 +137,91 @@ if (!$vkey) {
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
 }
 
-$status = status();
-($status > 1) ? (response(array(), 0, 'Parameter status invalid', 400, 0, 0, $idCompany)) . exit  : '';
+if (empty($userID)) {
+    http_response_code(400);
+    (response(array(), 0, 'User ID is required', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$sql_query = "SELECT 
-ru.id_user AS 'id_user', 
-ru.nombre AS 'nombre', 
-ru.regid AS 'regid', 
-ru.fechahora AS 'fechaHora', 
-ru.expiredStart AS 'expiredStart', 
-ru.expiredEnd AS 'expiredEnd',
-ru.estado AS 'estado',
-ru.motivo AS 'motivo',
-(SELECT COUNT(1) FROM reg_ r WHERE r.id_user = ru.id_user AND r.eventType=2 AND r.id_company = '$idCompany') AS 'cant', 
-re.idPunchEvent AS 'idPunchEvent'
-FROM reg_user_ ru 
-LEFT JOIN reg_enroll re ON ru.id_user = re.id_user
-WHERE ru.uid > 0";
+$notIdPunchEvent = '';
+$q = "SELECT * FROM `reg_enroll` WHERE `id_company` = '$idCompany' AND `id_user` = '$userID'";
+$a = array_pdoQuery($q);
+if ($a) {
+    foreach ($a as $key => $v) {
+        $i[] = $v['idPunchEvent'];
+    }
+    $notIdPunchEvent = implode(',',$i);
+}
+
+$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`rid` > 7669";
+
 $filtro_query = '';
-$filtro_query .= ($idCompany) ? " AND ru.id_company = $idCompany" : '';
-$filtro_query .= (!empty($status)) ? " AND ru.estado = '$status'" : "";
-$filtro_query .= (!empty($userID)) ? " AND ru.id_user = $userID" : '';
-$filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
-$filtro_query .= (!empty($userIDName)) ? " AND CONCAT(ru.nombre, ru.id_user) LIKE '%$userIDName%'" : '';
+$filtro_query .= " AND r.id_company = $idCompany";
+$filtro_query .= " AND r.id_user = '$userID'";
+$filtro_query .= ($notIdPunchEvent) ? " AND r.id_api NOT IN ($notIdPunchEvent)" : '';
+$filtro_query .= " AND r.id_api > 0";
+$filtro_query .= " AND r.attphoto = '0'";
 $sql_query .= $filtro_query;
-$sql_query .= " GROUP BY ru.id_user ORDER BY ru.nombre ASC";
+// echo $filtro_query;exit;
+$total = rowCount_pdoQuery($sql_query);
+$sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
 
-// print_r($sql_query);exit;
+$imageTypeArray = array(
+    0  => 'UNKNOWN',
+    1  => 'GIF',
+    2  => 'JPEG',
+    3  => 'PNG',
+    4  => 'SWF',
+    5  => 'PSD',
+    6  => 'BMP',
+    7  => 'TIFF_II',
+    8  => 'TIFF_MM',
+    9  => 'JPC',
+    10 => 'JP2',
+    11 => 'JPX',
+    12 => 'JB2',
+    13 => 'SWC',
+    14 => 'IFF',
+    15 => 'WBMP',
+    16 => 'XBM',
+    17 => 'ICO',
+    18 => 'COUNT'
+);
+
 $queryRecords = array_pdoQuery($sql_query);
+
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
-        // $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
+        $Fecha      = FechaFormatVar($r['fechaHora'], 'Y-m-d');
+        // $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
+        $eplodeFecha = explode('-', $Fecha);
+        $PathAnio    = $eplodeFecha[0];
+        $PathMes     = $eplodeFecha[1];
+        $PathDia     = $eplodeFecha[2];
+        $filename = "fotos/$idCompany/$PathAnio/$PathMes/$PathDia/";
+        $filenameOld = "fotos/$idCompany/";
+
+        $img = $filename . intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
+        $imgOld = $filenameOld . intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
+        $urlImg = (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld;
+        $size = getimagesize("../../../" . $urlImg);
+        $size[2] = $imageTypeArray[$size[2]];
+        list($ancho, $alto, $tipo, $atributos) = $size;
+
         $arrayData[] = array(
-            'lastUpdate'   => ($r['fechaHora']),
-            'userID'       => intval($r['id_user']),
-            'userName'     => $r['nombre'],
-            'userRegId'    => $r['regid'],
-            'userChecks'   => intval($r['cant']),
-            'expiredStart' => ($r['expiredStart']),
-            'expiredEnd'   => ($r['expiredEnd']),
-            'locked'       => ($r['estado']),
-            'motivo'       => ($r['motivo']),
-            'trained' => ($r['idPunchEvent']) ? true : false
+            "id_user"  => $r['id_user'],
+            "id_api"   => $r['id_api'],
+            'imageData'         => array(
+                'ancho'             => $ancho,
+                'alto'              => $alto,
+                'tipo'              => $size[2],
+                'img'               => $urlImg,
+            ),
         );
     }
-    $q = "SELECT COUNT(*) AS 'count' FROM reg_user_ ru WHERE ru.uid > 0";
-    $q .= $filtro_query;
-    $total = simple_pdoQuery($q)['count'];
 }
 
 $finScript    = microtime(true);

@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post['formUserExpired'] = $post['formUserExpired'] ?? '';
         $post['formUserEstado']  = $post['formUserEstado'] ?? '0';
         $post['formUserMotivo']  = $post['formUserMotivo'] ?? '';
-        
+
         $formUserName    = test_input($post['formUserName']);
         $formUserID      = test_input($post['formUserID']);
         $formUserRegid   = test_input($post['formUserRegid']);
@@ -432,7 +432,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $arrayData = $api['RESPONSE_DATA'];
             $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
             auditoria("Mensaje Mobile Enviado. Mensaje = $modalMsgMensaje - Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
-
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];
@@ -463,7 +462,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             PrintRespuestaJson('error', 'El userID no puede ser mayor a 11 caracteres');
             exit;
         };
-    
+
         $paramsApi = array(
             'key'        => $_SESSION["RECID_CLIENTE"],
             'userID'     => $userID,
@@ -477,9 +476,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        
+
         $totalRecords = $api['TOTAL'];
-        
+
         if ($api['COUNT'] > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
@@ -851,7 +850,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post = $_POST;
 
         $post['id_api']    = $post['id_api'] ?? '';
-        
+
         $id_api = test_input($post['id_api']);
 
         if (valida_campo($id_api)) {
@@ -887,6 +886,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
+    } else if ($_POST['tipo'] == 'formTrain') { // enrolar fotos
+
+        $post = $_POST;
+
+        $post['selected'] = $post['selected'] ?? '';
+        $post['userID']   = $post['userID'] ?? '';
+        $post['type']     = $post['type'] ?? '';
+
+        $selected = $post['selected'];
+        $userID = $post['userID'];
+        $type = $post['type'];
+
+        if (empty($userID)) {
+            PrintRespuestaJson('error', 'Debe seleccionar al menos un usuario');
+            exit;
+        }
+        if (empty($type)) {
+            PrintRespuestaJson('error', 'type no especificado');
+            exit;
+        }
+        if (($type != 'update' && $type != 'enroll')) {
+            PrintRespuestaJson('error', 'type erroneo');
+            exit;
+        }
+
+        $idPunchEvent = explode(',', $selected);
+
+        // print_r($post).exit;
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        if ($type == 'enroll') {
+
+            $params = array(
+                'key'          => $_SESSION["RECID_CLIENTE"],
+                'userID'       => $userID,
+                "idPunchEvent" => implode(',', $post['idPunchEvent']),
+            );
+
+            $api = "api/v1/enroll/enroll/";
+            $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            // $url   = "http://DESKTOP-8FK3BRD/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $api = sendApiData($url, $params, 'POST');
+            $api = json_decode($api, true);
+
+            $totalRecords = $api['TOTAL'];
+
+            if ($api['MESSAGE'] == 'OK') {
+                $status = 'ok';
+                $arrayData = $api['RESPONSE_DATA']['responseApi'];
+                auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
+                checkenroll($_SESSION["RECID_CLIENTE"], $userID, $_SESSION["APIMOBILEHRP"], 4);
+            } else {
+                $status = 'error';
+                $arrayData = $api['MESSAGE'];
+            }
+            $json_data = array(
+                "Mensaje" => $arrayData,
+                'status'  => $status,
+            );
+            echo json_encode($json_data);
+            exit;
+        }
+        if ($type == 'update') {
+
+            $params = array(
+                'key'          => $_SESSION["RECID_CLIENTE"],
+                'userID'       => $userID,
+                "idPunchEvent" => implode(',', $post['idPunchEvent']),
+            );
+            
+            $api = "api/v1/enroll/update/";
+            $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $api = sendApiData($url, $params, 'POST');
+            $api = json_decode($api, true);
+
+            $totalRecords = $api['TOTAL'];
+
+            if ($api['MESSAGE'] == 'OK') {
+                $status = 'ok';
+                $arrayData = $api['RESPONSE_DATA']['responseApi'];
+                auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
+                checkenroll($_SESSION["RECID_CLIENTE"], $userID, $_SESSION["APIMOBILEHRP"], 4);
+            } else {
+                $status = 'error';
+                $arrayData = $api['MESSAGE'];
+            }
+            $json_data = array(
+                "Mensaje" => $arrayData,
+                'status'  => $status,
+            );
+            echo json_encode($json_data);
+            exit;
+        }
+            
     } else {
         $json_data = array(
             "Mensaje" => 'Invalid Request Type',

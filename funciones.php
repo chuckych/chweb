@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.0.260'; // Version de la aplicación
+    return 'v0.0.262'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -35,7 +35,7 @@ function secure_auth_ch() // Funcion para validar si esta autenticado
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
-        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
+        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
         || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
         // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si eliminar dia actual no es el mismo
     ) {
@@ -79,7 +79,7 @@ function secure_auth_ch_json()
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
+        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         $f = 'Sesión Expirada. Incie sesión nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesión</a>';
@@ -116,7 +116,7 @@ function secure_auth_ch2()
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
+        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         // PrintRespuestaJson('error', 'Session Expirada');
@@ -3038,7 +3038,7 @@ function datosGet($Get, $Col)
 };
 function MinHora($Min)
 {
-    if(!$Min || !is_int($Min) ) {
+    if (!$Min || !is_int($Min)) {
         return false;
     };
     $segundos = $Min * 60;
@@ -3198,6 +3198,34 @@ function sendRemoteData($url, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    $payload = json_encode($payload);
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno) : $curl_error $url $payload"; // set error message
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+    curl_close($ch);
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+    }
+    exit;
+}
+function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
@@ -4241,11 +4269,23 @@ function horarioApi($ent, $sal, $labo, $Feri)
     $h = ($Feri == '1') ? 'Feriado' : $h;
     return $h;
 }
-function mergeArrayIfValue($arr1,$arr2,$key){
+function mergeArrayIfValue($arr1, $arr2, $key)
+{
     if ($arr1 && $arr2) {
         $d = (array_merge($arr1, $arr2));
-        foreach($d as $i) $n[$i[$key]] = $i;
+        foreach ($d as $i) $n[$i[$key]] = $i;
         return $n;
     }
     return false;
+}
+function checkenroll($recid, $userID, $apimobile, $sleep)
+{
+    sleep($sleep);
+    $paramsCheck = array(
+        'key'          => $recid,
+        'userID'       => $userID,
+    );
+    $apiCheck = "api/v1/enroll/check/";
+    $urlCheck   = $apimobile . "/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
+    sendApiData($urlCheck, $paramsCheck, 'POST');
 }

@@ -30,6 +30,7 @@ if ($(window).width() < 540) {
                     let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
                     let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
                     let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
+                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box disabled"></span>`;
 
                     if (row.userRegId.length > '100') {
                         activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
@@ -40,12 +41,15 @@ if ($(window).width() < 540) {
                     if (row.userChecks < 1) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
                     }
-
+                    if (row.userChecks > 1) {
+                        train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box trainUser"></span>`;
+                    }
                     let datacol = `
                             <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
                             <div class="text-secondary">ID: ${row.userID}</div>
-                            <div class="d-flex justify-content-end">
+                            <div class="d-flex justify-content-end mt-2">
                             <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border bi bi-pen updateUser"></span>
+                            ${train}
                             ${mensaje}
                             ${activar}
                             ${del}
@@ -134,9 +138,14 @@ if ($(window).width() < 540) {
             {
                 className: 'align-middle w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
+
+                    let colorTrained = (row.trained == true) ? 'success' : 'primary'
+                    let textTrained = (row.trained == true) ? 'Enrolado' : 'No enrolado'
+
                     let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
                     let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled "></span></span>`;
                     let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
+                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-person-bounding-box disabled"></span>`;
 
                     if (row.userRegId.length > '100') {
                         activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
@@ -147,9 +156,15 @@ if ($(window).width() < 540) {
                     if (row.userChecks < 1) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
                     }
+                    if (row.userChecks > 1) {
+                        // train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-person-bounding-box trainUser"></span>`;
+
+                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-${colorTrained} btn-sm border bi bi-person-bounding-box trainUser"></span>`;
+                    }
                     let datacol = `
                         <div class="d-flex justify-content-end">
                             <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
+                            ${train}
                             ${mensaje}
                             ${activar}
                             ${del}
@@ -486,7 +501,6 @@ $(document).on("click", ".updateUser", function (e) {
 $(document).on("click", ".cleanDate", function (e) {
     clearInput('#_drUser')
 });
-
 $(document).on("click", ".deleteUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
     console.log(data);
@@ -609,7 +623,7 @@ $(document).on("click", ".sendMensaje", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize()+'&userID='+ data.userID,
+                data: $(this).serialize() + '&userID=' + data.userID,
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -634,6 +648,206 @@ $(document).on("click", ".sendMensaje", function (e) {
         });
         $('#modalMsg').on('hidden.bs.modal', function () {
             $('#modales').html(' ');
+        });
+    });
+});
+$(document).on("click", ".trainUser", function (e) {
+
+
+    function restarNumeros(n1, n2) {
+        if (n1 && n2) {
+            let t = 0
+            t = (parseInt(n1) - parseInt(n2));
+            return t
+        }
+        return 0
+    }
+
+    function maxTotalSelected(length, max = 10) {
+        if (length && length > 0) {
+            m = restarNumeros(parseInt(max), parseInt(length))
+            return m
+        }
+        return max
+    }
+
+    e.preventDefault();
+    let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
+    // alert((data.locked));
+    axios({
+        method: 'post',
+        url: 'modalTrain.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+    }).then(function () {
+
+        $('#modalTrain .modal-title').html(`
+            <div class="text-secondary font-weight-bold font1">(${data.userID}) ${data.userName}</div> 
+            <div class="text-muted font1">Seleccione las fotos que desea enrolar.</div>
+            <div class="text-muted font1">Total seleccionado: <span class="totalSelected font-weight-bold">0</span></div>
+        `)
+
+        $('#modalTrain').modal('show');
+        $('#modalTrain .modal-body').append(`<div class="aguarde d-flex justify-content-center p-3 animate__animated animate__fadeIn">Aguarde por favor..</div>`);
+
+        $('#modalTrain #submitTrain').hide();
+
+    }).then(function () {
+
+        const id_user = data.userID
+        let userID = new FormData()
+        userID.append('userID', data.userID)
+        $('#userPhoto').val(id_user)
+
+        function getFaces() {
+            axios({
+                method: 'post',
+                url: 'getFaces.php',
+                data: userID,
+            }).then(function (response) {
+
+                $('.aguarde').remove()
+
+                let data = new Array()
+                let data2 = new Array()
+
+                data2.length = 0
+
+                data = response.data.data;
+                data2 = response.data.data2;
+
+                $('#modalTrain .modal-body').append(`<div class="form-row d-flex justify-content-start align-items-start mb-2" id="colfotos2">`);
+                (data2.length > 0) ? $('#typeEnroll').val('update') : $('#typeEnroll').val('enroll')
+                if (data2.length > 0) {
+                    $('#modalTrain #colfotos2').append(`<div class="col-12 pb-2">Fotos Enroladas (${data2.length})</div>`);
+
+                    $.each(data2, function (index, element) {
+                        url_foto = `${element.imageData.img}`;
+                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                        divFoto = `<div class="col-4 col-sm-3 col-md-3 col-lg-2 pb-3 d-flex justify-content-center">`
+                        divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn" data-toggle="buttons">`
+                        divFoto += `<label for="${element.id_api}" class="disabled active shadow-sm btn btn-success border-0 p-1" style="width:80px;">`
+                        divFoto += `<input type="checkbox" readonly value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:80px; height:80px" class="radius img-fluid shadow">`
+                        divFoto += `</label>`
+                        divFoto += `</div>`
+                        divFoto += `</div>`;
+
+                        $('#modalTrain #colfotos2').append(divFoto);
+                    })
+                    // maxTotalSelected = restarNumeros(parseInt(max), parseInt(data2.length))
+                }
+
+                $('#modalTrain .modal-body').append(`</div>`);
+
+                $('#modalTrain .modal-body').append(`<div class="form-row d-flex justify-content-start align-items-start" id="colfotos">`);
+
+                if (data.length > 0) {
+                    $('#modalTrain #colfotos').append(`<div class="col-12 pb-2 d-inline-flex justify-content-between"><div>Fotos a Enrolar </div><div><button type="button" class="cleanSelection btn btn-sm btn-link border" data-titlel="Borrar selección"><div class="d-inline-flex"><span class="d-none d-sm-block mr-2">Desmarcar</span> <i class="bi bi-eraser-fill"></i></div></button></div></div>`);
+                    $.each(data, function (index, element) {
+                        url_foto = `${element.imageData.img}`;
+                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                        divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
+                        divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
+                        divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
+                        divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow">`
+                        divFoto += `</label>`
+                        divFoto += `</div>`
+                        divFoto += `</div>`;
+
+                        $('#modalTrain #colfotos').append(divFoto);
+                    })
+                }
+
+                $(document).on("click", ".selected", function (e) {
+                    let selected = new Array();
+                    e.preventDefault()
+                    $("#modalTrain .modal-body input:checkbox:checked").each(function (e) {
+                        (selected.push(parseInt($(this).val())));
+                        $('#selectedPhoto').val(selected)
+
+                    });
+
+                    $('#modalTrain .totalSelected').html("(" + selected.length + ")");
+                    if (selected.length == 0) {
+                        $('#modalTrain .totalSelected').html("(0)");
+                        $('#modalTrain #submitTrain').hide();
+                    } else {
+                        $('#modalTrain #submitTrain').show();
+                    }
+
+                    if (selected.length >= maxTotalSelected(data2.length)) {
+                        $('#modalTrain .totalSelected').html("(" + selected.length + ")" + " Máximo permitido: " + 10 + "");
+                        $('#modalTrain .totalSelected').addClass('animate__animated animate__flash')
+                        setTimeout(() => {
+                            $('#modalTrain .totalSelected').removeClass('animate__animated animate__flash')
+                        }, 500);
+                        $("#modalTrain .modal-body input:checkbox").prop('disabled', true)
+                    } else {
+                        $('#modalTrain .totalSelected').html("(" + selected.length + ")");
+                        $("#modalTrain .modal-body input:checkbox").prop('disabled', false)
+                    }
+                });
+
+                $('#modalTrain .modal-body').append(`</div>`);
+
+                $(document).on("click", ".cleanSelection", function (e) {
+                    $("#modalTrain .modal-body input:checkbox").prop('checked', false)
+                    $('#modalTrain #colfotos label').removeClass('active')
+                    $('#modalTrain .totalSelected').html("");
+                    $('#modalTrain #submitTrain').hide();
+                    $('#selectedPhoto').val('')
+                });
+
+            }).catch(function (error) {
+                console.log(error)
+            })
+        }
+        getFaces()
+
+        $("#formTrain").bind("submit", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'POST',
+                url: 'crud.php',
+                data: $(this).serialize() + '&tipo=formTrain',
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitTrain", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        notify('Proceso de enrolamiento finalizado', 'success', 5000, 'right')
+                        ActiveBTN(false, "#submitTrain", 'Aguarde ' + loading, 'Aceptar')
+                        // $('#modalTrain').modal('h');
+                        $('#modalTrain .modal-body').html('')
+                        $('#modalTrain .modal-body').append(`<div class="aguarde d-flex justify-content-center p-3 animate__animated animate__fadeIn">Aguarde por favor..</div>`);
+                        setTimeout(() => {
+                            getFaces();
+                        }, 500);
+                        $('#tableUsuarios').DataTable().ajax.reload(null, false);
+                        $('#modalTrain .totalSelected').html("");
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitTrain", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+            e.stopImmediatePropagation()
+        });
+
+    }).catch(function (error) {
+        console.log(error)
+    }).then(function () {
+        $('#modalTrain').on('hidden.bs.modal', function () {
+            $('.selected').off('click')
+            setTimeout(() => {
+                $('#modales').html(' ');
+            }, 100);
         });
     });
 });

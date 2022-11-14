@@ -1,5 +1,4 @@
 <?php
-// require __DIR__ . '../../../config/index.php';
 ini_set('max_execution_time', 1800); //1800 seconds = 30 minutes
 // session_start();
 header("Content-Type: application/json");
@@ -363,6 +362,7 @@ function queryCalcZone($lat, $lng, $idCompany)
     ";
     return $query;
 }
+timeZone();
 
 $iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
@@ -450,9 +450,16 @@ if (!empty($arrayData)) {
     foreach ($arrayData as $key => $v) {
         $timestamp     = $v['dateTime'] ?? 0;
         $timestamp     = substr($timestamp, 0, 10);
-        $dates         = new \DateTime();
-        $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
-        $dates->setTimestamp($timestamp);
+
+        // $dates         = new \DateTime();
+        // $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
+        // $dates->setTimestamp($timestamp);
+
+        $dates = new DateTime("@" . $timestamp);  // will snap to UTC because of the 
+        $dates->setTimezone(new DateTimeZone('America/Argentina/Buenos_Aires'));
+        echo $dates->format('Y-m-d H:i:s') . PHP_EOL;  // Buenos_Aires time    
+
+
         $fechaHora     = $dates->format('Y-m-d H:i:s');
         $fechaHoraCH   = $dates->format('Ymd');
         $hora          = $dates->format('H:i');

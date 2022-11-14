@@ -36,6 +36,7 @@ $api = json_decode($api, true);
 
 $totalRecords = $api['TOTAL'];
 if ($api['COUNT'] > 0) {
+
     foreach ($api['RESPONSE_DATA'] as $r) {
 
         if ($r['locked'] == '1') {
@@ -59,7 +60,8 @@ if ($api['COUNT'] > 0) {
             'locked'       => $r['locked'],
             'motivo'       => $r['motivo'],
             'bloqueado'    => $bloqueado,
-            'tipoBloqueo'  => $tipoBloqueo
+            'tipoBloqueo'  => $tipoBloqueo,
+            'trained'  => $r['trained']
         );
     }
 }
