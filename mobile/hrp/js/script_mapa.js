@@ -58,8 +58,11 @@ $(document).on("click", "#VerMarcadores", function (e) {
     $('#Encabezado').html("Fichadas Mobile")
     focusRowTables()
     $('#btnMenu .btn').removeClass('btn-custom');
+    $('#btnMenu .btn').parents('li').removeClass('shadow');
     $('#btnMenu .btn').addClass('btn-outline-custom');
     $('.showChecks').removeClass('btn-outline-custom').addClass('btn-custom');
+    $('.showChecks').parents('li').addClass('shadow');
+
     $('#RowTableMobile').show();
 
     $('#map').css('height', '400px').css('width', '100%').addClass('shadow').show();

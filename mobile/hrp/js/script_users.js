@@ -30,7 +30,7 @@ if ($(window).width() < 540) {
                     let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
                     let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
                     let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
-                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border d-none bi bi-person-bounding-box disabled"></span>`;
+                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box disabled"></span>`;
 
                     if (row.userRegId.length > '100') {
                         activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
@@ -42,7 +42,7 @@ if ($(window).width() < 540) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
                     }
                     if (row.userChecks > 1) {
-                        train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border d-none bi bi-person-bounding-box trainUser"></span>`;
+                        train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box trainUser"></span>`;
                     }
                     let datacol = `
                             <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
@@ -145,7 +145,7 @@ if ($(window).width() < 540) {
                     let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
                     let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled "></span></span>`;
                     let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
-                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border d-none bi bi-person-bounding-box disabled"></span>`;
+                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-person-bounding-box disabled"></span>`;
 
                     if (row.userRegId.length > '100') {
                         activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
@@ -157,7 +157,7 @@ if ($(window).width() < 540) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
                     }
                     if (row.userChecks > 1) {
-                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-${colorTrained} btn-sm border d-none bi bi-person-bounding-box trainUser"></span>`;
+                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-${colorTrained} btn-sm border bi bi-person-bounding-box trainUser"></span>`;
                     }
                     let datacol = `
                         <div class="d-flex justify-content-end">

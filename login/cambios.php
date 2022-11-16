@@ -789,3 +789,19 @@ if ($verDB < 20220901) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20221116) {
+    pdoQuery("CREATE TABLE IF NOT EXISTS `reg_enroll` (
+        `idPunchEvent` INT(10) NOT NULL,
+        `faceIdAws` VARCHAR(50) NOT NULL DEFAULT '' COLLATE 'utf8mb3_general_ci',
+        `id_company` SMALLINT(5) NOT NULL,
+        `id_user` BIGINT(19) NOT NULL,
+        `fechahora` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE INDEX `Índice 1` (`idPunchEvent`, `faceIdAws`, `id_company`, `id_user`) USING BTREE
+    )COLLATE='utf8mb3_general_ci' ENGINE=MyISAM;");
+    fileLog("CREATE TABLE \"reg_enroll\"", $pathLog); // escribir en el log
+    
+    $verDB  = verDBLocal(); // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

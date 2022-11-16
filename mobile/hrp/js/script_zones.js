@@ -612,14 +612,17 @@ function getNearZonesTable($lat, $lng, createZone = false) {
     $('#formZone #divNearZone').html(`
         <div class="bg-white pb-3 invisible" id="RowTableNearZones" style="min-height:252px">
             <div class="">
-            <table class="table text-nowrap w-100 border table-boderless p-2" id="tableNearZones">
+            <table class="table text-nowrap w-100 border table-boderless p-2 shadow-sm" id="tableNearZones">
                 <thead class="fontq"></thead>
             </table>
             </div>
         </div>
         `)
     tableNearZones = $('#tableNearZones').DataTable({
-        dom: "<'row '<'col-12 tableResponsive't>>",
+        dom: `
+            <'row '<'col-12'l>>
+            <'row '<'col-12 tableResponsive't>>
+            `,
         ajax: {
             url: "getNearZones.php?zoneLat=" + $lat + "&zoneLng=" + $lng,
             type: "GET",
@@ -659,7 +662,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
                 },
             },
         ],
-        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        lengthMenu: [[5, 10, 25], [5, 10, 25]],
         bProcessing: false,
         serverSide: true,
         deferRender: true,

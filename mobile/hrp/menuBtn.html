@@ -5,9 +5,9 @@
                 <div class="d-flex justify-content-between">
                     <div class="d-inline-flex align-items-center ">
                         <!-- Fichadas -->
-                        <li class="nav-item">
+                        <li class="nav-item shadow">
                             <button readonly data-titlet="Fichadas" type="button"
-                                class="mr-1 btn btn-custom border-0  btn-sm p-2 w90 showChecks">
+                                class="pr-1 btn btn-custom border-0  btn-sm p-2 w90 showChecks">
                                 <i class="bi bi-clipboard-data-fill"></i>
                                 <br>
                                 <span class="fontp">Fichadas</span>
@@ -16,7 +16,7 @@
                         <!-- Usuarios -->
                         <li class="nav-item">
                             <button data-titlet="Gestión de usuarios" type="button"
-                                class="mr-1 btn btn-outline-custom border-0  btn-sm p-2 w90 showUsers">
+                                class="pr-1 btn btn-outline-custom border-0  btn-sm p-2 w90 showUsers">
                                 <span class="">
                                     <i class="bi bi-people-fill"></i>
                                     <br>
@@ -27,7 +27,7 @@
                         <!-- Dispositivos -->
                         <li class="nav-item">
                             <button data-titlet="Dispositivos"
-                                class="mr-1 btn btn-sm btn-outline-custom border-0 p-2 w90 showDevices">
+                                class="pr-1 btn btn-sm btn-outline-custom border-0 p-2 w90 showDevices">
                                 <span class="">
                                     <i class="bi bi-tablet-fill"></i>
                                     <br>
@@ -38,7 +38,7 @@
                         <!-- Zonas -->
                         <li class="nav-item">
                             <button data-titlet="Zonas"
-                                class="mr-1 btn btn-sm btn-outline-custom border-0  p-2 w90 showZones">
+                                class="pr-1 btn btn-sm btn-outline-custom border-0 p-2 w90 showZones">
                                 <span class="">
                                     <i class="bi bi-map-fill"></i>
                                     <br>
@@ -47,29 +47,18 @@
                             </button>
                         </li>
                         <!-- Ver Mapa -->
-                        <span id="btnVerMarcadores">
+                        <span id="btnVerMarcadores" class="">
                             <li class="nav-item">
-                                <a href="#positionMap" data-titlet="Ver Mapa"
-                                    class="mr-1 btn btn-sm btn-outline-custom border p-2 w90" disabled id="VerMarcadores">
+                                <button href="#positionMap" data-titlet="Ver Mapa"
+                                    class="btn btn-sm btn-outline-custom border p-2 w90" disabled id="VerMarcadores">
                                     <span class="">
                                         <i class="bi bi-pin-map-fill"></i>
                                         <br>
                                         <span class="fontp">Ver Mapa</span>
                                     </span>
-                                </a>
-                                </li>
+                                </button>
+                            </li>
                         </span>
-                        <!-- Rostros -->
-                        <li class="nav-item" style="display: none;">
-                            <button data-titlet="Enrolar"
-                                class="disabled mr-1 btn btn-sm btn-outline-custom border-0  p-2 w90 showEnroll">
-                                <span class="">
-                                    <i class="bi bi-person-bounding-box"></i>
-                                    <br>
-                                    <span class="fontp">Enrolar</span>
-                                </span>
-                            </button>
-                        </li>
                     </div>
                     <div class="d-flex align-items-center">
                         <!-- Expand  -->
@@ -80,8 +69,8 @@
                                 <i class="bi bi-arrows-angle-expand "></i>
                             </button>
                         </li>
-                         <!-- Actualizar  -->
-                         <li class="nav-item d-none">
+                        <!-- Actualizar  -->
+                        <li class="nav-item d-none">
                             <button data-titlel="Descargar registros"
                                 class="btn btn-sm btn-outline-custom border-0 fontq p-2 actualizar fontq d-none d-sm-block w35">
                                 <span class="d-block d-sm-none w100">

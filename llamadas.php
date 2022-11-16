@@ -13,7 +13,7 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?=vjs()?>" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?=version_file("/css/bootstrap.min.css")?>" type="text/css">
 <!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap-icons-1.5.0/bootstrap-icons.css" type="text/css"> -->
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/icons/font/bootstrap-icons.css" type="text/css">
 <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"> -->
@@ -137,11 +137,10 @@ switch ($Modulo) {
 		break;
 }
 ?>
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=vjs()?>">
-<!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=microtime(true)?>"> -->
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=version_file("/css/style-min.css")?>">
 <?php
 if (getBrowser($_SERVER['HTTP_USER_AGENT'])=='Internet explorer') {
-	echo '<link rel="stylesheet" type="text/css" href="/'. HOMEHOST .'/css/ie.css?v='.vjs().'" />';
+	echo '<link rel="stylesheet" type="text/css" href="/'. HOMEHOST .'/css/ie.css?v='.version_file("/css/ie.css").'" />';
 }
 ?>
 <!--

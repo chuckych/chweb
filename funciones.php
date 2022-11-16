@@ -1,11 +1,11 @@
 <?php
 function version()
 {
-    return 'v0.0.263'; // Version de la aplicación
+    return 'v0.0.264'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 202200901; // Version de la base de datos local
+    return 20221116; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -171,6 +171,9 @@ function vjs()
     } else {
         return version();
     }
+}
+function version_file($pathFile){
+    return FileSize(dirname(__FILE__). $pathFile). '.'. FilemTime(dirname(__FILE__). $pathFile);
 }
 function API_KEY_MAPS()
 {
@@ -4288,4 +4291,46 @@ function checkenroll($recid, $userID, $apimobile, $sleep)
     $apiCheck = "api/v1/enroll/check/";
     $urlCheck   = $apimobile . "/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
     sendApiData($urlCheck, $paramsCheck, 'POST');
+}
+/**
+* Convierte bytes en tamaño de archivo legible por humanos.
+*
+* @param cadena $bytes
+* @return cadena legible por humanos tamaño de archivo (2,87 Мб)
+*/
+function FileSizeConvert($bytes)
+{
+    $result = '';
+    $bytes = floatval($bytes);
+    $arBytes = array(
+        0 => array(
+            "UNIT" => "TB",
+            "VALUE" => pow(1024, 4)
+        ),
+        1 => array(
+            "UNIT" => "GB",
+            "VALUE" => pow(1024, 3)
+        ),
+        2 => array(
+            "UNIT" => "MB",
+            "VALUE" => pow(1024, 2)
+        ),
+        3 => array(
+            "UNIT" => "KB",
+            "VALUE" => 1024
+        ),
+        4 => array(
+            "UNIT" => "B",
+            "VALUE" => 1
+        ),
+    );
+
+    foreach ($arBytes as $arItem) {
+        if ($bytes >= $arItem["VALUE"]) {
+            $result = $bytes / $arItem["VALUE"];
+            $result = str_replace(".", ",", strval(round($result, 2))) . " " . $arItem["UNIT"];
+            break;
+        }
+    }
+    return $result;
 }

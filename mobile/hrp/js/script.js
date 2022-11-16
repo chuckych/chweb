@@ -447,7 +447,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '43vh',
-        scrollY: '415px',
+        scrollY: '425px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
@@ -1245,8 +1245,10 @@ let enableBtnMenu = (e) => {
 
 let focusBtn = (selector) => {
     $('#btnMenu .btn').removeClass('btn-custom');
+    $('#btnMenu .btn').parents('li').removeClass('shadow');
     $('#btnMenu .btn').addClass('btn-outline-custom');
     $(selector).removeClass('btn-outline-custom').addClass('btn-custom');
+    $(selector).parents('li').addClass('shadow');
 }
 
 let focusRowTables = () => {

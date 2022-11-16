@@ -194,7 +194,7 @@ if ($FechaIni > $FechaFin) {
 
 $MESSAGE = 'OK';
 $arrayData = array();
-$joinUser = (($validUser==1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
+$joinUser = (($validUser == 1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
 //$joinFaces = ($FechaIni >= '2022-09-01') ? "LEFT JOIN reg_faces rf ON r.id_user = rf.id_user AND r.id_company = rf.id_company AND r.createdDate = rf.createdDate" : '';
 //$basePhoto = ($FechaIni >= '2022-09-01') ? " rf.photo as 'basePhoto'," : '';
 $sql_query = "SELECT 
@@ -269,6 +269,13 @@ $imageTypeArray = array(
     17 => 'ICO',
     18 => 'COUNT'
 );
+function human_filesize($bytes, $decimals = 2)
+{
+    $sz = 'BKMGTP';
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+}
+
 // print_r($sql_query);exit;
 $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
@@ -288,9 +295,20 @@ if (($queryRecords)) {
         $img = $filename . intval($r['createdDate']) . '_' . $r['phoneid'] . '.jpg';
         $imgOld = $filenameOld . intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
         $urlImg = (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld;
-        $size = getimagesize("../../../" . $urlImg);
-        $size[2] = $imageTypeArray[$size[2]];
-        list($ancho, $alto, $tipo, $atributos) = $size;
+
+        if (file_exists("../../../" . $urlImg)) {
+            $size = getimagesize("../../../" . $urlImg);
+            $size[2] = $imageTypeArray[$size[2]];
+            $type = $size[2];
+            $filesize = filesize("../../../" . $urlImg);
+            $FileSizeConvert = FileSizeConvert($filesize);
+            list($ancho, $alto, $tipo, $atributos) = $size;
+        } else {
+            $size = '';
+            $type = '';
+            $filesize = '';
+            $FileSizeConvert = '';
+        }
 
         if ($r['id_company'] == '19') {
             $timestamp_19     = substr(intval($r['createdDate']), 0, 10);
@@ -325,8 +343,8 @@ if (($queryRecords)) {
             'phoneRegID'        => trim($r['regid']),
             'zoneID'            => intval($r['zoneID']),
             'zoneName'          => $r['zoneName'],
-            'zoneDistance'      => (intval($r['zoneID']>0)) ? floatval($r['zoneDistance']) : '',
-            'zoneDistanceStr'   => (intval($r['zoneID']>0)) ? round(floatval($r['zoneDistance'])*1000 , 2) ." Mts." : '',
+            'zoneDistance'      => (intval($r['zoneID'] > 0)) ? floatval($r['zoneDistance']) : '',
+            'zoneDistanceStr'   => (intval($r['zoneID'] > 0)) ? round(floatval($r['zoneDistance']) * 1000, 2) . " Mts." : '',
             'locked'            => intval($r['locked']),
             'error'             => $r['error'],
             'confidenceFaceVal' => floatval($r['confidence']),
@@ -334,10 +352,12 @@ if (($queryRecords)) {
             'threshold'         => intval($r['threshold']),
             'id_api'            => intval($r['id_api']),
             'imageData'         => array(
-                'ancho'             => $ancho,
-                'alto'              => $alto,
-                'tipo'              => $size[2],
-                'img'               => $urlImg,
+                'ancho'     => $ancho,
+                'alto'      => $alto,
+                'tipo'      => $type,
+                'img'       => $urlImg,
+                'size'      => $filesize,
+                'humanSize' => $FileSizeConvert
             ),
             'basePhoto' => $r['basePhoto'] ?? ''
         );

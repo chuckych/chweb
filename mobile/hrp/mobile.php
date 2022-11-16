@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
-    <link rel="stylesheet" href="css/styleMobile.css?=<?= time() ?>">
+    <link rel="stylesheet" href="css/styleMobile.css?=<?= version_file("/mobile/hrp/css/styleMobile.css") ?>">
     <title>Fichadas Mobile HR</title>
 </head>
 
@@ -43,7 +43,8 @@
         <!-- <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP"] ?? 0 ?>"> -->
         <?php
         if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
-
+            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
+        } else  if ($_SERVER['SERVER_NAME'] == '192.168.1.220') { // Si es localhost
             echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
         } else {
             echo '<input type="hidden" id="apiMobile" value="http://chweb.ar">';
@@ -138,11 +139,11 @@
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="js/script.js?v=<?= vjs() ?>"></script>
-    <script src="js/script_users.js?v=<?= vjs() ?>"></script>
-    <script src="js/script_devices.js?v=<?= vjs() ?>"></script>
-    <script src="js/script_zones.js?v=<?= vjs() ?>"></script>
-    <script src="js/script_mapa.js?v=<?= vjs() ?>"></script>
+    <script src="js/script.js?v=<?= version_file("/mobile/hrp/js/script.js") ?>"></script>
+    <script src="js/script_users.js?v=<?= version_file("/mobile/hrp/js/script_users.js") ?>"></script>
+    <script src="js/script_devices.js?v=<?= version_file("/mobile/hrp/js/script_devices.js") ?>"></script>
+    <script src="js/script_zones.js?v=<?= version_file("/mobile/hrp/js/script_zones.js") ?>"></script>
+    <script src="js/script_mapa.js?v=<?= version_file("/mobile/hrp/js/script_mapa.js") ?>"></script>
     <script>
         sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
     </script>
