@@ -41,7 +41,7 @@ if ($(window).width() < 540) {
                     if (row.userChecks < 1) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
                     }
-                    if (row.userChecks > 1) {
+                    if (row.userChecks > 0) {
                         train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box trainUser"></span>`;
                     }
                     let datacol = `
@@ -156,7 +156,7 @@ if ($(window).width() < 540) {
                     if (row.userChecks < 1) {
                         del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
                     }
-                    if (row.userChecks > 1) {
+                    if (row.userChecks > 0) {
                         train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-${colorTrained} btn-sm border bi bi-person-bounding-box trainUser"></span>`;
                     }
                     let datacol = `
@@ -501,7 +501,6 @@ $(document).on("click", ".cleanDate", function (e) {
 });
 $(document).on("click", ".deleteUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
-    console.log(data);
     axios({
         method: 'post',
         url: 'modalUser.html?v=' + $.now(),
@@ -588,7 +587,6 @@ $(document).on("click", ".deleteUser", function (e) {
 });
 $(document).on("click", ".sendMensaje", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
-    console.log(data);
     // return false;
     axios({
         method: 'post',
@@ -720,7 +718,6 @@ $(document).on("click", ".trainUser", function (e) {
                     $('#modalTrain #colfotos2').append(`<div class="col-12 pb-2">Fotos Enroladas (${data2.length})</div>`);
 
                     $.each(data2, function (index, element) {
-                        console.log(data2);
                         url_foto = `${element.imageData.img}`;
                         let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                         divFoto = `<div class="col-4 col-sm-3 col-md-3 col-lg-2 pb-3 d-flex justify-content-center">`
@@ -743,17 +740,18 @@ $(document).on("click", ".trainUser", function (e) {
                 if (data.length > 0) {
                     $('#modalTrain #colfotos').append(`<div class="col-12 pb-2 d-inline-flex justify-content-between"><div>Fotos a Enrolar </div><div><button type="button" class="cleanSelection btn btn-sm btn-link border" data-titlel="Borrar selección"><div class="d-inline-flex"><span class="d-none d-sm-block mr-2">Desmarcar</span> <i class="bi bi-eraser-fill"></i></div></button></div></div>`);
                     $.each(data, function (index, element) {
-                        url_foto = `${element.imageData.img}`;
-                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
-                        divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
-                        divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
-                        divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
-                        divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
-                        divFoto += `</label>`
-                        divFoto += `</div>`
-                        divFoto += `</div>`;
-
-                        $('#modalTrain #colfotos').append(divFoto);
+                        if (element.imageData.size < 30000) {
+                            url_foto = `${element.imageData.img}`;
+                            let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
+                            divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
+                            divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
+                            divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
+                            divFoto += `</label>`
+                            divFoto += `</div>`
+                            divFoto += `</div>`;
+                            $('#modalTrain #colfotos').append(divFoto);
+                        }
                     })
                 }
 
