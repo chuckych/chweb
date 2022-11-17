@@ -863,6 +863,7 @@ $(document).on("click", ".pic", function (e) {
     let zoneLng = data.zoneLng
     let zoneRadio = data.zoneRadio
     let zoneDistance = data.zoneDistance
+    let createdDate = data.createdDate
     let zoneName = (data.zoneID > 0) ? '<span class="text-success">' + data.zoneName + '</span>' : '<span class="text-danger">Fuera de Zona</span>'
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
     let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
@@ -948,7 +949,7 @@ $(document).on("click", ".pic", function (e) {
 
     let position = (parseFloat(_lat) + parseFloat(_lng))
     if (position != '0') {
-
+        $('#mapzone').show()
         $('.modal-body #noGPS').html('')
         // initMap()
         let lati = parseFloat($('#latitud').val())
@@ -958,6 +959,7 @@ $(document).on("click", ".pic", function (e) {
         let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
         // getMap(lati, long, 17, zone, 100, lati, long, '20 mts', user, pichora)
         $('#pic').on('shown.bs.modal', function (e) {
+            // $('#mapzone').show();
             setTimeout(() => {
                 let map = L.map('mapzone').setView([lati, long], 16);
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -977,7 +979,23 @@ $(document).on("click", ".pic", function (e) {
                     distancia = '<br>' + zoneDistance + ' mts.'
                 }
                 marker.bindTooltip("<b>" + user + "</b><br>" + picdia + "<br>" + zoneName + distancia)
+                setTimeout(() => {
+                    $('#mapzone').removeClass('invisible');
+                    $('#mapzone').addClass('visible');
+                    $('#mapzone').addClass('animate__animated animate__fadeIn');
+                }, 100);
             }, 200);
+
+            $('#pic').on('hidden.bs.modal', function (e) {
+                $('#mapzone').addClass('invisible');
+                $('#mapzone').removeClass('visible');
+                $('#mapzone').removeClass('animate__animated animate__fadeIn');
+                initializingMap()
+                // map.remove()
+                // mapcreatedDate.remove()
+                // map.off()
+                clean()
+            })    
         })
     } else {
         $('#mapzone').hide();
@@ -991,10 +1009,10 @@ $(document).on("click", ".processRegFace", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     processRegFace(data.id_api)
 });
-$('#pic').on('hidden.bs.modal', function (e) {
-    clean()
-    initializingMap()
-})
+// $('#pic').on('hidden.bs.modal', function (e) {
+//     clean()
+//     initializingMap()
+// })
 
 $('#expandContainer').on('click', function (e) {
     e.preventDefault()
@@ -1018,7 +1036,7 @@ $('#expandContainer').on('click', function (e) {
     }
 });
 function clean() {
-    $('#mapzone').html('');
+    $('#mapzone').hide();
     $("#map_size").val('5')
     $('.modal-body #noGPS').html('')
 }
