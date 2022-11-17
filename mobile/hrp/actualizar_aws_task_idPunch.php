@@ -432,7 +432,7 @@ if (!empty($array)) {
             'attphoto'      => $v['attphoto'],
             'batteryLevel'  => $v['position']['batteryLevel'],
             'bearing'       => $v['position']['bearing'],
-            'companyCode'   => $v['companyCode'],
+            'companyCode'   => ($v['companyCode'] == '-1') ? '4' : $v['companyCode'],
             'createdDate'   => $v['createdDate'],
             'dateTime'      => ($v['dateTime']),
             'employeId'     => $v['employeId'],

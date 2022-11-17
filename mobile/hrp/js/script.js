@@ -865,6 +865,7 @@ $(document).on("click", ".pic", function (e) {
     let zoneDistance = data.zoneDistance
     let createdDate = data.createdDate
     let zoneName = (data.zoneID > 0) ? '<span class="text-success">' + data.zoneName + '</span>' : '<span class="text-danger">Fuera de Zona</span>'
+    let mts = (data.zoneID > 0) ? '<span class="text-success font-weight-bold"><small> (' + zoneDistance + ' mts)<small></span>' : ''
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
     let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
 
@@ -922,7 +923,7 @@ $(document).on("click", ".pic", function (e) {
     $('.picDevice').html(picDevice);
     $('.picIDUser').html(picIDUser);
     $('.picHora').html('<b>' + pichora + '</b>');
-    $('.picZona').html(zoneName);
+    $('.picZona').html(zoneName + mts);
 
     let evento = '';
     switch (data.operationType) {
@@ -957,51 +958,26 @@ $(document).on("click", ".pic", function (e) {
         let zone = ($('#zona').val())
         zone = (zone) ? zone : 'Fuera de Zona';
         let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
-        // getMap(lati, long, 17, zone, 100, lati, long, '20 mts', user, pichora)
-        $('#pic').on('shown.bs.modal', function (e) {
-            // $('#mapzone').show();
-            setTimeout(() => {
-                let map = L.map('mapzone').setView([lati, long], 16);
-                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: 'HRProcess Mobile'
-                }).addTo(map);
-                let marker = L.marker([lati, long]).addTo(map);
-                let distancia = ''
-                if ((data.zoneID > 0)) {
-                    let circle = L.circle([zoneLat, zoneLng], {
-                        color: '#333',
-                        fillColor: '#efefef',
-                        fillOpacity: 0.6,
-                        radius: zoneRadio
-                    }).addTo(map);
-                    // circle.bindPopup("<b>Urbana</b>");
-                    distancia = '<br>' + zoneDistance + ' mts.'
-                }
-                marker.bindTooltip("<b>" + user + "</b><br>" + picdia + "<br>" + zoneName + distancia)
-                setTimeout(() => {
-                    $('#mapzone').removeClass('invisible');
-                    $('#mapzone').addClass('visible');
-                    $('#mapzone').addClass('animate__animated animate__fadeIn');
-                }, 100);
-            }, 200);
+        setTimeout(() => {
+            getMap(lati, long, 16, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID)
+            $('#mapzone').removeClass('invisible');
+            $('#mapzone').addClass('visible');
+            $('#mapzone').addClass('animate__animated animate__fadeIn');
+        }, 300);
 
-            $('#pic').on('hidden.bs.modal', function (e) {
-                $('#mapzone').addClass('invisible');
-                $('#mapzone').removeClass('visible');
-                $('#mapzone').removeClass('animate__animated animate__fadeIn');
-                initializingMap()
-                // map.remove()
-                // mapcreatedDate.remove()
-                // map.off()
-                clean()
-            })    
-        })
     } else {
         $('#mapzone').hide();
         $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 p-0 fontq"><span>Ubicación GPS no disponible</span></div>')
     }
 });
+$(document).on("hidden.bs.modal", "#pic", function (e) {
+    $('#mapzone').addClass('invisible');
+    $('#mapzone').removeClass('visible');
+    $('#mapzone').removeClass('animate__animated animate__fadeIn');
+    clean()
+    console.log('Cierra Modal');
+})
+
 $(document).on("click", ".processRegFace", function (e) {
     // ActiveBTN(true, ".processRegFace", loading, '')
     $(this).prop('disabled', true);
@@ -1009,11 +985,9 @@ $(document).on("click", ".processRegFace", function (e) {
     let data = tablemobile.row($(this).parents("tr")).data();
     processRegFace(data.id_api)
 });
-// $('#pic').on('hidden.bs.modal', function (e) {
-//     clean()
-//     initializingMap()
-// })
-
+$('#pic').on('hidden.bs.modal', function (e) {
+    clean()
+})
 $('#expandContainer').on('click', function (e) {
     e.preventDefault()
     if ($('#container').hasClass('container-fluid')) {
@@ -1504,27 +1478,38 @@ function fetchCreatedDate(url) {
             .catch(err => console.log(err));
     });
 }
-function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, datetime) {
-    let map = L.map('mapzone').setView([lat, lng], zoom);
+function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, datetime, zoneID) {
+    RemoveExistingMap(map)
+    initializingMap()
+    map = L.map('mapzone').setView([lat, lng], zoom);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '<b>HRProcess Mobile</b>'
+        attribution: '<small>'+lat+','+lng+'</small>'
     }).addTo(map);
-
     let marker = L.marker([lat, lng]).addTo(map);
-    let circle = L.circle([latzona, latzona], {
-        color: '#333',
-        fillColor: '#efefef',
-        fillOpacity: 0.6,
-        radius: radio
-    }).addTo(map);
-    // circle.bindPopup("<b>Urbana</b>");
-    marker.bindTooltip("<img src='http://chweb.ar/chweb/mobile/hrp/fotos/1/2022/11/16/1668635417120_267615861929486.jpg' style='width:60px; height:60px'><br><b>" + user + "</b><br>" + datetime + "<br>En zona: " + zona + " a " + mtszona).openTooltip()
+    distancia = ''
+    if ((zoneID > 0)) {
+        let circle = L.circle([latzona, lngzona], {
+            color: '#696969',
+            fillColor: '#fafafa',
+            fillOpacity: 0.4,
+            radius: radio
+        }).addTo(map);
+        // circle.bindPopup("<b>Urbana</b>");
+        distancia = '<br>' + mtszona + ' mts.'
+    }
+    marker.bindTooltip("<b>" + user + "</b><br>" + datetime + "<br>" + zona + distancia)
 }
 function initializingMap() // call this method before you initialize your map.
 {
-    var container = L.DomUtil.get('mapzone');
+    let container = L.DomUtil.get('mapzone');
     if (container != null) {
         container._leaflet_id = null;
+    }
+}
+function RemoveExistingMap(map) {
+    if (map != null) {
+        map.remove();
+        map = null;
     }
 }

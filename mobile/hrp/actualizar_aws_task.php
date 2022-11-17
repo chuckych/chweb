@@ -20,7 +20,7 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
 function E_ALL()
 {
     error_reporting(E_ALL);
-    ini_set('display_errors', '1');
+    ini_set('display_errors', '0');
 }
 E_ALL();
 
@@ -411,8 +411,7 @@ if ($flags_download == 2) {
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
 // $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
 $url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
-// echo ($url);
-// exit;
+// $url   = "http://207.191.165.3:7500/attention/api/punch-event/light/" . $flags_lastDate; // SIN FOTO
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
     foreach ($array['payload'] as $key => $v) {

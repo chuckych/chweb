@@ -47,12 +47,21 @@ table.dataTable td {
     display: flex;
     align-items: center;
 }
-.leaflet-control a {
+.leaflet-control-attribution a {
     display: none !important;
 }
-.leaflet-control span {
+.leaflet-control-attribution span {
     display: none !important;
 }
+.leaflet-attribution-flag {
+    display: none !important;
+}
+.leaflet-control-zoom  {
+    opacity: 0.6;
+}
+/* .leaflet-control span {
+    display: none !important;
+} */
 
 .table thead th {
     vertical-align: bottom;
