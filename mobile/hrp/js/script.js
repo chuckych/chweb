@@ -846,7 +846,7 @@ $(document).on("click", ".pic", function (e) {
     $('#pic').modal('show')
     url_foto = `${data.imageData.img}`;
     let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
-    let picfoto = data.imageData.img ? path+url_foto : '';
+    let picfoto = data.imageData.img ? path + url_foto : '';
     let picnombre = data.userName;
     let picDevice = data.deviceName
     let picIDUser = data.userID
@@ -859,8 +859,11 @@ $(document).on("click", ".pic", function (e) {
     let error = data.error
     let confidenceFaceStr = data.confidenceFaceStr;
     let basePhoto = data.basePhoto;
-
-    let zoneName = (data.zoneID > 0) ? data.zoneName : '<span class="text-danger">Fuera de Zona</span>'
+    let zoneLat = data.zoneLat
+    let zoneLng = data.zoneLng
+    let zoneRadio = data.zoneRadio
+    let zoneDistance = data.zoneDistance
+    let zoneName = (data.zoneID > 0) ? '<span class="text-success">' + data.zoneName + '</span>' : '<span class="text-danger">Fuera de Zona</span>'
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
     let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
 
@@ -945,9 +948,37 @@ $(document).on("click", ".pic", function (e) {
 
     let position = (parseFloat(_lat) + parseFloat(_lng))
     if (position != '0') {
-        $('#mapzone').show()
+
         $('.modal-body #noGPS').html('')
-        initMap()
+        // initMap()
+        let lati = parseFloat($('#latitud').val())
+        let long = parseFloat($('#longitud').val())
+        let zone = ($('#zona').val())
+        zone = (zone) ? zone : 'Fuera de Zona';
+        let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
+        // getMap(lati, long, 17, zone, 100, lati, long, '20 mts', user, pichora)
+        $('#pic').on('shown.bs.modal', function (e) {
+            setTimeout(() => {
+                let map = L.map('mapzone').setView([lati, long], 16);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '<b>HRProcess Mobile</b>'
+                }).addTo(map);
+                let marker = L.marker([lati, long]).addTo(map);
+                let distancia = ''
+                if ((data.zoneID > 0)) {
+                    let circle = L.circle([zoneLat, zoneLng], {
+                        color: '#333',
+                        fillColor: '#efefef',
+                        fillOpacity: 0.6,
+                        radius: zoneRadio
+                    }).addTo(map);
+                    // circle.bindPopup("<b>Urbana</b>");
+                    distancia = '<br>' + zoneDistance + ' mts.'
+                }
+                marker.bindTooltip("<b>" + user + "</b><br>" + picdia + "<br>" + zoneName + distancia)
+            }, 200);
+        })
     } else {
         $('#mapzone').hide();
         $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 p-0 fontq"><span>Ubicación GPS no disponible</span></div>')
@@ -962,6 +993,7 @@ $(document).on("click", ".processRegFace", function (e) {
 });
 $('#pic').on('hidden.bs.modal', function (e) {
     clean()
+    initializingMap()
 })
 
 $('#expandContainer').on('click', function (e) {
@@ -986,7 +1018,7 @@ $('#expandContainer').on('click', function (e) {
     }
 });
 function clean() {
-    $('#mapzone').hide();
+    $('#mapzone').html('');
     $("#map_size").val('5')
     $('.modal-body #noGPS').html('')
 }
@@ -1453,4 +1485,28 @@ function fetchCreatedDate(url) {
             })
             .catch(err => console.log(err));
     });
+}
+function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, datetime) {
+    let map = L.map('mapzone').setView([lat, lng], zoom);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '<b>HRProcess Mobile</b>'
+    }).addTo(map);
+
+    let marker = L.marker([lat, lng]).addTo(map);
+    let circle = L.circle([latzona, latzona], {
+        color: '#333',
+        fillColor: '#efefef',
+        fillOpacity: 0.6,
+        radius: radio
+    }).addTo(map);
+    // circle.bindPopup("<b>Urbana</b>");
+    marker.bindTooltip("<img src='http://chweb.ar/chweb/mobile/hrp/fotos/1/2022/11/16/1668635417120_267615861929486.jpg' style='width:60px; height:60px'><br><b>" + user + "</b><br>" + datetime + "<br>En zona: " + zona + " a " + mtszona).openTooltip()
+}
+function initializingMap() // call this method before you initialize your map.
+{
+    var container = L.DomUtil.get('mapzone');
+    if (container != null) {
+        container._leaflet_id = null;
+    }
 }

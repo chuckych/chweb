@@ -47,6 +47,12 @@ table.dataTable td {
     display: flex;
     align-items: center;
 }
+.leaflet-control a {
+    display: none !important;
+}
+.leaflet-control span {
+    display: none !important;
+}
 
 .table thead th {
     vertical-align: bottom;
