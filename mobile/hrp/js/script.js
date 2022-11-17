@@ -962,7 +962,7 @@ $(document).on("click", ".pic", function (e) {
                 let map = L.map('mapzone').setView([lati, long], 16);
                 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
-                    attribution: '<b>HRProcess Mobile</b>'
+                    attribution: 'HRProcess Mobile'
                 }).addTo(map);
                 let marker = L.marker([lati, long]).addTo(map);
                 let distancia = ''
