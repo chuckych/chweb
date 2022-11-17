@@ -208,19 +208,33 @@ if (($queryRecords)) {
         $imgOld = $filenameOld . intval($r['createdDate']) . '_' . $r['phoneid'] . '.png';
         $urlImg = (intval($r['createdDate']) > 1651872233773) ? $img : $imgOld;
 
+        if (file_exists("../../../../" . $urlImg)) {
+            $size = getimagesize("../../../../" . $urlImg);
+            $size[2] = $imageTypeArray[$size[2]];
+            $type = $size[2];
+            $filesize = filesize("../../../../" . $urlImg);
+            $FileSizeConvert = FileSizeConvert($filesize);
+            list($ancho, $alto, $tipo, $atributos) = $size;
+        } else {
+            $size = '';
+            $type = '';
+            $filesize = '';
+            $FileSizeConvert = '';
+        }
 
-        $size = getimagesize("../../../../" . $urlImg);
         if ($size) {
             $size[2] = $imageTypeArray[$size[2]];
             list($ancho, $alto, $tipo, $atributos) = $size;
             $arrayData[] = array(
                 "id_user" => $r['id_user'],
                 "id_api"  => $r['idPunchEvent'],
-                'imageData'         => array(
-                    'ancho'             => $ancho,
-                    'alto'              => $alto,
-                    'tipo'              => $size[2],
-                    'img'               => $urlImg,
+                'imageData' => array(
+                    'ancho'     => $ancho,
+                    'alto'      => $alto,
+                    'tipo'      => $type,
+                    'img'       => $urlImg,
+                    'size'      => $filesize,
+                    'humanSize' => $FileSizeConvert
                 ),
             );
         }

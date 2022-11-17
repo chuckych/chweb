@@ -720,12 +720,13 @@ $(document).on("click", ".trainUser", function (e) {
                     $('#modalTrain #colfotos2').append(`<div class="col-12 pb-2">Fotos Enroladas (${data2.length})</div>`);
 
                     $.each(data2, function (index, element) {
+                        console.log(data2);
                         url_foto = `${element.imageData.img}`;
                         let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                         divFoto = `<div class="col-4 col-sm-3 col-md-3 col-lg-2 pb-3 d-flex justify-content-center">`
                         divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn" data-toggle="buttons">`
                         divFoto += `<label for="${element.id_api}" class="disabled active shadow-sm btn btn-success border-0 p-1" style="width:80px;">`
-                        divFoto += `<input type="checkbox" readonly value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:80px; height:80px" class="radius img-fluid shadow">`
+                        divFoto += `<input type="checkbox" readonly value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:80px; height:80px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
                         divFoto += `</label>`
                         divFoto += `</div>`
                         divFoto += `</div>`;
@@ -747,7 +748,7 @@ $(document).on("click", ".trainUser", function (e) {
                         divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
                         divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
                         divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
-                        divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow">`
+                        divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
                         divFoto += `</label>`
                         divFoto += `</div>`
                         divFoto += `</div>`;
