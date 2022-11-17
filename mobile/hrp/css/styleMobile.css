@@ -59,6 +59,18 @@ table.dataTable td {
 .leaflet-control-zoom  {
     opacity: 0.6;
 }
+.w45{
+    width: 45px !important;
+}
+.h45{
+    height: 45px !important;
+}
+.w55{
+    width: 55px !important;
+}
+.h55{
+    height: 55px !important;
+}
 /* .leaflet-control span {
     display: none !important;
 } */

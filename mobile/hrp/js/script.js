@@ -73,10 +73,10 @@ let drmob2 = $('#max').val() + ' al ' + $('#max').val()
 $('#_drMob2').val(drmob2)
 if ($(window).width() < 540) {
     tablemobile = $('#table-mobile').DataTable({
-        dom: "<'row lengthFilterTable'" +
-            "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-            "<'row '<'col-12 table-responsive't>>" +
-            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        dom:    "<'row lengthFilterTable'" +
+                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+                "<'row '<'col-12 table-responsive't>>" +
+                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getRegMobile.php",
             type: "POST",
@@ -94,6 +94,22 @@ if ($(window).width() < 540) {
             {
                 className: 'text-center', targets: 'imageData', title: '<div class="w70">Fichadas</div>',
                 "render": function (data, type, row, meta) {
+
+                    color = '';
+                    if (row.confidenceFaceStr == 'Identificado') {
+                        color = 'success'
+                    } else if (row.confidenceFaceStr == 'No Identificado') {
+                        color = 'danger'
+                    } else if (row.confidenceFaceStr == 'No Enrolado') {
+                        color = 'warning'
+                    } else if (row.confidenceFaceStr == 'Foto Inválida') {
+                        color = 'info'
+                    } else if (row.confidenceFaceStr == 'No Disponible') {
+                        color = 'primary'
+                    } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
+                        color = 'warning'
+                    }
+
                     operation = (row.operation == 0) ? '' : ': ' + row.operation;
                     let evento = '';
                     switch (row.operationType) {
@@ -119,7 +135,8 @@ if ($(window).width() < 540) {
                     if (row.imageData.img) {
                         // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
                         url_foto = `${row.imageData.img}`;
-                        foto = `<img loading="lazy" src="${row.imageData.img}" class="w60 h60 radius img-fluid"></img>`;
+                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                        foto = `<img loading="lazy" src="${path}${url_foto}" class="w60 h60 radius img-fluid"></img>`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -133,7 +150,7 @@ if ($(window).width() < 540) {
                         foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
                     }
 
-                    let datacol = `<div class="pic w70 h70 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                    let datacol = `<div class="pic w70 h70 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
                 },
             },
@@ -220,6 +237,21 @@ if ($(window).width() < 540) {
             {
                 className: 'text-center', targets: 'imageData', title: '<div class="w50">Foto</div>',
                 "render": function (data, type, row, meta) {
+                    color = '';
+                    if (row.confidenceFaceStr == 'Identificado') {
+                        color = 'success'
+                    } else if (row.confidenceFaceStr == 'No Identificado') {
+                        color = 'danger'
+                    } else if (row.confidenceFaceStr == 'No Enrolado') {
+                        color = 'warning'
+                    } else if (row.confidenceFaceStr == 'Foto Inválida') {
+                        color = 'info'
+                    } else if (row.confidenceFaceStr == 'No Disponible') {
+                        color = 'primary'
+                    } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
+                        color = 'warning'
+                    }
+
                     operation = (row.operation == 0) ? '' : ': ' + row.operation;
                     let evento = '';
                     switch (row.operationType) {
@@ -246,7 +278,7 @@ if ($(window).width() < 540) {
                         // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
                         url_foto = `${row.imageData.img}`;
                         let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
-                        foto = `<img loading="lazy" src="${path}${url_foto}" class="w40 h40 radius img-fluid">`;
+                        foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 radius img-fluid">`;
                     } else {
                         url_foto = ``;
                         foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -257,7 +289,7 @@ if ($(window).width() < 540) {
                     if (row.basePhoto) {
                         foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
                     }
-                    let datacol = `<div class="pic scale w50 h50 shadow-sm d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                    let datacol = `<div class="pic scale w50 h50 shadow-sm border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                     return datacol;
                 },
             },
@@ -321,7 +353,7 @@ if ($(window).width() < 540) {
                         datacol = `<div class="w40">${confidenceFaceStr}</div>`
                         return datacol;
                     } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
-                        confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
+                        confidenceFaceStr = `<span data-titler="No enrolado" class="font1 text-warning bi bi-person-bounding-box"></span>`
                         datacol = `<div class="w40">${confidenceFaceStr}</div>`
                         return datacol;
                     }
@@ -886,7 +918,7 @@ $(document).on("click", ".pic", function (e) {
         if (data.basePhoto) {
             $('.picFoto').html(`<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w150 img-fluid rounded" />`)
         } else {
-            $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid rounded"/>');
+            $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid shadow"/>');
         }
         $('.divFoto').show()
     } else {
@@ -912,10 +944,12 @@ $(document).on("click", ".pic", function (e) {
 
     if (confidenceFaceStr == 'Identificado') {
         confidenceFaceStr = `<span class="text-success">${confidenceFaceStr}</span>`
-    } else if (confidenceFaceStr == 'No identificado') {
+    } else if (confidenceFaceStr == 'No Identificado') {
         confidenceFaceStr = `<span class="text-danger">${confidenceFaceStr}</span>`
     } else if (confidenceFaceStr == 'No Enrolado') {
         confidenceFaceStr = `<span class="text-primary">${confidenceFaceStr}</span>`
+    } else if (confidenceFaceStr == 'Entrenamiento Inválido') {
+        confidenceFaceStr = `<span class="text-info">No enrolado</span>`
     }
 
     $('.picFace').html(confidenceFaceStr);
@@ -959,15 +993,15 @@ $(document).on("click", ".pic", function (e) {
         zone = (zone) ? zone : 'Fuera de Zona';
         let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
         setTimeout(() => {
-            getMap(lati, long, 16, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID)
+            getMap(lati, long, 15, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID)
             $('#mapzone').removeClass('invisible');
             $('#mapzone').addClass('visible');
             $('#mapzone').addClass('animate__animated animate__fadeIn');
-        }, 300);
+        }, 200);
 
     } else {
         $('#mapzone').hide();
-        $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 p-0 fontq"><span>Ubicación GPS no disponible</span></div>')
+        $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 fontq alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
     }
 });
 $(document).on("hidden.bs.modal", "#pic", function (e) {
@@ -975,7 +1009,6 @@ $(document).on("hidden.bs.modal", "#pic", function (e) {
     $('#mapzone').removeClass('visible');
     $('#mapzone').removeClass('animate__animated animate__fadeIn');
     clean()
-    console.log('Cierra Modal');
 })
 
 $(document).on("click", ".processRegFace", function (e) {
