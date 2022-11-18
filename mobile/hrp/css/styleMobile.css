@@ -59,6 +59,9 @@ table.dataTable td {
 .leaflet-control-zoom  {
     opacity: 0.6;
 }
+.leaflet-control-fullscreen-button  {
+    opacity: 0.6;
+}
 .w45{
     width: 45px !important;
 }

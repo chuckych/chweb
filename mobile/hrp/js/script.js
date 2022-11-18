@@ -1519,6 +1519,12 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
         maxZoom: 19,
         attribution: '<small>'+lat+','+lng+'</small>'
     }).addTo(map);
+    map.addControl(new L.Control.Fullscreen({
+        title: {
+            'false': 'Expandir mapa',
+            'true': 'Contraer mapa'
+        }
+    }));
     let marker = L.marker([lat, lng]).addTo(map);
     distancia = ''
     if ((zoneID > 0)) {
