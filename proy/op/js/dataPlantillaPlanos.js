@@ -63,7 +63,7 @@ $(function () {
         }
     });
 
-    function asignPlano(checked) { 
+    function asignPlano(checked) {
         $.ajax({
             url: "op/crud.php",
             type: "POST",
@@ -138,7 +138,10 @@ $(function () {
             $.notifyClose();
             asignPlano(checked);
         });
-
+        $(".divFilaPlanPlano").hide();
+        // setTimeout(() => {
+        //     $(".SeleccionePlantilla").removeClass('invisible'); 
+        // }, 600);
     });
     tablePlantPlanos.on("page.dt", function (e, settings) { // Se agrega el evento page.dt para que se ejecute cuando se cambie de pagina
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla
@@ -146,13 +149,15 @@ $(function () {
     });
     tablePlantPlanos.on("draw.dt", function (e, settings) {  // Se agrega el evento draw.dt para que se 
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla
-        
-        // console.log(settings.json.recordsTotal);
 
+        // console.log(settings.json.recordsTotal);
         if (settings.json.recordsTotal == 0) {
-            $(".divFilaPlanPlano").hide();
+            // $(".divFilaPlanPlano").hide();
+            $("#btnAplicarPlantilla").hide();
+            $(".MarcarProc").hide();
+            // $(".SeleccionePlantilla").addClass('invisible');
             $(".divInfo").hide();
-            $("#selPlantillaNombre").hide();
+            // $("#selPlantillaNombre").hide();
             $(idTable).hide();
             $(".SeleccionePlantilla").html(`
             <label class="form-selectgroup-item flex-fill">
@@ -167,6 +172,9 @@ $(function () {
                 </div>
             </label>
         `);
+            if ($("#tablePlantPlanos_filter input").val() != "") {
+                $('.SeleccionePlantilla').html('');
+            }
             $(".cardSelPlantilla").hover(
                 function () {
                     $(".asignPlano").toggleClass('animate__animated animate__flash border-secondary text-secondary')
@@ -175,6 +183,9 @@ $(function () {
         }
 
         if (settings.json.recordsTotal > 0) {
+            $("#btnAplicarPlantilla").show();
+            $(".MarcarProc").show();
+            // $(".SeleccionePlantilla").removeClass('invisible');
             $(".divFilaPlanPlano").show();
             $(".divInfo").show();
             $("#selPlantillaNombre").show();

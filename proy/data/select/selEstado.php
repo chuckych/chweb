@@ -24,7 +24,7 @@ $r = array_pdoQuery($query);
 function html($text, $color, $icon, $textIcon)
 {
     $a = "
-    <div class='w-100 bg-transparent p-2 d-flex align-items-center' style='border:0px; border-bottom:2px solid $color; border-radius:0px; padding-bottom:5px'>
+    <div class='flex-center-between'>
         <div>$text</div> 
         <div class='text-mutted font08 ms-2'>$icon</div>
     </div>

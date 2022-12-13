@@ -39,5 +39,5 @@
         </div>
     </div>
 </div>
-<script src="op/js/dataProyectos.js?<?= vjs() ?>"></script>
-<script src="op/js/select.js?<?= vjs() ?>"></script>
+<script src="op/js/dataProyectos.js?<?=version_file("/proy/op/js/dataProyectos.js")?>"></script>
+<script src="op/js/select.js?<?=version_file("/proy/op/js/select.js")?>"></script>

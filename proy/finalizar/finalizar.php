@@ -49,4 +49,4 @@
         </div>
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/proy/finalizar/dataFinalizar.js?<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/proy/finalizar/dataFinalizar.js?<?=version_file("/proy/finalizar/dataFinalizar.js")?>"></script>

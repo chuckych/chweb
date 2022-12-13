@@ -9,7 +9,7 @@ $(function () {
         dom:
             "<'row mt-3'<'col-12 col-sm-6 d-flex justify-content-start d-none d-sm-block'l><'col-12 col-sm-6 d-flex justify-content-end'<'divAltaPlant'>f>>" +
             "<'row'<'col-12 table-responsive mt-2't>" +
-            "<'col-12 d-flex justify-content-end'p>"+
+            "<'col-12 d-flex justify-content-end'p>" +
             "<'col-12 d-flex justify-content-end'i>>",
         ajax: {
             url: `data/getPlantillasPl.php?${Date.now()}`,
@@ -32,7 +32,7 @@ $(function () {
                 title: "",
 
                 render: function (data, type, row, meta) {
-                        let datacol =
+                    let datacol =
                         `
                         <div class="form-selectgroup-item flex-fill mb-1">
                             <div class="card-body cardBody${row.PlantID} border p-3 animate__animated animate__fadeIn">
@@ -78,7 +78,7 @@ $(function () {
             $.ajax({
                 type: $(this).attr("method"),
                 url: "op/crud.php",
-                data: $(this).serialize() + "&PlantSubmit=" + tipo+ "&PlantMod=44",
+                data: $(this).serialize() + "&PlantSubmit=" + tipo + "&PlantMod=44",
                 beforeSend: function (data) {
                     $.notifyClose();
                     notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
@@ -261,15 +261,20 @@ $(function () {
                 </div>
             </label>
             `);
-            $("#tablePlantPlanos").DataTable().ajax.reload();
+            $("#tablePlantPlanos").DataTable().search('').draw().ajax.reload();
+            $('.SeleccionePlantilla').html('');
         });
 
     });
     tablePlantillas.on("page.dt", function (e, settings) { // Se agrega el evento page.dt para que se ejecute cuando se cambie de pagina
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla
-        $('#selPlantilla').val('')
-        $('#tablePlantPlanos').DataTable().ajax.reload();
+        // $('#selPlantilla').val('')
+        // $('#tablePlantPlanos').DataTable().ajax.reload();
         $(idTable + " div").addClass("pre-div"); // Se agrega la clase pre-div a la div de la tabla
+        // $("#selPlantillaNombre").hide();
+        if ($("#tablePlantPlanos_filter input").val() != "") {
+            $('.SeleccionePlantilla').html('');
+        }
     });
     tablePlantillas.on("draw.dt", function (e, settings) { // Se agrega el evento draw.dt para que se ejecute cuando se redibuje la tabla
         let idTable = "#" + e.target.id; // Se obtiene el id de la tabla

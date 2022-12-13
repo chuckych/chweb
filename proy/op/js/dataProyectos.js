@@ -5,6 +5,7 @@ $(function () {
         bProcessing: true,
         serverSide: true,
         deferRender: true,
+        stateSave: true,
         responsive: true,
         dom:
             "<'row mt-3'<'col-12 col-sm-6 d-flex justify-content-start'l<'divFiltrosProy'>><'col-12 col-sm-6 d-flex justify-content-end'<'divAltaProy'>f>>" +
@@ -30,7 +31,7 @@ $(function () {
         },
         rowGroup: {
             dataSrc: function (row) {
-                return `<span class="font-weight-bold"><span class="tracking-wide">(#${row.ProyData.ID})</span> ${row.ProyData.Nombre}</span><p class="text-mutted font08 pt-2 p-0">${row.ProyData.Desc}</p>`;
+                return `<span class="font-weight-bold"><span class="tracking-wide d-none">(#${row.ProyData.ID})</span> ${row.ProyData.Nombre}</span><p class="text-mutted font08 pt-2 p-0 m-0">${row.ProyData.Desc}</p>`;
             },
             endRender: null,
             startRender: function (rows, group) {
@@ -106,7 +107,7 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                        <span class="font08 text-secondary">Plantilla Procesos: </span><br><span class="font09">${row.ProyPlant.Nombre}</span>
+                        <span class="font08 text-secondary">Procesos: </span><br><span class="font09">${row.ProyPlant.Nombre}</span>
                         `;
                     return datacol;
                 }
@@ -120,7 +121,7 @@ $(function () {
                     let nombre = (row.ProyPlantPlano.Nombre) ? row.ProyPlantPlano.Nombre : '-'
                     let datacol =
                         `
-                        <span class="font08 text-secondary">Plantilla Planos: </span><br><span class="font09">${nombre}</span>
+                        <span class="font08 text-secondary">Planos: </span><br><span class="font09">${nombre}</span>
                         `;
                     return datacol;
                 }
@@ -162,7 +163,140 @@ $(function () {
             url: `../js/DataTableSpanishShort2.json?${Date.now()}`
         }
     });
+    let idPlano = new Array();
+    let planos = new Array()
+    function addLiPlanos(selector, id, text, cod) {
+        let idPlano = new Array();
 
+        $(selector).prepend(`
+            <div class="list-group-item animate__animated animate__fadeIn" id="list_${id}">
+                <div class="row align-items-center">
+                    <div class="col text-truncate">
+                        <input type="hidden" hidden class"idPlano" value="${id}">
+                        <div class="flex-center-between">
+                            <div>${text}</div>
+                            <button type="button" class="btn bg-red-lt deleteAsignPlano w30 h30 p-0"><i class="bi bi-dash"></i></button>
+                        </div>
+                        <small class="d-block text-muted text-truncate mt-n1">${cod}</small>
+                    </div>
+                </div>
+            </div>
+        `);
+        // $("#list_" + id).addClass('text-teal')
+        // setTimeout(() => {
+        //     $("#list_" + id).removeClass('text-teal')
+        // }, 1000);
+        /** Array de checkbox checked*/
+        $(document).on('click', '.deleteAsignPlano', function (e) {
+            $(this).parents('.list-group-item').remove()
+            idPlano = new Array();
+
+            $(selector + " input").each(function (index, element) {
+                (idPlano.push(parseInt(element.value)));
+            });
+            $('#TotalPlanosAsignados').html(idPlano.length)
+        });
+
+        $(selector + " input").each(function (index, element) {
+            (idPlano.push(parseInt(element.value)));
+        });
+        $('#TotalPlanosAsignados').html(idPlano.length)
+
+    }
+    function getLiPlanos(selector) {
+        if (selector) {
+            let i = new Array();
+            $(selector + " input").each(function (index, element) {
+                (i.push(parseInt(element.value)));
+            });
+            return i;
+        }
+        return false;
+    }
+    function setCardProyPlanos(plantilla) {
+        if (!plantilla) {
+            $('#cardProyPlanos').html('')
+            $('#TotalPlanosAsignados').html('0')
+            return
+        }
+
+        $('#cardProyPlanos').html('')
+        $('#TotalPlanosAsignados').html('0')
+
+        let datos = new FormData()
+        datos.append('Plantilla', plantilla)
+        datos.append('start', 0)
+        datos.append('length', 1000)
+        datos.append('draw', 0)
+        datos.append('planosPlant', 1)
+
+        axios({
+            method: "POST",
+            url: 'data/getPlantillaPlanos.php',
+            data: datos,
+            headers: { "Content-Type": "multipart/form-data" },
+        }).then(function (response) {
+            $.notifyClose();
+            let data = response.data;
+            if (data.data) {
+                $.each(data.data, function (index, value) {
+                    addLiPlanos('#cardProyPlanos', value.PlanoID, value.PlanoDesc, value.PlanoCod)
+                });
+            }
+
+        }).then(() => {
+
+        }).catch(function (error) {
+            alert(error);
+        })
+    }
+    function bindSubmitPlanoProy() {
+        $(document).on('click', '.submitPlanoProy', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if ($("#PlanoDesc").val() == "") {
+                $.notifyClose();
+                $("#PlanoDesc").focus().addClass("is-invalid");
+                let textErr = `<span class="text-danger font-weight-bold">Ingrese una descripción del Plano<span>`;
+                notify(textErr, "danger", 2000, "right");
+                return;
+            }
+            let PlanoDesc = $("#PlanoDesc").val();
+            let PlanoCod = $("#PlanoCod").val();
+            let PlanoObs = $("#PlanoObs").val();
+            let datos = new FormData();
+
+            ActiveBTN(true, this, '<i class="bi bi-plus font15"></i>', '<i class="bi bi-plus font15"></i>');
+            datos.append('PlanoDesc', PlanoDesc);
+            datos.append('PlanoCod', PlanoCod);
+            datos.append('PlanoObs', PlanoObs);
+            datos.append('PlanoEsta', 'on');
+            datos.append('PlanoSubmit', 'alta');           
+
+            axios({
+                method: "post",
+                url: 'op/crud.php',
+                data: datos,
+                headers: { "Content-Type": "multipart/form-data" },
+            }).then(function (response) {
+                $.notifyClose();
+                let data = response.data;
+                if (data.status == 'ok') {
+                    notify(data.Mensaje, 'success', 1000, 'right')
+                    $("#PlanoDesc").val('');
+                    $("#PlanoCod").val('');
+                    $("#PlanoObs").val('');
+                    addLiPlanos('#cardProyPlanos', data.dataPlano.id_plano, data.dataPlano.nombre_plano, data.dataPlano.PlanoCod)
+                } else {
+                    notify(data.Mensaje, 'danger', 1000, 'right')
+                }
+            }).then(() => {
+                ActiveBTN(false, this, '<i class="bi bi-plus font15"></i>', '<i class="bi bi-plus font15"></i>');
+            }).catch(function (error) {
+                alert(error);
+            })
+        });
+    }
     function bindForm(tipo) { //bindear formulario de alta/edicion
         $("#proyForm").bind("submit", function (e) {
             e.preventDefault();
@@ -192,7 +326,7 @@ $(function () {
             $.ajax({
                 type: $(this).attr("method"),
                 url: "op/crud.php",
-                data: $(this).serialize() + "&ProySubmit=" + tipo,
+                data: $(this).serialize() + "&ProySubmit=" + tipo + "&ProyLiPlanos=" + getLiPlanos('#cardProyPlanos'),
                 beforeSend: function (data) {
                     $.notifyClose();
                     notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
@@ -259,13 +393,14 @@ $(function () {
                     select2Value(dataRow.ProyPlant.ID, decodeEntities(dataRow.ProyPlant.Nombre), '#ProyPlant');
                     if (dataRow.ProyPlantPlano.ID) {
                         select2Value(dataRow.ProyPlantPlano.ID, decodeEntities(dataRow.ProyPlantPlano.Nombre), '#ProyPlantPlanos');
+                        setCardProyPlanos(dataRow.ProyPlantPlano.ID)
                     }
                     select2Value(dataRow.ProyEsta.ID, decodeEntities(dataRow.ProyEsta.Nombre), '#ProyEsta');
                     $("#proyModal #ProyIniFin").prop('disabled', true);
                     $("#proyModal #ProyEmpr").prop('disabled', true);
                     $("#proyModal #form-group-Empr .select2-selection__arrow").hide();
 
-                   
+
                     let FechaIni = dataRow.ProyFech.Inicio.split("-"); //fecha inicio
                     let FechaFin = dataRow.ProyFech.Fin.split("-"); //fecha fin 
                     FechaIni = `${FechaIni[2]}/${FechaIni[1]}/${FechaIni[0]}`;  // formato fecha inicio
@@ -320,7 +455,7 @@ $(function () {
                             }
                             return $(data.html);
                         }
-                    
+
                         $("#ProyEmpr").select2({
                             language: "es",
                             multiple: false,
@@ -636,6 +771,76 @@ $(function () {
                                 },
                             },
                         });
+                        $("#ProyAsignPlanos").select2({
+                            language: "es",
+                            multiple: false,
+                            allowClear: true,
+                            language: "es",
+                            placeholder: "Seleccionar plano",
+                            dropdownParent: $('#proyModal'),
+                            templateResult: template,
+                            // templateSelection: template,
+                            minimumInputLength: 0,
+                            minimumResultsForSearch: 0,
+                            maximumInputLength: 10,
+                            selectOnClose: false,
+                            language: {
+                                noResults: function () {
+                                    return "No hay resultados..";
+                                },
+                                inputTooLong: function (args) {
+                                    var message =
+                                        "Máximo " +
+                                        opt2["MaxInpLength"] +
+                                        " caracteres. Elimine " +
+                                        overChars +
+                                        " caracter";
+                                    if (overChars != 1) {
+                                        message += "es";
+                                    }
+                                    return message;
+                                },
+                                searching: function () {
+                                    return "Buscando..";
+                                },
+                                errorLoading: function () {
+                                    return "Sin datos..";
+                                },
+                                removeAllItems: function () {
+                                    return "Borrar";
+                                },
+                                inputTooShort: function () {
+                                    return "Ingresar " + opt2["MinLength"] + " o mas caracteres";
+                                },
+                                maximumSelected: function () {
+                                    return "Puede seleccionar solo una opción";
+                                },
+                                loadingMore: function () {
+                                    return "Cargando más resultados…";
+                                },
+                            },
+                            ajax: {
+                                url: "../proy/data/select/selPlanos.php",
+                                dataType: "json",
+                                type: "POST",
+                                delay: opt2["delay"],
+                                data: function (params) {
+                                    planos = new Array()
+                                    $("#cardProyPlanos input").each(function (index, element) {
+                                        (planos.push(parseInt(element.value)));
+                                    });
+                                    return {
+                                        q: params.term,
+                                        notPlano: planos
+                                    };
+                                },
+                                processResults: function (data) {
+                                    return {
+                                        results: data,
+                                    };
+                                },
+                            },
+                        });
 
                         bindForm(`mod&ProyID=${dataRow.ProyData.ID}&ProyEmpr=${dataRow.ProyEmpr.Nombre}`)  // Se bindea el formulario
                         $('#ProySubmitdelete').click(function () { // Se agrega el evento click al boton de eliminar
@@ -707,6 +912,24 @@ $(function () {
                                     })
                                 }); // Se termina el then de la peticion ajax
                         });
+
+                        bindSubmitPlanoProy();
+
+                        $('#ProyAsignPlanos').on('select2:select', function (e) {
+                            let data = e.params.data
+                            addLiPlanos('#cardProyPlanos', data.id, data.text, data.cod)
+                            $('#ProyAsignPlanos').val('').trigger('change')
+                        });
+                        $("#ProyPlantPlanos").on('select2:select', function (e) {
+                            let dataPlantilla = e.params.data
+                            setCardProyPlanos(dataPlantilla.id)
+                        });
+                        $("#ProyPlantPlanos").on('select2:clear', function (e) {
+                            setCardProyPlanos('')
+                        });
+
+                        autosize($('textarea'));
+
                     });
 
                 });
@@ -763,7 +986,7 @@ $(function () {
                         }
                         return $(data.html);
                     }
-                
+
                     $("#ProyEmpr").select2({
                         language: "es",
                         multiple: false,
@@ -1079,10 +1302,80 @@ $(function () {
                             },
                         },
                     });
-                    
+                    $("#ProyAsignPlanos").select2({
+                        language: "es",
+                        multiple: false,
+                        allowClear: true,
+                        language: "es",
+                        placeholder: "Seleccionar plano",
+                        dropdownParent: $('#proyModal'),
+                        templateResult: template,
+                        // templateSelection: template,
+                        minimumInputLength: 0,
+                        minimumResultsForSearch: 0,
+                        maximumInputLength: 10,
+                        selectOnClose: false,
+                        language: {
+                            noResults: function () {
+                                return "No hay resultados..";
+                            },
+                            inputTooLong: function (args) {
+                                var message =
+                                    "Máximo " +
+                                    opt2["MaxInpLength"] +
+                                    " caracteres. Elimine " +
+                                    overChars +
+                                    " caracter";
+                                if (overChars != 1) {
+                                    message += "es";
+                                }
+                                return message;
+                            },
+                            searching: function () {
+                                return "Buscando..";
+                            },
+                            errorLoading: function () {
+                                return "Sin datos..";
+                            },
+                            removeAllItems: function () {
+                                return "Borrar";
+                            },
+                            inputTooShort: function () {
+                                return "Ingresar " + opt2["MinLength"] + " o mas caracteres";
+                            },
+                            maximumSelected: function () {
+                                return "Puede seleccionar solo una opción";
+                            },
+                            loadingMore: function () {
+                                return "Cargando más resultados…";
+                            },
+                        },
+                        ajax: {
+                            url: "../proy/data/select/selPlanos.php",
+                            dataType: "json",
+                            type: "POST",
+                            delay: opt2["delay"],
+                            data: function (params) {
+                                planos = new Array()
+                                $("#cardProyPlanos input").each(function (index, element) {
+                                    (planos.push(parseInt(element.value)));
+                                });
+                                return {
+                                    q: params.term,
+                                    notPlano: planos
+                                };
+                            },
+                            processResults: function (data) {
+                                return {
+                                    results: data,
+                                };
+                            },
+                        },
+                    });
+
                     $('#ProyEmpr').on("select2:select", function (e) {
                     });
-                
+
                     $('#ProyIniFin').on('show.daterangepicker', function (ev, picker) {
                         $.notifyClose();
                         notify("Seleccione una Fecha de Inicio y Fin", "info", 0, "right");
@@ -1090,7 +1383,7 @@ $(function () {
                     $('#ProyIniFin').on('hide.daterangepicker', function (ev, picker) {
                         $.notifyClose();
                     });
-                
+
                     $('#ProyIniFin').daterangepicker({
                         singleDatePicker: false,
                         showDropdowns: false,
@@ -1130,7 +1423,31 @@ $(function () {
                     document.getElementById('proyModal').addEventListener('hidden.bs.modal', function (event) { // Se agrega el evento hidden.bs.modal al Modal
                         $("#modales").html('');
                     })
-                });
+                    // $("#ProyAsignPlanos").append($('<option>', { 'value': "9999", 'text': "New Option Text" }));
+                    let arrPlanAsign = new Array();
+                    let TotalPlanosAsignados = 0
+                    $('#TotalPlanosAsignados').html(TotalPlanosAsignados)
+
+                    bindSubmitPlanoProy();
+
+                    $('#ProyAsignPlanos').on('select2:select', function (e) {
+                        // console.log(e.params.data);
+                        let data = e.params.data
+                        // arrPlanAsign.push(data);
+                        addLiPlanos('#cardProyPlanos', data.id, data.text, data.cod)
+                        $('#ProyAsignPlanos').val('').trigger('change')
+                    });
+                    $("#ProyPlantPlanos").on('select2:select', function (e) {
+                        let dataPlantilla = e.params.data
+                        setCardProyPlanos(dataPlantilla.id)
+                    });
+                    $("#ProyPlantPlanos").on('select2:clear', function (e) {
+                        setCardProyPlanos('')
+                    });
+
+                    autosize($('textarea'));
+
+                })
         });
 
         fetch(`op/proyDivEstados.html?${Date.now()}`) // Se hace la peticion ajax para obtener el modal

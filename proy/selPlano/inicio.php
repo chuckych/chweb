@@ -14,4 +14,4 @@
     </div>
     <?= progressBar(3) ?>
 </div>
-<script src="/<?= HOMEHOST ?>/proy/selPlano/dataSelPlano.js?<?= vjs(true) ?>"></script>
+<script src="/<?= HOMEHOST ?>/proy/selPlano/dataSelPlano.js?<?=version_file("/proy/selPlano/dataSelPlano.js")?>"></script>

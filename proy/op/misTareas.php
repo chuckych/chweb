@@ -7,4 +7,4 @@
         </div>
     </div>
 </div>
-<script src="op/js/dataMisTareas.js?<?= vjs() ?>"></script>
+<script src="op/js/dataMisTareas.js?<?= version_file("/proy/op/js/dataMisTareas.js") ?>"></script>

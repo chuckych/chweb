@@ -29,4 +29,4 @@
         <?php access_log_proy('SelProy'); ?>
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/proy/inicio/dataInicio.js?<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/proy/inicio/dataInicio.js?<?=version_file("/proy/inicio/dataInicio.js")?>"></script>

@@ -34,7 +34,7 @@ if (($params['ProyFiltroFechas'] ?? '')) {
 switch ($params['NomFiltro']) {
     case 'ProyNomFiltro':
         $FiltroQ = (!empty($q)) ? " AND CONCAT_WS(' - ', ProyID, EmpDesc, ProyNom) LIKE '%$q%'" : '';
-        $query = "SELECT ProyID, ProyNom, EmpDesc FROM proy_proyectos
+        $query = "SELECT ProyID, ProyNom, EmpDesc, EstDesc, EstColor, EstTipo FROM proy_proyectos
         INNER JOIN proy_empresas on proy_proyectos.ProyEmpr = proy_empresas.EmpID
         INNER JOIN proy_estados on proy_proyectos.ProyEsta = proy_estados.EstID
         WHERE ProyID > 0";
@@ -50,12 +50,36 @@ switch ($params['NomFiltro']) {
 
         foreach ($r as $key => $row) {
 
-            $text = '(' . $row['ProyID'] . ') ' . $row['ProyNom'];
+            switch ($row['EstTipo']) {
+                case 'Abierto':
+                    $icon = "<i class='bi bi-play-fill' style='color: $row[EstColor];'></i>";
+                    $textIcon = 'Abierto';
+                    break;
+                case 'Cerrado':
+                    $icon = "<i class='bi bi-stop-fill' style='color: $row[EstColor];'></i>";
+                    $textIcon = 'Cerrado';
+                    break;
+                case 'Pausado':
+                    $icon = "<i class='bi bi-pause-fill' style='color: $row[EstColor];'></i>";
+                    $textIcon = 'Pausado';
+                    break;
+
+                default:
+                    $icon = "<i class='bi bi-play-fill' style='color: $row[EstColor];'></i>";
+                    $textIcon = 'Abierto';
+                    break;
+            }
+            // $text = '(' . $row['ProyID'] . ') ' . $row['ProyNom'];
+            $text = $row['ProyNom'];
+            $html = "<div title='$row[EstDesc]' class='flex-center-between'><span>".utf8str($text)."</span><span class='' title='$textIcon'>$icon</span></div>";
 
             $data[] = array(
-                'id'      => $row['ProyID'],
-                'empresa' => utf8str($row['EmpDesc']),
-                'text'    => utf8str($text),
+                'id'       => $row['ProyID'],
+                'empresa'  => utf8str($row['EmpDesc']),
+                'text'     => utf8str($text),
+                'EstDesc'  => ($row['EstDesc']),
+                'EstColor' => ($row['EstColor']),
+                'html' => $html,
             );
         }
         function groupAssoc($input, $sortkey)
@@ -148,7 +172,7 @@ switch ($params['NomFiltro']) {
         WHERE ProyID > 0";
         function html($text, $color, $icon, $textIcon)
         {
-            $a = "<div class='w-100 bg-transparent p-2 d-flex align-items-center' style='border:0px; border-bottom:2px solid $color; border-radius:0px; padding-bottom:5px'><div>$text</div><div class='text-mutted font08 ms-2'>$icon</div></div>";
+            $a = "<div class='flex-center-between w-100 p-1'><div>$text</div><div class='text-mutted font08 ms-2'>$icon</div></div>";
             return $a;
         }
         $query .= $FiltroQ;
@@ -178,7 +202,7 @@ switch ($params['NomFiltro']) {
                     $textIcon = 'Abierto';
                     break;
             }
-
+            // $html = "<div title='$row[EstDesc]' class='flex-center-between'><span>".utf8str($text)."</span><span style='background:$row[EstColor]' class='ms-1 p-1 me-1'></span></div>";
             $data[] = array(
                 'id'   => $row['ProyEsta'],
                 'text' => utf8str($row['EstDesc']),

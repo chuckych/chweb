@@ -13,6 +13,7 @@ $(function () {
         bProcessing: true,
         serverSide: true,
         deferRender: true,
+        stateSave: true,
         responsive: true,
         dom:
             "<'row rowFilters invisible'<'col-12 col-sm-6 flex-start-start'l<'divFiltrosTar flex-start-end'>><'col-12 col-sm-6 flex-center-end'<'divAltaTar'>f<'.divLimpiarSearch'>>>" +
@@ -50,7 +51,7 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                            <span class=""><i class="bi bi-hash font07 me-1"></i>${row.TareID}</span>
+                            <span class="">${row.TareID}</span>
                         `;
                     return '<div class="datacol viewTar pointer">' + datacol + '</div>';
                 }
@@ -63,8 +64,8 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                            <span data-titler="(#${row.proyecto.ID}) ${row.proyecto.nombre}">
-                                <div class="text-truncate filterProy" data-id="${row.proyecto.ID}" data-text="${row.proyecto.nombre}" style="max-width:200px">(#${row.proyecto.ID}) ${row.proyecto.nombre}</div>
+                            <span data-titler="${row.proyecto.nombre}">
+                                <div class="text-truncate filterProy" data-id="${row.proyecto.ID}" data-text="${row.proyecto.nombre}" style="max-width:150px">${row.proyecto.nombre}</div>
                             </span>
                         `;
                     return '<div class="datacol">' + datacol + '</div>';
@@ -114,11 +115,17 @@ $(function () {
                 targets: "",
                 title: "Responsable",
                 render: function (data, type, row, meta) {
+                    let datacol2 =
+                        `
+                            <span data-titler="${row.responsable.nombre}">
+                                <div class="text-truncate" data-text="${row.responsable.nombre}" style="max-width:150px">${row.responsable.nombre}</div>
+                            </span>
+                        `;
                     let datacol =
                         `
-                        <div class="text-truncate" style="max-width:100px">${row.responsable.nombre}</div>
+                        <div data-titler="${row.responsable.nombre}" class="text-truncate" style="max-width:100px">${row.responsable.nombre}</div>
                                     `;
-                    return '<div class="datacol">' + datacol + '</div>';
+                    return '<div class="datacol">' + datacol2 + '</div>';
                 }
             },
             /** Inicio Tarea */
@@ -193,8 +200,8 @@ $(function () {
                     let tiempo = '';
                     let text = ''
                     if (row.fechas.duracion) {
-                        tiempo = (row.fechas.duracionMin == 0) ? row.fechas.duracionMin + '<span class="font07 text-capitalize"> min</span>' : row.fechas.duracionHoras
-                        tiempo = `<span data-titlel="` + row.fechas.duracionHuman + `">
+                        tiempo = (row.totales.min == 0) ? row.fechas.duracionMin + '<span class="font07 text-capitalize"> min</span>' : row.totales.horas
+                        tiempo = `<span>
                             <div class="font08 px-2 badge w60 bg-azure font-weight-normal flex-center-center"><span>`+ tiempo + `</span></div>
                         </span>`
                         text = "Duración"
@@ -214,7 +221,7 @@ $(function () {
             },
             /** Estado */
             {
-                className: "",
+                className: "d-none",
                 targets: "",
                 title: "Estado",
                 render: function (data, type, row, meta) {
@@ -252,7 +259,7 @@ $(function () {
                         <span data-tareID="${row.TareID}" class="dropdown-item pointer compleTar"><span class="bi font09 bi-check2 me-2"></span>Completar</span>
                     </li>
                     <li>
-                        <span data-tareID="${row.TareID}" class="dropdown-item pointer compleTarNow d-none"><span class="bi font09 bi-check2-all me-2"></span>Completar ahora<span class="badge bg-red-lt ms-auto">${tiempo}</span></span>
+                        <span data-tareID="${row.TareID}" class="dropdown-item pointer compleTarNow"><span class="bi font09 bi-check2-all me-2"></span>Completar ahora<span class="badge bg-red-lt ms-auto">${tiempo}</span></span>
                     </li>`
                         : '';
                     let openTar = (row.estado == 'Completada') ? `
@@ -396,7 +403,7 @@ $(function () {
 
         $(idTable).removeClass("invisible"); // Se remueve la clase invisible de la tabla
         $('.rowFilters').removeClass("invisible"); // Se remueve la clase invisible de la fila de filtros
-        $(idTable + " tbody").on("click", ".viewTar", function (e) { // Se agrega el evento click al boton editar
+        $(idTable + " tbody").on("click", ".viewTar", function (e) { // Se agrega el evento click al boton viewTar
             e.preventDefault();
             $.notifyClose() // Se cierra el notify
             let dataRow = $(idTable).DataTable().row($(this).parents("tr")).data(); // Se obtiene la fila seleccionada en la tabla
@@ -449,12 +456,9 @@ $(function () {
             e.preventDefault();
             $.notifyClose() // Se cierra el notify
             let dataRow = $(idTable).DataTable().row($(this).parents("tr")).data(); // Se obtiene la fila seleccionada en la tabla
-            // console.log(dataRow);
-            // console.log(dataRow);
             fetch(`op/tarModal.php?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
                 .then(response => response.text()) // Se obtiene la respuesta
                 .then(data => {  // Se obtiene el html del modal
-                    // console.log(HtmlEncode(dataRow.ProyObs));
                     $("#modales").html(data); // Se agrega el html al modal
                     $("#modales .form-control").attr("autocomplete", "off"); // Se agrega el atributo autocomplete
                     let tarModal = new bootstrap.Modal(document.getElementById("tarModal"), { keyboard: true }); // Se inicializa el modal
@@ -1095,12 +1099,14 @@ $(function () {
                                     $.notifyClose();
                                     notify(data.Mensaje, "success", 2000, "right")
                                     $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
+                                    $("#tableAsignasTareas").DataTable().ajax.reload(null, false);
                                     $("#tarModal").fadeOut('slow');
                                     $("#tarModal").modal("hide");
                                 } else {
                                     $.notifyClose();
                                     notify(data.Mensaje, "danger", 2000, "right");
                                     $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
+                                    $("#tableAsignasTareas").DataTable().ajax.reload(null, false);
                                 }
                                 setTimeout(() => {
                                     ActiveBTN(false, "#ediTarSubmit", "Aguarde <span class='animated-dots'></span>", 'Aceptar');
@@ -1111,6 +1117,7 @@ $(function () {
                                 $.notifyClose();
                                 notify("Error", "danger", 3000, "right");
                                 $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
+                                $("#tableAsignasTareas").DataTable().ajax.reload(null, false);
                             }
                         });
                     });
@@ -1135,7 +1142,6 @@ $(function () {
             fetch(`op/tarModal.php?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
                 .then(response => response.text()) // Se obtiene la respuesta
                 .then(data => {  // Se obtiene el html del modal
-                    // console.log(HtmlEncode(dataRow.ProyObs));
                     $("#modales").html(data); // Se agrega el html al modal
                     $("#modales .form-control").attr("autocomplete", "off"); // Se agrega el atributo autocomplete
                     let tarModal = new bootstrap.Modal(document.getElementById("tarModal"), { keyboard: true }); // Se inicializa el modal
@@ -1219,6 +1225,7 @@ $(function () {
                                     $.notifyClose();
                                     notify(data.Mensaje, "success", 2000, "right")
                                     $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
+                                    $("#tableAsignasTareas").DataTable().ajax.reload(null, false);
                                     $("#tarModal").fadeOut('slow');
                                     $("#tarModal").modal("hide");
                                 } else {
@@ -1326,7 +1333,6 @@ $(function () {
                         $('[data-notify = "message"]').append('<div class="notifInfo p-2 card border"></div>')
                         $('.notifInfo').addClass('maxh450 overflow-auto')
                         $.each(response.data.Info, function (index, reg) {
-                            // console.log(reg);
                             $('.notifInfo').append('<p class="font08 p-0 mt-1"><span class="lh1">' + reg + '</span></p>')
                         })
                     }, 500);
@@ -1346,6 +1352,7 @@ $(function () {
             classEfect("#btnActualizarGrillaTar .bi", "animate__animated animate__rotateIn")
             loadingTable("#tableTareas")
             $("#tableTareas").DataTable().ajax.reload(); // Se recarga la tabla
+            $("#tableAsignasTareas").DataTable().ajax.reload(null, false);
         });
         fetch(`op/tarDivEstados.html?${Date.now()}`) // Se hace la peticion ajax para obtener el div de estados
             .then(response => response.text()) // Se obtiene la respuesta
@@ -1395,9 +1402,15 @@ $(function () {
                         if (response.data) {
                             let d = response.data.confTar;
                             $(".HoraCierre").val(d.HoraCierre);
+                            $(".MinimoDesc").val(d.MinimoDesc);
                             $(".LimitTar").val(d.LimitTar);
+                            $(".RecRedTar").val(d.RecRedTar);
                             let checked = (d.ProcPendTar == '1') ? true : false;
+                            let checked2 = (d.ProcDescTar == '1') ? true : false;
+                            let checked3 = (d.ProcRedTar == '1') ? true : false;
                             $(".ProcPendTar").prop('checked', checked);
+                            $(".ProcDescTar").prop('checked', checked2);
+                            $(".ProcRedTar").prop('checked', checked3);
                         }
                     }).catch(function (error) {
                         alert(error);
@@ -1409,17 +1422,40 @@ $(function () {
                     d.append('setConf', '1');
                     d.append('HoraCierre', $(".HoraCierre").val());
                     d.append('LimitTar', $(".LimitTar").val());
+                    d.append('RecRedTar', $(".RecRedTar").val());
+                    d.append('MinimoDesc', $(".MinimoDesc").val());
                     d.append('ProcPendTar', $(".ProcPendTar").prop('checked') ? '1' : '0');
+                    d.append('ProcDescTar', $(".ProcDescTar").prop('checked') ? '1' : '0');
+                    d.append('ProcRedTar', $(".ProcRedTar").prop('checked') ? '1' : '0');
                     navigator.sendBeacon('op/crud.php', d);
                 }
                 getConfTar();
                 $('.HoraCierre').mask(maskBehavior, spOptions);
+                $('.MinimoDesc').mask(maskBehavior, spOptions);
                 $(".ProcPendTar").on("change", function (e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     setConfTar()
                 });
+                $(".ProcDescTar").on("change", function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    setConfTar()
+                });
                 $(".HoraCierre").on("keyup", function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    let str = $(this).val();
+                    if (str.length == 5) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        setConfTar()
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                    }
+                });
+                $(".MinimoDesc").on("keyup", function (e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
                     let str = $(this).val();
@@ -1445,6 +1481,25 @@ $(function () {
                         $(this).removeClass("is-valid");
                         $(this).addClass("is-invalid");
                     }
+                });
+                $(".RecRedTar").on("keyup", function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    let str = $(this).val();
+                    if (str.length == 5) {
+                        $(this).removeClass("is-invalid");
+                        $(this).addClass("is-valid");
+                        setConfTar()
+                    } else {
+                        $(this).removeClass("is-valid");
+                        $(this).addClass("is-invalid");
+                    }
+                });
+                $('.RecRedTar').mask('00/00');
+                $(".ProcRedTar").on("change", function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    setConfTar()
                 });
             });
 
@@ -1623,13 +1678,283 @@ $(function () {
         })
     }
 
-    // $(document).on('click', '.filterProy', function (e) {
-    //     e.preventDefault();
-    //     let id = $(this).attr('data-id');
-    //     let text = $(this).attr('data-text');
-    //     select2Value(id, text, '#tarProyNomFiltro');
-    //     $("#tableTareas").DataTable().ajax.reload(); // Se recarga la tabla
-    //     e.stopPropagation();
-    //     // $('.filterProy').off('click');
-    // });
+    $(document).on('click', '#confDescanso', function (e) {
+        e.preventDefault();
+
+        fetch(`op/tarModal.php`) // Se hace la peticion ajax para obtener el modal
+            .then(response => response.text()) // Se obtiene la respuesta
+            .then(data => {  // Se obtiene el html del modal
+                $("#modales").html(data); // Se agrega el html al modal
+                let tarModal = new bootstrap.Modal(document.getElementById("tarModal"), { keyboard: true }); // Se inicializa el modal
+                tarModal.show(); // Se muestra el modal
+                $("#tarModal .modal-body").html('').addClass('bg-white pt-0')
+                $("#tarModal .modal-footer").addClass('bg-white pt-2')
+                $("#tarModal .modal-footer button").removeClass('me-auto')
+                $("#tarModal .modal-title").html(`
+                <div class="py-3">
+                    <div>Configuración descanso</div>
+                </div>
+            `)
+
+                $("#tarModal .tarSubmit").remove('')
+                $('#tarModal .modal-body').append(`
+                    <table id="tableDescanso" class="table text-wrap invisible w-100 border p-2 table-hover shadow-sm">
+                        <thead>
+                        </thead>
+                        <tbody class="font08"></tbody>
+                    </table>
+                `)
+
+                document.getElementById('tarModal').addEventListener('shown.bs.modal', function (event) {
+
+
+                    let tableDescanso = $("#tableDescanso").dataTable({ //inicializar datatable
+                        lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]], //mostrar cantidad de registros
+                        bProcessing: true,
+                        serverSide: false,
+                        deferRender: true,
+                        stateSave: true,
+                        dom:
+                            "<'row sticky-top bg-white pb-2'<'col-12 flex-center-between'<'inputIniFin'>f>>" +
+                            "<'row'<'col-12 table-responsive't>>" +
+                            "<'row'<'col-12 col-sm-5'i><'col-12 col-sm-7 flex-center-end'p>>",
+                        ajax: {
+                            url: `data/getUsersDesc.php`,
+                            type: "POST",
+                            dataType: "json",
+                            data: function (data) {
+                                // data.sinTar = $("input[name=sinTar]:checked").val();
+                                // data.presentes = $("input[name=presentes]:checked").val();
+                                // data.FiltroAsignTarFechas = $("#FiltroAsignTarFechas").val();
+                            },
+                            error: function () {
+                                $("#tableDescanso").css("display", "none");
+                            }
+                        },
+                        createdRow: function (row, data, dataIndex) {
+                            if (dataIndex == 0) {
+                                $(row).addClass("table-light").css('outline', 'thin solid #cecece');
+                            }
+                            $(row).addClass("animate__animated animate__fadeIn");
+                        },
+                        columns: [
+                            /** Nombre */
+                            {
+                                className: "align-middle",
+                                targets: "",
+                                title: "<span class=''>Nombre</span>",
+                                render: function (data, type, row, meta) {
+                                    let nombre = (!row.TarDesNom) ? 'Descanso General' : row.TarDesNom
+                                    let datacol =
+                                        `
+                                        <div>${nombre}</div>
+                                        <div class="text-mutted font08">${row.TarDesLeg}</div>
+                                    `;
+                                    return '<div class="">' + datacol + '</div>';
+                                }
+                            },
+                            /** Inicio */
+                            {
+                                className: "align-middle text-center",
+                                targets: "",
+                                title: "",
+                                render: function (data, type, row, meta) {
+                                    let bgcolor = (row.TarDesIni == '00:00') ? 'bg-dark-lt' : ''
+                                    let datacol =
+                                        `
+                                            <input type="tel" id="ini_${row.TarDesUsr}" value="${row.TarDesIni}" class="${bgcolor} TarDesIni form-control selectInput">
+                                    `;
+                                    return `<div class="flex-center-center">${datacol}</div>`;
+                                }
+                            },
+                            /**  */
+                            {
+                                className: "text-center align-middle",
+                                targets: "",
+                                title: "",
+                                render: function (data, type, row, meta) {
+                                    return `<div>a</div>`;
+                                }
+                            },
+                            /** Fin */
+                            {
+                                className: "align-middle text-center",
+                                targets: "",
+                                title: "",
+                                render: function (data, type, row, meta) {
+                                    let bgcolor = (row.TarDesIni == '00:00') ? 'bg-dark-lt' : ''
+                                    let datacol =
+                                        `
+                                        <input type="tel" id="fin_${row.TarDesUsr}" value="${row.TarDesFin}" class="${bgcolor} TarDesFin form-control selectInput">
+                                    `;
+                                    return `<div class="flex-center-center">${datacol}</div>`;
+                                }
+                            },
+                            /** estado */
+                            {
+                                className: "align-middle text-center",
+                                targets: "",
+                                title: "",
+                                render: function (data, type, row, meta) {
+                                    let checked  = (row.TarDesEsta == '0') ? 'checked' : ''
+                                    let datacol =
+                                        `
+                                        <label class="form-switch m-0" data-titlel="Controla descanso">
+                                            <input ${checked} id="esta_${row.TarDesUsr}" class="form-check-input TarDesEsta" type="checkbox" value="1">
+                                        </label>
+                                    `;
+                                    return `<div class="flex-center-center">${datacol}</div>`;
+                                }
+                            },
+                            /** Confirm */
+                            {
+                                className: "align-middle text-center",
+                                targets: "",
+                                title: "",
+                                render: function (data, type, row, meta) {
+                                    return `<button type="button" class="btn btn-teal" data-titlel="Aplicar" id="assignDesc"><i class="bi bi-check"></i></button>`;
+                                }
+                            },
+                        ],
+                        paging: false,
+                        searching: true,
+                        info: false,
+                        ordering: false,
+                        language: {
+                            url: `../js/DataTableSpanishShort2.json?${Date.now()}`
+                        }
+                    });
+                    tableDescanso.on("init.dt", function (e, settings) { // Cuando se inicializa la tabla
+                        let idTable = `#${e.target.id}`; // Se obtiene el id de la tabla
+                        let lengthMenu = $(`${idTable}_length select`); // Se obtiene el select del lengthMenu
+                        $(lengthMenu).css("margin-top", "0px"); // Se agrega la clase h40 height: 50px
+                        let filterInput = $(`${idTable}_filter input`); // Se obtiene el input del filtro
+                        $(filterInput).attr({ placeholder: "Buscar" });
+                        $(filterInput).css("height", "40px"); // Se agrega la clase h40 height: 50px
+                        //$(`${idTable}_filter`).append("<div class=''><select class='selectTar form-control w300'></select></div>").addClass('w200'); // Se agrega la clase flex-center-center
+                        $(idTable).removeClass("invisible"); // Se remueve la clase invisible de la tabla
+
+                        $(idTable + " tbody").addClass('bg-white');
+                        $(idTable + " thead").remove()
+
+                        $('.inputIniFin').html(`
+                            <div class="flex-center-end">
+                                <div class="me-2">De</div> 
+                                <input type="tel" id="ini_" value="00:00" class="form-control selectInput">
+                                <div class="me-2 ms-1">a</div>
+                                <input type="tel" id="fin_" value="00:00" class="form-control selectInput">
+                                <button type="button" id="assignDescAll" class="btn btn-teal" data-titler="Aplicar a todo"><i class="bi bi-check-all"></i></button>
+                            </div>
+                        `)
+
+                        // $.each(settings.json.data, function (index, reg) {
+                        //     if (reg.TarDesUsr == null) {
+                        //         $("#ini_").val(reg.TarDesIni)
+                        //         $("#fin_").val(reg.TarDesFin)
+                        //         return false;
+                        //     }
+                        // })
+
+                        setTimeout(() => {
+                            $('.selectInput').mask('00:00', { reverse: false });
+                            $(document).on("click", ".selectInput", function (e) {
+                                e.preventDefault();
+                                $(this).select()
+                            });
+                        }, 100);
+                    });
+                    tableDescanso.on("draw.dt", function (e, settings) {
+                        e.preventDefault()
+                        $('.selectInput').mask('00:00', { reverse: false });
+                        if (settings.json) {
+                            $.each(settings.json.data, function (index, reg) {
+                                if (reg.TarDesUsr == null) {
+                                    setTimeout(() => {
+                                        $("#ini_").val(reg.TarDesIni)
+                                        $("#fin_").val(reg.TarDesFin)
+                                    }, 500);
+                                    return false;
+                                }
+                            })
+                        }
+                    });
+                });
+            });
+        e.stopImmediatePropagation();
+        setTimeout(() => {
+            document.getElementById('tarModal').addEventListener('hidden.bs.modal', function (event) {
+                $("#modales").html('');
+            });
+        }, 100);
+        e.stopPropagation();
+    });
+
+    $(document).on('change', '.selectInput', function (e) {
+        e.preventDefault();
+        if ($(this).val() == '00:00') {
+            $(this).addClass('bg-dark-lt')
+        } else {
+            $(this).removeClass('bg-dark-lt')
+        }
+    });
+    $(document).on('click', '#assignDescAll', function (e) {
+        e.preventDefault()
+        let data = new FormData();
+        data.append('setDescAll', '1');
+        data.append('ini', $("#ini_").val());
+        data.append('fin', $("#fin_").val());
+        axios({
+            method: "post",
+            url: 'op/crud.php',
+            data: data,
+            headers: { "Content-Type": "multipart/form-data" },
+        }).then(function (response) {
+            if (response.data) {
+                if (response.data.status == 'ok') {
+                    $.notifyClose();
+                    notify(response.data.Mensaje, "success", 2000, "right");
+                    $("#tableDescanso").DataTable().ajax.reload();
+                } else {
+                    $.notifyClose();
+                    notify(response.data.Mensaje, "danger", 2000, "right");
+                }
+            }
+        }).catch(function (error) {
+            alert(error);
+        })
+        e.stopImmediatePropagation();
+    });
+    $(document).on('click', '#assignDesc', function (e) {
+        e.preventDefault()
+        let dataRow = $('#tableDescanso').DataTable().row($(this).parents("tr")).data()
+        let dataDesc = new FormData();
+        dataDesc.append('setDesc', '1');
+        dataDesc.append('TarDesUsr', dataRow.TarDesUsr);
+        dataDesc.append('TarDesNom', dataRow.TarDesNom);
+        dataDesc.append('TarDesLeg', dataRow.TarDesLeg);
+        dataDesc.append('TarDesEsta', ($("#esta_" + dataRow.TarDesUsr+":checked").val() =='1') ? '0':'1');
+        dataDesc.append('TarDesIni', $("#ini_" + dataRow.TarDesUsr).val());
+        dataDesc.append('TarDesFin', $("#fin_" + dataRow.TarDesUsr).val());
+        dataDesc.append('usuarioUsr', dataRow.usuarioUsr);
+        axios({
+            method: "post",
+            url: 'op/crud.php',
+            data: dataDesc,
+            headers: { "Content-Type": "multipart/form-data" },
+        }).then(function (response) {
+            if (response.data) {
+                if (response.data.status == 'ok') {
+                    $.notifyClose();
+                    notify(response.data.Mensaje, "success", 2000, "right");
+                    $("#tableDescanso").DataTable().ajax.reload();
+                } else {
+                    $.notifyClose();
+                    notify(response.data.Mensaje, "danger", 2000, "right");
+                }
+            }
+        }).catch(function (error) {
+            alert(error);
+        })
+        e.stopImmediatePropagation();
+    });
 });

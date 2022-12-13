@@ -51,7 +51,7 @@ if (isset($where_condition) && $where_condition != '') {
     $queryCount .= $where_condition;
 }
 
-$query .=  " ORDER BY proy_proyectos.ProyFeHo DESC LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$query .=  " ORDER BY proy_proyectos.ProyNom DESC LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 $totalRecords = simple_pdoQuery($queryCount);
 $count = $totalRecords['count'];
 $records = array_pdoQuery($query);

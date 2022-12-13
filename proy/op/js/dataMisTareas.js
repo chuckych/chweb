@@ -89,8 +89,8 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let datacol =
                         `
-                            <span data-titler="(#${row.proyecto.ID}) ${row.proyecto.nombre}">
-                                <div class="text-truncate filterProy" data-id="${row.proyecto.ID}" data-text="${row.proyecto.nombre}" style="max-width:200px">(#${row.proyecto.ID}) ${row.proyecto.nombre}</div>
+                            <span data-titler="${row.proyecto.nombre}">
+                                <div class="text-truncate filterProy" data-id="${row.proyecto.ID}" data-text="${row.proyecto.nombre}" style="max-width:200px">${row.proyecto.nombre}</div>
                             </span>
                         `;
                     return '<div class="datacol">' + datacol + '</div>';
@@ -217,9 +217,22 @@ $(function () {
                 render: function (data, type, row, meta) {
                     let tiempo = '';
                     let text = ''
+                    // if (row.fechas.duracion) {
+                    //     tiempo = (row.fechas.duracionMin == 0) ? row.fechas.duracionMin + '<span class="font07 text-capitalize"> min</span>' : row.fechas.duracionHoras
+                    //     tiempo = `<span data-titlel="` + row.fechas.duracionHuman + `">
+                    //         <div class="font08 px-2 badge w60 bg-azure font-weight-normal flex-center-center"><span>`+ tiempo + `</span></div>
+                    //     </span>`
+                    //     text = "Duración"
+                    // } else {
+                    //     tiempo = (row.fechas.diff >= 60) ? row.fechas.diffHoras : row.fechas.diff + ' <span class="font07 text-capitalize"> min</span>'
+                    //     tiempo = `<span data-titlel="` + row.fechas.diffHuman + `">
+                    //         <div class="font08 px-2 badge w60 bg-red font-weight-normal flex-center-center"><span>`+ tiempo + `</span></div>
+                    //     </span>`
+                    //     text = "Tiempo"
+                    // }
                     if (row.fechas.duracion) {
-                        tiempo = (row.fechas.duracionMin == 0) ? row.fechas.duracionMin + '<span class="font07 text-capitalize"> min</span>' : row.fechas.duracionHoras
-                        tiempo = `<span data-titlel="` + row.fechas.duracionHuman + `">
+                        tiempo = (row.totales.min == 0) ? row.fechas.duracionMin + '<span class="font07 text-capitalize"> min</span>' : row.totales.horas
+                        tiempo = `<span>
                             <div class="font08 px-2 badge w60 bg-azure font-weight-normal flex-center-center"><span>`+ tiempo + `</span></div>
                         </span>`
                         text = "Duración"
@@ -328,13 +341,13 @@ $(function () {
         $(".divAltaTar").append('<button type="button" data-titlel="Actualizar Grilla" class="btn btn-link border-0 h40 d-none" id="btnActualizarGrillaTar"><i class="bi bi-arrow-clockwise font12"></i></button>');
         $(".divAltaTar").append('<button type="button" data-titlel="Nueva Tareas" class="btn btn-tabler h40 shadow d-none" id="btnAltaTar"><i class="bi bi-plus font12"></i></button><div class="textDate"></div>');  // Se agrega el boton de alta de tarea
         $(".divLimpiarSearch").append(`<button type="button" class="btn-close p-2 ms-2" aria-label="Close" id="limpiarSearch" style="display: none;"></button>`);  // Se agrega el boton de limpiar busqueda
-
         $(idTable).removeClass("invisible"); // Se remueve la clase invisible de la tabla
         $('.rowFilters').removeClass("invisible"); // Se remueve la clase invisible de la fila de filtros
         $(idTable + " tbody").on("click", ".viewTar", function (e) { // Se agrega el evento click al boton editar
             e.preventDefault();
             $.notifyClose() // Se cierra el notify
             let dataRow = $(idTable).DataTable().row($(this).parents("tr")).data(); // Se obtiene la fila seleccionada en la tabla
+            console.log(dataRow);
             fetch(`op/tarModal.php?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
                 .then(response => response.text()) // Se obtiene la respuesta
                 .then(data => {  // Se obtiene el html del modal
@@ -344,8 +357,8 @@ $(function () {
                     tarModal.show(); // Se muestra el modal
                     let estadoColor = (dataRow.estado == 'Pendiente') ? 'bg-red-lt' : 'bg-azure-lt'; // Se obtiene el color del estado
                     let tiempo = (dataRow.estado == 'Pendiente') ?
-                        '<span class="ms-2 badge bg-red-lt text-capitalize font08 p-2">' + dataRow.fechas.diffHoras + ' hs.</span>' :
-                        '<span class="ms-2 badge bg-blue-lt text-capitalize font08 p-2">' + dataRow.fechas.duracionHoras + ' hs.</span>';
+                        '<span class="ms-2 badge bg-red-lt text-capitalize font08 p-2">' + dataRow.fechas.diffHuman + ' hs.</span>' :
+                        '<span class="ms-2 badge bg-blue-lt text-capitalize font08 p-2">' + dataRow.totales.horas + ' hs.</span>';
 
                     (dataRow.estado == 'Pendiente') ? $("#tarModal .divFin").remove() : '';
                     $("#tarModal .modal-title").html("<div>TAREA #" + dataRow.TareID + "</div>"); // Se agrega el titulo del modal
@@ -521,26 +534,6 @@ $(function () {
             return d;
         }
 
-        $('.divFiltrosTar').on("click", ".procPend", function (e) { // Se agrega el evento click al boton procPend
-            $('.procPend').prop('disabled', true);
-
-            axios({
-                method: "post",
-                url: 'finalizar/process.php',
-                data: filters(),
-                headers: { "Content-Type": "multipart/form-data" },
-            }).then(function (response) {
-                $.notifyClose()
-                notify(response.data.Mensaje, "success", 2000, "right");
-            }).catch(function (error) {
-                alert(error);
-            }).then(function () {
-                $('.procPend').prop('disabled', false);
-                $("#tableTareas").DataTable().ajax.reload(null, false); // Se recarga la tabla
-            });
-        });
-
-
         $("#btnActualizarGrillaTar").click(function (e) {
             e.preventDefault();
             classEfect("#btnActualizarGrillaTar .bi", "animate__animated animate__rotateIn")
@@ -551,6 +544,7 @@ $(function () {
             .then(response => response.text()) // Se obtiene la respuesta
             .then(data => {
                 $(".divEstadoTar").html(data); // Se agrega el html al modal
+                $('.labelAsign').remove()
                 $('.divEstadoTar').on("click", ".form-selectgroup-input", function (e) {
                     loadingTable(idTable)
                     $("#tableTareas").DataTable().ajax.reload();
@@ -558,7 +552,6 @@ $(function () {
             });
         $(".divFiltrosTar").append('<button type="button" data-titlel="Filtros" class="shadow-sm ms-1 btn btn-outline-tabler h40 shadow" id="tarShowFiltros" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltrosTar" aria-controls="offcanvasFiltrosTar"><i class="bi bi-filter font12"></i></button>'); // Se agrega el boton de filtros
         $(".divFiltrosTar").append('<button class="shadow-sm ms-1 btn btn-outline-info h40 font08 tarLimpiaFiltro" data-titler="Limpiar Filtros"><i class="bi bi-eraser font1"></i></button>'); // Se agrega el boton de limpiar filtros
-
         fetch(`op/tarFiltros.php?${Date.now()}`).then(
             response => response.text()
         ).then(

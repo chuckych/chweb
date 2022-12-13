@@ -15,7 +15,6 @@ $(function () {
         }
         return $(data.html);
     }
-
     $("#ProyEmpr").select2({
         language: "es",
         multiple: false,

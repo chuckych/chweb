@@ -45,4 +45,7 @@
         </div>
     </div>
 </div>
-<script src="op/js/filtroProy.js?<?=microtime(true)?>"></script>
+<?php
+require_once __DIR__ . '../../../funciones.php';
+?>
+<script src="op/js/filtroProy.js?<?=version_file("/proy/op/js/filtroProy.js")?>"></script>

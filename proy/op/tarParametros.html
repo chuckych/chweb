@@ -48,4 +48,33 @@
             </div>
         </small>
     </div>
+    <div class="border p-3 mt-3 shadow-sm bg-azure-lt">
+        <div class="flex-center-start">
+            <label class="form-check form-switch flex-center-start">
+                <input class="form-check-input ProcDescTar" type="checkbox">
+                <div class="form-check-label font08 pt-1 ms-2">Descontar tiempo de descanso.</div>
+            </label>
+        </div>
+        <div class="flex-center-start mt-2">
+            <div class="me-2 font08 w80" data-titler="Tiempo a tomar en cuenta cuando una tarea finaliza o comienza dentro del horario de descanso">Tolerancia: </div>
+            <input style="height:30px" type="tel" class="w90 border-0 font08 text-center form-control MinimoDesc" placeholder="00:30" maxlength="5">
+            <div class="ms-2 font08">Hs. </div>
+        </div>
+        <div class="flex-center-start mt-3">
+            <button id="confDescanso" type="button" class="btn btn-azure font07"><i class="bi bi-gear me-1"></i>Configurar descanso</button>
+        </div>
+    </div>
+    <div class="border p-3 mt-3 shadow-sm bg-azure-lt">
+        <div class="flex-center-start">
+            <label class="form-check form-switch flex-center-start">
+                <input class="form-check-input ProcRedTar" type="checkbox">
+                <div class="form-check-label font08 pt-1 ms-2">Redondear finalización de tarea.</div>
+            </label>
+        </div>
+        <div class="flex-center-start mt-2">
+            <div class="me-2 font08 w150">Recorte y redondeo: </div>
+            <input style="height:30px" type="tel" class="w90 border-0 font08 text-center form-control RecRedTar" placeholder="15/30" maxlength="5">
+            <div class="ms-2 font08">Min</div>
+        </div>
+    </div>
 </div>

@@ -68,6 +68,11 @@ if (!$params['tarTotales']) {
         $TareHorCost  = $row['TareHorCost'];
         $TareHorHoras = $row['TareHorHoras'];
 
+        if ($TareHorHoras) {
+            $t = explode(':',$TareHorHoras);
+            $TareHorHoras = $t[0].':'.$t[1];
+        }
+
         Carbon::setLocale('es');
         setlocale(LC_TIME, 'es_ES.UTF-8');
 

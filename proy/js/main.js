@@ -422,13 +422,51 @@ const procPend = (reloadTable = false, selectortable) => {
 }
 function goInicio() {
     fetch("routes.php/?page=inicio")
-    .then(response => response.text())
-    .then(data => {
-        sessionStorage.setItem(
-            location.pathname.substring(1) + "proy_page",
-            "inicio"
-        );
-        $("#mainTitleBar").html(capitalize('inicio')); // Title
-        $("#contenedor").html(data);
-    });
+        .then(response => response.text())
+        .then(data => {
+            sessionStorage.setItem(
+                location.pathname.substring(1) + "proy_page",
+                "inicio"
+            );
+            $("#mainTitleBar").html(capitalize('inicio')); // Title
+            $("#contenedor").html(data);
+        });
+}
+function formatDate(date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    hour = d.getHours();
+    min = d.getMinutes();
+
+    if (month.length < 2)
+        month = '0' + month;
+    if (day.length < 2)
+        day = '0' + day;
+    let fecha = [day, month, year].join('/')
+    min = (min == 0) ? "0" + min : min
+    min = (min == 1) ? "0" + min : min
+    min = (min == 2) ? min + "0" : min
+    min = (min == 3) ? min + "0" : min
+    min = (min == 4) ? min + "0" : min
+    min = (min == 5) ? min + "0" : min
+    let hora = (hour) ? ' ' + hour + ':' + min : ''
+    return fecha + hora;
+}
+function formatHour(date) {
+    let d = new Date(date),
+        hour = d.getHours();
+    min = d.getMinutes();
+    min = (min < 10) ? "0" + min : min
+    hour = (hour < 10) ? "0" + hour : hour
+    let hora = (hour) ? ' ' + hour + ':' + min : ''
+    return hora;
+}
+function formatDuracion(hours) {
+    if (!hours) {  
+        return '' 
+    } 
+    let d = hours.split(':');
+    return(d[0]+':'+d[1]);
 }

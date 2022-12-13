@@ -9,4 +9,4 @@
         </div>
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/proy/selProc/dataSelProc.js?<?= vjs() ?>"></script>
+<script src="/<?= HOMEHOST ?>/proy/selProc/dataSelProc.js?<?=version_file("/proy/selProc/dataSelProc.js")?>"></script>

@@ -542,6 +542,10 @@ $(function () {
                         $('#LimpiarTarFecha').show();
                     }
                 });
+                $('.divEstadoTar #FiltroTarFechas').on('show.daterangepicker', function (ev, picker) {
+                    $('.divEstadoTar .daterangepicker').css('top', '140px')
+                    $('.divEstadoTar .daterangepicker').css('right', '150px')
+                });
             }
 
         }).catch(function (error) {

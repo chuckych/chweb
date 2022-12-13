@@ -25,6 +25,8 @@ $(function () {
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 10,
         maximumInputLength: opt2["MaxInpLength"],
+        templateResult: template,
+        // templateSelection: template,
         selectOnClose: opt2["SelClose"],
         language: {
             noResults: function () {

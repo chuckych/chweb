@@ -41,5 +41,5 @@
         </div>
     </div>
 </div>
-<script src="op/js/dataPlantillasPl.js?<?= vjs() ?>"></script>
-<script src="op/js/dataPlantillaPlanos.js?<?= vjs() ?>"></script>
+<script src="op/js/dataPlantillasPl.js?<?=version_file("/proy/op/js/dataPlantillasPl.js")?>"></script>
+<script src="op/js/dataPlantillaPlanos.js?<?=version_file("/proy/op/js/dataPlantillaPlanos.js")?>"></script>

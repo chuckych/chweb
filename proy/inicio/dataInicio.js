@@ -47,7 +47,7 @@ $(function () {
     });
 
     tableProy = $("#selectProy").dataTable({ //inicializar datatable
-        lengthMenu: [[6, 10, 25, 50, 100], [6, 10, 25, 50, 100]], //mostrar cantidad de registros
+        lengthMenu: [[12, 25, 50, 100], [12, 25, 50, 100]], //mostrar cantidad de registros
         bProcessing: true,
         serverSide: true,
         deferRender: true,
@@ -74,10 +74,10 @@ $(function () {
             let textHS = data.ProyCalc.Minutos < 60 ? 'Min' : 'Hs'
             horasProy = data.ProyCalc.Minutos < 60 ? data.ProyCalc.Minutos : horasProy
             if (data.ProyCalc.Minutos > 0) {
-                divHoras = `<span class="font08 px-3 d-none d-sm-block radius-0 badge bg-azure font-weight-normal">${horasProy}<span class="text-capitalize font07">${(textHS)}</span></span>`
+                divHoras = `<span class="font08 px-3 d-none radius-0 badge bg-azure font-weight-normal">${horasProy}<span class="text-capitalize font07">${(textHS)}</span></span>`
             }
             $('#listSelProyRow').append(`
-                <div class="col-12 col-sm-6">
+                <div class="col-12 col-sm-4">
                     <div 
                         data-EmpID="${data.ProyEmpr.ID}" 
                         data-EmpDesc="${data.ProyEmpr.Nombre}" 
@@ -94,7 +94,7 @@ $(function () {
                             <input class="form-check-input" type="checkbox" value="" id="proy_${data.ProyData.ID}">
                             <div class="d-inline-flex w-100">
                                 <label class="form-check-label h3 w-100" for="proy_${data.ProyData.ID}">
-                                <span class="ls1 text-secondary">(#${data.ProyData.ID})</span>  ${data.ProyData.Nombre}
+                                <span class="ls1 text-secondary d-none">(#${data.ProyData.ID})</span>  ${data.ProyData.Nombre}
                                 </label>
                                 ${divHoras}
                             </div> 
@@ -260,7 +260,7 @@ $(function () {
                     <div class="d-inline-flex justify-content-between w-100">
                         <div>
                             <div class="${row.fechas.inicioHora} h2">
-                                <span class="tracking-wide">(#${row.proyecto.ID})</span> ${row.proyecto.nombre}
+                                <span class="tracking-wide d-none">(#${row.proyecto.ID})</span> ${row.proyecto.nombre}
                             </div>
                             <div class="text-mutted font08 m-0 p-0">${row.proyecto.descripcion}</div>
                         </div>
