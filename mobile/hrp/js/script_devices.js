@@ -9,8 +9,8 @@ const loadingTableDevices = (selectortable) => {
 if ($(window).width() < 540) {
     tableDevices = $('#tableDevices').DataTable({
         dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-                "<'row '<'col-12 table-responsive't>>" +
-                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getDevicesMobile.php",
             type: "POST",
@@ -30,8 +30,17 @@ if ($(window).width() < 540) {
                         del = `<span class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`
                     }
                     let deviceEvent = (row.deviceEvent == '0') ? 'Sin Evento' : `Evento: <span class="ls1">${row.deviceEvent}</span>`
+
+                    let text        = row.appVersion;
+                    let myArray     = text.split(" - ");
+                    let appVersion  = myArray[0];
+                    let appVersion2 = myArray[1];
+
                     let datacol = `
-                    <div class="text-uppercase font-weight-bold text-secondary">${row.deviceName}</div>
+                    <div class="d-flex justify-content-between">
+                        <div class="text-uppercase font-weight-bold text-secondary">${row.deviceName}</div>
+                        <div class="text-secondary"><small>${appVersion} - ${appVersion2}</small></div>
+                    </div>
                     <div class="text-secondary">${deviceEvent}</div>
                     <div class="d-flex justify-content-end w-100">
                         <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom border bi bi-pen updDevice"></span>
@@ -58,7 +67,7 @@ if ($(window).width() < 540) {
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-    
+
     });
 } else {
     tableDevices = $('#tableDevices').DataTable({
@@ -93,12 +102,27 @@ if ($(window).width() < 540) {
                     let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
                     return datacol;
                 },
-            }, 
-             /** Columna cant TotalChecks */
-             {
+            },
+            /** Columna cant TotalChecks */
+            {
                 className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
                 "render": function (data, type, row, meta) {
                     let datacol = `<div class="ls1 w50">${row.totalChecks}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna appVersion */
+            {
+                className: 'align-middle', targets: '', title: '<div class="">Versión App</div>',
+                "render": function (data, type, row, meta) {
+                    let text = row.appVersion;
+                    let myArray = text.split(" - ");
+                    let appVersion = myArray[0];
+                    let appVersion2 = myArray[1];
+                    let datacol = `<div data-titler="${row.lastUpdate}">-</div>`
+                    if (myArray[0]) {
+                        datacol = `<div class="" data-titler="${row.lastUpdate}">${appVersion} - ${appVersion2}</div>`
+                    }
                     return datacol;
                 },
             },
@@ -137,7 +161,7 @@ if ($(window).width() < 540) {
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-    
+
     });
 }
 
@@ -145,7 +169,7 @@ if ($(window).width() < 540) {
 tableDevices.on('init.dt', function (e, settings) {
     $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h40 opa8 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
     $('#tableDevices_filter input').removeClass('form-control-sm')
-    $('#tableDevices_filter input').attr("style","height: 40px !important");
+    $('#tableDevices_filter input').attr("style", "height: 40px !important");
     select2Simple('#tableDevices_length select', '', false, false)
 });
 tableDevices.on('draw.dt', function (e, settings) {
@@ -186,7 +210,7 @@ $(document).on("click", ".addDevice", function (e) {
     }).then(function () {
         $("#formDevice").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formDevice #formDeviceTipo').val()) {
                 case 'del_device':
                     tipoStatus = 'eliminado';
@@ -196,7 +220,7 @@ $(document).on("click", ".addDevice", function (e) {
                     break;
                 case 'add_device':
                     tipoStatus = 'Creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -204,7 +228,7 @@ $(document).on("click", ".addDevice", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo='+ $('#formDevice #formDeviceTipo').val(),
+                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -216,7 +240,7 @@ $(document).on("click", ".addDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableDevices').DataTable().ajax.reload();
@@ -246,7 +270,7 @@ $(document).on("click", ".updDevice", function (e) {
     }).then(function (response) {
         $('#modales').html(response.data)
     }).then(function () {
-        $('#modalDevice .modal-title').html('Editar Dispositivo '+data.deviceName)
+        $('#modalDevice .modal-title').html('Editar Dispositivo ' + data.deviceName)
         $('#formDevicePhoneID').val(data.phoneID)
         $('#modalDevice').modal('show');
         $('#formDevice .requerido').html('(*)')
@@ -267,7 +291,7 @@ $(document).on("click", ".updDevice", function (e) {
     }).then(function () {
         $("#formDevice").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formDevice #formDeviceTipo').val()) {
                 case 'del_device':
                     tipoStatus = 'eEliminado';
@@ -277,7 +301,7 @@ $(document).on("click", ".updDevice", function (e) {
                     break;
                 case 'add_device':
                     tipoStatus = 'Creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -285,7 +309,7 @@ $(document).on("click", ".updDevice", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo='+ $('#formDevice #formDeviceTipo').val(),
+                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -297,7 +321,7 @@ $(document).on("click", ".updDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         // $('#table-mobile').DataTable().columns.adjust().draw();
@@ -328,7 +352,7 @@ $(document).on("click", ".delDevice", function (e) {
     }).then(function (response) {
         $('#modales').html(response.data)
     }).then(function () {
-        $('#modalDevice .modal-title').html('¿Eliminar Dispositivo '+data.deviceName+'?')
+        $('#modalDevice .modal-title').html('¿Eliminar Dispositivo ' + data.deviceName + '?')
         $('#modalDevice .modal-title').addClass('text-danger')
         $('#formDevicePhoneID').val(data.phoneID)
         $('#modalDevice').modal('show');
@@ -344,7 +368,7 @@ $(document).on("click", ".delDevice", function (e) {
     }).then(function () {
         $("#formDevice").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formDevice #formDeviceTipo').val()) {
                 case 'del_device':
                     tipoStatus = 'Eliminado';
@@ -354,7 +378,7 @@ $(document).on("click", ".delDevice", function (e) {
                     break;
                 case 'add_device':
                     tipoStatus = 'Creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -362,7 +386,7 @@ $(document).on("click", ".delDevice", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo='+ $('#formDevice #formDeviceTipo').val(),
+                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -374,7 +398,7 @@ $(document).on("click", ".delDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableDevices').DataTable().ajax.reload();
@@ -409,7 +433,7 @@ $(document).on("click", "#addDevice", function (e) {
         $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
         $('#formDevice #formDevicePhoneID').mask('00000000000000000000', { reverse: false });
         $('#formDevice #formDeviceTipo').val('add_device')
-        
+
         setTimeout(() => {
             $('#formDevice #formDevicePhoneID').focus();
             $('#formDevice #formDevicePhoneID').removeAttr('readonly')
@@ -422,7 +446,7 @@ $(document).on("click", "#addDevice", function (e) {
     }).then(function () {
         $("#formDevice").bind("submit", function (e) {
             e.preventDefault();
-            let tipoStatus ='';
+            let tipoStatus = '';
             switch ($('#formDevice #formDeviceTipo').val()) {
                 case 'del_device':
                     tipoStatus = 'eliminado';
@@ -432,7 +456,7 @@ $(document).on("click", "#addDevice", function (e) {
                     break;
                 case 'add_device':
                     tipoStatus = 'Creado';
-                    break;            
+                    break;
                 default:
                     tipoStatus = '';
                     break;
@@ -440,7 +464,7 @@ $(document).on("click", "#addDevice", function (e) {
             $.ajax({
                 type: $(this).attr("method"),
                 url: 'crud.php',
-                data: $(this).serialize() + '&tipo='+ $('#formDevice #formDeviceTipo').val(),
+                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
                 // dataType: "json",
                 beforeSend: function (data) {
                     CheckSesion()
@@ -452,7 +476,7 @@ $(document).on("click", "#addDevice", function (e) {
                     if (data.status == "ok") {
                         $.notifyClose();
                         let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />'+tipoStatus+' '+ 'correctamente.', 'success', 5000, 'right')
+                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
                         // $('#tableUsuarios').DataTable().ajax.reload();
                         $('#table-mobile').DataTable().ajax.reload(null, false);
                         $('#tableDevices').DataTable().ajax.reload();

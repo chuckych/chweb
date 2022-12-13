@@ -408,12 +408,14 @@ if ($flags_download == 2) {
     exit;
 }
 statusFlags(1, $pathFlags, $flags_lastDate); // marcar bandera de espera
-// $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
-$url   = "http://207.191.165.3:7500/attention/api/punch-event/get/" . $_GET['idPunch'];
+$url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/get/" . $_GET['idPunch'];
+// $url   = "http://207.191.165.3:7500/attention/api/punch-event/get/" . $_GET['idPunch'];
 
 $array2 = json_decode(getEvents($url), true);
 
+
 $payload[] = ($array2['payload']); 
+
 
 $array = array(
     'type'          => $array2['type'],
@@ -453,21 +455,15 @@ if (!empty($array)) {
         );
     }
 }
-
 if (!empty($arrayData)) {
 
     foreach ($arrayData as $key => $v) {
         $timestamp     = $v['dateTime'] ?? 0;
         $timestamp     = substr($timestamp, 0, 10);
 
-        // $dates         = new \DateTime();
-        // $dates         = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
-        // $dates->setTimestamp($timestamp);
-
         $dates = new DateTime("@" . $timestamp);  // will snap to UTC because of the 
         $dates->setTimezone(new DateTimeZone('America/Argentina/Buenos_Aires'));
-        echo $dates->format('Y-m-d H:i:s') . PHP_EOL;  // Buenos_Aires time    
-
+        $dates->format('Y-m-d H:i:s') . PHP_EOL;  // Buenos_Aires time    
 
         $fechaHora     = $dates->format('Y-m-d H:i:s');
         $fechaHoraCH   = $dates->format('Ymd');
@@ -525,9 +521,10 @@ if (!empty($arrayData)) {
             'id_api'        => $id_api
         );
     }
-
+    
     (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
+    
 
     $assoc = array(
         'flags' => array(
@@ -568,6 +565,7 @@ if (!empty($arrayData)) {
         $company[]      = "$companyCode";
         // if (($companyCode == $_SESSION['ID_CLIENTE'])) {
         $totalSession[] = ($companyCode);
+        // $totalSession[] = ($companyCode == '-1') ? 0: $companyCode;
         // }
         $employe[]      = "$employeId";
 
@@ -711,7 +709,7 @@ if (!empty($arrayData)) {
         }
     }
 
-    $totalSession = array_count_values($totalSession);
+    // $totalSession = array_count_values($totalSession);
     $end  = microtime(true);
     $time = round($end - $start, 2);
     header("Content-Type: application/json");
@@ -726,6 +724,7 @@ if (!empty($arrayData)) {
         'time'         => ($time),
         'total'        => count($arrayData),
         'totalSession' => reset($totalSession),
+        'arrayObj' => ($arrayObj),
         // 'data'      => $arrayData,
     );
     echo json_encode(array('Response' => $data), JSON_PRETTY_PRINT);

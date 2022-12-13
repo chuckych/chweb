@@ -5,6 +5,7 @@
         "mpdf/mpdf": "^8.0",
         "phpoffice/phpspreadsheet": "^1.14",
         "nesbot/carbon": "^2.57",
-        "minwork/array": "^1.13"
+        "minwork/array": "^1.13",
+        "mikecao/flight": "^1.3"
     }
 }

@@ -71,7 +71,7 @@ function validaKey()
 }
 if (!isset($params['key'])) {
     http_response_code(400);
-    (response(array(), 0, 'The Key is required', 400, 0,0, $idCompany));
+    (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
 }
 $textParams = '';
 
@@ -79,7 +79,7 @@ foreach ($params as $key => $value) {
     if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'userID' || $key == 'userName' || $key == 'status' || $key == 'userIDName') {
         continue;
     } else {
-        (response(array(), 0, 'Parameter error', 400, 0,0, $idCompany));
+        (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
         exit;
     }
 }
@@ -124,7 +124,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../_logs/getUsers/' . date('Ymd') . '_getUsers_'.padLeft($idCompany, 3, 0).'.log'; // path Log Api
+    $pathLog  = __DIR__ . '../../_logs/getUsers/' . date('Ymd') . '_getUsers_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -145,13 +145,18 @@ foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
         $vkey      = $value['recidCompany'];
+        $nameCompany = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
         $vkey      = '';
+        $nameCompany = '';
+        $urlAppMobile = '';
         continue;
     }
 }
+
 if (!$vkey) {
     http_response_code(400);
     (response(array(), 0, 'Invalid Key', 400, 0, 0, $idCompany));
@@ -192,6 +197,47 @@ $queryRecords = array_pdoQuery($sql_query);
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         // $Fecha = FechaFormatVar($r['fechaHora'], 'Y-m-d');
+
+        if ($r['expiredEnd'] != '0000-00-00') {
+
+            if (intval(FechaString($r['expiredEnd'])) < intval(date('Ymd'))) { // si la fecha de expired date es menor a la fecha actual. enviamos a la api la actualización de los datos y actualizamos el usuario local
+                $user[] = array(
+                    'idUser'           => $r['id_user'],
+                    'name'             => $r['nombre'],
+                    'status'           => 'OK',
+                    'comments'         => '',
+                    'locked'           => false,
+                    'expiredDateStart' => null,
+                    'expiredDateEnd'   => null
+                );
+                $loked =  ($r['estado'] == '0') ? false : true;
+                $body = [
+                    array(
+                        "id"               => intval($idCompany),
+                        "recid"            => "$vkey",
+                        "name"            => "$nameCompany",
+                        "locked"           => $loked,
+                        "expiredDateStart" => null,
+                        "expiredDateEnd"   => null,
+                        "users"            => $user
+                    )
+                ];
+                $payload = json_encode($body);
+                $sendApi = sendApiMobileHRP($payload, $urlAppMobile, 'attention/api/access/update-users', $idCompany);
+                $responseApi = (json_decode($sendApi));
+
+                if ($responseApi->type == 'success') {
+                    if (pdoQuery("UPDATE reg_user_ SET expiredStart = '0000-00-00', expiredEnd = '0000-00-00', motivo = '' WHERE id_user = $r[id_user] AND id_Company = $idCompany")) {
+                        $r['expiredEnd'] = '0000-00-00';
+                        $r['expiredStart'] = '0000-00-00';
+                        $r['motivo'] = '';
+                        $pathLog  = __DIR__ . '../../_logs/getUsers/' . date('Ymd') . '_getUsers_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+                        fileLog("Se actualizo usuario ($r[id_user]) $r[nombre]. Company = $idCompany", $pathLog); // Log Api
+                    }
+                }
+            }
+        }
+
         $arrayData[] = array(
             'lastUpdate'   => ($r['fechaHora']),
             'userID'       => intval($r['id_user']),

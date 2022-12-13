@@ -785,7 +785,7 @@ if ($verDB < 20220901) {
     pdoQuery("UPDATE reg_ r SET r.confidence = (100-r.confidence) WHERE r.confidence > 0");
     fileLog("UPDATE TABLE reg_ \"confidence\"", $pathLog); // escribir en el log
 
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20220901; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -801,7 +801,41 @@ if ($verDB < 20221116) {
     )COLLATE='utf8mb3_general_ci' ENGINE=MyISAM;");
     fileLog("CREATE TABLE \"reg_enroll\"", $pathLog); // escribir en el log
     
-    $verDB  = verDBLocal(); // nueva version de la DB
+    $verDB  = 20221116; // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+if ($verDB < 20221213) {
+    pdoQuery("ALTER TABLE `proy_proyectos` ADD COLUMN `ProyUsePlant` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `ProyEsta`;");
+    fileLog("ALTER TABLE \"proy_proyectos\" ADD COLUMN \"ProyUsePlant\"", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_device_` ADD COLUMN `regid` VARCHAR(200) NOT NULL DEFAULT '' AFTER `evento`");
+    fileLog("ALTER TABLE \"reg_device_\" ADD COLUMN \"regid\"", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_device_` ADD COLUMN `appVersion` VARCHAR(50) NOT NULL DEFAULT '' AFTER `regid`");
+    fileLog("ALTER TABLE \"reg_device_\" ADD COLUMN \"appVersion\"", $pathLog); // escribir en el log
+   
+    pdoQuery("ALTER TABLE `proy_tare_horas`
+        ADD COLUMN `TareHorHoras2` TIME NOT NULL AFTER `TareHorHoras`,
+        ADD COLUMN `TareHorMin2` INT(10) NOT NULL AFTER `TareHorMin`,
+        ADD COLUMN `TareHorCost2` DECIMAL(20,2) NOT NULL DEFAULT '0.00' AFTER `TareHorCost`;");
+    fileLog("ALTER TABLE \"proy_tare_horas\" ADD COLUMN \"TareHorHoras2, TareHorMin2, TareHorCost2\"", $pathLog); // escribir en el log
+
+    pdoQuery("CREATE TABLE IF NOT EXISTS `proy_tareas_desc` (
+        `TarDesUsr` INT(10) NULL DEFAULT NULL,
+        `TarDesIni` TIME NOT NULL,
+        `TarDesFin` TIME NOT NULL,
+        `TarDesEsta` ENUM('0','1') NOT NULL DEFAULT '0' COLLATE 'utf8mb3_general_ci',
+        `TarDesFeHo` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        UNIQUE INDEX `UniqueUser` (`TarDesUsr`) USING BTREE,
+        INDEX `ÍndiceFecha` (`TarDesFeHo`) USING BTREE,
+        CONSTRAINT `FK_proy_tareas_desc_usuarios` FOREIGN KEY (`TarDesUsr`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+    )
+    COLLATE='utf8mb3_general_ci'
+    ENGINE=InnoDB;");
+    fileLog("CREATE TABLE \"proy_tareas_desc\"", $pathLog); // escribir en el log
+    
+    $verDB  = 20221213; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }

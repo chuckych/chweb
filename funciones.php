@@ -1,11 +1,11 @@
 <?php
 function version()
 {
-    return 'v0.0.264'; // Version de la aplicación
+    return 'v0.0.265'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20221116; // Version de la base de datos local
+    return 20221213; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -173,7 +173,10 @@ function vjs()
     }
 }
 function version_file($pathFile){
-    return FileSize(dirname(__FILE__). $pathFile). '.'. FilemTime(dirname(__FILE__). $pathFile);
+    if($pathFile){
+        return filesize(dirname(__FILE__). $pathFile). '.'. filemtime(dirname(__FILE__). $pathFile);
+    }
+    return time();
 }
 function API_KEY_MAPS()
 {
@@ -985,6 +988,7 @@ function fechformat2($var)
 }
 function FechaFormatH($FechaHora)
 {
+    if(!$FechaHora){ return false; }
     $dato = date_create($FechaHora);
     $var  = date_format($dato, "d/m/Y H:i");
     return $var;
@@ -4197,8 +4201,12 @@ function confTar($assoc, $path)
     }
     $content .= "## REFERENCIAS: ##\n";
     $content .= ";ProcPendTar : Procesar Tareas Pendientes. \"1\" = Si, \"0\" = No \n";
+    $content .= ";ProcDescTar : Procesar Tiempo de descanso. \"1\" = Si, \"0\" = No \n";
     $content .= ";HoraCierre  : Hora de cierre del día para cerrar tareas pendientes. De \"00:00\" a \"23:59\"\n";
+    $content .= ";MinimoDesc  : Tiempo Minimo de horario de descanso.\n";
     $content .= ";LimitTar    : Hora límite para cerrar tareas pendientes. De \"0\" a \"9999\"\n";
+    $content .= ";ProcRedTar  : Redondear finalizacion de tarea. De \"0\" a \"9999\"\n";
+    $content .= ";RecRedTar   : Recorte y redondeo de finalizacion de tarea.";
     $success = fwrite($handle, $content);
     fclose($handle);
     return $success;
@@ -4217,9 +4225,9 @@ function getConfTar()
  */
 function calcLimitTar($start, $end)
 {
-    $getConfTar = ((getConfTar()['confTar'])); // Obtenemos el limite de tiempo de la tarea en minutos
-    $getlimitTar = (($getConfTar['LimitTar'])); // Obtenemos el limite de tiempo de la tarea en minutos
-    $limitTar = intval($getlimitTar) * 60; // Convertimos el limite de tiempo a segundos
+    $getConfTar = ((getConfTar()['confTar'])); // Obtenemos configuración de confTarea.php en una array
+    $getlimitTar = (($getConfTar['LimitTar'])); // Obtenemos el limite de tiempo de la tarea en horas
+    $limitTar = intval($getlimitTar) * 60; // Convertimos el limite de tiempo a minutos
     $diffStartEnd  = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
     $obj =  array(
         'status'   => ($diffStartEnd > $limitTar) ? 1 : 0,

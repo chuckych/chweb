@@ -220,6 +220,7 @@ if (($queryRecords)) {
             $type = '';
             $filesize = '';
             $FileSizeConvert = '';
+            $imageTypeArray['JPEG'] = '';
         }
 
         if ($size) {

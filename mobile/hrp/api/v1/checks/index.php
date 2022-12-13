@@ -251,27 +251,7 @@ $sql_query .= $filtro_query;
 $total = rowCount_pdoQuery($sql_query);
 $sql_query .= " ORDER BY r.fechaHora DESC, r.createdDate DESC";
 $sql_query .= " LIMIT $start, $length";
-$imageTypeArray = array(
-    0  => 'UNKNOWN',
-    1  => 'GIF',
-    2  => 'JPEG',
-    3  => 'PNG',
-    4  => 'SWF',
-    5  => 'PSD',
-    6  => 'BMP',
-    7  => 'TIFF_II',
-    8  => 'TIFF_MM',
-    9  => 'JPC',
-    10 => 'JP2',
-    11 => 'JPX',
-    12 => 'JB2',
-    13 => 'SWC',
-    14 => 'IFF',
-    15 => 'WBMP',
-    16 => 'XBM',
-    17 => 'ICO',
-    18 => 'COUNT'
-);
+$imageTypeArray = array( 0=>'UNKNOWN', 1=>'GIF', 2=>'JPEG', 3=>'PNG', 4=>'SWF', 5=>'PSD', 6=>'BMP', 7=>'TIFF_II', 8=>'TIFF_MM', 9=>'JPC', 10=>'JP2', 11=>'JPX', 12=>'JB2', 13=>'SWC', 14=>'IFF', 15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT');
 function human_filesize($bytes, $decimals = 2)
 {
     $sz = 'BKMGTP';

@@ -42,8 +42,10 @@ if ($api['COUNT'] > 0) {
             'deviceEvent' => $r['deviceEvent'],
             'phoneID'     => $r['phoneID'],
             'idCompany'   => $r['idCompany'],
-            'lastUpdate'  => $r['lastUpdate'],
             'totalChecks' => $r['totalChecks'],
+            'regid'       => $r['regid'],
+            'appVersion'  => $r['appVersion'],
+            'lastUpdate'   => ($r['lastUpdate']),
         );
     }
 }

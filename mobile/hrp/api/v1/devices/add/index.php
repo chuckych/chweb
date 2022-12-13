@@ -1,7 +1,5 @@
 <?php
 require __DIR__ . '../../../../../../../config/index.php';
-// require __DIR__ . '../../../../../vendor/autoload.php';
-// use Carbon\Carbon;
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
@@ -202,7 +200,14 @@ if ($a > 0) {
     exit;
 }
 
-$sql_query = "INSERT INTO `reg_device_` (`phoneid`, `id_company`, `nombre`, `evento`) VALUES ('$devicePhoneID', '$idCompany', '$deviceName', '$deviceEvent')";
+/** Buscamos el ultimo regid del phone ID */
+$q2 = "SELECT regid, appVersion FROM reg_ WHERE phoneid = '$devicePhoneID' ORDER BY rid DESC LIMIT 1";
+$a2 = simple_pdoQuery($q2);
+$a2['regid'] = $a2['regid'] ?? '';
+$a2['appVersion'] = $a2['appVersion'] ?? '';
+/** */
+
+$sql_query = "INSERT INTO `reg_device_` (`phoneid`, `id_company`, `nombre`, `evento`, `regid`, `appVersion`) VALUES ('$devicePhoneID', '$idCompany', '$deviceName', '$deviceEvent', '$a2[regid]', '$a2[appVersion]')";
 
 $insert = pdoQuery($sql_query);
 if ($insert) {

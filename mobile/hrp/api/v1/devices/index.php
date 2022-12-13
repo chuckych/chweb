@@ -181,6 +181,8 @@ if (($queryRecords)) {
             'lastUpdate'  => ($r['fechahora']),
             'phoneID'     => $r['phoneid'],
             'totalChecks' => ($r['totalChecks']),
+            'appVersion'  => ($r['appVersion']),
+            'regid'       => ($r['regid']),
         );
     }
     $q = "SELECT COUNT(*) AS 'count' FROM `reg_device_` `rd` WHERE `rd`.`id` > 0";

@@ -17,13 +17,57 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
     exit;
 }
 
+require __DIR__ . '../../../vendor/autoload.php';
+
+use Carbon\Carbon;
+
+function diffStartEnd($start, $end)
+{
+    Carbon::setLocale('es');
+    setlocale(LC_TIME, 'es_ES.UTF-8');
+    $f      = Carbon::parse($start);
+    $f2     = Carbon::parse($end);
+    $d2 = $f->diffForHumans(null, false, false, 2);
+    $diffInSeconds = $f2->diffInSeconds($f);
+    $diffInMinutes = $f2->diffInMinutes($f);
+    $totalDuration = $diffInSeconds;
+    $totalDuration = gmdate("H:i:s", $totalDuration);
+    $totalDuration = ($end == '0000-00-00 00:00:00') ? '' : $totalDuration;
+    $tareDiff = trim(str_replace('hace', '', $d2));
+    $t = array(
+        'diffIni' => $tareDiff,
+        'duration' => $totalDuration,
+        'diffInSeconds' => $diffInSeconds,
+        'diffInMinutes' => $diffInMinutes
+    );
+    return $t;
+}
 function E_ALL()
 {
     error_reporting(E_ALL);
     ini_set('display_errors', '0');
 }
 E_ALL();
-
+function sendMessaje($url, $payload, $timeout = 10)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    $headers = [
+        'Accept' => '*/*',
+        'Accept-Encoding' => 'gzip, deflate, br',
+        'Content-Type: application/json',
+        'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8',
+        'Connection' => 'keep-alive'
+    ];
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    $file_contents = curl_exec($ch);
+    curl_close($ch);
+    return ($file_contents) ? $file_contents : false;
+    exit;
+}
 function MSQuery($query)
 {
     $params    = array();
@@ -396,7 +440,8 @@ $totalSession  = array();
 $distancia2 = '';
 
 $start = microtime(true);
-
+$fechaHora = '';
+$phoneid = '';
 if ($flags_download == 2) {
     $data = array(
         'Mensaje' => 'Aguarde. Hay procesos de descarga en ejecucion.',
@@ -409,8 +454,8 @@ if ($flags_download == 2) {
     exit;
 }
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
-// $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
-$url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
+$url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
+// $url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
 // $url   = "http://207.191.165.3:7500/attention/api/punch-event/light/" . $flags_lastDate; // SIN FOTO
 $array = json_decode(getEvents($url), true);
 if (!empty($array['payload'])) {
@@ -448,6 +493,10 @@ if (!empty($array['payload'])) {
 if (!empty($arrayData)) {
 
     foreach ($arrayData as $key => $v) {
+
+        // $LastStart = ($fechaHora) ? $fechaHora : '';
+        // $LastPhoneID = ($phoneid) ? $phoneid : '';
+               
         $timestamp     = $v['dateTime'] ?? 0;
         $timestamp     = substr($timestamp, 0, 10);
 
@@ -489,7 +538,110 @@ if (!empty($arrayData)) {
         $confidence    = $v['confidence'] ?? '';
         $locked        = $v['locked'];
         $error         = $v['error'];
-        $id_api         = $v['id_api'];
+        $id_api        = $v['id_api'];
+
+        
+
+        if ($companyCode == '-1') {
+            $go = true;
+            // $tmef = simple_pdoQuery("SELECT MAX(`fechaHora`) AS 'fechaHora'  FROM `reg_` WHERE `phoneid` = '$phoneid'");
+
+            // if ($LastStart = $fechaHora && $LastPhoneID = $phoneid) {
+            //     // $LastStart = $tmef['fechaHora']; // Fecha Hora de la ultima fichada
+            //     $end   = $fechaHora; // Fecha Hora de la fichada entrante
+            //     $go    = (diffStartEnd($LastStart, $end)['diffInMinutes'] > 1) ? true : false; // si la diferencia es mayor a 1 minutos go true
+            //     $pathDiff = __DIR__ . '/logs/' . date('Ymd') . '_tmef.log';
+            //     ($go) ? fileLog("TMEF = ".diffStartEnd($LastStart, $end)['diffInMinutes'], $pathDiff) : fileLog("TMEF = ".diffStartEnd($LastStart, $end)['diffInMinutes'], $pathDiff);
+            // }
+            if ($go) {
+                // do {
+                    $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_setting_auto_mobile.log'; // ruta del archivo de Log de errores
+                    // Si el ID Company es -1 actualizamos el telefono si el phone id tiene un alias asociado
+                    $q = "SELECT regid, id_company FROM reg_device_ WHERE phoneid = $phoneid and regid != '' LIMIT 1";
+                    $aq = simple_pdoQuery($q); //Buscamos el regis en los dispositivos
+                    $aqjson = json_encode($aq);
+                    ($aq) ? fileLog("Se encontro phoneID en Dispositivos. Usuario = $employeId. phoneID = $phoneid. IDCompany $aq[id_company]\n$aqjson", $pathLog) : '';
+                    if (!$aq) {
+                        fileLog("No se encontro phoneID en dispositivos. Usuario = $employeId. phoneID = $phoneid. IDCompany $aq[id_company]\n$aqjson", $pathLog);
+                        //  Si no hay regid en dispositivos busvamos en la ultima fichada del phoneid
+                        $q = "SELECT regid, id_company FROM reg_ WHERE phoneid = '$phoneid' AND id_company > 0 ORDER BY rid DESC LIMIT 1";
+                        $aq = simple_pdoQuery($q);
+                        $aqjson = json_encode($aq);
+                        fileLog("Se encontro phoneID en fichadas. Usuario = $employeId. phoneID = $phoneid. IDCompany $aq[id_company]\n$aqjson", $pathLog);
+                    }
+                    if ($aq) {
+                        $q2 = "SELECT nombre, recid FROM clientes WHERE id = $aq[id_company] LIMIT 1";
+                        $aq2 = simple_pdoQuery($q2);
+                        $aq2json = json_encode($aq2);
+                        $cancellationReasons[] = '';
+                        $operations[] = '';
+                        $dataSend = array(
+                            'eventType'           => 0,
+                            'apiKey'              => '7BB3A26C25687BCD56A9BAF353A78',
+                            'companyCode'         => $aq['id_company'],
+                            'employeId'           => $employeId,
+                            "recid"               => $aq2['recid'],
+                            'notificationId'      => 195,
+                            'locationIp'          => "http://190.7.56.83",
+                            'serverIp'            => "http://awsapi.chweb.ar:7575",
+                            'updateInterval'      => 90,
+                            'fastestInterval'     => 60,
+                            'cancellationReasons' => $cancellationReasons,
+                            'operations'          => $operations
+                        );
+                        $data2 = array(
+                            'to' => $aq['regid'],
+                            'data' => array('data' => $dataSend)
+                        );
+                        $payload = json_encode($data2);
+                        $url = 'https://fcm.googleapis.com/fcm/send';
+                        $sendSettings = sendMessaje($url, $payload, 10);
+                        $responseSettings = json_decode($sendSettings)->results;
+                        $responseSettings = json_encode($responseSettings);
+                        if (json_decode($sendSettings)->success == 1) {
+                            fileLog("Setting enviado. Usuario = $employeId. phoneID = $phoneid\n$responseSettings\n$aq2json", $pathLog); // escribir en el log
+                            /** Enviamos un mensaje al usuario  * */
+
+                            $mensaje[] = "Dispositivo configurado correctamente. \nFiche nuevamente.\nGracias\n" . date('d/m/Y H:m');
+
+                            $dataMsg = array(
+                                'notificationId' => 1,
+                                'description' => $mensaje,
+                                'eventType' => 1
+                            );
+
+                            $dataMsg = array(
+                                'data' => array('data' => $dataMsg),
+                                'to' => $aq['regid']
+                            );
+
+                            $payloadMsg = json_encode($dataMsg);
+                            sleep(2);
+                            $sendMensaje = sendMessaje($url, $payloadMsg, 10);
+                            $responseMsg = json_decode($sendMensaje)->results;
+                            $responseMsg = json_encode($responseMsg);
+                            if (json_decode($sendMensaje)->success == 1) {
+                                fileLog("Mensaje enviado. Usuario = $employeId. phoneID = $phoneid\n$responseMsg", $pathLog);
+                            } else {
+                                fileLog("Mensaje NO enviado. Usuario = $employeId. phoneID = $phoneid\n$responseMsg", $pathLog);
+                            }
+                            /**
+                             *  Fin de mensaje
+                             */
+                        } else {
+                            fileLog("Setting no enviado. Usuario = $employeId. phoneID = $phoneid\n$responseMsg\n$aq2json", $pathLog); // escribir en el log de errores
+                        }
+                    } else {
+                        fileLog("No existe phone ID en la base de datos. Usuario = $employeId. phoneID = $phoneid\n", $pathLog); // escribir en el log
+                    }
+                    fileLog("--------------------------------------------------------", $pathLog);
+                    $go = false;
+                // } while ($go);
+            }
+        }
+
+        pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
+        pdoQuery("UPDATE reg_device_ SET appVersion = '$appVersion', regid = '$regid' WHERE phoneid = $phoneid AND id_company = $companyCode");
 
         $arrayObj[] = array(
             'fechaHora'     => $fechaHora,
@@ -702,7 +854,7 @@ if (!empty($arrayData)) {
         }
     }
 
-    $totalSession = array_count_values($totalSession);
+    // $totalSession = array_count_values($totalSession);
     $end  = microtime(true);
     $time = round($end - $start, 2);
     header("Content-Type: application/json");
@@ -713,13 +865,12 @@ if (!empty($arrayData)) {
         'employe'      => array_count_values($employe),
         'iCH_Fail'     => ($insertCH_Fail),
         'iCH_OK'       => ($insertCH),
-        'status'       => 'ok',
         'time'         => ($time),
         'total'        => count($arrayData),
-        'totalSession' => reset($totalSession),
         // 'data'      => $arrayData,
     );
-    echo json_encode(array('Response' => $data), JSON_PRETTY_PRINT);
+    $respuesta = json_encode(array($data), JSON_PRETTY_PRINT);
+    fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_aws_task.log');
     statusFlags(1, $pathFlags, $first_element['createdDate']); // marcar bandera de descarga
     fileLogJson($first_element['createdDate'], 'createdDate.json', false); // un json con la fecha de la ultima descarga
     exit;
@@ -737,6 +888,7 @@ if (!empty($arrayData)) {
         'time'    => ($time),
         'total'   => count($arrayData),
     );
-    echo json_encode(array('Response' => $data), JSON_PRETTY_PRINT);
+    // $respuesta = 'No hay registros nuevos';
+    // fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_aws_task.log');
     exit;
 }
