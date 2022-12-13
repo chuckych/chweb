@@ -414,6 +414,15 @@ $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/get/" . $_GET['i
 $array2 = json_decode(getEvents($url), true);
 
 
+$array2['status'] = $array2['status'] ?? '';
+// print_r($array2['status']).exit;
+
+if ($array2['status'] == 500) {
+    $err = array("error" => $array2['error']);
+    echo json_encode($err);
+    exit;
+}
+
 $payload[] = ($array2['payload']); 
 
 
