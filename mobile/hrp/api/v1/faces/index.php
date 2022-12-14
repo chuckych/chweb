@@ -161,7 +161,7 @@ $filtro_query = '';
 $filtro_query .= " AND r.id_company = $idCompany";
 $filtro_query .= " AND r.id_user = '$userID'";
 $filtro_query .= ($notIdPunchEvent) ? " AND r.id_api NOT IN ($notIdPunchEvent)" : '';
-$filtro_query .= " AND r.id_api > 0";
+$filtro_query .= " AND r.id_api > 4501";
 $filtro_query .= " AND r.attphoto = '0'";
 $sql_query .= $filtro_query;
 // echo $filtro_query;exit;
