@@ -128,15 +128,18 @@ $(function () {
         });
 
         $('.divAsign').on("click", "#btnAplicarPlantilla", function (e) {
-
-            let checked = new Array();
-            $(`${idTable} input:checkbox`).each(function () {
-                if ($(this).is(':checked')) {
-                    (checked.push(parseInt($(this).val()))); /** Array de checkbox checked*/
-                }
-            });
-            $.notifyClose();
-            asignPlano(checked);
+            $(idTable).DataTable().search('')
+            // $(idTable).DataTable().ajax.reload()
+            setTimeout(() => {
+                let checked = new Array();
+                $(`${idTable} input:checkbox`).each(function () {
+                    if ($(this).is(':checked')) {
+                        (checked.push(parseInt($(this).val()))); /** Array de checkbox checked*/
+                    }
+                });
+                $.notifyClose();
+                asignPlano(checked);
+            }, 500);
         });
         $(".divFilaPlanPlano").hide();
         // setTimeout(() => {

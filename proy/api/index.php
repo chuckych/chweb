@@ -4,34 +4,49 @@ require __DIR__ . '../../../config/index.php';
 header("Content-Type: application/json");
 
 use Carbon\Carbon;
+$rsEnd = false;
+$data = array();
+$request = Flight::request();
 
-Flight::route('GET|POST /redondear', function () {
+$endPoints=array("/?redondear=1", "/?descanso=1");
 
-    $fechahora = (Flight::request()->data->datetime);
-    // $userID = (Flight::request()->data->userID);
+foreach ($endPoints as $v) {
+    if ($v == $request->url) {
+        $rsEnd = true;
+    }
+}
+
+if (!$rsEnd) {
+    $data = array(
+        'status'  => 'error',
+        'msg'     => 'Not Found: ' . $request->url,
+    );
+    Flight::json($data, 404);
+    exit;
+}
+
+if ($request->method != 'POST') {
+    $data = array(
+        'status'  => 'error',
+        'msg'     => 'Method Not Allowed: ' . $request->method,
+        'request' => $request,
+    );
+    Flight::json($data, 405);
+    exit;
+}
+
+if ($request->query->redondear == '1') {
+
+    $fechahora = ($request->data->datetime);
 
     if (empty($fechahora)) {
         $data = array(
             'status'    => 'error',
             'msg'       => 'datetime required',
         );
-        Flight::json($data);
+        Flight::json($data, 400);
         exit;
     }
-
-    // $rsUser = simple_pdoQuery("SELECT * FROM proy_tareas_desc WHERE TarDesUsr = $userID LIMIT 1");
-
-    // if ($rsUser['TarDesEsta'] == '1') {
-    //     $data = array(
-    //         'status'    => 'ok',
-    //         'msg'       => '',
-    //         "resultado" => $fechahora,
-    //         "redondear" => 0,
-    //         "limite"    => 0
-    //     );
-    //     Flight::json($data);
-    //     exit;
-    // }
 
     foreach (getConfTar() as $v) {
         $confTar = array(
@@ -66,7 +81,8 @@ Flight::route('GET|POST /redondear', function () {
             $minimumMoment   = $date->subMinute($limite);
             $futureTimestamp = ceil($minimumMoment->timestamp / $nearestSec) * $nearestSec;
             $futureMoment    = Carbon::createFromTimestamp($futureTimestamp);
-            return $futureMoment->startOfMinute()->format("Y-m-d H:i");
+            $futureMoment->startOfMinute()->format("Y-m-d H:i");
+            return ($futureMoment);
         } catch (exception $e) {
             $data = array(
                 'status'    => 'error',
@@ -75,15 +91,16 @@ Flight::route('GET|POST /redondear', function () {
                 "redondear" => $redondearEn,
                 "limite"    => $limite
             );
-            Flight::json($data);
+            Flight::json($data, 400);
             exit;
         }
     }
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
         $rs = (redondear($fechahora, $redondear, $limite));
+        $rs  = new DateTime($rs);
     } else {
         $d  = new DateTime($fechahora);
-        $rs = $d->format("Y-m-d H:i");
+        $rs = $d;
     }
 
     $data = array(
@@ -95,10 +112,9 @@ Flight::route('GET|POST /redondear', function () {
     );
     Flight::json($data);
     exit;
-});
+}
 
-Flight::route('GET|POST /descanso', function () {
-
+if ($request->query->descanso == '1') {
     foreach (getConfTar() as $key => $v) {
         $confTar = array(
             'ProcDescTar' => $v['ProcDescTar'],
@@ -107,10 +123,9 @@ Flight::route('GET|POST /descanso', function () {
         );
     }
 
-    $start = (Flight::request()->data->start);
-    $end   = (Flight::request()->data->end);
-    $user  = (Flight::request()->data->user);
-
+    $start = ($request->data->start);
+    $end   = ($request->data->end);
+    $user  = ($request->data->user);
 
     try {
         $start  = new DateTime($start);
@@ -118,9 +133,9 @@ Flight::route('GET|POST /descanso', function () {
     } catch (exception $e) {
         $data = array(
             'status'    => 'error',
-            'msg'       => $e->getMessage(),
+            'msg'       => $e->getMessage()
         );
-        Flight::json($data);
+        Flight::json($data, 400);
         exit;
     }
     try {
@@ -129,9 +144,9 @@ Flight::route('GET|POST /descanso', function () {
     } catch (exception $e) {
         $data = array(
             'status'    => 'error',
-            'msg'       => $e->getMessage(),
+            'msg'       => $e->getMessage()
         );
-        Flight::json($data);
+        Flight::json($data, 400);
         exit;
     }
 
@@ -246,7 +261,7 @@ Flight::route('GET|POST /descanso', function () {
         }
         /** */
         /** particion 3 * (dentro del horario de descanso)*/
-        $diff_3 = ($a1 >= $b1 && $d1 <= $c1) ? diffStartEnd($d, $d) : 0;
+        $diff_3 = ($a1 >= $b1 && $d1 <= $c1) ? diffStartEnd($a, $d) : 0;
         (!$diff_3) ? '' : $status = 'error' . $msg = 'Horas calculadas dentro del intervalo de descanso';
         /** */
         /** particion 4 * ejemplo de 11:00 a 14:00 (antes y despues del descanso)*/
@@ -292,13 +307,13 @@ Flight::route('GET|POST /descanso', function () {
         }
 
         $calcDesc = array(
-            // "part_1"    => $diff_1['diffInMinutes'],
-            // "part_2"    => $diff_2['diffInMinutes'],
-            // "part_3"    => $diff_3['diffInMinutes'],
-            // "part_4"    => $diff_4['diffInMinutes'],
-            // "part_5"    => $diff_5['diffInMinutes'],
-            // "part_6"    => $diff_6['diffInMinutes'],
-            // "part_desc" => $diff_desc['diffInMinutes'],
+            "part_1"    => $diff_1['diffInMinutes'],
+            "part_2"    => $diff_2['diffInMinutes'],
+            "part_3"    => $diff_3['diffInMinutes'],
+            "part_4"    => $diff_4['diffInMinutes'],
+            "part_5"    => $diff_5['diffInMinutes'],
+            "part_6"    => $diff_6['diffInMinutes'],
+            "part_desc" => $diff_desc['diffInMinutes'],
             "tipo"      => '1', // en descanso
             "min"       => $totalMin,
             "horas"     => MinHora($totalMin)
@@ -329,12 +344,11 @@ Flight::route('GET|POST /descanso', function () {
     $data = array(
         'totales' => $calculos,
         'status'   => 'ok',
-        'msg'      => $msg
+        'msg'      => $msg,
     );
 
     Flight::json($data);
     exit;
-});
+}
 
-Flight::start();
-// Flight::set('flight.log_errors', true);
+// Flight::start();

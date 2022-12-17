@@ -362,6 +362,9 @@ $(function () {
     } //fin bindForm
     tableProyectos.on("init.dt", function (e, settings) { // Cuando se inicializa la tabla
         let idTable = `#${e.target.id}`; // Se obtiene el id de la tabla
+        if ($("#tableProyectos_filter input").val()){ // si el input searchbox de la tabla tiene contenido. Lo lomipiamos y digujamos la tabla nuevamente
+            $(idTable).DataTable().search('').draw()
+        }
         $("thead").remove(); // Se remueve el thead
         let lengthMenu = $(`${idTable}_length select`); // Se obtiene el select del lengthMenu
         $(lengthMenu).addClass("h50"); // Se agrega la clase h40 height: 50px

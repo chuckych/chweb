@@ -37,7 +37,6 @@ function TareFinTipo($TareFinTipo, $TareFin)
 	}
 	return $tft;
 }
-
 function redondearTareFin($tareID, $fechahora)
 {
 	/** redondeamos TareHoraFin */
@@ -45,7 +44,7 @@ function redondearTareFin($tareID, $fechahora)
 	$d       = getIniCuenta($idCtar['recid']);
 	$params  = array("datetime" => $fechahora);
 	$urlHost = $d['hostCHWeb']; // Obtener el host de la cuenta
-	$url     = $urlHost . "/" . HOMEHOST . "/proy/api/redondear/";
+	$url     = $urlHost . "/" . HOMEHOST . "/proy/api/?redondear=1";
 	$rs = sendRemoteData($url, ($params));
 	$rs = json_decode($rs, true); // Lo decodificamos en un array.
 	return $rs['resultado'];
@@ -62,17 +61,12 @@ function calculaDescanso($tareID, $fin)
 		"user"  => $dataTar['TareResp'],
 	);
 	$urlHost  = $d['hostCHWeb']; // Obtener el host de la cuenta
-	$url = $urlHost . "/" . HOMEHOST . "/proy/api/descanso/";
+	$url = $urlHost . "/" . HOMEHOST . "/proy/api/?descanso=1";
 	$rs = sendRemoteData($url, ($params));
 	$rs = json_decode($rs, true); // Lo decodificamos en un array.
 	return $rs;
 	/** Fin */
 }
-// $calcular = calculaDescanso('211', '2022-12-06 17:32:00');
-
-// $total = $calcular['totales']['reales']['horas'];
-
-// print_r($total).exit;
 
 $_SESSION['UID'] = $_SESSION['UID'] ?? '';
 $_SESSION['ID_CLIENTE'] = $_SESSION['ID_CLIENTE'] ?? '';
@@ -186,7 +180,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	if (($_POST['fromTareas'])) { // Si viene de Tareas, validamos datos obligatorios
 
 		/** redondeamos TareHoraFin */
-		$FinTarea = redondearTareFin($tareID, dr_($_POST['TareFechaFin']) . ' ' . $_POST['TareHoraFin']);
+		$FinTarea = (dr_($_POST['TareFechaFin']) . ' ' . $_POST['TareHoraFin']);
 		/** Fin redondear */
 
 		// $fechaFin = ($_POST['fromTareas']) ? dr_($_POST['TareFechaFin']) . ' ' . $_POST['TareHoraFin'] : false;
@@ -203,12 +197,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 		}
 	}
 
-	$FechaHora = redondearTareFin($dataTar['TareID'], $FechaHora);
+	// $FechaHora = redondearTareFin($dataTar['TareID'], $FechaHora);
 
 	// $f       = Carbon::parse($dataTar['TareIni']); // Fecha de inicio
 	// $f2      = Carbon::parse($FechaHora); // Fecha de finalizacion
 	// $minutos = ($f2->diffInMinutes($f)); // Total de minutos
+	// $minutos2 = (0); // Total de minutos
 	// $total   = MinHora($f2->diffInMinutes($f)); // Total de horas y minutos
+	// $total2   = MinHora(0); // Total de horas y minutos
 
 	$calcular = calculaDescanso($dataTar['TareID'], $FechaHora);
 	$total    = $calcular['totales']['calculadas']['horas'];
@@ -226,6 +222,13 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 		$total2   = $calcular['totales']['reales']['horas'];
 		$minutos  = $calcular['totales']['calculadas']['min'];
 		$minutos2 = $calcular['totales']['reales']['min'];
+
+		// $f       = Carbon::parse($dataTar['TareIni']); // Fecha de inicio
+		// $f2      = Carbon::parse($fechaFin); // Fecha de finalizacion
+		// $minutos = ($f2->diffInMinutes($f)); // Total de minutos
+		// $minutos2 = (0); // Total de minutos
+		// $total   = MinHora($f2->diffInMinutes($f)); // Total de horas y minutos
+		// $total2   = MinHora(0); // Total de horas y minutos
 	}
 
 	$FechaHora = ($_POST['fromTareas']) ? $fechaFin : $FechaHora;
@@ -304,7 +307,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$FechaHoraIni = dr_($TareFechaIni) . ' ' . $TareHoraIni . ':00'; // Fecha y hora de inicio
 	$FechaHoraFin = dr_($TareFechaFin) . ' ' . $TareHoraFin . ':00'; // Fecha y hora de fin
 
-	$FechaHoraFin = redondearTareFin($tareID, $FechaHoraFin);
+	// $FechaHoraFin = redondearTareFin($tareID, $FechaHoraFin);
 
 	$h1 = intval(str_replace(':', '', $TareHoraIni)); // Hora de inicio en numeros enteros
 	$h2 = intval(str_replace(':', '', $TareHoraFin)); // Hora de fin en numeros enteros
@@ -353,13 +356,16 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	// $f       = Carbon::parse($FechaHoraIni); // Fecha de inicio
 	// $f2      = Carbon::parse($FechaHoraFin); // Fecha de finalizacion
 	// $minutos = ($f2->diffInMinutes($f)); // Total de minutos
+	// $minutos2 = (0); // Total de minutos
 	// $total   = MinHora($f2->diffInMinutes($f)); // Total de horas y minutos
+	// $total2   = MinHora(0); // Total de horas y minutos
 
 	$calcular = calculaDescanso($tareID, $FechaHoraFin);
 	$total    = $calcular['totales']['calculadas']['horas'];
 	$total2   = $calcular['totales']['reales']['horas'];
 	$minutos  = $calcular['totales']['calculadas']['min'];
 	$minutos2 = $calcular['totales']['reales']['min'];
+
 
 	// $cost = floatval($rCost);
 	// $cost = ($cost / 60) * $minutos;
@@ -550,6 +556,12 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 			$RegHoRe    = ($a['RegHoRe']);
 			$FicHorS    = ($a['FicHorS']);
 
+
+			$FechaFinFic = new DateTime($a['FeHora']->format('Y-m-d') . ' ' . $RegHoRe);
+			$FechaFinFic = redondearTareFin($v['TareID'], $FechaFinFic->format('Y-m-d H:i'));
+			$FeHora2 = $FechaFinFic->format('d/m/Y');
+			$RegHoRe = $FechaFinFic->format('H:i');
+
 			if ($TareIni2 <= $FeHora) { // Si la hora de inicio de la tarea es menor a la ultima fichada del día
 				$data = array(
 					'tareID'          => $v['TareID'],
@@ -618,13 +630,19 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 			}
 		} else { // SI NO ES HORARIOS NOCTURNO PROSESAMOS
 			if ($TareIni < $RegHoReMin) { // Si la hora de inicio de la tarea es menor a la ultima fichada del día
+				$FechaFinFic = new DateTime($RegHoRe);
+				$FechaFinFic = redondearTareFin($v['TareID'], $FechaFinFic->format('Y-m-d H:i'));
+				// $FeHora2 = $FechaFinFic->format('d/m/Y');
+				$RegHoRe = $FechaFinFic;
+				// print_r($RegHoRe).exit;
+				// print_r(FechaFormatVar($RegHoRe['date'], 'H:i')).exit;
 				$data = array(
 					'tareID'          => $v['TareID'],
 					'tarComplete'     => 'tarComplete',
 					'tarCompletePend' => 1,
 					'fromTareas'      => 'true',
 					'TareFechaFin'    => FechaFormatVar($v['fechas']['TareIni'], 'd/m/Y'),
-					'TareHoraFin'     => $RegHoRe,
+					'TareHoraFin'     => FechaFormatVar($RegHoRe['date'], 'H:i'),
 					'finTipo'         => 'fichada',
 				);
 
@@ -788,7 +806,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 
 			$set = json_decode($set, true);
 
-	
+
 			// if ($set['status'] == 'error') {
 			// 	$textLog = "Tarea (#$data[tareID]) no completada. $set[Mensaje]";
 			// 	fileLog($textLog, $pathLog); // Escribimos en el log la respuesta de la tarea

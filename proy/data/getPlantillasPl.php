@@ -4,6 +4,7 @@ header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
+
 $totalRecords = $data = array();
 $params = $_REQUEST;
 // sleep(1);
@@ -36,16 +37,16 @@ $records = array_pdoQuery($query);
 // exit;
 foreach ($records as $key => $row) {
 
-    $PlantID      = $row['PlantID'];
-    $PlantDesc    = $row['PlantDesc'];
-    $PlaPlanos  = $row['PlaPlanos'];
-    $PlaPlanos    = explode(",", $PlaPlanos);
+    $PlantID       = $row['PlantID'];
+    $PlantDesc     = $row['PlantDesc'];
+    $PlaPlanos     = $row['PlaPlanos'];
+    $PlaPlanos     = explode(",", $PlaPlanos);
     $PlaCountPlano = (!empty($PlaPlanos)) ? count($PlaPlanos): 0;
 
     $data[] = array(
-        "PlantID"      => $PlantID,
-        "PlantDesc"    => $PlantDesc,
-        "PlaPlanos"  => $PlaPlanos,
+        "PlantID"       => $PlantID,
+        "PlantDesc"     => $PlantDesc,
+        "PlaPlanos"     => $PlaPlanos,
         "PlaCountPlano" => $PlaCountPlano,
     );
 }
