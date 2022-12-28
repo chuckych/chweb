@@ -839,3 +839,14 @@ if ($verDB < 20221213) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20221221) {
+
+    pdoQuery("UPDATE `chweb`.`modulos` SET `estado`='0' WHERE  `id`=19;
+    SELECT `id`, `nombre`, `recid`, `orden`, `estado`, `idtipo` FROM `chweb`.`modulos` WHERE  `id`=19");
+    fileLog("Modulo Horarios asignados habilitado", $pathLog); // escribir en el log;
+
+    write_apiKeysFile();
+    $verDB  = 20221221; // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

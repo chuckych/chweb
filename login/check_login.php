@@ -34,6 +34,7 @@ try {
 /** Si es correcto */
 if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
 
+
 	if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
 		borrarLogs(__DIR__ . '../../logs/', 1, '.log');
 		borrarLogs(__DIR__ . '../../logs/error/', 1, '.log');
@@ -245,10 +246,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
 	$_SESSION['MODULOS'] = $modRol;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-
-	session_regenerate_id();
 	login_logs('1');
-	// mysqli_close($link);
+
 	if ($_POST['lasturl']) {
 		header('Location:' . urldecode($_POST['lasturl']));
 		// } else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
@@ -266,11 +265,10 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	}
 	access_log('Login correcto');
 }
-/** Si es incorrecto */
 else {
+	/** Si es incorrecto */
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');
 	access_log('Login incorrecto');
 }
-
 mysqli_close($link);

@@ -4,7 +4,6 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
-    <link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/3.2.4/css/fixedHeader.bootstrap4.min.css">
     <title><?= MODULOS['fichadas'] ?></title>
 </head>
 
@@ -92,13 +91,13 @@
     require __DIR__ . "../../js/DataTable.php";
     require 'modal_Filtros.html';
     ?>
-    <script src="https://cdn.datatables.net/fixedheader/3.2.4/js/dataTables.fixedHeader.min.js"></script>
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/toExcel-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/data-min.js?<?=version_file("/fichadas/js/data-min.js")?>"></script>
+    <script src="js/toExcel-min.js?<?=version_file("/fichadas/js/toExcel-min.js")?>"></script>
+
 </body>
 
 </html>

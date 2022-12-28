@@ -689,7 +689,7 @@ function getHTML(url, selector) {
 function onOpenSelect2() {
     $('select').on('select2:opening', function (e) {
         CheckSesion()
-        e.stopPropagation();
+        e.stopImmediatePropagation();
     });
 }
 function clearInput(selector) {

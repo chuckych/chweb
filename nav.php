@@ -1,4 +1,3 @@
-<div class="loader"></div>
 <input type="hidden" hidden id="_c" value="<?= $_SESSION["RECID_CLIENTE"] ?>">
 <input type="hidden" hidden id="_r" value="<?= $_SESSION["RECID_ROL"] ?>">
 <input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?>">
@@ -10,11 +9,14 @@
 <?php
 $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 // ExisteModRol(0)
+if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si es localhost
+    echo '<div class="loader"></div>';
+}
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?>">
 <!-- navBar -->
-<div id="navBarPrimary" class="sticky-top" style="z-index:1040;">
+<div id="navBarPrimary" class="sticky-top d-print-none" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
         <!-- brandLogo -->
         <?php if (HOMEHOST == 'chweb') { ?>
@@ -135,7 +137,7 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
                                         $Modulo2 = ($Modulo2 == 'Liquidar') ? 'Generar Liquidación' : $Modulo2;
                                         switch ($Modulo2) {
                                             case 'Horarios Asignados':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu d-none' href=/" . HOMEHOST . "/informes/horasign/>" . $Modulo2 . "</a>";
+                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/horasign/>" . $Modulo2 . "</a>";
                                                 break;
                                             case 'Planilla Horaria':
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu d-none' href=/" . HOMEHOST . "/informes/horplan/>" . $Modulo2 . "</a>";

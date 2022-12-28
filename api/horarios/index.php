@@ -5,9 +5,9 @@ ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
 tzLang();
 errorReport();
+$request = Flight::request();
 
-
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+if ($request->method != 'GET') {
     http_response_code(400);
     (response(array(), 0, 'Invalid Request Method: ' . $_SERVER['REQUEST_METHOD'], 400, $time_start, 0, $idCompany));
     exit;
@@ -15,34 +15,26 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 
 $wc = '';
 
-$dp = ($_REQUEST); // dataPayload
-$dp = file_get_contents("php://input");
-
-if (strlen($dp) > 0 && isValidJSON($dp)) {
-    $dp = json_decode($dp, true);
-} else {
-    isValidJSON($dp);
-    http_response_code(400);
-    (response(array(), 0, 'Invalid json Payload', 400, $time_start, 0, $idCompany));
-}
+$dp = $request->data;
 
 $start  = start();
 $length = length();
 
-$dp['Codi']  = ($dp['Codi']) ?? [];
-$dp['Codi']  = vp($dp['Codi'], 'Codi', 'intArrayM0', 11);
-$dp['ID']  = ($dp['ID']) ?? [];
-$dp['ID']  = vp($dp['ID'], 'ID', 'strArray', 3);
+$dp->Codi  = ($dp->Codi) ?? [];
+$dp->Codi  = vp($dp->Codi, 'Codi', 'intArrayM0', 11);
 
-$dp['Desc'] = $dp['Desc'] ?? '';
-$dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 40);
+$dp->ID  = ($dp->ID) ?? [];
+$dp->ID  = vp($dp->ID, 'ID', 'strArray', 3);
+
+$dp->Desc = $dp->Desc ?? '';
+$dp->Desc = vp($dp->Desc, 'Desc', 'str', 40);
 
 $arrDPHorarios = array(
-    'Codi' => $dp['Codi'], // Codigo de Horario {int} {array}
-    'ID'   => $dp['ID'], // ID de Horario {int} {array}
+    'Codi' => $dp->Codi, // Codigo de Horario {int} {array}
+    'ID'   => $dp->ID, // ID de Horario {int} {array}
 );
 $arrDPSTR = array(
-    'Desc'  => $dp['Desc'], // Descripcion de Horario {int} {array}
+    'Desc'  => $dp->Desc, // Descripcion de Horario {string}
 );
 
 foreach ($arrDPHorarios as $key => $Horarios) {
@@ -78,11 +70,11 @@ foreach ($arrDPSTR as $key => $v) {
             if ($e) {
                 if (count($e) > 1) {
                     $e = "'" . implode("','", $e) . "'";
-                    $wc .= " AND HORARIOS.$key IN ($e)";
+                    $wc .= " AND HORARIOS.$key LIKE '%$e%'";
                 } else {
                     foreach ($e as $v) {
                         if ($v !== NULL) {
-                            $wc .= " AND HORARIOS.$key = '$v'";
+                            $wc .= " AND HORARIOS.$key LIKE '%$v%'";
                         }
                     }
                 }
@@ -93,7 +85,7 @@ foreach ($arrDPSTR as $key => $v) {
             if ($key == 'HorDesc') {
                 $wc .= " AND HORARIOS.Hor$key LIKE '%$v%'";
             } else {
-                $wc .= " AND HORARIOS.Hor$key = '$v'";
+                $wc .= " AND HORARIOS.Hor$key LIKE '%$v%'";
             }
         }
     }
@@ -112,63 +104,49 @@ $stmtCount = $dbApiQuery($queryCount)[0]['count'] ?? '';
 $query .= " ORDER BY HORARIOS.HorCodi";
 $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
+// print_r($query).exit;
 $stmt = $dbApiQuery($query) ?? '';
 
+function arrDia($tipo, $de, $Ha, $Des, $li, $Ho){
+    
+    switch ($tipo) {
+        case '0':
+            $tipo = 'No Laboral';
+            break;
+        case '1':
+            $tipo = 'No Laboral';
+            break;
+        case '2':
+            $tipo = 'Según día';
+            break;
+        default:
+            $tipo = 'No definido';
+            break;
+    }
+        return array(
+            "Laboral"  => $tipo,
+            "Desde"    => $de,
+            "Hasta"    => $Ha,
+            "Descanso" => $Des,
+            "Limite"   => intval($li),
+            "Horas"    => $Ho,
+        );
+}
 foreach ($stmt  as $key => $v) {
     $data[] = array(
-        "Codi"      => $v['HorCodi'],
-        "Desc"      => $v['HorDesc'],
-        "ID"        => $v['HorID'],
-        "Color"     => $v['HorColor'],
-        "Domi"      => $v['HorDomi'],
-        "Lune"      => $v['HorLune'],
-        "Mart"      => $v['HorMart'],
-        "Mier"      => $v['HorMier'],
-        "Juev"      => $v['HorJuev'],
-        "Vier"      => $v['HorVier'],
-        "Saba"      => $v['HorSaba'],
-        "Feri"      => $v['HorFeri'],
-        "DoDe"      => $v['HorDoDe'],
-        "LuDe"      => $v['HorLuDe'],
-        "MaDe"      => $v['HorMaDe'],
-        "MiDe"      => $v['HorMiDe'],
-        "JuDe"      => $v['HorJuDe'],
-        "ViDe"      => $v['HorViDe'],
-        "SaDe"      => $v['HorSaDe'],
-        "FeDe"      => $v['HorFeDe'],
-        "DoHa"      => $v['HorDoHa'],
-        "LuHa"      => $v['HorLuHa'],
-        "MaHa"      => $v['HorMaHa'],
-        "MiHa"      => $v['HorMiHa'],
-        "JuHa"      => $v['HorJuHa'],
-        "ViHa"      => $v['HorViHa'],
-        "SaHa"      => $v['HorSaHa'],
-        "FeHa"      => $v['HorFeHa'],
-        "DoRe"      => $v['HorDoRe'],
-        "LuRe"      => $v['HorLuRe'],
-        "MaRe"      => $v['HorMaRe'],
-        "MiRe"      => $v['HorMiRe'],
-        "JuRe"      => $v['HorJuRe'],
-        "ViRe"      => $v['HorViRe'],
-        "SaRe"      => $v['HorSaRe'],
-        "FeRe"      => $v['HorFeRe'],
-        "DoLi"      => $v['HorDoLi'],
-        "LuLi"      => $v['HorLuLi'],
-        "MaLi"      => $v['HorMaLi'],
-        "MiLi"      => $v['HorMiLi'],
-        "JuLi"      => $v['HorJuLi'],
-        "ViLi"      => $v['HorViLi'],
-        "SaLi"      => $v['HorSaLi'],
-        "FeLi"      => $v['HorFeLi'],
-        "DoHs"      => $v['HorDoHs'],
-        "LuHs"      => $v['HorLuHs'],
-        "MaHs"      => $v['HorMaHs'],
-        "MiHs"      => $v['HorMiHs'],
-        "JuHs"      => $v['HorJuHs'],
-        "ViHs"      => $v['HorViHs'],
-        "SaHs"      => $v['HorSaHs'],
-        "FeHs"      => $v['HorFeHs'],
-        "FechaHora" => $v['FechaHora']
+        "Codi"       => $v['HorCodi'],
+        "Desc"       => $v['HorDesc'],
+        "ID"         => $v['HorID'],
+        "Color"      => floatval($v['HorColor']),
+        "FechaHora" => fecha($v['FechaHora'],'Y-m-d H:i:s'),
+        "Lunes"      => arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']),
+        "Martes"     => arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']),
+        "Miercoles"  => arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']),
+        "Jueves"     => arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']),
+        "Viernes"    => arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']),
+        "Sabado"     => arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']),
+        "Domingo"    => arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']),
+        "Feriado"    => arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']),
     );
 }
 

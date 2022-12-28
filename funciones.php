@@ -1,11 +1,11 @@
 <?php
 function version()
 {
-    return 'v0.0.266'; // Version de la aplicación
+    return 'v0.1.0'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20221213; // Version de la base de datos local
+    return 20221221; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -82,7 +82,8 @@ function secure_auth_ch_json()
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
-        $f = 'Sesión Expirada. Incie sesión nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesión</a>';
+        $_SERVER['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'] ?? '';
+        $f = 'Sesi&oacute;n Expirada. Incie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesi&oacute;n </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
     } else {
@@ -325,7 +326,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
     $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
     echo '
-    <div class="row text-' . $colortexto . ' ' . $bgc . ' radius-0">
+    <div class="row d-print-none text-' . $colortexto . ' ' . $bgc . ' radius-0">
     <div class="col-12 d-inline-flex h6 fw3 py-2 m-0">
         <div class="d-flex align-items-center w-100">
             <div>
@@ -3753,7 +3754,7 @@ function defaultConfigData() // default config data
 }
 function write_apiKeysFile()
 {
-    $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb' FROM `clientes` `c`";
+    $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb', `c`.`WebService` AS 'WebService' FROM `clientes` `c`";
     $assoc_arr = array_pdoQuery($q);
     // $assoc = $assoc_arr;
 
@@ -3765,12 +3766,14 @@ function write_apiKeysFile()
             'urlAppMobile' => $value['urlAppMobile'],
             'localCH'      => ($value['localCH']),
             'hostCHWeb'    => $value['hostCHWeb'],
+            'homeHost'     => HOMEHOST,
             'DBHost'       => $value['hostDB'],
             'DBUser'       => $value['userDB'],
             'DBPass'       => $value['passDB'],
             'DBName'       => $value['DB'],
             'DBAuth'       => $value['authDB'],
             'Token'        => sha1($value['recidCompany']),
+            'WebServiceCH' => ($value['WebService']),
         ));
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";

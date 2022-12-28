@@ -103,7 +103,7 @@ switch ($Modulo) {
 		break;
 	case '19':
 		/** Modulo Horarios Asignados. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #d32f2f; } </style>';
+		echo '<style>:root { --main-bg-modcolor : #4263eb; } </style>';
 		break;
 	case '21':
 		/** Modulo Horarios Asignados. Color predeterminado */

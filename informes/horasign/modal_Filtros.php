@@ -1,3 +1,6 @@
+<?php
+require __DIR__ . '../../../config/index.php';
+?>
 <!-- Modal -->
 <div class="modal animate__animated animate__fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
     aria-hidden="true">
@@ -6,6 +9,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
+                        
                         <label for="Tipo" class="mb-1 fontq">Tipo Personal: </label>
                         <select class="selectjs_tipoper" id="Tipo" name="Tipo">
                         </select>
@@ -15,7 +19,7 @@
                     <div class="col-12 col-sm-4">
                         <!-- Empresa -->
                         <label for="Emp" class="mb-1 fontq">Empresas</label>
-                        <select class="form-control selectjs_empresa"  id="Emp" name="Emp">
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
@@ -52,6 +56,26 @@
                     </div>
                 </div>
                 <div class="row d-flex align-items-center">
+                    <div class="col-12 col-sm-4">
+                        <!-- Tareas -->
+                        <label for="Tare" class="mb-1 w100 fontq">Tareas</label>
+                        <select class="form-control selectjs_tareprod" id="Tare" name="Tare">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Tareas -->
+                        <label for="Conv" class="mb-1 w100 fontq">Convenios</label>
+                        <select class="form-control selectjs_conv" id="Conv" name="Conv">
+                        </select>
+                    </div>
+                    <div class="col-12 col-sm-4">
+                        <!-- Regla -->
+                        <label for="Regla" class="mb-1 w100 fontq">Regla</label>
+                        <select class="form-control selectjs_regla" id="Regla" name="Regla">
+                        </select>
+                    </div>
+                </div>
+                <div class="row d-flex align-items-center">
                     <div class="col-12">
                         <!-- Legajo -->
                         <label for="Per" class="mb-1 w100 fontq">Legajos</label>
@@ -61,8 +85,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-custom btn-sm fontq" data-dismiss="modal">Aplicar Filtros</button>
             </div>
-        </div>
+        </div> 
     </div>
 </div>
+<script src="/<?= HOMEHOST ?>/informes/horasign/js/select.js?<?= version_file("/informes/horasign/js/select.js") ?>"></script>

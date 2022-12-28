@@ -6,28 +6,12 @@ tz();
 tzLang();
 errorReport();
 
-
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+if ($method != 'POST') {
     http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $_SERVER['REQUEST_METHOD'], 400, $time_start, 0, $idCompany));
+    (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
     exit;
 }
-
-$wc = '';
-
-$dp = ($_REQUEST); // dataPayload
-$dp = file_get_contents("php://input");
-
-if (strlen($dp) > 0 && isValidJSON($dp)) {
-    $dp = json_decode($dp, true);
-} else {
-    isValidJSON($dp);
-    http_response_code(400);
-    (response(array(), 0, 'Invalid json Payload', 400, $time_start, 0, $idCompany));
-}
-
-$start  = start();
-$length = length();
+// Flight::json($dp) . exit;
 
 $dp['getDatos']    = ($dp['getDatos']) ?? '';
 $dp['getDatos']    = vp($dp['getDatos'], 'getDatos', 'int01', 1); // Traer Datos
@@ -39,21 +23,42 @@ $dp['getHorarios'] = ($dp['getHorarios']) ?? '';
 $dp['getHorarios'] = vp($dp['getHorarios'], 'getHorarios', 'int01', 1); // Traer Horarios
 $dp['getControl']  = ($dp['getControl']) ?? '';
 $dp['getControl']  = vp($dp['getControl'], 'getControl', 'int01', 1); // Traer Control y Procesos
-$dp['getAcceso']  = ($dp['getAcceso']) ?? '';
-$dp['getAcceso']  = vp($dp['getAcceso'], 'getAcceso', 'int01', 1); // Traer Acceso
+$dp['getAcceso']   = ($dp['getAcceso']) ?? '';
+$dp['getAcceso']   = vp($dp['getAcceso'], 'getAcceso', 'int01', 1); // Traer Acceso
 
-$dp['Nume']  = ($dp['Nume']) ?? [];
-$dp['Nume']  = vp($dp['Nume'], 'Nume', 'intArray', 11);
-$dp['Docu']  = ($dp['Docu']) ?? [];
-$dp['Docu']  = vp($dp['Docu'], 'Docu', 'intArray', 11);
-$dp['Baja']  = ($dp['Baja']) ?? [];
-$dp['Baja']  = vp($dp['Baja'], 'Baja', 'numArray01', 1);
-$dp['IntExt']  = ($dp['IntExt']) ?? [];
-$dp['IntExt']  = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
-$dp['ApNo'] = $dp['ApNo'] ?? '';
-$dp['ApNo'] = vp($dp['ApNo'], 'ApNo', 'str', 40);
+$dp['Nume']     = ($dp['Nume']) ?? [];
+$dp['Nume']     = vp($dp['Nume'], 'Nume', 'intArray', 11);
+$dp['Docu']     = ($dp['Docu']) ?? [];
+$dp['Docu']     = vp($dp['Docu'], 'Docu', 'intArray', 11);
+$dp['Baja']     = ($dp['Baja']) ?? [];
+$dp['Baja']     = vp($dp['Baja'], 'Baja', 'numArray01', 1);
+$dp['IntExt']   = ($dp['IntExt']) ?? [];
+$dp['IntExt']   = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
+$dp['ApNo']     = $dp['ApNo'] ?? '';
+$dp['ApNo']     = vp($dp['ApNo'], 'ApNo', 'str', 40);
 $dp['ApNoNume'] = $dp['ApNoNume'] ?? '';
 $dp['ApNoNume'] = vp($dp['ApNoNume'], 'ApNoNume', 'str', 40);
+
+$dp['Empr']     = ($dp['Empr']) ?? [];
+$dp['Empr']     = vp($dp['Empr'], 'Empr', 'intArray', 5);
+$dp['Plan']     = ($dp['Plan']) ?? [];
+$dp['Plan']     = vp($dp['Plan'], 'Plan', 'intArray', 5);
+$dp['Conv']     = ($dp['Conv']) ?? [];
+$dp['Conv']     = vp($dp['Conv'], 'Conv', 'intArray', 5);
+$dp['Sec2']     = ($dp['Sec2']) ?? [];
+$dp['Sec2']     = vp($dp['Sec2'], 'Sec2', 'strArray', 10);
+$dp['Sect']     = ($dp['Sect']) ?? [];
+$dp['Sect']     = vp($dp['Sect'], 'Sect', 'intArray', 5);
+$dp['Grup']     = ($dp['Grup']) ?? [];
+$dp['Grup']     = vp($dp['Grup'], 'Grup', 'intArray', 5);
+$dp['Sucu']     = ($dp['Sucu']) ?? [];
+$dp['Sucu']     = vp($dp['Sucu'], 'Sucu', 'intArray', 5);
+$dp['TareProd'] = ($dp['TareProd']) ?? [];
+$dp['TareProd'] = vp($dp['TareProd'], 'TareProd', 'intArray', 5);
+$dp['RegCH'] = ($dp['RegCH']) ?? [];
+$dp['RegCH'] = vp($dp['RegCH'], 'RegCH', 'intArray', 5);
+$dp['Tipo'] = ($dp['Tipo']) ?? [];
+$dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'intArray', 1);
 
 // $dp['ID']  = ($dp['ID']) ?? [];
 // $dp['ID']  = vp($dp['ID'], 'ID', 'strArray', 3);
@@ -67,6 +72,16 @@ $arrDPPersonal = array(
     'Docu'     => $dp['Docu'], // Documento {string}
     'ApNoNume' => $dp['ApNoNume'], // Nombre y apellido y Legajo {string}
     'IntExt'   => $dp['IntExt'], // Tipo de legajo. Interno, Externo {int} {array}
+    'Empr'     => $dp['Empr'], // Empresa {int} {array}
+    'Plan'     => $dp['Plan'], // Planta {int} {array}
+    'Conv'     => $dp['Conv'], // Convenio {int} {array}
+    'Sec2'     => $dp['Sec2'], // Seccion {int} {array}
+    'Sect'     => $dp['Sect'], // Sector {int} {array}
+    'Grup'     => $dp['Grup'], // Grupos {int} {array}
+    'Sucu'     => $dp['Sucu'], // Sucursales {int} {array}
+    'TareProd' => $dp['TareProd'], // Tareas de produccion {int} {array}
+    'RegCH'    => $dp['RegCH'], // Regla de control horario {int} {array}
+    'Tipo'     => $dp['Tipo'], // Tipo de personal {int} {array}
 );
 $arrDPPersonalBaja = array(
     'Baja' => $dp['Baja'], // Codigo de Horario {int} {array}
@@ -86,11 +101,33 @@ foreach ($arrDPPersonal as $key => $per) {
         if (($e)) {
             if (count($e) > 1) {
                 $e = "'" . implode("','", $e) . "'";
-                $wc .= " AND PERSONAL.Leg$key IN ($e)";
+                // $wc .= " AND PERSONAL.Leg$key IN ($e)";
+
+                if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
+                    foreach ($dp['Sec2'] as $se2) {
+                        // $secSec2 = explode('-',$se2);
+                        // $dataSec2[] = $secSec2[0].$secSec2[1];
+                        $dataSec2[] = $se2;
+                    }
+                    $dataSec2 = implode(',', $dataSec2);
+                    // print_r($dataSec2).exit;
+                    $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                } else {
+                    $wc .= " AND PERSONAL.Leg$key IN ($e)";
+                }
+
             } else {
                 foreach ($e as $v) {
                     if ($v !== NULL) {
-                        $wc .= " AND PERSONAL.Leg$key = '$v'";
+                        // $wc .= " AND PERSONAL.Leg$key = '$v'";
+                        if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
+                            // $secSec2 = explode('-', $dp['Sec2'][0]);
+                            $dataSec2 = implode(',', $dp['Sec2']);
+                            // Flight::json($dataSec2).exit;
+                            $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                        } else {
+                            $wc .= " AND PERSONAL.Leg$key = '$v'";
+                        }
                     }
                 }
             }
@@ -107,6 +144,9 @@ foreach ($arrDPPersonal as $key => $per) {
         }
     }
 }
+
+// Flight::json($wc).exit;
+
 foreach ($arrDPPersonalBaja as $key => $baja) {
     $e = array();
     if (is_array($baja)) {
@@ -161,7 +201,6 @@ foreach ($arrDPSTR as $key => $v) {
         }
     }
 }
-// print_r($wc).exit;
 
 $columnas[] = "LegNume,LegApNo,LegIntExt,PERSONAL.FechaHora";
 
@@ -195,7 +234,7 @@ if ($dp['getAcceso']) {
 
     $queryReloHabi = "SELECT RELOHABI.RelReMa, RELOHABI.RelRelo, RELOJES.RelDeRe, RELOJES.RelSeri, RELOHABI.RelGrup FROM RELOHABI INNER JOIN RELOJES ON RELOHABI.RelReMa = RELOJES.RelReMa AND RELOHABI.RelRelo = RELOJES.RelRelo";
     $stmtReloHabi = $dbApiQuery($queryReloHabi) ?? '';
-    
+
     $querPerRelo = "SELECT PERRELO.RelReMa, PERRELO.RelRelo, RELOJES.RelDeRe, RELOJES.RelSeri, PERRELO.RelLega, PERRELO.RelFech, PERRELO.RelFech2 FROM PERRELO
     INNER JOIN RELOJES ON PERRELO.RelReMa = RELOJES.RelReMa AND PERRELO.RelRelo = RELOJES.RelRelo
     WHERE PERRELO.RelLega > 0";
@@ -240,7 +279,7 @@ $stmtCount = $dbApiQuery($queryCount)[0]['count'] ?? '';
 
 $query .= " ORDER BY PERSONAL.LegNume";
 $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
-// print_r($query).exit;
+// Flight::json($query).exit;
 
 $stmt = $dbApiQuery($query) ?? '';
 $_1753 = '1753-01-01 00:00:00.000';
@@ -276,11 +315,17 @@ foreach ($stmt  as $key => $v) {
         $Edad    = ($v['LegFeNa'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeNa'], 'Y-m-d'))->format('%y')) : '';
         $EdadStr = calculaEdadStr(fechFormat($v['LegFeNa'], 'Y-m-d'));
 
+        $CUIL = $v['LegCUIT'];
+
+        if(empty($CUIL) && strlen($v['LegDocu']) >= 7 && strlen($v['LegDocu']) <= 8) {
+            $CUIL = getCuil($v['LegDocu'], ($v['LegSexo']== 0) ? 'f':'m');
+        }
+
         $Datos = array(
             "TDoc"    => intval($v['LegTDoc']), // Tipo de Documento 0=DU 1=DNI 2=CI 3=LC 4=LE 5=PAS
             "TDocStr" => $v['LegTDocStr'], // Tipo de Documento String
             "Docu"    => intval($v['LegDocu']), // Documento
-            "CUIT"    => $v['LegCUIT'], // CUIT
+            "CUIT"    => $CUIL, // CUIT
             "Naci"    => intval($v['LegNaci']), // Código de Nacionalidad
             "NaciStr" => $v['NacDesc'], // Nacionalidad
             "EsCi"    => intval($v['LegEsCi']), // Estado Civil 0=Soltero/a 1=Casado/a 2=Viudo/a 3=Divorciado/a
@@ -404,12 +449,12 @@ foreach ($stmt  as $key => $v) {
         if (($stmtIdentifica)) {
             $arrIdentifica = filtrarObjetoArr($stmtIdentifica, 'IDLegajo', $v['LegNume']);
             foreach ($arrIdentifica as $key => $n) {
-                $dataIdentifica [] = array(
+                $dataIdentifica[] = array(
                     'Codigo'   => ($n['IDCodigo']),
                     'Fichada'  => intval($n['IDFichada']),
                     'Tarjeta'  => $n['IDTarjeta'],
                     'Legajo'   => intval($n['IDLegajo']),
-                    'Vence'    => ($n['IDVence'] != $_1753) ? fechFormat($n['IDVence'], 'Y-m-d'):'',
+                    'Vence'    => ($n['IDVence'] != $_1753) ? fechFormat($n['IDVence'], 'Y-m-d') : '',
                     'Cap04'    => intval($n['IDCap04']),
                     'Cap05'    => intval($n['IDCap05']),
                     'Cap06'    => intval($n['IDCap06']),
@@ -419,7 +464,7 @@ foreach ($stmt  as $key => $v) {
         if (($stmtReloHabi)) {
             $arrReloHabi = filtrarObjetoArr($stmtReloHabi, 'RelGrup', $v['LegGrHa']);
             foreach ($arrReloHabi as $key => $n) {
-                $dataReloHabi [] = array(
+                $dataReloHabi[] = array(
                     'ReMa' => intval($n['RelReMa']),
                     'Relo' => intval($n['RelRelo']),
                     'DeRe' => trim($n['RelDeRe']),
@@ -430,14 +475,14 @@ foreach ($stmt  as $key => $v) {
         if (($stmtPerRelo)) {
             $arrPerRelo = filtrarObjetoArr($stmtPerRelo, 'RelLega', $v['LegNume']);
             foreach ($arrPerRelo as $key => $n) {
-                $dataPerRelo [] = array(
+                $dataPerRelo[] = array(
                     'ReMa'  => intval($n['RelReMa']),
                     'Relo'  => intval($n['RelRelo']),
                     'DeRe'  => trim($n['RelDeRe']),
                     'Seri'  => trim($n['RelSeri']),
                     'Lega'  => intval($n['RelLega']),
-                    'Desde'  => ($n['RelFech'] != $_1753) ? fechformat($n['RelFech'], 'Y-m-d'):'',
-                    'Vence' => ($n['RelFech2'] != $_1753) ? fechformat($n['RelFech2'], 'Y-m-d'):'',
+                    'Desde'  => ($n['RelFech'] != $_1753) ? fechformat($n['RelFech'], 'Y-m-d') : '',
+                    'Vence' => ($n['RelFech2'] != $_1753) ? fechformat($n['RelFech2'], 'Y-m-d') : '',
                 );
             }
         }
@@ -450,10 +495,10 @@ foreach ($stmt  as $key => $v) {
             "PerRelo"  => $dataPerRelo, // Array de relojes habilitados con vencimiento
         );
     }
-    
+
     $data[] = array(
         "Lega"         => intval($v['LegNume']), // Número de Legajo
-        "ApNo"         => $v['LegApNo'], // Apellido y Nombre
+        "ApNo"         => trim(str_replace(' ', '', $v['LegApNo'])), // Apellido y Nombre
         "IntExt"       => $v['LegIntExt'], // Tipo de Legajo
         "IntExtString" => ($v['LegIntExt'] == '0') ? 'Interno' : 'Externo', // Tipo de Legajo
         "FechaHora"    => fechFormat($v['FechaHora'], 'Y-m-d H:i:s'), // lasta update

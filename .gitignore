@@ -9,6 +9,7 @@
 /vendor/tecnickcom/tcpdf/.github
 /vendor/tecnickcom/
 /informes/infornovc/reporte/*
+/informes/horasign-old/*
 /mpdf-examples
 /mobile/sms
 /wfch/

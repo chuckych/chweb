@@ -86,6 +86,7 @@ $(function () {
        let Regla =  Select2Estruct(".selectjs_regla", true, "Regla de control", "Regla",url, $('#Filtros'));
 
         $('.selectjs_sectores').on('select2:select', function (e) {
+            e.preventDefault()
             $(".select_seccion").prop("disabled", false);
             $('.select_seccion').val(null).trigger('change');
             // ActualizaTablas()
@@ -93,6 +94,7 @@ $(function () {
             $("#DatosFiltro").html('Sector: ' + nombresector);
         });
         $('.selectjs_sectores').on('select2:unselecting', function (e) {
+            e.preventDefault()
             $(".select_seccion").prop("disabled", true);
             $('.select_seccion').val(null).trigger('change');
             // ActualizaTablas()
@@ -144,6 +146,7 @@ $(function () {
         LimpiarFiltros()
     });
     $('#Filtros').on('hidden.bs.modal', function (e) {
+        e.preventDefault()
         $('#table-personal').DataTable().ajax.reload();
       });
 });
