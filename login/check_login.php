@@ -239,7 +239,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
 	$_SESSION["LIMIT_SESION"]   = 3600;
 	$_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
-	$_SESSION['IP_CLIENTE']     = $_SERVER['REMOTE_ADDR'];
+	$_SESSION['IP_CLIENTE']     = get_client_ip();
 	$_SESSION['DIA_ACTUAL']     = hoy();
 	$_SESSION['VER_DB_CH']      = false;
 	$_SESSION['CONECT_MSSQL']   = false;

@@ -29,25 +29,25 @@ if ($verDB < 20210102) {
             fileLog("El modulo: \"Datos\" ya existe", $pathLog); // escribir en el log
         }
         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 31 LIMIT 1")) { // Si no existe el registro
-            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('31', '357ruc7a', 'Estructura', 11, '0', 3)", $link);
+            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('31', '357ruc7a', 'Estructura', 11, '0', 3)");
             fileLog("Se inserto el modulo: \"Estructura\"", $pathLog); // escribir en el log
         } else { // Si existe el registro
             fileLog("El modulo: \"Estructura\" ya existe", $pathLog); // escribir en el log
         }
         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 32 LIMIT 1")) { // Si no existe el registro
-            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('32', 'm0b1l3Hr', 'Mobile HRP', 30, '0', 4)", $link);
+            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('32', 'm0b1l3Hr', 'Mobile HRP', 30, '0', 4)");
             fileLog("Se inserto el modulo: \"Mobile HRP\"", $pathLog); // escribir en el log
         } else { // Si existe el registro
             fileLog("El modulo: \"Mobile HRP\" ya existe", $pathLog); // escribir en el log
         }
         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 33 LIMIT 1")) { // Si no existe el registro
-            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('33', 'H0r4r10s', 'Horarios', 30, '0', 1)", $link);
+            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('33', 'H0r4r10s', 'Horarios', 30, '0', 1)");
             fileLog("Se inserto el modulo: \"Horarios\"", $pathLog); // escribir en el log
         } else { // Si existe el registro
             fileLog("El modulo: \"Horarios\" ya existe", $pathLog); // escribir en el log
         }
         if (!count_pdoQuery("SELECT 1 FROM modulos where id = 34 LIMIT 1")) { // Si no existe el registro
-            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('34', '1nf0rf4r', 'Informe FAR', 14, '1', 2)", $link);
+            insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('34', '1nf0rf4r', 'Informe FAR', 14, '1', 2)");
             fileLog("Se inserto el modulo: \"Informe FAR\"", $pathLog); // escribir en el log
         } else { // Si existe el registro
             fileLog("El modulo: \"Informe FAR\" ya existe", $pathLog); // escribir en el log
@@ -66,7 +66,7 @@ if ($verDB < 20210102) {
     if (checkTable('abm_roles')) {
         pdoQuery("UPDATE abm_roles SET abm_roles.id_rol = (SELECT roles.id FROM roles WHERE roles.recid = abm_roles.recid_rol) WHERE abm_roles.id_rol = 0");
         fileLog("Se actualizaron valores de la columna \"id_rol\" en la tabla \"abm_roles\"", $pathLog); // escribir en el log
-        pdoQuery("DELETE FROM abm_roles WHERE abm_roles.id_rol NOT IN (SELECT roles.id FROM roles)", $link);
+        pdoQuery("DELETE FROM abm_roles WHERE abm_roles.id_rol NOT IN (SELECT roles.id FROM roles)");
         fileLog("Se verificaron valores inconsistentes de la tabla \"abm_roles\"", $pathLog); // escribir en el log
     } else {
         fileLog("No existe tabla: \"abm_roles\"", $pathLog); // escribir en el log

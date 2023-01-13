@@ -64,9 +64,9 @@ if ($array['SUCCESS'] == 'YES') {
       exit;
    }
    
-   $data = array('status' => 'ok', 'LIST_FACES' => $MESSAGE);
-   echo json_encode($data);
-   exit;
+   // $data = array('status' => 'ok', 'LIST_FACES' => $MESSAGE);
+   // echo json_encode($data);
+   // exit;
 } else {
    $data = array('status' => 'error', 'LIST_FACES' => $MESSAGE);
    echo json_encode($data);

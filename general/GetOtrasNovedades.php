@@ -61,8 +61,8 @@ while ($row = sqlsrv_fetch_array($result)) :
 
         if (str_replace("-", "", $_SESSION['ListaONov'])) {
             if (in_array(intval($row['FicONov']), explode(',', $_SESSION['ListaONov']))) {
-                $editar   = $editar;
-                $eliminar = $eliminar;
+                // $editar   = $editar;
+                // $eliminar = $eliminar;
             } else {
                 $editar = '';
                 $eliminar = '';

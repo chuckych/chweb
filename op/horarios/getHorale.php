@@ -219,7 +219,7 @@ switch ($Tabla) {
         sqlsrv_close($link);
         echo json_encode($data);
         exit;
-        break;
+        // break;
     case 'Horario':
         $Datos = (json_decode($_POST['datos'], true));
         $HorCodi  = $Datos['HorCodi'];
@@ -291,7 +291,7 @@ switch ($Tabla) {
         sqlsrv_close($link);
         echo json_encode($data);
         exit;
-        break;
+        // break;
     case 'ListHorarios':
         $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS WHERE HorCodi >=0 $filtroListaHorarios";
         // print_r($sql_query); exit;

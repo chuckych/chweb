@@ -1,5 +1,5 @@
 <?php
-$border = $ErrModulo = $ErrModulo2 = $duplicado = $nombre = '';
+$border = $ErrModulo = $ErrModulo2 = $duplicado = $nombre = $id_Rol = $idClienteRol = '';
 /** ALTA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == $submit)) {
 

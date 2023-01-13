@@ -41,8 +41,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'true')) {
         exit;
     }
 
-    $datos = array($respuesta);
-    echo json_encode($datos);
+    // $datos = array($respuesta);
+    // echo json_encode($datos);
 }
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['modulos'] == 'true')) {
 

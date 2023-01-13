@@ -42,7 +42,7 @@ function MSQuery($query)
         echo json_encode($data[0]);
         sqlsrv_close($link);
         return false;
-        exit;
+        // exit;
     }
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
@@ -122,7 +122,7 @@ function pingApiMobileHRP($urlAppMobile)
     $file_contents = curl_exec($ch);
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
-    exit;
+    // exit;
 }
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
 {
@@ -338,7 +338,7 @@ function getEvents($url, $timeout = 10)
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
-    exit;
+    // exit;
 }
 function queryCalcZone($lat, $lng, $idCompany)
 {
@@ -530,10 +530,9 @@ if (!empty($arrayData)) {
             'id_api'        => $id_api
         );
     }
-    
-    (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
+    $arrayObj = array_column($arrayObj, 'createdDate');
+    (array_multisort($arrayObj, SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
-    
 
     $assoc = array(
         'flags' => array(

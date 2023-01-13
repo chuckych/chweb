@@ -98,7 +98,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany = $idCompany;
+    // $idCompany = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../control/PhpUserAgent/src/UserAgentParser.php';

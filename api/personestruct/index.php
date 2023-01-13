@@ -244,7 +244,7 @@ switch ($dp['Estruct']) {
         $dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
 
         $dataParamPerson = array(
-            "Nume"     => '',
+            "Nume"     => $dp['Nume'],
             "ApNoNume" => $dp['Desc'],
             "getDatos" => 1,
             "Baja"     => ($dp['Baja']),
@@ -278,7 +278,7 @@ switch ($dp['Estruct']) {
         }
         http_response_code(200);
         (response($data, $dataApiPerson['TOTAL'], $dataApiPerson['MESSAGE'], 200, $time_start, $dataApiPerson['COUNT'], $idCompany));
-        exit;
+        // exit;
         break;
     case 'Sec2':
         $sectorSecc = implode(',',$dp['Sector']);

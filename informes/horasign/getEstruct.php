@@ -67,7 +67,8 @@ switch ($params['Tipo']) {
 }
 
 $RegCH    = $params['Regla'] ? $params['Regla'] : '';
-$Legajos = ($Per) ? ($Per) : array();
+
+$Legajos = ($Per) ? ($Per) : explode(',', $_SESSION['EstrUser']);
 
 $dataApiPerson['DATA'] = $dataApiPerson['DATA'] ?? '';
 $dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
@@ -178,6 +179,7 @@ $dataParamPerson = array(
     "start"      => 0,
     "length"     => 500,
 );
+// Flight::json($dataParamPerson).exit;
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/personestruct/";
 

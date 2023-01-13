@@ -6,7 +6,8 @@ tz();
 tzLang();
 errorReport();
 
-$iLega2 = $total = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
+$iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
+$IlegFic = array();
 
 if ($_SERVER['REQUEST_METHOD'] != 'POST') {
     http_response_code(400);
@@ -17,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] != 'POST') {
 require __DIR__ . '../wc.php';
 
 if ($dp['getReg']) {
-    $FicCountSelect="(SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) AS 'FicCount',";
+    $FicCountSelect = "(SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) AS 'FicCount',";
+    // $FicCountSelect="(SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) AS 'FicCount',";
 
     if ($dp['onlyReg']) {
         // $joinFichas4 = " INNER JOIN REGISTRO on FICHAS.FicFech = REGISTRO.RegFeAs AND FICHAS.FicLega = REGISTRO.RegLega";
@@ -25,16 +27,16 @@ if ($dp['getReg']) {
     }
 }
 if ($wcNov) {
-    $joinFichas3 = " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech ";
+    $joinFichas3 = " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
 }
 if ($wcONov) {
-    $joinFichas2 = " INNER JOIN FICHAS2 ON FICHAS.FicLega = FICHAS2.FicLega AND FICHAS.FicFech = FICHAS2.FicFech ";
+    $joinFichas2 = " INNER JOIN FICHAS2 ON FICHAS.FicLega = FICHAS2.FicLega AND FICHAS.FicFech = FICHAS2.FicFech AND FICHAS.FicTurn = FICHAS2.FicTurn";
 }
 if ($wcHoras) {
-    $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech ";
+    $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 }
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
-$qFic = "SELECT $FicCountSelect FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
+$qFic = "SELECT FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1
 WHERE FICHAS.FicLega > 0 $wcFicFech";
 
@@ -67,7 +69,7 @@ if ($wcHoras) {
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
 $qFic .= " ORDER BY FICHAS.FicFech";
 $qFic .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
-// print_r($qFicCount).exit;
+// print_r($qFic).exit;
 $stmtFic = $dbApiQuery($qFic) ?? '';
 
 if (empty($stmtFic)) {
@@ -106,7 +108,6 @@ if ($dp['getNov']) {
     $stmtNov = $dbApiQuery($qNov);
 }
 if ($dp['getONov']) {
-
     $IlegONov = (implodeArrayByKey($IlegFic, 'FicLega'));
     $IlegONov = ($IlegONov) ? " AND FICHAS2.FicLega IN ($IlegONov)" : "";
 
@@ -216,7 +217,8 @@ foreach ($stmtFic as $key => $v) {
         }
     }
     if ($dp['getReg']) {
-        if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
+        if ($v['FicNovA'] == 0) {
+        // if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
             if ($stmtRegistros) {
                 $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
                 foreach ($dataFichada as $key => $r) {
@@ -260,7 +262,8 @@ foreach ($stmtFic as $key => $v) {
         'ATra'     => $v['FicHsAT'],
         'Trab'     => ($v['FicHsTr']),
         'Falta'    => $v['FicFalta'],
-        'FichC'    => $v['FicCount'] ?? '',
+        // 'FichC'    => $v['FicCount'] ?? '',
+        'FichC'    => count($dataFichadas) ?? '',
         'Tur'      => $horario,
         // 'CheckNov' => $CheckNov,
         'Fich'     => $dataFichadas,

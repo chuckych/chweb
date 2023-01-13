@@ -47,7 +47,6 @@ switch ($_GET['e']) {
         $respuesta = array('success' => 'NO', 'error' => '1', 'mensaje' => 'No se especifico parametro de estructura');
         $datos = array($respuesta);
         echo json_encode($datos);
-        exit;
         break;
 }
 UnsetGet('sect');

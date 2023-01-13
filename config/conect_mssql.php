@@ -37,7 +37,6 @@ switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 		break;
 }
 
-// require __DIR__. '../../log.class.php';
 /********************************************************************************* */
 /** conexion mediante autenticacion de windows */
 //$connectionInfo = array("Database"=>$base, "CharacterSet" => "UTF-8");

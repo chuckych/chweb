@@ -7,7 +7,7 @@ secure_auth_ch_json();
 E_ALL();
 $respuesta = array();
 $arrayData = array();
-$error = '';
+$error = $start_date = $end_date = '';
 $_SESSION["APIMOBILEHRP"] = $_SESSION["APIMOBILEHRP"] ?? '';
 function dr_f($ddmmyyyy)
 {
@@ -22,7 +22,7 @@ $FechaFin  = test_input(dr_f($DateRange[1]));
 $FechaFin  = fechformat2($FechaFin) . ' 23:59:59';
 
 $params = $columns = $totalRecords = '';
-$params = ($_REQUEST);
+$params = (Flight::request()->data);
 
 FusNuloPOST('SoloFic', '');
 FusNuloPOST('typeDownload', '');
@@ -56,6 +56,7 @@ $routeFile3 = 'archivos/export_' . $idCompany . '_' . $tm . '.xls';
 $startScript = microtime(true);
 borrarLogs($routeFile, 1, '.txt');
 borrarLogs($routeFile, 1, '.xls');
+
 if ($api['COUNT'] > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
 
@@ -150,6 +151,7 @@ if ($api['COUNT'] > 0) {
         }
     }
 }
+
 if ($params['typeDownload'] ?? '' == 'downloadXls') {
     require __DIR__ . './exportXls.php';
 }
@@ -170,9 +172,6 @@ switch ($params['typeDownload'] ?? '') {
     case 'downloadXls':
         $arrayData = $routeFile3;
         auditoria("Exportar Excel Fichadas Mobile HRP. Desde $start_date a $end_date", 'A', $idCompany, '32');
-        break;
-    default:
-        $arrayData = $arrayData;
         break;
 }
 $endScript = microtime(true);

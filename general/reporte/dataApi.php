@@ -79,7 +79,6 @@ $dataParametros = array(
     // 'Lega' => array("30366320", "17653753", "20891138", "45416221", "29988600", "29408391"),
     'Lega'    => ($Legajos),
     // 'Lega' => array("20891138"),
-    'Falta'   => '',
     'Empr'    => ($Empr),
     'Plan'    => ($Plan),
     'Sect'    => ($Sect),

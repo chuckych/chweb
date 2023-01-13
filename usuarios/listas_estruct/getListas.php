@@ -211,7 +211,7 @@ switch ($lista) {
                 }
                 $data[] = array(
                     'Se2Codi' => $r['Se2Codi'],
-                    'Se2Desc' => $r['Se2Desc'],
+                    // 'Se2Desc' => $r['Se2Desc'],
                     'Se2Desc' => empty($r['Se2Desc']) ? 'Sin Sección' : $r['Se2Desc'],
                     'SecCodi' => $r['SecCodi'],
                     'SecDesc' => $r['SecDesc'],

@@ -93,7 +93,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany = $idCompany;
+    // $idCompany = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -194,7 +194,7 @@ $f = FechaFormatVar($a['fechaHora'], 'd/m/Y H:i');
 $text = "Rostro registro fecha $f - $a[nombre]. ID = $a[id_user] reprocesado";
 fileLog($text, __DIR__ . '../../../_logs/addUser/' . date('Ymd') . '_log_addUser_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addUser_
 $arrayData = array(
-    'idApi'       => $a['id_user'],
+    // 'idApi'       => $a['id_user'],
     'id_company'  => $a['id_company'],
     'userName'    => $a['nombre'],
     'idApi'       => $a['idApi'],

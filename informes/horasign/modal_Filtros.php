@@ -1,6 +1,3 @@
-<?php
-require __DIR__ . '../../../config/index.php';
-?>
 <!-- Modal -->
 <div class="modal animate__animated animate__fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
     aria-hidden="true">
@@ -90,4 +87,3 @@ require __DIR__ . '../../../config/index.php';
         </div> 
     </div>
 </div>
-<script src="/<?= HOMEHOST ?>/informes/horasign/js/select.js?<?= version_file("/informes/horasign/js/select.js") ?>"></script>

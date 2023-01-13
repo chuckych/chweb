@@ -51,6 +51,4 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
             exit;
         }
     }
-    mysqli_close($link);
-    exit;
 }

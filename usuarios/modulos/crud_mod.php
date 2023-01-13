@@ -34,11 +34,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $Query = "DELETE mod_roles FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
         if (mysqli_query($link, $Query)) {
             /** Hacemos el delete de todos los modulos del tipo */
+            mysqli_close($link);
             return true;
-            mysqli_close($link);
         } else {
-            return false;
             mysqli_close($link);
+            return false;
         }
     }
     function InsertModRol($recidRol, $IdRol, $Modulo, $Fecha)

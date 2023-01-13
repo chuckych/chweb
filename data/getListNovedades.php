@@ -40,7 +40,7 @@ switch ($_nt) {
         $_ntipo = "AND NOVEDAD.NovTipo IN (0)";
         break;
     default:
-        $_ntipo = $_ntipo;
+        $_ntipo = '';
         break;
 }
 

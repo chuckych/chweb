@@ -145,8 +145,6 @@ $spreadsheet->getColumnDimension('E')->setWidth(15);
 $spreadsheet->getColumnDimension('F')->setWidth(10);
 
 $cols = array("V","W","Y","AB","AD","AE","R","T","X","Z");
-
-
 foreach ($cols as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(28);
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);

@@ -77,7 +77,7 @@ switch ($Tipo) {
     case 'u_empresas':
         require 'formulario_empresa.php';
         exit;
-    break;
+    // break;
 }
 ?>
 <div class="animate__animated animate__fadeIn p-2 mt-2">

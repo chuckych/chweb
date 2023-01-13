@@ -97,7 +97,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany    = $idCompany;
+    // $idCompany    = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -155,7 +155,7 @@ if ($a) {
     $notIdPunchEvent = implode(',',$i);
 }
 
-$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`rid` > 7669";
+$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`rid` > 8500";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_company = $idCompany";

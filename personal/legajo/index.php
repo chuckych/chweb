@@ -61,5 +61,6 @@ define("INCUMPLIMIENTO", [
    'Recortado sin control de descanso' => '5',
    'Recortado con control de descanso' => '6',
 ]);
-$naciones=nacionalidades();
+// echo '<pre>';
+// $naciones = arrMSQuery("SELECT NACIONES.NacCodi AS 'cod', NACIONES.NacDesc AS 'desc' FROM NACIONES");
 require pagina('alta.php');

@@ -5,6 +5,7 @@ require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
+$periodo = '';
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 E_ALL();

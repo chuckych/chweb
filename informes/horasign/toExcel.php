@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '../../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -16,18 +16,16 @@ header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 ultimoacc();
 secure_auth_ch();
-$Modulo = '3';
+$Modulo = '19';
 ExisteModRol($Modulo);
 E_ALL();
 $UltimaFic = $PrimeraFic = '';
-require_once __DIR__ . '../../vendor/autoload.php';
+//require_once __DIR__ . '../../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-
+$request = Flight::request();
 $documento = new Spreadsheet();
 $documento
     ->getProperties()
@@ -38,31 +36,17 @@ $documento
 
 # Como ya hay una hoja por defecto, la obtenemos, no la creamos
 $spreadsheet = $documento->getActiveSheet();
-$spreadsheet->setTitle("FICHADAS");
 # Escribir encabezado de los productos
 $encabezado = [
-    "Legajo",
-    "Nombre",
-    "Fecha",
-    "Dia",
-    "Horario",
-    "Cant",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale",
-    "Entra",
-    "Sale"
+    "Legajo", // A
+    "Nombre", // B
+    "Fecha", // C
+    "Dia", // D
+    "Horario", // E
+    "Descripcion", // F
+    "ID", // G
+    "Asignacion", // H
+    "Feriado" // I
 ];
 
 $styleArray = [
@@ -75,9 +59,6 @@ $styleArray = [
         ],
     ],
 ];
-$spreadsheet->getStyle('A1:V1')->applyFromArray($styleArray);
-$spreadsheet->setAutoFilter('A1:V1');
-$spreadsheet->fromArray($encabezado, null, 'A1');
 /** establecer el nivel de zoom de la hoja */
 $spreadsheet->getSheetView()->setZoomScale(100);
 /** Color de pestaña de hoja */
@@ -90,42 +71,37 @@ $spreadsheet->getPageMargins()->setLeft(0.3);
 $spreadsheet->getPageMargins()->setBottom(0.5);
 $spreadsheet->getPageSetup()->setFitToWidth(1);
 $spreadsheet->getPageSetup()->setFitToHeight(0);
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS');
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE HORARIOS');
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 $spreadsheet->setShowGridlines(true);
-$spreadsheet->getStyle('A:V')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->freezePane('A2');
-$spreadsheet->getStyle('A1:V1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->getColumnDimension('A')->setWidth(12);
-$spreadsheet->getColumnDimension('B')->setWidth(25);
+$spreadsheet->getStyle('A:I')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+$spreadsheet->getStyle('A1:I1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+$spreadsheet->getColumnDimension('A')->setWidth(9);
+$spreadsheet->getColumnDimension('B')->setWidth(22);
 $spreadsheet->getColumnDimension('C')->setWidth(12);
 $spreadsheet->getColumnDimension('D')->setWidth(12);
-$spreadsheet->getColumnDimension('E')->setWidth(14);
-$spreadsheet->getColumnDimension('F')->setWidth(8);
-$Letras = range("G", "V");
-foreach ($Letras as $col) {
-    $spreadsheet->getColumnDimension($col)->setWidth(10);
-}
-$spreadsheet->getStyle('A')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-$spreadsheet->getStyle('B')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-$spreadsheet->getStyle('C1:V1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('C:V')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getColumnDimension('E')->setWidth(13);
+$spreadsheet->getColumnDimension('F')->setWidth(20);
+$spreadsheet->getColumnDimension('G')->setWidth(8);
+$spreadsheet->getColumnDimension('H')->setWidth(60);
+$spreadsheet->getColumnDimension('I')->setWidth(12);
+
+$spreadsheet->getStyle('C')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle('C1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle('E')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle('E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle('G')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle('G1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 $spreadsheet->getStyle('C')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
 
-$spreadsheet->getStyle('G:V')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-
-$spreadsheet->getStyle('V')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-
 $spreadsheet->getStyle('A')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+
 $numeroDeFila = 2;
 
 function FormatoHoraToExcel($Hora)
@@ -145,23 +121,15 @@ function FormatoFechaToExcel($Fecha)
     $Fecha = ($excelTimestamp);
     return $Fecha;
 }
-function HoraVal($hora)
-{
-    $hora = str_replace(':', '', $hora);
-    $hora = str_replace(' ', '', $hora);
-    return intval($hora);
-}
 
-$params    = $_REQUEST;
-$data      = array();
-$authBasic = base64_encode('chweb:' . HOMEHOST);
-$token     = sha1($_SESSION['RECID_CLIENTE']);
-$params['start'] = $params['start'] ?? '0';
+$params           = $_REQUEST;
+$data             = array();
+$authBasic        = base64_encode('chweb:' . HOMEHOST);
+$token            = sha1($_SESSION['RECID_CLIENTE']);
+$params['start']  = $params['start'] ?? '0';
 $params['length'] = $params['length'] ?? '99999';
-$_POST['_dr'] = $_POST['_dr'] ?? '';
-(!$_POST['_dr']) ? exit : '';
-
-// print_r($_SESSION['EmprRol']).exit;
+$_POST['_dr']     = $_POST['_dr'] ?? '';
+// (!$_POST['_dr']) ? exit : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
@@ -171,98 +139,51 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni  = date('Ymd');
     $FechaFin  = date('Ymd');
 }
-$params['Per']      = $params['Per'] ?? '';
-$params['Per2']      = $params['Per2'] ?? '';
-$params['Emp']      = $params['Emp'] ?? '';
-$params['Plan']     = $params['Plan'] ?? '';
-$params['Sect']     = $params['Sect'] ?? '';
-$params['Sec2']     = $params['Sec2'] ?? '';
-$params['Grup']     = $params['Grup'] ?? '';
-$params['Sucur']    = $params['Sucur'] ?? '';
-$params['_l']       = $params['_l'] ?? $data = array();
-$params['draw']     = $params['draw'] ?? '';
-$params['FicFalta'] = $params['FicFalta'] ?? '';
-$params['Tipo']     = ($params['Tipo']) ?? '';
-$params['onlyReg']  = ($params['onlyReg']) ?? '';
 
-$Empr     = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
-$Per      = $params['Per'] ? ($params['Per']) : array();
-$Per2     = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
-$Plan     = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
-$Sect     = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
-$Grup     = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
-$Sucu     = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
-$Sec2     = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
-$FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
-$LegTipo  = $params['Tipo'] ? $params['Tipo'] : array();
+$fileJson = (file_get_contents("archivos/" . $request->data->time . ".json"));
+$dataLega = (json_decode($fileJson, true));
+$dataLega = $dataLega['data'][0];
+$dataHorarios = (json_decode($fileJson, true));
+$dataHorarios = $dataHorarios['data2']['data'];
 
-$Legajos = ($Per2) ? ($Per2) : $Per;
-$Legajos = ($Per) ? ($Per) : $Legajos;
+if ($dataLega && $dataHorarios) {
 
-$dataParametros = array(
-    'Lega'    => $Legajos,
-    'Falta'   => $FicFalta,
-    'Empr'    => ($Empr),
-    'Plan'    => ($Plan),
-    'Sect'    => ($Sect),
-    'Grup'    => ($Grup),
-    'Sucu'    => ($Sucu),
-    'Sec2'    => ($Sec2),
-    'LegTipo' => ($LegTipo),
-    'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
-    'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
-    'start'   => intval($params['start']),
-    'length'  => intval($params['length']),
-    'getReg'  => 1,
-    'onlyReg'  => $params['onlyReg']
-);
-
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
-
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
-
-$dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
-
-if ($dataApi['DATA']) {
-    foreach ($dataApi['DATA'] as $row) {
+    $Legajo = $dataLega['pers_legajo'];
+    $ApNo   = $dataLega['pers_nombre'];
+    $spreadsheet->setTitle("Horarios $Legajo");
+    foreach ($dataHorarios as $row) {
+        $Horario = "$row[Desde] a $row[Hasta]";
+        $Horario = ($row['Laboral'] == 'No') ? 'Franco' : $Horario;
+        $Fecha = explode('/', $row['Fecha']);
+        $Fecha = "$Fecha[2]-$Fecha[1]-$Fecha[0]";
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
-        $col = '';
-        $pers_legajo   = $row['Lega'];
-        $pers_nombre   = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
-        $dia = DiaSemana3(FechaFormatVar($row['Fech'], 'Ymd'));
-        $ficHorario = $row['Tur']['ent'] . ' a ' . $row['Tur']['sal'];
-        $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $ficHorario;
-        $ficHorario = ($row['Feri'] == '1') ? 'Feriado' : $ficHorario;
+        $Feriado = ($row['Feriado'] == 'Sí') ? 'Feriado' : '';
 
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $row['Lega']);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $row['ApNo']);
-        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, FormatoFechaToExcel($row['Fech']));
-        $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $dia);
-        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $ficHorario);
-        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $row['FichC']);
-        $col = 6;
-        foreach ($row['Fich'] as $key => $fich) {
-            $col++;
-            $spreadsheet->setCellValueByColumnAndRow($col, $numeroDeFila, (FormatoHoraToExcel($fich['Hora'])));
-        }
+        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
+        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $ApNo);
+        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, FormatoFechaToExcel($Fecha));
+        $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $row['Dia']);
+        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Horario);
+        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $row['Horario']);
+        $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $row['HorarioID']);
+        $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $row['TipoAsignStr']);
+        $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $Feriado);
         $numeroDeFila++;
     }
 }
-$cols = range("A","V");
-foreach ($cols as $key => $value) {
-    $spreadsheet->getStyle($value)->getAlignment()->setIndent(1);
-}
-$spreadsheet->getRowDimension('1')->setRowHeight(25);
-$ColumnCount=3;
-$RowIndex=2;
+$spreadsheet->freezePane('A2');
+$spreadsheet->getRowDimension('1')->setRowHeight(30);
+$ColumnCount = 3;
+$RowIndex    = 2;
 $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
-# Crear un "escritor"
+$spreadsheet->getStyle('A1:I1')->applyFromArray($styleArray);
+$spreadsheet->setAutoFilter('A1:I1');
+$spreadsheet->fromArray($encabezado, null, 'A1');
 try {
-    BorrarArchivosPDF('archivos/*.xls');
+    borrarLogs('archivos/', 1, '.xls');
     /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_Fichadas_" . $MicroTime . ".xls";
+    $NombreArchivo = "Horarios_asignados_" . $MicroTime . ".xls";
 
     $writer = new Xls($documento);
     # Le pasamos la ruta de guardado

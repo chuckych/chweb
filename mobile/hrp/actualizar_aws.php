@@ -77,7 +77,7 @@ function getEvents($url, $timeout = 10)
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
-    exit;
+    // exit;
 }
 function queryCalcZone($lat, $lng, $idCompany)
 {
@@ -249,7 +249,8 @@ if (!empty($arrayData)) {
         );
     }
 
-    (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
+    $arrayObj = array_column($arrayObj, 'createdDate');
+    (array_multisort($arrayObj, SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
 
     $assoc = array(

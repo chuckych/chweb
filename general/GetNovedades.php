@@ -74,8 +74,8 @@ if (sqlsrv_num_rows($result) > 0) {
 
         if (str_replace("-","",$_SESSION['ListaNov'])) {
             if (in_array(intval($row['nov_novedad']), explode(',', $_SESSION['ListaNov']))) {
-                $editar   = $editar;
-                $eliminar = $eliminar;
+                // $editar   = $editar;
+                // $eliminar = $eliminar;
             } else {
                 $editar = '';
                 $eliminar = '';

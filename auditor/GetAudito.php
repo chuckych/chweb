@@ -78,7 +78,7 @@ while( $row = sqlsrv_fetch_array($queryRecords) ) {
             break;
         
         default:
-        $AudModu = $AudModu;
+        $AudModu = '';
             break;
     }
     switch ($AudTipo) {
@@ -108,7 +108,7 @@ while( $row = sqlsrv_fetch_array($queryRecords) ) {
             break;
         
         default:
-        $AudTipo = $AudTipo;
+        $AudTipo = '';
             break;
     }
 

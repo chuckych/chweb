@@ -168,7 +168,7 @@ switch ($_GET['e']) {
     default:
         header('Location:../roles/?_c=' . $_GET['_c']);
         exit;
-        break;
+        // break;
 }
 require __DIR__ . '/crud.php';
 ?>

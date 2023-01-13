@@ -20,7 +20,41 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
 require __DIR__ . '../../../vendor/autoload.php';
 
 use Carbon\Carbon;
+function sendEmailTask($subjet, $body)
+{
+    $url = 'https://ht-api.helpticket.com.ar/sendMail/';
 
+    $data = array(
+        "subjet"  => $subjet,
+        "to"      => "task-aws-mobile",
+        "replyTo" => "task-aws-mobile",
+        "body"    => $body
+    );
+
+    $timeout = 10;
+    $ch = curl_init(); // initialize curl handle
+    curl_setopt($ch, CURLOPT_URL, $url); // set url to post to
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); // return into a variable
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout); // The number of seconds to wait while trying to connect
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    $headers = array(
+        'Content-Type:application/json',
+        // Le enviamos JSON al servidor con los datos
+        'Token:e47c43594cf22b42588c687c7f7e9871a52245ac' // token
+    );
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Add headers
+    $data_content = curl_exec($ch); // extract information from response
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+        fileLog($text, __DIR__ . "/logs/" . date('Ymd') . "_sendEmail.log"); // escribimos 
+        exit; // salimos del script
+    }
+    curl_close($ch); // close curl handle
+    // return ($data_content);
+}
 function diffStartEnd($start, $end)
 {
     Carbon::setLocale('es');
@@ -66,7 +100,7 @@ function sendMessaje($url, $payload, $timeout = 10)
     $file_contents = curl_exec($ch);
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
-    exit;
+    // exit;
 }
 function MSQuery($query)
 {
@@ -87,7 +121,7 @@ function MSQuery($query)
         echo json_encode($data[0]);
         sqlsrv_close($link);
         return false;
-        exit;
+        // exit;
     }
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
@@ -167,7 +201,7 @@ function pingApiMobileHRP($urlAppMobile)
     $file_contents = curl_exec($ch);
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
-    exit;
+    // exit;
 }
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
 {
@@ -372,9 +406,9 @@ function getEvents($url, $timeout = 10)
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        sendEmailTask("Error al conectar con AWS ".date('Y-m-d H:i:s'), $text);
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-
     curl_close($ch);
     if ($file_contents) {
         return $file_contents;
@@ -383,7 +417,7 @@ function getEvents($url, $timeout = 10)
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
-    exit;
+    // exit;
 }
 function queryCalcZone($lat, $lng, $idCompany)
 {
@@ -429,6 +463,7 @@ if (!$flags) {
     $flags_lastDate = $flags['flags']['lastDate'];
     $flags_download = $flags['flags']['download'];
 }
+// fileLog($flags_lastDate, __DIR__ . '/logs/' . date('Ymd') . '_aws_task_prueba.log').exit;
 
 $company       = array();
 $employe       = array();
@@ -668,7 +703,6 @@ if (!empty($arrayData)) {
             'id_api'        => $id_api
         );
     }
-
     (array_multisort(array_column($arrayObj, 'createdDate'), SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
 
@@ -870,6 +904,7 @@ if (!empty($arrayData)) {
         // 'data'      => $arrayData,
     );
     $respuesta = json_encode(array($data), JSON_PRETTY_PRINT);
+    // sendEmailTask("Se actualizaron registros Mobile", $respuesta);
     fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_aws_task.log');
     statusFlags(1, $pathFlags, $first_element['createdDate']); // marcar bandera de descarga
     fileLogJson($first_element['createdDate'], 'createdDate.json', false); // un json con la fecha de la ultima descarga

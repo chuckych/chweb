@@ -98,7 +98,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     // } catch (Html2PdfException $e) {
     //     $html2pdf->clean();
     //     $formatter = new ExceptionFormatter($e);
-    //     EscribirArchivo("Error_PDF_ParteDia_".date('Ymd'), "../../../logs/error/", $formatter->getMessage(), false, false, false);
     //     exit();
     // }
     try {
@@ -187,7 +186,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     } catch (\Mpdf\MpdfException $e) {
         echo $e->getMessage();
         // echo $formatter->getHtmlMessage();
-        EscribirArchivo("Error_PDF_InforFic_".date('Ymd'), "../../../logs/error/", $e->getMessage(), false, false, false);
+        file_put_contents("../../../logs/error/Error_PDF_InforFic_".date('Ymd').".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
         exit();
     }
 }

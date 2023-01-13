@@ -108,7 +108,6 @@ require_once "../sidebar/sidebar.php";?>
                </div>
                <div class="form-group row my-2">
                   <div class="col-12">
-                     <?=cerrar();?>
                   </div>
 					</div>
 				</div>

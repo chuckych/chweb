@@ -10,7 +10,7 @@ require __DIR__ . '../../config/index.php';
 UnsetGet('tk');
 UnsetGet('q');
 $respuesta = '';
-$respuesta = '';
+$filtros = '';
 $token     = token();
 
     $FechaIni=test_input($_GET['FechaIni']);

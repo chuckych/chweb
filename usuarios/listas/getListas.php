@@ -57,9 +57,9 @@ switch ($lista) {
                 );
             endwhile;
         }
-        break;
         sqlsrv_free_stmt($rs);
         sqlsrv_close($link);
+        break;
     case 2:
         $query = "SELECT ONovCodi, ONovDesc, ONovTipo FROM OTRASNOV WHERE ONovCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -81,9 +81,9 @@ switch ($lista) {
                 );
             endwhile;
         }
-        break;
         sqlsrv_free_stmt($rs);
         sqlsrv_close($link);
+        break;
     case 3:
         $query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -106,9 +106,9 @@ switch ($lista) {
                 );
             endwhile;
         }
-        break;
         sqlsrv_free_stmt($rs);
         sqlsrv_close($link);
+        break;
     case 4:
         $query = "SELECT RotCodi, RotDesc FROM ROTACION";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -128,9 +128,9 @@ switch ($lista) {
                 );
             endwhile;
         }
-        break;
         sqlsrv_free_stmt($rs);
         sqlsrv_close($link);
+        break;
     case 5:
         $query = "SELECT THoCodi, THoDesc, THoID FROM TIPOHORA WHERE THoCodi > 0";
         $rs = sqlsrv_query($link, $query, $params, $options);
@@ -151,9 +151,9 @@ switch ($lista) {
                 );
             endwhile;
         }
-        break;
         sqlsrv_free_stmt($rs);
         sqlsrv_close($link);
+        break;
     case 10:
         require __DIR__ . '../../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT r.id, r.nombre FROM roles r INNER JOIN clientes c ON r.cliente = c.id WHERE c.recid = '$recid_cliente' AND r.id != '$id_rol' AND r.id != 1");

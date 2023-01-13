@@ -25,9 +25,9 @@ function LastID(){
     while ($row= mysqli_fetch_assoc($stmt)) {
         $id = $row['max']+1;
     }
-    return $id;
     mysqli_free_result($stmt);
     mysqli_close($link);
+    return $id;
 }
 function CheckNombre($dato){
     require __DIR__ . '../../../config/conect_mysql.php';
@@ -36,9 +36,9 @@ function CheckNombre($dato){
     while ($row= mysqli_fetch_assoc($stmt)) {
         $nombre = $row['nombre'];
     }
-    return $nombre;
     mysqli_free_result($stmt);
     mysqli_close($link);
+    return $nombre;
 }
 // sleep(3);
 /** ALTA DE MODULO */

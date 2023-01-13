@@ -92,8 +92,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
     if (sqlsrv_num_rows($result) == 0) {
         $data = array('status' => 'error', 'Mensaje' => 'No hay identificador asociado al Legajo.');
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         while ($fila = sqlsrv_fetch_array($result)) {
             $RegTarj = $fila['IDCodigo'];
@@ -326,8 +326,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
                 PrintRespuestaJson('ok', $Dato2 . $Procesado);
                 exit;
             }
-            echo json_encode($data);
-            exit;
+            // echo json_encode($data);
+            // exit;
         } else {
             PrintRespuestaJson('error', 'Error');
             exit;
@@ -495,15 +495,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
+        sqlsrv_free_stmt($result);
+        sqlsrv_close($link);
         echo json_encode($data);
         exit;
     }
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
 }
 /** MODIFICACIÓN NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod')) {
@@ -611,15 +611,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
         echo json_encode($data);
+        sqlsrv_free_stmt($result);
+        sqlsrv_close($link);
         exit;
     }
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
 }
 /** BAJA NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_novedad'] == 'true')) {
@@ -761,14 +761,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado);
         }
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
         echo json_encode($data);
+        sqlsrv_close($link);
         exit;
     }
-    sqlsrv_close($link);
 }
 /** BAJA HORAS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Hora'] == 'true')) {
@@ -950,7 +950,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
             $file_contents = curl_exec($ch);
             curl_close($ch);
             return ($file_contents) ? $file_contents : false;
-            exit;
+            // exit;
         }
 
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
@@ -972,14 +972,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
             // auditoria($Dato2 . $Procesado. ' Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, "d/m/Y"), 'P', '', '4');
         }
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
         echo json_encode($data);
+        sqlsrv_close($link);
         exit;
     }
-    sqlsrv_close($link);
 }
 /** ALTA OTRAS NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true')) {
@@ -1047,14 +1047,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
         audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
         echo json_encode($data);
+        sqlsrv_close($link);
         exit;
     }
-    sqlsrv_close($link);
 }
 /** BAJA OTRAS NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
@@ -1170,14 +1170,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     } else {
         $data = array('status' => 'Error', 'Mensaje' => $Dato);
         echo json_encode($data);
+        sqlsrv_close($link);
         exit;
     }
-    sqlsrv_close($link);
 }
 /** ALTA CITACION */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true')) {

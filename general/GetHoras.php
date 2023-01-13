@@ -75,8 +75,8 @@ if (sqlsrv_num_rows($result) > 0) {
         }
         if (str_replace("-", "", $_SESSION['ListaTipoHora'])) {
             if (in_array(intval($row['Hora']), explode(',', $_SESSION['ListaTipoHora']))) {
-                $editar   = $editar;
-                $eliminar = $eliminar;
+                // $editar   = $editar;
+                // $eliminar = $eliminar;
             } else {
                 $editar = '';
                 $eliminar = '';

@@ -51,7 +51,7 @@ $dataCompany  = array(
 );
 /**
  * Devuelve valores separados por @separator de un array
- * @array {array} array de datos
+ * @var array {array} array de datos
  * @key {string} key a procesar
  * @separator {string} separador del valor
  */
@@ -261,7 +261,7 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany    = $idCompany;
+    // $idCompany    = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -316,9 +316,9 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $resultSet[] = $r;
         }
-        return $resultSet;
         $stmt = null;
         $conn = null;
+        return $resultSet;
     } catch (Exception $e) {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
@@ -331,7 +331,7 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
 /**
  * @text {string} texto del log
  * @path {string} ruta del archivo con su extension
- * @type {string} defecto false, value export = text sin fecha hora
+ * @var {string} defecto false, value export = text sin fecha hora
  */
 function writeLog($text, $path, $type = false)
 {
@@ -405,7 +405,7 @@ function horaMin($hora)
     return false;
 }
 /**
- * @array {array} matriz para filtrar
+ * @var array {array} matriz para filtrar
  * @key {string} llave de la matriz a filtrar
  * @valor {string} valor de la llave
  */
@@ -448,7 +448,7 @@ function fechFormat($dateTime, $format = 'Y-m-d')
 /**
  * @key {string} Parámetro a controlar
  * @valor {string} or {int} valor a controlar
- * @type {string} si es string o int
+ * @var {string} si es string o int
  * @lenght {int} la cantidad maxima de caracteres
  * @validArr {array} array de valores admitidos
  */
@@ -486,27 +486,27 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
                     case (!is_numeric($value)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
-                        exit;
+                        // exit;
                         break;
                     case (!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
-                        exit;
+                        // exit;
                         break;
                     case (strlen($value) > $length):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
-                        exit;
+                        // exit;
                         break;
                     case (($value) < 0):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
-                        exit;
+                        // exit;
                         break;
                     case (($value) > 1):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
-                        exit;
+                        // exit;
                         break;
                     default:
                         break;
@@ -729,6 +729,18 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
                 }
             }
         }
+        if ($type == 'arrfecha') {
+            if(!is_array($value)) {
+                http_response_code(400);
+                (response(array(), 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
+                exit;
+            }
+            if ($value) {
+                foreach ($value as $v) {
+                    validaFecha($v);
+                }
+            }
+        }
         if ($type == 'strArraySel2') {
             if ($value) {
                 if (!is_array($value)) {
@@ -748,15 +760,15 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
                             (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
-                        $vArr = explode('-',$v);
-                        if(count($vArr)>2){
+                        $vArr = explode('-', $v);
+                        if (count($vArr) > 2) {
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
                         $index0 = ($vArr[0]);
                         $index1 = ($vArr[1]);
-                        if ($index0 == '0'|| $index1 == '0') {
+                        if ($index0 == '0' || $index1 == '0') {
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores no pueden ser 0 (ceros)", 400, timeStart(), 0, 0));
                             exit;
@@ -825,28 +837,28 @@ function IncTiStr($LegIncTi)
         switch ($LegIncTi) {
             case '0':
                 return "Estándar sin control de descanso";
-                break;
+                // break;
             case '1':
                 return "Estándar con control de descanso";
-                break;
+                // break;
             case '2':
                 return "(Hs. a Trabajar - Hs. Trabajadas)";
-                break;
+                // break;
             case '3':
                 return "(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia";
-                break;
+                // break;
             case '4':
                 return "(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso";
-                break;
+                // break;
             case '5':
                 return "Recortado sin control de descanso";
-                break;
+                // break;
             case '6':
                 return "Recortado con control de descanso";
-                break;
+                // break;
             default:
                 return "Sin definir";
-                break;
+                // break;
         }
     }
     return '';
@@ -857,13 +869,13 @@ function LegHoAlStr($LegHoAl)
         switch ($LegHoAl) {
             case '0':
                 return "Según Asignación";
-                break;
+                // break;
             case '1':
                 return "Alternativo según fichadas";
-                break;
+                // break;
             default:
                 return "Sin definir";
-                break;
+                // break;
         }
     }
     return '';
@@ -992,3 +1004,46 @@ function getCuil($document_number, $gender)
     // file_put_contents(date('Y-m-d') . '_logRequest.log', $text, FILE_APPEND | LOCK_EX);
     return $cuil_cuit;
 }
+function validaFecha($fecha)
+{
+
+    if (!$fecha) return false;
+
+    $f = explode('-', $fecha);
+
+    if (count($f) != 3) {
+        http_response_code(400);
+        (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
+        exit;
+    }
+
+    $err = '';
+    $y = $f[0];
+    $m = ($f[1] > 12 || $f[1] == 0) ? $err .= "Mes ($f[1]) Incorrecto. " : $f[1];
+    $d = ($f[2] > 31) ? $err .= "Dia ($f[2]) Incorrecto. " : $f[2];
+
+    if ($err) {
+        $err = trim($err);
+        http_response_code(400);
+        (response(array(), 0, "$err", 400, timeStart(), 0, 0));
+        exit;
+    }
+    $f = "$y-$m-$d";
+    try {
+        new DateTime($f);
+    } catch (exception $e) {
+        http_response_code(400);
+        (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
+        exit;
+    }
+};
+function arrFecha($array, $format)
+{
+    if (!$array) return [];
+    foreach ($array as $f) {
+        $a[] = array(
+            fecha($f, $format)
+        );
+    }
+    return array_column($a, 0) ?? [];
+};

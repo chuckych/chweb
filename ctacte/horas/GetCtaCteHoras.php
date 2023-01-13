@@ -9,7 +9,7 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 header("Content-Type: application/json");
 E_ALL();
 
-    UnsetPost('Visualizar', '2');
+    UnsetPost('Visualizar');
 
     $DateRange = explode(' al ', $_POST['_dr']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));

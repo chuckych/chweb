@@ -132,7 +132,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $_SERVER['HTTP_USER_AGENT'] = ($_SERVER['HTTP_USER_AGENT']) ?? '';
     $agent    = urldecode($_SERVER['HTTP_USER_AGENT']);
-    $idCompany = $idCompany;
+    // $idCompany = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../../control/PhpUserAgent/src/UserAgentParser.php';
@@ -285,6 +285,7 @@ if ($update) {
         'locked'           => ($a['estado'] == 1) ? true : false,
         'expiredDateStart' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
         'expiredDateEnd'   => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
+        'hasArea' => false
     );
     $body = [
         array(

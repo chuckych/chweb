@@ -15,7 +15,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 $stmt  = sqlsrv_query($link, "SELECT @@VERSION");
 if (($stmt)) {
     $rs=sqlsrv_fetch_array($stmt);
-    PrintRespuestaJson('ok', nl2br($rs[0]));
+    PrintRespuestaJson('ok', "<h6>Conexión exitosa . . .</h6>" . nl2br($rs[0]));
     sqlsrv_free_stmt($stmt);
     sqlsrv_close($link);
     exit;
@@ -28,7 +28,7 @@ if (($stmt)) {
         }
     }
     echo json_encode($data[0]);
-    exit;
     sqlsrv_close($link);
+    exit;
 }
 

@@ -7,6 +7,12 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
+function hoyStr()
+{
+    $hoy = date('Ymd');
+    return rtrim($hoy);
+}
+
 if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST))) {
     pingWebService('Horario no disponible');
     

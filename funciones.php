@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.1.2'; // Version de la aplicación
+    return 'v0.2.1'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -26,6 +26,7 @@ function E_ALL()
     }
 }
 function secure_auth_ch() // Funcion para validar si esta autenticado
+
 {
     timeZone();
     timeZone_lang();
@@ -149,6 +150,7 @@ function secure_auth_ch2()
 }
 /** ultimaacc */
 function ultimoacc() // Funcion para obtener la fecha hora del ultimo acceso
+
 {
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
 }
@@ -173,9 +175,10 @@ function vjs()
         return version();
     }
 }
-function version_file($pathFile){
-    if($pathFile){
-        return filesize(dirname(__FILE__). $pathFile). '.'. filemtime(dirname(__FILE__). $pathFile);
+function version_file($pathFile)
+{
+    if ($pathFile) {
+        return filesize(dirname(__FILE__) . $pathFile) . '.' . filemtime(dirname(__FILE__) . $pathFile);
     }
     return time();
 }
@@ -183,14 +186,8 @@ function API_KEY_MAPS()
 {
     return 'AIzaSyCFs9lj9k7WZAyuwzDJwOiSiragUA9Xwg0';
 }
-// define("SQLSRV_CURSOR_KEYSET", '');
 $params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET, 'keyset');
-
-function encabezado($titulo)
-{
-    return '<div class="row"><div class="col-12 radius-0"><p class="bg-white shadow-sm p-3 text-dark lead">' . $titulo . '</p></div></div>';
-}
 /** GENERAR generaPass */
 function recid()
 {
@@ -222,18 +219,6 @@ function statusData($status, $dato)
     echo json_encode($data);
     exit;
 }
-function recid2($cant)
-{
-    $cadena = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-1234567890abcdefghijklmnopqrstuvwxyz";
-    $longitudCadena = strlen($cadena);
-    $pass = "";
-    $longitudPass = $cant;
-    for ($i = 1; $i <= $longitudPass; $i++) {
-        $pos = rand(0, $longitudCadena - 1);
-        $pass .= substr($cadena, $pos, 1);
-    }
-    return $pass;
-}
 function getBrowser($user_agent)
 {
     if (strpos($user_agent, 'MSIE') !== FALSE)
@@ -259,12 +244,6 @@ function AttrDisabled($ValTrue)
 {
     return $ValTrue == 1 ? '' : 'disabled';
 }
-function ocultarIE()
-{
-    if (getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer') {
-        echo 'd-none';
-    }
-}
 function BrowserIE()
 {
     return getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer' ? true : false;
@@ -282,42 +261,9 @@ function BorrarArchivosPDF($RutaFiles)
             unlink($file); //elimino el fichero
     }
 }
-function BorrarArchivo($RutaFiles)
-{
-    $files = glob($RutaFiles); //obtenemos el nombre de todos los ficheros
-    foreach ($files as $file) {
-        if (is_file($file))
-            /** borra arcchivos con diferencia de horas mayor a 1 */
-            unlink($file); //elimino el fichero
-    }
-}
-/** GENERAR generacontraseña */
-function GeneraClave() // Genera una contraseña aleatoria
-{
-    $cadena0 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    $cadena1 = "12345678901234567890";
-    $cadena2 = "abcdefghijklmnopqrstuvwxyz";
-    $cadena = ($cadena0) . ($cadena1) . ($cadena2); //concatenamos las cadenas
-    $longitudCadena = strlen($cadena); //longitud de la cadena
-    $pass = ""; //variable para almacenar la contraseña
-    $longitudPass = 12; //longitud de la contraseña
-    for ($i = 1; $i <= $longitudPass; $i++) { //ciclo para generar la contraseña
-        $pos = rand(0, $longitudCadena - 1);
-        $pass .= substr($cadena, $pos, 1);
-    }
-    return $pass; //retornamos la contraseña
-}
 function token()
 {
     return sha1('ie&%$sg@dQdtW@!""#');
-}
-function EscribirArchivo($nombre_archivo, $ruta_archivo, $texto, $date, $clear, $backup)
-{
-    require_once __DIR__ . '../log.class.php';
-    /** LLAMAMOS A LA CLASE LOG */
-    $log = new Log($nombre_archivo, $ruta_archivo);
-    $log->insert($texto, $date, $clear, $backup);
-    return $log;
 }
 function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 {
@@ -489,75 +435,7 @@ function pagina($pagina)
     $pag = (!isset($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
     return $pag;
 }
-function valida_legajo($user)
-{
-    if (trim($user) == '') {
-        return false;
-    } else {
-        return true;
-    }
-}
-function valida_password($pass)
-{
-    if (trim($pass) == '') {
-        return false;
-    } else {
-        return true;
-    }
-}
-function error_prepre($var)
-{
-    if (!$var) {
-        echo "<b>Declaración no pudo ser preparada.</b>";
-        //die(print_r(sqlsrv_errors(), true)); 
-        if (($errors = sqlsrv_errors()) != null) {
-            foreach ($errors as $error) {
-                echo "SQLSTATE: " . $error['SQLSTATE'] . "<br />";
-                echo "code: " . $error['code'] . "<br />";
-                echo "message: " . $error['message'] . "<br />";
-            }
-        }
-    }
-}
-function error_execute($var, $var2)
-{
-    if (!sqlsrv_execute($var)) {
-        echo "<b>La declaración " . $var2 . " no se pudo ejecutar</b>\n";
-        // die(print_r(sqlsrv_errors(), true));
-        if (($errors = sqlsrv_errors()) != null) {
-            foreach ($errors as $error) {
-                echo "SQLSTATE: " . $error['SQLSTATE'] . "<br />";
-                echo "code: " . $error['code'] . "<br />";
-                echo "message: " . $error['message'] . "<br />";
-            }
-        }
-    }
-}
-function error_query($var, $var2)
-{
-    if (!$var) {
-        echo "<b>La sentencia " . $var2 . " no se pudo ejecutar</b><br />";
-        // die(print_r(sqlsrv_errors(), true));
-        if (($errors = sqlsrv_errors()) != null) {
-            timeZone();
-            $fechaarch = date('dmY');
-            $fechaarch2 = date('d/m/Y H:i:s');
-            $nombre_archivo = __DIR__ . "/logs/log_error_sql_" . $fechaarch . ".txt";
-            if ($archivo = fopen($nombre_archivo, "a")) {
-                foreach ($errors as $error) {
-                    if (fwrite($archivo, "------------------------------\n"
-                        . $fechaarch2 . "\nLa sentencia " . $var2 . " no se pudo ejecutar\n SQLSTATE: " . $error['SQLSTATE'] . "\n code: " . $error['code'] . "\n message: " . $error['message'] . " \n------------------------------\n"))
-                        fclose($archivo);
-                }
-            }
-            // foreach($errors as $error) {
-            //     echo "SQLSTATE: ".$error[ 'SQLSTATE']."<br />";
-            //     echo "code: ".$error[ 'code']."<br />";
-            //     echo "message: ".$error[ 'message']."<br />";
-            // }
-        }
-    }
-}
+
 function UnsetGet($variable)
 {
     $_GET[$variable] = isset($_GET[$variable]) ? $_GET[$variable] : '';
@@ -569,24 +447,17 @@ function UnsetPost($variable)
     $_POST[$variable] = ($_POST[$variable]) ?? '';
     return $_POST[$variable];
 }
-function UnsetVar($UnsetVar)
-{
-    if (!isset($UnsetVar)) {
-        $UnsetVar = "";
-    }
-    return $UnsetVar;
-}
 function FormatHora($var)
 {
     // if($var <= -60){ /** Si el valor es menor o igual a menos -60 */
     $segundos = $var * 60;
-    $horas    = intval($segundos / 3600);
-    $minutos  = floor(($segundos - ($horas * 3600)) / 60);
+    $horas = intval($segundos / 3600);
+    $minutos = floor(($segundos - ($horas * 3600)) / 60);
     $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
-    $horas    = str_pad($horas, 2, "0", STR_PAD_LEFT);
+    $horas = str_pad($horas, 2, "0", STR_PAD_LEFT);
     // $minutos  = ($minutos < 0) ? str_replace("-", "", $minutos) : $minutos;
-    $minutos  = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora     = $horas . ':' . $minutos;
+    $minutos = str_pad($minutos, 2, "0", STR_PAD_LEFT);
+    $hora = $horas . ':' . $minutos;
     switch ($hora) {
         case '00:00':
             $hora = "-";
@@ -598,13 +469,13 @@ function FormatHoraR($var)
 {
     // if($var <= -60){ /** Si el valor es menor o igual a menos -60 */
     $segundos = $var * 60;
-    $horas    = intval($segundos / 3600);
-    $minutos  = floor(($segundos - ($horas * 3600)) / 60);
+    $horas = intval($segundos / 3600);
+    $minutos = floor(($segundos - ($horas * 3600)) / 60);
     $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
-    $horas    = str_pad($horas, 2, "0", STR_PAD_LEFT);
-    $minutos  = ($minutos < 0) ? str_replace("-", "", $minutos) : $minutos;
-    $minutos  = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora     = $horas . ':' . $minutos;
+    $horas = str_pad($horas, 2, "0", STR_PAD_LEFT);
+    $minutos = ($minutos < 0) ? str_replace("-", "", $minutos) : $minutos;
+    $minutos = str_pad($minutos, 2, "0", STR_PAD_LEFT);
+    $hora = $horas . ':' . $minutos;
     switch ($hora) {
         case '00:00':
             $hora = "0";
@@ -615,67 +486,8 @@ function FormatHoraR($var)
 function MinExcel($min)
 {
     $min = $min / 60;
-    $min    = ($min / 24);
+    $min = ($min / 24);
     return $min;
-}
-function FormatHora_Neg($var)
-{
-    $hora = (str_replace("-", "-00:", $var));
-    return $hora;
-}
-function FormatHora_chart($var)
-{
-    $segundos = $var * 60;
-    $horas    = floor($segundos / 3600);
-    $minutos  = floor(($segundos - ($horas * 3600)) / 60);
-    $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
-    $horas    = str_pad($horas, 2, "0", STR_PAD_LEFT);
-    $minutos  = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora     = $horas . "" . $minutos;
-    switch ($hora) {
-        case '0000':
-            $hora = "-";
-            break;
-    }
-    return $hora;
-}
-function cero4($var)
-{
-    $var = str_pad($var, 4, "0", STR_PAD_LEFT);
-    return $var;
-}
-function br()
-{
-    echo "<br />";
-}
-function h1($texto)
-{
-    echo "<h1>" . $texto . "</h1>";
-}
-function h2($texto)
-{
-    echo "<h2>" . $texto . "</h2>";
-}
-function h3($texto)
-{
-    echo "<h3>" . $texto . "</h3>";
-}
-function h4($texto)
-{
-    echo "<h4>" . $texto . "</h4>";
-}
-function pre($cod)
-{
-    echo "<pre>" . $cod . "</pre>";
-}
-function no()
-{
-    echo "d-none";
-}
-function nombrearchivo()
-{
-    $nombrearchivo = basename($_SERVER['PHP_SELF'], ".php") . PHP_EOL;
-    return ucfirst($nombrearchivo);
 }
 function test_input($data)
 {
@@ -689,46 +501,18 @@ function test_input($data)
     $data = htmlentities($data, ENT_QUOTES);
     return ($data);
 }
-function test_input2($data)
-{
-    foreach ($data as $key => $value) {
-        $value = trim($data);
-        // $data = stripslashes($data);
-        // $data = htmlspecialchars($data);
-        // $data = htmlspecialchars(stripslashes($data));
-        $value = str_ireplace("script", "blocked", $data);
-        $value = htmlentities($data, ENT_QUOTES);
-    }
-    return $value;
-}
 function hoy()
 {
     timeZone();
     $hoy = date('Y-m-d');
     return rtrim($hoy);
 }
-function hoyStr()
-{
-    $hoy = date('Ymd');
-    return rtrim($hoy);
-}
+
 function FechaString($var)
 {
-    $date        = date_create($var);
+    $date = date_create($var);
     $FormatFecha = date_format($date, "Ymd");
     return $FormatFecha;
-}
-function sino($var)
-{
-    switch ($var) {
-        case '0':
-            $var = "No";
-            break;
-        case '1':
-            $var = "Sí";
-            break;
-    }
-    return $var;
 }
 function ceronull($var)
 {
@@ -740,24 +524,6 @@ function ceronull($var)
         case null:
             $var = '-';
             break;
-    }
-    return $var;
-}
-function horacero($var)
-{
-    switch ($var) {
-        case '00:00':
-            $var = "-";
-            break;
-    }
-    return $var;
-}
-function show()
-{
-    if (($_GET['q'] == 'true')) {
-        $var = '';
-    } else {
-        $var = "collapse";
     }
     return $var;
 }
@@ -784,30 +550,6 @@ function nombre_dia($var)
             break;
         case '6':
             $var = "Sábado";
-            break;
-    }
-    return $var;
-}
-function tipo_doc($var)
-{
-    switch ($var) {
-        case '0':
-            $var = "DU";
-            break;
-        case '1':
-            $var = "DNI";
-            break;
-        case '2':
-            $var = "CI";
-            break;
-        case '3':
-            $var = "LC";
-            break;
-        case '4':
-            $var = "LE";
-            break;
-        case '5':
-            $var = "PAS";
             break;
     }
     return $var;
@@ -875,16 +617,6 @@ function DiaSemana($Ymd)
     $scheduled_day = "$days[$day] " . date('d/m/Y', strtotime($scheduled_day));
     return $scheduled_day;
 }
-function DiaSemana_Numero($Ymd)
-{
-    timeZone();
-    setlocale(LC_TIME, "spanish");
-    $scheduled_day = $Ymd;
-    $days = [7, 1, 2, 3, 4, 5, 6];
-    $day = date('w', strtotime($scheduled_day));
-    $scheduled_day = $days[$day];
-    return $scheduled_day;
-}
 function Nombre_Mes($Ymd)
 {
     $scheduled_month = $Ymd;
@@ -938,16 +670,6 @@ function Nombre_MesNum($NumeroMes)
     }
     return $text;
 }
-function DiaSemana2($Ymd)
-{
-    timeZone();
-    setlocale(LC_TIME, "spanish");
-    $scheduled_day = $Ymd;
-    $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
-    $day = date('w', strtotime($scheduled_day));
-    $scheduled_day = "$days[$day] <br/>" . date('d.m.Y', strtotime($scheduled_day));
-    return $scheduled_day;
-}
 function DiaSemana4($Ymd)
 {
     timeZone();
@@ -984,24 +706,26 @@ function Fech_Format_Var($fecha, $var)
 function fechformat2($var)
 {
     $dato = date_create($var);
-    $var  = date_format($dato, 'Y-m-d');
+    $var = date_format($dato, 'Y-m-d');
     return $var;
 }
 function FechaFormatH($FechaHora)
 {
-    if(!$FechaHora){ return false; }
+    if (!$FechaHora) {
+        return false;
+    }
     $dato = date_create($FechaHora);
-    $var  = date_format($dato, "d/m/Y H:i");
+    $var = date_format($dato, "d/m/Y H:i");
     return $var;
 }
 function HoraFormat($FechaHora, $second = true)
 {
     if ($second) {
         $dato = date_create($FechaHora);
-        $var  = date_format($dato, "H:i:s");
+        $var = date_format($dato, "H:i:s");
     } else {
         $dato = date_create($FechaHora);
-        $var  = date_format($dato, "H:i");
+        $var = date_format($dato, "H:i");
     }
     return $var;
 }
@@ -1009,27 +733,16 @@ function FechaFormatVar($FechaHora, $var)
 {
     if ($FechaHora != '0000-00-00 00:00:00') {
         $dato = date_create($FechaHora);
-        $var  = date_format($dato, $var);
+        $var = date_format($dato, $var);
         return $var;
     } else {
         return '';
     }
 }
-function fechformatM($var)
-{
-    $dato = date_create($var);
-    $var = date_format($dato, "d-m-Y");
-    return $var;
-}
 function Fecha_String($var)
 {
     $dato = date_create($var);
     $var = date_format($dato, 'Ymd');
-    return $var;
-}
-function user_session()
-{
-    $var = $_SESSION['legajo'];
     return $var;
 }
 function inicio()
@@ -1068,33 +781,6 @@ function token_exist($recid_cliente)
     $numrows = ($numrows == '1') ? true : false;
     return $numrows;
 }
-/** FUNCIÓN PARA LEER LE ARCHIVO */
-function DatoArchivo($ruta)
-{
-    $ruta  = __DIR__ . $ruta;
-    /** Ruta del archivo */
-    $fp    = fopen($ruta, "r");
-    /** Abrimos el archivo */
-    $dato  = fgets($fp);
-    /** Leemos el archivo */
-    fclose($fp);
-    /**  Cerramos el archivo */
-    return $dato;
-    /** retornamos el valor */
-}
-/** FUNCION PARA TRAER DATOS DESDE API*/
-function GetDatosApi($url, $key)
-{
-    // $Get   = file_get_contents($url);
-    /** Traemos el fichero completo de la url */
-    // $array = json_decode($Get, TRUE);
-    $array = json_decode(getRemoteFile($url), true);
-    /** Decodificamos el string de JSON que devuelve el get */
-    $array = $array[$key];
-    /** Array de los datos obtenidos del Get con la clave de acuerdo al manual de la API */
-    return $array;
-    /** Retornamos el resultado */
-}
 function dnone($var)
 {
     switch ($var) {
@@ -1119,7 +805,7 @@ function ExisteCliente($recid)
     require 'config/conect_mysql.php';
     $result = mysqli_query($link, $query);
     if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) :
+        while ($row = mysqli_fetch_assoc($result)):
             $nombre = $row['nombre'];
         endwhile;
         mysqli_free_result($result);
@@ -1140,10 +826,10 @@ function ExisteRol3($recid, $id)
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
-        while ($row = mysqli_fetch_assoc($rs)) :
+        while ($row = mysqli_fetch_assoc($rs)):
             $nombre = $row['nombre'];
-            $id     = $row['id'];
-            $recid  = $row['recid'];
+            $id = $row['id'];
+            $recid = $row['recid'];
         endwhile;
         return array('nombre' => $nombre, 'id' => $id, 'recid' => $recid);
     } else {
@@ -1161,13 +847,14 @@ function ExisteRol4($recid, $id)
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
+        mysqli_free_result($rs);
+        mysqli_close($link);
         return true;
     } else {
+        mysqli_free_result($rs);
+        mysqli_close($link);
         return false;
     }
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    exit;
 }
 function ExisteUser($cliente_recid, $uid)
 {
@@ -1176,13 +863,14 @@ function ExisteUser($cliente_recid, $uid)
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
+        mysqli_free_result($rs);
+        mysqli_close($link);
         return true;
     } else {
+        mysqli_free_result($rs);
+        mysqli_close($link);
         return false;
     }
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    exit;
 }
 function ExisteRol2($recid)
 {
@@ -1192,7 +880,7 @@ function ExisteRol2($recid)
     require 'config/conect_mysql.php';
     $rs = mysqli_query($link, $q);
     if (mysqli_num_rows($rs) > 0) {
-        while ($r = mysqli_fetch_assoc($rs)) :
+        while ($r = mysqli_fetch_assoc($rs)):
             $n = array($r['nombre'], $r['id_rol'], $r['recid']);
         endwhile;
         mysqli_free_result($rs);
@@ -1209,7 +897,7 @@ function ExisteRol($recid)
 {
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
-    $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
+    $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
@@ -1222,41 +910,41 @@ function ExisteRol($recid)
 }
 function Cliente_c($recid)
 {
-    $url   = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
+    $url = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
     $array = json_decode(getRemoteFile($url), true);
-    $data         = $array[0]['clientes'];
-    if (is_array($data)) :
+    $data = $array[0]['clientes'];
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
-            $id_c     = $value['id'];
-            $ident    = $value['ident'];
-            $recid_c  = $value['recid'];
+        foreach ($data as $value):
+            $id_c = $value['id'];
+            $ident = $value['ident'];
+            $recid_c = $value['recid'];
             $nombre_c = $value['nombre'];
-            $host_c   = $value['host'];
+            $host_c = $value['host'];
             return array($id_c, $ident, $nombre_c, $recid_c, $host_c);
         endforeach;
     endif;
 }
 function Rol_Recid($recid)
 {
-    $url   = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
+    $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid=" . $recid;
     //$json  = file_get_contents($url);
     // $array = getRemoteFile($url);
     $array = json_decode(getRemoteFile($url), true);
-    $data  = $array[0]['roles'];
-    if (is_array($data)) :
+    $data = $array[0]['roles'];
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
-            $id_Rol           = $value['id'];
-            $nombreRol        = $value['nombre'];
-            $clienteRol       = $value['cliente'];
-            $UsuariosRol      = $value['cant_roles'];
+        foreach ($data as $value):
+            $id_Rol = $value['id'];
+            $nombreRol = $value['nombre'];
+            $clienteRol = $value['cliente'];
+            $UsuariosRol = $value['cant_roles'];
             $recid_clienteRol = $value['recid_cliente'];
-            $idClienteRol     = $value['id_cliente'];
+            $idClienteRol = $value['id_cliente'];
             return array($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol, $idClienteRol);
         endforeach;
     endif;
@@ -1292,14 +980,11 @@ function ExisteModRol($modulo)
     }
     /** redirect */
 }
-function existConnMSSQL() // verifica si existe conexion a MSSQL
+// verifica si existe conexion a MSSQL
+function existConnMSSQL()
 {
     require_once __DIR__ . '/config/conect_mssql.php'; // conexion a MSSQL
     (!$_SESSION['CONECT_MSSQL']) ? header("Location:/" . HOMEHOST . "/inicio/?e=errorConexionMSSQL") . exit : ''; // si no existe conexion a MSSQL redirigimos al inicio
-}
-function errors($valor)
-{
-    return ini_set('display_errors', $valor);
 }
 function notif_ok_var($get, $texto)
 {
@@ -1331,46 +1016,24 @@ function notif_error_var($get, $texto)
     }
     return $ok;
 }
-function notif_error($GET, $msg, $texto)
-{
-    $ok = "";
-    if ($_GET[$GET] == $msg) {
-        $ok = '<div class="row"><div class="col-12 mt-4">
-        <div class="animate__animated animate__fadeInDown p-3 radius-0 fw4 fontq alert alert-danger text-uppercase alert-dismissible fade show" role="alert">
-			' . $texto . '
-          </div>
-          </div></div>';
-    }
-    return $ok;
-}
 function ListaRoles($Recid_C)
 {
-    $url          = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $Recid_C;
+    $url = host() . "/" . HOMEHOST . "/data/GetRoles.php?tk=" . token() . "&recid_c=" . $Recid_C;
     // $json         = file_get_contents($url);
     // $array        = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
-    $data         = $array[0]['roles'];
-    if (is_array($array)) :
-        foreach ($data as $value) :
+    $data = $array[0]['roles'];
+    if (is_array($array)):
+        foreach ($data as $value):
             $nombre = $value['nombre'];
-            $id     = $value['id'];
+            $id = $value['id'];
             echo '<option value="' . $id . '">' . $nombre . '</option>';
         endforeach;
     endif;
 }
-function sector_rol($recid_rol)
-{
-    $url   = host() . "/" . HOMEHOST . "/data/GetEstructRol.php?tk=" . token() . "&_r=" . $recid_rol;
-    // $json  = file_get_contents($url);
-    // $array = json_decode($json, TRUE);
-    $array = json_decode(getRemoteFile($url), true);
-    $sect_roles = (!$array[0]['error']) ? implode(",", $array[0]['sector']) : '';
-    $rol = (!$array[0]['error']) ? "$sect_roles" : "";
-    return $rol;
-}
 function estructura_rol($get_rol, $recid_rol, $e, $data)
 {
-    $url   = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
+    $url = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
     // echo $url; br();
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
@@ -1385,7 +1048,7 @@ function estructura_rol($get_rol, $recid_rol, $e, $data)
 }
 function estructura_rol_count($get_rol, $recid_rol, $e, $data)
 {
-    $url   = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
+    $url = host() . "/" . HOMEHOST . "/data/$get_rol.php?tk=" . token() . "&_r=" . $recid_rol . "&e=" . $e;
     // $json  = file_get_contents($url);
     // $array = json_decode($json, TRUE);
     // print_r($url);exit;
@@ -1393,31 +1056,6 @@ function estructura_rol_count($get_rol, $recid_rol, $e, $data)
     $val_roles = (!$array[0]['error']) ? count($array[0][$data]) : '';
     $rol = (!$array[0]['error']) ? "$val_roles" : "";
     return $rol;
-}
-function count_estructura($_c, $e)
-{
-    $urls   = host() . "/" . HOMEHOST . "/data/GetEstructura.php?tk=" . token() . "&_c=" . $_c . "&count&e=" . $e;
-    // echo $urls.PHP_EOL;
-    // CountRegMySql("SELECT modulos.id AS 'id' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");    
-    // $jsons  = file_get_contents($urls);
-    // $arrays = json_decode($jsons, TRUE);
-    $arrays = json_decode(getRemoteFile($urls), true);
-    if (is_array($arrays)) :
-        $rowcount = ($arrays[0]['error']) ? ($arrays[0]['count_cod']) : '-';
-        return $rowcount;
-    endif;
-}
-function count_estructura2($_c, $tabla, $ColCodi)
-{
-    require_once __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT COUNT($tabla.$ColCodi) AS count_cod
-    FROM $tabla";
-    $result = sqlsrv_query($link, $query);
-    while ($row = sqlsrv_fetch_array($result)) :
-        $count_cod = $row['count_cod'];
-    endwhile;
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
 }
 function TipoNov($var)
 {
@@ -1521,57 +1159,10 @@ function TipoDoc($var)
     }
     return $tipo;
 }
-function total_pers()
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT COUNT(PERSONAL.LegNume) AS cantidad FROM PERSONAL WHERE PERSONAL.LegFeEg = '17530101' AND PERSONAL.LegNume > '0'";
-    // print_r($query).PHP_EOL;
-    // exit;
-    $result = sqlsrv_query($link, $query);
-        // $data  = array();
-    ;
-    while ($row = sqlsrv_fetch_array($result)) {
-        $cantidad = $row['cantidad'];
-    }
-    return $cantidad;
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
-}
-function tot_pers_pres($fecha)
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT COUNT(PERSONAL.LegNume) AS cantidad FROM PERSONAL
-    INNER JOIN FICHAS ON PERSONAL.LegNume = FICHAS.FicLega
-    WHERE PERSONAL.LegFeEg = '17530101'
-    AND PERSONAL.LegNume > '0'
-    AND FICHAS.FicDiaL ='1' AND FICHAS.FicFech='$fecha'";
-    // print_r($query).PHP_EOL;
-    // exit;
-    $result = sqlsrv_query($link, $query);
-        // $data  = array();
-    ;
-    while ($row = sqlsrv_fetch_array($result)) {
-        $cantidad = $row['cantidad'];
-    }
-    return $cantidad;
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
-}
-function porcentaje($valor, $cantidad)
-{
-    $percent = round($valor / $cantidad * 100, 1);
-    $percent = ($percent <= 100) ? $percent : '100';
-    return $percent;
-}
 function imgIcon($var, $title, $width)
 {
     $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=" . vjs();
     return '<img loading="lazy" src="' . $src . '" class="' . $width . '" "alt="' . $title . '" title="' . $title . '">';
-}
-function imgFoto($face_url, $title, $width)
-{
-    $src = "https://server.xenio.uy/" . $face_url;
-    return '<img loading="lazy"  src="' . $src . '" class="' . $width . '" title="' . $title . '">';
 }
 function Foto($face_url, $title, $width)
 {
@@ -1584,25 +1175,25 @@ function color_fichada($array)
         switch ($valor['Tipo']) {
             case 'Manual':
                 $fichada = array(
-                    'Fic'    => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
             default:
                 $fichada = array(
-                    'Fic'    => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
         }
         switch ($valor['Estado']) {
             case 'Modificada':
                 $fichada = array(
-                    'Fic'    => '<span class="text-danger fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="text-danger fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '" >' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
         }
@@ -1615,32 +1206,31 @@ function color_fichada3($array)
         switch ($valor['Tipo']) {
             case 'Manual':
                 $fichada = array(
-                    'Fic'    => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="text-primary fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
             default:
                 $fichada = array(
-                    'Fic'    => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="fw4 contentd" data-titler="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
         }
         switch ($valor['Estado']) {
             case 'Modificada':
                 $fichada = array(
-                    'Fic'    => '<span class="text-danger fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
+                    'Fic' => '<span class="text-danger fw4 contentd" title="Fichada: ' . $valor['Tipo'] . '. Estado: ' . $valor['Estado'] . '. Fecha de registro: ' . $valor['RegFeRe'] . '">' . $valor['Fic'] . '</span>',
                     'Estado' => $valor['Estado'],
-                    'Tipo'   => $valor['Tipo']
+                    'Tipo' => $valor['Tipo']
                 );
                 break;
         }
     }
     return $fichada;
 }
-
 function color_Fichada2($tipo, $estado, $hora)
 {
 
@@ -1649,7 +1239,7 @@ function color_Fichada2($tipo, $estado, $hora)
             $fichada = '<span class="text-primary" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
         default:
-            $fichada =  '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada = '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
     }
     switch ($estado) {
@@ -1657,7 +1247,7 @@ function color_Fichada2($tipo, $estado, $hora)
             $fichada = '<span class="text-danger fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '" >' . $hora . '</span>';
             break;
         default:
-            $fichada =  '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
+            $fichada = '<span class="text-dark fw5" data-titler="Fichada: ' . $tipo . '. Estado: ' . $estado . '">' . $hora . '</span>';
             break;
     }
     if ($tipo == 'Manual' && $estado == 'Normal') {
@@ -1665,11 +1255,6 @@ function color_Fichada2($tipo, $estado, $hora)
     }
 
     return $fichada;
-}
-
-function estruct_rol($estructura)
-{
-    return $_SESSION["ESTRUC_ROL"][$estructura];
 }
 /** Actual month last day **/
 function _data_last_month_day($y, $m)
@@ -1679,7 +1264,8 @@ function _data_last_month_day($y, $m)
     $day = date("d", mktime(0, 0, 0, $month + 1, 0, $year));
 
     return date('Ymd', mktime(0, 0, 0, $month, $day, $year));
-};
+}
+;
 // echo _data_last_month_day('2020','04').PHP_EOL;
 
 /** Actual month first day **/
@@ -1693,7 +1279,7 @@ function peri_min_max()
 {
     require __DIR__ . '/config/conect_mssql.php';
     $query = "SELECT MIN(CTANOVE.CTA2Peri) AS peri_min, MAX(CTANOVE.CTA2Peri) AS peri_max FROM CTANOVE";
-    $rs    = sqlsrv_query($link, $query);
+    $rs = sqlsrv_query($link, $query);
     while ($fila = sqlsrv_fetch_array($rs)) {
         $peri_min = $fila['peri_min'];
         $peri_max = $fila['peri_max'];
@@ -1706,37 +1292,8 @@ function peri_min_max()
         'max' => $peri_max
     );
     return $array;
-    exit;
+    // exit;
 }
-function PeriLiq()
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT PARACONT.ParPeMeD AS 'MensDesde', PARACONT.ParPeMeH AS 'MensHasta', PARACONT.ParPeJ1D AS 'Jor1Desde', PARACONT.ParPeJ1H AS 'Jor1Hasta', PARACONT.ParPeJ2D AS 'Jor2Desde', PARACONT.ParPeJ2H AS 'Jor2Hasta' FROM PARACONT WHERE PARACONT.ParCodi='0'";
-    $rs    = sqlsrv_query($link, $query);
-    while ($fila = sqlsrv_fetch_array($rs)) {
-
-        $MensDesde = $fila['MensDesde'];
-        $MensHasta = $fila['MensHasta'];
-        $Jor1Desde = $fila['Jor1Desde'];
-        $Jor1Hasta = $fila['Jor1Hasta'];
-        $Jor2Desde = $fila['Jor2Desde'];
-        $Jor2Hasta = $fila['Jor2Hasta'];
-    }
-
-    sqlsrv_free_stmt($rs);
-    sqlsrv_close($link);
-    $array = array(
-        'MensDesde' => $MensDesde,
-        'MensHasta' => $MensHasta,
-        'Jor1Desde' => $Jor1Desde,
-        'Jor1Hasta' => $Jor1Hasta,
-        'Jor2Desde' => $Jor2Desde,
-        'Jor2Hasta' => $Jor2Hasta
-    );
-    return $array;
-    exit;
-}
-
 function audito_ch($AudTipo, $AudDato, $modulo = '')
 {
     $ipCliente = $_SERVER['REMOTE_ADDR'];
@@ -1757,14 +1314,14 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     // } else {
     //     $AudUser   = $_SESSION["user"];
     // }
-    $AudUser   = substr($_SESSION["NOMBRE_SESION"], 0, 10);
+    $AudUser = substr($_SESSION["NOMBRE_SESION"], 0, 10);
     $ipCliente = substr($ipCliente, 0, 20);
     // $AudTerm   = gethostname();
-    $AudTerm   = $ipCliente;
-    $AudModu   = 21;
+    $AudTerm = $ipCliente;
+    $AudModu = 21;
     $FechaHora = fechaHora();
-    $AudFech   = fechaHora();
-    $AudHora   = date('H:i:s');
+    $AudFech = fechaHora();
+    $AudHora = date('H:i:s');
 
     $procedure_params = array(
         array(&$AudFech),
@@ -1820,16 +1377,16 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
     require __DIR__ . '/config/conect_mssql.php';
     // $usuario    = explode("-", $_SESSION["user"]);
 
-    $AudUser   = substr($_SESSION["NOMBRE_SESION"], 0, 10);
+    $AudUser = substr($_SESSION["NOMBRE_SESION"], 0, 10);
     // $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
     // $AudTerm   = gethostname();
     // $AudTerm   = $ipCliente . '-' . recid2(4);
     $ipCliente = substr($ipCliente, 0, 20);
-    $AudTerm   = $ipCliente;
-    $AudModu   = 21;
+    $AudTerm = $ipCliente;
+    $AudModu = 21;
     // $FechaHora = date('Ymd H:i:s.u');
-    $AudFech   = date('Ymd');
-    $AudHora   = date('H:i:s');
+    $AudFech = date('Ymd');
+    $AudHora = date('H:i:s');
     // $now = DateTime::createFromFormat('U.u', number_format(microtime(true), 6, '.', ''));
     // $local = $now->setTimeZone(new DateTimeZone('America/Argentina/Buenos_Aires'));
     // $FechaHora = $local->format("Y-m-d H:i:s.u");
@@ -1896,16 +1453,18 @@ function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
         $sql = 'INSERT INTO auditoria( id_sesion, usuario, nombre, cuenta, audcuenta, fecha, hora, tipo, dato, modulo ) VALUES( :id_sesion, :usuario, :nombre, :cuenta, :audcuenta, :fecha, :hora, :tipo, :dato, :modulo )';
         $stmt = $connpdo->prepare($sql); // prepara la consulta
         $data = [
-            'id_sesion' => $_SESSION['ID_SESION'],  // $_SESSION['ID_SESION'],
-            'usuario'   => ($_SESSION["user"]) ? $_SESSION["user"] : 'Sin usuario',
-            'nombre'    => ($_SESSION["NOMBRE_SESION"]) ? $_SESSION["NOMBRE_SESION"] : 'Sin nombre',
-            'cuenta'    => ($_SESSION["ID_CLIENTE"]) ? $_SESSION["ID_CLIENTE"]  : '',
+            'id_sesion' => $_SESSION['ID_SESION'],
+            // $_SESSION['ID_SESION'],
+            'usuario' => ($_SESSION["user"]) ? $_SESSION["user"] : 'Sin usuario',
+            'nombre' => ($_SESSION["NOMBRE_SESION"]) ? $_SESSION["NOMBRE_SESION"] : 'Sin nombre',
+            'cuenta' => ($_SESSION["ID_CLIENTE"]) ? $_SESSION["ID_CLIENTE"] : '',
             'audcuenta' => ($audcuenta) ? $audcuenta : $_SESSION["ID_CLIENTE"],
-            'fecha'     => date("Y-m-d "),
-            'hora'      => date("H:i:s"),
-            'tipo'      => ($tipo) ? $tipo : 'Null', // a:insert, b:update, m:delete; p: proceso
-            'dato'      => ($dato) ? trim($dato) : 'No se especificaron datos',
-            'modulo'    => ($modulo) ? $modulo : ''
+            'fecha' => date("Y-m-d "),
+            'hora' => date("H:i:s"),
+            'tipo' => ($tipo) ? $tipo : 'Null',
+            // a:insert, b:update, m:delete; p: proceso
+            'dato' => ($dato) ? trim($dato) : 'No se especificaron datos',
+            'modulo' => ($modulo) ? $modulo : ''
         ];
         $stmt->bindParam(':id_sesion', $data['id_sesion']);
         $stmt->bindParam(':usuario', $data['usuario']);
@@ -1927,17 +1486,6 @@ function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
     }
     $connpdo = null; // cierra la conexion
 }
-function set_query_store($db)
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "ALTER DATABASE [$db] SET QUERY_STORE = ON   
-    (MAX_STORAGE_SIZE_MB = 1024)";
-    // print_r($query);
-    $rs    = sqlsrv_query($link, $query);
-    sqlsrv_free_stmt($rs);
-    sqlsrv_close($link);
-    // exit;
-}
 function fecha_min_max($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -1954,10 +1502,10 @@ function fecha_min_max($tabla, $ColFech)
         'min' => $min,
         'max' => $max
     );
-    return $array;
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
-    exit;
+    return $array;
+    // exit;
 }
 function fecha_min_max2($tabla, $ColFech)
 {
@@ -1975,42 +1523,22 @@ function fecha_min_max2($tabla, $ColFech)
         'min' => $min,
         'max' => $max
     );
-    return $array;
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
-    exit;
-}
-function fecha_min_max_mysql($tabla, $ColFech)
-{
-    require __DIR__ . '/config/conect_mysql.php';
-    $query = "SELECT MIN($ColFech) AS 'min', MAX($ColFech) AS 'max' FROM $tabla";
-    // print_r($query);exit;
-    $rs = mysqli_query($link, $query);
-    while ($r = mysqli_fetch_assoc($rs)) {
-        $min = ($r['min'] != null) ? $r['min'] : '';
-        $max = ($r['max'] != null) ? $r['max'] : '';
-    }
-    $array = array(
-        'min' => $min,
-        'max' => $max
-    );
     return $array;
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    exit;
 }
 function nov_cta_cte()
 {
     require __DIR__ . '/config/conect_mssql.php';
     $params = array();
-    $options =  array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $query = "SELECT DISTINCT CTANOVE.CTA2Nove, NOVEDAD.NovDesc, CTANOVE.CTA2Peri FROM CTANOVE JOIN NOVEDAD ON CTANOVE.CTA2Nove = NOVEDAD.NovCodi ORDER BY CTANOVE.CTA2Peri DESC";
-    $rs    = sqlsrv_query($link, $query, $params, $options);
+    $rs = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($rs) > 0) {
         while ($fila = sqlsrv_fetch_array($rs)) {
             $CTA2Nove = $fila['CTA2Nove'];
-            $NovDesc  = $fila['NovDesc'];
-            $CTA2Peri  = $fila['CTA2Peri'];
+            $NovDesc = $fila['NovDesc'];
+            $CTA2Peri = $fila['CTA2Peri'];
             $array[] = array(
                 'cod' => $CTA2Nove,
                 'desc' => $NovDesc,
@@ -2030,40 +1558,12 @@ function nov_cta_cte()
     return ($array);
     // exit;
 }
-function nacionalidades()
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $params = array();
-    $options =  array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $query = "SELECT NACIONES.NacCodi, NACIONES.NacDesc FROM NACIONES";
-    $rs    = sqlsrv_query($link, $query, $params, $options);
-    if (sqlsrv_num_rows($rs) > 0) {
-        while ($fila = sqlsrv_fetch_array($rs)) {
-            $NacCodi = $fila['NacCodi'];
-            $NacDesc  = empty($fila['NacDesc']) ? '-' : $fila['NacDesc'];
-            $array[] = array(
-                'cod' => $NacCodi,
-                'desc' => $NacDesc,
-            );
-        }
-    } else {
-        $array[] = array(
-            'cod' => false,
-            'desc' => false
-        );
-    }
-
-    sqlsrv_free_stmt($rs);
-    sqlsrv_close($link);
-    return ($array);
-    // exit;
-}
 function super_unique($array, $key)
 {
     $temp_array = [];
     foreach ($array as &$v) {
         if (!isset($temp_array[$v[$key]]))
-            $temp_array[$v[$key]] = &$v;
+            $temp_array[$v[$key]] = & $v;
     }
     $array = array_values($temp_array);
     return $array;
@@ -2074,33 +1574,23 @@ function ValNumerico($val)
     $val = is_numeric($val) ? true : false;
     return $val;
 }
-function ValInt($val)
-{
-    $val = is_int($val) ? true : false;
-    return $val;
-}
 function ValString($val)
 {
     $val = is_string($val) ? true : false;
     return $val;
 }
-function ValFloat($val)
-{
-    $val = is_float($val) ? true : false;
-    return $val;
-}
 function DeleteRegistro($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
         // print_r($query);
         // echo json_encode($query);
         // exit;
-        return true;
         sqlsrv_close($link);
+        return true;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -2109,8 +1599,8 @@ function DeleteRegistro($query)
             }
         }
         echo json_encode($data[0]);
-        exit;
         sqlsrv_close($link);
+        exit;
     }
 }
 /** Query MYSQL */
@@ -2121,13 +1611,12 @@ function CountRegMySql($query)
     // print_r($query); exit;
     if ($stmt) {
         $num = mysqli_num_rows($stmt);
-        return $num;
         mysqli_free_result($stmt);
         mysqli_close($link);
+        return $num;
     } else {
-        return 'Error';
         mysqli_close($link);
-        exit;
+        return 'Error';
     }
 }
 /** Query MYSQL */
@@ -2151,6 +1640,7 @@ function CountRegMayorCeroMySql($query)
 }
 function checkKey($fk, $table)
 {
+    $db = '';
     require __DIR__ . '/config/conect_mysql.php';
     // $check_schema = "SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$db' AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = $fk";
     $check_schema = "SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = '$table' AND CONSTRAINT_NAME = '$fk' AND TABLE_SCHEMA = '$db'";
@@ -2171,6 +1661,7 @@ function checkKey($fk, $table)
 }
 function checkColumn($table, $col)
 {
+    $db = '';
     require __DIR__ . '/config/conect_mysql.php';
     $check_schema = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table' AND COLUMN_NAME='$col'";
     $stmt = mysqli_query($link, $check_schema);
@@ -2190,6 +1681,7 @@ function checkColumn($table, $col)
 }
 function checkTable($table)
 {
+    $db = '';
     require __DIR__ . '/config/conect_mysql.php';
     $check_schema = "SELECT distinct(TABLE_NAME) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table'";
     $stmt = mysqli_query($link, $check_schema);
@@ -2206,69 +1698,28 @@ function checkTable($table)
         fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
     }
 }
-function CountModRol()
-{
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, "SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$_SESSION[RECID_ROL]'");
-    if ($stmt) {
-        return mysqli_num_rows($stmt);
-        mysqli_free_result($stmt);
-        mysqli_close($link);
-    } else {
-        mysqli_close($link);
-        exit;
-    }
-}
 function InsertRegistroMySql($query)
 {
     require __DIR__ . '/config/conect_mysql.php';
     // print_r($query); exit;
     $stmt = mysqli_query($link, $query);
     if (($stmt)) {
-        return true;
         mysqli_close($link);
+        return true;
     } else {
         statusData('error', mysqli_error($link));
         mysqli_close($link);
         exit;
     }
 }
-function simpleQuery($query, $link)
-{
-    $stmt = mysqli_query($link, $query);
-    if ($stmt) {
-        return true;
-    } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-        return false;
-    }
-}
-function simpleQueryData($query, $link)
-{
-    $stmt = mysqli_query($link, $query);
-    if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            $a  = mysqli_fetch_assoc($stmt);
-            mysqli_free_result($stmt);
-            return $a;
-        } else {
-            return false;
-        }
-    } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-        return false;
-    }
-}
 function simpleQueryDataMS($query)
 {
     require __DIR__ . './config/conect_mssql.php';
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if ($stmt) {
-        $a  = sqlsrv_fetch_array($stmt);
+        $a = sqlsrv_fetch_array($stmt);
         sqlsrv_free_stmt($stmt);
         return $a;
     } else {
@@ -2287,35 +1738,15 @@ function arrayQueryDataMS($query)
 {
     require __DIR__ . './config/conect_mssql.php';
     $data = array();
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if ($stmt) {
-        while ($a  = sqlsrv_fetch_array($stmt)) {
+        while ($a = sqlsrv_fetch_array($stmt)) {
             $data[] = $a;
         }
         sqlsrv_free_stmt($stmt);
         return $data;
-    } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-        return false;
-    }
-}
-function arrayQueryData($query, $link)
-{
-    $stmt = mysqli_query($link, $query);
-    if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            while ($a = mysqli_fetch_assoc($stmt)) {
-                $array[] = $a;
-            }
-            // $a = mysqli_fetch_assoc($stmt);
-            mysqli_free_result($stmt);
-            return $array;
-        } else {
-            return false;
-        }
     } else {
         $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
         fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
@@ -2328,8 +1759,8 @@ function UpdateRegistroMySql($query)
     $stmt = mysqli_query($link, $query);
     // print_r($query); exit;
     if (($stmt)) {
-        return true;
         mysqli_close($link);
+        return true;
     } else {
         statusData('error', mysqli_error($link));
         mysqli_close($link);
@@ -2342,8 +1773,8 @@ function deleteRegistroMySql($query)
     $stmt = mysqli_query($link, $query);
     // print_r($query); exit;
     if (($stmt)) {
-        return true;
         mysqli_close($link);
+        return true;
     } else {
         statusData('error', mysqli_error($link));
         mysqli_close($link);
@@ -2392,38 +1823,16 @@ function dataListaEstruct($lista, $uid)
         return false;
     }
 }
-/** Fin Query MYSQL */
-/**Query MS-SQL */
-function DateFirst($numerodia)
-{
-    require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, "SET DATEFIRST $numerodia");
-    if (($stmt)) {
-        return true;
-        // sqlsrv_close($link);
-    } else {
-        if (($errors = sqlsrv_errors()) != null) {
-            foreach ($errors as $error) {
-                $mensaje = explode(']', $error['message']);
-                $data[] = array("status" => "error", "dato" => $mensaje[3]);
-                exit;
-            }
-        }
-        echo json_encode($data[0]);
-        exit;
-        sqlsrv_close($link);
-    }
-}
 function InsertRegistro($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     // print_r($query);
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
-        return true;
         sqlsrv_close($link);
+        return true;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -2433,20 +1842,20 @@ function InsertRegistro($query)
             }
         }
         echo json_encode($data[0]);
-        exit;
         sqlsrv_close($link);
+        exit;
     }
 }
 function InsertRegistroMS($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     // print_r($query);
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
-        return true;
         sqlsrv_close($link);
+        return true;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -2463,31 +1872,20 @@ function InsertRegistroMS($query)
             }
         }
         echo json_encode($data[0]);
+        sqlsrv_close($link);
         exit;
-        sqlsrv_close($link);
-    }
-}
-function InsertRegistroCH($query)
-{
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
-    if (($stmt)) {
-        return true;
-        sqlsrv_close($link);
     }
 }
 function UpdateRegistro($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     if (($stmt)) {
-        return true;
         sqlsrv_close($link);
+        return true;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -2499,25 +1897,28 @@ function UpdateRegistro($query)
             }
         }
         echo json_encode($data);
-        exit;
         sqlsrv_close($link);
+        exit;
     }
 }
 function CountRegistrosMayorCero($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     if (($stmt)) {
         if (sqlsrv_num_rows($stmt) > 0) {
+            sqlsrv_free_stmt($stmt);
+            sqlsrv_close($link);
             return true;
         } else {
+            sqlsrv_free_stmt($stmt);
+            sqlsrv_close($link);
             return false;
         }
-        sqlsrv_free_stmt($stmt);
-        sqlsrv_close($link);
+
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -2532,27 +1933,15 @@ function CountRegistrosMayorCero($query)
         exit;
     }
 }
-function NumRowsQueryMSQL($query)
-{
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
-    $num_rows = sqlsrv_num_rows($stmt);
-    return $num_rows;
-    sqlsrv_free_stmt($stmt);
-    sqlsrv_close($link);
-    exit;
-}
 /** Fin Querys MS-SQL */
 function PerCierre($FechaStr, $Legajo)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $query = "SELECT TOP 1 CierreFech FROM PERCIERRE WHERE PERCIERRE.CierreLega = '$Legajo'";
     // print_r($query);exit;
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
     }
@@ -2562,27 +1951,28 @@ function PerCierre($FechaStr, $Legajo)
         return true;
     } else {
         $query = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
-        $stmt  = sqlsrv_query($link, $query, $params, $options);
+        $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
         $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if (intval($FechaStr) <= intval($ParCierr)) {
+            sqlsrv_close($link);
             return true;
         } else {
+            sqlsrv_close($link);
             return false;
         }
     }
-    sqlsrv_close($link);
 }
 function PerCierreFech($FechaStr, $Legajo)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $query = "SELECT TOP 1 CierreFech FROM PERCIERRE WHERE PERCIERRE.CierreLega = '$Legajo'";
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query); exit;
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
@@ -2595,19 +1985,21 @@ function PerCierreFech($FechaStr, $Legajo)
     } else {
         $query = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
         // print_r($query); exit;
-        $stmt  = sqlsrv_query($link, $query, $params, $options);
+        $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
         $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if ($FechaStr <= $ParCierr) {
+            sqlsrv_close($link);
             return $ParCierr;
         } else {
+            sqlsrv_close($link);
             return false;
         }
     }
-    sqlsrv_close($link);
+    // sqlsrv_close($link);
 }
 function rutaWebService($Comando)
 {
@@ -2631,19 +2023,8 @@ function EstadoProceso($url)
     } while (respuestaWebService($respuesta) == 'Pendiente');
     return respuestaWebService($respuesta);
 }
-function PingWebServiceRRHH()
-{
-    $url = rutaWebService("Ping?");
-    do {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $respuesta = curl_exec($ch);
-        curl_close($ch);
-    } while (($respuesta) == 'Pendiente');
-}
-
 function pingWebService($textError) // Funcion para validar que el Webservice de Control Horario esta disponible
+
 {
     $url = rutaWebService("Ping?");
     $ch = curl_init(); // Inicializar el objeto curl
@@ -2651,7 +2032,7 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
-    $response   = curl_exec($ch); // extract information from response
+    $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
     if ($curl_errno > 0) { // si hay error
@@ -2662,10 +2043,11 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     }
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
-    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
     curl_close($ch); // close curl handle
+    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
-function pingWS() // Funcion para validar que el Webservice de Control Horario esta disponible
+// Funcion para validar que el Webservice de Control Horario esta disponible
+function pingWS()
 {
     $url = rutaWebService("Ping?");
     $ch = curl_init(); // Inicializar el objeto curl
@@ -2673,7 +2055,7 @@ function pingWS() // Funcion para validar que el Webservice de Control Horario e
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // The number of seconds to wait while trying to connect
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
-    $response   = curl_exec($ch); // extract information from response
+    $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
     if ($curl_errno > 0) { // si hay error
@@ -2682,8 +2064,8 @@ function pingWS() // Funcion para validar que el Webservice de Control Horario e
     }
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
-    return ($http_code == 201) ? true : false; // escribir en el log
     curl_close($ch); // close curl handle
+    return ($http_code == 201) ? true : false; // escribir en el log
 }
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
@@ -2705,13 +2087,13 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
             $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
             fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return "Error";
-            exit;
+            // exit;
         }
         curl_close($ch);
         if ($httpCode == 404) {
             fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return $respuesta;
-            exit;
+            // exit;
         }
         $processID = respuestaWebService($respuesta);
         $url = rutaWebService("Estado?ProcesoId=" . $processID);
@@ -2719,85 +2101,6 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
         if ($httpCode == 201) {
             return EstadoProceso($url);
         }
-    }
-}
-function procesar_lega($legajo, $FechaDesde, $FechaHasta)
-{
-    // PingWebServiceRRHH();
-    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
-    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
-    $ruta = rutaWebService("Procesar");
-    $post_data = "{Usuario=Supervisor,TipoDePersonal=0,LegajoDesde='$legajo',LegajoHasta='$legajo',FechaDesde='$FechaDesde',FechaHasta='$FechaHasta',Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $ruta);
-    curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $respuesta = curl_exec($ch);
-    $curl_errno = curl_errno($ch);
-    $curl_error = curl_error($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ($curl_errno > 0) {
-        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        return $ruta;
-        exit;
-    }
-    curl_close($ch);
-    if ($httpCode === 404) {
-        $text = "Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        return $ruta;
-        exit;
-    }
-    $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("Estado?ProcesoId=" . $processID);
-    return ($url);
-    exit;
-    if ($httpCode == 201) {
-        // if (EstadoProceso($url) == 'Terminado') {
-        //     return true;
-        // }else{
-        //     return false;
-        // }
-        return EstadoProceso($url);
-    }
-}
-function procesar_Todo($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta)
-{
-    $FechaDesde = Fech_Format_Var($FechaDesde, 'd/m/Y');
-    $FechaHasta = Fech_Format_Var($FechaHasta, 'd/m/Y');
-    $ruta = rutaWebService("Procesar");
-    $post_data = "{Usuario=Supervisor,TipoDePersonal=0,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $ruta);
-    curl_setopt($ch, CURLOPT_POST, TRUE);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $respuesta = curl_exec($ch);
-    $curl_errno = curl_errno($ch);
-    $curl_error = curl_error($ch);
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    if ($curl_errno > 0) {
-        PrintRespuestaJson('error', 'No hay Conexión..');
-        exit;
-    }
-    curl_close($ch);
-    if ($httpCode == 404) {
-        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        echo $respuesta;
-        exit;
-    }
-    $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("Estado?ProcesoId=" . $processID);
-
-    if ($httpCode == 201) {
-        // sleep(2);
-        echo EstadoProceso($url);
-    } else {
-        $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDePersonal, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $TipoDeFichada, $Laboral)
@@ -2836,7 +2139,7 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
-        exit;
+        // exit;
     } else {
         $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2879,7 +2182,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
-        exit;
+        // exit;
     } else {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2925,7 +2228,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($httpCode == 201) {
         // return EstadoProceso($url);
         return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
-        exit;
+        // exit;
     } else {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2964,7 +2267,7 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
 
     if ($httpCode == 201) {
         return EstadoProceso($url);
-        exit;
+        // exit;
     } else {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
@@ -3003,7 +2306,7 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
     if ($httpCode == 201) {
         return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
-        exit;
+        // exit;
     } else {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
@@ -3038,40 +2341,32 @@ function datosGetIn($Get, $Col)
         $t = ($v) ? "AND " . $Col . " IN (" . (test_input($Get)) . ") " : '';
         return test_input($t);
     }
-};
+}
+;
 function datosGet($Get, $Col)
 {
     $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
-};
+}
+;
 function MinHora($Min)
 {
     if (!$Min || !is_int($Min)) {
         return false;
-    };
-    $segundos = $Min * 60;
-    $horas    = floor($segundos / 3600);
-    $minutos  = floor(($segundos - ($horas * 3600)) / 60);
-    $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
-    $horas    = str_pad($horas, 2, "0", STR_PAD_LEFT);
-    $minutos  = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora     = $horas . ':' . $minutos;
-    switch ($hora) {
-        case '00:00':
-            $hora = "-";
-            break;
     }
-    return $hora;
-}
-function MinHora2($Min)
-{
+    ;
     $segundos = $Min * 60;
     $horas = floor($segundos / 3600);
     $minutos = floor(($segundos - ($horas * 3600)) / 60);
     $segundos = $segundos - ($horas * 3600) - ($minutos * 60);
     $horas = str_pad($horas, 2, "0", STR_PAD_LEFT);
     $minutos = str_pad($minutos, 2, "0", STR_PAD_LEFT);
-    $hora = $horas . '' . $minutos;
+    $hora = $horas . ':' . $minutos;
+    switch ($hora) {
+        case '00:00':
+            $hora = "-";
+            break;
+    }
     return $hora;
 }
 function HoraMin($var)
@@ -3084,7 +2379,7 @@ function HoraMin($var)
 }
 function ValidarHora($Hora)
 {
-    $Hora =  HoraMin($Hora);
+    $Hora = HoraMin($Hora);
     $Hora = ($Hora > '1439' || $Hora < '1') ? true : false;
     return $Hora;
 }
@@ -3099,62 +2394,9 @@ function ValidaFormatoHora($valor)
         return false;
     }
 }
-function ArrayFechas($start, $end)
-{
-    $range = array();
-
-    if (is_string($start) === true) $start = strtotime($start);
-    if (is_string($end) === true) $end = strtotime($end);
-
-    // if ($start > $end) return createDateRangeArray($end, $start);
-
-    do {
-        $range[] = date('Ymd', $start);
-        $start = strtotime("+ 1 day", $start);
-    } while ($start <= $end);
-
-    return $range;
-}
-function CantDiasFech($Fecha)
-{
-    //defino fecha 1
-    $ano1 = 1900;
-    $mes1 = 01;
-    $dia1 = 01;
-    $Date = explode('-', $Fecha);
-    //defino fecha 2
-    $ano2 = $Date[0];
-    $mes2 = $Date[1];
-    $dia2 = $Date[2];
-
-    //calculo timestamp de las dos fechas
-    $timestamp1 = mktime(0, 0, 0, $mes1, $dia1, $ano1);
-    $timestamp2 = mktime(4, 12, 0, $mes2, $dia2, $ano2);
-
-    //resto a una fecha la otra
-    $segundos_diferencia = $timestamp1 - $timestamp2;
-    //echo $segundos_diferencia;
-
-    //convierto segundos en días
-    $dias_diferencia = $segundos_diferencia / (60 * 60 * 24);
-
-    //obtengo el valor absoulto de los días (quito el posible signo negativo)
-    $dias_diferencia = abs($dias_diferencia);
-
-    //quito los decimales a los días de diferencia
-    $dias_diferencia = floor($dias_diferencia);
-
-    return $dias_diferencia + 2;
-}
 function PrintError($TituloError, $Mensaje)
 {
     $data = array('status' => $TituloError, 'Mensaje' => $Mensaje);
-    echo json_encode($data);
-    /** Imprimo json con resultado */
-}
-function PrintOK($Mensaje)
-{
-    $data = array('status' => 'ok', 'Mensaje' => $Mensaje);
     echo json_encode($data);
     /** Imprimo json con resultado */
 }
@@ -3258,20 +2500,20 @@ function mod_roles($recid_rol)
     require 'config/conect_mysql.php';
     $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo=modulos.id WHERE mod_roles.id>'0' AND modulos.estado='0' AND mod_roles.recid_rol='$recid_rol' ORDER BY modulos.orden";
     $result = mysqli_query($link, $query);
-    $data  = array();
+    $data = array();
     if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)) :
-            $id        = $row['id'];
-            $id_mod    = $row['id_mod'];
+        while ($row = mysqli_fetch_assoc($result)):
+            $id = $row['id'];
+            $id_mod = $row['id_mod'];
             $recid_rol = $row['recid_rol'];
-            $nombre    = $row['nombre'];
-            $idtipo    = $row['idtipo'];
+            $nombre = $row['nombre'];
+            $idtipo = $row['idtipo'];
             $data[] = array(
-                'id'        => $id,
+                'id' => $id,
                 'recid_rol' => $recid_rol,
-                'id_mod'    => $id_mod,
-                'modulo'    => $nombre,
-                'idtipo'    => $idtipo
+                'id_mod' => $id_mod,
+                'modulo' => $nombre,
+                'idtipo' => $idtipo
             );
         endwhile;
         mysqli_free_result($result);
@@ -3289,14 +2531,14 @@ function TokenMobile($token, $data)
             case 'appcode':
                 $t[1] = $t[1] ?? '';
                 return $t[1];
-                break;
+            // break;
             case 'token':
                 $t[0] = $t[0] ?? '';
                 return $t[0];
-                break;
+            // break;
             default:
                 return '';
-                break;
+            // break;
         }
     } else {
         return '';
@@ -3323,38 +2565,24 @@ function utf8str($cadena)
         "&quot;",
         "&hellip;",
     ], [
-        "Á",
-        "É",
-        "Í",
-        "Ó",
-        "Ú",
-        "Ñ",
-        "á",
-        "é",
-        "í",
-        "ó",
-        "ú",
-        "ñ",
-        "&",
-        "'",
-        "'",
-        "'",
-        "...",
-    ], $cadena);
-}
-function NombreLegajo($NumLega)
-{
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT TOP 1 PERSONAL.LegApNo FROM PERSONAL WHERE PERSONAL.LegNume = '$NumLega'";
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
-    while ($row = sqlsrv_fetch_array($stmt)) {
-        $LegApNo = $row['LegApNo'];
-    }
-    return $LegApNo;
-    sqlsrv_free_stmt($stmt);
-    sqlsrv_close($link);
+            "Á",
+            "É",
+            "Í",
+            "Ó",
+            "Ú",
+            "Ñ",
+            "á",
+            "é",
+            "í",
+            "ó",
+            "ú",
+            "ñ",
+            "&",
+            "'",
+            "'",
+            "'",
+            "...",
+        ], $cadena);
 }
 function regid_legajo($legajo)
 {
@@ -3375,81 +2603,81 @@ function regid_legajo($legajo)
 function horarioCH($HorCodi)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $query   = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
-    $stmt    = sqlsrv_query($link, $query, $params, $options);
+    $query = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     while ($a = sqlsrv_fetch_array($stmt)) {
         $data = array(
-            'cod'  => $a['HorCodi'],
+            'cod' => $a['HorCodi'],
             'desc' => $a['HorDesc'],
         );
         return $data;
     }
     sqlsrv_close($link);
 }
-function listaRol($idLista  = '0')
+function listaRol($idLista = '0')
 {
     $idLista = intval($idLista);
     switch ($idLista) {
         case 0:
             return 'Todos';
-            break;
+        // break;
         case 1:
             return 'Novedades';
-            break;
+        // break;
         case 2:
             return 'Otras Novedades';
-            break;
+        // break;
         case 3:
             return 'Horarios';
-            break;
+        // break;
         case 4:
             return 'Rotaciones';
-            break;
+        // break;
         case 5:
             return 'Tipos de Hora';
-            break;
+        // break;
         default:
             return 'Todos';
-            break;
+        // break;
     }
 }
-function listaEstruct($idLista  = '0')
+function listaEstruct($idLista = '0')
 {
     $idLista = intval($idLista);
     switch ($idLista) {
         case 0:
             return 'Todos';
-            break;
+        // break;
         case 1:
             return 'Empresas';
-            break;
+        // break;
         case 2:
             return 'Plantas';
-            break;
+        // break;
         case 3:
             return 'Convenios';
-            break;
+        // break;
         case 4:
             return 'Sectores';
-            break;
+        // break;
         case 5:
             return 'Secciones';
-            break;
+        // break;
         case 6:
             return 'Grupos';
-            break;
+        // break;
         case 7:
             return 'Sucursales';
-            break;
+        // break;
         case 8:
             return 'Personal';
-            break;
+        // break;
         default:
             return 'Todos';
-            break;
+        // break;
     }
 }
 function totalDiasFechas($fecha_inicial, $fecha_final)
@@ -3469,16 +2697,17 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
     foreach ($arrayTotalMeses as $value) {
         $fecha1 = $fecha_inicial;
         $fecha2 = date("Ymd", strtotime($fecha1 . "+ " . $dias . " days"));
-        $fecha2 = ($fecha2 > date('Ymd')) ?  date('Ymd') : $fecha2;
-        $arrayFechas[] = array('FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'),  'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y'));
+        $fecha2 = ($fecha2 > date('Ymd')) ? date('Ymd') : $fecha2;
+        $arrayFechas[] = array('FechaIni' => FechaFormatVar($fecha1, 'd-m-Y'), 'FechaFin' => FechaFormatVar($fecha2, 'd-m-Y'));
         $fecha_inicial = date("Ymd", strtotime($fecha2 . "+ 1 days"));
     }
     return $arrayFechas;
 }
-function getVerDBCH($link) // Obtiene la version de la base de datos
+// Obtiene la version de la base de datos
+function getVerDBCH($link)
 {
     $query = "SELECT TOP 1 PARACONT.ParPath1 FROM PARACONT WHERE PARACONT.ParCodi = 10"; // Query
-    $stmt  = sqlsrv_query($link, $query); // Ejecucion del query
+    $stmt = sqlsrv_query($link, $query); // Ejecucion del query
     $path = '';
     while ($a = sqlsrv_fetch_array($stmt)) { // Recorre el resultado
         $path = $a['ParPath1']; // Asigna el valor a la variable
@@ -3488,37 +2717,39 @@ function getVerDBCH($link) // Obtiene la version de la base de datos
 }
 function fileLog($text, $ruta_archivo, $type = false)
 {
-    $log    = fopen($ruta_archivo, 'a');
-    $date   = fechaHora2();
-    $text   = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
+    $log = fopen($ruta_archivo, 'a');
+    $date = fechaHora2();
+    $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
     fwrite($log, $text);
     fclose($log);
 }
 function fileLogJson($text, $ruta_archivo, $date = true)
 {
     if ($date) {
-        $log    = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
+        $log = fopen(date('YmdHis') . '_' . $ruta_archivo, 'w');
     } else {
-        $log    = fopen($ruta_archivo, 'w');
+        $log = fopen($ruta_archivo, 'w');
     }
-    $text   = json_encode($text, JSON_PRETTY_PRINT) . "\n";
+    $text = json_encode($text, JSON_PRETTY_PRINT) . "\n";
     fwrite($log, $text);
     fclose($log);
 }
-function dateDifference($date_1, $date_2, $differenceFormat = '%a') // diferencia en días entre dos fechas
+// diferencia en días entre dos fechas
+function dateDifference($date_1, $date_2, $differenceFormat = '%a')
 {
     $datetime1 = date_create($date_1); // creo la fecha 1
     $datetime2 = date_create($date_2); // creo la fecha 2
     $interval = date_diff($datetime1, $datetime2); // obtengo la diferencia de fechas
     return $interval->format($differenceFormat); // devuelvo el número de días
 }
-function borrarLogs($path, $dias, $ext) // borra los logs a partir de una cantidad de días
+// borra los logs a partir de una cantidad de días
+function borrarLogs($path, $dias, $ext)
 {
     $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
     foreach ($files as $file) { // recorremos todos los ficheros.
         $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
-        $currentTime      = time(); // obtenemos la fecha actual
-        $dateDiff         = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
+        $currentTime = time(); // obtenemos la fecha actual
+        $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
         ($dateDiff >= $dias) ? unlink($file) : ''; //elimino el fichero
     }
 }
@@ -3526,7 +2757,7 @@ function fechaHora()
 {
     timeZone();
     $t = explode(" ", microtime());
-    $t = date("Ymd H:i:s", $t[1]) . substr((string)$t[0], 1, 4);
+    $t = date("Ymd H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
     return $t;
 }
 function fechaHora2()
@@ -3542,11 +2773,6 @@ function timeZone()
 function timeZone_lang()
 {
     return setlocale(LC_TIME, "es_ES");
-}
-function hostName()
-{
-    $nombre_host = gethostbyaddr($_SERVER['REMOTE_ADDR']);
-    return $nombre_host;
 }
 function simple_pdoQuery($sql)
 {
@@ -3629,6 +2855,7 @@ function rowCount_pdoQuery($sql)
     $stmt = null;
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
+
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] === $valor;
@@ -3638,6 +2865,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
     }
 }
 function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
+
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] === $valor;
@@ -3648,6 +2876,7 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     return $v;
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
+
 {
     $a = array();
     if ($array && $key && $key2 && $valor && $valor2) {
@@ -3681,7 +2910,7 @@ function tipoAud($tipo)
             $tipo = 'Baja';
             break;
         default:
-            $tipo = $tipo;
+            $tipo = '';
             break;
     }
     return $tipo;
@@ -3697,14 +2926,15 @@ function login_logs($estado, $usuario = '')
 
         $usuario = ($usuario == '') ? filter_input(INPUT_POST, 'user', FILTER_DEFAULT) : $usuario;
 
-        $data = [ // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
-            'usuario'   => $usuario,
-            'uid'       => $_SESSION["UID"] ?? '',
-            'estado'    => $estado,
-            'rol'       => $_SESSION["ID_ROL"] ?? '',
-            'cliente'   => $_SESSION["ID_CLIENTE"] ?? '',
-            'ip'        => ($_SERVER['REMOTE_ADDR'] == '::1') ? ip2long('127.0.0.1') : ip2long($_SERVER['REMOTE_ADDR']),
-            'agent'     => $_SERVER['HTTP_USER_AGENT'],
+        $data = [
+            // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
+            'usuario' => $usuario,
+            'uid' => $_SESSION["UID"] ?? '',
+            'estado' => $estado,
+            'rol' => $_SESSION["ID_ROL"] ?? '',
+            'cliente' => $_SESSION["ID_CLIENTE"] ?? '',
+            'ip' => ($_SERVER['REMOTE_ADDR'] == '::1') ? ip2long('127.0.0.1') : ip2long($_SERVER['REMOTE_ADDR']),
+            'agent' => $_SERVER['HTTP_USER_AGENT'],
             'fechahora' => fechaHora2()
         ];
 
@@ -3744,13 +2974,6 @@ function escape_sql_wild($s)
     } /*foreach*/
     return
         implode("", $result);
-} /*escape_sql_wild*/
-function defaultConfigData() // default config data
-{
-    $datos = array(
-        'mssql' => array('srv' => '', 'db' => '', 'user' => '', 'pass' => ''), 'logConexion' => array('success' => false, 'error' => true), 'api' => array('url' => "https://hr-process.com/hrctest/api/novedades/", 'user' => 'admin', 'pass' => 'admin'), 'webService' => array('url' => "http://localhost:6400/RRHHWebService/"), 'logNovedades' => array('success' => true, 'error' => true), 'proxy' => array('ip' => '', 'port' => '', 'enabled' => false), 'borrarLogs' => array('estado' => true, 'dias' => 31), // 'interrumpirSolicitud'=>array('carga'=>true, 'anulacion'=>true)
-    );
-    return $datos;
 }
 function write_apiKeysFile()
 {
@@ -3759,22 +2982,24 @@ function write_apiKeysFile()
     // $assoc = $assoc_arr;
 
     foreach ($assoc_arr as $key => $value) {
-        $assoc[] = (array(
-            'idCompany'    => $value['idCompany'],
-            'nameCompany'  => $value['nameCompany'],
-            'recidCompany' => $value['recidCompany'],
-            'urlAppMobile' => $value['urlAppMobile'],
-            'localCH'      => ($value['localCH']),
-            'hostCHWeb'    => $value['hostCHWeb'],
-            'homeHost'     => HOMEHOST,
-            'DBHost'       => $value['hostDB'],
-            'DBUser'       => $value['userDB'],
-            'DBPass'       => $value['passDB'],
-            'DBName'       => $value['DB'],
-            'DBAuth'       => $value['authDB'],
-            'Token'        => sha1($value['recidCompany']),
-            'WebServiceCH' => ($value['WebService']),
-        ));
+        $assoc[] = (
+            array(
+                'idCompany' => $value['idCompany'],
+                'nameCompany' => $value['nameCompany'],
+                'recidCompany' => $value['recidCompany'],
+                'urlAppMobile' => $value['urlAppMobile'],
+                'localCH' => ($value['localCH']),
+                'hostCHWeb' => $value['hostCHWeb'],
+                'homeHost' => HOMEHOST,
+                'DBHost' => $value['hostDB'],
+                'DBUser' => $value['userDB'],
+                'DBPass' => $value['passDB'],
+                'DBName' => $value['DB'],
+                'DBAuth' => $value['authDB'],
+                'Token' => sha1($value['recidCompany']),
+                'WebServiceCH' => ($value['WebService']),
+            )
+        );
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
     foreach ($assoc as $key => $elem) {
@@ -3784,8 +3009,10 @@ function write_apiKeysFile()
                 for ($i = 0; $i < count($elem2); $i++) {
                     $content .= $key2 . "[] =\"" . $elem2[$i] . "\"\n";
                 }
-            } else if ($elem2 == "") $content .= $key2 . " =\n";
-            else $content .= $key2 . " = \"" . $elem2 . "\"\n";
+            } else if ($elem2 == "")
+                $content .= $key2 . " =\n";
+            else
+                $content .= $key2 . " = \"" . $elem2 . "\"\n";
         }
     }
     $path = __DIR__ . '/mobileApikey.php';
@@ -3804,12 +3031,13 @@ function getIniCuenta($recidCuenta, $key = false)
         if ($value['recidCompany'] == $recidCuenta) {
             $urlHost = array($k => $value);
             return $urlHost[$k];
-            break;
+            // break;
         }
     }
     return ($key) ? $urlHost[0][$key] : $urlHost[0];
 }
 function getDataIni($url) // obtiene el json de la url
+
 {
     if (($url)) { // si existe el archivo
         $data = file_get_contents($url); // obtenemos el contenido del archivo
@@ -3826,7 +3054,7 @@ function getDataIni($url) // obtiene el json de la url
 }
 function gethostCHWeb()
 {
-    $token     = sha1($_SESSION['RECID_CLIENTE']);
+    $token = sha1($_SESSION['RECID_CLIENTE']);
     $iniData = (getDataIni(__DIR__ . './mobileApikey.php'));
 
     foreach ($iniData as $v) {
@@ -3835,10 +3063,11 @@ function gethostCHWeb()
                 $v
             );
             return $data[0]['hostCHWeb'];
-            break;
+            // break;
         }
     }
-};
+}
+;
 /**
  * @param $str = string a escapar
  * @param $length = cantidad de caracteres a devolver
@@ -3854,20 +3083,6 @@ function padLeft($str, $length, $pad = ' ')
  * @param {String} $key Property to sort by.
  * @param {Array} $data Array that stores multiple associative arrays.
  */
-function group_by($key, $data)
-{
-    $result = array();
-
-    foreach ($data as $val) {
-        if (array_key_exists($key, $val)) {
-            $result[$val[$key]][] = $val;
-        } else {
-            $result[""][] = $val;
-        }
-    }
-
-    return $result;
-}
 function _group_by_keys($array, $keys = array())
 {
     if (($array)) {
@@ -3908,7 +3123,7 @@ function pingApiMobileHRP($urlAppMobile)
     $file_contents = curl_exec($ch);
     curl_close($ch);
     return ($file_contents) ? $file_contents : false;
-    exit;
+    // exit;
 }
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
 {
@@ -3976,11 +3191,11 @@ function access_log($Modulo)
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
         borrarLogs(__DIR__ . '/logs/access/', 30, '.log');
         date_default_timezone_set('America/Argentina/Buenos_Aires');
-        $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
-        $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
-        $_SERVER['REMOTE_ADDR']     = $_SERVER['REMOTE_ADDR'] ?? '';
+        $_SESSION['NOMBRE_SESION'] = $_SESSION['NOMBRE_SESION'] ?? '';
+        $_SESSION['CLIENTE'] = $_SESSION['CLIENTE'] ?? '';
+        $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
         $_SESSION['secure_auth_ch'] = $_SESSION['secure_auth_ch'] ?? false;
-        $_REQUEST['state']             = $_REQUEST['state'] ?? false;
+        $_REQUEST['state'] = $_REQUEST['state'] ?? false;
 
         switch ($_REQUEST['state']) {
             case '1':
@@ -3994,8 +3209,8 @@ function access_log($Modulo)
                 break;
         }
 
-        $log  = fopen($pathLog, 'a');
-        $t    = (new DateTime())->format('Y-m-d H:i:s.v');
+        $log = fopen($pathLog, 'a');
+        $t = (new DateTime())->format('Y-m-d H:i:s.v');
         $text = "$t - u: \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
         fwrite($log, $text);
         fclose($log);
@@ -4008,11 +3223,11 @@ function access_log_proy($Modulo)
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
         borrarLogs(__DIR__, 30, $pathLog);
         date_default_timezone_set('America/Argentina/Buenos_Aires');
-        $_SESSION['NOMBRE_SESION']  = $_SESSION['NOMBRE_SESION'] ?? '';
-        $_SESSION['CLIENTE']        = $_SESSION['CLIENTE'] ?? '';
-        $_SERVER['REMOTE_ADDR']     = $_SERVER['REMOTE_ADDR'] ?? '';
+        $_SESSION['NOMBRE_SESION'] = $_SESSION['NOMBRE_SESION'] ?? '';
+        $_SESSION['CLIENTE'] = $_SESSION['CLIENTE'] ?? '';
+        $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
         $_SESSION['secure_auth_ch'] = $_SESSION['secure_auth_ch'] ?? false;
-        $_REQUEST['state']             = $_REQUEST['state'] ?? false;
+        $_REQUEST['state'] = $_REQUEST['state'] ?? false;
 
         switch ($_REQUEST['state']) {
             case '1':
@@ -4026,8 +3241,8 @@ function access_log_proy($Modulo)
                 break;
         }
 
-        $log  = fopen($pathLog, 'a');
-        $t    = (new DateTime())->format('Y-m-d H:i:s.v');
+        $log = fopen($pathLog, 'a');
+        $t = (new DateTime())->format('Y-m-d H:i:s.v');
         $text = "$t - u: \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
         fwrite($log, $text);
         fclose($log);
@@ -4045,15 +3260,15 @@ function createDir($path, $gitignore = true)
             if (!file_exists($git)) {
                 mkdir($path, 0700);
                 mkdir($git, 0755, true);
-                $logGit    = fopen($git . '/.gitignore', 'a');
-                $textGit   = '*';
+                $logGit = fopen($git . '/.gitignore', 'a');
+                $textGit = '*';
                 fwrite($logGit, $textGit);
                 fclose($logGit);
             }
         }
 
-        $log    = fopen($dirname . '/index.php', 'a');
-        $text   = '<?php exit;';
+        $log = fopen($dirname . '/index.php', 'a');
+        $text = '<?php exit;';
         fwrite($log, $text);
         fclose($log);
     }
@@ -4067,8 +3282,8 @@ function tareDiff($start, $end)
 {
     Carbon::setLocale('es');
     setlocale(LC_TIME, 'es_ES.UTF-8');
-    $f      = Carbon::parse($start);
-    $f2     = Carbon::parse($end);
+    $f = Carbon::parse($start);
+    $f2 = Carbon::parse($end);
     $d2 = $f->diffForHumans(null, false, false, 2);
     $totalDuration = $f2->diffInSeconds($f);
     $totalDuration = gmdate("H:i:s", $totalDuration);
@@ -4080,8 +3295,8 @@ function diffStartEnd($start, $end)
 {
     Carbon::setLocale('es');
     setlocale(LC_TIME, 'es_ES.UTF-8');
-    $f      = Carbon::parse($start);
-    $f2     = Carbon::parse($end);
+    $f = Carbon::parse($start);
+    $f2 = Carbon::parse($end);
     $d2 = $f->diffForHumans(null, false, false, 2);
     $diffInSeconds = $f2->diffInSeconds($f);
     $diffInMinutes = $f2->diffInMinutes($f);
@@ -4099,7 +3314,8 @@ function diffStartEnd($start, $end)
 }
 function implode_keys_values($array = array(), $key, $separator)
 {
-    if (!$array) : return $array;
+    if (!$array):
+        return $array;
     endif;
     $key = array_column($array, $key);
     $key = array_unique($key);
@@ -4108,10 +3324,10 @@ function implode_keys_values($array = array(), $key, $separator)
 }
 function simple_MSQuery($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     // print_r($query);
     // exit;
     if (($stmt)) {
@@ -4136,10 +3352,10 @@ function simple_MSQuery($query)
 }
 function MSQuery($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query, $params, $options);
+    $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
         return true;
     } else {
@@ -4153,15 +3369,15 @@ function MSQuery($query)
         echo json_encode($data[0]);
         sqlsrv_close($link);
         return false;
-        exit;
+        // exit;
     }
 }
 function arrMSQuery($query)
 {
-    $params    = array();
-    $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
-    $stmt  = sqlsrv_query($link, $query);
+    $stmt = sqlsrv_query($link, $query);
     if (($stmt)) {
         while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
             $registros[] = $r;
@@ -4169,7 +3385,6 @@ function arrMSQuery($query)
         sqlsrv_free_stmt($stmt);
         sqlsrv_close($link);
         return $registros ?? false;
-        // return false;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -4195,8 +3410,10 @@ function confTar($assoc, $path)
                 for ($i = 0; $i < count($elem2); $i++) {
                     $content .= $key2 . "[] =\"" . $elem2[$i] . "\"\n";
                 }
-            } else if ($elem2 == "") $content .= $key2 . " =\n";
-            else $content .= $key2 . " = \"" . $elem2 . "\"\n";
+            } else if ($elem2 == "")
+                $content .= $key2 . " =\n";
+            else
+                $content .= $key2 . " = \"" . $elem2 . "\"\n";
         }
     }
     if (!$handle = fopen($path, 'w')) {
@@ -4231,14 +3448,14 @@ function calcLimitTar($start, $end)
     $getConfTar = ((getConfTar()['confTar'])); // Obtenemos configuración de confTarea.php en una array
     $getlimitTar = (($getConfTar['LimitTar'])); // Obtenemos el limite de tiempo de la tarea en horas
     $limitTar = intval($getlimitTar) * 60; // Convertimos el limite de tiempo a minutos
-    $diffStartEnd  = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
-    $obj =  array(
-        'status'   => ($diffStartEnd > $limitTar) ? 1 : 0,
+    $diffStartEnd = intval(diffStartEnd($start, $end)['diffInMinutes']); // Calculamos la diferencia de tiempo de la tarea
+    $obj = array(
+        'status' => ($diffStartEnd > $limitTar) ? 1 : 0,
         'limitMin' => $limitTar,
         'limitHor' => MinHora($limitTar),
-        'diffMin'  => $diffStartEnd,
-        'diffHor'  => MinHora($diffStartEnd),
-        'confTar'  => $getConfTar
+        'diffMin' => $diffStartEnd,
+        'diffHor' => MinHora($diffStartEnd),
+        'confTar' => $getConfTar
     );
     return $obj;
 }
@@ -4251,15 +3468,20 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        "Accept: */*",
-        'Content-Type: application/json',
-        'Authorization: Basic ' . $authBasic, // Basic Authentication
-        "Token: $token",
-    ));
+    curl_setopt(
+        $ch,
+        CURLOPT_HTTPHEADER,
+        array(
+            "Accept: */*",
+            'Content-Type: application/json',
+            'Authorization: Basic ' . $authBasic,
+            // Basic Authentication
+            "Token: $token",
+        )
+    );
     $file_contents = curl_exec($ch);
-    $curl_errno    = curl_errno($ch); // get error code
-    $curl_error    = curl_error($ch); // get error information
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
 
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
@@ -4287,7 +3509,8 @@ function mergeArrayIfValue($arr1, $arr2, $key)
 {
     if ($arr1 && $arr2) {
         $d = (array_merge($arr1, $arr2));
-        foreach ($d as $i) $n[$i[$key]] = $i;
+        foreach ($d as $i)
+            $n[$i[$key]] = $i;
         return $n;
     }
     return false;
@@ -4296,19 +3519,19 @@ function checkenroll($recid, $userID, $apimobile, $sleep)
 {
     sleep($sleep);
     $paramsCheck = array(
-        'key'          => $recid,
-        'userID'       => $userID,
+        'key' => $recid,
+        'userID' => $userID,
     );
     $apiCheck = "api/v1/enroll/check/";
-    $urlCheck   = $apimobile . "/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
+    $urlCheck = $apimobile . "/" . HOMEHOST . "/mobile/hrp/" . $apiCheck;
     sendApiData($urlCheck, $paramsCheck, 'POST');
 }
 /**
-* Convierte bytes en tamaño de archivo legible por humanos.
-*
-* @param cadena $bytes
-* @return cadena legible por humanos tamaño de archivo (2,87 Мб)
-*/
+ * Convierte bytes en tamaño de archivo legible por humanos.
+ *
+ * @param $bytes
+ * @return // legible por humanos tamaño de archivo (2,87 Мб)
+ */
 function FileSizeConvert($bytes)
 {
     $result = '';
@@ -4344,4 +3567,24 @@ function FileSizeConvert($bytes)
         }
     }
     return $result;
+}
+function get_client_ip(): string
+{
+    $ipaddress = '';
+    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+        $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+    } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    } else if (isset($_SERVER['HTTP_X_FORWARDED'])) {
+        $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+    } else if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
+        $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+    } else if (isset($_SERVER['HTTP_FORWARDED'])) {
+        $ipaddress = $_SERVER['HTTP_FORWARDED'];
+    } else if (isset($_SERVER['REMOTE_ADDR'])) {
+        $ipaddress = $_SERVER['REMOTE_ADDR'];
+    } else {
+        $ipaddress = 'UNKNOWN';
+    }
+    return $ipaddress;
 }

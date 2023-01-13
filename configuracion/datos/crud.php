@@ -82,7 +82,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
                     break;
                 }
                 $error = ($error=='23000') ? 'El Codigo ya existe':'Error: '.$error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -236,7 +236,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
                     break;
                 }
                 $error = ($error=='23000') ? 'El Codigo ya existe':'Error: '.$error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -390,7 +390,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_nacion')) {
                     break;
                 }
                 $error = ($error=='23000') ? 'El Codigo ya existe':'Error: '.$error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }

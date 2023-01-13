@@ -205,7 +205,6 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
     $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-    $idCompany = $idCompany;
 
     if ($agent) {
         require_once __DIR__ . '../../../../../../../control/PhpUserAgent/src/UserAgentParser.php';

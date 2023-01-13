@@ -25,11 +25,10 @@
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none" data-toggle="modal" data-target="#Filtros">
+                <button type="button" disabled class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none" data-toggle="modal" data-target="#Filtros">
                     Filtros
                 </button>
-                <button type="button" class="d-none ml-1 btn btn-light text-success fw5 border btn-sm fontq d-print-none" id="btnExcel">
-                    Excel
+                <button type="button" class="ml-1 btn btn-outline-custom border btn-sm fontq d-print-none" disabled id="btnExcel">
                 </button>
                 <span id="trash_all" title="Limpiar Filtros" class="trash align-middle pb-0 d-print-none"></span>
             </div>
@@ -60,14 +59,14 @@
                 </div>
             </div>
         </div>
-        <div id="modales"></div>
+        <?php require 'modal_Filtros.php'; ?>
     </div>
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "../../../js/jquery.php";
     require __DIR__ . "../../../js/DataTable.php";
-    // require 'modal_Filtros.html';
+
     ?>
     <!-- moment.min.js -->
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
@@ -75,10 +74,26 @@
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="/<?= HOMEHOST ?>/informes/horasign/js/data.js?<?= version_file("/informes/horasign/js/data.js") ?>"></script>
-    <script src="/<?= HOMEHOST ?>/informes/horasign/js/toExcel.js?<?= version_file("/informes/horasign/js/toExcel.js") ?>"></script>
+    <script src="/<?= HOMEHOST ?>/informes/horasign/js/toExport.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
 </body>
+<script>
+    // document.addEventListener('DOMContentLoaded', (e) => {
+    axios({
+            method: 'get',
+            url: '/' + getSelectorVal('#_homehost') + '/status_ws.php?status=ws',
+            responseType: 'stream'
+        })
+        .then(function(response) {
+            if (response.data) {
+                $.notifyClose();
+                notify(response.data.Mensaje, 'info', 2000, 'right')
+            }
+        });
+    // getHTML('modal_Filtros.php', '#modales')
+    // return
+    // });
+</script>
 
 </html>

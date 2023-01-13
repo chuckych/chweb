@@ -155,7 +155,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     } catch (\Mpdf\MpdfException $e) {
         echo $e->getMessage();
         // echo $formatter->getHtmlMessage();
-        EscribirArchivo("Error_PDF_InforNov_".date('Ymd'), "../../../logs/error/", $e->getMessage(), false, false, false);
+        file_put_contents("../../../logs/error/Error_PDF_InforNov_".date('Ymd').".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
         exit();
     }
 }

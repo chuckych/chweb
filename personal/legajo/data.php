@@ -41,7 +41,7 @@ E_ALL();
             if( ($errors = sqlsrv_errors() ) != null) {
                 foreach( $errors as $error ) {
                     $data = array("status" => "error", "dato" => $error['message']);
-                    echo h1($error['message']);
+                    echo ($error['message']);
                 }
             }
             // print_r($data);

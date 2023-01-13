@@ -315,7 +315,7 @@ foreach ($stmt  as $key => $v) {
         $Edad    = ($v['LegFeNa'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeNa'], 'Y-m-d'))->format('%y')) : '';
         $EdadStr = calculaEdadStr(fechFormat($v['LegFeNa'], 'Y-m-d'));
 
-        $CUIL = $v['LegCUIT'];
+        $CUIL = trim($v['LegCUIT']);
 
         if(empty($CUIL) && strlen($v['LegDocu']) >= 7 && strlen($v['LegDocu']) <= 8) {
             $CUIL = getCuil($v['LegDocu'], ($v['LegSexo']== 0) ? 'f':'m');

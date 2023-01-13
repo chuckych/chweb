@@ -10,9 +10,9 @@ $bgcolor = 'bg-custom ';
 $border = $ErrNombre = $error = $duplicado = '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
     require __DIR__ . '../../config/conect_mysql.php';
-    $nombre    = test_input($_POST['nombre']);
-    $ident     = test_input($_POST['ident']);
-    $n_ident   = str_replace(" ", "", $nombre);
+    $nombre = test_input($_POST['nombre']);
+    $ident = test_input($_POST['ident']);
+    $n_ident = str_replace(" ", "", $nombre);
     $identauto = (empty($ident)) ? substr(strtoupper($n_ident), 0, 3) : $ident;
     $recid = recid();
     $fecha = date("Y/m/d H:i:s");
@@ -56,11 +56,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
                     $ident = $identauto;
                     $nombre = 'SISTEMA';
                     $usuario = 'sistema';
-                    $user_auto    = (empty($usuario)) ? strtolower($ident) . '-' . strtok(strtolower($nombre), " \n\t") . "-" . sprintf("%04d", rand(0, 9999)) : strtolower($ident) . '-' . $usuario . "-" . date('Y');
-                    $contraseña  = test_input($_POST["contraseña"]);
-                    $contraauto  = password_hash($user_auto, PASSWORD_DEFAULT);
+                    $user_auto = (empty($usuario)) ? strtolower($ident) . '-' . strtok(strtolower($nombre), " \n\t") . "-" . sprintf("%04d", rand(0, 9999)) : strtolower($ident) . '-' . $usuario . "-" . date('Y');
+                    $contraseña = test_input($_POST["contraseña"]);
+                    $contraauto = password_hash($user_auto, PASSWORD_DEFAULT);
                     $contraseña1 = (empty($contraseña)) ? $contraauto : password_hash($contraseña, PASSWORD_DEFAULT);
-                    $fecha       = date("Y/m/d H:i:s");
+                    $fecha = date("Y/m/d H:i:s");
                     /* INSERTAMOS USUARIOS */
                     $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, fecha_alta, fecha, principal) VALUES( '$recid', '$nombre', '$user_auto', '$rol', '$contraseña1', '$cliente', '$fecha', '$fecha','1')";
                     $rs_insert = mysqli_query($link, $query);
@@ -71,17 +71,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
                         $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>Error: " . mysqli_errno($link) . "<br />" . mysqli_error($link) . "</div>";
                     } else {
                         /** ALTA DE MÓDULOS */
-                        $modulo[] = array(1, 7);
-                        $recid_rol = $recid;
-                        // print_r($modulo);
-                        foreach ($modulo[0] as $value) {
-                            $modulo = $value;
-                            $query = "INSERT INTO mod_roles(id_rol,recid_rol, modulo, fecha ) VALUES( 1,'$recid_rol', '$modulo', '$fecha')";
-                            $rs_insert = mysqli_query($link, $query);
-                            // mysqli_error($link);
+                        $query = "INSERT INTO mod_roles(id_rol,recid_rol, modulo, fecha ) VALUES ( 1,'$recid', '1', '$fecha'),( 1,'$recid', '7', '$fecha') ";
+                        $rs_insert = pdoQuery($query);
+                        if ($rs_insert) {
+                            header("Location:/" . HOMEHOST . "/login/?p=check_login.php&conf=$user_auto");
+                            exit;
                         }
-                        // print_r($query);exit;
-                        header("Location:/" . HOMEHOST . "/login/?p=check_login.php&conf=$user_auto");
                         /** FIN ALTA DE MÓDULOS */
                     }
                 }
@@ -118,8 +113,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
                 </div>
                 <div class="col-12 bg-light">
                     <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>" method="POST" class="">
-                        <input type="text" required name="nombre" id="nombre" class="form-control h50 w-100" placeholder="Nombre de Cuenta">
-                        <button type="submit" name="submit" id="alta" class="mt-2 btn text-white btn-block h50 fontq <?= $bgcolor ?>" value="alta">CREAR CUENTA</button>
+                        <input type="text" required name="nombre" id="nombre" class="form-control h50 w-100"
+                            placeholder="Nombre de Cuenta">
+                        <button type="submit" name="submit" id="alta"
+                            class="mt-2 btn text-white btn-block h50 fontq <?= $bgcolor ?>" value="alta">CREAR
+                            CUENTA</button>
                     </form>
                 </div>
             </div>

@@ -6,7 +6,7 @@ ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
-
+$FiltrosFichas = '';
 require __DIR__ . '../../valores.php';
 
 require __DIR__ . '../../../../filtros/filtros.php';

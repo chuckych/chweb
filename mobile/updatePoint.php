@@ -14,7 +14,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['point'] != '')) {
     $alias = test_input($_POST['alias']);
 
     if(valida_campo($alias)){
-        $data = PrintRespuestaJson('Error', "Campo alias es requerido");
+        PrintRespuestaJson('Error', "Campo alias es requerido");
         exit;
     }
 
@@ -36,10 +36,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['point'] != '')) {
 
     if ($array['SUCCESS'] == 'YES') {
         auditoria("Alias Mobile ($name) Nombre: $alias", 'M', $audCuenta['id'], '5');
-        $data = PrintRespuestaJson('ok', "Datos Guardados correctamente");
+       PrintRespuestaJson('ok', "Datos Guardados correctamente");
         exit;
     } else {
-        $data = PrintRespuestaJson('error', $MESSAGE);
+       PrintRespuestaJson('error', $MESSAGE);
         exit;
     }
 }

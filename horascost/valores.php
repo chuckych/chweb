@@ -58,8 +58,8 @@ switch ($Agrup) {
         $agrupJoin = 'INNER JOIN TAREAS ON FICHAS01.FicTare = TAREAS.TareCodi';
         break;
 }
-$agrupCol = $agrupCol;
-$agrupDesc = $agrupDesc;
+// $agrupCol = $agrupCol;
+// $agrupDesc = $agrupDesc;
 
 $Per      = ($_POST['Per']);
 $Emp      = ($_POST['Emp']);

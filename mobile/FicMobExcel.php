@@ -237,13 +237,13 @@ if ($array['SUCCESS'] == 'YES' && (!empty($array['MESSAGE']))) {
         $certeza = round($valor['similarity'], 0, PHP_ROUND_HALF_UP);
 
         $u_id     = $valor['u_id'];
-        $name     = $name;
+        // $name     = $name;
         $dia      = DiaSemana3($Fecha);
         $Fecha    = FormatoFechaToExcel($Fecha);
         $time     = FormatoHoraToExcel($valor['time']);
-        $zone     = $zone;
-        $LinkMapa = $LinkMapa;
-        $certeza  = $certeza;
+        // $zone     = $zone;
+        // $LinkMapa = $LinkMapa;
+        // $certeza  = $certeza;
         $IN_OUT   = $inout;
         $t_type   = ucfirst($valor['t_type']);
 

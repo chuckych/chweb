@@ -107,7 +107,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: <strong>' . $error . '</strong><br> ' . $message;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -324,7 +324,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: ' . $error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -473,7 +473,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: ' . $error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -622,7 +622,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: ' . $error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -772,7 +772,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: ' . $error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -922,7 +922,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                     break;
                 }
                 $error = ($error == '23000') ? 'El Codigo ya existe' : 'Error: ' . $error;
-                PrintRespuestaJson('error', $error, true);
+                PrintRespuestaJson('error', $error);
                 exit;
             }
         }
@@ -1084,10 +1084,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             foreach (sqlsrv_errors() as $key => $v) {
                 $error = $v['SQLSTATE'];
                 $message = $v['message'];
-                break;
                 PrintRespuestaJson('error', $message);
                 sqlsrv_close($link);
-                exit;
+                break;
+                // exit;
             }
         }
     }

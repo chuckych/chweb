@@ -18,7 +18,7 @@ try {
 			// }
 		}
 	} else {
-		throw new Exception(mysqli_connect_error($link));
+		throw new Exception(mysqli_connect_error());
 	}
 } catch (Exception $e) {
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionDB.log';

@@ -796,3 +796,16 @@ const getFicNovHor = (selector, date1, date2, lega) => {
         console.log(error);
     });
 }
+
+const getSelectorVal = (selector) => {
+    if (!selector) return false
+    let s =''
+    if(document.querySelector(selector)){
+        s = document.querySelector(selector).value
+        return s
+    } else {
+        s = ''
+        console.log('No existe el selector '+ selector);
+        return s
+    }
+}

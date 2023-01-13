@@ -14,6 +14,7 @@ header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modifie
 header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
+$novedad = $periodo = '';
 
 require __DIR__ . '../../config/conect_mssql.php';
 require __DIR__ . '../../filtros/filtros.php';

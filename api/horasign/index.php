@@ -15,7 +15,6 @@ if ($request->method != 'POST') {
 }
 
 $stmtHorarios = $dbApiQuery("SELECT HorCodi, HorDesc, HorID FROM HORARIOS") ?? '';
-// Flight::json($stmtHorarios) . exit;
 
 function pingWebService($textError, $webService) // Funcion para validar que el Webservice de Control Horario esta disponible
 {
@@ -37,8 +36,8 @@ function pingWebService($textError, $webService) // Funcion para validar que el 
     }
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
-    return ($http_code == 201) ? true : (response(array(), 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
     curl_close($ch); // close curl handle
+    return ($http_code == 201) ? true : (response(array(), 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
 }
 pingWebService('Error Interno WS', $dataC['WebServiceCH'] . '/RRHHWebService');
 
@@ -69,11 +68,11 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
 {
     $time_start = microtime(true);
     $Legajos = implode(';', $Legajos);
-    // print_r($Legajos).exit;
     $FechaDesde = fecha($FechaDesde, 'd/m/Y');
     $FechaHasta = fecha($FechaHasta, 'd/m/Y');
     $ruta = rutaWebService($webService, "Horarios");
-    $post_data = "{Usuario=CHWEBAPI,Legajos=[$Legajos],TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
+    $post_data = "{Usuario=SUPERVISOR,Legajos=[$Legajos],TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
+    // print_r($post_data).exit;
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $ruta);
     curl_setopt($ch, CURLOPT_POST, TRUE);
@@ -105,7 +104,7 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
     $url = rutaWebService($webService, "Estado?ProcesoId=" . $processID);
     if ($httpCode == 201) {
         return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
-        exit;
+        // exit;
     } else {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
@@ -169,7 +168,7 @@ $getHorario = getHorario(
     $dp->Seccion,
     $dataC['WebServiceCH'] . '/RRHHWebService',
 );
-
+// Flight::json($getHorario, 200) . exit;
 // $arrHorario = preg_split('/(\r|\n)/', $getHorario['Estado'], -1, 1);
 // print_r($getHorario['Estado']).exit;
 $data = array();

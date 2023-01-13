@@ -21,7 +21,7 @@ switch ($_GET['e']) {
         break;
     default:
         exit;
-        break;
+        // break;
 }
 // session_start();
 UnsetGet('tk');
