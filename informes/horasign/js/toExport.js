@@ -1,4 +1,4 @@
-
+const time = document.getElementById('time').value
 let IconExcel = '<div class="d-inline-flex" data-titler="Exportar datos"><i class="bi bi-file-earmark-arrow-down-fill"></i><span class="ml-1 d-none d-sm-block">Exportar</span></div>'
 ActiveBTN(true, "#btnExcel", IconExcel, IconExcel)
 
@@ -6,58 +6,30 @@ $(document).on('click', '#btnExcel', function (e) {
     $.notifyClose();
     e.preventDefault();
     CheckSesion()
-    let body = `
-        <span class="fonth">Exportar datos</span>
-        <div class="row pt-3">
-            <div class="col-12">
-                <div class="d-inline-flex">
-                    <div class="custom-control custom-switch w130">
-                        <input type="radio" class="custom-control-input" checked id="legajoActual" name="exportLegajo" value="1">
-                        <label class="custom-control-label" style="padding-top: 3px;" for="legajoActual">Legajo actual</label>
-                    </div>
-                    <div class="custom-control custom-switch ml-3">
-                        <input type="radio" class="custom-control-input" id="legajoTodos" name="exportLegajo" value="2">
-                        <label class="custom-control-label" style="padding-top: 3px;" for="legajoTodos">Todos (Según filtro)</label>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 pt-3">
-                <div class="d-inline-flex">
-                    <div class="custom-control custom-switch w130">
-                        <input type="radio" class="custom-control-input" checked id="exportExcel" name="exporType" value="1">
-                        <label class="custom-control-label" style="" for="exportExcel"><i class="bi bi-filetype-xls font1"></i> xls</label>
-                    </div>
-                    <div class="custom-control custom-switch ml-3">
-                        <input type="radio" class="custom-control-input" id="exportPDF" name="exporType" value="2">
-                        <label class="custom-control-label" style="" for="exportPDF"><i class="bi bi-filetype-pdf font1"></i> pdf</label>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    bootbox.confirm({
-        // title: '',
-        message: body,
-        // message: '',
-        buttons: {
-            confirm: {
-                label: 'Aceptar',
-                className: 'btn-custom btn-sm fontq'
+    axios.get('js/bodyModal.html?'+time).then(function (response) {
+        bootbox.confirm({
+            // title: '',
+            message: response.data,
+            // message: '',
+            buttons: {
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-custom btn-sm fontq'
+                },
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-light btn-sm fontq text-secondary'
+                }
             },
-            cancel: {
-                label: 'Cancelar',
-                className: 'btn-light btn-sm fontq text-secondary'
+            callback: function (result) {
+                if (result) {
+                    CheckSesion()
+                    toExport()
+                    ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
+                }
             }
-        },
-        callback: function (result) {
-            if (result) {
-                CheckSesion()
-                toExport()
-                ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
-            }
-        }
-    });
-    e.stopImmediatePropagation();
+        });
+    })
 });
 
 function toExport() {
@@ -65,34 +37,30 @@ function toExport() {
     let url = '';
     let toExcelAll = '';
     let toPdfAll = '';
-    // url = ($("input[name=exportLegajo]:checked").val() == '1') ? 'toExcel.php' : 'getPersonal.php'
-    // url = ($("input[name=exporType]:checked").val() == '2') ? 'reporte/index.php' : 'getPersonal.php';
 
-    switch ($("input[name=exporType]:checked").val()) {
-        case '2':
-            url = 'reporte/index.php';
-            break;
-        case '1':
+    if ($("input[name=exportLegajo]:checked").val() == '1') {
+        toExcelAll = ''
+        toPdfAll = ''
+        if ($("input[name=exporType]:checked").val() == '1') {
             url = 'toExcel.php';
-            break;
-        default:
-            url = ''
-            break;
+        }
+        if ($("input[name=exporType]:checked").val() == '2') {
+            url = 'reporte/index.php';
+        }
+    } else if ($("input[name=exportLegajo]:checked").val() == '2') {
+        toExcelAll = ''
+        toPdfAll = ''
+        if ($("input[name=exporType]:checked").val() == '1') {
+            toExcelAll = '1'
+            toPdfAll = ''
+            url = 'getPersonal.php';
+        }
+        if ($("input[name=exporType]:checked").val() == '2') {
+            toExcelAll = '1'
+            toPdfAll = '1'
+            url = 'getPersonal.php';
+        }
     }
-    switch ($("input[name=exportLegajo]:checked").val()) {
-        case '2':
-            toExcelAll = 1
-            toPdfAll = 1
-            break;
-    }
-    switch ($("input[name=exportLegajo]:checked").val()) {
-        case '2':
-            toExcelAll = 1
-            break;
-    }
-
-    url = (toExcelAll == 1) ? 'getPersonal.php' : url
-    url = (toPdfAll == 1) ? 'getPersonal.php' : url
 
     ActiveBTN(true, "#btnExcel", 'Exportando ' + loading, IconExcel)
     $.notifyClose();
@@ -108,7 +76,7 @@ function toExport() {
             return s
         } else {
             s = ''
-            console.log('No existe el selector ' + selector);
+            // console.log('No existe el selector ' + selector);
             return s
         }
     }
@@ -118,9 +86,7 @@ function toExport() {
     data.append('_drhorarios', document.getElementById("_drHorarios").value)
     data.append('Tipo', $("#Tipo").val())
     data.append('toExcelAll', toExcelAll)
-    // data.append('exportPDF', exportPDF)
     data.append('toPdfAll', toPdfAll)
-    // $("#Per").val().forEach((a => { data.append("Per[]", a) }));
     getObjVal("#Per", 'Per', data);
     getObjVal("#Emp", 'Emp', data);
     getObjVal("#Plan", 'Plan', data);
@@ -150,14 +116,14 @@ function toExport() {
                     notify('No hay datos a exportar', 'danger', 3000, 'right');
                 } else {
                     notify('<b>Archivo exportado correctamente</b>.<br><div class="shadow-sm w100"><a href="' + file.archivo + '" class="btn btn-custom px-3 btn-sm mt-2 fontq download" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+                    // window.location = file.archivo
+                    // window.open(file.archivo)
                 }
                 $(document).on('click', '.download', function (e) {
                     setTimeout(() => {
                         $.notifyClose();
                     }, 3000);
                 });
-
-                // window.location = data.archivo
             }
         }
     }).catch(function (error) {
