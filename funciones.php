@@ -1,7 +1,7 @@
 <?php
 function version()
 {
-    return 'v0.2.2'; // Version de la aplicación
+    return 'v0.2.3'; // Version de la aplicación
 }
 function verDBLocal()
 {

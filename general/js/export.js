@@ -273,7 +273,7 @@ $(document).ready(function () {
         sendData.append('FicNovI', $("#datoFicNovI").val())
         sendData.append('FicNovS', $("#datoFicNovS").val())
         sendData.append('FicNovA', $("#datoFicNovA").val())
-        sendData.append('Fic3Nov', ($("#datoNovedad").val()!= null) ? $("#Sucur").val() : '')
+        sendData.append('Fic3Nov', ($("#datoNovedad").val()!= null) ? $("#datoNovedad").val() : '')
         sendData.append('_VerFic', $("#VerFic").val())
         sendData.append('_VerNove', $("#VerNove").val())
         sendData.append('_VerHoras', $("#VerHoras").val())
