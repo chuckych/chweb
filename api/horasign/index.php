@@ -8,11 +8,8 @@ errorReport();
 $request = Flight::request();
 // Flight::json($dataC['WebServiceCH'].'/RRHHWebService', 200) . exit;
 $Horario = '';
-if ($request->method != 'POST') {
-    http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $request->method, 400, $time_start, 0, $idCompany));
-    exit;
-}
+
+$checkMethod('POST');
 
 $stmtHorarios = $dbApiQuery("SELECT HorCodi, HorDesc, HorID FROM HORARIOS") ?? '';
 

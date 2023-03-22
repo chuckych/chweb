@@ -6,11 +6,7 @@ tz();
 tzLang();
 errorReport();
 
-if ($method != 'POST') {
-    http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
-    exit;
-}
+$checkMethod('POST');
 
 // Flight::json($dataC).exit;
 

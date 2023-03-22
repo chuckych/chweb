@@ -98,16 +98,16 @@
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/bootbox.min.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-    <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="js/enviar.js?v=<?= vjs() ?>"></script>
+    <script src="../../js/select2.min.js"></script>
+    <script src="js/enviar.js?v=<?= version_file("/personal/legajo/js/enviar.js")?>"></script>
     <?php
     $opt2 = array(
         'MinLength' => 0, 'SelClose' => 0, 'MaxInpLength' => 10, 'delay' => 250
     );
     ?>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
-    <script src="js/mascaras.js?v=<?= vjs() ?>"></script>
-    <script src="js/calculaEdad.js?v=<?= vjs() ?>"></script>
+    <script src="js/trash-select.js?v=<?= version_file("/personal/legajo/js/trash-select.js")?>"></script>
+    <script src="js/mascaras.js?v=<?= version_file("/personal/legajo/js/mascaras.js")?>"></script>
+    <script src="js/calculaEdad.js?v=<?= version_file("/personal/legajo/js/calculaEdad.js")?>"></script>
     <script>
         $(document).ready(function() {
             $('.select2').select2({

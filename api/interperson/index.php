@@ -5,26 +5,18 @@ ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
 tzLang();
 errorReport();
-
 $checkMethod('POST');
+// $decodeDP = json_decode($dp);
+foreach ($dp as $key => $v) {
+    if (is_int($key)) {
+        $d[] = $v;
+        $v['Lega'] = ($v['Lega']) ?? '';
+        $Lega = vpErr($v['Lega'], 'Lega', 'int', 10);
+    }
+}
 
-// Flight::json($dp) . exit;
+print_r($ErrorVP) . exit;
 
-$dp['getDatos']    = ($dp['getDatos']) ?? '';
-$dp['getDatos']    = vp($dp['getDatos'], 'getDatos', 'int01', 1); // Traer Datos
-$dp['getLiqui']    = ($dp['getLiqui']) ?? '';
-$dp['getLiqui']    = vp($dp['getLiqui'], 'getLiqui', 'int01', 1); // Traer Liquidacion
-$dp['getEstruct']  = ($dp['getEstruct']) ?? '';
-$dp['getEstruct']  = vp($dp['getEstruct'], 'getEstruct', 'int01', 1); // Traer Estructura
-$dp['getHorarios'] = ($dp['getHorarios']) ?? '';
-$dp['getHorarios'] = vp($dp['getHorarios'], 'getHorarios', 'int01', 1); // Traer Horarios
-$dp['getControl']  = ($dp['getControl']) ?? '';
-$dp['getControl']  = vp($dp['getControl'], 'getControl', 'int01', 1); // Traer Control y Procesos
-$dp['getAcceso']   = ($dp['getAcceso']) ?? '';
-$dp['getAcceso']   = vp($dp['getAcceso'], 'getAcceso', 'int01', 1); // Traer Acceso
-
-$dp['Nume']     = ($dp['Nume']) ?? [];
-$dp['Nume']     = vp($dp['Nume'], 'Nume', 'intArray', 11);
 $dp['Docu']     = ($dp['Docu']) ?? [];
 $dp['Docu']     = vp($dp['Docu'], 'Docu', 'intArray', 11);
 $dp['Baja']     = ($dp['Baja']) ?? [];

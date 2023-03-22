@@ -530,9 +530,14 @@ if (!empty($arrayData)) {
             'id_api'        => $id_api
         );
     }
-    $arrayObj = array_column($arrayObj, 'createdDate');
-    (array_multisort($arrayObj, SORT_DESC, $arrayObj));
+
+    
+    
+    // $arrayObj = array_column($arrayObj, 'createdDate');
+    // (array_multisort($arrayObj, SORT_DESC, $arrayObj));
     $first_element = reset($arrayObj);
+
+    // print_r($arrayObj).exit;
 
     $assoc = array(
         'flags' => array(
@@ -544,6 +549,8 @@ if (!empty($arrayData)) {
     );
 
     $arrGroup = (_group_by_keys($arrayObj, array('employeId', 'fechaHora', 'phoneid')));
+
+    // print_r($arrGroup).exit;
 
     foreach ($arrGroup as $key => $valor) {
 

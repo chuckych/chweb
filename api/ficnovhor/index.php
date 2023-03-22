@@ -9,11 +9,7 @@ errorReport();
 $iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
 $IlegFic = array();
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $_SERVER['REQUEST_METHOD'], 400, $time_start, 0, $idCompany));
-    exit;
-}
+$checkMethod('POST');
 
 require __DIR__ . '../wc.php';
 
@@ -98,7 +94,7 @@ if ($dp['getNov']) {
     $IlegNoV = (implodeArrayByKey($IlegNoV, 'FicLega'));
     $IlegNoV = ($IlegNoV) ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
     
-    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
+    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
         if ($wcNov) {
             $qNov .= $wcNov;
@@ -165,7 +161,9 @@ foreach ($stmtFic as $key => $v) {
                         'Codi'  => $n['NovCodi'],
                         'Desc'  => $n['NovDesc'],
                         'Horas' => $n['FicHoras'],
+                        'Obse'  => $n['FicObse'],
                         'NoTi'  => $n['FicNoTi'],
+                        'NoTiD' => novedadTipo(array($n['FicNoTi'])),
                         'CCodi' => $n['NovCCodi'],
                         'CDesc' => $n['NovCDesc'],
                     );

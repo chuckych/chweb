@@ -8,11 +8,7 @@ errorReport();
 
 $iLega2 = $total = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $_SERVER['REQUEST_METHOD'], 400, $time_start, 0, $idCompany));
-    exit;
-}
+$checkMethod('POST');
 
 require __DIR__ . '../wc.php';
 

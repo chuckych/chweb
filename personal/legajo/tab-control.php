@@ -26,21 +26,21 @@
             </div>
             <div class="form-inline mt-3">
                 <label for="LegToTa" class="mr-2 w120">Tolerancia Tarde</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegToTa'] ?>" id="LegToTa" name="LegToTa" max="99" maxlength="2">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegToTa'] ?>" id="LegToTa" name="LegToTa">
                 <label for="LegReTa" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegReTa'] ?>" id="LegReTa" name="LegReTa" max="99" maxlength="2" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReTa'] ?>" id="LegReTa" name="LegReTa" value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegToIn" class="mr-2 w120">Tolerancia Inc.</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegToIn'] ?>" id="LegToIn" name="LegToIn" max="99" maxlength="2">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegToIn'] ?>" id="LegToIn" name="LegToIn">
                 <label for="LegReIn" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegReIn'] ?>" id="LegReIn" name="LegReIn" max="99" maxlength="2" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReIn'] ?>" id="LegReIn" name="LegReIn" value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegToSa" class="mr-2 w120">Tolerancia Salida</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegToSa'] ?>" id="LegToSa" name="LegToSa" max="99" maxlength="2">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegToSa'] ?>" id="LegToSa" name="LegToSa">
                 <label for="LegReSa" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="number" value="<?= $pers['LegReSa'] ?>" id="LegReSa" name="LegReSa" max="99" maxlength="2" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReSa'] ?>" id="LegReSa" name="LegReSa" value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegIncTi" class="mr-2 w120">Incuplimiento</label>

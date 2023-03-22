@@ -6,12 +6,7 @@ tz();
 tzLang();
 errorReport();
 
-
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
-    http_response_code(400);
-    (response(array(), 0, 'Invalid Request Method: ' . $_SERVER['REQUEST_METHOD'], 400, $time_start, 0, $idCompany));
-    exit;
-}
+$checkMethod('POST');
 
 $wc = '';
 
