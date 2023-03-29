@@ -24,7 +24,7 @@ function start()
 {
     $p = $_POST;
     $p['start'] = $p['start'] ?? '0';
-    $start  = empty($p['start']) ? 0 : $p['start'];
+    $start = empty($p['start']) ? 0 : $p['start'];
     return intval($start);
 }
 function length()
@@ -38,7 +38,7 @@ function idZone()
 {
     $p = $_POST;
     $p['idZone'] = $p['idZone'] ?? '';
-    $idZone  = empty($p['idZone']) ? '' : test_input($p['idZone']);
+    $idZone = empty($p['idZone']) ? '' : test_input($p['idZone']);
     return intval($idZone);
 }
 function validaKey()
@@ -64,16 +64,16 @@ foreach ($params as $key => $value) {
 
 function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $count = 0, $idCompany)
 {
-    $start  = ($code != '400') ? start() : 0;
-    $length  = ($code != '400') ? length() : 0;
+    $start = ($code != '400') ? start() : 0;
+    $length = ($code != '400') ? length() : 0;
     $array = array(
         'RESPONSE_CODE' => http_response_code(intval($code)),
-        'START'         => intval($start),
-        'LENGTH'        => intval($length),
-        'TOTAL'         => intval($total),
-        'COUNT'         => intval($count),
-        'MESSAGE'       => $msg,
-        'TIME'          => $timeScript,
+        'START' => intval($start),
+        'LENGTH' => intval($length),
+        'TOTAL' => intval($total),
+        'COUNT' => intval($count),
+        'MESSAGE' => $msg,
+        'TIME' => $timeScript,
         'RESPONSE_DATA' => $data,
     );
 
@@ -89,7 +89,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     $textParams = implode('&', $textParams); // convert to string
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-    $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
     // $idCompany = $idCompany;
 
     if ($agent) {
@@ -97,12 +97,12 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
         $parsedagent[] = parse_user_agent($agent);
         foreach ($parsedagent as $key => $value) {
             $platform = $value['platform'];
-            $browser  = $value['browser'];
-            $version  = $value['version'];
+            $browser = $value['browser'];
+            $version = $value['version'];
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    $pathLog  = __DIR__ . '../../../_logs/delZone/' . date('Ymd') . '_log_delZone_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog = __DIR__ . '../../../_logs/delZone/' . date('Ymd') . '_log_delZone_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -111,10 +111,10 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     exit;
 }
 
-$queryRecords  = array();
-$start         = start();
-$length        = length();
-$idZone        = idZone();
+$queryRecords = array();
+$start = start();
+$length = length();
+$idZone = idZone();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -122,11 +122,15 @@ $vkey = '';
 foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
-        $vkey      = $value['recidCompany'];
+        $vkey = $value['recidCompany'];
+        $nameCompany = $value['nameCompany'];
+        $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
-        $vkey      = '';
+        $vkey = '';
+        $nameCompany = '';
+        $urlAppMobile = '';
         continue;
     }
 }
@@ -150,11 +154,11 @@ $qDel = "SELECT * FROM `reg_` WHERE `id_company` = '$idCompany' AND `idZone` = '
 $a = count_pdoQuery($qDel);
 
 if ($a) { // si tiene registros en la tbla de reg_
-    $arrayData  = array();
-    $MESSAGE    = 'This idZone cannot be deleted.';
-    $endScript  = microtime(true);
+    $arrayData = array();
+    $MESSAGE = 'This idZone cannot be deleted.';
+    $endScript = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
+    $countData = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 }
@@ -163,23 +167,23 @@ $a = simple_pdoQuery("SELECT * FROM `reg_zones` WHERE `id` = '$idZone' AND `id_c
 $MESSAGE = 'OK';
 
 if (!$a) {
-    $arrayData  = array();
-    $MESSAGE    = 'idZone does not exist';
-    $endScript  = microtime(true);
+    $arrayData = array();
+    $MESSAGE = 'idZone does not exist';
+    $endScript = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
+    $countData = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 } else {
     $text = "Eliminacion Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
     $arrayData = array(
         'id_company' => $a['id_company'],
-        'zoneID'     => $a['id'],
-        'zoneLat'    => $a['lat'],
-        'zoneLng'    => $a['lng'],
-        'zoneName'   => $a['nombre'],
-        'zoneRadio'  => $a['radio'],
-        'textAud'    => $text,
+        'zoneID' => $a['id'],
+        'zoneLat' => $a['lat'],
+        'zoneLng' => $a['lng'],
+        'zoneName' => $a['nombre'],
+        'zoneRadio' => $a['radio'],
+        'textAud' => $text,
     );
 }
 
@@ -188,16 +192,31 @@ $delete = pdoQuery($sql_query_delete);
 
 if ($delete) {
     $text = "Eliminacion Zona \"$arrayData[zoneName]\" ID = $arrayData[zoneID] Radio = $arrayData[zoneRadio] Lat = $arrayData[zoneLat] Lng = $arrayData[zoneLng]";
+
+    /** Eliminamos Zona en API */
+    try {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(CURLOPT_URL => $urlAppMobile . 'attention/api/zones/deleteZone/' . $arrayData['zoneID'], CURLOPT_RETURNTRANSFER => true, CURLOPT_ENCODING => '', CURLOPT_MAXREDIRS => 10, CURLOPT_TIMEOUT => 0, CURLOPT_FOLLOWLOCATION => true, CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1, CURLOPT_CUSTOMREQUEST => 'DELETE', CURLOPT_HTTPHEADER => array('Authorization: 7BB3A26C25687BCD56A9BAF353A78'), ));
+        $response = curl_exec($curl);
+        curl_close($curl);
+        $responseApi = (json_decode($response));
+        fileLog($responseApi, __DIR__ . '../../../_logs/delZone/' . date('Ymd') . '_log_delZone_api_' . padLeft($idCompany, 3, 0) . '.log');
+    } catch (Exception $e) {
+        fileLog($e->getMessage(), __DIR__ . '../../../_logs/delZone/' . date('Ymd') . '_log_delZone_api_' . padLeft($idCompany, 3, 0) . '.log');
+    }
+
+    /** Fin */
+
     fileLog($text, __DIR__ . '../../../_logs/delZone/' . date('Ymd') . '_log_delZone_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addDevice_
 } else {
     $MESSAGE = 'ERROR';
-    $endScript    = microtime(true);
+    $endScript = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    $countData    = count($arrayData);
+    $countData = count($arrayData);
     (response($arrayData, 0, $MESSAGE, '', $timeScript, 0, $idCompany));
 }
-$endScript    = microtime(true);
+$endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
-$countData    = count($arrayData);
+$countData = count($arrayData);
 (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
 exit;

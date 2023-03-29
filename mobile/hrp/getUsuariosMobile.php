@@ -55,6 +55,7 @@ if ($api['COUNT'] > 0) {
             'userName'     => $r['userName'],
             'userChecks'   => $r['userChecks'],
             'userRegId'    => $r['userRegId'],
+            'userArea'    => $r['hasArea'],
             'expiredEnd'   => ($r['expiredEnd']!= '0000-00-00') ? FechaFormatVar($r['expiredEnd'], 'd/m/Y'): null,
             'expiredStart' => ($r['expiredStart'] != '0000-00-00') ? FechaFormatVar($r['expiredStart'], 'd/m/Y') : null,
             'locked'       => $r['locked'],

@@ -224,6 +224,7 @@ if ($delete) {
         'status'           => 'Eliminado',
         'comments'         => '',
         'locked'           => true,
+        'hasArea'           => false,
         'expiredDateStart' => null,
         'expiredDateEnd'   => null,
     );

@@ -177,6 +177,7 @@ ru.expiredStart AS 'expiredStart',
 ru.expiredEnd AS 'expiredEnd',
 ru.estado AS 'estado',
 ru.motivo AS 'motivo',
+ru.hasArea AS 'hasArea',
 (SELECT COUNT(1) FROM reg_ r WHERE r.id_user = ru.id_user AND r.eventType=2 AND r.id_company = '$idCompany') AS 'cant', 
 re.idPunchEvent AS 'idPunchEvent'
 FROM reg_user_ ru 
@@ -244,6 +245,7 @@ if (($queryRecords)) {
             'userName'     => $r['nombre'],
             'userRegId'    => $r['regid'],
             'userChecks'   => intval($r['cant']),
+            'hasArea'   =>  ($r['hasArea']),
             'expiredStart' => ($r['expiredStart']),
             'expiredEnd'   => ($r['expiredEnd']),
             'locked'       => ($r['estado']),

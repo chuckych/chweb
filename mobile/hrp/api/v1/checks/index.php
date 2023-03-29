@@ -265,7 +265,7 @@ if (($queryRecords)) {
     foreach ($queryRecords as $r) {
         $Fecha      = FechaFormatVar($r['fechaHora'], 'Y-m-d');
         $appVersion = explode('-', $r['appVersion']);
-        $appVersion = trim($appVersion[0] . '-' . $appVersion[1]);
+        $appVersion = trim($appVersion[0] ?? '' . ' ' . $appVersion[1] ?? '');
         $regPhoto   = (intval($r['attPhoto']) == 0) ? "$r[regPhoto].png" : '';
 
         $eplodeFecha = explode('-', $Fecha);
@@ -338,12 +338,12 @@ if (($queryRecords)) {
             'threshold'         => intval($r['threshold']),
             'id_api'            => intval($r['id_api']),
             'imageData'         => array(
-                'ancho'     => $ancho,
-                'alto'      => $alto,
-                'tipo'      => $type,
-                'img'       => $urlImg,
-                'size'      => $filesize,
-                'humanSize' => $FileSizeConvert
+                'ancho'     => $ancho ??'',
+                'alto'      => $alto ??'',
+                'tipo'      => $type ??'',
+                'img'       => $urlImg ??'',
+                'size'      => $filesize ??'',
+                'humanSize' => $FileSizeConvert ??''
             ),
             'basePhoto' => $r['basePhoto'] ?? ''
         );

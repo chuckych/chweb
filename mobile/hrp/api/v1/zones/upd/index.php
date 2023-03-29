@@ -271,6 +271,19 @@ if ($update) {
     $a = simple_pdoQuery("SELECT * FROM `reg_zones` WHERE `id` = '$idZone' LIMIT 1");
     $MESSAGE = 'OK';
     $text = "Modificacion Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
+
+    /** Guardamos Zona en API */
+    try {
+        $body = array( "externalId"=>trim($a['id']), "id_company"=>$a['id_company'], "name"=>trim($a['nombre']), "lat"=>trim($a['lat']), "lng"=>trim($a['lng']), "radio"=>trim($a['radio']), "event"=>trim($a['evento']), );
+    
+        $sendApi = sendApiMobileHRP(json_encode($body), $urlAppMobile, 'attention/api/zones/saveZone', $idCompany);
+        $responseApi = (json_decode($sendApi));
+    } catch (Exception $e) {
+        fileLog($e->getMessage(), __DIR__ . '../../../_logs/updZones/' . date('Ymd') . '_log_updZones_api_' . padLeft($idCompany, 3, 0) . '.log');
+    }
+
+    /** Fin */
+
     $arrayData = array(
         'id_company' => $a['id_company'],
         'zoneID'     => $a['id'],
@@ -280,6 +293,7 @@ if ($update) {
         'zoneRadio'  => $a['radio'],
         'zoneEvent'  => $a['evento'],
         'textAud'    => $text,
+        'responseApi' => $responseApi
     );
     fileLog($text, __DIR__ . '../../../_logs/updZones/' . date('Ymd') . '_log_updZones_' . padLeft($idCompany, 3, 0) . '.log'); // 
 } else {

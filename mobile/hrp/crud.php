@@ -208,6 +208,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post['formUserRegid']   = $post['formUserRegid'] ?? '';
         $post['formUserExpired'] = $post['formUserExpired'] ?? '';
         $post['formUserEstado']  = $post['formUserEstado'] ?? '0';
+        $post['formUserArea']  = $post['formUserArea'] ?? '0';
         $post['formUserMotivo']  = $post['formUserMotivo'] ?? '';
 
         $formUserName    = test_input($post['formUserName']);
@@ -216,6 +217,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $formUserExpired = test_input($post['formUserExpired']);
         $formUserMotivo  = test_input($post['formUserMotivo']);
         $formUserEstado  = test_input($post['formUserEstado']);
+        $formUserArea  = test_input($post['formUserArea']);
 
 
         if (valida_campo($formUserName)) {
@@ -244,6 +246,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'userID'       => ($formUserID),
             'userRegid'    => ($formUserRegid),
             'status'       => ($formUserEstado),
+            'hasArea'      => ($formUserArea),
             'expiredStart' => ($FechaIni),
             'expiredEnd'   => ($FechaFin),
             'textLock'     => ($formUserMotivo),
@@ -281,6 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post['formUserRegid'] = $post['formUserRegid'] ?? '';
         $post['formUserExpired'] = $post['formUserExpired'] ?? '';
         $post['formUserEstado'] = $post['formUserEstado'] ?? '0';
+        $post['formUserArea'] = $post['formUserArea'] ?? '0';
         $post['formUserMotivo'] = $post['formUserMotivo'] ?? '';
 
         $formUserName  = test_input($post['formUserName']);
@@ -289,6 +293,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $formUserExpired = test_input($post['formUserExpired']);
         $formUserMotivo = test_input($post['formUserMotivo']);
         $formUserEstado = test_input($post['formUserEstado']);
+        $formUserArea = test_input($post['formUserArea']);
 
         if (valida_campo($formUserName)) {
             PrintRespuestaJson('error', 'Falta Nombre');
@@ -316,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'userID'       => ($formUserID),
             'userRegid'    => ($formUserRegid),
             'status'       => ($formUserEstado),
+            'hasArea'      => ($formUserArea),
             'expiredStart' => ($FechaIni),
             'expiredEnd'   => ($FechaFin),
             'textLock'     => ($formUserMotivo),

@@ -789,7 +789,6 @@ if ($verDB < 20220901) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20221116) {
     pdoQuery("CREATE TABLE IF NOT EXISTS `reg_enroll` (
         `idPunchEvent` INT(10) NOT NULL,
@@ -845,6 +844,13 @@ if ($verDB < 20221221) {
 
     write_apiKeysFile();
     $verDB  = 20221221; // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+if ($verDB < 20230329) {
+    pdoQuery("ALTER TABLE `reg_user_` ADD COLUMN `hasArea` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `estado`");
+    fileLog("ALTER TABLE `reg_user_` ADD COLUMN `hasArea`", $pathLog); // escribir en el log
+    $verDB  = 20230329; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }

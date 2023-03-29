@@ -293,7 +293,9 @@ $(document).on("click", "#addUser", function (e) {
         $('#labelInactivo').removeClass('active');
         $('#labelActivo').addClass('active');
         $('#formUserEstadoAct').prop('checked', true);
+        $('#formUserAreaAct').prop('checked', true);
         $('#formUserEstadoBloc').prop('checked', false);
+        $('#formUserAreaBloc').prop('checked', false);
 
 
     }).then(function () {
@@ -426,6 +428,20 @@ $(document).on("click", ".updateUser", function (e) {
             $('#formUserEstadoAct').prop('checked', true);
             $('#formUserEstadoBloc').prop('checked', false);
         }
+        if (data.userArea == '1') {
+            
+            $('#labelAreaInactivo').removeClass('active');
+            $('#labelAreaActivo').addClass('active');
+            $('#formUserAreaAct').prop('checked', true);
+            $('#formUserAreaBloc').prop('checked', false);
+
+        } else {
+            $('#labelAreaInactivo').addClass('active');
+            $('#labelAreaActivo').removeClass('active');
+            $('#formUserAreaBloc').prop('checked', true);
+            $('#formUserAreaAct').prop('checked', false);
+        }
+
         if (data.expiredEnd) {
             $('#_drUser').data('daterangepicker').setStartDate(data.expiredStart); // Set the start date
             $('#_drUser').data('daterangepicker').setEndDate(data.expiredEnd); // Set the end date

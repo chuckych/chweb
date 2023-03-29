@@ -24,7 +24,7 @@ try {
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
 	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parametro :user con el valor de $userLogin
 	$stmt->execute(); // ejecuta la consulta
-	$row  = $stmt->fetch(PDO::FETCH_ASSOC); // obtiene el resultado de la consulta
+	$row = $stmt->fetch(PDO::FETCH_ASSOC); // obtiene el resultado de la consulta
 	$connpdo = null; // cierra la conexion con la base de datos
 } catch (\Throwable $th) { // si hay error en la consulta
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log de errores
@@ -87,9 +87,9 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
 	$ABMRol = array(); // Array de permisos del rol
 	if ($abm) { // Si hay permisos
-		$ABMRol = array('aFic' => $abm['aFic'], 'mFic'  => $abm['mFic'], 'bFic'  => $abm['bFic'], 'aNov'  => $abm['aNov'], 'mNov'  => $abm['mNov'], 'bNov'  => $abm['bNov'], 'aHor'  => $abm['aHor'], 'mHor'  => $abm['mHor'], 'bHor'  => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc'  => $abm['Proc'], 'aCit'  => $abm['aCit'], 'mCit'  => $abm['mCit'], 'bCit'  =>  $abm['bCit'], 'aTur'  => $abm['aTur'], 'mTur'  => $abm['mTur'], 'bTur'  => $abm['bTur']);
+		$ABMRol = array('aFic' => $abm['aFic'], 'mFic' => $abm['mFic'], 'bFic' => $abm['bFic'], 'aNov' => $abm['aNov'], 'mNov' => $abm['mNov'], 'bNov' => $abm['bNov'], 'aHor' => $abm['aHor'], 'mHor' => $abm['mHor'], 'bHor' => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc' => $abm['Proc'], 'aCit' => $abm['aCit'], 'mCit' => $abm['mCit'], 'bCit' => $abm['bCit'], 'aTur' => $abm['aTur'], 'mTur' => $abm['mTur'], 'bTur' => $abm['bTur']);
 	} else { // Si no hay permisos
-		$ABMRol = array('aFic'  => '0', 'mFic'  => '0', 'bFic'  => '0', 'aNov'  => '0', 'mNov'  => '0', 'bNov'  => '0', 'aHor'  => '0', 'mHor'  => '0', 'bHor'  => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc'  => '0', 'aCit'  => '0', 'mCit'  => '0', 'bCit'  => '0', 'aTur'  => '0', 'mTur'  => '0', 'bTur'  => '0');
+		$ABMRol = array('aFic' => '0', 'mFic' => '0', 'bFic' => '0', 'aNov' => '0', 'mNov' => '0', 'bNov' => '0', 'aHor' => '0', 'mHor' => '0', 'bHor' => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc' => '0', 'aCit' => '0', 'mCit' => '0', 'bCit' => '0', 'aTur' => '0', 'mTur' => '0', 'bTur' => '0');
 	}
 	$data_mod = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
 
@@ -112,32 +112,32 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$concat = '';
 		switch ($e) {
 			case 'sectores':
-				$tabla     = 'sect_roles';
-				$ColEstr   = 'sector';
+				$tabla = 'sect_roles';
+				$ColEstr = 'sector';
 				break;
 			case 'plantas':
-				$tabla     = 'plan_roles';
-				$ColEstr   = 'planta';
+				$tabla = 'plan_roles';
+				$ColEstr = 'planta';
 				break;
 			case 'grupos':
-				$tabla     = 'grup_roles';
-				$ColEstr   = 'grupo';
+				$tabla = 'grup_roles';
+				$ColEstr = 'grupo';
 				break;
 			case 'sucursales':
-				$tabla     = 'suc_roles';
-				$ColEstr   = 'sucursal';
+				$tabla = 'suc_roles';
+				$ColEstr = 'sucursal';
 				break;
 			case 'empresas':
-				$tabla     = 'emp_roles';
-				$ColEstr   = 'empresa';
+				$tabla = 'emp_roles';
+				$ColEstr = 'empresa';
 				break;
 			case 'convenios':
-				$tabla     = 'conv_roles';
-				$ColEstr   = 'convenio';
+				$tabla = 'conv_roles';
+				$ColEstr = 'convenio';
 				break;
 			case 'secciones':
-				$tabla     = 'secc_roles';
-				$ColEstr   = 'seccion';
+				$tabla = 'secc_roles';
+				$ColEstr = 'seccion';
 				$concat = ", CONCAT(secc_roles.sector,secc_roles.seccion) AS 'sect_secc'";
 				break;
 			case 'personal':
@@ -152,8 +152,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		}
 
 		$recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
-		$query    = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
-		$result   = mysqli_query($link, $query);
+		$query = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
+		$result = mysqli_query($link, $query);
 		// print_r($query);exit;
 
 		if (mysqli_num_rows($result) > 0) {
@@ -179,8 +179,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		return $v;
 	}
 
-	$_SESSION['EstrUser'] =  estructUsuario(intval($row['id']), 8);
-	if ($row["recid_cliente"] == 'kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
+	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
+	if ($row["recid_cliente"] == 'kxo7w2q-'): // solo para la cuenta de SKF 'kxo7w2q-'
 		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
 		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
 			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
@@ -199,7 +199,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 			$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
 			$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
 		}
-	else :
+	else:
 		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
 		$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
@@ -218,31 +218,31 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
 	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
-	$_SESSION["CONEXION_MS"]    = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
+	$_SESSION["CONEXION_MS"] = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
 	$_SESSION["secure_auth_ch"] = true;
-	$_SESSION["user"]           = strtolower($row['usuario']);
-	$_SESSION["ultimoAcceso"]   = date("Y-m-d H:i:s");
-	$_SESSION["UID"]            = $row["id"];
-	$_SESSION["NOMBRE_SESION"]  = $row["nombre"];
-	$_SESSION["LEGAJO_SESION"]  = $row["legajo"];
-	$_SESSION["RECID_USER"]     = $row["recid_user"];
-	$_SESSION["ID_ROL"]         = $row["id_rol"];
-	$_SESSION["ID_CLIENTE"]     = $row["id_cliente"];
+	$_SESSION["user"] = strtolower($row['usuario']);
+	$_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s");
+	$_SESSION["UID"] = $row["id"];
+	$_SESSION["NOMBRE_SESION"] = $row["nombre"];
+	$_SESSION["LEGAJO_SESION"] = $row["legajo"];
+	$_SESSION["RECID_USER"] = $row["recid_user"];
+	$_SESSION["ID_ROL"] = $row["id_rol"];
+	$_SESSION["ID_CLIENTE"] = $row["id_cliente"];
 	$q = simple_pdoQuery("SELECT ApiMobileHRP FROM clientes WHERE id = '$row[id_cliente]' LIMIT 1");
-	$_SESSION["APIMOBILEHRP"]   = $q["ApiMobileHRP"];
-	$_SESSION["CLIENTE"]        = $row["cliente"];
-	$_SESSION["ROL"]            = $row["rol"];
-	$_SESSION["RECID_ROL"]      = $row["recid_rol"];
-	$_SESSION["RECID_CLIENTE"]  = $row["recid_cliente"];
-	$_SESSION["TK_MOBILE"]      = $row["tkmobile"];
-	$_SESSION["WEBSERVICE"]     = $row["WebService"];
-	$_SESSION["HASH_CLAVE"]     = ($row['clave']);
-	$_SESSION["LIMIT_SESION"]   = 3600;
-	$_SESSION['USER_AGENT']     = $_SERVER['HTTP_USER_AGENT'];
-	$_SESSION['IP_CLIENTE']     = get_client_ip();
-	$_SESSION['DIA_ACTUAL']     = hoy();
-	$_SESSION['VER_DB_CH']      = false;
-	$_SESSION['CONECT_MSSQL']   = false;
+	$_SESSION["APIMOBILEHRP"] = $q["ApiMobileHRP"];
+	$_SESSION["CLIENTE"] = $row["cliente"];
+	$_SESSION["ROL"] = $row["rol"];
+	$_SESSION["RECID_ROL"] = $row["recid_rol"];
+	$_SESSION["RECID_CLIENTE"] = $row["recid_cliente"];
+	$_SESSION["TK_MOBILE"] = $row["tkmobile"];
+	$_SESSION["WEBSERVICE"] = $row["WebService"];
+	$_SESSION["HASH_CLAVE"] = ($row['clave']);
+	$_SESSION["LIMIT_SESION"] = 3600;
+	$_SESSION['USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+	$_SESSION['IP_CLIENTE'] = get_client_ip();
+	$_SESSION['DIA_ACTUAL'] = hoy();
+	$_SESSION['VER_DB_CH'] = false;
+	$_SESSION['CONECT_MSSQL'] = false;
 	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
 	$_SESSION['MODULOS'] = $modRol;
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
@@ -264,8 +264,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 	access_log('Login correcto');
-}
-else {
+} else {
 	/** Si es incorrecto */
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');

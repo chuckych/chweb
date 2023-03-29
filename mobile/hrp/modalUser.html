@@ -25,7 +25,7 @@
                         <div class="col-12"></div>
                         <div class="col-12 py-2 hide">
                             <div class="form-row">
-                                <div class="col-12 col-sm-5">
+                                <div class="col-12 col-sm-6">
                                     <label for="formUserEstado">Estado</label>
                                     <div class="btn-group btn-group-toggle border p-1 w-100" data-toggle="buttons">
                                         <label class="btn btn-outline-success fontq border-0" id="labelActivo">
@@ -36,7 +36,18 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="col-12 col-sm-7">
+                                <div class="col-12 col-sm-6">
+                                    <label for="formUserArea">Visualizar Zona en App <i data-titlel="Informar zona al fichar en App" class="bi bi-info-circle"></i></label>
+                                    <div class="btn-group btn-group-toggle border p-1 w-100" data-toggle="buttons">
+                                        <label class="btn btn-outline-success fontq border-0" id="labelAreaActivo">
+                                            <input value="1" type="radio" name="formUserArea" id="formUserAreaAct"> Activo
+                                        </label>
+                                        <label class="btn btn-outline-danger fontq border-0 ml-1" id="labelAreaInactivo">
+                                            <input type="radio" value="0" name="formUserArea" id="formUserAreaBloc"> Inactivo
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12 mt-3">
                                     <label for="_drUser">Bloqueo por Fechas</label>
                                     <span class="bi bi-eraser text-secondary fontq pointer cleanDate" data-titlet="Borrar Fecha"></span>
                                     <div class="">

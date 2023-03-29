@@ -90,6 +90,13 @@ function status()
     $status = empty($p['status']) ? '0' : $p['status'];
     return ($status);
 }
+function hasArea()
+{
+    $p = $_POST;
+    $p['hasArea'] = $p['hasArea'] ?? '';
+    $hasArea = empty($p['hasArea']) ? '0' : $p['hasArea'];
+    return ($hasArea);
+}
 if (!isset($_POST['key'])) {
     http_response_code(400);
     (response(array(), 0, 'The Key is required', 400, 0, 0, $idCompany));
@@ -97,7 +104,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'userRegid' || $key == 'userName' || $key == 'userID' || $key == 'expiredStart' || $key == 'expiredEnd' || $key == 'textLock' || $key == 'status') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'userRegid' || $key == 'userName' || $key == 'userID' || $key == 'expiredStart' || $key == 'expiredEnd' || $key == 'textLock' || $key == 'status' || $key == 'hasArea') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -164,6 +171,7 @@ $expiredStart = expiredStart();
 $expiredEnd   = expiredEnd();
 $textLock     = textLock();
 $status       = status();
+$hasArea       = hasArea();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -219,9 +227,17 @@ if (strlen($status) > 1) {
     http_response_code(400);
     (response(array(), 0, 'status max length 1', 400, 0, 0, $idCompany));
 }
+if (strlen($hasArea) > 1) {
+    http_response_code(400);
+    (response(array(), 0, 'hasArea max length 1', 400, 0, 0, $idCompany));
+}
 if (($status) != 1 && ($status) != 0) {
     http_response_code(400);
     (response(array(), 0, 'status format Error', 400, 0, 0, $idCompany));
+}
+if (($hasArea) != 1 && ($hasArea) != 0) {
+    http_response_code(400);
+    (response(array(), 0, 'hasArea format Error', 400, 0, 0, $idCompany));
 }
 if (intval($expiredStart) > intval($expiredEnd)) {
     http_response_code(400);
@@ -258,7 +274,7 @@ if ($a > 0) {
 //     exit;
 // }
 
-$sql_query = "INSERT INTO `reg_user_` (`id_user`, `id_company`, `nombre`, `regid`, `estado`,`expiredStart`, `expiredEnd`, `motivo`) VALUES ('$userID', '$idCompany', '$userName', '$userRegid', '$status', '$expiredStart', '$expiredEnd', '$textLock')";
+$sql_query = "INSERT INTO `reg_user_` (`id_user`, `id_company`, `nombre`, `regid`, `estado`,`hasArea`,`expiredStart`, `expiredEnd`, `motivo`) VALUES ('$userID', '$idCompany', '$userName', '$userRegid', '$status', '$hasArea', '$expiredStart', '$expiredEnd', '$textLock')";
 $insert = pdoQuery($sql_query);
 if ($insert) {
     $a = simple_pdoQuery("SELECT * FROM `reg_user_` WHERE `id_user` = '$userID' AND `id_company` = '$idCompany' LIMIT 1");
@@ -271,7 +287,7 @@ if ($insert) {
         'locked'           => ($a['estado'] == 1) ? true : false,
         'expiredDateStart' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
         'expiredDateEnd'   => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
-        'hasArea' => false
+        'hasArea'          => ($a['hasArea'] == '1') ? true:false
     );
     $body = [
         array(

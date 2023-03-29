@@ -82,6 +82,13 @@ function status()
     $status = empty($p['status']) ? '0' : $p['status'];
     return ($status);
 }
+function hasArea()
+{
+    $p = $_POST;
+    $p['hasArea'] = $p['hasArea'] ?? '';
+    $hasArea = empty($p['hasArea']) ? '0' : $p['hasArea'];
+    return ($hasArea);
+}
 function validaKey()
 {
     $p = $_POST['key'];
@@ -95,7 +102,7 @@ if (!isset($_POST['key'])) {
 $textParams = '';
 
 foreach ($params as $key => $value) {
-    if ($key == 'key' || $key == 'userName' || $key == 'userID' || $key == 'userRegid' || $key == 'expiredStart' || $key == 'expiredEnd' || $key == 'textLock' || $key == 'status') {
+    if ($key == 'key' || $key == 'userName' || $key == 'userID' || $key == 'userRegid' || $key == 'expiredStart' || $key == 'expiredEnd' || $key == 'textLock' || $key == 'status' || $key == 'hasArea') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -161,6 +168,7 @@ $expiredStart = expiredStart();
 $expiredEnd   = expiredEnd();
 $textLock     = textLock();
 $status       = status();
+$hasArea       = hasArea();
 
 $validaKey = validaKey();
 $vkey = '';
@@ -212,6 +220,14 @@ if (($status) != 1 && ($status) != 0) {
     http_response_code(400);
     (response(array(), 0, 'status format Error', 400, 0, 0, $idCompany));
 }
+if (strlen($hasArea) > 1) {
+    http_response_code(400);
+    (response(array(), 0, 'hasArea max length 1', 400, 0, 0, $idCompany));
+}
+if (($hasArea) != 1 && ($hasArea) != 0) {
+    http_response_code(400);
+    (response(array(), 0, 'hasArea format Error', 400, 0, 0, $idCompany));
+}
 if (intval($expiredStart) > intval($expiredEnd)) {
     http_response_code(400);
     (response(array(), 0, 'date error', 400, 0, 0, $idCompany));
@@ -257,7 +273,7 @@ if ($a > 0) {
 }
 
 // update query 
-$sql_query = "UPDATE `reg_user_` SET `nombre` = '$userName', `regid` = '$userRegid', `estado` = '$status', `expiredStart` = '$expiredStart', `expiredEnd` = '$expiredEnd', `motivo` = '$textLock' WHERE `id_user` = '$userID' AND `id_company` = '$idCompany'";
+$sql_query = "UPDATE `reg_user_` SET `nombre` = '$userName', `regid` = '$userRegid', `estado` = '$status',  `hasArea` = '$hasArea',`expiredStart` = '$expiredStart', `expiredEnd` = '$expiredEnd', `motivo` = '$textLock' WHERE `id_user` = '$userID' AND `id_company` = '$idCompany'";
 
 $update = pdoQuery($sql_query);
 if ($update) {
@@ -270,6 +286,7 @@ if ($update) {
         'RegID'          => $a['regid'],
         'Motivo Bloqueo' => $a['motivo'],
         'Estado'         => $a['estado'],
+        'hasArea'         => ($a['hasArea']),
         'Bloqueo Inicio' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
         'Bloqueo Fin'    => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
     );
@@ -285,7 +302,7 @@ if ($update) {
         'locked'           => ($a['estado'] == 1) ? true : false,
         'expiredDateStart' => ($a['expiredStart'] == '0000-00-00') ? null : $a['expiredStart'],
         'expiredDateEnd'   => ($a['expiredEnd'] == '0000-00-00') ? null : $a['expiredEnd'],
-        'hasArea' => false
+        'hasArea' => ($a['hasArea'] == '1') ? true : false,
     );
     $body = [
         array(

@@ -1,11 +1,11 @@
 <?php
 function version()
 {
-    return 'v0.2.3'; // Version de la aplicación
+    return 'v0.2.4'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20221221; // Version de la base de datos local
+    return 20230329; // Version de la base de datos local
 }
 function checkDBLocal()
 {

@@ -25,7 +25,7 @@ function start()
 {
     $p = $_POST;
     $p['start'] = $p['start'] ?? '0';
-    $start  = empty($p['start']) ? 0 : $p['start'];
+    $start = empty($p['start']) ? 0 : $p['start'];
     return intval($start);
 }
 function length()
@@ -39,21 +39,21 @@ function zoneLat()
 {
     $p = $_POST;
     $p['zoneLat'] = $p['zoneLat'] ?? '';
-    $zoneLat  = empty($p['zoneLat']) ? '' : test_input($p['zoneLat']);
+    $zoneLat = empty($p['zoneLat']) ? '' : test_input($p['zoneLat']);
     return floatval($zoneLat);
 }
 function zoneLng()
 {
     $p = $_POST;
     $p['zoneLng'] = $p['zoneLng'] ?? '';
-    $zoneLng  = empty($p['zoneLng']) ? '' : test_input($p['zoneLng']);
+    $zoneLng = empty($p['zoneLng']) ? '' : test_input($p['zoneLng']);
     return floatval($zoneLng);
 }
 function zoneRadio()
 {
     $p = $_POST;
     $p['zoneRadio'] = $p['zoneRadio'] ?? '';
-    $zoneRadio  = empty($p['zoneRadio']) ? '' : test_input($p['zoneRadio']);
+    $zoneRadio = empty($p['zoneRadio']) ? '' : test_input($p['zoneRadio']);
     return intval($zoneRadio);
 }
 function zoneName()
@@ -73,7 +73,7 @@ function zoneEvent()
 {
     $p = $_REQUEST;
     $p['zoneEvent'] = $p['zoneEvent'] ?? 0;
-    $zoneEvent  = empty($p['zoneEvent']) ? 0 : $p['zoneEvent'];
+    $zoneEvent = empty($p['zoneEvent']) ? 0 : $p['zoneEvent'];
     return intval($zoneEvent);
 }
 if (!isset($_POST['key'])) {
@@ -93,16 +93,16 @@ foreach ($params as $key => $value) {
 
 function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $count = 0, $idCompany)
 {
-    $start  = ($code != '400') ? start() : 0;
-    $length  = ($code != '400') ? length() : 0;
+    $start = ($code != '400') ? start() : 0;
+    $length = ($code != '400') ? length() : 0;
     $array = array(
         'RESPONSE_CODE' => http_response_code(intval($code)),
-        'START'         => intval($start),
-        'LENGTH'        => intval($length),
-        'TOTAL'         => intval($total),
-        'COUNT'         => intval($count),
-        'MESSAGE'       => $msg,
-        'TIME'          => $timeScript,
+        'START' => intval($start),
+        'LENGTH' => intval($length),
+        'TOTAL' => intval($total),
+        'COUNT' => intval($count),
+        'MESSAGE' => $msg,
+        'TIME' => $timeScript,
         'RESPONSE_DATA' => $data,
     );
 
@@ -118,7 +118,7 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     $textParams = implode('&', $textParams); // convert to string
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-    $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
     // $idCompany = $idCompany;
 
     if ($agent) {
@@ -126,13 +126,13 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
         $parsedagent[] = parse_user_agent($agent);
         foreach ($parsedagent as $key => $value) {
             $platform = $value['platform'];
-            $browser  = $value['browser'];
-            $version  = $value['version'];
+            $browser = $value['browser'];
+            $version = $value['version'];
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
-    
-    $pathLog  = __DIR__ . '../../../_logs/addZones/' . date('Ymd') . '_log_addZones_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+
+    $pathLog = __DIR__ . '../../../_logs/addZones/' . date('Ymd') . '_log_addZones_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -141,12 +141,12 @@ function response($data, $total, $msg = 'OK', $code = 200, $timeScript = 0, $cou
     exit;
 }
 
-$queryRecords  = array();
-$start     = start();
-$length    = length();
-$zoneName  = (zoneName());
-$zoneLat   = (zoneLat());
-$zoneLng   = (zoneLng());
+$queryRecords = array();
+$start = start();
+$length = length();
+$zoneName = (zoneName());
+$zoneLat = (zoneLat());
+$zoneLng = (zoneLng());
 $zoneRadio = (zoneRadio());
 $zoneEvent = (zoneEvent());
 
@@ -156,13 +156,13 @@ $vkey = '';
 foreach ($iniKeys as $key => $value) {
     if ($value['recidCompany'] == $validaKey) {
         $idCompany = $value['idCompany'];
-        $vkey      = $value['recidCompany'];
+        $vkey = $value['recidCompany'];
         $nameCompany = $value['nameCompany'];
         $urlAppMobile = $value['urlAppMobile'];
         break;
     } else {
         $idCompany = 0;
-        $vkey      = '';
+        $vkey = '';
         $nameCompany = '';
         $urlAppMobile = '';
         continue;
@@ -225,24 +225,24 @@ $qUniqueName = "SELECT * FROM `reg_zones` WHERE `id_company` = '$idCompany' AND 
 $a = count_pdoQuery($qUniqueName);
 
 if ($a > 0) {
-    $arrayData  = array();
-    $MESSAGE    = 'zoneName already exists';
-    $endScript  = microtime(true);
+    $arrayData = array();
+    $MESSAGE = 'zoneName already exists';
+    $endScript = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
+    $countData = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 }
- /** cheqeuamos unique zone lat y lng */
+/** cheqeuamos unique zone lat y lng */
 $qPositionZone = "SELECT * FROM `reg_zones` WHERE `id_company` = '$idCompany' AND `lat` = '$zoneLat' AND `lng` = '$zoneLng' LIMIT 1";
 $a = count_pdoQuery($qPositionZone);
 
 if ($a > 0) {
-    $arrayData  = array();
-    $MESSAGE    = 'Position already exists';
-    $endScript  = microtime(true);
+    $arrayData = array();
+    $MESSAGE = 'Position already exists';
+    $endScript = microtime(true);
     $timeScript = round($endScript - $startScript, 2);
-    $countData  = count($arrayData);
+    $countData = count($arrayData);
     (response($arrayData, intval($countData), $MESSAGE, '', $timeScript, $countData, $idCompany));
     exit;
 }
@@ -254,23 +254,35 @@ if ($insert) {
     $a = simple_pdoQuery("SELECT * FROM `reg_zones` WHERE `nombre` = '$zoneName' AND `id_company` = '$idCompany' LIMIT 1");
     $MESSAGE = 'OK';
     $text = "Alta Zona \"$a[nombre]\" ID = $a[id] Radio = $a[radio] Lat = $a[lat] Lng = $a[lng] Evento = $a[evento]";
+
+    /** Guardamos Zona en API */
+    try {
+        $body = array("externalId" => trim($a['id']), "id_company" => $a['id_company'], "name" => trim($a['nombre']), "lat" => trim($a['lat']), "lng" => trim($a['lng']), "radio" => trim($a['radio']), "event" => trim($a['evento']), );
+        $sendApi = sendApiMobileHRP(json_encode($body), $urlAppMobile, 'attention/api/zones/saveZone', $idCompany);
+    } catch (Exception $e) {
+        fileLog($e->getMessage(), __DIR__ . '../../../_logs/addZones/' . date('Ymd') . '_log_addZones_api_' . padLeft($idCompany, 3, 0) . '.log');
+    }
+    $responseApi = (json_decode($sendApi));
+    /** Fin */
+
     $arrayData = array(
         'id_company' => $a['id_company'],
-        'zoneID'     => $a['id'],
-        'zoneLat'    => $a['lat'],
-        'zoneLng'    => $a['lng'],
-        'zoneName'   => $a['nombre'],
-        'zoneRadio'  => $a['radio'],
-        'zoneEvent'=> $a['evento'],
+        'zoneID' => $a['id'],
+        'zoneLat' => $a['lat'],
+        'zoneLng' => $a['lng'],
+        'zoneName' => $a['nombre'],
+        'zoneRadio' => $a['radio'],
+        'zoneEvent' => $a['evento'],
         'textAud' => $text,
+        'responseApi' => $responseApi
     );
     fileLog($text, __DIR__ . '../../../_logs/addZones/' . date('Ymd') . '_log_addZones_' . padLeft($idCompany, 3, 0) . '.log'); // _log_addZones_
 } else {
     $MESSAGE = 'ERROR';
     // $MESSAGE = $qPositionZone;
 }
-$endScript  = microtime(true);
+$endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
-$countData  = count($arrayData);
+$countData = count($arrayData);
 (response($arrayData, 1, $MESSAGE, '', $timeScript, 1, $idCompany));
 exit;
