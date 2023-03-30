@@ -168,30 +168,13 @@ $q = "SELECT `reg_enroll`.`idPunchEvent`, `reg_enroll`.`faceIdAws`, `reg_enroll`
 // $a = array_pdoQuery($q);
 $q .= " ORDER BY `reg_enroll`.`fechahora` DESC";
 
+// print_r($q).exit;
 
-$imageTypeArray = array(
-    0  => 'UNKNOWN',
-    1  => 'GIF',
-    2  => 'JPEG',
-    3  => 'PNG',
-    4  => 'SWF',
-    5  => 'PSD',
-    6  => 'BMP',
-    7  => 'TIFF_II',
-    8  => 'TIFF_MM',
-    9  => 'JPC',
-    10 => 'JP2',
-    11 => 'JPX',
-    12 => 'JB2',
-    13 => 'SWC',
-    14 => 'IFF',
-    15 => 'WBMP',
-    16 => 'XBM',
-    17 => 'ICO',
-    18 => 'COUNT'
-);
+
+$imageTypeArray = array( 0=>'UNKNOWN', 1=>'GIF', 2=>'JPEG', 3=>'PNG', 4=>'SWF', 5=>'PSD', 6=>'BMP', 7=>'TIFF_II', 8=>'TIFF_MM', 9=>'JPC', 10=>'JP2', 11=>'JPX', 12=>'JB2', 13=>'SWC', 14=>'IFF', 15=>'WBMP', 16=>'XBM', 17=>'ICO', 18=>'COUNT' );
 
 $queryRecords = array_pdoQuery($q);
+// print_r($queryRecords).exit;
 
 if (($queryRecords)) {
     foreach ($queryRecords as $r) {

@@ -155,7 +155,7 @@ if ($a) {
     $notIdPunchEvent = implode(',',$i);
 }
 
-$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`rid` > 8500";
+$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`id_api` > 24094";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_company = $idCompany";
@@ -226,12 +226,12 @@ if (($queryRecords)) {
             "id_user"  => $r['id_user'],
             "id_api"   => $r['id_api'],
             'imageData'         => array(
-                'ancho'     => $ancho,
-                'alto'      => $alto,
-                'tipo'      => $type,
-                'img'       => $urlImg,
-                'size'      => $filesize,
-                'humanSize' => $FileSizeConvert
+                'ancho'     => $ancho ?? '',
+                'alto'      => $alto ?? '',
+                'tipo'      => $type ?? '',
+                'img'       => $urlImg ?? '',
+                'size'      => $filesize ?? '',
+                'humanSize' => $FileSizeConvert ?? ''
             ),
         );
     }

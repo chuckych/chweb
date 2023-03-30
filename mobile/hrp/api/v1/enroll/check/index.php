@@ -171,32 +171,45 @@ if (empty($a)) {
 
 $MESSAGE = 'OK';
 
-$sendApi = sendApiMobileHRP('', $urlAppMobile, "attention/api/access/company/$idCompany/user/$userID/enroll-status", $idCompany, false);
+// $sendApi = sendApiMobileHRP('', $urlAppMobile, "attention/api/access/company/$idCompany/user/$userID/enroll-status", $idCompany, false);
+$collection = "$idCompany-$userID";
+$sendApi = sendApiMobileHRP('', $urlAppMobile, "attention/api/recognizer/getFaces/$collection", $idCompany, false);
 $responseApi = (json_decode($sendApi, true));
 // print_r($responseApi['payload']).exit;
 $arraValues = [];
 $arraValuesDelete = [];
 if($responseApi['payload']){
+
+    // {
+    //     "collection": "1-29988600",
+    //     "faceId": "552e1fca-5615-488e-a4d3-872249482380",
+    //     "imageId": "PunchEvent_44535",
+    //     "statusResponse": null,
+    //     "faceIDs": null,
+    //     "createStatus": false
+    //   },
+    //   {
+    //     "collection": "1-30366320",
+    //     "faceId": "3a5794d3-45f4-4b46-92f0-d7dc901a8daa",
+    //     "imageId": "95",
+    //     "statusResponse": null,
+    //     "faceIDs": null,
+    //     "createStatus": false
+    //   },
+    
+    $delete = "DELETE FROM `reg_enroll` WHERE `id_company`=$idCompany AND `id_user`=$userID";
+    pdoQuery($delete);
     
     foreach ($responseApi['payload'] as $key => $v) {
-        if ($v['faceIdAws'] && $v['status'] == 'OK') {
-            // $arraValues[] = "($v[idPunchEvent],'$v[faceIdAws]',$idCompany,$userID)";
-            $insert = "INSERT INTO `reg_enroll` (`idPunchEvent`,`faceIdAws`,`id_company`,`id_user`) VALUES ($v[idPunchEvent],'$v[faceIdAws]',$idCompany,$userID)";
+
+        if ($v['faceId'] && $v['imageId']) {
+            $idPunchEvent = explode("_", $v['imageId']);
+            $idPunch = ($idPunchEvent[1] ?? '') ? $idPunchEvent[1] : $idPunchEvent[0];
+            $insert = "INSERT INTO `reg_enroll` (`idPunchEvent`,`faceIdAws`,`id_company`,`id_user`) VALUES ($idPunch,'$v[faceId]',$idCompany, $userID)";
             pdoQuery($insert);
-        } else if ($v['status'] == 'ELIMINATED') {
-            $delete = "DELETE FROM `reg_enroll` WHERE `idPunchEvent`=$v[idPunchEvent] AND `id_company`=$idCompany AND `id_user`=$userID";
-            // print_r($delete);
-            pdoQuery($delete);
         }
     }
-    // if ($arraValues) {
-    //     $insert .= (implode(",", $arraValues));
-    //     $insert .= ";";
-    //     pdoQuery($insert);
-    // }
 }
-
-// print_r($responseApi['payload']).exit;
 
 $finScript    = microtime(true);
 $tiempoScript = round($finScript - $iniScript, 2);
