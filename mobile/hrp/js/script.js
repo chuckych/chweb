@@ -365,7 +365,7 @@ if ($(window).width() < 540) {
             {
                 className: '', targets: '', title: '<div class="w120">Zona</div>',
                 "render": function (data, type, row, meta) {
-                    // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+                    // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneID='${row.phoneID}'><i class="bi bi-plus-circle"></i></button>`;
                     let btnAdd = ''
                     let zoneName = (row.zoneID > 0) ? '<div class="text-success">' + row.zoneName + '</div>' : '<div class="text-danger">Fuera de Zona</div>'
                     let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
@@ -427,12 +427,23 @@ if ($(window).width() < 540) {
             {
                 className: '', targets: '', title: '<div class="w140" >Dispositivo</div>',
                 "render": function (data, type, row, meta) {
-                    // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneid='${row.phoneid}'><i class="bi bi-plus-circle"></i></button>`;
+
                     let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
 
-                    let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneid}</label><br>${btnAdd}</div>` : `<div class="">${row.deviceName}</div><div class="text-secondary fontp">${row.phoneid}</div>`;
+                    let colorDevice = (row.deviceName == row.phoneID) ? 'text-danger' : '';
+                    let iconEditDevice = (row.deviceName == row.phoneID) ? '<i class="bi bi-pencil fontp ml-2 text-primary"></i>' : '';
 
-                    let datacol = `<div class="smtdcol text-truncate" title="Versión App: ${row.appVersion}">${device}</div>`
+                    let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneID}</label><br>${btnAdd}</div>` : `<div title="Editar Dispositivo" class="d-flex align-items-center updDeviceTable pointer ${colorDevice}">${row.deviceName} ${iconEditDevice}</div><div class="text-secondary fontp">${row.phoneID}</div>`;
+
+                    let datacol = `<div class="smtdcol text-truncate">${device}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna version APP */
+            {
+                className: '', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="fontp text-secondary">${row.appVersion}</div>`
                     return datacol;
                 },
             },
@@ -901,7 +912,7 @@ $(document).on("click", ".pic", function (e) {
     let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
     let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
 
-    picDevice = (!picDevice) ? `${data.phoneid}` : picDevice;
+    picDevice = (!picDevice) ? `${data.phoneID}` : picDevice;
 
     // if (data.basePhoto) {
     //     picfoto = `<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w40 h40 radius img-fluid" />`

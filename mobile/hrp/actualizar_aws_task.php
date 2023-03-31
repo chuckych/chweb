@@ -441,7 +441,7 @@ function queryCalcZone($lat, $lng, $idCompany)
     return $query;
 }
 timeZone();
-
+$GeneralLogsPath = __DIR__ . '/logs/' . date('Ymd') . '_error.log';
 $iniKeys = (getDataIni(__DIR__ . '../../../mobileApikey.php'));
 
 $pathFlags = __DIR__ . '/flags_aws.php'; // ruta del archivo de Log de errores
@@ -676,7 +676,23 @@ if (!empty($arrayData)) {
         }
 
         pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
-        pdoQuery("UPDATE reg_device_ SET appVersion = '$appVersion', regid = '$regid' WHERE phoneid = $phoneid AND id_company = $companyCode");
+
+        $s = simple_pdoQuery("SELECT `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
+        if ($s) {
+            try {
+                (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `regid` = '$phoneid' AND id_company = $companyCode"));
+              } catch (Exception $e) {
+                fileLog("Error: " . $e->getMessage()."\n", $GeneralLogsPath); 
+              }
+        } else {
+            try {
+                (pdoQuery("INSERT INTO `reg_device_` (`appVersion`, `regid`, `phoneid`, `id_company`, `evento`, `nombre`) VALUES ('$appVersion', '$regid', '$phoneid', '$companyCode', 0, '$phoneid')"));
+              } catch (Exception $e) {
+                fileLog("Error: " . $e->getMessage()."\n", $GeneralLogsPath); 
+              }
+        }
+        
+        // pdoQuery("UPDATE reg_device_ SET appVersion = '$appVersion', regid = '$regid' WHERE phoneid = $phoneid AND id_company = $companyCode");
 
         $arrayObj[] = array(
             'fechaHora'     => $fechaHora,

@@ -854,3 +854,11 @@ if ($verDB < 20230329) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+
+if ($verDB < 20230331) {
+    pdoQuery("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany` (`phoneid`, `id_company`)");
+    fileLog("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany`", $pathLog); // escribir en el log
+    $verDB  = 20230331; // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

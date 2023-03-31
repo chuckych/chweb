@@ -261,9 +261,7 @@ $(document).on("click", ".addDevice", function (e) {
     });
 
 });
-$(document).on("click", ".updDevice", function (e) {
-    // get data row datatable
-    let data = tableDevices.row($(this).parents('tr')).data();
+const updDevice = (data) => {
     axios({
         method: 'post',
         url: 'modalDevice.html?v=' + $.now(),
@@ -279,7 +277,7 @@ $(document).on("click", ".updDevice", function (e) {
         $('#formDevice #formDeviceTipo').val('upd_device')
         $('#formDevice #formDevicePhoneID').val(data.phoneID)
         $('#formDevice #formDeviceNombre').val(data.deviceName)
-        $('#formDevice #formDeviceEvento').val(data.deviceEvent)
+        $('#formDevice #formDeviceEvento').val(data.deviceEvent ?? '0')
         setTimeout(() => {
             focusEndText('#formDevice #formDeviceNombre')
         }, 500);
@@ -294,7 +292,7 @@ $(document).on("click", ".updDevice", function (e) {
             let tipoStatus = '';
             switch ($('#formDevice #formDeviceTipo').val()) {
                 case 'del_device':
-                    tipoStatus = 'eEliminado';
+                    tipoStatus = 'Eliminado';
                     break;
                 case 'upd_device':
                     tipoStatus = 'Actualizado';
@@ -341,8 +339,16 @@ $(document).on("click", ".updDevice", function (e) {
             $('#modales').html(' ');
         });
     });
-
+}
+$(document).on("click", ".updDevice", function (e) {
+    let data = tableDevices.row($(this).parents('tr')).data();
+    updDevice(data);
 });
+$(document).on("click", ".updDeviceTable", function (e) {
+    let data = tablemobile.row($(this).parents('tr')).data();
+    updDevice(data);
+});
+
 $(document).on("click", ".delDevice", function (e) {
     let data = tableDevices.row($(this).parents('tr')).data();
     console.log(data);
