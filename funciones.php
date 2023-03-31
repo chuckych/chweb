@@ -3037,19 +3037,18 @@ function getIniCuenta($recidCuenta, $key = false)
     return ($key) ? $urlHost[0][$key] : $urlHost[0];
 }
 function getDataIni($url) // obtiene el json de la url
-
 {
-    if (($url)) { // si existe el archivo
-        $data = file_get_contents($url); // obtenemos el contenido del archivo
-        if ($data) { // si el contenido no está vacío
-            $data = parse_ini_file($url, true); // Obtenemos los datos del archivo
-            return $data; // devolvemos el json
-        } else { // si el contenido está vacío
-            fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
-        }
-    } else { // si no existe el archivo
-        fileLog("No existe archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
-        return false; // devolvemos false
+    try {
+        if (!file_exists($url)) return false; // Si no existe el archivo
+            $data = file_get_contents($url); // obtenemos el contenido del archivo
+            if ($data) { // si el contenido no está vacío
+                $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
+                return $data; // devolvemos el json
+            } else { // si el contenido está vacío
+                fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
+            }
+    } catch (Exception $e) {
+        fileLog($e->getMessage(), __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
     }
 }
 function gethostCHWeb()

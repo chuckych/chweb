@@ -270,11 +270,18 @@ function HoraMask(selector) {
     };
     return $(selector).mask(maskBehavior, spOptions);
 }
+let templateData = (data) => {
+    if ($(data.html).length === 0) {
+        return data.text;
+    }
+    return $(data.html);
+};
 function SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumInputLength, minimumResultsForSearch, maximumInputLength, selectOnClose, ajax_url, delay, data_array, type) {
     $(selector).select2({
         multiple: multiple,
         language: "es",
         allowClear: allowClear,
+        templateResult: templateData,
         placeholder: placeholder,
         minimumInputLength: minimumInputLength,
         minimumResultsForSearch: minimumResultsForSearch,

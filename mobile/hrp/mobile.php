@@ -66,7 +66,7 @@
                 ?>
                     <div class="col-12 m-0 mt-2">
                         <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
-                            <select class="selectjs_cuentaToken w200" id="recid" name="recid" style="display:none">
+                            <select class="selectjs_cuentaToken w250" id="recid" name="recid" style="display:none">
                             </select>
                         </form>
                     </div>
@@ -155,26 +155,8 @@
     if (modulo_cuentas()) :
     ?>
         <script>
-            new Promise((resolve) => {
-                fetch('getCuentasApi.php', {
-                        method: 'get',
-                    }).then(response => response.json())
-                    .then(data => {
-                        resolve(data);
-                        $(".selectjs_cuentaToken").select2({
-                            data: data,
-                            multiple: false,
-                            language: "es",
-                            placeholder: "Cambiar de Cuenta",
-                            minimumInputLength: "0",
-                            minimumResultsForSearch: 10,
-                            maximumInputLength: "10",
-                            selectOnClose: false,
-                            searching: false,
-                            closeOnSelect: true,
-                        });
-                    }).catch(err => console.log(err));
-            });
+            SelectSelect2Ajax(".selectjs_cuentaToken", false, false, 'Cambiar de Cuenta', 0, 10, 10, false, '/mobile/hrp/getCuentasApi.php', '250', '', 'POST');
+
             $(".selectjs_cuentaToken").on("select2:select", function(e) {
                 CheckSesion();
                 $("#RefreshToken").submit();
