@@ -33,13 +33,13 @@ if ($(window).width() < 540) {
 
                     let text        = row.appVersion;
                     let myArray     = text.split(" - ");
-                    let appVersion  = myArray[0];
-                    let appVersion2 = myArray[1];
+                    let appVersion  = myArray[0] ?? '';
+                    let appVersion2 = myArray[1] ?? '';
 
                     let datacol = `
                     <div class="d-flex justify-content-between">
                         <div class="text-uppercase font-weight-bold text-secondary">${row.deviceName}</div>
-                        <div class="text-secondary"><small>${appVersion} - ${appVersion2}</small></div>
+                        <div class="text-secondary"><small>${appVersion} ${appVersion2}</small></div>
                     </div>
                     <div class="text-secondary">${deviceEvent}</div>
                     <div class="d-flex justify-content-end w-100">
@@ -117,11 +117,11 @@ if ($(window).width() < 540) {
                 "render": function (data, type, row, meta) {
                     let text = row.appVersion;
                     let myArray = text.split(" - ");
-                    let appVersion = myArray[0];
-                    let appVersion2 = myArray[1];
+                    let appVersion  = myArray[0] ?? '';
+                    let appVersion2 = myArray[1] ?? '';
                     let datacol = `<div data-titler="${row.lastUpdate}">-</div>`
                     if (myArray[0]) {
-                        datacol = `<div class="" data-titler="${row.lastUpdate}">${appVersion} - ${appVersion2}</div>`
+                        datacol = `<div class="" data-titler="${row.lastUpdate}">${appVersion} ${appVersion2}</div>`
                     }
                     return datacol;
                 },
