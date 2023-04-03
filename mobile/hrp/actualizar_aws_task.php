@@ -797,28 +797,28 @@ if (!empty($arrayData)) {
             $eventZone = $a['evento']; // Evento de la zona
         }
 
-        $b = simple_pdoQuery("SELECT evento FROM reg_device_ WHERE id_company = '$companyCode' AND evento != '0' AND phoneid = '$phoneid' LIMIT 1");
+        pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
+
+        $s = simple_pdoQuery("SELECT `id`, `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
+
+        if ($s) {
+            (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `regid` = '$phoneid' AND id_company = $companyCode"));
+            $deviceID = $s['id'];
+        } else {
+
+            (pdoQuery("INSERT INTO `reg_device_` (`appVersion`, `regid`, `phoneid`, `id_company`, `evento`, `nombre`) VALUES ('$appVersion', '$regid', '$phoneid', '$companyCode', 0, '$phoneid')"));
+            
+            $getDeviceID = simple_pdoQuery("SELECT `id` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
+            $deviceID = $getDeviceID['id'];
+        }
+
+        $b = simple_pdoQuery("SELECT evento FROM reg_device_ WHERE id_company = '$companyCode' AND id = '$deviceID' LIMIT 1");
+
         $eventDevice = $b['evento'] ?? ''; // Evento del dispositivo
         $identified = ($confidence >= 75) ? '1' : '0';
-        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, identified, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$identified', '$locked', '$error', '$id_api')";
+        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, deviceID, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, identified, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$deviceID','$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$identified', '$locked', '$error', '$id_api')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de 
-
-            pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
-
-            $s = simple_pdoQuery("SELECT `id`, `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
-            if ($s) {
-                (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `regid` = '$phoneid' AND id_company = $companyCode"));
-                $DeviceID = $s['id'];
-            } else {
-
-                (pdoQuery("INSERT INTO `reg_device_` (`appVersion`, `regid`, `phoneid`, `id_company`, `evento`, `nombre`) VALUES ('$appVersion', '$regid', '$phoneid', '$companyCode', 0, '$phoneid')"));
-                
-                $getDeviceID = simple_pdoQuery("SELECT `id` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
-                $DeviceID = $getDeviceID['id'];
-            }
-
-
 
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
 
