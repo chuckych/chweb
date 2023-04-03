@@ -19,8 +19,9 @@ const loadingTable = (selectortable) => {
 }
 const ClearFilterMobile = () => {
     $('.FilterUser').val(null).trigger('change'),
-        $('.FilterZones').val(null).trigger('change'),
-        $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
+    $('.FilterZones').val(null).trigger('change'),
+    $('.FilterDevice').val(null).trigger('change'),
+    $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
     $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
 }
 /**
@@ -39,6 +40,7 @@ const filterData = (table = false, typeDownload = '') => {
     f.append('draw', '');
     f.append('users[]', $('.FilterUser').val());
     f.append('zones[]', $('.FilterZones').val());
+    f.append('device[]', $('.FilterDevice').val());
     f.append('identified', $('input[name=FilterIdentified]:checked').val());
     if (table) {
         let data = [];
@@ -95,6 +97,7 @@ if ($(window).width() < 540) {
                 data.SoloFic = $("#SoloFic").val();
                 data.users = $('.FilterUser').val()
                 data.zones = $('.FilterZones').val()
+                data.device = $('.FilterDevice').val()
                 data.identified = $('input[name=FilterIdentified]:checked').val();
             },
         },
@@ -241,6 +244,7 @@ if ($(window).width() < 540) {
                 data.SoloFic = $("#SoloFic").val();
                 data.users = $('.FilterUser').val();
                 data.zones = $('.FilterZones').val();
+                data.device = $('.FilterDevice').val()
                 data.identified = $('input[name=FilterIdentified]:checked').val();
             },
         },
@@ -600,18 +604,24 @@ tablemobile.on('init.dt', function (e, settings, json) {
     }
     function refreshUnselected(selector) {
         $(selector).on('select2:unselecting', function (e) {
+            // e.preventDefault();
+            e.stopImmediatePropagation();
             if (!e.params.args.originalEvent) {
                 return
             } else {
                 if ($(this).val().length > 0) {
-                    $('#table-mobile').DataTable().ajax.reload();
                     loadingTable('#table-mobile')
+                    setTimeout(() => {
+                        $('#table-mobile').DataTable().ajax.reload();
+                    }, 200);
                 }
             }
         }).on('select2:unselect', function (e) {
             if ($(this).val().length === 0) {
-                $('#table-mobile').DataTable().ajax.reload();
                 loadingTable('#table-mobile')
+                setTimeout(() => {
+                    $('#table-mobile').DataTable().ajax.reload();
+                }, 200);
             }
         });
         // actualizarTablas();
@@ -683,6 +693,7 @@ tablemobile.on('init.dt', function (e, settings, json) {
                         length: 50,
                         users: $('.FilterUser').val(),
                         zones: $('.FilterZones').val(),
+                        device: $('.FilterDevice').val(),
                         identified: $('input[name=FilterIdentified]:checked').val(),
                     }
                 },
@@ -692,7 +703,8 @@ tablemobile.on('init.dt', function (e, settings, json) {
                     }
                 },
             }
-        }).on("select2:unselecting", function (e) {
+        })
+        .on("select2:unselecting", function (e) {
             $(this).data('state', 'unselected');
         }).on("select2:open", function (e) {
             if ($(this).data('state') === 'unselected') {
@@ -703,6 +715,7 @@ tablemobile.on('init.dt', function (e, settings, json) {
                 }, 1);
             }
         });
+
         $('.FilterZones').select2({
             multiple: true,
             language: "es",
@@ -754,6 +767,7 @@ tablemobile.on('init.dt', function (e, settings, json) {
                         length: 50,
                         users: $('.FilterUser').val(),
                         zones: $('.FilterZones').val(),
+                        device: $('.FilterDevice').val(),
                         identified: $('input[name=FilterIdentified]:checked').val(),
                     }
                 },
@@ -763,7 +777,82 @@ tablemobile.on('init.dt', function (e, settings, json) {
                     }
                 },
             }
-        }).on("select2:unselecting", function (e) {
+        })
+        .on("select2:unselecting", function (e) {
+            $(this).data('state', 'unselected');
+        }).on("select2:open", function (e) {
+            if ($(this).data('state') === 'unselected') {
+                $(this).removeData('state');
+                var self = $(this);
+                setTimeout(function () {
+                    self.select2('close');
+                }, 1);
+            }
+        });
+
+        $('.FilterDevice').select2({
+            multiple: true,
+            language: "es",
+            allowClear: true,
+            templateResult: templateData,
+            placeholder: 'Dispositivos',
+            minimumInputLength: 0,
+            minimumResultsForSearch: 10,
+            maximumInputLength: 10,
+            selectOnClose: false,
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + 10 + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + 0 + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                removeAllItems: function () {
+                    return "Eliminar Selección"
+                }
+            },
+            ajax: {
+                url: "getRegMobile.php",
+                dataType: "json",
+                type: 'POST',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        qZone: params.term,
+                        type: 'selectDevice',
+                        _drMob2: $("#_drMob2").val(),
+                        start: 0,
+                        length: 50,
+                        users: $('.FilterUser').val(),
+                        zones: $('.FilterZones').val(),
+                        device: $('.FilterDevice').val(),
+                        identified: $('input[name=FilterIdentified]:checked').val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+            }
+        })
+        .on("select2:unselecting", function (e) {
             $(this).data('state', 'unselected');
         }).on("select2:open", function (e) {
             if ($(this).data('state') === 'unselected') {
@@ -779,9 +868,13 @@ tablemobile.on('init.dt', function (e, settings, json) {
         refreshUnselected('.FilterZones')
         refreshSelected('.FilterUser')
         refreshUnselected('.FilterUser')
+        refreshSelected('.FilterDevice')
+        refreshUnselected('.FilterDevice')
 
         setTimeout(() => {
             $('.FilterUser').removeClass('invisible')
+            $('.FilterDevice').removeClass('invisible')
+            $('.FilterZones').removeClass('invisible')
         }, 100);
     })
 });

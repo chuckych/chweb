@@ -111,6 +111,7 @@ function validUser()
 $zones   = $_REQUEST['zones'] ?? array();
 $users   = $_REQUEST['users'] ?? array();
 $devices = $_REQUEST['devices'] ?? array();
+$groupBy = ($_REQUEST['groupBy']) ?? '';
 
 $idCompany = 0;
 
@@ -122,7 +123,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'zoneIDName' || $key == 'createdDate' || $key == 'validUser' || $key == 'zones' || $key == 'users' || $key == 'identified' || $key == 'devices') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'zoneIDName' || $key == 'createdDate' || $key == 'validUser' || $key == 'zones' || $key == 'users' || $key == 'identified' || $key == 'devices' || $key == 'groupBy') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -216,6 +217,10 @@ if ($identified && $identified != 1 && $identified != 2) {
     http_response_code(400);
     (response(array(), 0, 'Identified invalid', 400, 0, 0, $idCompany));
 }
+if ( $groupBy && $groupBy !='user' && $groupBy !='zone' && $groupBy !='device' ){
+    http_response_code(400);
+    (response(array(), 0, 'groupBy invalid', 400, 0, 0, $idCompany));
+}
 
 $MESSAGE = 'OK';
 $arrayData = array();
@@ -263,13 +268,22 @@ $sql_query = "SELECT
     LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
     WHERE r.rid > 0";
 
-
-// $implodeZone = (!empty($zones)) ? implode(',', $zones) : '';
-// $implodeUser = (!empty($users)) ? implode(',', $users) : '';
-// $implodeDevice = (!empty($devices)) ? implode(',', $devices) : '';
-// print_r($implodeZone).exit;
 $identificado = ($identified == 1) ? true : ''; 
 $Noidentificado = ($identified == 2) ? true : ''; 
+
+if ($groupBy) {
+    switch ($groupBy) {
+        case 'user':
+            $groupBy = 'id_user';
+            break;
+        case 'zone':
+            $groupBy = 'idZone';
+            break;
+        case 'device':
+            $groupBy = 'deviceID';
+            break;
+    }
+}
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
@@ -288,6 +302,7 @@ $filtro_query .= ($identificado) ? " AND r.identified = '1'" : '';
 $filtro_query .= ($Noidentificado) ? " AND r.identified = '0'" : '';
 // $filtro_query .= (($validUser==1)) ? "AND ru.nombre != ''" : '';
 // $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
+$filtro_query .= ($groupBy) ? " GROUP BY ".$groupBy : '';
 $sql_query .= $filtro_query;
 // echo $filtro_query;exit;
 $total = rowCount_pdoQuery($sql_query);

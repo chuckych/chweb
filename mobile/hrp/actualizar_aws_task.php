@@ -806,13 +806,19 @@ if (!empty($arrayData)) {
 
             pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
 
-            $s = simple_pdoQuery("SELECT `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
-
+            $s = simple_pdoQuery("SELECT `id`, `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
             if ($s) {
                 (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `regid` = '$phoneid' AND id_company = $companyCode"));
+                $DeviceID = $s['id'];
             } else {
+
                 (pdoQuery("INSERT INTO `reg_device_` (`appVersion`, `regid`, `phoneid`, `id_company`, `evento`, `nombre`) VALUES ('$appVersion', '$regid', '$phoneid', '$companyCode', 0, '$phoneid')"));
+                
+                $getDeviceID = simple_pdoQuery("SELECT `id` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
+                $DeviceID = $getDeviceID['id'];
             }
+
+
 
             $Legajo = str_pad($employeId, 11, "0", STR_PAD_LEFT);
 

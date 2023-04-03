@@ -60,15 +60,20 @@
                 <div class="col-12">
                     <div class="collapse" id="collapseFilterChecks">
                         <div class="form-row pb-2">
-                            <div class="col-12 col-sm-6 d-flex flex-column">
+                            <div class="col-12 col-sm-4 d-flex flex-column">
                                 <label for="FilterUser">Usuarios</label>
                                 <select name="FilterUser" id="FilterUser"
                                     class="form-control w-100 FilterUser invisible h40"></select>
                             </div>
-                            <div class="col-12 col-sm-6  d-flex flex-column">
+                            <div class="col-12 col-sm-4  d-flex flex-column">
                                 <label for="FilterZones">Zonas</label>
                                 <select name="FilterZones" id="FilterZones"
                                     class="form-control w-100 FilterZones invisible h40"></select>
+                            </div>
+                            <div class="col-12 col-sm-4 d-flex flex-column">
+                            <label for="FilterDevice">Dispositivos</label>
+                                <select name="FilterDevice" id="FilterDevice"
+                                    class="form-control w-100 FilterDevice invisible h40"></select>
                             </div>
                             <div class="col-12 col-sm-6 mt-2">
                             </div>

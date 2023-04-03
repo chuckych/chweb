@@ -31,6 +31,7 @@ $params['qUser'] = $params['qUser'] ?? '';
 $params['qZone'] = $params['qZone'] ?? '';
 $params['users'] = $params['users'] ?? '';
 $params['zones'] = $params['zones'] ?? '';
+$params['device'] = $params['device'] ?? '';
 $params['identified'] = $params['identified'] ?? '';
 // $params['data_array'] = $params['data_array'] ?? '';
 
@@ -47,6 +48,22 @@ if($params['zones'] && $params['type'] != 'selectZone'){
     $zones = implode(',', $params['zones']);
 }
 
+if($params['device'] && $params['type'] != 'selectDevice'){
+    $device = implode(',', $params['device']);
+}
+
+if($params['type'] == 'selectUsers'){
+    $groupBy = 'user';
+}
+
+if($params['type'] == 'selectZone'){
+    $groupBy = 'zone';
+}
+
+if($params['type'] == 'selectDevice'){
+    $groupBy = 'device';
+}
+
 $paramsApi = array(
     'key'        => $_SESSION["RECID_CLIENTE"],
     'start'      => urlencode($params['start']),
@@ -56,6 +73,8 @@ $paramsApi = array(
     'endDate'    => test_input(dr_f($DateRange[1])),
     'users'      => $users ?? '',
     'zones'      => $zones ?? '',
+    'devices'      => $device ?? '',
+    'groupBy'    => $groupBy ?? '',
     'identified' => $params['identified'] ?? '',
     'userIDName' => urlencode($params['search']['value'] ?? $params['qUser']),
     'zoneIDName' => $params['qZone']
@@ -71,6 +90,8 @@ $api = "api/v1/checks/$parametros";
 $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
+
+// echo Flight::json($api).exit;
 
 $totalRecords = $api['TOTAL'];
 $tm = (microtime(true));
@@ -130,6 +151,15 @@ if ($api['COUNT'] > 0) {
                     </div>
                     </div>
                     ',
+                );
+            }
+        }
+
+        if ($params['type'] == 'selectDevice') {
+            if ($r['deviceName']) {
+                $arraySelect[] = array(
+                    'id' => $r['deviceID'],
+                    'text' => $r['deviceName']
                 );
             }
         }
@@ -250,8 +280,9 @@ $json_data = array(
     "timeScript" => $timeScript,
 );
 // sleep(2);
-if ($params['type'] == 'selectUsers' || $params['type'] == 'selectZone') {
-    echo json_encode(_group_by_keys($arraySelect, $keys = array('id', 'text')));
+if ($params['type'] == 'selectUsers' || $params['type'] == 'selectZone' || $params['type'] == 'selectDevice') {
+    // echo json_encode(_group_by_keys($arraySelect, $keys = array('id', 'text')));
+    echo json_encode($arraySelect);
     exit;
 }
 
