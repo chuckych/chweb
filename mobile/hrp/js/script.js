@@ -19,8 +19,8 @@ const loadingTable = (selectortable) => {
 }
 const ClearFilterMobile = () => {
     $('.FilterUser').val(null).trigger('change'),
-    $('.FilterZones').val(null).trigger('change'),
-    $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
+        $('.FilterZones').val(null).trigger('change'),
+        $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
     $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
 }
 /**
@@ -37,9 +37,9 @@ const filterData = (table = false, typeDownload = '') => {
     f.append('length', 10000);
     f.append('search[value]', $('#table-mobile_filter input').val());
     f.append('draw', '');
-    f.append('users[]',  $('.FilterUser').val());
-    f.append('zones[]',  $('.FilterZones').val());
-    f.append('identified',  $('input[name=FilterIdentified]:checked').val());
+    f.append('users[]', $('.FilterUser').val());
+    f.append('zones[]', $('.FilterZones').val());
+    f.append('identified', $('input[name=FilterIdentified]:checked').val());
     if (table) {
         let data = [];
         data._drMob = $("#_drMob").val() ?? '';
@@ -595,42 +595,41 @@ tablemobile.on('init.dt', function (e, settings, json) {
         $(selector).on('select2:select', function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
-            $('#table-mobile').DataTable().ajax.reload(null, false);
+            $('#table-mobile').DataTable().ajax.reload();
         });
     }
-
-    $('input[name=FilterIdentified]').on('change', function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        $('#table-mobile').DataTable().ajax.reload(null, false);
-    });
-
-    $('#ClearFilter').on('click', function (e) {
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        ClearFilterMobile()
-        $('#table-mobile').DataTable().ajax.reload(null, false);
-    });
-
     function refreshUnselected(selector) {
         $(selector).on('select2:unselecting', function (e) {
             if (!e.params.args.originalEvent) {
                 return
             } else {
                 if ($(this).val().length > 0) {
-                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#table-mobile').DataTable().ajax.reload();
                     loadingTable('#table-mobile')
                 }
             }
         }).on('select2:unselect', function (e) {
             if ($(this).val().length === 0) {
-                $('#table-mobile').DataTable().ajax.reload(null, false); 
+                $('#table-mobile').DataTable().ajax.reload();
                 loadingTable('#table-mobile')
             }
         });
         // actualizarTablas();
         return
     }
+
+    $('input[name=FilterIdentified]').on('change', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $('#table-mobile').DataTable().ajax.reload();
+    });
+
+    $('#ClearFilter').on('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        ClearFilterMobile()
+        $('#table-mobile').DataTable().ajax.reload();
+    });
     $('#collapseFilterChecks').on('shown.bs.collapse', function () {
 
         $('.FilterUser').select2({
@@ -679,11 +678,12 @@ tablemobile.on('init.dt', function (e, settings, json) {
                     return {
                         qUser: params.term,
                         type: 'selectUsers',
-                        _drMob2 : $("#_drMob2").val(),
-                        length :50,
-                        users : $('.FilterUser').val(),
-                        zones : $('.FilterZones').val(),
-                        identified : $('input[name=FilterIdentified]:checked').val(),
+                        _drMob2: $("#_drMob2").val(),
+                        start: 0,
+                        length: 50,
+                        users: $('.FilterUser').val(),
+                        zones: $('.FilterZones').val(),
+                        identified: $('input[name=FilterIdentified]:checked').val(),
                     }
                 },
                 processResults: function (data) {
@@ -749,11 +749,12 @@ tablemobile.on('init.dt', function (e, settings, json) {
                     return {
                         qZone: params.term,
                         type: 'selectZone',
-                        _drMob2 : $("#_drMob2").val(),
-                        length :50,
-                        users : $('.FilterUser').val(),
-                        zones : $('.FilterZones').val(),
-                        identified : $('input[name=FilterIdentified]:checked').val(),
+                        _drMob2: $("#_drMob2").val(),
+                        start: 0,
+                        length: 50,
+                        users: $('.FilterUser').val(),
+                        zones: $('.FilterZones').val(),
+                        identified: $('input[name=FilterIdentified]:checked').val(),
                     }
                 },
                 processResults: function (data) {
