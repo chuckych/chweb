@@ -17,6 +17,12 @@ const loadingTable = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
+const ClearFilterMobile = () => {
+    $('.FilterUser').val(null).trigger('change'),
+    $('.FilterZones').val(null).trigger('change'),
+    $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
+    $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
+}
 /**
  * @param {table} boolean 1: table, 0: nada
  * @param {typeDownload} string tipo de descarga
@@ -31,6 +37,9 @@ const filterData = (table = false, typeDownload = '') => {
     f.append('length', 10000);
     f.append('search[value]', $('#table-mobile_filter input').val());
     f.append('draw', '');
+    f.append('users[]',  $('.FilterUser').val());
+    f.append('zones[]',  $('.FilterZones').val());
+    f.append('identified',  $('input[name=FilterIdentified]:checked').val());
     if (table) {
         let data = [];
         data._drMob = $("#_drMob").val() ?? '';
@@ -73,10 +82,10 @@ let drmob2 = $('#max').val() + ' al ' + $('#max').val()
 $('#_drMob2').val(drmob2)
 if ($(window).width() < 540) {
     tablemobile = $('#table-mobile').DataTable({
-        dom:    "<'row lengthFilterTable'" +
-                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
-                "<'row '<'col-12 table-responsive't>>" +
-                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+        dom: "<'row lengthFilterTable'" +
+            "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getRegMobile.php",
             type: "POST",
@@ -84,6 +93,9 @@ if ($(window).width() < 540) {
                 data._drMob = $("#_drMob").val();
                 data._drMob2 = $("#_drMob2").val();
                 data.SoloFic = $("#SoloFic").val();
+                data.users = $('.FilterUser').val()
+                data.zones = $('.FilterZones').val()
+                data.identified = $('input[name=FilterIdentified]:checked').val();
             },
         },
         createdRow: function (row, data, dataIndex) {
@@ -227,6 +239,9 @@ if ($(window).width() < 540) {
                 data._drMob = $("#_drMob").val();
                 data._drMob2 = $("#_drMob2").val();
                 data.SoloFic = $("#SoloFic").val();
+                data.users = $('.FilterUser').val();
+                data.zones = $('.FilterZones').val();
+                data.identified = $('input[name=FilterIdentified]:checked').val();
             },
         },
         createdRow: function (row, data, dataIndex) {
@@ -357,7 +372,7 @@ if ($(window).width() < 540) {
                         datacol = `<div class="w40">${confidenceFaceStr}</div>`
                         return datacol;
                     }
-                    datacol = `<div class="w40 ${processRegFace}" title="${row.confidenceFaceVal}">${confidenceFaceStr}</div>`
+                    datacol = `<div class="w40 ${processRegFace}">${confidenceFaceStr}</div>`
                     return datacol;
                 },
             },
@@ -448,20 +463,20 @@ if ($(window).width() < 540) {
                 },
             },
             /** Columna id_api */
-            {
-                className: '', targets: '', title: '',
-                "render": function (data, type, row, meta) {
-                    let datacol = `<div class="w40">${row.id_api}</div>`
-                    if ((host == 'https://localhost')) {
-                        return datacol;
-                    } else if ((host == 'http://localhost')) {
-                        return datacol;
-                    } else {
-                        return '';
-                    }
-                }
+            // {
+            //     className: '', targets: '', title: '',
+            //     "render": function (data, type, row, meta) {
+            //         let datacol = `<div class="w40">${row.id_api}</div>`
+            //         if ((host == 'https://localhost')) {
+            //             return datacol;
+            //         } else if ((host == 'http://localhost')) {
+            //             return datacol;
+            //         } else {
+            //             return '';
+            //         }
+            //     }
 
-            },
+            // },
             /** Columna Flag */
             {
                 className: 'w-100 text-right', targets: '', title: '',
@@ -541,10 +556,13 @@ let processRegFace = (id_api) => {
 
 tablemobile.on('init.dt', function (e, settings, json) {
     $('.dr').append(`
-        <div class="mx-2">
+        <div class="mx-2" data-titlet="Filtrar Fechas">
             <input type="text" readonly class="pointer h40 form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
         </div>
-        <div class="btn-group dropright">
+        <button class="btn btn-outline-custom border h40" data-titlet="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
+            <i class="bi bi-funnel"></i>
+        </button>
+        <div class="btn-group dropright ml-1" data-titlet="Exportar txt, xls">
             <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </button>
@@ -572,6 +590,199 @@ tablemobile.on('init.dt', function (e, settings, json) {
     select2Simple('#table-mobile_length select', '', false, false)
     $('.SoloFic').hide()
     // click event
+
+    function refreshSelected(selector) {
+        $(selector).on('select2:select', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $('#table-mobile').DataTable().ajax.reload(null, false);
+        });
+    }
+
+    $('input[name=FilterIdentified]').on('change', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        $('#table-mobile').DataTable().ajax.reload(null, false);
+    });
+
+    $('#ClearFilter').on('click', function (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        ClearFilterMobile()
+        $('#table-mobile').DataTable().ajax.reload(null, false);
+    });
+
+    function refreshUnselected(selector) {
+        $(selector).on('select2:unselecting', function (e) {
+            if (!e.params.args.originalEvent) {
+                return
+            } else {
+                if ($(this).val().length > 0) {
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    loadingTable('#table-mobile')
+                }
+            }
+        }).on('select2:unselect', function (e) {
+            if ($(this).val().length === 0) {
+                $('#table-mobile').DataTable().ajax.reload(null, false); 
+                loadingTable('#table-mobile')
+            }
+        });
+        // actualizarTablas();
+        return
+    }
+    $('#collapseFilterChecks').on('shown.bs.collapse', function () {
+
+        $('.FilterUser').select2({
+            multiple: true,
+            language: "es",
+            allowClear: true,
+            templateResult: templateData,
+            placeholder: 'Usuarios',
+            minimumInputLength: 0,
+            minimumResultsForSearch: 10,
+            maximumInputLength: 10,
+            selectOnClose: false,
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + 10 + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + 0 + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                removeAllItems: function () {
+                    return "Eliminar Selección"
+                }
+            },
+            ajax: {
+                url: "getRegMobile.php",
+                dataType: "json",
+                type: 'POST',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        qUser: params.term,
+                        type: 'selectUsers',
+                        _drMob2 : $("#_drMob2").val(),
+                        length :50,
+                        users : $('.FilterUser').val(),
+                        zones : $('.FilterZones').val(),
+                        identified : $('input[name=FilterIdentified]:checked').val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+            }
+        }).on("select2:unselecting", function (e) {
+            $(this).data('state', 'unselected');
+        }).on("select2:open", function (e) {
+            if ($(this).data('state') === 'unselected') {
+                $(this).removeData('state');
+                var self = $(this);
+                setTimeout(function () {
+                    self.select2('close');
+                }, 1);
+            }
+        });
+        $('.FilterZones').select2({
+            multiple: true,
+            language: "es",
+            allowClear: true,
+            templateResult: templateData,
+            placeholder: 'Zonas',
+            minimumInputLength: 0,
+            minimumResultsForSearch: 10,
+            maximumInputLength: 10,
+            selectOnClose: false,
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + 10 + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + 0 + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                },
+                removeAllItems: function () {
+                    return "Eliminar Selección"
+                }
+            },
+            ajax: {
+                url: "getRegMobile.php",
+                dataType: "json",
+                type: 'POST',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        qZone: params.term,
+                        type: 'selectZone',
+                        _drMob2 : $("#_drMob2").val(),
+                        length :50,
+                        users : $('.FilterUser').val(),
+                        zones : $('.FilterZones').val(),
+                        identified : $('input[name=FilterIdentified]:checked').val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+            }
+        }).on("select2:unselecting", function (e) {
+            $(this).data('state', 'unselected');
+        }).on("select2:open", function (e) {
+            if ($(this).data('state') === 'unselected') {
+                $(this).removeData('state');
+                var self = $(this);
+                setTimeout(function () {
+                    self.select2('close');
+                }, 1);
+            }
+        });
+
+        refreshSelected('.FilterZones')
+        refreshUnselected('.FilterZones')
+        refreshSelected('.FilterUser')
+        refreshUnselected('.FilterUser')
+
+        setTimeout(() => {
+            $('.FilterUser').removeClass('invisible')
+        }, 100);
+    })
 });
 
 $(document).on('click', '#downloadTxt', function (e) {
@@ -1528,7 +1739,7 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
     map = L.map('mapzone').setView([lat, lng], zoom);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '<small>'+lat+','+lng+'</small>'
+        attribution: '<small>' + lat + ',' + lng + '</small>'
     }).addTo(map);
     map.addControl(new L.Control.Fullscreen({
         title: {

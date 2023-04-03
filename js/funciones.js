@@ -292,7 +292,7 @@ function SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumI
                 return 'No hay resultados..'
             },
             inputTooLong: function (args) {
-                var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
+                var message = 'Máximo ' + maximumInputLength + ' caracteres. Elimine ' + overChars + ' caracter';
                 if (overChars != 1) {
                     message += 'es'
                 }
@@ -305,7 +305,7 @@ function SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumI
                 return 'Sin datos..'
             },
             inputTooShort: function () {
-                return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
+                return 'Ingresar ' + minimumInputLength + ' o mas caracteres'
             },
             maximumSelected: function () {
                 return 'Puede seleccionar solo una opción'

@@ -854,11 +854,44 @@ if ($verDB < 20230329) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
-
 if ($verDB < 20230331) {
     pdoQuery("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany` (`phoneid`, `id_company`)");
     fileLog("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany`", $pathLog); // escribir en el log
     $verDB  = 20230331; // nueva version de la DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+if ($verDB < 20230403) {
+    
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `identified` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `threshold`");
+    fileLog("ALTER TABLE `reg_` ADD COLUMN `identified`", $pathLog); // escribir en el log
+   
+    pdoQuery("UPDATE reg_ SET reg_.`identified` = '1' WHERE reg_.confidence >= reg_.threshold");
+    fileLog("UPDATE reg_ SET reg_.`identified`", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_` ADD COLUMN `deviceID` INT NOT NULL AFTER `phoneid`");
+    fileLog("ALTER TABLE `reg_` ADD COLUMN `deviceID`", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_` ADD INDEX `refDevice` (`deviceID`)");
+    fileLog("ALTER TABLE `reg_` ADD INDEX `refDevice`", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_` ADD INDEX `refDate` (`fechaHora`)");
+    fileLog("ALTER TABLE `reg_` ADD INDEX `refDate`", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE `reg_device_` DROP INDEX `phoneidCompany`, ADD UNIQUE INDEX `phoneidCompany` (`phoneid`, `id_company`) USING BTREE");
+    fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `phoneidCompany`", $pathLog); // escribir en el log
+    
+    pdoQuery("SET @count = 0; UPDATE reg_device_ SET reg_device_.id = @count:= @count + 1");
+    fileLog("UPDATE reg_device_", $pathLog); // escribir en el log
+    
+    pdoQuery("ALTER TABLE reg_device_  AUTO_INCREMENT = 1");
+    fileLog("ALTER TABLE reg_device_  AUTO_INCREMENT", $pathLog); // escribir en el log
+    
+    pdoQuery("UPDATE reg_ INNER JOIN reg_device_ ON reg_.phoneid = reg_device_.phoneid SET reg_.deviceID = reg_device_.id WHERE reg_.phoneid = reg_device_.phoneid");
+    fileLog("UPDATE reg_.deviceID", $pathLog); // escribir en el log
+    
+    
+    $verDB  = 20230403; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }

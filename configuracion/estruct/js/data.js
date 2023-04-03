@@ -107,7 +107,7 @@ $(function () {
             ordering: false,
             autoWidth: true,
             language: {
-                "url": "../../js/DataTableSpanishTotal.json?v=" + vjs()
+                "url": "../../js/DataTableSpanishShort.json?v=" + vjs()
             },
         })
     }
@@ -173,7 +173,7 @@ $(function () {
             ordering: false,
             autoWidth: true,
             language: {
-                "url": "../../js/DataTableSpanishTotal.json?v=" + vjs()
+                "url": "../../js/DataTableSpanishShort.json?v=" + vjs()
             },
         })
         $(selectorDT+' tbody').on(eventoOn(mxwidth), checkEstructClass, function (e) {

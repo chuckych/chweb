@@ -5,8 +5,10 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <link rel="stylesheet" href="css/styleMobile.css?=<?= version_file("/mobile/hrp/css/styleMobile.css") ?>">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
+        rel='stylesheet' />
     <title>Fichadas Mobile HR</title>
 </head>
 
@@ -22,8 +24,8 @@
         <?php
         $FirstDate = "2019/01/01";
         $FirstYear = '2019';
-        $maxDate   = date('Y-m-d');
-        $maxYear   = date('Y');
+        $maxDate = date('Y-m-d');
+        $maxYear = date('Y');
         /** Para dateRangePicker */
         $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -46,7 +48,7 @@
         <?php
         if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
             echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
-        } else  if ($_SERVER['SERVER_NAME'] == '192.168.1.220') { // Si es localhost
+        } else if ($_SERVER['SERVER_NAME'] == '192.168.1.220') { // Si es localhost
             echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
         } else {
             echo '<input type="hidden" id="apiMobile" value="http://chweb.ar">';
@@ -55,6 +57,46 @@
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
             <div class="row bg-white invisible mt-2" id="RowTableMobile">
+                <div class="col-12">
+                    <div class="collapse" id="collapseFilterChecks">
+                        <div class="form-row pb-2">
+                            <div class="col-12 col-sm-6 d-flex flex-column">
+                                <label for="FilterUser">Usuarios</label>
+                                <select name="FilterUser" id="FilterUser"
+                                    class="form-control w-100 FilterUser invisible h40"></select>
+                            </div>
+                            <div class="col-12 col-sm-6  d-flex flex-column">
+                                <label for="FilterZones">Zonas</label>
+                                <select name="FilterZones" id="FilterZones"
+                                    class="form-control w-100 FilterZones invisible h40"></select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2 d-flex align-items-center justify-content-end">
+                                <div class="p-1">
+                                    <button class="btn border-0" data-titlet="Borrar Filtros" id="ClearFilter">
+                                        <i class="text-secondarybi bi-eraser"></i>
+                                    </button>
+                                </div>
+                                <div class="btn-group btn-group-toggle border p-1" data-toggle="buttons">
+                                    <label class="btn btn-outline-light border-0" data-titlet="Identificado">
+                                        <input type="radio" name="FilterIdentified" id="FilterIdentified1" value="1"> <i
+                                            class="text-success bi bi-person-bounding-box"></i>
+                                    </label>
+                                    <label class="btn btn-outline-light border-0" data-titlet="No Identificado">
+                                        <input type="radio" name="FilterIdentified" id="FilterIdentified2" value="2"> <i
+                                            class="text-danger bi bi-person-bounding-box"></i>
+                                    </label>
+                                    <label class="btn btn-outline-light border-0" data-titlet="Todos">
+                                        <input type="radio" name="FilterIdentified" id="FilterIdentified3" value="" checked> <i
+                                            class="text-secondary bi bi-person-bounding-box"></i>
+                                    </label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12" id="divTableMobile">
                     <table class="table text-nowrap w-100 border shadow p-2" id="table-mobile">
                         <thead class="fontq">
@@ -62,8 +104,8 @@
                     </table>
                 </div>
                 <?php
-                if (modulo_cuentas()) :
-                ?>
+                if (modulo_cuentas()):
+                    ?>
                     <div class="col-12 m-0 mt-2">
                         <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
                             <select class="selectjs_cuentaToken w250" id="recid" name="recid" style="display:none">
@@ -76,7 +118,7 @@
                             <div>AppCode: <span id="dataRecidCompany" class="ml-1"></span></div>
                         </div>
                     </div>
-                <?php
+                    <?php
                 endif;
                 ?>
             </div>
@@ -133,7 +175,8 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../../js/DataTable.php";
     ?>
-    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
@@ -152,27 +195,29 @@
         sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
     </script>
     <?php
-    if (modulo_cuentas()) :
-    ?>
+    if (modulo_cuentas()):
+        ?>
         <script>
             SelectSelect2Ajax(".selectjs_cuentaToken", false, false, 'Cambiar de Cuenta', 0, 10, 10, false, '/mobile/hrp/getCuentasApi.php', '250', '', 'POST');
 
-            $(".selectjs_cuentaToken").on("select2:select", function(e) {
+            $(".selectjs_cuentaToken").on("select2:select", function (e) {
                 CheckSesion();
                 $("#RefreshToken").submit();
             });
-            $("#RefreshToken").on("submit", function(e) {
+            $("#RefreshToken").on("submit", function (e) {
                 e.preventDefault();
+                ClearFilterMobile();
+                $("#collapseFilterChecks").collapse('hide')
                 $.ajax({
                     type: $(this).attr("method"),
                     url: $(this).attr("action"),
                     data: $(this).serialize(),
-                    beforeSend: function(data) {
+                    beforeSend: function (data) {
                         loadingTable('#table-mobile');
                         loadingTableUser('#tableUsuarios');
                         loadingTableDevices('#tableDevices');
                     },
-                    success: function(data) {
+                    success: function (data) {
                         if (data.status == "ok") {
                             sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
                             $('#dataIdCompany').html(data.idCompany)
@@ -181,14 +226,14 @@
                             tablemobile.columns.adjust().draw()
                         }
                     },
-                    error: function() {}
+                    error: function () { }
                 });
             });
             $('#dataIdCompany').html('<?= $_SESSION['ID_CLIENTE'] ?>')
             $('#dataRecidCompany').html('<?= $_SESSION['RECID_CLIENTE'] ?>')
             Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken")
         </script>
-    <?php
+        <?php
     endif;
     ?>
 </body>

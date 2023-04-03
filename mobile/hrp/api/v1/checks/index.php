@@ -59,6 +59,13 @@ function userID()
     $userID = empty($p['userID']) ? '' : $p['userID'];
     return intval($userID);
 }
+function identified()
+{
+    $p = $_REQUEST;
+    $p['identified'] = $p['identified'] ?? '';
+    $identified = empty($p['identified']) ? '' : $p['identified'];
+    return intval($identified);
+}
 function userName()
 {
     $p = $_REQUEST;
@@ -72,6 +79,13 @@ function userIDName()
     $p['userIDName'] = $p['userIDName'] ?? '';
     $userIDName = empty($p['userIDName']) ? '' : $p['userIDName'];
     return urldecode($userIDName);
+}
+function zoneIDName()
+{
+    $p = $_REQUEST;
+    $p['zoneIDName'] = $p['zoneIDName'] ?? '';
+    $zoneIDName = empty($p['zoneIDName']) ? '' : $p['zoneIDName'];
+    return urldecode($zoneIDName);
 }
 function validaKey()
 {
@@ -94,6 +108,10 @@ function validUser()
     return intval($validUser);
 }
 
+$zones   = $_REQUEST['zones'] ?? array();
+$users   = $_REQUEST['users'] ?? array();
+$devices = $_REQUEST['devices'] ?? array();
+
 $idCompany = 0;
 
 if (!isset($params['key'])) {
@@ -104,7 +122,7 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'createdDate' || $key == 'validUser') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'zoneIDName' || $key == 'createdDate' || $key == 'validUser' || $key == 'zones' || $key == 'users' || $key == 'identified' || $key == 'devices') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -131,10 +149,10 @@ function response($data, $total, $msg = 'OK', $code = 200, $tiempoScript = 0, $c
 
     /** LOG API CONFIG */
     $textParams = array();
-    foreach ($_REQUEST as $key => $value) {
-        $arrRequest = "$key=$value";
-        array_push($textParams, $arrRequest);
-    }
+    // foreach ($_REQUEST as $key => $value) {
+    //         $arrRequest = "$key = $value";
+    //         array_push($textParams, $arrRequest);
+    // }
 
     $textParams = implode('&', $textParams); // convert to string
 
@@ -165,8 +183,10 @@ $queryRecords = array();
 $start        = start();
 $length       = length();
 $userID       = userID();
+$identified   = identified();
 $userName     = userName();
 $userIDName   = userIDName();
+$zoneIDName   = zoneIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
 $createdDate  = createdDate();
@@ -192,6 +212,11 @@ if ($FechaIni > $FechaFin) {
     (response(array(), 0, 'The start date is greater than the end date', 400, 0, 0, $idCompany));
 }
 
+if ($identified && $identified != 1 && $identified != 2) {
+    http_response_code(400);
+    (response(array(), 0, 'Identified invalid', 400, 0, 0, $idCompany));
+}
+
 $MESSAGE = 'OK';
 $arrayData = array();
 $joinUser = (($validUser == 1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
@@ -201,6 +226,7 @@ $sql_query = "SELECT
     r.createdDate AS 'createdDate', 
     r.id_user AS 'id_user', 
     r.phoneid AS 'phoneid', 
+    r.deviceID AS 'deviceID', 
     ru.nombre AS 'name', 
     r.fechaHora 'fechaHora', 
     r.lat AS 'lat', 
@@ -229,12 +255,21 @@ $sql_query = "SELECT
     r.confidence AS 'confidence', 
     r.threshold AS 'threshold', 
     r.eventZone AS 'eventZone', 
-    r.eventDevice AS 'eventDevice'
+    r.eventDevice AS 'eventDevice',
+    r.identified AS 'identified'
     FROM reg_ r
     $joinUser
     LEFT JOIN reg_device_ rd ON r.phoneid=rd.phoneid AND r.id_company = rd.id_company
     LEFT JOIN reg_zones rz ON r.id_company = rz.id_company AND r.idZone = rz.id 
     WHERE r.rid > 0";
+
+
+// $implodeZone = (!empty($zones)) ? implode(',', $zones) : '';
+// $implodeUser = (!empty($users)) ? implode(',', $users) : '';
+// $implodeDevice = (!empty($devices)) ? implode(',', $devices) : '';
+// print_r($implodeZone).exit;
+$identificado = ($identified == 1) ? true : ''; 
+$Noidentificado = ($identified == 2) ? true : ''; 
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
@@ -243,8 +278,14 @@ $filtro_query .= ($idCompany) ? " AND r.id_company = $idCompany" : '';
 $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
+$filtro_query .= (!empty($zoneIDName))  ? " AND CONCAT(rz.id, rz.nombre) LIKE '%$zoneIDName%'" : '';
 $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
 $filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'" : '';
+$filtro_query .= (!empty($zones)) ? " AND r.idZone IN ($zones)" : '';
+$filtro_query .= (!empty($users)) ? " AND r.id_user IN ($users)" : '';
+$filtro_query .= (!empty($devices)) ? " AND r.deviceID IN ($devices)" : '';
+$filtro_query .= ($identificado) ? " AND r.identified = '1'" : '';
+$filtro_query .= ($Noidentificado) ? " AND r.identified = '0'" : '';
 // $filtro_query .= (($validUser==1)) ? "AND ru.nombre != ''" : '';
 // $filtro_query .= ' GROUP BY id_user, fechaHora, phoneid';
 $sql_query .= $filtro_query;
@@ -314,6 +355,7 @@ if (($queryRecords)) {
             'operation'         => $r['operation'],
             'operationType'     => $r['operationType'],
             'phoneid'           => ($r['phoneid']),
+            'deviceID'           => intval($r['deviceID']),
             'regDate'           => FechaFormatVar($r['fechaHora'], 'Y-m-d'),
             'regDateTime'       => ($r['fechaHora']),
             'regUID'            => ($r['reg_uid']),
@@ -338,6 +380,7 @@ if (($queryRecords)) {
             'confidenceFaceVal' => floatval($r['confidence']),
             'confidenceFaceStr' => (confidenceFaceStr($r['confidence'], $r['id_api'], intval($r['threshold']))),
             'threshold'         => intval($r['threshold']),
+            'identified'         => intval($r['identified']),
             'id_api'            => intval($r['id_api']),
             'imageData'         => array(
                 'ancho'     => $ancho ??'',
