@@ -572,8 +572,6 @@ if (!empty($arrayData)) {
         $error = $v['error'];
         $id_api = $v['id_api'];
 
-
-
         if ($companyCode == '-1') {
             $go = true;
             // $tmef = simple_pdoQuery("SELECT MAX(`fechaHora`) AS 'fechaHora'  FROM `reg_` WHERE `phoneid` = '$phoneid'");
@@ -771,7 +769,7 @@ if (!empty($arrayData)) {
         /** Calculamos la Zona */
         $zona = '';
 
-        if ($lat > 0) {
+        if ($lat != 0.0) {
             $query = queryCalcZone($lat, $lng, $companyCode);
             $zona  = simple_pdoQuery($query);
         }
