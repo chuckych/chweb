@@ -386,8 +386,8 @@ function statusFlags($statusFlags, $pathFlags, $createdDate)
     $text = ($statusFlags == '2') ? "Se marco Bandera de espera" : "Se marco Bandera de descarga";
     $pathLog = __DIR__ . '/logs/flagsLog';
     createDir($pathLog);
-    fileLog($text, $pathLog . '/flagsLog_aws.log');
-    borrarLogs($pathLog . '/', 1, '.log');
+    fileLog($text, $pathLog . date('Ymd') .'/flagsLog_aws.log');
+    borrarLogs($pathLog . '/', 5, '.log');
 }
 function getEvents($url, $timeout = 10)
 {
