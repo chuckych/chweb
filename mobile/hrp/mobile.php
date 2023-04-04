@@ -229,7 +229,7 @@
                             $('#dataIdCompany').html(data.idCompany)
                             $('#dataRecidCompany').html(data.recidCompany)
                             minmaxDate()
-                            $('#table-mobile').DataTable().columns.adjust().draw()
+                            // $('#table-mobile').DataTable().columns.adjust().draw()
                         }
                     },
                     error: function () { }
