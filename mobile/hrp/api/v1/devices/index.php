@@ -157,14 +157,15 @@ if (!$vkey) {
 $MESSAGE = 'OK';
 $arrayData = array();
 
-$sql_query = "SELECT *, (SELECT COUNT(1) FROM reg_ r WHERE r.phoneid = rd.phoneid AND r.id_company = '$idCompany') AS 'totalChecks'  FROM `reg_device_` `rd` WHERE `rd`.`id` > 0";
+$sql_query = "SELECT rd.id, rd.phoneid, rd.id_company, rd.nombre, rd.evento, rd.regid, rd.appVersion, rd.fechahora, COUNT(rd.id) AS totalChecks FROM `reg_device_` `rd` 
+INNER JOIN reg_ ON rd.id = reg_.deviceID WHERE `rd`.`id` > 0";
 $filtro_query = '';
 $filtro_query .= ($idCompany) ? " AND `rd`.`id_company` = '$idCompany'" : '';
 $filtro_query .= (!empty($deviceID)) ? " AND `rd`.`id` = '$deviceID'" : '';
 $filtro_query .= (!empty($deviceEvent)) ? " AND `rd`.`evento` = '$deviceEvent'" : '';
 $filtro_query .= (!empty($deviceName)) ? " AND `rd`.`nombre` LIKE '%$deviceName%'" : '';
 $sql_query .= $filtro_query;
-$sql_query .= " ORDER BY `rd`.`nombre` ASC";
+$sql_query .= " GROUP BY rd.id ORDER BY `rd`.`nombre` ASC";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;
