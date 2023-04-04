@@ -609,7 +609,7 @@ $(function () {
                 multiple: true,
                 dropdownAutoHeight: true,
                 language: "es",
-                allowClear: true,
+                allowClear: false,
                 templateResult: templateData,
                 placeholder: 'Zonas',
                 minimumInputLength: 0,
@@ -672,7 +672,7 @@ $(function () {
             $('.FilterDevice').select2({
                 multiple: true,
                 language: "es",
-                allowClear: true,
+                allowClear: false,
                 templateResult: templateData,
                 placeholder: 'Dispositivos',
                 minimumInputLength: 0,
