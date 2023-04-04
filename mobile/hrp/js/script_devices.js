@@ -345,7 +345,7 @@ $(document).on("click", ".updDevice", function (e) {
     updDevice(data);
 });
 $(document).on("click", ".updDeviceTable", function (e) {
-    let data = tablemobile.row($(this).parents('tr')).data();
+    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
     updDevice(data);
 });
 

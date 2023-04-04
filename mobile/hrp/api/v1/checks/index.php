@@ -87,6 +87,13 @@ function zoneIDName()
     $zoneIDName = empty($p['zoneIDName']) ? '' : $p['zoneIDName'];
     return urldecode($zoneIDName);
 }
+function deviceIDName()
+{
+    $p = $_REQUEST;
+    $p['deviceIDName'] = $p['deviceIDName'] ?? '';
+    $deviceIDName = empty($p['deviceIDName']) ? '' : $p['deviceIDName'];
+    return urldecode($deviceIDName);
+}
 function validaKey()
 {
     $p = $_REQUEST['key'];
@@ -123,7 +130,8 @@ $textParams = '';
 
 foreach ($params as $key => $value) {
     $key = urldecode($key);
-    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'zoneIDName' || $key == 'createdDate' || $key == 'validUser' || $key == 'zones' || $key == 'users' || $key == 'identified' || $key == 'devices' || $key == 'groupBy') {
+    if ($key == 'key' || $key == 'start' || $key == 'length' || $key == 'checks' || $key == 'startDate' || $key == 'endDate' || $key == 'userID' || $key == 'userName' || $key == 'userIDName' || $key == 'zoneIDName' || $key == 'createdDate' || $key == 'validUser' || $key == 'zones' || $key == 'users' || $key == 'identified' || $key == 'devices' 
+    || $key == 'groupBy' || $key == 'deviceIDName') {
         continue;
     } else {
         (response(array(), 0, 'Parameter error', 400, 0, 0, $idCompany));
@@ -188,6 +196,7 @@ $identified   = identified();
 $userName     = userName();
 $userIDName   = userIDName();
 $zoneIDName   = zoneIDName();
+$deviceIDName = deviceIDName();
 $FechaIni     = startDate();
 $FechaFin     = endDate();
 $createdDate  = createdDate();
@@ -293,6 +302,7 @@ $filtro_query .= (!empty($userID)) ? " AND r.id_user = $userID" : '';
 $filtro_query .= (!empty($userName)) ? " AND ru.nombre LIKE '%$userName%'" : '';
 $filtro_query .= (!empty($userIDName))  ? " AND CONCAT(ru.id_user, ru.nombre) LIKE '%$userIDName%'" : '';
 $filtro_query .= (!empty($zoneIDName))  ? " AND CONCAT(rz.id, rz.nombre) LIKE '%$zoneIDName%'" : '';
+$filtro_query .= (!empty($deviceIDName))  ? " AND CONCAT(rd.id, rd.nombre) LIKE '%$deviceIDName%'" : '';
 $filtro_query .= (empty($createdDate)) ? " AND r.fechaHora BETWEEN '$FechaIni' AND '$FechaFin'" : '';
 $filtro_query .= (!empty($createdDate)) ? " AND r.createdDate > '$createdDate'" : '';
 $filtro_query .= (!empty($zones)) ? " AND r.idZone IN ($zones)" : '';

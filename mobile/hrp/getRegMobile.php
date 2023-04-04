@@ -77,7 +77,8 @@ $paramsApi = array(
     'groupBy'    => $groupBy ?? '',
     'identified' => $params['identified'] ?? '',
     'userIDName' => urlencode($params['search']['value'] ?? $params['qUser']),
-    'zoneIDName' => $params['qZone']
+    'zoneIDName' => urlencode($params['qZone']),
+    'deviceIDName' => urlencode($params['qDevice'])
 );
 
 // echo Flight::json($paramsApi).exit;

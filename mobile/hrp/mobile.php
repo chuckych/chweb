@@ -191,6 +191,7 @@
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
+    <script src="js/fn.js?v=<?= version_file("/mobile/hrp/js/fn.js") ?>"></script>
     <script src="js/script.js?v=<?= version_file("/mobile/hrp/js/script.js") ?>"></script>
     <script src="js/script_users.js?v=<?= version_file("/mobile/hrp/js/script_users.js") ?>"></script>
     <script src="js/script_devices.js?v=<?= version_file("/mobile/hrp/js/script_devices.js") ?>"></script>

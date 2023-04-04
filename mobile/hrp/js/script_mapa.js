@@ -15,7 +15,7 @@ let hideMapMarcadores = () => {
         </li>`)
     }
 }
-tablemobile.on('draw.dt', function (e, settings) {
+$("#table-mobile").on('draw.dt', function (e, settings) {
     e.preventDefault();
     hideMapMarcadores();
     return true
@@ -52,7 +52,6 @@ let getMarcadores = (lat = '', lng = '') => {
     return marcadores;
 }
 $(document).on("click", "#VerMarcadores", function (e) {
-
     enableBtnMenu()
     document.title = "Fichadas Mobile"
     $('#Encabezado').html("Fichadas Mobile")
