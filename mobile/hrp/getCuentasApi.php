@@ -6,7 +6,7 @@ ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
-
+$_POST['q'] = $_POST['q'] ?? '';
 $q = test_input($_POST['q']) ?? '';
 $data = getDataIni('../../mobileApikey.php');
 if(!$data) echo json_encode($data).exit;
@@ -15,7 +15,7 @@ $a = array();
 
 foreach ($data as $row) {
 
-    if((!$row['urlAppMobile'])) continue;
+    if((!$row['apiMobileHRP'])) continue;
 
     $html='<div class="d-flex justify-content-start"><span class="badge badge-light w30 p-2">'.$row['idCompany'].'</span><span class="ml-2">'.$row['nameCompany'].'</span></div>';
 

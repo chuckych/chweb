@@ -1,11 +1,11 @@
 <?php
 function version()
 {
-    return 'v0.2.8'; // Version de la aplicación
+    return 'v0.2.9'; // Version de la aplicación
 }
 function verDBLocal()
 {
-    return 20230403; // Version de la base de datos local
+    return 20230404; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -2977,7 +2977,7 @@ function escape_sql_wild($s)
 }
 function write_apiKeysFile()
 {
-    $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb', `c`.`WebService` AS 'WebService' FROM `clientes` `c`";
+    $q = "SELECT `c`.`host` AS 'hostDB', `c`.`user` AS 'userDB',`c`.`pass` AS 'passDB', `c`.`db` AS 'DB', `c`.`auth` AS 'authDB', `c`.`id` as 'idCompany', `c`.`nombre` as 'nameCompany', `c`.`recid` as 'recidCompany', 'key' as 'key', `c`.`urlAppMobile` AS 'urlAppMobile', `c`.`localCH` as 'localCH', (SELECT `valores` FROM `params` `p` WHERE `p`.`modulo` = 1 AND `p`.`descripcion` = 'host' AND `p`.`cliente` = `c`.`id` LIMIT 1) AS 'hostCHWeb', `c`.`WebService` AS 'WebService', `c`.`ApiMobileHRP` AS 'apiMobileHRP' FROM `clientes` `c`";
     $assoc_arr = array_pdoQuery($q);
     // $assoc = $assoc_arr;
 
@@ -2988,6 +2988,7 @@ function write_apiKeysFile()
                 'nameCompany' => $value['nameCompany'],
                 'recidCompany' => $value['recidCompany'],
                 'urlAppMobile' => $value['urlAppMobile'],
+                'apiMobileHRP' => $value['ApiMobileHRP'],
                 'localCH' => ($value['localCH']),
                 'hostCHWeb' => $value['hostCHWeb'],
                 'homeHost' => HOMEHOST,
