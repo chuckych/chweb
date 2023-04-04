@@ -2988,7 +2988,7 @@ function write_apiKeysFile()
                 'nameCompany' => $value['nameCompany'],
                 'recidCompany' => $value['recidCompany'],
                 'urlAppMobile' => $value['urlAppMobile'],
-                'apiMobileHRP' => $value['ApiMobileHRP'],
+                'apiMobileHRP' => $value['apiMobileHRP'],
                 'localCH' => ($value['localCH']),
                 'hostCHWeb' => $value['hostCHWeb'],
                 'homeHost' => HOMEHOST,
