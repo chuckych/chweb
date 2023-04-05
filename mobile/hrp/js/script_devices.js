@@ -31,9 +31,9 @@ if ($(window).width() < 540) {
                     }
                     let deviceEvent = (row.deviceEvent == '0') ? 'Sin Evento' : `Evento: <span class="ls1">${row.deviceEvent}</span>`
 
-                    let text        = row.appVersion;
-                    let myArray     = text.split(" - ");
-                    let appVersion  = myArray[0] ?? '';
+                    let text = row.appVersion;
+                    let myArray = text.split(" - ");
+                    let appVersion = myArray[0] ?? '';
                     let appVersion2 = myArray[1] ?? '';
 
                     let datacol = `
@@ -88,15 +88,15 @@ if ($(window).width() < 540) {
         columns: [
             /** Columna Nombre */
             {
-                className: 'align-middle', targets: '', title: `<div class="w180">Dispositivo</div>`,
+                className: '', targets: '', title: `<div class="w180">Dispositivo</div>`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div data-titlet="" class="text-truncate w180">${row.deviceName}</div>`
+                    let datacol = `<div class="w180">${row.deviceName}</div>`
                     return datacol;
                 },
             },
             /** Columna Evento */
             {
-                className: 'align-middle', targets: '', title: `<div class="w60">Evento</div>`,
+                className: '', targets: '', title: `<div class="w60">Evento</div>`,
                 "render": function (data, type, row, meta) {
                     let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
                     let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
@@ -105,30 +105,38 @@ if ($(window).width() < 540) {
             },
             /** Columna cant TotalChecks */
             {
-                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                className: '', targets: '', title: '<div class="w60">Fichadas</div>',
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div class="ls1 w50">${row.totalChecks}</div>`
+                    let datacol = `<div class="ls1 w60">${row.totalChecks}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Fecha */
+            {
+                className: '', targets: '', title: '<div class="w150">Actualizado</div>',
+                "render": function (data, type, row, meta) {
+                    datacol = `<div class="ls1 w150">${formatDateTime(row.lastUpdate)}</div>`
                     return datacol;
                 },
             },
             /** Columna appVersion */
             {
-                className: 'align-middle', targets: '', title: '<div class="">Versión App</div>',
+                className: '', targets: '', title: 'Versión App',
                 "render": function (data, type, row, meta) {
                     let text = row.appVersion;
                     let myArray = text.split(" - ");
-                    let appVersion  = myArray[0] ?? '';
+                    let appVersion = myArray[0] ?? '';
                     let appVersion2 = myArray[1] ?? '';
                     let datacol = `<div data-titler="${row.lastUpdate}">-</div>`
                     if (myArray[0]) {
-                        datacol = `<div class="" data-titler="${row.lastUpdate}">${appVersion} ${appVersion2}</div>`
+                        datacol = `<div class="ls1" data-titler="${row.lastUpdate}">${appVersion} ${appVersion2}</div>`
                     }
                     return datacol;
                 },
             },
             /** Columna Acciones */
             {
-                className: 'align-middle w-100', targets: '', title: '',
+                className: 'w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
                     let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
                     if (row.totalChecks > 1) {
@@ -148,7 +156,7 @@ if ($(window).width() < 540) {
         bProcessing: false,
         serverSide: true,
         deferRender: true,
-        searchDelay: 1000,
+        searchDelay: 250,
         paging: true,
         searching: true,
         info: true,
@@ -156,8 +164,7 @@ if ($(window).width() < 540) {
         // scrollY: '52vh',
         scrollY: '281px',
         scrollCollapse: true,
-        scrollX: true,
-        fixedHeader: false,
+        // scrollX: true,
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },

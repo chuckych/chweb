@@ -60,9 +60,9 @@ const filterData = (table = false, typeDownload = '') => {
     f.append('length', 10000);
     f.append('search[value]', $('#table-mobile_filter input').val());
     f.append('draw', '');
-    f.append('users[]', $('.FilterUser').val());
-    f.append('zones[]', $('.FilterZones').val());
-    f.append('device[]', $('.FilterDevice').val());
+    f.append('users[]', ($('.FilterUser').val() == null) ? '' : $('.FilterUser').val() ?? '');
+    f.append('zones[]', ($('.FilterZones').val() == null) ? '' : $('.FilterZones').val() ?? '');
+    f.append('device[]', ($('.FilterDevice').val() == null) ? '' : $('.FilterDevice').val() ?? '');
     f.append('identified', $('input[name=FilterIdentified]:checked').val());
     if (table) {
         let data = [];
@@ -703,6 +703,32 @@ const dateRange = () => {
         actualizarRegistros('#table-mobile')
     });
 }
+const formatDateTime = (date) => { 
+    var d = new Date(date);
+    var day = d.getDate();
+    var month = d.getMonth() + 1;
+    var year = d.getFullYear();
+    var hours = d.getHours();
+    var minutes = d.getMinutes();
+    
+    if (day < 10) {
+      day = '0' + day;
+    }
+  
+    if (month < 10) {
+      month = '0' + month;
+    }
+  
+    if (hours < 10) {
+      hours = '0' + hours;
+    }
+  
+    if (minutes < 10) {
+      minutes = '0' + minutes;
+    }
+  
+    return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes;
+  }
 
     // {/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
     // let copyRegig = new ClipboardJS('.copyRegig');

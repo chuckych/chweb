@@ -92,7 +92,7 @@ $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 
-// echo Flight::json($api).exit;
+// echo Flight::json($parametros).exit;
 
 $totalRecords = $api['TOTAL'];
 $tm = (microtime(true));
@@ -155,7 +155,6 @@ if ($api['COUNT'] > 0) {
                 );
             }
         }
-
         if ($params['type'] == 'selectDevice') {
             if ($r['deviceName']) {
                 $arraySelect[] = array(
@@ -203,6 +202,7 @@ if ($api['COUNT'] > 0) {
             'imageData' => $r['imageData'],
             'basePhoto' => $r['basePhoto']
         );
+            // print_r($arrayData).exit;
         if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(
                 'userID' => (padLeft($r['userID'], 11, ' ')),
@@ -215,6 +215,7 @@ if ($api['COUNT'] > 0) {
                 'regDateTime' => ($r['regDateTime']),
                 'eventZone' => ($r['eventZone']),
             );
+            // print_r($txtData).exit;
             if ($txtData['userName']) {
                 $line = "$txtData[userID],$txtData[regDateTime],$txtData[eventZone],$txtData[userName]";
                 fileLog($line, $routeFile, 'export');
