@@ -129,11 +129,12 @@ if ($api['COUNT'] > 0) {
                     'id' => $r['userID'],
                     'text' => $name,
                     'html' => '
-                    <div class="d-flex align-items-center">
-                    <div class="d-flex flex-column">
-                    <span>' . $name . '</span>
-                    <span class="fontp">ID: ' . $r['userID'] . '</span>
-                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex flex-column">
+                            <span>' . $name . '</span>
+                            <span class="fontp">ID: ' . $r['userID'] . '</span>
+                        </div>
+                        <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
                     </div>
                     ',
                 );
@@ -146,10 +147,9 @@ if ($api['COUNT'] > 0) {
                     'id' => $r['zoneID'],
                     'text' => $zoneName,
                     'html' => '
-                    <div class="d-flex align-items-center">
-                    <div class="d-flex flex-column">
-                    <span>' . $zoneName . '</span>
-                    </div>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span>' . $zoneName . '</span>
+                        <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
                     </div>
                     ',
                 );
@@ -159,7 +159,13 @@ if ($api['COUNT'] > 0) {
             if ($r['deviceName']) {
                 $arraySelect[] = array(
                     'id' => $r['deviceID'],
-                    'text' => $r['deviceName']
+                    'text' => $r['deviceName'],
+                    'html' => '
+                    <div class="d-flex align-items-center justify-content-between">
+                        <span>' . $r['deviceName'] . '</span>
+                        <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
+                    </div>
+                    ',
                 );
             }
         }

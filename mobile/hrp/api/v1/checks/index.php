@@ -233,11 +233,30 @@ if ( $groupBy && $groupBy !='user' && $groupBy !='zone' && $groupBy !='device' )
 
 $MESSAGE = 'OK';
 $arrayData = array();
-$joinUser = (($validUser == 1)) ? "INNER JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
+$joinUser = (($validUser == 1)) ? "LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company" : 'LEFT JOIN reg_user_ ru ON r.id_user=ru.id_user AND r.id_company = ru.id_company';
 //$joinFaces = ($FechaIni >= '2022-09-01') ? "LEFT JOIN reg_faces rf ON r.id_user = rf.id_user AND r.id_company = rf.id_company AND r.createdDate = rf.createdDate" : '';
 //$basePhoto = ($FechaIni >= '2022-09-01') ? " rf.photo as 'basePhoto'," : '';
+
+if ($groupBy) {
+    
+    switch ($groupBy) {
+        case 'user':
+            $groupBy = 'r.id_user';
+            break;
+        case 'zone':
+            $groupBy = 'r.idZone';
+            break;
+        case 'device':
+            $groupBy = 'r.deviceID';
+            break;
+    }
+}
+
+$countGroup = ($groupBy) ? "COUNT(r.id_user) AS 'countGroup'," : '';
+
 $sql_query = "SELECT 
     r.createdDate AS 'createdDate', 
+    $countGroup
     r.id_user AS 'id_user', 
     r.phoneid AS 'phoneid', 
     r.deviceID AS 'deviceID', 
@@ -280,19 +299,7 @@ $sql_query = "SELECT
 $identificado = ($identified == 1) ? true : ''; 
 $Noidentificado = ($identified == 2) ? true : ''; 
 
-if ($groupBy) {
-    switch ($groupBy) {
-        case 'user':
-            $groupBy = 'id_user';
-            break;
-        case 'zone':
-            $groupBy = 'idZone';
-            break;
-        case 'device':
-            $groupBy = 'deviceID';
-            break;
-    }
-}
+
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_user > 0";
@@ -415,7 +422,8 @@ if (($queryRecords)) {
                 'size'      => $filesize ??'',
                 'humanSize' => $FileSizeConvert ??''
             ),
-            'basePhoto' => $r['basePhoto'] ?? ''
+            'basePhoto' => $r['basePhoto'] ?? '',
+            'countGroup' => ($groupBy) ? $r['countGroup'] : ''
         );
     }
 }
