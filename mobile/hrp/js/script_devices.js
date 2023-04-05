@@ -138,14 +138,23 @@ if ($(window).width() < 540) {
             {
                 className: 'w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
+                    let setDevice = ''
+                    let setDeviceTitle = ''
                     let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
                     if (row.totalChecks > 1) {
                         del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
                     }
+                    if(row.regid){
+                        setDevice = "btn-outline-primary setDevice"
+                        setDeviceTitle = 'data-titlel="Configurar dispositivo"'
+                    }else{
+                        setDevice = "btn-outline-secondary disabled"
+                        setDeviceTitle = 'data-titlel="Falta Regid"'
+                    }
                     let datacol = `
                     <div class="d-flex justify-content-end w-100">
                         <div class="mr-1 btn btn-outline-custom btn-sm border updDevice"><span data-titlel="Editar Dispositivo" class="bi bi-pen"></span></div>
-                        <div class="mr-1 btn btn-outline-primary btn-sm border setDevice"><span data-titlel="Configurar dispositivo" class="bi bi-gear"></span></div>
+                        <div class="mr-1 btn btn-sm border ${setDevice}"><span ${setDeviceTitle} class="bi bi-gear"></span></div>
                         ${del}
                     </div>
                     `
