@@ -140,7 +140,7 @@
             </div>
             <div class="bg-white invisible mt-2" id="RowTableDevices">
                 <div class="row">
-                    <div class="col-12 col-sm-10">
+                    <div class="col-12">
                         <table class="table text-nowrap w-100 border shadow p-2" id="tableDevices">
                             <thead class="fontq"></thead>
                         </table>

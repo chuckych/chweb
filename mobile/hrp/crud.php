@@ -7,6 +7,8 @@ secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
 
+$_POST['tipo'] = $_POST['tipo'] ?? '';
+
 $id_company = $_SESSION["ID_CLIENTE"];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['tipo'] == 'transferir') {
@@ -490,6 +492,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $arrayData = $api['RESPONSE_DATA'];
             $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
             auditoria("Seteo Mobile Enviado. Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'];
+        }
+        $json_data = array(
+            "Mensaje" => $arrayData,
+            'status'  => $status,
+        );
+        echo json_encode($json_data);
+        exit;
+    } else if ($_POST['tipo'] == 'send_DeviceSet') { // auditado    
+
+        $params = (Flight::request()->data);
+
+        $params['deviceName']         = $params['deviceName'] ?? '';
+        $params['deviceIDCompany']    = $params['deviceIDCompany'] ?? '';
+        $params['deviceRememberUser'] = $params['deviceRememberUser'] ?? '';
+        $params['deviceTMEF']         = $params['deviceTMEF'] ?? '';
+        $params['deviceUser']         = $params['deviceUser'] ?? '';
+        $params['devicePhoneID']      = $params['devicePhoneID'] ?? '';
+        $params['deviceRegid']        = $params['deviceRegid'] ?? '';
+        $params['deviceInitialize']   = $params['deviceInitialize'] ?? '';
+        $params['deviceAppVersion']   = $params['deviceAppVersion'] ?? '';
+
+        $deviceUser       = intval($params['deviceUser']);
+        $deviceTMEF       = intval($params['deviceTMEF']);
+        $rememberUser     = intval($params['deviceRememberUser']);
+        $deviceInitialize = intval($params['deviceInitialize']);
+
+        if (valida_campo($params['deviceRegid'])) {
+            PrintRespuestaJson('error', 'Falta Reg ID');
+            exit;
+        };
+
+        if (strlen($deviceUser) > 11) {
+            PrintRespuestaJson('error', 'El usuario no puede ser mayor a 11 caracteres');
+            exit;
+        };
+        if ($rememberUser > 1) {
+            PrintRespuestaJson('error', 'Recordar usuario inválido');
+            exit;
+        };
+
+        $paramsApi = array(
+            'key'            => $_SESSION["RECID_CLIENTE"],
+            'rememberUser' => $rememberUser,
+            'TMEF'           => $deviceTMEF,
+            'userID'         => $deviceUser,
+            'regid'          => $params['deviceRegid'],
+            'initialize'     => $deviceInitialize,
+        );
+
+        // echo Flight::json($paramsApi).exit;
+        
+        $api = "api/v1/setDevice/";
+        $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = sendRemoteData($url, $paramsApi, $timeout = 10);
+        $api = json_decode($api, true);
+    
+        $totalRecords = $api['TOTAL'];
+
+        if ($api['COUNT'] > 0) {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA'];
+            $i = ($deviceInitialize) ? 'Sí' : 'No';
+            $r = ($rememberUser) ? 'Sí' : 'No';
+            $textAud  = "Dispositivo ($params[deviceName]) configurado. TMEF: $deviceTMEF; userID: $deviceUser; phoneID: $params[devicePhoneID]; Inhabilitado: $i; RememberUser: $r; Versión App: $params[deviceAppVersion]";
+            auditoria($textAud, 'A', $params['deviceIDCompany'], '32');
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'];

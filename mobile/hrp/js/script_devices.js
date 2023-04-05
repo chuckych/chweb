@@ -144,7 +144,8 @@ if ($(window).width() < 540) {
                     }
                     let datacol = `
                     <div class="d-flex justify-content-end w-100">
-                        <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updDevice"></span>
+                        <div class="mr-1 btn btn-outline-custom btn-sm border updDevice"><span data-titlel="Editar Dispositivo" class="bi bi-pen"></span></div>
+                        <div class="mr-1 btn btn-outline-primary btn-sm border setDevice"><span data-titlel="Configurar dispositivo" class="bi bi-gear"></span></div>
                         ${del}
                     </div>
                     `
@@ -171,7 +172,6 @@ if ($(window).width() < 540) {
 
     });
 }
-
 
 tableDevices.on('init.dt', function (e, settings) {
     $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h40 opa8 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
@@ -268,6 +268,68 @@ $(document).on("click", ".addDevice", function (e) {
     });
 
 });
+const setDevice = (data) => {
+    axios({
+        method: 'post',
+        url: 'modalSetting.html?v=' + $.now(),
+    }).then(function (response) {
+        $('#modales').html(response.data)
+    }).then(function () {
+        $('#modalSetting .modal-title').html('Configurar Dispositivo <br><span class="fontq">' + data.deviceName + '</span>')
+        $('#modalSetting').modal('show');
+
+    }).then(function () {
+
+    }).catch(function (error) {
+        alert(error)
+    }).then(function () {
+
+        $("#deviceSetting").bind("submit", function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: 'post',
+                url: 'crud.php',
+                data: {
+                    tipo: 'send_DeviceSet',
+                    deviceID: data.deviceID,
+                    deviceName: data.deviceName,
+                    devicePhoneID: data.phoneID,
+                    deviceIDCompany: data.idCompany,
+                    deviceRegid: data.regid,
+                    deviceAppVersion: data.appVersion,
+                    deviceUser: $('#deviceSettingUsuario').val(),
+                    deviceTMEF: $('#deviceSettingTMEF').val(),
+                    deviceRememberUser: $('input[name=deviceSettingRememberUser]:checked').val(),
+                    deviceInitialize: $('input[name=deviceInitialize]').is(':checked') ? 1 : 0
+                },
+                beforeSend: function (data) {
+                    CheckSesion()
+                    $.notifyClose();
+                    notify('Aguarde..', 'info', 0, 'right')
+                    ActiveBTN(true, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+                },
+                success: function (data) {
+                    if (data.status == "ok") {
+                        $.notifyClose();
+                        let deviceName = data.Mensaje.deviceName
+                        notify('Dispositivo configurado correctamente.', 'success', 5000, 'right')
+                        ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+                        $('#modalSetting').modal('hide');
+                    } else {
+                        $.notifyClose();
+                        notify(data.Mensaje, 'danger', 5000, 'right')
+                        ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+                    }
+                },
+                error: function () { }
+            });
+            e.stopImmediatePropagation();
+        });
+        $('#modalSetting').on('hidden.bs.modal', function () {
+            $('#modales').html(' ');
+        });
+    });
+}
 const updDevice = (data) => {
     axios({
         method: 'post',
@@ -350,6 +412,10 @@ const updDevice = (data) => {
 $(document).on("click", ".updDevice", function (e) {
     let data = tableDevices.row($(this).parents('tr')).data();
     updDevice(data);
+});
+$(document).on("click", ".setDevice", function (e) {
+    let data = tableDevices.row($(this).parents('tr')).data();
+    setDevice(data);
 });
 $(document).on("click", ".updDeviceTable", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
