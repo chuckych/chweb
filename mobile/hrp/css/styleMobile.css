@@ -33,15 +33,19 @@ table.dataTable td {
 #tableUsuarios.dataTable td {
     height: 40px !important;
 }
+
 #tableDevices.dataTable td {
     height: 40px !important;
 }
+
 #tableZones.dataTable td {
     height: 40px !important;
 }
+
 #tableNearZones.dataTable td {
     height: 20px !important;
 }
+
 #tableZones.dataTable td {
     height: 40px;
     /* display: flex; */
@@ -49,33 +53,43 @@ table.dataTable td {
     /* justify-content: center; */
 
 }
+
 .leaflet-control-attribution a {
     display: none !important;
 }
+
 .leaflet-control-attribution span {
     display: none !important;
 }
+
 .leaflet-attribution-flag {
     display: none !important;
 }
-.leaflet-control-zoom  {
+
+.leaflet-control-zoom {
     opacity: 0.6;
 }
-.leaflet-control-fullscreen-button  {
+
+.leaflet-control-fullscreen-button {
     opacity: 0.6;
 }
-.w45{
+
+.w45 {
     width: 45px !important;
 }
-.h45{
+
+.h45 {
     height: 45px !important;
 }
-.w55{
+
+.w55 {
     width: 55px !important;
 }
-.h55{
+
+.h55 {
     height: 55px !important;
 }
+
 /* .leaflet-control span {
     display: none !important;
 } */
@@ -280,4 +294,8 @@ table.dataTable {
     padding-right: 16px !important;
     padding-left: 16px !important;
     border-radius: 0px !important;
+}
+
+.select2-container--open .select2-dropdown--below {
+    margin-top: 5px;
 }

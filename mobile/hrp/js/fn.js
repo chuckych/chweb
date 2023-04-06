@@ -6,8 +6,10 @@ const loadingTable = (selectortable) => {
     $(selectortable + ' td i').addClass('invisible')
     $(selectortable + ' td span').addClass('invisible')
 }
-const actualizarRegistros = (selector, reload = false) => {
-    loadingTable(selector)
+const actualizarRegistros = (selector, reload = false, loading = true) => {
+    if (loading) {
+        loadingTable(selector)
+    }
     try {
         (reload) ? $(selector).DataTable().ajax.reload(null, false) : $(selector).DataTable().ajax.reload()
     } catch (error) {
@@ -116,10 +118,10 @@ const minmaxDate = () => {
         $('#_drMob2').val(dr).trigger('change')
         $('#_drMob').val(dr).trigger('change')
     }).then(() => {
-        actualizarRegistros('#table-mobile', true)
-        actualizarRegistros('#tableUsuarios', true)
-        actualizarRegistros('#tableDevices', true)
-        actualizarRegistros('#tableZones', true)
+        actualizarRegistros('#table-mobile', true, false)
+        actualizarRegistros('#tableUsuarios', true, false)
+        actualizarRegistros('#tableDevices', true, false)
+        actualizarRegistros('#tableZones', true, false)
         dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
