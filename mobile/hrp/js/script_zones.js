@@ -142,7 +142,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '286px',
+        scrollY: '350px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,

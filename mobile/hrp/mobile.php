@@ -117,12 +117,12 @@
                             </select>
                         </form>
                     </div>
-                    <div class="col-12">
+                    <!-- <div class="col-12">
                         <div class="fontq mt-2 p-2">
                             <div>ID: <span id="dataIdCompany" class="ml-1"></span></div>
                             <div>AppCode: <span id="dataRecidCompany" class="ml-1"></span></div>
                         </div>
-                    </div>
+                    </div> -->
                     <?php
                 endif;
                 ?>
@@ -219,24 +219,19 @@
                     url: $(this).attr("action"),
                     data: $(this).serialize(),
                     beforeSend: function (data) {
-                        loadingTable('#table-mobile');
-                        loadingTableUser('#tableUsuarios');
-                        loadingTableDevices('#tableDevices');
+                        loadingTable('#table-mobile')
                     },
                     success: function (data) {
                         if (data.status == "ok") {
                             sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
-                            $('#dataIdCompany').html(data.idCompany)
-                            $('#dataRecidCompany').html(data.recidCompany)
+                            // $('#dataIdCompany').html(data.idCompany)
+                            // $('#dataRecidCompany').html(data.recidCompany)
                             minmaxDate()
-                            // $('#table-mobile').DataTable().columns.adjust().draw()
                         }
                     },
                     error: function () { }
                 });
             });
-            $('#dataIdCompany').html('<?= $_SESSION['ID_CLIENTE'] ?>')
-            $('#dataRecidCompany').html('<?= $_SESSION['RECID_CLIENTE'] ?>')
             Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken")
         </script>
         <?php

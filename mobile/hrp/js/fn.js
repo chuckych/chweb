@@ -20,7 +20,6 @@ const ClearFilterMobile = () => {
         $('.FilterDevice').val(null).trigger('change'),
         $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
     $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
-    $('#table-mobile').DataTable().search($(this).text()).draw();
 }
 function refreshSelected(selector) {
     $(selector).on('select2:select', function (e) {

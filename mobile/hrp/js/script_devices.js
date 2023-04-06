@@ -183,7 +183,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '281px',
+        scrollY: '350px',
         scrollCollapse: true,
         // scrollX: true,
         language: {

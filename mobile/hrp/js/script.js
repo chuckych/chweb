@@ -527,6 +527,7 @@ $(function () {
             e.preventDefault();
             e.stopImmediatePropagation();
             ClearFilterMobile()
+            $('#table-mobile').DataTable().search($(this).text()).draw();
             // actualizarRegistros('#table-mobile', true)
         });
         $('#collapseFilterChecks').on('shown.bs.collapse', function () {
