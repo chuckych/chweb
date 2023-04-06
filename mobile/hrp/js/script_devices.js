@@ -101,16 +101,9 @@ if ($(window).width() < 540) {
             {
                 className: '', targets: '', title: `<div class="w180">Dispositivo</div>`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div class="w180">${row.deviceName}</div>`
-                    return datacol;
-                },
-            },
-            /** Columna Evento */
-            {
-                className: 'text-center', targets: '', title: `<div class="w60">Evento</div>`,
-                "render": function (data, type, row, meta) {
-                    let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
-                    let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
+                    let datacol = `<div class="d-flex flex-column">
+                        <div class="text-truncate w180">${row.deviceName}</div><span class="text-secondary fontp">Evento: ${row.deviceEvent}</span>
+                    </div>`
                     return datacol;
                 },
             },
@@ -183,7 +176,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '350px',
+        scrollY: '360px',
         scrollCollapse: true,
         // scrollX: true,
         language: {

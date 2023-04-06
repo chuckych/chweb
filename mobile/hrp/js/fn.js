@@ -15,11 +15,11 @@ const actualizarRegistros = (selector, reload = false) => {
     }
 }
 const ClearFilterMobile = () => {
-    $('.FilterUser').val(null).trigger('change'),
+        $('.FilterUser').val(null).trigger('change'),
         $('.FilterZones').val(null).trigger('change'),
         $('.FilterDevice').val(null).trigger('change'),
         $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
-    $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
+        $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
 }
 function refreshSelected(selector) {
     $(selector).on('select2:select', function (e) {
@@ -45,6 +45,12 @@ function refreshUnselected(selector) {
     });
     // actualizarTablas();
     return
+}
+function select2Val(id, text, selector) {
+    var newOption = new Option(text, id, false, false);
+    if (text != '') {
+        $(selector).append(newOption).trigger('change');
+    }
 }
 /**
  * @param {table} boolean 1: table, 0: nada
@@ -703,32 +709,32 @@ const dateRange = () => {
         actualizarRegistros('#table-mobile')
     });
 }
-const formatDateTime = (date) => { 
+const formatDateTime = (date) => {
     var d = new Date(date);
     var day = d.getDate();
     var month = d.getMonth() + 1;
     var year = d.getFullYear();
     var hours = d.getHours();
     var minutes = d.getMinutes();
-    
+
     if (day < 10) {
-      day = '0' + day;
+        day = '0' + day;
     }
-  
+
     if (month < 10) {
-      month = '0' + month;
+        month = '0' + month;
     }
-  
+
     if (hours < 10) {
-      hours = '0' + hours;
+        hours = '0' + hours;
     }
-  
+
     if (minutes < 10) {
-      minutes = '0' + minutes;
+        minutes = '0' + minutes;
     }
-  
+
     return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes;
-  }
+}
 
     // {/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
     // let copyRegig = new ClipboardJS('.copyRegig');

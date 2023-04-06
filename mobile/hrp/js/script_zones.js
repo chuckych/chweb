@@ -76,28 +76,22 @@ if ($(window).width() < 540) {
         columns: [
             /** Columna Nombre */
             {
-                className: 'align-middle', targets: '', title: `<div class="w250">Zona</div>`,
+                className: '', targets: '', title: `<div class="w250 ">Zona</div>`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div>`
+                    let datacol = `<div class="d-flex flex-column">
+                        <div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div><span class="text-secondary fontp">Evento: ${row.zoneEvent}</span>
+                    </div>`
                     return datacol;
                 },
             },
             /** Columna Radio */
             {
-                className: 'align-middle', targets: '', title: `<div class="w40">Radio</div>`,
+                className: 'text-center', targets: '', title: `<div class="w40">Radio</div>`,
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div class="w40">${row.zoneRadio}</div>`
+                    let datacol = `<div class="w40 ls1">${row.zoneRadio}</div>`
                     return datacol;
                 },
             },
-            // /** Columna Latitud */
-            // {
-            //     className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
-            //     "render": function (data, type, row, meta) {
-            //         let datacol = `<div data-titlet="" class="text-truncate w90">${row.zoneLat}<br>${row.zoneLng}</div>`
-            //         return datacol;
-            //     },
-            // },
             // /** Columna Longitud */
             // {
             //     className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
@@ -108,15 +102,23 @@ if ($(window).width() < 540) {
             // },
             /** Columna cant TotalZones */
             {
-                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                className: 'text-center', targets: '', title: '<div class="w70">Registros</div>',
                 "render": function (data, type, row, meta) {
-                    let datacol = `<div class="ls1 w50">${row.totalZones}</div>`
+                    let datacol = `<div class="ls1 w70">${row.totalZones}</div>`
+                    return datacol;
+                },
+            },
+              /** Columna Lat / Lng */
+              {
+                className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div data-titlet="" class="ls1 w90 fontp text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
                     return datacol;
                 },
             },
             /** Columna Acciones */
             {
-                className: 'align-middle w-100', targets: '', title: '',
+                className: 'w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
                     let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom border-0 bi bi-trash delZone"></button></span>`
                     if (row.totalZones > 1) {
@@ -142,7 +144,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '350px',
+        scrollY: '370px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,

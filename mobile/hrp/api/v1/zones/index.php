@@ -153,7 +153,7 @@ $filtro_query .= ($idCompany) ? " AND `rz`.`id_company` = '$idCompany'" : '';
 $filtro_query .= (!empty($zoneID)) ? " AND `rz`.`id` = '$zoneID'" : '';
 $filtro_query .= (!empty($zoneName)) ? " AND `rz`.`nombre` LIKE '%$zoneName%'" : '';
 $sql_query .= $filtro_query;
-$sql_query .= " ORDER BY `rz`.`nombre` ASC";
+$sql_query .= " ORDER BY totalZones DESC, `rz`.`nombre` ASC";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;

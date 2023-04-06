@@ -15,10 +15,6 @@ $(function () {
     });
 
     if ($("#actMobile").val() == '1') {
-        // actualizar(false);
-        // actualizar2(false);
-        // actualizar3(false);
-        // actualizar4(false);
         actualizar_aws(false);
         setInterval(() => {
             // actualizar(false);
@@ -186,7 +182,7 @@ $(function () {
             },
         });
     } else {
-       $('#table-mobile').DataTable({
+        $('#table-mobile').DataTable({
             // iDisplayLength: 5,
             dom: "<'row lengthFilterTable'" +
                 "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'><'Filter'>f>>" +
@@ -527,7 +523,7 @@ $(function () {
             e.preventDefault();
             e.stopImmediatePropagation();
             ClearFilterMobile()
-            $('#table-mobile').DataTable().search($(this).text()).draw();
+            $('#table-mobile').DataTable().search('').draw();
             // actualizarRegistros('#table-mobile', true)
         });
         $('#collapseFilterChecks').on('shown.bs.collapse', function () {
@@ -594,17 +590,17 @@ $(function () {
                     },
                 }
             })
-                // .on("select2:unselecting", function (e) {
-                //     $(this).data('state', 'unselected');
-                // }).on("select2:open", function (e) {
-                //     if ($(this).data('state') === 'unselected') {
-                //         $(this).removeData('state');
-                //         let self = $(this);
-                //         // setTimeout(function () {
-                //             self.select2('close');
-                //         // }, 1);
-                //     }
-                // });
+            // .on("select2:unselecting", function (e) {
+            //     $(this).data('state', 'unselected');
+            // }).on("select2:open", function (e) {
+            //     if ($(this).data('state') === 'unselected') {
+            //         $(this).removeData('state');
+            //         let self = $(this);
+            //         // setTimeout(function () {
+            //             self.select2('close');
+            //         // }, 1);
+            //     }
+            // });
 
             $('.FilterZones').select2({
                 multiple: true,
@@ -827,6 +823,20 @@ $(function () {
         $('#table-mobile').DataTable().search($(this).text()).draw();
         classEfect('#table-mobile_filter input', 'border-custom')
     });
+    // $(document).on('click', '.searchZone', function (e) {
+    //     e.preventDefault();
+    //     let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
+    //     let zoneID = data.zoneID
+    //     let zoneName = data.zoneName
+    //     $('.FilterZones').val(null).trigger('change')
+    //     select2Val(zoneID, zoneName, ".FilterZones")
+    //     $("#collapseFilterChecks").collapse('show')
+
+    //     setTimeout(() => {
+    //         actualizarRegistros('#table-mobile')
+    //     }, 500);
+        
+    // });
     $(document).on('change', '#SoloFic', function (e) {
         e.preventDefault()
         loadingTable('#table-mobile')

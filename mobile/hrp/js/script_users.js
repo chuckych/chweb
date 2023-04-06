@@ -110,7 +110,7 @@ if ($(window).width() < 540) {
             },
             /** Columna Nombre */
             {
-                className: 'align-middle h50', targets: '', title: `<div class="w200">Nombre</div>`,
+                className: 'align-middle', targets: '', title: `<div class="w200">Nombre</div>`,
                 "render": function (data, type, row, meta) {
                     let bloqueado = '';
                     if (row.bloqueado == true) {
@@ -179,7 +179,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '350px',
+        scrollY: '360px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,

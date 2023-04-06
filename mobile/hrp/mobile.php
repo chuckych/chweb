@@ -58,7 +58,7 @@
         <div class="wrapper">
             <div class="row bg-white invisible mt-2" id="RowTableMobile">
                 <div class="col-12">
-                    <div class="collapse border p-3 mb-3 shadow-sm" id="collapseFilterChecks">
+                    <div class="collapse border p-3 mb-3 shadow-sm animate__animated animate__fadeIn" id="collapseFilterChecks">
                         <div class="form-row">
                             <div class="col-12 col-sm-4 d-flex flex-column">
                                 <label for="FilterUser">Usuarios</label>

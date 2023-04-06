@@ -42,10 +42,12 @@ table.dataTable td {
 #tableNearZones.dataTable td {
     height: 20px !important;
 }
-#tableZones.dataTable td div {
+#tableZones.dataTable td {
     height: 40px;
-    display: flex;
-    align-items: center;
+    /* display: flex; */
+    /* align-items: center; */
+    /* justify-content: center; */
+
 }
 .leaflet-control-attribution a {
     display: none !important;
