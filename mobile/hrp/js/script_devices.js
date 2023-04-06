@@ -35,19 +35,30 @@ if ($(window).width() < 540) {
                     let myArray = text.split(" - ");
                     let appVersion = myArray[0] ?? '';
                     let appVersion2 = myArray[1] ?? '';
+                    let setDevice = ''
+                    let setDeviceTitle = ''
+
+                    if(row.regid){
+                        setDevice = "btn-outline-secondary setDevice"
+                        setDeviceTitle = 'data-titlel="Configurar dispositivo"'
+                    }else{
+                        setDevice = "btn-outline-secondary disabled"
+                        setDeviceTitle = 'data-titlel="Falta Regid"'
+                    }
 
                     let datacol = `
                     <div class="d-flex justify-content-between">
                         <div class="text-uppercase font-weight-bold text-secondary">${row.deviceName}</div>
-                        <div class="text-secondary"><small>${appVersion} ${appVersion2}</small></div>
+                        <div class="text-secondary"><small>${row.totalChecks}</small></div>
                     </div>
-                    <div class="text-secondary">${deviceEvent}</div>
+                    <div class="text-secondary"><small>${appVersion}</small></div>
                     <div class="d-flex justify-content-end w-100">
-                        <span data-titlel="Editar Dispositivo" class="mr-1 btn btn-outline-custom border bi bi-pen updDevice"></span>
+                        <div class="mr-1 btn btn-outline-custom border updDevice"><span data-titlel="Editar Dispositivo" class="bi bi-pen"></span></div>
+                        <div class="btn border ${setDevice}"><span ${setDeviceTitle} class="bi bi-gear-fill"></span></div>
                         ${del}
                     </div>
                     `
-                    return datacol;
+                    return datacol;                    
                 },
             },
         ],
@@ -96,7 +107,7 @@ if ($(window).width() < 540) {
             },
             /** Columna Evento */
             {
-                className: '', targets: '', title: `<div class="w60">Evento</div>`,
+                className: 'text-center', targets: '', title: `<div class="w60">Evento</div>`,
                 "render": function (data, type, row, meta) {
                     let deviceEvent = (row.deviceEvent == '0') ? '-' : row.deviceEvent
                     let datacol = `<div class="ls1 w60">${deviceEvent}</div>`
@@ -105,7 +116,7 @@ if ($(window).width() < 540) {
             },
             /** Columna cant TotalChecks */
             {
-                className: '', targets: '', title: '<div class="w60">Fichadas</div>',
+                className: 'text-center', targets: '', title: '<div class="w60">Registros</div>',
                 "render": function (data, type, row, meta) {
                     let datacol = `<div class="ls1 w60">${row.totalChecks}</div>`
                     return datacol;
@@ -121,7 +132,7 @@ if ($(window).width() < 540) {
             },
             /** Columna appVersion */
             {
-                className: '', targets: '', title: 'Versión App',
+                className: 'text-center', targets: '', title: '<div class="w100">Versión App</div>',
                 "render": function (data, type, row, meta) {
                     let text = row.appVersion;
                     let myArray = text.split(" - ");
@@ -129,7 +140,7 @@ if ($(window).width() < 540) {
                     let appVersion2 = myArray[1] ?? '';
                     let datacol = `<div data-titler="${row.lastUpdate}">-</div>`
                     if (myArray[0]) {
-                        datacol = `<div class="ls1" data-titler="${row.lastUpdate}">${appVersion} ${appVersion2}</div>`
+                        datacol = `<div class="ls1 w100" data-titler="${row.lastUpdate}">${appVersion}</div>`
                     }
                     return datacol;
                 },
@@ -140,21 +151,21 @@ if ($(window).width() < 540) {
                 "render": function (data, type, row, meta) {
                     let setDevice = ''
                     let setDeviceTitle = ''
-                    let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash delDevice"></span>`
+                    let del = `<span data-titlel="Eliminar" class="ml-1 btn btn-outline-custom border-0 bi bi-trash delDevice"></span>`
                     if (row.totalChecks > 1) {
-                        del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`
+                        del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom border-0 bi bi-trash disabled"></span>`
                     }
                     if(row.regid){
-                        setDevice = "btn-outline-primary setDevice"
+                        setDevice = "btn-outline-secondary setDevice"
                         setDeviceTitle = 'data-titlel="Configurar dispositivo"'
                     }else{
                         setDevice = "btn-outline-secondary disabled"
                         setDeviceTitle = 'data-titlel="Falta Regid"'
                     }
                     let datacol = `
-                    <div class="d-flex justify-content-end w-100">
-                        <div class="mr-1 btn btn-outline-custom btn-sm border updDevice"><span data-titlel="Editar Dispositivo" class="bi bi-pen"></span></div>
-                        <div class="mr-1 btn btn-sm border ${setDevice}"><span ${setDeviceTitle} class="bi bi-gear"></span></div>
+                    <div class="float-right border p-1 bg-white">
+                        <div class="mr-1 btn btn-outline-custom border-0 updDevice"><span data-titlel="Editar Dispositivo" class="bi bi-pen"></span></div>
+                        <div class="mr-1 btn border-0 ${setDevice}"><span ${setDeviceTitle} class="bi bi-gear-fill"></span></div>
                         ${del}
                     </div>
                     `
@@ -346,7 +357,7 @@ const updDevice = (data) => {
     }).then(function (response) {
         $('#modales').html(response.data)
     }).then(function () {
-        $('#modalDevice .modal-title').html('Editar Dispositivo ' + data.deviceName)
+        $('#modalDevice .modal-title').html('Editar Dispositivo <br><span class="fontq">' + data.deviceName+'</span>')
         $('#formDevicePhoneID').val(data.phoneID)
         $('#modalDevice').modal('show');
         $('#formDevice .requerido').html('(*)')
@@ -354,10 +365,11 @@ const updDevice = (data) => {
         $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
         $('#formDevice #formDeviceTipo').val('upd_device')
         $('#formDevice #formDevicePhoneID').val(data.phoneID)
-        $('#formDevice #formDeviceNombre').val(data.deviceName)
+        $('#formDevice #formDeviceNombre').val(data.deviceName).select()
         $('#formDevice #formDeviceEvento').val(data.deviceEvent ?? '0')
         setTimeout(() => {
             focusEndText('#formDevice #formDeviceNombre')
+            // $('#formDevice #formDeviceNombre').val(data.deviceName).select()
         }, 500);
 
     }).then(function () {

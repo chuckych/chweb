@@ -50,8 +50,6 @@ if ($(window).width() < 540) {
                             <div class="d-flex justify-content-end mt-2">
                             <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border bi bi-pen updateUser"></span>
                             ${train}
-                            ${mensaje}
-                            ${activar}
                             ${del}
                             </div>
                             `
@@ -112,25 +110,25 @@ if ($(window).width() < 540) {
             },
             /** Columna Nombre */
             {
-                className: 'align-middle', targets: '', title: `<div class="w250">Nombre</div>`,
+                className: 'align-middle h50', targets: '', title: `<div class="w200">Nombre</div>`,
                 "render": function (data, type, row, meta) {
                     let bloqueado = '';
                     if (row.bloqueado == true) {
                         bloqueado = 'text-danger font-weight-bold';
                     }
-                    let datacol = `<div class="text-truncate w250 ${bloqueado}">${row.userName}</div>`
+                    let datacol = `<div class="text-truncate w200 ${bloqueado}">${row.userName}</div>`
                     return datacol;
                 },
             },
             /** Columna cant Fichadas */
             {
-                className: 'align-middle', targets: '', title: '<div class="w50">Fichadas</div>',
+                className: 'align-middle text-center', targets: '', title: '<div class="w100">Registros</div>',
                 "render": function (data, type, row, meta) {
                     let bloqueado = '';
                     if (row.bloqueado == true) {
                         bloqueado = 'text-danger font-weight-bold';
                     }
-                    let datacol = `<div class="ls1 ${bloqueado}">${row.userChecks}</div>`
+                    let datacol = `<div class="w100 ls1 ${bloqueado}">${row.userChecks}</div>`
                     return datacol;
                 },
             },
@@ -142,29 +140,27 @@ if ($(window).width() < 540) {
                     let colorTrained = (row.trained == true) ? 'success' : 'primary'
                     let textTrained = (row.trained == true) ? 'Enrolado' : 'No enrolado'
 
-                    let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
-                    let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text disabled "></span></span>`;
-                    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash disabled"></span>`;
-                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-person-bounding-box disabled"></span>`;
+                    let activar = `<span data-titlel="Sin Reg ID" class=" btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                    let mensaje = `<span data-titlel="Sin Reg ID" class=" btn btn-outline-custom border-0 bi bi-chat-text disabled "></span></span>`;
+                    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-trash disabled"></span>`;
+                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-person-bounding-box disabled"></span>`;
 
                     if (row.userRegId.length > '100') {
-                        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-sm btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+                        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class=" btn btn-outline-custom border-0 sendSettings"><i class="bi bi-phone"></i></span>`
                     }
                     if (row.userRegId.length > '100') {
-                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-sm btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class=" btn btn-outline-custom border-0 bi bi-chat-text sendMensaje"></span>`
                     }
                     if (row.userChecks < 1) {
-                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom btn-sm border bi bi-trash deleteUser"></span>`;
+                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-trash deleteUser"></span>`;
                     }
                     if (row.userChecks > 0) {
-                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-${colorTrained} btn-sm border bi bi-person-bounding-box trainUser"></span>`;
+                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-${colorTrained} border-0 bi bi-person-bounding-box trainUser"></span>`;
                     }
                     let datacol = `
-                        <div class="d-flex justify-content-end">
-                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom btn-sm border bi bi-pen updateUser"></span>
+                        <div class="float-right border p-1">
+                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border-0 bi bi-pen updateUser"></span>
                             ${train}
-                            ${mensaje}
-                            ${activar}
                             ${del}
                         </div>
                         `
@@ -183,7 +179,7 @@ if ($(window).width() < 540) {
         info: true,
         ordering: false,
         // scrollY: '52vh',
-        scrollY: '281px',
+        scrollY: '350px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
@@ -294,6 +290,7 @@ $(document).on("click", "#addUser", function (e) {
         $('#labelActivo').addClass('active');
         $('#formUserEstadoAct').prop('checked', true);
         $('#formUserAreaAct').prop('checked', true);
+        $('#formUserAreaAct').parents('label').addClass('active');
         $('#formUserEstadoBloc').prop('checked', false);
         $('#formUserAreaBloc').prop('checked', false);
 

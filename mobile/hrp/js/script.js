@@ -45,7 +45,7 @@ $(function () {
     if ($(window).width() < 540) {
         $('#table-mobile').DataTable({
             dom: "<'row lengthFilterTable'" +
-                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'><'Filter'>f>>" +
                 "<'row '<'col-12 table-responsive't>>" +
                 "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
             ajax: {
@@ -151,16 +151,16 @@ $(function () {
                         if (row.regLat == 0) {
                             btnAdd = `<span class="text-danger p-0 m-0">Sin datos GPS</span>`;
                         }
-                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<span class="">${zoneName}</span><span class="text-secondary fontp ml-2">${Distance2}</span>`;
+                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="text-truncate" style="max-width:170px"><span class="">${zoneName}</span><span class="text-secondary fontp ml-2">${Distance2}</span></div>`;
 
 
                         let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                         let datacol = `
                         <div class="smtdcol">
-                            <div class="searchName pointer">${nameuser}</div>
+                            <div class="searchName pointer text-truncate" style="max-width:170px">${nameuser}</div>
                             <div class="searchID pointer text-secondary d-none">${row.userID}</div>
                             <span class="">${row.regDay} ${row.regDate} <span class="font-weight-bold ls1">${row.regTime}</span></span>
-                            <span title="${zoneName2}" class="">${device}</span>
+                            <span title="${zoneName2}">${device}</span>
                         </div>
                         `
                         return datacol;
@@ -189,7 +189,7 @@ $(function () {
        $('#table-mobile').DataTable({
             // iDisplayLength: 5,
             dom: "<'row lengthFilterTable'" +
-                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'>f>>" +
+                "<'col-12 col-sm-6 d-flex align-items-start dr'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'<'SoloFic mt-2'><'Filter'>f>>" +
                 "<'row '<'col-12 table-responsive't>>" +
                 "<'row d-none d-sm-block'<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>" +
                 "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
@@ -268,7 +268,7 @@ $(function () {
                         if (row.basePhoto) {
                             foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
                         }
-                        let datacol = `<div class="pic scale w50 h50 shadow-sm border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
+                        let datacol = `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                         return datacol;
                     },
                 },
@@ -376,7 +376,7 @@ $(function () {
                 },
                 /** Columna Tipo */
                 {
-                    className: '', targets: '', title: '<div class="w70">Tipo</div>',
+                    className: 'd-none', targets: '', title: '<div class="w70">Tipo</div>',
                     "render": function (data, type, row, meta) {
                         // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
                         let evento = '';
@@ -485,10 +485,7 @@ $(function () {
         <div class="mx-2" data-titlet="Filtrar Fechas">
             <input type="text" readonly class="pointer h40 form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
         </div>
-        <button class="btn btn-outline-custom border h40" data-titlet="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
-            <i class="bi bi-funnel"></i>
-        </button>
-        <div class="btn-group dropright ml-1" data-titlet="Exportar txt, xls">
+        <div class="btn-group dropright d-none d-sm-block" data-titlet="Exportar txt, xls">
             <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </button>
@@ -507,10 +504,13 @@ $(function () {
             <span class="text-dark d-none d-lg-block">Solo Fichadas</span>
             <span class="text-dark d-block d-lg-none" style="padding-top:1px">Fichadas</span>
         </label>
-    </div>`)
+        </div>`)
         $('#RowTableMobile').removeClass('invisible')
         // $('#table-mobile_filter input').addClass('w250')
         $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
+        $('.Filter').html(`<button class="btn btn-light border h40" data-titlet="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
+        <i class="bi bi-funnel-fill text-secondary"></i>
+        </button>`)
         $('#table-mobile_filter input').removeClass('form-control-sm')
         $('#table-mobile_filter input').attr("style", "height: 40px !important");
         select2Simple('#table-mobile_length select', '', false, false)
@@ -527,7 +527,7 @@ $(function () {
             e.preventDefault();
             e.stopImmediatePropagation();
             ClearFilterMobile()
-            actualizarRegistros('#table-mobile', true)
+            // actualizarRegistros('#table-mobile', true)
         });
         $('#collapseFilterChecks').on('shown.bs.collapse', function () {
 
@@ -978,7 +978,6 @@ $(function () {
         $('#mapzone').removeClass('animate__animated animate__fadeIn');
         clean()
     })
-
     $(document).on("click", ".processRegFace", function (e) {
         // ActiveBTN(true, ".processRegFace", loading, '')
         $(this).prop('disabled', true);
@@ -1068,8 +1067,8 @@ $(function () {
         $(this).addClass('btn-custom');
         $(this).prop('readonly', true)
         focusBtn(this);
-        document.title = "Fichadas Mobile"
-        $('#Encabezado').html("Fichadas Mobile")
+        document.title = "Mobile HRP"
+        $('#Encabezado').html("Mobile HRP")
         focusRowTables()
         $('#RowTableMobile').show();
         loadingTable('#table-mobile');

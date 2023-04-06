@@ -165,7 +165,7 @@ $filtro_query .= (!empty($deviceID)) ? " AND `rd`.`id` = '$deviceID'" : '';
 $filtro_query .= (!empty($deviceEvent)) ? " AND `rd`.`evento` = '$deviceEvent'" : '';
 $filtro_query .= (!empty($deviceName)) ? " AND `rd`.`nombre` LIKE '%$deviceName%'" : '';
 $sql_query .= $filtro_query;
-$sql_query .= " GROUP BY rd.id ORDER BY `rd`.`nombre` ASC";
+$sql_query .= " GROUP BY rd.id ORDER BY totalChecks DESC, `rd`.`nombre`";
 $sql_query .= " LIMIT $start, $length";
 
 // print_r($sql_query);exit;

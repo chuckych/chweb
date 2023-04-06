@@ -9,7 +9,7 @@
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
         rel='stylesheet' />
-    <title>Fichadas Mobile HR</title>
+    <title>Mobile HR</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -18,7 +18,7 @@
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
-            <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', 'Fichadas ' . MODULOS['mobile'], 'color: #fff; width:30px', 'mr-2'); ?>
+            <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', '' . MODULOS['mobile']. ' HRP', 'color: #fff; width:30px', 'mr-2'); ?>
         </div>
         <!-- Fin Encabezado -->
         <?php
@@ -58,32 +58,32 @@
         <div class="wrapper">
             <div class="row bg-white invisible mt-2" id="RowTableMobile">
                 <div class="col-12">
-                    <div class="collapse" id="collapseFilterChecks">
-                        <div class="form-row pb-2">
+                    <div class="collapse border p-3 mb-3 shadow-sm" id="collapseFilterChecks">
+                        <div class="form-row">
                             <div class="col-12 col-sm-4 d-flex flex-column">
                                 <label for="FilterUser">Usuarios</label>
                                 <select name="FilterUser" id="FilterUser"
                                     class="form-control w-100 FilterUser invisible h40"></select>
                             </div>
-                            <div class="col-12 col-sm-4  d-flex flex-column">
+                            <div class="col-12 col-sm-4  d-flex flex-column mt-2 mt-sm-0">
                                 <label for="FilterZones">Zonas</label>
                                 <select name="FilterZones" id="FilterZones"
                                     class="form-control w-100 FilterZones invisible h40"></select>
                             </div>
-                            <div class="col-12 col-sm-4 d-flex flex-column">
+                            <div class="col-12 col-sm-4 d-flex flex-column mt-2 mt-sm-0">
                             <label for="FilterDevice">Dispositivos</label>
                                 <select name="FilterDevice" id="FilterDevice"
                                     class="form-control w-100 FilterDevice invisible h40"></select>
                             </div>
-                            <div class="col-12 col-sm-6 mt-2">
+                            <div class="col-12 col-sm-6 mt-3">
                             </div>
-                            <div class="col-12 col-sm-6 mt-2 d-flex align-items-center justify-content-end">
-                                <div class="p-1">
-                                    <button class="btn border-0" data-titlet="Borrar Filtros" id="ClearFilter">
-                                        <i class="text-secondarybi bi-eraser"></i>
+                            <div class="col-12 col-sm-6 mt-3 d-flex align-items-center justify-content-end">
+                                <div class="btn-group btn-group-toggle border p-1 bg-white mr-1">
+                                    <button class="btn-light btn border-0" data-titlet="Borrar Filtros" id="ClearFilter">
+                                        <i class="text-secondary bi bi-eraser-fill"></i>
                                     </button>
                                 </div>
-                                <div class="btn-group btn-group-toggle border p-1" data-toggle="buttons">
+                                <div class="btn-group btn-group-toggle border p-1 bg-white" data-toggle="buttons">
                                     <label class="btn btn-outline-light border-0" data-titlet="Identificado">
                                         <input type="radio" name="FilterIdentified" id="FilterIdentified1" value="1"> <i
                                             class="text-success bi bi-person-bounding-box"></i>
@@ -129,7 +129,7 @@
             </div>
             <div class="bg-white invisible mt-2" id="RowTableUsers">
                 <div class="row">
-                    <div class="col-12 col-sm-10">
+                    <div class="col-12 col-sm-8">
                         <table class="table text-nowrap w-100 border shadow p-2" id="tableUsuarios">
                             <thead class="fontq"></thead>
                         </table>

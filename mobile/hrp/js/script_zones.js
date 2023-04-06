@@ -118,13 +118,13 @@ if ($(window).width() < 540) {
             {
                 className: 'align-middle w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash delZone"></button></span>`
+                    let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom border-0 bi bi-trash delZone"></button></span>`
                     if (row.totalZones > 1) {
-                        del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom btn-sm border bi bi-trash disabled"></button></span>`
+                        del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom border-0 bi bi-trash disabled"></button></span>`
                     }
                     let datacol = `
-                    <div class="d-flex justify-content-end">
-                        <span><button data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom btn-sm border bi bi-pen updZone"></button></span>
+                    <div class="float-right border p-1">
+                        <span><button data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom border-0 bi bi-pen updZone"></button></span>
                         ${del}
                     </div>
                     `

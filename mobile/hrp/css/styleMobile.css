@@ -31,19 +31,19 @@ table.dataTable td {
 }
 
 #tableUsuarios.dataTable td {
-    height: 30px !important;
+    height: 40px !important;
 }
 #tableDevices.dataTable td {
-    height: 30px !important;
+    height: 40px !important;
 }
 #tableZones.dataTable td {
-    height: 30px !important;
+    height: 40px !important;
 }
 #tableNearZones.dataTable td {
     height: 20px !important;
 }
 #tableZones.dataTable td div {
-    height: 32px;
+    height: 40px;
     display: flex;
     align-items: center;
 }
@@ -203,6 +203,13 @@ table.dataTable {
 
 @media all and (max-width:480px) {
     #btnMenu {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+
+    .tdOverflowX {
         display: block;
         overflow-x: auto;
         white-space: nowrap;
