@@ -23,10 +23,10 @@ $Rol     = ExisteRol2($_GET['_r'])
         <div class="row pl-1 py-3">
             <div class="col-12 col-sm-6">
                 <div class="form-inline">
-                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $Rol['0'] ?></span>
+                    <label class="w70 fontq">Rol </label><span class="fw4 fontq"><?= $Rol['0'] ?? '' ?></span>
                 </div>
                 <div class="form-inline">
-                    <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $Cliente ?></span>
+                    <label class="w70 fontq">Cuenta </label><span class="fw4 fontq"><?= $Cliente ?? '' ?></span>
                 </div>
             </div>
             <div class="col-12 col-sm-6">

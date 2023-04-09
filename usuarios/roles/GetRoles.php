@@ -69,7 +69,9 @@ $SUCURSALES = Total('SUCURSALES', 'SucCodi');
 $CONVENIO   = Total('CONVENIO', 'ConCodi');
 $GRUPOS     = Total('GRUPOS', 'GruCodi');
 $SECTORES   = Total('SECTORES', 'SecCodi');
-$rowcount_mod = CountRegMySql("SELECT modulos.id AS 'id' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");
+// $rowcount_mod = CountRegMySql("SELECT modulos.id AS 'id' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");
+$r = simple_pdoQuery("SELECT count(modulos.id) AS 'count' FROM modulos WHERE modulos.id>'0' AND modulos.estado ='0'");
+$rowcount_mod = $r['count'] ?? '';
 
 if ($totalRecords > 0) {
     while ($row = mysqli_fetch_assoc($queryRecords)) :

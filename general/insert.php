@@ -912,57 +912,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         /** Grabamos en Auditor */
         audito_ch('M', $Dato, '4');
         //setup request to send json via POST
-        $extraHours[] = array(
-            'name'       => $NombreLega,
-            'hour'       => $FicHsAu,
-            'auth_hours' => $Fic1HsAu2,
-            'employe_id' => $FicLega,
-            'type'       => $THoDesc,
-            'type_id'    => $Fic1Hora,
-            'date'       => FechaFormatVar($FechaHora, 'd M Y'),
-            'date_str'   => $FechaHora,
-        );
-
-        $data = array(
-            'apiKey' => "7BB3A26C25687BCD56A9BAF353A78",
-            'eventType' => 201,
-            'extraHours' => $extraHours,
-        );
-        $regid_legajo = regid_legajo('20891138');
-        $data = array(
-            'data' => array('data' => $data),
-            'to' => $regid_legajo
-        );
-        $payload = json_encode($data);
-
-        function sendMessaje($url, $payload, $timeout = 10)
-        {
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            $headers = [
-                'Content-Type: application/json',
-                'Authorization:key=AAAALZBjrKc:APA91bH2dmW3epeVB9UFRVNPCXoKc27HMvh6Y6m7e4oWEToMSBDEc4U7OUJhm2yCkcRKGDYPqrP3J2fktNkkTJj3mUGQBIT2mOLGEbwXfGSPAHg_haryv3grT91GkKUxqehYZx_0_kX8'
-            ];
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
-            $file_contents = curl_exec($ch);
-            curl_close($ch);
-            return ($file_contents) ? $file_contents : false;
-            // exit;
-        }
 
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
-
-            $url = 'https://fcm.googleapis.com/fcm/send';
-
-            if ($_SESSION["ID_CLIENTE"] == '1' && $_SERVER['SERVER_NAME'] != 'localhost' && !empty($regid_legajo)) {
-                $sendMensaje = sendMessaje($url, $payload, 10);
-            } else {
-                $sendMensaje = '';
-            }
 
             $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje));
             // auditoria($Dato2 . $Procesado. ' Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, "d/m/Y"), 'P', '', '4');

@@ -1,20 +1,20 @@
-<input type="hidden" hidden id="_c" value="<?= $_SESSION["RECID_CLIENTE"] ?>">
-<input type="hidden" hidden id="_r" value="<?= $_SESSION["RECID_ROL"] ?>">
-<input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?>">
-<input type="hidden" hidden id="_homehost" value="<?= HOMEHOST ?>">
+<input type="hidden" hidden id="_c" value="<?= $_SESSION["RECID_CLIENTE"] ?? '' ?>">
+<input type="hidden" hidden id="_r" value="<?= $_SESSION["RECID_ROL"] ?? '' ?>">
+<input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?? '' ?>">
+<input type="hidden" hidden id="_homehost" value="<?= HOMEHOST ?? '' ?>">
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
-<input type="hidden" hidden id="_sesion" value="0">
+<input type="hidden" id="_sesion" value="0">
 <!-- <input type="" id="" value="<?= $_SESSION['ConvRol'] ?>"> -->
 <?php
 $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 // ExisteModRol(0)
-if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si es localhost
+if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
     echo '<div class="loader"></div>';
 }
 ?>
-<input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI']) ?>">
-<input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?>">
+<input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI'] ?? '') ?>">
+<input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?? '' ?>">
 <!-- navBar -->
 <div id="navBarPrimary" class="sticky-top d-print-none" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">

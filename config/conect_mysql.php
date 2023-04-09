@@ -1,6 +1,16 @@
 <?php
 E_ALL();
-require __DIR__ . '../dataconnmysql.php';
+// require __DIR__ . '../dataconnmysql.php';
+
+require __DIR__ . '../../vendor/autoload.php';
+$routeEnv = __DIR__.'../../../../config_chweb/';
+$dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
+$dotenv->safeLoad();
+$host = $_ENV['DB_CHWEB_HOST']?? '';
+$user = $_ENV['DB_CHWEB_USER'] ?? '';
+$pw   = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
+$db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+
 try {
 	if ($link = mysqli_connect($host, $user, $pw, $db)) {
 		mysqli_query($link, "SET @@GLOBAL.sql_mode='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION'");

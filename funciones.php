@@ -1,7 +1,13 @@
 <?php
+
+require __DIR__ . '/vendor/autoload.php';
+$routeEnv = __DIR__.'../../../config_chweb/';
+$dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
+$dotenv->safeLoad();
+
 function version()
 {
-    return 'v0.3.3'; // Version de la aplicación
+    return 'v0.3.4'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -25,8 +31,8 @@ function E_ALL()
         ini_set('display_errors', '0');
     }
 }
-function secure_auth_ch() // Funcion para validar si esta autenticado
-
+// Funcion para validar si esta autenticado
+function secure_auth_ch()
 {
     timeZone();
     timeZone_lang();
@@ -149,8 +155,8 @@ function secure_auth_ch2()
     E_ALL();
 }
 /** ultimaacc */
-function ultimoacc() // Funcion para obtener la fecha hora del ultimo acceso
-
+// Funcion para obtener la fecha hora del ultimo acceso
+function ultimoacc() 
 {
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
 }
@@ -170,7 +176,6 @@ function vjs()
 {
     if ($_SERVER['SERVER_NAME'] == 'localhost') {
         return time();
-        // return version();
     } else {
         return version();
     }
@@ -507,7 +512,6 @@ function hoy()
     $hoy = date('Y-m-d');
     return rtrim($hoy);
 }
-
 function FechaString($var)
 {
     $date = date_create($var);
@@ -696,7 +700,6 @@ function fechformat($fecha)
     $fecha = date_format($fecha, 'd/m/Y');
     return $fecha;
 }
-
 function Fech_Format_Var($fecha, $var)
 {
     $fecha = date_create($fecha);
@@ -747,39 +750,28 @@ function Fecha_String($var)
 }
 function inicio()
 {
-    require __DIR__ . '../config/conect_mysql.php';
     $sql = "SELECT usuarios.id FROM usuarios";
-    $rs = mysqli_query($link, $sql);
-    $numrows = mysqli_num_rows($rs);
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    return $numrows;
+    $rs = array_pdoQuery($sql);
+    $numrows = count($rs);
+    return ($numrows);
 }
 function principal($rol)
 {
-    require __DIR__ . '../config/conect_mysql.php';
-    $sql = "SELECT usuarios.id FROM usuarios 
-    JOIN roles ON usuarios.rol = roles.id
-    WHERE usuarios.principal = '1' AND roles.recid = '$rol'";
-    // print_r($sql);
-    $rs = mysqli_query($link, $sql);
-    $numrows = mysqli_num_rows($rs);
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    $numrows = ($numrows == '1') ? true : false;
-    return $numrows;
+    if ($rol) {
+        $sql="SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
+        $rs = simple_pdoQuery($sql);
+        return ($rs) ? true : false;
+    }
 }
 function token_exist($recid_cliente)
 {
-    require __DIR__ . '../config/conect_mysql.php';
+    if(!$recid_cliente) return false;
+
     $sql = "SELECT clientes.id FROM clientes
     WHERE clientes.tkmobile !='' AND clientes.recid = '$recid_cliente'";
-    $rs = mysqli_query($link, $sql);
-    $numrows = mysqli_num_rows($rs);
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    $numrows = ($numrows == '1') ? true : false;
-    return $numrows;
+    $rs = simple_pdoQuery($sql);
+    return ($rs) ? true : false;
+
 }
 function dnone($var)
 {
@@ -802,57 +794,34 @@ function ExisteCliente($recid)
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
     $query = "SELECT clientes.recid as recid, clientes.nombre as nombre FROM clientes WHERE clientes.id >'0' AND clientes.recid='$recid' LIMIT 1";
-    require 'config/conect_mysql.php';
-    $result = mysqli_query($link, $query);
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)):
-            $nombre = $row['nombre'];
-        endwhile;
-        mysqli_free_result($result);
-        mysqli_close($link);
+    $result = simple_pdoQuery($query);
+    if ($result) {
+        $nombre = $result['nombre'];
         return $nombre;
     } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
-
-    // CountRegMayorCeroMySql($query) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
-    /** redirect */
 }
 function ExisteRol3($recid, $id)
 {
     /** Verificamos el recid de rol para ver si existe. 
      * Sino existe redirigimos a Clientes*/
     $q = "SELECT roles.nombre, roles.id, roles.recid FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
-    require 'config/conect_mysql.php';
-    $rs = mysqli_query($link, $q);
-    if (mysqli_num_rows($rs) > 0) {
-        while ($row = mysqli_fetch_assoc($rs)):
-            $nombre = $row['nombre'];
-            $id = $row['id'];
-            $recid = $row['recid'];
-        endwhile;
-        return array('nombre' => $nombre, 'id' => $id, 'recid' => $recid);
+    $result = simple_pdoQuery($q);
+    if ($result) {
+        return array('nombre' => $result['nombre'], 'id' => $result['id'], 'recid' => $result['recid']);
     } else {
         header("Location: /" . HOMEHOST . "/usuarios/clientes/");
-        // return false;
     }
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    exit;
 }
 function ExisteRol4($recid, $id)
 {
     /** Verificamos si existe el rol */
     $q = "SELECT 1 FROM roles WHERE roles.recid='$recid' AND roles.id = '$id' LIMIT 1";
-    require 'config/conect_mysql.php';
-    $rs = mysqli_query($link, $q);
-    if (mysqli_num_rows($rs) > 0) {
-        mysqli_free_result($rs);
-        mysqli_close($link);
+    $result = simple_pdoQuery($q);
+    if ($result) {
         return true;
     } else {
-        mysqli_free_result($rs);
-        mysqli_close($link);
         return false;
     }
 }
@@ -860,15 +829,10 @@ function ExisteUser($cliente_recid, $uid)
 {
     /** Verificamos si existe el usuario */
     $q = "SELECT 1 FROM usuarios u INNER JOIN clientes c ON u.cliente=c.id WHERE u.id='$uid' AND c.recid='$cliente_recid' LIMIT 1";
-    require 'config/conect_mysql.php';
-    $rs = mysqli_query($link, $q);
-    if (mysqli_num_rows($rs) > 0) {
-        mysqli_free_result($rs);
-        mysqli_close($link);
+    $result = simple_pdoQuery($q);
+    if ($result) {
         return true;
     } else {
-        mysqli_free_result($rs);
-        mysqli_close($link);
         return false;
     }
 }
@@ -877,21 +841,12 @@ function ExisteRol2($recid)
     /** Verificamos el recid de cliente para ver si existe. 
      * Sino existe redirigimos a Clientes*/
     $q = "SELECT roles.recid as 'recid', roles.nombre as 'nombre', roles.id as 'id_rol' FROM roles WHERE roles.recid='$recid' LIMIT 1";
-    require 'config/conect_mysql.php';
-    $rs = mysqli_query($link, $q);
-    if (mysqli_num_rows($rs) > 0) {
-        while ($r = mysqli_fetch_assoc($rs)):
-            $n = array($r['nombre'], $r['id_rol'], $r['recid']);
-        endwhile;
-        mysqli_free_result($rs);
-        mysqli_close($link);
-        return $n;
+    $r = simple_pdoQuery($q);
+    if ($r) {
+        return array($r['nombre'], $r['id_rol'], $r['recid']);
     } else {
-        header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+       header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
-
-    // CountRegMayorCeroMySql($query) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
-    /** redirect */
 }
 function ExisteRol($recid)
 {
@@ -985,36 +940,6 @@ function existConnMSSQL()
 {
     require_once __DIR__ . '/config/conect_mssql.php'; // conexion a MSSQL
     (!$_SESSION['CONECT_MSSQL']) ? header("Location:/" . HOMEHOST . "/inicio/?e=errorConexionMSSQL") . exit : ''; // si no existe conexion a MSSQL redirigimos al inicio
-}
-function notif_ok_var($get, $texto)
-{
-    $ok = "";
-    if (!empty($_GET[$get]) && (isset($_GET[$get]))) {
-        $ok = '<div class="col-12">
-        <div class="animate__animated animate__fadeInDown mt-3 radius p-3 fw5 fontq alert alert-success text-uppercase alert-dismissible fade show" role="alert">
-			' . $texto . '
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-          </div>
-          </div>';
-    }
-    return $ok;
-}
-function notif_error_var($get, $texto)
-{
-    $ok = "";
-    if (isset($_GET[$get])) {
-        $ok = '<div class="col-12">
-        <div class="animate__animated animate__fadeInDown mt-1 p-3 radius-0 fw4 fontq alert alert-danger text-uppercase alert-dismissible fade show" role="alert">
-			' . $texto . '
-			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			  <span aria-hidden="true">&times;</span>
-			</button>
-          </div>
-          </div>';
-    }
-    return $ok;
 }
 function ListaRoles($Recid_C)
 {
@@ -1604,112 +1529,56 @@ function DeleteRegistro($query)
     }
 }
 /** Query MYSQL */
-function CountRegMySql($query)
-{
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, $query);
-    // print_r($query); exit;
-    if ($stmt) {
-        $num = mysqli_num_rows($stmt);
-        mysqli_free_result($stmt);
-        mysqli_close($link);
-        return $num;
-    } else {
-        mysqli_close($link);
-        return 'Error';
-    }
-}
-/** Query MYSQL */
 function CountRegMayorCeroMySql($query)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, $query);
-    // print_r($query); exit;
+    $stmt = simple_pdoQuery($query);
     if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            mysqli_free_result($stmt);
-            return true;
-        } else {
-            mysqli_free_result($stmt);
-            return false;
-        }
+        return true;
     } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_count.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
 }
 function checkKey($fk, $table)
 {
-    $db = '';
-    require __DIR__ . '/config/conect_mysql.php';
-    // $check_schema = "SELECT 1 FROM information_schema.TABLE_CONSTRAINTS WHERE information_schema.TABLE_CONSTRAINTS.CONSTRAINT_TYPE = 'FOREIGN KEY' AND information_schema.TABLE_CONSTRAINTS.TABLE_SCHEMA = '$db' AND information_schema.TABLE_CONSTRAINTS.TABLE_NAME = $fk";
+    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
     $check_schema = "SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = '$table' AND CONSTRAINT_NAME = '$fk' AND TABLE_SCHEMA = '$db'";
-    $stmt = mysqli_query($link, $check_schema);
-    // print_r($query); exit;
+    $stmt = simple_pdoQuery($check_schema);
     if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            mysqli_free_result($stmt);
-            return true;
-        } else {
-            mysqli_free_result($stmt);
-            return false;
-        }
+        return true;
     } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_fk.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . $check_schema . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
 }
 function checkColumn($table, $col)
 {
-    $db = '';
-    require __DIR__ . '/config/conect_mysql.php';
+    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
     $check_schema = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table' AND COLUMN_NAME='$col'";
-    $stmt = mysqli_query($link, $check_schema);
-    // print_r($query); exit;
+    $stmt = simple_pdoQuery($check_schema);
     if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            mysqli_free_result($stmt);
-            return true;
-        } else {
-            mysqli_free_result($stmt);
-            return false;
-        }
+        return true;
     } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_col.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
 }
 function checkTable($table)
 {
-    $db = '';
-    require __DIR__ . '/config/conect_mysql.php';
+    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+
     $check_schema = "SELECT distinct(TABLE_NAME) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table'";
-    $stmt = mysqli_query($link, $check_schema);
+    $stmt = simple_pdoQuery($check_schema);
     if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            mysqli_free_result($stmt);
-            return true;
-        } else {
-            mysqli_free_result($stmt);
-            return false;
-        }
+        return true;
     } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery_table.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        return false;
     }
 }
 function InsertRegistroMySql($query)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    // print_r($query); exit;
-    $stmt = mysqli_query($link, $query);
-    if (($stmt)) {
-        mysqli_close($link);
+    $stmt = pdoQuery($query);
+    if ($stmt) {
         return true;
     } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
+        return false;
     }
 }
 function simpleQueryDataMS($query)
@@ -1749,79 +1618,71 @@ function arrayQueryDataMS($query)
         return $data;
     } else {
         $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+        fileLog($_SERVER['REQUEST_URI'] . "\n", $pathLog); // escribir en el log
         return false;
     }
 }
 function UpdateRegistroMySql($query)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, $query);
-    // print_r($query); exit;
+    $stmt = pdoQuery($query);
     if (($stmt)) {
-        mysqli_close($link);
         return true;
     } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
+        statusData('error', 'Error');
+        return false;
     }
 }
 function deleteRegistroMySql($query)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, $query);
-    // print_r($query); exit;
+    $stmt = pdoQuery($query);
     if (($stmt)) {
-        mysqli_close($link);
         return true;
     } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
+        statusData('error', 'Error');
+        return false;
     }
 }
 function dataLista($lista, $rol)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, "SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
-    // print_r($query); exit;
-    if (($stmt)) {
-        if (mysqli_num_rows($stmt) > 0) {
-            while ($row = mysqli_fetch_assoc($stmt)) {
-                return array($row['datos']);
-            }
-        } else {
-            return array('-');
-        }
 
-        mysqli_free_result($stmt);
-        mysqli_close($link);
-    } else {
-        statusData('error', mysqli_error($link));
-        mysqli_close($link);
-        exit;
+    $q = ("SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
+    $stmt = array_pdoQuery($q);
+    if ($stmt) {
+        return $stmt;
+    }else{
+        return array('-');
     }
 }
 function dataListaEstruct($lista, $uid)
 {
-    require __DIR__ . '/config/conect_mysql.php';
-    $stmt = mysqli_query($link, "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'");
+    $q = "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'";
+
+    $stmt = simple_pdoQuery($q);
 
     if ($stmt) {
-        if (mysqli_num_rows($stmt) > 0) {
-            while ($row = mysqli_fetch_assoc($stmt)) {
-                return array($row['datos']);
-            }
-            mysqli_free_result($stmt);
-        } else {
-            return array('-');
-        }
-    } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
-        fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
-        return false;
+        return array($stmt['datos']);
+    }else{
+        return array('-');
     }
+
+    // require __DIR__ . '/config/conect_mysql.php';
+    // $stmt = mysqli_query($link, "SELECT lista_estruct.datos FROM lista_estruct where lista_estruct.uid = '$uid' AND lista_estruct.lista = '$lista'");
+
+    // if ($stmt) {
+    //     if (mysqli_num_rows($stmt) > 0) {
+    //         while ($row = mysqli_fetch_assoc($stmt)) {
+    //             print_r(array($row['datos'])).exit;
+    //             return array($row['datos']);
+    //         }
+    //         mysqli_free_result($stmt);
+    //     } else {
+    //         return array('-');
+    //     }
+    // } else {
+    //     $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+    //     fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
+    //     return false;
+    // }
 }
 function InsertRegistro($query)
 {
@@ -2024,7 +1885,6 @@ function EstadoProceso($url)
     return respuestaWebService($respuesta);
 }
 function pingWebService($textError) // Funcion para validar que el Webservice de Control Horario esta disponible
-
 {
     $url = rutaWebService("Ping?");
     $ch = curl_init(); // Inicializar el objeto curl
@@ -2497,27 +2357,28 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
 }
 function mod_roles($recid_rol)
 {
-    require 'config/conect_mysql.php';
     $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo=modulos.id WHERE mod_roles.id>'0' AND modulos.estado='0' AND mod_roles.recid_rol='$recid_rol' ORDER BY modulos.orden";
-    $result = mysqli_query($link, $query);
+    $result = array_pdoQuery($query);
     $data = array();
-    if (mysqli_num_rows($result) > 0) {
-        while ($row = mysqli_fetch_assoc($result)):
-            $id = $row['id'];
-            $id_mod = $row['id_mod'];
-            $recid_rol = $row['recid_rol'];
-            $nombre = $row['nombre'];
-            $idtipo = $row['idtipo'];
-            $data[] = array(
-                'id' => $id,
-                'recid_rol' => $recid_rol,
-                'id_mod' => $id_mod,
-                'modulo' => $nombre,
-                'idtipo' => $idtipo
-            );
-        endwhile;
-        mysqli_free_result($result);
-        mysqli_close($link);
+    
+    if (($result)) {
+            foreach ($result as $key => $row) {
+
+                $id        = $row['id'];
+                $id_mod    = $row['id_mod'];
+                $recid_rol = $row['recid_rol'];
+                $nombre    = $row['nombre'];
+                $idtipo    = $row['idtipo'];
+                
+                $data[] = array(
+                    'id'        => $id,
+                    'recid_rol' => $recid_rol,
+                    'id_mod'    => $id_mod,
+                    'modulo'    => $nombre,
+                    'idtipo'    => $idtipo
+                );
+
+            }
         $respuesta = array('success' => 'YES', 'error' => '0', 'mod_roles' => $data);
         return $respuesta;
     }
@@ -2583,22 +2444,6 @@ function utf8str($cadena)
             "'",
             "...",
         ], $cadena);
-}
-function regid_legajo($legajo)
-{
-    require __DIR__ . '../config/conect_mysql.php';
-    $sql = "SELECT regid FROM reg_user_ WHERE id_user ='$legajo' LIMIT 1";
-    $rs = mysqli_query($link, $sql);
-    if (mysqli_num_rows($rs) > 0) {
-        while ($a = mysqli_fetch_assoc($rs)) {
-            $regid = $a['regid'];
-        }
-    } else {
-        $regid = '';
-    }
-    mysqli_free_result($rs);
-    mysqli_close($link);
-    return $regid;
 }
 function horarioCH($HorCodi)
 {

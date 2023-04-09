@@ -3,8 +3,8 @@
 require __DIR__ . '../../funciones.php';
 E_ALL();
 header("Content-Type: text/html;charset=UTF-8");
-date_default_timezone_set('America/Argentina/Buenos_Aires');
-setlocale(LC_TIME, "spanish");
+timeZone();
+timeZone_lang();
 define("HOMEHOST", 'chweb');
 define("CUSTOMER", 'HRConsulting');
 define("MODULOS", [

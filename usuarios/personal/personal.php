@@ -1,4 +1,19 @@
 <?php
+function notif_error_var($get, $texto)
+{
+    $ok = "";
+    if (isset($_GET[$get])) {
+        $ok = '<div class="col-12">
+        <div class="animate__animated animate__fadeInDown mt-1 p-3 radius-0 fw4 fontq alert alert-danger text-uppercase alert-dismissible fade show" role="alert">
+			' . $texto . '
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+          </div>
+          </div>';
+    }
+    return $ok;
+}
 $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident as 'ident', clientes.id as 'id', clientes.nombre as 'nombre' FROM clientes WHERE clientes.id > 0 AND clientes.recid='$_GET[_c]' LIMIT 1");
 ($Cliente_c['id']) ? '' : header("Location: /" . HOMEHOST . "/usuarios/clientes/");
 ?>

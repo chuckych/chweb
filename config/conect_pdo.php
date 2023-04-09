@@ -1,41 +1,45 @@
 <?php
-require __DIR__ . '../dataconnmysql.php';
-// class Connection
-// {
-// 	public static function make($host, $db, $user, $pw)
-// 	{
-// 		$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
-// 		try {
-// 			if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
-// 				$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionPDO.log';
-// 				fileLog($_SERVER['PHP_SELF'] . ' -> Conexion Exitosa', $pathLog); // escribir en el log de errores
-// 			}
-// 			$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-// 			return new PDO($dsn, $user, $pw, $options);
-// 		} catch (PDOException $e) {
-// 			$msj = die($e->getMessage());
-// 			$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionPDO.log';
-// 			fileLog($msj, $pathLog); // escribir en el log de errores
-// 			header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirecciona a login
-// 			exit;
-// 		}
-// 	}
-// }
-// return Connection::make($host, $db, $user, $pw);
+
+require __DIR__ . '../../vendor/autoload.php';
+$routeEnv = __DIR__.'../../../../config_chweb/';
+
+if (!is_dir($routeEnv)) {
+	if (file_exists(__DIR__ . './dataconnmysql.php')) {
+		require __DIR__ . './dataconnmysql.php';
+	} else {
+		$host = "localhost";
+		$user = "root";
+		$pw   = "";
+		$db   = "chweb";
+	}
+    mkdir($routeEnv);
+	if (!file_exists($routeEnv.'.env')) {
+		$enviroment ="DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
+		file_put_contents($routeEnv.'.env', $enviroment);
+
+		if (!unlink(__DIR__ . './dataconnmysql.php')) {
+			echo ("Error deleting");
+		} else {
+			echo ("Deleted");
+		}		
+	}
+}
+
+$dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
+$dotenv->safeLoad();
+
+$host = $_ENV['DB_CHWEB_HOST'] ?? '';
+$user = $_ENV['DB_CHWEB_USER'] ?? '';
+$pw   = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
+$db   = $_ENV['DB_CHWEB_NAME'] ?? '';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 
 try {
 	$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
 	$connpdo =  new PDO($dsn, $user, $pw, $options);
-	if ($connpdo) {
-		// if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
-			//$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionPDO.log';
-			//fileLog($_SERVER['PHP_SELF'] . ' -> Conexion Exitosa', $pathLog); // escribir en el log de errores
-		// }
-	}
 } catch (PDOException $e) {
-	$msj = die($e->getMessage());
+	$msj = trim($e->getMessage());
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionPDO.log';
 	fileLog($msj, $pathLog); // escribir en el log de errores
 	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirecciona a login

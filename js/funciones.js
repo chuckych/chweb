@@ -639,18 +639,38 @@ function dobleDatePickerAuto(selector, opens, drop) {
     });
 }
 function CheckSesion() {
-    $.ajax({
-        dataType: "json",
-        url: "/" + $("#_homehost").val() + "/sesion.php",
-        context: document.body
-    }).done(function (data) {
-        let status = data.status ?? false;
+
+    let _homehost = document.getElementById('_homehost')
+
+    if (_homehost == null) { return false }
+    if (_homehost.value == '') { return false }
+
+    let _referer = document.getElementById('_referer')
+    let _url = "/" + _homehost.value + "/sesion.php"
+    let _sesion = document.getElementById('_sesion')
+
+    axios.get(_url).then(function (response) {
+        if (response.status != 200) { return false }
+
+        let status = response.data.status ?? false;
+        if (status == '') { return false }
+
         if (status == 'sesion') {
-            $('#_sesion').val('1')
-            window.location.href = "/" + $('#_homehost').val() + "/login/?l=" + $('#_referer').val()
+            _sesion.value = '1'
+            if (_referer != null) {
+                if (_referer.value != '') {
+                    window.location.href = "/" + _homehost.value + "/login/?l=" + _referer.value
+                } else {
+                    window.location.href = "/" + _homehost.value + "/login/"
+                }
+            } else {
+                window.location.href = "/" + _homehost.value + "/login/"
+            }
         } else {
-            $('#_sesion').val('0')
+            _sesion.value = '0'
         }
+    }).catch(function (error) {
+        console.log(error);
     });
 }
 function Procesar(FechaIni, FechaFin, LegaIni, LegaFin) {
@@ -704,8 +724,10 @@ function clearInput(selector) {
     $(selector).trigger('change');
 }
 setInterval(() => {
-    CheckSesion();
-}, 120000);
+    if (document.visibilityState === 'visible') {
+        CheckSesion();
+    };
+}, 60000);
 
 /**
  * @param String name
@@ -806,13 +828,13 @@ const getFicNovHor = (selector, date1, date2, lega) => {
 
 const getSelectorVal = (selector) => {
     if (!selector) return false
-    let s =''
-    if(document.querySelector(selector)){
+    let s = ''
+    if (document.querySelector(selector)) {
         s = document.querySelector(selector).value
         return s
     } else {
         s = ''
-        console.log('No existe el selector '+ selector);
+        console.log('No existe el selector ' + selector);
         return s
     }
 }

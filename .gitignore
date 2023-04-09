@@ -41,6 +41,7 @@ pruebaApiML.php
 *--old.js
 *--old.css
 *--old.html
+*.env
 composer.phar
 ### VisualStudioCode ###
 .vscode/*

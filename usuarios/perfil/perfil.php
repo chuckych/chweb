@@ -1,4 +1,19 @@
 <?php require __DIR__ . '/crud.php';
+function notif_ok_var($get, $texto)
+{
+    $ok = "";
+    if (!empty($_GET[$get]) && (isset($_GET[$get]))) {
+        $ok = '<div class="col-12">
+        <div class="animate__animated animate__fadeInDown mt-3 radius p-3 fw5 fontq alert alert-success text-uppercase alert-dismissible fade show" role="alert">
+			' . $texto . '
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			  <span aria-hidden="true">&times;</span>
+			</button>
+          </div>
+          </div>';
+    }
+    return $ok;
+}
 ?>
 <!doctype html>
 <html lang="es">

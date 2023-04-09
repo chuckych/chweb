@@ -2,18 +2,20 @@
 /** FUNCIÓN PARA ESCRIBIR UN ARCHIVO */
 E_ALL();
 if (isset($_GET['_c'])) {
-	require __DIR__ . '/conect_mysql.php';
+	// require __DIR__ . '/conect_mysql.php';
 	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
-	$result = mysqli_query($link, $querydb);
-	$row    = mysqli_fetch_assoc($result);
-	mysqli_free_result($result);
+	// $result = mysqli_query($link, $querydb);
+	$row    = simple_pdoQuery($querydb);
+	// print_r($row).exit;
+	// mysqli_free_result($result);
 	$serverName = $row['host'];
 	$db = $row['db'];
 	$user = $row['user'];
 	$pass = $row['pass'];
 	$auth = $row['auth'];
-	mysqli_close($link);
+	// mysqli_close($link);
 	$conexionSesion = false;
+
 } else {
 	$serverName = $_SESSION["CONEXION_MS"]['host']; //serverName
 	$db = $_SESSION["CONEXION_MS"]['db']; //"SIS_DB";

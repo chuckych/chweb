@@ -9,9 +9,10 @@ $_GET['l'] = $_GET['l'] ?? false;
 $self = explode('/', $_SERVER['PHP_SELF']);
 $self = $self[1];
 ?>
-<?php if (inicio() == 0) {
-    header("Location:/" . HOMEHOST . "/op/");
-}
+<?php 
+    // if (inicio() == 0) {
+    // header("Location:/" . HOMEHOST . "/op/");
+// }
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -33,13 +34,14 @@ $self = $self[1];
         }
     </style>
 </head>
-<?php require __DIR__ . '../../config/conect_mysql.php'; ?>
+<?php require __DIR__ . '../../config/conect_pdo.php'; ?>
 
 <body class="body">
     <div class="vh-100 p-4 fw4 animate__animated animate__fadeIn">
         <form action="?p=check_login.php" method="POST" autocomplete=off class="w-100" onsubmit="ShowLoading()">
         <input type="hidden" value="<?=$_GET['l']?>" name="lasturl">
         <input type="hidden" value="<?=$self?>" id="selfHome">
+
             <div class="row">
                 <div class="mx-auto col-12 col-md-6 col-sm-8 col-lg-5 col-xl-4 p-0 border-0">
                     <div class="mx-auto shadow ancho">
@@ -50,8 +52,6 @@ $self = $self[1];
                             <div class="form-group">
                                 <label for="user" class="fw4">Usuario</label>
                                 <input required type="text" class="form-control text-lowercase mr-1 mb-2 h50" id="user" placeholder="" name="user" value="<?= $usuario ?>">
-                                <!-- <label for="clave" class="fw4">Contrase&ntilde;a</label>
-                                <input required type="password" class="form-control h50" id="clave" placeholder="" name="clave" value="<?= $clave ?>"> -->
                                 <div class="input-group">
                                     <div class="input-group-prepend" style="width:100% !important">
                                         <input required type="password" class="form-control h50" id="clave" placeholder="" name="clave" value="<?= $clave; ?>">
@@ -83,7 +83,8 @@ $self = $self[1];
         </form>
     </div>
     <?php require __DIR__ . "../../js/jquery.php"; ?>
-    <script src="login.js?v=<?=vjs()?>"></script>
+    <script src="login-min.js?v=<?= version_file("/login/login-min.js") ?>"></script>
+
 </body>
 
 </html>
