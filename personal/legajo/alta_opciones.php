@@ -6,6 +6,10 @@ header("Content-Type: application/json");
 ultimoacc();
 secure_auth_ch_json();
 E_ALL();
+
+$token = sha1($_SESSION['RECID_CLIENTE']);
+$pathApiCH = gethostCHWeb()."/".HOMEHOST."/api";
+
 // $_POST['dato']           = $_POST['dato'] ?? '';
 FusNuloPOST('dato', '');
 $_POST['alta_localidad'] = $_POST['alta_localidad'] ?? '';
@@ -1360,17 +1364,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
 }
 /** ALTA HISTORIAl INGRESOS LEGAJOS  */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+
     if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
-        $data = array('status' => 'requeridos');
+        $data = array('status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida');
         echo json_encode($data);
         exit;
     };
-    // @InEgLega,@InEgFeIn,@InEgFeEg,@InEgCaus,@FechaHora
 
-    $params  = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
     FusNuloPOST('InEgCaus', '');
@@ -1378,44 +1378,103 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     $InEgLega  = test_input($_POST['InEgLega']);
 
     $InEgFeIn  = test_input(($_POST['InEgFeIn']));
-    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn) : '17530101';
+    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
 
     $InEgFeEg  = test_input(($_POST['InEgFeEg']));
-    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg) : '17530101';
+    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
 
     $InEgCaus  = test_input($_POST['InEgCaus']);
-    $FechaHora = date('Ymd H:i:s');
 
-    if (!valida_campo($_POST['InEgFeEg'])) {
-        if (($InEgFeIn) > ($InEgFeEg)) {
-            $data = array('status' => 'Error Fecha', 'dato' => 'Ingreso es mayor que Egreso');
-            echo json_encode($data);
-            exit;
-        };
-        if (($InEgFeIn) == ($InEgFeEg)) {
-            $data = array('status' => 'Error Fecha', 'dato' => 'Ingreso es igual Egreso');
-            echo json_encode($data);
-            exit;
-        };
-    }
+    $payload = array(
+        "Lega" => $InEgLega,
+        "FeIn" => $InEgFeIn,
+        "FeEg" => $InEgFeEg,
+        "Caus" => $InEgCaus
+    );
 
+    // print_r($payload).exit;
+
+    $sendApi['DATA'] = $sendApi['DATA'] ?? '';
+    $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
+
+    $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'POST', $token);
+    $sendApi = json_decode($sendApi, true);
 
     $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
-    $Dato2    = 'Leg: ' . $InEgLega . '.<br/> In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+       
+    if ($sendApi['MESSAGE'] == 'OK') {
+
+        audito_ch('A', $Dato,  '10');
+        $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
+        echo json_encode($data);
+
+    } else {
+
+        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        echo json_encode($data);
+
+    }
+
+    exit;
+    
+
+
+    // require_once __DIR__ . '../../../config/conect_mssql.php';
+    // if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
+    //     $data = array('status' => 'requeridos');
+    //     echo json_encode($data);
+    //     exit;
+    // };
+    // @InEgLega,@InEgFeIn,@InEgFeEg,@InEgCaus,@FechaHora
+
+    // $params  = array();
+    // $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    // $data    = array();
+    // FusNuloPOST('InEgFeIn', '');
+    // FusNuloPOST('InEgFeEg', '');
+    // FusNuloPOST('InEgCaus', '');
+
+    // $InEgLega  = test_input($_POST['InEgLega']);
+
+    // $InEgFeIn  = test_input(($_POST['InEgFeIn']));
+    // $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn) : '17530101';
+
+    // $InEgFeEg  = test_input(($_POST['InEgFeEg']));
+    // $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg) : '17530101';
+
+    // $InEgCaus  = test_input($_POST['InEgCaus']);
+    // $FechaHora = date('Ymd H:i:s');
+
+    // if (!valida_campo($_POST['InEgFeEg'])) {
+    //     if (($InEgFeIn) > ($InEgFeEg)) {
+    //         $data = array('status' => 'Error Fecha', 'dato' => 'Ingreso es mayor que Egreso');
+    //         echo json_encode($data);
+    //         exit;
+    //     };
+    //     if (($InEgFeIn) == ($InEgFeEg)) {
+    //         $data = array('status' => 'Error Fecha', 'dato' => 'Ingreso es igual Egreso');
+    //         echo json_encode($data);
+    //         exit;
+    //     };
+    // }
+
+
+    // $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+    // $Dato2    = 'Leg: ' . $InEgLega . '.<br/> In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
 
     /** Query revisar si existe un registro de fecha Ingreso igual */
-    $query = "SELECT PERINEG.InEgLega FROM PERINEG WHERE PERINEG.InEgFeIn = '$InEgFeIn' AND PERINEG.InEgLega = '$InEgLega'";
+    // $query = "SELECT PERINEG.InEgLega FROM PERINEG WHERE PERINEG.InEgFeIn = '$InEgFeIn' AND PERINEG.InEgLega = '$InEgLega'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
-    if (sqlsrv_num_rows($result) > 0) {
-        while ($fila = sqlsrv_fetch_array($result)) {
-            // print_r($query);
-            $data = array('status' => 'existe', 'dato' => 'Fecha de ingreso: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y'));
-            echo json_encode($data);
-        }
-        sqlsrv_free_stmt($result);
-        exit;
-    }
+    // $result  = sqlsrv_query($link, $query, $params, $options);
+    // if (sqlsrv_num_rows($result) > 0) {
+    //     while ($fila = sqlsrv_fetch_array($result)) {
+    //         // print_r($query);
+    //         $data = array('status' => 'existe', 'dato' => 'Fecha de ingreso: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y'));
+    //         echo json_encode($data);
+    //     }
+    //     sqlsrv_free_stmt($result);
+    //     exit;
+    // }
     /** fin */
     /** Fecha de ingreso no puede ser igual o inferior a la fecha de egreso mas alta */
     // $query = "SELECT TOP 1 PERINEG.InEgFeEg FROM PERINEG WHERE PERINEG.InEgLega = '$InEgLega' ORDER BY PERINEG.InEgFeEg DESC";
@@ -1455,86 +1514,186 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     // }
     /** fin */
 
-    $procedure_params = array(
-        array(&$InEgLega),
-        array(&$InEgFeIn),
-        array(&$InEgFeEg),
-        array(&$InEgCaus),
-        array(&$FechaHora)
-    );
+    // $procedure_params = array(
+    //     array(&$InEgLega),
+    //     array(&$InEgFeIn),
+    //     array(&$InEgFeEg),
+    //     array(&$InEgCaus),
+    //     array(&$FechaHora)
+    // );
 
-    $sql = "exec DATA_PERINEGInsert @InEgLega=?,@InEgFeIn=?,@InEgFeEg=?,@InEgCaus=?,@FechaHora=?";
-    /** Query del Store Prcedure */
-    $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
-    /** preparar la sentencia */
+    // $sql = "exec DATA_PERINEGInsert @InEgLega=?,@InEgFeIn=?,@InEgFeEg=?,@InEgCaus=?,@FechaHora=?";
+    // /** Query del Store Prcedure */
+    // $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
+    // /** preparar la sentencia */
 
-    if (!$stmt) {
-        die(print_r(sqlsrv_errors(), true));
-    }
-    if (sqlsrv_execute($stmt)) {
-        /** ejecuto la sentencia */
-        /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
-        /** */
-        // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato2);
-        echo json_encode($data);
-        /** retorno resultados en formato json */
-    } else {
-        $data = array('status' => 'error', 'dato' => $Dato2);
-        echo json_encode($data);
-        // die(print_r(sqlsrv_errors(), true));
-    }
+    // if (!$stmt) {
+    //     die(print_r(sqlsrv_errors(), true));
+    // }
+    // if (sqlsrv_execute($stmt)) {
+    //     /** ejecuto la sentencia */
+    //     /** Grabo en la tabla Auditor */
+    //     audito_ch('A', $Dato,  '10');
+    //     /** */
+    //     // sleep(3);
+    //     $data = array('status' => 'ok', 'dato' => $Dato2);
+    //     echo json_encode($data);
+    //     /** retorno resultados en formato json */
+    // } else {
+    //     $data = array('status' => 'error', 'dato' => $Dato2);
+    //     echo json_encode($data);
+    //     // die(print_r(sqlsrv_errors(), true));
+    // }
 
-    sqlsrv_close($link);
+    // sqlsrv_close($link);
 
     // echo json_encode($data);
 
 }
+/** EDITA HISTORIAl INGRESOS LEGAJOS  */
+if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg')) {
+
+    if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
+        $data = array('status' => 'requeridos');
+        echo json_encode($data);
+        exit;
+    };
+
+    FusNuloPOST('InEgFeIn', '');
+    FusNuloPOST('InEgFeEg', '');
+    FusNuloPOST('InEgCaus', '');
+
+    $InEgLega  = test_input($_POST['InEgLega']);
+
+    $InEgFeIn  = test_input(($_POST['InEgFeIn']));
+    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
+
+    $InEgFeEg  = test_input(($_POST['InEgFeEg']));
+    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
+
+    $InEgCaus  = test_input($_POST['InEgCaus']);
+
+    $payload = array(
+        "Lega" => $InEgLega,
+        "FeIn" => $InEgFeIn,
+        "FeEg" => $InEgFeEg,
+        "Caus" => $InEgCaus
+    );
+
+    // print_r($payload).exit;
+
+    $sendApi['DATA'] = $sendApi['DATA'] ?? '';
+    $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
+
+    $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'PUT', $token);
+    $sendApi = json_decode($sendApi, true);
+
+    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+       
+    if ($sendApi['MESSAGE'] == 'OK') {
+
+        audito_ch('M', $Dato,  '10');
+        $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
+        echo json_encode($data);
+
+    } else {
+
+        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        echo json_encode($data);
+
+    }
+
+    exit;
+
+}
 /** BAJAS HISTORIAl INGRESOS LEGAJOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+
+    if (valida_campo($_POST['DelInEgLega']) || valida_campo($_POST['DelInEgFeIn'])) {
+        $data = array('status' => 'requeridos');
+        echo json_encode($data);
+        exit;
+    };
 
     $InEgLega = test_input($_POST['DelInEgLega']);
-    $InEgFeIn = test_input(FechaString($_POST['DelInEgFeIn']));
-
-    $FechaHora = date('Ymd H:i:s');
+    $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'],'Y-m-d'));
 
     $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y');
-    $procedure_params = array(
-        array(&$InEgLega),
-        array(&$InEgFeIn),
+    
+    $payload = array(
+        "Lega" => $InEgLega,
+        "FeIn" => $InEgFeIn
     );
-    // echo json_encode($procedure_params);exit; 
+    
+    $sendApi['DATA'] = $sendApi['DATA'] ?? '';
+    $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
 
-    $sql = "exec DATA_PERINEGDelete @InEgLega=?,@InEgFeIn=?";
-    /** Query del Store Prcedure */
-    $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
-    /** preparar la sentencia */
+    $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'DELETE', $token);
+    $sendApi = json_decode($sendApi, true);
 
-    if (!$stmt) {
-        die(print_r(sqlsrv_errors(), true));
-    }
-    if (sqlsrv_execute($stmt)) {
-        /** ejecuto la sentencia */
-        /** Grabo en la tabla Auditor */
+    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+       
+    if ($sendApi['MESSAGE'] == 'OK') {
+
         audito_ch('B', $Dato,  '10');
-        /** */
-        // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
-        echo json_encode($data);
-        /** retorno resultados en formato json */
+        $data = array('status' => 'ok_delete', 'dato' => $sendApi['DATA']);
+        Flight::json($data);
+
+        audito_ch('B', $Dato,  '10');
+        exit;
+
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
-        echo json_encode($data);
-        // die(print_r(sqlsrv_errors(), true));
+
+        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        Flight::json($data);
+
     }
 
-    sqlsrv_close($link);
+    exit;
+
+    // require_once __DIR__ . '../../../config/conect_mssql.php';
+
+    // $params  = array();
+    // $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    // $data    = array();
+
+    // $InEgLega = test_input($_POST['DelInEgLega']);
+    // $InEgFeIn = test_input(FechaString($_POST['DelInEgFeIn']));
+
+    // $FechaHora = date('Ymd H:i:s');
+
+    // $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y');
+    // $procedure_params = array(
+    //     array(&$InEgLega),
+    //     array(&$InEgFeIn),
+    // );
+    // // echo json_encode($procedure_params);exit; 
+
+    // $sql = "exec DATA_PERINEGDelete @InEgLega=?,@InEgFeIn=?";
+    // /** Query del Store Prcedure */
+    // $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
+    // /** preparar la sentencia */
+
+    // if (!$stmt) {
+    //     die(print_r(sqlsrv_errors(), true));
+    // }
+    // if (sqlsrv_execute($stmt)) {
+    //     /** ejecuto la sentencia */
+    //     /** Grabo en la tabla Auditor */
+    //     audito_ch('B', $Dato,  '10');
+    //     /** */
+    //     // sleep(3);
+    //     $data = array('status' => 'ok_delete', 'dato' => $Dato);
+    //     echo json_encode($data);
+    //     /** retorno resultados en formato json */
+    // } else {
+    //     $data = array('status' => 'error_delete', 'dato' => $Dato);
+    //     echo json_encode($data);
+    //     // die(print_r(sqlsrv_errors(), true));
+    // }
+
+    // sqlsrv_close($link);
 
     // echo json_encode($data);
 

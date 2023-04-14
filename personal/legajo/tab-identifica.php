@@ -5,7 +5,7 @@
                 <div class="form-inline mt-2 <?=$bgcolor?> p-2">
                     <label for="" class="mx-2 fw4 text-white p-2">Identificadores:</label>
                     <button title="Agregar Identificador" type="button" class="px-2 btn btn-sm btn-light fontq text-secondary" data-toggle="modal" data-target="#altaidentifica">
-                        &#x27A5;
+                        <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
                 <div class="mt-2 p-2">

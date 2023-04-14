@@ -331,6 +331,34 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         exit;
     }
 };
+$dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
+    if (!$query) {
+        http_response_code(400);
+        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        exit;
+    }
+    require __DIR__ . './connectDBPDO.php';
+    try {
+        $resultSet = array();
+        $stmt = $conn->query($query);
+        if ($stmt) {
+            $stmt = null;
+            $conn = null;
+            return true;
+        } else {
+            $stmt = null;
+            $conn = null;
+            return false;
+        }
+    } catch (Exception $e) {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
+        writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
+        writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
+        http_response_code(400);
+        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        exit;
+    }
+};
 /**
  * @text {string} texto del log
  * @path {string} ruta del archivo con su extension
@@ -374,20 +402,18 @@ function dateDiff($date_1, $date_2, $differenceFormat = '%a') // diferencia en d
 function start()
 {
     $request = Flight::request();
-    $p = $request->data;
-    // $p = $_REQUEST;
-    // $p = file_get_contents("php://input");
-    // $p = json_decode($p, true);
+    
+    $p = ($request->method == 'post') ? $request->data : $request->query;
     $p->start = $p->start ?? '0';
-    $start  = empty($p->start) ? 0 : $p->start;
+    $start = empty(vp($p->start, 'Start', 'int', 11)) ? 0 : $p->start;
     return intval($start);
 }
 function length()
 {
     $request = Flight::request();
-    $p = $request->data;
+    $p = ($request->method == 'post') ? $request->data : $request->query;
     $p->length = $p->length ?? '';
-    $length = empty($p->length) ? 10 : $p->length;
+    $length = empty(vp($p->length, 'Length', 'int', 11)) ? 10 : $p->length;
     return intval($length);
 }
 /** 
@@ -1327,37 +1353,84 @@ function getCuil($document_number, $gender)
     // file_put_contents(date('Y-m-d') . '_logRequest.log', $text, FILE_APPEND | LOCK_EX);
     return $cuil_cuit;
 }
-function validaFecha($fecha)
+function validaFecha($fecha, $required = true)
 {
 
-    if (!$fecha) return false;
-
-    $f = explode('-', $fecha);
-
-    if (count($f) != 3) {
-        http_response_code(400);
-        (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
-        exit;
+    if ($required) {
+        if (!$fecha) return false;
     }
 
-    $err = '';
-    $y = $f[0];
-    $m = ($f[1] > 12 || $f[1] == 0) ? $err .= "Mes ($f[1]) Incorrecto. " : $f[1];
-    $d = ($f[2] > 31) ? $err .= "Dia ($f[2]) Incorrecto. " : $f[2];
+    if ($fecha) {
+        $f = explode('-', $fecha);
 
-    if ($err) {
-        $err = trim($err);
-        http_response_code(400);
-        (response(array(), 0, "$err", 400, timeStart(), 0, 0));
-        exit;
+        if (count($f) != 3) {
+            http_response_code(400);
+            (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
+            exit;
+        }
+
+        $err = '';
+        $y = $f[0];
+        $m = ($f[1] > 12 || $f[1] == 0) ? $err .= "Mes ($f[1]) Incorrecto. " : $f[1];
+        $d = ($f[2] > 31) ? $err .= "Dia ($f[2]) Incorrecto. " : $f[2];
+
+        if ($err) {
+            $err = trim($err);
+            http_response_code(400);
+            (response(array(), 0, "$err", 400, timeStart(), 0, 0));
+            exit;
+        }
+        $f = "$y-$m-$d";
+        try {
+           new DateTime($f);
+        } catch (exception $e) {
+            http_response_code(400);
+            (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
+            exit;
+        }
     }
-    $f = "$y-$m-$d";
-    try {
-        new DateTime($f);
-    } catch (exception $e) {
-        http_response_code(400);
-        (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
-        exit;
+};
+function returnFecha($fecha, $format='Y-m-d', $required = true)
+{
+
+    if ($required) {
+        if (!$fecha){
+            http_response_code(400);
+            (response(array(), 0, "Fecha es requerido", 400, timeStart(), 0, 0));
+            exit;
+        }
+    }
+
+    if ($fecha) {
+        $f = explode('-', $fecha);
+
+        if (count($f) != 3) {
+            http_response_code(400);
+            (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
+            exit;
+        }
+
+        $err = '';
+        $y = $f[0];
+        $m = ($f[1] > 12 || $f[1] == 0) ? $err .= "Mes ($f[1]) Incorrecto. " : $f[1];
+        $d = ($f[2] > 31) ? $err .= "Dia ($f[2]) Incorrecto. " : $f[2];
+
+        if ($err) {
+            $err = trim($err);
+            http_response_code(400);
+            (response(array(), 0, "$err", 400, timeStart(), 0, 0));
+            exit;
+        }
+        $f = "$y-$m-$d";
+        try {
+            $date = new DateTime($f);
+            $formatted_date = $date->format($format);
+            return $formatted_date;
+        } catch (exception $e) {
+            http_response_code(400);s
+            (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
+            exit;
+        }
     }
 };
 function arrFecha($array, $format)

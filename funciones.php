@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.3.4'; // Version de la aplicación
+    return 'v0.3.5'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -2183,9 +2183,9 @@ function FusNuloGET($dato, $result)
     $_GET[$dato] = ($_GET[$dato]) ?? $result;
     return $_GET[$dato];
 }
-function dr_fecha($ddmmyyyy)
+function dr_fecha($ddmmyyyy, $format = 'Ymd')
 {
-    $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
+    $fecha = date($format, strtotime((str_replace("/", "-", $ddmmyyyy))));
     return $fecha;
 }
 function dr_($ddmmyyyy)
@@ -2337,6 +2337,35 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+    $payload = json_encode($payload);
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno) : $curl_error $url $payload"; // set error message
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+    curl_close($ch);
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+    }
+    exit;
+}
+function curlAPI($url, $payload, $method = 'POST', $token, $timeout = 10)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "Accept: */*", 'Content-Type: application/json', "Token: $token", ) );
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information

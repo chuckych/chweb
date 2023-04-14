@@ -7,7 +7,7 @@ $('li').on('hidden.bs.dropdown', function () {
     $(this).children(".dropdown-menu").removeClass("animate__animated animate__fadeIn mt-1");
 })
 function formatDate(date) {
-    var d = new Date(date),
+    let d = new Date(date),
         month = '' + (d.getMonth() + 1),
         day = '' + d.getDate(),
         year = d.getFullYear();

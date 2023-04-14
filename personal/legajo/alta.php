@@ -113,8 +113,7 @@
             $('.select2').select2({
                 minimumResultsForSearch: -1
             });
-        });
-        $(document).ready(function() {
+
             $("#LegFeNa").change(function() {
                 calcularEdad();
             });
@@ -947,22 +946,37 @@
                         q2: LegNume
                     },
                 },
-                columns: [{
-                    "class": "align-middle ls1",
-                    "data": "InEgFeIn"
-                }, {
-                    "class": "align-middle ls1",
-                    "data": "InEgFeEg"
-                }, {
-                    "class": "align-middle",
-                    "data": "InEgCaus"
-                }, {
-                    "class": "align-middle text-center",
-                    "data": "eliminar"
-                }, {
-                    "class": "align-middle w-100",
-                    "data": "null"
-                }],
+                columns: [
+                /** Columna Ingreso */
+                {
+                className: 'align-middle', targets: '', title: 'Ingreso',
+                    "render": function (data, type, row, meta) {
+                        return `<span class="ls1">${row.InEgFeIn}</span>`;
+                    },
+                },
+                /** Columna Egreso */
+                {
+                className: 'align-middle', targets: '', title: 'Egreso',
+                    "render": function (data, type, row, meta) {
+                        return `<span class="ls1">${row.InEgFeEg}</span>`;
+                    },
+                },
+                /** Columna Causa */
+                {
+                className: 'align-middle text-wrap w-100', targets: '', title: 'Causa',
+                    "render": function (data, type, row, meta) {
+                        return row.InEgCaus;
+                    },
+                },
+                /** Columna Eliminar */
+                {
+                className: 'align-middle', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        let div = `<div class="d-flex justify-content-end"><span>${row.editar}</span><span class="ml-2">${row.eliminar}</span></div>`
+                        return div;
+                    },
+                }
+            ],
                 paging: false,
                 scrollX: false,
                 scrollCollapse: false,

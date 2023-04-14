@@ -38,7 +38,7 @@
                     <label for="" class="mx-2 fw4 p-2 text-white">Dispositivos habilitados con vencimiento:</label>
                     <span data-toggle="modal" data-target="#altaPerRelo" class="pointer">
                     <button id="btn__PerRelo" type="button" class="ml-1 btn btn-sm btn-light text-secondary" data-toggle="tooltip" data-placement="right" title="Agregar Dispositivo">
-                        &#x27A5;
+                        <i class="bi bi-plus-lg"></i>
                     </button>
                     </span>
                 </div>

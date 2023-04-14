@@ -1207,10 +1207,18 @@ $('#altahistorial').on('hidden.bs.modal', function (e) {
     $(".form-perineg")[0].reset();
     $("#btnHisto").html('Aceptar');
     $("#btnHisto").prop('disabled', false);
+
+    $('#InEgFeIn').val('').prop('disabled', false)
+    $('#trash_InEgFeIn').removeClass('d-none')
+    $('#InEgFeEg').val('')
+    $('#InEgCaus').val('')
+    $('#btnHisto').attr('type', 'submit')
+    $('#btnHisto').show()
+    $('#btnHisto2').hide()
     $('#Perineg').DataTable().ajax.reload();
 })
 $(document).ready(function () {
-    $(".form-perineg").bind("submit", function () {
+    $(".form-perineg").bind("submit", function (event) {
         event.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
@@ -1219,46 +1227,20 @@ $(document).ready(function () {
             data: $(this).serialize(),
             beforeSend: function (data) {
                 $("#alerta_historial").addClass("d-none");
-                $("#btnHisto").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                    <span class="sr-only"></span>`);
+                $("#btnHisto").html(`Aguarde`);
                 $("#btnHisto").prop('disabled', true);
             },
             success: function (data) {
                 if (data.status == "ok") {
-                    // $("#CFFech").val('');
-                    // $("#ConvFeriTabla").removeClass("d-none");
-                    $("#alerta_historial").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    $(".respuesta_historial").html("Se agregó correctamente.!");
-                    $(".mensaje_historial").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-perineg")[0].reset();
-                    $("#btnHisto").html('Aceptar');
-                    $("#btnHisto").prop('disabled', false);
+                    notify(data.dato, 'success', 3000, 'right')
+                    $('#Perineg').DataTable().ajax.reload();
                     $('#altahistorial').modal('hide');
-                    $('#Perineg').DataTable().ajax.reload();
-
-                } else if (data.status == "existe") {
-                    $("#alerta_historial").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
-                    $(".respuesta_historial").html("¡Ya existe!");
-                    $(".mensaje_historial").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $("#btnHisto").html('Aceptar');
-                    $("#btnHisto").prop('disabled', false);
-                    $('#Perineg').DataTable().ajax.reload();
-
-                } else if (data.status == "requeridos") {
-                    $("#alerta_historial").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_historial").html("¡Campos requeridos!");
-                    $(".mensaje_historial").html(`<br />Ingreso - Egreso. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $("#btnHisto").html('Aceptar');
-                    $("#btnHisto").prop('disabled', false);
-                    $('#Perineg').DataTable().ajax.reload();
 
                 } else {
-                    $("#alerta_historial").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_historial").html("¡Error!");
-                    $(".mensaje_historial").html(`<br />${data.dato}`);
-                    $("#btnHisto").html('Aceptar');
+                    notify(data.dato, 'danger', 3000, 'right')
                     $("#btnHisto").prop('disabled', false);
-                    $('#Perineg').DataTable().ajax.reload();
+                    $("#btnHisto").html(`Aceptar`);
+
                 }
             }
         });
@@ -1280,15 +1262,107 @@ $(document).on('click', '.delete_perineg', function (e) {
             DelInEgLega,
             DelPerineg
         },
-
         success: function (data) {
             if (data.status == "ok_delete") {
+                notify(data.dato, 'success', 3000, 'right')
                 $('#Perineg').DataTable().ajax.reload();
             } else {
+                notify(data.dato, 'danger', 3000, 'right')
                 $('#Perineg').DataTable().ajax.reload();
             }
         }
     });
+});
+/** EDITA HISTORIAl INGRESOS LEGAJOS*/
+$(document).on('click', '.edita_perineg', function (e) {
+    e.preventDefault();
+    // var parent = $(this).parent().parent().attr('id');
+    let InEgFeIn = $(this).attr('data');
+    let InEgLega = $(this).attr('data2');
+    let Perineg = $(this).attr('data3');
+    let InEgFeEg = $(this).attr('data4');
+    let InEgCaus = $(this).attr('data5');
+
+    $('#InEgFeIn').val(InEgFeIn).prop('disabled', true)
+    $('#trash_InEgFeIn').addClass('d-none')
+    $('#InEgFeEg').val(InEgFeEg)
+    $('#InEgCaus').val(InEgCaus)
+    // $('#btnHisto').attr('type', 'button')
+    $('#altahistorial').modal('show')
+    $('#btnHisto').hide()
+    $('#btnHisto2').show()
+
+    let btnHisto2 = document.getElementById('btnHisto2')
+
+    btnHisto2.addEventListener("click", function (e) {
+
+        e.preventDefault()
+        e.stopImmediatePropagation()
+
+        btnHisto2.disabled = true
+        btnHisto2.innerHTML = 'Aguarde'
+
+        let formData = new FormData();
+        formData.append("dato", 'edita_perineg');
+        formData.append("InEgFeIn", $('#InEgFeIn').val());
+        formData.append("InEgLega", InEgLega);
+        formData.append("InEgFeEg", $('#InEgFeEg').val());
+        formData.append("InEgCaus", $('#InEgCaus').val());
+
+        axios.post('alta_opciones.php', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(response => {
+            btnHisto2.disabled = false
+            btnHisto2.innerHTML = 'Aceptar'
+
+            if (response.data.status != 'ok') {
+                notify(response.data.dato, 'danger', 3000, 'right')
+                return
+            }
+            notify(response.data.dato, 'success', 3000, 'right')
+            $('#altahistorial').modal('hide')
+        }).catch(error => {
+            btnHisto2.disabled = false
+            btnHisto2.innerHTML = 'Aceptar'
+            console.error('Error:', error);
+        });
+
+
+        // axios.post('alta_opciones.php', {
+        //     data:{
+
+        //     }
+        // }).then(function (response) {
+        //     $('#altahistorial').modal('hide')
+        //     $('#Perineg').DataTable().ajax.reload();
+        // }).catch(function (error) {
+        //     console.log(error);
+        // });
+        // // e.preventDefault();
+        // $.ajax({
+        //     type: "POST",
+        //     url: "alta_opciones.php",
+        //     'data': {
+        //         dato: 'edita_perineg',
+        //         InEgFeIn: InEgFeIn,
+        //         InEgLega: InEgLega,
+        //         InEgFeEg: InEgFeEg,
+        //         InEgCaus: InEgCaus
+        //     },
+
+        //     success: function (data) {
+        //         if (data.status == "ok") {
+        //             $('#Perineg').DataTable().ajax.reload();
+        //         } else {
+        //             $('#Perineg').DataTable().ajax.reload();
+        //         }
+        //     }
+        // });
+
+
+    }, false)
 });
 /** ALTA PERSONAL PREMIOS */
 $(document).ready(function () {

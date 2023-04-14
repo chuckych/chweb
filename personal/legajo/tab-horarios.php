@@ -71,7 +71,7 @@
                 <div class="form-inline mt-2 <?= $bgcolor ?> p-2">
                     <label for="" class="mx-2 fw4 text-white p-2">Horario alternativo según fichadas:</label>
                     <button title="Asignar Horario" type="button" class="px-2 btn btn-sm btn-light fontq text-secondary" data-toggle="modal" data-target="#altahorarioal">
-                        &#x27A5;
+                        <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
 
