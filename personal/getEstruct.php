@@ -7,7 +7,7 @@ UnsetGet('q');
 UnsetGet('Emp');
 session_start();
 $data = array();
-$_SESSION['RECID_CLIENTE'] = 'aNGL89kv';
+// $_SESSION['RECID_CLIENTE'] = 'aNGL89kv';
 $token = sha1($_SESSION['RECID_CLIENTE']);
 $pathApiCH = gethostCHWeb()."/".HOMEHOST."/api";
 
