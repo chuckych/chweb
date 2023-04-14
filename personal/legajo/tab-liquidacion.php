@@ -38,7 +38,7 @@
                 <span id="trash_LegFeEg" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
             </div>
         </div>
-        <div class="col-sm-6 col-12 py-2">
+        <div class="col-sm-10 col-12 py-2">
             <div class="mt-2 shadow-sm p-0">
                 <div class="form-inline mt-2 <?= $bgcolor ?> p-2">
                     <label for="" class="mx-2 fw4 text-white p-2">Historial:</label>
@@ -48,7 +48,7 @@
                 </div>
                 
                 <div class="p-2">
-                    <table class="table w-100 text-nowrap" id="Perineg">
+                    <table class="table text-nowrap w-100" id="Perineg">
                         <thead class="border-top-0">
                         </thead>
                     </table>
@@ -64,7 +64,7 @@
                     </button>
                 </div>
                 
-                <div class="mt-2 p-2">
+                <div class="p-2">
                     <table class="table w-100 text-nowrap table-sm" id="Perpremio">
                         <thead class="border-top-0">
                             <tr>
@@ -78,7 +78,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-12 py-3">
+        <div class="col-sm-6 col-12 py-2">
             <div class="w-100 mt-2 shadow-sm p-0">
                 <div class="form-inline mt-2 <?= $bgcolor ?> p-2">
                     <label for="" class="mx-2 fw4 text-white p-2">Conceptos:</label>
@@ -87,7 +87,7 @@
                     </button>
                 </div>
                 
-                <div class="mt-2 p-2">
+                <div class="p-2">
                     <table class="table w-100 text-nowrap table-sm" id="OtrosConLeg">
                         <thead class="border-top-0">
                             <tr>

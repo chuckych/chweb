@@ -1153,25 +1153,25 @@ function isValidJSON($str)
     json_decode($str);
     return json_last_error() == JSON_ERROR_NONE;
 }
-function calculaEdad($fecha)
+function calculaEdad($fecha, $fechaFin = '')
 {
     if ($fecha) {
         if ($fecha != '1753-01-01') {
-            $dia_actual = date("Y-m-d");
+            $dia_actual = ($fechaFin) ? $fechaFin : date("Y-m-d");
             $edad_diff = date_diff(date_create($fecha), date_create($dia_actual));
             return $edad_diff;
         }
     }
     return '';
 }
-function calculaEdadStr($fecha)
+function calculaEdadStr($fecha, $fechaFin = '')
 {
     if ($fecha) {
         if ($fecha != '1753-01-01') {
             $EdadStr = '';
-            $Edad      = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%y'));
-            $EdadMeses = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%m'));
-            $EdadDias  = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'))->format('%d'));
+            $Edad      = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%y'));
+            $EdadMeses = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%m'));
+            $EdadDias  = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%d'));
             $EdadStr .= ($Edad) ? $Edad . (($Edad > 1) ? ' Años' : ' Año') : '';
             $EdadStr .= ($EdadMeses) ? ' ' . (($EdadMeses > 1) ? $EdadMeses . ' Meses' : $EdadMeses . ' Mes') : '';
             $EdadStr .= ($EdadDias) ? ' ' . (($EdadDias > 1) ? $EdadDias . ' Días' : $EdadDias . ' Día') : '';

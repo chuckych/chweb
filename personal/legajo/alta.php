@@ -938,6 +938,9 @@
             /** Table Perineg */
 
             $('#Perineg').DataTable({
+
+                dom: "<'row '<'col-12't>>",
+
                 deferRender: true,
                 "ajax": {
                     url: "../../data/getPerineg.php",
@@ -959,6 +962,13 @@
                 className: 'align-middle', targets: '', title: 'Egreso',
                     "render": function (data, type, row, meta) {
                         return `<span class="ls1">${row.InEgFeEg}</span>`;
+                    },
+                },
+                  /** Columna Diff */
+                {
+                className: 'align-middle', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        return row.Diff;
                     },
                 },
                 /** Columna Causa */

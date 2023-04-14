@@ -88,13 +88,18 @@ $query .= " ORDER BY PERINEG.InEgLega";
 $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
 $stmt = $dbApiQuery($query) ?? '';
+$_1753 = '1753-01-01 00:00:00.000';
 
 foreach ($stmt  as $key => $v) {
+
+    $EdadStr = ($v['InEgFeEg'] != $_1753) ? calculaEdadStr(fechFormat($v['InEgFeIn'], 'Y-m-d'), fechFormat($v['InEgFeEg'], 'Y-m-d')): '';
+
     $data[] = array(
         "Lega"      => $v['InEgLega'],
         "FeIn"      => fechFormat($v['InEgFeIn'], 'Y-m-d'),
         "FeEg"      => ($v['InEgFeEg'] == '1753-01-01 00:00:00.000') ? '': fechFormat($v['InEgFeEg']),
         "Caus"      => $v['InEgCaus'],
+        "Diff"      => $EdadStr,
         "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
     );
 }

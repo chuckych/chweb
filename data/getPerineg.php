@@ -28,6 +28,7 @@ if ($sendApi['MESSAGE'] == 'OK') {
     if ($sendApi['DATA']) {
         foreach ($sendApi['DATA'] as $key => $fila) {
             $InEgLega  = $fila['Lega'];
+            $Diff  = $fila['Diff'];
             $InEgFeIn  = FechaFormatVar($fila['FeIn'], 'd/m/Y');
             $InEgFeIn2  = FechaFormatVar($fila['FeIn'],'Ymd');
             $InEgFeEg  = FechaFormatVar($fila['FeEg'],'d/m/Y');
@@ -46,8 +47,8 @@ if ($sendApi['MESSAGE'] == 'OK') {
                 "InEgCaus"  => $InEgCaus,
                 "FechaHora" => $FechaHora,
                 "eliminar"  => $eliminar,
-                "editar"  => $editar,
-                "null"      => ''
+                "editar"    => $editar,
+                "Diff"      => $Diff
             );
         }
     }

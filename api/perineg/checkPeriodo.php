@@ -60,14 +60,28 @@ if ($s) {
                 exit;
             }
         }
-        if (
+        if ($method == 'POST') {
+            if (
             $InEgLega == intval($dp['Lega']) 
             && ($dp['FeEg'] == '17530101')
             ) 
-        {
-            http_response_code(200);
-            (response("Existen periodos sin si fecha de egreso.", 0, 'ERROR', 200, $time_start, 0, $idCompany));
-            exit;
+            {
+                http_response_code(200);
+                (response("Existen periodos sin si fecha de egreso.", 0, 'ERROR', 200, $time_start, 0, $idCompany));
+                exit;
+            }
+        }
+        if ($method == 'PUT') {
+            if (
+            $InEgLega == intval($dp['Lega']) 
+            && ($dp['FeIn'] != $dp['FeIn'])
+            && ($dp['FeEg'] == '17530101')
+            ) 
+            {
+                http_response_code(200);
+                (response("Existen periodos sin si fecha de egreso.", 0, 'ERROR', 200, $time_start, 0, $idCompany));
+                exit;
+            }
         }
     }
 }
