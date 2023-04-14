@@ -9,8 +9,22 @@ E_ALL();
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
 
-    if(valida_campo(test_input($_POST['LegNume']))){
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Legajo Obligatorio.');
+    $_POST['LegEmpr'] = $_POST['LegEmpr'] ?? '';
+    $_POST['LegNume'] = $_POST['LegNume'] ?? '';
+    $_POST['LegApNo'] = $_POST['LegApNo'] ?? '';
+    
+    if(valida_campo(test_input($_POST['LegEmpr']))){
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa Obligatorio.');
+        echo json_encode($data);
+        exit;
+    };
+    if(valida_campo(test_input($_POST['LegApNo']))){
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Nombre Obligatorio.');
+        echo json_encode($data);
+        exit;
+    };
+    if(valida_campo(test_input($_POST['LegEmpr']))){
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa Obligatorio.');
         echo json_encode($data);
         exit;
     };
@@ -24,6 +38,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
     /** Recibo Variables */
     /**  1:*/   $LegNume = test_input($_POST['LegNume']) ?? ''; 
     /**  2:*/   $LegApNo = test_input($_POST['LegApNo']) ?? ''; 
+    /**  3:*/   $LegEmpr = test_input($_POST['LegEmpr']) ?? ''; 
     /** Fin Variables */
 
     /** Query revisar si existe un registro igual */
@@ -44,7 +59,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
 
     $FechaHora = date('Ymd H:i:s');
 
-    $sql ="INSERT INTO PERSONAL (LegNume,LegApNo,LegEsta,LegEmpr,LegPlan,LegSucu,LegGrup,LegSect,LegSec2,LegTDoc,LegDocu,LegCUIT,LegDomi,LegDoNu,LegDoPi,LegDoDP,LegDoOb,LegCOPO,LegProv,LegLoca,LegTel1,LegTeO1,LegTel2,LegTeO2,LegTel3,LegMail,LegNaci,LegEsCi,LegSexo,LegFeNa,LegTipo,LegFeIn,LegFeEg,LegPrCo,LegPrSe,LegPrGr,LegPrPl,LegPrRe,LegPrHo,LegToTa,LegToIn,LegToSa,LegReTa,LegReIn,LegReSa,LegIncTi,LegDesc,LegHLDe,LegHLDH,LegHLRo,LegHGDe,LegHGDH,LegHGRo,LegHSDe,LegHSDH,LegHSRo,LegHoAl,LegHoLi,LegGrHa,LegArea,LegAvisa,LegChkHo,LegAntes,LegDespu,LegTarde,LegRegCH,LegRegCO,LegCant,LegValHora,LegHabSali,LegJornada,LegForPago,LegMoneda,LegBanco,LegBanSuc,LegBanCTA,LegBanCBU,LegConv,LegCalif,LegTare,LegObs,LegObsPlan,LegZona,LegRedu,LegAFJP,LegSind,LegActi,LegModa,LegSitu,LegCond,LegSine,LegTicket,LegBasico,LegImporte1,LegImporte2,LegImporte3,LegImporte4,LegImporte5,LegImporte6,LegTopeAde,LegCapiLRT,LegCalcGan,LegTareProd,LegNo24,LegTZ,LegTZ1,LegTZ2,LegTZ3,LegBandHor,FechaHora) VALUES ('$LegNume','$LegApNo',0,0,0,0,0,0,0,1,0,'','',0,0,'','','',0,0,'','','','','','',0,0,0,'17530101',0,'17530101','17530101',0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,'01:00',0,0,0,0,'00:00','00:00','00:00',0,0,0, 0,'00:00',0,1,0,0,0,'','',0,0,0,0,0,1, 30,0,0,49,8,1,1,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,1,0,0,0,0,'1111111111111111','$FechaHora')";
+    $sql ="INSERT INTO PERSONAL (LegNume,LegApNo,LegEsta,LegEmpr,LegPlan,LegSucu,LegGrup,LegSect,LegSec2,LegTDoc,LegDocu,LegCUIT,LegDomi,LegDoNu,LegDoPi,LegDoDP,LegDoOb,LegCOPO,LegProv,LegLoca,LegTel1,LegTeO1,LegTel2,LegTeO2,LegTel3,LegMail,LegNaci,LegEsCi,LegSexo,LegFeNa,LegTipo,LegFeIn,LegFeEg,LegPrCo,LegPrSe,LegPrGr,LegPrPl,LegPrRe,LegPrHo,LegToTa,LegToIn,LegToSa,LegReTa,LegReIn,LegReSa,LegIncTi,LegDesc,LegHLDe,LegHLDH,LegHLRo,LegHGDe,LegHGDH,LegHGRo,LegHSDe,LegHSDH,LegHSRo,LegHoAl,LegHoLi,LegGrHa,LegArea,LegAvisa,LegChkHo,LegAntes,LegDespu,LegTarde,LegRegCH,LegRegCO,LegCant,LegValHora,LegHabSali,LegJornada,LegForPago,LegMoneda,LegBanco,LegBanSuc,LegBanCTA,LegBanCBU,LegConv,LegCalif,LegTare,LegObs,LegObsPlan,LegZona,LegRedu,LegAFJP,LegSind,LegActi,LegModa,LegSitu,LegCond,LegSine,LegTicket,LegBasico,LegImporte1,LegImporte2,LegImporte3,LegImporte4,LegImporte5,LegImporte6,LegTopeAde,LegCapiLRT,LegCalcGan,LegTareProd,LegNo24,LegTZ,LegTZ1,LegTZ2,LegTZ3,LegBandHor,FechaHora) VALUES ('$LegNume','$LegApNo',0,'$LegEmpr',0,0,0,0,0,1,0,'','',0,0,'','','',0,0,'','','','','','',0,0,0,'17530101',0,'17530101','17530101',0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,'01:00',0,0,0,0,'00:00','00:00','00:00',0,0,0, 0,'00:00',0,1,0,0,0,'','',0,0,0,0,0,1, 30,0,0,49,8,1,1,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,1,0,0,0,0,'1111111111111111','$FechaHora')";
         // print_r($sql);exit;
             $stmt = sqlsrv_prepare($link, $sql, $params, $options); /** preparar la sentencia */
 

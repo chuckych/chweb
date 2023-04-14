@@ -15,6 +15,7 @@ $params['length'] = $params['length'] ?? '';
 $params['_l'] = $params['_l'] ?? '';
 (!$params['length']) ? exit : '';
 (!$params['_l']) ? exit : '';
+
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));
@@ -23,6 +24,7 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni  = date('Ymd');
     $FechaFin  = date('Ymd');
 }
+
 $params['Emp']      = $params['Emp'] ?? '';
 $params['Plan']     = $params['Plan'] ?? '';
 $params['Sect']     = $params['Sect'] ?? '';

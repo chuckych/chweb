@@ -65,12 +65,38 @@
     require __DIR__ . '/modal_Filtros.html';
     require __DIR__ . '/modalNuevoLeg.php';
     ?>
-    <script src="altaLeg-min.js?v=<?= vjs() ?>"></script>
-    <script src="script-min.js?v=<?= vjs() ?>"></script>
-    <script src="perExcel-min.js?v=<?= vjs() ?>"></script>
+    <script src="altaLeg-min.js?v=<?= version_file("/personal/altaLeg-min.js")?>"></script>
+    <script src="script-min.js?v=<?= version_file("/personal/script-min.js")?>"></script>
+    <script src="perExcel-min.js?v=<?= version_file("/personal/perExcel-min.js")?>"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="getSelect/select-min.js?v=<?= vjs() ?>"></script>
+    <script src="getSelect/select-min.js?v=<?= version_file("/personal/getSelect/select-min.js")?>"></script>
+    <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+
+    <script>
+        //Fetch data using Axios Ajax
+    $('#LegNume').mask('000000000');
+
+    axios.get('getEstruct.php?Estruct=Emp&length=1000')
+        .then(function (response) {
+            //Get the select element
+            let LegEmpr = document.getElementById("LegEmpr");
+
+            //Loop through the response data and create a new option element for each item
+            response.data.forEach(function (item) {
+                let option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.text;
+
+                //Add the new option element to the select element
+                LegEmpr.add(option);
+            });
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+        select2Simple('#LegEmpr', 'Empresa', true, false, '100%')
+    </script>
 </body>
 
 </html>

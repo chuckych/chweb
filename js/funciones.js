@@ -487,12 +487,13 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         }
     })
 }
-function select2Simple(selector, placeholder, clear, selclose) {
+function select2Simple(selector, placeholder, clear, selclose, width ='') {
     $(selector).select2({
         placeholder: placeholder,
         minimumResultsForSearch: 10,
         allowClear: clear,
         selectOnClose: selclose,
+        width: width
     })
 }
 function Select2Value(id, text, selector) {
