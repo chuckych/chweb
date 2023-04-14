@@ -12,19 +12,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
     $_POST['LegEmpr'] = $_POST['LegEmpr'] ?? '';
     $_POST['LegNume'] = $_POST['LegNume'] ?? '';
     $_POST['LegApNo'] = $_POST['LegApNo'] ?? '';
-    
-    if(valida_campo(test_input($_POST['LegEmpr']))){
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa Obligatorio.');
+
+    if(valida_campo(test_input($_POST['LegNume']))){
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Legajo es requerido.');
         echo json_encode($data);
         exit;
     };
     if(valida_campo(test_input($_POST['LegApNo']))){
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Nombre Obligatorio.');
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Nombre es requerido.');
         echo json_encode($data);
         exit;
     };
     if(valida_campo(test_input($_POST['LegEmpr']))){
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa Obligatorio.');
+        $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa es requerido.');
         echo json_encode($data);
         exit;
     };
