@@ -802,7 +802,7 @@ if (!empty($arrayData)) {
         $s = simple_pdoQuery("SELECT `id`, `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
 
         if ($s) {
-            (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `regid` = '$phoneid' AND id_company = $companyCode"));
+            (pdoQuery("UPDATE `reg_device_` SET `appVersion` = '$appVersion', `regid` = '$regid' WHERE `id` = '$s[id]' AND id_company = $companyCode"));
             $deviceID = $s['id'];
         } else {
 

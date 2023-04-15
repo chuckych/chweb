@@ -48,31 +48,79 @@ $arrDP = array(
 switch ($dp['Estruct']) {
     case 'Emp':
         $tabla = 'EMPRESAS';
-        $pref = 'Emp';
+        $pref = $dp['Estruct'];
         break;
     case 'Pla':
         $tabla = 'PLANTAS';
-        $pref = 'Pla';
+        $pref = $dp['Estruct'];
         break;
     case 'Sec':
         $tabla = 'SECTORES';
-        $pref = 'Sec';
+        $pref = $dp['Estruct'];
         break;
     case 'Con':
         $tabla = 'CONVENIO';
-        $pref = 'Con';
+        $pref = $dp['Estruct'];
         break;
     case 'Se2':
         $tabla = 'SECCION';
-        $pref = 'Se2';
+        $pref = $dp['Estruct'];
         break;
     case 'Gru':
         $tabla = 'GRUPOS';
-        $pref = 'Gru';
+        $pref = $dp['Estruct'];
         break;
     case 'Suc':
         $tabla = 'SUCURSALES';
-        $pref = 'Suc';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Nov':
+        $tabla = 'NOVEDAD';
+        $pref = $dp['Estruct'];
+        break;
+    case 'ONov':
+        $tabla = 'OTRASNOV';
+        $pref = $dp['Estruct'];
+        break;
+    case 'THo':
+        $tabla = 'TIPOHORA';
+        $pref = $dp['Estruct'];
+        break;
+    case 'THoC':
+        $tabla = 'TIPOHORACAUSA';
+        $pref = $dp['Estruct'];
+        break;
+    case 'NovC':
+        $tabla = 'NOVECAUSA';
+        $pref = $dp['Estruct'];
+        break;
+    case 'RC':
+        $tabla = 'REGLASCH';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Hor':
+        $tabla = 'HORARIOS';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Loc':
+        $tabla = 'LOCALIDA';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Nac':
+        $tabla = 'NACIONES';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Pro':
+        $tabla = 'PROVINCI';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Tare':
+        $tabla = 'TAREAS';
+        $pref = $dp['Estruct'];
+        break;
+    case 'Gua':
+        $tabla = 'GUARDIAS';
+        $pref = $dp['Estruct'];
         break;
     default:
         http_response_code(400);
@@ -110,10 +158,16 @@ foreach ($arrDP as $key => $p) {
 
 $Codi = $pref.'Codi';
 $Desc = ($dp['Estruct'] == 'Emp') ? $pref.'Razon': $pref.'Desc';
+$Sec = ($dp['Estruct'] == 'Se2') ? true : '';
+$JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
+$SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
-$query="SELECT * FROM $tabla WHERE $Codi > 0";
+$query="SELECT * $SecDesc FROM $tabla $JoinSe2 WHERE $Codi > 0";
+
+// print_r($query).exit;
+
 $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
 
 if ($wc) {
@@ -130,11 +184,23 @@ $stmt = $dbApiQuery($query) ?? '';
 
 foreach ($stmt  as $key => $v) {
 
-    $data[] = array(
-        "Codi"      => $v[$Codi],
-        "Desc"      => $v[$Desc],
-        "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-    );
+    if ($Sec) {
+        $data[] = array(
+            "Codi"      => $v[$Codi],
+            "Desc"      => $v[$Desc],
+            "Sector" => array(
+                "Codi" => $v['SecCodi'],
+                "Desc" => $v['SecDesc'],
+            ),
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        );
+    } else {
+        $data[] = array(
+            "Codi"      => $v[$Codi],
+            "Desc"      => $v[$Desc],
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        );
+    }
 }
 
 if (empty($data)) {
