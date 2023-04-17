@@ -403,7 +403,7 @@ function start()
 {
     $request = Flight::request();
     
-    $p = ($request->method == 'post') ? $request->data : $request->query;
+    $p = (strtolower ($request->method) == 'post') ? $request->data : $request->query;
     $p->start = $p->start ?? '0';
     $start = empty(vp($p->start, 'Start', 'int', 11)) ? 0 : $p->start;
     return intval($start);
@@ -411,7 +411,8 @@ function start()
 function length()
 {
     $request = Flight::request();
-    $p = ($request->method == 'post') ? $request->data : $request->query;
+    // print_r($request).exit;
+    $p = (strtolower ($request->method) == 'post') ? $request->data : $request->query;
     $p->length = $p->length ?? '';
     $length = empty(vp($p->length, 'Length', 'int', 11)) ? 10 : $p->length;
     return intval($length);
