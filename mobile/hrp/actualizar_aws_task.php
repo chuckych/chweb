@@ -119,6 +119,28 @@ function MSQuery($query)
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '../../../config/conect_mssql.php';
+    try {
+        $stmt = sqlsrv_query($link, $query, $params, $options);   
+        if ($stmt === false) {
+            $error = sqlsrv_errors();
+            foreach ($error as $key => $e) {
+                throw new Exception(($e['message']));
+            }
+            return false;
+        } else {
+            return true;
+        }
+
+    } catch (\Throwable $th) { // si hay error en la consulta
+        $pathLog = __DIR__ . '/logs/error_insert_CH/';
+        fileLog($th->getMessage(), $pathLog . '/' . date('Ymd') . '_error_MSQuery.log');
+    }
+}
+function MSQuery_old($query)
+{
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    require __DIR__ . '../../../config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
     if (($stmt)) {
         return true;
