@@ -166,7 +166,7 @@ try {
     
 }
 
-$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`id_api` > lastPunchFoto";
+$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`id_api` > $lastPunchFoto";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_company = $idCompany";
