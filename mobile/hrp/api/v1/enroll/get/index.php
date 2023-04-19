@@ -207,7 +207,7 @@ if (($queryRecords)) {
         }
 
         if ($size) {
-            $size[2] = $imageTypeArray[$size[2]];
+            $size[2] = $imageTypeArray[$size[2]] ?? '';
             list($ancho, $alto, $tipo, $atributos) = $size;
             $arrayData[] = array(
                 "id_user" => $r['id_user'],

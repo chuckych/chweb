@@ -1,10 +1,7 @@
 <?php
 ini_set('max_execution_time', 1800); //1800 seconds = 30 minutes
-// session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-// ultimoacc();
-// secure_auth_ch_json();
 $_SERVER["argv"][1] = $_SERVER["argv"][1] ?? '';
 
 if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
@@ -16,6 +13,17 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
     print_r($data);
     exit;
 }
+// $_GET['idPunch'] = $_GET['idPunch'] ?? '';
+
+// if(empty($_GET['idPunch'])){
+//     $data = array(
+//         'Mensaje' => 'idPunch empty',
+//         'date'    => date('Y-m-d H:i:s'),
+//         'status'  => 'error',
+//     );
+//     print_r($data);
+//     exit;
+// };
 
 require __DIR__ . '../../../vendor/autoload.php';
 
@@ -207,11 +215,9 @@ function _group_by_keys($array, $keys = array())
             }
             $return[$final_key][] = $val;
         }
-        // return $return;
         foreach ($return as $key => $value) {
             $arrGroup2[] = array_map("unserialize", array_unique(array_map("serialize", $value)));
         }
-
         foreach ($arrGroup2 as $key => $value2) {
             $arrGroup3[] = $value2[0];
         }
@@ -526,9 +532,40 @@ if ($flags_download == 2) {
 }
 statusFlags(2, $pathFlags, $flags_lastDate); // marcar bandera de espera
 $url = "http://awsapi.chweb.ar:7575/attention/api/punch-event/" . $flags_lastDate;
+// $url   = "http://awsapi.chweb.ar:7575/attention/api/punch-event/get/" . $_GET['idPunch'];
 // $url   = "http://207.191.165.3:7500/attention/api/punch-event/" . $flags_lastDate;
 // $url   = "http://207.191.165.3:7500/attention/api/punch-event/light/" . $flags_lastDate; // SIN FOTO
 $array = json_decode(getEvents($url), true);
+
+// $array2 = json_decode(getEvents($url), true);
+
+
+// $array2['status'] = $array2['status'] ?? '';
+
+// if ($array2['status'] == 500) {
+//     $fechaHora =date('Y-m-d H:i:s');
+//     $texterr = "$fechaHora Error: \"$array[error]\" Path: \"$array[path]\"";
+//     sendEmailTask("Task Mobile: $array[error]", "<pre>$array[timestamp]<br>$array[path]<pre>");
+// }
+
+// $payload[] = ($array2['payload']); 
+
+// $array = array(
+//     'type'          => $array2['type'],
+//     'message'       => $array2['message'],
+//     'payload'       => $payload,
+// );
+
+$array['status'] = $array['status'] ?? '';
+$array['payload'] = $array['payload'] ?? '';
+
+if($array['status'] == 500) {
+    $fechaHora =date('Y-m-d H:i:s');
+    $texterr = "$fechaHora Error: \"$array[error]\" Path: \"$array[path]\"";
+    sendEmailTask("Task Mobile: $array[error]", "<pre>$array[timestamp]<br>$array[path]<pre>");
+}
+
+
 if (!empty($array['payload'])) {
     foreach ($array['payload'] as $key => $v) {
         $operation = $v['operation']['observations'] ?? '';
