@@ -12,7 +12,7 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
         'date' => date('Y-m-d H:i:s'),
         'status' => 'error',
     );
-    print_r($data);
+    file_put_contents($GeneralLogsPath, json_encode($data)."\n", FILE_APPEND );
     exit;
 }
 require __DIR__ . '../../../vendor/autoload.php';
@@ -92,8 +92,8 @@ function getEvents($url, $timeout = 10)
 timeZone();
 $array = array();
 $GeneralLogsPath = __DIR__ . '/logs/' . date('Ymd') . '_deleted_aws_fotos.log';
-$last_aws_photo = __DIR__ . '/logs/api/v1/last_aws_photo.txt';
-
+$last_aws_photo = __DIR__ . '/api/v1/faces/last_aws_photo.txt';
+$start = microtime(true);
 $url = "http://awsapi.chweb.ar:7575/attention/api/test/attphotos/delete?days=30";
 $array = json_decode(getEvents($url), true);
 
@@ -101,9 +101,11 @@ $array['type'] = $array['type'] ?? '';
 $array['message'] = $array['message'] ?? '';
 
 if($array['type'] == "success") {
+    $end = microtime(true);
+    $time = round($end - $start, 2);
     $lastPunchEvent = explode(':', $array['message']); // Last punchevent
-    file_put_contents($last_aws_photo, $lastPunchEvent[0]); // escribimos el Last punchevent en el archivo /logs/api/v1/last_aws_photo.txt
+    file_put_contents($last_aws_photo, intval($lastPunchEvent[1])); // escribimos el Last punchevent en el archivo /logs/api/v1/last_aws_photo.txt
     $fechaHora = date('Y-m-d H:i:s');
     sendEmailTask("Deleted Fotos: $array[type]", "<pre>$array[message]<pre>");
-    file_put_contents($GeneralLogsPath, "$fechaHora $array[message]\n", FILE_APPEND );
+    file_put_contents($GeneralLogsPath, "$fechaHora $array[message] Dur: $time\n", FILE_APPEND );
 }
