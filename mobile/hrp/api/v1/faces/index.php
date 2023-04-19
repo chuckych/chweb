@@ -155,7 +155,18 @@ if ($a) {
     $notIdPunchEvent = implode(',',$i);
 }
 
-$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`id_api` > 39338";
+try {
+    $getPunchFoto = file_get_contents('last_aws_photo.txt');
+    if ($getPunchFoto === false) {
+        $lastPunchFoto = 0;
+    } else {
+        $lastPunchFoto = $getPunchFoto;
+    }
+} catch (Exception $e) {
+    
+}
+
+$sql_query="SELECT r.id_user AS 'id_user', r.createdDate, r.fechaHora, r.phoneid, r.reg_uid AS 'reg_uid', CONCAT(r.createdDate, '_',r.phoneid) AS 'regPhoto', r.id_api AS 'id_api' FROM reg_ r WHERE r.id_user > 0 AND `r`.`id_api` > lastPunchFoto";
 
 $filtro_query = '';
 $filtro_query .= " AND r.id_company = $idCompany";
