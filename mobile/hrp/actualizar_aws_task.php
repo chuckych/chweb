@@ -21,6 +21,17 @@ require __DIR__ . '../../../vendor/autoload.php';
 
 use Carbon\Carbon;
 
+function sanitizeAppVersion($string){
+    // string  = v1.5.4  - 20220915 - ip83 - settings_hrprocess
+    if (!$string) return '';
+    if (preg_match('/([\d\.]+)\s/', $string, $match)) {
+        $version = $match[1];
+        $version = preg_replace('/\.(\d{3,}).*/', '', $version);
+        return $version; // Salida: 1.5.4
+    } else {
+        return $string; // string
+    }
+}
 function sendEmailTask($subjet, $body)
 {
     $url = 'https://ht-api.helpticket.com.ar/sendMail/';
@@ -503,7 +514,7 @@ if (!empty($array['payload'])) {
             '__v'           => $v['__v'] ?? '',
             '_id'           => $v['_id'] ?? '',
             'accuracy'      => $v['position']['accuracy'],
-            'appVersion'    => $v['appVersion'],
+            'appVersion'    => sanitizeAppVersion($v['appVersion']),
             'attphoto'      => $v['attphoto'],
             'batteryLevel'  => $v['position']['batteryLevel'],
             'bearing'       => $v['position']['bearing'],
@@ -797,7 +808,7 @@ if (!empty($arrayData)) {
             $eventZone = $a['evento']; // Evento de la zona
         }
 
-        pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
+        // pdoQuery("UPDATE reg_user_ SET regid = '$regid' WHERE id_user = $employeId AND id_company = $companyCode");
 
         $s = simple_pdoQuery("SELECT `id`, `phoneid`, `id_company`, `nombre`, `evento`, `appVersion` FROM reg_device_ WHERE phoneid = '$phoneid' AND id_company = $companyCode");
 
@@ -816,7 +827,7 @@ if (!empty($arrayData)) {
 
         $eventDevice = $b['evento'] ?? ''; // Evento del dispositivo
         $identified = ($confidence >= 75) ? '1' : '0';
-        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, deviceID, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, _id,regid,appVersion, attphoto, confidence, identified, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$deviceID','$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation','$_id', '$regid', '$appVersion', '$checkPhoto', '$confidence', '$identified', '$locked', '$error', '$id_api')";
+        $query = "INSERT INTO reg_ (reg_uid, id_user, phoneid, deviceID, id_company,createdDate,fechaHora,lat,lng, idZone, distance, eventZone, eventDevice, gpsStatus,eventType,operationType, operation, appVersion, attphoto, confidence, identified, locked, error, id_api) VALUES(UUID(),'$employeId', '$phoneid', '$deviceID','$companyCode','$createdDate', '$fechaHora', '$lat','$lng', '$idZone', '$distancia2', '$eventZone', '$eventDevice', '$gpsStatus','$eventType', '$operationType', '$operation', '$appVersion', '$checkPhoto', '$confidence', '$identified', '$locked', '$error', '$id_api')";
 
         if ((pdoQuery($query))) { // Si se guarda correctamente insertanmos en la tabla fichadas de 
 
