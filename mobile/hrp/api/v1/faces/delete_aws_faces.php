@@ -15,7 +15,7 @@ if ($_SERVER["argv"][1] != "1ec558a60b5dda24597816c924776716018caf8b") {
     file_put_contents($GeneralLogsPath, json_encode($data)."\n", FILE_APPEND );
     exit;
 }
-require __DIR__ . '../../../vendor/autoload.php';
+require __DIR__ . '../../../../../../vendor/autoload.php';
 
 function sendEmailTask($subjet, $body)
 {
@@ -75,7 +75,7 @@ function getEvents($url, $timeout = 10)
 
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
-        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        $pathLog = date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         sendEmailTask("Error al conectar con AWS " . date('Y-m-d H:i:s'), $text);
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
@@ -83,7 +83,7 @@ function getEvents($url, $timeout = 10)
     if ($file_contents) {
         return $file_contents;
     } else {
-        $pathLog = __DIR__ . '../../../logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        $pathLog = date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
@@ -91,8 +91,8 @@ function getEvents($url, $timeout = 10)
 }
 timeZone();
 $array = array();
-$GeneralLogsPath = __DIR__ . '/logs/' . date('Ymd') . '_deleted_aws_fotos.log';
-$last_aws_photo = __DIR__ . '/api/v1/faces/last_aws_photo.txt';
+$GeneralLogsPath = date('Ymd') . '_deleted_aws_fotos.log';
+$last_aws_photo = 'last_aws_photo.txt';
 $start = microtime(true);
 $url = "http://awsapi.chweb.ar:7575/attention/api/test/attphotos/delete?days=30";
 $array = json_decode(getEvents($url), true);
