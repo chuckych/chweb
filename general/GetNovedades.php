@@ -97,8 +97,7 @@ if (sqlsrv_num_rows($result) > 0) {
             'Just'        => JustNov($row['FicJust']),
             'editar'      => $editar,
             'eliminar'    => $eliminar,
-            'null'        => '',
-            'e' => $_SESSION["ABM_ROL"],
+            'null'        => ''
         );
     endwhile;
     sqlsrv_free_stmt($result);

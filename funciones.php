@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.3.7'; // Version de la aplicación
+    return 'v0.3.8'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -1642,13 +1642,35 @@ function deleteRegistroMySql($query)
         return false;
     }
 }
+function dataLista2($lista, $rol)
+{
+    require __DIR__ . '/config/conect_mysql.php';
+    $stmt = mysqli_query($link, "SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
+    // print_r($query); exit;
+    if (($stmt)) {
+        if (mysqli_num_rows($stmt) > 0) {
+            while ($row = mysqli_fetch_assoc($stmt)) {
+                return array($row['datos']);
+            }
+        } else {
+            return array('-');
+        }
+
+        mysqli_free_result($stmt);
+        mysqli_close($link);
+    } else {
+        statusData('error', mysqli_error($link));
+        mysqli_close($link);
+        exit;
+    }
+}
 function dataLista($lista, $rol)
 {
 
     $q = ("SELECT datos FROM lista_roles where id_rol = '$rol' AND lista = '$lista'");
-    $stmt = array_pdoQuery($q);
+    $stmt = simple_pdoQuery($q);
     if ($stmt) {
-        return $stmt;
+        return array($stmt['datos']);
     }else{
         return array('-');
     }
