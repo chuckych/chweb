@@ -9,13 +9,13 @@ existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetPersonal';
 $_datos  = 'personal';
 $bgcolor = 'bg-custom';
+$token     = sha1($_SESSION['RECID_CLIENTE']);
 define("TIPO_DOC", [
    'DU'  => '0',
    'DNI' => '1',
    'CI'  => '2',
    'LC'  => '3',
-   'LE'  => '4',
-//    'PAS' => '5'
+   'LE'  => '4'
 ]);
 define("ESTADO_CIVIL", [
    'Soltero/a'  => '0',
@@ -59,8 +59,78 @@ define("INCUMPLIMIENTO", [
    '(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia' => '3',
    '(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso' => '4',
    'Recortado sin control de descanso' => '5',
-   'Recortado con control de descanso' => '6',
+   'Recortado con control de descanso' => '6'
 ]);
-// echo '<pre>';
-// $naciones = arrMSQuery("SELECT NACIONES.NacCodi AS 'cod', NACIONES.NacDesc AS 'desc' FROM NACIONES");
+
+$_GET["_leg"] = intval($_GET["_leg"]) ?? '';
+
+$_leg = ($_GET["_leg"]);
+
+if (empty($_leg)) {
+   echo "<h1>Legajo Inválido</h1>";
+   echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
+   exit;
+}
+
+$EstrUser = explode(',', $_SESSION['EstrUser']);
+$Empr     = explode(',', $_SESSION['EmprRol']);
+$Plan     = explode(',', $_SESSION['PlanRol']);
+$Conv     = explode(',', $_SESSION['ConvRol']);
+$Sect     = explode(',', $_SESSION['SectRol']);
+$Sec2     = explode(',', $_SESSION['Sec2Rol']);
+$Grup     = explode(',', $_SESSION['GrupRol']);
+$Sucu     = explode(',', $_SESSION['SucuRol']);
+
+$dataParametros = array(
+    'Nume'     => ($EstrUser),
+    'ApNo'     => "",
+    'Docu'     => [],
+    'ApNoNume' => "",
+    'Empr'     => ($Empr),
+    'Plan'     => ($Plan),
+    'Sect'     => ($Sect),
+    'Sec2'     => ($Sec2),
+    'Conv'     => ($Conv),
+    'Grup'     => ($Grup),
+    'Sucu'     => ($Sucu),
+    'TareProd' => [],
+    'RegCH'    => [],
+    'Tipo'     => [],
+    "Baja"=> [],
+    "IntExt"=> [],
+    "getDatos"=> 0,
+    "getLiqui"=> 0,
+    "getEstruct"=> 0,
+    "getControl"=> 0,
+    "getHorarios"=> 0,
+    "getAcceso"=> 0,
+    'start'   => 0,
+    'length'  => 5000
+);
+
+$url = gethostCHWeb()."/".HOMEHOST."/api/personal/";
+
+$dataApi['DATA'] = $dataApi['DATA'] ?? '';
+$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+$dataApi = json_decode(requestApi($url, $token, "", $dataParametros, 10), true);
+$colLega = array();
+
+if ($dataApi['DATA']) {
+   $colLega = array_column($dataApi['DATA'], "Lega");
+}
+
+try {
+   $searchValue = $_leg;
+   $key = array_search($searchValue, $colLega);
+
+   if ($key === false) {
+      echo "El Legajo $searchValue No es valido";
+      echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
+      exit;
+   }
+} catch (Exception $e) {
+    echo 'Error: ' . $e->getMessage();
+    echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
+   exit;
+}
 require pagina('alta.php');

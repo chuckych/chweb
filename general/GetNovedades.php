@@ -56,20 +56,20 @@ if (sqlsrv_num_rows($result) > 0) {
             $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
         } else {
             $editar = '<a data-titler="Editar Novedad: ' . $row['nov_descripcion'] . '" href="#TopN"
-        class="btn btn-sm btn-link text-decoration-none mod_Nov bi bi-pen" 
-        data="' . $row['nov_novedad'] . '-' . $row['nov_tipo'] . '-' . $row['FicCate'] . '"
-        data2="' . $row['nov_novedad'] . '"
-        data3="' . $row['nov_descripcion'] . '"
-        data4="' . $row['CodCaus'] . '"
-        data5="' . $row['DescCausa'] . '"
-        data6="' . $row['Obserb'] . '"
-        data7="' . $row['FicJust'] . '"
-        data8="' . $row['FicCate'] . '"
-        data9="' . $row['nov_horas'] . '"
-        data10="' . $row['nov_tipo'] . '"
-        </a>';
-        $eliminar = '<a data-titler="Eliminar Novedad: ' . $row['nov_descripcion'] . '" data="' . $row['nov_novedad'] . '-' . $NovFechStr . '-' . $Legajo . '"  data2="' . $row['nov_descripcion'] . '" class="btn btn-sm btn-link text-decoration-none baja_Nov bi bi-trash"></a>';
-        $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
+            class="btn btn-sm btn-link text-decoration-none mod_Nov bi bi-pen" 
+            data="' . $row['nov_novedad'] . '-' . $row['nov_tipo'] . '-' . $row['FicCate'] . '"
+            data2="' . $row['nov_novedad'] . '"
+            data3="' . $row['nov_descripcion'] . '"
+            data4="' . $row['CodCaus'] . '"
+            data5="' . $row['DescCausa'] . '"
+            data6="' . $row['Obserb'] . '"
+            data7="' . $row['FicJust'] . '"
+            data8="' . $row['FicCate'] . '"
+            data9="' . $row['nov_horas'] . '"
+            data10="' . $row['nov_tipo'] . '"
+            </a>';
+            $eliminar = '<a data-titler="Eliminar Novedad: ' . $row['nov_descripcion'] . '" data="' . $row['nov_novedad'] . '-' . $NovFechStr . '-' . $Legajo . '"  data2="' . $row['nov_descripcion'] . '" class="btn btn-sm btn-link text-decoration-none baja_Nov bi bi-trash"></a>';
+            $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
         }
 
         if (str_replace("-","",$_SESSION['ListaNov'])) {
@@ -97,7 +97,8 @@ if (sqlsrv_num_rows($result) > 0) {
             'Just'        => JustNov($row['FicJust']),
             'editar'      => $editar,
             'eliminar'    => $eliminar,
-            'null'        => ''
+            'null'        => '',
+            'e' => $_SESSION["ABM_ROL"],
         );
     endwhile;
     sqlsrv_free_stmt($result);
