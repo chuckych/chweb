@@ -7,6 +7,7 @@ ini_set('display_errors', '0');
 
 require __DIR__ . '../../../vendor/autoload.php';
 use Carbon\Carbon;
+
 timeZone();
 
 $_SERVER["argv"][1] = $_SERVER["argv"][1] ?? '';
@@ -627,39 +628,38 @@ foreach ($columnIdPunch as $keyPunch => $idPunch) {
         fileLog($e->getMessage(), __DIR__ . '/logs/' . date('Ymd') . '_error_punch-event_get.log');
     }
 
-    // Flight::json($arr);
-// exit;
-
     if (!empty($arr['payload'])) {
         foreach ($arr['payload'] as $key => $v) {
             $operation = $v['operation']['observations'] ?? '';
-            $arrayData[] = array(
-                '__v' => $v['__v'] ?? '',
-                '_id' => $v['_id'] ?? '',
-                'accuracy' => $v['position']['accuracy'] ?? '',
-                'appVersion' => sanitizeAppVersion($v['appVersion']),
-                'attphoto' => $v['attphoto'] ?? '',
-                'batteryLevel' => $v['position']['batteryLevel'] ?? '',
-                'bearing' => $v['position']['bearing'] ?? '',
-                'companyCode' => $v['companyCode'] ?? '',
-                'createdDate' => $v['createdDate'] ?? '',
-                'dateTime' => ($v['dateTime'] ?? ''),
-                'employeId' => $v['employeId'] ?? '',
-                'eventType' => $v['eventType'] ?? '',
-                'gpsStatus' => $v['position']['gpsStatus'] ?? '',
-                'lat' => $v['position']['lat'] ?? '',
-                'lng' => $v['position']['lng'] ?? '',
-                'phoneid' => $v['phoneid'] ?? '',
-                'regid' => $v['regid'] ?? '',
-                'speed' => $v['position']['speed'] ?? '',
-                'sync' => $v['sync'] ?? '',
-                'operationType' => $v['operationType'] ?? '',
-                'operation' => $operation,
-                'confidence' => $v['confidence'] ?? '',
-                'locked' => $v['locked'] ?? '0',
-                'error' => $v['error'] ?? '',
-                'id_api' => $v['id'] ?? ''
-            );
+            if ($v['employeId'] != null) {
+                $arrayData[] = array(
+                    '__v' => $v['__v'] ?? '',
+                    '_id' => $v['_id'] ?? '',
+                    'accuracy' => $v['position']['accuracy'] ?? '',
+                    'appVersion' => sanitizeAppVersion($v['appVersion']),
+                    'attphoto' => $v['attphoto'] ?? '',
+                    'batteryLevel' => $v['position']['batteryLevel'] ?? '',
+                    'bearing' => $v['position']['bearing'] ?? '',
+                    'companyCode' => $v['companyCode'] ?? '',
+                    'createdDate' => $v['createdDate'] ?? '',
+                    'dateTime' => ($v['dateTime'] ?? ''),
+                    'employeId' => $v['employeId'] ?? '',
+                    'eventType' => $v['eventType'] ?? '',
+                    'gpsStatus' => $v['position']['gpsStatus'] ?? '',
+                    'lat' => $v['position']['lat'] ?? '',
+                    'lng' => $v['position']['lng'] ?? '',
+                    'phoneid' => $v['phoneid'] ?? '',
+                    'regid' => $v['regid'] ?? '',
+                    'speed' => $v['position']['speed'] ?? '',
+                    'sync' => $v['sync'] ?? '',
+                    'operationType' => $v['operationType'] ?? '',
+                    'operation' => $operation,
+                    'confidence' => $v['confidence'] ?? '',
+                    'locked' => $v['locked'] ?? '0',
+                    'error' => $v['error'] ?? '',
+                    'id_api' => $v['id'] ?? ''
+                );
+            }
         }
     }
 
