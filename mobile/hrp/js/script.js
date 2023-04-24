@@ -14,25 +14,14 @@ $(function () {
         $('.loading').hide()
     });
 
-    if ($("#actMobile").val() == '1') {
-        actualizar_aws(false);
+    // if ((host != 'https://localhost') && (host != 'http://localhost')) {
         setInterval(() => {
-            // actualizar(false);
-            // actualizar2(false);
-            // actualizar3(false);
-            // actualizar4(false);
-            actualizar_aws(false);
-        }, 15000);
-    } else {
-        if ((host != 'https://localhost') && (host != 'http://localhost')) {
-            setInterval(() => {
-                if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
-                    let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-                    fetchCreatedDate('createdDate.php')
-                }
-            }, 5000); // cada 5 segundos
-        }
-    }
+            if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
+                let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+                fetchCreatedDate('api/createdDate.php')
+            }
+        }, 5000); // cada 5 segundos
+    // }
 
     $.fn.DataTable.ext.pager.numbers_length = 5;
     // $('#btnFiltrar').removeClass('d-sm-block');
@@ -809,7 +798,7 @@ $(function () {
     // });
     $('#table-mobile').DataTable().on('xhr.dt', function (e, settings, json) {
         let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-        fetchCreatedDate('createdDate.php')
+        fetchCreatedDate('api/createdDate.php')
         $('#table-mobile').DataTable().off('xhr.dt');
     });
 
@@ -835,7 +824,7 @@ $(function () {
     //     setTimeout(() => {
     //         actualizarRegistros('#table-mobile')
     //     }, 500);
-        
+
     // });
     $(document).on('change', '#SoloFic', function (e) {
         e.preventDefault()
