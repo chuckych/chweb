@@ -652,7 +652,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             },
             /** Columna Distancia */
             {
-                className: 'align-middle py-2 fontq text-right', targets: '', title: ``,
+                className: 'align-middle py-2 fontq text-right', targets: '', title: 'Distancia',
                 "render": function (data, type, row, meta) {
                     let className = '';
                     if (createZone) {
@@ -660,6 +660,14 @@ function getNearZonesTable($lat, $lng, createZone = false) {
                     }
                     let distance = (row.distance >= 1000) ? (row.distance / 1000).toFixed(2) + ' Km.' : row.distance + ' Mts.';
                     let datacol = `<div class="float-right ${className}">${distance}</div>`
+                    return datacol;
+                },
+            },
+            /** Columna Radio */
+            {
+                className: 'align-middle py-2 fontq text-right', targets: '', title:'Radio',
+                "render": function (data, type, row, meta) {
+                    let datacol = `<div class="float-right fontq">${row.zoneRadio}</div>`
                     return datacol;
                 },
             },
