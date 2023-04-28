@@ -1,5 +1,29 @@
 const loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 const host = $('#_host').val()
+
+const redMarker = L.icon({
+    iconUrl: 'css/marker-icon-2x-red.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    // shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    iconColor: '#FF0000'
+});
+const greenMarker = L.icon({
+    iconUrl: 'css/marker-icon-2x-green.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    // shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    shadowSize: [41, 41],
+    shadowAnchor: [12, 41],
+    iconColor: '#FF0000'
+});
+
 const loadingTable = (selectortable) => {
     $(selectortable + ' td div').addClass('bg-light text-light border-0 h50')
     $(selectortable + ' td img').addClass('invisible')
@@ -17,11 +41,11 @@ const actualizarRegistros = (selector, reload = false, loading = true) => {
     }
 }
 const ClearFilterMobile = () => {
-        $('.FilterUser').val(null).trigger('change'),
+    $('.FilterUser').val(null).trigger('change'),
         $('.FilterZones').val(null).trigger('change'),
         $('.FilterDevice').val(null).trigger('change'),
         $('input[name=FilterIdentified]').prop('checked', false).parents('label').removeClass('active')
-        $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
+    $('#FilterIdentified3').prop('checked', true).parents('label').addClass('active')
 }
 function refreshSelected(selector) {
     $(selector).on('select2:select', function (e) {
@@ -118,10 +142,10 @@ const minmaxDate = () => {
         $('#_drMob2').val(dr).trigger('change')
         $('#_drMob').val(dr).trigger('change')
     }).then(() => {
-        actualizarRegistros('#table-mobile', true, false)
-        actualizarRegistros('#tableUsuarios', true, false)
-        actualizarRegistros('#tableDevices', true, false)
-        actualizarRegistros('#tableZones', true, false)
+        actualizarRegistros('#table-mobile')
+        actualizarRegistros('#tableUsuarios')
+        actualizarRegistros('#tableDevices')
+        actualizarRegistros('#tableZones')
         dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
@@ -174,19 +198,39 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
             'true': 'Contraer mapa'
         }
     }));
-    let marker = L.marker([lat, lng]).addTo(map);
-    distancia = ''
+    // let myIcon = L.icon({
+    //     iconUrl: '../../img/iconMarker.svg',
+    // });
+    if (zoneID > 0) {
+        marker = L.marker([lat, lng], { icon: greenMarker }).addTo(map);
+    } else {
+        marker = L.marker([lat, lng], { icon: redMarker }).addTo(map);
+    }
+    let distancia = (mtszona > 0) ? '<br>Distancia: ' + mtszona : '';
+    marker.bindTooltip("<b>" + user + "</b><br>" + datetime + "<br>" + zona + distancia)
+
+    let circleOptions2 = {
+        color: 'green',
+        fillColor: 'green',
+        fillOpacity: 1,
+    };
+
     if ((zoneID > 0)) {
         let circle = L.circle([latzona, lngzona], {
-            color: '#696969',
-            fillColor: '#fafafa',
-            fillOpacity: 0.4,
-            radius: radio
+            color: 'green',
+            fillColor: 'green',
+            fillOpacity: 0.1,
+            radius: radio,
+            weight: 1
         }).addTo(map);
-        // circle.bindPopup("<b>Urbana</b>");
-        distancia = '<br>' + mtszona + ' mts.'
+        circle2=L.circle([latzona,lngzona],{...circleOptions2,radius:1}).addTo(map);
+        start = L.latLng([latzona, lngzona])
+        end = L.latLng([lat, lng])
+        let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(map);
+
+        circle.bindTooltip("Zona: <b>" + zona + "</b><br>Radio: " + radio)
+
     }
-    marker.bindTooltip("<b>" + user + "</b><br>" + datetime + "<br>" + zona + distancia)
 }
 function initializingMap() // call this method before you initialize your map.
 {
@@ -232,6 +276,9 @@ const processRegFace = (id_api) => {
 }
 function initMap() {
 
+    if (!lati) {
+        return false
+    }
     var lati = parseFloat($('#latitud').val())
     var long = parseFloat($('#longitud').val())
     var zona = ($('#zona').val())
@@ -411,19 +458,6 @@ function initMap() {
     marker.addListener("click", () => {
         infowindow.open(map, marker);
     });
-
-    // var sunCircle = {
-    //     strokeColor: "#0388D1",
-    //     strokeOpacity: 1,
-    //     strokeWeight: 1,
-    //     fillColor: "#0388D1",
-    //     fillOpacity: 0.25,
-    //     map: map,
-    //     center: myLatLng,
-    //     radius: 200 // en metros
-    // };
-    // cityCircle = new google.maps.Circle(sunCircle)
-    // cityCircle.bindTo('center', marker, 'position');
 }
 function clean() {
     $('#mapzone').hide();
@@ -738,22 +772,172 @@ const formatDateTime = (date) => {
     return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes;
 }
 
-    // {/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
-    // let copyRegig = new ClipboardJS('.copyRegig');
-    // copyRegig.on('success', function (e) {
-    //     $.notifyClose();
-    //     notify('Copiado', 'warning', 1000, 'right')
-    //     setTimeout(function () {
-    //         $.notifyClose();
-    //     }, 1000);
-    //     e.clearSelection();
-    // });
+// {/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
+// let copyRegig = new ClipboardJS('.copyRegig');
+// copyRegig.on('success', function (e) {
+//     $.notifyClose();
+//     notify('Copiado', 'warning', 1000, 'right')
+//     setTimeout(function () {
+//         $.notifyClose();
+//     }, 1000);
+//     e.clearSelection();
+// });
 
-    // copyRegig.on('error', function (e) {
-    //     $.notifyClose();
-    //     notify('Error al copiar', 'danger', 1000, 'right')
-    //     setTimeout(function () {
-    //         $.notifyClose();
-    //     }, 1000);
-    //     e.clearSelection();
-    // });
+// copyRegig.on('error', function (e) {
+//     $.notifyClose();
+//     notify('Error al copiar', 'danger', 1000, 'right')
+//     setTimeout(function () {
+//         $.notifyClose();
+//     }, 1000);
+//     e.clearSelection();
+// });
+
+function loadMap(data, customid) {
+
+    // console.log(data.length);
+    $('#mapid').html('');
+
+    if((data.length == 0)){
+        $('#mapid').hide();
+        return false
+    }
+    // Crea el mapa
+    $('#mapid').show();
+    $('#mapid').html('<div style="width:100%; height:550px;" id="' + customid + '"></div>');
+
+    let ubicacionesParaMapa = [];
+    let uniqueZones = new Map();
+
+    for (const item of data) {
+        if (!uniqueZones.has(item.zoneID)) {
+            if (item.zoneID > 0) {
+                let a = {
+                    "zoneID": item.zoneID,
+                    "zoneName": item.zoneName,
+                    "zoneLat": parseFloat(item.zoneLat),
+                    "zoneLng": parseFloat(item.zoneLng),
+                    "zoneRadio": parseInt(item.zoneRadio),
+                }
+                uniqueZones.set(item.zoneID, a);
+            }
+        }
+    }
+
+
+    let uniqueZonesArray = Array.from(uniqueZones.values())
+    let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+    data.forEach((ubicacion) => {
+        ubicacionesParaMapa.push(
+            {
+                lat: ubicacion.regLat,
+                lon: ubicacion.regLng,
+                zoneID: ubicacion.zoneID,
+                user: ubicacion.userName,
+                datetime: ubicacion.regDate + ' ' + ubicacion.regHora,
+                distancia: (ubicacion.zoneDistance > 0) ? 'Distancia: ' + ubicacion.zoneDistance + ' m.' : '',
+                zona: (ubicacion.zoneName != null) ? '<span class="text-success">' + ubicacion.zoneName + '</b>' : '<span class="text-danger"><span>Fuera de zona</b></span>',
+                img: path + ubicacion.imageData['img'],
+                zoneLat: ubicacion.zoneLat,
+                zoneLng: ubicacion.zoneLng,
+                regLat: ubicacion.regLat,
+                regLng: ubicacion.regLng
+            }
+        );
+    });
+
+    let primerElemento = ubicacionesParaMapa[0]
+    let latitud = primerElemento.lat
+    let longitud = primerElemento.lon
+
+    let mymap = L.map(customid).setView([latitud, longitud], 16);
+    // Agrega el layer de OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        maxZoom: 20
+    }).addTo(mymap);
+
+
+    let circleOptions = {
+        color: 'green',
+        fillColor: 'green',
+        fillOpacity: 0.1,
+        weight: 1
+    };
+    let circleOptions2 = {
+        color: 'black',
+        fillColor: 'black',
+        fillOpacity: 1,
+    };
+    let circleOptions3 = {
+        color: 'white',
+        fillColor: 'green',
+        fillOpacity: 0.9,
+        radius: 7
+    };
+    let circleOptions4 = {
+        color: 'white',
+        fillColor: 'red',
+        fillOpacity: 0.9,
+        radius: 7
+    };
+
+    mymap.addControl(new L.Control.Fullscreen({
+        title: {
+            'false': 'Expandir mapa',
+            'true': 'Contraer mapa'
+        }
+    }));
+
+    // let markersLayer = L.layerGroup().addTo(mymap);
+    // markersLayer.clearLayers();
+
+    // let iconZone = L.icon({
+    //     iconUrl: '',
+    let start = 0
+    let end = 0
+    let markersLayer = ''
+    // });    
+    for (let i = 0; i < ubicacionesParaMapa.length; i++) {
+        let ubicacion = ubicacionesParaMapa[i];
+        if (ubicacion.zoneID > 0) {
+            start = L.latLng([ubicacion.regLat, ubicacion.regLng])
+            end = L.latLng([ubicacion.zoneLat, ubicacion.zoneLng])
+            markersLayer = L.marker([ubicacion.lat, ubicacion.lon], { icon: greenMarker }).addTo(mymap);
+            // circle3 = L.circleMarker([ubicacion.lat,ubicacion.lon],{...circleOptions3}).addTo(mymap);
+            let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(mymap);
+        } else {
+            markersLayer = L.marker([ubicacion.lat, ubicacion.lon], { icon: redMarker }).addTo(mymap);
+            // circle3 = L.circleMarker([ubicacion.lat,ubicacion.lon],{...circleOptions4}).addTo(mymap);
+        }
+
+        let infoMarker = `
+        <div class='d-inline-flex'>
+            <img src='${ubicacion.img}' style='width:40px; height:40px'></img>
+            <div class='d-flex flex-column ml-2'>
+                <span>${ubicacion.user}</span> </span>${ubicacion.datetime}</span>
+            </div>
+        </div>
+        <div class='d-flex flex-column'>
+            <span>Zona: ${ubicacion.zona}</span> </span>${ubicacion.distancia}</span>
+        </div>
+        `
+
+        markersLayer.bindTooltip(infoMarker)
+
+    }
+    for (let i = 0; i < uniqueZonesArray.length; i++) {
+        let zone = uniqueZonesArray[i];
+        circle = L.circle([zone.zoneLat, zone.zoneLng], {
+            ...circleOptions,
+            radius: zone.zoneRadio
+        }).addTo(mymap);
+        circle2 = L.circle([zone.zoneLat, zone.zoneLng], {
+            ...circleOptions2,
+            radius: 1
+        }).addTo(mymap);
+        circle.bindTooltip("Zona: <b>" + zone.zoneName + "</b><br>Radio: " + zone.zoneRadio)
+    }
+
+    $('#mapid').append(`<div class="pt-2 fontp float-right">Total Zonas: ${uniqueZonesArray.length}.</div>`)
+
+}

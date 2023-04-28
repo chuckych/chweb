@@ -707,9 +707,9 @@
  }
 
  .scale:hover {
-     transform: scale(1.5);
+     transform: scale(1.3);
      z-index: 1000;
-     transition: 0.5s;
+     transition: 0.3s;
  }
 
  .opa1 {

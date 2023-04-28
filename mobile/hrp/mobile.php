@@ -18,7 +18,7 @@
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
-            <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', '' . MODULOS['mobile']. ' HRP', 'color: #fff; width:30px', 'mr-2'); ?>
+            <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', '' . MODULOS['mobile'] . ' HRP', 'color: #fff; width:30px', 'mr-2'); ?>
         </div>
         <!-- Fin Encabezado -->
         <?php
@@ -56,9 +56,10 @@
         ?>
         <?php require __DIR__ . '../menuBtn.html' ?>
         <div class="wrapper">
-            <div class="row bg-white invisible mt-2" id="RowTableMobile">
+            <div class="row bg-white invisible my-2" id="RowTableMobile">
                 <div class="col-12">
-                    <div class="collapse border p-3 mb-3 shadow-sm animate__animated animate__fadeIn" id="collapseFilterChecks">
+                    <div class="collapse border p-3 mb-3 shadow-sm animate__animated animate__fadeIn"
+                        id="collapseFilterChecks">
                         <div class="form-row">
                             <div class="col-12 col-sm-4 d-flex flex-column">
                                 <label for="FilterUser">Usuarios</label>
@@ -71,7 +72,7 @@
                                     class="form-control w-100 FilterZones invisible h40"></select>
                             </div>
                             <div class="col-12 col-sm-4 d-flex flex-column mt-2 mt-sm-0">
-                            <label for="FilterDevice">Dispositivos</label>
+                                <label for="FilterDevice">Dispositivos</label>
                                 <select name="FilterDevice" id="FilterDevice"
                                     class="form-control w-100 FilterDevice invisible h40"></select>
                             </div>
@@ -79,7 +80,8 @@
                             </div>
                             <div class="col-12 col-sm-6 mt-3 d-flex align-items-center justify-content-end">
                                 <div class="btn-group btn-group-toggle border p-1 bg-white mr-1">
-                                    <button class="btn-light btn border-0" data-titlet="Borrar Filtros" id="ClearFilter">
+                                    <button class="btn-light btn border-0" data-titlet="Borrar Filtros"
+                                        id="ClearFilter">
                                         <i class="text-secondary bi bi-eraser-fill"></i>
                                     </button>
                                 </div>
@@ -93,8 +95,8 @@
                                             class="text-danger bi bi-person-bounding-box"></i>
                                     </label>
                                     <label class="btn btn-outline-light border-0" data-titlet="Todos">
-                                        <input type="radio" name="FilterIdentified" id="FilterIdentified3" value="" checked> <i
-                                            class="text-secondary bi bi-person-bounding-box"></i>
+                                        <input type="radio" name="FilterIdentified" id="FilterIdentified3" value=""
+                                            checked> <i class="text-secondary bi bi-person-bounding-box"></i>
                                     </label>
                                 </div>
                             </div>
@@ -126,6 +128,9 @@
                     <?php
                 endif;
                 ?>
+                <div class="col-12 mt-3">
+                    <div id="mapid"></div>
+                </div>
             </div>
             <div class="bg-white invisible mt-2" id="RowTableUsers">
                 <div class="row">
@@ -186,7 +191,7 @@
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&amp;libraries=places" defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&libraries=places&callback=initMap" defer></script>
     <script src="/<?= HOMEHOST ?>/js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
