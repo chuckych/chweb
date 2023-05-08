@@ -246,8 +246,7 @@ $data = array(
     "total Insert" => $countInsert,
     "total Update" => $countUpdate,
     "proceso" => ($procesado == null) ? '' : $procesado,
-    "errores" => $errores,
-    "_i" => $stmt = $db->query("SELECT * FROM PERSONAL WHERE LegNume = 29988600")
+    "errores" => $errores
 );
 http_response_code(200);
 (response($data, $totalProcesados, 'OK', 200, $time_start, 0, $idCompany));
