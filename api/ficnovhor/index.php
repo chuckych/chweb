@@ -9,7 +9,8 @@ errorReport();
 $iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
 $IlegFic = array();
 
-$checkMethod('POST');
+$control->check_method("POST");
+$control->check_json();
 
 require __DIR__ . '../wc.php';
 
@@ -186,7 +187,6 @@ foreach ($stmtFic as $key => $v) {
             }
         }
     }
-    
     if ($dp['getHor']) {
         if (($stmtHoras)) {
             if (horaMin($v['FicHsTr'] > 0)) {

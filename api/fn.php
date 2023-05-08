@@ -1,31 +1,45 @@
 <?php
-// ini_set('memory_limit', '500M');
-require '../../vendor/autoload.php';
+ini_set('max_execution_time', 480); //480 seconds = 8 minutes
+require __DIR__ . './class.php';
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 $time_start = timeStart(); // Inicio
-$pathLog  = __DIR__ . '/logs/'; // path de Logs Api
+$pathLog = __DIR__ . '/logs/'; // path de Logs Api
 cleanFile($pathLog, 1, '.log'); // Elimina logs de los ultimos 7 días.
 $iniData = (getIni(__DIR__ . '../../mobileApikey.php'));
 header('WWW-Authenticate: Basic');
 $_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
-$dataC     = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
+$dataC = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
+
+$control = new requestControl();
+$apiData = new apiData($dataC);
+$db = new querydb($dataC);
+
+$ws = new webServiceCH($apiData->get('WebServiceCH'));
+
+$apiData = function ($key = '') use ($dataC) {
+    if ($key) {
+        return $dataC[$key];
+    }
+    return $dataC;
+};
+
 $idCompany = $dataC['idCompany']; // Id de la cuenta {int}
 $_SERVER['PHP_AUTH_USER'] = $_SERVER['PHP_AUTH_USER'] ?? '';
-$_SERVER['PHP_AUTH_PW']   = $_SERVER['PHP_AUTH_PW'] ?? '';
+$_SERVER['PHP_AUTH_PW'] = $_SERVER['PHP_AUTH_PW'] ?? '';
 $validData = $wc = '';
-$ErrorVP = '';
+$ErrorVP = [];
 
 $request = Flight::request();
 $payload = $request->data;
-$dp      = $request->data;
-$method  = $request->method;
+$dp = $request->data;
+$method = $request->method;
 
-$dp->start  = $dp->start ?? '0';
-$start      = intval(empty($dp->start) ? 0 : $dp->start);
+$dp->start = $dp->start ?? '0';
+$start = intval(empty($dp->start) ? 0 : $dp->start);
 
 $dp->length = $dp->length ?? '10';
-$length     = intval(empty($dp->length) ? 10 : $dp->length);
+$length = intval(empty($dp->length) ? 10 : $dp->length);
 
 // Flight::json($request).exit;
 
@@ -42,15 +56,15 @@ $passAuth = explode('/', $_SERVER['PHP_SELF']);
 /**
  * Datos de la cuenta
  */
-$dataCompany  = array(
-    'host'        => $dataC['DBHost'],
-    'user'        => $dataC['DBUser'],
-    'pass'        => $dataC['DBPass'],
-    'db'          => $dataC['DBName'],
-    'auth'        => $dataC['DBAuth'],
-    'idCompany'   => $dataC['idCompany'],
+$dataCompany = array(
+    'host' => $dataC['DBHost'],
+    'user' => $dataC['DBUser'],
+    'pass' => $dataC['DBPass'],
+    'db' => $dataC['DBName'],
+    'auth' => $dataC['DBAuth'],
+    'idCompany' => $dataC['idCompany'],
     'nameCompany' => $dataC['nameCompany'],
-    'hostCHWeb'   => $dataC['hostCHWeb'],
+    'hostCHWeb' => $dataC['hostCHWeb'],
 );
 /**
  * Devuelve valores separados por @separator de un array
@@ -199,7 +213,7 @@ function checkToken($token, $iniData = array())
         foreach ($iniData as $v) {
             if ($v['Token'] == $token) {
                 $idCompany = $v['idCompany'];
-                $vkey      = $v['recidCompany'];
+                $vkey = $v['recidCompany'];
                 $data = array(
                     $v
                 );
@@ -229,29 +243,28 @@ function checkToken($token, $iniData = array())
  */
 $start = start();
 $length = length();
-// $response = function ($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0) use ($start,$length)
 function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
 {
     $code = intval($code);
-    $start  = ($code != 400) ? start() : 0;
-    $length  = ($code != 400) ? length() : 0;
+    $start = ($code != 400) ? start() : 0;
+    $length = ($code != 400) ? length() : 0;
 
     $time_end = microtime(true);
     $tiempoScript = number_format($time_end - $time_start, 4);
 
     $array = array(
-        'RESPONSE_CODE' => http_response_code(intval($code)),
-        'START'         => intval($start),
-        'LENGTH'        => intval($length),
-        'TOTAL'         => intval($total),
-        'COUNT'         => intval($count),
-        'MESSAGE'       => $msg,
-        'TIME'          => floatval($tiempoScript),
+        'RESPONSE_CODE' => http_response_code($code),
+        'START' => intval($start),
+        'LENGTH' => intval($length),
+        'TOTAL' => intval($total),
+        'COUNT' => intval($count),
+        'MESSAGE' => $msg,
+        'TIME' => floatval($tiempoScript),
         // 'REQUEST_URI'   => $_SERVER['REQUEST_URI'],
         'DATA' => $data,
     );
 
-    echo json_encode($array, JSON_PRETTY_PRINT);
+    Flight::json($array);
 
     /** LOG API CONFIG */
     // $textParams = array();
@@ -263,22 +276,22 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
     $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
 
     $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-    $agent    = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
     // $idCompany    = $idCompany;
 
     if ($agent) {
-        require_once __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
+        require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
         $parsedagent[] = parse_user_agent($agent);
         foreach ($parsedagent as $key => $value) {
             $platform = $value['platform'];
-            $browser  = $value['browser'];
-            $version  = $value['version'];
+            $browser = $value['browser'];
+            $version = $value['version'];
         }
         $agent = $platform . ' ' . $browser . ' ' . $version;
     }
 
-    $pathLog  = __DIR__ . '/logs/'; // path Log Api
-    $nameLog  = date('Ymd') . '_request_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+    $pathLog = __DIR__ . '/logs/'; // path Log Api
+    $nameLog = date('Ymd') . '_request_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
     /** start text log*/
     $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
     /** end text log*/
@@ -297,8 +310,8 @@ function cleanFile($path, $dias, $ext) // borra los archivo a partir de una cant
     if ($files) {
         foreach ($files as $file) { // recorremos todos los ficheros.
             $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
-            $currentTime      = time(); // obtenemos la fecha actual
-            $dateDiff         = dateDiff(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
+            $currentTime = time(); // obtenemos la fecha actual
+            $dateDiff = dateDiff(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
             ($dateDiff >= intval($dias)) ? unlink($file) : ''; //elimino el fichero
         }
     }
@@ -359,6 +372,46 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
         exit;
     }
 };
+$dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
+    if (!$query) {
+        http_response_code(400);
+        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        exit;
+    }
+    require __DIR__ . './connectDBPDO.php';
+    try {
+
+        $stmt = sqlsrv_prepare($conn, $query, $procedure_params);
+        if ($stmt === false) {
+            http_response_code(400);
+            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtFalse.log'; // ruta del archivo de Log de errores
+            $e = json_encode(sqlsrv_errors());
+            writeLog(PHP_EOL . 'stmt: ' . $e, $pathLog); // escribir en el log de errores el error
+            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+        }
+
+        // execute the stored procedure
+        if (sqlsrv_execute($stmt) === false) {
+            http_response_code(400);
+            $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtExecute.log'; // ruta del archivo de Log de errores
+            $e = json_encode(sqlsrv_errors());
+            writeLog(PHP_EOL . 'stmtExecute: ' . $e, $pathLog); // escribir en el log de errores el error
+            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+        }
+
+        $stmt = null;
+        $conn = null;
+        return true;
+
+    } catch (Exception $e) {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
+        writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
+        writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
+        http_response_code(400);
+        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        exit;
+    }
+};
 /**
  * @text {string} texto del log
  * @path {string} ruta del archivo con su extension
@@ -366,9 +419,9 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
  */
 function writeLog($text, $path, $type = false)
 {
-    $log    = fopen($path, 'a');
-    $date   = dateTimeNow();
-    $text   = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
+    $log = fopen($path, 'a');
+    $date = dateTimeNow();
+    $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
     file_put_contents($path, $text, FILE_APPEND | LOCK_EX);
 }
 /** 
@@ -402,8 +455,8 @@ function dateDiff($date_1, $date_2, $differenceFormat = '%a') // diferencia en d
 function start()
 {
     $request = Flight::request();
-    
-    $p = (strtolower ($request->method) == 'post') ? $request->data : $request->query;
+
+    $p = (strtolower($request->method) == 'post') ? $request->data : $request->query;
     $p->start = $p->start ?? '0';
     $start = empty(vp($p->start, 'Start', 'int', 11)) ? 0 : $p->start;
     return intval($start);
@@ -412,7 +465,7 @@ function length()
 {
     $request = Flight::request();
     // print_r($request).exit;
-    $p = (strtolower ($request->method) == 'post') ? $request->data : $request->query;
+    $p = (strtolower($request->method) == 'post') ? $request->data : $request->query;
     $p->length = $p->length ?? '';
     $length = empty(vp($p->length, 'Length', 'int', 11)) ? 10 : $p->length;
     return intval($length);
@@ -464,7 +517,7 @@ function fechFormat($dateTime, $format = 'Y-m-d')
     if ($dateTime) {
         if ($dateTime != '0000-00-00 00:00:00') {
             $x = date_create($dateTime);
-            $x  = date_format($x, $format);
+            $x = date_format($x, $format);
             return $x;
         } else {
             return false;
@@ -761,7 +814,7 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             }
         }
         if ($type == 'arrfecha') {
-            if(!is_array($value)) {
+            if (!is_array($value)) {
                 http_response_code(400);
                 (response(array(), 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
                 exit;
@@ -832,17 +885,22 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
 }
 function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
 {
+    $Error = [];
     if ($value) {
         if ($type == 'int') {
-            if ($value) {
-                // $ErrorVP[] = (!is_numeric($value)) ? "Parámetro '$key' de ser {int}. Valor '$value'":''; 
-                // $ErrorVP[] = (!filter_var($value, FILTER_VALIDATE_INT)) ? "Parámetro '$key' de ser {int}. Valor = '$value'":''; 
-                // $ErrorVP[] = (strlen($value) > $length) ? "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'":''; 
-                if ($value > 2147483648) {
-                    $ErrorVP .= "Parámetro '$key' no puede ser mayor '2147483648'. Valor '$value'";
-                }
-                // $ErrorVP[] = (($value) < 0) ? "Parámetro '$key' de ser mayor o igual a '1'. Valor '$value'":''; 
+            if (!filter_var($value, FILTER_VALIDATE_INT)) {
+                $Error[] = "Parámetro '$key' de ser {int}. Valor = '$value'";
             }
+            if (strlen($value) > $length) {
+                $Error[] = "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'";
+            }
+            if ($value > 2147483648) {
+                $Error[] = "Parámetro '$key' no puede ser mayor '2147483648'. Valor '$value'";
+            }
+            if (($value) < 0) {
+                $Error[] = "Parámetro '$key' de ser mayor o igual a '1'. Valor '$value'";
+            }
+            return $Error;
         }
         if ($type == 'int01') {
             if ($value) {
@@ -1094,7 +1152,7 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             }
         }
         if ($type == 'arrfecha') {
-            if(!is_array($value)) {
+            if (!is_array($value)) {
                 http_response_code(400);
                 (response(array(), 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
                 exit;
@@ -1147,6 +1205,35 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             }
         }
     }
+    if ($type == 'intRequerido') {
+        if (empty($value)) {
+            $Error[] = "Parámetro '$key' es requerido.";
+            return $Error;
+        }
+        if (!filter_var($value, FILTER_VALIDATE_INT)) {
+            $Error[] = "Parámetro '$key' de ser {int}. Valor = '$value'";
+        }
+        if (strlen($value) > $length) {
+            $Error[] = "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'";
+        }
+        if ($value > 2147483648) {
+            $Error[] = "Parámetro '$key' no puede ser mayor '2147483648'. Valor '$value'";
+        }
+        if (($value) < 0) {
+            $Error[] = "Parámetro '$key' de ser mayor o igual a '1'. Valor '$value'";
+        }
+        return $Error;
+    }
+    if ($type == 'strRequerido') {
+        if (empty($value)) {
+            $Error[] = "Parámetro '$key' es requerido.";
+            return $Error;
+        }
+        if (strlen($value) > $length) {
+            $Error[] = "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'";
+        }
+        return $Error;
+    }
     return $value;
 }
 function isValidJSON($str)
@@ -1170,9 +1257,9 @@ function calculaEdadStr($fecha, $fechaFin = '')
     if ($fecha) {
         if ($fecha != '1753-01-01') {
             $EdadStr = '';
-            $Edad      = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%y'));
+            $Edad = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%y'));
             $EdadMeses = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%m'));
-            $EdadDias  = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%d'));
+            $EdadDias = intval(calculaEdad(fechFormat($fecha, 'Y-m-d'), $fechaFin)->format('%d'));
             $EdadStr .= ($Edad) ? $Edad . (($Edad > 1) ? ' Años' : ' Año') : '';
             $EdadStr .= ($EdadMeses) ? ' ' . (($EdadMeses > 1) ? $EdadMeses . ' Meses' : $EdadMeses . ' Mes') : '';
             $EdadStr .= ($EdadDias) ? ' ' . (($EdadDias > 1) ? $EdadDias . ' Días' : $EdadDias . ' Día') : '';
@@ -1187,28 +1274,28 @@ function IncTiStr($LegIncTi)
         switch ($LegIncTi) {
             case '0':
                 return "Estándar sin control de descanso";
-                // break;
+            // break;
             case '1':
                 return "Estándar con control de descanso";
-                // break;
+            // break;
             case '2':
                 return "(Hs. a Trabajar - Hs. Trabajadas)";
-                // break;
+            // break;
             case '3':
                 return "(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia";
-                // break;
+            // break;
             case '4':
                 return "(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso";
-                // break;
+            // break;
             case '5':
                 return "Recortado sin control de descanso";
-                // break;
+            // break;
             case '6':
                 return "Recortado con control de descanso";
-                // break;
+            // break;
             default:
                 return "Sin definir";
-                // break;
+            // break;
         }
     }
     return '';
@@ -1219,13 +1306,13 @@ function LegHoAlStr($LegHoAl)
         switch ($LegHoAl) {
             case '0':
                 return "Según Asignación";
-                // break;
+            // break;
             case '1':
                 return "Alternativo según fichadas";
-                // break;
+            // break;
             default:
                 return "Sin definir";
-                // break;
+            // break;
         }
     }
     return '';
@@ -1233,8 +1320,8 @@ function LegHoAlStr($LegHoAl)
 function fecha($date, $format = 'Y-m-d')
 {
     try {
-        $date  = new DateTime($date);
-        $date  = $date->format($format);
+        $date = new DateTime($date);
+        $date = $date->format($format);
     } catch (exception $e) {
         file_put_contents(__DIR__ . "/logs/" . date('Ymd') . "_errFecha.log", date('Y-m-d H:i') . ' ' . $_SERVER['PHP_SELF'] . ' ' . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
         return false;
@@ -1253,7 +1340,7 @@ function diaSemana($Ymd)
 }
 
 $authBasic = base64_encode('chweb:' . $dataC['homeHost']);
-$token     = $_SERVER['HTTP_TOKEN'];
+$token = $_SERVER['HTTP_TOKEN'];
 
 $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) {
     $ch = curl_init();
@@ -1263,20 +1350,25 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        "Accept: */*",
-        'Content-Type: application/json',
-        'Authorization: Basic ' . $authBasic, // Basic Authentication
-        "Token: $token",
-    ));
+    curl_setopt(
+        $ch,
+        CURLOPT_HTTPHEADER,
+        array(
+            "Accept: */*",
+            'Content-Type: application/json',
+            'Authorization: Basic ' . $authBasic,
+            // Basic Authentication
+            "Token: $token",
+        )
+    );
     $file_contents = curl_exec($ch);
-    $curl_errno    = curl_errno($ch); // get error code
-    $curl_error    = curl_error($ch); // get error information
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
 
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
-        fileLog($text, $pathLog); // escribir en el log de errores el error
+        writelog($text, $pathLog); // escribir en el log de errores el error
     }
 
     curl_close($ch);
@@ -1284,7 +1376,7 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
         return $file_contents;
     } else {
         $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
-        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+        writeLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
 };
@@ -1298,13 +1390,13 @@ function getCuil($document_number, $gender)
 {
     /** Formula: https://es.wikipedia.org/wiki/Clave_%C3%9Anica_de_Identificaci%C3%B3n_Tributaria */
     $AB = '';
-    $C  = '';
+    $C = '';
     // define('HOMBRE', ["HOMBRE", "M", "MALE"]);
     // define('MUJER', ["MUJER", "F", "FEMALE"]);
     // define('SOCIEDAD', ["SOCIEDAD", "S", "SOCIETY"]);
 
-    $HOMBRE   = ["HOMBRE", "M", "MALE"];
-    $MUJER    = ["MUJER", "F", "FEMALE"];
+    $HOMBRE = ["HOMBRE", "M", "MALE"];
+    $MUJER = ["MUJER", "F", "FEMALE"];
     $SOCIEDAD = ["SOCIEDAD", "S", "SOCIETY"];
 
     $gender = ucwords($gender);
@@ -1324,19 +1416,19 @@ function getCuil($document_number, $gender)
     // Realizo las dos primeras multiplicaciones por separado.
     $calculo = intval(substr($AB, 0, 1)) * 5 + intval(substr($AB, 1, 1)) * 4;
     /*
-    * Recorro el arreglo y el numero de document_number para
-    * realizar las multiplicaciones.
-    */
+     * Recorro el arreglo y el numero de document_number para
+     * realizar las multiplicaciones.
+     */
     for ($i = 0; $i < 8; $i++) {
         $calculo += intval(substr($document_number, $i, 1)) * $multiplicadores[$i];
     }
     // Calculo el resto.
     $resto = (intval($calculo) % 11);
     /*
-    * Llevo a cabo la evaluacion de las tres condiciones para
-    * determinar el valor de C y conocer el valor definitivo de
-    * AB.
-    */
+     * Llevo a cabo la evaluacion de las tres condiciones para
+     * determinar el valor de C y conocer el valor definitivo de
+     * AB.
+     */
     if ($AB != 30 && $resto == 1) {
         if ($AB == 20) {
             $C = "9";
@@ -1358,7 +1450,8 @@ function validaFecha($fecha, $required = true)
 {
 
     if ($required) {
-        if (!$fecha) return false;
+        if (!$fecha)
+            return false;
     }
 
     if ($fecha) {
@@ -1383,19 +1476,19 @@ function validaFecha($fecha, $required = true)
         }
         $f = "$y-$m-$d";
         try {
-           new DateTime($f);
+            new DateTime($f);
         } catch (exception $e) {
             http_response_code(400);
             (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
             exit;
         }
     }
-};
-function returnFecha($fecha, $format='Y-m-d', $required = true)
+}
+function returnFecha($fecha, $format = 'Y-m-d', $required = true)
 {
 
     if ($required) {
-        if (!$fecha){
+        if (!$fecha) {
             http_response_code(400);
             (response(array(), 0, "Fecha es requerido", 400, timeStart(), 0, 0));
             exit;
@@ -1428,23 +1521,26 @@ function returnFecha($fecha, $format='Y-m-d', $required = true)
             $formatted_date = $date->format($format);
             return $formatted_date;
         } catch (exception $e) {
-            http_response_code(400);s
+            http_response_code(400);
             (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
             exit;
         }
     }
-};
+}
+
 function arrFecha($array, $format)
 {
-    if (!$array) return [];
+    if (!$array)
+        return [];
     foreach ($array as $f) {
         $a[] = array(
             fecha($f, $format)
         );
     }
     return array_column($a, 0) ?? [];
-};
-$checkMethod = function($value) use ($time_start, $idCompany, $method){
+}
+
+$checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     if ($method != $value) {
         http_response_code(400);
         (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
@@ -1452,20 +1548,21 @@ $checkMethod = function($value) use ($time_start, $idCompany, $method){
     }
 };
 
-function novedadTipo($value = array()){
+function novedadTipo($value = array())
+{
     if (!$value)
         return 'Desconocido';
-        $tipos = array(
-            '0' => 'LLegada Tarde',
-            '1' => 'Incumplimiento',
-            '2' => 'Salida Anticipada',
-            '3' => 'Ausencia',
-            '4' => 'Licencia',
-            '5' => 'Accidente',
-            '6' => 'Vacaciones',
-            '7' => 'Suspensión',
-            '8' => 'Art'
-        );
-        
+    $tipos = array(
+        '0' => 'LLegada Tarde',
+        '1' => 'Incumplimiento',
+        '2' => 'Salida Anticipada',
+        '3' => 'Ausencia',
+        '4' => 'Licencia',
+        '5' => 'Accidente',
+        '6' => 'Vacaciones',
+        '7' => 'Suspensión',
+        '8' => 'Art'
+    );
+
     return $tipos[$value[0]];
 }
