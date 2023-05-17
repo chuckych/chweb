@@ -426,7 +426,7 @@ $(document).on("click", ".updateUser", function (e) {
             $('#formUserEstadoBloc').prop('checked', false);
         }
         if (data.userArea == '1') {
-            
+
             $('#labelAreaInactivo').removeClass('active');
             $('#labelAreaActivo').addClass('active');
             $('#formUserAreaAct').prop('checked', true);

@@ -1,13 +1,13 @@
 <?php
 
 require __DIR__ . '/vendor/autoload.php';
-$routeEnv = __DIR__.'../../../config_chweb/';
+$routeEnv = __DIR__ . '../../../config_chweb/';
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.0'; // Version de la aplicación
+    return 'v0.4.1'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -156,7 +156,7 @@ function secure_auth_ch2()
 }
 /** ultimaacc */
 // Funcion para obtener la fecha hora del ultimo acceso
-function ultimoacc() 
+function ultimoacc()
 {
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
 }
@@ -758,14 +758,15 @@ function inicio()
 function principal($rol)
 {
     if ($rol) {
-        $sql="SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
+        $sql = "SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
         $rs = simple_pdoQuery($sql);
         return ($rs) ? true : false;
     }
 }
 function token_exist($recid_cliente)
 {
-    if(!$recid_cliente) return false;
+    if (!$recid_cliente)
+        return false;
 
     $sql = "SELECT clientes.id FROM clientes
     WHERE clientes.tkmobile !='' AND clientes.recid = '$recid_cliente'";
@@ -845,7 +846,7 @@ function ExisteRol2($recid)
     if ($r) {
         return array($r['nombre'], $r['id_rol'], $r['recid']);
     } else {
-       header("Location: /" . HOMEHOST . "/usuarios/clientes/");
+        header("Location: /" . HOMEHOST . "/usuarios/clientes/");
     }
 }
 function ExisteRol($recid)
@@ -1488,7 +1489,7 @@ function super_unique($array, $key)
     $temp_array = [];
     foreach ($array as &$v) {
         if (!isset($temp_array[$v[$key]]))
-            $temp_array[$v[$key]] = & $v;
+            $temp_array[$v[$key]] = &$v;
     }
     $array = array_values($temp_array);
     return $array;
@@ -1540,7 +1541,7 @@ function CountRegMayorCeroMySql($query)
 }
 function checkKey($fk, $table)
 {
-    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+    $db = $_ENV['DB_CHWEB_NAME'] ?? '';
     $check_schema = "SELECT * FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_NAME = '$table' AND CONSTRAINT_NAME = '$fk' AND TABLE_SCHEMA = '$db'";
     $stmt = simple_pdoQuery($check_schema);
     if ($stmt) {
@@ -1551,7 +1552,7 @@ function checkKey($fk, $table)
 }
 function checkColumn($table, $col)
 {
-    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+    $db = $_ENV['DB_CHWEB_NAME'] ?? '';
     $check_schema = "SELECT information_schema.COLUMNS.COLUMN_NAME FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table' AND COLUMN_NAME='$col'";
     $stmt = simple_pdoQuery($check_schema);
     if ($stmt) {
@@ -1562,7 +1563,7 @@ function checkColumn($table, $col)
 }
 function checkTable($table)
 {
-    $db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+    $db = $_ENV['DB_CHWEB_NAME'] ?? '';
 
     $check_schema = "SELECT distinct(TABLE_NAME) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA='$db' AND TABLE_NAME='$table'";
     $stmt = simple_pdoQuery($check_schema);
@@ -1671,7 +1672,7 @@ function dataLista($lista, $rol)
     $stmt = simple_pdoQuery($q);
     if ($stmt) {
         return array($stmt['datos']);
-    }else{
+    } else {
         return array('-');
     }
 }
@@ -1683,7 +1684,7 @@ function dataListaEstruct($lista, $uid)
 
     if ($stmt) {
         return array($stmt['datos']);
-    }else{
+    } else {
         return array('-');
     }
 
@@ -2387,7 +2388,7 @@ function curlAPI($url, $payload, $method = 'POST', $token, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt( $ch, CURLOPT_HTTPHEADER, array( "Accept: */*", 'Content-Type: application/json', "Token: $token", ) );
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Accept: */*", 'Content-Type: application/json', "Token: $token", ));
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -2411,25 +2412,25 @@ function mod_roles($recid_rol)
     $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo=modulos.id WHERE mod_roles.id>'0' AND modulos.estado='0' AND mod_roles.recid_rol='$recid_rol' ORDER BY modulos.orden";
     $result = array_pdoQuery($query);
     $data = array();
-    
+
     if (($result)) {
-            foreach ($result as $key => $row) {
+        foreach ($result as $key => $row) {
 
-                $id        = $row['id'];
-                $id_mod    = $row['id_mod'];
-                $recid_rol = $row['recid_rol'];
-                $nombre    = $row['nombre'];
-                $idtipo    = $row['idtipo'];
-                
-                $data[] = array(
-                    'id'        => $id,
-                    'recid_rol' => $recid_rol,
-                    'id_mod'    => $id_mod,
-                    'modulo'    => $nombre,
-                    'idtipo'    => $idtipo
-                );
+            $id = $row['id'];
+            $id_mod = $row['id_mod'];
+            $recid_rol = $row['recid_rol'];
+            $nombre = $row['nombre'];
+            $idtipo = $row['idtipo'];
 
-            }
+            $data[] = array(
+                'id' => $id,
+                'recid_rol' => $recid_rol,
+                'id_mod' => $id_mod,
+                'modulo' => $nombre,
+                'idtipo' => $idtipo
+            );
+
+        }
         $respuesta = array('success' => 'YES', 'error' => '0', 'mod_roles' => $data);
         return $respuesta;
     }
@@ -2751,7 +2752,6 @@ function rowCount_pdoQuery($sql)
     $stmt = null;
 }
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
-
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] === $valor;
@@ -2761,7 +2761,6 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
     }
 }
 function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
-
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] === $valor;
@@ -2772,7 +2771,6 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     return $v;
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
-
 {
     $a = array();
     if ($array && $key && $key2 && $valor && $valor2) {
@@ -2936,14 +2934,15 @@ function getIniCuenta($recidCuenta, $key = false)
 function getDataIni($url) // obtiene el json de la url
 {
     try {
-        if (!file_exists($url)) return false; // Si no existe el archivo
-            $data = file_get_contents($url); // obtenemos el contenido del archivo
-            if ($data) { // si el contenido no está vacío
-                $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
-                return $data; // devolvemos el json
-            } else { // si el contenido está vacío
-                fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
-            }
+        if (!file_exists($url))
+            return false; // Si no existe el archivo
+        $data = file_get_contents($url); // obtenemos el contenido del archivo
+        if ($data) { // si el contenido no está vacío
+            $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
+            return $data; // devolvemos el json
+        } else { // si el contenido está vacío
+            fileLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
+        }
     } catch (Exception $e) {
         fileLog($e->getMessage(), __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
     }
