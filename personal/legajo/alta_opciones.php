@@ -8,45 +8,45 @@ secure_auth_ch_json();
 E_ALL();
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$pathApiCH = gethostCHWeb()."/".HOMEHOST."/api";
+$pathApiCH = gethostCHWeb() . "/" . HOMEHOST . "/api";
 
 // $_POST['dato']           = $_POST['dato'] ?? '';
 FusNuloPOST('dato', '');
 $_POST['alta_localidad'] = $_POST['alta_localidad'] ?? '';
 $_POST['alta_provincia'] = $_POST['alta_provincia'] ?? '';
-$_POST['alta_nacion']    = $_POST['alta_nacion'] ?? '';
-$_POST['dato_conv']      = $_POST['dato_conv'] ?? '';
-$_POST['alta-diasvac']   = $_POST['alta-diasvac'] ?? '';
-$_POST['del_ConvVac']    = $_POST['del_ConvVac'] ?? '';
-$_POST['alta-feriConv']  = $_POST['alta-feriConv'] ?? '';
-$_POST['del_ConvFeri']   = $_POST['del_ConvFeri'] ?? '';
-$_POST['DelPerineg']     = $_POST['DelPerineg'] ?? '';
-$_POST['PERPREMI']       = $_POST['PERPREMI'] ?? '';
-$_POST['DelPerPremi']    = $_POST['DelPerPremi'] ?? '';
-$_POST['OTROCONLEG']     = $_POST['OTROCONLEG'] ?? '';
-$_POST['DelOtroConLeg']  = $_POST['DelOtroConLeg'] ?? '';
-$_POST['PERHOAL']        = $_POST['PERHOAL'] ?? '';
-$_POST['DelPerHoAl']     = $_POST['DelPerHoAl'] ?? '';
-$_POST['IDENTIFICA']     = $_POST['IDENTIFICA'] ?? '';
-$_POST['DelIdentifica']  = $_POST['DelIdentifica'] ?? '';
-$_POST['GrupoHabi']      = $_POST['GrupoHabi'] ?? '';
-$_POST['DelPerrelo']     = $_POST['DelPerrelo'] ?? '';
-$_POST['PERRELO']        = $_POST['PERRELO'] ?? '';
-$_POST['OTROConValor']   = $_POST['OTROConValor'] ?? '';
-$_POST['EmpDomi']        = $_POST['EmpDomi'] ?? '';
-$_POST['EmpProv']        = $_POST['EmpProv'] ?? '';
-$_POST['EmpLoca']        = $_POST['EmpLoca'] ?? '';
-$_POST['EmpCodi']        = $_POST['EmpCodi'] ?? '';
+$_POST['alta_nacion'] = $_POST['alta_nacion'] ?? '';
+$_POST['dato_conv'] = $_POST['dato_conv'] ?? '';
+$_POST['alta-diasvac'] = $_POST['alta-diasvac'] ?? '';
+$_POST['del_ConvVac'] = $_POST['del_ConvVac'] ?? '';
+$_POST['alta-feriConv'] = $_POST['alta-feriConv'] ?? '';
+$_POST['del_ConvFeri'] = $_POST['del_ConvFeri'] ?? '';
+$_POST['DelPerineg'] = $_POST['DelPerineg'] ?? '';
+$_POST['PERPREMI'] = $_POST['PERPREMI'] ?? '';
+$_POST['DelPerPremi'] = $_POST['DelPerPremi'] ?? '';
+$_POST['OTROCONLEG'] = $_POST['OTROCONLEG'] ?? '';
+$_POST['DelOtroConLeg'] = $_POST['DelOtroConLeg'] ?? '';
+$_POST['PERHOAL'] = $_POST['PERHOAL'] ?? '';
+$_POST['DelPerHoAl'] = $_POST['DelPerHoAl'] ?? '';
+$_POST['IDENTIFICA'] = $_POST['IDENTIFICA'] ?? '';
+$_POST['DelIdentifica'] = $_POST['DelIdentifica'] ?? '';
+$_POST['GrupoHabi'] = $_POST['GrupoHabi'] ?? '';
+$_POST['DelPerrelo'] = $_POST['DelPerrelo'] ?? '';
+$_POST['PERRELO'] = $_POST['PERRELO'] ?? '';
+$_POST['OTROConValor'] = $_POST['OTROConValor'] ?? '';
+$_POST['EmpDomi'] = $_POST['EmpDomi'] ?? '';
+$_POST['EmpProv'] = $_POST['EmpProv'] ?? '';
+$_POST['EmpLoca'] = $_POST['EmpLoca'] ?? '';
+$_POST['EmpCodi'] = $_POST['EmpCodi'] ?? '';
 
 /** ALTA NACIONES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $NacDesc  = (test_input(($_POST['NacDesc'])));
+    $NacDesc = (test_input(($_POST['NacDesc'])));
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
     // sleep(2);
@@ -54,13 +54,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT NACIONES.NacDesc
         FROM NACIONES WHERE NACIONES.NacDesc = '$NacDesc' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $NacDesc);
@@ -75,13 +76,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
     $query = "SELECT TOP 1 NACIONES.NacCodi, NACIONES.NacDesc
     FROM NACIONES
     ORDER BY NACIONES.NacCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
-            $NacCodi  = $fila['NacCodi'] + 1;
-            $Dato     = 'Nacionalidad: ' . $NacDesc . ': ' . $NacCodi;
+            $NacCodi = $fila['NacCodi'] + 1;
+            $Dato = 'Nacionalidad: ' . $NacDesc . ': ' . $NacCodi;
 
             $procedure_params = array(
                 array(&$NacCodi),
@@ -125,11 +126,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta_provincia')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_prov  = (test_input(($_POST['desc_prov'])));
+    $desc_prov = (test_input(($_POST['desc_prov'])));
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -137,12 +138,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PROVINCI.ProDesc FROM PROVINCI WHERE PROVINCI.ProDesc = '$desc_prov' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_prov);
@@ -157,13 +159,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
     $query = "SELECT TOP 1 PROVINCI.ProCodi, PROVINCI.ProDesc
     FROM PROVINCI
     ORDER BY PROVINCI.ProCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
-            $ProCodi  = $fila['ProCodi'] + 1;
-            $Dato     = 'Provincia: ' . $desc_prov . ': ' . $ProCodi;
+            $ProCodi = $fila['ProCodi'] + 1;
+            $Dato = 'Provincia: ' . $desc_prov . ': ' . $ProCodi;
 
             $procedure_params = array(
                 array(&$ProCodi),
@@ -182,7 +184,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov);
@@ -207,11 +209,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta_localidad')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_local  = test_input($_POST['desc_local']);
+    $desc_local = test_input($_POST['desc_local']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
     // print_r($desc_local);
@@ -220,12 +222,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT LOCALIDA.LocDesc FROM LOCALIDA WHERE LOCALIDA.LocDesc = '$desc_local' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_local);
@@ -240,13 +243,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
     $query = "SELECT TOP 1 LOCALIDA.LocCodi, LOCALIDA.LocDesc
     FROM LOCALIDA
     ORDER BY LOCALIDA.LocCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
-            $LocCodi  = $fila['LocCodi'] + 1;
-            $Dato     = 'Localidad: ' . $desc_local . ': ' . $LocCodi;
+            $LocCodi = $fila['LocCodi'] + 1;
+            $Dato = 'Localidad: ' . $desc_local . ': ' . $LocCodi;
 
             $procedure_params = array(
                 array(&$LocCodi),
@@ -265,7 +268,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local);
@@ -290,11 +293,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_planta  = test_input($_POST['desc_planta']);
+    $desc_planta = test_input($_POST['desc_planta']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -303,12 +306,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PLANTAS.PlaDesc FROM PLANTAS WHERE PLANTAS.PlaDesc = '$desc_planta' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_planta);
@@ -323,13 +327,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
     $query = "SELECT TOP 1 PLANTAS.PlaCodi, PLANTAS.PlaDesc
     FROM PLANTAS
     ORDER BY PLANTAS.PlaCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
-            $PlaCodi  = $fila['PlaCodi'] + 1;
-            $Dato     = 'Planta: ' . $desc_planta . ': ' . $PlaCodi;
+            $PlaCodi = $fila['PlaCodi'] + 1;
+            $Dato = 'Planta: ' . $desc_planta . ': ' . $PlaCodi;
 
             $procedure_params = array(
                 array(&$PlaCodi),
@@ -348,7 +352,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
@@ -373,48 +377,49 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
-    $EmpRazon     = test_input($_POST['EmpRazon']);
+    $data = array();
+    $EmpRazon = test_input($_POST['EmpRazon']);
     /** Razon Social */
-    $EmpTipo      = test_input($_POST['EmpTipo']);
+    $EmpTipo = test_input($_POST['EmpTipo']);
     /** Empresa Tipo */
-    $EmpCUIT      = test_input($_POST['EmpCUIT']);
-    $EmpDomi      = test_input($_POST['EmpDomi']);
-    $EmpDoNu      = test_input($_POST['EmpDoNu']);
-    $EmpPiso      = test_input($_POST['EmpPiso']);
-    $EmpDpto      = test_input($_POST['EmpDpto']);
-    $EmpCoPo      = test_input($_POST['EmpCoPo']);
-    $EmpProv      = test_input($_POST['EmpProv']);
-    $EmpLoca      = test_input($_POST['EmpLoca']);
-    $EmpTele      = test_input($_POST['EmpTele']);
-    $EmpMail      = test_input($_POST['EmpMail']);
-    $EmpCont      = test_input($_POST['EmpCont']);
-    $EmpObse      = test_input($_POST['EmpObse']);
-    $EmpEst       = '';
-    $EmpCodActi   = '';
+    $EmpCUIT = test_input($_POST['EmpCUIT']);
+    $EmpDomi = test_input($_POST['EmpDomi']);
+    $EmpDoNu = test_input($_POST['EmpDoNu']);
+    $EmpPiso = test_input($_POST['EmpPiso']);
+    $EmpDpto = test_input($_POST['EmpDpto']);
+    $EmpCoPo = test_input($_POST['EmpCoPo']);
+    $EmpProv = test_input($_POST['EmpProv']);
+    $EmpLoca = test_input($_POST['EmpLoca']);
+    $EmpTele = test_input($_POST['EmpTele']);
+    $EmpMail = test_input($_POST['EmpMail']);
+    $EmpCont = test_input($_POST['EmpCont']);
+    $EmpObse = test_input($_POST['EmpObse']);
+    $EmpEst = '';
+    $EmpCodActi = '';
     $EmpActividad = '';
-    $EmpBanco     = '';
-    $EmpBanSuc    = '';
-    $EmpBanCta    = '';
-    $EmpLugPag    = '';
-    $EmpRecibo    = '';
-    $EmpLogo      = '';
-    $EmpReduc     = '';
-    $EmpForCta    = '';
-    $EmpTipoEmpl  = '';
-    $FechaHora    = date('Ymd H:i:s');
+    $EmpBanco = '';
+    $EmpBanSuc = '';
+    $EmpBanCta = '';
+    $EmpLugPag = '';
+    $EmpRecibo = '';
+    $EmpLogo = '';
+    $EmpReduc = '';
+    $EmpForCta = '';
+    $EmpTipoEmpl = '';
+    $FechaHora = date('Ymd H:i:s');
 
     if (valida_campo($_POST['EmpRazon'])) {
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT EMPRESAS.EmpRazon FROM EMPRESAS WHERE EMPRESAS.EmpRazon = '$EmpRazon' COLLATE Latin1_General_CI_AI";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $EmpRazon);
@@ -430,7 +435,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
     $query = "SELECT TOP 1 EMPRESAS.EmpCodi
     FROM EMPRESAS
     ORDER BY EMPRESAS.EmpCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
 
 
     while ($fila = sqlsrv_fetch_array($result)) {
@@ -439,7 +444,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
 
     $EmpCodi = $EmpCodi ?? '1';
 
-    $Dato     = 'Empresa: ' . $EmpCodi . ': ' . $EmpRazon;
+    $Dato = 'Empresa: ' . $EmpCodi . ': ' . $EmpRazon;
 
     //$procedure_params=array( array(&$EmpCodi), array(&$EmpRazon), array(&$EmpTipo), array(&$EmpCUIT), array(&$EmpDomi), array(&$EmpDoNu), array(&$EmpPiso), array(&$EmpDpto), array(&$EmpCoPo), array(&$EmpProv), array(&$EmpLoca), array(&$EmpTele), array(&$EmpMail), array(&$EmpCont), array(&$EmpObse), array(&$EmpEst), array(&$EmpCodActi), array(&$EmpActividad), array(&$EmpBanco), array(&$EmpBanSuc), array(&$EmpBanCta), array(&$EmpLugPag), array(&$EmpRecibo), array(&$EmpLogo), array(&$EmpReduc), array(&$EmpForCta), array(&$EmpTipoEmpl), array(&$FechaHora), );
     // echo json_encode($procedure_params);exit;
@@ -452,7 +457,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
     // }
     if (InsertRegistro("INSERT INTO EMPRESAS( [EmpCodi],[EmpRazon],[EmpTipo],[EmpCUIT],[EmpDomi],[EmpDoNu],[EmpPiso],[EmpDpto],[EmpCoPo],[EmpProv],[EmpLoca],[EmpTele],[EmpMail],[EmpCont],[EmpObse],[EmpEsta],[EmpCodActi],[EmpActividad],[EmpBanco],[EmpBanSuc],[EmpBanCta],[EmpLugPag],[EmpRecibo],[EmpLogo],[EmpReduc],[EmpForCta],[EmpTipoEmpl],[FechaHora],[EmpAFIPTipo],[EmpAFIPLiqui] ) values ( '$EmpCodi','$EmpRazon','$EmpTipo','$EmpCUIT','$EmpDomi','$EmpDoNu','$EmpPiso','$EmpDpto','$EmpCoPo','$EmpProv','$EmpLoca','$EmpTele','$EmpMail','$EmpCont','$EmpObse','$EmpEsta','$EmpCodActi','$EmpActividad','$EmpBanco','$EmpBanSuc','$EmpBanCta','$EmpLugPag','$EmpRecibo','$EmpLogo','$EmpReduc','$EmpForCta','$EmpTipoEmpl','$FechaHora','$EmpAFIPTipo','$EmpAFIPLiqui')")) {
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(1);
         $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon);
@@ -475,11 +480,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_sector  = test_input($_POST['desc_sector']);
+    $desc_sector = test_input($_POST['desc_sector']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -488,12 +493,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECTORES.SecDesc FROM SECTORES WHERE SECTORES.SecDesc = '$desc_sector' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_sector);
@@ -508,13 +514,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
     $query = "SELECT TOP 1 SECTORES.SecCodi, SECTORES.SecDesc
     FROM SECTORES
     ORDER BY SECTORES.SecCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
             $SecCodi = $fila['SecCodi'] + 1;
-            $Dato    = 'Sector: ' . $desc_sector . ': ' . $SecCodi;
+            $Dato = 'Sector: ' . $desc_sector . ': ' . $SecCodi;
             $SecTaIn = '';
 
             $procedure_params = array(
@@ -533,9 +539,34 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
                 die(print_r(sqlsrv_errors(), true));
             }
             if (sqlsrv_execute($stmt)) {
+
+                try {
+                    $Se2Codi = 0;
+                    $Se2Desc = '';
+                    $procedure_params_seccion = array(
+                        array(&$SecCodi),
+                        array(&$Se2Codi),
+                        array(&$Se2Desc),
+                        array(&$FechaHora)
+                    );
+                    // INSERTAMOS EN LA TABLA SECCIONES EL REGISTRO CON VALOR 0
+                    $sql = "exec DATA_SECCIONInsert @SecCodi=?,@Se2Codi=?,@Se2Desc=?,@FechaHora=?";
+                    $stmt = sqlsrv_prepare($link, $sql, $procedure_params_seccion);
+                    if (!$stmt) {
+                        throw new Exception(sqlsrv_errors());
+                    }
+                    sqlsrv_execute($stmt); // ejecuto la sentencia
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                    $data = array('status' => 'Error', 'dato' => $e->getMessage());
+                    echo json_encode($data);
+                    exit;
+                }
+
+
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector);
@@ -560,14 +591,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $Se2Desc   = test_input($_POST['Se2Desc']);
+    $Se2Desc = test_input($_POST['Se2Desc']);
     /** Descripcion */
-    $SecCodi   = test_input($_POST['SecCodi']);
-    $Se2Desc   = test_input($_POST['Se2Desc']);
+    $SecCodi = test_input($_POST['SecCodi']);
+    $Se2Desc = test_input($_POST['Se2Desc']);
     $FechaHora = date('Ymd H:i:s');
 
 
@@ -575,12 +606,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECCION.Se2Desc FROM SECCION WHERE SECCION.Se2Desc = '$Se2Desc' COLLATE Latin1_General_CI_AI AND SECCION.SecCodi='$SecCodi'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $Se2Desc);
@@ -595,14 +627,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
     $query = "SELECT TOP 1 SECCION.Se2Codi
     FROM SECCION WHERE SECCION.SecCodi = '$SecCodi'
     ORDER BY SECCION.Se2Codi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
 
     while ($fila = sqlsrv_fetch_array($result)) {
         $Se2Codi = $fila['Se2Codi'] + 1;
     }
 
     $Se2Codi = $Se2Codi ?? '1';
-    $Dato    = 'Seccion: ' . $Se2Codi . ': ' . $Se2Desc . '. Sector: ' . $SecCodi;
+    $Dato = 'Seccion: ' . $Se2Codi . ': ' . $Se2Desc . '. Sector: ' . $SecCodi;
 
     $procedure_params = array(
         array(&$SecCodi),
@@ -623,7 +655,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(1);
         $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $Se2Codi, 'desc' => $Se2Desc);
@@ -656,11 +688,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_grupo  = test_input($_POST['desc_grupo']);
+    $desc_grupo = test_input($_POST['desc_grupo']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -669,12 +701,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT GRUPOS.GruDesc FROM GRUPOS WHERE GRUPOS.GruDesc = '$desc_grupo' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_grupo);
@@ -689,13 +722,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
     $query = "SELECT TOP 1 GRUPOS.GruCodi, GRUPOS.GruDesc
     FROM GRUPOS
     ORDER BY GRUPOS.GruCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
             $GruCodi = $fila['GruCodi'] + 1;
-            $Dato    = 'Grupo: ' . $desc_grupo . ': ' . $GruCodi;
+            $Dato = 'Grupo: ' . $desc_grupo . ': ' . $GruCodi;
 
             $procedure_params = array(
                 array(&$GruCodi),
@@ -714,7 +747,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo);
@@ -739,11 +772,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_sucur  = test_input($_POST['desc_sucur']);
+    $desc_sucur = test_input($_POST['desc_sucur']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -752,12 +785,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SUCURSALES.SucDesc FROM SUCURSALES WHERE SUCURSALES.SucDesc = '$desc_sucur' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_sucur);
@@ -772,13 +806,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
     $query = "SELECT TOP 1 SUCURSALES.SucCodi, SUCURSALES.SucDesc
     FROM SUCURSALES
     ORDER BY SUCURSALES.SucCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
             $SucCodi = $fila['SucCodi'] + 1;
-            $Dato    = 'Sucursal: ' . $desc_sucur . ': ' . $SucCodi;
+            $Dato = 'Sucursal: ' . $desc_sucur . ': ' . $SucCodi;
 
             $procedure_params = array(
                 array(&$SucCodi),
@@ -797,7 +831,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur);
@@ -822,11 +856,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $desc_tarea  = test_input($_POST['desc_tarea']);
+    $desc_tarea = test_input($_POST['desc_tarea']);
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
@@ -835,12 +869,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT TAREAS.TareDesc FROM TAREAS WHERE TAREAS.TareDesc = '$desc_tarea' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_tarea);
@@ -855,13 +890,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
     $query = "SELECT TOP 1 TAREAS.TareCodi, TAREAS.TareDesc
     FROM TAREAS
     ORDER BY TAREAS.TareCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
             $TareCodi = $fila['TareCodi'] + 1;
-            $Dato    = 'Tareas Prod: ' . $desc_tarea . ': ' . $TareCodi;
+            $Dato = 'Tareas Prod: ' . $desc_tarea . ': ' . $TareCodi;
             $TareEstado = '0';
 
             $procedure_params = array(
@@ -882,7 +917,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea);
@@ -907,29 +942,30 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_convenio')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $desc_convenio = test_input($_POST['desc_convenio']);
     /** Descripcion */
-    $ConDias       = test_input($_POST['ConDias']);
+    $ConDias = test_input($_POST['ConDias']);
     /** 1 día cada 'ConDias' trabajados */
-    $ConTDias      = test_input($_POST['ConTDias']);
+    $ConTDias = test_input($_POST['ConTDias']);
     /** Dias Tipo */
-    $FechaHora     = date('Ymd H:i:s');
+    $FechaHora = date('Ymd H:i:s');
 
 
     if (valida_campo($_POST['desc_convenio'])) {
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_convenio);
@@ -944,13 +980,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
     $query = "SELECT TOP 1 CONVENIO.ConCodi, CONVENIO.ConDesc
     FROM CONVENIO
     ORDER BY CONVENIO.ConCodi DESC";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
 
             $ConCodi = $fila['ConCodi'] + 1;
-            $Dato    = 'Convenio: ' . $desc_convenio . ': ' . $ConCodi;
+            $Dato = 'Convenio: ' . $desc_convenio . ': ' . $ConCodi;
             $TareEstado = '0';
 
             $procedure_params = array(
@@ -972,7 +1008,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
-                audito_ch('A', $Dato,  '10');
+                audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
                 $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias);
@@ -997,30 +1033,31 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_convenio')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $desc_convenio = test_input($_POST['desc_convenio']);
     /** Descripcion */
-    $codConv       = test_input($_POST['codConv']);
+    $codConv = test_input($_POST['codConv']);
     /** 1 día cada 'ConDias' trabajados */
-    $ConDias       = test_input($_POST['ConDias']);
+    $ConDias = test_input($_POST['ConDias']);
     /** 1 día cada 'ConDias' trabajados */
-    $ConTDias      = test_input($_POST['ConTDias']);
+    $ConTDias = test_input($_POST['ConTDias']);
     /** Dias Tipo */
-    $FechaHora     = date('Ymd H:i:s');
+    $FechaHora = date('Ymd H:i:s');
 
 
     if (valida_campo($_POST['desc_convenio'])) {
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     /** Query para comparar datos de la bd con lo enviado. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConCodi = '$codConv' AND CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI AND CONVENIO.ConDias='$ConDias' AND CONVENIO.ConTDias = '$ConTDias'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'nomod', 'desc' => $desc_convenio);
@@ -1033,7 +1070,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConCodi != '$codConv' AND CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'duplicado', 'desc' => $desc_convenio);
@@ -1044,7 +1081,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     }
     /** fin */
 
-    $Dato    = 'Convenio: ' . $desc_convenio . ': ' . $codConv;
+    $Dato = 'Convenio: ' . $desc_convenio . ': ' . $codConv;
     $TareEstado = '0';
 
     $procedure_params = array(
@@ -1066,7 +1103,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('M', $Dato,  '10');
+        audito_ch('M', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'okm', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias);
@@ -1092,28 +1129,29 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
         $data = array('status' => 'cod_requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $CVConv    = test_input($_POST['cod-diasvac']);
+    $CVConv = test_input($_POST['cod-diasvac']);
     /** cod-diasvac */
-    $CVAnios   = test_input($_POST['anios']);
+    $CVAnios = test_input($_POST['anios']);
     /** Años */
-    $CVMeses   = test_input($_POST['meses']);
+    $CVMeses = test_input($_POST['meses']);
     /** Meses */
-    $CVDias    = test_input($_POST['diasvac']);
+    $CVDias = test_input($_POST['diasvac']);
     /** Diasvac */
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Antiguedad Convenio: ' . $CVConv . ': ' . $CVAnios . '-' . $CVMeses . '-' . $CVDias;
+    $Dato = 'Antiguedad Convenio: ' . $CVConv . ': ' . $CVAnios . '-' . $CVMeses . '-' . $CVDias;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT CONVVACA.CVConv FROM CONVVACA WHERE CONVVACA.CVConv = '$CVConv' AND CONVVACA.CVAnios = '$CVAnios' AND CONVVACA.CVMeses = '$CVMeses'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'Conv: ' . $CVConv . '. Años: ' . $CVAnios . '. Meses: ' . $CVMeses);
@@ -1142,7 +1180,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1163,21 +1201,21 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $CVConv    = test_input($_POST['del_cod']);
+    $CVConv = test_input($_POST['del_cod']);
     /** cod-diasvac */
-    $CVAnios   = test_input($_POST['del_anios']);
+    $CVAnios = test_input($_POST['del_anios']);
     /** Años */
-    $CVMeses   = test_input($_POST['del_meses']);
+    $CVMeses = test_input($_POST['del_meses']);
     /** Meses */
-    $CVDias    = test_input($_POST['del_dias']);
+    $CVDias = test_input($_POST['del_dias']);
     /** Meses */
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Antiguedad Convenio: ' . $CVConv . ': ' . $CVAnios . '-' . $CVMeses . '-' . $CVDias;
+    $Dato = 'Antiguedad Convenio: ' . $CVConv . ': ' . $CVAnios . '-' . $CVMeses . '-' . $CVDias;
 
     $procedure_params = array(
         array(&$CVConv),
@@ -1196,7 +1234,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true'))
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1222,41 +1260,43 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $FechaHora = date('Ymd H:i:s');
 
-    $_POST['CFInfM']   = $_POST['CFInfM'] ?? '';
-    $_POST['CFInfJ']   = $_POST['CFInfJ'] ?? '';
+    $_POST['CFInfM'] = $_POST['CFInfM'] ?? '';
+    $_POST['CFInfJ'] = $_POST['CFInfJ'] ?? '';
     $_POST['CFInFeTR'] = $_POST['CFInFeTR'] ?? '';
 
-    $CFConv   = test_input($_POST['CFConv']);
-    $CFFech   = test_input(FechaString($_POST['CFFech']));
-    $CFDesc   = test_input($_POST['CFDesc']);
-    $CFCodM   = test_input($_POST['CFCodM']);
-    $CFCodJ   = test_input($_POST['CFCodJ']);
-    $CFInfM   = ($_POST['CFInfM'] == 'on') ? '1' : '0';
-    $CFInfJ   = ($_POST['CFInfJ'] == 'on') ? '1' : '0';;
-    $CFCodM2  = test_input($_POST['CFCodM2']);
-    $CFCodJ2  = test_input($_POST['CFCodJ2']);
-    $CFCodM3  = test_input($_POST['CFCodM3']);
-    $CFCodJ3  = test_input($_POST['CFCodJ3']);
+    $CFConv = test_input($_POST['CFConv']);
+    $CFFech = test_input(FechaString($_POST['CFFech']));
+    $CFDesc = test_input($_POST['CFDesc']);
+    $CFCodM = test_input($_POST['CFCodM']);
+    $CFCodJ = test_input($_POST['CFCodJ']);
+    $CFInfM = ($_POST['CFInfM'] == 'on') ? '1' : '0';
+    $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';
+    ;
+    $CFCodM2 = test_input($_POST['CFCodM2']);
+    $CFCodJ2 = test_input($_POST['CFCodJ2']);
+    $CFCodM3 = test_input($_POST['CFCodM3']);
+    $CFCodJ3 = test_input($_POST['CFCodJ3']);
     $CFInFeTR = ($_POST['CFInFeTR'] == 'on') ? '1' : '0';
     $CFInMeNL = test_input($_POST['CFInMeNL']);
     $CFInJoNL = test_input($_POST['CFInJoNL']);
 
 
-    $Dato    = 'Feriado Convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y') . '. Desc: ' . $CFDesc . ' CFInFeTR = ' . $CFInFeTR;
+    $Dato = 'Feriado Convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y') . '. Desc: ' . $CFDesc . ' CFInFeTR = ' . $CFInFeTR;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT CONVFERI.CFConv FROM CONVFERI WHERE CONVFERI.CFConv = '$CFConv' AND CONVFERI.CFFech = '$CFFech'";
     // print_r($query);exit;
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'Feriado convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y'));
@@ -1296,7 +1336,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $CFConv);
@@ -1317,9 +1357,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $CFConv = test_input($_POST['CFConv']);
     $CFFech = test_input($_POST['CFFech']);
@@ -1327,7 +1367,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
 
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Feriado Convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y') . '. Desc: ' . $CFDesc;
+    $Dato = 'Feriado Convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y') . '. Desc: ' . $CFDesc;
 
     $procedure_params = array(
         array(&$CFConv),
@@ -1345,7 +1385,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1369,21 +1409,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
         $data = array('status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
     FusNuloPOST('InEgCaus', '');
 
-    $InEgLega  = test_input($_POST['InEgLega']);
+    $InEgLega = test_input($_POST['InEgLega']);
 
-    $InEgFeIn  = test_input(($_POST['InEgFeIn']));
-    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
+    $InEgFeIn = test_input(($_POST['InEgFeIn']));
+    $InEgFeIn = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
 
-    $InEgFeEg  = test_input(($_POST['InEgFeEg']));
-    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
+    $InEgFeEg = test_input(($_POST['InEgFeEg']));
+    $InEgFeEg = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
 
-    $InEgCaus  = test_input($_POST['InEgCaus']);
+    $InEgCaus = test_input($_POST['InEgCaus']);
 
     $payload = array(
         "Lega" => $InEgLega,
@@ -1400,11 +1441,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'POST', $token);
     $sendApi = json_decode($sendApi, true);
 
-    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
-       
+    $Dato = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+
     if ($sendApi['MESSAGE'] == 'OK') {
 
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
         echo json_encode($data);
 
@@ -1416,7 +1457,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     }
 
     exit;
-    
+
 
 
     // require_once __DIR__ . '../../../config/conect_mssql.php';
@@ -1557,21 +1598,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
     FusNuloPOST('InEgCaus', '');
 
-    $InEgLega  = test_input($_POST['InEgLega']);
+    $InEgLega = test_input($_POST['InEgLega']);
 
-    $InEgFeIn  = test_input(($_POST['InEgFeIn']));
-    $InEgFeIn  = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
+    $InEgFeIn = test_input(($_POST['InEgFeIn']));
+    $InEgFeIn = !empty(($InEgFeIn)) ? dr_fecha($InEgFeIn, 'Y-m-d') : '';
 
-    $InEgFeEg  = test_input(($_POST['InEgFeEg']));
-    $InEgFeEg  = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
+    $InEgFeEg = test_input(($_POST['InEgFeEg']));
+    $InEgFeEg = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
 
-    $InEgCaus  = test_input($_POST['InEgCaus']);
+    $InEgCaus = test_input($_POST['InEgCaus']);
 
     $payload = array(
         "Lega" => $InEgLega,
@@ -1588,11 +1630,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
     $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'PUT', $token);
     $sendApi = json_decode($sendApi, true);
 
-    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
-       
+    $Dato = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+
     if ($sendApi['MESSAGE'] == 'OK') {
 
-        audito_ch('M', $Dato,  '10');
+        audito_ch('M', $Dato, '10');
         $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
         echo json_encode($data);
 
@@ -1614,33 +1656,34 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $InEgLega = test_input($_POST['DelInEgLega']);
-    $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'],'Y-m-d'));
+    $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'], 'Y-m-d'));
 
-    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y');
-    
+    $Dato = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y');
+
     $payload = array(
         "Lega" => $InEgLega,
         "FeIn" => $InEgFeIn
     );
-    
+
     $sendApi['DATA'] = $sendApi['DATA'] ?? '';
     $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
 
     $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'DELETE', $token);
     $sendApi = json_decode($sendApi, true);
 
-    $Dato    = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
-       
+    $Dato = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y') . '. Eg: ' . Fech_Format_Var($InEgFeEg, 'd/m/Y');
+
     if ($sendApi['MESSAGE'] == 'OK') {
 
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         $data = array('status' => 'ok_delete', 'dato' => $sendApi['DATA']);
         Flight::json($data);
 
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         exit;
 
     } else {
@@ -1708,24 +1751,25 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $LPreLega    = test_input($_POST['LPreLega']);
+    $LPreLega = test_input($_POST['LPreLega']);
     /** Legajo */
-    $LPreCodi   = test_input($_POST['LPreCodi']);
+    $LPreCodi = test_input($_POST['LPreCodi']);
     /** Codigo premio */
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Premio: (' . $LPreCodi . '). Legajo: ' . $LPreLega;
+    $Dato = 'Premio: (' . $LPreCodi . '). Legajo: ' . $LPreLega;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 PERPREMI.LPreLega FROM PERPREMI WHERE PERPREMI.LPreLega = '$LPreLega' AND PERPREMI.LPreCodi = '$LPreCodi'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'Ya existe premio.');
@@ -1752,7 +1796,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1773,15 +1817,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $LPreLega = test_input($_POST['DelLPreLega']);
     $LPreCodi = test_input(($_POST['DelLPreCodi']));
 
 
-    $Dato    = 'Premio: (' . $LPreCodi . '). Legajo: ' . $LPreLega;
+    $Dato = 'Premio: (' . $LPreCodi . '). Legajo: ' . $LPreLega;
 
     $procedure_params = array(
         array(&$LPreLega),
@@ -1800,7 +1844,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1825,24 +1869,25 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $OTROConLega  = test_input($_POST['OTROConLega']);
+    $OTROConLega = test_input($_POST['OTROConLega']);
     /** Legajo */
-    $OTROConCodi  = test_input($_POST['OTROConCodi']);
+    $OTROConCodi = test_input($_POST['OTROConCodi']);
     $OTROConValor = empty(test_input($_POST['OTROConValor'])) ? '0' : test_input($_POST['OTROConValor']);
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Concepto: (' . $OTROConCodi . '). Legajo: ' . $OTROConLega;
+    $Dato = 'Concepto: (' . $OTROConCodi . '). Legajo: ' . $OTROConLega;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 OTROCONLEG.OTROConLega FROM OTROCONLEG WHERE OTROCONLEG.OTROConLega = '$OTROConLega' AND OTROCONLEG.OTROConCodi = '$OTROConCodi'";
 
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'Ya existe concepto.');
@@ -1870,7 +1915,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato);
@@ -1892,15 +1937,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $OTROConLega = test_input($_POST['OTROConLega']);
     $OTROConCodi = test_input(($_POST['OTROConCodi']));
 
 
-    $Dato    = 'Concepto: (' . $OTROConCodi . '). Legajo: ' . $OTROConLega;
+    $Dato = 'Concepto: (' . $OTROConCodi . '). Legajo: ' . $OTROConLega;
 
     $procedure_params = array(
         array(&$OTROConLega),
@@ -1919,7 +1964,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -1945,23 +1990,24 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $LegHoAl  = test_input($_POST['LegHoAl']);
+    $LegHoAl = test_input($_POST['LegHoAl']);
     /** Legajo */
-    $LeHALega  = test_input($_POST['LeHALega']);
+    $LeHALega = test_input($_POST['LeHALega']);
     $OTROConValor = empty(test_input($_POST['OTROConValor'])) ? '0' : test_input($_POST['OTROConValor']);
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Horario Alternativo: (' . $LegHoAl . '). Legajo: ' . $LeHALega;
+    $Dato = 'Horario Alternativo: (' . $LegHoAl . '). Legajo: ' . $LeHALega;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 PERHOALT.LeHALega FROM PERHOALT WHERE PERHOALT.LeHALega = '$LeHALega' AND PERHOALT.LeHAHora = '$LegHoAl'";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'Ya existe horario.');
@@ -1988,7 +2034,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato);
@@ -2010,15 +2056,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $LeHALega = test_input($_POST['LeHALega']);
     $LeHAHora = test_input(($_POST['LeHAHora']));
 
 
-    $Dato    = 'Horario Alternativo: (' . $LeHAHora . '). Legajo: ' . $LeHALega;
+    $Dato = 'Horario Alternativo: (' . $LeHAHora . '). Legajo: ' . $LeHALega;
     $procedure_params = array(
         array(&$LeHALega),
         array(&$LeHAHora),
@@ -2036,7 +2082,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) 
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -2062,7 +2108,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $data = array('status' => 'cod_requerido', 'dato' => 'Identicador requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $_POST['IDVence'] = $_POST['IDVence'] ?? '';
     $_POST['IDCap01'] = $_POST['IDCap01'] ?? '';
     $_POST['IDCap02'] = $_POST['IDCap02'] ?? '';
@@ -2071,13 +2118,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $_POST['IDCap05'] = $_POST['IDCap05'] ?? '';
     $_POST['IDCap06'] = $_POST['IDCap06'] ?? '';
 
-    $params             = array();
-    $options            = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data               = array();
+    $params = array();
+    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $data = array();
     $_POST['IDTarjeta'] = $_POST['IDTarjeta'] ?? '';
-    $IDCodigo           = test_input($_POST['IDCodigo']);
-    $IDLegajo           = test_input($_POST['IDLegajo']);
-    $IDTarjeta          = test_input($_POST['IDTarjeta']);
+    $IDCodigo = test_input($_POST['IDCodigo']);
+    $IDLegajo = test_input($_POST['IDLegajo']);
+    $IDTarjeta = test_input($_POST['IDTarjeta']);
     /** Dispositivos */
     $IDCap01 = ($_POST['IDCap01'] == 'on') ? '1' : '0'; // Macronet
     $IDCap02 = ($_POST['IDCap02'] == 'on') ? '1' : '0'; // nose..
@@ -2086,16 +2133,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $IDCap05 = ($_POST['IDCap05'] == 'on') ? '1' : '0'; // SUPREMA
     $IDCap06 = ($_POST['IDCap06'] == 'on') ? '1' : '0'; // Hikvsion
     /** */
-    $IDVence            = !empty(test_input($_POST['IDVence'])) ? dr_fecha(test_input($_POST['IDVence'])) : '17530101';
-    $IDVence            = FechaString($IDVence);
-    $IDFichada          = '1';
-    $FechaHora          = date('Ymd H:i:s');
+    $IDVence = !empty(test_input($_POST['IDVence'])) ? dr_fecha(test_input($_POST['IDVence'])) : '17530101';
+    $IDVence = FechaString($IDVence);
+    $IDFichada = '1';
+    $FechaHora = date('Ymd H:i:s');
 
-    $Dato    = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
+    $Dato = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 IDENTIFICA.IDLegajo, PERSONAL.LegApNo FROM IDENTIFICA INNER JOIN PERSONAL ON IDENTIFICA.IDLegajo=PERSONAL.LegNume WHERE IDENTIFICA.IDCodigo='$IDCodigo'";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => 'ID asignado al legajo:<br /> <strong>' . $fila['IDLegajo'] . ' - ' . $fila['LegApNo'] . '</strong>');
@@ -2180,7 +2227,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     if (($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato);
@@ -2202,16 +2249,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $IDCodigo = test_input($_POST['IDCodigo']);
     $IDLegajo = test_input($_POST['IDLegajo']);
 
 
 
-    $Dato    = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
+    $Dato = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
 
     $procedure_params = array(
         array(&$IDCodigo)
@@ -2228,7 +2275,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('B', $Dato,  '10');
+        audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok_delete', 'dato' => $Dato);
@@ -2250,14 +2297,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
-    $LegGrHa    = test_input($_POST['LegGrHa2']);
+    $LegGrHa = test_input($_POST['LegGrHa2']);
     $LegajoGrHa = test_input($_POST['LegajoGrHa']);
 
-    $Dato    = 'Grupo Capt: (' . $LegGrHa . '). Legajo: ' . $LegajoGrHa;
+    $Dato = 'Grupo Capt: (' . $LegGrHa . '). Legajo: ' . $LegajoGrHa;
 
     $sql = "UPDATE PERSONAL SET PERSONAL.LegGrHa = '$LegGrHa' WHERE PERSONAL.LegNume = '$LegajoGrHa'";
     /** Query */
@@ -2272,7 +2319,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('M', $Dato,  '10');
+        audito_ch('M', $Dato, '10');
         /** */
         // sleep(3);
         $data = array('status' => 'ok', 'dato' => $Dato, 'LegGrHa' => $LegGrHa);
@@ -2298,20 +2345,21 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Datos requeridos.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $ReloMarca = ($_POST['ReloMarca']);
     $ReloMarca = explode("-", $ReloMarca);
 
-    $RelLega  = test_input($_POST['RelLega']);
-    $RelRelo  = $ReloMarca[0];
-    $RelReMa  = $ReloMarca[1];
-    $RelFech  = test_input(FechaString($_POST['RelFech']));
+    $RelLega = test_input($_POST['RelLega']);
+    $RelRelo = $ReloMarca[0];
+    $RelReMa = $ReloMarca[1];
+    $RelFech = test_input(FechaString($_POST['RelFech']));
     $RelFech2 = test_input(FechaString($_POST['RelFech2']));
     $FechaHora = date('Ymd H:i:s');
 
@@ -2319,15 +2367,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'error', 'dato' => 'Fecha Inválida.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    $Dato    = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
+    $Dato = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 PERRELO.RelLega 
             FROM PERRELO
             WHERE PERRELO.RelLega = '$RelLega' AND PERRELO.RelReMa = '$RelReMa' AND PERRELO.RelRelo = '$RelRelo'";
-    $result  = sqlsrv_query($link, $query, $params, $options);
+    $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
             $data = array('status' => 'existe', 'dato' => '');
@@ -2358,7 +2407,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
-        audito_ch('A', $Dato,  '10');
+        audito_ch('A', $Dato, '10');
         $data = array('status' => 'ok', 'dato' => $Dato);
         echo json_encode($data);
         /** retorno resultados en formato json */
@@ -2378,9 +2427,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
-    $params  = array();
+    $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data    = array();
+    $data = array();
 
     $RelRelo = test_input($_POST['RelRelo']);
     $RelReMa = test_input($_POST['RelReMa']);
@@ -2388,7 +2437,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) 
 
 
 
-    $Dato    = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
+    $Dato = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
 
     $procedure_params = array(
         array(&$RelLega),
