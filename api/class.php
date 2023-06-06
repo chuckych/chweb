@@ -1,5 +1,5 @@
 <?php
-require '../../vendor/autoload.php';
+require __DIR__ . '../../vendor/autoload.php';
 class requestControl
 {
     public function check_get($queryParams = array(), $url)
@@ -841,5 +841,28 @@ class tools
             $f = "$y-$m-$d";
             return false;
         }
+    }
+}
+class Response
+{
+    /**
+     * Devuelve una respuesta JSON con el código de respuesta especificado.
+     *
+     * @param int $code El código de respuesta HTTP.
+     * @param mixed $data Los datos a incluir en la respuesta.
+     */
+    public static function json($data, $code = 200)
+    {
+        // Establecemos el código de respuesta HTTP.
+        http_response_code($code);
+
+        // Establecemos las cabeceras para indicar que la respuesta es JSON.
+        header('Content-Type: application/json; charset=utf-8');
+
+        // Convertimos los datos a formato JSON, escapando correctamente los caracteres UTF-8.
+        $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+        // Devolvemos la respuesta JSON.
+        echo $json;
     }
 }

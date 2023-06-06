@@ -25,14 +25,14 @@ if ($method == 'DELETE') {
 
 $wc = '';
 $dp = ($request->query); // dataPayload
-$start  = start();
-$length  = length();
+$start = start();
+$length = length();
 
-$dp['Codi']  = ($dp['Codi']) ?? [];
-$dp['Codi']  = vp($dp['Codi'], 'Codi', 'intArrayM0', 11);
+$dp['Codi'] = ($dp['Codi']) ?? [];
+$dp['Codi'] = vp($dp['Codi'], 'Codi', 'intArrayM0', 11);
 
-$dp['Estruct']  = ($dp['Estruct']) ?? [];
-$dp['Estruct']  = vp($dp['Estruct'], 'Estruct', 'str', 11);
+$dp['Estruct'] = ($dp['Estruct']) ?? [];
+$dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'str', 11);
 
 
 if (empty($dp['Estruct'])) {
@@ -126,7 +126,6 @@ switch ($dp['Estruct']) {
         http_response_code(400);
         (response("Parámetro 'Estruct' es inválido", 0, "Parámetro 'Estruct' es inválido", 400, timeStart(), 0, 0));
         exit;
-        break;
 }
 
 foreach ($arrDP as $key => $p) {
@@ -156,15 +155,15 @@ foreach ($arrDP as $key => $p) {
     }
 }
 
-$Codi = $pref.'Codi';
-$Desc = ($dp['Estruct'] == 'Emp') ? $pref.'Razon': $pref.'Desc';
+$Codi = $pref . 'Codi';
+$Desc = ($dp['Estruct'] == 'Emp') ? $pref . 'Razon' : $pref . 'Desc';
 $Sec = ($dp['Estruct'] == 'Se2') ? true : '';
 $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
 $SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
-$query="SELECT * $SecDesc FROM $tabla $JoinSe2 WHERE $Codi > 0";
+$query = "SELECT * $SecDesc FROM $tabla $JoinSe2 WHERE $Codi > 0";
 
 // print_r($query).exit;
 
@@ -182,12 +181,12 @@ $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
 $stmt = $dbApiQuery($query) ?? '';
 
-foreach ($stmt  as $key => $v) {
+foreach ($stmt as $key => $v) {
 
     if ($Sec) {
         $data[] = array(
-            "Codi"      => $v[$Codi],
-            "Desc"      => $v[$Desc],
+            "Codi" => $v[$Codi],
+            "Desc" => $v[$Desc],
             "Sector" => array(
                 "Codi" => $v['SecCodi'],
                 "Desc" => $v['SecDesc'],
@@ -196,8 +195,8 @@ foreach ($stmt  as $key => $v) {
         );
     } else {
         $data[] = array(
-            "Codi"      => $v[$Codi],
-            "Desc"      => $v[$Desc],
+            "Codi" => $v[$Codi],
+            "Desc" => $v[$Desc],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         );
     }
@@ -208,7 +207,7 @@ if (empty($data)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

@@ -5,7 +5,7 @@ if (isset($_GET['_c'])) {
 	// require __DIR__ . '/conect_mysql.php';
 	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
 	// $result = mysqli_query($link, $querydb);
-	$row    = simple_pdoQuery($querydb);
+	$row = simple_pdoQuery($querydb);
 	// print_r($row).exit;
 	// mysqli_free_result($result);
 	$serverName = $row['host'];
@@ -32,7 +32,7 @@ if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion
 
 switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 	case '1':
-		$connectionInfo = array("Database" => $db, "CharacterSet" => "utf-8");  // Windows Authentication
+		$connectionInfo = array("Database" => $db, "CharacterSet" => "utf-8"); // Windows Authentication
 		break;
 	case '0':
 		$connectionInfo = array("Database" => $db, "UID" => $user, "PWD" => $pass, "CharacterSet" => "utf-8"); // SQL Server Authentication
@@ -56,19 +56,20 @@ if ($link === false) {
 			date_default_timezone_set('America/Argentina/Buenos_Aires');
 			$date = date('d-m-Y H:i:s');
 			$errorHTML = "<div class=''>" . $date . "<br />SQLSTATE: <b>" . $error['SQLSTATE'] . "</b><br />Code: <b>" . $error['code'] . "</b><br />Mensaje: <b>" . $error['message'] . "</b></div>"; // Texto Error en HTML
-			$errorHTML2 = $date . PHP_EOL."SQLSTATE: " . $error['SQLSTATE'] . "\nCode: " . $error['code'] . "\nMensaje: " . $error['message']; // Texto Error en HTML
-			$SQLSTATE = $error['SQLSTATE'];  // Codigo de error SQLSTATE
-			$code = $error['code'];  // Codigo de error SQL
+			$errorHTML2 = $date . PHP_EOL . "SQLSTATE: " . $error['SQLSTATE'] . "\nCode: " . $error['code'] . "\nMensaje: " . $error['message']; // Texto Error en HTML
+			$SQLSTATE = $error['SQLSTATE']; // Codigo de error SQLSTATE
+			$code = $error['code']; // Codigo de error SQL
 			$message = $error['message']; // Mensaje de error
 			$text = "\nSQLSTATE: \"$SQLSTATE\"\ncode: \"$code\"\nMessage: \"$message\""; // Texto Error
 			$text .= ($key === 1) ? "\n----" : ''; // Separador
-			if ($key === 1) : break; // Solo mostrar el primer error
+			if ($key === 1):
+				break; // Solo mostrar el primer error
 			endif; // si es el primer error, termina el script
 			$ruta_archivo = __DIR__ . "../../logs/error/" . date('Ymd') . "_Error_Conn.log"; // Ruta del archivo de error
 			fileLog($text, $ruta_archivo); // Función para escribir en el archivo de error
 		}
 		if (!$conexionSesion) { // Si no se esta usando la conexion de sesion
-			header("Content-Type: application/json"); 	// Tipo de contenido de la respuesta
+			header("Content-Type: application/json"); // Tipo de contenido de la respuesta
 			// echo '<pre>';
 			PrintRespuestaJson('Error', $errorHTML);
 			exit;

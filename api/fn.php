@@ -264,7 +264,7 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
         'DATA' => $data,
     );
 
-    Flight::json($array);
+    Response::json($array);
 
     /** LOG API CONFIG */
     // $textParams = array();
