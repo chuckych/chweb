@@ -1178,16 +1178,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         echo json_encode($data);
         exit;
     };
-    if ((($CitEntra == '00:00'))) {
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Entrada no puede estar en 00:00');
-        echo json_encode($data);
-        exit;
-    };
-    if ((($CitSale == '00:00'))) {
-        $data = array('status' => 'error', 'Mensaje' => 'Campo Salida no puede estar en 00:00');
-        echo json_encode($data);
-        exit;
-    };
+    // if ((($CitEntra == '00:00'))) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'Campo Entrada no puede estar en 00:00');
+    //     echo json_encode($data);
+    //     exit;
+    // };
+    // if ((($CitSale == '00:00'))) {
+    //     $data = array('status' => 'error', 'Mensaje' => 'Campo Salida no puede estar en 00:00');
+    //     echo json_encode($data);
+    //     exit;
+    // };
     if (ValidarHora($_POST['CitEntra'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto: ' . $_POST['CitSale']);
         echo json_encode($data);

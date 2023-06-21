@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.2'; // Version de la aplicación
+    return 'v0.4.3'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -2262,6 +2262,8 @@ function HoraMin($var)
 }
 function ValidarHora($Hora)
 {
+    if ($Hora == '00:00')
+        return false;
     $Hora = HoraMin($Hora);
     $Hora = ($Hora > '1439' || $Hora < '1') ? true : false;
     return $Hora;
@@ -2478,24 +2480,24 @@ function utf8str($cadena)
         "&quot;",
         "&hellip;",
     ], [
-            "Á",
-            "É",
-            "Í",
-            "Ó",
-            "Ú",
-            "Ñ",
-            "á",
-            "é",
-            "í",
-            "ó",
-            "ú",
-            "ñ",
-            "&",
-            "'",
-            "'",
-            "'",
-            "...",
-        ], $cadena);
+        "Á",
+        "É",
+        "Í",
+        "Ó",
+        "Ú",
+        "Ñ",
+        "á",
+        "é",
+        "í",
+        "ó",
+        "ú",
+        "ñ",
+        "&",
+        "'",
+        "'",
+        "'",
+        "...",
+    ], $cadena);
 }
 function horarioCH($HorCodi)
 {
