@@ -1008,7 +1008,7 @@ const getToken = () => {
                 tabledata += `<td class="user-select-all">${element.token}</td>`
                 tabledata += `<td>${element.expirationDate}</td>`
                 // tabledata += `<td>${(element.dateDelete == null) ? 'No' : 'Sí'}</td>`
-                tabledata += `<td class="text-center">${element.tmef}</td>`
+                tabledata += `<td class="text-center">${element.tmef} s</td>`
                 tabledata += `<td class="text-center">${(element.rememberEmployeId == true) ? 'Sí' : 'No'}</td>`
                 tabledata += `<td class="w-100"></td>`
                 tabledata += `</tr>`
