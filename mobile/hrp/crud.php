@@ -1104,8 +1104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post = $_POST;
 
         $idCompany = $_SESSION['ID_CLIENTE'];
-        $_SESSION["APIMOBILEHRP"] = 'http://localhost';
-
+        
         $params = array(
             'key' => $_SESSION["RECID_CLIENTE"],
         );
