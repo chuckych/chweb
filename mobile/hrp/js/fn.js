@@ -223,7 +223,7 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
             radius: radio,
             weight: 1
         }).addTo(map);
-        circle2=L.circle([latzona,lngzona],{...circleOptions2,radius:1}).addTo(map);
+        circle2 = L.circle([latzona, lngzona], { ...circleOptions2, radius: 1 }).addTo(map);
         start = L.latLng([latzona, lngzona])
         end = L.latLng([lat, lng])
         let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(map);
@@ -797,7 +797,7 @@ function loadMap(data, customid) {
     // console.log(data.length);
     $('#mapid').html('');
 
-    if((data.length == 0)){
+    if ((data.length == 0)) {
         $('#mapid').hide();
         return false
     }
@@ -941,3 +941,91 @@ function loadMap(data, customid) {
     $('#mapid').append(`<div class="pt-2 fontp float-right">Total Zonas: ${uniqueZonesArray.length}.</div>`)
 
 }
+const getToken = () => {
+    let formData = new FormData();
+    formData.append('tipo', 'getTokenMobile');
+    axios({
+        method: 'post',
+        url: 'crud.php',
+        data: formData,
+    }).then(function (response) {
+        let data = response.data
+
+        // {
+        //     "data": [
+        //         {
+        //             "companyId": 1,
+        //             "dateDelete": null,
+        //             "expirationDate": "2024-04-21",
+        //             "id": 1,
+        //             "token": "HRC20230321",
+        //             "updatedDate": 1680106443640,
+        //             "config": {
+        //                 "alwaysSavePosition": false,
+        //                 "notificationId": 195,
+        //                 "apiKey": "7BB3A26C25687BCD56A9BAF353A78",
+        //                 "locationIp": "http:\/\/190.7.56.83",
+        //                 "serverIp": "http:\/\/207.191.165.3:7575",
+        //                 "companyCode": "1",
+        //                 "recid": "aNGL89kv",
+        //                 "employeId": "",
+        //                 "updateInterval": 90,
+        //                 "fastestInterval": 60,
+        //                 "eventType": 0,
+        //                 "cancellationReasons": [],
+        //                 "operations": [],
+        //                 "tmef": 10,
+        //                 "rememberEmployeId": true
+        //             }
+        //         },
+        //     ],
+        //     "status": "ok"
+        // }
+        let d = document.getElementById('dataT')
+        // create elemente table
+        let tabledata = ''
+        let t = ''
+
+        t += `<table class="table table-responsive p-2 border animate__animated animate__fadeIn" id="tableToken">`
+        t += `<thead>`
+        t += `<tr>`
+        t += `<th data-titler="Token de activación de App Mobile">Token</th>`
+        t += `<th data-titler="Fecha de expiración del Token">Expiración</th>`
+        // t += `<th>Eliminado</th>`
+        t += `<th class="text-center" data-titler="Tiempo mínimo entre registraciones">Tiempo</th>`
+        t += `<th class="text-center" data-titler="Recuerda el usuario en la App">Recordar usuario</th>`
+        t += `<th class="w-100"></th>`
+        t += `</tr>`
+        t += `</thead>`
+        t += `<tbody>`
+        t += `</tbody>`
+        t += `</table>`
+        d.innerHTML = t
+
+        data.data.forEach(element => {
+            if (element.dateDelete == null) {
+                tabledata += `<tr>`
+                tabledata += `<td class="user-select-all">${element.token}</td>`
+                tabledata += `<td>${element.expirationDate}</td>`
+                // tabledata += `<td>${(element.dateDelete == null) ? 'No' : 'Sí'}</td>`
+                tabledata += `<td class="text-center">${element.tmef}</td>`
+                tabledata += `<td class="text-center">${(element.rememberEmployeId == true) ? 'Sí' : 'No'}</td>`
+                tabledata += `<td class="w-100"></td>`
+                tabledata += `</tr>`
+            }
+
+        });
+        tabledata += `<tr>`
+        tabledata += `<td colspan="5" class="">`
+        tabledata += `<a href="https://play.google.com/store/apps/details?id=com.dysi.hrprocessmobile" class="btn btn-sm btn-custom" target="_blank" ><i class="bi bi-google-play mr-2"></i>HRProcess Mobile</a>`
+        tabledata += `</td>`
+        tabledata += `</tr>`
+        let table = document.querySelector('#tableToken tbody')
+        table.innerHTML = tabledata
+
+
+    }).catch(function (error) {
+        console.log(error);
+    });
+}
+getToken()

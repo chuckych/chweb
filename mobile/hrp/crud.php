@@ -1099,6 +1099,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
+    } else if ($_POST['tipo'] == 'getTokenMobile') { // enrolar fotos
+
+        $post = $_POST;
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+        $_SESSION["APIMOBILEHRP"] = 'http://localhost';
+
+        $params = array(
+            'key' => $_SESSION["RECID_CLIENTE"],
+        );
+
+        $urlParams = http_build_query($params);
+        $api = "api/v1/token/?" . $urlParams;
+        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = getRemoteFile($url, $timeout = 10);
+        $api = json_decode($api, true);
+
+        $totalRecords = $api['TOTAL'] ?? 0;
+
+        if (($api['MESSAGE'] ?? '') == 'OK') {
+            $status = 'ok';
+            $arrayData = $api['RESPONSE_DATA']['payload'];
+            foreach ($arrayData as $key => $value) {
+                $config = json_decode($value['config'], true);
+                $data[] = array(
+                    "companyId" => $value['companyId'],
+                    "dateDelete" => $value['dateDelete'],
+                    "expirationDate" => FechaFormatVar($value['expirationDate'], 'd/m/Y'),
+                    "id" => $value['id'],
+                    "token" => $value['token'],
+                    "updatedDate" => $value['updatedDate'],
+                    "rememberEmployeId" => $config['rememberEmployeId'],
+                    "tmef" => $config['tmef'],
+                );
+            }
+
+        } else {
+            $status = 'error';
+            $arrayData = $api['MESSAGE'] ?? '';
+        }
+        $json_data = array(
+            "data" => $data ?? $arrayData,
+            'status' => $status,
+        );
+        echo json_encode($json_data);
+        exit;
+
     } else {
         $json_data = array(
             "Mensaje" => 'Invalid Request Type',

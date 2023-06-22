@@ -15,12 +15,12 @@ $(function () {
     });
 
     // if ((host != 'https://localhost') && (host != 'http://localhost')) {
-        setInterval(() => {
-            if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
-                let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-                fetchCreatedDate('api/createdDate.php')
-            }
-        }, 5000); // cada 5 segundos
+    setInterval(() => {
+        if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
+            let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+            fetchCreatedDate('api/createdDate.php')
+        }
+    }, 5000); // cada 5 segundos
     // }
 
     $.fn.DataTable.ext.pager.numbers_length = 5;
@@ -787,7 +787,7 @@ $(function () {
         });
     });
     $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
-        loadMap(settings.json.data, 'map_id_'+settings.json.draw);
+        loadMap(settings.json.data, 'map_id_' + settings.json.draw);
         return true
     });
     $('#table-mobile').DataTable().on('page.dt', function (e, settings, json) {
