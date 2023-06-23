@@ -123,7 +123,6 @@ foreach ($arrDPPersonal as $key => $per) {
                 } else {
                     $wc .= " AND FICHAS.Fic$key IN ($e)";
                 }
-
             } else {
                 foreach ($e as $v) {
                     if ($v !== NULL) {
@@ -204,7 +203,7 @@ switch ($dp['Estruct']) {
         break;
     case 'Tipo':
         $ColEstruc = 'PERSONAL';
-        $ColEstrucCod = 'FICHAS.FicTipo';
+        $ColEstrucCod = 'PERSONAL.LegTipo';
         break;
 }
 $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
@@ -275,7 +274,7 @@ if (empty($stmt)) {
     exit;
 }
 
-foreach ($stmt as $key => $row):
+foreach ($stmt as $key => $row) :
 
     switch ($dp['Estruct']) {
         case 'Tipo':
