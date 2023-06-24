@@ -16,7 +16,7 @@ $ColEstrucDesc = '';
 $ColEstrucCod = '';
 $wc = '';
 
-$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega');
+$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora');
 $dp['estruct'] = ($dp['Estruct']) ?? '';
 $dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); // str de estructura 
 
@@ -151,7 +151,7 @@ foreach ($arrDPPersonal as $key => $per) {
         }
     }
 }
-
+$JoinCustom = '';
 switch ($dp['Estruct']) {
     case 'Empr':
         $FicEstruct = 'FICHAS.FicEmpr';
@@ -200,6 +200,13 @@ switch ($dp['Estruct']) {
         $ColEstruc = 'REGLASCH';
         $ColEstrucDesc = 'REGLASCH.RCDesc';
         $ColEstrucCod = 'REGLASCH.RCCodi';
+        break;
+    case 'THora':
+        $FicEstruct = 'FICHAS1.FicHora';
+        $ColEstruc = 'TIPOHORA';
+        $ColEstrucDesc = 'TIPOHORA.THoDesc';
+        $ColEstrucCod = 'TIPOHORA.THoCodi';
+        $JoinCustom = "INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
         break;
     case 'Tipo':
         $ColEstruc = 'PERSONAL';
@@ -261,7 +268,7 @@ switch ($dp['Estruct']) {
         $query = "SELECT FICHAS.FicSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM FICHAS INNER JOIN SECCION ON FICHAS.FicSec2=SECCION.Se2Codi AND FICHAS.FicSect=SECCION.SecCodi  INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2";
         break;
     default:
-        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS INNER JOIN $ColEstruc ON $FicEstruct=$ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
+        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinCustom INNER JOIN $ColEstruc ON $FicEstruct=$ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
         break;
 }
 // Flight::json($query) . exit;
