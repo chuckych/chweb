@@ -38,8 +38,8 @@ if ($dp['Sector'] && $dp['estruct'] == 'Sec2') {
     $dp['Sector'] = vp($dp['Sector'], 'Sector', 'intArray', 11, $validEstruct);
 }
 
-$dp['Nume'] = ($dp['Nume']) ?? [];
-$dp['Nume'] = vp($dp['Nume'], 'Nume', 'intArray', 11);
+$dp['Lega'] = ($dp['Lega']) ?? [];
+$dp['Lega'] = vp($dp['Lega'], 'Lega', 'intArray', 11);
 $dp['Docu'] = ($dp['Docu']) ?? [];
 $dp['Docu'] = vp($dp['Docu'], 'Docu', 'intArray', 11);
 $dp['IntExt'] = ($dp['IntExt']) ?? [];
@@ -71,7 +71,7 @@ $dp['Tipo'] = ($dp['Tipo']) ?? [];
 $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'numArray01', 1);
 
 $arrDPPersonal = array(
-    'Nume' => $dp['Nume'],
+    'Lega' => $dp['Lega'],
     // Codigo de Horario {int} {array}
     'ApNo' => $dp['ApNo'],
     // Nombre y apellido {string}
@@ -142,9 +142,9 @@ foreach ($arrDPPersonal as $key => $per) {
     } else {
         if ($per) {
             if ($key == 'ApNoNume') {
-                $wc .= " AND CONCAT(FICHAS.FicApNo, FICHAS.FicNume) LIKE '%$per%'";
+                $wc .= " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE '%$per%'";
             } else if ($key == 'ApNo') {
-                $wc .= " AND FICHAS.Fic$key LIKE '%$per%'";
+                $wc .= " AND PERSONAL.LegApNo LIKE '%$per%'";
             } else {
                 $wc .= " AND FICHAS.Fic$key = '$per'";
             }
@@ -210,7 +210,7 @@ $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) co
 
 switch ($dp['Estruct']) {
     case 'Tipo':
-        $query = "SELECT $ColEstrucCod AS 'Cod', COUNT(*) AS 'Count' FROM $ColEstruc WHERE PERSONAL.LegNume > 0 $wc GROUP BY $ColEstrucCod ORDER BY $ColEstrucCod";
+        $query = "SELECT $ColEstrucCod AS 'Cod', COUNT(*) AS 'Count' FROM $ColEstruc INNER JOIN FICHAS ON PERSONAL.LegNume = FICHAS.FicLega WHERE PERSONAL.LegNume > 0 $wc GROUP BY $ColEstrucCod ORDER BY $ColEstrucCod";
         break;
     case 'Lega':
 
