@@ -69,6 +69,25 @@ $dp['RegCH'] = ($dp['RegCH']) ?? [];
 $dp['RegCH'] = vp($dp['RegCH'], 'RegCH', 'intArray', 5);
 $dp['Tipo'] = ($dp['Tipo']) ?? [];
 $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'numArray01', 1);
+$dp['THora'] = ($dp['THora']) ?? [];
+
+$dp['FechaIni'] = ($dp['FechaIni']) ?? '';
+$dp['FechaFin'] = ($dp['FechaFin']) ?? '';
+
+if (empty($dp['FechaIni']) && empty($dp['FechaFin'])) {
+    $dp['FechaIni'] = date('Ymd');
+    $dp['FechaFin'] = date('Ymd');
+}
+// Si la fecha de Ini es mayor a la fecha de Fin, error
+if ($dp['FechaIni'] > $dp['FechaFin']) {
+    http_response_code(400);
+    (response(array(), 0, "FechaIni no puede ser mayor a FechaFin.", 400, $time_start, 0, $idCompany));
+    exit;
+}
+$fechaIni = fechFormat($dp['FechaIni'], 'Ymd');
+$fechaFin = fechFormat($dp['FechaFin'], 'Ymd');
+
+$wc .= " AND (FICHAS.FicFech BETWEEN '" . $fechaIni . "' AND '" . $fechaFin . "')";
 
 $arrDPPersonal = array(
     'Lega' => $dp['Lega'],
@@ -151,6 +170,7 @@ foreach ($arrDPPersonal as $key => $per) {
         }
     }
 }
+
 $JoinCustom = '';
 switch ($dp['Estruct']) {
     case 'Empr':
