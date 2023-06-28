@@ -6,7 +6,7 @@ tz();
 tzLang();
 errorReport();
 
-$checkMethod('POST');
+// $checkMethod('POST');
 
 function validarHora($hora)
 {
@@ -28,6 +28,9 @@ function validarHora($hora)
     }
     return false;
 }
+
+// print_r(Flight::request());
+// exit;
 
 $FicEstruct = '';
 $ColEstruc = '';
@@ -115,12 +118,12 @@ if ($dp['FechaIni'] > $dp['FechaFin']) {
     (response(array(), 0, "FechaIni no puede ser mayor a FechaFin.", 400, $time_start, 0, $idCompany));
     exit;
 }
-if (!validarHora($dp['HoraMin'])) {
+if (!empty($dp['HoraMin']) && !validarHora($dp['HoraMin'])) {
     http_response_code(400);
     (response(array(), 0, "Formato de HoraMin Incorrecto", 400, $time_start, 0, $idCompany));
     exit;
 }
-if (!validarHora($dp['HoraMax'])) {
+if (!empty($dp['HoraMin']) && !validarHora($dp['HoraMax'])) {
     http_response_code(400);
     (response(array(), 0, "Formato de HoraMax Incorrecto", 400, $time_start, 0, $idCompany));
     exit;
@@ -132,7 +135,7 @@ $fechaFin = fechFormat($dp['FechaFin'], 'Ymd');
 // Flight::json($dp['FechaIni']);
 // exit;
 
-if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
 
     $wc .= " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
 }

@@ -33,7 +33,8 @@ if ($wcHoras) {
     $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 }
 $HoraMinMax = '';
-if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+
+if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
     if (($dp['getHor'])) {
         $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
         $HoraMinMax = " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
@@ -135,7 +136,7 @@ if ($dp['getHor']) {
 
     $qHor = "SELECT FICHAS1.FicFech AS 'Fecha', FicLega, FicHora, THoDesc, THoDesc2, THoID, THoColu, FicObse, FicEsta, FICHAS1.FicHsHe AS 'HorasCalc', FICHAS1.FicHsAu AS 'HorasHechas', FICHAS1.FicHsAu2 AS 'HorasAuto', THoCCodi, THoCDesc FROM FICHAS1 LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora WHERE FICHAS1.FicLega > 0 $wcFicFechHor $IlegHor";
 
-    if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+    if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
         $qHor .= " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
     }
 
