@@ -199,6 +199,12 @@ foreach ($arrDP as $key => $filtro) {
                     }
                     $dataTHora = implode(',', $dataTHora);
                     $wc .= " AND FICHAS1.FicHora IN ($dataTHora)";
+                } else if ($key == 'Tipo') {  // Si viene Tipo de Hora
+                    foreach ($dp['Tipo'] as $Tipo) {
+                        $dataTipo[] = $Tipo;
+                    }
+                    $dataTipo = implode(',', $dataTipo);
+                    $wc .= " AND PERSONAL.LegTipo IN ($dataTipo)";
                 } else {
                     $wc .= " AND FICHAS.Fic$key IN ($e)";
                 }
@@ -213,6 +219,9 @@ foreach ($arrDP as $key => $filtro) {
                         } else if ($key == 'THora') {  // Si viene Tipo de Hora
                             $dataTHora = implode(',', $dp['THora']);
                             $wc .= " AND FICHAS1.FicHora = '$dataTHora'";
+                        } else if ($key == 'Tipo') {  // Si viene Tipo de Hora
+                            $dataTipo = implode(',', $dp['Tipo']);
+                            $wc .= " AND PERSONAL.LegTipo = '$dataTipo'";
                         } else {
                             $wc .= " AND FICHAS.Fic$key = '$v'";
                         }
@@ -234,6 +243,10 @@ foreach ($arrDP as $key => $filtro) {
 }
 
 $JoinFichas1 = '';
+$JoinPersonal = '';
+if ($dp['Tipo']) {
+    $JoinPersonal = " INNER JOIN PERSONAL ON PERSONAL.LegNume = FICHAS.FicLega";
+}
 switch ($dp['Estruct']) {
     case 'Empr':
         $FicEstruct = 'FICHAS.FicEmpr';
@@ -353,12 +366,12 @@ switch ($dp['Estruct']) {
         $sectorSecc = implode(',', $dp['Sector']);
         $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT(SECCION.SecCodi, SECCION.Se2Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
         $query = "SELECT FICHAS.FicSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM FICHAS 
-        $JoinFichas1
+        $JoinFichas1 $JoinPersonal
         INNER JOIN SECCION ON FICHAS.FicSec2=SECCION.Se2Codi AND FICHAS.FicSect=SECCION.SecCodi 
         INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2 OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
         break;
     default:
-        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinFichas1 INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
+        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinFichas1 $JoinPersonal INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
         break;
 }
 // Flight::json($query) . exit;
