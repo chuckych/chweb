@@ -11,6 +11,27 @@ if (strlen($dp) > 0 && isValidJSON($dp)) {
     (response(array(), 0, 'Invalid json Payload', 400, $time_start, 0, $idCompany));
 }
 
+function validarHora($hora)
+{
+    if (is_string($hora)) {
+        $f = explode(':', $hora);
+
+        if (count($f) != 2) return false;
+
+        if (!is_numeric($f[0])) return false;
+        if (!is_numeric($f[1])) return false;
+
+        if ($f[0] > 23 || $f[0] < 0) return false;
+        if ($f[1] > 59 || $f[1] < 0) return false;
+
+        if (strlen($f[0]) == 1) return false;
+        if (strlen($f[1]) == 1) return false;
+
+        return true;
+    }
+    return false;
+}
+
 $start  = start();
 $length = length();
 
@@ -41,6 +62,11 @@ $dp['ONovEx']  = vp($dp['ONovEx'], 'ONovEx', 'int01', 1); // Filtrar Otras Noved
 $dp['HoraEx']  = ($dp['HoraEx']) ?? '';
 $dp['HoraEx']  = vp($dp['HoraEx'], 'HoraEx', 'int01', 1); // Filtrar Horas de forma exclusiva
 
+$dp['HoraMin'] = ($dp['HoraMin']) ?? '';
+$dp['HoraMin'] = vp($dp['HoraMin'], 'HoraMin', 'str', 5); // str de horas minimo
+
+$dp['HoraMax'] = ($dp['HoraMax']) ?? '';
+$dp['HoraMax'] = vp($dp['HoraMax'], 'HoraMax', 'str', 5); // str de horas maximo
 
 $dp['LegApNo'] = $dp['LegApNo'] ?? '';
 $dp['LegApNo'] = vp($dp['LegApNo'], 'LegApNo', 'str', 40);

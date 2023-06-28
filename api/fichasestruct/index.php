@@ -8,7 +8,26 @@ errorReport();
 
 $checkMethod('POST');
 
-// Flight::json($dataC).exit;
+function validarHora($hora)
+{
+    if (is_string($hora)) {
+        $f = explode(':', $hora);
+
+        if (count($f) != 2) return false;
+
+        if (!is_numeric($f[0])) return false;
+        if (!is_numeric($f[1])) return false;
+
+        if ($f[0] > 23 || $f[0] < 0) return false;
+        if ($f[1] > 59 || $f[1] < 0) return false;
+
+        if (strlen($f[0]) == 1) return false;
+        if (strlen($f[1]) == 1) return false;
+
+        return true;
+    }
+    return false;
+}
 
 $FicEstruct = '';
 $ColEstruc = '';
@@ -16,12 +35,16 @@ $ColEstrucDesc = '';
 $ColEstrucCod = '';
 $wc = '';
 
-$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora');
+$start  = start();
+$length = length();
+
+$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora', 'HoraMin', 'HoraMax');
 $dp['estruct'] = ($dp['Estruct']) ?? '';
 $dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); // str de estructura 
 
-$dp['Desc'] = ($dp['Desc']) ?? '';
+$dp['Desc'] = ($dp['Desc']) ?? '00:00';
 $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 20); // str de estructura
+
 $dp['Baja'] = ($dp['Baja']) ?? [];
 $dp['Baja'] = vp($dp['Baja'], 'Baja', 'numArray01', 1);
 $dp['Sector'] = ($dp['Sector']) ?? '';
@@ -69,12 +92,20 @@ $dp['RegCH'] = ($dp['RegCH']) ?? [];
 $dp['RegCH'] = vp($dp['RegCH'], 'RegCH', 'intArray', 5);
 $dp['Tipo'] = ($dp['Tipo']) ?? [];
 $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'numArray01', 1);
+
 $dp['THora'] = ($dp['THora']) ?? [];
+$dp['THora'] = vp($dp['THora'], 'THora', 'intArray', 5);
 
 $dp['FechaIni'] = ($dp['FechaIni']) ?? '';
 $dp['FechaFin'] = ($dp['FechaFin']) ?? '';
 
-if (empty($dp['FechaIni']) && empty($dp['FechaFin'])) {
+$dp['HoraMin'] = ($dp['HoraMin']) ?? '';
+$dp['HoraMin'] = vp($dp['HoraMin'], 'HoraMin', 'str', 5); // str de horas minimo
+
+$dp['HoraMax'] = ($dp['HoraMax']) ?? '';
+$dp['HoraMax'] = vp($dp['HoraMax'], 'HoraMax', 'str', 5); // str de horas maximo
+
+if (empty($dp['FechaIni']) || empty($dp['FechaFin'])) {
     $dp['FechaIni'] = date('Ymd');
     $dp['FechaFin'] = date('Ymd');
 }
@@ -84,12 +115,31 @@ if ($dp['FechaIni'] > $dp['FechaFin']) {
     (response(array(), 0, "FechaIni no puede ser mayor a FechaFin.", 400, $time_start, 0, $idCompany));
     exit;
 }
+if (!validarHora($dp['HoraMin'])) {
+    http_response_code(400);
+    (response(array(), 0, "Formato de HoraMin Incorrecto", 400, $time_start, 0, $idCompany));
+    exit;
+}
+if (!validarHora($dp['HoraMax'])) {
+    http_response_code(400);
+    (response(array(), 0, "Formato de HoraMax Incorrecto", 400, $time_start, 0, $idCompany));
+    exit;
+}
+
 $fechaIni = fechFormat($dp['FechaIni'], 'Ymd');
 $fechaFin = fechFormat($dp['FechaFin'], 'Ymd');
 
+// Flight::json($dp['FechaIni']);
+// exit;
+
+if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+
+    $wc .= " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
+}
+
 $wc .= " AND (FICHAS.FicFech BETWEEN '" . $fechaIni . "' AND '" . $fechaFin . "')";
 
-$arrDPPersonal = array(
+$arrDP = array(
     'Lega' => $dp['Lega'],
     // Codigo de Horario {int} {array}
     'ApNo' => $dp['ApNo'],
@@ -119,13 +169,14 @@ $arrDPPersonal = array(
     'RegCH' => $dp['RegCH'],
     // Regla de control horario {int} {array}
     'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
+    'THora' => $dp['THora'], // Tipo de Hora {int} {array}
 );
 
-foreach ($arrDPPersonal as $key => $per) {
+foreach ($arrDP as $key => $filtro) {
     $e = array();
-    if (is_array($per)) {
+    if (is_array($filtro)) {
         $v = '';
-        $e = array_filter($per, function ($v) {
+        $e = array_filter($filtro, function ($v) {
             return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
         });
         $e = array_unique($e);
@@ -139,6 +190,12 @@ foreach ($arrDPPersonal as $key => $per) {
                     }
                     $dataSec2 = implode(',', $dataSec2);
                     $wc .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN ($dataSec2)";
+                } else if ($key == 'THora') {  // Si viene Tipo de Hora
+                    foreach ($dp['THora'] as $THora) {
+                        $dataTHora[] = $THora;
+                    }
+                    $dataTHora = implode(',', $dataTHora);
+                    $wc .= " AND FICHAS1.FicHora IN ($dataTHora)";
                 } else {
                     $wc .= " AND FICHAS.Fic$key IN ($e)";
                 }
@@ -149,8 +206,10 @@ foreach ($arrDPPersonal as $key => $per) {
                         if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
                             // $secSec2 = explode('-', $dp['Sec2'][0]);
                             $dataSec2 = implode(',', $dp['Sec2']);
-                            // Flight::json($dataSec2).exit;
                             $wc .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN ($dataSec2)";
+                        } else if ($key == 'THora') {  // Si viene Tipo de Hora
+                            $dataTHora = implode(',', $dp['THora']);
+                            $wc .= " AND FICHAS1.FicHora = '$dataTHora'";
                         } else {
                             $wc .= " AND FICHAS.Fic$key = '$v'";
                         }
@@ -159,19 +218,19 @@ foreach ($arrDPPersonal as $key => $per) {
             }
         }
     } else {
-        if ($per) {
+        if ($filtro) {
             if ($key == 'ApNoNume') {
-                $wc .= " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE '%$per%'";
+                $wc .= " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE '%$filtro%'";
             } else if ($key == 'ApNo') {
-                $wc .= " AND PERSONAL.LegApNo LIKE '%$per%'";
+                $wc .= " AND PERSONAL.LegApNo LIKE '%$filtro%'";
             } else {
-                $wc .= " AND FICHAS.Fic$key = '$per'";
+                $wc .= " AND FICHAS.Fic$key = '$filtro'";
             }
         }
     }
 }
 
-$JoinCustom = '';
+$JoinFichas1 = '';
 switch ($dp['Estruct']) {
     case 'Empr':
         $FicEstruct = 'FICHAS.FicEmpr';
@@ -226,20 +285,26 @@ switch ($dp['Estruct']) {
         $ColEstruc = 'TIPOHORA';
         $ColEstrucDesc = 'TIPOHORA.THoDesc';
         $ColEstrucCod = 'TIPOHORA.THoCodi';
-        $JoinCustom = "INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
+        break;
+    case 'Lega':
+        $FicEstruct = 'FICHAS.FicLega';
+        $ColEstruc = 'PERSONAL';
+        $ColEstrucDesc = 'PERSONAL.LegApNo';
+        $ColEstrucCod = 'PERSONAL.LegNume';
         break;
     case 'Tipo':
         $ColEstruc = 'PERSONAL';
         $ColEstrucCod = 'PERSONAL.LegTipo';
         break;
 }
+$JoinFichas1 = "INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
 
 switch ($dp['Estruct']) {
     case 'Tipo':
-        $query = "SELECT $ColEstrucCod AS 'Cod', COUNT(*) AS 'Count' FROM $ColEstruc INNER JOIN FICHAS ON PERSONAL.LegNume = FICHAS.FicLega WHERE PERSONAL.LegNume > 0 $wc GROUP BY $ColEstrucCod ORDER BY $ColEstrucCod";
+        $query = "SELECT $ColEstrucCod AS 'Cod', COUNT(*) AS 'Count' FROM $ColEstruc INNER JOIN FICHAS ON PERSONAL.LegNume = FICHAS.FicLega $JoinFichas1 WHERE PERSONAL.LegNume > 0 $wc GROUP BY $ColEstrucCod ORDER BY $ColEstrucCod OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
         break;
-    case 'Lega':
+    case 'Lega__old':
 
         $dataApiPerson['DATA'] = $dataApiPerson['DATA'] ?? '';
         $dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
@@ -263,9 +328,9 @@ switch ($dp['Estruct']) {
             "length" => $length,
         );
         $url = "$dataC[hostCHWeb]/$dataC[homeHost]/api/personal/";
-        // Flight::json($url) . exit;
 
         $dataApiPerson = json_decode($requestApi($url, $dataParamPerson, 10), true);
+        // Flight::json($dataApiPerson) . exit;
 
         foreach ($dataApiPerson['DATA'] as $key => $v) {
             $id = $v['Lega'];
@@ -284,11 +349,13 @@ switch ($dp['Estruct']) {
     case 'Sec2':
         $sectorSecc = implode(',', $dp['Sector']);
         $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT(SECCION.SecCodi, SECCION.Se2Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
-        //  $query = "SELECT PERSONAL.LegSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM PERSONAL INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND PERSONAL.LegSect=SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE PERSONAL.LegSec2 > 0 AND PERSONAL.LegSect IN ($sectorSecc) $wc $FiltroQ GROUP BY PERSONAL.LegSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY PERSONAL.LegSec2";
-        $query = "SELECT FICHAS.FicSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM FICHAS INNER JOIN SECCION ON FICHAS.FicSec2=SECCION.Se2Codi AND FICHAS.FicSect=SECCION.SecCodi  INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2";
+        $query = "SELECT FICHAS.FicSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM FICHAS 
+        $JoinFichas1
+        INNER JOIN SECCION ON FICHAS.FicSec2=SECCION.Se2Codi AND FICHAS.FicSect=SECCION.SecCodi 
+        INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2 OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
         break;
     default:
-        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinCustom INNER JOIN $ColEstruc ON $FicEstruct=$ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
+        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinFichas1 INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
         break;
 }
 // Flight::json($query) . exit;

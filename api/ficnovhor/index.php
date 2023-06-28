@@ -32,12 +32,23 @@ if ($wcONov) {
 if ($wcHoras) {
     $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 }
+$HoraMinMax = '';
+if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+    if (($dp['getHor'])) {
+        $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
+        $HoraMinMax = " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
+    }
+}
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
 $qFic = "SELECT FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1
 WHERE FICHAS.FicLega > 0 $wcFicFech";
+$qFic .= $HoraMinMax;
+
+// print_r($qFic) . exit;
 
 $qFicCount = "SELECT count(1) as 'count' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
+$qFicCount .= $HoraMinMax;
 
 if ($wc) {
     $qFic .= $wc;
@@ -91,10 +102,10 @@ foreach ($stmtFic as $key => $i) {
     }
 }
 if ($dp['getNov']) {
-    
+
     $IlegNoV = (implodeArrayByKey($IlegNoV, 'FicLega'));
     $IlegNoV = ($IlegNoV) ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
-    
+
     $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
         if ($wcNov) {
@@ -123,7 +134,11 @@ if ($dp['getHor']) {
     $IlegHor = ($IlegHor) ? " AND FICHAS1.FicLega IN ($IlegHor)" : "";
 
     $qHor = "SELECT FICHAS1.FicFech AS 'Fecha', FicLega, FicHora, THoDesc, THoDesc2, THoID, THoColu, FicObse, FicEsta, FICHAS1.FicHsHe AS 'HorasCalc', FICHAS1.FicHsAu AS 'HorasHechas', FICHAS1.FicHsAu2 AS 'HorasAuto', THoCCodi, THoCDesc FROM FICHAS1 LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora WHERE FICHAS1.FicLega > 0 $wcFicFechHor $IlegHor";
-    
+
+    if (validarHora($dp['HoraMin']) && validarHora($dp['HoraMax'])) {
+        $qHor .= " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
+    }
+
     if ($dp['HoraEx']) {
         if ($wcHoras) {
             $qHor .= $wcHoras;
@@ -191,7 +206,7 @@ foreach ($stmtFic as $key => $v) {
         if (($stmtHoras)) {
             if (horaMin($v['FicHsTr'] > 0)) {
                 $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-                
+
                 foreach ($dataHora as $key => $h) {
                     $dataHoras[] = array(
                         'Hora'   => $h['FicHora'],
@@ -209,14 +224,13 @@ foreach ($stmtFic as $key => $v) {
                             'Desc' => trim($h['THoCDesc']),
                         )
                     );
-                    
                 }
             }
         }
     }
     if ($dp['getReg']) {
         if ($v['FicNovA'] == 0) {
-        // if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
+            // if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
             if ($stmtRegistros) {
                 $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
                 foreach ($dataFichada as $key => $r) {
@@ -226,7 +240,7 @@ foreach ($stmtFic as $key => $v) {
                         // 'Fech' => $r['RegFech']->format('Y-m-d'), 
                         'FeRe' => fechFormat($r['RegFeRe'], 'Y-m-d'),
                         'Hora' => $r['RegHora'],
-                        'FeAs' => fechFormat($r['RegFeAs'],'Y-m-d'),
+                        'FeAs' => fechFormat($r['RegFeAs'], 'Y-m-d'),
                         'HoRe' => $r['RegHoRe'],
                         'Relo' => $r['RegRelo'],
                         'Lect' => $r['RegLect'],
@@ -252,9 +266,9 @@ foreach ($stmtFic as $key => $v) {
     $data[] = array(
         'Lega'     => $v['FicLega'],
         'ApNo'     => trim(str_replace(' ', '', $v['LegApNo'])),
-        'Docu'     => ($v['LegDocu'] > 0) ?$v['LegDocu']:'',
+        'Docu'     => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
         'Cuil'     => $v['LegCUIT'],
-        'Fech'     => fechFormat($v['FicFech'], 'Y-m-d' ),
+        'Fech'     => fechFormat($v['FicFech'], 'Y-m-d'),
         'Labo'     => $v['FicDiaL'],
         'Feri'     => $v['FicDiaF'],
         'ATra'     => $v['FicHsAT'],
