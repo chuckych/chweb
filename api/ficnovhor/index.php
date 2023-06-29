@@ -33,23 +33,26 @@ if ($wcHoras) {
     $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 }
 $HoraMinMax = '';
+$distinct = '';
 
 if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
     if (($dp['getHor'])) {
+        $distinct = 'DISTINCT';
         $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
         $HoraMinMax = " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
     }
 }
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
-$qFic = "SELECT FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
+$qFic = "SELECT $distinct FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1
 WHERE FICHAS.FicLega > 0 $wcFicFech";
 $qFic .= $HoraMinMax;
 
-// print_r($qFic) . exit;
 
-$qFicCount = "SELECT count(1) as 'count' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
+$qFicCount = "SELECT count(1) as 'count' FROM (SELECT $distinct FICHAS.FicFech, FICHAS.FicLega FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
 $qFicCount .= $HoraMinMax;
+// $qFicCount = "SELECT count(1) as 'count' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
+// $qFicCount .= $HoraMinMax;
 
 if ($wc) {
     $qFic .= $wc;
@@ -73,7 +76,10 @@ if ($wcHoras) {
     $qFic .= $wcHoras;
     $qFicCount .= $wcHoras;
 }
-// print_r($qFic).exit;
+$qFicCount .= ") AS FICHAS";
+// print_r($qFic) . exit;
+// print_r($qFicCount) . exit;
+
 
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
 $qFic .= " ORDER BY FICHAS.FicFech";
