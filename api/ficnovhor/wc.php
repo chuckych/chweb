@@ -11,27 +11,6 @@ if (strlen($dp) > 0 && isValidJSON($dp)) {
     (response(array(), 0, 'Invalid json Payload', 400, $time_start, 0, $idCompany));
 }
 
-function validarHora($hora)
-{
-    if (is_string($hora)) {
-        $f = explode(':', $hora);
-
-        if (count($f) != 2) return false;
-
-        if (!is_numeric($f[0])) return false;
-        if (!is_numeric($f[1])) return false;
-
-        if ($f[0] > 23 || $f[0] < 0) return false;
-        if ($f[1] > 59 || $f[1] < 0) return false;
-
-        if (strlen($f[0]) == 1) return false;
-        if (strlen($f[1]) == 1) return false;
-
-        return true;
-    }
-    return false;
-}
-
 $start  = start();
 $length = length();
 
@@ -41,11 +20,20 @@ $dp['FechFin'] = $dp['FechFin'] ?? date('Y-m-d'); // Fecha de Fin
 $dp['onlyReg']  = ($dp['onlyReg']) ?? '';
 $dp['onlyReg']  = vp($dp['onlyReg'], 'onlyReg', 'int01', 1); // Traer Solo Fichadas
 
+$dp['onlyHsTr']  = ($dp['onlyHsTr']) ?? '';
+$dp['onlyHsTr']  = vp($dp['onlyHsTr'], 'onlyHsTr', 'int01', 1); // Traer Solo registros con Horas trabajadas reales.
+
 $dp['getReg']  = ($dp['getReg']) ?? '';
 $dp['getReg']  = vp($dp['getReg'], 'getReg', 'int01', 1); // Traer Fichadas
 
 $dp['getNov']  = ($dp['getNov']) ?? '';
 $dp['getNov']  = vp($dp['getNov'], 'getNov', 'int01', 1); // Traer Novedades
+
+$dp['getEstruct']  = ($dp['getEstruct']) ?? '';
+$dp['getEstruct']  = vp($dp['getEstruct'], 'getEstruct', 'int01', 1); // Traer codigo de Estructura
+
+$dp['getCierre']  = ($dp['getCierre']) ?? '';
+$dp['getCierre']  = vp($dp['getCierre'], 'getCierre', 'int01', 1); // Traer fecha de cierre
 
 $dp['getONov']  = ($dp['getONov']) ?? '';
 $dp['getONov']  = vp($dp['getONov'], 'getONov', 'int01', 1); // Traer Otras Novedades
@@ -171,8 +159,10 @@ $arrDPONovedad = array(
 
 $dp['Hora'] = $dp['Hora'] ?? [];
 $dp['Hora'] = vp($dp['Hora'], 'Hora', 'intArray', 5);
+
 $dp['Esta'] = $dp['Esta'] ?? [];
 $dp['Esta'] = vp($dp['Esta'], 'Esta', 'intArray', 1);
+
 $arrDPHOras = array(
     'Hora'  => $dp['Hora'], // Hora {int}
     'Esta'  => $dp['Esta'], // {int}  Estado (0-Normal 2-Manual o modificada)
@@ -340,6 +330,9 @@ if ($dp['LegaD']) {
     } else {
         $wc .= " AND FICHAS.FicLega BETWEEN '$LegaD' AND '$LegaH'";
     }
+}
+if ($dp['onlyHsTr']) {
+    $wc .= " AND dbo.fn_STRMinutos(FICHAS.FicHstr) > 0";
 }
 // $pathLogss = __DIR__ . '/logs/' . date('Ymd') . '_wc.log';
 // writeLog(PHP_EOL . 'DP: ' . json_encode($dp), $pathLogss);

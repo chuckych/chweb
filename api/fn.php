@@ -402,7 +402,6 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
         $stmt = null;
         $conn = null;
         return true;
-
     } catch (Exception $e) {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
@@ -1274,28 +1273,28 @@ function IncTiStr($LegIncTi)
         switch ($LegIncTi) {
             case '0':
                 return "Estándar sin control de descanso";
-            // break;
+                // break;
             case '1':
                 return "Estándar con control de descanso";
-            // break;
+                // break;
             case '2':
                 return "(Hs. a Trabajar - Hs. Trabajadas)";
-            // break;
+                // break;
             case '3':
                 return "(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia";
-            // break;
+                // break;
             case '4':
                 return "(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso";
-            // break;
+                // break;
             case '5':
                 return "Recortado sin control de descanso";
-            // break;
+                // break;
             case '6':
                 return "Recortado con control de descanso";
-            // break;
+                // break;
             default:
                 return "Sin definir";
-            // break;
+                // break;
         }
     }
     return '';
@@ -1306,13 +1305,13 @@ function LegHoAlStr($LegHoAl)
         switch ($LegHoAl) {
             case '0':
                 return "Según Asignación";
-            // break;
+                // break;
             case '1':
                 return "Alternativo según fichadas";
-            // break;
+                // break;
             default:
                 return "Sin definir";
-            // break;
+                // break;
         }
     }
     return '';
@@ -1565,4 +1564,25 @@ function novedadTipo($value = array())
     );
 
     return $tipos[$value[0]];
+}
+
+function validarHora($hora)
+{
+    if (is_string($hora)) {
+        $f = explode(':', $hora);
+
+        if (count($f) != 2) return false;
+
+        if (!is_numeric($f[0])) return false;
+        if (!is_numeric($f[1])) return false;
+
+        if ($f[0] > 23 || $f[0] < 0) return false;
+        if ($f[1] > 59 || $f[1] < 0) return false;
+
+        if (strlen($f[0]) == 1) return false;
+        if (strlen($f[1]) == 1) return false;
+
+        return true;
+    }
+    return false;
 }

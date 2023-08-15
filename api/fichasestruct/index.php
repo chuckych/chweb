@@ -6,31 +6,8 @@ tz();
 tzLang();
 errorReport();
 
-// $checkMethod('POST');
-
-function validarHora($hora)
-{
-    if (is_string($hora)) {
-        $f = explode(':', $hora);
-
-        if (count($f) != 2) return false;
-
-        if (!is_numeric($f[0])) return false;
-        if (!is_numeric($f[1])) return false;
-
-        if ($f[0] > 23 || $f[0] < 0) return false;
-        if ($f[1] > 59 || $f[1] < 0) return false;
-
-        if (strlen($f[0]) == 1) return false;
-        if (strlen($f[1]) == 1) return false;
-
-        return true;
-    }
-    return false;
-}
-
-// print_r(Flight::request());
-// exit;
+// $control->check_method("POST");
+$control->check_json();
 
 $FicEstruct = '';
 $ColEstruc = '';
@@ -48,9 +25,10 @@ $dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); /
 $dp['Desc'] = ($dp['Desc']) ?? '00:00';
 $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 20); // str de estructura
 
-$dp['Baja'] = ($dp['Baja']) ?? [];
-$dp['Baja'] = vp($dp['Baja'], 'Baja', 'numArray01', 1);
 $dp['Sector'] = ($dp['Sector']) ?? '';
+
+$dp['onlyHsTr']  = ($dp['onlyHsTr']) ?? '';
+$dp['onlyHsTr']  = vp($dp['onlyHsTr'], 'onlyHsTr', 'int01', 1); // Traer Solo registros con Horas trabajadas reales.
 
 if ($dp['estruct'] == 'Sec2' && empty($dp['Sector'])) {
     http_response_code(400);
@@ -66,14 +44,6 @@ if ($dp['Sector'] && $dp['estruct'] == 'Sec2') {
 
 $dp['Lega'] = ($dp['Lega']) ?? [];
 $dp['Lega'] = vp($dp['Lega'], 'Lega', 'intArray', 11);
-$dp['Docu'] = ($dp['Docu']) ?? [];
-$dp['Docu'] = vp($dp['Docu'], 'Docu', 'intArray', 11);
-$dp['IntExt'] = ($dp['IntExt']) ?? [];
-$dp['IntExt'] = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
-$dp['ApNo'] = $dp['ApNo'] ?? '';
-$dp['ApNo'] = vp($dp['ApNo'], 'ApNo', 'str', 40);
-$dp['ApNoNume'] = $dp['ApNoNume'] ?? '';
-$dp['ApNoNume'] = vp($dp['ApNoNume'], 'ApNoNume', 'str', 40);
 
 $dp['Empr'] = ($dp['Empr']) ?? [];
 $dp['Empr'] = vp($dp['Empr'], 'Empr', 'intArray', 5);
@@ -107,6 +77,9 @@ $dp['HoraMin'] = vp($dp['HoraMin'], 'HoraMin', 'str', 5); // str de horas minimo
 
 $dp['HoraMax'] = ($dp['HoraMax']) ?? '';
 $dp['HoraMax'] = vp($dp['HoraMax'], 'HoraMax', 'str', 5); // str de horas maximo
+
+$dp['Esta'] = $dp['Esta'] ?? [];
+$dp['Esta'] = vp($dp['Esta'], 'Esta', 'intArray', 1);
 
 if (empty($dp['FechaIni']) || empty($dp['FechaFin'])) {
     $dp['FechaIni'] = date('Ymd');
@@ -144,15 +117,6 @@ $wc .= " AND (FICHAS.FicFech BETWEEN '" . $fechaIni . "' AND '" . $fechaFin . "'
 
 $arrDP = array(
     'Lega' => $dp['Lega'],
-    // Codigo de Horario {int} {array}
-    'ApNo' => $dp['ApNo'],
-    // Nombre y apellido {string}
-    'Docu' => $dp['Docu'],
-    // Documento {string}
-    'ApNoNume' => $dp['ApNoNume'],
-    // Nombre y apellido y Legajo {string}
-    'IntExt' => $dp['IntExt'],
-    // Tipo de legajo. Interno, Externo {int} {array}
     'Empr' => $dp['Empr'],
     // Empresa {int} {array}
     'Plan' => $dp['Plan'],
@@ -173,6 +137,7 @@ $arrDP = array(
     // Regla de control horario {int} {array}
     'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
     'THora' => $dp['THora'], // Tipo de Hora {int} {array}
+    'Esta' => $dp['Esta'], // Estado Hora {int} {array}
 );
 
 foreach ($arrDP as $key => $filtro) {
@@ -192,13 +157,19 @@ foreach ($arrDP as $key => $filtro) {
                         $dataSec2[] = $se2;
                     }
                     $dataSec2 = implode(',', $dataSec2);
-                    $wc .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN ($dataSec2)";
+                    $wc .= " AND (FICHAS.FicSec2) IN ($dataSec2)";
                 } else if ($key == 'THora') {  // Si viene Tipo de Hora
                     foreach ($dp['THora'] as $THora) {
                         $dataTHora[] = $THora;
                     }
                     $dataTHora = implode(',', $dataTHora);
                     $wc .= " AND FICHAS1.FicHora IN ($dataTHora)";
+                } else if ($key == 'Esta') {  // Si viene Tipo de Hora
+                    foreach ($dp['Esta'] as $Esta) {
+                        $dataEsta[] = $Esta;
+                    }
+                    $dataEsta = implode(',', $dataEsta);
+                    $wc .= " AND FICHAS1.FicEsta IN ($dataEsta)";
                 } else if ($key == 'Tipo') {  // Si viene Tipo de Hora
                     foreach ($dp['Tipo'] as $Tipo) {
                         $dataTipo[] = $Tipo;
@@ -215,10 +186,13 @@ foreach ($arrDP as $key => $filtro) {
                         if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
                             // $secSec2 = explode('-', $dp['Sec2'][0]);
                             $dataSec2 = implode(',', $dp['Sec2']);
-                            $wc .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN ($dataSec2)";
+                            $wc .= " AND (FICHAS.FicSec2) IN ($dataSec2)";
                         } else if ($key == 'THora') {  // Si viene Tipo de Hora
                             $dataTHora = implode(',', $dp['THora']);
                             $wc .= " AND FICHAS1.FicHora = '$dataTHora'";
+                        } else if ($key == 'Esta') {  // Si viene Tipo de Hora
+                            $dataEsta = implode(',', $dp['Esta']);
+                            $wc .= " AND FICHAS1.FicEsta = '$dataEsta'";
                         } else if ($key == 'Tipo') {  // Si viene Tipo de Hora
                             $dataTipo = implode(',', $dp['Tipo']);
                             $wc .= " AND PERSONAL.LegTipo = '$dataTipo'";
@@ -240,6 +214,9 @@ foreach ($arrDP as $key => $filtro) {
             }
         }
     }
+}
+if ($dp['onlyHsTr']) {
+    $wc .= " AND dbo.fn_STRMinutos(FICHAS.FicHstr) > 0";
 }
 
 $JoinFichas1 = '';
@@ -376,57 +353,59 @@ switch ($dp['Estruct']) {
 }
 // Flight::json($query) . exit;
 
-$stmt = $dbApiQuery($query) ?? '';
+try {
 
-if (empty($stmt)) {
-    http_response_code(200);
-    (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
-    exit;
-}
+    $stmt = $dbApiQuery($query) ?? '';
 
-foreach ($stmt as $key => $row) :
-
-    switch ($dp['Estruct']) {
-        case 'Tipo':
-            $Cod = $row['Cod'];
-            $Count = $row['Count'];
-            $id2 = ($Cod == 0) ? 0 : 1;
-            $Desc = ($Cod == '0') ? 'Mensuales' : 'Jornales';
-            $data[] = array(
-                'Cod' => $id2,
-                'Desc' => $Desc,
-                'Count' => $Count,
-            );
-            break;
-        case 'Sec2':
-            $Cod = $row['Cod'];
-            $Count = $row['Count'];
-            $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
-
-            $data[] = array(
-                'Cod' => $Cod,
-                'Desc' => $Desc,
-                'Count' => $Count,
-                'Sect' => $row['SecCodi'],
-                'SectDesc' => $row['SecDesc'],
-            );
-            break;
-        default:
-            $Cod = $row['id'];
-            $Count = $row['Count'];
-            $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
-
-            $data[] = array(
-                'Cod' => $Cod,
-                'Desc' => $Desc,
-                'Count' => $Count,
-            );
-            break;
+    if (empty($stmt)) {
+        throw new Exception(''); //No hay datos
     }
 
-endforeach;
+    foreach ($stmt as $key => $row) :
 
-$countData = count($data);
-http_response_code(200);
-(response($data, $countData, 'OK', 200, $time_start, $countData, $idCompany));
-exit;
+        switch ($dp['Estruct']) {
+            case 'Tipo':
+                $Cod = $row['Cod'];
+                $Count = $row['Count'];
+                $id2 = ($Cod == 0) ? 0 : 1;
+                $Desc = ($Cod == '0') ? 'Mensuales' : 'Jornales';
+                $data[] = array(
+                    'Cod' => $id2,
+                    'Desc' => $Desc,
+                    'Count' => $Count,
+                );
+                break;
+            case 'Sec2':
+                $Cod = $row['Cod'];
+                $Count = $row['Count'];
+                $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
+
+                $data[] = array(
+                    'Cod' => $Cod,
+                    'Desc' => $Desc,
+                    'Count' => $Count,
+                    'Sect' => $row['SecCodi'],
+                    'SectDesc' => $row['SecDesc'],
+                );
+                break;
+            default:
+                $Cod = $row['id'];
+                $Count = $row['Count'];
+                $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
+
+                $data[] = array(
+                    'Cod' => $Cod,
+                    'Desc' => $Desc,
+                    'Count' => $Count,
+                );
+                break;
+        }
+
+    endforeach;
+
+    $countData = count($data);
+    http_response_code(200);
+    (response($data, $countData, 'OK', 200, $time_start, $countData, $idCompany));
+} catch (\Throwable $th) {
+    (response($th->getMessage(), 0, 'OK', 200, $time_start, 0, $idCompany));
+}

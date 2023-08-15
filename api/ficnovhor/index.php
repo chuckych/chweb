@@ -6,7 +6,7 @@ tz();
 tzLang();
 errorReport();
 
-$iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
+$iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $colCierre = $joinCierres = $onlyRegCount = '';
 $IlegFic = array();
 
 $control->check_method("POST");
@@ -32,6 +32,12 @@ if ($wcONov) {
 if ($wcHoras) {
     $joinFichas1 = " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
 }
+if ($dp['getCierre']) {
+    $sqCierre = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
+    $stmtCierre = $dbApiQuery($sqCierre) ?? '';
+    $joinCierres = " LEFT JOIN PERCIERRE ON FICHAS.FicLega = PERCIERRE.CierreLega";
+    $colCierre = ",PERCIERRE.CierreFech";
+}
 $HoraMinMax = '';
 $distinct = '';
 
@@ -42,9 +48,11 @@ if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax
         $HoraMinMax = " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
     }
 }
+$colEstruct = array('FicConv', 'FicPlan', 'FicGrup', 'FicSect', 'FicSec2', 'FicEmpr', 'FicSucu');
+$colEstruct = implode(',', $colEstruct);
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
-$qFic = "SELECT $distinct FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta FROM FICHAS
-INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1
+$qFic = "SELECT $distinct FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta, $colEstruct $colCierre FROM FICHAS
+INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 $joinCierres
 WHERE FICHAS.FicLega > 0 $wcFicFech";
 $qFic .= $HoraMinMax;
 
@@ -211,28 +219,28 @@ foreach ($stmtFic as $key => $v) {
     }
     if ($dp['getHor']) {
         if (($stmtHoras)) {
-            if (horaMin($v['FicHsTr'] > 0)) {
-                $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            // if (horaMin($v['FicHsTr']) > 0) {
+            $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
 
-                foreach ($dataHora as $key => $h) {
-                    $dataHoras[] = array(
-                        'Hora'   => $h['FicHora'],
-                        'Desc'   => $h['THoDesc'],
-                        'Desc2'  => $h['THoDesc2'],
-                        'ID'     => $h['THoID'],
-                        'Colu'   => $h['THoColu'],
-                        'Obse'   => $h['FicObse'],
-                        'Esta'   => $h['FicEsta'],
-                        'Calc'   => $h['HorasCalc'],
-                        'Hechas' => $h['HorasHechas'],
-                        'Auto'   => $h['HorasAuto'],
-                        'Causa' => array(
-                            'Cod' => ($h['THoCCodi']) ? $h['THoCCodi'] : '',
-                            'Desc' => trim($h['THoCDesc']),
-                        )
-                    );
-                }
+            foreach ($dataHora as $key => $h) {
+                $dataHoras[] = array(
+                    'Hora'   => $h['FicHora'],
+                    'Desc'   => $h['THoDesc'],
+                    'Desc2'  => $h['THoDesc2'],
+                    'ID'     => $h['THoID'],
+                    'Colu'   => $h['THoColu'],
+                    'Obse'   => $h['FicObse'],
+                    'Esta'   => $h['FicEsta'],
+                    'Calc'   => $h['HorasCalc'],
+                    'Hechas' => $h['HorasHechas'],
+                    'Auto'   => $h['HorasAuto'],
+                    'Causa' => array(
+                        'Cod' => ($h['THoCCodi']) ? $h['THoCCodi'] : '',
+                        'Desc' => trim($h['THoCDesc']),
+                    )
+                );
             }
+            // }
         }
     }
     if ($dp['getReg']) {
@@ -269,13 +277,55 @@ foreach ($stmtFic as $key => $v) {
         'Tar' => $v['FicNovT'],
         'Inc' => $v['FicNovI'],
     );
+    $estruct = [];
+    if ($dp['getEstruct']) {
+        $estruct = array(
+            'Empr' => $v['FicEmpr'],
+            'Plan' => $v['FicPlan'],
+            'Conv' => $v['FicConv'],
+            'Sect' => $v['FicSect'],
+            'Sec2' => $v['FicSec2'],
+            'Grup' => $v['FicGrup'],
+            'Sucu' => $v['FicSucu'],
+        );
+    }
+    $cierre = [];
 
+    $Fech = fechFormat($v['FicFech'], 'Y-m-d');
+    $Fech2 = fechFormat($v['FicFech'], 'Ymd');
+
+    if ($dp['getCierre']) {
+
+        $genCierre = fechFormat($stmtCierre[0]['ParCierr'], 'Y-m-d');
+        $genCierre2 = fechFormat($stmtCierre[0]['ParCierr'], 'Ymd');
+        $FechCierre = fechFormat($v['CierreFech'], 'Y-m-d');
+        $FechCierre2 = fechFormat($v['CierreFech'], 'Ymd');
+
+        if ($genCierre2 == '1753-01-01') {
+            if ($FechCierre == '1753-01-01') {
+                $EstaCierre = 'abierto';
+            } else {
+                $EstaCierre = (intval($Fech2) <= intval($FechCierre2)) ? 'cerrado' : 'abierto';
+            }
+        } else {
+            if ($genCierre2 > $FechCierre2) {
+                $EstaCierre = (intval($Fech2) <= intval($genCierre2)) ? 'cerrado' : 'abierto';
+            } else {
+                $EstaCierre = (intval($Fech2) <= intval($FechCierre2)) ? 'cerrado' : 'abierto';
+            }
+        }
+        $cierre = array(
+            'PerFech' => ($FechCierre == '1753-01-01') ? '' : fechFormat($v['CierreFech'], 'Y-m-d'),
+            'GenFech' => ($genCierre == '1753-01-01') ? '' : $genCierre,
+            'Estado' => $EstaCierre,
+        );
+    }
     $data[] = array(
         'Lega'     => $v['FicLega'],
         'ApNo'     => trim(str_replace(' ', '', $v['LegApNo'])),
         'Docu'     => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
         'Cuil'     => $v['LegCUIT'],
-        'Fech'     => fechFormat($v['FicFech'], 'Y-m-d'),
+        'Fech'     => $Fech,
         'Labo'     => $v['FicDiaL'],
         'Feri'     => $v['FicDiaF'],
         'ATra'     => $v['FicHsAT'],
@@ -289,6 +339,8 @@ foreach ($stmtFic as $key => $v) {
         'Nove'     => $dataNov,
         'ONove'    => $dataONov,
         'Horas'    => $dataHoras,
+        'Estruct' => $estruct,
+        'Cierre' => $cierre,
     );
 }
 $countData    = count($data);

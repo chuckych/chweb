@@ -158,12 +158,16 @@ foreach ($arrDP as $key => $p) {
 $Codi = $pref . 'Codi';
 $Desc = ($dp['Estruct'] == 'Emp') ? $pref . 'Razon' : $pref . 'Desc';
 $Sec = ($dp['Estruct'] == 'Se2') ? true : '';
+$THoC = ($dp['Estruct'] == 'THoC') ? true : '';
 $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
 $SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
+$JoinTHora = ($dp['Estruct'] == 'THoC') ? "INNER JOIN TIPOHORA ON TIPOHORACAUSA.THoCHora = TIPOHORA.THoCodi" : '';
+$THoraDesc = ($dp['Estruct'] == 'THoC') ? ",TIPOHORA.THoDesc" : '';
+
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
-$query = "SELECT * $SecDesc FROM $tabla $JoinSe2 WHERE $Codi > 0";
+$query = "SELECT * $SecDesc $THoraDesc FROM $tabla $JoinSe2 $JoinTHora WHERE $Codi > 0";
 
 // print_r($query).exit;
 
@@ -191,6 +195,14 @@ foreach ($stmt as $key => $v) {
                 "Codi" => $v['SecCodi'],
                 "Desc" => $v['SecDesc'],
             ),
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        );
+    } else if ($THoC) {
+        $data[] = array(
+            "Codi" => $v[$Codi],
+            "Desc" => $v[$Desc],
+            "CodiHora" => $v['THoCodi'],
+            "DescHora" => $v['THoDesc'],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         );
     } else {

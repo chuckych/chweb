@@ -12,10 +12,10 @@ $params['q'] = $params['q'] ?? '';
 $params['d'] = $params['d'] ?? '';
 $q = $params['q'];
 $data = array();
-$where_condition ='';
+$where_condition = '';
 if (empty($params['_dr'])) {
     $where_condition .= " AND auditoria.fecha = (SELECT MAX(fecha) FROM auditoria)";
-}else{
+} else {
     $DateRange = explode(' al ', $params['_dr']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));
     $FechaFin  = test_input(dr_fecha($DateRange[1]));
@@ -104,12 +104,13 @@ switch ($params['d']) {
         $query .= $FiltroQ;
         $query .= $where_condition;
         $query .= ' ORDER BY auditoria.audcuenta';
+
         $r = array_pdoQuery($query);
 
         foreach ($r as $key => $row) {
             $data[] = array(
                 'id'    => $row['audid'],
-                'text'  => tipoAud($row['nombre'])
+                'text'  => ($row['nombre'])
             );
         }
         break;
