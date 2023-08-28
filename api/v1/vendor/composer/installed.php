@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'name' => '__root__',
+        'pretty_version' => 'dev-master',
+        'version' => 'dev-master',
+        'reference' => 'f6940d86c592a893230f5e9c4ea30e83e090d66b',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-master',
+            'version' => 'dev-master',
+            'reference' => 'f6940d86c592a893230f5e9c4ea30e83e090d66b',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'donatj/phpuseragentparser' => array(
+            'pretty_version' => 'v1.7.0',
+            'version' => '1.7.0.0',
+            'reference' => 'a35900b93530715f8669c10e49756adde5c8e6fc',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../donatj/phpuseragentparser',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+        'mikecao/flight' => array(
+            'pretty_version' => 'v2.0.1',
+            'version' => '2.0.1.0',
+            'reference' => 'a130231646e6c7a9e2504a9025f851e9a3bf1975',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../mikecao/flight',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
+    ),
+);

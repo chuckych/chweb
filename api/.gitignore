@@ -1,6 +1,6 @@
 # *.php
-logs/*.log
-logs/*.txt
-logs/*.xls
-logs/*.csv
-logs/*.xlsx
+*.log
+*.txt
+*.xls
+*.csv
+*.xlsx

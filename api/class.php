@@ -1,5 +1,9 @@
 <?php
-require __DIR__ . '../../vendor/autoload.php';
+// require __DIR__ . '../../vendor/autoload.php';
+require __DIR__ . '/v1/vendor/autoload.php';
+
+use donatj\UserAgent\UserAgentParser;
+
 class requestControl
 {
     public function check_get($queryParams = array(), $url)
@@ -105,20 +109,27 @@ class requestControl
         // $idCompany    = $idCompany;
 
         if ($agent) {
-            require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
-            $parsedagent[] = parse_user_agent($agent);
-            foreach ($parsedagent as $key => $value) {
-                $platform = $value['platform'];
-                $browser = $value['browser'];
-                $version = $value['version'];
-            }
-            $agent = $platform . ' ' . $browser . ' ' . $version;
+            // require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
+            // $parsedagent[] = parse_user_agent($agent);
+            // foreach ($parsedagent as $key => $value) {
+            //     $platform = $value['platform'];
+            //     $browser = $value['browser'];
+            //     $version = $value['version'];
+            // }
+            // $agent = $platform . ' ' . $browser . ' ' . $version;
+            $parser = new UserAgentParser();
+            $ua = $parser->parse();
+            $ua = $parser();
+            $ua->platform();
+            $ua->browser();
+            $ua->browserVersion();
+            $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
         }
 
         $pathLog = __DIR__ . '/logs/'; // path Log Api
         $nameLog = date('Ymd') . '_request_' . padLeft($idCompany, 3, 0) . '.log'; // path Log Api
         /** start text log*/
-        $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
+        $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"HOLA $agent\" ]\n----------";
         /** end text log*/
         writeLog($TextLog, $pathLog . $nameLog); // Log Api
         /** END LOG API CONFIG */
@@ -363,7 +374,6 @@ class fnArray
         }
         return '';
     }
-
 }
 
 class validaRequest
@@ -815,7 +825,6 @@ class querydb
             exit;
         }
     }
-
 }
 
 class tools

@@ -22,10 +22,10 @@ if ($params['ProyID']) {
     $dataPlantilla = simple_pdoQuery($r)['ProyPlantPlano'];
 
     $r = "SELECT PlaPlanos FROM proy_plantilla_plano where PlaPlanoID = $dataPlantilla";
-    $planos = simple_pdoQuery($r)['PlaPlanos'];
+    $planos = simple_pdoQuery($r)['PlaPlanos'] ?? '';
     if ($planos) {
         $where_condition .= " AND proy_planos.PlanoID IN ($planos)";
-    } else{
+    } else {
         $where_condition .= " AND proy_planos.PlanoID IN ('')";
     }
 }

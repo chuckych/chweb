@@ -1,0 +1,11 @@
+{
+    "require": {
+        "mikecao/flight": "^2.0",
+        "donatj/phpuseragentparser": "^1.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Classes\\": "classes"
+        }
+    }
+}

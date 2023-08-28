@@ -1,6 +1,10 @@
 <?php
 ini_set('max_execution_time', 480); //480 seconds = 8 minutes
-require __DIR__ . './class.php';
+require __DIR__ . '/v1/vendor/autoload.php';
+
+use donatj\UserAgent\UserAgentParser;
+
+require __DIR__ . '/class.php';
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 $time_start = timeStart(); // Inicio
@@ -280,14 +284,21 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
     // $idCompany    = $idCompany;
 
     if ($agent) {
-        require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
-        $parsedagent[] = parse_user_agent($agent);
-        foreach ($parsedagent as $key => $value) {
-            $platform = $value['platform'];
-            $browser = $value['browser'];
-            $version = $value['version'];
-        }
-        $agent = $platform . ' ' . $browser . ' ' . $version;
+        // require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
+
+        $parser = new UserAgentParser();
+        $ua = $parser->parse();
+        $ua = $parser();
+        // $parsedagent[] = parse_user_agent($agent);
+        $ua->platform();
+        $ua->browser();
+        $ua->browserVersion();
+        // foreach ($parsedagent as $key => $value) {
+        //     $platform = $value['platform'];
+        //     $browser = $value['browser'];
+        //     $version = $value['version'];
+        // }
+        $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
     }
 
     $pathLog = __DIR__ . '/logs/'; // path Log Api

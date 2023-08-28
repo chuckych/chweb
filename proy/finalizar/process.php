@@ -118,9 +118,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 
 	$dataTar = simple_pdoQuery($rTar);
 
-	$tareDiff = tareDiff($dataTar['TareIni'], $dataTar['TareFin']);
+	// $tareDiff = tareDiff($dataTar['TareIni'], $dataTar['TareFin']) ?? [];
+	if (isset($dataTar['TareIni'], $dataTar['TareFin'])) {
+		$tareDiff = tareDiff($dataTar['TareIni'], $dataTar['TareFin']) ?? [];
+	} else {
+		$tareDiff = []; // O maneja el caso en que los valores son nulos
+	}
 
-	if ($dataTar['TareID']) { // Si existe una tarea en curso
+	if ($dataTar['TareID'] ?? '') { // Si existe una tarea en curso
 		if ($dataTar['TareFin'] = '0000-00-00 00:00:00') { // Si la tarea no ha finalizado
 			$TareInicio = FechaFormatH($dataTar['TareIni']); // Fecha de inicio de la tarea
 			$dataTar = array(
@@ -141,17 +146,24 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 		}
 	}
 	$PlanoID = empty($PlanoID) ? 'NULL' : $PlanoID;
-	$i = "INSERT INTO `proy_tareas` (`TareEmp`, `TareProy`, `TareResp`, `TareProc`, `TarePlano`, `TareCost`, `TareIni`, `TareFin`, `Cliente`) VALUES ( '$EmpID', '$ProyID', '$User', '$ProcID', $PlanoID, '$ProcCost', '$FechaHora', '', '$Cliente')";
 
-	if (pdoQuery($i)) {
+	try {
+		$i = "INSERT INTO `proy_tareas` (`TareEmp`, `TareProy`, `TareResp`, `TareProc`, `TarePlano`, `TareCost`, `TareIni`, `TareFin`, `Cliente`) VALUES ( '$EmpID', '$ProyID', '$User', '$ProcID', $PlanoID, '$ProcCost', '$FechaHora', '', '$Cliente')";
+
+		if (!pdoQuery($i)) {
+			throw new Exception("Error al iniciar la tarea");
+		}
+
 		$r = "SELECT `TareID` FROM `proy_tareas` WHERE `TareEmp` = '$EmpID' AND `TareProy` = '$ProyID' AND `TareResp` = '$User' AND `TareProc` = '$ProcID' AND `TareCost` = '$ProcCost' AND `TareIni` = '$FechaHora' AND `Cliente` = '$Cliente' ORDER BY `TareID` DESC LIMIT 1";
 		$r = simple_pdoQuery($r);
+
 		PrintRespuestaJson('ok', "Tarea (#$r[TareID]) iniciada con correctamente");
 		auditoria("Tarea (#$r[TareID]) iniciada correctamente", 'A', '', '37');
-	} else {
-		PrintRespuestaJson('error', 'Error al iniciar la tarea');
+
+		exit;
+	} catch (\Throwable $th) {
+		PrintRespuestaJson('error', $th->getMessage());
 	}
-	exit;
 } else if ($_POST['tarComplete']) { // Completar tarea
 
 	$_POST['tareID']          = ($_POST['tareID']) ?? '';

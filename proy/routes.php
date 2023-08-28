@@ -54,8 +54,8 @@ function checkModulo($modulo)
 // print_r($_SESSION["MODS_ROL_PROY"]);
 // echo '</pre>';
 // exit;
-($_SESSION["MODS_ROL_PROY"] == 'error') ? require __DIR__ . '/errMod.php':'';
-($_SESSION["MODS_ROL_PROY"] == 'error') ? exit:'';
+($_SESSION["MODS_ROL_PROY"] == 'error') ? require __DIR__ . '/errMod.php' : '';
+($_SESSION["MODS_ROL_PROY"] == 'error') ? exit : '';
 
 $rutas = array(
     'log_rfid'   => array(
@@ -132,7 +132,9 @@ $request = $_GET['page'];
 foreach ($rutas as $key => $pagina) {
     if ($key == $request) {
         ($pagina['mod'] == 0) ? require __DIR__ . '/' . $pagina['url'] : ''; //Si el modulo es 0, no se verifica el permiso
-        ($pagina['mod'] == 0) ? '' : checkModulo($pagina['mod']) ? require __DIR__ . '/' . $pagina['url'] : '';
+        // ($pagina['mod'] == 0) ? '' : checkModulo($pagina['mod']) ? require __DIR__ . '/' . $pagina['url'] : '';
+        ($pagina['mod'] == 0) ? '' : (checkModulo($pagina['mod']) ? require __DIR__ . '/' . $pagina['url'] : '');
+
         access_log_proy($key);
         exit;
     }

@@ -408,14 +408,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
 
     $DiaLaboral = CountRegistrosMayorCero("SELECT FicDiaL FROM FICHAS WHERE FICHAS.FicLega= '$FicLega' AND FICHAS.FicFech= '$FicFech' AND FICHAS.FicDiaL='1'");
 
-    if (!$DiaLaboral && $FicCate == 0) {
-        // echo $DiaLaboral;
-        $data = array('status' => 'Error', 'Mensaje' => 'Error. Solo se permiten Novedades Secundarias en día no Laboral');
-        echo json_encode($data);
-        exit;
-    }
-
-
+    // $query =  "SELECT TOP 1 NovTipo FROM NOVEDAD WHERE NovCodi = '$FicNove'";
+    // $Prueba = simpleQueryDataMS($query);
+    // $data = array('status' => 'Error', 'Mensaje' => $Prueba['NovTipo']);
+    // echo json_encode($data);
+    // exit;
 
     $query = "SELECT TOP 1 NovTipo, NovDesc, NovCodi FROM NOVEDAD WHERE NovCodi = '$FicNove' ORDER BY NovCodi";
     $result  = sqlsrv_query($link, $query, $params, $options);
@@ -426,6 +423,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     }
     sqlsrv_free_stmt($result);
 
+    // if (!$DiaLaboral && $FicCate == 0) {
+    //     // echo $DiaLaboral;
+    //     $data = array('status' => 'Error', 'Mensaje' => 'Error. Solo se permiten Novedades Secundarias en día no Laboral');
+    //     echo json_encode($data);
+    //     exit;
+    // }
 
     switch ($NovTipo) {
         case '0':
@@ -575,12 +578,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
 
     $DiaLaboral = CountRegistrosMayorCero("SELECT FicDiaL FROM FICHAS WHERE FICHAS.FicLega= '$FicLega' AND FICHAS.FicFech= '$FicFech' AND FICHAS.FicDiaL='1'");
 
-    if (!$DiaLaboral && $FicCate == 0) {
-        // echo $DiaLaboral;
-        $data = array('status' => 'Error', 'Mensaje' => 'Error. Solo se permiten Novedades Secundarias en día no Laboral');
-        echo json_encode($data);
-        exit;
-    }
+    // if (!$DiaLaboral && $FicCate == 0) {
+    //     // echo $DiaLaboral;
+    //     $data = array('status' => 'Error', 'Mensaje' => 'Error. Solo se permiten Novedades Secundarias en día no Laboral');
+    //     echo json_encode($data);
+    //     exit;
+    // }
 
     $query = "SELECT TOP 1 NovTipo, NovDesc, NovCodi FROM NOVEDAD WHERE NovCodi = '$FicNove' ORDER BY NovCodi";
     $result  = sqlsrv_query($link, $query, $params, $options);
@@ -916,7 +919,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
             $Procesado = " - Procesado.";
 
-            $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje));
+            $data = array('status' => 'ok', 'Mensaje' => $Dato2 . $Procesado, 'tipo' => 'mod', 'ApiMobile' => json_decode($sendMensaje ?? ''));
             // auditoria($Dato2 . $Procesado. ' Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, "d/m/Y"), 'P', '', '4');
         } else {
             $Procesado = " - <b>Sin procesar.</b>.";
