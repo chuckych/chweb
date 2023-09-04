@@ -107,7 +107,7 @@ class Horas
                     $Hasta = $agrup['Fechas']['Hasta'];
                     $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
                 } catch (\Exception $e) {
-                    $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos.log');
+                    $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
                 }
             }
@@ -115,7 +115,7 @@ class Horas
         } catch (\PDOException $e) {
             $conn->rollBack();
             $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras_' . ID_COMPANY . '.log');
             exit;
         }
     }
@@ -138,7 +138,7 @@ class Horas
         } catch (\PDOException $e) {
             // $conn->rollBack();
             // $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            // $this->log->write($e->getMessage(), date('Ymd') . '_procPend.log');
+            // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
             // exit;
         }
     }

@@ -1,31 +1,42 @@
 <?php
 require 'vendor/autoload.php';
+session_start();
 
-$horas       = new Classes\Horas;
-$response    = new Classes\Response;
-$log         = new Classes\Log;
+$_SESSION['DataCompany']['idCompany'] = $_SESSION['DataCompany']['idCompany'] ?? 'xxx';
+$_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
+
+$tools = new Classes\Tools;
+define('ID_COMPANY', $tools->padLeft($_SESSION['DataCompany']['idCompany'], 3, 0)); // ID de la empresa
+
 $dataCompany = new Classes\DataCompany;
+$dataCompany->checkToken();
+
+$response       = new Classes\Response;
+$log            = new Classes\Log;
+$horas          = new Classes\Horas;
 $RRHHWebService = new Classes\RRHHWebService;
-// $ConnectSqlSrv = new Classes\ConnectSqlSrv;
-// $dataCompany->get(); // Obtiene los datos de la empresa y valida el token
+$ConnectSqlSrv  = new Classes\ConnectSqlSrv;
 
-$log->delete('log', 1); // Elimina los logs de hace 1 día o más
+use flight\Engine;
 
-// Flight::route('GET /info', [$dataCompany, 'get']);
-// Flight::route('GET /conn', [$ConnectSqlSrv, 'conn']);
-Flight::route('PUT /horas', [$horas, 'update']);
-Flight::route('/RRHHWebService', [$RRHHWebService, 'procesar_legajos']);
+$api = new Engine();
 
-Flight::map('notFound', [$response, 'notFound']);
+$log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
-Flight::map('error', function ($ex) {
+$api->route('PUT /horas', [$horas, 'update']);
+
+$api->map('notFound', [$response, 'notFound']);
+
+$api->map('error', function ($ex) {
     $log = new Classes\Log;
     $nameLog = date('Ymd') . '_error_.log'; // path Log Api
     if ($ex instanceof Exception) {
         $log->write($ex->getTraceAsString(), $nameLog);
     } elseif ($ex instanceof Error) {
         $log->write($ex->getTraceAsString(), $nameLog);
+    } elseif ($ex instanceof PDOException) {
+        $log->write($ex->getTraceAsString(), $nameLog);
     }
 });
 
-Flight::start();
+$api->start();

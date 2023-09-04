@@ -5,7 +5,7 @@ namespace Classes;
 use donatj\UserAgent\UserAgentParser;
 use Classes\Log;
 use Classes\Tools;
-use Classes\DataCompany;
+// use Classes\DataCompany;
 use Flight;
 
 class Response
@@ -42,9 +42,7 @@ class Response
      */
     function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
     {
-        $tools = new Tools; // Tools Api
         $log = new Log; // Log Api
-
         $code = intval($code); // code response
         $start = ($code != 400) ? $this->start() : 0; // start response
         $length = ($code != 400) ? $this->length() : 0; // length response
@@ -78,9 +76,11 @@ class Response
             $ua->browserVersion();
             $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
         }
-        $company = new DataCompany; // DataCompany Api
-        $idCompany = ($idCompany) ? $idCompany : $company->get('idCompany'); // get data company
-        $nameLog = date('Ymd') . '_request_' . $tools->padLeft($idCompany, 3, 0) . '.log'; // path Log Api
+        // $company = new DataCompany; // DataCompany Api
+        // $idCompany = ($idCompany) ? $idCompany : $company->get('idCompany'); // get data company
+        // $idCompany = '0'; // get data company
+
+        $nameLog = date('Ymd') . '_request_' . ID_COMPANY . '.log'; // path Log Api
         /** start text log*/
         $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
         /** end text log*/

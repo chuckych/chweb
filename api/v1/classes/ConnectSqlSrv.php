@@ -2,14 +2,13 @@
 
 namespace Classes;
 
-use Classes\DataCompany;
+// use Classes\DataCompany;
 use Classes\Log;
-
 
 class ConnectSqlSrv
 {
     private $conn;
-    private $dataCompany;
+    // private $dataCompany;
 
     private $log;
 
@@ -17,13 +16,13 @@ class ConnectSqlSrv
     {
         $this->log = new Log; // Instancia de la clase Log
 
-        $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
-        $dataCompany = $this->dataCompany->get(); // Obtiene los datos de la empresa y valida el token
+        // $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
+        // $dataCompany = $this->dataCompany->get(); // Obtiene los datos de la empresa y valida el token
 
-        $db         = $dataCompany['DBName']; // Nombre de la base de datos
-        $user       = $dataCompany['DBUser']; // Usuario de la base de datos
-        $pass       = $dataCompany['DBPass']; // Contraseña de la base de datos
-        $serverName = $dataCompany['DBHost']; // Host de la base de datos
+        $db         = $_SESSION['DataCompany']['DBName']; // Nombre de la base de datos
+        $user       = $_SESSION['DataCompany']['DBUser']; // Usuario de la base de datos
+        $pass       = $_SESSION['DataCompany']['DBPass']; // Contraseña de la base de datos
+        $serverName = $_SESSION['DataCompany']['DBHost']; // Host de la base de datos
 
         try { // Intenta conectar a la base de datos
             if (!$serverName) {
@@ -38,7 +37,6 @@ class ConnectSqlSrv
             if (!$pass) {
                 throw new \PDOException("No hay datos de contraseña SQL");
             }
-
             $this->conn = new \PDO( // Instancia de la clase PDO
                 "sqlsrv:server=$serverName;Database=$db", // DSN
                 $user,
@@ -48,7 +46,7 @@ class ConnectSqlSrv
                 )
             );
         } catch (\PDOException $e) {
-            $this->log->write(($e->getMessage()), date('Ymd') . '_sqlsr_connect.log');
+            $this->log->write(($e->getMessage()), date('Ymd') . '_sqlsr_connect_' . ID_COMPANY . '.log');
             throw new \PDOException($e->getMessage(), (int) $e->getCode());
         }
     }

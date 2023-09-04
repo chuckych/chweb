@@ -6,6 +6,7 @@ use Classes\DataCompany;
 use Classes\Log;
 use Classes\Response;
 use Classes\Tools;
+use Flight;
 
 class RRHHWebService
 {
@@ -24,15 +25,16 @@ class RRHHWebService
     private $Grupo;
     private $Sector;
     private $Seccion;
-    private $dataCompany;
+    // private $dataCompany;
     private $log;
     private $resp;
     private $tools;
 
     public function __construct()
     {
-        $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
-        $url = $this->url = $this->dataCompany->get('WebServiceCH');
+        // $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
+        // $url = $this->url = $this->dataCompany->get('WebServiceCH');
+        $url = $this->url = $_SESSION['DataCompany']['WebServiceCH'];
         if ($url) {
             $this->url = $url . '/RRHHWebService'; // Assign the value to the property
         }
@@ -44,7 +46,7 @@ class RRHHWebService
     public function baseUrl()
     {
         if (!$this->url) { // Si no hay url del WebService
-            $this->log->write('No se establecio el baseUrl del webservice', date('Ymd') . '_RRHHWebService.log');
+            $this->log->write('No se establecio el baseUrl del webservice', date('Ymd') . '_RRHHWebService_' . ID_COMPANY . '.log');
             return; // Salir
         }
         return $this->url;
@@ -140,13 +142,13 @@ class RRHHWebService
                     }
                     $dias = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
                     $text = "Legajos procesados [$Legajos] - $FechaDesde a $FechaHasta $dias dias";
-                    $this->log->write($text, date('Ymd') . '_procesar_legajos.log');
+                    $this->log->write($text, date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     // $this->resp->response('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
                 }
                 curl_close($ch);
             }
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
             //$this->resp->response('', 0, $e->getMessage(), $e->getCode(), microtime(true), 0, 0);
             // exit;
         }
@@ -191,7 +193,7 @@ class RRHHWebService
             curl_close($ch);
             // $this->resp->response('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
             //$this->resp->response('', 0, $e->getMessage(), $e->getCode(), microtime(true), 0, 0);
             // exit;
         }
@@ -234,10 +236,10 @@ class RRHHWebService
                 throw new \Exception("Error Ping WebService. \"Cod: $curl_errno: $curl_error\"", 1);
             }
             // $this->resp->response('', 0, 'Ping Correcto', $http_code, microtime(true), 0, 0);
-            $this->log->write('Ping Webservice Correcto', date('Ymd') . '_ws_ping.log');
+            $this->log->write('Ping Webservice Correcto', date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
             return true;
         } catch (\Exception $th) {
-            $this->log->write($th->getMessage(), date('Ymd') . '_ws_ping.log');
+            $this->log->write($th->getMessage(), date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
             $this->resp->response('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
         }
     }

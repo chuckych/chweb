@@ -10,7 +10,7 @@ use Flight;
  * Clase para obtener la informacion de la empresa y validar el token recibido en cada request
  * @package Classes
  */
-class dataCompany
+class DataCompany
 {
     private $urlData;
     private $resp;
@@ -45,12 +45,9 @@ class dataCompany
 
             $data = parse_ini_file($url, true); // Obtenemos los datos del mobileApikey.php
             return $data; // devolvemos el json
-            // echo json_encode($data);
-            // $this->resp->response($data, 0, '', 200, microtime(true), 0, 0);
-            // $this->log->write(json_encode($data), date('Ymd') . '_getIni.log');
         } catch (\Exception $e) {
             $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_getIni.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_getIni_' . ID_COMPANY . '.log');
         }
     }
     function get($key = '')
@@ -90,6 +87,37 @@ class dataCompany
         } catch (\Exception $e) {
             $this->resp->response('', 0, $e->getMessage(), 401, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_getToken.log');
+            exit;
+        }
+    }
+    function checkToken()
+    {
+        $iniData = $this->iniData;
+        $token = $this->token;
+
+        try {
+
+            if (!isset($token) || empty($token) || !$token) {
+                throw new \Exception("El token es requerido");
+            }
+            if (!is_array($iniData) || empty($iniData) || !$iniData || !isset($iniData)) {
+                throw new \Exception("Error de configuracion");
+            }
+
+            $filteredData = array_filter($iniData, function ($element) use ($token) {
+                return $element['Token'] === $token;
+            });
+
+            $dataCompany = reset($filteredData); // Obtener el primer elemento del resultado
+
+            if ($dataCompany === false) {
+                throw new \Exception("Invalid Token");
+            }
+            $_SESSION['DataCompany'] = $dataCompany;
+        } catch (\Exception $e) {
+            $this->resp->response('', 0, $e->getMessage(), 401, microtime(true), 0, ID_COMPANY);
+            $this->log->write($e->getMessage(), date('Ymd') . '_getToken_' . ID_COMPANY . '.log');
+            session_destroy();
             exit;
         }
     }
