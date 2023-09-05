@@ -16,6 +16,7 @@ $log            = new Classes\Log;
 $horas          = new Classes\Horas;
 $RRHHWebService = new Classes\RRHHWebService;
 $ConnectSqlSrv  = new Classes\ConnectSqlSrv;
+$ParaGene       = new Classes\ParaGene;
 
 use flight\Engine;
 
@@ -24,6 +25,7 @@ $api = new Engine();
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
 $api->route('PUT /horas', [$horas, 'update']);
+$api->route('/paragene', [$ParaGene, 'get']);
 
 $api->map('notFound', [$response, 'notFound']);
 
