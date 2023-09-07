@@ -41,7 +41,7 @@ function secure_auth_ch()
     if (
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
-        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
+        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
         || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
         // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si eliminar dia actual no es el mismo
@@ -85,7 +85,7 @@ function secure_auth_ch_json()
     if (
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
+        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
@@ -123,7 +123,7 @@ function secure_auth_ch2()
     if (
         $_SESSION["secure_auth_ch"] !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
+        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
