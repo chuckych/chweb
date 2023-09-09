@@ -30,7 +30,7 @@
         $api = getRemoteFile($url, $timeout = 10);
         // print_r($url);
         $api = json_decode($api, true);
-        $arrayFech = $api['RESPONSE_DATA'];
+        $arrayFech = $api['RESPONSE_DATA'] ?? '';
         $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');

@@ -36,8 +36,8 @@ $url   = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 
-$totalRecords = $api['TOTAL'];
-if ($api['COUNT'] > 0) {
+$totalRecords = $api['TOTAL'] ?? 0;
+if ($api['COUNT'] ?? 0 > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
         $arrayData[] = array(
             'zoneID'     => $r['zoneID'],

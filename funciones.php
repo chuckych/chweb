@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.11'; // Version de la aplicación
+    return 'v0.4.12'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -2878,7 +2878,7 @@ function write_apiKeysFile()
             'recidCompany' => $value['recidCompany'],
             'urlAppMobile' => $value['urlAppMobile'],
             'apiMobileHRP' => $value['apiMobileHRP'],
-            'localCH' => ($value['localCH']),
+            'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
             'hostCHWeb' => $value['hostCHWeb'],
             'homeHost' => HOMEHOST,
             'DBHost' => $value['hostDB'],

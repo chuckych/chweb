@@ -41,26 +41,26 @@ FusNuloPOST('typeDownload', '');
 $arrayUsers[] = array();
 $idCompany = $_SESSION['ID_CLIENTE'];
 
-if($params['users'] && $params['type'] != 'selectUsers'){
+if ($params['users'] && $params['type'] != 'selectUsers') {
     $users = implode(',', $params['users']);
 }
-if($params['zones'] && $params['type'] != 'selectZone'){
+if ($params['zones'] && $params['type'] != 'selectZone') {
     $zones = implode(',', $params['zones']);
 }
 
-if($params['device'] && $params['type'] != 'selectDevice'){
+if ($params['device'] && $params['type'] != 'selectDevice') {
     $device = implode(',', $params['device']);
 }
 
-if($params['type'] == 'selectUsers'){
+if ($params['type'] == 'selectUsers') {
     $groupBy = 'user';
 }
 
-if($params['type'] == 'selectZone'){
+if ($params['type'] == 'selectZone') {
     $groupBy = 'zone';
 }
 
-if($params['type'] == 'selectDevice'){
+if ($params['type'] == 'selectDevice') {
     $groupBy = 'device';
 }
 
@@ -94,7 +94,7 @@ $api = json_decode($api, true);
 
 // echo Flight::json($parametros).exit;
 
-$totalRecords = $api['TOTAL'];
+$totalRecords = $api['TOTAL'] ?? 0;
 $tm = (microtime(true));
 $routeFile = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.txt';
 $routeFileXls = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.xls';
@@ -104,7 +104,7 @@ $startScript = microtime(true);
 borrarLogs($routeFile, 1, '.txt');
 borrarLogs($routeFile, 1, '.xls');
 
-if ($api['COUNT'] > 0) {
+if ($api['COUNT'] ?? 0 > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
 
         $jsonMarcador = json_encode(
@@ -208,7 +208,7 @@ if ($api['COUNT'] > 0) {
             'imageData' => $r['imageData'],
             'basePhoto' => $r['basePhoto']
         );
-            // print_r($arrayData).exit;
+        // print_r($arrayData).exit;
         if ($params['typeDownload'] ?? '' == 'downloadTxt') { //downloadTxt
             $txtData = array(
                 'userID' => (padLeft($r['userID'], 11, ' ')),
@@ -258,7 +258,7 @@ if ($api['COUNT'] > 0) {
 if ($params['typeDownload'] ?? '' == 'downloadXls') {
     require __DIR__ . './exportXls.php';
 }
-if ($api['COUNT'] == 0) {
+if ($api['COUNT'] ?? '' == 0) {
     if ($params['typeDownload'] ?? '' == 'downloadTxt') {
         $routeFile2 = '';
     }

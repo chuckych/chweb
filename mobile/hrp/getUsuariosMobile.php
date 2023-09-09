@@ -35,8 +35,8 @@ $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 
-$totalRecords = $api['TOTAL'];
-if ($api['COUNT'] > 0) {
+$totalRecords = $api['TOTAL'] ?? 0;
+if ($api['COUNT'] ?? 0 > 0) {
 
     foreach ($api['RESPONSE_DATA'] as $r) {
 
@@ -58,10 +58,10 @@ if ($api['COUNT'] > 0) {
                 'html' => '
                     <div class="d-flex justify-content-between align-items-center">
                         <div class="d-flex flex-column">
-                            <span>'.$r['userName'].'</span>
-                            <span class="fontp">ID: '.$r['userID'].'</span>
+                            <span>' . $r['userName'] . '</span>
+                            <span class="fontp">ID: ' . $r['userID'] . '</span>
                         </div>
-                        <span class="badge badge-light">'.$r['userChecks'].'</span>
+                        <span class="badge badge-light">' . $r['userChecks'] . '</span>
                     </div>
                 ',
             );
