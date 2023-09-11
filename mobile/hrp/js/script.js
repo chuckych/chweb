@@ -94,8 +94,14 @@ $(function () {
                         let foto = '';
                         if (row.imageData.img) {
                             // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
+                            let path = '';
                             let url_foto = `${row.imageData.img}`;
-                            let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            let apiMobile = document.getElementById('apiMobile').value;
+                            if (apiMobile == 'http://localhost:8050') {
+                                path = ''
+                            } else {
+                                path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            }
                             foto = `<img loading="lazy" src="${path}${url_foto}" class="w60 h60 radius img-fluid"></img>`;
                         } else {
                             url_foto = ``;
@@ -239,9 +245,14 @@ $(function () {
 
                         let foto = '';
                         if (row.imageData.img) {
-                            // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
+                            let path = '';
                             let url_foto = `${row.imageData.img}`;
-                            let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            let apiMobile = document.getElementById('apiMobile').value;
+                            if (apiMobile == 'http://localhost:8050') {
+                                path = ''
+                            } else {
+                                path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            }
                             foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 radius img-fluid">`;
                         } else {
                             url_foto = ``;
@@ -845,7 +856,15 @@ $(function () {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
         $('#pic').modal('show')
         let url_foto = `${data.imageData.img}`;
-        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+        // let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+        let path = '';
+        let apiMobile = document.getElementById('apiMobile').value;
+        if (apiMobile == 'http://localhost:8050') {
+            path = ''
+        } else {
+            path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+        }
+
         let picfoto = data.imageData.img ? path + url_foto : '';
         let picnombre = data.userName;
         let picDevice = data.deviceName

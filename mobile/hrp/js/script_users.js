@@ -732,7 +732,13 @@ $(document).on("click", ".trainUser", function (e) {
 
                     $.each(data2, function (index, element) {
                         url_foto = `${element.imageData.img}`;
-                        let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                        let path = '';
+                        let apiMobile = document.getElementById('apiMobile').value;
+                        if (apiMobile == 'http://localhost:8050') {
+                            path = ''
+                        } else {
+                            path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                        }
                         divFoto = `<div class="col-4 col-sm-3 col-md-3 col-lg-2 pb-3 d-flex justify-content-center">`
                         divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn" data-toggle="buttons">`
                         divFoto += `<label for="${element.id_api}" class="disabled active shadow-sm btn btn-success border-0 p-1" style="width:80px;">`
@@ -755,7 +761,13 @@ $(document).on("click", ".trainUser", function (e) {
                     $.each(data, function (index, element) {
                         if (element.imageData.size < 30000) {
                             url_foto = `${element.imageData.img}`;
-                            let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            let path = '';
+                            let apiMobile = document.getElementById('apiMobile').value;
+                            if (apiMobile == 'http://localhost:8050') {
+                                path = ''
+                            } else {
+                                path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+                            }
                             divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
                             divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
                             divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
