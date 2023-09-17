@@ -114,7 +114,7 @@ class ConnectSqlSrv
 
             return $resultSet;
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int) $e->getCode());
+            $this->log->write(($e->getMessage()), date('Ymd') . '_executeQuery_' . ID_COMPANY . '.log');
         }
     }
 

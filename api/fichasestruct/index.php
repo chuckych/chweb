@@ -18,7 +18,7 @@ $wc = '';
 $start  = start();
 $length = length();
 
-$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora', 'HoraMin', 'HoraMax');
+$validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora', 'HoraMin', 'HoraMax', 'Nove');
 $dp['estruct'] = ($dp['Estruct']) ?? '';
 $dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); // str de estructura 
 
@@ -68,6 +68,9 @@ $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'numArray01', 1);
 
 $dp['THora'] = ($dp['THora']) ?? [];
 $dp['THora'] = vp($dp['THora'], 'THora', 'intArray', 5);
+
+$dp['Nove'] = ($dp['Nove']) ?? [];
+$dp['Nove'] = vp($dp['Nove'], 'Nove', 'intArray', 5);
 
 $dp['FechaIni'] = ($dp['FechaIni']) ?? '';
 $dp['FechaFin'] = ($dp['FechaFin']) ?? '';
@@ -137,6 +140,7 @@ $arrDP = array(
     // Regla de control horario {int} {array}
     'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
     'THora' => $dp['THora'], // Tipo de Hora {int} {array}
+    'Nove' => $dp['Nove'], // Novedade {int} {array}
     'Esta' => $dp['Esta'], // Estado Hora {int} {array}
 );
 
@@ -164,6 +168,12 @@ foreach ($arrDP as $key => $filtro) {
                     }
                     $dataTHora = implode(',', $dataTHora);
                     $wc .= " AND FICHAS1.FicHora IN ($dataTHora)";
+                } else if ($key == 'Nove') {  // Si viene Tipo de Hora
+                    foreach ($dp['Nove'] as $Nove) {
+                        $dataNove[] = $Nove;
+                    }
+                    $dataNove = implode(',', $dataNove);
+                    $wc .= " AND FICHAS3.FicNove IN ($dataNove)";
                 } else if ($key == 'Esta') {  // Si viene Tipo de Hora
                     foreach ($dp['Esta'] as $Esta) {
                         $dataEsta[] = $Esta;
@@ -190,10 +200,13 @@ foreach ($arrDP as $key => $filtro) {
                         } else if ($key == 'THora') {  // Si viene Tipo de Hora
                             $dataTHora = implode(',', $dp['THora']);
                             $wc .= " AND FICHAS1.FicHora = '$dataTHora'";
-                        } else if ($key == 'Esta') {  // Si viene Tipo de Hora
+                        } else if ($key == 'Nove') {  // Si viene Novedad
+                            $dataNove = implode(',', $dp['Nove']);
+                            $wc .= " AND FICHAS3.FicNove = '$dataNove'";
+                        } else if ($key == 'Esta') {  // Si viene Tipo de Hora Esta
                             $dataEsta = implode(',', $dp['Esta']);
                             $wc .= " AND FICHAS1.FicEsta = '$dataEsta'";
-                        } else if ($key == 'Tipo') {  // Si viene Tipo de Hora
+                        } else if ($key == 'Tipo') {  // Si viene Tipo de personal
                             $dataTipo = implode(',', $dp['Tipo']);
                             $wc .= " AND PERSONAL.LegTipo = '$dataTipo'";
                         } else {
@@ -279,6 +292,12 @@ switch ($dp['Estruct']) {
         $ColEstrucDesc = 'TIPOHORA.THoDesc';
         $ColEstrucCod = 'TIPOHORA.THoCodi';
         break;
+    case 'Nove':
+        $FicEstruct = 'FICHAS3.FicNove';
+        $ColEstruc = 'NOVEDAD';
+        $ColEstrucDesc = 'NOVEDAD.NovDesc';
+        $ColEstrucCod = 'NOVEDAD.NovCodi';
+        break;
     case 'Lega':
         $FicEstruct = 'FICHAS.FicLega';
         $ColEstruc = 'PERSONAL';
@@ -290,7 +309,8 @@ switch ($dp['Estruct']) {
         $ColEstrucCod = 'PERSONAL.LegTipo';
         break;
 }
-$JoinFichas1 = "INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
+$JoinFichas1 = "LEFT JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
+$JoinFichas1 .= " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
 $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
 
 switch ($dp['Estruct']) {
@@ -348,7 +368,7 @@ switch ($dp['Estruct']) {
         INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2 OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
         break;
     default:
-        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinFichas1 $JoinPersonal INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
+        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinPersonal $JoinFichas1 INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
         break;
 }
 // Flight::json($query) . exit;

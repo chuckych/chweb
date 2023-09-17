@@ -68,4 +68,42 @@ class ParaGene
         }
         $this->resp->response($rs, 0, 'OK', 200, $inicio, 0, 0);
     }
+    public function return()
+    {
+        $sql = "SELECT * FROM PARAGENE";
+        $Data = $this->conect->executeQueryWhithParams($sql);
+        foreach ($Data as &$element) {
+            $rs = array(
+                'Etiquetas' => array(
+                    'EmprSin' => $element['ParEmprSin'],
+                    'EmprPlu' => $element['ParEmprPlu'],
+                    'PlanSin' => $element['ParPlanSin'],
+                    'PlanPlu' => $element['ParPlanPlu'],
+                    'SucuSin' => $element['ParSucuSin'],
+                    'SucuPlu' => $element['ParSucuPlu'],
+                    'GrupSin' => $element['ParGrupSin'],
+                    'GrupPlu' => $element['ParGrupPlu'],
+                    'SectSin' => $element['ParSectSin'],
+                    'SectPlu' => $element['ParSectPlu'],
+                    'SeccSin' => $element['ParSeccSin'],
+                    'SeccPlu' => $element['ParSeccPlu'],
+                ),
+                'ParDato' => array(
+                    'LegDocu' => $element['ParDatoLegDocu'],
+                    'LegCUIL' => $element['ParDatoLegCUIL'],
+                    'LegEmpr' => $element['ParDatoLegEmpr'],
+                    'LegPlan' => $element['ParDatoLegPlan'],
+                    'LegSucu' => $element['ParDatoLegSucu'],
+                    'LegGrup' => $element['ParDatoLegGrup'],
+                    'LegSect' => $element['ParDatoLegSect'],
+                    'LegSecc' => $element['ParDatoLegSecc'],
+                    'LegTare' => $element['ParDatoLegTare'],
+                    'LegFeIn' => $element['ParDatoLegFeIn'],
+                    'LegReCH' => $element['ParDatoLegReCH'],
+                ),
+                'FechaHora' => $element['FechaHora'],
+            );
+        }
+        return $rs;
+    }
 }

@@ -58,26 +58,33 @@ class InputValidator
     private function generateErrorMessage($field, $rule)
     {
         $messages = [
-            'required'   => "El campo $field es requerido",
-            'email'      => "El campo $field debe ser una dirección de correo válida",
-            'numeric'    => "El campo $field debe ser un número",
-            'numeric10'  => "El campo $field debe ser un número y menor a 10 dígitos",
-            'numeric5'   => "El campo $field debe ser un número y menor a 5 dígitos",
-            'date'       => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
-            'time'       => "El campo $field debe ser una hora válida con formato hh:mm",
-            'varchar40'  => "El campo $field debe tener una longitud menor a 40 caracteres",
-            'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
-            'smallint'   => "El campo $field debe ser un número entero y menor a 32767",
-            'int'        => "El campo $field debe ser un número entero y menor a 2147483647",
-            'decima12.2' => "El campo $field debe ser un número decimal con 2 decimales y menor a 12 dígitos",
-            'datetime'   => "El campo $field debe ser una fecha y hora válida con formato yyyy-mm-dd hh:mm:ss",
+            'required'      => "El campo $field es requerido",
+            'email'         => "El campo $field debe ser una dirección de correo válida",
+            'numeric'       => "El campo $field debe ser un número",
+            'numeric10'     => "El campo $field debe ser un número y menor a 10 dígitos",
+            'numeric5'      => "El campo $field debe ser un número y menor a 5 dígitos",
+            'date'          => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
+            'time'          => "El campo $field debe ser una hora válida con formato hh:mm",
+            'varchar40'     => "El campo $field debe tener una longitud menor a 40 caracteres",
+            'allowed01'     => "El campo $field debe tener un valor permitido. [0, 1]",
+            'allowed012'    => "El campo $field debe tener un valor permitido. [0, 1, 2]",
+            'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
+            'arrAllowed01'  => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
+            'smallint'      => "El campo $field debe ser un número entero y menor a 32767",
+            'arrSmallint'   => "El campo $field debe ser un arreglo de números enteros y menor a 32767",
+            'int'           => "El campo $field debe ser un número entero y menor a 2147483647",
+            'intempty'      => "El campo $field debe ser un número entero",
+            'arrInt'        => "El campo $field debe ser un arreglo de números enteros",
+            'decima12.2'    => "El campo $field debe ser un número decimal con 2 decimales y menor a 12 dígitos",
+            'datetime'      => "El campo $field debe ser una fecha y hora válida con formato yyyy-mm-dd hh:mm:ss",
         ];
 
         return $messages[$rule] ?? "Error desconocido en la regla de validación";
     }
     private function validateRule($field, $rule)
     {
-        $value = $this->data[$field];
+        $value = $this->data[$field] ?? null;
+
         $smallintOpt = array(
             'options' => array(
                 'min_range' => 0,
@@ -136,14 +143,70 @@ class InputValidator
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;
+            case 'allowed01':
+                if ($value && !in_array($value, ['0', '1'])) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                break;
+            case 'arrAllowed012':
+                $value = $value ?? [];
+                if (!is_array($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                foreach ($value as $val) {
+                    if (!in_array($val, ['0', '1', '2'])) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule));
+                    }
+                }
+                break;
+            case 'arrAllowed01':
+                $value = $value ?? [];
+                if (!is_array($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                foreach ($value as $val) {
+                    if (!in_array($val, ['0', '1'])) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule));
+                    }
+                }
+                break;
             case 'smallint':
                 if (filter_var($value, FILTER_VALIDATE_INT, $smallintOpt) === false) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;
+            case 'arrSmallint':
+                $value = $value ?? [];
+                if (!is_array($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                foreach ($value as $val) {
+                    if (filter_var($val, FILTER_VALIDATE_INT, $smallintOpt) === false) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule));
+                    }
+                }
+                break;
             case 'int':
                 if (filter_var($value, FILTER_VALIDATE_INT, $intOpt) === false) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                break;
+            case 'intempty':
+                if ($value) {
+                    if (filter_var($value, FILTER_VALIDATE_INT) === false) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule));
+                    }
+                }
+                break;
+            case 'arrInt':
+                $value = $value ?? [];
+                if (!is_array($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                foreach ($value as $val) {
+                    if (filter_var($val, FILTER_VALIDATE_INT) === false) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule));
+                    }
                 }
                 break;
             case 'decima12.2':
