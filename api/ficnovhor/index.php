@@ -86,13 +86,14 @@ if ($wcHoras) {
 }
 $qFicCount .= ") AS FICHAS";
 // print_r($qFic) . exit;
+// print_r($dp['NovEx']) . exit;
 // print_r($qFicCount) . exit;
 
 
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
 $qFic .= " ORDER BY FICHAS.FicFech";
 $qFic .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
-// print_r($qFic).exit;
+// print_r($qFic) . exit;
 $stmtFic = $dbApiQuery($qFic) ?? '';
 
 if (empty($stmtFic)) {
@@ -121,7 +122,7 @@ if ($dp['getNov']) {
     $IlegNoV = (implodeArrayByKey($IlegNoV, 'FicLega'));
     $IlegNoV = ($IlegNoV) ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
 
-    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
+    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
         if ($wcNov) {
             $qNov .= $wcNov;
@@ -195,6 +196,7 @@ foreach ($stmtFic as $key => $v) {
                         'Obse'  => $n['FicObse'],
                         'NoTi'  => $n['FicNoTi'],
                         'NoTiD' => novedadTipo(array($n['FicNoTi'])),
+                        'Esta' => $n['FicEsta'],
                         'CCodi' => $n['NovCCodi'],
                         'CDesc' => $n['NovCDesc'],
                     );

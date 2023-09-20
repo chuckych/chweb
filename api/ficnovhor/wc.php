@@ -144,10 +144,15 @@ $dp['Nove'] = $dp['Nove'] ?? [];
 $dp['Nove'] = vp($dp['Nove'], 'Nove', 'intArray', 5);
 $dp['NoTi'] = $dp['NoTi'] ?? [];
 $dp['NoTi'] = vp($dp['NoTi'], 'NoTi', 'intArrayM8', 1);
+$dp['Esta'] = $dp['Esta'] ?? [];
+$dp['Esta'] = vp($dp['Esta'], 'NoTi', 'intArray', 1);
+$dp['EstaNov'] = $dp['EstaNov'] ?? [];
+$dp['EstaNov'] = vp($dp['EstaNov'], 'NoTi', 'intArray', 1);
 
 $arrDPNovedad = array(
-    'Nove'  => $dp['Nove'], // Novedad {int}
-    'NoTi'  => $dp['NoTi'], // Tipo de Novedad {int} 
+    'Nove'    => $dp['Nove'], // Novedad {int}
+    'NoTi'    => $dp['NoTi'], // Tipo de Novedad {int}
+    'EstaNov' => $dp['EstaNov'], // {int}  Estado (0-Normal 2-Manual o modificada)
 );
 
 $dp['ONov'] = $dp['ONov'] ?? [];
@@ -159,9 +164,6 @@ $arrDPONovedad = array(
 
 $dp['Hora'] = $dp['Hora'] ?? [];
 $dp['Hora'] = vp($dp['Hora'], 'Hora', 'intArray', 5);
-
-$dp['Esta'] = $dp['Esta'] ?? [];
-$dp['Esta'] = vp($dp['Esta'], 'Esta', 'intArray', 1);
 
 $arrDPHOras = array(
     'Hora'  => $dp['Hora'], // Hora {int}
@@ -196,6 +198,9 @@ foreach ($arrDPHOras as $key => $Fichas1) { // Novedades
 }
 foreach ($arrDPNovedad as $key => $Fichas3) { // Novedades
     $e = array();
+    if ($key == 'EstaNov') {
+        $key = 'Esta';
+    }
     if (is_array($Fichas3)) {
         foreach ($Fichas3 as $v1) {
             if ($v1 !== NULL && $v1 !== '') {
