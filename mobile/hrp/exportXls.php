@@ -66,6 +66,8 @@ $encabezado = [
     /** t_type K*/
     'Evento Dispositivo',
     /** t_type L*/
+    'Versión App',
+    /** t_type M*/
 ];
 
 $styleArray = [
@@ -82,10 +84,10 @@ $styleArray = [
     ],
 ];
 
-$spreadsheet->getStyle('A1:L1')->applyFromArray($styleArray);
+$spreadsheet->getStyle('A1:M1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
-$spreadsheet->setAutoFilter('A1:L1');
+$spreadsheet->setAutoFilter('A1:M1');
 /** El último argumento es por defecto A1 */
 $spreadsheet->fromArray($encabezado, null, 'A1');
 /** Establecer la orientación y el tamaño de la página */
@@ -115,7 +117,7 @@ $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . 
 $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
 $spreadsheet->getStyle('A:L')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->getStyle('A1:L1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+$spreadsheet->getStyle('A1:M1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
 /** cálculo automático de ancho de columna */
 // foreach (range('A:E', $spreadsheet->getHighestDataColumn()) as $col) {
@@ -133,6 +135,7 @@ $spreadsheet->getColumnDimension('I')->setWidth(10);
 $spreadsheet->getColumnDimension('J')->setWidth(20);
 $spreadsheet->getColumnDimension('K')->setWidth(10);
 $spreadsheet->getColumnDimension('L')->setWidth(14);
+$spreadsheet->getColumnDimension('M')->setWidth(14);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(33);
@@ -149,6 +152,7 @@ $spreadsheet->getStyle("G")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreads
 $spreadsheet->getStyle("H")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 $spreadsheet->getStyle("K")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 $spreadsheet->getStyle("L")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+$spreadsheet->getStyle("M")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
 $spreadsheet->getStyle('D')
     ->getNumberFormat()
@@ -168,14 +172,14 @@ $spreadsheet->getStyle('A1')
 
 // $spreadsheet->freezePane('A2');
 
-$ColNume = array("A","B","C","D","E","F","G","H","I","J","K","L");
+$ColNume = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M");
 foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
-    $spreadsheet->getStyle($colN.'1')->getAlignment()->setIndent(1);
-    $spreadsheet->getStyle($colN.'1')->getAlignment()->setWrapText(true);
+    $spreadsheet->getStyle($colN . '1')->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($colN . '1')->getAlignment()->setWrapText(true);
 }
-$ColumnCount=3;
-$RowIndex=2;
+$ColumnCount = 3;
+$RowIndex = 2;
 $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
@@ -238,17 +242,12 @@ if ($xlsData) {
         $device      = $valor['device'];
         $eventDevice = $valor['eventDevice'];
         $eventZone   = $valor['eventZone'];
+        $appVersion  = $valor['appVersion'];
 
-        if (empty($device)) {
-            $spreadsheet->getStyle('J' . $numeroDeFila)
-                ->getNumberFormat()
-                ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-            $device = $valor['phoneid'];
-        } else {
-            $spreadsheet->getStyle('J' . $numeroDeFila)
-                ->getNumberFormat()
-                ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_TEXT);
+        if (is_numeric($device)) {
+            $spreadsheet->getStyle('J' . $numeroDeFila)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
         }
+
         $textMap = $valor['regLat'] != 0 ? 'Ver en Google Maps' : 'Sin GPS';
 
         $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $userID);
@@ -263,9 +262,9 @@ if ($xlsData) {
         $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $device);
         $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $eventZone);
         $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $eventDevice);
+        $spreadsheet->setCellValueByColumnAndRow(13, $numeroDeFila, $appVersion);
 
-        ($valor['regLat'] != 0) ? $spreadsheet->getCell('G' . $numeroDeFila)->getHyperlink()->setUrl($LinkMapa):''; // Si no hay GPS no se puede ver el link mapa 
-
+        ($valor['regLat'] != 0) ? $spreadsheet->getCell('G' . $numeroDeFila)->getHyperlink()->setUrl($LinkMapa) : ''; // Si no hay GPS no se puede ver el link mapa 
         $numeroDeFila++;
     }
 }

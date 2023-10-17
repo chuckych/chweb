@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.16'; // Version de la aplicación
+    return 'v0.4.17'; // Version de la aplicación
 }
 function verDBLocal()
 {
