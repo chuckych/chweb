@@ -827,7 +827,7 @@ function loadMap(data, customid) {
     let uniqueZonesArray = Array.from(uniqueZones.values())
     let apiMobile = document.getElementById('apiMobile');
     let path = apiMobile.value + '/chweb/mobile/hrp/'
-    if (apiMobile == 'http://localhost:8050') {
+    if (apiMobile.value == 'http://localhost:8050') {
         path = ''
     }
     console.log(path);
