@@ -159,17 +159,22 @@ $Codi = $pref . 'Codi';
 $Desc = ($dp['Estruct'] == 'Emp') ? $pref . 'Razon' : $pref . 'Desc';
 $Sec = ($dp['Estruct'] == 'Se2') ? true : '';
 $THoC = ($dp['Estruct'] == 'THoC') ? true : '';
+$NovC = ($dp['Estruct'] == 'NovC') ? true : '';
+$Nov = ($dp['Estruct'] == 'Nov') ? true : '';
 $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
 $SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
 $JoinTHora = ($dp['Estruct'] == 'THoC') ? "INNER JOIN TIPOHORA ON TIPOHORACAUSA.THoCHora = TIPOHORA.THoCodi" : '';
-$THoraDesc = ($dp['Estruct'] == 'THoC') ? ",TIPOHORA.THoDesc" : '';
+// $THoraDesc = ($dp['Estruct'] == 'THoC') ? ",TIPOHORA.THoDesc" : '';
+$JoinNovC = ($dp['Estruct'] == 'NovC') ? "INNER JOIN NOVEDAD ON NOVECAUSA.NovCNove = NOVEDAD.NovCodi" : '';
+$TipoNovedad = ($dp['Estruct'] == 'Nov') ? ", NOVEDAD.NovTipo, dbo.fn_TipoNovedad(NOVEDAD.NovTipo) as 'NovTipoDesc' " : '';
+
 
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
-$query = "SELECT * $SecDesc $THoraDesc FROM $tabla $JoinSe2 $JoinTHora WHERE $Codi > 0";
+$query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
 
-// print_r($query).exit;
+// print_r($query) . exit;
 
 $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
 
@@ -203,6 +208,22 @@ foreach ($stmt as $key => $v) {
             "Desc" => $v[$Desc],
             "CodiHora" => $v['THoCodi'],
             "DescHora" => $v['THoDesc'],
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        );
+    } else if ($NovC) {
+        $data[] = array(
+            "Codi" => $v[$Codi],
+            "Desc" => $v[$Desc],
+            "CodiNov" => $v['NovCodi'],
+            "DescNov" => $v['NovDesc'],
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        );
+    } else if ($Nov) {
+        $data[] = array(
+            "Codi"      => $v[$Codi],
+            "Desc"      => $v[$Desc],
+            "Tipo"      => $v['NovTipo'],
+            "TipoDesc"  => $v['NovTipoDesc'],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         );
     } else {

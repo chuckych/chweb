@@ -825,7 +825,11 @@ function loadMap(data, customid) {
 
 
     let uniqueZonesArray = Array.from(uniqueZones.values())
-    let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+    let apiMobile = document.getElementById('apiMobile');
+    let path = apiMobile.value + '/chweb/mobile/hrp/'
+    if (apiMobile == 'http://localhost:8050') {
+        path = ''
+    }
     data.forEach((ubicacion) => {
         ubicacionesParaMapa.push(
             {
