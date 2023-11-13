@@ -51,7 +51,7 @@ foreach ($groupLega as $key => $encabezado) {
     // }
     $f1 .= '</tr>';
     echo $f1;
-    $cuerpoLegajo  = filtrarObjetoArr($dataApi['DATA'], 'Lega', $encabezado['Lega']); // Filtramos los datos por legajo
+    $cuerpoLegajo = filtrarObjetoArr($dataApi['DATA'], 'Lega', $encabezado['Lega']); // Filtramos los datos por legajo
     // echo '<pre>';
     // print_r($groupLega) . exit;
     $arrNove = array();
@@ -63,13 +63,13 @@ foreach ($groupLega as $key => $encabezado) {
     }
     foreach ($cuerpoLegajo as $key => $valueLegajo) {
 
-        $ent     = $valueLegajo['Tur']['ent'];
-        $sal     = $valueLegajo['Tur']['sal'];
-        $labo    = $valueLegajo['Labo'];
-        $feri    = $valueLegajo['Feri'];
+        $ent = $valueLegajo['Tur']['ent'];
+        $sal = $valueLegajo['Tur']['sal'];
+        $labo = $valueLegajo['Labo'];
+        $feri = $valueLegajo['Feri'];
         $horario = horarioApi($ent, $sal, $labo, $feri);
-        $fecha   = FechaFormatVar($valueLegajo['Fech'], 'd/m/Y');
-        $dia     = DiaSemana3($valueLegajo['Fech']);
+        $fecha = FechaFormatVar($valueLegajo['Fech'], 'd/m/Y');
+        $dia = DiaSemana3($valueLegajo['Fech']);
         echo '<tr>';
         echo "<td class='pr-2 vtop'>$fecha</td>";
         echo "<td class='px-2 vtop'>$dia</td>";
@@ -77,9 +77,9 @@ foreach ($groupLega as $key => $encabezado) {
 
         if ($valueLegajo['Fich']) { // Mostramos Las Fichadas E/S
             $lastKey = count($valueLegajo['Fich']);
-            $incons  = ($lastKey % 2 == 0) ? '' : '(I)';
+            $incons = ($lastKey % 2 == 0) ? '' : '(I)';
             $masFich = ($lastKey > 2) ? '*' : '';
-            $primera   = ($valueLegajo['Fich'][0]['HoRe']);
+            $primera = ($valueLegajo['Fich'][0]['HoRe']);
             switch ($valueLegajo['Fich'][0]['Tipo']) {
                 case 'Manual':
                     $color = "style='color:blue'";

@@ -5,8 +5,10 @@ require __DIR__ . '/v1/vendor/autoload.php';
 use donatj\UserAgent\UserAgentParser;
 
 require __DIR__ . '/class.php';
+
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
+
 $time_start = timeStart(); // Inicio
 $pathLog = __DIR__ . '/logs/'; // path de Logs Api
 cleanFile($pathLog, 1, '.log'); // Elimina logs de los ultimos 7 días.
@@ -44,8 +46,6 @@ $start = intval(empty($dp->start) ? 0 : $dp->start);
 
 $dp->length = $dp->length ?? '10';
 $length = intval(empty($dp->length) ? 10 : $dp->length);
-
-// Flight::json($request).exit;
 
 $passAuth = explode('/', $_SERVER['PHP_SELF']);
 /**
@@ -284,20 +284,12 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
     // $idCompany    = $idCompany;
 
     if ($agent) {
-        // require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
-
         $parser = new UserAgentParser();
         $ua = $parser->parse();
         $ua = $parser();
-        // $parsedagent[] = parse_user_agent($agent);
         $ua->platform();
         $ua->browser();
         $ua->browserVersion();
-        // foreach ($parsedagent as $key => $value) {
-        //     $platform = $value['platform'];
-        //     $browser = $value['browser'];
-        //     $version = $value['version'];
-        // }
         $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
     }
 
@@ -1284,28 +1276,28 @@ function IncTiStr($LegIncTi)
         switch ($LegIncTi) {
             case '0':
                 return "Estándar sin control de descanso";
-                // break;
+            // break;
             case '1':
                 return "Estándar con control de descanso";
-                // break;
+            // break;
             case '2':
                 return "(Hs. a Trabajar - Hs. Trabajadas)";
-                // break;
+            // break;
             case '3':
                 return "(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia";
-                // break;
+            // break;
             case '4':
                 return "(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso";
-                // break;
+            // break;
             case '5':
                 return "Recortado sin control de descanso";
-                // break;
+            // break;
             case '6':
                 return "Recortado con control de descanso";
-                // break;
+            // break;
             default:
                 return "Sin definir";
-                // break;
+            // break;
         }
     }
     return '';
@@ -1316,13 +1308,13 @@ function LegHoAlStr($LegHoAl)
         switch ($LegHoAl) {
             case '0':
                 return "Según Asignación";
-                // break;
+            // break;
             case '1':
                 return "Alternativo según fichadas";
-                // break;
+            // break;
             default:
                 return "Sin definir";
-                // break;
+            // break;
         }
     }
     return '';
@@ -1582,16 +1574,23 @@ function validarHora($hora)
     if (is_string($hora)) {
         $f = explode(':', $hora);
 
-        if (count($f) != 2) return false;
+        if (count($f) != 2)
+            return false;
 
-        if (!is_numeric($f[0])) return false;
-        if (!is_numeric($f[1])) return false;
+        if (!is_numeric($f[0]))
+            return false;
+        if (!is_numeric($f[1]))
+            return false;
 
-        if ($f[0] > 23 || $f[0] < 0) return false;
-        if ($f[1] > 59 || $f[1] < 0) return false;
+        if ($f[0] > 23 || $f[0] < 0)
+            return false;
+        if ($f[1] > 59 || $f[1] < 0)
+            return false;
 
-        if (strlen($f[0]) == 1) return false;
-        if (strlen($f[1]) == 1) return false;
+        if (strlen($f[0]) == 1)
+            return false;
+        if (strlen($f[1]) == 1)
+            return false;
 
         return true;
     }

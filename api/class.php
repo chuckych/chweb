@@ -63,6 +63,7 @@ class requestControl
     {
         $array = file_get_contents('php://input');
         $data = json_decode($array, true);
+
         if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
             $errores[] = json_last_error_msg();
             // la cadena no está en formato JSON válido
@@ -354,7 +355,8 @@ class fnArray
             // Datos duplicaodos con los valores recicibidos en el array1
             'duplicados2' => $duplicados2,
             // Datos duplicaodos con los valores recicibidos del array2
-            'no_duplicados' => $no_duplicados, // Datos no duplicados
+            'no_duplicados' => $no_duplicados,
+            // Datos no duplicados
         );
     }
 

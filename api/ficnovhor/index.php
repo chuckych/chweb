@@ -190,11 +190,11 @@ foreach ($stmtFic as $key => $v) {
                 $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
                 foreach ($arrNov as $key => $n) {
                     $dataNov[] = array(
-                        'Codi'  => $n['NovCodi'],
-                        'Desc'  => $n['NovDesc'],
+                        'Codi' => $n['NovCodi'],
+                        'Desc' => $n['NovDesc'],
                         'Horas' => $n['FicHoras'],
-                        'Obse'  => $n['FicObse'],
-                        'NoTi'  => $n['FicNoTi'],
+                        'Obse' => $n['FicObse'],
+                        'NoTi' => $n['FicNoTi'],
                         'NoTiD' => novedadTipo(array($n['FicNoTi'])),
                         'Esta' => $n['FicEsta'],
                         'CCodi' => $n['NovCCodi'],
@@ -209,11 +209,11 @@ foreach ($stmtFic as $key => $v) {
             $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
             foreach ($arrONov as $key => $vo) {
                 $dataONov[] = array(
-                    'ONov'  => $vo['FicONov'],
+                    'ONov' => $vo['FicONov'],
                     'Valor' => ($vo['ONovTipo']) ? decimalToTime($vo['FicValor']) : $vo['FicValor'],
-                    'ObsN'  => $vo['FicObsN'],
-                    'Desc'  => $vo['ONovDesc'],
-                    'Tipo'  => $vo['ONovTipo'],
+                    'ObsN' => $vo['FicObsN'],
+                    'Desc' => $vo['ONovDesc'],
+                    'Tipo' => $vo['ONovTipo'],
                     'TipoS' => $vo['Tipo'],
                 );
             }
@@ -226,16 +226,16 @@ foreach ($stmtFic as $key => $v) {
 
             foreach ($dataHora as $key => $h) {
                 $dataHoras[] = array(
-                    'Hora'   => $h['FicHora'],
-                    'Desc'   => $h['THoDesc'],
-                    'Desc2'  => $h['THoDesc2'],
-                    'ID'     => $h['THoID'],
-                    'Colu'   => $h['THoColu'],
-                    'Obse'   => $h['FicObse'],
-                    'Esta'   => $h['FicEsta'],
-                    'Calc'   => $h['HorasCalc'],
+                    'Hora' => $h['FicHora'],
+                    'Desc' => $h['THoDesc'],
+                    'Desc2' => $h['THoDesc2'],
+                    'ID' => $h['THoID'],
+                    'Colu' => $h['THoColu'],
+                    'Obse' => $h['FicObse'],
+                    'Esta' => $h['FicEsta'],
+                    'Calc' => $h['HorasCalc'],
                     'Hechas' => $h['HorasHechas'],
-                    'Auto'   => $h['HorasAuto'],
+                    'Auto' => $h['HorasAuto'],
                     'Causa' => array(
                         'Cod' => ($h['THoCCodi']) ? $h['THoCCodi'] : '',
                         'Desc' => trim($h['THoCDesc']),
@@ -323,29 +323,29 @@ foreach ($stmtFic as $key => $v) {
         );
     }
     $data[] = array(
-        'Lega'     => $v['FicLega'],
-        'ApNo'     => trim(str_replace(' ', '', $v['LegApNo'])),
-        'Docu'     => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
-        'Cuil'     => $v['LegCUIT'],
-        'Fech'     => $Fech,
-        'Labo'     => $v['FicDiaL'],
-        'Feri'     => $v['FicDiaF'],
-        'ATra'     => $v['FicHsAT'],
-        'Trab'     => ($v['FicHsTr']),
-        'Falta'    => $v['FicFalta'],
+        'Lega' => $v['FicLega'],
+        'ApNo' => trim(str_replace(' ', '', $v['LegApNo'])),
+        'Docu' => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
+        'Cuil' => $v['LegCUIT'],
+        'Fech' => $Fech,
+        'Labo' => $v['FicDiaL'],
+        'Feri' => $v['FicDiaF'],
+        'ATra' => $v['FicHsAT'],
+        'Trab' => ($v['FicHsTr']),
+        'Falta' => $v['FicFalta'],
         // 'FichC'    => $v['FicCount'] ?? '',
-        'FichC'    => count($dataFichadas) ?? '',
-        'Tur'      => $horario,
+        'FichC' => count($dataFichadas) ?? '',
+        'Tur' => $horario,
         // 'CheckNov' => $CheckNov,
-        'Fich'     => $dataFichadas,
-        'Nove'     => $dataNov,
-        'ONove'    => $dataONov,
-        'Horas'    => $dataHoras,
+        'Fich' => $dataFichadas,
+        'Nove' => $dataNov,
+        'ONove' => $dataONov,
+        'Horas' => $dataHoras,
         'Estruct' => $estruct,
         'Cierre' => $cierre,
     );
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtFicCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

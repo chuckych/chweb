@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.17'; // Version de la aplicación
+    return 'v0.4.18'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -496,7 +496,8 @@ function MinExcel($min)
 }
 function test_input($data)
 {
-    if (!$data) return '';
+    if (!$data)
+        return '';
     $data = $data ?? '';
     $data = trim($data);
     // $data = stripslashes($data);
@@ -869,11 +870,11 @@ function Cliente_c($recid)
     $url = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['clientes'];
-    if (is_array($data)) :
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
+        foreach ($data as $value):
             $id_c = $value['id'];
             $ident = $value['ident'];
             $recid_c = $value['recid'];
@@ -890,11 +891,11 @@ function Rol_Recid($recid)
     // $array = getRemoteFile($url);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
-    if (is_array($data)) :
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
+        foreach ($data as $value):
             $id_Rol = $value['id'];
             $nombreRol = $value['nombre'];
             $clienteRol = $value['cliente'];
@@ -949,8 +950,8 @@ function ListaRoles($Recid_C)
     // $array        = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
-    if (is_array($array)) :
-        foreach ($data as $value) :
+    if (is_array($array)):
+        foreach ($data as $value):
             $nombre = $value['nombre'];
             $id = $value['id'];
             echo '<option value="' . $id . '">' . $nombre . '</option>';
@@ -1190,7 +1191,8 @@ function _data_last_month_day($y, $m)
     $day = date("d", mktime(0, 0, 0, $month + 1, 0, $year));
 
     return date('Ymd', mktime(0, 0, 0, $month, $day, $year));
-};
+}
+;
 // echo _data_last_month_day('2020','04').PHP_EOL;
 
 /** Actual month first day **/
@@ -1334,7 +1336,7 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
     if (!$stmt) {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
-                $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQueryMS.log';
+                $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQueryMS.log';
                 fileLog($_SERVER['REQUEST_URI'] . "\n" . sqlsrv_errors($link), $pathLog); // escribir en el log
                 return false;
             }
@@ -1900,6 +1902,7 @@ function EstadoProceso($url)
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $respuesta = curl_exec($ch);
         curl_close($ch);
     } while (respuestaWebService($respuesta) == 'Pendiente');
@@ -1911,6 +1914,7 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
     $response = curl_exec($ch); // extract information from response
@@ -1934,6 +1938,7 @@ function pingWS()
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // The number of seconds to wait while trying to connect
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
     $response = curl_exec($ch); // extract information from response
@@ -1960,6 +1965,7 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
         curl_setopt($ch, CURLOPT_POST, TRUE);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $respuesta = curl_exec($ch);
         $curl_errno = curl_errno($ch);
         $curl_error = curl_error($ch);
@@ -1995,6 +2001,7 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $respuesta = curl_exec($ch);
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
@@ -2038,6 +2045,7 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $respuesta = curl_exec($ch);
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
@@ -2081,6 +2089,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $respuesta = curl_exec($ch);
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
@@ -2127,6 +2136,7 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $respuesta = curl_exec($ch);
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
@@ -2164,6 +2174,7 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
     curl_setopt($ch, CURLOPT_POST, TRUE);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $respuesta = curl_exec($ch);
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
@@ -2222,17 +2233,20 @@ function datosGetIn($Get, $Col)
         $t = ($v) ? "AND " . $Col . " IN (" . (test_input($Get)) . ") " : '';
         return test_input($t);
     }
-};
+}
+;
 function datosGet($Get, $Col)
 {
     $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
-};
+}
+;
 function MinHora($Min)
 {
     if (!$Min || !is_int($Min)) {
         return false;
-    };
+    }
+    ;
     $segundos = $Min * 60;
     $horas = floor($segundos / 3600);
     $minutos = floor(($segundos - ($horas * 3600)) / 60);
@@ -2294,6 +2308,7 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -2325,6 +2340,7 @@ function sendRemoteData($url, $payload, $timeout = 10)
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -2352,6 +2368,7 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
@@ -2375,17 +2392,19 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
     }
     exit;
 }
-function curlAPI($url, $payload, $method = 'POST', $token, $timeout = 10)
+function curlAPI($url, $payload, $method, $token, $timeout = 10)
 {
+    $method = $method ?? 'POST';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Accept: */*", 'Content-Type: application/json', "Token: $token",));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Accept: */*", 'Content-Type: application/json', "Token: $token", ));
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -2440,14 +2459,14 @@ function TokenMobile($token, $data)
             case 'appcode':
                 $t[1] = $t[1] ?? '';
                 return $t[1];
-                // break;
+            // break;
             case 'token':
                 $t[0] = $t[0] ?? '';
                 return $t[0];
-                // break;
+            // break;
             default:
                 return '';
-                // break;
+            // break;
         }
     } else {
         return '';
@@ -2516,25 +2535,25 @@ function listaRol($idLista = '0')
     switch ($idLista) {
         case 0:
             return 'Todos';
-            // break;
+        // break;
         case 1:
             return 'Novedades';
-            // break;
+        // break;
         case 2:
             return 'Otras Novedades';
-            // break;
+        // break;
         case 3:
             return 'Horarios';
-            // break;
+        // break;
         case 4:
             return 'Rotaciones';
-            // break;
+        // break;
         case 5:
             return 'Tipos de Hora';
-            // break;
+        // break;
         default:
             return 'Todos';
-            // break;
+        // break;
     }
 }
 function listaEstruct($idLista = '0')
@@ -2543,34 +2562,34 @@ function listaEstruct($idLista = '0')
     switch ($idLista) {
         case 0:
             return 'Todos';
-            // break;
+        // break;
         case 1:
             return 'Empresas';
-            // break;
+        // break;
         case 2:
             return 'Plantas';
-            // break;
+        // break;
         case 3:
             return 'Convenios';
-            // break;
+        // break;
         case 4:
             return 'Sectores';
-            // break;
+        // break;
         case 5:
             return 'Secciones';
-            // break;
+        // break;
         case 6:
             return 'Grupos';
-            // break;
+        // break;
         case 7:
             return 'Sucursales';
-            // break;
+        // break;
         case 8:
             return 'Personal';
-            // break;
+        // break;
         default:
             return 'Todos';
-            // break;
+        // break;
     }
 }
 function totalDiasFechas($fecha_inicial, $fecha_final)
@@ -2872,23 +2891,24 @@ function write_apiKeysFile()
     // $assoc = $assoc_arr;
 
     foreach ($assoc_arr as $key => $value) {
-        $assoc[] = (array(
-            'idCompany' => $value['idCompany'],
-            'nameCompany' => $value['nameCompany'],
-            'recidCompany' => $value['recidCompany'],
-            'urlAppMobile' => $value['urlAppMobile'],
-            'apiMobileHRP' => $value['apiMobileHRP'],
-            'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
-            'hostCHWeb' => $value['hostCHWeb'],
-            'homeHost' => HOMEHOST,
-            'DBHost' => $value['hostDB'],
-            'DBUser' => $value['userDB'],
-            'DBPass' => $value['passDB'],
-            'DBName' => $value['DB'],
-            'DBAuth' => $value['authDB'],
-            'Token' => sha1($value['recidCompany']),
-            'WebServiceCH' => ($value['WebService']),
-        )
+        $assoc[] = (
+            array(
+                'idCompany' => $value['idCompany'],
+                'nameCompany' => $value['nameCompany'],
+                'recidCompany' => $value['recidCompany'],
+                'urlAppMobile' => $value['urlAppMobile'],
+                'apiMobileHRP' => $value['apiMobileHRP'],
+                'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
+                'hostCHWeb' => $value['hostCHWeb'],
+                'homeHost' => HOMEHOST,
+                'DBHost' => $value['hostDB'],
+                'DBUser' => $value['userDB'],
+                'DBPass' => $value['passDB'],
+                'DBName' => $value['DB'],
+                'DBAuth' => $value['authDB'],
+                'Token' => sha1($value['recidCompany']),
+                'WebServiceCH' => ($value['WebService']),
+            )
         );
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
@@ -2956,7 +2976,8 @@ function gethostCHWeb()
             // break;
         }
     }
-};
+}
+;
 /**
  * @param $str = string a escapar
  * @param $length = cantidad de caracteres a devolver
@@ -3002,6 +3023,7 @@ function pingApiMobileHRP($urlAppMobile)
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $urlAppMobile . '/attention/api/test/ping');
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     $headers = [
         'Content-Type: application/json',
@@ -3019,6 +3041,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $urlApp . '/' . $paramsUrl);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
     $headers = [
         'Content-Type: application/json',
@@ -3203,7 +3226,7 @@ function diffStartEnd($start, $end)
 }
 function implode_keys_values($array = array(), $key, $separator)
 {
-    if (!$array) :
+    if (!$array):
         return $array;
     endif;
     $key = array_column($array, $key);
@@ -3352,10 +3375,14 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
+    // curl_setopt($ch, CURLOPT_VERBOSE, 1);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_ENCODING, '');
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt(
         $ch,
@@ -3363,26 +3390,38 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
         array(
             "Accept: */*",
             'Content-Type: application/json',
-            'Authorization: Basic ' . $authBasic,
-            // Basic Authentication
             "Token: $token",
         )
     );
+
+    // $verbose = fopen('php://temp', 'w+');
+    // curl_setopt($ch, CURLOPT_STDERR, $verbose);
+
+
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
 
+    // Obtener la salida VERBOSE del archivo temporal
+    // rewind($verbose);
+    // $verbose_output = stream_get_contents($verbose);
+
+    // Cerrar el recurso de archivo temporal
+    // fclose($verbose);
+
+    // Puedes imprimir la salida VERBOSE o guardarla en un archivo para revisarla
+    // echo $verbose_output;
+    $pathLog = __DIR__ . '/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+
     if ($curl_errno > 0) { // si hay error
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
-        $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-
     curl_close($ch);
+
     if ($file_contents) {
         return $file_contents;
     } else {
-        $pathLog = __DIR__ . '.' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
         return false;
     }
