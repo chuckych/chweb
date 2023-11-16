@@ -145,12 +145,13 @@ class RRHHWebService
                     $this->log->write($text, date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     // $this->resp->response('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
                 }
+
                 curl_close($ch);
+                return true;
             }
         } catch (\Exception $e) {
             $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
-            //$this->resp->response('', 0, $e->getMessage(), $e->getCode(), microtime(true), 0, 0);
-            // exit;
+            return false;
         }
     }
     /** 

@@ -7,7 +7,7 @@ $dotenv->safeLoad();
 
 function version()
 {
-    return 'v0.4.18'; // Version de la aplicación
+    return 'v0.4.19'; // Version de la aplicación
 }
 function verDBLocal()
 {
@@ -192,6 +192,9 @@ function API_KEY_MAPS()
     return 'AIzaSyCFs9lj9k7WZAyuwzDJwOiSiragUA9Xwg0';
 }
 $params = array();
+if (!defined('SQLSRV_CURSOR_KEYSET')) {
+    define('SQLSRV_CURSOR_KEYSET', 2); // El valor correcto puede variar según tu aplicación
+}
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET, 'keyset');
 /** GENERAR generaPass */
 function recid()
@@ -3224,7 +3227,7 @@ function diffStartEnd($start, $end)
     );
     return $t;
 }
-function implode_keys_values($array = array(), $key, $separator)
+function implode_keys_values($key, $separator, $array = array())
 {
     if (!$array):
         return $array;

@@ -11,13 +11,13 @@ define('ID_COMPANY', $tools->padLeft($_SESSION['DataCompany']['idCompany'], 3, 0
 $dataCompany = new Classes\DataCompany;
 $dataCompany->checkToken();
 
-$response       = new Classes\Response;
-$log            = new Classes\Log;
-$horas          = new Classes\Horas;
-$novedades      = new Classes\Novedades;
+$response = new Classes\Response;
+$log = new Classes\Log;
+$horas = new Classes\Horas;
+$novedades = new Classes\Novedades;
 $RRHHWebService = new Classes\RRHHWebService;
-$ConnectSqlSrv  = new Classes\ConnectSqlSrv;
-$ParaGene       = new Classes\ParaGene;
+$ConnectSqlSrv = new Classes\ConnectSqlSrv;
+$ParaGene = new Classes\ParaGene;
 
 use flight\Engine;
 
@@ -25,9 +25,11 @@ $api = new Engine();
 
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
+$api->route('PUT /novedades', [$novedades, 'update']);
 $api->route('PUT /horas', [$horas, 'update']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
+$api->route('GET /novedades/data', [$novedades, 'data']);
 $api->route('/paragene', [$ParaGene, 'get']);
 
 $api->map('notFound', [$response, 'notFound']);

@@ -9,6 +9,7 @@ if ($_POST["guarda"] == "on") {
 	// setcookie("user", "");
 	// setcookie("clave", "");
 }
+
 /** Consultamos el si el usuario y clave son correctos */
 require __DIR__ . '../../config/conect_mysql.php';
 
@@ -26,6 +27,7 @@ try {
 	$stmt->execute(); // ejecuta la consulta
 	$row = $stmt->fetch(PDO::FETCH_ASSOC); // obtiene el resultado de la consulta
 	$connpdo = null; // cierra la conexion con la base de datos
+
 } catch (\Throwable $th) { // si hay error en la consulta
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log de errores
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -60,6 +62,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	}
 
 	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
+
 	$verDB = intval($a['valores']); // valor de la version de la DB mysql
 	// $a = simpleQueryData("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1", $link); // Traigo el valor de la version de la DB mysql
 
@@ -85,6 +88,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 
 	// $abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
 	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
+
 	$ABMRol = array(); // Array de permisos del rol
 	if ($abm) { // Si hay permisos
 		$ABMRol = array('aFic' => $abm['aFic'], 'mFic' => $abm['mFic'], 'bFic' => $abm['bFic'], 'aNov' => $abm['aNov'], 'mNov' => $abm['mNov'], 'bNov' => $abm['bNov'], 'aHor' => $abm['aHor'], 'mHor' => $abm['mHor'], 'bHor' => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc' => $abm['Proc'], 'aCit' => $abm['aCit'], 'mCit' => $abm['mCit'], 'bCit' => $abm['bCit'], 'aTur' => $abm['aTur'], 'mTur' => $abm['mTur'], 'bTur' => $abm['bTur']);

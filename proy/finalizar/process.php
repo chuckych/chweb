@@ -41,10 +41,10 @@ function redondearTareFin($tareID, $fechahora)
 {
 	/** redondeamos TareHoraFin */
 	$idCtar = simple_pdoQuery("SELECT c.recid FROM clientes c INNER JOIN proy_tareas pt ON c.id = pt.Cliente WHERE pt.TareID = '$tareID' LIMIT 1"); // Obtenemos el recid de la cuenta
-	$d       = getIniCuenta($idCtar['recid']);
-	$params  = array("datetime" => $fechahora);
+	$d = getIniCuenta($idCtar['recid']);
+	$params = array("datetime" => $fechahora);
 	$urlHost = $d['hostCHWeb']; // Obtener el host de la cuenta
-	$url     = $urlHost . "/" . HOMEHOST . "/proy/api/?redondear=1";
+	$url = $urlHost . "/" . HOMEHOST . "/proy/api/?redondear=1";
 	$rs = sendRemoteData($url, ($params));
 	$rs = json_decode($rs, true); // Lo decodificamos en un array.
 	return $rs['resultado'];
@@ -54,13 +54,13 @@ function calculaDescanso($tareID, $fin)
 {
 	/** calculamos descanso */
 	$dataTar = simple_pdoQuery("SELECT c.recid, pt.TareResp, pt.TareIni FROM clientes c INNER JOIN proy_tareas pt ON c.id = pt.Cliente WHERE pt.TareID = '$tareID' LIMIT 1"); // Obtenemos el recid de la cuenta
-	$d  = getIniCuenta($dataTar['recid']);
+	$d = getIniCuenta($dataTar['recid']);
 	$params = array(
 		"start" => $dataTar['TareIni'],
-		"end"   => $fin,
-		"user"  => $dataTar['TareResp'],
+		"end" => $fin,
+		"user" => $dataTar['TareResp'],
 	);
-	$urlHost  = $d['hostCHWeb']; // Obtener el host de la cuenta
+	$urlHost = $d['hostCHWeb']; // Obtener el host de la cuenta
 	$url = $urlHost . "/" . HOMEHOST . "/proy/api/?descanso=1";
 	$rs = sendRemoteData($url, ($params));
 	$rs = json_decode($rs, true); // Lo decodificamos en un array.
@@ -73,15 +73,15 @@ $_SESSION['ID_CLIENTE'] = $_SESSION['ID_CLIENTE'] ?? '';
 
 $FechaHora = date("Y-m-d H:i");
 $Cliente = $_SESSION['ID_CLIENTE'];
-$User    = $_SESSION['UID'];
-$_POST['tarSubmit']   = $_POST['tarSubmit'] ?? '';
-$_POST['assignTar']   = $_POST['assignTar'] ?? '';
+$User = $_SESSION['UID'];
+$_POST['tarSubmit'] = $_POST['tarSubmit'] ?? '';
+$_POST['assignTar'] = $_POST['assignTar'] ?? '';
 $_POST['tarComplete'] = $_POST['tarComplete'] ?? '';
-$_POST['openTar']     = $_POST['openTar'] ?? '';
-$_POST['ediTar']      = $_POST['ediTar'] ?? '';
-$_POST['anulaTar']    = $_POST['anulaTar'] ?? '';
-$_POST['calCosto']    = $_POST['calCosto'] ?? '';
-$_POST['procPendientes']    = $_POST['procPendientes'] ?? '';
+$_POST['openTar'] = $_POST['openTar'] ?? '';
+$_POST['ediTar'] = $_POST['ediTar'] ?? '';
+$_POST['anulaTar'] = $_POST['anulaTar'] ?? '';
+$_POST['calCosto'] = $_POST['calCosto'] ?? '';
+$_POST['procPendientes'] = $_POST['procPendientes'] ?? '';
 
 function emptyData($data, $err)
 {
@@ -91,25 +91,25 @@ function emptyData($data, $err)
 (!$_SERVER['REQUEST_METHOD'] == 'POST') ? PrintRespuestaJson('error', 'Invalid Request Method') . exit : '';
 
 if (($_POST['tarSubmit'])) { // Crear Tarea
-	$_POST['data']  = $_POST['data'] ?? '';
+	$_POST['data'] = $_POST['data'] ?? '';
 	emptyData($_POST['data'], 'No se recibieron datos'); // Validar que se recibieron datos
 	$data = json_decode($_POST['data']);
 
-	$EmpDesc   = $data->EmpDesc ?? '';
-	$EmpID     = $data->EmpID ?? '';
-	$PlanoCod  = $data->PlanoCod ?? '';
+	$EmpDesc = $data->EmpDesc ?? '';
+	$EmpID = $data->EmpID ?? '';
+	$PlanoCod = $data->PlanoCod ?? '';
 	$PlanoDesc = $data->PlanoDesc ?? '';
-	$PlanoID   = $data->PlanoID ?? '';
+	$PlanoID = $data->PlanoID ?? '';
 	$PlantDesc = $data->PlantDesc ?? '';
-	$ProcCost  = $data->ProcCost ?? '';
-	$ProcDesc  = $data->ProcDesc ?? '';
-	$ProcID    = $data->ProcID ?? '';
-	$ProyDesc  = $data->ProyDesc ?? '';
-	$ProyID    = $data->ProyID ?? '';
-	$ProyNom   = $data->ProyNom ?? '';
+	$ProcCost = $data->ProcCost ?? '';
+	$ProcDesc = $data->ProcDesc ?? '';
+	$ProcID = $data->ProcID ?? '';
+	$ProyDesc = $data->ProyDesc ?? '';
+	$ProyID = $data->ProyID ?? '';
+	$ProyNom = $data->ProyNom ?? '';
 	$ProyPlant = $data->ProyPlant ?? '';
-	$ProyResp  = $data->ProyResp ?? '';
-	$RespDesc  = $data->RespDesc ?? '';
+	$ProyResp = $data->ProyResp ?? '';
+	$RespDesc = $data->RespDesc ?? '';
 
 	emptyData($ProyID, 'No se recibieron datos del proyecto'); // Validar que se recibieron datos del proyecto
 	emptyData($ProcID, 'No se recibieron datos del proceso'); // Validar que se recibieron datos del proyecto
@@ -134,14 +134,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 					"nombre" => $dataTar['ProyNom'],
 					"ID" => $dataTar['TareProy']
 				),
-				"EmpDesc"   => $dataTar['EmpDesc'],
-				"ProcDesc"  => $dataTar['ProcDesc'],
+				"EmpDesc" => $dataTar['EmpDesc'],
+				"ProcDesc" => $dataTar['ProcDesc'],
 				"PlanoDesc" => $dataTar['PlanoDesc'],
-				"TareID"    => $dataTar['TareID'],
-				"Inicio"    => $TareInicio,
-				"Duracion"  => $tareDiff,
+				"TareID" => $dataTar['TareID'],
+				"Inicio" => $TareInicio,
+				"Duracion" => $tareDiff,
 			);
-			PrintRespuestaJson('pendTar',  $dataTar);
+			PrintRespuestaJson('pendTar', $dataTar);
 			exit;
 		}
 	}
@@ -166,11 +166,11 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 } else if ($_POST['tarComplete']) { // Completar tarea
 
-	$_POST['tareID']          = ($_POST['tareID']) ?? '';
-	$_POST['TareFechaFin']    = ($_POST['TareFechaFin']) ?? '';
-	$_POST['TareHoraFin']     = ($_POST['TareHoraFin']) ?? '';
-	$_POST['fromTareas']      = ($_POST['fromTareas']) ?? '';
-	$_POST['finTipo']         = ($_POST['finTipo']) ?? '';
+	$_POST['tareID'] = ($_POST['tareID']) ?? '';
+	$_POST['TareFechaFin'] = ($_POST['TareFechaFin']) ?? '';
+	$_POST['TareHoraFin'] = ($_POST['TareHoraFin']) ?? '';
+	$_POST['fromTareas'] = ($_POST['fromTareas']) ?? '';
+	$_POST['finTipo'] = ($_POST['finTipo']) ?? '';
 	$_POST['tarCompletePend'] = ($_POST['tarCompletePend']) ?? '';
 	$tareID = test_input($_POST['tareID']);
 
@@ -219,9 +219,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	// $total2   = MinHora(0); // Total de horas y minutos
 
 	$calcular = calculaDescanso($dataTar['TareID'], $FechaHora);
-	$total    = $calcular['totales']['calculadas']['horas'];
-	$total2   = $calcular['totales']['reales']['horas'];
-	$minutos  = $calcular['totales']['calculadas']['min'];
+	$total = $calcular['totales']['calculadas']['horas'];
+	$total2 = $calcular['totales']['reales']['horas'];
+	$minutos = $calcular['totales']['calculadas']['min'];
 	$minutos2 = $calcular['totales']['reales']['min'];
 
 	if (($_POST['fromTareas'])) {
@@ -230,9 +230,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 		// $minutos = ($f2->diffInMinutes($f)); // Total de minutos
 		// $total = MinHora($f2->diffInMinutes($f)); // Total de horas y minutos
 		$calcular = calculaDescanso($dataTar['TareID'], $fechaFin);
-		$total    = $calcular['totales']['calculadas']['horas'];
-		$total2   = $calcular['totales']['reales']['horas'];
-		$minutos  = $calcular['totales']['calculadas']['min'];
+		$total = $calcular['totales']['calculadas']['horas'];
+		$total2 = $calcular['totales']['reales']['horas'];
+		$minutos = $calcular['totales']['calculadas']['min'];
 		$minutos2 = $calcular['totales']['reales']['min'];
 
 		// $f       = Carbon::parse($dataTar['TareIni']); // Fecha de inicio
@@ -280,30 +280,30 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	}
 } else if (($_POST['ediTar'])) { // Editar Tarea
 
-	$_POST['TareResp']     = $_POST['TareResp'] ?? '';
-	$_POST['TareProy']     = $_POST['TareProy'] ?? '';
-	$_POST['TareProc']     = $_POST['TareProc'] ?? '';
-	$_POST['TarePlano']    = $_POST['TarePlano'] ?? 'NULL';
-	$_POST['TarePlano']    = ($_POST['TarePlano'] == '0') ? 'NULL' : $_POST['TarePlano'];
+	$_POST['TareResp'] = $_POST['TareResp'] ?? '';
+	$_POST['TareProy'] = $_POST['TareProy'] ?? '';
+	$_POST['TareProc'] = $_POST['TareProc'] ?? '';
+	$_POST['TarePlano'] = $_POST['TarePlano'] ?? 'NULL';
+	$_POST['TarePlano'] = ($_POST['TarePlano'] == '0') ? 'NULL' : $_POST['TarePlano'];
 	$_POST['TareFechaIni'] = $_POST['TareFechaIni'] ?? '';
-	$_POST['TareHoraIni']  = $_POST['TareHoraIni'] ?? '';
+	$_POST['TareHoraIni'] = $_POST['TareHoraIni'] ?? '';
 	$_POST['TareFechaFin'] = $_POST['TareFechaFin'] ?? '';
-	$_POST['TareHoraFin']  = $_POST['TareHoraFin'] ?? '';
-	$_POST['tareID']       = $_POST['tareID'] ?? '';
-	$_POST['fromTareas']   = $_POST['fromTareas'] ?? '';
-	$_POST['pendTar']      = $_POST['pendTar'] ?? '';
+	$_POST['TareHoraFin'] = $_POST['TareHoraFin'] ?? '';
+	$_POST['tareID'] = $_POST['tareID'] ?? '';
+	$_POST['fromTareas'] = $_POST['fromTareas'] ?? '';
+	$_POST['pendTar'] = $_POST['pendTar'] ?? '';
 
 	$TareFechaFin = test_input($_POST['TareFechaFin']) ?? '';
-	$TareHoraFin  = test_input($_POST['TareHoraFin']) ?? '';
+	$TareHoraFin = test_input($_POST['TareHoraFin']) ?? '';
 	$TareFechaIni = test_input($_POST['TareFechaIni']) ?? '';
-	$TareHoraIni  = test_input($_POST['TareHoraIni']) ?? '';
-	$TareProy     = test_input($_POST['TareProy']) ?? '';
-	$TareProc     = test_input($_POST['TareProc']) ?? '';
-	$TarePlano    = test_input($_POST['TarePlano']) ?? '';
-	$TareResp     = test_input($_POST['TareResp']) ?? '';
-	$tareID       = test_input($_POST['tareID']) ?? '';
-	$fromTareas   = test_input($_POST['fromTareas']) ?? '';
-	$pendTar      = test_input($_POST['pendTar']) ?? '';
+	$TareHoraIni = test_input($_POST['TareHoraIni']) ?? '';
+	$TareProy = test_input($_POST['TareProy']) ?? '';
+	$TareProc = test_input($_POST['TareProc']) ?? '';
+	$TarePlano = test_input($_POST['TarePlano']) ?? '';
+	$TareResp = test_input($_POST['TareResp']) ?? '';
+	$tareID = test_input($_POST['tareID']) ?? '';
+	$fromTareas = test_input($_POST['fromTareas']) ?? '';
+	$pendTar = test_input($_POST['pendTar']) ?? '';
 
 	emptyData($tareID, 'La Tarea es requerida'); // Validamos el ID de la tarea
 	emptyData($TareResp, 'El Responsable es requerido'); // Validamos el responsable
@@ -349,7 +349,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$TareFinTipo = ($FechaHoraFin != $r['TareFin']) ? 'modificada' : $TareFinTipo; // Si la fecha de fin es diferente a la de la tarea, la tarea fue modificada
 
 	if ($FechaHoraFin != "0000-00-00 00:00:00") { // Si la fecha de fin no es 0000-00-00 00:00:00 (si la tarea esta pendiente)
-		$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin);  // Calculamos el limite de tiempo de la tarea
+		$calcLimitTar = calcLimitTar($FechaHoraIni, $FechaHoraFin); // Calculamos el limite de tiempo de la tarea
 		$textErrorCalc = "El límite de tiempo para las tareas es de: $calcLimitTar[limitHor] Hs. Y el tiempo calculado es: $calcLimitTar[diffHor] Hs.";
 		if ($calcLimitTar['status']) {
 			$data = array('status' => 'error', 'Mensaje' => $textErrorCalc, 'confTar' => ($calcLimitTar));
@@ -373,9 +373,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	// $total2   = MinHora(0); // Total de horas y minutos
 
 	$calcular = calculaDescanso($tareID, $FechaHoraFin);
-	$total    = $calcular['totales']['calculadas']['horas'];
-	$total2   = $calcular['totales']['reales']['horas'];
-	$minutos  = $calcular['totales']['calculadas']['min'];
+	$total = $calcular['totales']['calculadas']['horas'];
+	$total2 = $calcular['totales']['reales']['horas'];
+	$minutos = $calcular['totales']['calculadas']['min'];
 	$minutos2 = $calcular['totales']['reales']['min'];
 
 
@@ -424,7 +424,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 } else if (($_POST['openTar'])) {
 
 	$_POST['tareID'] = ($_POST['tareID']) ?? '';
-	$tareID          = test_input($_POST['tareID']);
+	$tareID = test_input($_POST['tareID']);
 	emptyData($tareID, 'La Tarea es requerida'); // Validamos la tarea
 
 	$r = count_pdoQuery("SELECT 1 FROM `proy_tareas` WHERE `TareID` = '$tareID' LIMIT 1"); // Contamos si existe la tarea // devuelve true o false
@@ -439,7 +439,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 } else if (($_POST['anulaTar'])) {
 
 	$_POST['tareID'] = ($_POST['tareID']) ?? '';
-	$tareID          = test_input($_POST['tareID']);
+	$tareID = test_input($_POST['tareID']);
 	emptyData($tareID, 'La Tarea es requerida'); // Validamos la tarea
 
 	$r = count_pdoQuery("SELECT 1 FROM `proy_tareas` WHERE `TareID` = '$tareID' LIMIT 1"); // Contamos si existe la tarea // devuelve true o false
@@ -461,11 +461,11 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$qTar = "SELECT `proy_tareas`.`TareID`, `proy_empresas`.`EmpDesc`, `proy_tareas`.`TareEmp`, `proy_tareas`.`TareProy`, `proy_proyectos`.`ProyDesc`, `proy_proyectos`.`ProyNom`, `proy_proyectos`.`ProyPlant`, `proy_tareas`.`TareResp`, `resp`.`nombre`, `proy_tareas`.`TareProc`, `proy_proceso`.`ProcDesc`, `proy_tareas`.`TarePlano`, `proy_planos`.`PlanoDesc`, `proy_tareas`.`TareIni`, `proy_tareas`.`TareFin`, `proy_tareas`.`TareEsta`, `proy_tareas`.`Cliente`, `proy_tare_horas`.`TareHorMin`, `proy_tare_horas`.`TareHorCost`, `proy_tare_horas`.`TareHorHoras`, `proy_proceso`.`ProcCost` 
 	FROM `proy_tareas` LEFT JOIN `proy_tare_horas` ON `proy_tareas`.`TareID` = `proy_tare_horas`.`TareHorID` INNER JOIN `proy_empresas` ON `proy_tareas`.`TareEmp`=`proy_empresas`.`EmpID` INNER JOIN `proy_proyectos` ON `proy_tareas`.`TareProy`=`proy_proyectos`.`ProyID` INNER JOIN `usuarios`AS `resp` ON `proy_tareas`.`TareResp`=`resp`.`id` INNER JOIN `proy_proceso` ON `proy_tareas`.`TareProc`=`proy_proceso`.`ProcID` LEFT JOIN `proy_planos` ON `proy_tareas`.`TarePlano`=`proy_planos`.`PlanoID` INNER JOIN `proy_estados` ON `proy_proyectos`.`ProyEsta`=`proy_estados`.`EstID` WHERE `proy_tareas`.`TareID` > 0";
 
-	if ($w_c ?? '') : // if where_conditions existe
+	if ($w_c ?? ''): // if where_conditions existe
 		$qTar .= $w_c;
 	endif;
 
-	$qTar .=  " ORDER BY `proy_tareas`.`TareID` DESC";
+	$qTar .= " ORDER BY `proy_tareas`.`TareID` DESC";
 	// print_r($qTar);exit;
 	$r = array_pdoQuery($qTar);
 	$data = $r;
@@ -474,14 +474,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	} else {
 		$recordsTotal = 0;
 	}
-	$tareID = implode_keys_values($data, 'TareID', ','); // Obtenemos los ids de las tareas
+	$tareID = implode_keys_values('TareID', ',', $data); // Obtenemos los ids de las tareas
 
 	if ($data) {
 		$q = "UPDATE proy_tareas tar
 		INNER JOIN proy_proceso proc ON tar.TareProc = proc.ProcID SET tar.TareCost = proc.ProcCost
 		WHERE tar.TareID IN ($tareID)";
 		pdoQuery($q); // Actualizamos el costo de proceso de las tareas
-		if (pdoQuery($q)) :
+		if (pdoQuery($q)):
 			$q = "UPDATE proy_tare_horas tarhor
 		INNER JOIN proy_tareas tar ON tarhor.TareHorID = tar.TareID 
 		SET tarhor.TareHorCost = (tar.TareCost / 60) * tarhor.TareHorMin
@@ -494,14 +494,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$tiempo = ($tiempo_fin - $tiempo_inicio);
 	$rt = $recordsTotal;
 	$msg = '(' . $rt . ') Tareas recalculadas correctamente';
-	$msg = ($rt  == 1) ? '(' . $rt . ') Tarea recalculada correctamente' : $msg;
-	$msg = ($rt  == 0) ? 'No hay Tareas para calcular' : $msg;
+	$msg = ($rt == 1) ? '(' . $rt . ') Tarea recalculada correctamente' : $msg;
+	$msg = ($rt == 0) ? 'No hay Tareas para calcular' : $msg;
 	$jdata = array(
-		"status"       => 'ok',
+		"status" => 'ok',
 		"recordsTotal" => $rt,
-		"Mensaje"      => $msg,
-		"tareID"       => $tareID,
-		"tiempo"       => round($tiempo, 2)
+		"Mensaje" => $msg,
+		"tareID" => $tareID,
+		"tiempo" => round($tiempo, 2)
 	);
 	// echo json_encode($qTar);
 	auditoria("$jdata[Mensaje].", 'M', '', '37');
@@ -512,11 +512,11 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$_POST['ProcPendTar'] = ($_POST['ProcPendTar']) ?? '';
 	$_POST['_c'] = ($_POST['_c']) ?? '';
 
-	$_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
+	$_GET['_c'] = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
 	emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
 
-	$dataCuenta  = getIniCuenta($_POST['_c']);
-	$urlHost  = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
+	$dataCuenta = getIniCuenta($_POST['_c']);
+	$urlHost = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
 
 	$getConf = getConfTar();
 
@@ -527,15 +527,15 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 		PrintRespuestaJson('error', 'No se puede actualizar') . exit;
 	}
 
-	$r     = "SELECT c.id from clientes c WHERE c.recid = '$_POST[_c]' LIMIT 1";
+	$r = "SELECT c.id from clientes c WHERE c.recid = '$_POST[_c]' LIMIT 1";
 	$dataC = simple_pdoQuery($r); // Obtenemos el id de la cuenta
 	$pathLog = "logspend/logs_pendientes_" . $dataC['id'] . "_" . date('Ymd') . ".log"; // Path del log de tareas pendientes
 	borrarLogs(__DIR__ . $pathLog, 30, '.log'); // Borramos los logs de tareas pendientes de mas de 30 días
 
 	$dataRequest = $_REQUEST;
-	$dataRequest['TareEstado']     = 'pendientes';
-	$dataRequest['idCliente']      = $dataC['id'];
-	$dataRequest['length']         = 9999;
+	$dataRequest['TareEstado'] = 'pendientes';
+	$dataRequest['idCliente'] = $dataC['id'];
+	$dataRequest['length'] = 9999;
 	$dataRequest['procPendientes'] = 1;
 	$dataRequest['HoraLimit'] = $getConf['HoraCierre'];
 
@@ -547,14 +547,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	fileLog("Inicio. Tareas Pendientes: $tareasPendientes[recordsTotal]", $pathLog); // Escribimos en el log el inicio del proceso.
 	$info = array();
 	foreach ($dataPendientes as $v) { // Recorremos el array de tareas pendientes
-		$legajo   = $v['responsable']['legajo']; // Legajo del responsable de la tarea
+		$legajo = $v['responsable']['legajo']; // Legajo del responsable de la tarea
 		$FechaTar = FechaString($v['fechas']['TareIni']); // Fecha de la tarea
 		$q = "SELECT TOP 1 F.FicDiaL, F.FicHorE AS 'FicHorE', F.FicHorS AS 'FicHorS', dbo.fn_STRMinutos((F.FicHorS)) AS 'FicHorSMin', R.RegHoRe AS 'RegHoRe', dbo.fn_STRMinutos((R.RegHoRe)) AS 'RegHoReMin' FROM FICHAS F LEFT JOIN REGISTRO R ON F.FicFech = R.RegFeAs AND F.FicLega = R.RegLega WHERE F.FicFech = '$FechaTar' AND F.FicLega = '$legajo' ORDER BY R.RegHoRe DESC";
 		$a = simple_MSQuery($q); // obtenemos datos de la tabla fichas y registro para poder completar la tarea
-		$TareIni    = (HoraMin($v['fechas']['inicioHora'])); // Hora de inicio de la tarea
-		$TareIni2    = FechaFormatVar($v['fechas']['TareIni'], 'YmdHi'); // Fechhora de inicio de la tarea
+		$TareIni = (HoraMin($v['fechas']['inicioHora'])); // Hora de inicio de la tarea
+		$TareIni2 = FechaFormatVar($v['fechas']['TareIni'], 'YmdHi'); // Fechhora de inicio de la tarea
 		$RegHoReMin = ($a['RegHoReMin']); // Hora de ultima fichada del día
-		$RegHoRe    = ($a['RegHoRe']); // Hora de ultima fichada del día
+		$RegHoRe = ($a['RegHoRe']); // Hora de ultima fichada del día
 
 		if ($a['FicHorS'] < $a['FicHorE']) { // SI ES HORARIOS NOCTURNO PROSESAMOS
 
@@ -565,8 +565,8 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 			$FeHora2 = ($a['FeHora'] != null) ? $a['FeHora']->format('d/m/Y') : '0';
 			$FeHoraS = ($a['FeHoraS'] != null) ? $a['FeHoraS']->format('YmdHi') : '0';
 			$FeHoraS2 = ($a['FeHoraS'] != null) ? $a['FeHoraS']->format('d/m/Y') : '0';
-			$RegHoRe    = ($a['RegHoRe']);
-			$FicHorS    = ($a['FicHorS']);
+			$RegHoRe = ($a['RegHoRe']);
+			$FicHorS = ($a['FicHorS']);
 
 
 			$FechaFinFic = new DateTime($a['FeHora']->format('Y-m-d') . ' ' . $RegHoRe);
@@ -576,16 +576,16 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 
 			if ($TareIni2 <= $FeHora) { // Si la hora de inicio de la tarea es menor a la ultima fichada del día
 				$data = array(
-					'tareID'          => $v['TareID'],
-					'tarComplete'     => 'tarComplete',
+					'tareID' => $v['TareID'],
+					'tarComplete' => 'tarComplete',
 					'tarCompletePend' => 1,
-					'fromTareas'      => 'true',
-					'TareFechaFin'    => $FeHora2,
-					'TareHoraFin'     => $RegHoRe,
-					'finTipo'         => 'fichada',
+					'fromTareas' => 'true',
+					'TareFechaFin' => $FeHora2,
+					'TareHoraFin' => $RegHoRe,
+					'finTipo' => 'fichada',
 				);
 
-				$urlSet   = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
+				$urlSet = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
 				$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 
 				$set = json_decode($set, true);
@@ -603,19 +603,19 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 				// exit;
 			} else {
 				$FicHorSMin = ($a['FicHorSMin']); // Hora de fin (Salida) de turno del día
-				$FicHorS    = ($a['FicHorS']); // Hora de fin (Salida) de turno del día
+				$FicHorS = ($a['FicHorS']); // Hora de fin (Salida) de turno del día
 				if ($a['FicDiaL'] == 1) { // Si el día es laborable
 					if ($TareIni2 < $FeHoraS) { // Si la hora de inicio de la tarea es menor a la hora de fin de turno del día
 						$data = array(
-							'tareID'       => $v['TareID'],
-							'tarComplete'  => 'tarComplete',
-							'fromTareas'   => 'true',
+							'tareID' => $v['TareID'],
+							'tarComplete' => 'tarComplete',
+							'fromTareas' => 'true',
 							'TareFechaFin' => $FeHoraS2,
-							'TareHoraFin'  => $FicHorS,
-							'finTipo'      => 'turno',
+							'TareHoraFin' => $FicHorS,
+							'finTipo' => 'turno',
 						);
-						$urlSet  = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
-						$set     = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
+						$urlSet = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
+						$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 						$set = json_decode($set, true);
 
 						if ($set['status'] == 'error') {
@@ -649,16 +649,16 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 				// print_r($RegHoRe).exit;
 				// print_r(FechaFormatVar($RegHoRe['date'], 'H:i')).exit;
 				$data = array(
-					'tareID'          => $v['TareID'],
-					'tarComplete'     => 'tarComplete',
+					'tareID' => $v['TareID'],
+					'tarComplete' => 'tarComplete',
 					'tarCompletePend' => 1,
-					'fromTareas'      => 'true',
-					'TareFechaFin'    => FechaFormatVar($v['fechas']['TareIni'], 'd/m/Y'),
-					'TareHoraFin'     => FechaFormatVar($RegHoRe['date'], 'H:i'),
-					'finTipo'         => 'fichada',
+					'fromTareas' => 'true',
+					'TareFechaFin' => FechaFormatVar($v['fechas']['TareIni'], 'd/m/Y'),
+					'TareHoraFin' => FechaFormatVar($RegHoRe['date'], 'H:i'),
+					'finTipo' => 'fichada',
 				);
 
-				$urlSet   = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
+				$urlSet = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
 				$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 
 				$set = json_decode($set, true);
@@ -676,19 +676,19 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 				}
 			} else {
 				$FicHorSMin = ($a['FicHorSMin']); // Hora de fin (Salida) de turno del día
-				$FicHorS    = ($a['FicHorS']); // Hora de fin (Salida) de turno del día
+				$FicHorS = ($a['FicHorS']); // Hora de fin (Salida) de turno del día
 				if ($a['FicDiaL'] == 1) { // Si el día es laborable
 					if ($TareIni < $FicHorSMin) { // Si la hora de inicio de la tarea es menor a la hora de fin de turno del día
 						$data = array(
-							'tareID'       => $v['TareID'],
-							'tarComplete'  => 'tarComplete',
-							'fromTareas'   => 'true',
+							'tareID' => $v['TareID'],
+							'tarComplete' => 'tarComplete',
+							'fromTareas' => 'true',
 							'TareFechaFin' => FechaFormatVar($v['fechas']['TareIni'], 'd/m/Y'),
-							'TareHoraFin'  => $FicHorS,
-							'finTipo'      => 'turno',
+							'TareHoraFin' => $FicHorS,
+							'finTipo' => 'turno',
 						);
-						$urlSet  = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
-						$set     = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
+						$urlSet = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php"; // Url para completar la tarea
+						$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 						$set = json_decode($set, true);
 
 						if ($set['status'] == 'error') {
@@ -722,14 +722,14 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	fileLog("Fin de proceso de Tareas Pendientes" . PHP_EOL, $pathLog) . exit; // Escribimos en el log el fin del proceso de tareas pendientes
 } else if (($_POST['assignTar'])) {
 
-	$TarePlano    = $_POST['TarePlano'] ?? '';
-	$TareProy     = $_POST['TareProy'] ?? '';
-	$TareProc     = $_POST['TareProc'] ?? '';
-	$TareResp     = $_POST['TareResp'] ?? '';
+	$TarePlano = $_POST['TarePlano'] ?? '';
+	$TareProy = $_POST['TareProy'] ?? '';
+	$TareProc = $_POST['TareProc'] ?? '';
+	$TareResp = $_POST['TareResp'] ?? '';
 	$TareFechaIni = $_POST['TareFechaIni'] ?? '';
 	$TareFechaFin = $_POST['TareFechaFin'] ?? '';
-	$TareHoraIni  = $_POST['TareHoraIni'] ?? '';
-	$TareHoraFin  = $_POST['TareHoraFin'] ?? '';
+	$TareHoraIni = $_POST['TareHoraIni'] ?? '';
+	$TareHoraFin = $_POST['TareHoraFin'] ?? '';
 
 	emptyData($TareProy, 'No se recibieron datos del proyecto'); // Validar que se recibieron datos del proyecto
 	emptyData($TareProc, 'No se recibieron datos del proceso'); // Validar que se recibieron datos del proyecto
@@ -799,21 +799,21 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 			// (!pdoQuery($i)) ? PrintRespuestaJson('error', 'Error al finalizar la tarea') . exit : ''; // Sino se pudo insertar la tarea, Salimos del script
 
 			$getRecid = simple_pdoQuery("SELECT c.recid FROM clientes c INNER JOIN proy_tareas pt ON c.id = pt.Cliente WHERE pt.TareID = '$dataTar[TareID]' LIMIT 1"); // Obtenemos el recid de la cuenta
-			$d  = getIniCuenta($getRecid['recid']);
-			$urlHost  = $d['hostCHWeb']; // Obtener el host de la cuenta
+			$d = getIniCuenta($getRecid['recid']);
+			$urlHost = $d['hostCHWeb']; // Obtener el host de la cuenta
 
 			$data = array(
-				'tareID'          => $dataTar['TareID'],
-				'tarComplete'     => 'tarComplete',
-				'fromTareas'      => 'true',
-				'TareFechaFin'    => $TareFechaFin,
-				'TareHoraFin'     => $TareHoraFin
+				'tareID' => $dataTar['TareID'],
+				'tarComplete' => 'tarComplete',
+				'fromTareas' => 'true',
+				'TareFechaFin' => $TareFechaFin,
+				'TareHoraFin' => $TareHoraFin
 			);
 
 			// echo json_encode($data);
 			// exit;
 
-			$urlSet   = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
+			$urlSet = $urlHost . "/" . HOMEHOST . "/proy/finalizar/process.php";
 			$set = sendRemoteData($urlSet, $data); // Completamos la tarea con la ultima fichada del día
 
 			$set = json_decode($set, true);

@@ -25,15 +25,15 @@ class Horas
 
     function __construct()
     {
-        $this->resp       = new Response;
-        $this->request    = Flight::request();
-        $this->getData    = $this->request->data->getData();
-        $this->query      = $this->request->query->getData();
-        $this->log        = new Log;
-        $this->conect     = new ConnectSqlSrv;
+        $this->resp = new Response;
+        $this->request = Flight::request();
+        $this->getData = $this->request->data->getData();
+        $this->query = $this->request->query->getData();
+        $this->log = new Log;
+        $this->conect = new ConnectSqlSrv;
         $this->webservice = new RRHHWebService;
-        $this->tools      = new Tools;
-        $this->paraGene   = new ParaGene;
+        $this->tools = new Tools;
+        $this->paraGene = new ParaGene;
     }
     public function update()
     {
@@ -108,7 +108,7 @@ class Horas
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    // $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
@@ -155,17 +155,17 @@ class Horas
             }
 
             $rules = [ // Reglas de validacion
-                'Lega'  => ['int'],
+                'Lega' => ['int'],
                 'Fecha' => ['required', 'date'],
-                'Hora'  => ['required', 'smallint'],
-                'HsAu'  => ['required', 'time'],
-                'Esta'  => ['allowed012'],
-                'Obse'  => ['varchar40'],
-                'Moti'  => ['smallint'],
+                'Hora' => ['required', 'smallint'],
+                'HsAu' => ['required', 'time'],
+                'Esta' => ['allowed012'],
+                'Obse' => ['varchar40'],
+                'Moti' => ['smallint'],
                 'Valor' => ['decima12.2'],
             ];
 
-            $FechaHoraActual = date('YmdHis') . substr((string)microtime(), 1, 8); // Fecha y hora actual
+            $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
             $customValueKey = array( // Valores por defecto
                 'Lega' => "0",
                 'Fecha' => '00000000',
@@ -199,8 +199,8 @@ class Horas
     public function estruct($estruct)
     {
         $estruct = strtolower($estruct); // Convierto a minuscula
-        $inicio  = microtime(true); // Tiempo de inicio de la consulta
-        $datos   = $this->getEstruct($estruct); // retorna la estructura de datos validada
+        $inicio = microtime(true); // Tiempo de inicio de la consulta
+        $datos = $this->getEstruct($estruct); // retorna la estructura de datos validada
 
         try {
 
@@ -211,33 +211,33 @@ class Horas
                 throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 400);
             }
 
-            $Cod      = ($datos['Cod']); // Codigo de la estructura
-            $Lega     = ($datos['Lega']); // Legajo
-            $Empr     = ($datos['Empr']); // Empresa
-            $Plan     = ($datos['Plan']); // Planta
-            $Conv     = ($datos['Conv']); // Convenio
-            $Sect     = ($datos['Sect']); // Sector
-            $Sec2     = ($datos['Sec2']); // Seccion
-            $Grup     = ($datos['Grup']); // Grupo
-            $Sucu     = ($datos['Sucu']); // Sucursal
-            $Tare     = ($datos['TareProd']); // Tarea de produccion
-            $RegCH    = ($datos['RegCH']); // Regla de Control Horario
-            $Tipo     = ($datos['Tipo']); // Tipo de Personal
-            $THora    = ($datos['THora']); // Tipo de Hora
-            $Esta     = ($datos['Esta']); // Estado de la ficha hora (FicEsta)
-            $Docu     = ($datos['Docu']); // DNI Del Legajo
-            $Sector   = ($datos['Sector']); // Sector
-            $DiaL     = ($datos['DiaL']); // Si Día Laboral
-            $DiaF     = ($datos['DiaF']); // Si Día Feriado
+            $Cod = ($datos['Cod']); // Codigo de la estructura
+            $Lega = ($datos['Lega']); // Legajo
+            $Empr = ($datos['Empr']); // Empresa
+            $Plan = ($datos['Plan']); // Planta
+            $Conv = ($datos['Conv']); // Convenio
+            $Sect = ($datos['Sect']); // Sector
+            $Sec2 = ($datos['Sec2']); // Seccion
+            $Grup = ($datos['Grup']); // Grupo
+            $Sucu = ($datos['Sucu']); // Sucursal
+            $Tare = ($datos['TareProd']); // Tarea de produccion
+            $RegCH = ($datos['RegCH']); // Regla de Control Horario
+            $Tipo = ($datos['Tipo']); // Tipo de Personal
+            $THora = ($datos['THora']); // Tipo de Hora
+            $Esta = ($datos['Esta']); // Estado de la ficha hora (FicEsta)
+            $Docu = ($datos['Docu']); // DNI Del Legajo
+            $Sector = ($datos['Sector']); // Sector
+            $DiaL = ($datos['DiaL']); // Si Día Laboral
+            $DiaF = ($datos['DiaF']); // Si Día Feriado
 
-            $start    = $datos['start']; // Pagina de inicio
-            $length   = $datos['length']; // Cantidad de registros
-            $Desc     = $datos['Desc']; // Descripcion de la estructura
-            $ApNo     = $datos['ApNo']; // Apellido y Nombre
+            $start = $datos['start']; // Pagina de inicio
+            $length = $datos['length']; // Cantidad de registros
+            $Desc = $datos['Desc']; // Descripcion de la estructura
+            $ApNo = $datos['ApNo']; // Apellido y Nombre
             $ApNoLega = $datos['ApNoLega']; // Apellido y Nombre + legajo
-            $HoraMin  = $datos['HoraMin']; // Hora minima
-            $HoraMax  = $datos['HoraMax']; // Hora maxima
-            $HsTr     = $datos['HsTr']; // Solo horas trabajadas
+            $HoraMin = $datos['HoraMin']; // Hora minima
+            $HoraMax = $datos['HoraMax']; // Hora maxima
+            $HsTr = $datos['HsTr']; // Solo horas trabajadas
 
             /** De este Fragmento de codigo se definoe si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
             $estructuras = ['tare', 'regla', 'lega', 'tipo']; // Estructuras que se utilizan para el INNER JOIN PERSONAL
@@ -280,8 +280,8 @@ class Horas
             $params = [
                 ':FechaIni' => $FechaIni,
                 ':FechaFin' => $FechaFin,
-                ':start'    => intval($start),
-                ':length'   => intval($length)
+                ':start' => intval($start),
+                ':length' => intval($length)
             ];
             ($Desc) ? $params[':Desc'] = '%' . $Desc . '%' : '';
             ($paramPers && $ApNo) ? $params[':ApNo'] = '%' . $ApNo . '%' : '';
@@ -305,34 +305,34 @@ class Horas
         }
 
         $rules = [ // Reglas de validacion
-            'Cod'      => ['arrInt'], // Codigo de la estructura
-            'Desc'     => ['varchar40'], // Descripcion de la estructura
-            'Sector'   => ['arrSmallint'], // Sector
-            'Docu'     => ['arrInt'], // DNI Del Legajo
-            'Lega'     => ['arrInt'], // Legajo
-            'ApNo'     => ['varchar40'], // Apellido y Nombre
+            'Cod' => ['arrInt'], // Codigo de la estructura
+            'Desc' => ['varchar40'], // Descripcion de la estructura
+            'Sector' => ['arrSmallint'], // Sector
+            'Docu' => ['arrInt'], // DNI Del Legajo
+            'Lega' => ['arrInt'], // Legajo
+            'ApNo' => ['varchar40'], // Apellido y Nombre
             'ApNoLega' => ['varchar40'], // Apellido y Nombre del legajo
-            'Empr'     => ['arrSmallint'], // Empresa
-            'Plan'     => ['arrSmallint'], // Planta
-            'Conv'     => ['arrSmallint'], // Convenio
-            'Sect'     => ['arrSmallint'], // Seccion
-            'Sec2'     => ['arrSmallint'], // Seccion 2
-            'Grup'     => ['arrSmallint'], // Grupo
-            'Sucu'     => ['arrSmallint'], // Sucursal
+            'Empr' => ['arrSmallint'], // Empresa
+            'Plan' => ['arrSmallint'], // Planta
+            'Conv' => ['arrSmallint'], // Convenio
+            'Sect' => ['arrSmallint'], // Seccion
+            'Sec2' => ['arrSmallint'], // Seccion 2
+            'Grup' => ['arrSmallint'], // Grupo
+            'Sucu' => ['arrSmallint'], // Sucursal
             'TareProd' => ['arrSmallint'], // Tarea de produccion
-            'RegCH'    => ['arrSmallint'], // Regla de Control Horario
-            'Tipo'     => ['arrSmallint'], // Tipo de Personal
-            'THora'    => ['arrSmallint'], // Tipo de Hora
-            'Esta'     => ['arrAllowed012'], // Estado de la ficha hora (FicEsta)
+            'RegCH' => ['arrSmallint'], // Regla de Control Horario
+            'Tipo' => ['arrSmallint'], // Tipo de Personal
+            'THora' => ['arrSmallint'], // Tipo de Hora
+            'Esta' => ['arrAllowed012'], // Estado de la ficha hora (FicEsta)
             'FechaIni' => ['required', 'date'], // Fecha de inicio
             'FechaFin' => ['required', 'date'], // Fecha de fin
-            'HoraMax'  => ['time'], // Hora maxima
-            'HoraMin'  => ['time'], // Hora minima
-            'DiaL'     => ['arrAllowed01'], // Si Dia laboral
-            'DiaF'     => ['arrAllowed01'], // Si Dia feriado
-            'HsTr'     => ['allowed01'], // Solo horas trabajadas
-            'start'    => ['intempty'], // Pagina de inicio
-            'length'   => ['intempty'] // Cantidad de registros
+            'HoraMax' => ['time'], // Hora maxima
+            'HoraMin' => ['time'], // Hora minima
+            'DiaL' => ['arrAllowed01'], // Si Dia laboral
+            'DiaF' => ['arrAllowed01'], // Si Dia feriado
+            'HsTr' => ['allowed01'], // Solo horas trabajadas
+            'start' => ['intempty'], // Pagina de inicio
+            'length' => ['intempty'] // Cantidad de registros
         ];
 
         try {
@@ -342,11 +342,11 @@ class Horas
                 throw new \Exception("Parámetro Sector es requerido cuando solicita estruct sección (sec2).", 1);
             }
 
-            $datos['HsTr']     = $datos['HsTr'] ?? "0"; // Solo horas trabajadas. 0 = No, 1 = Si
-            $datos['HoraMin']  = $datos['HoraMin'] ?? '00:01'; // Hora minima
-            $datos['HoraMax']  = $datos['HoraMax'] ?? '23:59'; // Hora maxima
-            $datos['start']    = $datos['start'] ?? 0; // Pagina de inicio si no viene en los datos
-            $datos['length']   = $datos['length'] ?? 5; // Cantidad de registros si no viene en los datos
+            $datos['HsTr'] = $datos['HsTr'] ?? "0"; // Solo horas trabajadas. 0 = No, 1 = Si
+            $datos['HoraMin'] = $datos['HoraMin'] ?? '00:01'; // Hora minima
+            $datos['HoraMax'] = $datos['HoraMax'] ?? '23:59'; // Hora maxima
+            $datos['start'] = $datos['start'] ?? 0; // Pagina de inicio si no viene en los datos
+            $datos['length'] = $datos['length'] ?? 5; // Cantidad de registros si no viene en los datos
             $datos['FechaIni'] = $datos['FechaIni'] ?? date('Y-m-d'); // Fecha de inicio si no viene en los datos
             $datos['FechaFin'] = $datos['FechaFin'] ?? date('Y-m-d'); // Fecha de fin si no viene en los datos
 
@@ -373,22 +373,22 @@ class Horas
     private function joinEstruct($estruct)
     {
         $JoinEstruct = [
-            'empr'  => " INNER JOIN EMPRESAS ON FICHAS.FicEmpr = EMPRESAS.EmpCodi",
-            'plan'  => " INNER JOIN PLANTAS ON FICHAS.FicPlan = PLANTAS.PlaCodi",
-            'grup'  => " INNER JOIN GRUPOS ON FICHAS.FicGrup = GRUPOS.GruCodi",
-            'sect'  => " INNER JOIN SECTORES ON FICHAS.FicSect = SECTORES.SecCodi",
-            'sucu'  => " INNER JOIN SUCURSALES ON FICHAS.FicSucu = SUCURSALES.SucCodi",
-            'tare'  => " INNER JOIN TAREAS ON PERSONAL.LegTareProd = TAREAS.TareCodi",
-            'conv'  => " INNER JOIN CONVENIO ON FICHAS.FicConv = CONVENIO.ConCodi",
+            'empr' => " INNER JOIN EMPRESAS ON FICHAS.FicEmpr = EMPRESAS.EmpCodi",
+            'plan' => " INNER JOIN PLANTAS ON FICHAS.FicPlan = PLANTAS.PlaCodi",
+            'grup' => " INNER JOIN GRUPOS ON FICHAS.FicGrup = GRUPOS.GruCodi",
+            'sect' => " INNER JOIN SECTORES ON FICHAS.FicSect = SECTORES.SecCodi",
+            'sucu' => " INNER JOIN SUCURSALES ON FICHAS.FicSucu = SUCURSALES.SucCodi",
+            'tare' => " INNER JOIN TAREAS ON PERSONAL.LegTareProd = TAREAS.TareCodi",
+            'conv' => " INNER JOIN CONVENIO ON FICHAS.FicConv = CONVENIO.ConCodi",
             'regla' => " INNER JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi",
             'thora' => " INNER JOIN TIPOHORA ON FICHAS1.FicHora = TIPOHORA.THoCodi",
-            'sec2'  => " INNER JOIN SECCION ON FICHAS.FicSec2 = SECCION.Se2Codi AND FICHAS.FicSect = SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi",
+            'sec2' => " INNER JOIN SECCION ON FICHAS.FicSec2 = SECCION.Se2Codi AND FICHAS.FicSect = SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi",
         ];
         return $JoinEstruct[$estruct] ?? '';
     }
     private function columnsEstruct($estruct)
     {
-        $cod   = 'Cod';
+        $cod = 'Cod';
         $count = 'Count';
 
         $labelEstruct = ($this->paraGene->return());
@@ -401,18 +401,18 @@ class Horas
         $sinSec2 = "Sin " . $labelEstruct['Etiquetas']['SeccSin'];
 
         $Select = [
-            'empr'  => $this->caseWhen('EmpRazon', $sinEmpr) . ", FicEmpr AS '$cod', count(FicEmpr) AS '$count'",
-            'plan'  => $this->caseWhen('PlaDesc', $sinPlan) . ", FicPlan AS '$cod', count(FicPlan) AS '$count'",
-            'grup'  => $this->caseWhen('GruDesc', $sinGrup) . ", FicGrup AS '$cod', count(FicGrup) AS '$count'",
-            'sect'  => $this->caseWhen('SecDesc', $sinSect) . ", FicSect AS '$cod', count(FicSect) AS '$count'",
-            'sucu'  => $this->caseWhen('SucDesc', $sinSucu) . ", FicSucu AS '$cod', count(FicSucu) AS '$count'",
-            'tare'  => $this->caseWhen('TareDesc', "Sin Tarea") . ", LegTareProd AS '$cod', count(LegTareProd) AS '$count'",
-            'conv'  => $this->caseWhen('ConDesc', "Fuera de Convenio") . ", FicConv AS '$cod', count(FicConv) AS '$count'",
+            'empr' => $this->caseWhen('EmpRazon', $sinEmpr) . ", FicEmpr AS '$cod', count(FicEmpr) AS '$count'",
+            'plan' => $this->caseWhen('PlaDesc', $sinPlan) . ", FicPlan AS '$cod', count(FicPlan) AS '$count'",
+            'grup' => $this->caseWhen('GruDesc', $sinGrup) . ", FicGrup AS '$cod', count(FicGrup) AS '$count'",
+            'sect' => $this->caseWhen('SecDesc', $sinSect) . ", FicSect AS '$cod', count(FicSect) AS '$count'",
+            'sucu' => $this->caseWhen('SucDesc', $sinSucu) . ", FicSucu AS '$cod', count(FicSucu) AS '$count'",
+            'tare' => $this->caseWhen('TareDesc', "Sin Tarea") . ", LegTareProd AS '$cod', count(LegTareProd) AS '$count'",
+            'conv' => $this->caseWhen('ConDesc', "Fuera de Convenio") . ", FicConv AS '$cod', count(FicConv) AS '$count'",
             'regla' => $this->caseWhen('RCDesc', "Sin Regla CH") . ", LegRegCH AS '$cod', count(LegRegCH) AS '$count'",
             'thora' => $this->caseWhen('THoDesc', "Sin Tipo de Hora") . ", FicHora AS '$cod', count(FicHora) AS '$count'",
-            'lega'  => $this->caseWhen('LegApNo', "Sin Nombre") . ", FICHAS.FicLega AS '$cod', count(FICHAS.FicLega) AS '$count'",
-            'tipo'  => " dbo.fn_TipoDePersonal(LegTipo) as 'Desc', LegTipo AS '$cod', count(LegTipo) AS '$count'",
-            'sec2'  => $this->caseWhen('Se2Desc', $sinSec2) . ", SECCION.SecCodi AS 'Sect', SECTORES.SecDesc AS 'SectDesc', FicSec2 AS '$cod', count(FicSec2) AS '$count'",
+            'lega' => $this->caseWhen('LegApNo', "Sin Nombre") . ", FICHAS.FicLega AS '$cod', count(FICHAS.FicLega) AS '$count'",
+            'tipo' => " dbo.fn_TipoDePersonal(LegTipo) as 'Desc', LegTipo AS '$cod', count(LegTipo) AS '$count'",
+            'sec2' => $this->caseWhen('Se2Desc', $sinSec2) . ", SECCION.SecCodi AS 'Sect', SECTORES.SecDesc AS 'SectDesc', FicSec2 AS '$cod', count(FicSec2) AS '$count'",
         ];
         return $Select[$estruct];
     }
@@ -421,62 +421,65 @@ class Horas
         $group = 'GROUP BY';
         $order = 'ORDER BY';
         $GroupBY = [
-            'empr'  => " $group EmpRazon, FicEmpr $order EmpRazon",
-            'plan'  => " $group PlaDesc, FicPlan $order PlaDesc",
-            'grup'  => " $group GruDesc, FicGrup $order GruDesc",
-            'sect'  => " $group SecDesc, FicSect $order SecDesc",
-            'sucu'  => " $group SucDesc, FicSucu $order SucDesc",
-            'tare'  => " $group TareDesc, LegTareProd $order TareDesc",
-            'conv'  => " $group ConDesc, FicConv $order ConDesc",
+            'empr' => " $group EmpRazon, FicEmpr $order EmpRazon",
+            'plan' => " $group PlaDesc, FicPlan $order PlaDesc",
+            'grup' => " $group GruDesc, FicGrup $order GruDesc",
+            'sect' => " $group SecDesc, FicSect $order SecDesc",
+            'sucu' => " $group SucDesc, FicSucu $order SucDesc",
+            'tare' => " $group TareDesc, LegTareProd $order TareDesc",
+            'conv' => " $group ConDesc, FicConv $order ConDesc",
             'regla' => " $group RCDesc, LegRegCH $order RCDesc",
             'thora' => " $group THoDesc, FicHora $order THoDesc",
-            'lega'  => " $group LegApNo, FICHAS.FicLega $order LegApNo",
-            'tipo'  => " $group LegTipo $order LegTipo",
-            'sec2'  => " GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc $order Se2Desc",
+            'lega' => " $group LegApNo, FICHAS.FicLega $order LegApNo",
+            'tipo' => " $group LegTipo $order LegTipo",
+            'sec2' => " GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc $order Se2Desc",
         ];
         return $GroupBY[$estruct];
     }
     private function queryEstructDesc($estruct, $Desc)
     {
-        if (!($Desc)) return '';
+        if (!($Desc))
+            return '';
         $arr = [
-            'empr'  => " AND EMPRESAS.EmpRazon LIKE :Desc",
-            'plan'  => " AND PLANTAS.PlaDesc LIKE :Desc",
-            'grup'  => " AND GRUPOS.GruDesc LIKE :Desc",
-            'sect'  => " AND SECTORES.SecDesc LIKE :Desc",
-            'sucu'  => " AND SUCURSALES.SucDesc LIKE :Desc",
-            'tare'  => " AND TAREAS.TareDesc LIKE :Desc",
-            'conv'  => " AND CONVENIO.ConDesc LIKE :Desc",
+            'empr' => " AND EMPRESAS.EmpRazon LIKE :Desc",
+            'plan' => " AND PLANTAS.PlaDesc LIKE :Desc",
+            'grup' => " AND GRUPOS.GruDesc LIKE :Desc",
+            'sect' => " AND SECTORES.SecDesc LIKE :Desc",
+            'sucu' => " AND SUCURSALES.SucDesc LIKE :Desc",
+            'tare' => " AND TAREAS.TareDesc LIKE :Desc",
+            'conv' => " AND CONVENIO.ConDesc LIKE :Desc",
             'regla' => " AND REGLASCH.RCDesc LIKE :Desc",
             'thora' => " AND TIPOHORA.THoDesc LIKE :Desc",
-            'lega'  => " AND PERSONAL.LegApNo LIKE :Desc",
-            'tipo'  => " AND dbo.fn_TipoDePersonal(LegTipo) LIKE :Desc",
+            'lega' => " AND PERSONAL.LegApNo LIKE :Desc",
+            'tipo' => " AND dbo.fn_TipoDePersonal(LegTipo) LIKE :Desc",
             'sec2' => " AND SECCION.Se2Desc LIKE :Desc"
         ];
         return $arr[$estruct];
     }
     private function queryEstructCod($estruct, $Cod)
     {
-        if (!($Cod)) return '';
+        if (!($Cod))
+            return '';
         $arr = [
-            'empr'  => " AND FICHAS.FicEmpr IN (" . implode(",", $Cod) . ")",
-            'plan'  => " AND FICHAS.FicPlan IN (" . implode(",", $Cod) . ")",
-            'grup'  => " AND FICHAS.FicGrup IN (" . implode(",", $Cod) . ")",
-            'sect'  => " AND FICHAS.FicSect IN (" . implode(",", $Cod) . ")",
-            'sucu'  => " AND FICHAS.FicSucu IN (" . implode(",", $Cod) . ")",
-            'tare'  => " AND PERSONAL.LegTareProd IN (" . implode(",", $Cod) . ")",
-            'conv'  => " AND FICHAS.FicConv IN (" . implode(",", $Cod) . ")",
+            'empr' => " AND FICHAS.FicEmpr IN (" . implode(",", $Cod) . ")",
+            'plan' => " AND FICHAS.FicPlan IN (" . implode(",", $Cod) . ")",
+            'grup' => " AND FICHAS.FicGrup IN (" . implode(",", $Cod) . ")",
+            'sect' => " AND FICHAS.FicSect IN (" . implode(",", $Cod) . ")",
+            'sucu' => " AND FICHAS.FicSucu IN (" . implode(",", $Cod) . ")",
+            'tare' => " AND PERSONAL.LegTareProd IN (" . implode(",", $Cod) . ")",
+            'conv' => " AND FICHAS.FicConv IN (" . implode(",", $Cod) . ")",
             'regla' => " AND PERSONAL.LegRegCH IN (" . implode(",", $Cod) . ")",
             'thora' => " AND FICHAS1.FicHora IN (" . implode(",", $Cod) . ")",
-            'lega'  => " AND FICHAS.FicLega IN (" . implode(",", $Cod) . ")",
-            'tipo'  => " AND PERSONAL.LegTipo IN (" . implode(",", $Cod) . ")",
+            'lega' => " AND FICHAS.FicLega IN (" . implode(",", $Cod) . ")",
+            'tipo' => " AND PERSONAL.LegTipo IN (" . implode(",", $Cod) . ")",
             'sec2' => " AND FICHAS.FicSec2 IN (" . implode(",", $Cod) . ")"
         ];
         return $arr[$estruct];
     }
     private function queryEstructSect($estruct, $Sector)
     {
-        if (!($Sector)) return '';
+        if (!($Sector))
+            return '';
         $arr = [
             'sec2' => " AND FICHAS.FicSect IN (" . implode(",", $Sector) . ")"
         ];
@@ -493,7 +496,16 @@ class Horas
     private function queryFichasEstruct($Lega, $Empr, $Plan, $Conv, $Sect, $Sec2, $Grup, $Sucu, $DiaL, $DiaF)
     {
         $Filtros = [
-            'Lega' => $Lega, 'Empr' => $Empr, 'Plan' => $Plan, 'Conv' => $Conv, 'Sect' => $Sect, 'Sec2' => $Sec2, 'Grup' => $Grup, 'Sucu' => $Sucu, 'DiaL' => $DiaL, 'DiaF' => $DiaF
+            'Lega' => $Lega,
+            'Empr' => $Empr,
+            'Plan' => $Plan,
+            'Conv' => $Conv,
+            'Sect' => $Sect,
+            'Sec2' => $Sec2,
+            'Grup' => $Grup,
+            'Sucu' => $Sucu,
+            'DiaL' => $DiaL,
+            'DiaF' => $DiaF
         ];
 
         $sql = " WHERE FICHAS.FicLega > 0 AND FICHAS.FicFech BETWEEN :FechaIni AND :FechaFin";
@@ -511,12 +523,12 @@ class Horas
     {
         $sql = '';
         if ($paramPers) {
-            $sql .= ($ApNo)     ? " AND PERSONAL.LegApNo LIKE :ApNo" : '';
+            $sql .= ($ApNo) ? " AND PERSONAL.LegApNo LIKE :ApNo" : '';
             $sql .= ($ApNoLega) ? " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE :ApNoLega" : '';
-            $sql .= ($Docu)     ? " AND PERSONAL.LegDocu IN (" . implode(",", $Docu) . ")" : '';
-            $sql .= ($Tipo)     ? " AND PERSONAL.LegTipo IN (" . implode(",", $Tipo) . ")" : '';
-            $sql .= ($RegCH)    ? " AND PERSONAL.LegRegCH IN (" . implode(",", $RegCH) . ")" : '';
-            $sql .= ($Tare)     ? " AND PERSONAL.LegTareProd IN (" . implode(",", $Tare) . ")" : '';
+            $sql .= ($Docu) ? " AND PERSONAL.LegDocu IN (" . implode(",", $Docu) . ")" : '';
+            $sql .= ($Tipo) ? " AND PERSONAL.LegTipo IN (" . implode(",", $Tipo) . ")" : '';
+            $sql .= ($RegCH) ? " AND PERSONAL.LegRegCH IN (" . implode(",", $RegCH) . ")" : '';
+            $sql .= ($Tare) ? " AND PERSONAL.LegTareProd IN (" . implode(",", $Tare) . ")" : '';
         }
         return $sql;
     }
