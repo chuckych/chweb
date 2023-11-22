@@ -544,18 +544,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             PrintRespuestaJson('error', 'Falta Reg ID');
             exit;
         }
-        ;
 
         if (strlen($deviceUser) > 11) {
             PrintRespuestaJson('error', 'El usuario no puede ser mayor a 11 caracteres');
             exit;
         }
-        ;
         if ($rememberUser > 1) {
             PrintRespuestaJson('error', 'Recordar usuario inválido');
             exit;
         }
-        ;
 
         $paramsApi = array(
             'key' => $_SESSION["RECID_CLIENTE"],
@@ -566,16 +563,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'initialize' => $deviceInitialize,
         );
 
-        // echo Flight::json($paramsApi).exit;
+        // echo Flight::json($paramsApi) . exit;
 
         $api = "api/v1/setDevice/";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? '';
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? '') > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             $i = ($deviceInitialize) ? 'Sí' : 'No';
@@ -584,7 +581,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             auditoria($textAud, 'A', $params['deviceIDCompany'], '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = ($api['MESSAGE'] ?? '');
         }
         $json_data = array(
             "Mensaje" => $arrayData,
@@ -1104,7 +1101,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $post = $_POST;
 
         $idCompany = $_SESSION['ID_CLIENTE'];
-        
+
         $params = array(
             'key' => $_SESSION["RECID_CLIENTE"],
         );

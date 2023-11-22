@@ -830,7 +830,7 @@ function loadMap(data, customid) {
     if (apiMobile.value == 'http://localhost:8050') {
         path = ''
     }
-    console.log(path);
+
     data.forEach((ubicacion) => {
         ubicacionesParaMapa.push(
             {
