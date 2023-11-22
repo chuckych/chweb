@@ -564,7 +564,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'AppVersion' => $params['deviceAppVersion'],
         );
 
-        echo Flight::json($paramsApi) . exit;
+        // echo Flight::json($paramsApi) . exit;
 
         $api = "api/v1/setDevice/";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
