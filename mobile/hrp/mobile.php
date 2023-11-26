@@ -105,16 +105,10 @@
                 ?>
                     <div class="col-12 m-0 mt-2">
                         <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
-                            <select class="selectjs_cuentaToken w250" id="recid" name="recid" style="display:none">
+                            <select class="selectjs_cuentaToken" id="recid" name="recid" style="display:none">
                             </select>
                         </form>
                     </div>
-                    <!-- <div class="col-12">
-                        <div class="fontq mt-2 p-2">
-                            <div>ID: <span id="dataIdCompany" class="ml-1"></span></div>
-                            <div>AppCode: <span id="dataRecidCompany" class="ml-1"></span></div>
-                        </div>
-                    </div> -->
                 <?php
                 endif;
                 ?>
@@ -198,7 +192,30 @@
     if (modulo_cuentas()) :
     ?>
         <script>
-            SelectSelect2Ajax(".selectjs_cuentaToken", false, false, 'Cambiar de Cuenta', 0, 10, 10, false, '/mobile/hrp/getCuentasApi.php', '250', '', 'POST');
+            const getCuentas = async () => {
+                const url = 'getCuentasApi.php';
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const json = await response.json();
+                json.forEach(element => {
+                    $('.selectjs_cuentaToken').append(`<option value="${element.id}">${element.id} - ${element.text}</option>`);
+                });
+
+                $(".selectjs_cuentaToken").select2({
+                    placeholder: 'Cambiar de Cuenta',
+                    minimumResultsForSearch: 10,
+                    allowClear: false,
+                    selectOnClose: false,
+                    width: '250px'
+                })
+                return json;
+            }
+
+            getCuentas();
 
             $(".selectjs_cuentaToken").on("select2:select", function(e) {
                 CheckSesion();
@@ -208,7 +225,7 @@
             $("#RefreshToken").on("submit", function(e) {
                 e.preventDefault();
                 ClearFilterMobile();
-                $("#collapseFilterChecks").collapse('hide')
+                $("#collapseFilterChecks").collapse('hide');
                 $.ajax({
                     type: $(this).attr("method"),
                     url: $(this).attr("action"),

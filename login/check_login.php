@@ -184,7 +184,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	}
 
 	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
-	if ($row["recid_cliente"] == 'kxo7w2q-'): // solo para la cuenta de SKF 'kxo7w2q-'
+	if ($row["recid_cliente"] == 'kxo7w2q-') : // solo para la cuenta de SKF 'kxo7w2q-'
 		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
 		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
 			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
@@ -203,7 +203,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 			$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
 			$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
 		}
-	else:
+	else :
 		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
 		$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
