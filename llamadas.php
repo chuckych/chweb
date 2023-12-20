@@ -13,7 +13,8 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css"> -->
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?=version_file("/css/bootstrap.min.css")?>" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>"
+	type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
 <?php
 switch ($Modulo) {
@@ -43,11 +44,11 @@ switch ($Modulo) {
 		echo '<style>:root { --main-bg-modcolor : #68518f; } </style>';
 		break;
 	case '5':
-		/** Modulo mobile fichadas. Color predeterminado */
+	/** Modulo mobile fichadas. Color predeterminado */
 	case '25':
-		/** Modulo mobile zonas. Color predeterminado */
+	/** Modulo mobile zonas. Color predeterminado */
 	case '26':
-		/** Modulo mobile Usuarios. Color predeterminado */
+	/** Modulo mobile Usuarios. Color predeterminado */
 	case '27':
 		/** Modulo mobile Mensajes. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #b71c1c; } </style>';
@@ -135,10 +136,10 @@ switch ($Modulo) {
 		break;
 }
 ?>
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?=version_file("/css/style-min.css")?>">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style-min.css?v=<?= version_file("/css/style-min.css") ?>">
 <?php
-if (getBrowser($_SERVER['HTTP_USER_AGENT'])=='Internet explorer') {
-	echo '<link rel="stylesheet" type="text/css" href="/'. HOMEHOST .'/css/ie.css?v='.version_file("/css/ie.css").'" />';
+if (getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer') {
+	echo '<link rel="stylesheet" type="text/css" href="/' . HOMEHOST . '/css/ie.css?v=' . version_file("/css/ie.css") . '" />';
 }
 ?>
 <!--

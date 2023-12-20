@@ -17,11 +17,13 @@ header('WWW-Authenticate: Basic');
 $_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
 $dataC = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
 
+// (response(Flight::request(), 0, 'test', 400, timeStart(), 0, 1)) . exit;
 $control = new requestControl();
 $apiData = new apiData($dataC);
 $db = new querydb($dataC);
 
 $ws = new webServiceCH($apiData->get('WebServiceCH'));
+
 
 $apiData = function ($key = '') use ($dataC) {
     if ($key) {
@@ -29,7 +31,6 @@ $apiData = function ($key = '') use ($dataC) {
     }
     return $dataC;
 };
-
 $idCompany = $dataC['idCompany']; // Id de la cuenta {int}
 $_SERVER['PHP_AUTH_USER'] = $_SERVER['PHP_AUTH_USER'] ?? '';
 $_SERVER['PHP_AUTH_PW'] = $_SERVER['PHP_AUTH_PW'] ?? '';
@@ -38,6 +39,8 @@ $ErrorVP = [];
 
 $request = Flight::request();
 $payload = $request->data;
+
+
 $dp = $request->data;
 $method = $request->method;
 

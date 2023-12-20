@@ -39,7 +39,7 @@ if ($dp['getCierre']) {
     $colCierre = ",PERCIERRE.CierreFech";
 }
 $HoraMinMax = '';
-$distinct = '';
+$distinct = 'DISTINCT';
 
 if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
     if (($dp['getHor'])) {

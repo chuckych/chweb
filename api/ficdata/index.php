@@ -8,7 +8,10 @@ errorReport();
 
 $iLega2 = $total = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $onlyRegCount = '';
 
-$checkMethod('POST');
+// $checkMethod('POST');
+
+$control->check_method("POST");
+$control->check_json();
 
 require __DIR__ . '../wc.php';
 
@@ -18,7 +21,7 @@ if ($dp['getReg']) {
     if ($dp['onlyReg']) {
         $joinFichas4 = " INNER JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs ";
     }
-    
+
 }
 if ($dp['getNov']) {
     $joinFichas3 = " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech ";
@@ -64,11 +67,11 @@ if (empty($stmtFic)) {
 foreach ($stmtFic as $key => $v) {
 
     $data[] = array(
-        'Lega'     => $v['FicLega'],
-        'ApNo'     => trim(str_replace(' ', '', $v['LegApNo'])),
+        'Lega' => $v['FicLega'],
+        'ApNo' => trim(str_replace(' ', '', $v['LegApNo'])),
     );
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtFicCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

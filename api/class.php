@@ -61,14 +61,17 @@ class requestControl
      */
     public function check_json()
     {
-        $array = file_get_contents('php://input');
-        $data = json_decode($array, true);
-
-        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+        $request = Flight::request();
+        $payload = $request->data;
+        // (response($payload, 0, 'Formato JSON invalido', 400, microtime(true), 0, 0));
+        // exit;
+        // $array = file_get_contents('php://input');
+        // $data = json_decode($array, true);
+        if ($payload === null && json_last_error() !== JSON_ERROR_NONE) {
             $errores[] = json_last_error_msg();
             // la cadena no está en formato JSON válido
             http_response_code(400);
-            (response($errores, 0, 'Formato JSON inválido', 400, microtime(true), 0, 0));
+            (response($errores, 0, 'Formato JSON invalido', 400, microtime(true), 0, 0));
             exit;
         }
     }
