@@ -1,7 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
-echo '<body class="fontq" backtop="5mm" backbottom="10mm">';
+echo '<body backtop="5mm" backbottom="10mm">';
 require __DIR__ . '/dataApi.php';
 $groupLega = _group_by_keys($dataApi['DATA'], $keys = array('Lega')); // Agrupamos los datos obtenidos de la api por legajo. 
 if ($THColu) {
@@ -19,7 +19,7 @@ foreach ($groupLega as $key => $encabezado) {
     }
     $f1 = '<div style="page-break-inside: avoid">';
     $f1 .= '<hr>';
-    $f1 .= '<table width=100%>'; // encabezado
+    $f1 .= '<table border=0 width=100%>'; // encabezado
     $f1 .= '<tr>';
     $f1 .= '<th class="bold" style="width:50px">Legajo: </th>';
     $f1 .= "<th><span class='bold'>($encabezado[Lega]) $encabezado[ApNo]</span></th>";
@@ -30,7 +30,7 @@ foreach ($groupLega as $key => $encabezado) {
     $f1 .= '</tr>';
     $f1 .= '</table>'; // Fin Encabezado
     $f1 .= '<hr>';
-    $f1 .= '<table border=0>';
+    $f1 .= '<table border=0 width:100%>';
     $f1 .= '<tr>';
     $f1 .= '<th class="pr-2 bold">Fecha</th>';
     $f1 .= '<th class="px-2 bold">Día</th>';
@@ -43,6 +43,7 @@ foreach ($groupLega as $key => $encabezado) {
     // }
     // if ($_VerNove == '1') { // Mostramos Las columnas Novedades
     $f1 .= '<th class="px-2 bold">Novedades</th>';
+    $f1 .= '<th class="bold center"></th>';
     // }
     // if ($_VerHoras == '1') { // Mostramos Las columnas Horas
     foreach ($THColu as $dataTHoDesc2) {
@@ -128,27 +129,47 @@ foreach ($groupLega as $key => $encabezado) {
 
             $TotalNovedades = count($valueLegajo['Nove']);
             if ($TotalNovedades > 0) {
-                echo '<td>';
-                echo '<table border=0 width="100%">';
+                echo "<td  class='px-2 vtop'>";
+                // echo '<table border=1 width="100%" autosize="1">';
                 foreach ($valueLegajo['Nove'] as $key => $n) {
-                    echo '<tr style="padding-top:0px;">';
-                    echo "<td class='px-2 vtop' style='padding-top:0px;'>";
-                    echo "$n[Desc]";
-                    echo "</td>";
-                    echo "<td class='px-2 vtop' style='text-align:right;padding-top:0px;'>";
-                    echo "$n[Horas]";
-                    echo "</td>";
-                    echo '</tr>';
+                    // echo '<tr>';
+                    // echo "<td class='vtop'>";
+                    // echo '<p style="border:0px solid #333;">';
+                    echo "<p>";
+                    echo "<span>" . $n['Desc'] . "</span>";
+                    // echo "&nbsp;";
+                    // echo "</td>";
+                    // echo "<td class='vtop' style='text-align:right'>";
+                    // echo "<span style='float-right'>" . $n['Horas'] . "</span>";
+                    echo "</p>";
+                    // echo "</td>";
+                    // echo '</tr>';
+                    // si la ultima $key es mayor a 0 y la cantidad de novedades es mayor a 1, mostramos un hr
+                    // echo '</p>';
+                    if ($key < $TotalNovedades - 1 && $TotalNovedades > 1) {
+                        echo '<hr style="margin:2px; padding:0px; color:#fff">';
+                    }
                     $arrNove[$n['Desc']] += horaMin($n['Horas']);
                     $arrNoveGeneral[$n['Desc']] += horaMin($n['Horas']);
                     $arrNoveCant[$n['Desc']] += 1;
                     $arrNoveCantGeneral[$n['Desc']] += 1;
                 }
-                echo '</table>';
+                // echo '</table>';
                 echo '</td>';
             }
+            echo "<td  class='vtop center'>";
+            foreach ($valueLegajo['Nove'] as $key => $n2) {
+                echo "<p>";
+                echo "<span>" . $n2['Horas'] . "</span>";
+                echo "</p>";
+                if ($key < $TotalNovedades - 1 && $TotalNovedades > 1) {
+                    echo '<hr style="margin:2px; padding:0px; color:#fff">';
+                }
+            }
+            echo '</td>';
         } else {
             echo "<td class='px-2 vtop'>.</td>";
+            echo "<td class='vtop center'></td>";
         }
 
         if ($THColu) { // Mostramos Horas
@@ -176,7 +197,7 @@ foreach ($groupLega as $key => $encabezado) {
         $TotalHoras[$key] = array_sum(($t));
     }
     echo '<tr>';
-    echo '<td colspan="7"></td>';
+    echo '<td colspan="8"></td>';
     echo '<td class="bold" style="text-align:right">Totales:</td>';
     foreach ($TotalHoras as $key => $ColHoras) {
         echo "<td class='px-2 vtop center bold' style='text-align:center'>" . MinHora($ColHoras) . "</td>";
