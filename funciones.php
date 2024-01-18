@@ -5,9 +5,14 @@ $routeEnv = __DIR__ . '../../../config_chweb/';
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 
-function version()
+function version($html = false)
 {
-    return 'v0.4.23'; // Version de la aplicación
+    $version = shell_exec('git log -1 --pretty=%B');
+    $fecha = shell_exec('git log -1 --format=%ci');
+    $fecha_ultimo_commit = new DateTime($fecha);
+    $formato_fecha = $fecha_ultimo_commit->format('d/m/Y H:i');
+    $version = $html ? "<span class='text-white text-right'>$version - $formato_fecha</span>" : $version;
+    return $version; // Version de la aplicación
 }
 function verDBLocal()
 {

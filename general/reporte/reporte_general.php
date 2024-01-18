@@ -46,6 +46,7 @@ foreach ($groupLega as $key => $encabezado) {
     $f1 .= '<th class="bold center"></th>';
     // }
     // if ($_VerHoras == '1') { // Mostramos Las columnas Horas
+    $cantidadTHColu = count($THColu);
     foreach ($THColu as $dataTHoDesc2) {
         $f1 .= "<th class='px-2 bold center'>$dataTHoDesc2[Desc2]</th>";
     }
@@ -64,6 +65,8 @@ foreach ($groupLega as $key => $encabezado) {
     }
     foreach ($cuerpoLegajo as $key => $valueLegajo) {
 
+
+
         $ent = $valueLegajo['Tur']['ent'];
         $sal = $valueLegajo['Tur']['sal'];
         $labo = $valueLegajo['Labo'];
@@ -71,7 +74,17 @@ foreach ($groupLega as $key => $encabezado) {
         $horario = horarioApi($ent, $sal, $labo, $feri);
         $fecha = FechaFormatVar($valueLegajo['Fech'], 'd/m/Y');
         $dia = DiaSemana3($valueLegajo['Fech']);
-        echo '<tr>';
+        $FrancoColor = '';
+        // if ($horario == 'Franco' || $horario == 'Feriado') {
+        // echo '<tr>';
+        // echo '<td colspan="' . ($cantidadTHColu + 9) . '">';
+        // echo '<hr style="margin:2px; padding:0px;">';
+        // echo '</td>';
+        // echo '</tr>';
+        // continue;
+        // $FrancoColor = 'style="background-color:#fafafa;"';
+        // }
+        echo '<tr ' . $FrancoColor . '>';
         echo "<td class='pr-2 vtop'>$fecha</td>";
         echo "<td class='px-2 vtop'>$dia</td>";
         echo "<td class='px-2 vtop'>$horario</td>";
