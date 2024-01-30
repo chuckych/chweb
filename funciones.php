@@ -2251,6 +2251,9 @@ function datosGet($Get, $Col)
 ;
 function MinHora($Min)
 {
+    if ($Min == 0) {
+        return '00:00';
+    }
     if (!$Min || !is_int($Min)) {
         return false;
     }
