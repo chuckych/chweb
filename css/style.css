@@ -4,6 +4,7 @@
      --main-radius0: .0px;
      --main-transition: .5s;
      --animate-duration: .6s;
+     --border-input-color: #bcbbbb;
  }
 
  .bg-nov, .bg-nov:hover {
@@ -50,7 +51,7 @@
  }
 
  .border-ddd {
-     border: 1px solid #ddd !important;
+     border: 1px solid var(--border-input-color) !important;
  }
 
  @font-face {
@@ -248,8 +249,8 @@
 
  .form-control {
      background-color: #fff;
-     border-color: #ddd;
-     border: 1px solid #ddd;
+     /* border-color: var(--border-input-color); */
+     border: 1px solid var(--border-input-color);
      border-radius: var(--main-radius);
      color: #66615b;
      line-height: normal !important;
@@ -771,7 +772,7 @@
  input[type=search] {
      padding: 10px;
      background-color: #fff;
-     border: 1px solid #ddd;
+     border: 1px solid var(--border-input-color);
      border-radius: var(--main-radius);
      color: #66615b !important;
      line-height: normal !important;
@@ -937,7 +938,7 @@
  }
 
  .select2-dropdown {
-     border: solid #ddd 1px !important;
+     border: 1px solid var(--border-input-color) !important;
  }
 
  .select2-results__option[aria-selected=true] {
@@ -945,11 +946,11 @@
  }
 
  .select2-container--default.select2-container--focus .select2-selection--multiple {
-     border: solid #cecece 1px
+     border: 1px solid var(--border-input-color) !important;
  }
 
  .select2-container--default.select2-container .select2-selection--multiple {
-     border: solid #cecece 1px;
+     border: 1px solid var(--border-input-color) !important;
      padding-left: 10px;
      border-radius: var(--main-radius)
  }
@@ -1034,7 +1035,7 @@
      height: 40px;
      padding: 5px;
      border-radius: var(--main-radius) !important;
-     border-color: #ddd !important;
+     border-color: var(--border-input-color) !important;
      transition: color .5s ease-in-out, border-color .5s ease-in-out, background-color .5s ease-in-out !important;
      box-shadow: none !important;
      outline: 0 !important
@@ -1051,7 +1052,7 @@
  }
 
  table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
-     background-color: var(--main-bg-modcolor) !important
+     background-color: #efefef !important;
  }
 
  table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
@@ -1062,6 +1063,16 @@
  table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
      background-color: #cecece !important;
      transition: .5s !important
+ }
+
+ .select2-container .select2-selection--single:hover {
+     border-color: var(--main-bg-modcolor) !important;
+     background-color: #fafafa !important
+ }
+
+ .select2-container .select2-selection--multiple:hover {
+     border-color: var(--main-bg-modcolor) !important;
+     background-color: #fafafa !important
  }
 
  .tooltip-inner {

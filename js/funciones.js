@@ -16,12 +16,15 @@ function formatDate(date) {
         month = '0' + month;
     if (day.length < 2)
         day = '0' + day;
-
     return [year, month, day].join('-');
 }
 function formatDate2(date) {
     let d = date.split("/")
     return [d[2], d[1], d[0]].join('-');
+}
+function formatDate3(date) {
+    let d = date.split("-")
+    return [d[2], d[1], d[0]].join('/');
 }
 function NombreMesJS(Mes) {
     switch (Mes) {
@@ -439,7 +442,7 @@ function notify(Mensaje, type, delay, NotifAlign, from) {
         mouse_over: 'pause',
         placement: {
             from: from,
-            align: NotifAlign /** orientación de la notificacion */
+            align: NotifAlign /** orientación de la notificación */
         },
         animate: {
             enter: 'animate__animated animate__fadeInDown',
@@ -487,7 +490,7 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         }
     })
 }
-function select2Simple(selector, placeholder, clear, selclose, width ='') {
+function select2Simple(selector, placeholder, clear, selclose, width = '') {
     $(selector).select2({
         placeholder: placeholder,
         minimumResultsForSearch: 10,
@@ -838,4 +841,61 @@ const getSelectorVal = (selector) => {
         console.log('No existe el selector ' + selector);
         return s
     }
+}
+const colorFichada = (value) => {
+    textColor = ''
+    switch (value['Tipo']) {
+        case 'Normal':
+            textColor = ''
+            break;
+        case 'Manual':
+            textColor = 'text-primary'
+            break;
+        default:
+            textColor = ''
+            break;
+    }
+    textColor = (value['Esta'] == 'Modificada') ? 'text-danger' : textColor
+    return textColor
+}
+const getFichada = (array, fichada) => {
+    let datacol = '-';
+    let textColor = '';
+    let horaOriginal = ''
+    if (fichada == 'primera') {
+        let countOfItems = array.length
+        if (countOfItems) {
+            if (array[0]['Esta'] == 'Modificada') {
+                horaOriginal = '. Hora original: ' + array[0]['Hora']
+            }
+            textColor = colorFichada(array[0])
+            datacol = '<span data-titlet="(# 1) ' + array[0]['HoRe'] + ' ' + array[0]['Tipo'] + ' ' + array[0]['Esta'] + horaOriginal + '"><span class="ls1">' + array[0]['HoRe'] + '</span></span>'
+        }
+        return '<div class="' + textColor + '">' + datacol + '</div>';
+    }
+    if (fichada == 'ultima') {
+        let countOfItems = array.length
+        if (countOfItems > 1) {
+            countOfItems = array.length - 1
+            item = countOfItems + 1
+            if (array[countOfItems]['Esta'] == 'Modificada') {
+                horaOriginal = '. Hora original: ' + array[countOfItems]['Hora']
+            }
+            textColor = colorFichada(array[countOfItems])
+            datacol = '<span data-titlet="(# ' + item + ') ' + array[countOfItems]['HoRe'] + ' ' + array[countOfItems]['Tipo'] + ' ' + array[countOfItems]['Esta'] + horaOriginal + '"><span class="ls1">' + array[countOfItems]['HoRe'] + '</span></span>'
+        }
+        return '<div class="' + textColor + '">' + datacol + '</div>';
+    }
+    return '-';
+}
+const getHorario = (array, Labo, Feri) => {
+    if (!array) return false
+    let Tur = array;
+    let Turno = `${Tur['ent']} a ${Tur['sal']}`;
+    Turno = (Labo == '0') ? 'Franco' : Turno;
+    Turno = (Feri == '1') ? 'Feriado' : Turno;
+    let Descanso = `Descanso: ${Tur['des']}`;
+    Descanso = (Labo == '0') ? '' : Descanso;
+    Descanso = (Feri == '1') ? '' : Descanso;
+    return `<span title="${Descanso}">${Turno}</span>`;
 }

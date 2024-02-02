@@ -36,9 +36,13 @@ function E_ALL()
         ini_set('display_errors', '0');
     }
 }
-// Funcion para validar si esta autenticado
+// Función para validar si esta autenticado
 function secure_auth_ch()
 {
+    if (!$_SESSION) {
+        Flight::json(array("error" => "Sesión finalizada."));
+        exit;
+    }
     timeZone();
     timeZone_lang();
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? ''; // Si no existe la variable la crea

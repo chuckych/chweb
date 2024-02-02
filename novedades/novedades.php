@@ -4,11 +4,21 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../llamadas.php"; ?>
-    <title><?= MODULOS['novedades'] ?></title>
+    <title>
+        <?= MODULOS['novedades'] ?>
+    </title>
     <style>
         .dataTables_info {
             font-size: small;
             margin-top: 0px;
+        }
+
+        th {
+            font-size: .9rem;
+        }
+
+        td {
+            font-size: .9rem !important;
         }
     </style>
 </head>
@@ -24,10 +34,14 @@
         <div class="" id="divTablas">
             <div class="row radius pt-3 mb-0 pb-0">
                 <div class="col-12 col-sm-6">
-                    <button <?= AttrDisabled($_SESSION["ABM_ROL"]['aNov']) ?> type="button" class="btn opa7 btn-custom btn-sm fontq" data-toggle="tooltip" data-placement="right" data-html="true" title="" data-original-title="<span class='fw5 fontq'>Agregar de Novedades</span>" id="addNov">
+                    <button <?= AttrDisabled($_SESSION["ABM_ROL"]['aNov']) ?> type="button"
+                        class="btn opa7 btn-custom btn-sm fontq" data-toggle="tooltip" data-placement="right"
+                        data-html="true" title=""
+                        data-original-title="<span class='fw5 fontq'>Agregar de Novedades</span>" id="addNov">
                         Agregar
                     </button>
-                    <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
+                    <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal"
+                        data-target="#Filtros">
                         Filtros
                     </button>
                     <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">
@@ -36,13 +50,15 @@
                     <span id="trash_all" title="Limpiar Filtros" class="invisible trash align-middle pb-0"></span>
                     <div class="custom-control custom-switch custom-control-inline w180 ml-1 pt-2 pt-lg-0">
                         <input type="checkbox" class="custom-control-input" id="Visualizar">
-                        <label class="custom-control-label" for="Visualizar" style="padding-top: 3px;"><span id="VerPor"></span></label>
+                        <label class="custom-control-label" for="Visualizar" style="padding-top: 3px;"><span
+                                id="VerPor"></span></label>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
                         <input type="text" readonly class="mx-2 form-control text-center w250 ls2" name="_dr" id="_dr">
-                        <button title="Actualizar Grilla" type="button" id="Refresh" disabled class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
+                        <button title="Actualizar Grilla" type="button" id="Refresh" disabled
+                            class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
                             <svg class="bi" width="20" height="20" fill="currentColor">
                                 <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />
                             </svg>
@@ -58,9 +74,9 @@
             /** FirstDate */
             $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
             /** FirstYear */
-            $maxDate   = $FechaMinMax['max'];
+            $maxDate = $FechaMinMax['max'];
             /** maxDate */
-            $maxYear   = date('Y');
+            $maxYear = date('Y');
             /** maxYear */
             $FechaIni = $FechaMinMax['max'];
             $FechaFin = $FechaMinMax['max'];
@@ -71,7 +87,8 @@
             <input type="hidden" hidden value="<?= $AnioMax ?>" id="AnioMax">
             <div class="row pb-sm-3 invisible" id="pagLega">
                 <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
-                    <input type="text" data-mask="000000000" reverse="true" id="Per2" class="form-control mr-2 w100 mt-n1 d-none text-center" style="height: 15px;">
+                    <input type="text" data-mask="000000000" reverse="true" id="Per2"
+                        class="form-control mr-2 w100 mt-n1 d-none text-center" style="height: 15px;">
                     <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
 
                     </table>
@@ -88,42 +105,12 @@
                 <div class="col-12 animate__animated animate__fadeIn">
                     <div class="table-responsive invisible" id="GetNovedadesTable">
                         <table class="table table-hover text-nowrap w-100" id="GetNovedades">
-                            <thead class="">
-                                <tr>
-                                    <!-- <th class="fw4">LEGAJO</th>
-                                <th class="fw4">NOMBRE</th> -->
-                                    <th class="fw4">FECHA</th>
-                                    <th class="fw4">DÍA</th>
-                                    <th class="fw4">HORARIO</th>
-                                    <th class="fw4 text-center">COD</th>
-                                    <th class="fw4">NOVEDAD</th>
-                                    <th class="fw4"></th>
-                                    <th class="fw4">TIPO</th>
-                                    <th class="fw4">CAUSA</th>
-                                    <th class="fw4">OBSERVACIONES</th>
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>
                 <div class="col-12 animate__animated animate__fadeIn">
                     <div class="table-responsive" id="GetNovedadesFechaTable">
                         <table class="table table-hover text-nowrap w-100" id="GetNovedadesFecha">
-                            <thead class="">
-                                <tr>
-                                    <th class="fw4">LEGAJO</th>
-                                    <th class="fw4">NOMBRE</th>
-                                    <!-- <th class="fw4">FECHA</th>
-                                <th class="fw4">DÍA</th> -->
-                                    <th class="fw4">HORARIO</th>
-                                    <th class="fw4 text-center">COD</th>
-                                    <th class="fw4">NOVEDAD</th>
-                                    <th class="fw4"></th>
-                                    <th class="fw4">TIPO</th>
-                                    <th class="fw4">CAUSA</th>
-                                    <th class="fw4">OBSERVACIONES</th>
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>
@@ -134,6 +121,7 @@
                 <?php require 'addNov.php'; ?>
             </div>
         <?php } ?>
+        <div id="modales"></div>
     </div>
     <!-- fin container -->
     <?php
@@ -149,11 +137,13 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/selectadd-min.js?v=<?=vjs()?>"></script>
-    <script src="js/trashSelect.js?v=<?=vjs()?>"></script>
-    <script src="js/NovXLS.js?v=<?=vjs()?>"></script>
+    <script src="../js/select2-es.js"></script>
+    <script src="js/data.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/selectadd-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
+    <script src="js/NovXLS.js?v=<?= vjs() ?>"></script>
+
 </body>
 
 </html>
