@@ -166,7 +166,7 @@ let GetNovedades = $('#GetNovedades').DataTable({
         {
             data: '', className: 'align-middle', targets: '', title: '',
             "render": function (data, type, row, meta) {
-                return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen"></edita>`;
+                return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
             },
         },
         {
@@ -247,9 +247,14 @@ $("#GetNovedades").on('init.dt', function () {
     $(idTableBody).on('click', (e) => {
         if (e.target.closest('tr').tagName) {
             if (e.target.tagName == 'EDITA') {
+                if (e.target.classList.contains('disabled')) {
+                    return false;
+                }
+                e.target.classList.add('disabled');
                 let data = GetNovedades.row(e.target.closest('tr')).data();
                 if (data.arrayNove) {
                     modalEditNove(data);
+                    e.target.classList.remove('disabled');
                 }
             }
         }
@@ -359,7 +364,7 @@ setTimeout(function () {
             {
                 data: '', className: 'align-middle', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen"></edita>`;
+                    return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
                 },
             },
             {
@@ -438,9 +443,15 @@ setTimeout(function () {
             // console.log(e.target.tagName);
             if (e.target.closest('tr').tagName) {
                 if (e.target.tagName == 'EDITA') {
+                    if (e.target.classList.contains('disabled')) {
+                        return false;
+                    }
+                    e.target.classList.add('disabled');
+
                     let data = GetNovedadesFecha.row(e.target.closest('tr')).data();
                     if (data.arrayNove) {
                         modalEditNove(data);
+                        e.target.classList.remove('disabled');
                     }
                 }
             }
@@ -678,7 +689,6 @@ const tableNoveEdit = async (data) => {
 
             if (e.target.closest('tr').tagName) {
 
-                // if (e.target.tagName == 'EDITA') {
                 let data = dt.row(e.target.closest('tr')).data();
                 if (!data) return;
 
@@ -875,4 +885,15 @@ const disabledForm = (disabled) => {
     $('#Obs').val('').prop('disabled', disabled).trigger('change'); // Limpia el input de observaciones
     $('#Horas').val('').prop('disabled', disabled).trigger('change'); // Limpia el input de Horas
     $('#NoveSec').prop('checked', false).prop('disabled', disabled); // Desmarca el checkbox
+}
+const disabledBtnEdita = () => {
+    let btn = document.querySelectorAll('.editaNov');
+    if (btn) {
+        btn.forEach((item) => {
+            item.classList.add('disabled');
+            setTimeout(() => {
+                console.log(item);
+            }, 200);
+        });
+    }
 }
