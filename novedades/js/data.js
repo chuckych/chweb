@@ -253,8 +253,9 @@ $("#GetNovedades").on('init.dt', function () {
                 e.target.classList.add('disabled');
                 let data = GetNovedades.row(e.target.closest('tr')).data();
                 if (data.arrayNove) {
-                    modalEditNove(data);
-                    e.target.classList.remove('disabled');
+                    modalEditNove(data).then(() => {
+                        e.target.classList.remove('disabled');
+                    });
                 }
             }
         }
@@ -450,8 +451,9 @@ setTimeout(function () {
 
                     let data = GetNovedadesFecha.row(e.target.closest('tr')).data();
                     if (data.arrayNove) {
-                        modalEditNove(data);
-                        e.target.classList.remove('disabled');
+                        modalEditNove(data).then(() => {
+                            e.target.classList.remove('disabled');
+                        });
                     }
                 }
             }
@@ -548,8 +550,10 @@ const modalEditNove = async (data) => {
             $('#modales').html('');
             $.notifyClose();
         });
+        return true;
     } catch (error) {
         alert(error.message);
+        return false;
     }
 }
 const tableNoveEdit = async (data) => {
