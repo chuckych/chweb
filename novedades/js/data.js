@@ -508,7 +508,20 @@ const modalEditNove = async (data) => {
 
         $('#modales').html(html); // Agrega el modal al DOM
         $('#modal #rowForm').hide(); // Oculta el formulario
-        $('#modal #btnGuardar').prop('disabled', true);
+        $('#Nove').select2({ // Inicializa el select2 de novedades
+            placeholder: 'Seleccionar Novedad',
+            width: "100%",
+            language: "es",
+        });
+        $('#Causa').select2({   // Inicializa el select2 de causas
+            placeholder: 'Seleccionar causa',
+            width: "100%",
+            language: "es",
+            allowClear: true,
+        });
+        HoraMask('#Horas')
+
+        disabledForm(true);
 
         getFicha(data.nov_LegNume, data.FechaStr).then((rs) => {
             let ficha = rs;
@@ -542,7 +555,7 @@ const tableNoveEdit = async (data) => {
     // Crear un string separado por comas de los valores de "HoRe"
     var StrFichadas = hoReArray.join(', ');
 
-    let countFichadas = (Fichadas.length > 2) ? '<span data-titlet="' + StrFichadas + '">...</span>' : '';
+    let countFichadas = (Fichadas.length > 2) ? '<span title="' + StrFichadas + '">...</span>' : '';
     let Horario = getHorario(Tur, Ficha['Labo'], Ficha['Feri']) ?? 'Sin horario';
     let periodo = '';
     let primerFichada = getFichada(Fichadas, 'primera');
@@ -553,6 +566,10 @@ const tableNoveEdit = async (data) => {
         periodo = '(Periodo ' + Ficha.Cierre.Estado + ')';
     }
     $('.modal-title').html('Editar Novedades ' + periodo) // Cambia el título del modal
+
+    if ($.fn.DataTable.isDataTable('#tableNovEdit')) {
+        $('#tableNovEdit').DataTable().destroy();
+    }
 
     let dt = $('#tableNovEdit').DataTable({
         dom: `
@@ -646,7 +663,7 @@ const tableNoveEdit = async (data) => {
         $("#modal .divFichadas").html(tableInfo);
 
         let idTableBody = '#tableNovEdit tbody tr';
-        $('#modal #btnGuardar').prop('disabled', true);
+        // $('#modal #btnGuardar').prop('disabled', true);
 
         let tr = document.querySelector(idTableBody); // Obtiene el primer tr
 
@@ -655,7 +672,7 @@ const tableNoveEdit = async (data) => {
         }, 500);
 
         $(idTableBody).on('click', (e) => {
-
+            disabledForm(true);
             e.preventDefault();
             e.stopPropagation();
 
@@ -681,11 +698,11 @@ const tableNoveEdit = async (data) => {
                     dt.rows().nodes().each((row) => row.querySelector('input[type="checkbox"]').checked = false);
                     classList.add('selected'); // Agrega la clase selected al tr
                     $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
-                    $('#modal #btnGuardar').prop('disabled', false);
-                    // disabledForm(false);
+                    // $('#modal #btnGuardar').prop('disabled', false);
                     checkbox.checked = true; // Marca el checkbox
                     formNovedad(data).then((rs) => {
                         if (rs) {
+                            $('#modal #btnGuardar').prop('disabled', false);
                             ls.set(LS_FICHA_FORM, Ficha);
                             if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
                                 disabledForm(true); // Deshabilita el formulario
@@ -699,7 +716,7 @@ const tableNoveEdit = async (data) => {
     });
 }
 const formNovedad = async (data) => {
-    // console.log(data);
+
     try {
 
         if (!data.Codi) { // Si no hay novedad o tipo de novedad
@@ -713,20 +730,8 @@ const formNovedad = async (data) => {
         addSelectOptions(novedades, '#Nove') // Agrega las novedades al select
         addSelectOptions(causas, '#Causa') // Agrega las causas al select
 
-        $('#Nove').select2({ // Inicializa el select2 de novedades
-            placeholder: 'Seleccionar Novedad',
-            width: "100%",
-            language: "es",
-        });
         $('#Nove').val(data.Codi).trigger('change'); // Selecciona la novedad
         $('#NoveOriginal').val(data.Codi).trigger('change'); // Guarda la novedad original
-        $('#Causa').select2({   // Inicializa el select2 de causas
-            placeholder: 'Seleccionar causa',
-            width: "100%",
-            language: "es",
-            allowClear: true,
-        });
-        HoraMask('#Horas')
         $('#NoveSec').prop('checked', false).prop('disabled', false);
         $("#Horas").val(data.Horas).prop('disabled', false).trigger('change'); // Selecciona las horas
         $("#Obs").val(data.Obse).prop('disabled', false).trigger('change'); // Selecciona la observación
@@ -744,6 +749,7 @@ const formNovedad = async (data) => {
     }
 
 }
+
 const addSelectOptions = (array, selector) => {
     $(selector).prop('disabled', true).empty().trigger('change');
     if (!array) return false;
@@ -756,6 +762,7 @@ const addSelectOptions = (array, selector) => {
         $(selector).prop('disabled', false);
     }
 }
+
 const formGuardar = async () => {
     $(document).on('click', '#modal #btnGuardar', async function (e) {
         e.preventDefault();
@@ -814,7 +821,7 @@ const formGuardar = async () => {
 formGuardar();
 
 const tableInfoFicha = (Lega, ApNo, Fech, Horario, primerFichada, ultimaFichada, countFichadas) => `
-<table id="tableInfoFicha" class="table table-auto text-nowrap table-responsive p-2 mb-0 mt-n2 fontq">
+<table id="tableInfoFicha" class="table table-responsive text-nowrap mb-0 mt-n1">
     <thead>
         <tr>
             <th>Legajo</th>
@@ -822,9 +829,8 @@ const tableInfoFicha = (Lega, ApNo, Fech, Horario, primerFichada, ultimaFichada,
             <th>Fecha</th>
             <th>Horario</th>
             <th class="text-center">Entrada</th>
-            <th class="text-center px-0"></th>
             <th class="text-center">Salida</th>
-            <th></th>
+            <th class=""></th>
         </tr>
     </thead>
     <tbody>
@@ -834,9 +840,8 @@ const tableInfoFicha = (Lega, ApNo, Fech, Horario, primerFichada, ultimaFichada,
             <td>${Fech}</td>
             <td>${Horario}</td>
             <td class="text-center">${primerFichada}</td>
-            <td class="text-center px-0">${countFichadas}</td>
             <td class="text-center">${ultimaFichada}</td>
-            <td class="w-100"></td>
+            <td class="w-100">${countFichadas}</td>
         </tr>
     </tbody>
 </table>

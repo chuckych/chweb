@@ -7,6 +7,7 @@ if (!$_SESSION) {
     Flight::json(array("error" => "Sesión finalizada."));
     exit;
 }
+sleep(1);
 
 ultimoacc();
 secure_auth_ch();

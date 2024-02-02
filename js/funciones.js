@@ -869,7 +869,7 @@ const getFichada = (array, fichada) => {
                 horaOriginal = '. Hora original: ' + array[0]['Hora']
             }
             textColor = colorFichada(array[0])
-            datacol = '<span data-titlet="(# 1) ' + array[0]['HoRe'] + ' ' + array[0]['Tipo'] + ' ' + array[0]['Esta'] + horaOriginal + '"><span class="ls1">' + array[0]['HoRe'] + '</span></span>'
+            datacol = '<span data-titlel="(# 1) ' + array[0]['HoRe'] + ' ' + array[0]['Tipo'] + ' ' + array[0]['Esta'] + horaOriginal + '"><span class="ls1">' + array[0]['HoRe'] + '</span></span>'
         }
         return '<div class="' + textColor + '">' + datacol + '</div>';
     }
@@ -882,7 +882,7 @@ const getFichada = (array, fichada) => {
                 horaOriginal = '. Hora original: ' + array[countOfItems]['Hora']
             }
             textColor = colorFichada(array[countOfItems])
-            datacol = '<span data-titlet="(# ' + item + ') ' + array[countOfItems]['HoRe'] + ' ' + array[countOfItems]['Tipo'] + ' ' + array[countOfItems]['Esta'] + horaOriginal + '"><span class="ls1">' + array[countOfItems]['HoRe'] + '</span></span>'
+            datacol = '<span data-titlel="(# ' + item + ') ' + array[countOfItems]['HoRe'] + ' ' + array[countOfItems]['Tipo'] + ' ' + array[countOfItems]['Esta'] + horaOriginal + '"><span class="ls1">' + array[countOfItems]['HoRe'] + '</span></span>'
         }
         return '<div class="' + textColor + '">' + datacol + '</div>';
     }
