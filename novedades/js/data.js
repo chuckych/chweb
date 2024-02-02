@@ -508,7 +508,7 @@ const modalEditNove = async (data) => {
 
         $('#modales').html(html); // Agrega el modal al DOM
         $('#modal #rowForm').hide(); // Oculta el formulario
-        disabledForm(true);
+        $('#modal #btnGuardar').prop('disabled', true);
         // let FechaNovedad = `<span class="fontq">${data.nov_nom_dia} ${data.Fecha} <br>${data.nov_LegNume} - ${data.nov_leg_nombre}</span>`;
         // $('.modal-title').html('Editar Novedades<br>' + FechaNovedad) // Cambia el título del modal
 
