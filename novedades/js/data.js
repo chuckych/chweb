@@ -493,7 +493,7 @@ $("#Visualizar").change(function () {
 });
 
 const modalEditNove = async (data) => {
-    // console.log(data);
+    loading();
     try {
 
         if (!data) { // Si no hay datos
@@ -516,6 +516,7 @@ const modalEditNove = async (data) => {
             let ficha = rs;
             tableNoveEdit(ficha).then(() => { // Carga la tabla de novedades
                 $('#modal').modal('show')// Muestra el modal
+                $.notifyClose();
             });
         });
 
@@ -758,19 +759,23 @@ const addSelectOptions = (array, selector) => {
 }
 const formGuardar = async () => {
     $(document).on('click', '#modal #btnGuardar', async function (e) {
-
         e.preventDefault();
         e.stopPropagation();
+
 
         let data = ls.get(LS_FICHA_FORM);
         if (!data) return;
 
         if (!data) {
+            $.notifyClose();
             notify('No se encontraron datos para editar', 'danger', 2000, 'right');
             return;
         }
 
+        loading();
+
         if (data.Cierre.Estado != 'abierto') {
+            $.notifyClose();
             notify('No se puede editar una ficha cerrada', 'warning', 2000, 'right');
             return;
         }
@@ -786,13 +791,16 @@ const formGuardar = async () => {
             Causa: $('#Causa').val(),
             Esta: "1",
         }
+        disabledForm(true);
         let rs = await axios.put('data/novedad', formData);
         // console.log(rs.data);
         if (rs.data.error) {
+            disabledForm(false);
             notify(rs.data.error, 'danger', 2000, 'right');
             return;
         }
         if (rs.data.MESSAGE == "OK") {
+            $.notifyClose();
             notify('Novedad editada correctamente', 'success', 2000, 'right');
             $('#modal #btnGuardar').off('click')
             ActualizaTablas();

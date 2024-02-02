@@ -40,8 +40,7 @@ function E_ALL()
 function secure_auth_ch()
 {
     if (!$_SESSION) {
-        Flight::json(array("error" => "Sesión finalizada."));
-        exit;
+        header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER']));
     }
     timeZone();
     timeZone_lang();
