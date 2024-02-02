@@ -509,8 +509,6 @@ const modalEditNove = async (data) => {
         $('#modales').html(html); // Agrega el modal al DOM
         $('#modal #rowForm').hide(); // Oculta el formulario
         $('#modal #btnGuardar').prop('disabled', true);
-        // let FechaNovedad = `<span class="fontq">${data.nov_nom_dia} ${data.Fecha} <br>${data.nov_LegNume} - ${data.nov_leg_nombre}</span>`;
-        // $('.modal-title').html('Editar Novedades<br>' + FechaNovedad) // Cambia el título del modal
 
         getFicha(data.nov_LegNume, data.FechaStr).then((rs) => {
             let ficha = rs;
@@ -654,7 +652,7 @@ const tableNoveEdit = async (data) => {
 
         setTimeout(() => {
             $(tr).trigger('click'); // Dispara el evento click del primer tr
-        }, 100);
+        }, 500);
 
         $(idTableBody).on('click', (e) => {
 
