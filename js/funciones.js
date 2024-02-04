@@ -899,3 +899,20 @@ const getHorario = (array, Labo, Feri) => {
     Descanso = (Feri == '1') ? '' : Descanso;
     return `<span title="${Descanso}">${Turno}</span>`;
 }
+function CateNov(value) {
+    switch (value) {
+        case '0':
+            str = 'Primaria';
+            break;
+        case '1':
+            str = 'Adicional';
+            break;
+        case '2':
+            str = 'Forzada';
+            break;
+        default:
+            str = value;
+            break;
+    }
+    return str;
+}

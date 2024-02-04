@@ -525,7 +525,9 @@ const modalEditNove = async (data) => {
         let response = await axios('modal_editar.html' + "?" + Date.now()); // Busca el modal
         let html = response.data; // Obtiene el modal
 
+
         $('#modales').html(html); // Agrega el modal al DOM
+
         $('#modal #rowForm').hide(); // Oculta el formulario
         $('#Nove').select2({ // Inicializa el select2 de novedades
             placeholder: 'Seleccionar Novedad',
@@ -555,7 +557,6 @@ const modalEditNove = async (data) => {
                 $.notifyClose();
             });
         });
-
 
         $('#modal').on('hidden.bs.modal', function (e) {
             tipo_cod = null;
@@ -591,7 +592,7 @@ const tableNoveEdit = async (data) => {
         var StrFichadas = hoReArray.join(', ');
 
         let countFichadas = (Fichadas.length > 2) ? '<span title="' + StrFichadas + '">...</span>' : '';
-        let Horario = getHorario(Tur, Ficha['Labo'], Ficha['Feri']) ?? 'Sin horario';
+        let Horario = Ficha['TurStr'] ?? 'Sin horario';
         let periodo = '';
         let primerFichada = getFichada(Fichadas, 'primera');
         let ultimaFichada = getFichada(Fichadas, 'ultima');
@@ -661,6 +662,12 @@ const tableNoveEdit = async (data) => {
                     },
                 },
                 {
+                    data: 'Cate', className: 'align-middle', targets: '', title: 'Tipo',
+                    "render": function (data, type, row, meta) {
+                        return CateNov(data);
+                    },
+                },
+                {
                     data: 'Obse', className: 'align-middle', targets: '', title: 'Observaciones',
                     "render": function (data, type, row, meta) {
                         return `<div class="text-truncate" style="max-width:130px">${data}</div>`;
@@ -696,7 +703,9 @@ const tableNoveEdit = async (data) => {
 
             fadeInOnly('#tableNovEdit');
 
-            let tableInfo = tableInfoFicha(Ficha.Lega, Ficha.ApNo, formatDate3(Ficha.Fech), Horario, primerFichada, ultimaFichada, countFichadas);
+            let tableInfo = tableInfoFicha(Ficha.Lega, Ficha.ApNo, Ficha.FechD, Ficha.FechF, Horario, primerFichada, ultimaFichada, countFichadas);
+
+
 
             $("#modal .divFichadas").html('');
             $("#modal .divFichadas").html(tableInfo);
@@ -724,15 +733,16 @@ const tableNoveEdit = async (data) => {
                         return;
                     }
 
-                    $('#modal #rowForm').addClass('loader-in');
+                    // $('#modal #rowForm').addClass('loader-in');
 
                     let checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
                     let classList = e.currentTarget.classList; // Obtiene la lista de clases del tr
 
                     if (classList.contains('selected')) { // Si el tr está seleccionado
                         classList.remove('selected'); // Quita la clase selected
-                        $('#modal #rowForm').hide(); // Oculta el formulario
+                        // $('#modal #rowForm').hide(); // Oculta el formulario
                         disabledForm(true);
+                        $('#modal  #rowForm').addClass('loader-in');
                         $('#modal #btnGuardar ').off('click')
                         checkbox.checked = false; // Desmarca el checkbox
                     }
@@ -746,7 +756,6 @@ const tableNoveEdit = async (data) => {
                         formNovedad(data).then((rs) => {
                             if (rs) {
                                 $('#modal #btnGuardar').prop('disabled', false);
-                                $('#modal #rowForm').removeClass('loader-in');
                                 ls.set(LS_FICHA_FORM, Ficha);
                                 if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
                                     disabledForm(true); // inhabilita el formulario
@@ -789,6 +798,7 @@ const formNovedad = async (data) => {
         if (data.Cate == '2') {
             $('#NoveSec').prop('checked', true).trigger('change');
         }
+        $('#modal  #rowForm').removeClass('loader-in');
         return true; // Retorna true si todo salió bien
     } catch (error) {
         alert(error.message);
@@ -815,7 +825,6 @@ const formGuardar = async () => {
         e.preventDefault();
         e.stopPropagation();
 
-
         let data = ls.get(LS_FICHA_FORM);
         if (!data) return;
 
@@ -826,6 +835,7 @@ const formGuardar = async () => {
         }
 
         loading();
+        $('#modal .modal-body').addClass('loader-in');
 
         if (data.Cierre.Estado != 'abierto') {
             $.notifyClose();
@@ -844,12 +854,10 @@ const formGuardar = async () => {
             Causa: $('#Causa').val(),
             Esta: "1"
         }
-        disabledForm(true);
         let rs = await axios.put('data/novedad', formData);
         // console.log(rs.data);
         if (rs.data.error) {
             $.notifyClose();
-            disabledForm(false);
             notify(rs.data.error, 'danger', 2000, 'right');
             return;
         }
@@ -873,6 +881,37 @@ const formGuardar = async () => {
 
 formGuardar();
 
+const addNovedad = () => {
+    $(document).on('click', '#modal #addNovedad', function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        let data = ls.get(LS_FICHA_FORM);
+        if (!data) return;
+
+        console.log(data);
+
+        if (data.NoveAdd == '0') {
+            $.notifyClose();
+            notify('No tiene permisos para agregar novedades', 'danger', 2000, 'right');
+            $(this).prop('disabled', true).off('click');
+            return;
+        }
+
+        $('#addNov').trigger('click');
+        setTimeout(() => {
+            $('#TipoIngresoFiltrosLegajos').trigger('click');
+            $('#GetPers').DataTable().search(data.Lega).draw();
+            $('#_draddNov').data('daterangepicker').setStartDate(data.FechF);
+            $('#_draddNov').data('daterangepicker').setEndDate(data.FechF);
+            $('#aFicNove').select2('open');
+        }, 100);
+        $('#modal').modal('hide');
+    });
+}
+addNovedad();
+
 const deleteNovedad = async (data) => {
 
     if (!data) {
@@ -882,7 +921,7 @@ const deleteNovedad = async (data) => {
     }
 
     loading();
-
+    $('#modal .modal-body').addClass('loader-in');
     if (data.Cierre.Estado != 'abierto') {
         $.notifyClose();
         notify('No se puede editar una ficha cerrada', 'warning', 2000, 'right');
@@ -913,33 +952,36 @@ const deleteNovedad = async (data) => {
         });
         return;
     }
-    $.notifyClose();
     notify(rs.data.MESSAGE ?? '' == "OK", 'danger', 2000, 'right');
 
 }
 
-const tableInfoFicha = (Lega, ApNo, Fech, Horario, primerFichada, ultimaFichada, countFichadas) => `
+const tableInfoFicha = (Lega, ApNo, FechD, FechF, Horario, primerFichada, ultimaFichada, countFichadas) => `
 <table id="tableInfoFicha" class="table table-responsive text-nowrap mb-0 mt-n1">
     <thead>
         <tr>
             <th>Legajo</th>
             <th>Nombre</th>
-            <th>Fecha</th>
+            <th class="px-0">Fecha</th>
+            <th></th>
             <th>Horario</th>
-            <th class="text-center">Entrada</th>
-            <th class="text-center">Salida</th>
+            <th class="text-center">Entra</th>
+            <th class="text-center">Sale</th>
+            <th class=""></th>
             <th class=""></th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>${Lega}</td>
-            <td><div title="${ApNo}" class="text-truncate" style="max-width:200px">${ApNo}</div></td>
-            <td>${Fech}</td>
+            <td><div title="${ApNo}" class="text-truncate" style="max-width:180px">${ApNo}</div></td>
+            <td class="px-0">${FechD}</td>
+            <td class="pl-0"><span class="ml-2">${FechF}</span></td>
             <td>${Horario}</td>
             <td class="text-center">${primerFichada}</td>
             <td class="text-center">${ultimaFichada}</td>
             <td class="w-100">${countFichadas}</td>
+            <td><span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-outline-default bi bi-plus-lg"></span></td>
         </tr>
     </tbody>
 </table>

@@ -50,8 +50,14 @@ if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax
 }
 $colEstruct = array('FicConv', 'FicPlan', 'FicGrup', 'FicSect', 'FicSec2', 'FicEmpr', 'FicSucu');
 $colEstruct = implode(',', $colEstruct);
-// CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
-$qFic = "SELECT $distinct FICHAS.FicFech AS 'Fecha', PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta, $colEstruct $colCierre FROM FICHAS
+
+$queryDateFirst = "SET DATEFIRST 7";
+
+$colHorarioStr = 'dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS "HorarioStr"';
+$colDiaDeLaSemana = 'dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS "DiaStr"';
+$colFechaFormat = 'dbo.fn_DateSTR(FICHAS.FicFech) AS "FechaStr"';
+$qFic = "$queryDateFirst;";
+$qFic .= "SELECT $distinct FICHAS.FicFech AS 'Fecha', $colDiaDeLaSemana, $colFechaFormat, PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, $colHorarioStr, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta, $colEstruct $colCierre FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 $joinCierres
 WHERE FICHAS.FicLega > 0 $wcFicFech";
 $qFic .= $HoraMinMax;
@@ -329,6 +335,8 @@ foreach ($stmtFic as $key => $v) {
         'Docu' => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
         'Cuil' => $v['LegCUIT'],
         'Fech' => $Fech,
+        'FechD' => $v['DiaStr'],
+        'FechF' => $v['FechaStr'],
         'Labo' => $v['FicDiaL'],
         'Feri' => $v['FicDiaF'],
         'ATra' => $v['FicHsAT'],
@@ -337,6 +345,7 @@ foreach ($stmtFic as $key => $v) {
         // 'FichC'    => $v['FicCount'] ?? '',
         'FichC' => count($dataFichadas) ?? '',
         'Tur' => $horario,
+        'TurStr' => $v['HorarioStr'],
         // 'CheckNov' => $CheckNov,
         'Fich' => $dataFichadas,
         'Nove' => $dataNov,

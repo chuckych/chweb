@@ -1046,7 +1046,7 @@ function CateNov($var)
             $tipo = 'Adicional';
             break;
         case '2':
-            $tipo = 'Secundaria';
+            $tipo = 'Forzada';
             break;
         default:
             $tipo = $var;

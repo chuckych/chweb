@@ -260,6 +260,7 @@ Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
     if ($data) {
         $data[0]['NoveDelete'] = $_SESSION['ABM_ROL']['bNov'];
+        $data[0]['NoveAdd'] = $_SESSION['ABM_ROL']['aNov'];
     }
     Flight::json($data);
 });
