@@ -161,6 +161,8 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
         'NoveTipo' => ($NoveTipo),
         'NoveTipoCod' => $NoveTipoCod,
         'arrayNove' => $Novedad ?? '',
+        'NoveEdit' => $_SESSION['ABM_ROL']['mNov'],
+        'NoveDelete' => $_SESSION['ABM_ROL']['bNov'],
     );
     unset($Novedad);
 endwhile;

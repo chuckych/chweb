@@ -7,10 +7,10 @@
                     <span aria-hidden="true" class="bi bi-x-lg"></span>
                 </button>
             </div>
-            <div class="modal-body mt-n4 shadow-sm">
+            <div class="modal-body mt-n4 shadow-sm loader-in">
                 <div class="row mb-2">
                     <div class="col-12 user-select-none">
-                        <table id="tableNovEdit" class="table text-nowrap w-100 table-hover p-2 shadow-sm border">
+                        <table id="tableNovEdit" class="table text-nowrap w-100 table-hover p-2 shadow-sm border ">
                         </table>
                     </div>
                 </div>
@@ -28,11 +28,11 @@
                         <label for="Causa">Causa</label>
                         <select name="Causa" class="form-control" id="Causa"></select>
                     </div>
-                    <div class="col-12 mt-0 mt-sm-2">
+                    <div class="col-12 col-sm-7 mt-0 mt-sm-2">
                         <label for="Obs">Observaciones</label>
-                        <input name="Obs" class="form-control h40" id="Obs" placeholder="Observaciones">
+                        <input name="Obs" class="form-control h40" id="Obs" maxlength="40" placeholder="Observaciones">
                     </div>
-                    <div class="col-12 mt-2 d-none">
+                    <div class="col-12 mt-2">
                         <div class="custom-control custom-switch pt-1 custom-control-inline">
                             <input type="checkbox" class="custom-control-input" name="NoveSec" id="NoveSec">
                             <label class="custom-control-label mr-2" for="NoveSec" style="padding-top:4px;">
@@ -50,3 +50,4 @@
         </div>
     </div>
 </div>
+<div class="loadingDiv"></div>

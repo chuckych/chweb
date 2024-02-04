@@ -7,7 +7,7 @@ if (!$_SESSION) {
     Flight::json(array("error" => "Sesión finalizada."));
     exit;
 }
-// sleep(1);
+// sleep(2);
 
 ultimoacc();
 secure_auth_ch();
@@ -63,6 +63,11 @@ function ch_api()
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
             ($payload) ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
         }
+        if ($method == 'DELETE') {
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+            ($payload) ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
+        }
+
         $token = sha1($_SESSION['RECID_CLIENTE']);
         $headers = array(
             "Accept: */*",
@@ -188,11 +193,15 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
-    return $arrayData['DATA'][0];
+    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
+    if (empty($arrayData['DATA'])) {
+        return [];
+    }
+    return array($arrayData['DATA'][0]);
 }
 
 Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi) {
-
+    // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
     $queryParams = array(
@@ -231,6 +240,9 @@ Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
 Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
     $opt = array("getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1");
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
+    if ($data) {
+        $data[0]['NoveDelete'] = $_SESSION['ABM_ROL']['bNov'];
+    }
     Flight::json($data);
 });
 Flight::route('PUT /novedad', function () {
@@ -246,6 +258,21 @@ Flight::route('PUT /novedad', function () {
     $rs = ch_api($endpoint, array($payload), $method, '');
     Flight::json(json_decode($rs, true));
 });
+Flight::route('DELETE /novedad', function () {
+
+    if ($_SESSION['ABM_ROL']['bNov'] == '0') {
+        Flight::json(array("error" => "No tiene permisos para eliminar novedades."));
+        return;
+    }
+
+    $payload = Flight::request();
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
+    $method = 'DELETE';
+    $rs = ch_api($endpoint, array($payload->data), $method, '');
+    Flight::json(json_decode($rs, true));
+});
+
 
 
 Flight::start(); // Inicio FlightPHP

@@ -64,10 +64,12 @@ class Novedades
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = :FechaHora WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
+            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = :FechaHora, FicCate = :Cate WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
+
+            // print_r($datos) . exit;
 
             foreach ($datos as $dato) { // Recorro los datos
 
@@ -84,6 +86,7 @@ class Novedades
                 $stmt->bindValue(':Fecha', $dato['Fecha'], \PDO::PARAM_STR);
                 $stmt->bindValue(':Nove', $dato['Nove'], \PDO::PARAM_INT);
                 $stmt->bindValue(':FicNoTi', $tipoNovedad, \PDO::PARAM_INT);
+                $stmt->bindValue(':Cate', $dato['Cate'], \PDO::PARAM_INT);
                 $stmt->execute(); // Ejecuto la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Cuento la cantidad de filas afectadas
             }
@@ -142,7 +145,92 @@ class Novedades
         } catch (\PDOException $e) {
             $conn->rollBack();
             $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras_' . ID_COMPANY . '.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_updateNovedades_' . ID_COMPANY . '.log');
+            exit;
+        }
+    }
+    public function delete()
+    {
+        $inicio = microtime(true);
+        $datos = $this->validarInputsDelete();
+
+        // $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
+        // $dataNovedades = $this->data(true);
+
+        $conn = $this->conect->conn();
+        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+        try {
+            $conn->beginTransaction(); // Iniciar transacción
+
+            $sql = "DELETE FROM FICHAS3 WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
+            $stmt = $conn->prepare($sql);
+
+            $totalAffectedRows = 0;
+
+            foreach ($datos as $dato) { // Recorro los datos
+                $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+                $stmt->bindValue(':Lega', $dato['Lega'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Fecha', $dato['Fecha'], \PDO::PARAM_STR);
+                $stmt->bindValue(':Nove', $dato['Nove'], \PDO::PARAM_INT);
+                $stmt->execute(); // Ejecuto la consulta
+                $totalAffectedRows += $stmt->rowCount(); // Cuento la cantidad de filas afectadas
+            }
+
+            $conn->commit(); // Confirmar la transacción
+
+            $groupedData = [];
+
+            $minDate = PHP_INT_MAX;
+            $maxDate = 0;
+
+            foreach ($datos as $item) {
+                $lega = $item["Lega"];
+                $fechaMin = strtotime($item["Fecha"]);
+                $fechaMax = strtotime($item["Fecha"]);
+
+                if ($fechaMin < $minDate) {
+                    $minDate = $fechaMin;
+                }
+                if ($fechaMax > $maxDate) {
+                    $maxDate = $fechaMax;
+                }
+
+                if (!isset($groupedData[$lega])) {
+                    $groupedData[$lega] = true;
+                }
+            }
+
+            $agrup = [ // Agrupar los datos para procesarlos en el WebService
+                "Legajos" => array_keys($groupedData), // Obtengo los legajos
+                "Fechas" => [ // Obtengo las fechas
+                    "Desde" => date("Y-m-d", $minDate),
+                    "Hasta" => date("Y-m-d", $maxDate)
+                ]
+            ];
+
+            if ($agrup) { // Si hay datos para procesar
+                try { // Procesar los legajos en el WebService
+                    if (!isset($agrup['Fechas']['Desde']) || !isset($agrup['Fechas']['Hasta']) || empty($agrup['Fechas']['Desde']) || empty($agrup['Fechas']['Hasta'])) {
+                        throw new \Exception("No se recibieron las fechas", 1);
+                    }
+                    // Validar que existan los legajos
+                    if (!isset($agrup['Legajos']) || empty($agrup['Legajos'])) {
+                        throw new \Exception("No se recibieron los legajos", 1);
+                    }
+                    $Legajos = $agrup['Legajos'];
+                    $Desde = $agrup['Fechas']['Desde'];
+                    $Hasta = $agrup['Fechas']['Hasta'];
+                    // $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                } catch (\Exception $e) {
+                    $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
+                    return false;
+                }
+            }
+            $this->resp->response([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $conn->rollBack();
+            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_deleteNovedades_' . ID_COMPANY . '.log');
             exit;
         }
     }
@@ -155,7 +243,7 @@ class Novedades
                 throw new \Exception("No se recibieron datos", 1);
             }
 
-            $rules = [ // Reglas de validacion
+            $rules = [ // Reglas de validación
                 'Lega' => ['int'],
                 'Fecha' => ['required', 'date'],
                 'Nove' => ['required', 'smallint'],
@@ -163,7 +251,8 @@ class Novedades
                 'Horas' => ['required', 'time'],
                 'Esta' => ['allowed012'],
                 'Obse' => ['varchar40'],
-                'Causa' => ['smallint']
+                'Causa' => ['smallint'],
+                'Cate' => ['smallint']
             ];
 
             $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
@@ -176,7 +265,8 @@ class Novedades
                 'Esta' => "1",
                 'Obse' => '',
                 'Causa' => "0",
-                'FechaHora' => ''
+                'FechaHora' => '',
+                'Cate' => "0"
             );
             $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
 
@@ -197,6 +287,45 @@ class Novedades
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
+    private function validarInputsDelete()
+    {
+        $datos = $this->getData;
+        try {
+
+            if (!is_array($datos)) {
+                throw new \Exception("No se recibieron datos", 1);
+            }
+
+            $rules = [ // Reglas de validación
+                'Lega' => ['required', 'int'],
+                'Fecha' => ['required', 'date'],
+                'Nove' => ['smallint'],
+            ];
+
+            $customValueKey = array( // Valores por defecto
+                'Lega' => "0",
+                'Fecha' => '00000000',
+                // 'Nove' => "0",
+            );
+            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+
+            foreach ($datos as $dato) { // Recorro los datos recibidos
+                foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
+                        $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                    }
+                }
+                $datosModificados[] = $dato; // Guardo los datos modificados en un array
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+                $validator->validate(); // Valido los datos
+            }
+            return $datosModificados;
+            // $this->resp->response($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
+        } catch (\Exception $e) {
+            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsDelete.log');
+        }
+    }
     public function estruct($estruct)
     {
         $estruct = strtolower($estruct); // Convierto a minuscula
@@ -212,25 +341,25 @@ class Novedades
                 throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 400);
             }
 
-            $Cod = ($datos['Cod']); // Codigo de la estructura
+            $Cod = ($datos['Cod']); // Código de la estructura
             $Lega = ($datos['Lega']); // Legajo
             $Empr = ($datos['Empr']); // Empresa
             $Plan = ($datos['Plan']); // Planta
             $Conv = ($datos['Conv']); // Convenio
             $Sect = ($datos['Sect']); // Sector
-            $Sec2 = ($datos['Sec2']); // Seccion
+            $Sec2 = ($datos['Sec2']); // Sección
             $Grup = ($datos['Grup']); // Grupo
             $Sucu = ($datos['Sucu']); // Sucursal
-            $Tare = ($datos['TareProd']); // Tarea de produccion
+            $Tare = ($datos['TareProd']); // Tarea de producción
             $RegCH = ($datos['RegCH']); // Regla de Control Horario
             $Tipo = ($datos['Tipo']); // Tipo de Personal
             $Docu = ($datos['Docu']); // DNI Del Legajo
             $Sector = ($datos['Sector']); // Sector
 
             $Esta = ($datos['Esta']); // Estado de la ficha hora (FicEsta)
-            $Nove = ($datos['Nove']); // Codigo novedad
-            $NoveTipo = ($datos['NoveTipo']); // Codigo tipo novedad
-            $NovI = ($datos['NovI']); // Si Novedad Inclumiento
+            $Nove = ($datos['Nove']); // Código novedad
+            $NoveTipo = ($datos['NoveTipo']); // Código tipo novedad
+            $NovI = ($datos['NovI']); // Si Novedad Incumplimiento
             $NovA = ($datos['NovA']); // Si Novedad Ausentismo
             $NovS = ($datos['NovS']); // Si Novedad Salida anticipada
             $NovT = ($datos['NovT']); // Si Novedad Tardanza
@@ -239,15 +368,15 @@ class Novedades
 
             $start = $datos['start']; // Pagina de inicio
             $length = $datos['length']; // Cantidad de registros
-            $Desc = $datos['Desc']; // Descripcion de la estructura
+            $Desc = $datos['Desc']; // Descripción de la estructura
             $ApNo = $datos['ApNo']; // Apellido y Nombre
             $ApNoLega = $datos['ApNoLega']; // Apellido y Nombre + legajo
 
-            /** De este Fragmento de codigo se definoe si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
+            /** De este Fragmento de código se defino si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
             $estructuras = ['tare', 'regla', 'lega', 'tipo']; // Estructuras que se utilizan para el INNER JOIN PERSONAL
-            $parametros = [$ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare]; // Parametros que se utilizan para el INNER JOIN PERSONAL
+            $parametros = [$ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare]; // Parámetros que se utilizan para el INNER JOIN PERSONAL
             $estructTare = in_array($estruct, $estructuras); // Si la estructura esta en el array $estructuras
-            $paramPers = $estructTare || in_array(true, $parametros); // Si la estructura esta en el array $estructuras o si algun parametro esta en el array $parametros
+            $paramPers = $estructTare || in_array(true, $parametros); // Si la estructura esta en el array $estructuras o si algún parámetro esta en el array $parámetros
             /** FIN Fragmento */
             /** SELECT */
             $sql = "SELECT";

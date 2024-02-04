@@ -71,6 +71,7 @@ class InputValidator
             'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
             'arrAllowed01' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'smallint' => "El campo $field debe ser un número entero y menor a 32767",
+            'smallintEmpty' => "El campo $field debe ser un número entero y menor a 32767 o vacío",
             'arrSmallint' => "El campo $field debe ser un arreglo de números enteros y menor a 32767",
             'arrSmallintEmpty' => "El campo $field debe ser un arreglo de números y menor a 32767",
             'int' => "El campo $field debe ser un número entero y menor a 2147483647",
@@ -173,6 +174,11 @@ class InputValidator
                 break;
             case 'smallint':
                 if (filter_var($value, FILTER_VALIDATE_INT, $smallintOpt) === false) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                break;
+            case 'smallintEmpty':
+                if ($value && filter_var($value, FILTER_VALIDATE_INT, $smallintOpt) === false) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;

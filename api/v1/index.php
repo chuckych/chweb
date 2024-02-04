@@ -26,6 +26,7 @@ $api = new Engine();
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
 $api->route('PUT /novedades', [$novedades, 'update']);
+$api->route('DELETE /novedades', [$novedades, 'delete']);
 $api->route('PUT /horas', [$horas, 'update']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);

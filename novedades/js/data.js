@@ -164,9 +164,12 @@ let GetNovedades = $('#GetNovedades').DataTable({
     },
     columns: [
         {
-            data: '', className: 'align-middle', targets: '', title: '',
+            data: 'NoveEdit', className: 'align-middle px-0', targets: '', title: '',
             "render": function (data, type, row, meta) {
-                return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
+                if (data == '1') {
+                    return `<edita class="btn mx-2 btn-sm btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
+                }
+                return ``;
             },
         },
         {
@@ -363,9 +366,12 @@ setTimeout(function () {
         },
         columns: [
             {
-                data: '', className: 'align-middle', targets: '', title: '',
+                data: 'NoveEdit', className: 'align-middle px-0', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    return `<edita class="btn btn-sm btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
+                    if (data == '1') {
+                        return `<edita class="btn btn-sm mx-2 btn-outline-custom border-0 bi bi-pen editaNov"></edita>`;
+                    }
+                    return ``;
                 },
             },
             {
@@ -538,7 +544,13 @@ const modalEditNove = async (data) => {
 
         getFicha(data.nov_LegNume, data.FechaStr).then((rs) => {
             let ficha = rs;
-            tableNoveEdit(ficha).then(() => { // Carga la tabla de novedades
+            if (ficha.length === 0) {
+                $('#modal').modal('hide');
+                $.notifyClose();
+                notify('No se encontró la ficha', 'danger', 2000, 'right');
+                return;
+            }
+            tableNoveEdit(ficha[0]).then(() => { // Carga la tabla de novedades
                 $('#modal').modal('show')// Muestra el modal
                 $.notifyClose();
             });
@@ -560,6 +572,13 @@ const tableNoveEdit = async (data) => {
 
     let Ficha = data;
     let Novedades = Ficha.Nove ?? [];
+    Novedades.forEach((nove) => {
+        nove.Fech = Ficha.Fech;
+        nove.Lega = Ficha.Lega;
+        nove.Cierre = Ficha.Cierre;
+        nove.NoveDelete = Ficha.NoveDelete;
+    });
+
     let Tur = Ficha.Tur; // array de Turno
     let Fichadas = Ficha.Fich; // array de fichadas
     // crear un string con los elementos del array Fichadas separados por una coma
@@ -653,9 +672,13 @@ const tableNoveEdit = async (data) => {
                 },
             },
             {
-                data: '', className: 'align-middle text-center d-none', targets: '', title: '',
+                data: 'NoveDelete', className: 'align-middle text-center px-0', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    return `<delete data-titlel="Eliminar Novedad" class="btn btn-sm btn-outline-danger border-0 bi bi-trash"></delete>`;
+                    console.log(Novedades);
+                    if (data == '1') {
+                        return `<delete data-titlel="Eliminar Novedad" class="btn btn-sm btn-outline-danger border-0 mx-2 bi bi-trash"></delete>`;
+                    }
+                    return ``;
                 },
             },
         ],
@@ -687,7 +710,7 @@ const tableNoveEdit = async (data) => {
         }, 500);
 
         $(idTableBody).on('click', (e) => {
-            disabledForm(true);
+
             e.preventDefault();
             e.stopPropagation();
 
@@ -695,6 +718,13 @@ const tableNoveEdit = async (data) => {
 
                 let data = dt.row(e.target.closest('tr')).data();
                 if (!data) return;
+
+                if (e.target.tagName == 'DELETE') {
+                    deleteNovedad(data);
+                    return;
+                }
+
+                $('#modal #rowForm').addClass('loader-in');
 
                 let checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
                 let classList = e.currentTarget.classList; // Obtiene la lista de clases del tr
@@ -717,12 +747,14 @@ const tableNoveEdit = async (data) => {
                     formNovedad(data).then((rs) => {
                         if (rs) {
                             $('#modal #btnGuardar').prop('disabled', false);
+                            $('#modal #rowForm').removeClass('loader-in');
                             ls.set(LS_FICHA_FORM, Ficha);
                             if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
-                                disabledForm(true); // Deshabilita el formulario
+                                disabledForm(true); // inhabilita el formulario
                                 $('#modal #btnGuardar ').off('click') // Quita el evento click del botón guardar
                             }
                         }
+                        $("#modal .modal-body").removeClass('loader-in');
                     });
                 }
             }
@@ -803,13 +835,13 @@ const formGuardar = async () => {
         let formData = {
             Lega: data.Lega,
             Fecha: data.Fech,
-            Cate: $('#NoveSec').is(':checked') ? '1' : '0',
+            Cate: $('#NoveSec').is(':checked') ? '2' : '0',
             Nove: $('#NoveOriginal').val(),
             NoveM: $('#Nove').val(),
             Horas: $('#Horas').val(),
-            Obse: $('#Obs').val(),
+            Obse: $('#Obs').val().substring(0, 40).trim(),
             Causa: $('#Causa').val(),
-            Esta: "1",
+            Esta: "1"
         }
         disabledForm(true);
         let rs = await axios.put('data/novedad', formData);
@@ -821,18 +853,71 @@ const formGuardar = async () => {
         }
         if (rs.data.MESSAGE == "OK") {
             $.notifyClose();
-            notify('Novedad editada correctamente', 'success', 2000, 'right');
             $('#modal #btnGuardar').off('click')
             ActualizaTablas();
             ls.remove(LS_FICHA_FORM);
             setTimeout(() => {
                 $('#modal').modal('hide');
+                notify('Novedad editada correctamente', 'success', 2000, 'right');
             }, 200);
         }
     });
 }
 
 formGuardar();
+
+const deleteNovedad = async (data) => {
+
+    if (!data) {
+        $.notifyClose();
+        notify('No se encontraron datos para eliminar', 'danger', 2000, 'right');
+        return;
+    }
+
+    loading();
+
+    if (data.Cierre.Estado != 'abierto') {
+        $.notifyClose();
+        notify('No se puede editar una ficha cerrada', 'warning', 2000, 'right');
+        return;
+    }
+
+    let formData = {
+        Lega: data.Lega,
+        Fecha: data.Fech,
+        Nove: data.Codi,
+    }
+    let rs = await axios.delete('data/novedad', { data: formData });
+    if (rs.data.error) {
+        $.notifyClose();
+        notify(rs.data.error, 'danger', 2000, 'right');
+        return;
+    }
+    if (rs.data.MESSAGE == "OK") {
+        $.notifyClose();
+        notify('Novedad eliminada correctamente', 'success', 2000, 'right');
+        getFicha(data.Lega, data.Fech).then((rs) => {
+            let ficha = rs;
+            if (ficha.length === 0) {
+                $('#modal').modal('hide');
+            } else {
+                tableNoveEdit(ficha[0]);
+                // click en el primer tr
+                setTimeout(() => {
+                    let tr = document.querySelector('#tableNovEdit tbody tr');
+                    console.log(tr);
+                    $(tr).trigger('click'); // Dispara el evento click del primer tr
+                }, 500);
+
+            }
+            ActualizaTablas();
+        });
+        return;
+    }
+    $.notifyClose();
+    notify(rs.data.MESSAGE ?? '' == "OK", 'danger', 2000, 'right');
+
+}
 
 const tableInfoFicha = (Lega, ApNo, Fech, Horario, primerFichada, ultimaFichada, countFichadas) => `
 <table id="tableInfoFicha" class="table table-responsive text-nowrap mb-0 mt-n1">
@@ -875,7 +960,7 @@ $(document).on('select2:select', '#Nove', async function (e) {
 const getFicha = async (legajo, fecha) => {
     try {
         let rs = await axios.post('data/ficha/' + legajo + '/' + fecha + '/');
-        return rs.data;
+        return rs.data ?? [];
     } catch (error) {
         console.log(error);
         return null;

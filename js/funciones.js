@@ -899,3 +899,41 @@ const getHorario = (array, Labo, Feri) => {
     Descanso = (Feri == '1') ? '' : Descanso;
     return `<span title="${Descanso}">${Turno}</span>`;
 }
+
+// función para recortar str en 40 caracteres
+const strMax40 = (str) => {
+    if (!str) return false;
+    return str.substring(0, 40);
+}
+
+const loadInDiv = (element) => {
+    // Crear el elemento de carga
+    let loadingDiv = document.querySelector('.loadingDiv')
+    // Establecer el contenido y el estilo del elemento de carga
+    loadingDiv.innerHTML = 'Cargando...';
+    loadingDiv.style.position = 'absolute';
+    loadingDiv.style.top = '50%';
+    loadingDiv.style.left = '50%';
+    loadingDiv.style.transform = 'translate(-50%, -50%)';
+    loadingDiv.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    loadingDiv.style.color = 'white';
+    loadingDiv.style.padding = '20px';
+    loadingDiv.style.borderRadius = '5px';
+    loadingDiv.style.textAlign = 'center';
+
+    // Asegurarse de que el elemento padre tiene posición relativa
+    element.style.position = 'relative';
+
+    // Agregar el elemento de carga al elemento padre
+    element.appendChild(loadingDiv);
+}
+
+const removeLoadingFromDiv = (element) => {
+    // Buscar el elemento de carga dentro del elemento padre
+    let loadingDiv = element.querySelector('.loadingDiv');
+
+    // Si el elemento de carga existe, eliminarlo
+    if (loadingDiv) {
+        element.removeChild(loadingDiv);
+    }
+}

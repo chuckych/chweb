@@ -400,6 +400,16 @@
      background-size: 30px
  }
 
+ .loader-in {
+     position: relative;
+     left: 0;
+     top: 0;
+     width: 100%;
+     opacity: 0.4;
+     background-size: 30px;
+     pointer-events: none;
+ }
+
  @media (min-width:768px) {
      .collapse.dont-collapse-sm {
          display: block;
