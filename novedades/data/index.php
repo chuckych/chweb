@@ -199,6 +199,24 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
     }
     return array($arrayData['DATA'][0]);
 }
+/**
+ * Obtiene el cierre de ficha para un legajo y fecha específicos.
+ *
+ * @param string $legajo El legajo del empleado.
+ * @param string $fecha La fecha para la cual se desea obtener el cierre de ficha.
+ * @return array El cierre de ficha para el legajo y fecha especificados.
+ */
+function getCierreFicha($legajo, $fecha)
+{
+    if (!$legajo || !$fecha) {
+        return array();
+    }
+
+    $opt = array("getNov" => "0", "getONov" => "0", "getHor" => "0", "getFic" => "0");
+    $data = getFicNovHorSimple($legajo, $fecha, $opt);
+    $cierre = $data[0]['Cierre'] ?? array();
+    return $cierre;
+}
 
 Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi) {
     // sleep('2');
@@ -253,6 +271,17 @@ Flight::route('PUT /novedad', function () {
     }
 
     $payload = Flight::request()->data;
+
+    $legajo = $payload['Lega'];
+    $fecha = $payload['Fecha'];
+
+    $cierre = getCierreFicha($legajo, $fecha);
+
+    if ($cierre['Estado'] != 'abierto') {
+        Flight::json(array("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
+        return;
+    }
+
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, '');
@@ -266,10 +295,18 @@ Flight::route('DELETE /novedad', function () {
     }
 
     $payload = Flight::request();
+    $legajo = $payload->data['Lega'];
+    $fecha = $payload->data['Fecha'];
+
+    $cierre = getCierreFicha($legajo, $fecha);
+
+    if ($cierre['Estado'] != 'abierto') {
+        Flight::json(array("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
+        return;
+    }
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
-    $method = 'DELETE';
-    $rs = ch_api($endpoint, array($payload->data), $method, '');
+    $rs = ch_api($endpoint, array($payload->data), 'DELETE', '');
     Flight::json(json_decode($rs, true));
 });
 

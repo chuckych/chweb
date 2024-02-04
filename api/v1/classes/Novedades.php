@@ -154,11 +154,8 @@ class Novedades
         $inicio = microtime(true);
         $datos = $this->validarInputsDelete();
 
-        // $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
-        // $dataNovedades = $this->data(true);
-
         $conn = $this->conect->conn();
-        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
