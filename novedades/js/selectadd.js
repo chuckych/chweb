@@ -61,7 +61,7 @@ $(document).ready(function () {
         });
         GetPers.on('init.dt', function (settings) {
             $('div.loader').remove();
-            $('#GetPers_filter .form-control-sm').attr('placeholder','Buscar Legajo');
+            $('#GetPers_filter .form-control-sm').attr('placeholder', 'Buscar Legajo');
         });
         GetPers.on('draw.dt', function (settings) {
             let pagIni = (settings._iDisplayStart);
@@ -684,6 +684,7 @@ $(document).ready(function () {
     $("#TipoIngreso1").change(function () {
         CheckSesion()
         if ($("#TipoIngreso1").is(":checked")) {
+            $('#divTablePers').addClass('loader-in')
             $('#TipoIngreso').val(1)
             $('.check').prop('disabled', true)
         }
@@ -691,8 +692,17 @@ $(document).ready(function () {
     $("#TipoIngreso2").change(function () {
         CheckSesion()
         if ($("#TipoIngreso2").is(":checked")) {
+            $('#divTablePers').removeClass('loader-in')
             $('#TipoIngreso').val(2)
             $('.check').prop('disabled', false)
+        }
+    });
+    $("#TipoIngreso").change(function () {
+        alert('cambio')
+        if (this.val() == '2') {
+            $('#divTablePers').removeClass('loader-in')
+        } else {
+            $('#divTablePers').addClass('loader-in')
         }
     });
     /** Variables para las notificaciones de pantalla */

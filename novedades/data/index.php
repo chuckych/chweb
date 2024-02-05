@@ -97,7 +97,6 @@ function ch_api()
         return false;
     }
 }
-
 /**
  * Obtiene las causas de una novedad específica.
  *
@@ -124,7 +123,6 @@ function getNoveCausas($novedad)
 
     return array_values($rs) ?? array();
 }
-
 /**
  * Obtiene los datos de una ficha de novedades y horarios de forma simplificada.
  *
@@ -217,7 +215,35 @@ function getCierreFicha($legajo, $fecha)
     $cierre = $data[0]['Cierre'] ?? array();
     return $cierre;
 }
+Flight::route('/novedades-all', function () {
+    // sleep('2');
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
+    $queryParams = array(
+        "start" => 0,
+        "length" => 5000,
+        "Estruct" => "Nov"
+    );
 
+    $data = ch_api($endpoint, '', 'GET', $queryParams);
+
+    $arrayData = json_decode($data, true);
+
+    $novedades = $arrayData['DATA'] ?? array();
+
+    $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
+        $key = $item['TipoDesc'];
+        if (!isset($result[$key])) {
+            $result[$key] = [];
+        }
+        $result[$key][] = $item;
+        return $result;
+    }, []);
+
+    $json = array(
+        "novedades" => ($noveAgrupaPorTipo) ?? array(),
+    );
+    Flight::json($json);
+});
 Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi) {
     // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
@@ -241,6 +267,7 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
             return $element['Tipo'] == $NoveTipo;
         });
     }
+
     $json = array(
         "novedades" => array_values($novedades) ?? array(),
         "causas" => (intval($NoveCodi) > 0) ? getNoveCausas($NoveCodi) ?? array() : array(),
@@ -286,6 +313,47 @@ Flight::route('PUT /novedad', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, '');
+    Flight::json(json_decode($rs, true));
+});
+Flight::route('POST /novedad', function () {
+
+    if ($_SESSION['ABM_ROL']['aNov'] == '0') {
+        Flight::json(array("error" => "No tiene permisos para ingresar novedades."));
+        return;
+    }
+
+    $payload = Flight::request()->data;
+
+    $legajo = $payload['Lega'];
+    $fecha = $payload['Fecha'];
+
+    $opt = array("getNov" => "1");
+    $data = getFicNovHorSimple($legajo, $fecha, $opt);
+    $data = $data[0] ?? array();
+
+    if (empty($data)) {
+        Flight::json(array("error" => "No se puede crear la novedad, no se encontró la ficha."));
+        return;
+    }
+
+    $dataNovedad = $data['Nove'] ?? array();
+    $dataCierra = $data['Cierre'] ?? array();
+
+    foreach ($dataNovedad as $key => $value) {
+        if ($value['Codi'] == $payload['Nove']) {
+            Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad con el mismo código."));
+            return;
+        }
+    }
+
+    if ($dataCierra['Estado'] != 'abierto') {
+        Flight::json(array("error" => "No se puede crear la novedad, la ficha se encuentra cerrada."));
+        return;
+    }
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
+
+    $rs = ch_api($endpoint, array($payload), 'POST', '');
     Flight::json(json_decode($rs, true));
 });
 Flight::route('DELETE /novedad', function () {

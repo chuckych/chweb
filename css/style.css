@@ -1,6 +1,6 @@
  :root {
      --main-bg-color: #546e7a;
-     --main-radius: 0px;
+     --main-radius: 3px;
      --main-radius0: .0px;
      --main-transition: .5s;
      --animate-duration: .6s;
@@ -408,6 +408,7 @@
      opacity: 0.4;
      background-size: 30px;
      pointer-events: none;
+     user-select: none;
  }
 
  @media (min-width:768px) {
@@ -823,12 +824,12 @@
  .dataTables_paginate {
      margin-bottom: 10px !important;
      margin-top: 20px !important;
-     border-radius: var(--main-radius)
+     border-radius: var(--main-radius-0)
  }
 
  .page-item {
      font-size: .7rem;
-     border-radius: var(--main-radius);
+     border-radius: var(--main-radius-0);
      outline: 0 !important;
  }
 
@@ -837,7 +838,7 @@
      color: #fff !important;
      background-color: var(--main-bg-modcolor) !important;
      border-color: var(--main-bg-modcolor) !important;
-     border-radius: var(--main-radius);
+     border-radius: var(--main-radius-0);
      outline: 0 !important;
  }
 
@@ -854,7 +855,7 @@
      opacity: .7;
      color: #fff !important;
      background-color: var(--main-bg-modcolor) !important;
-     border-radius: var(--main-radius)
+     border-radius: var(--main-radius-0)
  }
 
  .badge-secondary {
@@ -967,7 +968,7 @@
 
  .select2-container--default .select2-results>.select2-results__options {
      max-height: 500px;
-     border-radius: var(--main-radius)
+     border-radius: var(--main-radius-0)
  }
 
  .select2-container .select2-selection--single .select2-selection__rendered {
@@ -983,7 +984,7 @@
      opacity: .7 !important;
      color: #ffffff !important;
      border: 1px solid #ffffff;
-     border-radius: var(--main-radius);
+     border-radius: var(--main-radius-0);
      cursor: default;
      float: left;
      font-size: .7rem;
@@ -1157,7 +1158,7 @@
  } */
 
  .modal-content {
-     border-radius: 0px !important;
+     border-radius: var(--main-radius) !important;
  }
 
  .dropdown-toggle::after {
@@ -1530,7 +1531,7 @@
          border: 1px solid #cecece;
          z-index: 9999999;
          visibility: hidden;
-         border-radius: 0px;
+         border-radius: var(--main-radius);
          font-weight: 400;
      }
 
@@ -1559,7 +1560,7 @@
          border: 1px solid #cecece;
          z-index: 9999999;
          visibility: hidden;
-         border-radius: 0px;
+         border-radius: var(--main-radius);
          font-weight: 400;
      }
 
@@ -1583,7 +1584,7 @@
          border: 1px solid #cecece;
          z-index: 9999999;
          visibility: hidden;
-         border-radius: 0px;
+         border-radius: var(--main-radius);
          font-weight: 400;
      }
 

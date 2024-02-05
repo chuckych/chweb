@@ -7,6 +7,25 @@
                     <button type="button" class="float-right fontq btn btn-link text-decoration-none text-secondary"
                         id="trash_allFilter">Limpiar Filtro</button>
                 </div>
+                <div class="col-12 mb-3">
+                    <span class="fontq py-2 mr-2">Ingresar Por:</span>
+                    <div class="d-flex align-items-center pt-2">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn fontq btn btn-outline-custom border w100 radius" id="TipoIngresoFiltros"
+                                data-toggle="tooltip" data-placement="bottom" data-html="true" title=""
+                                data-original-title="<span class='font1'>Ingresar por Filtros<br>(Carga R&aacute;pida)</span>">
+                                <input checked type="radio" name="TipoIngresos" id="TipoIngreso1"> Filtros
+                            </label>
+                            <label class="btn fontq btn btn-outline-custom border w100 radius"
+                                id="TipoIngresoFiltrosLegajos" data-toggle="tooltip" data-placement="bottom"
+                                data-html="true" title=""
+                                data-original-title="<span class='font1'>Ingresar por Legajo<br>(Carga Lenta)</span>">
+                                <input type="radio" name="TipoIngresos" id="TipoIngreso2"> Legajos
+                            </label>
+                            <input type="hidden" hidden id="TipoIngreso" name="TipoIngreso">
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12 d-none">
                     <div class="d-inline-flex mt-1 w-100">
                         <!-- Tipo personal -->
@@ -115,31 +134,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12 mt-3">
-                    <span class="fontq py-2 fw5 mr-2">Ingresar Por:</span>
-                    <div class="d-flex align-items-center pt-2">
-                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-sm fontq btn btn-outline-custom opa7 border w100 fw4 radius"
-                                id="TipoIngresoFiltros" data-toggle="tooltip" data-placement="bottom" data-html="true"
-                                title=""
-                                data-original-title="<span class='fw5 fontq'>Ingresar por Filtros<br>(Carga R&aacute;pida)</span>">
-                                <input checked type="radio" name="TipoIngresos" id="TipoIngreso1"> Filtros
-                            </label>
-                            <label class="btn btn-sm fontq btn btn-outline-custom opa7 border w100 fw4 radius"
-                                id="TipoIngresoFiltrosLegajos" data-toggle="tooltip" data-placement="bottom"
-                                data-html="true" title=""
-                                data-original-title="<span class='fw5 fontq'>Ingresar por Legajo<br>(Carga Lenta)</span>">
-                                <input type="radio" name="TipoIngresos" id="TipoIngreso2"> Legajos
-                            </label>
-                            <input type="hidden" hidden id="TipoIngreso" name="TipoIngreso">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12 mt-3 mt-lg-0 d-flex justify-content-end">
-                    <button type="button" class="btn btn-outline-custom btn-sm border fontq" id="CloseaddNov">
+                <div class="col-12 mt-3 d-flex justify-content-end">
+                    <button type="button" class="btn btn-outline-custom border fontq" id="CloseaddNov">
                         Cerrar
                     </button>
-                    <button type="submit" class="ml-1 btn bg-custom btn-sm text-white fontq w100" id="submit"></button>
+                    <button type="submit" class="ml-1 btn bg-custom text-white fontq w100" id="submit"></button>
                 </div>
                 <div class="col-12 mt-3 d-flex justify-content-start">
                     <span class="fontq text-dark">Nota: <br>Para la carga por Filtros. al menos un filtro es
@@ -157,7 +156,7 @@
                 <input type="hidden" name="Cuenta" id="Cuenta">
             </div>
         </div>
-        <div class="col-12 col-sm-6 table-responsive pt-2 d-none" id="divTablePers">
+        <div class="col-12 col-sm-6 table-responsive pt-2 d-none loader-in" id="divTablePers">
             <table class="table table-hover text-nowrap w-100 table-sm" id="GetPers">
                 <thead class="">
                     <tr>

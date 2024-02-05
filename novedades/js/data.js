@@ -573,7 +573,20 @@ const tableNoveEdit = async (data) => {
     return new Promise((resolve, reject) => {
         let Ficha = data;
 
+        if (Ficha.length === 0) {
+            $.notifyClose();
+            notify('No se encontró la ficha', 'danger', 2000, 'right');
+            return;
+        }
+
         let Novedades = Ficha.Nove ?? [];
+
+        if (Novedades.length === 0) {
+            $.notifyClose();
+            notify('La novedad no tiene ficha asociada', 'danger', 2000, 'right');
+            return;
+        }
+
         Novedades.forEach((nove) => {
             nove.Fech = Ficha.Fech;
             nove.Lega = Ficha.Lega;
@@ -609,12 +622,12 @@ const tableNoveEdit = async (data) => {
 
         let dt = $('#tableNovEdit').DataTable({
             dom: `
-        <'row '
-            <'col-12 divFichadas'>
-        >
-        <'row '
-            <'col-12 table-responsive mt-0't>
-        >`,
+                <'row '
+                    <'col-12 divFichadas'>
+                >
+                <'row '
+                    <'col-12 table-responsive mt-0't>
+                >`,
             bProcessing: true,
             loadingRecords: true,
             paging: false,
@@ -703,9 +716,7 @@ const tableNoveEdit = async (data) => {
 
             fadeInOnly('#tableNovEdit');
 
-            let tableInfo = tableInfoFicha(Ficha.Lega, Ficha.ApNo, Ficha.FechD, Ficha.FechF, Horario, primerFichada, ultimaFichada, countFichadas);
-
-
+            let tableInfo = tableInfoFicha(Ficha.Lega, Ficha.ApNo, Ficha.FechD, Ficha.FechF, Horario, primerFichada, ultimaFichada, countFichadas); // Crea la tabla de información de la ficha
 
             $("#modal .divFichadas").html('');
             $("#modal .divFichadas").html(tableInfo);
@@ -723,6 +734,9 @@ const tableNoveEdit = async (data) => {
                 e.preventDefault();
                 e.stopPropagation();
 
+
+                $('#modal  #rowForm').addClass('loader-in');
+
                 if (e.target.closest('tr').tagName) {
 
                     let data = dt.row(e.target.closest('tr')).data();
@@ -732,8 +746,6 @@ const tableNoveEdit = async (data) => {
                         deleteNovedad(data);
                         return;
                     }
-
-                    // $('#modal #rowForm').addClass('loader-in');
 
                     let checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
                     let classList = e.currentTarget.classList; // Obtiene la lista de clases del tr
@@ -755,7 +767,19 @@ const tableNoveEdit = async (data) => {
                         checkbox.checked = true; // Marca el checkbox
                         formNovedad(data).then((rs) => {
                             if (rs) {
+
+
+                                $('#modal  #rowForm').removeClass('loader-in');
+                                $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
+
                                 $('#modal #btnGuardar').prop('disabled', false);
+                                $('#modal #btnGuardar').removeClass('btnAgregar')
+                                $('#modal #btnGuardar').addClass('btnGuardar')
+
+                                $('#modal #btnGuardar').removeClass('btn-success')
+                                $('#modal #btnGuardar').addClass('btn-custom')
+                                $('#modal #btnGuardar').html('Aplicar')
+
                                 ls.set(LS_FICHA_FORM, Ficha);
                                 if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
                                     disabledForm(true); // inhabilita el formulario
@@ -775,7 +799,7 @@ const formNovedad = async (data) => {
 
     try {
 
-        if (!data.Codi) { // Si no hay novedad o tipo de novedad
+        if (!data.Codi) { // Si no hay novedad
             throw new Error('No se encontraron datos para editar');
         }
 
@@ -798,7 +822,6 @@ const formNovedad = async (data) => {
         if (data.Cate == '2') {
             $('#NoveSec').prop('checked', true).trigger('change');
         }
-        $('#modal  #rowForm').removeClass('loader-in');
         return true; // Retorna true si todo salió bien
     } catch (error) {
         alert(error.message);
@@ -806,7 +829,6 @@ const formNovedad = async (data) => {
     }
 
 }
-
 const addSelectOptions = (array, selector) => {
     $(selector).prop('disabled', true).empty().trigger('change');
     if (!array) return false;
@@ -820,8 +842,26 @@ const addSelectOptions = (array, selector) => {
     }
 }
 
+function generarOptgroupYOptions(objeto, selector) {
+    var select = document.querySelector(selector);
+
+    Object.keys(objeto).forEach(function (clave) {
+        var optgroup = document.createElement('optgroup');
+        optgroup.label = clave;
+
+        objeto[clave].forEach(function (item) {
+            var option = document.createElement('option');
+            option.value = item.Codi;
+            option.text = item.Desc;
+            optgroup.appendChild(option);
+        });
+
+        select.appendChild(optgroup);
+    });
+}
+
 const formGuardar = async () => {
-    $(document).on('click', '#modal #btnGuardar', async function (e) {
+    $(document).on('click', '#modal .btnGuardar', async function (e) {
         e.preventDefault();
         e.stopPropagation();
 
@@ -878,19 +918,37 @@ const formGuardar = async () => {
         }
     });
 }
-
 formGuardar();
 
 const addNovedad = () => {
-    $(document).on('click', '#modal #addNovedad', function (e) {
+    $(document).on('click', '#modal #addNovedad', async function (e) {
 
         e.preventDefault();
         e.stopPropagation();
 
+        $('#modal #btnGuardar').addClass('btnAgregar')
+        $('#modal #btnGuardar').addClass('btn-success')
+        $('#modal #btnGuardar').removeClass('btn-custom')
+        $('#modal #btnGuardar').removeClass('btnGuardar')
+        $('#modal #btnGuardar').html('Agregar')
+        $('#modal #rowForm').addClass('loader-in');
+
+        let idTableNovedades = '#tableNovEdit tbody tr';
+
+        if ($(idTableNovedades).length > 0) {
+            $(idTableNovedades).removeClass('selected');
+            // uncheck all checkboxes
+            $(idTableNovedades).find('input[type="checkbox"]').prop('checked', false);
+            // $(idTableNovedades).first().trigger('click');
+        }
+        disabledForm(false);
+
+        let rsData = await axios('data/novedades-all'); // Busca las novedades y causas
+        let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
+        generarOptgroupYOptions(novedades, '#Nove') // Agrega las novedades al select
+
         let data = ls.get(LS_FICHA_FORM);
         if (!data) return;
-
-        console.log(data);
 
         if (data.NoveAdd == '0') {
             $.notifyClose();
@@ -899,18 +957,83 @@ const addNovedad = () => {
             return;
         }
 
-        $('#addNov').trigger('click');
-        setTimeout(() => {
-            $('#TipoIngresoFiltrosLegajos').trigger('click');
-            $('#GetPers').DataTable().search(data.Lega).draw();
-            $('#_draddNov').data('daterangepicker').setStartDate(data.FechF);
-            $('#_draddNov').data('daterangepicker').setEndDate(data.FechF);
-            $('#aFicNove').select2('open');
-        }, 100);
-        $('#modal').modal('hide');
+        $('#modal #rowForm').removeClass('loader-in');
+        $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
+
+
+        // $('#addNov').trigger('click');
+        // setTimeout(() => {
+        //     $('#TipoIngresoFiltrosLegajos').trigger('click');
+        //     $('#GetPers').DataTable().search(data.Lega).draw();
+        //     $('#_draddNov').data('daterangepicker').setStartDate(data.FechF);
+        //     $('#_draddNov').data('daterangepicker').setEndDate(data.FechF);
+        //     $('#aFicNove').select2('open');
+        // }, 100);
+        // $('#modal').modal('hide');
     });
 }
 addNovedad();
+
+const formAgregar = async () => {
+    $(document).on('click', '#modal .btnAgregar', async function (e) {
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        let data = ls.get(LS_FICHA_FORM);
+        if (!data) return;
+
+        if (!data) {
+            $.notifyClose();
+            notify('No se encontraron datos', 'danger', 2000, 'right');
+            return;
+        }
+
+        loading();
+        $('#modal .modal-body').addClass('loader-in');
+
+        if (data.Cierre.Estado != 'abierto') {
+            $.notifyClose();
+            notify('La ficha está cerrada', 'warning', 2000, 'right');
+            return;
+        }
+
+        let formData = {
+            Lega: data.Lega,
+            Fecha: data.Fech,
+            Cate: $('#NoveSec').is(':checked') ? '2' : '0',
+            Nove: $('#Nove').val(),
+            Horas: $('#Horas').val(),
+            Obse: $('#Obs').val().substring(0, 40).trim(),
+            Causa: $('#Causa').val(),
+            Esta: "0"
+        }
+        let rs = await axios.post('data/novedad', formData);
+        // console.log(rs.data);
+        if (rs.data.error) {
+            $.notifyClose();
+            notify(rs.data.error, 'danger', 2000, 'right');
+            return;
+        }
+        if (rs.data.MESSAGE == "OK") {
+            $.notifyClose();
+            $('#modal #btnGuardar').off('click')
+            ActualizaTablas();
+            notify('Novedad creada correctamente', 'success', 2000, 'right');
+            getFicha(data.Lega, data.Fech).then((rs) => {
+                if (!rs) {
+                    ls.remove(LS_FICHA_FORM)
+                    $('#modal').modal('hide');
+                    return;
+                }
+                tableNoveEdit(rs[0]);
+            });
+            return;
+        }
+    });
+}
+
+formAgregar();
 
 const deleteNovedad = async (data) => {
 
@@ -981,7 +1104,7 @@ const tableInfoFicha = (Lega, ApNo, FechD, FechF, Horario, primerFichada, ultima
             <td class="text-center">${primerFichada}</td>
             <td class="text-center">${ultimaFichada}</td>
             <td class="w-100">${countFichadas}</td>
-            <td><span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-outline-default bi bi-plus-lg"></span></td>
+            <td><span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span></td>
         </tr>
     </tbody>
 </table>

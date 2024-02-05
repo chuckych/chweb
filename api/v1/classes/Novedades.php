@@ -42,22 +42,6 @@ class Novedades
 
         $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
         $dataNovedades = $this->data(true);
-        function obtenerNovTipo($novCodi, $array)
-        {
-            if (!$novCodi) {
-                return 0;
-            }
-            if ($array) {
-                foreach ($array as $elemento) {
-                    if (array_key_exists('NovCodi', $elemento) && array_key_exists('NovTipo', $elemento)) {
-                        if ($elemento['NovCodi'] == $novCodi) {
-                            return $elemento['NovTipo'];
-                        }
-                    }
-                }
-            }
-            return 0;
-        }
 
         $conn = $this->conect->conn();
         $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
@@ -73,7 +57,7 @@ class Novedades
 
             foreach ($datos as $dato) { // Recorro los datos
 
-                $tipoNovedad = obtenerNovTipo($dato['NoveM'], $dataNovedades);
+                $tipoNovedad = $this->obtenerTipoDeNovedad($dato['NoveM'], $dataNovedades);
 
                 $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
                 $stmt->bindValue(':NoveM', $dato['NoveM'], \PDO::PARAM_INT);
@@ -146,6 +130,105 @@ class Novedades
             $conn->rollBack();
             $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_updateNovedades_' . ID_COMPANY . '.log');
+            exit;
+        }
+    }
+    public function add()
+    {
+        $inicio = microtime(true);
+        $datos = $this->validarInputsAdd();
+
+        $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
+        $dataNovedades = $this->data(true);
+
+        $conn = $this->conect->conn();
+        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+        try {
+            $conn->beginTransaction(); // Iniciar transacción
+
+            $sql = "INSERT INTO FICHAS3 (FicLega, FicFech, FicTurn, FicNove, FicNoTi, FicHoras, FicEsta, FicCaus, FicObse, FechaHora, FicCate, FicJust, FicComp) VALUES (:Lega, :Fecha, 1, :Nove, :FicNoTi, :Horas, :Esta, :Causa, :Obse, :FechaHora, :Cate, :Comp, :Just)";
+
+            $stmt = $conn->prepare($sql);
+
+            $totalAffectedRows = 0;
+
+            foreach ($datos as $dato) { // Recorro los datos
+
+                $tipoNovedad = $this->obtenerTipoDeNovedad($dato['Nove'], $dataNovedades);
+                $Fecha = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+
+                $stmt->bindValue(':Lega', $dato['Lega'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+                $stmt->bindValue(':Nove', $dato['Nove'], \PDO::PARAM_INT);
+                $stmt->bindValue(':FicNoTi', $tipoNovedad, \PDO::PARAM_INT);
+                $stmt->bindValue(':Horas', $dato['Horas'], \PDO::PARAM_STR);
+                $stmt->bindValue(':Esta', $dato['Esta'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Causa', $dato['Causa'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Obse', $dato['Obse'], \PDO::PARAM_STR);
+                $stmt->bindValue(':FechaHora', $FechaHoraActual, \PDO::PARAM_STR);
+                $stmt->bindValue(':Cate', $dato['Cate'], \PDO::PARAM_INT);
+                $stmt->bindValue(':Comp', 0, \PDO::PARAM_INT);
+                $stmt->bindValue(':Just', '00:00', \PDO::PARAM_STR);
+
+                $stmt->execute(); // Ejecuto la consulta
+                $totalAffectedRows += $stmt->rowCount(); // Cuento la cantidad de filas afectadas
+            }
+
+            $conn->commit(); // Confirmar la transacción
+
+            $groupedData = [];
+
+            $minDate = PHP_INT_MAX;
+            $maxDate = 0;
+
+            foreach ($datos as $item) {
+                $lega = $item["Lega"];
+                $fechaMin = strtotime($item["Fecha"]);
+                $fechaMax = strtotime($item["Fecha"]);
+
+                if ($fechaMin < $minDate) {
+                    $minDate = $fechaMin;
+                }
+                if ($fechaMax > $maxDate) {
+                    $maxDate = $fechaMax;
+                }
+
+                if (!isset($groupedData[$lega])) {
+                    $groupedData[$lega] = true;
+                }
+            }
+
+            $agrup = [ // Agrupar los datos para procesarlos en el WebService
+                "Legajos" => array_keys($groupedData), // Obtengo los legajos
+                "Fechas" => [ // Obtengo las fechas
+                    "Desde" => date("Y-m-d", $minDate),
+                    "Hasta" => date("Y-m-d", $maxDate)
+                ]
+            ];
+
+            if ($agrup) { // Si hay datos para procesar
+                try { // Procesar los legajos en el WebService
+                    if (!isset($agrup['Fechas']['Desde']) || !isset($agrup['Fechas']['Hasta']) || empty($agrup['Fechas']['Desde']) || empty($agrup['Fechas']['Hasta'])) {
+                        throw new \Exception("No se recibieron las fechas", 1);
+                    }
+                    // Validar que existan los legajos
+                    if (!isset($agrup['Legajos']) || empty($agrup['Legajos'])) {
+                        throw new \Exception("No se recibieron los legajos", 1);
+                    }
+                    $Legajos = $agrup['Legajos'];
+                    $Desde = $agrup['Fechas']['Desde'];
+                    $Hasta = $agrup['Fechas']['Hasta'];
+                    $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                } catch (\Exception $e) {
+                    $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
+                    return false;
+                }
+            }
+            $this->resp->response([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $conn->rollBack();
+            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_addNovedades_' . ID_COMPANY . '.log');
             exit;
         }
     }
@@ -274,7 +357,7 @@ class Novedades
                     }
                 }
                 $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancio la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
                 $validator->validate(); // Valido los datos
             }
             return $datosModificados;
@@ -282,6 +365,57 @@ class Novedades
         } catch (\Exception $e) {
             $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
+        }
+    }
+    private function validarInputsAdd()
+    {
+        $datos = $this->getData;
+        try {
+
+            if (!is_array($datos)) {
+                throw new \Exception("No se recibieron datos", 1);
+            }
+
+            $rules = [ // Reglas de validación
+                'Lega' => ['required', 'int'],
+                'Fecha' => ['required', 'date'],
+                'Nove' => ['required', 'smallint'],
+                'Horas' => ['time'],
+                'Esta' => ['allowed012'],
+                'Obse' => ['varchar40'],
+                'Causa' => ['smallint'],
+                'Cate' => ['smallint']
+            ];
+
+            $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
+            $customValueKey = array( // Valores por defecto
+                'Lega' => "0",
+                'Fecha' => '00000000',
+                'Nove' => "0",
+                'Horas' => '00:00',
+                'Esta' => "0",
+                'Obse' => '',
+                'Causa' => "0",
+                'FechaHora' => '',
+                'Cate' => "0"
+            );
+            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+
+            foreach ($datos as $dato) { // Recorro los datos recibidos
+                foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacio
+                        $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                    }
+                }
+                $datosModificados[] = $dato; // Guardo los datos modificados en un array
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+                $validator->validate(); // Valido los datos
+            }
+            return $datosModificados;
+            // $this->resp->response($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
+        } catch (\Exception $e) {
+            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsAdd.log');
         }
     }
     private function validarInputsDelete()
@@ -772,5 +906,28 @@ class Novedades
             $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
+    }
+    /**
+     * Obtiene el tipo de novedad correspondiente al código de novedad proporcionado.
+     *
+     * @param int $novCodi El código de novedad a buscar.
+     * @param array $array El arreglo de elementos a buscar.
+     * @return int|string El tipo de novedad correspondiente al código de novedad proporcionado, o 0 si no se encuentra.
+     */
+    private function obtenerTipoDeNovedad($novCodi, $array)
+    {
+        if (!$novCodi) {
+            return 0;
+        }
+        if ($array) {
+            foreach ($array as $elemento) {
+                if (array_key_exists('NovCodi', $elemento) && array_key_exists('NovTipo', $elemento)) {
+                    if ($elemento['NovCodi'] == $novCodi) {
+                        return $elemento['NovTipo'];
+                    }
+                }
+            }
+        }
+        return 0;
     }
 }

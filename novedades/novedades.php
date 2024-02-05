@@ -36,8 +36,8 @@
                 <div class="col-12 col-sm-6">
                     <button <?= AttrDisabled($_SESSION["ABM_ROL"]['aNov']) ?> type="button"
                         class="btn opa7 btn-custom btn-sm fontq" data-toggle="tooltip" data-placement="right"
-                        data-html="true" title=""
-                        data-original-title="<span class='fw5 fontq'>Agregar de Novedades</span>" id="addNov">
+                        data-html="true" title="" data-original-title="<span class='font1'>Agregar Novedades</span>"
+                        id="addNov">
                         Agregar
                     </button>
                     <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal"
@@ -140,7 +140,7 @@
     <script src="../js/select2-es.js"></script>
     <script src="js/data.js?v=<?= vjs() ?>"></script>
     <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/selectadd-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/selectadd.js?v=<?= vjs() ?>"></script>
     <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
     <script src="js/NovXLS.js?v=<?= vjs() ?>"></script>
 
