@@ -310,7 +310,7 @@ Flight::route('PUT /novedad', function () {
         return;
     }
 
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, '');
     Flight::json(json_decode($rs, true));
@@ -351,7 +351,7 @@ Flight::route('POST /novedad', function () {
         return;
     }
 
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
 
     $rs = ch_api($endpoint, array($payload), 'POST', '');
     Flight::json(json_decode($rs, true));
@@ -374,7 +374,7 @@ Flight::route('DELETE /novedad', function () {
         return;
     }
 
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/";
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
     $rs = ch_api($endpoint, array($payload->data), 'DELETE', '');
     Flight::json(json_decode($rs, true));
 });

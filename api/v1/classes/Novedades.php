@@ -43,6 +43,8 @@ class Novedades
         $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
         $dataNovedades = $this->data(true);
 
+        $procesar = Flight::request()->query['procesar'] ?? false;
+
         $conn = $this->conect->conn();
         $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
         try {
@@ -119,7 +121,9 @@ class Novedades
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    // $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    if ($procesar) {
+                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
@@ -140,6 +144,8 @@ class Novedades
 
         $this->query = array('start' => 0, 'length' => 9999); // Para que no se pagine
         $dataNovedades = $this->data(true);
+
+        $procesar = Flight::request()->query['procesar'] ?? false;
 
         $conn = $this->conect->conn();
         $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
@@ -218,7 +224,10 @@ class Novedades
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+
+                    if ($procesar) {
+                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
@@ -238,6 +247,8 @@ class Novedades
         $datos = $this->validarInputsDelete();
 
         $conn = $this->conect->conn();
+
+        $procesar = Flight::request()->query['procesar'] ?? false;
 
         try {
             $conn->beginTransaction(); // Iniciar transacción
@@ -300,7 +311,9 @@ class Novedades
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    if ($procesar) {
+                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
