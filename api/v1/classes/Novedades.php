@@ -300,7 +300,7 @@ class Novedades
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    // $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
