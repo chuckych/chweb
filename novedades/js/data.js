@@ -78,7 +78,21 @@ let GetPersonal = $('#GetPersonal').DataTable({
     serverSide: true,
     deferRender: true,
     searchDelay: 1500,
-    dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+    // dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+    dom: `
+    <"row"
+        <"col-12 d-flex justify-content-end"
+            <"d-flex justify-content-end align-items-end">
+            <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
+                <"d-none d-sm-block ml-1"p>
+            >   
+        >
+        <"col-12"
+            <"d-block d-sm-none mt-n2"p>
+            <"d-flex justify-content-end align-items-end mt-n1"i>
+        >
+    >
+        `,
     ajax: {
         url: "/" + $("#_homehost").val() + "/novedades/GetPersonal.php",
         type: "POST",
@@ -105,24 +119,16 @@ let GetPersonal = $('#GetPersonal').DataTable({
         },
     },
     columns: [
-        // {
-        //     "class": "w80 px-3 border fw4 bg-light radius pers_legajo",
-        //     "data": 'pers_legajo'
-        // },
         {
             data: 'pers_legajo', className: 'w80 px-3 border fw4 bg-light radius pers_legajo', targets: '', title: '',
             "render": function (data, type, row, meta) {
                 return `<div class="text-truncate" style="max-width:80px">${data}</div>`;
             },
         },
-        // {
-        //     "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
-        //     "data": 'pers_nombre'
-        // },
         {
-            data: 'pers_nombre', className: 'w80 px-3 border fw4 bg-light radius pers_legajo', targets: '', title: '',
+            data: 'pers_nombre', className: 'px-3 border fw4 bg-light radius pers_legajo', targets: '', title: '',
             "render": function (data, type, row, meta) {
-                return `<div class="text-truncate" style="min-width:190px;max-width:190px" title="${row.ApNo}">${data}</div>`;
+                return `<div class="text-truncate" style="min-width:190px;max-width:250px" title="${row.ApNo}">${data}</div>`;
             },
         },
     ],
@@ -296,7 +302,21 @@ setTimeout(function () {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+        // dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+        dom: `
+        <"row"
+            <"col-12 d-flex justify-content-end"
+                <"d-flex justify-content-end align-items-end">
+                <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
+                    <"d-none d-sm-block ml-1"p>
+                >   
+            >
+            <"col-12"
+                <"d-block d-sm-none mt-n2"p>
+                <"d-flex justify-content-end align-items-end mt-n1"i>
+            >
+        >
+            `,
         ajax: {
             url: "/" + $("#_homehost").val() + "/novedades/GetFechas.php",
             type: "POST",
@@ -326,8 +346,10 @@ setTimeout(function () {
                 "data": 'FicFech'
             },
             {
-                "class": "w300 px-3 border fw4 bg-light radius",
-                "data": 'Dia'
+                data: 'Dia', className: 'text-center px-3 border fw4 bg-light radius', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    return `<div class="text-truncate" style="min-width:190px;max-width:250px" title="${row.ApNo}">${data}</div>`;
+                },
             },
         ],
         paging: true,

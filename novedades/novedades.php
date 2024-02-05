@@ -89,14 +89,16 @@
                 <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
                     <input type="text" data-mask="000000000" reverse="true" id="Per2"
                         class="form-control mr-2 w100 mt-n1 d-none text-center" style="height: 15px;">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
+                    <table class="p-3 table table-borderless text-nowrap w-auto table-sm table-responsive"
+                        id="GetPersonal">
 
                     </table>
                 </div>
             </div>
             <div class="row pb-sm-3" id="pagFech">
-                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
+                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn ">
+                    <table class="table-responsive p-3 table table-borderless text-nowrap w-auto table-sm"
+                        id="GetFechas">
 
                     </table>
                 </div>

@@ -372,19 +372,19 @@ $(function () {
         serverSide: true,
         deferRender: true,
         dom: `
-    <"row"
-        <"col-12 d-flex justify-content-end p-0"
-            <"d-flex justify-content-end align-items-end">
-            <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
-                <"d-none d-sm-block ml-1"p>
-            >   
+        <"row"
+            <"col-12 d-flex justify-content-end p-0"
+                <"d-flex justify-content-end align-items-end">
+                <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
+                    <"d-none d-sm-block ml-1"p>
+                >   
+            >
+            <"col-12"
+                <"d-block d-sm-none mt-n2"p>
+                <"d-flex justify-content-end align-items-end mt-n4 p-0"i>
+            >
         >
-        <"col-12"
-            <"d-block d-sm-none mt-n2"p>
-            <"d-flex justify-content-end align-items-end mt-n4 p-0"i>
-        >
-    >
-        `,
+            `,
         ajax: {
             url: "/" + $("#_homehost").val() + "/fichadas/GetFechasFichas.php",
             type: "POST",

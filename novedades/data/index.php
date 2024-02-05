@@ -332,7 +332,7 @@ Flight::route('PUT /novedad', function () {
         return;
     }
 
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades";
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, '');
     Flight::json(json_decode($rs, true));
@@ -354,9 +354,10 @@ Flight::route('POST /novedad', function () {
     $legajo = $payload['Lega'];
     $fecha = $payload['Fecha'];
 
-    $opt = array("getNov" => "1");
-    $data = getFicNovHorSimple($legajo, $fecha, $opt);
-    $data = $data[0] ?? array();
+    $opt = array("getNov" => "1", "getFic" => "1");
+    $dataFicNov = getFicNovHorSimple($legajo, $fecha, $opt);
+    $data = $dataFicNov[0] ?? array();
+    $dataFic = $dataFicNov[0]['Fich'] ?? array();
 
     $getNovedad = getNovedad($payload['Nove']);
 
@@ -365,11 +366,18 @@ Flight::route('POST /novedad', function () {
         return;
     }
 
-    $dataNovedad = $data['Nove'] ?? array();
+    $dataNovedad = $data['Nove'] ?? array(); // Obtenemos las novedades de la ficha
+    $dataCierra = $data['Cierre'] ?? array(); // Obtenemos el cierre de la ficha
+    $tipoNovedadRecibida = intval($getNovedad[0]['Tipo']); // Obtenemos el tipo de novedad
 
-    $dataCierra = $data['Cierre'] ?? array();
-
-    $tipoNovedadRecibida = $getNovedad[0]['Tipo'];
+    /** Si la ficha tiene fichadas y el tipo de novedad es del tipo ausencia y la novedad forzada es 0
+     * no se puede crear la novedad porque ya existen fichadas para el día.
+     */
+    if (count($dataFic) > 0 && $tipoNovedadRecibida > 2 && intval($payload['Cate']) === 0) {
+        Flight::json(array("error" => "No se puede crear la novedad del tipo ausencia, existen fichadas para el día."));
+        return;
+    }
+    /** */
 
     foreach ($dataNovedad as $key => $value) {
 
