@@ -218,7 +218,7 @@ function getCierreFicha($legajo, $fecha)
 /**
  * Retrieves a specific novedad from the API.
  *
- * @param string $novedad The code of the novedad to retrieve.
+ * @param string | array $novedad The code of the novedad to retrieve.
  * @return array The data of the novedad, or an empty array if not found.
  */
 function getNovedad($novedad)
@@ -229,7 +229,7 @@ function getNovedad($novedad)
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov",
-        "Codi" => array($novedad)
+        "Codi" => (is_array($novedad)) ? $novedad : [$novedad]
     );
 
     $data = ch_api($endpoint, '', $method, $queryParams);
@@ -324,6 +324,8 @@ Flight::route('PUT /novedad', function () {
 
     $legajo = $payload['Lega'];
     $fecha = $payload['Fecha'];
+    $noveM = $payload['NoveM'];
+    $nove = $payload['Nove'];
 
     $cierre = getCierreFicha($legajo, $fecha);
 
@@ -335,7 +337,30 @@ Flight::route('PUT /novedad', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades";
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, '');
-    Flight::json(json_decode($rs, true));
+    $result = json_decode($rs, true);
+
+    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+
+    if ($result['MESSAGE'] == "OK") {
+
+        $noves = array($nove, $noveM);
+        $dataNovedad = getNovedad($noves);
+
+        $getNovedad = array_filter($dataNovedad, function ($element) use ($nove) {
+            return $element['Codi'] == $nove;
+        });
+        $getNovedad2 = array_filter($dataNovedad, function ($element) use ($noveM) {
+            return $element['Codi'] == $noveM;
+        });
+
+        $getNovedad = (array_values($getNovedad));
+        $getNovedad2 = (array_values($getNovedad2));
+
+        $aud = 'Modificación Novedad: (' . $nove . ') ' . $getNovedad[0]['Desc'] . '. Por novedad (' . $noveM . ') ' . $getNovedad2[0]['Desc'] . '. Legajo: ' . $legajo . '. Fecha: ' . fechformat($fecha);
+        audito_ch('M', $aud, '2');
+    }
+
+    Flight::json($result);
 });
 Flight::route('POST /novedad', function () {
 
@@ -410,7 +435,17 @@ Flight::route('POST /novedad', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
 
     $rs = ch_api($endpoint, array($payload), 'POST', '');
-    Flight::json(json_decode($rs, true));
+
+    $result = json_decode($rs, true);
+
+    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+
+    if ($result['MESSAGE'] == "OK") {
+        $aud = 'Alta Novedad: (' . $payload['Nove'] . ') ' . $getNovedad[0]['Desc'] . ' de Legajo: ' . $legajo . ' Fecha: ' . fechformat($fecha);
+        audito_ch('A', $aud, '2');
+    }
+
+    Flight::json($result);
 });
 Flight::route('DELETE /novedad', function () {
 
@@ -422,6 +457,7 @@ Flight::route('DELETE /novedad', function () {
     $payload = Flight::request();
     $legajo = $payload->data['Lega'];
     $fecha = $payload->data['Fecha'];
+    $nove = $payload->data['Nove'];
 
     $cierre = getCierreFicha($legajo, $fecha);
 
@@ -432,7 +468,17 @@ Flight::route('DELETE /novedad', function () {
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
     $rs = ch_api($endpoint, array($payload->data), 'DELETE', '');
-    Flight::json(json_decode($rs, true));
+    $result = json_decode($rs, true);
+
+    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+
+    if ($result['MESSAGE'] == "OK") {
+        $getNovedad = getNovedad($nove);
+        $aud = 'Baja Novedad: (' . $getNovedad[0]['Codi'] . ') ' . $getNovedad[0]['Desc'] . '. Legajo: ' . $legajo . '. Fecha: ' . fechformat($fecha);
+        audito_ch('B', $aud, '2');
+    }
+
+    Flight::json($result);
 });
 
 

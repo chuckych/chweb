@@ -729,7 +729,7 @@ const tableNoveEdit = async (data) => {
                     },
                 },
                 {
-                    data: 'NoveDelete', className: 'align-middle text-center px-0', targets: '', title: '',
+                    data: 'NoveDelete', className: 'align-middle text-center px-0', targets: '', title: '<span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span>',
                     "render": function (data, type, row, meta) {
                         if (data == '1') {
                             return `<delete data-titlel="Eliminar Novedad" class="btn btn-sm btn-outline-danger border-0 mx-2 bi bi-trash"></delete>`;
@@ -1118,7 +1118,6 @@ const tableInfoFicha = (Lega, ApNo, FechD, FechF, Horario, primerFichada, ultima
             <th class="text-center">Entra</th>
             <th class="text-center">Sale</th>
             <th class=""></th>
-            <th class=""></th>
         </tr>
     </thead>
     <tbody>
@@ -1131,7 +1130,6 @@ const tableInfoFicha = (Lega, ApNo, FechD, FechF, Horario, primerFichada, ultima
             <td class="text-center">${primerFichada}</td>
             <td class="text-center">${ultimaFichada}</td>
             <td class="w-100">${countFichadas}</td>
-            <td><span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span></td>
         </tr>
     </tbody>
 </table>
