@@ -78,7 +78,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
     serverSide: true,
     deferRender: true,
     searchDelay: 1500,
-    dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+    dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
     ajax: {
         url: "/" + $("#_homehost").val() + "/novedades/GetPersonal.php",
         type: "POST",
@@ -105,13 +105,25 @@ let GetPersonal = $('#GetPersonal').DataTable({
         },
     },
     columns: [
+        // {
+        //     "class": "w80 px-3 border fw4 bg-light radius pers_legajo",
+        //     "data": 'pers_legajo'
+        // },
         {
-            "class": "w80 px-3 border fw4 bg-light radius pers_legajo",
-            "data": 'pers_legajo'
+            data: 'pers_legajo', className: 'w80 px-3 border fw4 bg-light radius pers_legajo', targets: '', title: '',
+            "render": function (data, type, row, meta) {
+                return `<div class="text-truncate" style="max-width:80px">${data}</div>`;
+            },
         },
+        // {
+        //     "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
+        //     "data": 'pers_nombre'
+        // },
         {
-            "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
-            "data": 'pers_nombre'
+            data: 'pers_nombre', className: 'w80 px-3 border fw4 bg-light radius pers_legajo', targets: '', title: '',
+            "render": function (data, type, row, meta) {
+                return `<div class="text-truncate" style="min-width:190px;max-width:190px" title="${row.ApNo}">${data}</div>`;
+            },
         },
     ],
     paging: true,
@@ -139,6 +151,7 @@ let GetNovedades = $('#GetNovedades').DataTable({
     serverSide: true,
     deferRender: true,
     searchDelay: 1500,
+    dom: `<'mt-3'<'d-none d-sm-block'l><t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
     ajax: {
         url: "/" + $("#_homehost").val() + "/novedades/GetNovedades.php",
         type: "POST",
@@ -283,7 +296,7 @@ setTimeout(function () {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+        dom: `<'mt-3't><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
         ajax: {
             url: "/" + $("#_homehost").val() + "/novedades/GetFechas.php",
             type: "POST",
@@ -340,6 +353,7 @@ setTimeout(function () {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
+        dom: `<'mt-3'<'d-none d-sm-block'l><t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
         ajax: {
             url: "/" + $("#_homehost").val() + "/novedades/GetNovedadesFecha.php",
             type: "POST",
@@ -626,7 +640,7 @@ const tableNoveEdit = async (data) => {
                     <'col-12 divFichadas'>
                 >
                 <'row '
-                    <'col-12 table-responsive mt-0't>
+                    <'col-12 mt-0't>
                 >`,
             bProcessing: true,
             loadingRecords: true,
@@ -844,7 +858,7 @@ const addSelectOptions = (array, selector) => {
 
 function generarOptgroupYOptions(objeto, selector) {
     var select = document.querySelector(selector);
-
+    $(selector).append(`<option value=""></option>`);
     Object.keys(objeto).forEach(function (clave) {
         var optgroup = document.createElement('optgroup');
         optgroup.label = clave;
@@ -960,16 +974,6 @@ const addNovedad = () => {
         $('#modal #rowForm').removeClass('loader-in');
         $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
 
-
-        // $('#addNov').trigger('click');
-        // setTimeout(() => {
-        //     $('#TipoIngresoFiltrosLegajos').trigger('click');
-        //     $('#GetPers').DataTable().search(data.Lega).draw();
-        //     $('#_draddNov').data('daterangepicker').setStartDate(data.FechF);
-        //     $('#_draddNov').data('daterangepicker').setEndDate(data.FechF);
-        //     $('#aFicNove').select2('open');
-        // }, 100);
-        // $('#modal').modal('hide');
     });
 }
 addNovedad();
@@ -1012,6 +1016,7 @@ const formAgregar = async () => {
         // console.log(rs.data);
         if (rs.data.error) {
             $.notifyClose();
+            $('#modal .modal-body').removeClass('loader-in');
             notify(rs.data.error, 'danger', 2000, 'right');
             return;
         }

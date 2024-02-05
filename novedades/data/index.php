@@ -215,6 +215,28 @@ function getCierreFicha($legajo, $fecha)
     $cierre = $data[0]['Cierre'] ?? array();
     return $cierre;
 }
+/**
+ * Retrieves a specific novedad from the API.
+ *
+ * @param string $novedad The code of the novedad to retrieve.
+ * @return array The data of the novedad, or an empty array if not found.
+ */
+function getNovedad($novedad)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
+    $method = 'GET';
+    $queryParams = array(
+        "start" => 0,
+        "length" => 5000,
+        "Estruct" => "Nov",
+        "Codi" => array($novedad)
+    );
+
+    $data = ch_api($endpoint, '', $method, $queryParams);
+
+    $arrayData = json_decode($data, true);
+    return ($arrayData['DATA']) ?? array();
+}
 Flight::route('/novedades-all', function () {
     // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
@@ -321,8 +343,13 @@ Flight::route('POST /novedad', function () {
         Flight::json(array("error" => "No tiene permisos para ingresar novedades."));
         return;
     }
-
     $payload = Flight::request()->data;
+
+    if (!$payload['Nove']) {
+        Flight::json(array("error" => "La novedad es requerida."));
+        return;
+    }
+
 
     $legajo = $payload['Lega'];
     $fecha = $payload['Fecha'];
@@ -331,19 +358,40 @@ Flight::route('POST /novedad', function () {
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
     $data = $data[0] ?? array();
 
+    $getNovedad = getNovedad($payload['Nove']);
+
     if (empty($data)) {
         Flight::json(array("error" => "No se puede crear la novedad, no se encontró la ficha."));
         return;
     }
 
     $dataNovedad = $data['Nove'] ?? array();
+
     $dataCierra = $data['Cierre'] ?? array();
 
+    $tipoNovedadRecibida = $getNovedad[0]['Tipo'];
+
     foreach ($dataNovedad as $key => $value) {
+
         if ($value['Codi'] == $payload['Nove']) {
             Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad con el mismo código."));
             return;
         }
+
+        if (intval($payload['Cate']) === 0) { // Si la novedad no viene forzada chequeamos que no exista una novedad del mismo tipo
+
+            if ((intval($value['NoTi']) > 2) && (intval($tipoNovedadRecibida) > 2)) {
+                Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
+                return;
+            }
+
+            if (intval($value['NoTi']) === intval($tipoNovedadRecibida)) {
+                Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
+                return;
+            }
+
+        }
+
     }
 
     if ($dataCierra['Estado'] != 'abierto') {
