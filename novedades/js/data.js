@@ -674,13 +674,21 @@ const tableNoveEdit = async (data) => {
             data: (Novedades),
             createdRow: function (row, data, dataIndex) {
                 row.classList.add('pointer');
-                row.setAttribute('data-titlet', 'Editar: ');
             },
             columns: [
                 {
-                    data: '', className: 'align-middle text-center', targets: '', title: '',
+                    data: 'NoveDelete', className: 'align-middle text-center pl-0', targets: '', title: '<span id="addNovedad" data-titler="Nueva Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span>',
                     "render": function (data, type, row, meta) {
-                        return `<div class="custom-control custom-checkbox">
+                        if (data == '1') {
+                            return `<delete data-titler="Eliminar Novedad" class="btn btn-sm btn-outline-danger border-0 mx-2 bi bi-trash"></delete>`;
+                        }
+                        return ``;
+                    },
+                },
+                {
+                    data: '', className: 'd-none align-middle text-center pl-0', targets: '', title: '<span id="addNovedad" data-titler="Nueva Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span>',
+                    "render": function (data, type, row, meta) {
+                        return `<div class="custom-control custom-checkbox pl-4 ml-3">
                     <input type="checkbox" class="custom-control-input">
                     <label class="custom-control-label"></label>
                   </div>`;
@@ -711,7 +719,18 @@ const tableNoveEdit = async (data) => {
                     },
                 },
                 {
-                    data: 'Cate', className: 'align-middle', targets: '', title: 'Tipo',
+                    data: 'Esta', className: 'align-middle', targets: '', title: 'Tipo',
+                    "render": function (data, type, row, meta) {
+                        switch (data) {
+                            case '0': return 'Defecto';
+                            case '1': return 'Modificada';
+                            case '2': return 'Creada';
+                            default: return '';
+                        }
+                    },
+                },
+                {
+                    data: 'Cate', className: 'align-middle', targets: '', title: 'Categoría',
                     "render": function (data, type, row, meta) {
                         return CateNov(data);
                     },
@@ -727,16 +746,7 @@ const tableNoveEdit = async (data) => {
                     "render": function (data, type, row, meta) {
                         return ``;
                     },
-                },
-                {
-                    data: 'NoveDelete', className: 'align-middle text-center px-0', targets: '', title: '<span id="addNovedad" data-titlel="Agregar Novedad" class="btn btn-sm btn-success bi bi-plus-lg"></span>',
-                    "render": function (data, type, row, meta) {
-                        if (data == '1') {
-                            return `<delete data-titlel="Eliminar Novedad" class="btn btn-sm btn-outline-danger border-0 mx-2 bi bi-trash"></delete>`;
-                        }
-                        return ``;
-                    },
-                },
+                }
             ],
             paging: false,
             responsive: false,
@@ -1032,7 +1042,7 @@ const formAgregar = async () => {
             Horas: $('#Horas').val(),
             Obse: $('#Obs').val().substring(0, 40).trim(),
             Causa: $('#Causa').val(),
-            Esta: "0"
+            Esta: "2"
         }
         let rs = await axios.post('data/novedad', formData);
         // console.log(rs.data);
@@ -1177,4 +1187,9 @@ const disabledBtnEdita = () => {
             }, 200);
         });
     }
+}
+function scrollHorizontally(event) {
+    event.preventDefault();
+    let delta = Math.max(-1, Math.min(1, (event.wheelDelta || -event.detail)));
+    document.querySelector('.tabla-container').scrollLeft -= (delta * 40); // Ajusta la velocidad del desplazamiento horizontal según tu preferencia
 }
