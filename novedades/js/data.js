@@ -2,6 +2,7 @@ const homehost = $("#_homehost").val();
 const LS_FICHA_FORM = homehost + '_ficha_form';
 const LS_NOVEDADES = homehost + '_novedades';
 ls.remove(LS_FICHA_FORM);
+
 const loading = () => {
     $.notifyClose();
     let spinner = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`;
@@ -867,13 +868,14 @@ const formNovedad = async (data) => {
     }
 
 }
-const addSelectOptions = (array, selector) => {
+const addSelectOptions = (objeto, selector) => {
+    if (!objeto) return false;
     $(selector).prop('disabled', true).empty().trigger('change');
-    if (!array) return false;
-    if (array.length > 0) {
+    if (!objeto) return false;
+    if (objeto.length > 0) {
         $(selector).append(`<option value=""></option>`);
-        Object.keys(array).forEach(element => {
-            let opt = array[element];
+        Object.keys(objeto).forEach(element => {
+            let opt = objeto[element];
             $(selector).append(`<option value="${opt.Codi}">${opt.Desc}</option>`);
         });
         $(selector).prop('disabled', false);
@@ -881,7 +883,8 @@ const addSelectOptions = (array, selector) => {
 }
 
 function generarOptgroupYOptions(objeto, selector) {
-    var select = document.querySelector(selector);
+    if (!objeto) return false;
+    let select = document.querySelector(selector);
     $(selector).append(`<option value=""></option>`);
     Object.keys(objeto).forEach(function (clave) {
         var optgroup = document.createElement('optgroup');
@@ -980,9 +983,7 @@ const addNovedad = () => {
         }
         disabledForm(false);
 
-        let rsData = await axios('data/novedades-agrupa'); // Busca las novedades y causas
-        let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
-        generarOptgroupYOptions(novedades, '#Nove') // Agrega las novedades al select
+        generarOptgroupYOptions(ls.get(LS_NOVEDADES).agrupadas, '#Nove') // Agrega las novedades al select
 
         let data = ls.get(LS_FICHA_FORM);
         if (!data) return;

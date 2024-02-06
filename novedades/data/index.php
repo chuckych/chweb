@@ -257,9 +257,20 @@ Flight::route('/novedades-all', function () {
     $arrayData = json_decode($data, true);
     $causas = $arrayData['DATA'] ?? array();
 
+
+    $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
+        $key = $item['TipoDesc'];
+        if (!isset($result[$key])) {
+            $result[$key] = [];
+        }
+        $result[$key][] = $item;
+        return $result;
+    }, []);
+
     $arr = array(
-        "novedades" => $novedades,
-        "causas" => $causas
+        "novedades" => $novedades ?? array(),
+        "causas" => $causas ?? array(),
+        "agrupadas" => $noveAgrupaPorTipo ?? array()
     );
 
     Flight::json($arr);
