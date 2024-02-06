@@ -238,6 +238,33 @@ function getNovedad($novedad)
     return ($arrayData['DATA']) ?? array();
 }
 Flight::route('/novedades-all', function () {
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
+    $queryParams = array(
+        "start" => 0,
+        "length" => 5000,
+        "Estruct" => "Nov"
+    );
+    $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las novedades
+    $arrayData = json_decode($data, true);
+    $novedades = $arrayData['DATA'] ?? array();
+
+    $queryParams = array(
+        "start" => 0,
+        "length" => 5000,
+        "Estruct" => "NovC"
+    );
+    $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
+    $arrayData = json_decode($data, true);
+    $causas = $arrayData['DATA'] ?? array();
+
+    $arr = array(
+        "novedades" => $novedades,
+        "causas" => $causas
+    );
+
+    Flight::json($arr);
+});
+Flight::route('/novedades-agrupa', function () {
     // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
     $queryParams = array(

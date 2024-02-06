@@ -1,5 +1,7 @@
 const homehost = $("#_homehost").val();
 const LS_FICHA_FORM = homehost + '_ficha_form';
+const LS_NOVEDADES = homehost + '_novedades';
+ls.remove(LS_FICHA_FORM);
 const loading = () => {
     $.notifyClose();
     let spinner = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`;
@@ -547,6 +549,10 @@ $("#Visualizar").change(function () {
     }
 });
 
+axios('data/novedades-all').then((rs) => {
+    ls.set(LS_NOVEDADES, rs.data);
+});
+
 const modalEditNove = async (data) => {
     loading();
     try {
@@ -757,6 +763,7 @@ const tableNoveEdit = async (data) => {
             },
         });
         dt.on('init.dt', function (e, settings) {
+
             e.preventDefault();
             e.stopPropagation();
 
@@ -779,7 +786,6 @@ const tableNoveEdit = async (data) => {
 
                 e.preventDefault();
                 e.stopPropagation();
-
 
                 $('#modal  #rowForm').addClass('loader-in');
 
@@ -813,7 +819,6 @@ const tableNoveEdit = async (data) => {
                         checkbox.checked = true; // Marca el checkbox
                         formNovedad(data).then((rs) => {
                             if (rs) {
-
 
                                 $('#modal  #rowForm').removeClass('loader-in');
                                 $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
@@ -849,10 +854,25 @@ const formNovedad = async (data) => {
             throw new Error('No se encontraron datos para editar');
         }
 
-        let rsData = await axios('data/novedades/' + data.NoTi + '/' + data.Codi); // Busca las novedades y causas
-        let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
-        let causas = (rsData.data.causas ?? []); // Obtiene las causas
-        // $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
+        // let rsData = await axios('data/novedades/' + data.NoTi + '/' + data.Codi); // Busca las novedades y causas
+
+        // let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
+        // let causas = (rsData.data.causas ?? []); // Obtiene las causas
+
+        let rsData = ls.get(LS_NOVEDADES);
+        if (!rsData) {
+            throw new Error('No se encontraron datos para editar');
+        }
+        // filtrar las novedades por el tipo de novedad
+        let novedades = '';
+        if (data.NoTi > 2) {
+            novedades = rsData.novedades.filter((nove) => nove.Tipo > 2);
+        } else {
+            novedades = rsData.novedades.filter((nove) => nove.Tipo == data.NoTi);
+        }
+        // filtrar las causas por el código de la novedad
+        let causas = rsData.causas.filter((causa) => causa.CodiNov == data.Codi);
+
         addSelectOptions(novedades, '#Nove') // Agrega las novedades al select
         addSelectOptions(causas, '#Causa') // Agrega las causas al select
 
@@ -989,7 +1009,7 @@ const addNovedad = () => {
         }
         disabledForm(false);
 
-        let rsData = await axios('data/novedades-all'); // Busca las novedades y causas
+        let rsData = await axios('data/novedades-agrupa'); // Busca las novedades y causas
         let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
         generarOptgroupYOptions(novedades, '#Nove') // Agrega las novedades al select
 
@@ -1150,8 +1170,11 @@ $(document).on('select2:select', '#Nove', async function (e) {
     e.stopPropagation();
     let NovCodi = $(this).val(); // Obtiene el valor seleccionado
     if (!NovCodi) return; // Si no hay valor seleccionado, no hace nada
-    let rsCausas = await axios('data/causas/' + NovCodi); // Busca las causas
-    let causas = (rsCausas.data.causas ?? []); // Obtiene las causas
+
+    let rsData = ls.get(LS_NOVEDADES);
+    if (!rsData) return;
+    let causas = rsData.causas.filter((causa) => causa.CodiNov == NovCodi) ?? [];
+
     addSelectOptions(causas, '#Causa') // Agrega las causas al select
     $('#Causa').append(`<option value="" selected></option>`); // Agrega un option vacío
 });
