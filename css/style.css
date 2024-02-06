@@ -1709,3 +1709,7 @@
  #GetFechas_wrapper .page-link {
      border: 0px solid #333;
  }
+
+ .rotado {
+     transform: rotate(180deg);
+ }

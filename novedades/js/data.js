@@ -560,13 +560,8 @@ const modalEditNove = async (data) => {
         if (!data) { // Si no hay datos
             throw new Error('No se encontraron datos para editar');
         }
-
-        let tipo_cod = data.tipo_cod ?? null; // Obtiene el código del tipo de novedad
-        let nove_cod = data.cod ?? null; // Obtiene el código de la novedad
-
         let response = await axios('modal_editar.html' + "?" + Date.now()); // Busca el modal
         let html = response.data; // Obtiene el modal
-
 
         $('#modales').html(html); // Agrega el modal al DOM
 
@@ -592,8 +587,10 @@ const modalEditNove = async (data) => {
                 $('#modal').modal('hide');
                 $.notifyClose();
                 notify('No se encontró la ficha', 'danger', 2000, 'right');
+                ls.remove(LS_FICHA_FORM);
                 return;
             }
+            ls.set(LS_FICHA_FORM, ficha[0]);
             tableNoveEdit(ficha[0]).then(() => { // Carga la tabla de novedades
                 $('#modal').modal('show')// Muestra el modal
                 $.notifyClose();
@@ -636,27 +633,8 @@ const tableNoveEdit = async (data) => {
             nove.NoveDelete = Ficha.NoveDelete;
         });
 
-        let Tur = Ficha.Tur; // array de Turno
-        let Fichadas = Ficha.Fich; // array de fichadas
-        // crear un string con los elementos del array Fichadas separados por una coma
-        let hoReArray = Fichadas.map(function (item) {
-            return item.HoRe;
-        });
-
-        // Crear un string separado por comas de los valores de "HoRe"
-        var StrFichadas = hoReArray.join(', ');
-
-        let countFichadas = (Fichadas.length > 2) ? '<span title="' + StrFichadas + '">...</span>' : '';
-        let Horario = Ficha['TurStr'] ?? 'Sin horario';
-        let periodo = '';
-        let primerFichada = getFichada(Fichadas, 'primera');
-        let ultimaFichada = getFichada(Fichadas, 'ultima');
-        ultimaFichada = (primerFichada === ultimaFichada) ? '-' : ultimaFichada;
-
-        if (Ficha.Cierre.Estado != 'abierto') {
-            periodo = '(Periodo ' + Ficha.Cierre.Estado + ')';
-        }
-        $('.modal-title').html('Editar Novedades ' + periodo) // Cambia el título del modal
+        let siFichaCerrada = (Ficha.Cierre.Estado != 'abierto') ? '(Periodo ' + Ficha.Cierre.Estado + ')' : '';
+        $('.modal-title').html('Editar Novedades ' + siFichaCerrada ?? '') // Cambia el título del modal
 
         if ($.fn.DataTable.isDataTable('#tableNovEdit')) {
             $('#tableNovEdit').DataTable().destroy();
@@ -769,7 +747,7 @@ const tableNoveEdit = async (data) => {
 
             fadeInOnly('#tableNovEdit');
 
-            let tableInfo = tableInfoFicha(Ficha.Lega, Ficha.ApNo, Ficha.FechD, Ficha.FechF, Horario, primerFichada, ultimaFichada, countFichadas); // Crea la tabla de información de la ficha
+            let tableInfo = tableInfoFicha(); // Crea la tabla de información de la ficha
 
             $("#modal .divFichadas").html('');
             $("#modal .divFichadas").html(tableInfo);
@@ -831,7 +809,6 @@ const tableNoveEdit = async (data) => {
                                 $('#modal #btnGuardar').addClass('btn-custom')
                                 $('#modal #btnGuardar').html('Aplicar')
 
-                                ls.set(LS_FICHA_FORM, Ficha);
                                 if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
                                     disabledForm(true); // inhabilita el formulario
                                     $('#modal #btnGuardar ').off('click') // Quita el evento click del botón guardar
@@ -853,11 +830,6 @@ const formNovedad = async (data) => {
         if (!data.Codi) { // Si no hay novedad
             throw new Error('No se encontraron datos para editar');
         }
-
-        // let rsData = await axios('data/novedades/' + data.NoTi + '/' + data.Codi); // Busca las novedades y causas
-
-        // let novedades = (rsData.data.novedades ?? []); // Obtiene las novedades
-        // let causas = (rsData.data.causas ?? []); // Obtiene las causas
 
         let rsData = ls.get(LS_NOVEDADES);
         if (!rsData) {
@@ -970,7 +942,6 @@ const formGuardar = async () => {
         if (rs.data.MESSAGE == "OK") {
             $.notifyClose();
             $('#modal #btnGuardar').off('click')
-            ls.remove(LS_FICHA_FORM);
             ActualizaTablas();
             notify('Novedad editada correctamente', 'success', 2000, 'right');
             getFicha(data.Lega, data.Fech).then((rs) => {
@@ -1136,34 +1107,86 @@ const deleteNovedad = async (data) => {
 
 }
 
-const tableInfoFicha = (Lega, ApNo, FechD, FechF, Horario, primerFichada, ultimaFichada, countFichadas) => `
-<table id="tableInfoFicha" class="table table-responsive text-nowrap mb-0 mt-n1">
-    <thead>
-        <tr>
-            <th>Legajo</th>
-            <th>Nombre</th>
-            <th class="px-0">Fecha</th>
-            <th></th>
-            <th>Horario</th>
-            <th class="text-center">Entra</th>
-            <th class="text-center">Sale</th>
-            <th class=""></th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>${Lega}</td>
-            <td><div title="${ApNo}" class="text-truncate" style="max-width:180px">${ApNo}</div></td>
-            <td class="px-0">${FechD}</td>
-            <td class="pl-0"><span class="ml-2">${FechF}</span></td>
-            <td>${Horario}</td>
-            <td class="text-center">${primerFichada}</td>
-            <td class="text-center">${ultimaFichada}</td>
-            <td class="w-100">${countFichadas}</td>
-        </tr>
-    </tbody>
-</table>
-`
+const tableInfoFicha = () => {
+
+    let Ficha = ls.get(LS_FICHA_FORM);
+
+    let Horario = Ficha['TurStr'] ?? 'Sin horario';
+    let Fichadas = Ficha.Fich
+    let primerFichada = getFichada(Fichadas, 'primera');
+    let ultimaFichada = getFichada(Fichadas, 'ultima');
+
+    let linkCollapse = '<a class="p-0 btn-link" data-toggle="collapse" href="#collapseFichadas" role="button" aria-expanded="false" aria-controls="collapseFichadas"><i id="chevronCollapse" class="bi bi-chevron-down"></i></a>';
+    let countFichadas = (Fichadas.length > 2) ? '<span>' + linkCollapse + '</span>' : '';
+
+    let colsFichadas = (Fichadas) => {
+        let html = '';
+        if (Fichadas.length <= 2) return html;
+
+        Fichadas.forEach((element, index) => {
+            html += `<td class="text-center ${colorFichada(element)}">${element.HoRe}</td>`;
+        });
+        html += `<td class="w-100"></td>`;
+
+        return html;
+    };
+
+    let colsTH = (Fichadas) => {
+        let html = '';
+        if (Fichadas.length <= 2) return html;
+
+        Fichadas.forEach((element, indice) => {
+            html += `<th class="text-center fontq">${(indice % 2 === 0) ? 'Entra' : 'Sale'}</th>`;
+        });
+        html += `<th class="w-100"></th>`;
+
+        return html;
+    };
+
+    const collapseFichadas = (Fichadas) => {
+        if (Fichadas.length <= 2) return '';
+        return `
+        <div class="card">
+            <table id="collapseFichadas" class="collapse w-100 table table-responsive mb-0 mt-n1 border">
+                <thead>
+                    <tr>${colsTH(Fichadas)}</tr>
+                </thead>
+                <tbody>
+                    <tr>${colsFichadas(Fichadas)}</tr>
+                </tbody>
+            </table>
+        </div>`;
+    }
+
+    let html = `<table id="tableInfoFicha" class="table table-responsive text-nowrap mb-0 mt-n1">
+        <thead>
+            <tr>
+                <th>Legajo</th>
+                <th>Nombre</th>
+                <th class="px-0">Fecha</th>
+                <th></th>
+                <th>Horario</th>
+                <th class="text-center">Entra</th>
+                <th class="text-center">Sale</th>
+                <th class=""></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>${Ficha.Lega}</td>
+                <td><div title="${Ficha.ApNo}" class="text-truncate" style="max-width:180px">${Ficha.ApNo}</div></td>
+                <td class="px-0">${Ficha.FechD}</td>
+                <td class="pl-0"><span class="ml-2">${Ficha.FechF}</span></td>
+                <td>${Horario}</td>
+                <td class="text-center">${primerFichada}</td>
+                <td class="text-center">${ultimaFichada}</td>
+                <td class="w-100">${countFichadas}</td>
+            </tr>
+        </tbody>
+    </table>`;
+    html += collapseFichadas(Fichadas);
+    return html;
+}
 
 $(document).on('select2:select', '#Nove', async function (e) {
     e.preventDefault();
@@ -1176,7 +1199,7 @@ $(document).on('select2:select', '#Nove', async function (e) {
     let causas = rsData.causas.filter((causa) => causa.CodiNov == NovCodi) ?? [];
 
     addSelectOptions(causas, '#Causa') // Agrega las causas al select
-    $('#Causa').append(`<option value="" selected></option>`); // Agrega un option vacío
+    $('#Causa').append(`< option value = "" selected ></option > `); // Agrega un option vacío
 });
 
 const getFicha = async (legajo, fecha) => {
