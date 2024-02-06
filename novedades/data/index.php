@@ -237,13 +237,22 @@ function getNovedad($novedad)
     $arrayData = json_decode($data, true);
     return ($arrayData['DATA']) ?? array();
 }
+function novedadesRol()
+{
+    $novedadesRol = $_SESSION['ListaNov'] ?? '';
+    $novedadesRol = ($novedadesRol && $novedadesRol != '-') ? explode(',', $novedadesRol) : [];
+    return $novedadesRol;
+}
 Flight::route('/novedades-all', function () {
+
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
     $queryParams = array(
         "start" => 0,
         "length" => 5000,
-        "Estruct" => "Nov"
+        "Estruct" => "Nov",
+        "Codi" => novedadesRol()
     );
+
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las novedades
     $arrayData = json_decode($data, true);
     $novedades = $arrayData['DATA'] ?? array();
@@ -251,12 +260,11 @@ Flight::route('/novedades-all', function () {
     $queryParams = array(
         "start" => 0,
         "length" => 5000,
-        "Estruct" => "NovC"
+        "Estruct" => "NovC",
     );
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
     $arrayData = json_decode($data, true);
     $causas = $arrayData['DATA'] ?? array();
-
 
     $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
         $key = $item['TipoDesc'];
@@ -281,7 +289,8 @@ Flight::route('/novedades-agrupa', function () {
     $queryParams = array(
         "start" => 0,
         "length" => 5000,
-        "Estruct" => "Nov"
+        "Estruct" => "Nov",
+        "Codi" => novedadesRol()
     );
 
     $data = ch_api($endpoint, '', 'GET', $queryParams);
