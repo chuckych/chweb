@@ -140,11 +140,12 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/select2-es.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/selectadd.js?v=<?= vjs() ?>"></script>
-    <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
-    <script src="js/NovXLS.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?<?= version_file("/novedades/js/data.js") ?>"></script>
+    <script src="js/select.js?<?= version_file("/novedades/js/select.js") ?>"></script>
+    <script src="js/selectadd.js?<?= version_file("/novedades/js/selectadd.js") ?>"></script>
+    <script src="js/trashSelect.js?<?= version_file("/novedades/js/trashSelect.js") ?>"></script>
+    <script src="js/NovXLS.js?<?= version_file("/novedades/js/NovXLS.js") ?>"></script>
+    <script src="../js/funciones.js?<?= version_file("/js/funciones.js") ?>"></script>
 
 </body>
 
