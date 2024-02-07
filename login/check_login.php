@@ -1,13 +1,39 @@
 <?php
+
+// Configuración de la cookie
+$path = '/';
+$domain = 'localhost'; // Reemplaza 'tudominio.com' con tu dominio real
+$secure = true; // Establece a true si solo deseas que se envíe sobre HTTPS
+$sameSite = 'None'; // Puedes configurar a 'Strict', 'Lax', o 'None'
+
+session_set_cookie_params([
+	'samesite' => 'None',
+	'secure' => true, // Asegúrate de usar solo HTTPS para este valor
+	'httponly' => true // Esto evita que la cookie sea accesible a través de JavaScript
+]);
+
 $_POST["guarda"] = $_POST["guarda"] ?? '';
 
 if ($_POST["guarda"] == "on") {
 	##  GUARDAR COOKIE ## 
-	setcookie("user", strtolower($_POST["user"]), time() + 3600 * 24 * 30);
-	setcookie("clave", $_POST["clave"], time() + 3600 * 24 * 30);
-} else {
-	// setcookie("user", "");
-	// setcookie("clave", "");
+	// setcookie("user", strtolower($_POST["user"]), time() + 3600 * 24 * 30);
+	setcookie('user', strtolower($_POST["user"]), [
+		'expires' => time() + 3600 * 24 * 30, // expira en 30 días
+		'path' => $path, // disponible en todo el dominio
+		'domain' => $domain,
+		'secure' => $secure,
+		'httponly' => true, // Esto evita que la cookie sea accesible a través de JavaScript
+		'samesite' => $sameSite // Establece el valor de SameSite
+	]);
+	// setcookie("clave", $_POST["clave"], time() + 3600 * 24 * 30);
+	setcookie('clave', strtolower($_POST["clave"]), [
+		'expires' => time() + 3600 * 24 * 30, // expira en 30 días
+		'path' => $path, // disponible en todo el dominio
+		'domain' => $domain,
+		'secure' => $secure,
+		'httponly' => true, // Esto evita que la cookie sea accesible a través de JavaScript
+		'samesite' => $sameSite // Establece el valor de SameSite
+	]);
 }
 
 /** Consultamos el si el usuario y clave son correctos */

@@ -550,7 +550,7 @@ $("#Visualizar").change(function () {
     }
 });
 
-axios('data/novedades-all').then((rs) => {
+axios('../app-data/novedades-all').then((rs) => {
     ls.set(LS_NOVEDADES, rs.data);
 });
 
@@ -935,7 +935,7 @@ const formGuardar = async () => {
             Causa: $('#Causa').val(),
             Esta: "1"
         }
-        let rs = await axios.put('data/novedad', formData);
+        let rs = await axios.put('../app-data/novedad', formData);
         // console.log(rs.data);
         if (rs.data.error) {
             $.notifyClose();
@@ -1036,7 +1036,7 @@ const formAgregar = async () => {
             Causa: $('#Causa').val(),
             Esta: "2"
         }
-        let rs = await axios.post('data/novedad', formData);
+        let rs = await axios.post('../app-data/novedad', formData);
         // console.log(rs.data);
         if (rs.data.error) {
             $.notifyClose();
@@ -1085,7 +1085,7 @@ const deleteNovedad = async (data) => {
         Fecha: data.Fech,
         Nove: data.Codi,
     }
-    let rs = await axios.delete('data/novedad', { data: formData });
+    let rs = await axios.delete('../app-data/novedad', { data: formData });
     if (rs.data.error) {
         $.notifyClose();
         notify(rs.data.error, 'danger', 2000, 'right');
@@ -1205,7 +1205,7 @@ $(document).on('select2:select', '#Nove', async function (e) {
 
 const getFicha = async (legajo, fecha) => {
     try {
-        let rs = await axios.post('data/ficha/' + legajo + '/' + fecha + '/');
+        let rs = await axios.post('../app-data/ficha/' + legajo + '/' + fecha + '/');
         if (rs.data.length === 0) {
             return false;
         }

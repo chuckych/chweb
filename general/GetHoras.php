@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
@@ -12,12 +12,12 @@ E_ALL();
 
 require __DIR__ . '../../config/conect_mssql.php';
 
-$param   = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $Datos = explode('-', $_GET['Datos']);
 
-$Fecha  = $Datos[1];
+$Fecha = $Datos[1];
 $Legajo = $Datos[0];
 
 $data = array();
@@ -36,14 +36,14 @@ if (PerCierre($Fecha, $Legajo)) {
 $result = sqlsrv_query($link, $query, $param, $options);
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $HorasNeg  = ($row['FicHsATMin'] <= $row['FicHsTrMin']) ? 0 : 1;
+        $HorasNeg = ($row['FicHsATMin'] <= $row['FicHsTrMin']) ? 0 : 1;
         $Exedentes = ($row['FicHsTrMin'] - $row['FicHsATMin']);
 
-        $disabled  = '';
-        $editar    = '';
-        $eliminar  = '';
+        $disabled = '';
+        $editar = '';
+        $eliminar = '';
 
         $HoraFechStr = !empty($row['FicFech']) ? $row['FicFech']->format('Ymd') : '';
         if (!empty($row['FicFech'])) {
@@ -82,37 +82,37 @@ if (sqlsrv_num_rows($result) > 0) {
                 $eliminar = '';
             }
         }
-        $editar   = $_SESSION["ABM_ROL"]['mHor'] == '0' ? '' : $editar;
+        $editar = $_SESSION["ABM_ROL"]['mHor'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bHor'] == '0' ? '' : $eliminar;
         if (!empty($row['FicFech'])) {
             $data[] = array(
-                'Cod'          => $row['Hora'],
-                'Descripcion'  => $row['HoraDesc'],
+                'Cod' => $row['Hora'],
+                'Descripcion' => $row['HoraDesc'],
                 'Descripcion2' => $row['HoraDesc2'],
-                'HsCalc'       => $row['FicHsAu'],
-                'HsHechas'     => $row['FicHsHe'],
-                'HsAuto'       => $row['FicHsAu2'],
-                'Observ'       => ceronull($row['Observ']),
-                'Motivo'       => ceronull($row['Motivo']),
-                'DescMotivo'   => ceronull($row['DescMotivo']),
-                'editar'      => $editar,
-                'eliminar'    => $eliminar,
-                'null'         => ''
+                'HsCalc' => $row['FicHsAu'],
+                'HsHechas' => $row['FicHsHe'],
+                'HsAuto' => $row['FicHsAu2'],
+                'Observ' => ceronull($row['Observ']),
+                'Motivo' => ceronull($row['Motivo']),
+                'DescMotivo' => ceronull($row['DescMotivo']),
+                'editar' => $editar,
+                'eliminar' => $eliminar,
+                'null' => ''
             );
         }
         $dataFichas = array(
-            'Horario'    => $row['Horario'],
-            'FicHsTr'    => $row['FicHsTr'],
-            'FicHsAT'    => $row['FicHsAT'],
-            'FicDiaL'    => $row['FicDiaL'],
-            'FicDiaF'    => $row['FicDiaF'],
-            'FicHorE'    => $row['FicHorE'],
-            'FicHorS'    => $row['FicHorS'],
+            'Horario' => $row['Horario'],
+            'FicHsTr' => $row['FicHsTr'],
+            'FicHsAT' => $row['FicHsAT'],
+            'FicDiaL' => $row['FicDiaL'],
+            'FicDiaF' => $row['FicDiaF'],
+            'FicHorE' => $row['FicHorE'],
+            'FicHorS' => $row['FicHorS'],
             'FicHsTrMin' => $row['FicHsTrMin'],
             'FicHsATMin' => $row['FicHsATMin'],
-            'HorasNeg'   => $HorasNeg,
-            'DatoFicha'  => $HoraFechStr . $row['FicLega'],
-            'Exedentes'  => MinHora($Exedentes),
+            'HorasNeg' => $HorasNeg,
+            'DatoFicha' => $HoraFechStr . $row['FicLega'],
+            'Exedentes' => MinHora($Exedentes),
         );
     endwhile;
     sqlsrv_free_stmt($result);

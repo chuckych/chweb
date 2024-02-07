@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
@@ -17,17 +17,17 @@ if (empty($params['_dr'])) {
     $where_condition .= " AND auditoria.fecha = (SELECT MAX(fecha) FROM auditoria)";
 } else {
     $DateRange = explode(' al ', $params['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
     $where_condition .= " AND auditoria.fecha BETWEEN '$FechaIni' AND '$FechaFin'";
 }
-$params['nombreAud']   = test_input($params['nombreAud']);
-$params['tipoAud']     = test_input($params['tipoAud']);
-$params['userAud']     = test_input($params['userAud']);
+$params['nombreAud'] = test_input($params['nombreAud']);
+$params['tipoAud'] = test_input($params['tipoAud']);
+$params['userAud'] = test_input($params['userAud']);
 $params['idSesionAud'] = test_input($params['idSesionAud']);
-$params['horaAud']     = test_input($params['horaAud']);
-$params['cuentaAud']   = test_input($params['cuentaAud']);
-$params['datosAud']    = test_input($params['datosAud']);
+$params['horaAud'] = test_input($params['horaAud']);
+$params['cuentaAud'] = test_input($params['cuentaAud']);
+$params['datosAud'] = test_input($params['datosAud']);
 
 $where_condition .= (!empty($params['nombreAud'])) ? " AND auditoria.nombre = '" . $params['nombreAud'] . "'" : "";
 $where_condition .= (!empty($params['tipoAud'])) ? " AND auditoria.tipo = '" . $params['tipoAud'] . "'" : "";
@@ -48,8 +48,8 @@ switch ($params['d']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'    => $row['nombre'],
-                'text'  => $row['nombre']
+                'id' => $row['nombre'],
+                'text' => $row['nombre']
             );
         }
         break;
@@ -63,8 +63,8 @@ switch ($params['d']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'    => $row['usuario'],
-                'text'  => $row['usuario']
+                'id' => $row['usuario'],
+                'text' => $row['usuario']
             );
         }
         break;
@@ -78,8 +78,8 @@ switch ($params['d']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'    => $row['id_sesion'],
-                'text'  => $row['id_sesion']
+                'id' => $row['id_sesion'],
+                'text' => $row['id_sesion']
             );
         }
         break;
@@ -93,8 +93,8 @@ switch ($params['d']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'    => $row['tipo'],
-                'text'  => tipoAud($row['tipo'])
+                'id' => $row['tipo'],
+                'text' => tipoAud($row['tipo'])
             );
         }
         break;
@@ -109,8 +109,8 @@ switch ($params['d']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'    => $row['audid'],
-                'text'  => ($row['nombre'])
+                'id' => $row['audid'],
+                'text' => ($row['nombre'])
             );
         }
         break;

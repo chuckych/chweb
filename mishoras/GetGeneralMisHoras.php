@@ -1,11 +1,12 @@
 <?php
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
-session_start();
+// session_start();
 secure_auth_ch_json();
 E_ALL();
 
@@ -14,17 +15,17 @@ $check_dl = (isset($_POST['_dl'])) ? "AND FICHAS.FicDiaL = '1'" : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
 } else {
-    $FechaIni  = date('Ymd');
-    $FechaFin  = date('Ymd');
+    $FechaIni = date('Ymd');
+    $FechaFin = date('Ymd');
 }
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $query = "SELECT DISTINCT FICHAS.FicFech AS Fecha FROM .FICHAS INNER JOIN .PERSONAL ON .FICHAS.FicLega=.PERSONAL.LegNume WHERE PERSONAL.LegFeEg='17530101' AND .FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $check_dl $filtros ORDER BY .FICHAS.FicFech";
@@ -32,7 +33,7 @@ $query = "SELECT DISTINCT FICHAS.FicFech AS Fecha FROM .FICHAS INNER JOIN .PERSO
 $result = sqlsrv_query($link, $query, $param, $options);
 // print_r($query); exit;
 
-while ($row = sqlsrv_fetch_array($result)) :
+while ($row = sqlsrv_fetch_array($result)):
     $IndiFecha[] = ($row['Fecha']->format('Y-m-d'));
 endwhile;
 $IndiFecha = (isset($IndiFecha)) ? $IndiFecha : array($FechaIni);
@@ -42,7 +43,7 @@ sqlsrv_free_stmt($result);
 $query = "SELECT MIN(REGISTRO.RegFeAs) AS 'min_Fecha', MAX(REGISTRO.RegFeAs) AS 'max_Fecha' FROM REGISTRO,PERSONAL WHERE PERSONAL.LegFeEg='17530101' AND REGISTRO.RegFeAs >'17530101' AND REGISTRO.RegLega=PERSONAL.LegNume";
 $result = sqlsrv_query($link, $query, $param, $options);
 // print_r($query); exit;
-while ($row = sqlsrv_fetch_array($result)) :
+while ($row = sqlsrv_fetch_array($result)):
     $firstDate = array(
         'firstDate' => $row['min_Fecha']->format('Y/m/d'),
         'firstYear' => $row['min_Fecha']->format('Y')
@@ -56,10 +57,10 @@ sqlsrv_free_stmt($result);
 /** LIBERAMOS MEMORIA */
 
 $primero = (array_key_first($IndiFecha));
-$ultimo  = (array_key_last($IndiFecha));
+$ultimo = (array_key_last($IndiFecha));
 $primero = (array_values($IndiFecha)[$primero]);
-$ultimo  = (array_values($IndiFecha)[$ultimo]);
-$k        = (isset($_GET['k'])) ? $_GET['k'] : '0';
+$ultimo = (array_values($IndiFecha)[$ultimo]);
+$k = (isset($_GET['k'])) ? $_GET['k'] : '0';
 $FechaPag = array_values($IndiFecha)[$k];
 $FechaIni = (isset($_GET['k'])) ? FechaString($FechaPag) : FechaString($primero);
 $FechaFin = FechaString($FechaFin);
@@ -84,7 +85,7 @@ $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
 
 if (!empty($params['search']['value'])) {
-    $where_condition .=    " AND ";
+    $where_condition .= " AND ";
     $where_condition .= " (CONCAT(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%" . $params['search']['value'] . "%') ";
 }
 
@@ -93,23 +94,23 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlRec .= $where_condition;
 }
 
-$sqlRec .=  "ORDER BY .FICHAS.FicFech DESC OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+$sqlRec .= "ORDER BY .FICHAS.FicFech DESC OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 // print_r($sqlRec); exit;
 
 /** BUSCAMOS DENTRO DE FICHAS EL LEGAJO NOMBRE FECHA DIA HORARIO */
-while ($row = sqlsrv_fetch_array($queryRecords)) :
-    $Gen_Lega        = $row['Gen_Lega'];
-    $Gen_Nombre      = $row['Gen_Nombre'];
-    $Gen_Fecha       = $row['Gen_Fecha']->format('d/m/Y');
-    $Gen_Fecha2      = $row['Gen_Fecha']->format('Ymd');
-    $Gen_Fecha3      = $row['Gen_Fecha']->format('Y-m-d');
-    $Gen_dia         = $row['Gen_dia'];
-    $Gen_Dia_Semana  = $row['Gen_dia'];
+while ($row = sqlsrv_fetch_array($queryRecords)):
+    $Gen_Lega = $row['Gen_Lega'];
+    $Gen_Nombre = $row['Gen_Nombre'];
+    $Gen_Fecha = $row['Gen_Fecha']->format('d/m/Y');
+    $Gen_Fecha2 = $row['Gen_Fecha']->format('Ymd');
+    $Gen_Fecha3 = $row['Gen_Fecha']->format('Y-m-d');
+    $Gen_dia = $row['Gen_dia'];
+    $Gen_Dia_Semana = $row['Gen_dia'];
     $Gen_Dia_Semana2 = ($row['Gen_dia']);
-    $Gen_Horario     = $row['Gen_Horario'];
+    $Gen_Horario = $row['Gen_Horario'];
 
     /** FICHADAS */
     if ($Gen_Fecha2 < '20210319') {
@@ -121,23 +122,23 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
     // print_r($query_Fic).PHP_EOL; exit;
     if (sqlsrv_num_rows($result_Fic) > 0) {
-        while ($row_Fic = sqlsrv_fetch_array($result_Fic)) :
+        while ($row_Fic = sqlsrv_fetch_array($result_Fic)):
             $Fic_Hora[] = array(
-                'Fic'    => $row_Fic['Fic_Hora'],
+                'Fic' => $row_Fic['Fic_Hora'],
                 'Estado' => $row_Fic['Fic_Estado'],
-                'Tipo'   => $row_Fic['Fic_Tipo']
+                'Tipo' => $row_Fic['Fic_Tipo']
             );
         endwhile;
         sqlsrv_free_stmt($result_Fic);
         $primero = (array_key_first($Fic_Hora));
-        $ultimo  = (array_key_last($Fic_Hora));
+        $ultimo = (array_key_last($Fic_Hora));
         $primero = (array_values($Fic_Hora)[$primero]);
-        $ultimo  = (array_values($Fic_Hora)[$ultimo]);
+        $ultimo = (array_values($Fic_Hora)[$ultimo]);
         $ultimo = ($ultimo == $primero) ? array('Fic' => "", 'Estado' => "", 'Tipo' => "") : $ultimo;
     } else {
         $Fic_Hora[] = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
-        $primero  = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
-        $ultimo   = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
+        $primero = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
+        $ultimo = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
     }
     if (is_array($Fic_Hora)) {
         foreach ($Fic_Hora as $fila) {
@@ -158,21 +159,21 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
 
     if (sqlsrv_num_rows($result_Nov) > 0) {
-        while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
+        while ($row_Nov = sqlsrv_fetch_array($result_Nov)):
             $Novedad[] = array(
-                'Cod'         => $row_Nov['nov_novedad'],
+                'Cod' => $row_Nov['nov_novedad'],
                 'Descripcion' => $row_Nov['nov_descripcion'],
-                'Horas'       => $row_Nov['nov_horas'],
-                'Tipo'        => $row_Nov['nov_tipo']
+                'Horas' => $row_Nov['nov_horas'],
+                'Tipo' => $row_Nov['nov_tipo']
             );
         endwhile;
         sqlsrv_free_stmt($result_Nov);
     } else {
         $Novedad[] = array(
-            'Cod'         => "",
+            'Cod' => "",
             'Descripcion' => "",
-            'Horas'       => "",
-            'Tipo'        => ""
+            'Horas' => "",
+            'Tipo' => ""
         );
     }
     if (is_array($Novedad)) {
@@ -182,9 +183,9 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
             $desc3[] = ($fila["Horas"]);
         }
 
-        $Novedades  = implode("", $desc);
+        $Novedades = implode("", $desc);
         $Novedades2 = implode("<br/>", $desc2);
-        $NoveHoras  = implode("<br/>", $desc3);
+        $NoveHoras = implode("<br/>", $desc3);
         unset($desc);
         unset($desc2);
         unset($desc3);
@@ -199,25 +200,25 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     // exit;
 
     if (sqlsrv_num_rows($result_Hor) > 0) {
-        while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
+        while ($row_Hor = sqlsrv_fetch_array($result_Hor)):
             $Horas[] = array(
-                'Cod'          => $row_Hor['Hora'],
-                'Descripcion'  => $row_Hor['HoraDesc'],
+                'Cod' => $row_Hor['Hora'],
+                'Descripcion' => $row_Hor['HoraDesc'],
                 'Descripcion2' => $row_Hor['HoraDesc2'],
-                'HsHechas'     => $row_Hor['HsHechas'],
-                'HsCalc'       => $row_Hor['HsCalculadas'],
-                'HsAuto'       => $row_Hor['HsAutorizadas']
+                'HsHechas' => $row_Hor['HsHechas'],
+                'HsCalc' => $row_Hor['HsCalculadas'],
+                'HsAuto' => $row_Hor['HsAutorizadas']
             );
         endwhile;
         sqlsrv_free_stmt($result_Hor);
     } else {
         $Horas[] = array(
-            'Cod'          => '',
-            'Descripcion'  => '',
+            'Cod' => '',
+            'Descripcion' => '',
             'Descripcion2' => '',
-            'HsHechas'     => '',
-            'HsCalc'       => '',
-            'HsAuto'       => ''
+            'HsHechas' => '',
+            'HsCalc' => '',
+            'HsAuto' => ''
         );
     }
     if (is_array($Horas)) {
@@ -227,11 +228,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
             $hor2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion"]) . '</span>';
             $hor6[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion2"]) . '</span>';
             $HsHechas[] = ceronull($fila["HsHechas"]);
-            $HsCalc[]   = ceronull($fila["HsCalc"]);
-            $HsAuto[]   = ceronull($fila["HsAuto"]);
+            $HsCalc[] = ceronull($fila["HsCalc"]);
+            $HsAuto[] = ceronull($fila["HsAuto"]);
         }
 
-        $horas  = implode("", $hor);
+        $horas = implode("", $hor);
         $horas2 = implode("<br/>", $hor2);
         /** Descripcion 1 del tipo de hora */
         $horas6 = implode("<br/>", $hor6);
@@ -250,7 +251,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     /** Fin HORAS */
 
     $entrada = color_Fichada(array($primero));
-    $salida  = color_Fichada(array($ultimo));
+    $salida = color_Fichada(array($ultimo));
 
     if (BrowserIE()) {
         $icono = '<svg width="1.2em" height="1.2em" viewBox="0 0 16 16" class="bi bi-clipboard-data" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -266,24 +267,24 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
 
     $modal = '<a title="Ver detalle" type="button" class="open-modal btn-outline-custom btn-sm border-0 py-2 btn animate__animated animate__flipInX contentd" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_dia . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '">' . $icono . '</a>';
     $data[] = array(
-        'LegNombre'     => '<span class="contentd">' . $Gen_Nombre . '<br><span class="fw3">Legajo: </span> ' . $Gen_Lega . '</span>',
-        'Gen_Lega'      => '<span class="contentd">' . $Gen_Lega . '</span>',
-        'Gen_Nombre'    => '<span class="contentd">' . $Gen_Nombre . '</span>',
-        'Fecha'         => '<span class="contentd">' . $Gen_Fecha . '</span>',
-        'FechaDia'      => '<span class="contentd">' . $Gen_Fecha . '<br />' . ($Gen_dia) . '</span>',
-        'Fechastr'      => '<span class="contentd">' . $Gen_Fecha2 . '</span>',
-        'Primera'       => '<span class="contentd">' . $entrada['Fic'] . '</span>',
-        'Ultima'        => '<span class="contentd">' . $salida['Fic'] . '</span>',
-        'Novedades'     => '<span class="contentd">' . $Novedades2 . '</span>',
-        'NovHor'        => '<span class="contentd">' . $NoveHoras . '</span>',
-        'DescHoras'     => '<span class="contentd">' . $horas6 . '</span>',
-        'HsHechas'      => '<span class="contentd">' . ($horas3) . '</span>',
-        'HsCalc'        => '<span class="contentd">' . ($horas4) . '</span>',
-        'HsAuto'        => '<span class="contentd">' . $horas5 . '</span>',
+        'LegNombre' => '<span class="contentd">' . $Gen_Nombre . '<br><span class="fw3">Legajo: </span> ' . $Gen_Lega . '</span>',
+        'Gen_Lega' => '<span class="contentd">' . $Gen_Lega . '</span>',
+        'Gen_Nombre' => '<span class="contentd">' . $Gen_Nombre . '</span>',
+        'Fecha' => '<span class="contentd">' . $Gen_Fecha . '</span>',
+        'FechaDia' => '<span class="contentd">' . $Gen_Fecha . '<br />' . ($Gen_dia) . '</span>',
+        'Fechastr' => '<span class="contentd">' . $Gen_Fecha2 . '</span>',
+        'Primera' => '<span class="contentd">' . $entrada['Fic'] . '</span>',
+        'Ultima' => '<span class="contentd">' . $salida['Fic'] . '</span>',
+        'Novedades' => '<span class="contentd">' . $Novedades2 . '</span>',
+        'NovHor' => '<span class="contentd">' . $NoveHoras . '</span>',
+        'DescHoras' => '<span class="contentd">' . $horas6 . '</span>',
+        'HsHechas' => '<span class="contentd">' . ($horas3) . '</span>',
+        'HsCalc' => '<span class="contentd">' . ($horas4) . '</span>',
+        'HsAuto' => '<span class="contentd">' . $horas5 . '</span>',
         //    'Primera' => '<span class="contentd">'.''.'</span>',
-        'num_dia'       => '<span class="contentd">' . nombre_dia($Gen_Dia_Semana) . '</span>',
-        'Gen_Horario'   => '<span class="contentd">' . $Gen_Horario . '</span>',
-        'modal'         => '<span class="contentd py-2">' . $modal . '</span>',
+        'num_dia' => '<span class="contentd">' . nombre_dia($Gen_Dia_Semana) . '</span>',
+        'Gen_Horario' => '<span class="contentd">' . $Gen_Horario . '</span>',
+        'modal' => '<span class="contentd py-2">' . $modal . '</span>',
         //    'Fichadas'    => ($Fic_Hora),
         //    'Novedades'   => ($Novedad),
         //    'FichaFirst'  => ($primero),
@@ -301,10 +302,10 @@ endwhile;
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 $json_data = array(
-    "draw"            => intval($params['draw']),
-    "recordsTotal"    => intval($totalRecords),
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
-    "data"            => $data,
-    "nombre"          => $Gen_Nombre ?? '',
+    "data" => $data,
+    "nombre" => $Gen_Nombre ?? '',
 );
 echo json_encode($json_data);

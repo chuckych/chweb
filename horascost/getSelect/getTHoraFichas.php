@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
@@ -12,14 +12,14 @@ require __DIR__ . '../../valores.php';
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
-$id       = 'FICHAS01.FicHora';
-$Desc     = 'TIPOHORA.THoDesc';
+$id = 'FICHAS01.FicHora';
+$Desc = 'TIPOHORA.THoDesc';
 $DescCodi = 'TIPOHORA.THoCodi';
-$Col      = 'TIPOHORA';
-$ColData  = 'FICHAS01';
-$FiltroQ  = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'":'';
-$Calculos = (!$Calculos==1) ? "AND TIPOHORA.THoColu > 0" : '';
- $query="SELECT $id AS 'id',
+$Col = 'TIPOHORA';
+$ColData = 'FICHAS01';
+$FiltroQ = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'" : '';
+$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+$query = "SELECT $id AS 'id',
     $Desc AS 'Desc'
 FROM $ColData
     INNER JOIN FICHAS ON $ColData.FicLega = FICHAS.FicLega
@@ -34,22 +34,22 @@ GROUP BY $id,
 ORDER BY $Desc";
 // print_r($query); exit;
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $id   = $row['id'];
+        $id = $row['id'];
         $text = $row['Desc'];
 
         $data[] = array(
-            'id'    => $id,
-            'text'  => $text,
-            'title' => $id.' - '.$text,
+            'id' => $id,
+            'text' => $text,
+            'title' => $id . ' - ' . $text,
         );
     endwhile;
 }

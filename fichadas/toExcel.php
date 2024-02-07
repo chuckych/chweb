@@ -1,6 +1,6 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
@@ -25,8 +25,8 @@ require_once __DIR__ . '../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
@@ -130,7 +130,7 @@ $numeroDeFila = 2;
 
 function FormatoHoraToExcel($Hora)
 {
-    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -152,10 +152,10 @@ function HoraVal($hora)
     return intval($hora);
 }
 
-$params    = $_REQUEST;
-$data      = array();
+$params = $_REQUEST;
+$data = array();
 $authBasic = base64_encode('chweb:' . HOMEHOST);
-$token     = sha1($_SESSION['RECID_CLIENTE']);
+$token = sha1($_SESSION['RECID_CLIENTE']);
 $params['start'] = $params['start'] ?? '0';
 $params['length'] = $params['length'] ?? '99999';
 $_POST['_dr'] = $_POST['_dr'] ?? '';
@@ -165,56 +165,56 @@ $_POST['_dr'] = $_POST['_dr'] ?? '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
 } else {
-    $FechaIni  = date('Ymd');
-    $FechaFin  = date('Ymd');
+    $FechaIni = date('Ymd');
+    $FechaFin = date('Ymd');
 }
-$params['Per']      = $params['Per'] ?? '';
-$params['Per2']      = $params['Per2'] ?? '';
-$params['Emp']      = $params['Emp'] ?? '';
-$params['Plan']     = $params['Plan'] ?? '';
-$params['Sect']     = $params['Sect'] ?? '';
-$params['Sec2']     = $params['Sec2'] ?? '';
-$params['Grup']     = $params['Grup'] ?? '';
-$params['Sucur']    = $params['Sucur'] ?? '';
-$params['_l']       = $params['_l'] ?? $data = array();
-$params['draw']     = $params['draw'] ?? '';
+$params['Per'] = $params['Per'] ?? '';
+$params['Per2'] = $params['Per2'] ?? '';
+$params['Emp'] = $params['Emp'] ?? '';
+$params['Plan'] = $params['Plan'] ?? '';
+$params['Sect'] = $params['Sect'] ?? '';
+$params['Sec2'] = $params['Sec2'] ?? '';
+$params['Grup'] = $params['Grup'] ?? '';
+$params['Sucur'] = $params['Sucur'] ?? '';
+$params['_l'] = $params['_l'] ?? $data = array();
+$params['draw'] = $params['draw'] ?? '';
 $params['FicFalta'] = $params['FicFalta'] ?? '';
-$params['Tipo']     = ($params['Tipo']) ?? '';
-$params['onlyReg']  = ($params['onlyReg']) ?? '';
+$params['Tipo'] = ($params['Tipo']) ?? '';
+$params['onlyReg'] = ($params['onlyReg']) ?? '';
 
-$Empr     = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
-$Per      = $params['Per'] ? ($params['Per']) : array();
-$Per2     = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
-$Plan     = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
-$Sect     = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
-$Grup     = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
-$Sucu     = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
-$Sec2     = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
+$Empr = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
+$Per = $params['Per'] ? ($params['Per']) : array();
+$Per2 = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
+$Plan = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
+$Sect = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
+$Grup = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
+$Sucu = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
+$Sec2 = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
 $FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
-$LegTipo  = $params['Tipo'] ? $params['Tipo'] : array();
+$LegTipo = $params['Tipo'] ? $params['Tipo'] : array();
 
 $Legajos = ($Per2) ? ($Per2) : $Per;
 $Legajos = ($Per) ? ($Per) : $Legajos;
 
 $dataParametros = array(
-    'Lega'    => $Legajos,
-    'Falta'   => $FicFalta,
-    'Empr'    => ($Empr),
-    'Plan'    => ($Plan),
-    'Sect'    => ($Sect),
-    'Grup'    => ($Grup),
-    'Sucu'    => ($Sucu),
-    'Sec2'    => ($Sec2),
+    'Lega' => $Legajos,
+    'Falta' => $FicFalta,
+    'Empr' => ($Empr),
+    'Plan' => ($Plan),
+    'Sect' => ($Sect),
+    'Grup' => ($Grup),
+    'Sucu' => ($Sucu),
+    'Sec2' => ($Sec2),
     'LegTipo' => ($LegTipo),
     'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
     'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
-    'start'   => intval($params['start']),
-    'length'  => intval($params['length']),
-    'getReg'  => 1,
-    'onlyReg'  => $params['onlyReg']
+    'start' => intval($params['start']),
+    'length' => intval($params['length']),
+    'getReg' => 1,
+    'onlyReg' => $params['onlyReg']
 );
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
@@ -228,8 +228,8 @@ if ($dataApi['DATA']) {
     foreach ($dataApi['DATA'] as $row) {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
         $col = '';
-        $pers_legajo   = $row['Lega'];
-        $pers_nombre   = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
+        $pers_legajo = $row['Lega'];
+        $pers_nombre = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
         $dia = DiaSemana3(FechaFormatVar($row['Fech'], 'Ymd'));
         $ficHorario = $row['Tur']['ent'] . ' a ' . $row['Tur']['sal'];
         $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $ficHorario;
@@ -249,13 +249,13 @@ if ($dataApi['DATA']) {
         $numeroDeFila++;
     }
 }
-$cols = range("A","V");
+$cols = range("A", "V");
 foreach ($cols as $key => $value) {
     $spreadsheet->getStyle($value)->getAlignment()->setIndent(1);
 }
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
-$ColumnCount=3;
-$RowIndex=2;
+$ColumnCount = 3;
+$RowIndex = 2;
 $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 # Crear un "escritor"
 try {

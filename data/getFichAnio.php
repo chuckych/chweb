@@ -1,6 +1,5 @@
 <?php
-session_start();
-// header('Content-type: text/html; charset=utf-8');
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
@@ -16,20 +15,20 @@ $query = "SELECT DATEPART(YY, FICHAS.FicFech) AS anio FROM FICHAS WHERE DATEPART
 GROUP BY DATEPART(YY, FICHAS.FicFech) ORDER BY DATEPART(YY, FICHAS.FicFech) Desc";
 // print_r($query); exit;
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $id   = $row['anio'];
+        $id = $row['anio'];
         $text = $row['anio'];
 
         $data[] = array(
-            'id'   => $id,
+            'id' => $id,
             'text' => $text,
         );
     endwhile;

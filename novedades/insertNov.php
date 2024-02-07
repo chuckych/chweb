@@ -1,6 +1,6 @@
 <?php
+require __DIR__ . '../../config/session_start.php';
 ini_set('max_execution_time', 900); // 900 segundos 15 minutos
-session_start();
 header("Content-Type: application/json");
 // header('Access-Control-Allow-Origin: *');
 require __DIR__ . '../../config/index.php';

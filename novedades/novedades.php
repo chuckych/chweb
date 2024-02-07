@@ -145,7 +145,6 @@
     <script src="js/selectadd.js?<?= version_file("/novedades/js/selectadd.js") ?>"></script>
     <script src="js/trashSelect.js?<?= version_file("/novedades/js/trashSelect.js") ?>"></script>
     <script src="js/NovXLS.js?<?= version_file("/novedades/js/NovXLS.js") ?>"></script>
-    <script src="../js/funciones.js?<?= version_file("/js/funciones.js") ?>"></script>
 
 </body>
 

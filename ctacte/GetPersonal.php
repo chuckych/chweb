@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
@@ -14,11 +14,11 @@ E_ALL();
 $data = array();
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
-}else{
-    $FechaIni  = date('Ymd');
-    $FechaFin  = date('Ymd');
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
+} else {
+    $FechaIni = date('Ymd');
+    $FechaFin = date('Ymd');
 }
 
 require __DIR__ . '../valores.php';
@@ -27,7 +27,7 @@ $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
- $sql_query="SELECT PERSONAL.LegNume AS 'pers_legajo',
+$sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo',
     PERSONAL.LegApNo AS 'pers_nombre'
 FROM FICHAS3
     INNER JOIN PERSONAL ON FICHAS3.FicLega = PERSONAL.LegNume
@@ -41,41 +41,43 @@ GROUP BY PERSONAL.LegNume,
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
 
-if( !empty($params['search']['value']) ) {
-    $where_condition .=	" AND ";
-    $where_condition .= " (dbo.fn_Concatenar(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%".$params['search']['value']."%') ";
+if (!empty($params['search']['value'])) {
+    $where_condition .= " AND ";
+    $where_condition .= " (dbo.fn_Concatenar(PERSONAL.LegNume,PERSONAL.LegApNo) LIKE '%" . $params['search']['value'] . "%') ";
 }
 
-if(isset($where_condition) && $where_condition != '') {
-$sqlTot .= $where_condition;
-$sqlRec .= $where_condition;
+if (isset($where_condition) && $where_condition != '') {
+    $sqlTot .= $where_condition;
+    $sqlRec .= $where_condition;
 }
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  " ORDER BY PERSONAL.LegNume OFFSET ".$params['start']." ROWS FETCH NEXT ".$params['length']." ROWS ONLY";
+$sqlRec .= " ORDER BY PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
-$queryRecords = sqlsrv_query($link, $sqlRec,$param, $options);
+$queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 
 // print_r($sqlRec); exit;
 
 while ($row = sqlsrv_fetch_array($queryRecords)) {
-    $pers_legajo   = $row['pers_legajo'];
-    $pers_nombre   = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
+    $pers_legajo = $row['pers_legajo'];
+    $pers_nombre = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
     $data[] = array(
         'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $pers_legajo . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
         'pers_nombre' => '<span class="animate__animated animate__fadeIn">' . $pers_nombre . '</span>',
-        'null'        => '',
+        'null' => '',
     );
 }
 if (!empty($Per2)) {
-    if (!CountRegistrosMayorCero("SELECT DISTINCT FICHAS.FicLega FROM FICHAS
+    if (
+        !CountRegistrosMayorCero("SELECT DISTINCT FICHAS.FicLega FROM FICHAS
     INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-    WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")) {
+    WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")
+    ) {
         $data[] = array(
             'pers_legajo' => '<span class="numlega animate__animated animate__fadeIn btn pointer p-0 fontq text-dark fw4">' . $Per3 . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
             'pers_nombre' => '<span class="animate__animated animate__fadeIn text-danger fw5">Legajo inválido</span>',
-            'null'        => '',
+            'null' => '',
         );
     }
 }
@@ -83,9 +85,9 @@ if (!empty($Per2)) {
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 $json_data = array(
-"draw"            => intval( $params['draw'] ),   
-"recordsTotal"    => intval( $totalRecords ),  
-"recordsFiltered" => intval($totalRecords),
-"data"            => $data
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($totalRecords),
+    "recordsFiltered" => intval($totalRecords),
+    "data" => $data
 );
 echo json_encode($json_data);

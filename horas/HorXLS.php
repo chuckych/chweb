@@ -1,10 +1,10 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
-$datehis=date('YmdHis');
+$datehis = date('YmdHis');
 // header('Content-Disposition: attachment;filename="Reporte_HORAS_'.$datehis.'.xls"');
 // If you're serving to IE 9, then the following may be needed
 header('Cache-Control: max-age=1');
@@ -21,17 +21,17 @@ require __DIR__ . '../valores.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='16';
+$Modulo = '16';
 ExisteModRol($Modulo);
-E_ALL(); 
+E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php'; 
+require_once __DIR__ . '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
@@ -78,7 +78,7 @@ $spreadsheet->getStyle('A1:L1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
 $spreadsheet->setAutoFilter('A1:L1');
-/** El último argumento es por defecto A1 */ 
+/** El último argumento es por defecto A1 */
 $spreadsheet->fromArray($encabezado, null, 'A1');
 /** Establecer la orientación y el tamaño de la página */
 $spreadsheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
@@ -99,7 +99,7 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Encabezado y Pie de Pagina */
 $dateini = FechaFormatVar($FechaIni, 'd/m/Y');
 $datefin = FechaFormatVar($FechaFin, 'd/m/Y');
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE HORAS. DESDE '. ($dateini).' A '.$datefin );
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE HORAS. DESDE ' . ($dateini) . ' A ' . $datefin);
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
@@ -140,15 +140,15 @@ $spreadsheet->getSheetView()->setZoomScale(100);
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
 
 // $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-$Letras = array('A','B', 'C','D','E','G','J', 'L');
+$Letras = array('A', 'B', 'C', 'D', 'E', 'G', 'J', 'L');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 }
 
-$Letras = array('F','H','I','K');
+$Letras = array('F', 'H', 'I', 'K');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-    $spreadsheet->getStyle($col.'1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $spreadsheet->getStyle($col . '1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 }
 
 $spreadsheet->getStyle('C')
@@ -162,11 +162,11 @@ $spreadsheet->getStyle('I')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
 
-$Letras = array('A','F','K');
+$Letras = array('A', 'F', 'K');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+        ->getNumberFormat()
+        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 }
 $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 /** Mostrar / ocultar una columna */
@@ -176,8 +176,8 @@ $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpread
 // $spreadsheet->setBreak('A10', \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet::BREAK_ROW);
 
 $numeroDeFila = 2;
-$Calculos = (!$Calculos==1) ? "AND TIPOHORA.THoColu > 0" : '';
-$query="SELECT FICHAS1.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', FICHAS1.FicFech AS 'Fecha', 
+$Calculos = (!$Calculos == 1) ? "AND TIPOHORA.THoColu > 0" : '';
+$query = "SELECT FICHAS1.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', FICHAS1.FicFech AS 'Fecha', 
 dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS 'Horario', 
 dbo.fn_DiaDeLaSemana(FICHAS1.FicFech) AS 'Dia',
 FICHAS1.FicHora AS 'Hora', 
@@ -196,17 +196,19 @@ WHERE FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin'
 $Calculos $FilterEstruct $FiltrosFichas
 ORDER BY FICHAS1.FicLega, TIPOHORA.THoColu, FICHAS1.FicHora";
 // h4($query); exit;
-$result = sqlsrv_query($link, $query,$param, $options);
+$result = sqlsrv_query($link, $query, $param, $options);
 
-function FormatoHoraToExcel($Hora){
-    $Hora      = !empty($Hora) ? $Hora:'00:00:00' ;
+function FormatoHoraToExcel($Hora)
+{
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
-    $Hora = ($excelTimestamp - $excelDate)==0 ? '': $excelTimestamp - $excelDate;
+    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
     return $Hora;
 }
-function FormatoFechaToExcel($Fecha){
+function FormatoFechaToExcel($Fecha)
+{
     $timestamp = new \DateTime($Fecha);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -217,17 +219,17 @@ function FormatoFechaToExcel($Fecha){
 while ($row = sqlsrv_fetch_array($result)) {
     # Obtener los datos de la base de datos
 
-    $Legajo     = $row['Legajo'];
-    $Nombre     = $row['Nombre'];
-    $Fecha      = $row['Fecha']->format('Y-m-d');
-    $Horario    = $row['Horario'];
-    $Dia        = $row['Dia'];
-    $Hora       = $row['Hora'];
-    $HoraDesc   = $row['HoraDesc'];
-    $FicHsAu    = FormatoHoraToExcel($row['FicHsAu']);
-    $FicHsAu2   = FormatoHoraToExcel($row['FicHsAu2']);
-    $Observ     = $row['Observ'];
-    $Motivo     = ($row['Motivo']=='0')?'':$row['Motivo'];
+    $Legajo = $row['Legajo'];
+    $Nombre = $row['Nombre'];
+    $Fecha = $row['Fecha']->format('Y-m-d');
+    $Horario = $row['Horario'];
+    $Dia = $row['Dia'];
+    $Hora = $row['Hora'];
+    $HoraDesc = $row['HoraDesc'];
+    $FicHsAu = FormatoHoraToExcel($row['FicHsAu']);
+    $FicHsAu2 = FormatoHoraToExcel($row['FicHsAu2']);
+    $Observ = $row['Observ'];
+    $Motivo = ($row['Motivo'] == '0') ? '' : $row['Motivo'];
     $DescMotivo = $row['DescMotivo'];
 
     $Fecha = FormatoFechaToExcel($Fecha);
@@ -252,19 +254,19 @@ sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 # Crear un "escritor"
 try {
-BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
-$MicroTime=microtime(true);
-$NombreArchivo="Reporte_Horas_".$MicroTime.".xls";
+    BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
+    $MicroTime = microtime(true);
+    $NombreArchivo = "Reporte_Horas_" . $MicroTime . ".xls";
 
-$writer = new Xls($documento);
-# Le pasamos la ruta de guardado
-$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-$writer->save('archivos/'.$NombreArchivo);
-// $writer->save('php://output');
+    $writer = new Xls($documento);
+    # Le pasamos la ruta de guardado
+    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    $writer->save('archivos/' . $NombreArchivo);
+    // $writer->save('php://output');
 
-$data = array('status' => 'ok', 'archivo'=> 'archivos/'.$NombreArchivo);
-echo json_encode($data);
-exit;
+    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    echo json_encode($data);
+    exit;
 
 } catch (\Exception $e) {
     $data = array('status' => 'error');

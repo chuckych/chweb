@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
@@ -12,12 +12,12 @@ E_ALL();
 
 require __DIR__ . '../../config/conect_mssql.php';
 
-$param   = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $Datos = (explode('-', test_input($_GET['Datos'])));
 
-$Fecha  = $Datos[1];
+$Fecha = $Datos[1];
 $Legajo = $Datos[0];
 
 $data = array();
@@ -47,7 +47,7 @@ if (PerCierre($Fecha, $Legajo)) {
 
 if (sqlsrv_num_rows($result) > 0) {
 
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
         $NovFechStr = $row['FicFech']->format('Ymd');
 
         if ($percierre) {
@@ -72,7 +72,7 @@ if (sqlsrv_num_rows($result) > 0) {
             $eliminar = ($row['Estado'] == '0') ? '' : $eliminar;
         }
 
-        if (str_replace("-","",$_SESSION['ListaNov'])) {
+        if (str_replace("-", "", $_SESSION['ListaNov'])) {
             if (in_array(intval($row['nov_novedad']), explode(',', $_SESSION['ListaNov']))) {
                 // $editar   = $editar;
                 // $eliminar = $eliminar;
@@ -82,22 +82,22 @@ if (sqlsrv_num_rows($result) > 0) {
             }
         }
 
-        $editar   = $_SESSION["ABM_ROL"]['mNov'] == '0' ? '' : $editar;
+        $editar = $_SESSION["ABM_ROL"]['mNov'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bNov'] == '0' ? '' : $eliminar;
 
         $data[] = array(
-            'Cod'         => $row['nov_novedad'],
+            'Cod' => $row['nov_novedad'],
             'Descripcion' => $row['nov_descripcion'],
-            'Horas'       => ($row['nov_horas']),
-            'Tipo'        => TipoNov($row['nov_tipo']),
-            'CodCausa'    => ($row['CodCaus']),
-            'Causa'       => ceronull($row['DescCausa']),
-            'Obserb'      => ceronull($row['Obserb']),
-            'Cate'        => CateNov($row['FicCate']),
-            'Just'        => JustNov($row['FicJust']),
-            'editar'      => $editar,
-            'eliminar'    => $eliminar,
-            'null'        => ''
+            'Horas' => ($row['nov_horas']),
+            'Tipo' => TipoNov($row['nov_tipo']),
+            'CodCausa' => ($row['CodCaus']),
+            'Causa' => ceronull($row['DescCausa']),
+            'Obserb' => ceronull($row['Obserb']),
+            'Cate' => CateNov($row['FicCate']),
+            'Just' => JustNov($row['FicJust']),
+            'editar' => $editar,
+            'eliminar' => $eliminar,
+            'null' => ''
         );
     endwhile;
     sqlsrv_free_stmt($result);

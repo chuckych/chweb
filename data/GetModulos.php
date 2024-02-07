@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 // secure_auth_ch();
@@ -7,7 +7,7 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
 
-$respuesta   = $nocuentas = '';
+$respuesta = $nocuentas = '';
 $token = token();
 
 $recid = (isset($_GET['recid'])) ? "AND modulos.recid='$_GET[recid]'" : "";
@@ -30,19 +30,19 @@ if ($_GET['tk'] == $token) {
         $result = mysqli_query($link, $query);
         // print_r(mysqli_error_list($link));
         // print_r($query); exit;
-        $data  = array();
+        $data = array();
         if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) :
-                
-                $id     = $row['id'];
-                $recid  = $row['recid'];
-                $tipo   = $row['tipo'];
+            while ($row = mysqli_fetch_assoc($result)):
+
+                $id = $row['id'];
+                $recid = $row['recid'];
+                $tipo = $row['tipo'];
                 $nombre = $row['nombre'];
                 $data[] = array(
-                    'id'     => $id,
-                    'recid'  => $recid,
+                    'id' => $id,
+                    'recid' => $recid,
                     'nombre' => $nombre,
-                    'tipo'   => $tipo
+                    'tipo' => $tipo
                 );
             endwhile;
             mysqli_free_result($result);

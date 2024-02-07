@@ -1,10 +1,10 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
-$datehis=date('YmdHis');
+$datehis = date('YmdHis');
 // header('Content-Disposition: attachment;filename="Reporte_NOVEDADES_'.$datehis.'.xls"');
 // If you're serving to IE 9, then the following may be needed
 header('Cache-Control: max-age=1');
@@ -21,17 +21,17 @@ require __DIR__ . '../valores.php';
 
 ultimoacc();
 secure_auth_ch();
-$Modulo='2';
+$Modulo = '2';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php'; 
+require_once __DIR__ . '../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
@@ -79,7 +79,7 @@ $spreadsheet->getStyle('A1:M1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
 /** aplicar un autofiltro a un rango de celdas */
 $spreadsheet->setAutoFilter('A1:M1');
-/** El último argumento es por defecto A1 */ 
+/** El último argumento es por defecto A1 */
 $spreadsheet->fromArray($encabezado, null, 'A1');
 /** Establecer la orientación y el tamaño de la página */
 $spreadsheet->getPageSetup()->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_PORTRAIT);
@@ -100,7 +100,7 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Encabezado y Pie de Pagina */
 $dateini = FechaFormatVar($FechaIni, 'd/m/Y');
 $datefin = FechaFormatVar($FechaFin, 'd/m/Y');
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE NOVEDADES. DESDE '. ($dateini).' A '.$datefin );
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE NOVEDADES. DESDE ' . ($dateini) . ' A ' . $datefin);
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
@@ -142,12 +142,12 @@ $spreadsheet->getSheetView()->setZoomScale(100);
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
 
 // $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-$Letras = array('A','B', 'C','D','E','G','H','K','M', 'F', 'J');
+$Letras = array('A', 'B', 'C', 'D', 'E', 'G', 'H', 'K', 'M', 'F', 'J');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 }
 
-$Letras = array('I','L');
+$Letras = array('I', 'L');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 }
@@ -160,11 +160,11 @@ $spreadsheet->getStyle('I')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
 
-$Letras = array('A','F', 'J');
+$Letras = array('A', 'F', 'J');
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+        ->getNumberFormat()
+        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 }
 $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 /** Mostrar / ocultar una columna */
@@ -175,7 +175,7 @@ $spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpread
 
 $numeroDeFila = 2;
 
-$query="SELECT
+$query = "SELECT
 FICHAS3.FicLega AS 'Legajo',
 PERSONAL.LegApNo AS 'Nombre',
 FICHAS3.FicFech AS 'Fecha',
@@ -197,17 +197,19 @@ INNER JOIN NOVECAUSA ON FICHAS3.FicNove = NOVECAUSA.NovCNove AND FICHAS3.FicCaus
 WHERE FICHAS3.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas
 ORDER BY FICHAS3.FicFech, FICHAS3.FicLega";
 // h4($query); exit;
-$result = sqlsrv_query($link, $query,$param, $options);
+$result = sqlsrv_query($link, $query, $param, $options);
 
-function FormatoHoraToExcel($Hora){
-    $Hora      = !empty($Hora) ? $Hora:'00:00:00' ;
+function FormatoHoraToExcel($Hora)
+{
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
-    $Hora = ($excelTimestamp - $excelDate)==0 ? '': $excelTimestamp - $excelDate;
+    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
     return $Hora;
 }
-function FormatoFechaToExcel($Fecha){
+function FormatoFechaToExcel($Fecha)
+{
     $timestamp = new \DateTime($Fecha);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -217,19 +219,19 @@ function FormatoFechaToExcel($Fecha){
 
 while ($row = sqlsrv_fetch_array($result)) {
     # Obtener los datos de la base de datos
-    $Legajo    = $row['Legajo'];
-    $Nombre    = $row['Nombre'];
-    $Fecha     = $row['Fecha']->format('Y-m-d');
-    $Horario   = $row['Horario'];
-    $Dia       = $row['Dia'];
-    $CodNov    = $row['CodNov'];
-    $DescNov   = $row['DescNov'];
-    $TipoNov   = TipoNov($row['TipoNov']);
-    $HorNov    = FormatoHoraToExcel($row['HorNov']);
-    $CodCausa  = ($row['CodCausa']=='0')?'':$row['CodCausa'];
+    $Legajo = $row['Legajo'];
+    $Nombre = $row['Nombre'];
+    $Fecha = $row['Fecha']->format('Y-m-d');
+    $Horario = $row['Horario'];
+    $Dia = $row['Dia'];
+    $CodNov = $row['CodNov'];
+    $DescNov = $row['DescNov'];
+    $TipoNov = TipoNov($row['TipoNov']);
+    $HorNov = FormatoHoraToExcel($row['HorNov']);
+    $CodCausa = ($row['CodCausa'] == '0') ? '' : $row['CodCausa'];
     $DescCausa = $row['DescCausa'];
-    $JustNov   = $row['JustNov'];
-    $ObsNov    = $row['ObsNov'];
+    $JustNov = $row['JustNov'];
+    $ObsNov = $row['ObsNov'];
 
 
     $Fecha = FormatoFechaToExcel($Fecha);
@@ -255,29 +257,29 @@ sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 # Crear un "escritor"
 try {
-BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
-$MicroTime=microtime(true);
-$NombreArchivo="Reporte_Novedades_".$MicroTime.".xls";
+    BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
+    $MicroTime = microtime(true);
+    $NombreArchivo = "Reporte_Novedades_" . $MicroTime . ".xls";
 
-$writer = new Xls($documento);
-# Le pasamos la ruta de guardado
-$writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-// $ruta = '/'.HOMEHOST.'/novedades/archivos/'.$NombreArchivo;
-$ruta = 'archivos/'.$NombreArchivo;
-$writer->save($ruta);
-// $writer->save('php://output');
-switch ($ToInfornov) {
-    case '1':
-        $ruta = '/'.HOMEHOST.'/novedades/archivos/'.$NombreArchivo;
-        break;
-    
-    default:
-        $ruta = 'archivos/'.$NombreArchivo;
-        break;
-}
-$data = array('status' => 'ok', 'archivo'=> $ruta);
-echo json_encode($data);
-exit;
+    $writer = new Xls($documento);
+    # Le pasamos la ruta de guardado
+    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    // $ruta = '/'.HOMEHOST.'/novedades/archivos/'.$NombreArchivo;
+    $ruta = 'archivos/' . $NombreArchivo;
+    $writer->save($ruta);
+    // $writer->save('php://output');
+    switch ($ToInfornov) {
+        case '1':
+            $ruta = '/' . HOMEHOST . '/novedades/archivos/' . $NombreArchivo;
+            break;
+
+        default:
+            $ruta = 'archivos/' . $NombreArchivo;
+            break;
+    }
+    $data = array('status' => 'ok', 'archivo' => $ruta);
+    echo json_encode($data);
+    exit;
 
 } catch (\Exception $e) {
     $data = array('status' => 'error');

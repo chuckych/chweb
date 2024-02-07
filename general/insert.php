@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 header("Content-Type: application/json");

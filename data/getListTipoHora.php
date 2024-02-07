@@ -1,16 +1,16 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
+require __DIR__ . '../../config/session_start.php';
 require_once __DIR__ . '../../config/index.php';
-session_start();
 E_ALL();
 require_once __DIR__ . '../../config/conect_mssql.php';
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $filtroTipoHora = '';
 $ListaTipoHora = $_SESSION['ListaTipoHora'];
-if ($ListaTipoHora  != "-") {
+if ($ListaTipoHora != "-") {
     $filtroTipoHora = " AND TipoHora.THoCodi IN ($ListaTipoHora)";
 }
 
@@ -33,34 +33,34 @@ $data = array();
 
 $q = (ValString($_POST['q'])) ? $_POST['q'] : exit;
 // $NovCNove = (ValNumerico($_POST['NovCNove'])) ? $_POST['NovCNove'] : exit;
-$valores='';
-$query="SELECT FICHAS1.FicHora FROM FICHAS1 WHERE FICHAS1.FicLega='$FicLega' AND FICHAS1.FicFech='$FicFech'";
-$result  = sqlsrv_query($link, $query, $params, $options);
+$valores = '';
+$query = "SELECT FICHAS1.FicHora FROM FICHAS1 WHERE FICHAS1.FicLega='$FicLega' AND FICHAS1.FicFech='$FicFech'";
+$result = sqlsrv_query($link, $query, $params, $options);
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
-        $FicHora[]    = $row['FicHora'];
+    while ($row = sqlsrv_fetch_array($result)):
+        $FicHora[] = $row['FicHora'];
         $valores = implode(",", $FicHora);
-        $valores = 'AND THoCodi NOT IN ('.$valores.')';
+        $valores = 'AND THoCodi NOT IN (' . $valores . ')';
     endwhile;
 }
 sqlsrv_free_stmt($result);
 
 
-$query="SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi > 0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi $filtroTipoHora ORDER BY THoCodi";
+$query = "SELECT THoCodi AS Codigo, THoDesc AS Descripcion FROM TipoHora WHERE THoCodi > 0 $valores AND THoDesc LIKE '%$q%' $FiltroTHoCodi $filtroTipoHora ORDER BY THoCodi";
 
-$result  = sqlsrv_query($link, $query, $params, $options);
+$result = sqlsrv_query($link, $query, $params, $options);
 // print_r($query); exit;
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
         // $cod = str_pad($row['Codigo'], 3, "0", STR_PAD_LEFT);
         $data[] = array(
-            'id'       => $row['Codigo'],
-            'text'     => $row['Descripcion'],
+            'id' => $row['Codigo'],
+            'text' => $row['Descripcion'],
         );
     endwhile;
     sqlsrv_free_stmt($result);
 }
 
 sqlsrv_close($link);
-echo json_encode(($data)); 
+echo json_encode(($data));

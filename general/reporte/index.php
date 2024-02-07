@@ -1,6 +1,6 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-session_start();
+require __DIR__ . '../../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
 require __DIR__ . '../../../config/index.php';

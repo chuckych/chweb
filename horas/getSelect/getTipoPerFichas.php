@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
@@ -12,41 +12,41 @@ require __DIR__ . '../../valores.php';
 require __DIR__ . '../../../filtros/filtros.php';
 require __DIR__ . '../../../config/conect_mssql.php';
 
-$id       = 'PERSONAL.LegTipo';
-$ColData  = 'FICHAS1';
+$id = 'PERSONAL.LegTipo';
+$ColData = 'FICHAS1';
 
-$query="SELECT $id AS 'id' FROM FICHAS1 INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech AND FICHAS1.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY $id ORDER BY $id";
+$query = "SELECT $id AS 'id' FROM FICHAS1 INNER JOIN FICHAS ON FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech AND FICHAS1.FicTurn=FICHAS.FicTurn INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY $id ORDER BY $id";
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $id   = $row['id'];
+        $id = $row['id'];
         $text = $row['id'];
         switch ($id) {
             case '0':
-                $id=2;
+                $id = 2;
                 break;
         }
 
         switch ($text) {
             case '0':
-                $text= 'Mensuales';
+                $text = 'Mensuales';
                 break;
             case '1':
-                $text= 'Jornales';
+                $text = 'Jornales';
                 break;
         }
 
 
         $data[] = array(
-            'id'    => $id,
-            'text'  => $text,
+            'id' => $id,
+            'text' => $text,
         );
     endwhile;
 }

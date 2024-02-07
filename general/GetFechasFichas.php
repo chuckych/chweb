@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
@@ -18,10 +18,10 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
     $json_data = array(
-        "draw"            => intval($params['draw']),
-        "recordsTotal"    => 0,
+        "draw" => intval($params['draw']),
+        "recordsTotal" => 0,
         "recordsFiltered" => 0,
-        "data"            => $data
+        "data" => $data
     );
     echo json_encode($json_data);
     exit;
@@ -48,9 +48,9 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$sqlRec .=  " ORDER BY FICHAS.FicFech OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+$sqlRec .= " ORDER BY FICHAS.FicFech OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 // print_r($totalRecords); exit;
@@ -58,23 +58,23 @@ if ($totalRecords > 0) {
     $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
     while ($row = sqlsrv_fetch_array($queryRecords)) {
 
-        $Dia        = $row['Dia'];
-        $FicFech    = $row['FicFech']->format('d/m/Y');
+        $Dia = $row['Dia'];
+        $FicFech = $row['FicFech']->format('d/m/Y');
         $FicFechStr = $row['FicFech']->format('Ymd');
 
         $data[] = array(
             'FicFech' => '<span class="animate__animated animate__fadeIn">' . $FicFech . '</span><input type="hidden" class="" id="_f" value=' . $FicFechStr . '>',
-            'Dia'         => '<span class="animate__animated animate__fadeIn">' . $Dia . '</span>',
-            'null'        => '',
+            'Dia' => '<span class="animate__animated animate__fadeIn">' . $Dia . '</span>',
+            'null' => '',
         );
     }
     sqlsrv_free_stmt($queryRecords);
 }
 sqlsrv_close($link);
 $json_data = array(
-    "draw"            => intval($params['draw']),
-    "recordsTotal"    => intval($totalRecords),
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
-    "data"            => $data
+    "data" => $data
 );
 echo json_encode($json_data);

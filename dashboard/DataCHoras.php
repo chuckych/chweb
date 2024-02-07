@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 ultimoacc();
@@ -11,14 +11,14 @@ require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
 
 $json_data = array();
-$data      = array();
+$data = array();
 
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $DateRange = explode(' al ', $_POST['_dr']);
-$FechaIni  = test_input(dr_fecha($DateRange[0]));
-$FechaFin  = test_input(dr_fecha($DateRange[1]));
+$FechaIni = test_input(dr_fecha($DateRange[0]));
+$FechaFin = test_input(dr_fecha($DateRange[1]));
 
 $sql_query = "SELECT 
  FICHAS1.FicHora AS 'Hora', 
@@ -35,19 +35,19 @@ $queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryRecords);
 
 if ($totalRecords > 0) {
-    while ($row = sqlsrv_fetch_array($queryRecords)) :
+    while ($row = sqlsrv_fetch_array($queryRecords)):
         $HorasAuto2 = ($row['HsAutorizadas']);
         $HorasAuto = MinHora($row['HsAutorizadas']);
         // $HorasAuto = date("H:i",strtotime($HorasAuto));
         if ($row['HsAutorizadas'] > 0) {
             $data[] = array(
                 'HsAutorizadas' => $HorasAuto,
-                'HoraDesc2'     => ($row['HoraDesc2']),
+                'HoraDesc2' => ($row['HoraDesc2']),
             );
             $data2[] = array(
                 'name' => ($row['HoraDesc2']),
-                'y'    => ($HorasAuto2),
-                'horas'    => ($HorasAuto),
+                'y' => ($HorasAuto2),
+                'horas' => ($HorasAuto),
             );
         }
     endwhile;
@@ -55,9 +55,9 @@ if ($totalRecords > 0) {
     sqlsrv_close($link);
 }
 $HsAutorizadas = implode(',', array_column($data, 'HsAutorizadas'));
-$HoraDesc2     = implode(', ', array_column($data, 'HoraDesc2'));
-$HoraDesc2Arr  = array(array_column($data, 'HoraDesc2'));
-$CantArr       = array(array_column($data, 'HsAutorizadas'));
+$HoraDesc2 = implode(', ', array_column($data, 'HoraDesc2'));
+$HoraDesc2Arr = array(array_column($data, 'HoraDesc2'));
+$CantArr = array(array_column($data, 'HsAutorizadas'));
 $dataArray = ($data2);
 
 $rgbColor = array();
@@ -71,10 +71,10 @@ $colorArr = array(array_column($colorArr, 'color'));
 
 $json_data = array(
     "recordsTotal" => intval($totalRecords),
-    "CantArr"      => ($CantArr),
-    "dataArray"    => ($dataArray),
+    "CantArr" => ($CantArr),
+    "dataArray" => ($dataArray),
     "HoraDesc2Arr" => $HoraDesc2Arr,
-    "colorArr"     => $colorArr
+    "colorArr" => $colorArr
 );
 
 echo json_encode($json_data);

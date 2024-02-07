@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 ultimoacc();
@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 $_POST['i'] = $_POST['i'] ?? '';
 $_POST['s'] = $_POST['s'] ?? '';
-$id  = intval(test_input($_POST['i']));
+$id = intval(test_input($_POST['i']));
 $ids = intval(test_input($_POST['s']));
 
 if (empty($id) || empty($ids)) {
@@ -21,15 +21,15 @@ if (empty($id) || empty($ids)) {
 
 require_once __DIR__ . '../../PhpUserAgent/src/UserAgentParser.php';
 
-$query="SELECT login_logs.id 'log_idse', auditoria.nombre AS 'aud_nomb', auditoria.usuario AS 'aud_user', login_logs.uid AS 'log_usid', login_logs.fechahora AS 'log_feho', login_logs.rol AS 'log_irol', login_logs.ip AS 'log_d_ip', login_logs.agent AS 'log_agen', auditoria.dato AS 'aud_dato', auditoria.tipo AS 'aud_tipo', auditoria.modulo AS 'aud_imod', modulos.nombre AS 'aud_modu', auditoria.fecha AS 'aud_fech', auditoria.hora AS 'aud_hora', auditoria.audcuenta AS 'aud_iacu', clientes.nombre AS 'aud_nacu', roles.nombre AS 'log_nrol' FROM auditoria INNER JOIN login_logs ON auditoria.id_sesion=login_logs.id LEFT JOIN modulos ON auditoria.modulo=modulos.id LEFT JOIN clientes ON auditoria.audcuenta=clientes.id LEFT JOIN roles ON login_logs.rol=roles.id WHERE auditoria.id_sesion=$ids AND auditoria.id=$id LIMIT 1";
+$query = "SELECT login_logs.id 'log_idse', auditoria.nombre AS 'aud_nomb', auditoria.usuario AS 'aud_user', login_logs.uid AS 'log_usid', login_logs.fechahora AS 'log_feho', login_logs.rol AS 'log_irol', login_logs.ip AS 'log_d_ip', login_logs.agent AS 'log_agen', auditoria.dato AS 'aud_dato', auditoria.tipo AS 'aud_tipo', auditoria.modulo AS 'aud_imod', modulos.nombre AS 'aud_modu', auditoria.fecha AS 'aud_fech', auditoria.hora AS 'aud_hora', auditoria.audcuenta AS 'aud_iacu', clientes.nombre AS 'aud_nacu', roles.nombre AS 'log_nrol' FROM auditoria INNER JOIN login_logs ON auditoria.id_sesion=login_logs.id LEFT JOIN modulos ON auditoria.modulo=modulos.id LEFT JOIN clientes ON auditoria.audcuenta=clientes.id LEFT JOIN roles ON login_logs.rol=roles.id WHERE auditoria.id_sesion=$ids AND auditoria.id=$id LIMIT 1";
 
 $d = simple_pdoQuery($query);
 
 $parsedagent[] = parse_user_agent($d['log_agen']);
 foreach ($parsedagent as $key => $value) {
     $platform = $value['platform'];
-    $browser  = $value['browser'];
-    $version  = $value['version'];
+    $browser = $value['browser'];
+    $version = $value['version'];
 }
 
 $json_data = array(

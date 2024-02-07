@@ -1,10 +1,10 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 E_ALL();
 UnsetGet('q2');
-session_start();
 require __DIR__ . '../../config/conect_mssql.php';
 $q2 = $_GET['q2'];
 
@@ -12,51 +12,51 @@ $query = "SELECT RELOHABI.RelGrup AS GrupoCod,  GRUPCAPT.GHaDesc as Grupo, RELOH
 
 //    print_r($query);
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($fila = sqlsrv_fetch_array($result)) {
-        $Grupo   = $fila['Grupo'];
-        $Reloj   = $fila['Reloj'];
-        $Serie   = $fila['Serie'];
+        $Grupo = $fila['Grupo'];
+        $Reloj = $fila['Reloj'];
+        $Serie = $fila['Serie'];
         $Descrip = $fila['Descrip'];
         $Marca = $fila['Marca'];
         switch ($Marca) {
-            case '0'  : 
-               $Marca = 'ASCII';
+            case '0':
+                $Marca = 'ASCII';
                 break;
-            case '1'  : 
-               $Marca = 'Macronet';
+            case '1':
+                $Marca = 'Macronet';
                 break;
-            case '10' : 
-               $Marca = 'Hand Reader';
+            case '10':
+                $Marca = 'Hand Reader';
                 break;
-            case '21' : 
-               $Marca = 'SB CAuto';
+            case '21':
+                $Marca = 'SB CAuto';
                 break;
-            case '30' : 
-               $Marca = 'ZKTeco';
+            case '30':
+                $Marca = 'ZKTeco';
                 break;
-            case '41' : 
-               $Marca = 'Suprema';
+            case '41':
+                $Marca = 'Suprema';
                 break;
-            case '50' : 
-               $Marca = 'HikVision';
+            case '50':
+                $Marca = 'HikVision';
                 break;
-            default   : 
+            default:
                 $Marca = $fila['Marca'];
                 break;
         }
         $data[] = array(
-            "Grupo"   => $Grupo,
-            "Reloj"   => $Reloj,
-            "Serie"   => $Serie,
+            "Grupo" => $Grupo,
+            "Reloj" => $Reloj,
+            "Serie" => $Serie,
             "Descrip" => $Descrip,
-            "Marca"   => $Marca,
-            "null"    => ''
+            "Marca" => $Marca,
+            "null" => ''
         );
     }
 }

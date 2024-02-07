@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
@@ -8,14 +8,14 @@ header('Access-Control-Allow-Origin: *');
 
 E_ALL();
 
-$respuesta   = $nocuentas = '';
+$respuesta = $nocuentas = '';
 $token = token();
 
 $recid = (isset($_GET['recid'])) ? "AND modulos.recid='$_GET[recid]'" : "";
 $idtipo = (isset($_GET['idtipo'])) ? "AND modulos.idtipo='$_GET[idtipo]'" : "";
 
-if ($_GET['idtipo']=='5') {
-    $nocuentas = (modulo_cuentas()!='1') ? "AND modulos.id != '1'":'';
+if ($_GET['idtipo'] == '5') {
+    $nocuentas = (modulo_cuentas() != '1') ? "AND modulos.id != '1'" : '';
 }
 // $recidRol = (isset($_GET['recidRol'])) ? "AND modulos.id IN (SELECT mod_roles.modulo FROM mod_roles WHERE mod_roles.recid_rol = '$_GET[recidRol]')" : "";
 
@@ -29,20 +29,20 @@ if ($_GET['tk'] == $token) {
         $result = mysqli_query($link, $query);
         // print_r(mysqli_error_list($link));
         // print_r($query); exit;
-        $data  = array();
+        $data = array();
         if (mysqli_num_rows($result) > 0) {
-            while ($row = mysqli_fetch_assoc($result)) :
-                
-                $id     = $row['id'];
-                $recid  = $row['recid'];
-                $tipo   = $row['tipo'];
+            while ($row = mysqli_fetch_assoc($result)):
+
+                $id = $row['id'];
+                $recid = $row['recid'];
+                $tipo = $row['tipo'];
                 $nombre = $row['nombre'];
-                
+
                 $data[] = array(
-                    'id'     => $id,
-                    'recid'  => $recid,
+                    'id' => $id,
+                    'recid' => $recid,
                     'nombre' => $nombre,
-                    'tipo'   => $tipo
+                    'tipo' => $tipo
                 );
 
             endwhile;

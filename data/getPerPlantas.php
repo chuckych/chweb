@@ -14,9 +14,9 @@ FusNuloGET("Sec2", '');
 FusNuloGET("Grup", '');
 FusNuloGET("Sucur", '');
 FusNuloGET("Tipo", '');
-FusNuloGET("Per",'');
+FusNuloGET("Per", '');
 
-$Per = !empty(($_GET['Per'])) ? implode(',', $_GET['Per']):'';  
+$Per = !empty(($_GET['Per'])) ? implode(',', $_GET['Per']) : '';
 $Per = !empty(($_GET['Per'])) ? "AND PERSONAL.LegNume IN ($Per)" : '';
 
 // $Tipo = ($_GET['Tipo'] == '2') ? "AND PERSONAL.LegTipo = '1'" : "AND PERSONAL.LegTipo = '0'";
@@ -36,23 +36,23 @@ switch ($Tipo) {
 
 $Tipo = empty(($_GET['Tipo'])) ? "" : $Tipo;
 
-$Empresa      = datosGet($_GET['Emp'], "PERSONAL.LegEmpr");
-$Planta       = datosGet($_GET['Plan'], "PERSONAL.LegPlan");
-$Sector       = datosGet($_GET['Sect'], "PERSONAL.LegSect");
-$Seccion      = datosGet($_GET['Sec2'], "PERSONAL.LegSec2");
-$Grupo        = datosGet($_GET['Grup'], "PERSONAL.LegGrup");
-$Sucursal     = datosGet($_GET['Sucur'], "PERSONAL.LegSucu");
+$Empresa = datosGet($_GET['Emp'], "PERSONAL.LegEmpr");
+$Planta = datosGet($_GET['Plan'], "PERSONAL.LegPlan");
+$Sector = datosGet($_GET['Sect'], "PERSONAL.LegSect");
+$Seccion = datosGet($_GET['Sec2'], "PERSONAL.LegSec2");
+$Grupo = datosGet($_GET['Grup'], "PERSONAL.LegGrup");
+$Sucursal = datosGet($_GET['Sucur'], "PERSONAL.LegSucu");
 
 $TipoPersonal = $Tipo;
 
-$FilterEstruct  = $Empresa;
-$FilterEstruct  .= $Planta;
-$FilterEstruct  .= $Sector;
-$FilterEstruct  .= $Seccion;
-$FilterEstruct  .= $Grupo;
-$FilterEstruct  .= $Sucursal;
-$FilterEstruct  .= $TipoPersonal;
-$FilterEstruct  .= $Per;
+$FilterEstruct = $Empresa;
+$FilterEstruct .= $Planta;
+$FilterEstruct .= $Sector;
+$FilterEstruct .= $Seccion;
+$FilterEstruct .= $Grupo;
+$FilterEstruct .= $Sucursal;
+$FilterEstruct .= $TipoPersonal;
+$FilterEstruct .= $Per;
 
 require __DIR__ . '../../filtros/filtros.php';
 require __DIR__ . '../../config/conect_mssql.php';
@@ -63,20 +63,20 @@ $q = $_GET['q'];
 $query = "SELECT PERSONAL.LegPlan AS 'id', PLANTAS.PlaDesc AS 'text' FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan =PLANTAS.PlaCodi WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegFeEg='17530101' AND CONCAT(PERSONAL.LegPlan,PLANTAS.PlaDesc) LIKE '%$q%' AND PERSONAL.LegPlan >'0' AND PERSONAL.LegFeEg='17530101' $filtros $FilterEstruct GROUP BY PERSONAL.LegPlan, PLANTAS.PlaDesc";
 // print_r($query); exit;
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $id   = $row['id'];
+        $id = $row['id'];
         $text = $row['text'];
 
         $data[] = array(
-            'id'   => $id,
+            'id' => $id,
             'text' => $text,
         );
     endwhile;
