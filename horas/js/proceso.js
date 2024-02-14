@@ -638,6 +638,11 @@ const tableTotalesFecha2 = () => {
     let FechaIniFormat = FechaIni.split('/').reverse().join('-');
     let FechaFinFormat = FechaFin.split('/').reverse().join('-');
 
+    if (FechaFinFormat == FechaIniFormat) {
+        document.getElementById('tabla-horas-total2').innerHTML = '';
+        return;
+    }
+
     let jsonData = {
         FechIni: FechaIniFormat,
         FechFin: FechaFinFormat,
