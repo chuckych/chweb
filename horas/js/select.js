@@ -598,11 +598,13 @@ $(document).ready(function () {
         function refreshSelected(slectjs) {
             $(slectjs).on('select2:select', function (e) {
                 ActualizaTablas()
+                ls.set(LS_FILTROS + slectjs, $(slectjs).val())
             });
         }
         function refreshUnselected(slectjs) {
             $(slectjs).on('select2:unselecting', function (e) {
                 ActualizaTablas()
+                ls.remove(LS_FILTROS + slectjs)
             });
         }
         function refreshOnChange(selector) {
@@ -662,13 +664,18 @@ $(document).ready(function () {
             ActualizaTablas()
         });
 
-        $("#SHoras2").change(function () {
-            CheckSesion()
-            if ($("#SHoras2").is(":checked")) {
-                $('#TipoIngreso').val(2)
-            }
+        let SHoras0 = document.querySelector('#SHoras0');
+        let SHoras1 = document.querySelector('#SHoras1');
+
+        SHoras1.addEventListener('click', function () {
+            ls.set(LS_FILTROS + '#SHoras', '1')
             ActualizaTablas()
         });
+        SHoras0.addEventListener('click', function () {
+            ls.set(LS_FILTROS + '#SHoras', '0')
+            ActualizaTablas()
+        });
+
 
         $('#HoraMin').change(function () {
             CheckSesion()
@@ -676,9 +683,11 @@ $(document).ready(function () {
                 $('#HoraMin').css('border', '1px solid red')
                 $('#minmaxreq').addClass('text-danger')
                 switchClass('#minmaxreq', 'text-danger fw5 animate__animated animate__flash', 'text-secondary')
+                ls.remove(LS_FILTROS + '#HoraMin')
             } else {
                 $('#HoraMin').css('border', '1px solid #ddd')
                 if ($('#HoraMax').val()) {
+                    ls.set(LS_FILTROS + '#HoraMin', $('#HoraMin').val())
                     switchClass('#minmaxreq', 'text-secondary', 'text-danger fw5 animate__animated animate__flash')
                     ActualizaTablas()
                 }
@@ -689,15 +698,17 @@ $(document).ready(function () {
             if (!$('#HoraMax').val()) {
                 $('#HoraMax').css('border', '1px solid red')
                 switchClass('#minmaxreq', 'text-danger fw5 animate__animated animate__flash', 'text-secondary')
+                ls.remove(LS_FILTROS + '#HoraMax')
             } else {
                 $('#HoraMax').css('border', '1px solid #ddd')
                 if ($('#HoraMin').val()) {
+                    ls.set(LS_FILTROS + '#HoraMax', $('#HoraMax').val())
                     switchClass('#minmaxreq', 'text-secondary', 'text-danger fw5 animate__animated animate__flash')
                     ActualizaTablas()
                 }
             }
         });
-        refreshOnChange("#Calculos");
+        // refreshOnChange("#Calculos");
         // refreshOnChange("#HoraMin");
         // refreshOnChange("#HoraMax");
     });

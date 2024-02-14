@@ -2,6 +2,8 @@
 
 namespace Classes;
 
+use DateTime;
+
 class ValidationException extends \Exception
 {
 }
@@ -126,12 +128,19 @@ class InputValidator
                 }
                 break;
             case 'date':
-                if (!\DateTime::createFromFormat('Y-m-d', $value)) {
+                if (!DateTime::createFromFormat('Y-m-d', $value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                $fecha = date_create($value);
+                if (!$fecha) {
+                    $e = date_get_last_errors();
+                    foreach ($e['errors'] as $error) {
+                        throw new ValidationException("Error de Fecha $field: $error");
+                    }
                 }
                 break;
             case 'time':
-                if (!preg_match('/^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/', $value)) {
+                if ($value && !preg_match('/^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])$/', $value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;
@@ -232,7 +241,7 @@ class InputValidator
                 }
                 break;
             case 'datetime':
-                if (!\DateTime::createFromFormat('Y-m-d H:i:s', $value)) {
+                if (!DateTime::createFromFormat('Y-m-d H:i:s', $value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;

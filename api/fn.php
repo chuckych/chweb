@@ -245,7 +245,7 @@ function checkToken($token, $iniData = array())
  * @total {int} count data
  * @msg {string} mensaje de respuesta default OK
  * @code {int} http_response_code
- * @tiempoScript {floatval} duración del srcipt, default 0
+ * @tiempoScript {floatval} duración del script, default 0
  * @idCompany {int} id de la cuenta
  */
 $start = start();
@@ -307,10 +307,10 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
 }
 /** 
  * @path {string} ruta de los archivos a eliminar
- * @dias {int} cantidad de días para atras de los archivos a mantener sin eliminar
+ * @Dias {int} cantidad de días para atrás de los archivos a mantener sin eliminar
  * @ext {string} extensión del archivo a eliminar
  */
-function cleanFile($path, $dias, $ext) // borra los archivo a partir de una cantidad de días
+function cleanFile($path, $Dias, $ext) // borra los archivo a partir de una cantidad de días
 {
     $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
     if ($files) {
@@ -318,7 +318,7 @@ function cleanFile($path, $dias, $ext) // borra los archivo a partir de una cant
             $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
             $currentTime = time(); // obtenemos la fecha actual
             $dateDiff = dateDiff(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
-            ($dateDiff >= intval($dias)) ? unlink($file) : ''; //elimino el fichero
+            ($dateDiff >= intval($Dias)) ? unlink($file) : ''; //elimino el fichero
         }
     }
 }
@@ -572,27 +572,27 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'int01') {
             if ($value) {
                 switch ($value) {
-                    case (!is_numeric($value)):
+                    case(!is_numeric($value)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (!filter_var($value, FILTER_VALIDATE_INT)):
+                    case(!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (strlen($value) > $length):
+                    case(strlen($value) > $length):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (($value) < 0):
+                    case(($value) < 0):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (($value) > 1):
+                    case(($value) > 1):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
@@ -910,27 +910,27 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'int01') {
             if ($value) {
                 switch ($value) {
-                    case (!is_numeric($value)):
+                    case(!is_numeric($value)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (!filter_var($value, FILTER_VALIDATE_INT)):
+                    case(!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (strlen($value) > $length):
+                    case(strlen($value) > $length):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (($value) < 0):
+                    case(($value) < 0):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case (($value) > 1):
+                    case(($value) > 1):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;

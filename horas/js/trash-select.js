@@ -35,6 +35,21 @@ $("#trash_per").on("click", function () {
     $('.selectjs_personal').val(null).trigger("change");
     ActualizaTablas()
 });
+const cleanLs = () => {
+    ls.remove(LS_FILTROS + '.selectjs_plantas')
+    ls.remove(LS_FILTROS + '.selectjs_empresa')
+    ls.remove(LS_FILTROS + '.selectjs_sectores')
+    ls.remove(LS_FILTROS + '.select_seccion')
+    ls.remove(LS_FILTROS + '.selectjs_grupos')
+    ls.remove(LS_FILTROS + '.selectjs_sucursal')
+    ls.remove(LS_FILTROS + '.selectjs_personal')
+    ls.remove(LS_FILTROS + '.selectjs_thora')
+    ls.remove(LS_FILTROS + '.selectjs_tipoper')
+    ls.remove(LS_FILTROS + '#HoraMin')
+    ls.remove(LS_FILTROS + '#HoraMax')
+    ls.remove(LS_FILTROS + '#SHoras')
+}
+cleanLs();
 function LimpiarFiltros() {
     CheckSesion()
     $('.selectjs_plantas').val(null).trigger("change");
@@ -52,8 +67,9 @@ function LimpiarFiltros() {
     $('#Autori').removeClass('focus active');
     $('#Hechas').addClass('focus active');
     $('#SHoras').val('1');
-    $('#Calculos').prop('checked',false);
+    $('#Calculos').prop('checked', false);
     $('#Calculos').val(null);
+    cleanLs();
 }
 $("#trash_all").on("click", function () {
     $('#Filtros').modal('show')

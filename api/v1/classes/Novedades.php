@@ -129,10 +129,10 @@ class Novedades
                     return false;
                 }
             }
-            $this->resp->response([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_updateNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -233,10 +233,10 @@ class Novedades
                     return false;
                 }
             }
-            $this->resp->response([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_addNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -319,10 +319,10 @@ class Novedades
                     return false;
                 }
             }
-            $this->resp->response([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_deleteNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -330,6 +330,10 @@ class Novedades
     private function validarInputs()
     {
         $datos = $this->getData;
+        if ($this->tools->jsonNoValido()) {
+            $errores = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+        }
         try {
 
             if (!is_array($datos)) {
@@ -365,24 +369,28 @@ class Novedades
 
             foreach ($datos as $dato) { // Recorro los datos recibidos
                 foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
-                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacio
+                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
                         $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
                     }
                 }
                 $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
             return $datosModificados;
-            // $this->resp->response($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
+            // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
     private function validarInputsAdd()
     {
         $datos = $this->getData;
+        if ($this->tools->jsonNoValido()) {
+            $errores = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+        }
         try {
 
             if (!is_array($datos)) {
@@ -416,24 +424,30 @@ class Novedades
 
             foreach ($datos as $dato) { // Recorro los datos recibidos
                 foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
-                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacio
+                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
                         $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
                     }
                 }
                 $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
             return $datosModificados;
-            // $this->resp->response($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
+            // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsAdd.log');
         }
     }
     private function validarInputsDelete()
     {
         $datos = $this->getData;
+
+        if ($this->tools->jsonNoValido()) {
+            $errores = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+        }
+
         try {
 
             if (!is_array($datos)) {
@@ -464,15 +478,15 @@ class Novedades
                 $validator->validate(); // Valido los datos
             }
             return $datosModificados;
-            // $this->resp->response($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
+            // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsDelete.log');
         }
     }
     public function estruct($estruct)
     {
-        $estruct = strtolower($estruct); // Convierto a minuscula
+        $estruct = strtolower($estruct); // Convierto a minúscula
         $inicio = microtime(true); // Tiempo de inicio de la consulta
         $datos = $this->getEstruct($estruct); // retorna la estructura de datos validada
 
@@ -518,13 +532,13 @@ class Novedades
 
             /** De este Fragmento de código se defino si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
             $estructuras = ['tare', 'regla', 'lega', 'tipo']; // Estructuras que se utilizan para el INNER JOIN PERSONAL
-            $parametros = [$ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare]; // Parámetros que se utilizan para el INNER JOIN PERSONAL
+            $parámetros = [$ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare]; // Parámetros que se utilizan para el INNER JOIN PERSONAL
             $estructTare = in_array($estruct, $estructuras); // Si la estructura esta en el array $estructuras
-            $paramPers = $estructTare || in_array(true, $parametros); // Si la estructura esta en el array $estructuras o si algún parámetro esta en el array $parámetros
+            $paramPers = $estructTare || in_array(true, $parámetros); // Si la estructura esta en el array $estructuras o si algún parámetro esta en el array $parámetros
             /** FIN Fragmento */
             /** SELECT */
             $sql = "SELECT";
-            $sql .= $this->columnsEstruct($estruct); // Columnas de la estructura, campos descripcion, codigo y cantidad
+            $sql .= $this->columnsEstruct($estruct); // Columnas de la estructura, campos Descripción, Código y cantidad
             $sql .= " FROM FICHAS";
             $sql .= $this->joinFichas3Estruct(); // Join con la tabla FICHAS3 (NOVEDADES)
 
@@ -537,9 +551,9 @@ class Novedades
             $sql .= $this->queryFichasEstruct($Lega, $Empr, $Plan, $Conv, $Sect, $Sec2, $Grup, $Sucu, $NovI, $NovA, $NovS, $NovT, $DiaL, $DiaF);
 
             /** QUERY ESTRUCTURA */
-            $sql .= $this->queryEstructDesc($estruct, $Desc); // Descripcion de la estructura
-            $sql .= $this->queryEstructCod($estruct, $Cod); // Codigo de la estructura
-            $sql .= $this->queryEstructSect($estruct, $Sector); // Codigo de la estructura
+            $sql .= $this->queryEstructDesc($estruct, $Desc); // Descripción de la estructura
+            $sql .= $this->queryEstructCod($estruct, $Cod); // Código de la estructura
+            $sql .= $this->queryEstructSect($estruct, $Sector); // Código de la estructura
 
             /** QUERY TABLA FICHAS3 (NOVEDADES) */
             $sql .= $this->queryFichas3Estruct($Nove, $NoveTipo, $Esta);
@@ -547,11 +561,11 @@ class Novedades
             /** QUERY TABLA PERSONAL */
             $sql .= $this->queryPersonalEstruct($paramPers, $ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare);
 
-            /** GROUP, ORDER BY, PAGINACION */
+            /** GROUP, ORDER BY, PAGINACIÓN */
             $sql .= $this->groupByEstruct($estruct); // Group By de la estructura
-            $sql .= " OFFSET :start ROWS FETCH NEXT :length ROWS ONLY"; // Paginacion
+            $sql .= " OFFSET :start ROWS FETCH NEXT :length ROWS ONLY"; // Paginación
             // print_r($sql) . exit;
-            /** PARAMETROS DE LA CONSULTA SQL */
+            /** PARÁMETROS DE LA CONSULTA SQL */
             $params = [
                 ':FechaIni' => $FechaIni,
                 ':FechaFin' => $FechaFin,
@@ -561,13 +575,13 @@ class Novedades
             ($Desc) ? $params[':Desc'] = '%' . $Desc . '%' : '';
             ($paramPers && $ApNo) ? $params[':ApNo'] = '%' . $ApNo . '%' : '';
             ($paramPers && $ApNoLega) ? $params[':ApNoLega'] = '%' . $ApNoLega . '%' : '';
-            /**  FIN DE PARAMETROS DE LA CONSULTA SQL */
+            /**  FIN DE PARÁMETROS DE LA CONSULTA SQL */
             // print_r($params) . exit;
             $data = $this->conect->executeQueryWhithParams($sql, $params);
             $total = count($data);
-            $this->resp->response($data, $total, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($data, $total, 'OK', 200, $inicio, 0, 0);
         } catch (\Exception $th) {
-            $this->resp->response('', 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
+            $this->resp->respuesta('', 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
             exit;
         }
     }
@@ -576,13 +590,13 @@ class Novedades
         $arrValidEstruct = ["empr", "plan", "grup", "sect", "sec2", "sucu", "tare", "conv", "regla", "nove", "novetipo", "lega", "tipo"];
 
         if (!in_array(strtolower($estruct), $arrValidEstruct)) { // Si la estructura no es valida
-            $this->resp->response('', 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
             exit;
         }
 
-        $rules = [ // Reglas de validacion
-            'Cod' => ['arrInt'], // Codigo de la estructura
-            'Desc' => ['varchar40'], // Descripcion de la estructura
+        $rules = [ // Reglas de validación
+            'Cod' => ['arrInt'], // Código de la estructura
+            'Desc' => ['varchar40'], // Descripción de la estructura
             'Sector' => ['arrSmallint'], // Sector
             'Docu' => ['arrInt'], // DNI Del Legajo
             'Lega' => ['arrInt'], // Legajo
@@ -591,11 +605,11 @@ class Novedades
             'Empr' => ['arrSmallint'], // Empresa
             'Plan' => ['arrSmallint'], // Planta
             'Conv' => ['arrSmallint'], // Convenio
-            'Sect' => ['arrSmallint'], // Seccion
-            'Sec2' => ['arrSmallint'], // Seccion 2
+            'Sect' => ['arrSmallint'], // Sección
+            'Sec2' => ['arrSmallint'], // Sección 2
             'Grup' => ['arrSmallint'], // Grupo
             'Sucu' => ['arrSmallint'], // Sucursal
-            'TareProd' => ['arrSmallint'], // Tarea de produccion
+            'TareProd' => ['arrSmallint'], // Tarea de producción
             'RegCH' => ['arrSmallint'], // Regla de Control Horario
             'Tipo' => ['arrSmallint'], // Tipo de Personal
             'FechaIni' => ['required', 'date'], // Fecha de inicio
@@ -603,9 +617,9 @@ class Novedades
             'Esta' => ['arrAllowed012'], // Estado de la ficha novedad (FicEsta)
             'start' => ['intempty'], // Pagina de inicio
             'length' => ['intempty'], // Cantidad de registros
-            'Nove' => ['arrSmallint'], // Codigo novedad
-            'NoveTipo' => ['arrSmallint'], // Codigo tipo novedad
-            'NovI' => ['arrAllowed01'], // Si Novedad Inclumiento
+            'Nove' => ['arrSmallint'], // Código novedad
+            'NoveTipo' => ['arrSmallint'], // Código tipo novedad
+            'NovI' => ['arrAllowed01'], // Si Novedad Incumplimiento
             'NovA' => ['arrAllowed01'], // Si Novedad Ausentismo
             'NovS' => ['arrAllowed01'], // Si Novedad Salida anticipada
             'NovT' => ['arrAllowed01'], // Si Novedad Tardanza
@@ -616,6 +630,11 @@ class Novedades
         try {
             $datos = ($this->getData);
 
+            if ($this->tools->jsonNoValido()) {
+                $errores = $this->tools->jsonNoValido();
+                $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            }
+
             if ($estruct == 'sec2' && empty($datos['Sector'] ?? '')) {
                 throw new \Exception("Parámetro Sector es requerido cuando solicita estruct sección (sec2).", 1);
             }
@@ -625,22 +644,22 @@ class Novedades
             $datos['FechaIni'] = $datos['FechaIni'] ?? date('Y-m-d'); // Fecha de inicio si no viene en los datos
             $datos['FechaFin'] = $datos['FechaFin'] ?? date('Y-m-d'); // Fecha de fin si no viene en los datos
 
-            $validator = new InputValidator($datos, $rules); // Instancio la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+            $validator = new InputValidator($datos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
             $validator->validate(); // Valido los datos
 
             $keyString = ['ApNo', 'ApNoLega', 'Desc'];
 
             foreach ($keyString as $key) {
-                $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacio
+                $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacío
             }
 
             $keysArray = ['Sector', 'Cod', 'Lega', 'Docu', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'TareProd', 'RegCH', 'Tipo', 'Nove', 'NoveTipo', 'Esta', 'NovI', 'NovA', 'NovS', 'NovT', 'DiaL', 'DiaF'];
 
             foreach ($keysArray as $key) { // Recorro las claves del array $keysArray
-                $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacio
+                $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
             }
         } catch (\Throwable $th) {
-            $this->resp->response('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
             exit;
         }
         return $datos;
@@ -794,7 +813,7 @@ class Novedades
         $FiltrosNombres = ['Lega', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'NovI', 'NovA', 'NovS', 'NovT', 'DiaL', 'DiaF'];
 
         foreach ($FiltrosNombres as $Nombre) {
-            if (!empty($Filtros[$Nombre])) { // Si el filtro no esta vacio
+            if (!empty($Filtros[$Nombre])) { // Si el filtro no esta vacío
                 $sql .= " AND FICHAS.Fic{$Nombre} IN (" . implode(",", $Filtros[$Nombre]) . ")";
             }
         }
@@ -832,18 +851,18 @@ class Novedades
         $conn = $this->conect->conn();
         try {
 
-            $datosCod = (array_filter($datos['Cod'])); // Elimino los valores vacios del array $datos['Cod']
+            $datosCod = (array_filter($datos['Cod'])); // Elimino los valores vacíos del array $datos['Cod']
 
             $whereConditions[] = " WHERE NovCodi > 0";
             $whereConditions[] = ($datos['Desc']) ? " NovDesc LIKE :Desc" : '';
             $whereConditions[] = ($datos['Tipo']) ? " NovTipo = :Tipo" : '';
             $whereConditions[] = ($datosCod) ? " NovCodi IN (" . implode(",", $datosCod) . ")" : '';
-            $whereConditions = array_filter($whereConditions); // Elimino los valores vacios del array $whereConditions
+            $whereConditions = array_filter($whereConditions); // Elimino los valores vacíos del array $whereConditions
 
             $sql = "SELECT NovCodi, NovDesc, NovTipo, dbo.fn_TipoNovedad(NovTipo) as 'NovTipoDesc', NovID, FechaHora FROM NOVEDAD";
             $sql .= ($whereConditions) ? implode(" AND ", $whereConditions) : '';
             $sql .= " ORDER BY NovCodi";
-            $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginacion
+            $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
 
             $stmt = $conn->prepare($sql);
 
@@ -872,12 +891,12 @@ class Novedades
             if ($return) {
                 return $novedades;
             } else {
-                $this->resp->response($novedades, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
+                $this->resp->respuesta($novedades, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
             }
 
         } catch (\PDOException $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras_' . ID_COMPANY . '.log');
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_dataNovedades_' . ID_COMPANY . '.log');
             exit;
         }
     }
@@ -887,8 +906,8 @@ class Novedades
         $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
         $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
         $tipo = $datos['Tipo'] ?? ''; // Tipo de datos que se reciben
-        $desc = $datos['Desc'] ?? ''; // Descripcion de la estructura
-        $cod = $datos['Cod'] ?? ''; // Codigo de la estructura
+        $desc = $datos['Desc'] ?? ''; // Descripción de la estructura
+        $cod = $datos['Cod'] ?? ''; // Código de la estructura
 
         $datosRecibidos = array( // Valores por defecto
             'Cod' => empty($cod) ? [] : $cod,
@@ -904,7 +923,7 @@ class Novedades
                 throw new \Exception("No se recibieron datos", 1);
             }
 
-            $rules = [ // Reglas de validacion
+            $rules = [ // Reglas de validación
                 'Cod' => ['arrSmallintEmpty'],
                 'Desc' => ['varchar40'],
                 'Tipo' => ['intempty'],
@@ -912,11 +931,11 @@ class Novedades
                 'length' => ['intempty'],
             ];
 
-            $validator = new InputValidator($datosRecibidos, $rules); // Instancio la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+            $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
@@ -942,5 +961,340 @@ class Novedades
             }
         }
         return 0;
+    }
+    private function validarInputsTotales()
+    {
+        $datos = $this->getData;
+
+        if ($this->tools->jsonNoValido()) {
+            $errores = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+        }
+
+        if (!$datos) {
+            $this->resp->respuesta('', 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
+        }
+
+        $FechIni = $datos['FechIni'] ?? '';
+        $FechFin = $datos['FechFin'] ?? '';
+        $LegApNo = $datos['LegApNo'] ?? '';
+        $LegDocu = $datos['LegDocu'] ?? [];
+        $LegRegCH = $datos['LegRegCH'] ?? [];
+        $LegTipo = $datos['LegTipo'] ?? [];
+        $LegaD = $datos['LegaD'] ?? '';
+        $LegaH = $datos['LegaH'] ?? '';
+        $Lega = $datos['Lega'] ?? [];
+        $Empr = $datos['Empr'] ?? [];
+        $Plan = $datos['Plan'] ?? [];
+        $Conv = $datos['Conv'] ?? [];
+        $Sec2 = $datos['Sec2'] ?? [];
+        $Sect = $datos['Sect'] ?? [];
+        $Grup = $datos['Grup'] ?? [];
+        $Sucu = $datos['Sucu'] ?? [];
+        $NovT = $datos['NovT'] ?? [];
+        $NovS = $datos['NovS'] ?? [];
+        $NovA = $datos['NovA'] ?? [];
+        $NovI = $datos['NovI'] ?? [];
+        $DiaL = $datos['DiaL'] ?? [];
+        $DiaF = $datos['DiaF'] ?? [];
+        $Nove = $datos['Nove'] ?? [];
+        $NoTi = $datos['NoTi'] ?? [];
+
+        $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
+        $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
+
+
+        $datosRecibidos = array( // Valores por defecto
+            'FechIni' => empty($FechIni) ? '' : $FechIni,
+            'FechFin' => empty($FechFin) ? '' : $FechFin,
+            'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
+            'LegDocu' => !is_array($LegDocu) ? [] : $LegDocu,
+            'LegRegCH' => !is_array($LegRegCH) ? [] : $LegRegCH,
+            'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
+            'LegaD' => empty($LegaD) ? '' : $LegaD,
+            'LegaH' => empty($LegaH) ? '' : $LegaH,
+            'Lega' => !is_array($Lega) ? [] : $Lega,
+            'Empr' => !is_array($Empr) ? [] : $Empr,
+            'Plan' => !is_array($Plan) ? [] : $Plan,
+            'Conv' => !is_array($Conv) ? [] : $Conv,
+            'Sec2' => !is_array($Sec2) ? [] : $Sec2,
+            'Sect' => !is_array($Sect) ? [] : $Sect,
+            'Grup' => !is_array($Grup) ? [] : $Grup,
+            'Sucu' => !is_array($Sucu) ? [] : $Sucu,
+            'NovT' => !is_array($NovT) ? [] : $NovT,
+            'NovS' => !is_array($NovS) ? [] : $NovS,
+            'NovA' => !is_array($NovA) ? [] : $NovA,
+            'NovI' => !is_array($NovI) ? [] : $NovI,
+            'DiaL' => !is_array($DiaL) ? [] : $DiaL,
+            'DiaF' => !is_array($DiaF) ? [] : $DiaF,
+            'Nove' => !is_array($Nove) ? [] : $Nove,
+            'NoTi' => !is_array($NoTi) ? [] : $NoTi,
+            'start' => empty($start) ? 0 : ($start),
+            'length' => empty($length) ? 5 : ($length),
+        );
+
+        try {
+
+            if (!is_array($datos)) {
+                throw new \Exception("No se recibieron datos", 1);
+            }
+
+            $rules = [ // Reglas de validación
+                'FechIni' => ['required', 'date'],
+                'FechFin' => ['required', 'date'],
+                'LegApNo' => ['varchar40'],
+                'LegDocu' => ['arrInt'],
+                'LegRegCH' => ['arrSmallint'],
+                'LegTipo' => ['arrSmallint'],
+                'LegaD' => ['intempty'],
+                'LegaH' => ['intempty'],
+                'Lega' => ['arrInt'],
+                'Empr' => ['arrSmallint'],
+                'Plan' => ['arrSmallint'],
+                'Conv' => ['arrSmallint'],
+                'Sec2' => ['arrSmallint'],
+                'Sect' => ['arrSmallint'],
+                'Grup' => ['arrSmallint'],
+                'Sucu' => ['arrSmallint'],
+                'NovT' => ['arrAllowed01'],
+                'NovS' => ['arrAllowed01'],
+                'NovA' => ['arrAllowed01'],
+                'NovI' => ['arrAllowed01'],
+                'DiaL' => ['arrAllowed01'],
+                'DiaF' => ['arrAllowed01'],
+                'Nove' => ['arrSmallint'],
+                'NoTi' => ['arrSmallint'],
+                'start' => ['intempty'],
+                'length' => ['intempty'],
+            ];
+
+            $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+            $validator->validate(); // Valido los datos
+            return $datosRecibidos;
+        } catch (\Exception $e) {
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsTotales.log');
+        }
+    }
+    public function totales()
+    {
+        $inicio = microtime(true);
+        $datos = $this->validarInputsTotales(); // Valido los datos
+        $conn = $this->conect->conn();
+
+        try {
+
+            $FechIni = date('Ymd', strtotime($datos['FechIni']));
+            $FechFin = date('Ymd', strtotime($datos['FechFin']));
+
+            if ($FechIni > $FechFin) {
+                $this->resp->respuesta([], 0, 'La fecha de Inicio no puede ser mayor a la fecha de Fin', 400, $inicio, 0, 0);
+                exit;
+            }
+
+            $LegApNo = $datos['LegApNo'] ?? '';
+            $Empr = implode(",", $datos["Empr"]);
+            $LegDocu = implode(",", $datos["LegDocu"]);
+            $LegRegCH = implode(",", $datos["LegRegCH"]);
+            $LegTipo = implode(",", $datos["LegTipo"]);
+            $LegaD = $datos['LegaD'];
+            $LegaH = $datos['LegaH'];
+            $Lega = implode(",", $datos["Lega"]);
+            $Plan = implode(",", $datos["Plan"]);
+            $Conv = implode(",", $datos["Conv"]);
+            $Sec2 = implode(",", $datos["Sec2"]);
+            $Sect = implode(",", $datos["Sect"]);
+            $Grup = implode(",", $datos["Grup"]);
+            $Sucu = implode(",", $datos["Sucu"]);
+            $NovT = implode(",", $datos["NovT"]);
+            $NovS = implode(",", $datos["NovS"]);
+            $NovA = implode(",", $datos["NovA"]);
+            $NovI = implode(",", $datos["NovI"]);
+            $DiaL = implode(",", $datos["DiaL"]);
+            $DiaF = implode(",", $datos["DiaF"]);
+            $Nove = implode(",", $datos["Nove"]);
+            $NoTi = implode(",", $datos["NoTi"]);
+
+            $wc[] = ($datos["LegApNo"]) ? " PERSONAL.LegApNo LIKE :LegApNo" : '';
+            $wc[] = ($datos["LegDocu"]) ? " PERSONAL.LegDocu IN ($LegDocu)" : '';
+            $wc[] = ($datos["LegRegCH"]) ? " PERSONAL.LegRegCH IN ($LegRegCH)" : '';
+            $wc[] = ($datos["LegTipo"]) ? " PERSONAL.LegTipo IN ($LegTipo)" : '';
+            $wc[] = ($datos["LegaD"]) ? " FICHAS.FicLega >= $LegaD" : '';
+            $wc[] = ($datos["LegaH"]) ? " FICHAS.FicLega <= $LegaH" : '';
+            $wc[] = ($datos["Lega"]) ? " FICHAS.FicLega IN ($Lega)" : '';
+            $wc[] = ($datos["Empr"]) ? " FICHAS.FicEmpr IN ($Empr)" : '';
+            $wc[] = ($datos["Plan"]) ? " FICHAS.FicPlan IN ($Plan)" : '';
+            $wc[] = ($datos["Conv"]) ? " FICHAS.FicConv IN ($Conv)" : '';
+            $wc[] = ($datos["Sec2"]) ? " FICHAS.FicSec2 IN ($Sec2)" : '';
+            $wc[] = ($datos["Sect"]) ? " FICHAS.FicSect IN ($Sect)" : '';
+            $wc[] = ($datos["Grup"]) ? " FICHAS.FicGrup IN ($Grup)" : '';
+            $wc[] = ($datos["Sucu"]) ? " FICHAS.FicSucu IN ($Sucu)" : '';
+            $wc[] = ($datos["NovT"]) ? " FICHAS.FicNovT IN ($NovT)" : '';
+            $wc[] = ($datos["NovS"]) ? " FICHAS.FicNovS IN ($NovS)" : '';
+            $wc[] = ($datos["NovA"]) ? " FICHAS.FicNovA IN ($NovA)" : '';
+            $wc[] = ($datos["NovI"]) ? " FICHAS.FicNovI IN ($NovI)" : '';
+            $wc[] = ($datos["DiaL"]) ? " FICHAS.FicDiaL IN ($DiaL)" : '';
+            $wc[] = ($datos["DiaF"]) ? " FICHAS.FicDiaF IN ($DiaF)" : '';
+            $wc[] = ($datos["Nove"]) ? " FICHAS3.FicNove IN ($Nove)" : '';
+            $wc[] = ($datos["NoTi"]) ? " FICHAS3.FicNoTi IN ($NoTi)" : '';
+            $wc = array_filter($wc); // Elimino los valores vacíos del array $wc
+            $wc = array_values($wc); // Reordeno los índices del array $wc   
+
+            /** vamos a consultar las novedades que hay en la tabla de novedades */
+            $whereConditions = "";
+            $whereConditions .= (count($wc) > 1) ? ' AND' . implode(" AND ", $wc) : "";
+            $whereConditions .= (count($wc) === 1) ? ' AND' . $wc[0] : "";
+            $sql = "SELECT DISTINCT(FicNove) as 'NovCodi', NovDesc, NovTipo FROM FICHAS3";
+            $sql .= " INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICHAS.FicFech AND FICHAS3.FicTurn = FICHAS.FicTurn";
+            $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
+            $sql .= " INNER JOIN NOVEDAD ON FICHAS3.FicNove = NOVEDAD.NovCodi";
+            $sql .= " WHERE FicNove > 0 AND FICHAS.FicFech BETWEEN '$FechIni' AND '$FechFin'";
+            $sql .= $whereConditions;
+            $sql .= " ORDER BY FicNove";
+
+            // print_r($sql) . exit;
+
+            $stmt = $conn->prepare($sql);
+            $ApNo = "%$datos[LegApNo]%";
+            ($datos['LegApNo']) ? $stmt->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
+            $stmt->execute(); // Ejecuto la consulta
+            $colNovedades = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+
+            if (empty($colNovedades)) {
+                $this->resp->respuesta([], 0, 'No se encontraron novedades', 200, $inicio, 0, 0);
+                exit;
+            }
+            $countNoveCols = array_map(function ($v) {
+                return "COUNT(CASE WHEN FICHAS3.FicNove = " . $v['NovCodi'] . " THEN 1 END) as 'Total_" . $v['NovCodi'] . "'";
+            }, $colNovedades);
+
+            $sumNoveCols = array_map(function ($v) {
+                return "COALESCE(SUM(CASE WHEN FICHAS3.FicNove = " . $v['NovCodi'] . " THEN dbo.fn_STRMinutos(FICHAS3.FicHoras) END), 0) as 'Horas_" . $v['NovCodi'] . "'";
+
+            }, $colNovedades);
+
+            /** **********************************  */
+
+            $columnas = [
+                "FICHAS3.FicLega AS 'Lega'",
+                "PERSONAL.LegApNo AS 'LegApNo'",
+            ];
+
+            $columnas2 = implode(", ", $countNoveCols);
+            $columnas3 = implode(", ", $sumNoveCols);
+            $columnas = implode(", ", $columnas);
+            $sql = "SELECT $columnas, $columnas2, $columnas3 FROM FICHAS3";
+            $sql .= " INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICHAS.FicFech AND FICHAS3.FicTurn = FICHAS.FicTurn";
+            $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
+            $sql .= " WHERE FicNove > 0";
+            $sql .= " AND FICHAS3.FicFech BETWEEN '$FechIni' AND '$FechFin'";
+            $sql .= $whereConditions;
+            $sql .= " GROUP BY FICHAS3.FicLega, PERSONAL.LegApNo";
+            $sql .= " ORDER BY FICHAS3.FicLega";
+            $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
+
+            $stmt1 = $conn->prepare($sql);
+            ($datos['LegApNo']) ? $stmt1->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
+            $stmt1->execute(); // Ejecuto la consulta
+            $novedades = $stmt1->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+
+            $sql = "SELECT COUNT(FicNove) as 'Total' FROM FICHAS3";
+            $sql .= " INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICHAS.FicFech AND FICHAS3.FicTurn = FICHAS.FicTurn";
+            $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
+            $sql .= " WHERE FicNove > 0";
+            $sql .= " AND FICHAS3.FicFech BETWEEN '$FechIni' AND '$FechFin'";
+            $sql .= $whereConditions;
+            $stmt2 = $conn->prepare($sql);
+            // $this->bindParameters($stmt2, $params);
+            ($datos['LegApNo']) ? $stmt2->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
+            $stmt2->execute(); // Ejecuto la consulta
+            $total = $stmt2->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+            $stmt->closeCursor(); // Cierro el cursor
+            $stmt1->closeCursor(); // Cierro el cursor
+            $stmt2->closeCursor(); // Cierro el cursor
+
+            $nuevo_array = array();
+
+            // Recorremos el array original y reestructuramos los datos
+            foreach ($novedades as $elemento) {
+                $nuevo_elemento = array(
+                    'Lega' => $elemento['Lega'],
+                    'LegApNo' => $elemento['LegApNo'],
+                    'Totales' => array()
+                );
+
+                // Buscamos las claves dinámicas que comienzan con 'Total_'
+                foreach ($elemento as $clave => $valor) {
+                    if (strpos($clave, 'Total_') === 0) {
+                        // Extraemos el número dinámico de la clave
+                        $numero = substr($clave, 6); // Se asume que siempre hay 6 caracteres fijos antes del número
+                        $FiltroNovedades = array_values($this->tools->filtrarElementoArray($colNovedades, 'NovCodi', ($numero)));
+                        if (intval($valor) == 0) {
+                            continue;
+                        }
+                        $nuevo_elemento['Totales'][] = array(
+                            'NovCodi' => intval($numero),
+                            'NovDesc' => $FiltroNovedades[0]['NovDesc'],
+                            'Cantidad' => intval($valor),
+                            'EnHoras' => $this->minutosAHoras(intval($elemento['Horas_' . $numero])),
+                            'EnMinutos' => intval($elemento['Horas_' . $numero])
+                        );
+                        // sumar minutos y crear array con los minutos de cada novedad
+                    }
+                }
+
+                $nuevo_array[] = $nuevo_elemento;
+            }
+
+            foreach ($colNovedades as $key => $value) {
+                $nov[] = array(
+                    'NovCodi' => intval($value['NovCodi']),
+                    'NovDesc' => trim($value['NovDesc']),
+                    'NovTipo' => intval($value['NovTipo']),
+                );
+            }
+
+            $array = [
+                'data' => $nuevo_array,
+                'novedades' => $nov,
+            ];
+
+            $this->resp->respuesta($array, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
+
+        } catch (\PDOException $e) {
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_totalesNovedades_' . ID_COMPANY . '.log');
+            exit;
+        }
+    }
+    private function bindParameters($stmt, $params)
+    {
+        foreach ($params as $param => $info) {
+            if ($info !== null) { // Verifica si el valor del parámetro no es null
+                $value = $info['value'];
+                $type = $info['type'];
+                $stmt->bindParam($param, $value, $type);
+            }
+            unset($param, $info, $value, $type);
+        }
+    }
+    private function minutosAHoras($minutos)
+    {
+        $horas = floor($minutos / 60);
+        $minutos = $minutos % 60;
+        return sprintf("%02d:%02d", $horas, $minutos);
+    }
+    private function minutosAHorasDecimal($minutos)
+    {
+        // Dividir los minutos por 60 para obtener la cantidad de horas
+        $horas = $minutos / 60;
+        // Redondear hacia abajo el valor a dos decimales
+        $horasRedondeadas = floor($horas * 100) / 100;
+        return $horasRedondeadas;
+    }
+    private function round_down($number, $precision = 2)
+    {
+        $fig = (int) str_pad('1', $precision, '0');
+        return (floor($number * $fig) / $fig);
     }
 }

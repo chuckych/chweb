@@ -6,38 +6,40 @@ timeZone();
 timeZone_lang();
 define("HOMEHOST", 'chweb');
 define("CUSTOMER", 'HRConsulting');
-define("MODULOS", [
-       /** ID = 01 */       'cuentas' => 'Cuentas',
-       /** ID = 02 */       'novedades' => 'Novedades',
-       /** ID = 03 */       'fichadas' => 'Fichadas',
-       /** ID = 04 */       'general' => 'General',
-       /** ID = 05 */       'mobile' => 'Mobile',
-       /** ID = 06 */       'mishoras' => 'Mis Horas',
-       /** ID = 07 */       'micuenta' => 'Mi Cuenta',
-       /** ID = 08 */       'Dashboard' => 'Dashboard',
-       /** ID = 09 */       'ctacte' => 'Cta Cte Novedades',
-       /** ID = 10 */       'personal' => 'Personal',
-       /** ID = 11 */       'fichar' => 'Ingreso de Fichadas',
-       /** ID = 12 */       'procesar' => 'Procesar',
-       /** ID = 13 */       'ctactehoras' => 'Cta Cte Horas',
-       /** ID = 14 */       'cierres' => 'Generar Cierres',
-       /** ID = 15 */       'liquidar' => 'Generar Liquidación',
-       /** ID = 16 */       'horas' => 'Horas Trabajadas',
-       /** ID = 17 */       'otrasnov' => 'Otras Novedades',
-       /** ID = 18 */       'auditoria' => 'Auditoría',
-       /** ID = 19 */       'horasign' => 'Horarios Asignados',
-       /** ID = 20 */       'horplan' => 'Planilla Horaria',
-       /** ID = 21 */       'partedia' => 'Parte Diario',
-       /** ID = 22 */       'infornov' => 'Informe de Novedades',
-       /** ID = 23 */       'inforfic' => 'Informe de Fichadas',
-       /** ID = 24 */       'inforhora' => 'Informe de Horas',
-       /** ID = 25 */       'mobilezonas' => 'Zonas Mobile',
-       /** ID = 26 */       'mobileuser' => 'Usuarios Mobile',
-       /** ID = 27 */       'mobilesms' => 'Mensajes Mobile',
-       /** ID = 28 */       'horascost' => 'Horas Costeadas',
-       /** ID = 29 */       'infornovc' => 'Informe de Presentismo',
-       /** ID = 30 */       'datos' => 'Datos',
-       /** ID = 31 */       'estruct' => 'Estructura',
-       /** ID = 33 */       'horarios' => 'Horarios',
-       /** ID = 34 */       'inforfar' => 'Informe FAR'
-]);
+$array_mod = array(
+       'cuentas' => 'Cuentas', // Cuentas ID 01
+       'novedades' => 'Novedades', // Novedades ID 02
+       'fichadas' => 'Fichadas', // Fichadas ID 03
+       'general' => 'General', // General ID 04
+       'mobile' => 'Mobile', // Mobile ID 05
+       'mishoras' => 'Mis Horas', // Mis Horas ID 06
+       'micuenta' => 'Mi Cuenta', // Mi Cuenta ID 07
+       'Dashboard' => 'Dashboard', // Dashboard ID 08
+       'ctacte' => 'Cta Cte Novedades', // Cta Cte Novedades ID 09
+       'personal' => 'Personal', // Personal ID 10
+       'fichar' => 'Ingreso de Fichadas', // Ingreso de Fichadas ID 11
+       'procesar' => 'Procesar', // Procesar ID 12
+       'ctactehoras' => 'Cta Cte Horas', // Cta Cte Horas ID 13
+       'cierres' => 'Generar Cierres', // Generar Cierres ID 14
+       'liquidar' => 'Generar Liquidación', // Generar Liquidación ID 15
+       'horas' => 'Horas Trabajadas', // Horas Trabajadas ID 16
+       'otrasnov' => 'Otras Novedades', // Otras Novedades ID 17
+       'auditoria' => 'Auditoría', // Auditoría ID 18
+       'horasign' => 'Horarios Asignados', // Horarios Asignados ID 19
+       'horplan' => 'Planilla Horaria', // Planilla Horaria ID 20
+       'partedia' => 'Parte Diario', // Parte Diario ID 21
+       'infornov' => 'Informe de Novedades', // Informe de Novedades ID 22
+       'inforfic' => 'Informe de Fichadas', // Informe de Fichadas ID 23
+       'inforhora' => 'Informe de Horas', // Informe de Horas ID 24
+       'mobilezonas' => 'Zonas Mobile', // Zonas Mobile ID 25
+       'mobileuser' => 'Usuarios Mobile', // Usuarios Mobile ID 26
+       'mobilesms' => 'Mensajes Mobile', // Mensajes Mobile ID 27
+       'horascost' => 'Horas Costeadas', // Horas Costeadas ID 28
+       'infornovc' => 'Informe de Presentismo', // Informe de Presentismo ID 29
+       'datos' => 'Datos', // Datos ID 30
+       'estruct' => 'Estructura', // Estructura ID 31
+       'horarios' => 'Horarios', // Horarios ID 33
+       'inforfar' => 'Informe FAR', // Informe FAR ID 34
+       'Proyectos' => 'Proyectos' // Proyectos ID 35
+);
+define("MODULOS", $array_mod);

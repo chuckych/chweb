@@ -138,7 +138,7 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
     if (!$fecha)
         return false;
 
-    // $opt = array("getNov" => "0", "getONov" => "0", "getHor" => "0", "getFic" => "0", "getEstruct" => "0", "getCierre" => "0");
+    // $opt = array("getNov" => "0", "getONov" => "0", "getHor" => "0", "getFic" => "0", "getEstruct" => "0", "getCierre" => "0", "EstaNov" => [0, 1, 2]);
 
     $payload = array(
         "FechIni" => $fecha,
@@ -184,10 +184,13 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         "ONov" => [],
         "Hora" => [],
         "Esta" => [],
-        "EstaNov" => [0, 1, 2],
+        "EstaNov" => $opt['EstaNov'] ?? [],
         "start" => 0,
         "length" => $opt['length'] ?? 1
     );
+
+    // Flight::json($payload) . exit;
+
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
@@ -196,6 +199,18 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         return [];
     }
     return array($arrayData['DATA'][0]);
+}
+function getHorasTotales($payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    // print_r($payload) . exit;
+    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
+    if (empty($arrayData['DATA'])) {
+        return [];
+    }
+    return ($arrayData['DATA']);
 }
 /**
  * Obtiene el cierre de ficha para un legajo y fecha específicos.
@@ -242,6 +257,17 @@ function novedadesRol()
     $novedadesRol = $_SESSION['ListaNov'] ?? '';
     $novedadesRol = ($novedadesRol && $novedadesRol != '-') ? explode(',', $novedadesRol) : [];
     return $novedadesRol;
+}
+/**
+ * Combina dos arrays eliminando duplicados.
+ *
+ * @param array $arr1 El primer array.
+ * @param array $arr2 El segundo array.
+ * @return array El array resultante de combinar los dos arrays sin duplicados.
+ */
+function mergeArray($arr1, $arr2)
+{
+    return ($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
 }
 Flight::route('/novedades-all', function () {
 
@@ -352,12 +378,16 @@ Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
     Flight::json($json);
 });
 Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
+
     $opt = array("getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1");
+    $data = array();
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
+
     if ($data) {
         $data[0]['NoveDelete'] = $_SESSION['ABM_ROL']['bNov'];
         $data[0]['NoveAdd'] = $_SESSION['ABM_ROL']['aNov'];
     }
+
     Flight::json($data);
 });
 Flight::route('PUT /novedad', function () {
@@ -527,7 +557,50 @@ Flight::route('DELETE /novedad', function () {
 
     Flight::json($result);
 });
+Flight::route('POST /horas/totales', function () {
 
+    $payload = Flight::request()->data->getData();
 
+    $payload['Empr'] = $payload['Empr'] ?? [];
+    $payload['Plan'] = $payload['Plan'] ?? [];
+    $payload['Conv'] = $payload['Conv'] ?? [];
+    $payload['Sect'] = $payload['Sect'] ?? [];
+    $payload['Sec2'] = $payload['Sec2'] ?? [];
+    $payload['Grup'] = $payload['Grup'] ?? [];
+    $payload['Sucu'] = $payload['Sucu'] ?? [];
+    $payload['Lega'] = $payload['Lega'] ?? [];
+
+    $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
+    $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
+    $convRol = ($_SESSION['ConvRol']) ? explode(',', $_SESSION['ConvRol']) : [];
+    $sectRol = ($_SESSION['SectRol']) ? explode(',', $_SESSION['SectRol']) : [];
+    $sec2Rol = ($_SESSION['Sec2Rol']) ? explode(',', $_SESSION['Sec2Rol']) : [];
+    $grupRol = ($_SESSION['GrupRol']) ? explode(',', $_SESSION['GrupRol']) : [];
+    $sucuRol = ($_SESSION['SucuRol']) ? explode(',', $_SESSION['SucuRol']) : [];
+    $persRol = ($_SESSION['EstrUser']) ? explode(',', $_SESSION['EstrUser']) : [];
+
+    $payload['Plan'] = (!$payload['Plan']) ? mergeArray($payload['Plan'], $planRol) : $payload['Plan'];
+    $payload['Empr'] = (!$payload['Empr']) ? mergeArray($payload['Empr'], $emprRol) : $payload['Empr'];
+    $payload['Conv'] = (!$payload['Conv']) ? mergeArray($payload['Conv'], $convRol) : $payload['Conv'];
+    $payload['Sect'] = (!$payload['Sect']) ? mergeArray($payload['Sect'], $sectRol) : $payload['Sect'];
+    $payload['Sec2'] = (!$payload['Sec2']) ? mergeArray($payload['Sec2'], $sec2Rol) : $payload['Sec2'];
+    $payload['Grup'] = (!$payload['Grup']) ? mergeArray($payload['Grup'], $grupRol) : $payload['Grup'];
+    $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
+    $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
+
+    $data = array();
+    $data = getHorasTotales($payload);
+
+    Flight::json($data);
+});
+
+Flight::map('notFound', function () {
+    Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);
+});
+Flight::set('flight.log_errors', true);
+
+Flight::map('error', function ($ex) {
+    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
+});
 
 Flight::start(); // Inicio FlightPHP

@@ -19,9 +19,9 @@ class ConnectSqlSrv
         // $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
         // $dataCompany = $this->dataCompany->get(); // Obtiene los datos de la empresa y valida el token
 
-        $db         = $_SESSION['DataCompany']['DBName']; // Nombre de la base de datos
-        $user       = $_SESSION['DataCompany']['DBUser']; // Usuario de la base de datos
-        $pass       = $_SESSION['DataCompany']['DBPass']; // Contraseña de la base de datos
+        $db = $_SESSION['DataCompany']['DBName']; // Nombre de la base de datos
+        $user = $_SESSION['DataCompany']['DBUser']; // Usuario de la base de datos
+        $pass = $_SESSION['DataCompany']['DBPass']; // Contraseña de la base de datos
         $serverName = $_SESSION['DataCompany']['DBHost']; // Host de la base de datos
 
         try { // Intenta conectar a la base de datos
@@ -58,18 +58,6 @@ class ConnectSqlSrv
     {
         return $this->conn;
     }
-
-    /**
-     * Cierra la conexión a la base de datos
-     * @param \PDO $conn Conexión a la base de datos
-     * @return \PDO Conexión cerrada
-     */
-    public function close($conn)
-    {
-        $conn = null; // Cerrar la conexión
-        return $conn;
-    }
-
     /**
      * Ejecuta una consulta SQL
      * @param string $sql Consulta SQL

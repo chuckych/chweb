@@ -105,4 +105,21 @@ class Tools
             return false;
         }
     }
+    public function jsonNoValido()
+    {
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            return json_last_error_msg();
+        } else {
+            return false;
+        }
+    }
+    public function filtrarElementoArray($array, $key, $value)
+    {
+        $result = array_filter($array, function ($item) use ($key, $value) {
+            return ($item[$key] === $value);
+        });
+        return $result;
+    }
 }

@@ -160,7 +160,7 @@ let GetNovedades = $('#GetNovedades').DataTable({
     serverSide: true,
     deferRender: true,
     searchDelay: 1500,
-    dom: `<'mt-3'<'d-none d-sm-block'l><t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+    dom: `<'mt-3'<'d-none d-sm-block'l><''t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
     ajax: {
         url: "/" + $("#_homehost").val() + "/novedades/GetNovedades.php",
         type: "POST",
@@ -249,6 +249,11 @@ let GetNovedades = $('#GetNovedades').DataTable({
             },
         }
     ],
+    createdRow: function (row, data, dataIndex) {
+        if (data.NoveEdit == '1') {
+            $(row).addClass('pointer');
+        }
+    },
     scrollX: true,
     scrollCollapse: true,
     // scrollY: '25vmax',
@@ -271,18 +276,21 @@ $("#GetNovedades").on('init.dt', function () {
 
     $(idTableBody).on('click', (e) => {
         if (e.target.closest('tr').tagName) {
-            if (e.target.tagName == 'EDITA') {
-                if (e.target.classList.contains('disabled')) {
-                    return false;
-                }
-                e.target.classList.add('disabled');
-                let data = GetNovedades.row(e.target.closest('tr')).data();
-                if (data.arrayNove) {
-                    modalEditNove(data).then(() => {
-                        e.target.classList.remove('disabled');
-                    });
-                }
+            // console.log(e.target.closest('tr'));
+            // if (e.target.tagName == 'EDITA') {
+            if (e.target.classList.contains('disabled')) {
+                return false;
             }
+            // e.target.closest('tr').classList.add('selected');
+
+            e.target.classList.add('disabled');
+            let data = GetNovedades.row(e.target.closest('tr')).data();
+            if (data.arrayNove) {
+                modalEditNove(data).then(() => {
+                    e.target.classList.remove('disabled');
+                });
+            }
+            // }
         }
     })
 
@@ -403,6 +411,11 @@ setTimeout(function () {
                 $("#GetNovedadesFecha_processing").css("display", "none");
             },
         },
+        createdRow: function (row, data, dataIndex) {
+            if (data.NoveEdit == '1') {
+                $(row).addClass('pointer');
+            }
+        },
         columns: [
             {
                 data: 'NoveEdit', className: 'align-middle px-0', targets: '', title: '',
@@ -488,19 +501,19 @@ setTimeout(function () {
         $(idTableBody).on('click', (e) => {
             // console.log(e.target.tagName);
             if (e.target.closest('tr').tagName) {
-                if (e.target.tagName == 'EDITA') {
-                    if (e.target.classList.contains('disabled')) {
-                        return false;
-                    }
-                    e.target.classList.add('disabled');
-
-                    let data = GetNovedadesFecha.row(e.target.closest('tr')).data();
-                    if (data.arrayNove) {
-                        modalEditNove(data).then(() => {
-                            e.target.classList.remove('disabled');
-                        });
-                    }
+                // if (e.target.tagName == 'EDITA') {
+                if (e.target.classList.contains('disabled')) {
+                    return false;
                 }
+                e.target.classList.add('disabled');
+
+                let data = GetNovedadesFecha.row(e.target.closest('tr')).data();
+                if (data.arrayNove) {
+                    modalEditNove(data).then(() => {
+                        e.target.classList.remove('disabled');
+                    });
+                }
+                // }
             }
         })
 

@@ -40,7 +40,7 @@ class Response
      * @param int $count El total de registros de la respuesta.
      * @param int $idCompany El id de la empresa.
      */
-    function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
+    function respuesta($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
     {
         $log = new Log; // Log Api
         $code = intval($code); // code response
@@ -76,15 +76,12 @@ class Response
             $ua->browserVersion();
             $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
         }
-        // $company = new DataCompany; // DataCompany Api
-        // $idCompany = ($idCompany) ? $idCompany : $company->get('idCompany'); // get data company
-        // $idCompany = '0'; // get data company
-
         $nameLog = date('Ymd') . '_request_' . ID_COMPANY . '.log'; // path Log Api
         /** start text log*/
         $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
         /** end text log*/
         $log->write($TextLog, $nameLog); // Log Api
+        exit;
         /** END LOG API CONFIG */
     }
     function start()
@@ -175,6 +172,6 @@ class Response
     }
     function notFound()
     {
-        $this->response('', 0, 'Not Found', 404, 0, 0, 0);
+        $this->respuesta('', 0, 'Not Found', 404, 0, 0, 0);
     }
 }

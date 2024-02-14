@@ -15,7 +15,7 @@
                     <div class="col-12 col-sm-4">
                         <!-- Empresa -->
                         <label for="Emp" class="mb-1 fontq">Empresas</label>
-                        <select class="form-control selectjs_empresa  id=" Emp" name="Emp">
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
@@ -33,8 +33,8 @@
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-4">
-                        <!-- Seccion -->
-                        <label for="Sec2" class="mb-1 w100 fontq">Secciónes</label>
+                        <!-- Sección -->
+                        <label for="Sec2" class="mb-1 w100 fontq">Secciones</label>
                         <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
                         </select>
                     </div>
@@ -70,31 +70,30 @@
                         <!-- Min -->
                         <label for="HoraMin" class="mb-1 w100 fontq">Min / Max <span class="">(*)</span></label>
                         <div class="d-flex align-items-center">
-                            <input type="tel" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMin" class="ls1 w100 form-control h40" placeholder="00:00"
-                                value="00:00">
-                            <input type="tel" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMax" class="ml-2 ls1 w100 form-control h40" placeholder="00:00"
-                                value="23:59">
+                            <input type="tel" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMin"
+                                class="ls1 w100 form-control h40" placeholder="00:00" value="00:00">
+                            <input type="tel" data-mask="00:00" reverse="true" placeholder="00:00" id="HoraMax"
+                                class="ml-2 ls1 w100 form-control h40" placeholder="00:00" value="23:59">
                         </div>
                     </div>
                     <div class="col-12 col-sm-5">
                         <label for="" class="mb-1 w100 fontq">Sobre Horas</label>
                         <div class="d-flex align-items-center">
-                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-sm fontq btn-outline-custom border w100" id="Hechas"
-                                title="Min/Max sobre horas hechas.">
-                                <input checked type="radio" name="SHoras" id="SHoras1"> Hechas
-                            </label>
-                            <label class="btn btn-sm fontq btn-outline-custom border w100" id="Autori"
-                                title="Min/Max sobre horas autorizadas.">
-                                <input type="radio" name="SHoras" id="SHoras2"> Autorizadas
-                            </label>
-                            <input type="hidden" hidden id="SHoras">
-                        </div>
-                        <div class="custom-control custom-switch custom-control-inline ml-sm-2">
-                            <input type="checkbox" class="custom-control-input" id="Calculos">
-                            <label class="custom-control-label" for="Calculos" title="Mostrar Todos los cálculos"
-                                style="padding-top: 3px;">Todos los cálculos</label>
-                        </div>
+                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                <label class="btn btn-sm fontq btn-outline-custom border w100" id="Hechas"
+                                    title="Min/Max sobre horas hechas.">
+                                    <input checked type="radio" name="SHoras" id="SHoras0" value="0"> Hechas
+                                </label>
+                                <label class="btn btn-sm fontq btn-outline-custom border w100" id="Autori"
+                                    title="Min/Max sobre horas autorizadas.">
+                                    <input type="radio" name="SHoras" id="SHoras1" value="1"> Autorizadas
+                                </label>
+                            </div>
+                            <div class="custom-control custom-switch custom-control-inline ml-sm-2 d-none">
+                                <input type="checkbox" class="custom-control-input" id="Calculos">
+                                <label class="custom-control-label" for="Calculos" title="Mostrar Todos los cálculos"
+                                    style="padding-top: 3px;">Todos los cálculos</label>
+                            </div>
                         </div>
                     </div>
                     <div class="col-12 mt-2">
@@ -103,7 +102,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-custom btn-sm fontq border" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-outline-custom btn-sm fontq border"
+                    data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

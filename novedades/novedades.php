@@ -105,7 +105,7 @@
             </div>
             <div class="row radius mt-sm-n5">
                 <div class="col-12 animate__animated animate__fadeIn">
-                    <div class="table-responsive invisible" id="GetNovedadesTable">
+                    <div class="invisible" id="GetNovedadesTable">
                         <table class="table table-hover text-nowrap w-100" id="GetNovedades">
                         </table>
                     </div>

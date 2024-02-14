@@ -39,27 +39,27 @@ class ValidarPayload
             if ($type == 'int01') {
                 if ($value) {
                     switch ($value) {
-                        case (!is_numeric($value)):
+                        case(!is_numeric($value)):
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, microtime(true), 0, 0));
                             // exit;
                             break;
-                        case (!filter_var($value, FILTER_VALIDATE_INT)):
+                        case(!filter_var($value, FILTER_VALIDATE_INT)):
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, microtime(true), 0, 0));
                             // exit;
                             break;
-                        case (strlen($value) > $length):
+                        case(strlen($value) > $length):
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, microtime(true), 0, 0));
                             // exit;
                             break;
-                        case (($value) < 0):
+                        case(($value) < 0):
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, microtime(true), 0, 0));
                             // exit;
                             break;
-                        case (($value) > 1):
+                        case(($value) > 1):
                             http_response_code(400);
                             (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, microtime(true), 0, 0));
                             // exit;

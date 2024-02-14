@@ -143,7 +143,7 @@ class RRHHWebService
                     $dias = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
                     $text = "Legajos procesados [$Legajos] - $FechaDesde a $FechaHasta $dias dias";
                     $this->log->write($text, date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
-                    // $this->resp->response('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
+                    // $this->resp->respuesta('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
                 }
 
                 curl_close($ch);
@@ -192,10 +192,10 @@ class RRHHWebService
                 throw new \Exception($text, $httpCode);
             }
             curl_close($ch);
-            // $this->resp->response('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
+            // $this->resp->respuesta('', 0, $respuesta, $httpCode, microtime(true), 0, 0);
         } catch (\Exception $e) {
             $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
-            //$this->resp->response('', 0, $e->getMessage(), $e->getCode(), microtime(true), 0, 0);
+            //$this->resp->respuesta('', 0, $e->getMessage(), $e->getCode(), microtime(true), 0, 0);
             // exit;
         }
         // $processID = respuestaWebService($respuesta);
@@ -241,7 +241,7 @@ class RRHHWebService
             return true;
         } catch (\Exception $th) {
             $this->log->write($th->getMessage(), date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
-            $this->resp->response('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
         }
     }
 }

@@ -66,9 +66,9 @@ class ParaGene
                 'FechaHora' => $element['FechaHora'],
             );
         }
-        $this->resp->response($rs, 0, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
     }
-    public function return()
+    public function return ()
     {
         $sql = "SELECT * FROM PARAGENE";
         $Data = $this->conect->executeQueryWhithParams($sql);

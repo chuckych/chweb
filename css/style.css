@@ -223,6 +223,18 @@
      font-size: 1rem
  }
 
+ .font10 {
+     font-size: 1rem !important
+ }
+
+ .font09 {
+     font-size: .9rem !important
+ }
+
+ .font08 {
+     font-size: .8rem !important
+ }
+
  .fontq {
      font-size: .8rem !important
  }
@@ -307,7 +319,7 @@
  }
 
  td {
-     font-size: 0.8em !important;
+     font-size: 0.9rem !important;
      /* font-weight: 500 !important; */
      color: #333 !important;
      /* font-display: swap !important; */
@@ -1712,4 +1724,12 @@
 
  .rotado {
      transform: rotate(180deg);
+ }
+
+ .show {
+     transition: opacity 700ms;
+ }
+
+ .hide {
+     opacity: 0;
  }

@@ -46,7 +46,7 @@ class DataCompany
             $data = parse_ini_file($url, true); // Obtenemos los datos del mobileApikey.php
             return $data; // devolvemos el json
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_getIni_' . ID_COMPANY . '.log');
         }
     }
@@ -61,7 +61,7 @@ class DataCompany
                 throw new \Exception("El token es requerido");
             }
             if (!is_array($iniData) || empty($iniData) || !$iniData || !isset($iniData)) {
-                throw new \Exception("Error de configuracion");
+                throw new \Exception("Error de configuración");
             }
 
             $filteredData = array_filter($iniData, function ($element) use ($token) {
@@ -79,13 +79,11 @@ class DataCompany
                     throw new \Exception("Invalid Key");
                 }
                 $firstElement = $firstElement[$key];
-            } else {
-                $firstElement =  $firstElement;
             }
             return $firstElement;
-            // $this->resp->response($firstElement, 0, '', 200, microtime(true), 0, 0);
+            // $this->resp->respuesta($firstElement, 0, '', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 401, microtime(true), 0, 0);
+            $this->resp->respuesta('', 0, $e->getMessage(), 401, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_getToken.log');
             exit;
         }
@@ -101,7 +99,7 @@ class DataCompany
                 throw new \Exception("El token es requerido");
             }
             if (!is_array($iniData) || empty($iniData) || !$iniData || !isset($iniData)) {
-                throw new \Exception("Error de configuracion");
+                throw new \Exception("Error de configuración");
             }
 
             $filteredData = array_filter($iniData, function ($element) use ($token) {
@@ -115,7 +113,7 @@ class DataCompany
             }
             $_SESSION['DataCompany'] = $dataCompany;
         } catch (\Exception $e) {
-            $this->resp->response('', 0, $e->getMessage(), 401, microtime(true), 0, ID_COMPANY);
+            $this->resp->respuesta('', 0, $e->getMessage(), 401, microtime(true), 0, ID_COMPANY);
             $this->log->write($e->getMessage(), date('Ymd') . '_getToken_' . ID_COMPANY . '.log');
             session_destroy();
             exit;

@@ -28,6 +28,8 @@ $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 $api->route('PUT /novedades', [$novedades, 'update']);
 $api->route('DELETE /novedades', [$novedades, 'delete']);
 $api->route('POST /novedades', [$novedades, 'add']);
+$api->route('POST /novedades/totales', [$novedades, 'totales']);
+$api->route('POST /horas/totales', [$horas, 'totales']);
 $api->route('PUT /horas', [$horas, 'update']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
@@ -35,17 +37,19 @@ $api->route('GET /novedades/data', [$novedades, 'data']);
 $api->route('/paragene', [$ParaGene, 'get']);
 
 $api->map('notFound', [$response, 'notFound']);
+$api->set('flight.log_errors', true);
 
 $api->map('error', function ($ex) {
     $log = new Classes\Log;
     $nameLog = date('Ymd') . '_error_.log'; // path Log Api
     if ($ex instanceof Exception) {
-        $log->write($ex->getTraceAsString(), $nameLog);
+        $log->write($ex->getMessage(), $nameLog);
     } elseif ($ex instanceof Error) {
-        $log->write($ex->getTraceAsString(), $nameLog);
+        $log->write($ex->getMessage(), $nameLog);
     } elseif ($ex instanceof PDOException) {
-        $log->write($ex->getTraceAsString(), $nameLog);
+        $log->write($ex->getMessage(), $nameLog);
     }
+    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
 });
 
 $api->start();
