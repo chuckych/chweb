@@ -717,6 +717,10 @@ function getHTML(url, selector) {
         $(selector).html(data);
     })
 }
+/**
+ * Función que se ejecuta al abrir el select2.
+ * Verifica la sesión y detiene la propagación del evento.
+ */
 function onOpenSelect2() {
     $('select').on('select2:opening', function (e) {
         CheckSesion()

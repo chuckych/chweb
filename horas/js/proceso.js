@@ -1,7 +1,10 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_filtro_horas_';
 function ActualizaTablas() {
-    if (verPor === '1') {
+    $('#tablas').addClass('loader-in')
+    let verPor = document.querySelector('input[name="VPor"]:checked').value;
+    ls.set(LS_FILTROS + 'VPor', parseInt(verPor));
+    if (verPor === 1) {
         getFechas();
     } else {
         getPersonal();
@@ -10,18 +13,12 @@ function ActualizaTablas() {
 
 $('input[name="VPor"]').on('change', function () {
     CheckSesion()
-    if ($(this).val() === '1') {
-        getFechas();
-        let el = document.getElementById('div-horas-total');
-        el.classList.replace('show', 'd-none');
-    } else {
-        getPersonal();
-    }
+    ActualizaTablas()
 });
 
 const toggleTablas = (tipo) => {
 
-    if (tipo === 'fecha') {
+    if (tipo === 1) {
 
         $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
         $('#pagLega').hide().removeClass('animate__animated animate__fadeIn');
@@ -30,7 +27,7 @@ const toggleTablas = (tipo) => {
         $('#GetHorasFechaTable').show().addClass('animate__animated animate__fadeIn');
 
     } else {
-
+        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
         $('#pagFech').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasFechaTable').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasTable').show().addClass('animate__animated animate__fadeIn');
@@ -349,7 +346,7 @@ const getPersonal = () => {
         $(".dataTables_info").addClass('text-secondary');
     });
     $('#GetPersonal').on('draw.dt', function (settings, json) {
-        toggleTablas('legajo');
+        toggleTablas();
         getHoras(); // create
         tableTotalesLegajo();
         $('#GetPersonal').removeClass('loader-in');
@@ -420,8 +417,7 @@ const getFechas = () => {
         tableTotalesFecha2();
     });
     $('#GetFechas').on('draw.dt', function (e, settings, json, xhr) {
-        console.log(settings);
-        toggleTablas('fecha');
+        toggleTablas(1);
         getHorasFecha();
         tableTotalesFecha();
         tableTotalesFecha2();
@@ -433,10 +429,13 @@ const getFechas = () => {
         CheckSesion()
     });
 }
-$("#VFecha").prop('checked', true);
-getFechas();
+if (ls.get(LS_FILTROS + 'VPor')) {
+    $("#VFecha").prop('checked', true);
+} else {
+    $("#VLegajo").prop('checked', true);
+}
+ActualizaTablas();
 const verPor = document.querySelector('input[name="VPor"]:checked').value;
-// getPersonal();
 
 $("#Refresh").on("click", function () {
     CheckSesion()

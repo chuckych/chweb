@@ -3,15 +3,15 @@ require __DIR__ . '../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
 
+ultimoacc();
+secure_auth_ch_json();
+header("Content-Type: application/json");
+
 if (!$_SESSION) {
     Flight::json(array("error" => "Sesión finalizada."));
     exit;
 }
-// sleep(2);
-
-ultimoacc();
-secure_auth_ch();
-header("Content-Type: application/json");
+// sleep(1);
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
 
