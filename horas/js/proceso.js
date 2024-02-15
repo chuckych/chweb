@@ -1,12 +1,42 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_filtro_horas_';
 function ActualizaTablas() {
-    if ($("#Visualizar").is(":checked")) {
-        getFechas(true);
+    if (verPor === '1') {
+        getFechas();
     } else {
-        getPersonal(true);
+        getPersonal();
     };
 };
+
+$('input[name="VPor"]').on('change', function () {
+    CheckSesion()
+    if ($(this).val() === '1') {
+        getFechas();
+        let el = document.getElementById('div-horas-total');
+        el.classList.replace('show', 'd-none');
+    } else {
+        getPersonal();
+    }
+});
+
+const toggleTablas = (tipo) => {
+
+    if (tipo === 'fecha') {
+
+        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
+        $('#pagLega').hide().removeClass('animate__animated animate__fadeIn');
+        $('#GetHorasTable').hide().removeClass('animate__animated animate__fadeIn');
+        $('#pagFech').show().addClass('animate__animated animate__fadeIn');
+        $('#GetHorasFechaTable').show().addClass('animate__animated animate__fadeIn');
+
+    } else {
+
+        $('#pagFech').hide().removeClass('animate__animated animate__fadeIn');
+        $('#GetHorasFechaTable').hide().removeClass('animate__animated animate__fadeIn');
+        $('#GetHorasTable').show().addClass('animate__animated animate__fadeIn');
+        $('#pagLega').show().addClass('animate__animated animate__fadeIn');
+    }
+}
 onOpenSelect2()
 var map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
 $(document).keydown(function (e) {
@@ -31,22 +61,21 @@ $(document).keydown(function (e) {
     if (e.keyCode in map) {
         map[e.keyCode] = true;
         if (map[39]) { /** Flecha derecha */
-            if ($("#Visualizar").is(":checked")) {
+            if (verPor === '1') {
                 $('#GetFechas').DataTable().page('next').draw('page');
             } else {
                 $('#GetPersonal').DataTable().page('next').draw('page');
-            };
+            }
         }
     }
     if (e.keyCode in map) {
         map[e.keyCode] = true;
         if (map[37]) { /** Flecha izquierda */
-            if ($("#Visualizar").is(":checked")) {
+            if (verPor === '1') {
                 $('#GetFechas').DataTable().page('previous').draw('page');
             } else {
                 $('#GetPersonal').DataTable().page('previous').draw('page');
-            };
-
+            }
         }
     }
 }).keyup(function (e) {
@@ -55,8 +84,8 @@ $(document).keydown(function (e) {
     }
 });
 
-const getHoras = (reload) => {
-    if (reload) {
+const getHoras = () => {
+    if ($.fn.DataTable.isDataTable('#GetHoras')) {
         $('#GetHoras').DataTable().ajax.reload();
         return;
     }
@@ -96,7 +125,7 @@ const getHoras = (reload) => {
         },
         columns: [
             {
-                'class': 'ls1',
+                'class': '',
                 'data': 'FicFech',
             },
             {
@@ -104,7 +133,7 @@ const getHoras = (reload) => {
                 'data': 'Dia',
             },
             {
-                'class': 'ls1',
+                'class': '',
                 'data': 'Horario',
             },
             {
@@ -116,11 +145,11 @@ const getHoras = (reload) => {
                 'data': 'HoraDesc',
             },
             {
-                'class': 'ls1 text-center',
+                'class': 'text-center',
                 'data': 'FicHsAu',
             },
             {
-                'class': 'ls1 bg-light fw4 text-center',
+                'class': 'bg-light fw4 text-center',
                 'data': 'FicHsAu2',
             },
             {
@@ -144,27 +173,21 @@ const getHoras = (reload) => {
         },
     });
     $('#GetHoras').on('init.dt', function () {
-        $("#Refresh").prop('disabled', false);
         $('#trash_all').removeClass('invisible');
-        fadeInOnly('#pagLega')
-        fadeInOnly('#GetHorasTable')
     });
     $('#GetHoras').on('draw.dt', function () {
-        // $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
-        $('#pagLega').removeClass('invisible')
-        $('#GetHorasTable').removeClass('invisible')
-        setTimeout(function () {
-            $(".Filtros").prop('disabled', false);
-        }, 1000);
+        $(".Filtros").prop('disabled', false);
+        $('#GetHoras').removeClass('loader-in');
     });
     $('#GetHoras').on('page.dt', function () {
+        $('#GetHoras').addClass('loader-in');
         CheckSesion()
     });
 }
-const getHorasFecha = (reload) => {
-    if (reload) {
+const getHorasFecha = () => {
+    if ($.fn.DataTable.isDataTable('#GetHorasFecha')) {
         $('#GetHorasFecha').DataTable().ajax.reload();
         return;
     }
@@ -205,7 +228,7 @@ const getHorasFecha = (reload) => {
         },
         columns: [
             {
-                'class': 'ls1',
+                'class': '',
                 'data': 'Legajo',
             },
             {
@@ -213,7 +236,7 @@ const getHorasFecha = (reload) => {
                 'data': 'Nombre',
             },
             {
-                'class': 'ls1',
+                'class': '',
                 'data': 'Horario',
             },
             {
@@ -225,11 +248,11 @@ const getHorasFecha = (reload) => {
                 'data': 'HoraDesc',
             },
             {
-                'class': 'ls1 text-center',
+                'class': ' text-center',
                 'data': 'FicHsAu',
             },
             {
-                'class': 'ls1 bg-light fw4 text-center',
+                'class': 'bg-light fw4 text-center',
                 'data': 'FicHsAu2',
             },
             {
@@ -255,21 +278,23 @@ const getHorasFecha = (reload) => {
     $('#GetHorasFecha').on('draw.dt', function () {
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
-        $('#Visualizar').prop('disabled', false)
-        $('#GetHorasFechaTable').removeClass('invisible')
         setTimeout(function () {
             $(".Filtros").prop('disabled', false);
         }, 500);
+        $('#GetHorasFecha').removeClass('loader-in');
     });
     $('#GetHorasFecha').on('page.dt', function () {
         CheckSesion()
+        $('#GetHorasFecha').addClass('loader-in');
     });
 }
-const getPersonal = (reload) => {
-    if (reload) {
+const getPersonal = () => {
+
+    if ($.fn.DataTable.isDataTable('#GetPersonal')) {
         $('#GetPersonal').DataTable().ajax.reload();
         return;
     }
+
     $('#GetPersonal').DataTable({
         pagingType: "full",
         lengthMenu: [[1], [1]],
@@ -321,24 +346,22 @@ const getPersonal = (reload) => {
     });
     $('#GetPersonal').on('init.dt', function (settings, json) {
         $("#GetPersonal thead").remove();
-        // $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
     });
     $('#GetPersonal').on('draw.dt', function (settings, json) {
-
-        if ($.fn.DataTable.isDataTable('#GetHoras')) {
-            getHoras(true); // reload
-        } else {
-            getHoras(); // create
-        }
+        toggleTablas('legajo');
+        getHoras(); // create
         tableTotalesLegajo();
+        $('#GetPersonal').removeClass('loader-in');
     });
     $('#GetPersonal').on('page.dt', function () {
+        $('#GetPersonal').addClass('loader-in');
+        $('#GetHoras').addClass('loader-in');
         CheckSesion()
     });
 }
-const getFechas = (reload) => {
-    if (reload) {
+const getFechas = () => {
+    if ($.fn.DataTable.isDataTable('#GetFechas')) {
         $('#GetFechas').DataTable().ajax.reload();
         return;
     }
@@ -375,7 +398,7 @@ const getFechas = (reload) => {
         },
         columns: [
             {
-                "class": "w80 px-3 border fw4 bg-light radius ls1",
+                "class": "w80 px-3 border fw4 bg-light radius",
                 "data": 'FicFech'
             },
             {
@@ -397,63 +420,34 @@ const getFechas = (reload) => {
         tableTotalesFecha2();
     });
     $('#GetFechas').on('draw.dt', function (e, settings, json, xhr) {
-        if ($.fn.DataTable.isDataTable('#GetHorasFecha')) {
-            getHorasFecha(true); // reload
-        } else {
-            getHorasFecha(); // create
-        }
+        console.log(settings);
+        toggleTablas('fecha');
+        getHorasFecha();
         tableTotalesFecha();
         tableTotalesFecha2();
+        $('#GetFechas').removeClass('loader-in');
     });
     $('#GetFechas').on('page.dt', function () {
+        $('#GetFechas').addClass('loader-in');
+        $('#GetHorasFecha').addClass('loader-in');
         CheckSesion()
     });
 }
-
-$("#pagFech").addClass('d-none');
-$("#GetHorasFechaTable").addClass('d-none');
-
-getPersonal();
+$("#VFecha").prop('checked', true);
+getFechas();
+const verPor = document.querySelector('input[name="VPor"]:checked').value;
+// getPersonal();
 
 $("#Refresh").on("click", function () {
     CheckSesion()
     ActualizaTablas()
 });
 
-$("#_dr").change(function () {
+$('#_dr').on('apply.daterangepicker', function (ev, picker) {
     CheckSesion()
     ActualizaTablas()
 });
-$('#VerPor').html('Visualizar por Fecha')
-$("#Visualizar").change(function () {
-    CheckSesion()
-    if ($("#Visualizar").is(":checked")) {
 
-        if ($.fn.DataTable.isDataTable('#GetFechas')) {
-            getFechas(true); // reload
-        } else {
-            getFechas(); // create
-        }
-        $("#GetHorasTable").addClass('d-none');
-        $("#GetHorasFechaTable").removeClass('d-none');
-        $("#GetHorasTotalesTable").addClass('d-none');
-        $("#pagLega").addClass('d-none');
-        $("#pagFech").removeClass('d-none')
-        let el = document.getElementById('div-horas-total');
-        el.classList.replace('show', 'd-none');
-    } else {
-        if ($.fn.DataTable.isDataTable('#GetPersonal')) {
-            getPersonal(true); // reload
-        } else {
-            getPersonal(); // create
-        }
-        $("#GetHorasTable").removeClass('d-none');
-        $("#GetHorasFechaTable").addClass('d-none')
-        $("#GetHorasTotalesTable").removeClass('d-none')
-        $("#pagLega").removeClass('d-none')
-        $("#pagFech").addClass('d-none')
-    }
-});
 const getHorasTotales = async (jsonData) => {
     try {
         let rs = await axios.post('../app-data/horas/totales/', jsonData);
@@ -530,7 +524,7 @@ const tableTotalesLegajo = () => {
         HtmlTable += `<td class="font09">Hechas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
@@ -538,7 +532,7 @@ const tableTotalesLegajo = () => {
         HtmlTable += `<td class="font09 fw5">Autorizadas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class="font09 fw5">${rs.EnHoras2} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class="font09 fw5">${rs.EnHoras2} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
@@ -581,11 +575,13 @@ const tableTotalesFecha = () => {
         let tiposHoras = rs.tiposHoras ?? false;
 
         if (tiposHoras === false) {
+            document.getElementById('tabla-horas-total').innerHTML = '';
             return;
         }
         let data = rs.totales ?? false;
 
         if (data === false) {
+            document.getElementById('tabla-horas-total').innerHTML = '';
             return;
         }
 
@@ -607,7 +603,7 @@ const tableTotalesFecha = () => {
         HtmlTable += `<td class="font09">Hechas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
@@ -615,7 +611,7 @@ const tableTotalesFecha = () => {
         HtmlTable += `<td class="font09 fw5">Autorizadas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class="fw5 font09">${rs.EnHoras2} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class="fw5 font09">${rs.EnHoras2} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
@@ -662,14 +658,17 @@ const tableTotalesFecha2 = () => {
 
     getHorasTotales(jsonData).then((rs) => {
         if (rs === false) {
+            document.getElementById('tabla-horas-total2').innerHTML = '';
             return;
         }
         let tiposHoras = rs.tiposHoras ?? false;
         if (tiposHoras === false) {
+            document.getElementById('tabla-horas-total2').innerHTML = '';
             return;
         }
         let data = rs.totales ?? false;
         if (data === false) {
+            document.getElementById('tabla-horas-total2').innerHTML = '';
             return;
         }
 
@@ -692,7 +691,7 @@ const tableTotalesFecha2 = () => {
         HtmlTable += `<td class="font09">Hechas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class=" font09">${rs.EnHoras} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
@@ -700,7 +699,7 @@ const tableTotalesFecha2 = () => {
         HtmlTable += `<td class="font09 fw5">Autorizadas</td>`;
         tiposHoras.forEach((item) => {
             let rs = data.find((x) => x.HoraCodi === item.HoraCodi);
-            HtmlTable += `<td class="font09 fw5">${rs.EnHoras2} <span class="ls1 font08">(${rs.Cantidad})</span></td>`;
+            HtmlTable += `<td class="font09 fw5">${rs.EnHoras2} <span class="font08">(${rs.Cantidad})</span></td>`;
         });
         HtmlTable += `<td class="w-100"></td>`;
         HtmlTable += '</tr>';
