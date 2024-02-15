@@ -4,7 +4,7 @@ function ActualizaTablas() {
     $('#tablas').addClass('loader-in')
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
     ls.set(LS_FILTROS + 'VPor', parseInt(verPor));
-    if (verPor === 1) {
+    if (verPor === '1') {
         getFechas();
     } else {
         getPersonal();
