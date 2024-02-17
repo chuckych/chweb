@@ -299,7 +299,20 @@ const getPersonal = () => {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+        dom: `
+        <"row"
+                <"col-12 d-flex justify-content-end"
+                <"d-flex justify-content-end align-items-end">
+                <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
+                    <"d-none d-sm-block ml-1"p>
+                >   
+            >
+            <"col-12"
+                <"d-block d-sm-none mt-n2"p>
+                <"d-flex justify-content-end align-items-end mt-n1"i>
+            >
+        >
+            `,
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetPersonalFichas1.php",
             type: "POST",
@@ -329,9 +342,21 @@ const getPersonal = () => {
                 "data": 'pers_legajo'
             },
             {
-                "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
-                "data": 'pers_nombre'
+                data: 'pers_nombre', className: 'text-center px-3 border fw4 bg-light radius', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    let col = '';
+                    // si la resolución es menor a 576px
+                    // if (window.innerWidth < 576) {
+                    col = `<div class="text-truncate d-sm-none d-block" style="max-width:160px">${data}</div><div class="d-sm-block d-none">${data}</div>`;
+                    // }
+                    console.log(data);
+                    return col;
+                },
             },
+            // {
+            //     "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
+            //     "data": 'pers_nombre'
+            // },
         ],
         paging: true,
         responsive: false,
@@ -369,7 +394,21 @@ const getFechas = () => {
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+        // dom: '<"d-inline-flex d-flex align-items-center"t<"ml-2"p>><"mt-n3 d-flex justify-content-end"i>',
+        dom: `
+        <"row"
+            <"col-12 d-flex justify-content-end"
+                <"d-flex justify-content-end align-items-end">
+                <"d-inline-flex align-items-center"<"mt-2 mt-sm-1"t>
+                    <"d-none d-sm-block ml-1"p>
+                >   
+            >
+            <"col-12"
+                <"d-block d-sm-none mt-n2"p>
+                <"d-flex justify-content-end align-items-end mt-n1"i>
+            >
+        >
+            `,
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetFechasFichas1.php",
             type: "POST",

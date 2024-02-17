@@ -286,7 +286,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
     }
     (!$('#Visualizar').is(':checked')) ? textResult(settings.json.recordsTotal, '.modal-footer .result', 'legajo') : '';
     $("#GetPersonal thead").remove();
-    $(".page-link").addClass('border border-0');
+
     $(".dataTables_info").addClass('text-secondary');
     $('#pagLega').removeClass('d-none')
 
@@ -380,7 +380,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
             },
         });
         $('#GetGeneral').DataTable().on('draw.dt', function () {
-            $(".page-link").addClass('border border-0');
+
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
             $('#pagLega').removeClass('invisible')
@@ -399,10 +399,10 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
 $('#GetFechas').DataTable({
     "initComplete": function (settings, json) {
         $("#GetFechas thead").remove();
-        // $(".page-link").addClass('border border-0');
+        // 
     },
     "drawCallback": function (settings) {
-        $(".page-link").addClass('border border-0');
+
         if ((settings.json.recordsTotal > 0)) {
             // $('#GetGeneralFecha').DataTable().ajax.reload(null, false);
             // $('#GetGeneralFechaTotales').DataTable().ajax.reload(null, false);
@@ -468,7 +468,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
     if (settings.iDraw === 1) {
         $('#GetGeneralFecha').DataTable({
             "drawCallback": function (settings) {
-                $(".page-link").addClass('border border-0');
+
                 // $('#Visualizar').prop('disabled', false)
                 if ((settings.json.recordsTotal > 0)) {
                     // $('#GetGeneralFechaTable').show()
@@ -485,7 +485,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             deferRender: true,
             searchDelay: 1500,
             // stateSave: -1,
-            dom: 'lBfrtip',
+            dom: 'ltip',
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/GetGeneralFecha.php",
                 type: "POST",
@@ -563,7 +563,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             },
         });
         $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
-            $(".page-link").addClass('border border-0');
+
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
             fadeInOnly('#GetGeneralFecha');
