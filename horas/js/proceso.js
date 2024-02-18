@@ -195,10 +195,15 @@ const getHoras = () => {
             "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
-    $('#GetHoras').on('init.dt', function () {
+    $('#GetHoras').on('init.dt', function (settings, json) {
         $('#trash_all').removeClass('invisible');
+        if (json.json.recordsTotal === 0) {
+            setTimeout(() => {
+                ActualizaTablas()
+            }, 300);
+        }
     });
-    $('#GetHoras').on('draw.dt', function () {
+    $('#GetHoras').on('draw.dt', function (settings, json) {
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
         $(".Filtros").prop('disabled', false);
@@ -488,7 +493,13 @@ const getFechas = () => {
             "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
     });
-    $('#GetFechas').on('init.dt', function () {
+    $('#GetFechas').on('init.dt', function (settings, json) {
+        if (json.json.recordsTotal === 0) {
+            setTimeout(() => {
+                ActualizaTablas()
+            }, 300);
+            console.log('no hay registros');
+        }
         $("#GetFechas thead").remove();
         $(".dataTables_info").addClass('text-secondary');
         tableTotalesFecha2();
