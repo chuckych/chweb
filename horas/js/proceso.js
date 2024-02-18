@@ -130,40 +130,58 @@ const getHoras = () => {
         },
         columns: [
             {
-                'class': '',
-                'data': 'FicFech',
+                data: 'FicFech', className: '', targets: '', title: 'Fecha',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'Dia',
+                data: 'Dia', className: '', targets: '', title: 'Día',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'Horario',
+                data: 'Horario', className: '', targets: '', title: 'Horario',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'text-center',
-                'data': 'Hora',
+                data: 'Hora', className: 'text-center', targets: '', title: 'Hora',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'HoraDesc',
+                data: 'HoraDesc', className: '', targets: '', title: 'Descripción',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'text-center',
-                'data': 'FicHsAu',
+                data: 'FicHsAu', className: 'text-center', targets: '', title: 'Hechas',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'bg-light fw4 text-center',
-                'data': 'FicHsAu2',
+                data: 'FicHsAu2', className: 'bg-light fw4 text-center', targets: '', title: 'Autor.',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'Observ',
+                data: 'Observ', className: '', targets: '', title: 'Observ.',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'DescMotivo',
+                data: 'DescMotivo', className: '', targets: '', title: 'Motivo',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
         ],
         scrollX: true,
@@ -235,40 +253,58 @@ const getHorasFecha = () => {
         },
         columns: [
             {
-                'class': '',
-                'data': 'Legajo',
+                data: 'Legajo', className: '', targets: '', title: 'Legajo',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'ApNo',
-                'data': 'Nombre',
+                data: 'Nombre', className: 'ApNo', targets: '', title: 'Nombre',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'Horario',
+                data: 'Horario', className: '', targets: '', title: 'Horario',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'text-center',
-                'data': 'Hora',
+                data: 'Hora', className: 'text-center', targets: '', title: 'Hora',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'HoraDesc',
+                data: 'HoraDesc', className: '', targets: '', title: 'Descripción',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': ' text-center',
-                'data': 'FicHsAu',
+                data: 'FicHsAu', className: 'text-center', targets: '', title: 'Hechas',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': 'bg-light fw4 text-center',
-                'data': 'FicHsAu2',
+                data: 'FicHsAu2', className: 'bg-light fw4 text-center', targets: '', title: 'Autor.',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'Observ',
+                data: 'Observ', className: '', targets: '', title: 'Observ.',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
             {
-                'class': '',
-                'data': 'DescMotivo',
+                data: 'DescMotivo', className: '', targets: '', title: 'Motivo',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
             },
         ],
         scrollX: true,
@@ -485,6 +521,10 @@ $("#Refresh").on("click", function () {
 
 $('#_dr').on('apply.daterangepicker', function (ev, picker) {
     CheckSesion()
+    $('#GetFechas').addClass('loader-in');
+    $('#GetPersonal').addClass('loader-in');
+    $('#GetHoras').addClass('loader-in');
+    $('#GetHorasFecha').addClass('loader-in');
     ActualizaTablas()
 });
 

@@ -89,18 +89,7 @@
                     <div class="col-12">
                         <div class="" id="GetHorasTable" style="display:none">
                             <table class="table text-nowrap w-100 " id="GetHoras">
-                                <thead class="font08">
-                                    <tr>
-                                        <th class="">Fecha</th>
-                                        <th class="">Día</th>
-                                        <th class="">Horario</th>
-                                        <th class="text-center">Hora</th>
-                                        <th class="">Descripción</th>
-                                        <th class="text-center" title="Horas Hechas">Hechas</th>
-                                        <th class="text-center" title="Horas Autorizadas">Autor.</th>
-                                        <th class="">Observ</th>
-                                        <th class="">Motivo</th>
-                                    </tr>
+                                <thead class="font09">
                                 </thead>
                             </table>
                         </div>
@@ -108,18 +97,7 @@
                     <div class="col-12">
                         <div class="table-responsive" id="GetHorasFechaTable" style="display:none">
                             <table class="table text-nowrap w-100" id="GetHorasFecha">
-                                <thead class="font08">
-                                    <tr>
-                                        <th class="">Legajo</th>
-                                        <th class="ApNo">Nombre</th>
-                                        <th class="">Horario</th>
-                                        <th class="text-center">Hora</th>
-                                        <th class="">Descripción</th>
-                                        <th class="text-center">Hechas</th>
-                                        <th class="text-center">Autor.</th>
-                                        <th class="">Observ</th>
-                                        <th class="">Motivo</th>
-                                    </tr>
+                                <thead class="font09">
                                 </thead>
                             </table>
                         </div>
