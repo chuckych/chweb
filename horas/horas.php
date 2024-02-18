@@ -44,7 +44,6 @@
                             </label>
                         </div>
                     </div>
-
                 </div>
                 <div class="col-12 col-sm-6">
                     <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
@@ -71,71 +70,73 @@
             $FechaIni = $FechaMinMax['max'];
             $FechaFin = $FechaMinMax['max'];
             ?>
+            <div id="tablas2">
+                <div class="row bg-white pb-sm-3" id="pagLega" style="display:none">
+                    <div class="col-12 d-flex justify-content-sm-end">
+                        <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
 
-            <div class="row bg-white pb-sm-3" id="pagLega" style="display:none">
-                <div class="col-12 d-flex justify-content-sm-end">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
-
-                    </table>
-                </div>
-            </div>
-            <div class="row bg-white pb-sm-3" id="pagFech" style="display:none">
-                <div class="col-12 d-flex justify-content-sm-end">
-                    <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
-
-                    </table>
-                </div>
-            </div>
-            <div class="row bg-white radius mt-sm-n5">
-                <div class="col-12">
-                    <div class="" id="GetHorasTable" style="display:none">
-                        <table class="table text-nowrap w-100 " id="GetHoras">
-                            <thead class="font08">
-                                <tr>
-                                    <th class="">Fecha</th>
-                                    <th class="">Día</th>
-                                    <th class="">Horario</th>
-                                    <th class="text-center">Hora</th>
-                                    <th class="">Descripción</th>
-                                    <th class="text-center" title="Horas Hechas">Hechas</th>
-                                    <th class="text-center" title="Horas Autorizadas">Autor.</th>
-                                    <th class="">Observ</th>
-                                    <th class="">Motivo</th>
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>
-                <div class="col-12">
-                    <div class="table-responsive" id="GetHorasFechaTable" style="display:none">
-                        <table class="table text-nowrap w-100" id="GetHorasFecha">
-                            <thead class="font08">
-                                <tr>
-                                    <th class="">Legajo</th>
-                                    <th class="ApNo">Nombre</th>
-                                    <th class="">Horario</th>
-                                    <th class="text-center">Hora</th>
-                                    <th class="">Descripción</th>
-                                    <th class="text-center">Hechas</th>
-                                    <th class="text-center">Autor.</th>
-                                    <th class="">Observ</th>
-                                    <th class="">Motivo</th>
-                                </tr>
-                            </thead>
+                <div class="row bg-white pb-sm-3" id="pagFech" style="display:none">
+                    <div class="col-12 d-flex justify-content-sm-end">
+                        <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
+
                         </table>
                     </div>
                 </div>
-            </div>
-            <div class="d-none mt-2 mb-4 shadow-sm border animate__animated animate__fadeIn" id="div-horas-total">
-                <div class="row">
+                <div class="row bg-white radius mt-sm-n5">
                     <div class="col-12">
-                        <p class="p-3 pb-0 pt-3 m-0 font09 bg-light border-bottom">Totales:</p>
-                        <table class="table w-100 table-responsive text-nowrap font09 p-2 mb-0 pb-0"
-                            id="tabla-horas-total">
-                        </table>
-                        <table class="d-none table w-100 table-responsive text-nowrap font09 p-2 mb-0 pb-0"
-                            id="tabla-horas-total2">
-                        </table>
+                        <div class="" id="GetHorasTable" style="display:none">
+                            <table class="table text-nowrap w-100 " id="GetHoras">
+                                <thead class="font08">
+                                    <tr>
+                                        <th class="">Fecha</th>
+                                        <th class="">Día</th>
+                                        <th class="">Horario</th>
+                                        <th class="text-center">Hora</th>
+                                        <th class="">Descripción</th>
+                                        <th class="text-center" title="Horas Hechas">Hechas</th>
+                                        <th class="text-center" title="Horas Autorizadas">Autor.</th>
+                                        <th class="">Observ</th>
+                                        <th class="">Motivo</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="table-responsive" id="GetHorasFechaTable" style="display:none">
+                            <table class="table text-nowrap w-100" id="GetHorasFecha">
+                                <thead class="font08">
+                                    <tr>
+                                        <th class="">Legajo</th>
+                                        <th class="ApNo">Nombre</th>
+                                        <th class="">Horario</th>
+                                        <th class="text-center">Hora</th>
+                                        <th class="">Descripción</th>
+                                        <th class="text-center">Hechas</th>
+                                        <th class="text-center">Autor.</th>
+                                        <th class="">Observ</th>
+                                        <th class="">Motivo</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-none mt-2 mb-4 shadow-sm border radius animate__animated animate__fadeIn"
+                    id="div-horas-total">
+                    <div class="row">
+                        <div class="col-12">
+                            <p class="p-3 pb-0 pt-3 m-0 font09 bg-light border-bottom" id="totales-title">Totales:</p>
+                            <table class="table w-100 table-responsive text-nowrap font09 p-2 mb-0 pb-0"
+                                id="tabla-horas-total">
+                            </table>
+                            <table class="d-none table w-100 table-responsive text-nowrap font09 p-2 mb-0 pb-0"
+                                id="tabla-horas-total2">
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -153,7 +154,9 @@
     require 'modal_Filtros.html';
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
+    <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
+    <script src="../js/select2-es.js"></script>
     <script src="js/proceso.js?<?= version_file("/horas/js/proceso.js") ?>"></script>
     <script src="js/select.js?<?= version_file("/horas/js/select.js") ?>"></script>
     <script src="js/trash-select.js?<?= version_file("/horas/js/trash-select.js") ?>"></script>

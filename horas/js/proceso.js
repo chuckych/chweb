@@ -1,5 +1,11 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_filtro_horas_';
+const spinnerLoad = `<div class="spinner-border font07" role="status" style="width: 15px; height:15px" ></div>`;
+const loading = () => {
+    $.notifyClose();
+    let spinner = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`;
+    notify('Aguarde <span class = "dotting mr-1"> </span> ' + spinner, 'dark', 60000, 'right')
+}
 function ActualizaTablas() {
     $('#tablas').addClass('loader-in')
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
@@ -12,8 +18,10 @@ function ActualizaTablas() {
 };
 
 $('input[name="VPor"]').on('change', function () {
-    CheckSesion()
+    $('#tablas2').addClass('invisible').removeClass('animate__animated animate__fadeIn');
+    loading()
     ActualizaTablas()
+    CheckSesion()
 });
 
 const toggleTablas = (tipo) => {
@@ -94,7 +102,7 @@ const getHoras = () => {
         searchDelay: 1500,
         dom: "<'row'" +
             "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
-            "<'row '<'col-12'<'border p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetHoras.php",
@@ -160,7 +168,7 @@ const getHoras = () => {
         ],
         scrollX: true,
         scrollCollapse: true,
-        scrollY: '25vmax',
+        // scrollY: '25vmax',
         paging: true,
         info: true,
         searching: false,
@@ -177,6 +185,8 @@ const getHoras = () => {
         $(".custom-select").addClass('text-secondary bg-light');
         $(".Filtros").prop('disabled', false);
         $('#GetHoras').removeClass('loader-in');
+        $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $.notifyClose();
     });
     $('#GetHoras').on('page.dt', function () {
         $('#GetHoras').addClass('loader-in');
@@ -196,7 +206,7 @@ const getHorasFecha = () => {
         searchDelay: 1500,
         dom: "<'row'" +
             "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
-            "<'row '<'col-12'<'border p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
             url: "/" + $("#_homehost").val() + "/horas/GetHorasFecha.php",
@@ -263,7 +273,7 @@ const getHorasFecha = () => {
         ],
         scrollX: true,
         scrollCollapse: true,
-        scrollY: '25vmax',
+        // scrollY: '25vmax',
         paging: true,
         info: true,
         searching: false,
@@ -279,6 +289,8 @@ const getHorasFecha = () => {
             $(".Filtros").prop('disabled', false);
         }, 500);
         $('#GetHorasFecha').removeClass('loader-in');
+        $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        $.notifyClose();
     });
     $('#GetHorasFecha').on('page.dt', function () {
         CheckSesion()
@@ -344,19 +356,9 @@ const getPersonal = () => {
             {
                 data: 'pers_nombre', className: 'text-center px-3 border fw4 bg-light radius', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    let col = '';
-                    // si la resolución es menor a 576px
-                    // if (window.innerWidth < 576) {
-                    col = `<div class="text-truncate d-sm-none d-block" style="max-width:160px">${data}</div><div class="d-sm-block d-none">${data}</div>`;
-                    // }
-                    console.log(data);
-                    return col;
+                    return `<div class="text-truncate d-sm-none d-block" style="max-width:160px">${data}</div><div class="d-sm-block d-none">${data}</div>`;
                 },
             },
-            // {
-            //     "class": "w300 px-3 border border-left-0 fw4 bg-light radius",
-            //     "data": 'pers_nombre'
-            // },
         ],
         paging: true,
         responsive: false,
