@@ -31,6 +31,7 @@ $api->route('POST /novedades', [$novedades, 'add']);
 $api->route('POST /novedades/totales', [$novedades, 'totales']);
 $api->route('POST /horas/totales', [$horas, 'totales']);
 $api->route('PUT /horas', [$horas, 'update']);
+$api->route('GET /horas/dateMinMax', [$horas, 'dateMinMax']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
 $api->route('GET /novedades/data', [$novedades, 'data']);

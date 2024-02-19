@@ -126,8 +126,8 @@
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../js/DateRanger.php";
-    /** INCLUIMOS LIBRERÍAS y script DATERANGER */
+    require __DIR__ . "../../js/DateRangePicker.php";
+    /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "../../js/DataTable.php";
     require 'modal_Filtros.html';
     ?>

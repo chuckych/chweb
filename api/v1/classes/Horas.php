@@ -893,6 +893,24 @@ class Horas
             exit;
         }
     }
+    public function dateMinMax()
+    {
+        $conn = $this->conect->conn();
+
+        $sql = "SELECT MIN(FICHAS1.FicFech) AS 'min', MAX(FICHAS1.FicFech) AS 'max' FROM FICHAS1 WHERE FICHAS1.FicFech !='17530101' AND FICHAS1.FicFech < GETDATE()";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(); // Ejecuto la consulta
+        $array = $stmt->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+        $array['min'] = date('Y-m-d', strtotime($array['min']));
+        $array['max'] = date('Y-m-d', strtotime($array['max']));
+        $a = array(
+            'min' => ($array['min']),
+            'max' => $array['max']
+        );
+        $this->resp->respuesta($array, 1, 'OK', 200, microtime(true), 0, 0);
+        $stmt->closeCursor(); // Cierro el cursor
+
+    }
     private function minutosAHoras($minutos)
     {
         $horas = floor($minutos / 60);

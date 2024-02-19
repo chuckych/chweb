@@ -6,6 +6,61 @@ const loading = () => {
     let spinner = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`;
     notify('Aguarde <span class = "dotting mr-1"> </span> ' + spinner, 'dark', 60000, 'right')
 }
+
+const dateRange = async () => {
+    let rs = await axios.get('../app-data/fechas/horas');
+    if (!rs.data) return;
+    let añoMin = rs.data.min.split('-')[0];
+    let añoMax = rs.data.max.split('-')[0];
+    let minDate = rs.data.min.split('-').reverse().join('/');
+    let maxDate = rs.data.max.split('-').reverse().join('/');
+
+    $('#_dr').daterangepicker({
+        singleDatePicker: false,
+        showDropdowns: true,
+        minYear: añoMin,
+        maxYear: añoMax,
+        showWeekNumbers: false,
+        autoUpdateInput: true,
+        opens: "left",
+        drops: "down",
+        startDate: maxDate,
+        endDate: maxDate,
+        autoApply: true,
+        minDate: minDate,
+        maxDate: maxDate,
+        alwaysShowCalendars: true,
+        linkedCalendars: false,
+        buttonClasses: "btn btn-sm fontq",
+        applyButtonClasses: "btn-custom fw4 px-3 opa8",
+        cancelClass: "btn-link fw4 text-gris",
+        ranges: {
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Esta semana': [moment().day(1), moment().day(7)],
+            'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+            'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+        },
+        locale: {
+            format: "DD/MM/YYYY",
+            separator: " al ",
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            fromLabel: "Desde",
+            toLabel: "Para",
+            customRangeLabel: "Personalizado",
+            weekLabel: "Sem",
+            daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+            monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            firstDay: 1,
+            alwaysShowCalendars: true,
+            applyButtonClasses: "btn-custom fw5 px-3 opa8",
+        },
+    });
+}
 function ActualizaTablas() {
     $('#tablas').addClass('loader-in')
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
@@ -197,11 +252,6 @@ const getHoras = () => {
     });
     $('#GetHoras').on('init.dt', function (settings, json) {
         $('#trash_all').removeClass('invisible');
-        if (json.json.recordsTotal === 0) {
-            setTimeout(() => {
-                ActualizaTablas()
-            }, 300);
-        }
     });
     $('#GetHoras').on('draw.dt', function (settings, json) {
         $(".dataTables_info").addClass('text-secondary');
@@ -494,12 +544,6 @@ const getFechas = () => {
         },
     });
     $('#GetFechas').on('init.dt', function (settings, json) {
-        if (json.json.recordsTotal === 0) {
-            setTimeout(() => {
-                ActualizaTablas()
-            }, 300);
-            console.log('no hay registros');
-        }
         $("#GetFechas thead").remove();
         $(".dataTables_info").addClass('text-secondary');
         tableTotalesFecha2();
@@ -522,7 +566,9 @@ if (ls.get(LS_FILTROS + 'VPor')) {
 } else {
     $("#VLegajo").prop('checked', true);
 }
-ActualizaTablas();
+dateRange().then(() => {
+    ActualizaTablas();
+});
 const verPor = document.querySelector('input[name="VPor"]:checked').value;
 
 $("#Refresh").on("click", function () {

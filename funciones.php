@@ -293,7 +293,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
         <div class="d-flex align-items-center w-100">
             <div>
                 <a href="' . $_SERVER['PHP_SELF'] . $QueryString . '">
-                <img src="/' . HOMEHOST . '/img/' . $img . '?v=' . vjs() . '" alt="' . $titulo . '"class="mr-2 img-fluid ' . $imgclass . ' bg-light radius w30">
+                <img src="/' . HOMEHOST . '/img/' . $img . '?v=' . vjs() . '" alt="' . $titulo . '" class="mr-2 img-fluid ' . $imgclass . ' bg-light radius w30">
                 </a>
             </div>
             <div class="w-100 d-inline-flex h30">
@@ -1100,7 +1100,7 @@ function TipoDoc($var)
 function imgIcon($var, $title, $width)
 {
     $src = "/" . HOMEHOST . "/img/" . $var . ".png?v=" . vjs();
-    return '<img loading="lazy" src="' . $src . '" class="' . $width . '" "alt="' . $title . '" title="' . $title . '">';
+    return '<img loading="lazy" src="' . $src . '" class="' . $width . '" alt="' . $title . '" title="' . $title . '">';
 }
 function Foto($face_url, $title, $width)
 {
