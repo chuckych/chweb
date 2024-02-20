@@ -90,6 +90,7 @@ const toggleTablas = (tipo) => {
         $('#GetHorasFechaTable').show().addClass('animate__animated animate__fadeIn');
 
     } else {
+
         $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
         $('#pagFech').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasFechaTable').hide().removeClass('animate__animated animate__fadeIn');
@@ -441,13 +442,13 @@ const getPersonal = () => {
         },
         columns: [
             {
-                "class": "w80 px-3 border fw4 bg-light radius",
+                "class": "w80 px-3 border border-right-0 radius-left fw4 bg-light",
                 "data": 'pers_legajo'
             },
             {
-                data: 'pers_nombre', className: 'text-center px-3 border fw4 bg-light radius', targets: '', title: '',
+                data: 'pers_nombre', className: 'text-left border-left-0 radius-right px-3 border fw4 bg-light', targets: '', title: '',
                 "render": function (data, type, row, meta) {
-                    return `<div class="text-truncate d-sm-none d-block" style="max-width:160px">${data}</div><div class="d-sm-block d-none">${data}</div>`;
+                    return `<div class="text-truncate d-sm-none d-block" style="max-width:160px">${data}</div><div style="min-width:300px" class="d-sm-block d-none">${data}</div>`;
                 },
             },
         ],
@@ -527,11 +528,11 @@ const getFechas = () => {
         },
         columns: [
             {
-                "class": "w80 px-3 border fw4 bg-light radius",
+                "class": "w80 px-3 border border-right-0 radius-left fw4 bg-light",
                 "data": 'FicFech'
             },
             {
-                "class": "w300 px-3 border fw4 bg-light radius",
+                "class": "w200 px-3 border border-left-0 radius-right fw4 bg-light",
                 "data": 'Dia'
             },
         ],

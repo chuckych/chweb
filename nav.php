@@ -60,7 +60,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                         /** Tipos de Modulo
                          *  1 Operaciones
                          *  2 Informes
-                         *  3 Configuracion
+                         *  3 Configuración
                          *  4 Mobile
                          *  5 Cuentas
                          *  6 Proyectos
@@ -165,6 +165,9 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                             case 'Informe FAR':
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforfar/>" . $Modulo2 . "</a>";
                                                 break;
+                                            case 'Reporte de Totales':
+                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/reporte/>" . $Modulo2 . "</a>";
+                                                break;
                                         }
                                     }
                                     ?>
@@ -176,10 +179,10 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         ?>
                             <!--Configuración-->
                             <li class="nav-item mx-1 dropdown">
-                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownconfiguracion"
+                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownConf"
                                     role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">Configuración</a>
-                                <div class="dropdown-menu radius" aria-labelledby="navbarDropdownconfiguracion">
+                                <div class="dropdown-menu radius" aria-labelledby="navbarDropdownConf">
                                     <?php
                                     foreach ($dataROL as $values) {
                                         $Modulo = $values['modulo'];
@@ -297,6 +300,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         && ($Modulo2 != 'Informe de Fichadas')
                                         && ($Modulo2 != 'Informe de Horas')
                                         && ($Modulo2 != 'Informe FAR')
+                                        && ($Modulo2 != 'Reporte de Totales')
                                         && ($Modulo2 != 'Mobile')
                                         && ($Modulo2 != 'Zonas Mobile')
                                         && ($Modulo2 != 'Usuarios Mobile')

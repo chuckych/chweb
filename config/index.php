@@ -40,6 +40,7 @@ $array_mod = array(
        'estruct' => 'Estructura', // Estructura ID 31
        'horarios' => 'Horarios', // Horarios ID 33
        'inforfar' => 'Informe FAR', // Informe FAR ID 34
-       'Proyectos' => 'Proyectos' // Proyectos ID 35
+       'Proyectos' => 'Proyectos', // Proyectos ID 35
+       'reporte' => 'Reporte de Totales' // Reporte de totales ID 45
 );
 define("MODULOS", $array_mod);

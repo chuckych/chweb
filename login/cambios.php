@@ -1,7 +1,8 @@
 <?php
 $pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
 
-function createTable($tableName, $fields, $engine, $pathLog) {
+function createTable($tableName, $fields, $engine, $pathLog)
+{
     if (!checkTable($tableName)) {
         $sql = "CREATE TABLE `$tableName` (";
         $sql .= $fields;
@@ -73,8 +74,8 @@ if ($verDB < 20210102) {
     }
 
     if (checkTable('params')) {
-        $selDataPresentes  = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'presentes' and cliente = $row[id_cliente] LIMIT 1");
-        $selDataAusentes   = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'ausentes' and cliente = $row[id_cliente] LIMIT 1");
+        $selDataPresentes = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'presentes' and cliente = $row[id_cliente] LIMIT 1");
+        $selDataAusentes = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 29 and descripcion = 'ausentes' and cliente = $row[id_cliente] LIMIT 1");
         (!$selDataPresentes) ? pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'presentes', '', $row[id_cliente])") : '';
         fileLog("Se insertaron valores \"presentes\" en tabla \"params\"", $pathLog); // escribir en el log
         (!$selDataAusentes) ? pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES ('29', 'ausentes', '', $row[id_cliente])") : '';
@@ -238,7 +239,7 @@ if ($verDB < 20210102) {
     } else { // si existe la clave foranea
         fileLog("Ya existe la clave foranea \"FK_usuario_roles\" de la tabla \"usuarios\"", $pathLog); // escribir en el log
     }
-    $verDB  = 20210102; // nueva version de la DB
+    $verDB = 20210102; // nueva version de la DB
     // simpleQuery("UPDATE params set valores = $verDB WHERE modulo = 0", $link); // seteo la fecha de actualización de la version de DB
     // fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
@@ -254,7 +255,7 @@ if ($verDB < 20211006) {
         pdoQuery("ALTER TABLE `lista_estruct` ADD CONSTRAINT `FK_lista_estruct_usuarios` FOREIGN KEY (`uid`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE");
         fileLog("Se agrego clave foranea \"FK_lista_estruct_usuarios\" de la tabla \"lista_estruct\"", $pathLog); // escribir en el log 
     }
-    $verDB  = 20211006;
+    $verDB = 20211006;
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -270,7 +271,7 @@ if ($verDB < 20211024) {
     } else {
         fileLog("No se creo tabla: \"auditoria\". ya existe", $pathLog); // escribir en el log
     }
-    $verDB  = 20211024; 
+    $verDB = 20211024;
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -293,7 +294,7 @@ if ($verDB < 20220301) {
     pdoQuery("UPDATE reg_ SET reg_.attphoto = '1' WHERE reg_.operationType = 1");
     fileLog("Se actualizo tabla \"reg_\" columna \"attphoto\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220301; // nueva version de la DB // 20211006
+    $verDB = 20220301; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -313,7 +314,7 @@ if ($verDB < 20220303) {
     pdoQuery("ALTER TABLE `reg_phone_` ADD COLUMN `id_company` SMALLINT NOT NULL DEFAULT 0 AFTER `phoneid`;");
     fileLog("Se creo columna \"id_company\" en tabla \"reg_phone_\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220303; // nueva version de la DB // 20211006
+    $verDB = 20220303; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -321,7 +322,7 @@ if ($verDB < 20220304) {
     pdoQuery("RENAME TABLE `reg_phone_` TO `reg_device_`");
     fileLog("Se renombro tabla \"reg_phone_\" por \"reg_device_\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220304; // nueva version de la DB // 20211006
+    $verDB = 20220304; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -335,7 +336,7 @@ if ($verDB < 20220310) {
     pdoQuery("SET @num := 0; UPDATE reg_ SET rid = @num := (@num+1); ALTER TABLE reg_ AUTO_INCREMENT = 1");
     fileLog("se reestablece el autoincrement de tabla \"reg_\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220310; // nueva version de la DB // 20211006
+    $verDB = 20220310; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -358,7 +359,7 @@ if ($verDB < 20220311) {
     pdoQuery("ALTER TABLE `reg_device_` ENGINE=MyISAM");
     fileLog("ALTER TABLE \"reg_device_\" ENGINE=MyISAM", $pathLog); // escribir en el log
 
-    $verDB  = 20220311; // nueva version de la DB // 20211006
+    $verDB = 20220311; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -384,7 +385,7 @@ if ($verDB < 20220313) {
     pdoQuery("ALTER TABLE `reg_` ADD CONSTRAINT `refZone` FOREIGN KEY (`idZone`) REFERENCES `reg_zones` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION");
     fileLog("ALTER TABLE \"reg_\" ADD CONSTRAINT \"refZone\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220313; // nueva version de la DB // 20211006
+    $verDB = 20220313; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -392,7 +393,7 @@ if ($verDB < 20220314) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `distance` DECIMAL(10,7) NOT NULL DEFAULT 0 AFTER `idZone`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `distance`", $pathLog); // escribir en el log
 
-    $verDB  = 20220314; // nueva version de la DB // 20211006
+    $verDB = 20220314; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -407,7 +408,7 @@ if ($verDB < 20220316) {
     pdoQuery("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid` (`reg_uid`)"); // agregar un indice unico
     fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `unique-reguid`", $pathLog); // escribir en el log
 
-    $verDB  = 20220316; // nueva version de la DB // 20211006
+    $verDB = 20220316; // nueva version de la DB // 20211006
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
@@ -423,7 +424,7 @@ if ($verDB < 20220318) {
     ) COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=0");
     fileLog("CREATE TABLE \"reg_faces\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220318; // nueva version de la DB // 20220318
+    $verDB = 20220318; // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -455,7 +456,7 @@ if ($verDB < 20220502) {
     pdoQuery("ALTER TABLE `clientes` ADD COLUMN `localCH` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `auth`");
     fileLog("ADD COLUMN \"localCH\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220502; // nueva version de la DB // 20220318
+    $verDB = 20220502; // nueva version de la DB // 20220318
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
@@ -472,7 +473,7 @@ if ($verDB < 20220503) {
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `eventDevice` SMALLINT(6) NOT NULL AFTER `eventZone`");
     fileLog("ADD COLUMN \"eventDevice\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220503; // nueva version de la DB
+    $verDB = 20220503; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 
@@ -485,7 +486,7 @@ if ($verDB < 20220517) {
 	CHANGE COLUMN `UrlAppMobile` `UrlAppMobile` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `ApiMobileHRP`");
     fileLog("CHANGE COLUMN \"WebService, ApiMobileHRP, UrlAppMobile\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220517; // nueva version de la DB
+    $verDB = 20220517; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -503,41 +504,41 @@ if ($verDB < 20220816) {
 
     if (checkTable('modulos')) {
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (35, 'Pr0t3c70', 'Proyectos', 1, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (35, 'Pr0t3c70', 'Proyectos', 1, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Proyectos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (36, 'Mis Tareas', 'm1sT4r3a' , 2, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Mis Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (36, 'Mis Tareas', 'm1sT4r3a' , 2, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Mis Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (37, 'Tareas', 'T4r3a5' , 3, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (37, 'Tareas', 'T4r3a5' , 3, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Tareas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (38, 'Estados', '3s74d0s' , 4, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Estados\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (38, 'Estados', '3s74d0s' , 4, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Estados\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (39, 'Procesos', 'pr0s3s0s' , 5, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (39, 'Procesos', 'pr0s3s0s' , 5, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (40, 'Plantilla Procesos', 'p14npr0s' , 6, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Plantilla Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (40, 'Plantilla Procesos', 'p14npr0s' , 6, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Plantilla Procesos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (41, 'Planos', 'p14n0s' , 7, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Planos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (41, 'Planos', 'p14n0s' , 7, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Planos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (42, 'Empresas', '3mpr354s' , 8, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Empresas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (42, 'Empresas', '3mpr354s' , 8, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Empresas\" en la tabla \"modulos\"", $pathLog); // escribir en el log
 
-            $insert_modulos = "INSERT INTO `modulos` VALUES (43, 'Inicio', '1n1c10' , 0, '0', 6)";
-            pdoQuery($insert_modulos);
-            fileLog("Se creo modulo \"Inicio\" en la tabla \"modulos\"", $pathLog); // escribir en el log
+        $insert_modulos = "INSERT INTO `modulos` VALUES (43, 'Inicio', '1n1c10' , 0, '0', 6)";
+        pdoQuery($insert_modulos);
+        fileLog("Se creo modulo \"Inicio\" en la tabla \"modulos\"", $pathLog); // escribir en el log
     }
 
     $tableName = "uident";
@@ -566,7 +567,7 @@ if ($verDB < 20220816) {
 	PRIMARY KEY (`EmpID`) USING BTREE,
 	INDEX `FK_proy_empresas_clientes` (`Cliente`) USING BTREE,
 	CONSTRAINT `FK_proy_empresas_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
+    $engine = "COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
 
     $tableName = "proy_estados";
@@ -580,7 +581,7 @@ if ($verDB < 20220816) {
 	PRIMARY KEY (`EstID`) USING BTREE,
 	INDEX `FK_proy_estados_clientes` (`Cliente`) USING BTREE,
 	CONSTRAINT `FK_proy_estados_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
+    $engine = "COLLATE='utf8_general_ci' ENGINE=InnoDB AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
 
     $tableName = "proy_planos";
@@ -594,7 +595,7 @@ if ($verDB < 20220816) {
 	PRIMARY KEY (`PlanoID`) USING BTREE,
 	INDEX `FK_proy_planos_clientes` (`Cliente`) USING BTREE,
 	CONSTRAINT `FK_proy_planos_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB
     AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
@@ -608,7 +609,7 @@ if ($verDB < 20220816) {
 	PRIMARY KEY (`PlantID`) USING BTREE,
 	INDEX `FK_proy_plantillas_clientes` (`Cliente`) USING BTREE,
 	CONSTRAINT `FK_proy_plantillas_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB
     AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
@@ -620,7 +621,7 @@ if ($verDB < 20220816) {
 	`PlaProFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 	PRIMARY KEY (`PlaProPlan`) USING BTREE,
 	CONSTRAINT `FK_proy_plantilla_proc_proy_plantillas` FOREIGN KEY (`PlaProPlan`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE CASCADE";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB";
     createTable($tableName, $fields, $engine, $pathLog);
 
@@ -635,7 +636,7 @@ if ($verDB < 20220816) {
 	PRIMARY KEY (`ProcID`) USING BTREE,
 	INDEX `FK_proy_proceso_clientes` (`Cliente`) USING BTREE,
 	CONSTRAINT `FK_proy_proceso_clientes` FOREIGN KEY (`Cliente`) REFERENCES `clientes` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB
     AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
@@ -665,7 +666,7 @@ if ($verDB < 20220816) {
 	CONSTRAINT `FK_proy_proyectos_proy_estados` FOREIGN KEY (`ProyEsta`) REFERENCES `proy_estados` (`EstID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
 	CONSTRAINT `FK_proy_proyectos_proy_plantillas` FOREIGN KEY (`ProyPlant`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
 	CONSTRAINT `FK_proy_proyectos_usuarios` FOREIGN KEY (`ProyResp`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB
     AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
@@ -697,7 +698,7 @@ if ($verDB < 20220816) {
 	CONSTRAINT `FK_proy_tareas_proy_proceso` FOREIGN KEY (`TareProc`) REFERENCES `proy_proceso` (`ProcID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
 	CONSTRAINT `FK_proy_tareas_proy_proyectos` FOREIGN KEY (`TareProy`) REFERENCES `proy_proyectos` (`ProyID`) ON UPDATE NO ACTION ON DELETE NO ACTION,
 	CONSTRAINT `FK_proy_tareas_usuarios` FOREIGN KEY (`TareResp`) REFERENCES `usuarios` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB
     AUTO_INCREMENT=0";
     createTable($tableName, $fields, $engine, $pathLog);
@@ -710,7 +711,7 @@ if ($verDB < 20220816) {
 	`TareHorMin` INT(11) NOT NULL,
 	`TareHorFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 	INDEX `FK_proy_tare_horas_proy_tareas` (`TareHorID`) USING BTREE";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB";
     createTable($tableName, $fields, $engine, $pathLog);
 
@@ -722,11 +723,11 @@ if ($verDB < 20220816) {
 	`TareHorMin` INT(11) NOT NULL,
 	`TareHorFeHo` DATETIME NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
 	INDEX `FK_proy_tare_horas_proy_tareas` (`TareHorID`) USING BTREE";
-    $engine="COLLATE='utf8_general_ci'
+    $engine = "COLLATE='utf8_general_ci'
     ENGINE=InnoDB";
     createTable($tableName, $fields, $engine, $pathLog);
 
-    $verDB  = 20220816; // nueva version de la DB // 20220816
+    $verDB = 20220816; // nueva version de la DB // 20220816
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -735,7 +736,7 @@ if ($verDB < 20220822) {
 	ADD COLUMN `PlanoEsta` ENUM('0','1') NOT NULL AFTER `PlanoObs`");
     fileLog("ADD COLUMN \"proy_planos\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220822; // nueva version de la DB
+    $verDB = 20220822; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -750,7 +751,7 @@ if ($verDB < 20220824) {
 
     pdoQuery("INSERT INTO `modulos` (`id`, `nombre`, `recid`, `orden`, `idtipo`) VALUES ('44', 'Plantilla Planos', 'p14np1n0', '6', '6')");
     fileLog("Se creo modulo \"Plantilla Planos\" en la tabla \"modulos\"", $pathLog); // escribir en el log
-    
+
     pdoQuery("CREATE TABLE IF NOT EXISTS  `proy_plantilla_plano` (
         `PlaPlanoID` SMALLINT(5) NOT NULL,
         `PlaPlanos` TEXT NOT NULL COLLATE 'utf8mb3_general_ci',
@@ -768,7 +769,7 @@ if ($verDB < 20220824) {
 	ADD CONSTRAINT `FK_proy_proyectos_proy_plantillas_2` FOREIGN KEY (`ProyPlantPlano`) REFERENCES `proy_plantillas` (`PlantID`) ON UPDATE NO ACTION ON DELETE NO ACTION");
     fileLog("ADD COLUMN \"ProyPlantPlano\" en la tabla \"proy_proyectos\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220824; // nueva version de la DB
+    $verDB = 20220824; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -777,7 +778,7 @@ if ($verDB < 20220901) {
 	DROP PRIMARY KEY,
 	ADD PRIMARY KEY (`id`, `createdDate`, `id_user`) USING BTREE");
     fileLog("ALTER TABLE \"reg_faces\"", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_`
 	ADD COLUMN `threshold` TINYINT NOT NULL DEFAULT '75' AFTER `confidence`");
     fileLog("ALTER TABLE ADD COLUMN \"threshold\"", $pathLog); // escribir en el log
@@ -785,7 +786,7 @@ if ($verDB < 20220901) {
     pdoQuery("UPDATE reg_ r SET r.confidence = (100-r.confidence) WHERE r.confidence > 0");
     fileLog("UPDATE TABLE reg_ \"confidence\"", $pathLog); // escribir en el log
 
-    $verDB  = 20220901; // nueva version de la DB
+    $verDB = 20220901; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -799,21 +800,21 @@ if ($verDB < 20221116) {
         UNIQUE INDEX `Índice 1` (`idPunchEvent`, `faceIdAws`, `id_company`, `id_user`) USING BTREE
     )COLLATE='utf8mb3_general_ci' ENGINE=MyISAM;");
     fileLog("CREATE TABLE \"reg_enroll\"", $pathLog); // escribir en el log
-    
-    $verDB  = 20221116; // nueva version de la DB
+
+    $verDB = 20221116; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20221213) {
     pdoQuery("ALTER TABLE `proy_proyectos` ADD COLUMN `ProyUsePlant` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `ProyEsta`;");
     fileLog("ALTER TABLE \"proy_proyectos\" ADD COLUMN \"ProyUsePlant\"", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_device_` ADD COLUMN `regid` VARCHAR(200) NOT NULL DEFAULT '' AFTER `evento`");
     fileLog("ALTER TABLE \"reg_device_\" ADD COLUMN \"regid\"", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_device_` ADD COLUMN `appVersion` VARCHAR(50) NOT NULL DEFAULT '' AFTER `regid`");
     fileLog("ALTER TABLE \"reg_device_\" ADD COLUMN \"appVersion\"", $pathLog); // escribir en el log
-   
+
     pdoQuery("ALTER TABLE `proy_tare_horas`
         ADD COLUMN `TareHorHoras2` TIME NOT NULL AFTER `TareHorHoras`,
         ADD COLUMN `TareHorMin2` INT(10) NOT NULL AFTER `TareHorMin`,
@@ -833,8 +834,8 @@ if ($verDB < 20221213) {
     COLLATE='utf8mb3_general_ci'
     ENGINE=InnoDB;");
     fileLog("CREATE TABLE \"proy_tareas_desc\"", $pathLog); // escribir en el log
-    
-    $verDB  = 20221213; // nueva version de la DB
+
+    $verDB = 20221213; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
@@ -843,61 +844,69 @@ if ($verDB < 20221221) {
     fileLog("Modulo Horarios asignados habilitado", $pathLog); // escribir en el log;
 
     write_apiKeysFile();
-    $verDB  = 20221221; // nueva version de la DB
+    $verDB = 20221221; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20230329) {
     pdoQuery("ALTER TABLE `reg_user_` ADD COLUMN `hasArea` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `estado`");
     fileLog("ALTER TABLE `reg_user_` ADD COLUMN `hasArea`", $pathLog); // escribir en el log
-    $verDB  = 20230329; // nueva version de la DB
+    $verDB = 20230329; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20230331) {
     pdoQuery("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany` (`phoneid`, `id_company`)");
     fileLog("ALTER TABLE `reg_device_` ADD INDEX `phoneidCompany`", $pathLog); // escribir en el log
-    $verDB  = 20230331; // nueva version de la DB
+    $verDB = 20230331; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20230403) {
-    
+
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `identified` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `threshold`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `identified`", $pathLog); // escribir en el log
-   
+
     pdoQuery("UPDATE reg_ SET reg_.`identified` = '1' WHERE reg_.confidence >= reg_.threshold");
     fileLog("UPDATE reg_ SET reg_.`identified`", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_` ADD COLUMN `deviceID` INT NOT NULL AFTER `phoneid`");
     fileLog("ALTER TABLE `reg_` ADD COLUMN `deviceID`", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_` ADD INDEX `refDevice` (`deviceID`)");
     fileLog("ALTER TABLE `reg_` ADD INDEX `refDevice`", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_` ADD INDEX `refDate` (`fechaHora`)");
     fileLog("ALTER TABLE `reg_` ADD INDEX `refDate`", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE `reg_device_` DROP INDEX `phoneidCompany`, ADD UNIQUE INDEX `phoneidCompany` (`phoneid`, `id_company`) USING BTREE");
     fileLog("ALTER TABLE `reg_` ADD UNIQUE INDEX `phoneidCompany`", $pathLog); // escribir en el log
-    
+
     pdoQuery("SET @count = 0; UPDATE reg_device_ SET reg_device_.id = @count:= @count + 1");
     fileLog("UPDATE reg_device_", $pathLog); // escribir en el log
-    
+
     pdoQuery("ALTER TABLE reg_device_  AUTO_INCREMENT = 1");
     fileLog("ALTER TABLE reg_device_  AUTO_INCREMENT", $pathLog); // escribir en el log
-    
+
     pdoQuery("UPDATE reg_ INNER JOIN reg_device_ ON reg_.phoneid = reg_device_.phoneid SET reg_.deviceID = reg_device_.id WHERE reg_.phoneid = reg_device_.phoneid");
     fileLog("UPDATE reg_.deviceID", $pathLog); // escribir en el log
-    
-    
-    $verDB  = 20230403; // nueva version de la DB
+
+
+    $verDB = 20230403; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
 if ($verDB < 20230404) {
     write_apiKeysFile();
-    $verDB  = 20230404; // nueva version de la DB
+    $verDB = 20230404; // nueva version de la DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}
+if ($verDB < 20240219) {
+    write_apiKeysFile();
+    $verDB = 20240219; // nueva version de la DB
+    pdoQuery("INSERT INTO `modulos` (`id`, `nombre`, `recid`, `orden`, `idtipo`) VALUES ('45','Reporte de Totales', 'r3p0rt0t', '12', '2');");
+    fileLog("Se creó módulo \"Reporte de Totales\"", $pathLog);
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }

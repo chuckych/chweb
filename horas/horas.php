@@ -30,46 +30,42 @@
                         data-toggle="modal" data-target="#Filtros">
                         Filtros
                     </button>
-                    <button type="button" class="ml-1 btn btn-light text-success fw5 border btn-sm fontq" id="btnExcel">
+                    <button type="button"
+                        class="ml-1 btn btn-light text-success fw4 border btn-sm fontq hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        id="btnExcel" aria-label="Exportar a Excel">
                         Excel
                     </button>
                     <span id="trash_all" title="Limpiar Filtros" class="invisible trash align-middle pb-0"></span>
                     <div class="d-flex align-items-center ml-2 border p-1 radius bg-light">
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-sm fontq btn-outline-custom border-0 w80">
+                            <label
+                                class="btn btn-sm fontq btn-outline-custom border-0 w80 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                                aria-label="Visualizar por Legajo">
                                 <input type="radio" name="VPor" id="VLegajo" value="0"> Legajo
                             </label>
-                            <label class="btn btn-sm fontq btn-outline-custom border-0 w80">
+                            <label
+                                class="btn btn-sm fontq btn-outline-custom border-0 w80 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                                aria-label="Visualizar por Fechas">
                                 <input type="radio" name="VPor" id="VFecha" value="1"> Fecha
                             </label>
                         </div>
                     </div>
                 </div>
                 <div class="col-12 col-sm-6">
-                    <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                        <input type="text" class="mx-2 form-control text-center w250" name="_dr" id="_dr">
-                        <button title="Actualizar Grilla" type="button" id="Refresh"
-                            class="btn px-2 border-0 fontq float-right bg-custom text-white opa8">
-                            <svg class="bi" width="20" height="20" fill="currentColor">
-                                <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />
-                            </svg>
-                        </button>
+                    <div class="input-group w-100 d-inline-flex justify-content-end">
+                        <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
+                            <input type="text" class="mx-2 form-control text-center w250" name="_dr" id="_dr">
+                            <button title="Actualizar Grilla" type="button" id="Refresh"
+                                class="btn px-2 border-0 fontq float-right bg-custom text-white opa8 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                                aria-label="Actualizar Grilla">
+                                <svg class="bi" width="20" height="20" fill="currentColor">
+                                    <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-            <?php
-            $FechaMinMax = (fecha_min_max('FICHAS1', 'FICHAS1.FicFech'));
-            $FirstDate = $FechaMinMax['min'];
-            /** FirstDate */
-            $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
-            /** FirstYear */
-            $maxDate = $FechaMinMax['max'];
-            /** maxDate */
-            $maxYear = date('Y');
-            /** maxYear */
-            $FechaIni = $FechaMinMax['max'];
-            $FechaFin = $FechaMinMax['max'];
-            ?>
             <div id="tablas2">
                 <div class="row bg-white pb-sm-3" id="pagLega" style="display:none">
                     <div class="col-12 d-flex justify-content-sm-end">

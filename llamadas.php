@@ -12,6 +12,7 @@
 <meta name="theme-color" content="#fafafa">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/hint/hint.css" type="text/css" />
 <!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css"> -->
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>"
 	type="text/css">

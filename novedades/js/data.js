@@ -71,7 +71,6 @@ let GetPersonal = $('#GetPersonal').DataTable({
     },
     "drawCallback": function (settings) {
         $("#GetPersonal thead").remove();
-        $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $('#GetNovedades').DataTable().ajax.reload();
     },
@@ -146,7 +145,6 @@ let GetPersonal = $('#GetPersonal').DataTable({
 
 let GetNovedades = $('#GetNovedades').DataTable({
     "drawCallback": function (settings) {
-        $(".page-link").addClass('border border-0');
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
         $('#pagLega').removeClass('invisible');
@@ -154,13 +152,18 @@ let GetNovedades = $('#GetNovedades').DataTable({
         setTimeout(function () {
             $(".Filtros").prop('disabled', false);
         }, 1000);
+        $('#GetNovedades').removeClass('loader-in');
     },
     lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
     bProcessing: true,
     serverSide: true,
     deferRender: true,
     searchDelay: 1500,
-    dom: `<'mt-3'<'d-none d-sm-block'l><''t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+    // dom: `<'mt-3'<'d-none d-sm-block'l><''t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+    dom: "<'row'" +
+        "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+        "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
+        "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
     ajax: {
         url: "/" + $("#_homehost").val() + "/novedades/GetNovedades.php",
         type: "POST",
@@ -302,10 +305,8 @@ setTimeout(function () {
             $("#GetFechas thead").remove();
         },
         "drawCallback": function (settings) {
-            $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $('#GetNovedadesFecha').DataTable().ajax.reload();
-            // $(".loader2").fadeOut("slow");
         },
         pagingType: "full",
         lengthMenu: [[1], [1]],
@@ -373,20 +374,24 @@ setTimeout(function () {
     });
     let GetNovedadesFecha = $('#GetNovedadesFecha').DataTable({
         "drawCallback": function (settings) {
-            $(".page-link").addClass('border border-0');
             $(".dataTables_info").addClass('text-secondary');
             $(".custom-select").addClass('text-secondary bg-light');
             $('#Visualizar').prop('disabled', false)
             setTimeout(function () {
                 $(".Filtros").prop('disabled', false);
             }, 1000);
+            $('#GetNovedadesFecha').removeClass('loader-in');
         },
         lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
         bProcessing: true,
         serverSide: true,
         deferRender: true,
         searchDelay: 1500,
-        dom: `<'mt-3'<'d-none d-sm-block'l><t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+        // dom: `<'mt-3'<'d-none d-sm-block'l><t>><"mt-n2"p><"mt-n2 pb-2 d-flex justify-content-end"i>`,
+        dom: "<'row'" +
+            "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
             url: "/" + $("#_homehost").val() + "/novedades/GetNovedadesFecha.php",
             type: "POST",
@@ -429,13 +434,13 @@ setTimeout(function () {
             {
                 data: 'nov_LegNume', className: 'align-middle', targets: '', title: 'Legajo',
                 "render": function (data, type, row, meta) {
-                    return data;
+                    return data
                 },
             },
             {
                 data: 'nov_leg_nombre', className: 'align-middle', targets: '', title: 'Nombre',
                 "render": function (data, type, row, meta) {
-                    return data;
+                    return `<div class="text-truncate" style="max-width:200px" title="${data}">${data}</div>${row.nov_LegNume}`;
                 },
             },
             {
@@ -524,12 +529,14 @@ $('#GetPersonal').on('page.dt', function () {
     CheckSesion()
 });
 $('#GetNovedades').on('page.dt', function () {
+    $('#GetNovedades').addClass('loader-in');
     CheckSesion()
 });
 $('#GetFechas').on('page.dt', function () {
     CheckSesion()
 });
 $('#GetNovedadesFecha').on('page.dt', function () {
+    $('#GetNovedadesFecha').addClass('loader-in');
     CheckSesion()
 });
 

@@ -5,6 +5,7 @@
      --main-transition: .5s;
      --animate-duration: .6s;
      --border-input-color: #bcbbbb;
+     --bg-default: var(--main-bg-modcolor);
  }
 
  .bg-nov, .bg-nov:hover {
@@ -140,6 +141,16 @@
 
  .radius {
      border-radius: var(--main-radius) !important;
+ }
+
+ .radius-left {
+     border-top-left-radius: var(--main-radius) !important;
+     border-bottom-left-radius: var(--main-radius) !important;
+ }
+
+ .radius-right {
+     border-top-right-radius: var(--main-radius) !important;
+     border-bottom-right-radius: var(--main-radius) !important;
  }
 
  p {
