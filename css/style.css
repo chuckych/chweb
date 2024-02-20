@@ -95,6 +95,10 @@
      min-height: 100%;
  }
 
+ select option {
+     font-family: 'Montserrat', sans-serif;
+ }
+
  #showuser {
      display: none
  }

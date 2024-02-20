@@ -920,3 +920,11 @@ function CateNov(value) {
     }
     return str;
 }
+const loaderIn = (selector, state) => {
+    if (!selector) return;
+    if (state) {
+        $(selector).addClass('loader-in')
+    } else {
+        $(selector).removeClass('loader-in')
+    }
+}

@@ -604,6 +604,17 @@ Flight::route('/fechas/horas', function () {
     }
     Flight::json($arrayData ?? array());
 });
+Flight::route('/fechas/fichas', function () {
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
+    $data = ch_api($endpoint, '', 'GET', '');
+    $arrayData = json_decode($data, true);
+    if ($arrayData['RESPONSE_CODE'] == '200 OK') {
+        $arrayData = $arrayData['DATA'] ?? array();
+    } else {
+        $arrayData = array();
+    }
+    Flight::json($arrayData ?? array());
+});
 
 Flight::map('notFound', function () {
     Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);

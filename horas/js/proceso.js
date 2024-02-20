@@ -62,7 +62,7 @@ const dateRange = async () => {
     });
 }
 function ActualizaTablas() {
-    $('#tablas').addClass('loader-in')
+    loaderIn('table', true);
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
     ls.set(LS_FILTROS + 'VPor', parseInt(verPor));
     if (verPor === '1') {
@@ -83,7 +83,8 @@ const toggleTablas = (tipo) => {
 
     if (tipo === 1) {
 
-        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
+        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        loaderIn('#tablas', false);
         $('#pagLega').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasTable').hide().removeClass('animate__animated animate__fadeIn');
         $('#pagFech').show().addClass('animate__animated animate__fadeIn');
@@ -91,7 +92,8 @@ const toggleTablas = (tipo) => {
 
     } else {
 
-        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn').removeClass('loader-in');
+        $('#tablas').removeClass('invisible').addClass('animate__animated animate__fadeIn');
+        loaderIn('#tablas', false);
         $('#pagFech').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasFechaTable').hide().removeClass('animate__animated animate__fadeIn');
         $('#GetHorasTable').show().addClass('animate__animated animate__fadeIn');
@@ -258,13 +260,13 @@ const getHoras = () => {
         $(".dataTables_info").addClass('text-secondary');
         $(".custom-select").addClass('text-secondary bg-light');
         $(".Filtros").prop('disabled', false);
-        $('#GetHoras').removeClass('loader-in');
         $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
         $.notifyClose();
+        loaderIn('table', false);
     });
     $('#GetHoras').on('page.dt', function () {
-        $('#GetHoras').addClass('loader-in');
         CheckSesion()
+        loaderIn('#GetHoras', true);
     });
 }
 const getHorasFecha = () => {
@@ -380,13 +382,13 @@ const getHorasFecha = () => {
         setTimeout(function () {
             $(".Filtros").prop('disabled', false);
         }, 500);
-        $('#GetHorasFecha').removeClass('loader-in');
         $('#tablas2').removeClass('invisible').addClass('animate__animated animate__fadeIn');
         $.notifyClose();
+        loaderIn('table', false);
     });
     $('#GetHorasFecha').on('page.dt', function () {
         CheckSesion()
-        $('#GetHorasFecha').addClass('loader-in');
+        loaderIn('#GetHorasFecha', true);
     });
 }
 const getPersonal = () => {
@@ -468,11 +470,11 @@ const getPersonal = () => {
         toggleTablas();
         getHoras(); // create
         tableTotalesLegajo();
-        $('#GetPersonal').removeClass('loader-in');
+        loaderIn('#GetPersonal', false);
     });
     $('#GetPersonal').on('page.dt', function () {
-        $('#GetPersonal').addClass('loader-in');
-        $('#GetHoras').addClass('loader-in');
+        loaderIn('#GetPersonal', true);
+        loaderIn('#GetHoras', true);
         CheckSesion()
     });
 }
@@ -554,11 +556,11 @@ const getFechas = () => {
         getHorasFecha();
         tableTotalesFecha();
         tableTotalesFecha2();
-        $('#GetFechas').removeClass('loader-in');
+        loaderIn('#GetFechas', false);
     });
     $('#GetFechas').on('page.dt', function () {
-        $('#GetFechas').addClass('loader-in');
-        $('#GetHorasFecha').addClass('loader-in');
+        loaderIn('#GetFechas', true);
+        loaderIn('#GetHorasFecha', true);
         CheckSesion()
     });
 }
@@ -579,10 +581,10 @@ $("#Refresh").on("click", function () {
 
 $('#_dr').on('apply.daterangepicker', function (ev, picker) {
     CheckSesion()
-    $('#GetFechas').addClass('loader-in');
-    $('#GetPersonal').addClass('loader-in');
-    $('#GetHoras').addClass('loader-in');
-    $('#GetHorasFecha').addClass('loader-in');
+    loaderIn('#GetFechas', true);
+    loaderIn('#GetPersonal', true);
+    loaderIn('#GetHoras', true);
+    loaderIn('#GetHorasFecha', true);
     ActualizaTablas()
 });
 

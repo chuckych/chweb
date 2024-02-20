@@ -32,7 +32,8 @@
             </div>
             <div class="col-12 col-sm-6">
                 <div class="input-group w-100 d-inline-flex justify-content-end">
-                    <div class="hint--left hint--rounded hint--no-arrow hint--info" aria-label="Seleccionar fechas">
+                    <div class="hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        aria-label="Seleccionar fechas">
                         <div class="shadow-sm d-inline-flex border">
                             <div class="input-group-prepend">
                                 <span class="input-group-text border-0 bg-white" id="Refresh">
@@ -42,15 +43,15 @@
                                 </span>
                             </div>
                             <div>
-                                <input type="text" class="hint--left form-control text-center border-0 ls1 h40 w250"
-                                    name="_drHorarios" id="_drHorarios">
+                                <input type="text" class="form-control text-center border-0 ls1 h40 w250 loader-in"
+                                    name="_dr" id="_dr">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <?php // require 'modal_Filtros.php';                                                     ?>
+        <?php // require 'modal_Filtros.php';                                                                     ?>
     </div>
     <!-- fin container -->
     <?php
@@ -66,10 +67,8 @@
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <!-- <script
-        src="/<?= HOMEHOST ?>/informes/horasign/js/data.js?<?= version_file("/informes/horasign/js/data.js") ?>"></script> -->
-    <!-- <script
-        src="/<?= HOMEHOST ?>/informes/horasign/js/toExport-min.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script> -->
+    <script
+        src="/<?= HOMEHOST ?>/informes/reporte/js/reporte.js?<?= version_file("/informes/reporte/js/reporte.js") ?>"></script>
 </body>
 
 </html>
