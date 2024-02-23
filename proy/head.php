@@ -13,9 +13,10 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap5/tabler.min.css" type="text/css"> -->
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap5/tabler.min.css?v=<?=version_file("/css/bootstrap5/tabler.min.css")?>">
+<link rel="stylesheet"
+    href="/<?= HOMEHOST ?>/css/bootstrap5/tabler.min.css?v=<?= version_file("/css/bootstrap5/tabler.min.css") ?>">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap5/dataTables.bootstrap5.min.css" type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/proy/css/style.css?v=<?=version_file("/proy/css/style.css")?>">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/proy/css/date.css?v=<?=version_file("/proy/css/date.css")?>">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/proy/css/style.css?v=<?= version_file("/proy/css/style.css") ?>">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/proy/css/date.css?v=<?= version_file("/proy/css/date.css") ?>">
 <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />

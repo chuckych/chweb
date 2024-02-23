@@ -615,6 +615,22 @@ Flight::route('/fechas/fichas', function () {
     }
     Flight::json($arrayData ?? array());
 });
+Flight::route('POST /estruct/fichas/', function () {
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/fichasestruct/";
+    $payload = Flight::request()->data;
+    $data = ch_api($endpoint, ($payload), 'POST', '');
+
+    $arrayData = json_decode($data, true);
+
+    if ($arrayData['RESPONSE_CODE'] == '200 OK') {
+        $arrayData = $arrayData['DATA'] ?? array();
+    } else {
+        Flight::json(array('status' => 'error', 'message' => $arrayData['MESSAGE']), 204);
+        exit;
+    }
+    Flight::json($arrayData ?? array());
+});
+
 
 Flight::map('notFound', function () {
     Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);

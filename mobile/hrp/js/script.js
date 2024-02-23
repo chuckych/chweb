@@ -372,9 +372,9 @@ $(function () {
                 },
                 /** Columna Tipo */
                 {
-                    className: 'd-none', targets: '', title: '<div class="w70">Tipo</div>',
+                    className: '', targets: '', title: '<div class="w70">Tipo</div>',
                     "render": function (data, type, row, meta) {
-                        // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
+                        let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
                         let evento = '';
                         switch (row.operationType) {
                             case '-1':
@@ -394,7 +394,7 @@ $(function () {
                             evento = 'Fichada';
                         }
                         row.operation = (row.operation == '0') ? '' : row.operation;
-                        let datacol = `<div class="w70 text-truncate">${evento}<br>${row.operation}</div>`
+                        let datacol = `<div class="w70 text-truncate">${evento}<br>${eventType}</div>`
                         return datacol;
                     },
                 },

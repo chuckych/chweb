@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="view-transition" content="same-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="Control Horario WEB HRProcess">
 <meta name="author" content="Norberto CH  - nch@outlook.com.ar">

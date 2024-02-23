@@ -15,7 +15,7 @@ $ColEstrucDesc = '';
 $ColEstrucCod = '';
 $wc = '';
 
-$start  = start();
+$start = start();
 $length = length();
 
 $validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega', 'THora', 'HoraMin', 'HoraMax', 'Nove');
@@ -27,8 +27,8 @@ $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 20); // str de estructura
 
 $dp['Sector'] = ($dp['Sector']) ?? '';
 
-$dp['onlyHsTr']  = ($dp['onlyHsTr']) ?? '';
-$dp['onlyHsTr']  = vp($dp['onlyHsTr'], 'onlyHsTr', 'int01', 1); // Traer Solo registros con Horas trabajadas reales.
+$dp['onlyHsTr'] = ($dp['onlyHsTr']) ?? '';
+$dp['onlyHsTr'] = vp($dp['onlyHsTr'], 'onlyHsTr', 'int01', 1); // Traer Solo registros con Horas trabajadas reales.
 
 if ($dp['estruct'] == 'Sec2' && empty($dp['Sector'])) {
     http_response_code(400);
@@ -36,7 +36,7 @@ if ($dp['estruct'] == 'Sec2' && empty($dp['Sector'])) {
     exit;
 }
 
-if ($dp['Sector'] && $dp['estruct'] == 'Sec2') {
+if ($dp['estruct'] == 'Sec2') {
     $stmtSect = $dbApiQuery("SELECT SecCodi FROM SECTORES WHERE SecCodi > 0") ?? '';
     $validEstruct = (array_column($stmtSect, 'SecCodi'));
     $dp['Sector'] = vp($dp['Sector'], 'Sector', 'intArray', 11, $validEstruct);
@@ -129,18 +129,18 @@ $arrDP = array(
     'Sect' => $dp['Sect'],
     // Sector {int} {array}
     'Sec2' => $dp['Sec2'],
-    // Seccion {int} {array}
+    // Sección {int} {array}
     'Grup' => $dp['Grup'],
     // Grupos {int} {array}
     'Sucu' => $dp['Sucu'],
     // Sucursales {int} {array}
     'TareProd' => $dp['TareProd'],
-    // Tareas de produccion {int} {array}
+    // Tareas de producción {int} {array}
     'RegCH' => $dp['RegCH'],
     // Regla de control horario {int} {array}
     'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
     'THora' => $dp['THora'], // Tipo de Hora {int} {array}
-    'Nove' => $dp['Nove'], // Novedade {int} {array}
+    'Nove' => $dp['Nove'], // Novedades {int} {array}
     'Esta' => $dp['Esta'], // Estado Hora {int} {array}
 );
 
@@ -156,7 +156,7 @@ foreach ($arrDP as $key => $filtro) {
             if (count($e) > 1) {
                 $e = "'" . implode("','", $e) . "'";
 
-                if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
+                if ($key == 'Sec2') { // Si viene Sección hacemos explode de sector sección
                     foreach ($dp['Sec2'] as $se2) {
                         $dataSec2[] = $se2;
                     }
@@ -193,7 +193,7 @@ foreach ($arrDP as $key => $filtro) {
                 foreach ($e as $v) {
                     if ($v !== NULL) {
                         // $wc .= " AND PERSONAL.Leg$key = '$v'";
-                        if ($key == 'Sec2') { // Si viene Seccion hacemos explode de sector seccion
+                        if ($key == 'Sec2') { // Si viene Sección hacemos explode de sector sección
                             // $secSec2 = explode('-', $dp['Sec2'][0]);
                             $dataSec2 = implode(',', $dp['Sec2']);
                             $wc .= " AND (FICHAS.FicSec2) IN ($dataSec2)";
@@ -235,7 +235,7 @@ if ($dp['onlyHsTr']) {
 $JoinFichas1 = '';
 $JoinPersonal = '';
 if ($dp['Tipo']) {
-    $JoinPersonal = " INNER JOIN PERSONAL ON PERSONAL.LegNume = FICHAS.FicLega";
+    // $JoinPersonal = " INNER JOIN PERSONAL ON PERSONAL.LegNume = FICHAS.FicLega";
 }
 switch ($dp['Estruct']) {
     case 'Empr':
@@ -310,7 +310,7 @@ switch ($dp['Estruct']) {
         break;
 }
 $JoinFichas1 = "LEFT JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
-$JoinFichas1 .= " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
+$JoinFichas1 .= " LEFT JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
 $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
 
 switch ($dp['Estruct']) {
@@ -381,7 +381,7 @@ try {
         throw new Exception(''); //No hay datos
     }
 
-    foreach ($stmt as $key => $row) :
+    foreach ($stmt as $key => $row):
 
         switch ($dp['Estruct']) {
             case 'Tipo':

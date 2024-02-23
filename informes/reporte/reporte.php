@@ -21,7 +21,7 @@
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">
-                <button type="button" disabled class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none"
+                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none"
                     data-toggle="modal" data-target="#Filtros">
                     Filtros
                 </button>
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <?php // require 'modal_Filtros.php';                                                                     ?>
+        <?php require 'filtros.html'; ?>
     </div>
     <!-- fin container -->
     <?php
@@ -64,9 +64,12 @@
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <!-- daterangepicker.min.js -->
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
-    <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
+    <!-- notify -->
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
+    <!-- select2 -->
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
+    <script src="/<?= HOMEHOST ?>/js/select2-es.js"></script>
+    <!-- reporte.js -->
     <script
         src="/<?= HOMEHOST ?>/informes/reporte/js/reporte.js?<?= version_file("/informes/reporte/js/reporte.js") ?>"></script>
 </body>
