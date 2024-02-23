@@ -394,8 +394,10 @@ $(function () {
                             evento = 'Fichada';
                         }
                         row.operation = (row.operation == '0') ? '' : row.operation;
-                        let datacol = `<div class="w70 text-truncate">${evento}<br>${row.eventType}</div>`
-                        return datacol;
+                        if (evento == 'Fichada') {
+                            return `<div class="w70 text-truncate">${evento}</div>`
+                        }
+                        return `<div class="w70 text-truncate">${evento}<br><span class="text-secondary font07">Cod: ${row.eventType}</span></div>`
                     },
                 },
                 /** Columna Dispositivo */
