@@ -1,5 +1,5 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 secure_auth_ch();
 $Modulo = '999';
@@ -13,15 +13,4 @@ if ($_SESSION['MODS_ROL']) {
         header('Location:../mishoras/');
     }
 }
-// echo '<pre>';
-// print_r($_SESSION);
-// echo 'EstrUser : '.$_SESSION['EstrUser'].'<br>';
-// echo 'PlanRol : '.$_SESSION['PlanRol'].'<br>';
-// echo 'ConvRol : '.$_SESSION['ConvRol'].'<br>';
-// echo 'SectRol : '.$_SESSION['SectRol'].'<br>';
-// echo 'Sec2Rol : '.$_SESSION['Sec2Rol'].'<br>';
-// echo 'GrupRol : '.$_SESSION['GrupRol'].'<br>';
-// echo 'SucuRol : '.$_SESSION['SucuRol'].'<br>';
-
-// exit;
 require pagina('inicio.php');

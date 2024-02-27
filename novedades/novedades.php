@@ -26,8 +26,8 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-
         <?php require __DIR__ . '../../nav.php'; ?>
+
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'novedades.png', MODULOS['novedades'], '') ?>
         <!-- Fin Encabezado -->

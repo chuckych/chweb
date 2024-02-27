@@ -19,22 +19,28 @@
         <?= encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['reporte'], ''); ?>
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
-        <div class="row bg-white radius pt-3 mb-0 pb-0">
+        <div class="row bg-white pt-3">
             <div class="col-12 col-sm-6">
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none"
-                    data-toggle="modal" data-target="#Filtros">
-                    Filtros
-                </button>
-                <button type="button" class="ml-1 btn btn-outline-custom border btn-sm fontq d-print-none" disabled
-                    id="btnExcel">
-                </button>
-                <span id="trash_all" title="Limpiar Filtros" class="trash align-middle pb-0 d-print-none"></span>
+                <!-- <div class="border p-1 radius bg-light"> -->
+                <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
+                    <label
+                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        aria-label="Visualizar Novedades">
+                        <input type="radio" name="VPor" id="VNovedades" value="novedades"> Novedades
+                    </label>
+                    <label
+                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        aria-label="Visualizar Horas">
+                        <input type="radio" name="VPor" id="VHoras" value="horas"> Horas
+                    </label>
+                </div>
+                <!-- </div> -->
             </div>
             <div class="col-12 col-sm-6">
                 <div class="input-group w-100 d-inline-flex justify-content-end">
                     <div class="hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Seleccionar fechas">
-                        <div class="shadow-sm d-inline-flex border">
+                        <div class="d-inline-flex radius border">
                             <div class="input-group-prepend">
                                 <span class="input-group-text border-0 bg-white" id="Refresh">
                                     <svg class="bi mr-1" width="18" height="18" fill="currentColor">
@@ -52,6 +58,10 @@
             </div>
         </div>
         <?php require 'filtros.html'; ?>
+        <section class="border mt-2 p-2 radius">
+            <table id="tabla" class="table w-100">
+            </table>
+        </section>
     </div>
     <!-- fin container -->
     <?php

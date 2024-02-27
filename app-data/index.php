@@ -212,6 +212,25 @@ function getHorasTotales($payload)
     }
     return ($arrayData['DATA']);
 }
+function getHorasTotalesDT($payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    // print_r($payload) . exit;
+    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
+    if (empty($arrayData['DATA'])) {
+        return [];
+    }
+    $dt_data = array(
+        "recordsTotal" => intval($arrayData['TOTAL']),
+        "recordsFiltered" => intval($arrayData['COUNT']),
+        "data" => $arrayData['DATA']['data'] ?? array(),
+        "totales" => $arrayData['DATA']['totales'] ?? array(),
+        "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? array(),
+    );
+    return ($dt_data);
+}
 /**
  * Obtiene el cierre de ficha para un legajo y fecha específicos.
  *
@@ -560,6 +579,9 @@ Flight::route('DELETE /novedad', function () {
 Flight::route('POST /horas/totales', function () {
 
     $payload = Flight::request()->data->getData();
+    // Flight::json($payload) . exit;
+
+    $payload['DTHoras'] = $payload['DTHoras'] ?? false;
 
     $payload['Empr'] = $payload['Empr'] ?? [];
     $payload['Plan'] = $payload['Plan'] ?? [];
@@ -589,6 +611,13 @@ Flight::route('POST /horas/totales', function () {
     $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
 
     $data = array();
+
+    if ($payload['DTHoras'] == 'true') {
+        $data = getHorasTotalesDT($payload);
+        Flight::json($data);
+        exit;
+    }
+
     $data = getHorasTotales($payload);
 
     Flight::json($data);

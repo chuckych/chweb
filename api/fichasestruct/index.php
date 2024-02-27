@@ -76,10 +76,10 @@ $dp['FechaIni'] = ($dp['FechaIni']) ?? '';
 $dp['FechaFin'] = ($dp['FechaFin']) ?? '';
 
 $dp['HoraMin'] = ($dp['HoraMin']) ?? '';
-$dp['HoraMin'] = vp($dp['HoraMin'], 'HoraMin', 'str', 5); // str de horas minimo
+$dp['HoraMin'] = vp($dp['HoraMin'], 'HoraMin', 'str', 5); // str de horas mínimo
 
 $dp['HoraMax'] = ($dp['HoraMax']) ?? '';
-$dp['HoraMax'] = vp($dp['HoraMax'], 'HoraMax', 'str', 5); // str de horas maximo
+$dp['HoraMax'] = vp($dp['HoraMax'], 'HoraMax', 'str', 5); // str de horas máximo
 
 $dp['Esta'] = $dp['Esta'] ?? [];
 $dp['Esta'] = vp($dp['Esta'], 'Esta', 'intArray', 1);
@@ -235,7 +235,7 @@ if ($dp['onlyHsTr']) {
 $JoinFichas1 = '';
 $JoinPersonal = '';
 if ($dp['Tipo']) {
-    // $JoinPersonal = " INNER JOIN PERSONAL ON PERSONAL.LegNume = FICHAS.FicLega";
+    $JoinPersonal = " INNER JOIN PERSONAL ON PERSONAL.LegNume = FICHAS.FicLega";
 }
 switch ($dp['Estruct']) {
     case 'Empr':
@@ -366,6 +366,9 @@ switch ($dp['Estruct']) {
         $JoinFichas1 $JoinPersonal
         INNER JOIN SECCION ON FICHAS.FicSec2=SECCION.Se2Codi AND FICHAS.FicSect=SECCION.SecCodi 
         INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE FICHAS.FicSec2 > 0  AND FICHAS.FicSect IN ($sectorSecc) $wc $FiltroQ GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY FICHAS.FicSec2 OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
+        break;
+    case 'Lega':
+        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinFichas1 INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
         break;
     default:
         $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc', COUNT(*) AS 'Count' FROM FICHAS $JoinPersonal $JoinFichas1 INNER JOIN $ColEstruc ON $FicEstruct = $ColEstrucCod WHERE FICHAS.FicLega > 0 $wc $FiltroQ GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct OFFSET $start ROWS FETCH NEXT $length ROWS ONLY ";
