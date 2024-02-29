@@ -82,12 +82,12 @@
 
 [class*="hint--"][aria-label]:after {
 	content: attr(aria-label);
-	opacity: 0.9;
+	opacity: 1;
 }
 
 [class*="hint--"][data-hint]:after {
 	content: attr(data-hint);
-	opacity: 0.9;
+	opacity: 1;
 }
 
 [aria-label='']:before, [aria-label='']:after,

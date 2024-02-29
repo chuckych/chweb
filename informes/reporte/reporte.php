@@ -11,7 +11,7 @@
     </title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="bg-secondary">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '../../../nav.php'; ?>
@@ -19,21 +19,21 @@
         <?= encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['reporte'], ''); ?>
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
-        <div class="row bg-white pt-3">
+        <div class="row pt-3">
             <div class="col-12 col-sm-6 mb-sm-0 mb-3">
-                <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
+                <div class="btn-group btn-group-toggle bg-light shadow-sm radius p-1" data-toggle="buttons">
                     <label
-                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Horas y Novedades">
                         <input type="radio" name="VPor" id="VTodo" value="todo"> Todo
                     </label>
                     <label
-                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Novedades">
                         <input type="radio" name="VPor" id="VNovedades" value="novedades"> Novedades
                     </label>
                     <label
-                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Horas">
                         <input type="radio" name="VPor" id="VHoras" value="horas"> Horas
                     </label>

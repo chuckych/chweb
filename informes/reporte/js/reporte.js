@@ -62,20 +62,37 @@ const dateRange = async () => {
     loaderIn('#_dr', false);
 }
 
-if (ls.get(LS_FILTROS + 'VPor') == "horas") {
-    $('#VHoras').prop('checked', true);
+const VTodo = (value) => {
+    if (value == "horas") {
+        $('#VHoras').prop('checked', true);
+        $("#select_thora").prop('disabled', false);
+        $("#select_nove").prop('disabled', true);
+    }
+    if (value == "novedades") {
+        $('#VNovedades').prop('checked', true);
+        $("#select_nove").prop('disabled', false);
+        $("#select_thora").prop('disabled', true);
+    }
+    if (value == "todo") {
+        $('#VTodo').prop('checked', true);
+        $("#select_thora").prop('disabled', false);
+        $("#select_nove").prop('disabled', false);
+    }
 }
-if (ls.get(LS_FILTROS + 'VPor') == "novedades") {
-    $('#VNovedades').prop('checked', true);
-}
-if (ls.get(LS_FILTROS + 'VPor') == "todo") {
+
+if (!ls.get(LS_FILTROS + 'VPor')) {
     $('#VTodo').prop('checked', true);
+    $("#select_thora").prop('disabled', false);
+    $("#select_nove").prop('disabled', false);
 }
+
+VTodo(ls.get(LS_FILTROS + 'VPor'));
 
 $('input[name="VPor"]').on('change', function () {
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
     ls.set(LS_FILTROS + 'VPor', (verPor));
     verTabla();
+    VTodo(ls.get(LS_FILTROS + 'VPor'));
 });
 $('input[name="VPorFormato"]').on('change', function () {
     if ($(this).val() == 'enDecimal') {
@@ -174,6 +191,8 @@ dateRange().then(() => {
     ls.set(LS_FILTROS, jsonData);
 
     const ajaxSelect2 = (selector, placeholder, estruct) => {
+        // si ya es un select2 no hace nada return false
+        if ($(selector).hasClass("select2-hidden-accessible")) return false;
         $(selector).select2({
             multiple: true,
             allowClear: true,
@@ -247,6 +266,7 @@ dateRange().then(() => {
     }
 
     $('#Filtros').on('shown.bs.collapse', function () {
+        VTodo(ls.get(LS_FILTROS + 'VPor'));
         ajaxSelect2("#select_empresa", "Empresas", "Empr");
         ajaxSelect2("#select_planta", "Plantas", "Plan");
         ajaxSelect2("#select_sector", "Sectores", "Sect");
@@ -257,7 +277,7 @@ dateRange().then(() => {
         ajaxSelect2("#select_tipo", "Tipo de Personal", "Tipo");
         ajaxSelect2("#select_thora", "Tipos de Horas", "THora");
         ajaxSelect2("#select_nove", "Novedades", "Nove");
-        $('#Filtros').off('shown.bs.collapse');
+        // $('#Filtros').off('shown.bs.collapse');
     });
 
     let trash_allInputs = () => {
@@ -287,11 +307,15 @@ dateRange().then(() => {
             "Esta": [],
             "Nove": [],
             "FechaIni": getValuesDate().startDate,
+            "FechIni": getValuesDate().startDate,
             "FechaFin": getValuesDate().endDate,
+            "FechFin": getValuesDate().endDate,
             "start": 0,
             "length": 1000
         }
-        // $('#tabla').DataTable().ajax.reload();
+        ls.set(LS_FILTROS, jsonData);
+        getHoras();
+        getNovedades();
     }
     let trash_allIn = document.getElementById('trash_allIn');
     trash_allIn.addEventListener('click', trash_allInputs, false);
@@ -335,7 +359,7 @@ const getHoras = async () => {
         dom: "<'row'" +
             "<'col-12 d-flex align-items-center'l<'ml-2 font09 title'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
-            "<'row '<'col-12 d-flex bg-transparent align-items-start justify-content-between'<i><p>>>",
+            "<'row '<'col-12 col-sm-6'<i>>''<'col-12 col-sm-6'<p>>'>",
         ajax: {
             url: "../../app-data/horas/totales",
             type: "POST",
@@ -457,6 +481,7 @@ const getHoras = async () => {
             });
             loaderIn('#tabla', false);
             $('#section_tablas').show();
+            $('#div_formato').show();
         },
         preDrawCallback: function () {
             loaderIn('#tabla', true);
@@ -472,7 +497,6 @@ const getHoras = async () => {
                 $('.enDecimales').addClass('d-none');
             }
             setTimeout(() => {
-                console.log('drawCallback');
                 loaderIn('#tabla', false);
             }, 100);
         }
@@ -501,7 +525,7 @@ const getNovedades = async () => {
         dom: "<'row'" +
             "<'col-12 d-flex align-items-center'l<'font09 title-nove'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
-            "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
+            "<'row '<'col-12 col-sm-6'<i>>''<'col-12 col-sm-6'<p>>'>",
         ajax: {
             url: "../../app-data/novedades/totales",
             type: "POST",

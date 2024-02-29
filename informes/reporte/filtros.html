@@ -1,9 +1,23 @@
-<button
-    class="text-pop-up-top btn btn-outline-custom border btn-sm font08 mt-2 mb-3 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
-    aria-label="Filtrar Datos" type=" button" data-toggle="collapse" data-target="#Filtros" aria-expanded="false"
-    aria-controls="Filtros">
-    <i class="bi bi-filter"></i> Filtros
-</button>
+<div class="my-2 row" id="div_formato" style="display:none">
+    <div class="col-12">
+        <button class="text-pop-up-top btn btn-outline-custom border font08" type=" button" data-toggle="collapse"
+            data-target="#Filtros" aria-expanded="false" aria-controls="Filtros">
+            <i class="bi bi-filter"></i> Filtros
+        </button>
+        <div class="btn-group btn-group-toggle bg-light shadow-sm radius p-1 float-right" data-toggle="buttons">
+            <label
+                class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                aria-label="Visualizar en Decimal">
+                <input type="radio" name="VPorFormato" id="VEnDecimal" value="enDecimal"> En Decimal
+            </label>
+            <label
+                class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                aria-label="Visualizar en Horas">
+                <input type="radio" name="VPorFormato" id="VEnHoras" checked value="enHoras"> En Horas
+            </label>
+        </div>
+    </div>
+</div>
 <section class="collapse invisible" id="Filtros">
     <div class="row mt-2">
         <div class="col-12 col-sm-4">
@@ -81,20 +95,4 @@
                 Filtros</span>
         </div>
     </div>
-    <div class=" mt-2 row">
-                <div class="col-12 mb-3 text-right">
-                    <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
-                        <label
-                            class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
-                            aria-label="Visualizar en Decimal">
-                            <input type="radio" name="VPorFormato" id="VEnDecimal" value="enDecimal"> En Decimal
-                        </label>
-                        <label
-                            class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
-                            aria-label="Visualizar en Horas">
-                            <input type="radio" name="VPorFormato" id="VEnHoras" checked value="enHoras"> En Horas
-                        </label>
-                    </div>
-                </div>
-        </div>
 </section>
