@@ -24,6 +24,11 @@
                 <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
                     <label
                         class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                        aria-label="Visualizar Horas y Novedades">
+                        <input type="radio" name="VPor" id="VTodo" value="todo"> Todo
+                    </label>
+                    <label
+                        class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
                         aria-label="Visualizar Novedades">
                         <input type="radio" name="VPor" id="VNovedades" value="novedades"> Novedades
                     </label>
@@ -56,13 +61,15 @@
             </div>
         </div>
         <?php require 'filtros.html'; ?>
-        <section>
-            <table id="tabla" class="table w-100 text-nowrap">
-            </table>
-        </section>
-        <section class="mt-2">
-            <table id="tabla_novedades" class="table w-100 text-nowrap">
-            </table>
+        <section id="section_tablas" class="mb-3" style="display:none">
+            <div id="div_tabla">
+                <table id="tabla" class="table w-100 text-nowrap">
+                </table>
+            </div>
+            <div class="mt-2" id="div_tabla_novedades">
+                <table id="tabla_novedades" class="table w-100 text-nowrap">
+                </table>
+            </div>
         </section>
     </div>
     <!-- fin container -->

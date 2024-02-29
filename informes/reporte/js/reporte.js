@@ -64,13 +64,18 @@ const dateRange = async () => {
 
 if (ls.get(LS_FILTROS + 'VPor') == "horas") {
     $('#VHoras').prop('checked', true);
-} else {
+}
+if (ls.get(LS_FILTROS + 'VPor') == "novedades") {
     $('#VNovedades').prop('checked', true);
+}
+if (ls.get(LS_FILTROS + 'VPor') == "todo") {
+    $('#VTodo').prop('checked', true);
 }
 
 $('input[name="VPor"]').on('change', function () {
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
     ls.set(LS_FILTROS + 'VPor', (verPor));
+    verTabla();
 });
 $('input[name="VPorFormato"]').on('change', function () {
     if ($(this).val() == 'enDecimal') {
@@ -82,8 +87,23 @@ $('input[name="VPorFormato"]').on('change', function () {
     }
 });
 
-dateRange().then(() => {
+const verTabla = () => {
+    if (ls.get(LS_FILTROS + 'VPor') == "horas") {
+        $('#div_tabla').show().addClass('animate__animated animate__fadeIn');
+        $('#div_tabla_novedades').hide().removeClass('animate__animated animate__fadeIn');
+    }
+    if (ls.get(LS_FILTROS + 'VPor') == "novedades") {
+        $('#div_tabla').hide().removeClass('animate__animated animate__fadeIn');
+        $('#div_tabla_novedades').show().addClass('animate__animated animate__fadeIn');
+    }
+    if (ls.get(LS_FILTROS + 'VPor') == "todo") {
+        $('#div_tabla').show().addClass('animate__animated animate__fadeIn');
+        $('#div_tabla_novedades').show().addClass('animate__animated animate__fadeIn');
+    }
 
+}
+verTabla();
+dateRange().then(() => {
 
     const select2Data = (selector) => {
         try {
@@ -226,18 +246,19 @@ dateRange().then(() => {
         $("#Filtros").removeClass("invisible");
     }
 
-    // $('#Filtros').on('shown.bs.modal', function () {
-    ajaxSelect2("#select_empresa", "Empresas", "Empr");
-    ajaxSelect2("#select_planta", "Plantas", "Plan");
-    ajaxSelect2("#select_sector", "Sectores", "Sect");
-    ajaxSelect2("#select_grupo", "Grupos", "Grup");
-    ajaxSelect2("#select_sucursal", "Sucursales", "Sucu");
-    ajaxSelect2("#select_personal", "Personal", "Lega");
-    ajaxSelect2("#select_seccion", "Secciones", "Sec2");
-    ajaxSelect2("#select_tipo", "Tipo de Personal", "Tipo");
-    ajaxSelect2("#select_thora", "Tipos de Horas", "THora");
-    ajaxSelect2("#select_nove", "Novedades", "Nove");
-    // });
+    $('#Filtros').on('shown.bs.collapse', function () {
+        ajaxSelect2("#select_empresa", "Empresas", "Empr");
+        ajaxSelect2("#select_planta", "Plantas", "Plan");
+        ajaxSelect2("#select_sector", "Sectores", "Sect");
+        ajaxSelect2("#select_grupo", "Grupos", "Grup");
+        ajaxSelect2("#select_sucursal", "Sucursales", "Sucu");
+        ajaxSelect2("#select_personal", "Personal", "Lega");
+        ajaxSelect2("#select_seccion", "Secciones", "Sec2");
+        ajaxSelect2("#select_tipo", "Tipo de Personal", "Tipo");
+        ajaxSelect2("#select_thora", "Tipos de Horas", "THora");
+        ajaxSelect2("#select_nove", "Novedades", "Nove");
+        $('#Filtros').off('shown.bs.collapse');
+    });
 
     let trash_allInputs = () => {
         $('#Filtros input').val('');
@@ -312,9 +333,9 @@ const getHoras = async () => {
         deferRender: true,
         searchDelay: 1500,
         dom: "<'row'" +
-            "<'col-12 col-sm-6 d-flex align-items-center'l<'ml-2 font09 title'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'col-12 d-flex align-items-center'l<'ml-2 font09 title'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
-            "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
+            "<'row '<'col-12 d-flex bg-transparent align-items-start justify-content-between'<i><p>>>",
         ajax: {
             url: "../../app-data/horas/totales",
             type: "POST",
@@ -429,14 +450,16 @@ const getHoras = async () => {
         },
         // Eventos de la tabla
         initComplete: function () {
-            $('.title').html('<span>Totales Horas</span>');
+            // $('.title').html('<span>Totales Horas</span>');
+            $('.title').html('<div>Totales Horas</div>').addClass('w-100 text-right');
             $(".custom-select").select2({
                 minimumResultsForSearch: Infinity,
             });
-            loaderIn('#table', false);
+            loaderIn('#tabla', false);
+            $('#section_tablas').show();
         },
         preDrawCallback: function () {
-            loaderIn('#table', true);
+            loaderIn('#tabla', true);
         },
         // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
         drawCallback: function () {
@@ -449,7 +472,8 @@ const getHoras = async () => {
                 $('.enDecimales').addClass('d-none');
             }
             setTimeout(() => {
-                loaderIn('#table', false);
+                console.log('drawCallback');
+                loaderIn('#tabla', false);
             }, 100);
         }
     });
@@ -475,7 +499,7 @@ const getNovedades = async () => {
         deferRender: true,
         searchDelay: 1500,
         dom: "<'row'" +
-            "<'col-12 col-sm-6 d-flex align-items-center'l<'ml-2 font09 title-nove'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'col-12 d-flex align-items-center'l<'font09 title-nove'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
@@ -592,7 +616,7 @@ const getNovedades = async () => {
         },
         // Eventos de la tabla
         initComplete: function () {
-            $('.title-nove').html('<span>Totales Novedades</span>');
+            $('.title-nove').html('<div>Totales Novedades</div>').addClass('w-100 text-right');
             $(".custom-select").select2({
                 minimumResultsForSearch: Infinity,
             });
