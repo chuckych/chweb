@@ -437,7 +437,7 @@ const getHoras = async () => {
                     let html = '';
                     array.forEach(element => {
                         let EnHorasDecimal = (element.EnHorasDecimal);
-                        EnHorasDecimal = Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100;
+                        EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
                         html += `<div class="enDecimales">${(EnHorasDecimal)}</div>`
                         html += `<div class="enHoras">${element.EnHoras}</div>`
                     });
@@ -451,7 +451,7 @@ const getHoras = async () => {
                     let html = '';
                     array.forEach(element => {
                         let EnHorasDecimal2 = (element.EnHorasDecimal2);
-                        EnHorasDecimal2 = Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100;
+                        EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
                         html += `<div class="enDecimales">${(EnHorasDecimal2)}</div>`
                         html += `<div class="enHoras">${element.EnHoras2}</div>`
                     });
@@ -603,27 +603,13 @@ const getNovedades = async () => {
                     let html = '';
                     array.forEach(element => {
                         let EnHorasDecimal = (element.EnHorasDecimal);
-                        EnHorasDecimal = Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100;
+                        EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
                         html += `<div class="enDecimales">${(EnHorasDecimal)}</div>`
                         html += `<div class="enHoras">${element.EnHoras}</div>`
                     });
                     return html;
                 },
             },
-            // {
-            //     data: '', className: 'text-right bg-light minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Autorizadas" > AUTOR.</div>',
-            //     "render": function (data, type, row, meta) {
-            //         let array = row.Totales
-            //         let html = '';
-            //         array.forEach(element => {
-            //             let EnHorasDecimal2 = (element.EnHorasDecimal2);
-            //             EnHorasDecimal2 = Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100;
-            //             html += `<div class="enDecimales">${(EnHorasDecimal2)}</div>`
-            //             html += `<div class="enHoras">${element.EnHoras2}</div>`
-            //         });
-            //         return html;
-            //     },
-            // },
             {
                 data: '', className: 'w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
