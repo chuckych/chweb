@@ -3,13 +3,13 @@ E_ALL();
 // require __DIR__ . '../dataconnmysql.php';
 
 require __DIR__ . '../../vendor/autoload.php';
-$routeEnv = __DIR__.'../../../../config_chweb/';
+$routeEnv = __DIR__ . '../../../../config_chweb/';
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
-$host = $_ENV['DB_CHWEB_HOST']?? '';
+$host = $_ENV['DB_CHWEB_HOST'] ?? '';
 $user = $_ENV['DB_CHWEB_USER'] ?? '';
-$pw   = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
-$db   = $_ENV['DB_CHWEB_NAME'] ?? '';
+$pw = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
+$db = $_ENV['DB_CHWEB_NAME'] ?? '';
 
 try {
 	if ($link = mysqli_connect($host, $user, $pw, $db)) {
@@ -23,8 +23,8 @@ try {
 		} else {
 			printf("", mysqli_character_set_name($link));
 			// if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
-				//$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionDB.log';
-				//fileLog($_SERVER['PHP_SELF'] . ' -> Conexion Exitosa', $pathLog); // escribir en el log de errores
+			//$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_successConexionDB.log';
+			//fileLog($_SERVER['PHP_SELF'] . ' -> Conexión Exitosa', $pathLog); // escribir en el log de errores
 			// }
 		}
 	} else {
@@ -33,6 +33,6 @@ try {
 } catch (Exception $e) {
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionDB.log';
 	fileLog($_SERVER['PHP_SELF'] . ' -> ' . $e->getMessage(), $pathLog); // escribir en el log de errores
-	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirecciona a login
+	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirection a login
 	exit;
 }

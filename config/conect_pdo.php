@@ -14,13 +14,13 @@ if (!is_dir($routeEnv)) {
 	}
 	mkdir($routeEnv);
 	if (!file_exists($routeEnv . '.env')) {
-		$enviroment = "DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
-		file_put_contents($routeEnv . '.env', $enviroment);
+		$environment = "DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
+		file_put_contents($routeEnv . '.env', $environment);
 
 		if (!unlink(__DIR__ . './dataconnmysql.php')) {
-			echo ("Error deleting");
+			// echo ("Error deleting");
 		} else {
-			echo ("Deleted");
+			// echo ("Deleted");
 		}
 	}
 }
@@ -42,6 +42,6 @@ try {
 	$msj = trim($e->getMessage());
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionPDO.log';
 	fileLog($msj, $pathLog); // escribir en el log de errores
-	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirecciona a login
+	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirection a login
 	exit;
 }

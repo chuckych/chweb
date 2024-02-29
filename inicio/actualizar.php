@@ -1,16 +1,16 @@
 <?php
-session_start();
+require __DIR__ . '../../config/session_start.php';
 require __DIR__ . '../../config/index.php';
 secure_auth_ch();
 
 if (modulo_cuentas()) {
-	
+
 	//InsertRegistroMySql("ALTER TABLE `modulos` CHANGE COLUMN `id` `id` INT(11) NOT NULL FIRST;");
 	//InsertRegistroMySql("ALTER TABLE `modulos` CHANGE COLUMN `nombre` `nombre` VARCHAR(20) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci' AFTER `recid`");
 	//InsertRegistroMySql("ALTER TABLE `clientes` CHANGE COLUMN `host` `host` VARCHAR(100) NOT NULL COLLATE 'latin1_swedish_ci' AFTER `nombre`");
-	
+
 	InsertRegistroMySql(
-	"REPLACE INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES
+		"REPLACE INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES
 	(1, 'EJCrN002', 'Cuentas', 80, '0', 5),
 	(2, 'Q4vOuQNR', 'Novedades', 33, '0', 1),
 	(3, '5illJcuG', 'Fichadas', 29, '0', 1),
@@ -39,9 +39,10 @@ if (modulo_cuentas()) {
 	(26, 'u5u4r10s', 'Usuarios Mobile', 20, '0', 4),
 	(27, 'm3n5s4j3', 'Mensajes Mobile', 30, '1', 4),
 	(28, 'H0raC057', 'Horas Costeadas', 32,'0', 1)
-	");
+	"
+	);
 	InsertRegistroMySql(
-"CREATE TABLE IF NOT EXISTS `abm_roles` (
+		"CREATE TABLE IF NOT EXISTS `abm_roles` (
 	`id` int(11) NOT NULL AUTO_INCREMENT,
 	`id_rol` int(11) NOT NULL,
 	`recid_rol` char(8) NOT NULL,
@@ -65,5 +66,6 @@ if (modulo_cuentas()) {
 	PRIMARY KEY (`id`),
 	KEY `id_rol` (`id_rol`),
 	KEY `recid_rol` (`recid_rol`)
-  ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4");
+  ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4"
+	);
 }

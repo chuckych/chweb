@@ -486,7 +486,7 @@ class Horas
     }
     private function joinPersonalEstruct($paramPers)
     {
-        return ($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
+        return($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
     }
     private function joinFichas1Estruct()
     {
@@ -785,12 +785,13 @@ class Horas
             $stmt1->execute(); // Ejecuto la consulta
             $horas = $stmt1->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
 
-            $sql = "SELECT COUNT(FicHora) as 'Total' FROM FICHAS1";
-            $sql .= " INNER JOIN FICHAS ON FICHAS1.FicLega = FICHAS.FicLega AND FICHAS1.FicFech = FICHAS.FicFech AND FICHAS1.FicTurn = FICHAS.FicTurn";
+            $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) AS 'Total' FROM FICHAS";
+            $sql .= " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicHora > 0";
             $sql .= " AND FICHAS1.FicFech BETWEEN '$FechIni' AND '$FechFin'";
             $sql .= $whereConditions;
+            // print_r($sql) . exit;
             $stmt2 = $conn->prepare($sql);
 
             ($datos['LegApNo']) ? $stmt2->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
@@ -820,6 +821,14 @@ class Horas
                         if (intval($valor) == 0) {
                             continue;
                         }
+
+                        $promedioEnMinutos = (intval($elemento['Horas_' . $numero])) / intval($valor);
+                        $promedioEnMinutos2 = (intval($elemento['Horas2_' . $numero])) / intval($valor);
+                        $promedioEnHoras = $this->minutosAHoras($promedioEnMinutos);
+                        $promedioEnHoras2 = $this->minutosAHoras($promedioEnMinutos2);
+                        $horasEnDecimal = $this->minutosAHorasDecimal(intval($elemento['Horas_' . $numero]));
+                        $horasEnDecimal2 = $this->minutosAHorasDecimal(intval($elemento['Horas2_' . $numero]));
+
                         $nuevo_elemento['Totales'][] = array(
                             'HoraCodi' => intval($numero),
                             'THoDesc' => $FiltroHoras[0]['THoDesc'],
@@ -828,7 +837,13 @@ class Horas
                             'EnHoras' => $this->minutosAHoras(intval($elemento['Horas_' . $numero])),
                             'EnHoras2' => $this->minutosAHoras(intval($elemento['Horas2_' . $numero])),
                             'EnMinutos' => (intval($elemento['Horas_' . $numero])),
-                            'EnMinutos2' => (intval($elemento['Horas2_' . $numero]))
+                            'EnMinutos2' => (intval($elemento['Horas2_' . $numero])),
+                            'PromedioEnMinutosPromedio' => $promedioEnMinutos,
+                            'PromedioEnMinutos2' => $promedioEnMinutos2,
+                            'HorasPromedio' => $promedioEnHoras,
+                            'EnHorasPromedio2' => $promedioEnHoras2,
+                            'EnHorasDecimal' => $horasEnDecimal,
+                            'EnHorasDecimal2' => $horasEnDecimal2,
                         );
                     }
                 }
@@ -885,7 +900,7 @@ class Horas
                 'tiposHoras' => $hor,
             ];
 
-            $this->resp->respuesta($array, count($horas), 'OK', 200, $inicio, $total['Total'], 0);
+            $this->resp->respuesta($array, count($nuevo_array), 'OK', 200, $inicio, $total['Total'], 0);
 
         } catch (\PDOException $e) {
             $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
@@ -916,5 +931,12 @@ class Horas
         $horas = floor($minutos / 60);
         $minutos = $minutos % 60;
         return sprintf("%02d:%02d", $horas, $minutos);
+    }
+    private function minutosAHorasDecimal($minutos)
+    {
+        $horas = floor($minutos / 60);
+        $minutosRestantes = $minutos % 60;
+        $minutosDecimal = $minutosRestantes / 60.0;
+        return $horas + $minutosDecimal;
     }
 }

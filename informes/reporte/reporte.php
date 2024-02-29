@@ -20,8 +20,7 @@
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white pt-3">
-            <div class="col-12 col-sm-6">
-                <!-- <div class="border p-1 radius bg-light"> -->
+            <div class="col-12 col-sm-6 mb-sm-0 mb-3">
                 <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
                     <label
                         class="btn btn-sm fontq btn-outline-custom border-0 w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
@@ -34,7 +33,6 @@
                         <input type="radio" name="VPor" id="VHoras" value="horas"> Horas
                     </label>
                 </div>
-                <!-- </div> -->
             </div>
             <div class="col-12 col-sm-6">
                 <div class="input-group w-100 d-inline-flex justify-content-end">
@@ -58,8 +56,12 @@
             </div>
         </div>
         <?php require 'filtros.html'; ?>
-        <section class="border mt-2 p-2 radius">
-            <table id="tabla" class="table w-100">
+        <section>
+            <table id="tabla" class="table w-100 text-nowrap">
+            </table>
+        </section>
+        <section class="mt-2">
+            <table id="tabla_novedades" class="table w-100 text-nowrap">
             </table>
         </section>
     </div>

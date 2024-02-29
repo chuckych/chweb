@@ -1,16 +1,21 @@
 <?php
+// obtener el dominio con $Server
+$Server = $_SERVER['SERVER_NAME'];
 
 // Configuración de la cookie
 $path = '/';
-$domain = 'localhost'; // Reemplaza 'tudominio.com' con tu dominio real
+$domain = $Server;
 $secure = true; // Establece a true si solo deseas que se envíe sobre HTTPS
 $sameSite = 'None'; // Puedes configurar a 'Strict', 'Lax', o 'None'
 
-session_set_cookie_params([
-	'samesite' => 'None',
-	'secure' => true, // Asegúrate de usar solo HTTPS para este valor
-	'httponly' => true // Esto evita que la cookie sea accesible a través de JavaScript
-]);
+// si la session no esta iniciada
+if (session_status() == PHP_SESSION_NONE) {
+	session_set_cookie_params([
+		'samesite' => 'None',
+		'secure' => true, // Asegúrate de usar solo HTTPS para este valor
+		'httponly' => true // Esto evita que la cookie sea accesible a través de JavaScript
+	]);
+}
 
 $_POST["guarda"] = $_POST["guarda"] ?? '';
 
@@ -26,7 +31,7 @@ if ($_POST["guarda"] == "on") {
 		'samesite' => $sameSite // Establece el valor de SameSite
 	]);
 	// setcookie("clave", $_POST["clave"], time() + 3600 * 24 * 30);
-	setcookie('clave', strtolower($_POST["clave"]), [
+	setcookie('clave', $_POST["clave"], [
 		'expires' => time() + 3600 * 24 * 30, // expira en 30 días
 		'path' => $path, // disponible en todo el dominio
 		'domain' => $domain,
@@ -37,7 +42,7 @@ if ($_POST["guarda"] == "on") {
 }
 
 /** Consultamos el si el usuario y clave son correctos */
-require __DIR__ . '../../config/conect_mysql.php';
+// require __DIR__ . '../../config/conect_mysql.php';
 
 $userLogin = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
 $passLogin = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags($_POST['clave']);
@@ -45,19 +50,19 @@ $userLogin = test_input($userLogin);
 $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);
 
-require_once __DIR__ . '../../config/conect_pdo.php'; //Conexion a la base de datos
+require_once __DIR__ . '../../config/conect_pdo.php'; //Conexión a la base de datos
 try {
 	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
-	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parametro :user con el valor de $userLogin
+	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parámetro :user con el valor de $userLogin
 	$stmt->execute(); // ejecuta la consulta
 	$row = $stmt->fetch(PDO::FETCH_ASSOC); // obtiene el resultado de la consulta
-	$connpdo = null; // cierra la conexion con la base de datos
+	$connpdo = null; // cierra la conexión con la base de datos
 
 } catch (\Throwable $th) { // si hay error en la consulta
 	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log de errores
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
-	exit; // termina la ejecucion
+	exit; // termina la ejecución
 }
 /** Si es correcto */
 if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
@@ -84,7 +89,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 
 	if (!count_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1")) { // Si no existe el registro
 		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (0, 'Ver DB', 20210101, 0)");
-		fileLog("Se inserto el parametro: \"Ver DB\"", $pathLog); // escribir en el log
+		fileLog("Se inserto el parámetro: \"Ver DB\"", $pathLog); // escribir en el log
 	}
 
 	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
@@ -106,11 +111,11 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$dataLista = implode(',', $dataLista);
 		$_SESSION[$nombreSesion] = $dataLista;
 	}
-	sesionListas($row['id_rol'], 1, 'ListaNov'); // Sesion lista de novedades
-	sesionListas($row['id_rol'], 2, 'ListaONov'); // Sesion lista de otras Novedades
-	sesionListas($row['id_rol'], 3, 'ListaHorarios'); // Sesion lista de horarios
-	sesionListas($row['id_rol'], 4, 'ListaRotaciones'); // Sesion lista de rotaciones
-	sesionListas($row['id_rol'], 5, 'ListaTipoHora'); // Sesion lista de tipos de horas
+	sesionListas($row['id_rol'], 1, 'ListaNov'); // Sesión lista de novedades
+	sesionListas($row['id_rol'], 2, 'ListaONov'); // Sesión lista de otras Novedades
+	sesionListas($row['id_rol'], 3, 'ListaHorarios'); // Sesión lista de horarios
+	sesionListas($row['id_rol'], 4, 'ListaRotaciones'); // Sesión lista de rotaciones
+	sesionListas($row['id_rol'], 5, 'ListaTipoHora'); // Sesión lista de tipos de horas
 
 	// $abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
 	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
@@ -133,7 +138,6 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	} else {
 		$_SESSION["MODS_ROL_PROY"] = 'error'; // Guardo en la session los módulos asociados al rol
 	}
-
 
 	function estructura_recid_rol($recid_rol, $e, $data)
 	{
@@ -174,7 +178,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 				break;
 			default:
 				$concat = '';
-				// $respuesta = array('success' => 'NO', 'error' => '1', 'mensaje' => 'No se especifico parametro de estructura');
+				// $respuesta = array('success' => 'NO', 'error' => '1', 'mensaje' => 'No se especifico parámetro de estructura');
 				// $datos = array($respuesta);
 				// echo json_encode($datos);
 				// exit;
@@ -184,7 +188,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
 		$query = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
 		$result = mysqli_query($link, $query);
-		// print_r($query);exit;
+		// print_r($query);
+		// exit;
 
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
@@ -210,7 +215,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	}
 
 	$_SESSION['EstrUser'] = estructUsuario(intval($row['id']), 8);
-	if ($row["recid_cliente"] == 'kxo7w2q-'): // solo para la cuenta de SKF 'kxo7w2q-'
+	if ($row["recid_cliente"] == 'kxo7w2q-') { // solo para la cuenta de SKF 'kxo7w2q-'
 		$checkEstruct = count_pdoQuery("select 1 from lista_estruct where uid = '$row[id]'");
 		if ($checkEstruct > 0) { // Si ya existe una estructura para el usuario en la tabla lista_estruct Cargamos las sesiones de estructura por usuarios
 			$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
@@ -229,7 +234,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 			$_SESSION['GrupRol'] = (estructura_recid_rol($row['recid_rol'], 'grupos', 'grupo'));
 			$_SESSION['SucuRol'] = (estructura_recid_rol($row['recid_rol'], 'sucursales', 'sucursal'));
 		}
-	else:
+	} else {
 		$_SESSION['EmprRol'] = estructUsuario(intval($row['id']), 1);
 		$_SESSION['PlanRol'] = estructUsuario(intval($row['id']), 2);
 		$_SESSION['ConvRol'] = estructUsuario(intval($row['id']), 3);
@@ -237,7 +242,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$_SESSION['Sec2Rol'] = estructUsuario(intval($row['id']), 5);
 		$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
 		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
-	endif;
+	}
 	// fileLog($_SESSION['Sec2Rol'], 'Sec2Rol');
 
 	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
@@ -284,6 +289,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		// 	header('Location:/' . HOMEHOST . '/dashboard/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '6'")) {
 		header('Location:/' . HOMEHOST . '/mishoras/');
+		exit;
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '5'")) {
 		header('Location:/' . HOMEHOST . '/mobile/');
 	} else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '32'")) {
@@ -295,7 +301,6 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	}
 	access_log('Login correcto');
 } else {
-	/** Si es incorrecto */
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');
 	access_log('Login incorrecto');

@@ -1,39 +1,6 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_reporte_totales_filtros';
 
-ls.remove(LS_FILTROS);
-
-let jsonData = {
-    "Estruct": "",
-    "Desc": "",
-    "Sector": select2Data("#select_sector"),
-    "Baja": [],
-    "Nume": [],
-    "ApNo": "",
-    "ApNoNume": "",
-    "Docu": [],
-    "Empr": select2Data("#select_empresa"),
-    "Plan": select2Data("#select_planta"),
-    "Conv": [],
-    "Sect": select2Data("#select_sector"),
-    "Sec2": select2Data("#select_seccion"),
-    "Grup": select2Data("#select_grupo"),
-    "Sucu": select2Data("#select_sucursal"),
-    "TareProd": [],
-    "RegCH": [],
-    "Tipo": [],
-    "THora": [],
-    "Esta": [],
-    "Nove": [],
-    "FechaIni": getValuesDate().startDate,
-    "FechaFin": getValuesDate().endDate,
-    "FechIni": getValuesDate().startDate,
-    "FechFin": getValuesDate().endDate,
-    "start": 0,
-    "length": 1000
-}
-
-
 const dateRange = async () => {
     let rs = await axios.get('../../app-data/fechas/fichas'); // retorna objeto con la primer fecha y la ultima de FICHAS ej: {data: {min: "2021-01-01", max: "2021-12-31"}}
     if (!rs.data) return; // si no hay respuesta, no hace nada
@@ -46,8 +13,6 @@ const dateRange = async () => {
     let maxDate2 = (new Date(rs.data.max) > new Date()) ? new Date() : new Date(rs.data.max); // si la fecha maxima es mayor a la fecha actual, la fecha maxima es la fecha actual
     let minDate2 = new Date(maxDate2); // la fecha minima es la fecha maxima
     minDate2.setDate(minDate2.getDate() - 29); // le resta 29 Dias a la fecha maxima
-
-    const now = () => new Date(); // fecha actual
 
     $('#_dr').daterangepicker({
         singleDatePicker: false,
@@ -69,14 +34,14 @@ const dateRange = async () => {
         applyButtonClasses: "btn-custom fw4 px-3 opa8",
         cancelClass: "btn-link fw4 text-gris",
         ranges: {
-            'Hoy': [now(), now()],
-            'Ayer': [now(now().setDate(now().getDate() - 1)), now(now().setDate(now().getDate() - 1))],
-            'Esta semana': [now(now().setDate(now().getDate() - now().getDay() + 1)), now()],
-            'Semana Anterior': [now(now().setDate(now().getDate() - now().getDay() - 6)), now(now().setDate(now().getDate() - now().getDay()))],
-            'Últimos 7 días': [now(now().setDate(now().getDate() - 6)), now()],
-            'Este mes': [now(now().getFullYear(), now().getMonth(), 1), now(now().getFullYear(), now().getMonth() + 1, 0)],
-            'Mes anterior': [now(now().getFullYear(), now().getMonth() - 1, 1), now(now().getFullYear(), now().getMonth(), 0)],
-            'Últimos 30 días': [now(now().setDate(now().getDate() - 29)), now()],
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Esta semana': [moment().day(1), moment().day(7)],
+            'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
+            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+            'Este mes': [moment().startOf('month'), moment().endOf('month')],
+            'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
         },
         locale: {
             format: "DD/MM/YYYY",
@@ -107,8 +72,30 @@ $('input[name="VPor"]').on('change', function () {
     let verPor = document.querySelector('input[name="VPor"]:checked').value;
     ls.set(LS_FILTROS + 'VPor', (verPor));
 });
+$('input[name="VPorFormato"]').on('change', function () {
+    if ($(this).val() == 'enDecimal') {
+        $('.enHoras').addClass('d-none').removeClass('animate__animated animate__fadeIn');
+        $('.enDecimales').removeClass('d-none').addClass('animate__animated animate__fadeIn');
+    } else {
+        $('.enHoras').removeClass('d-none').addClass('animate__animated animate__fadeIn');
+        $('.enDecimales').addClass('d-none').removeClass('animate__animated animate__fadeIn');
+    }
+});
 
 dateRange().then(() => {
+
+
+    const select2Data = (selector) => {
+        try {
+            if (!$(selector).hasClass("select2-hidden-accessible")) {
+                throw new Error("No es un select2")
+            }
+            const data = $(selector).select2('data') ?? [];
+            return data.length > 0 ? data.map(item => item.id) : [];
+        } catch (error) {
+            return [];
+        }
+    }
 
     const getValuesDate = () => {
         let dateRange = $('#_dr').data('daterangepicker');
@@ -133,17 +120,7 @@ dateRange().then(() => {
         text: item.Desc,
         html: `<div class=""><span>${item.Desc}</span><br><span class="font08">${item.Cod}</span></div>`,
     })) : [];
-    const select2Data = (selector) => {
-        try {
-            if (!$(selector).hasClass("select2-hidden-accessible")) {
-                throw new Error("No es un select2")
-            }
-            const data = $(selector).select2('data') ?? [];
-            return data.length > 0 ? data.map(item => item.id) : [];
-        } catch (error) {
-            return [];
-        }
-    }
+
 
     let jsonData = {
         "Estruct": "",
@@ -169,9 +146,12 @@ dateRange().then(() => {
         "Nove": [],
         "FechaIni": getValuesDate().startDate,
         "FechaFin": getValuesDate().endDate,
+        "FechIni": getValuesDate().startDate,
+        "FechFin": getValuesDate().endDate,
         "start": 0,
         "length": 1000
     }
+    ls.set(LS_FILTROS, jsonData);
 
     const ajaxSelect2 = (selector, placeholder, estruct) => {
         $(selector).select2({
@@ -228,8 +208,8 @@ dateRange().then(() => {
             }
             jsonData[estruct] = select2Data(selector);
             ls.set(LS_FILTROS, jsonData);
-            loaderIn('#tabla', true);
-            $('#tabla').DataTable().ajax.reload();
+            getHoras();
+            getNovedades();
         }).on('select2:unselect', function () {
             if (estruct == 'Sect') {
                 jsonData['Sector'] = select2Data("#select_sector");
@@ -238,8 +218,8 @@ dateRange().then(() => {
             }
             jsonData[estruct] = select2Data(selector);
             ls.set(LS_FILTROS, jsonData);
-            loaderIn('#tabla', true);
-            $('#tabla').DataTable().ajax.reload();
+            getHoras();
+            getNovedades();
         }).on('select2:close', function () {
 
         });
@@ -256,7 +236,7 @@ dateRange().then(() => {
     ajaxSelect2("#select_seccion", "Secciones", "Sec2");
     ajaxSelect2("#select_tipo", "Tipo de Personal", "Tipo");
     ajaxSelect2("#select_thora", "Tipos de Horas", "THora");
-    ajaxSelect2("#select_nove", "Tipos de Horas", "Nove");
+    ajaxSelect2("#select_nove", "Novedades", "Nove");
     // });
 
     let trash_allInputs = () => {
@@ -297,50 +277,63 @@ dateRange().then(() => {
 
     // console.log((jsonData));
     $('#_dr').on('apply.daterangepicker', function (ev, picker) {
-        // reconstruir jsonData
+        jsonData.FechIni = picker.startDate.format('YYYY-MM-DD');
         jsonData.FechaIni = picker.startDate.format('YYYY-MM-DD');
+        jsonData.FechFin = picker.endDate.format('YYYY-MM-DD');
         jsonData.FechaFin = picker.endDate.format('YYYY-MM-DD');
-
-        getHoras(ls.get(LS_FILTROS));
+        ls.set(LS_FILTROS, jsonData);
+        getHoras();
+        getNovedades();
     });
-    getHoras(jsonData);
+
+    getHoras();
+    getNovedades();
 });
 
 
-const getHoras = (jsonData) => {
+const getHoras = async () => {
 
-
-    jsonData.FechIni = jsonData.FechaIni;
-    jsonData.FechFin = jsonData.FechaFin;
-    jsonData.DTHoras = true;
-
-    delete jsonData.start;
-    delete jsonData.length;
-    // delete jsonData.FechaIni;
-    // delete jsonData.FechaFin;
-
-    console.log(jsonData);
+    // Función para obtener los datos actualizados
+    const getTableData = () => {
+        let jsonData = ls.get(LS_FILTROS);
+        return jsonData;
+    };
 
     if ($.fn.DataTable.isDataTable('#tabla')) {
-        $('#tabla').DataTable().ajax.reload();
+        loaderIn('#tabla', true);
+        $('#tabla').DataTable().ajax.reload(); // Recargar la tabla con los datos actuales
         return false;
     }
 
-    $('#tabla').DataTable({
-        lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+    let tabla = $('#tabla').DataTable({
+        lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
         bProcessing: true,
-        serverSide: true,
+        serverSide: false,
         deferRender: true,
         searchDelay: 1500,
         dom: "<'row'" +
-            "<'col-12 col-sm-6 d-flex align-items-start'l><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'col-12 col-sm-6 d-flex align-items-center'l<'ml-2 font09 title'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
             "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
             "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
         ajax: {
             url: "../../app-data/horas/totales",
             type: "POST",
             "data": function (data) {
-                Object.assign(data, jsonData);
+                data.Empr = getTableData().Empr;
+                data.Plan = getTableData().Plan;
+                data.Sect = getTableData().Sect;
+                data.Sec2 = getTableData().Sec2;
+                data.Grup = getTableData().Grup;
+                data.Sucu = getTableData().Sucu;
+                data.LegTipo = getTableData().Tipo;
+                data.Hora = getTableData().THora;
+                data.Nove = getTableData().Nove;
+                data.FechIni = getTableData().FechIni;
+                data.FechFin = getTableData().FechFin;
+                data.Lega = getTableData().Lega;
+                data.start = 0;
+                data.length = 1000000;
+                data.DTHoras = true;
             },
             error: function () {
                 $("#tabla_processing").css("display", "none");
@@ -348,20 +341,85 @@ const getHoras = (jsonData) => {
         },
         columns: [
             {
-                data: 'Lega', className: '', targets: '', title: 'Legajo',
+                data: 'Lega', className: '', targets: '', title: 'LEGAJO',
                 "render": function (data, type, row, meta) {
                     return data;
                 },
             },
             {
-                data: 'LegApNo', className: '', targets: '', title: 'Nombre',
+                data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
                 "render": function (data, type, row, meta) {
-                    return data;
+                    return `<div class="text-truncate" style="min-width:250px; max-width:250px">${data}</div>`;
+                },
+            },
+            {
+                data: '', className: 'text-center', targets: '', title: 'COD',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div>${element.HoraCodi}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: '', targets: '', title: 'TIPO DE HORA',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div class="text-truncate" style="min-width:140px; max-width:140px">${element.THoDesc}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right', targets: '', title: 'CANT',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div>${element.Cantidad}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        let EnHorasDecimal = (element.EnHorasDecimal);
+                        EnHorasDecimal = Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100;
+                        html += `<div class="enDecimales">${(EnHorasDecimal)}</div>`
+                        html += `<div class="enHoras">${element.EnHoras}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right bg-light minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Autorizadas" > AUTOR.</div>',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        let EnHorasDecimal2 = (element.EnHorasDecimal2);
+                        EnHorasDecimal2 = Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100;
+                        html += `<div class="enDecimales">${(EnHorasDecimal2)}</div>`
+                        html += `<div class="enHoras">${element.EnHoras2}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'w-100', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    return '';
                 },
             },
         ],
-        scrollX: true,
-        scrollCollapse: true,
         paging: true,
         info: true,
         searching: false,
@@ -369,17 +427,193 @@ const getHoras = (jsonData) => {
         language: {
             "url": "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
+        // Eventos de la tabla
+        initComplete: function () {
+            $('.title').html('<span>Totales Horas</span>');
+            $(".custom-select").select2({
+                minimumResultsForSearch: Infinity,
+            });
+            loaderIn('#table', false);
+        },
+        preDrawCallback: function () {
+            loaderIn('#table', true);
+        },
+        // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
+        drawCallback: function () {
+            let formato = $('input[name="VPorFormato"]:checked').val();
+            if (formato == 'enDecimal') {
+                $('.enHoras').addClass('d-none');
+                $('.enDecimales').removeClass('d-none');
+            } else {
+                $('.enHoras').removeClass('d-none');
+                $('.enDecimales').addClass('d-none');
+            }
+            setTimeout(() => {
+                loaderIn('#table', false);
+            }, 100);
+        }
     });
-    $('#tabla').on('init.dt', function (settings, json) {
-    });
-    $('#tabla').on('draw.dt', function (settings, json) {
-        $(".dataTables_info").addClass('text-secondary');
-        $(".custom-select").addClass('text-secondary bg-light');
-        $.notifyClose();
-        loaderIn('#tabla', false);
-    });
-    $('#tabla').on('page.dt', function () {
-        CheckSesion()
-        loaderIn('#tabla', true);
+}
+const getNovedades = async () => {
+
+    // Función para obtener los datos actualizados
+    const getTableData = () => {
+        let jsonData = ls.get(LS_FILTROS);
+        return jsonData;
+    };
+
+    if ($.fn.DataTable.isDataTable('#tabla_novedades')) {
+        loaderIn('#tabla_novedades', true);
+        $('#tabla_novedades').DataTable().ajax.reload(); // Recargar la tabla con los datos actuales
+        return false;
+    }
+
+    let tabla = $('#tabla_novedades').DataTable({
+        lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+        bProcessing: true,
+        serverSide: false,
+        deferRender: true,
+        searchDelay: 1500,
+        dom: "<'row'" +
+            "<'col-12 col-sm-6 d-flex align-items-center'l<'ml-2 font09 title-nove'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
+            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12 d-flex bg-transparent align-items-center justify-content-between'<i><p>>>",
+        ajax: {
+            url: "../../app-data/novedades/totales",
+            type: "POST",
+            "data": function (data) {
+                data.Empr = getTableData().Empr;
+                data.Plan = getTableData().Plan;
+                data.Sect = getTableData().Sect;
+                data.Sec2 = getTableData().Sec2;
+                data.Grup = getTableData().Grup;
+                data.Sucu = getTableData().Sucu;
+                data.LegTipo = getTableData().Tipo;
+                data.Hora = getTableData().THora;
+                data.Nove = getTableData().Nove;
+                data.FechIni = getTableData().FechIni;
+                data.FechFin = getTableData().FechFin;
+                data.Lega = getTableData().Lega;
+                data.start = 0;
+                data.length = 1000000;
+                data.DTNovedades = true;
+            },
+            error: function () {
+                $("#tabla_novedades_processing").css("display", "none");
+            },
+        },
+        columns: [
+            {
+                data: 'Lega', className: '', targets: '', title: 'LEGAJO',
+                "render": function (data, type, row, meta) {
+                    return data;
+                },
+            },
+            {
+                data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
+                "render": function (data, type, row, meta) {
+                    return `<div class="text-truncate" style="min-width:250px; max-width:250px">${data}</div>`;
+                },
+            },
+            {
+                data: '', className: 'text-center', targets: '', title: 'COD',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div>${element.NovCodi}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: '', targets: '', title: 'NOVEDAD',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div class="text-truncate" style="min-width:220px; max-width:220px">${element.NovDesc}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right', targets: '', title: 'CANT',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        html += `<div>${element.Cantidad}</div>`
+                    });
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right minmax50 bg-light', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas de la novedad">HORAS</div>',
+                "render": function (data, type, row, meta) {
+                    let array = row.Totales
+                    let html = '';
+                    array.forEach(element => {
+                        let EnHorasDecimal = (element.EnHorasDecimal);
+                        EnHorasDecimal = Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100;
+                        html += `<div class="enDecimales">${(EnHorasDecimal)}</div>`
+                        html += `<div class="enHoras">${element.EnHoras}</div>`
+                    });
+                    return html;
+                },
+            },
+            // {
+            //     data: '', className: 'text-right bg-light minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Autorizadas" > AUTOR.</div>',
+            //     "render": function (data, type, row, meta) {
+            //         let array = row.Totales
+            //         let html = '';
+            //         array.forEach(element => {
+            //             let EnHorasDecimal2 = (element.EnHorasDecimal2);
+            //             EnHorasDecimal2 = Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100;
+            //             html += `<div class="enDecimales">${(EnHorasDecimal2)}</div>`
+            //             html += `<div class="enHoras">${element.EnHoras2}</div>`
+            //         });
+            //         return html;
+            //     },
+            // },
+            {
+                data: '', className: 'w-100', targets: '', title: '',
+                "render": function (data, type, row, meta) {
+                    return '';
+                },
+            },
+        ],
+        paging: true,
+        info: true,
+        searching: false,
+        ordering: false,
+        language: {
+            "url": "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
+        },
+        // Eventos de la tabla
+        initComplete: function () {
+            $('.title-nove').html('<span>Totales Novedades</span>');
+            $(".custom-select").select2({
+                minimumResultsForSearch: Infinity,
+            });
+            loaderIn('#tabla_novedades', false);
+        },
+        preDrawCallback: function () {
+            loaderIn('#tabla_novedades', true);
+        },
+        // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
+        drawCallback: function () {
+            let formato = $('input[name="VPorFormato"]:checked').val();
+            if (formato == 'enDecimal') {
+                $('.enHoras').addClass('d-none');
+                $('.enDecimales').removeClass('d-none');
+            } else {
+                $('.enHoras').removeClass('d-none');
+                $('.enDecimales').addClass('d-none');
+            }
+            setTimeout(() => {
+                loaderIn('#tabla_novedades', false);
+            }, 100);
+        }
     });
 }

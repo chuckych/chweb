@@ -783,7 +783,7 @@ class Novedades
     }
     private function joinPersonalEstruct($paramPers)
     {
-        return ($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
+        return($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
     }
     private function joinFichas3Estruct()
     {
@@ -1198,8 +1198,8 @@ class Novedades
             $stmt1->execute(); // Ejecuto la consulta
             $novedades = $stmt1->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
 
-            $sql = "SELECT COUNT(FicNove) as 'Total' FROM FICHAS3";
-            $sql .= " INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICHAS.FicFech AND FICHAS3.FicTurn = FICHAS.FicTurn";
+            $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) as 'Total' FROM FICHAS";
+            $sql .= " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicNove > 0";
             $sql .= " AND FICHAS3.FicFech BETWEEN '$FechIni' AND '$FechFin'";
@@ -1232,12 +1232,16 @@ class Novedades
                         if (intval($valor) == 0) {
                             continue;
                         }
+
+                        $horasEnDecimal = $this->minutosAHorasDecimal(intval($elemento['Horas_' . $numero]));
+
                         $nuevo_elemento['Totales'][] = array(
                             'NovCodi' => intval($numero),
                             'NovDesc' => $FiltroNovedades[0]['NovDesc'],
                             'Cantidad' => intval($valor),
                             'EnHoras' => $this->minutosAHoras(intval($elemento['Horas_' . $numero])),
-                            'EnMinutos' => intval($elemento['Horas_' . $numero])
+                            'EnMinutos' => intval($elemento['Horas_' . $numero]),
+                            'EnHorasDecimal' => $horasEnDecimal,
                         );
                         // sumar minutos y crear array con los minutos de cada novedad
                     }
@@ -1284,17 +1288,16 @@ class Novedades
         $minutos = $minutos % 60;
         return sprintf("%02d:%02d", $horas, $minutos);
     }
-    private function minutosAHorasDecimal($minutos)
-    {
-        // Dividir los minutos por 60 para obtener la cantidad de horas
-        $horas = $minutos / 60;
-        // Redondear hacia abajo el valor a dos decimales
-        $horasRedondeadas = floor($horas * 100) / 100;
-        return $horasRedondeadas;
-    }
     private function round_down($number, $precision = 2)
     {
         $fig = (int) str_pad('1', $precision, '0');
-        return (floor($number * $fig) / $fig);
+        return(floor($number * $fig) / $fig);
+    }
+    private function minutosAHorasDecimal($minutos)
+    {
+        $horas = floor($minutos / 60);
+        $minutosRestantes = $minutos % 60;
+        $minutosDecimal = $minutosRestantes / 60.0;
+        return $horas + $minutosDecimal;
     }
 }

@@ -210,11 +210,11 @@ function getHorasTotales($payload)
     if (empty($arrayData['DATA'])) {
         return [];
     }
-    return ($arrayData['DATA']);
+    return($arrayData['DATA']);
 }
-function getHorasTotalesDT($payload)
+function getNovedadesTotales($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     // print_r($payload) . exit;
@@ -222,14 +222,42 @@ function getHorasTotalesDT($payload)
     if (empty($arrayData['DATA'])) {
         return [];
     }
+    return($arrayData['DATA']);
+}
+function getHorasTotalesDT($payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    // print_r($payload) . exit;
+    $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    $arrayData['DATA'] = $arrayData['DATA'] ?? [];
+    // if (empty($arrayData['DATA'])) {
+    //     return [];
+    // }
     $dt_data = array(
-        "recordsTotal" => intval($arrayData['TOTAL']),
-        "recordsFiltered" => intval($arrayData['COUNT']),
-        "data" => $arrayData['DATA']['data'] ?? array(),
-        "totales" => $arrayData['DATA']['totales'] ?? array(),
-        "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? array(),
+        "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
+        "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
+        "data" => $arrayData['DATA']['data'] ?? [],
+        "totales" => $arrayData['DATA']['totales'] ?? [],
+        "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? [],
     );
-    return ($dt_data);
+    return($dt_data);
+}
+function getNovedadesTotalesDT($payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
+    // print_r($payload) . exit;
+    $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    $arrayData['DATA'] = $arrayData['DATA'] ?? [];
+
+    $dt_data = array(
+        "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
+        "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
+        "data" => $arrayData['DATA']['data'] ?? [],
+        "novedades" => $arrayData['DATA']['novedades'] ?? [],
+    );
+    return($dt_data);
 }
 /**
  * Obtiene el cierre de ficha para un legajo y fecha específicos.
@@ -269,7 +297,7 @@ function getNovedad($novedad)
     $data = ch_api($endpoint, '', $method, $queryParams);
 
     $arrayData = json_decode($data, true);
-    return ($arrayData['DATA']) ?? array();
+    return($arrayData['DATA']) ?? array();
 }
 function novedadesRol()
 {
@@ -286,12 +314,12 @@ function novedadesRol()
  */
 function mergeArray($arr1, $arr2)
 {
-    return ($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
+    return($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
 }
 Flight::route('/novedades-all', function () {
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
-    $queryParams = array(
+    $queryParams = array (
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov",
@@ -300,30 +328,30 @@ Flight::route('/novedades-all', function () {
 
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las novedades
     $arrayData = json_decode($data, true);
-    $novedades = $arrayData['DATA'] ?? array();
+    $novedades = $arrayData['DATA'] ?? array ();
 
-    $queryParams = array(
+    $queryParams = array (
         "start" => 0,
         "length" => 5000,
         "Estruct" => "NovC",
     );
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
     $arrayData = json_decode($data, true);
-    $causas = $arrayData['DATA'] ?? array();
+    $causas = $arrayData['DATA'] ?? array ();
 
     $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
         $key = $item['TipoDesc'];
-        if (!isset($result[$key])) {
+        if (!isset ($result[$key])) {
             $result[$key] = [];
         }
         $result[$key][] = $item;
         return $result;
     }, []);
 
-    $arr = array(
-        "novedades" => $novedades ?? array(),
-        "causas" => $causas ?? array(),
-        "agrupadas" => $noveAgrupaPorTipo ?? array()
+    $arr = array (
+        "novedades" => $novedades ?? array (),
+        "causas" => $causas ?? array (),
+        "agrupadas" => $noveAgrupaPorTipo ?? array ()
     );
 
     Flight::json($arr);
@@ -331,7 +359,7 @@ Flight::route('/novedades-all', function () {
 Flight::route('/novedades-agrupa', function () {
     // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
-    $queryParams = array(
+    $queryParams = array (
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov",
@@ -342,19 +370,19 @@ Flight::route('/novedades-agrupa', function () {
 
     $arrayData = json_decode($data, true);
 
-    $novedades = $arrayData['DATA'] ?? array();
+    $novedades = $arrayData['DATA'] ?? array ();
 
     $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
         $key = $item['TipoDesc'];
-        if (!isset($result[$key])) {
+        if (!isset ($result[$key])) {
             $result[$key] = [];
         }
         $result[$key][] = $item;
         return $result;
     }, []);
 
-    $json = array(
-        "novedades" => ($noveAgrupaPorTipo) ?? array(),
+    $json = array (
+        "novedades" => ($noveAgrupaPorTipo) ?? array (),
     );
     Flight::json($json);
 });
@@ -362,7 +390,7 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
     // sleep('2');
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
-    $queryParams = array(
+    $queryParams = array (
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov"
@@ -382,24 +410,24 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
         });
     }
 
-    $json = array(
-        "novedades" => array_values($novedades) ?? array(),
-        "causas" => (intval($NoveCodi) > 0) ? getNoveCausas($NoveCodi) ?? array() : array(),
+    $json = array (
+        "novedades" => array_values($novedades) ?? array (),
+        "causas" => (intval($NoveCodi) > 0) ? getNoveCausas($NoveCodi) ?? array () : array (),
         "NoveCodi" => $NoveCodi ?? '',
         "NoveTipo" => $NoveTipo ?? ''
     );
     Flight::json($json);
 });
 Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
-    $json = array(
-        "causas" => (getNoveCausas($NoveCodi)) ?? array(),
+    $json = array (
+        "causas" => (getNoveCausas($NoveCodi)) ?? array (),
     );
     Flight::json($json);
 });
 Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
 
-    $opt = array("getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1");
-    $data = array();
+    $opt = array ("getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1");
+    $data = array ();
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
 
     if ($data) {
@@ -412,7 +440,7 @@ Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
 Flight::route('PUT /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['mNov'] == '0') {
-        Flight::json(array("error" => "No tiene permisos para modificar novedades."));
+        Flight::json(array ("error" => "No tiene permisos para modificar novedades."));
         return;
     }
 
@@ -426,20 +454,20 @@ Flight::route('PUT /novedad', function () {
     $cierre = getCierreFicha($legajo, $fecha);
 
     if ($cierre['Estado'] != 'abierto') {
-        Flight::json(array("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
+        Flight::json(array ("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
         return;
     }
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades";
     $method = 'PUT';
-    $rs = ch_api($endpoint, array($payload), $method, '');
+    $rs = ch_api($endpoint, array ($payload), $method, '');
     $result = json_decode($rs, true);
 
     $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
 
     if ($result['MESSAGE'] == "OK") {
 
-        $noves = array($nove, $noveM);
+        $noves = array ($nove, $noveM);
         $dataNovedad = getNovedad($noves);
 
         $getNovedad = array_filter($dataNovedad, function ($element) use ($nove) {
@@ -461,13 +489,13 @@ Flight::route('PUT /novedad', function () {
 Flight::route('POST /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['aNov'] == '0') {
-        Flight::json(array("error" => "No tiene permisos para ingresar novedades."));
+        Flight::json(array ("error" => "No tiene permisos para ingresar novedades."));
         return;
     }
     $payload = Flight::request()->data;
 
     if (!$payload['Nove']) {
-        Flight::json(array("error" => "La novedad es requerida."));
+        Flight::json(array ("error" => "La novedad es requerida."));
         return;
     }
 
@@ -475,27 +503,27 @@ Flight::route('POST /novedad', function () {
     $legajo = $payload['Lega'];
     $fecha = $payload['Fecha'];
 
-    $opt = array("getNov" => "1", "getFic" => "1");
+    $opt = array ("getNov" => "1", "getFic" => "1");
     $dataFicNov = getFicNovHorSimple($legajo, $fecha, $opt);
-    $data = $dataFicNov[0] ?? array();
-    $dataFic = $dataFicNov[0]['Fich'] ?? array();
+    $data = $dataFicNov[0] ?? array ();
+    $dataFic = $dataFicNov[0]['Fich'] ?? array ();
 
     $getNovedad = getNovedad($payload['Nove']);
 
-    if (empty($data)) {
-        Flight::json(array("error" => "No se puede crear la novedad, no se encontró la ficha."));
+    if (empty ($data)) {
+        Flight::json(array ("error" => "No se puede crear la novedad, no se encontró la ficha."));
         return;
     }
 
-    $dataNovedad = $data['Nove'] ?? array(); // Obtenemos las novedades de la ficha
-    $dataCierra = $data['Cierre'] ?? array(); // Obtenemos el cierre de la ficha
+    $dataNovedad = $data['Nove'] ?? array (); // Obtenemos las novedades de la ficha
+    $dataCierra = $data['Cierre'] ?? array (); // Obtenemos el cierre de la ficha
     $tipoNovedadRecibida = intval($getNovedad[0]['Tipo']); // Obtenemos el tipo de novedad
 
     /** Si la ficha tiene fichadas y el tipo de novedad es del tipo ausencia y la novedad forzada es 0
      * no se puede crear la novedad porque ya existen fichadas para el día.
      */
     if (count($dataFic) > 0 && $tipoNovedadRecibida > 2 && intval($payload['Cate']) === 0) {
-        Flight::json(array("error" => "No se puede crear la novedad del tipo ausencia, existen fichadas para el día."));
+        Flight::json(array ("error" => "No se puede crear la novedad del tipo ausencia, existen fichadas para el día."));
         return;
     }
     /** */
@@ -503,19 +531,19 @@ Flight::route('POST /novedad', function () {
     foreach ($dataNovedad as $key => $value) {
 
         if ($value['Codi'] == $payload['Nove']) {
-            Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad con el mismo código."));
+            Flight::json(array ("error" => "No se puede crear la novedad, ya existe una novedad con el mismo código."));
             return;
         }
 
         if (intval($payload['Cate']) === 0) { // Si la novedad no viene forzada chequeamos que no exista una novedad del mismo tipo
 
             if ((intval($value['NoTi']) > 2) && (intval($tipoNovedadRecibida) > 2)) {
-                Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
+                Flight::json(array ("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
                 return;
             }
 
             if (intval($value['NoTi']) === intval($tipoNovedadRecibida)) {
-                Flight::json(array("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
+                Flight::json(array ("error" => "No se puede crear la novedad, ya existe una novedad del mismo tipo."));
                 return;
             }
 
@@ -524,13 +552,13 @@ Flight::route('POST /novedad', function () {
     }
 
     if ($dataCierra['Estado'] != 'abierto') {
-        Flight::json(array("error" => "No se puede crear la novedad, la ficha se encuentra cerrada."));
+        Flight::json(array ("error" => "No se puede crear la novedad, la ficha se encuentra cerrada."));
         return;
     }
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
 
-    $rs = ch_api($endpoint, array($payload), 'POST', '');
+    $rs = ch_api($endpoint, array ($payload), 'POST', '');
 
     $result = json_decode($rs, true);
 
@@ -546,7 +574,7 @@ Flight::route('POST /novedad', function () {
 Flight::route('DELETE /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['bNov'] == '0') {
-        Flight::json(array("error" => "No tiene permisos para eliminar novedades."));
+        Flight::json(array ("error" => "No tiene permisos para eliminar novedades."));
         return;
     }
 
@@ -558,12 +586,12 @@ Flight::route('DELETE /novedad', function () {
     $cierre = getCierreFicha($legajo, $fecha);
 
     if ($cierre['Estado'] != 'abierto') {
-        Flight::json(array("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
+        Flight::json(array ("error" => "No se puede eliminar la novedad, la ficha se encuentra cerrada."));
         return;
     }
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
-    $rs = ch_api($endpoint, array($payload->data), 'DELETE', '');
+    $rs = ch_api($endpoint, array ($payload->data), 'DELETE', '');
     $result = json_decode($rs, true);
 
     $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
@@ -610,7 +638,7 @@ Flight::route('POST /horas/totales', function () {
     $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
     $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
 
-    $data = array();
+    $data = array ();
 
     if ($payload['DTHoras'] == 'true') {
         $data = getHorasTotalesDT($payload);
@@ -622,27 +650,73 @@ Flight::route('POST /horas/totales', function () {
 
     Flight::json($data);
 });
+Flight::route('POST /novedades/totales', function () {
+
+    $payload = Flight::request()->data->getData();
+    // Flight::json($payload) . exit;
+
+    $payload['DTNovedades'] = $payload['DTNovedades'] ?? false;
+
+    $payload['Empr'] = $payload['Empr'] ?? [];
+    $payload['Plan'] = $payload['Plan'] ?? [];
+    $payload['Conv'] = $payload['Conv'] ?? [];
+    $payload['Sect'] = $payload['Sect'] ?? [];
+    $payload['Sec2'] = $payload['Sec2'] ?? [];
+    $payload['Grup'] = $payload['Grup'] ?? [];
+    $payload['Sucu'] = $payload['Sucu'] ?? [];
+    $payload['Lega'] = $payload['Lega'] ?? [];
+
+    $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
+    $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
+    $convRol = ($_SESSION['ConvRol']) ? explode(',', $_SESSION['ConvRol']) : [];
+    $sectRol = ($_SESSION['SectRol']) ? explode(',', $_SESSION['SectRol']) : [];
+    $sec2Rol = ($_SESSION['Sec2Rol']) ? explode(',', $_SESSION['Sec2Rol']) : [];
+    $grupRol = ($_SESSION['GrupRol']) ? explode(',', $_SESSION['GrupRol']) : [];
+    $sucuRol = ($_SESSION['SucuRol']) ? explode(',', $_SESSION['SucuRol']) : [];
+    $persRol = ($_SESSION['EstrUser']) ? explode(',', $_SESSION['EstrUser']) : [];
+
+    $payload['Plan'] = (!$payload['Plan']) ? mergeArray($payload['Plan'], $planRol) : $payload['Plan'];
+    $payload['Empr'] = (!$payload['Empr']) ? mergeArray($payload['Empr'], $emprRol) : $payload['Empr'];
+    $payload['Conv'] = (!$payload['Conv']) ? mergeArray($payload['Conv'], $convRol) : $payload['Conv'];
+    $payload['Sect'] = (!$payload['Sect']) ? mergeArray($payload['Sect'], $sectRol) : $payload['Sect'];
+    $payload['Sec2'] = (!$payload['Sec2']) ? mergeArray($payload['Sec2'], $sec2Rol) : $payload['Sec2'];
+    $payload['Grup'] = (!$payload['Grup']) ? mergeArray($payload['Grup'], $grupRol) : $payload['Grup'];
+    $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
+    $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
+
+    $data = array ();
+
+    if ($payload['DTNovedades'] == 'true') {
+        $data = getNovedadesTotalesDT($payload);
+        Flight::json($data);
+        exit;
+    }
+
+    $data = getNovedadesTotales($payload);
+
+    Flight::json($data);
+});
 Flight::route('/fechas/horas', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/dateMinMax";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayData = json_decode($data, true);
     if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+        $arrayData = $arrayData['DATA'] ?? array ();
     } else {
-        $arrayData = array();
+        $arrayData = array ();
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? array ());
 });
 Flight::route('/fechas/fichas', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayData = json_decode($data, true);
     if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+        $arrayData = $arrayData['DATA'] ?? array ();
     } else {
-        $arrayData = array();
+        $arrayData = array ();
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? array ());
 });
 Flight::route('POST /estruct/fichas/', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/fichasestruct/";
@@ -652,22 +726,22 @@ Flight::route('POST /estruct/fichas/', function () {
     $arrayData = json_decode($data, true);
 
     if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+        $arrayData = $arrayData['DATA'] ?? array ();
     } else {
-        Flight::json(array('status' => 'error', 'message' => $arrayData['MESSAGE']), 204);
+        Flight::json(array ('status' => 'error', 'message' => $arrayData['MESSAGE']), 204);
         exit;
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? array ());
 });
 
 
 Flight::map('notFound', function () {
-    Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);
+    Flight::json(array ('status' => 'error', 'message' => 'Not found'), 404);
 });
 Flight::set('flight.log_errors', true);
 
 Flight::map('error', function ($ex) {
-    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
+    Flight::json(array ('status' => 'error', 'message' => $ex->getMessage()), 400);
 });
 
 Flight::start(); // Inicio FlightPHP
