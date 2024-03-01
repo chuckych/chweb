@@ -1,4 +1,5 @@
 <?php
+$_SERVER["HTTPS"] = $_SERVER["HTTPS"] ?? "off";
 if ($_SERVER["HTTPS"] == "on") {
     session_set_cookie_params([
         'samesite' => 'None',
