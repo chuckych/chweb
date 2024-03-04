@@ -39,6 +39,7 @@ pruebaApiML.php
 *.tgz
 *.tar
 *.ini
+app-data/json/*.json
 *--old.php
 *--old.js
 *--old.css

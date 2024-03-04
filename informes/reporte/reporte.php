@@ -14,14 +14,15 @@
 <body class="bg-secondary">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '../../../nav.php';
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" class="bi icon-tabler-chart-line" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 19l16 0" /><path d="M4 15l4 -6l4 2l4 -5l4 4" /></svg>';
+        ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['reporte'], ''); ?>
+        <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['reporte'], ''); ?>
         <!-- Fin Encabezado -->
-        <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row pt-3">
             <div class="col-12 col-sm-6 mb-sm-0 mb-3">
-                <div class="btn-group btn-group-toggle bg-light shadow-sm radius p-1" data-toggle="buttons">
+                <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
                     <label
                         class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Horas y Novedades">
@@ -63,10 +64,16 @@
         <?php require 'filtros.html'; ?>
         <section id="section_tablas" class="mb-3" style="display:none">
             <div id="div_tabla">
+                <p class="bg-custom opa8 m-0 p-2 text-white text-center">Horas</p>
+                <div id="card_totales"></div>
                 <table id="tabla" class="table w-100 text-nowrap">
+                </table>
+                <table id="tabla_totales" class="table w-100 text-nowrap mb-2">
                 </table>
             </div>
             <div class="mt-2" id="div_tabla_novedades">
+                <p class="bg-custom opa8 m-0 p-2 text-white text-center">Novedades</p>
+                <div id="card_totales_nove"></div>
                 <table id="tabla_novedades" class="table w-100 text-nowrap">
                 </table>
             </div>

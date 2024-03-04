@@ -15,6 +15,8 @@ if (!$_SESSION) {
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
 
+borrarLogs('json', 1, 'json');
+
 /**
  * Realiza una llamada a la API CH.
  *
@@ -255,6 +257,7 @@ function getNovedadesTotalesDT($payload)
         "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
         "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
         "data" => $arrayData['DATA']['data'] ?? [],
+        "totales" => $arrayData['DATA']['totales'] ?? [],
         "novedades" => $arrayData['DATA']['novedades'] ?? [],
     );
     return($dt_data);
@@ -610,6 +613,7 @@ Flight::route('POST /horas/totales', function () {
     // Flight::json($payload) . exit;
 
     $payload['DTHoras'] = $payload['DTHoras'] ?? false;
+    $payload['flag'] = $payload['flag'] ?? false;
 
     $payload['Empr'] = $payload['Empr'] ?? [];
     $payload['Plan'] = $payload['Plan'] ?? [];
@@ -642,6 +646,10 @@ Flight::route('POST /horas/totales', function () {
 
     if ($payload['DTHoras'] == 'true') {
         $data = getHorasTotalesDT($payload);
+        $nameFile = $payload['flag'];
+        $file = fopen("json/total_horas_$nameFile.json", "w") or die ("Unable to open file!");
+        fwrite($file, json_encode($data));
+        fclose($file);
         Flight::json($data);
         exit;
     }
@@ -656,6 +664,7 @@ Flight::route('POST /novedades/totales', function () {
     // Flight::json($payload) . exit;
 
     $payload['DTNovedades'] = $payload['DTNovedades'] ?? false;
+    $payload['flag'] = $payload['flag'] ?? false;
 
     $payload['Empr'] = $payload['Empr'] ?? [];
     $payload['Plan'] = $payload['Plan'] ?? [];
@@ -688,6 +697,10 @@ Flight::route('POST /novedades/totales', function () {
 
     if ($payload['DTNovedades'] == 'true') {
         $data = getNovedadesTotalesDT($payload);
+        $nameFile = $payload['flag'];
+        $file = fopen("json/total_novedades_$nameFile.json", "w") or die ("Unable to open file!");
+        fwrite($file, json_encode($data));
+        fclose($file);
         Flight::json($data);
         exit;
     }
@@ -695,6 +708,49 @@ Flight::route('POST /novedades/totales', function () {
     $data = getNovedadesTotales($payload);
 
     Flight::json($data);
+});
+Flight::route('GET /export/totales', function () {
+    $payload = Flight::request()->query->getData();
+    $payload['flag'] = $payload['flag'] ?? false;
+
+    if ($payload['flag']) {
+        $fileHoras = "json/total_horas_" . $payload['flag'] . ".json";
+        if (file_exists($fileHoras)) {
+            $dataHoras = file_get_contents($fileHoras);
+            $dataHoras = json_decode($dataHoras, true);
+            $dataHorasData = $dataHoras['data'];
+        }
+        $fileNovedades = "json/total_novedades_" . $payload['flag'] . ".json";
+        if (file_exists($fileNovedades)) {
+            $dataNovedades = file_get_contents($fileNovedades);
+            $dataNovedades = json_decode($dataNovedades, true);
+            $dataNovedades = $dataNovedades['data'];
+        }
+    }
+    // Array para almacenar los resultados agrupados
+    $array_agrupado = [];
+
+    $array_original = [
+        "horas" => $dataHorasData ?? [],
+        "novedades" => $dataNovedades ?? []
+    ];
+
+    // Agrupar por Lega los arrays Totales de horas
+    foreach ($array_original['horas'] as $hora) {
+        $lega = $hora['Lega'];
+        unset ($hora['Lega']);
+        $array_agrupado[$lega]['TotalesHoras'] = $hora['Totales'] ?? [];
+    }
+
+    // Agrupar por Lega los arrays Totales de novedades
+    foreach ($array_original['novedades'] as $novedad) {
+        $lega = $novedad['Lega'];
+        unset ($novedad['Lega']);
+        $array_agrupado[$lega]['TotalesNovedades'] = $novedad['Totales'] ?? [];
+    }
+
+    Flight::json($array_agrupado);
+
 });
 Flight::route('/fechas/horas', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/dateMinMax";

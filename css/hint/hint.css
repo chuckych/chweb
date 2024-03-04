@@ -605,41 +605,41 @@
  * default
  */
 .hint--default:after {
-	background-color: #efefef;
+	background-color: #f4f4f4;
 	text-shadow: 0 -1px 0px #1a321a;
 	color: #1a321a;
 }
 
 .hint--default.hint--top-left:before {
-	border-top-color: #efefef;
+	border-top-color: #f4f4f4;
 }
 
 .hint--default.hint--top-right:before {
-	border-top-color: #efefef;
+	border-top-color: #f4f4f4;
 }
 
 .hint--default.hint--top:before {
-	border-top-color: #efefef;
+	border-top-color: #f4f4f4;
 }
 
 .hint--default.hint--bottom-left:before {
-	border-bottom-color: #efefef;
+	border-bottom-color: #f4f4f4;
 }
 
 .hint--default.hint--bottom-right:before {
-	border-bottom-color: #efefef;
+	border-bottom-color: #f4f4f4;
 }
 
 .hint--default.hint--bottom:before {
-	border-bottom-color: #efefef;
+	border-bottom-color: #f4f4f4;
 }
 
 .hint--default.hint--left:before {
-	border-left-color: #efefef;
+	border-left-color: #f4f4f4;
 }
 
 .hint--default.hint--right:before {
-	border-right-color: #efefef;
+	border-right-color: #f4f4f4;
 }
 
 /**

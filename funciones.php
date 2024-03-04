@@ -297,7 +297,28 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
                 </a>
             </div>
             <div class="w-100 d-inline-flex h30">
-                <div class="d-flex justify-content-strat align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
+                <div class="d-flex justify-content-start align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
+                <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $VER_DB_CH . ' - Version DB Local: ' . $VER_DB_LOCAL . '">' . version() . '</div>
+            </div>
+        </div>
+    </div>
+    </div>';
+}
+function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
+{
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
+    $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
+
+    echo '
+    <div class="row d-print-none text-' . $colortexto . ' ' . $bgc . ' radius-0">
+    <div class="col-12 d-inline-flex h6 fw3 py-2 m-0">
+        <div class="d-flex align-items-center w-100">
+            <div>
+                ' . $svg . '
+            </div>
+            <div class="w-100 d-inline-flex h30">
+                <div class="d-flex justify-content-start align-items-center text-nowrap ml-1 fonth" id="Encabezado">' . $titulo . '</div>
                 <div class="fontpp d-flex justify-content-end align-items-top w-100" style="color:#efefef" title="Version DB CH: ' . $VER_DB_CH . ' - Version DB Local: ' . $VER_DB_LOCAL . '">' . version() . '</div>
             </div>
         </div>
@@ -517,7 +538,7 @@ function test_input($data)
     $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
     $data = str_ireplace("script", '', $data);
     $data = htmlentities($data, ENT_QUOTES);
-    return ($data);
+    return($data);
 }
 function hoy()
 {
@@ -766,14 +787,14 @@ function inicio()
     $sql = "SELECT usuarios.id FROM usuarios";
     $rs = array_pdoQuery($sql);
     $numrows = count($rs);
-    return ($numrows);
+    return($numrows);
 }
 function principal($rol)
 {
     if ($rol) {
         $sql = "SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
         $rs = simple_pdoQuery($sql);
-        return ($rs) ? true : false;
+        return($rs) ? true : false;
     }
 }
 function token_exist($recid_cliente)
@@ -784,7 +805,7 @@ function token_exist($recid_cliente)
     $sql = "SELECT clientes.id FROM clientes
     WHERE clientes.tkmobile !='' AND clientes.recid = '$recid_cliente'";
     $rs = simple_pdoQuery($sql);
-    return ($rs) ? true : false;
+    return($rs) ? true : false;
 }
 function dnone($var)
 {
@@ -1493,7 +1514,7 @@ function nov_cta_cte()
 
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
-    return ($array);
+    return($array);
     // exit;
 }
 function super_unique($array, $key)
@@ -1905,7 +1926,7 @@ function respuestaWebService($respuesta)
 {
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    return ($respuesta[0]);
+    return($respuesta[0]);
 }
 function EstadoProceso($url)
 {
@@ -1940,7 +1961,7 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
-    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
+    return($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
 // Funcion para validar que el Webservice de Control Horario esta disponible
 function pingWS()
@@ -1962,7 +1983,7 @@ function pingWS()
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
-    return ($http_code == 201) ? true : false; // escribir en el log
+    return($http_code == 201) ? true : false; // escribir en el log
 }
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
@@ -2722,7 +2743,7 @@ function count_pdoQuery($sql)
     try {
         $stmt = $connpdo->prepare($sql);
         $stmt->execute();
-        return ($stmt->fetchColumn() > 0) ? true : false;
+        return($stmt->fetchColumn() > 0) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2748,7 +2769,7 @@ function insert_pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return ($stmt->execute()) ? true : false;
+        return($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2760,7 +2781,7 @@ function pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return ($stmt->execute()) ? true : false;
+        return($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2786,7 +2807,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
         return $e[$key] === $valor;
     });
     foreach ($r as $key => $value) {
-        return ($value);
+        return($value);
     }
 }
 function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
@@ -2958,7 +2979,7 @@ function getIniCuenta($recidCuenta, $key = false)
             // break;
         }
     }
-    return ($key) ? $urlHost[0][$key] : $urlHost[0];
+    return($key) ? $urlHost[0][$key] : $urlHost[0];
 }
 function getDataIni($url) // obtiene el json de la url
 {
@@ -3047,7 +3068,7 @@ function pingApiMobileHRP($urlAppMobile)
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $file_contents = curl_exec($ch);
     curl_close($ch);
-    return ($file_contents) ? $file_contents : false;
+    return($file_contents) ? $file_contents : false;
     // exit;
 }
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
@@ -3076,7 +3097,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
         exit; // salimos del script
     }
     curl_close($ch);
-    return ($file_contents) ? $file_contents : false;
+    return($file_contents) ? $file_contents : false;
 }
 function confidenceFaceStr($confidence, $id_api, $threshold)
 {

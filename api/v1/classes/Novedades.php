@@ -1243,7 +1243,6 @@ class Novedades
                             'EnMinutos' => intval($elemento['Horas_' . $numero]),
                             'EnHorasDecimal' => $horasEnDecimal,
                         );
-                        // sumar minutos y crear array con los minutos de cada novedad
                     }
                 }
 
@@ -1258,7 +1257,42 @@ class Novedades
                 );
             }
 
+
+            $sumas = array();
+
+            foreach ($nuevo_array as $empleado) {
+                foreach ($empleado["Totales"] as $suma) {
+                    $NovCodi = $suma["NovCodi"];
+                    $NovDesc = $suma["NovDesc"];
+                    $cantidad = $suma["Cantidad"];
+                    $enMinutos = $suma["EnMinutos"];
+                    $enHoras = $suma["EnHoras"];
+                    $EnHorasDecimal = $suma["EnHorasDecimal"];
+
+                    // Si el NovCodi ya existe en el array de sumas, sumamos los valores, de lo contrario lo inicializamos
+                    if (array_key_exists($NovCodi, $sumas)) {
+                        $sumas[$NovCodi]["Cantidad"] += $cantidad;
+                        $sumas[$NovCodi]["EnMinutos"] += $enMinutos;
+                        $sumas[$NovCodi]["EnHoras"] = $this->minutosAHoras(intval($sumas[$NovCodi]["EnMinutos"]));
+                        $sumas[$NovCodi]["EnHorasDecimal"] = $this->minutosAHorasDecimal(intval($sumas[$NovCodi]["EnMinutos"]));
+                    } else {
+                        $sumas[$NovCodi] = array(
+                            "NovCodi" => $NovCodi,
+                            "NovDesc" => $NovDesc,
+                            "Cantidad" => $cantidad,
+                            "EnMinutos" => $enMinutos,
+                            "EnHoras" => $enHoras,
+                            "EnHorasDecimal" => $EnHorasDecimal,
+                        );
+
+                        // sort $sumas by NovCodi
+                        ksort($sumas);
+                    }
+                }
+            }
+
             $array = [
+                'totales' => array_values($sumas),
                 'data' => $nuevo_array,
                 'novedades' => $nov,
             ];

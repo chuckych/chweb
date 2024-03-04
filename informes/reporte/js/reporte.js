@@ -1,5 +1,7 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_reporte_totales_filtros';
+const LS_TOTAL_HORAS = homehost + '_reporte_totales_horas';
+const now = new Date().getTime();
 
 const dateRange = async () => {
     let rs = await axios.get('../../app-data/fechas/fichas'); // retorna objeto con la primer fecha y la ultima de FICHAS ej: {data: {min: "2021-01-01", max: "2021-12-31"}}
@@ -333,6 +335,7 @@ dateRange().then(() => {
 
     getHoras();
     getNovedades();
+    exportarXls();
 });
 
 
@@ -358,7 +361,7 @@ const getHoras = async () => {
         searchDelay: 1500,
         dom: "<'row'" +
             "<'col-12 d-flex align-items-center'l<'ml-2 font09 title'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
-            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12'<'border radius p-1 table-responsive't>>>" +
             "<'row '<'col-12 col-sm-6'<i>>''<'col-12 col-sm-6'<p>>'>",
         ajax: {
             url: "../../app-data/horas/totales",
@@ -379,6 +382,7 @@ const getHoras = async () => {
                 data.start = 0;
                 data.length = 1000000;
                 data.DTHoras = true;
+                data.flag = now;
             },
             error: function () {
                 $("#tabla_processing").css("display", "none");
@@ -473,9 +477,9 @@ const getHoras = async () => {
             "url": "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
         },
         // Eventos de la tabla
-        initComplete: function () {
+        initComplete: function (e, settings, json) {
             // $('.title').html('<span>Totales Horas</span>');
-            $('.title').html('<div>Totales Horas</div>').addClass('w-100 text-right');
+            $('.title').html('<div>Horas</div>').addClass('w-100 text-right');
             $(".custom-select").select2({
                 minimumResultsForSearch: Infinity,
             });
@@ -487,7 +491,13 @@ const getHoras = async () => {
             loaderIn('#tabla', true);
         },
         // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
-        drawCallback: function () {
+        drawCallback: function (e, settings, json) {
+            setTimeout(() => {
+                loaderIn('#tabla', false);
+            }, 100);
+            if (e.json) {
+                getHorasTotales(e.json.totales ?? '');
+            }
             let formato = $('input[name="VPorFormato"]:checked').val();
             if (formato == 'enDecimal') {
                 $('.enHoras').addClass('d-none');
@@ -496,9 +506,6 @@ const getHoras = async () => {
                 $('.enHoras').removeClass('d-none');
                 $('.enDecimales').addClass('d-none');
             }
-            setTimeout(() => {
-                loaderIn('#tabla', false);
-            }, 100);
         }
     });
 }
@@ -524,7 +531,7 @@ const getNovedades = async () => {
         searchDelay: 1500,
         dom: "<'row'" +
             "<'col-12 d-flex align-items-center'l<'font09 title-nove'>><'col-12 col-sm-6 d-inline-flex align-items-start justify-content-end'f>>" +
-            "<'row '<'col-12'<'border radius p-2 shadow-sm table-responsive't>>>" +
+            "<'row '<'col-12'<'border radius p-1 table-responsive't>>>" +
             "<'row '<'col-12 col-sm-6'<i>>''<'col-12 col-sm-6'<p>>'>",
         ajax: {
             url: "../../app-data/novedades/totales",
@@ -545,6 +552,7 @@ const getNovedades = async () => {
                 data.start = 0;
                 data.length = 1000000;
                 data.DTNovedades = true;
+                data.flag = now;
             },
             error: function () {
                 $("#tabla_novedades_processing").css("display", "none");
@@ -636,7 +644,15 @@ const getNovedades = async () => {
             loaderIn('#tabla_novedades', true);
         },
         // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
-        drawCallback: function () {
+        drawCallback: function (e, settings, json) {
+
+            setTimeout(() => {
+                loaderIn('#tabla_novedades', false);
+            }, 100);
+
+            if (e.json) {
+                getNovedadesTotales(e.json.totales ?? '');
+            }
             let formato = $('input[name="VPorFormato"]:checked').val();
             if (formato == 'enDecimal') {
                 $('.enHoras').addClass('d-none');
@@ -645,9 +661,182 @@ const getNovedades = async () => {
                 $('.enHoras').removeClass('d-none');
                 $('.enDecimales').addClass('d-none');
             }
-            setTimeout(() => {
-                loaderIn('#tabla_novedades', false);
-            }, 100);
         }
     });
+}
+
+const exportarXls = async () => {
+    let button = document.getElementById('ExportarXLS');
+    button.disabled = false;
+    button.addEventListener('click', async function () {
+        let rs = await axios.get('../../app-data/export/totales?flag=' + now);
+        console.log(rs.data);
+    });
+}
+
+const getHorasTotales = async (data) => {
+
+    let cardTotales = document.getElementById('card_totales');
+    cardTotales.innerHTML = '';
+    if (!data) {
+        cardTotales.innerHTML = '';
+        return false;
+    }
+    let col = (data.length < 3) ? 6 : 4;
+    let html = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
+    data.forEach(element => {
+        let colorAuto = '';
+        colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';
+        let EnHorasDecimal = (element.EnHorasDecimal);
+        EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+        let EnHorasDecimal2 = (element.EnHorasDecimal2);
+        EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
+        html += `
+        <div class="col-12 col-md-6 col-lg-${col} mt-2">
+            <div class="card" style="border:1px solid #dee2e6 !important">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="font09">${element.THoDesc}</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font07 text-secondary">Autorizadas</div>
+                        <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras2}</div>
+                        <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal2}</div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font07 text-secondary">Hechas</div>
+                        <div class="font09 enHoras">${element.EnHoras}</div>
+                        <div class="font09 enDecimales">${EnHorasDecimal}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    html += '</div>';
+    cardTotales.innerHTML = html;
+
+
+    // if (!data.length === 0) {
+    //     $('#tabla_totales').DataTable().destroy();
+    //     return false;
+    // }
+
+    // if ($.fn.DataTable.isDataTable('#tabla_totales')) {
+    //     $('#tabla_totales').DataTable().destroy();
+    // }
+
+    // $('#tabla_totales').DataTable({
+    //     bProcessing: true,
+    //     dom: "<'row'" +
+    //         "<'col-12 d-flex align-items-center'<'font09 title-totales'>>>" +
+    //         "<'row '<'col-12'<'border radius p-1 table-responsive't>>>",
+    //     data: data,
+    //     columns: [
+    //         {
+    //             data: 'HoraCodi', className: '', targets: '', title: 'COD',
+    //             "render": function (data, type, row, meta) {
+    //                 return data;
+    //             },
+    //         },
+    //         {
+    //             data: 'THoDesc', className: '', targets: '', title: 'TIPO DE HORA',
+    //             "render": function (data, type, row, meta) {
+    //                 return data;
+    //             },
+    //         },
+    //         {
+    //             data: 'Cantidad', className: 'text-right', targets: '', title: 'CANT',
+    //             "render": function (data, type, row, meta) {
+    //                 return data;
+    //             },
+    //         },
+    //         {
+    //             data: '', className: 'text-right', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
+    //             "render": function (data, type, row, meta) {
+    //                 // let array = row.Totales
+    //                 let html = '';
+    //                 // let EnHorasDecimal = (row.EnHorasDecimal);
+    //                 // EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+    //                 // html += `< div class="enDecimales" > ${ (EnHorasDecimal) }</div > `
+    //                 html += `<div class="enHoras">${row.EnHoras}</div>`
+    //                 return html;
+    //             },
+    //         },
+    //         {
+    //             data: '', className: 'text-right bg-light', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Autorizadas">AUTOR</div>',
+    //             "render": function (data, type, row, meta) {
+    //                 // let array = row.Totales
+    //                 let html = '';
+    //                 // let EnHorasDecimal = (row.EnHorasDecimal);
+    //                 // EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+    //                 // html += `< div class="enDecimales" > ${ (EnHorasDecimal) }</div > `
+    //                 html += `<div class="enHoras"> ${row.EnHoras2}</div>`
+    //                 return html;
+    //             },
+    //         },
+    //         {
+    //             data: '', className: 'w-100', targets: '', title: '',
+    //             "render": function (data, type, row, meta) {
+    //                 return '';
+    //             },
+    //         },
+    //     ],
+    //     paging: false,
+    //     info: false,
+    //     searching: false,
+    //     ordering: false,
+    //     language: {
+    //         "url": "../../js/DataTableSpanishShort2.json" + "?" + vjs(),
+    //     },
+    //     // Eventos de la tabla
+    //     drawCallback: function () {
+    //         $('.title-totales').html('<div>Total General de Horas</div>').addClass('w-100 text-right my-3');
+    //     },
+    // });
+}
+const getNovedadesTotales = async (data) => {
+    console.log(data);
+    let cardTotales = document.getElementById('card_totales_nove');
+    cardTotales.innerHTML = '';
+    if (!data) {
+        cardTotales.innerHTML = '';
+        return false;
+    }
+    let col = (data.length < 3) ? 6 : 4;
+    let html = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
+    data.forEach(element => {
+        let colorAuto = '';
+        colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';
+        let EnHorasDecimal = (element.EnHorasDecimal);
+        EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+        let EnHorasDecimal2 = (element.EnHorasDecimal2);
+        EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
+        html += `
+        <div class="col-12 col-md-6 col-lg-${col} mt-2">
+            <div class="card" style="border:1px solid #dee2e6 !important">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="font09">${element.NovDesc}</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font07 text-secondary">Horas</div>
+                        <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras}</div>
+                        <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal}</div>
+                    </div>
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font07 text-secondary">Cantidad</div>
+                        <div class="font11 ${colorAuto}">${element.Cantidad}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    html += '</div>';
+    cardTotales.innerHTML = html;
 }

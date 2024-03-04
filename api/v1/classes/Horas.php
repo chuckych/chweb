@@ -871,6 +871,8 @@ class Horas
                     $enMinutos2 = $suma["EnMinutos2"];
                     $enHoras = $suma["EnHoras"];
                     $enHoras2 = $suma["EnHoras2"];
+                    $EnHorasDecimal = $suma["EnHorasDecimal"];
+                    $EnHorasDecimal2 = $suma["EnHorasDecimal2"];
 
                     // Si el HoraCodi ya existe en el array de sumas, sumamos los valores, de lo contrario lo inicializamos
                     if (array_key_exists($horaCodi, $sumas)) {
@@ -879,6 +881,8 @@ class Horas
                         $sumas[$horaCodi]["EnMinutos2"] += $enMinutos2;
                         $sumas[$horaCodi]["EnHoras"] = $this->minutosAHoras(intval($sumas[$horaCodi]["EnMinutos"]));
                         $sumas[$horaCodi]["EnHoras2"] = $this->minutosAHoras(intval($sumas[$horaCodi]["EnMinutos2"]));
+                        $sumas[$horaCodi]["EnHorasDecimal"] = $this->minutosAHorasDecimal(intval($sumas[$horaCodi]["EnMinutos"]));
+                        $sumas[$horaCodi]["EnHorasDecimal2"] = $this->minutosAHorasDecimal(intval($sumas[$horaCodi]["EnMinutos2"]));
                     } else {
                         $sumas[$horaCodi] = array(
                             "HoraCodi" => $horaCodi,
@@ -888,7 +892,9 @@ class Horas
                             "EnMinutos" => $enMinutos,
                             "EnHoras" => $enHoras,
                             "EnMinutos2" => $enMinutos2,
-                            "EnHoras2" => $enHoras2
+                            "EnHoras2" => $enHoras2,
+                            "EnHorasDecimal" => $EnHorasDecimal,
+                            "EnHorasDecimal2" => $EnHorasDecimal2,
                         );
                     }
                 }

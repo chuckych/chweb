@@ -1,6 +1,6 @@
 <?php
 // obtener el dominio con $Server
-$Server = $_SERVER['SERVER_NAME'];
+$Server = $_SERVER['SERVER_NAME'] ?? '';
 
 // Configuración de la cookie
 $path = '/';
@@ -68,7 +68,7 @@ try {
 if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
 
 
-	if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+	if ($Server == 'localhost') { // Si es localhost
 		borrarLogs(__DIR__ . '../../logs/', 1, '.log');
 		borrarLogs(__DIR__ . '../../logs/error/', 1, '.log');
 	} else {

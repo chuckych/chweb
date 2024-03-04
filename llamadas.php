@@ -13,8 +13,6 @@
 <meta name="theme-color" content="#fafafa">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/hint/hint.css" type="text/css" />
-<!-- <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/rapid-icon-font/icons-min.css" type="text/css"> -->
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>"
 	type="text/css">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css" type="text/css">
@@ -133,11 +131,16 @@ switch ($Modulo) {
 		/** Modulo custom2. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #198754; } </style>';
 		break;
+	case '45':
+		/** Modulo custom2. Color predeterminado */
+		echo '<style>:root { --main-bg-modcolor : #d9403a; } </style>';
+		break;
 	default:
 		echo '<style>:root { --main-bg-modcolor : #17a2b8; } </style>';
 		break;
 }
 ?>
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/hint/hint.css?v=<?= version_file("/css/hint/hint.css") ?>">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style.css?v=<?= version_file("/css/style.css") ?>">
 <?php
 if (getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer') {
