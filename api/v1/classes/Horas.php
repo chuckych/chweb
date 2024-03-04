@@ -822,6 +822,13 @@ class Horas
                             continue;
                         }
 
+                        $EnMinutos = (intval($elemento['Horas_' . $numero]));
+                        $EnMinutos2 = (intval($elemento['Horas2_' . $numero]));
+                        $sumaDeMinutos = $EnMinutos + $EnMinutos2;
+                        if ($sumaDeMinutos == 0) {
+                            continue;
+                        }
+
                         $promedioEnMinutos = (intval($elemento['Horas_' . $numero])) / intval($valor);
                         $promedioEnMinutos2 = (intval($elemento['Horas2_' . $numero])) / intval($valor);
                         $promedioEnHoras = $this->minutosAHoras($promedioEnMinutos);
@@ -836,8 +843,8 @@ class Horas
                             'Cantidad' => intval($valor),
                             'EnHoras' => $this->minutosAHoras(intval($elemento['Horas_' . $numero])),
                             'EnHoras2' => $this->minutosAHoras(intval($elemento['Horas2_' . $numero])),
-                            'EnMinutos' => (intval($elemento['Horas_' . $numero])),
-                            'EnMinutos2' => (intval($elemento['Horas2_' . $numero])),
+                            'EnMinutos' => $EnMinutos,
+                            'EnMinutos2' => $EnMinutos2,
                             'PromedioEnMinutosPromedio' => $promedioEnMinutos,
                             'PromedioEnMinutos2' => $promedioEnMinutos2,
                             'HorasPromedio' => $promedioEnHoras,
@@ -896,6 +903,7 @@ class Horas
                             "EnHorasDecimal" => $EnHorasDecimal,
                             "EnHorasDecimal2" => $EnHorasDecimal2,
                         );
+                        ksort($sumas);
                     }
                 }
             }
