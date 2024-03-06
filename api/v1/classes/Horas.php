@@ -154,7 +154,7 @@ class Horas
                 throw new \Exception("No se recibieron datos", 1);
             }
 
-            $rules = [ // Reglas de validacion
+            $rules = [ // Reglas de validación
                 'Lega' => ['int'],
                 'Fecha' => ['required', 'date'],
                 'Hora' => ['required', 'smallint'],
@@ -758,6 +758,10 @@ class Horas
                 return "COALESCE(SUM(CASE WHEN FICHAS1.FicHora = " . $v['HoraCodi'] . " THEN dbo.fn_STRMinutos(FICHAS1.FicHsAu2) END), 0) as 'Horas2_" . $v['HoraCodi'] . "'";
 
             }, $colHoras);
+            $sumHoraCols3 = array_map(function ($v) {
+                return "COALESCE(SUM(CASE WHEN FICHAS1.FicHora = " . $v['HoraCodi'] . " THEN dbo.fn_STRMinutos(FICHAS1.FicHsHe) END), 0) as 'Horas1_" . $v['HoraCodi'] . "'";
+
+            }, $colHoras);
 
             /** **********************************  */
 
@@ -766,11 +770,18 @@ class Horas
                 "PERSONAL.LegApNo AS 'LegApNo'",
             ];
 
+            $columnas = implode(", ", $columnas);
             $columnas2 = implode(", ", $countHoraCols);
             $columnas3 = implode(", ", $sumHoraCols);
-            $columnas = implode(", ", $columnas);
             $columnas4 = implode(", ", $sumHoraCols2);
-            $sql = "SELECT $columnas, $columnas2, $columnas3, $columnas4 FROM FICHAS1";
+            $columnas5 = implode(", ", $sumHoraCols3);
+            $sql = "SELECT $columnas, $columnas2, $columnas3, $columnas4";
+            $sql .= ", $columnas5";
+            $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) as 'Horas_Tr'";
+            // $sql .= " , (SELECT COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) FROM FICHAS WHERE FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn) AS 'Horas_Tr'";
+            $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) as 'Horas_AT'";
+            // $sql .= " , (SELECT COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) FROM FICHAS WHERE FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn) AS 'Horas_AT'";
+            $sql .= " FROM FICHAS1";
             $sql .= " INNER JOIN FICHAS ON FICHAS1.FicLega = FICHAS.FicLega AND FICHAS1.FicFech = FICHAS.FicFech AND FICHAS1.FicTurn = FICHAS.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicHora > 0";
@@ -779,6 +790,7 @@ class Horas
             $sql .= " GROUP BY FICHAS1.FicLega, PERSONAL.LegApNo";
             $sql .= " ORDER BY FICHAS1.FicLega";
             $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
+            // print_r($sql) . exit;
 
             $stmt1 = $conn->prepare($sql);
             ($datos['LegApNo']) ? $stmt1->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
@@ -809,6 +821,12 @@ class Horas
                 $nuevo_elemento = array(
                     'Lega' => $elemento['Lega'],
                     'LegApNo' => $elemento['LegApNo'],
+                    'HsTrEnMinutos' => intval($elemento['Horas_Tr']),
+                    'HsTrEnHoras' => $this->minutosAHoras(intval($elemento['Horas_Tr'])),
+                    'HsTrEnDecimal' => $this->minutosAHorasDecimal(intval($elemento['Horas_Tr'])),
+                    'HsATEnMinutos' => intval($elemento['Horas_AT']),
+                    'HsATEnHoras' => $this->minutosAHoras(intval($elemento['Horas_AT'])),
+                    'HsATEnDecimal' => $this->minutosAHorasDecimal(intval($elemento['Horas_AT'])),
                     'Totales' => array()
                 );
 
@@ -824,17 +842,15 @@ class Horas
 
                         $EnMinutos = (intval($elemento['Horas_' . $numero]));
                         $EnMinutos2 = (intval($elemento['Horas2_' . $numero]));
+                        $EnMinutos1 = (intval($elemento['Horas1_' . $numero]));
                         $sumaDeMinutos = $EnMinutos + $EnMinutos2;
                         if ($sumaDeMinutos == 0) {
                             continue;
                         }
 
-                        $promedioEnMinutos = (intval($elemento['Horas_' . $numero])) / intval($valor);
-                        $promedioEnMinutos2 = (intval($elemento['Horas2_' . $numero])) / intval($valor);
-                        $promedioEnHoras = $this->minutosAHoras($promedioEnMinutos);
-                        $promedioEnHoras2 = $this->minutosAHoras($promedioEnMinutos2);
                         $horasEnDecimal = $this->minutosAHorasDecimal(intval($elemento['Horas_' . $numero]));
                         $horasEnDecimal2 = $this->minutosAHorasDecimal(intval($elemento['Horas2_' . $numero]));
+                        $horasEnDecimal1 = $this->minutosAHorasDecimal(intval($elemento['Horas1_' . $numero]));
 
                         $nuevo_elemento['Totales'][] = array(
                             'HoraCodi' => intval($numero),
@@ -842,14 +858,13 @@ class Horas
                             'THoDesc2' => $FiltroHoras[0]['THoDesc2'],
                             'Cantidad' => intval($valor),
                             'EnHoras' => $this->minutosAHoras(intval($elemento['Horas_' . $numero])),
+                            'EnHoras1' => $this->minutosAHoras(intval($elemento['Horas1_' . $numero])),
                             'EnHoras2' => $this->minutosAHoras(intval($elemento['Horas2_' . $numero])),
                             'EnMinutos' => $EnMinutos,
+                            'EnMinutos1' => $EnMinutos1,
                             'EnMinutos2' => $EnMinutos2,
-                            'PromedioEnMinutosPromedio' => $promedioEnMinutos,
-                            'PromedioEnMinutos2' => $promedioEnMinutos2,
-                            'HorasPromedio' => $promedioEnHoras,
-                            'EnHorasPromedio2' => $promedioEnHoras2,
                             'EnHorasDecimal' => $horasEnDecimal,
+                            'EnHorasDecimal1' => $horasEnDecimal1,
                             'EnHorasDecimal2' => $horasEnDecimal2,
                         );
                     }
@@ -875,33 +890,42 @@ class Horas
                     $horaDesc2 = $suma["THoDesc2"];
                     $cantidad = $suma["Cantidad"];
                     $enMinutos = $suma["EnMinutos"];
+                    $enMinutos1 = $suma["EnMinutos1"];
                     $enMinutos2 = $suma["EnMinutos2"];
                     $enHoras = $suma["EnHoras"];
+                    $enHoras1 = $suma["EnHoras1"];
                     $enHoras2 = $suma["EnHoras2"];
                     $EnHorasDecimal = $suma["EnHorasDecimal"];
+                    $EnHorasDecimal1 = $suma["EnHorasDecimal1"];
                     $EnHorasDecimal2 = $suma["EnHorasDecimal2"];
 
                     // Si el HoraCodi ya existe en el array de sumas, sumamos los valores, de lo contrario lo inicializamos
                     if (array_key_exists($horaCodi, $sumas)) {
                         $sumas[$horaCodi]["Cantidad"] += $cantidad;
                         $sumas[$horaCodi]["EnMinutos"] += $enMinutos;
+                        $sumas[$horaCodi]["EnMinutos1"] += $enMinutos1;
                         $sumas[$horaCodi]["EnMinutos2"] += $enMinutos2;
                         $sumas[$horaCodi]["EnHoras"] = $this->minutosAHoras(intval($sumas[$horaCodi]["EnMinutos"]));
+                        $sumas[$horaCodi]["EnHoras1"] = $this->minutosAHoras(intval($sumas[$horaCodi]["EnMinutos1"]));
                         $sumas[$horaCodi]["EnHoras2"] = $this->minutosAHoras(intval($sumas[$horaCodi]["EnMinutos2"]));
+                        $sumas[$horaCodi]["EnHorasDecimal1"] = $this->minutosAHorasDecimal(intval($sumas[$horaCodi]["EnMinutos1"]));
                         $sumas[$horaCodi]["EnHorasDecimal"] = $this->minutosAHorasDecimal(intval($sumas[$horaCodi]["EnMinutos"]));
                         $sumas[$horaCodi]["EnHorasDecimal2"] = $this->minutosAHorasDecimal(intval($sumas[$horaCodi]["EnMinutos2"]));
                     } else {
                         $sumas[$horaCodi] = array(
-                            "HoraCodi" => $horaCodi,
-                            "THoDesc" => $horaDesc,
-                            "THoDesc2" => $horaDesc2,
-                            "Cantidad" => $cantidad,
-                            "EnMinutos" => $enMinutos,
-                            "EnHoras" => $enHoras,
-                            "EnMinutos2" => $enMinutos2,
-                            "EnHoras2" => $enHoras2,
-                            "EnHorasDecimal" => $EnHorasDecimal,
-                            "EnHorasDecimal2" => $EnHorasDecimal2,
+                            "HoraCodi" => $horaCodi, // Código de la hora
+                            "THoDesc" => $horaDesc, // Descripción de la hora
+                            "THoDesc2" => $horaDesc2, // Descripción de la hora corta
+                            "Cantidad" => $cantidad, // Cantidad de horas en totales 
+                            "EnMinutos" => $enMinutos, // Suma de minutos de horas calculadas
+                            "EnMinutos1" => $enMinutos1, // Suma de minutos de horas hechas
+                            "EnMinutos2" => $enMinutos2, // Suma de minutos de horas autorizadas
+                            "EnHoras" => $enHoras, // Suma de horas calculadas en horas:minutos
+                            "EnHoras1" => $enHoras1, // Suma de horas hechas en horas:minutos
+                            "EnHoras2" => $enHoras2, // Suma de horas autorizadas en horas:minutos
+                            "EnHorasDecimal" => $EnHorasDecimal, // Suma de horas calculadas en decimal
+                            "EnHorasDecimal1" => $EnHorasDecimal1, // Suma de horas hechas en decimal
+                            "EnHorasDecimal2" => $EnHorasDecimal2, // Suma de horas autorizadas en decimal
                         );
                         ksort($sumas);
                     }

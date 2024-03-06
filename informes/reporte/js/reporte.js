@@ -398,9 +398,31 @@ const getHoras = async () => {
             {
                 data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
                 "render": function (data, type, row, meta) {
-                    return `<div class="text-truncate" style="min-width:250px; max-width:250px">${data}</div>`;
+                    return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}</div>`;
                 },
             },
+            // {
+            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas a Trabajar">HS AT</div>',
+            //     "render": function (data, type, row, meta) {
+            //         let html = '';
+            //         let HsATEnDecimal = (row.HsATEnDecimal);
+            //         HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+            //         html += `<div class="enDecimales">${(HsATEnDecimal)}</div>`
+            //         html += `<div class="enHoras">${row.HsATEnHoras}</div>`
+            //         return html;
+            //     },
+            // },
+            // {
+            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Trabajadas">HS TR</div>',
+            //     "render": function (data, type, row, meta) {
+            //         let html = '';
+            //         let HsTrEnDecimal = (row.HsTrEnDecimal);
+            //         HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+            //         html += `<div class="enDecimales">${(HsTrEnDecimal)}</div>`
+            //         html += `<div class="enHoras">${row.HsTrEnHoras}</div>`
+            //         return html;
+            //     },
+            // },
             {
                 data: '', className: 'text-center', targets: '', title: 'COD',
                 "render": function (data, type, row, meta) {
@@ -434,6 +456,20 @@ const getHoras = async () => {
                     return html;
                 },
             },
+            // {
+            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
+            //     "render": function (data, type, row, meta) {
+            //         let array = row.Totales
+            //         let html = '';
+            //         array.forEach(element => {
+            //             let EnHorasDecimal1 = (element.EnHorasDecimal1);
+            //             EnHorasDecimal1 = (Math.round((EnHorasDecimal1 + Number.EPSILON) * 100) / 100).toFixed(2);
+            //             html += `<div class="enDecimales">${(EnHorasDecimal1)}</div>`
+            //             html += `<div class="enHoras">${element.EnHoras1}</div>`
+            //         });
+            //         return html;
+            //     },
+            // },
             {
                 data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
                 "render": function (data, type, row, meta) {

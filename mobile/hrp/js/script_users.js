@@ -239,6 +239,7 @@ $(document).on("click", ".sendSettings", function (e) {
 });
 $(document).on("click", "#addUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
+    console.log(data);
     axios({
         method: 'post',
         url: 'modalUser.html?v=' + $.now(),
