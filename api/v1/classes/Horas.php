@@ -969,7 +969,7 @@ class Horas
 
             $array = [
                 'totales' => array_values($sumas),
-                'totalesTryAT' => $totalesATyTr ?? [],
+                'totalesTryAT' => $totalesATyTr ?? '',
                 'data' => $nuevo_array,
                 'tiposHoras' => $hor,
             ];

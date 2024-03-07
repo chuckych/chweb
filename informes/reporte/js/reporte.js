@@ -329,6 +329,7 @@ dateRange().then(() => {
         jsonData.FechFin = picker.endDate.format('YYYY-MM-DD');
         jsonData.FechaFin = picker.endDate.format('YYYY-MM-DD');
         ls.set(LS_FILTROS, jsonData);
+        loaderIn('#section_tablas', true);
         getHoras();
         getNovedades();
     });
@@ -390,12 +391,6 @@ const getHoras = async () => {
             },
         },
         columns: [
-            {
-                data: 'Lega', className: 'd-none', targets: '', title: 'LEGAJO',
-                "render": function (data, type, row, meta) {
-                    return data;
-                },
-            },
             {
                 data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
                 "render": function (data, type, row, meta) {
@@ -502,7 +497,7 @@ const getHoras = async () => {
         // Eventos de la tabla
         initComplete: function (e, settings, json) {
             // $('.title').html('<span>Totales Horas</span>');
-            $('.title').html('<div>Horas</div>').addClass('w-100 text-right');
+            $('.title').html('<div>Detalle de Horas</div>').addClass('w-100 text-right');
             $(".custom-select").select2({
                 minimumResultsForSearch: Infinity,
             });
@@ -529,6 +524,7 @@ const getHoras = async () => {
                 $('.enHoras').removeClass('d-none');
                 $('.enDecimales').addClass('d-none');
             }
+            loaderIn('#section_tablas', false);
         }
     });
 }
@@ -583,15 +579,9 @@ const getNovedades = async () => {
         },
         columns: [
             {
-                data: 'Lega', className: '', targets: '', title: 'LEGAJO',
-                "render": function (data, type, row, meta) {
-                    return data;
-                },
-            },
-            {
                 data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
                 "render": function (data, type, row, meta) {
-                    return `<div class="text-truncate" style="min-width:250px; max-width:250px">${data}</div>`;
+                    return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}<br>${row.Lega}</div>`;
                 },
             },
             {
@@ -657,7 +647,7 @@ const getNovedades = async () => {
         },
         // Eventos de la tabla
         initComplete: function () {
-            $('.title-nove').html('<div>Totales Novedades</div>').addClass('w-100 text-right');
+            $('.title-nove').html('<div>Detalle de Novedades</div>').addClass('w-100 text-right');
             $(".custom-select").select2({
                 minimumResultsForSearch: Infinity,
             });
@@ -701,88 +691,91 @@ const getHorasTotales = async (data, dataATyTr) => {
 
     let cardTotales = document.getElementById('card_totales');
     cardTotales.innerHTML = '';
+
     if (!data) {
         cardTotales.innerHTML = '';
         return false;
     }
-    let col = (data.length < 3) ? 6 : 4;
-    let html = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
-    data.forEach(element => {
-        let colorAuto = '';
-        colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';
-        let EnHorasDecimal = (element.EnHorasDecimal);
-        EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
-        let EnHorasDecimal2 = (element.EnHorasDecimal2);
-        EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
-        html += `
-        <div class="col-12 col-md-6 col-lg-${col} mt-2">
-            <div class="card" style="border:1px solid #dee2e6 !important">
-                <div class="card-header border-0">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="font09">${element.THoDesc}</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font07 text-secondary">Autorizadas</div>
-                        <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras2}</div>
-                        <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal2}</div>
-                    </div>
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font07 text-secondary">Hechas</div>
-                        <div class="font09 enHoras">${element.EnHoras}</div>
-                        <div class="font09 enDecimales">${EnHorasDecimal}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        `;
-    });
-    html += '</div>';
 
     if (dataATyTr) {
-        let html2 = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
+        let html2 = '<div class="form-row animate__animated animate__fadeIn mt-2">';
         let HsTrEnDecimal = (dataATyTr.HsTrEnDecimal);
         HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
         let HsATEnDecimal = (dataATyTr.HsATEnDecimal);
         HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
         html2 += `
-        <div class="col-12 col-md-6 col-lg-6 mt-2">
-            <div class="card" style="border:1px solid #dee2e6 !important">
-                <div class="card-header border-0">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="font09">Horas a Trabajar</div>
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="card" style="border:1px solid #dee2e6 !important">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="font09">Horas a Trabajar</div>
+                        </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font-weight-bold font11 enHoras">${dataATyTr.HsATEnHoras}</div>
-                        <div class="font-weight-bold font11 enDecimales">${HsATEnDecimal}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-6 mt-2">
-            <div class="card" style="border:1px solid #dee2e6 !important">
-                <div class="card-header border-0">
-                    <div class="d-flex justify-content-center align-items-center">
-                        <div class="font09">Horas Trabajadas</div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font-weight-bold font11 enHoras">${dataATyTr.HsTrEnHoras}</div>
-                        <div class="font-weight-bold font11 enDecimales">${HsTrEnDecimal}</div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div class="font-weight-bold font11 enHoras">${dataATyTr.HsATEnHoras}</div>
+                            <div class="font-weight-bold font11 enDecimales">${HsATEnDecimal}</div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        `;
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="card" style="border:1px solid #dee2e6 !important">
+                    <div class="card-header border-0">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="font09">Horas Trabajadas</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <div class="font-weight-bold font11 enHoras">${dataATyTr.HsTrEnHoras}</div>
+                            <div class="font-weight-bold font11 enDecimales">${HsTrEnDecimal}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
         html2 += '</div>';
-
         cardTotales.innerHTML += html2;
     }
-    cardTotales.innerHTML += html;
+
+    if (data.length > 0) {
+        let col = (data.length < 3) ? 6 : 4;
+        let html = '<div class="form-row animate__animated animate__fadeIn my-2">';
+        data.forEach(element => {
+            let colorAuto = '';
+            colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';
+            let EnHorasDecimal = (element.EnHorasDecimal);
+            EnHorasDecimal = (Math.round((EnHorasDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+            let EnHorasDecimal2 = (element.EnHorasDecimal2);
+            EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
+            html += `
+                <div class="col-12 col-md-6 col-lg-${col} mt-2">
+                    <div class="card" style="border:1px solid #dee2e6 !important">
+                        <div class="card-header border-0">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <div class="font09">${element.THoDesc}</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div class="font07 text-secondary">Autorizadas</div>
+                                <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras2}</div>
+                                <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal2}</div>
+                            </div>
+                            <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div class="font07 text-secondary">Hechas</div>
+                                <div class="font09 enHoras">${element.EnHoras}</div>
+                                <div class="font09 enDecimales">${EnHorasDecimal}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+        });
+        html += '</div>';
+        cardTotales.innerHTML += html;
+    }
 
 
     // if (!data.length === 0) {
@@ -872,7 +865,7 @@ const getNovedadesTotales = async (data) => {
         return false;
     }
     let col = (data.length < 3) ? 6 : 4;
-    let html = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
+    let html = '<div class="form-row animate__animated animate__fadeIn mb-3">';
     data.forEach(element => {
         let colorAuto = '';
         colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';

@@ -241,7 +241,7 @@ function getHorasTotalesDT($payload)
         "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
         "data" => $arrayData['DATA']['data'] ?? [],
         "totales" => $arrayData['DATA']['totales'] ?? [],
-        "totalesTryAT" => $arrayData['DATA']['totalesTryAT'] ?? [],
+        "totalesTryAT" => $arrayData['DATA']['totalesTryAT'] ?? '',
         "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? [],
     );
     return($dt_data);
