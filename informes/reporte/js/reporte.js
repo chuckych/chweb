@@ -382,6 +382,7 @@ const getHoras = async () => {
                 data.start = 0;
                 data.length = 1000000;
                 data.DTHoras = true;
+                data.HsTrAT = 1;
                 data.flag = now;
             },
             error: function () {
@@ -390,7 +391,7 @@ const getHoras = async () => {
         },
         columns: [
             {
-                data: 'Lega', className: '', targets: '', title: 'LEGAJO',
+                data: 'Lega', className: 'd-none', targets: '', title: 'LEGAJO',
                 "render": function (data, type, row, meta) {
                     return data;
                 },
@@ -398,33 +399,33 @@ const getHoras = async () => {
             {
                 data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
                 "render": function (data, type, row, meta) {
-                    return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}</div>`;
+                    return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}<br>${row.Lega}</div>`;
                 },
             },
-            // {
-            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas a Trabajar">HS AT</div>',
-            //     "render": function (data, type, row, meta) {
-            //         let html = '';
-            //         let HsATEnDecimal = (row.HsATEnDecimal);
-            //         HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
-            //         html += `<div class="enDecimales">${(HsATEnDecimal)}</div>`
-            //         html += `<div class="enHoras">${row.HsATEnHoras}</div>`
-            //         return html;
-            //     },
-            // },
-            // {
-            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Trabajadas">HS TR</div>',
-            //     "render": function (data, type, row, meta) {
-            //         let html = '';
-            //         let HsTrEnDecimal = (row.HsTrEnDecimal);
-            //         HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
-            //         html += `<div class="enDecimales">${(HsTrEnDecimal)}</div>`
-            //         html += `<div class="enHoras">${row.HsTrEnHoras}</div>`
-            //         return html;
-            //     },
-            // },
             {
-                data: '', className: 'text-center', targets: '', title: 'COD',
+                data: 'HsATyTR', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas a Trabajar">HS AT</div>',
+                "render": function (data, type, row, meta) {
+                    let html = '';
+                    let HsATEnDecimal = (data.HsATEnDecimal);
+                    HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+                    html += `<div class="enDecimales">${(HsATEnDecimal)}</div>`
+                    html += `<div class="enHoras">${data.HsATEnHoras}</div>`
+                    return html;
+                },
+            },
+            {
+                data: 'HsATyTR', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Trabajadas">HS TR</div>',
+                "render": function (data, type, row, meta) {
+                    let html = '';
+                    let HsTrEnDecimal = (data.HsTrEnDecimal);
+                    HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+                    html += `<div class="enDecimales">${(HsTrEnDecimal)}</div>`
+                    html += `<div class="enHoras">${data.HsTrEnHoras}</div>`
+                    return html;
+                },
+            },
+            {
+                data: '', className: 'text-right pr-0', targets: '', title: 'COD',
                 "render": function (data, type, row, meta) {
                     let array = row.Totales
                     let html = '';
@@ -456,20 +457,6 @@ const getHoras = async () => {
                     return html;
                 },
             },
-            // {
-            //     data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
-            //     "render": function (data, type, row, meta) {
-            //         let array = row.Totales
-            //         let html = '';
-            //         array.forEach(element => {
-            //             let EnHorasDecimal1 = (element.EnHorasDecimal1);
-            //             EnHorasDecimal1 = (Math.round((EnHorasDecimal1 + Number.EPSILON) * 100) / 100).toFixed(2);
-            //             html += `<div class="enDecimales">${(EnHorasDecimal1)}</div>`
-            //             html += `<div class="enHoras">${element.EnHoras1}</div>`
-            //         });
-            //         return html;
-            //     },
-            // },
             {
                 data: '', className: 'text-right minmax50', targets: '', title: '<div class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow" aria-label="Horas Hechas">HECHAS</div>',
                 "render": function (data, type, row, meta) {
@@ -532,7 +519,7 @@ const getHoras = async () => {
                 loaderIn('#tabla', false);
             }, 100);
             if (e.json) {
-                getHorasTotales(e.json.totales ?? '');
+                getHorasTotales(e.json.totales ?? '', e.json.totalesTryAT ?? '');
             }
             let formato = $('input[name="VPorFormato"]:checked').val();
             if (formato == 'enDecimal') {
@@ -710,7 +697,7 @@ const exportarXls = async () => {
     });
 }
 
-const getHorasTotales = async (data) => {
+const getHorasTotales = async (data, dataATyTr) => {
 
     let cardTotales = document.getElementById('card_totales');
     cardTotales.innerHTML = '';
@@ -752,7 +739,50 @@ const getHorasTotales = async (data) => {
         `;
     });
     html += '</div>';
-    cardTotales.innerHTML = html;
+
+    if (dataATyTr) {
+        let html2 = '<div class="form-row animate__animated animate__fadeIn my-2 mb-3">';
+        let HsTrEnDecimal = (dataATyTr.HsTrEnDecimal);
+        HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+        let HsATEnDecimal = (dataATyTr.HsATEnDecimal);
+        HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
+        html2 += `
+        <div class="col-12 col-md-6 col-lg-6 mt-2">
+            <div class="card" style="border:1px solid #dee2e6 !important">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="font09">Horas a Trabajar</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font-weight-bold font11 enHoras">${dataATyTr.HsATEnHoras}</div>
+                        <div class="font-weight-bold font11 enDecimales">${HsATEnDecimal}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-6 mt-2">
+            <div class="card" style="border:1px solid #dee2e6 !important">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="font09">Horas Trabajadas</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex flex-column justify-content-center align-items-center">
+                        <div class="font-weight-bold font11 enHoras">${dataATyTr.HsTrEnHoras}</div>
+                        <div class="font-weight-bold font11 enDecimales">${HsTrEnDecimal}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+        html2 += '</div>';
+
+        cardTotales.innerHTML += html2;
+    }
+    cardTotales.innerHTML += html;
 
 
     // if (!data.length === 0) {
@@ -834,7 +864,7 @@ const getHorasTotales = async (data) => {
     // });
 }
 const getNovedadesTotales = async (data) => {
-    console.log(data);
+
     let cardTotales = document.getElementById('card_totales_nove');
     cardTotales.innerHTML = '';
     if (!data) {

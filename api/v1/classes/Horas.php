@@ -578,6 +578,7 @@ class Horas
         $DiaF = $datos['DiaF'] ?? [];
         $Hora = $datos['Hora'] ?? [];
         $Esta = $datos['Esta'] ?? [];
+        $HsTrAT = $datos['HsTrAT'] ?? '';
         $HoraMin = $datos['HoraMin'] ?? ''; // Hora minima
         $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
         $MinMaxH = $datos['MinMaxH'] ?? 0; // Si se quiere el mínimo y máximo de horas
@@ -610,6 +611,7 @@ class Horas
             'HoraMin' => empty($HoraMin) ? '' : ($HoraMin),
             'HoraMax' => empty($HoraMax) ? '' : ($HoraMax),
             'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
+            'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),
         );
@@ -644,6 +646,7 @@ class Horas
                 'HoraMin' => ['time'],
                 'HoraMax' => ['time'],
                 'MinMaxH' => ['allowed01'],
+                'HsTrAT' => ['allowed01'],
                 'start' => ['intempty'],
                 'length' => ['intempty'],
             ];
@@ -672,7 +675,6 @@ class Horas
                 exit;
             }
 
-            $LegApNo = $datos['LegApNo'] ?? '';
             $Empr = implode(",", $datos["Empr"]);
             $LegDocu = implode(",", $datos["LegDocu"]);
             $LegRegCH = implode(",", $datos["LegRegCH"]);
@@ -693,6 +695,7 @@ class Horas
             $HoraMin = $datos['HoraMin']; // Hora minima
             $HoraMax = $datos['HoraMax']; // Hora maxima
             $MinMaxH = $datos['MinMaxH']; // Sobre horas hechas o autorizadas `0` = Hechas (defecto); `1` = Autorizadas
+            $HsTrAT = intval($datos['HsTrAT']); // retorna horas trabajadas y a trabajar. `0` = No, `1` = Si
 
             $wc[] = ($datos["LegApNo"]) ? " PERSONAL.LegApNo LIKE :LegApNo" : '';
             $wc[] = ($datos["LegDocu"]) ? " PERSONAL.LegDocu IN ($LegDocu)" : '';
@@ -778,9 +781,7 @@ class Horas
             $sql = "SELECT $columnas, $columnas2, $columnas3, $columnas4";
             $sql .= ", $columnas5";
             $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) as 'Horas_Tr'";
-            // $sql .= " , (SELECT COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) FROM FICHAS WHERE FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn) AS 'Horas_Tr'";
             $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) as 'Horas_AT'";
-            // $sql .= " , (SELECT COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) FROM FICHAS WHERE FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn) AS 'Horas_AT'";
             $sql .= " FROM FICHAS1";
             $sql .= " INNER JOIN FICHAS ON FICHAS1.FicLega = FICHAS.FicLega AND FICHAS1.FicFech = FICHAS.FicFech AND FICHAS1.FicTurn = FICHAS.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
@@ -796,6 +797,12 @@ class Horas
             ($datos['LegApNo']) ? $stmt1->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
             $stmt1->execute(); // Ejecuto la consulta
             $horas = $stmt1->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+            $horasATyTR = [];
+
+            if ($HsTrAT == 1) { // Si se quiere el total de horas trabajadas y a trabajar
+                $legajos = array_column($horas, 'Lega');
+                $horasATyTR = $this->horasATyTR($legajos, $FechIni, $FechFin);
+            }
 
             $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) AS 'Total' FROM FICHAS";
             $sql .= " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
@@ -818,15 +825,27 @@ class Horas
 
             // Recorremos el array original y reestructuramos los datos
             foreach ($horas as $elemento) {
+
+                if ($HsTrAT == 1) { // Si se quiere el total de horas trabajadas y a trabajar
+                    $hsATyTR = array_values($this->tools->filtrarElementoArray($horasATyTR, 'Lega', $elemento['Lega']));
+                    $hsATyTR = (empty($hsATyTR)) ? [] : $hsATyTR[0];
+                    $Horas_Tr = intval($hsATyTR['Horas_Tr']);
+                    $Horas_AT = intval($hsATyTR['Horas_AT']);
+                    $arrayHsATyTR = array(
+                        'HsTrEnMinutos' => intval($Horas_Tr),
+                        'HsTrEnHoras' => $this->minutosAHoras(intval($Horas_Tr)),
+                        'HsTrEnDecimal' => $this->minutosAHorasDecimal(intval($Horas_Tr)),
+                        'HsATEnMinutos' => intval($Horas_AT),
+                        'HsATEnHoras' => $this->minutosAHoras(intval($Horas_AT)),
+                        'HsATEnDecimal' => $this->minutosAHorasDecimal(intval($Horas_AT)),
+                    );
+                }
+                $arrayHsATyTR = $arrayHsATyTR ?? [];
+
                 $nuevo_elemento = array(
                     'Lega' => $elemento['Lega'],
                     'LegApNo' => $elemento['LegApNo'],
-                    'HsTrEnMinutos' => intval($elemento['Horas_Tr']),
-                    'HsTrEnHoras' => $this->minutosAHoras(intval($elemento['Horas_Tr'])),
-                    'HsTrEnDecimal' => $this->minutosAHorasDecimal(intval($elemento['Horas_Tr'])),
-                    'HsATEnMinutos' => intval($elemento['Horas_AT']),
-                    'HsATEnHoras' => $this->minutosAHoras(intval($elemento['Horas_AT'])),
-                    'HsATEnDecimal' => $this->minutosAHorasDecimal(intval($elemento['Horas_AT'])),
+                    'HsATyTR' => $arrayHsATyTR,
                     'Totales' => array()
                 );
 
@@ -884,7 +903,9 @@ class Horas
             $sumas = array();
 
             foreach ($nuevo_array as $empleado) {
+                $datHsATyTR[] = ($HsTrAT == 1) ? $empleado['HsATyTR'] : []; // Si se quiere el total de horas trabajadas y a trabajar, creamos un array con los valores de horas trabajadas y a trabajar
                 foreach ($empleado["Totales"] as $suma) {
+
                     $horaCodi = $suma["HoraCodi"];
                     $horaDesc = $suma["THoDesc"];
                     $horaDesc2 = $suma["THoDesc2"];
@@ -927,13 +948,28 @@ class Horas
                             "EnHorasDecimal1" => $EnHorasDecimal1, // Suma de horas hechas en decimal
                             "EnHorasDecimal2" => $EnHorasDecimal2, // Suma de horas autorizadas en decimal
                         );
-                        ksort($sumas);
                     }
+                    ksort($sumas);
                 }
+            }
+
+            if ($HsTrAT) {
+                $horasTrabajadasTotales = array_sum(array_column($datHsATyTR, 'HsTrEnMinutos'));
+                $horasATrabajarTotales = array_sum(array_column($datHsATyTR, 'HsATEnMinutos'));
+
+                $totalesATyTr = [
+                    'HsTrEnMinutos' => $horasTrabajadasTotales,
+                    'HsTrEnHoras' => $this->minutosAHoras(intval($horasTrabajadasTotales)),
+                    'HsTrEnDecimal' => $this->minutosAHorasDecimal(intval($horasTrabajadasTotales)),
+                    'HsATEnMinutos' => $horasATrabajarTotales,
+                    'HsATEnHoras' => $this->minutosAHoras(intval($horasATrabajarTotales)),
+                    'HsATEnDecimal' => $this->minutosAHorasDecimal(intval($horasATrabajarTotales)),
+                ];
             }
 
             $array = [
                 'totales' => array_values($sumas),
+                'totalesTryAT' => $totalesATyTr ?? [],
                 'data' => $nuevo_array,
                 'tiposHoras' => $hor,
             ];
@@ -976,5 +1012,32 @@ class Horas
         $minutosRestantes = $minutos % 60;
         $minutosDecimal = $minutosRestantes / 60.0;
         return $horas + $minutosDecimal;
+    }
+    /**
+     * Retrieves the total hours worked and overtime hours for the given employees within a specified date range.
+     *
+     * @param array $arrayLegajos An array of employee IDs.
+     * @param string $FechIni The start date of the date range in 'YYYY-MM-DD' format.
+     * @param string $FechFin The end date of the date range in 'YYYY-MM-DD' format.
+     * @return array An array containing the employee ID, total hours worked, and overtime hours for each employee.
+     */
+    private function horasATyTR($arrayLegajos, $FechIni, $FechFin)
+    {
+        if (!$arrayLegajos)
+            return [];
+
+        $conn = $this->conect->conn();
+        $sql = "SELECT FICHAS.FicLega as 'Lega'";
+        $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) as 'Horas_Tr'";
+        $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) as 'Horas_AT'";
+        $sql .= " FROM FICHAS";
+        $sql .= " WHERE FICHAS.FicLega IN(" . implode(",", $arrayLegajos) . ")";
+        $sql .= " AND FICHAS.FicFech BETWEEN '$FechIni' AND '$FechFin'";
+        $sql .= " GROUP BY FICHAS.FicLega";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute(); // Ejecuto la consulta
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        return $data;
     }
 }

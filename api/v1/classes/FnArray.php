@@ -41,10 +41,10 @@ class FnArray
     }
 
     /** 
-     * Toma como parámetro un array multidimensional y elimina subarrays vacíos. Se recorre cada subarray dentro del array principal y se comprueba si está vacío o no. Si el subarray está vacío, se elimina ese subarray del array principal. la función retorna el array resultante con los subarrays vacíos eliminados.
+     * Toma como parámetro un array multidimensional y elimina subArrays vacíos. Se recorre cada subarray dentro del array principal y se comprueba si está vacío o no. Si el subarray está vacío, se elimina ese subarray del array principal. la función retorna el array resultante con los subarrays vacíos eliminados.
      * @param array arrayMultidimensional
      */
-    public static function removeEmptySubarrays($array)
+    public static function removeEmptySubArrays($array)
     {
         if ($array) {
             foreach ($array as $key => $subarray) {
