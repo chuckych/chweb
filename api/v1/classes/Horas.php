@@ -716,8 +716,10 @@ class Horas
             $wc[] = ($datos["Hora"]) ? " FICHAS1.FicHora IN ($Hora)" : '';
             $wc[] = ($datos["Esta"]) ? " FICHAS1.FicEsta IN ($Esta)" : '';
             $ColFiltroMinMax = ($MinMaxH) ? "FICHAS1.FicHsAu2" : "FICHAS1.FicHsAu";
-            $wc[] = ($datos["HoraMin"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) >= dbo.fn_STRMinutos('$HoraMin')" : '';
-            $wc[] = ($datos["HoraMax"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) <= dbo.fn_STRMinutos('$HoraMax')" : '';
+            $wc[] = ($datos["HoraMin"]) ? " $ColFiltroMinMax >= '$HoraMin'" : '';
+            $wc[] = ($datos["HoraMax"]) ? " $ColFiltroMinMax <= '$HoraMax'" : '';
+            // $wc[] = ($datos["HoraMin"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) >= dbo.fn_STRMinutos('$HoraMin')" : '';
+            // $wc[] = ($datos["HoraMax"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) <= dbo.fn_STRMinutos('$HoraMax')" : '';
             $wc = array_filter($wc); // Elimino los valores vacíos del array $wc
             $wc = array_values($wc); // Reordeno los índices del array $wc   
 
@@ -863,9 +865,9 @@ class Horas
                         $EnMinutos2 = (intval($elemento['Horas2_' . $numero]));
                         $EnMinutos1 = (intval($elemento['Horas1_' . $numero]));
                         $sumaDeMinutos = $EnMinutos + $EnMinutos2;
-                        if ($sumaDeMinutos == 0) {
-                            continue;
-                        }
+                        // if ($sumaDeMinutos == 0) {
+                        //     continue;
+                        // }
 
                         $horasEnDecimal = $this->minutosAHorasDecimal(intval($elemento['Horas_' . $numero]));
                         $horasEnDecimal2 = $this->minutosAHorasDecimal(intval($elemento['Horas2_' . $numero]));

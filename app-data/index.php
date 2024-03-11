@@ -15,7 +15,10 @@ if (!$_SESSION) {
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
 
-borrarLogs('json', 1, 'json');
+// borrarLogs('json', 1, 'json');
+// borrarFileHoras('json', 1, 'json');
+// borrarFileHoras('archivos', 1, 'xls');
+// borrarFile('json', 'json');
 
 /**
  * Realiza una llamada a la API CH.
@@ -649,8 +652,11 @@ Flight::route('POST /horas/totales', function () {
         $data = getHorasTotalesDT($payload);
         $nameFile = $payload['flag'];
         $file = fopen("json/total_horas_$nameFile.json", "w") or die ("Unable to open file!");
+        $file2 = fopen("json/payload_horas_$nameFile.json", "w") or die ("Unable to open file!");
         fwrite($file, json_encode($data));
+        fwrite($file2, json_encode($payload));
         fclose($file);
+        fclose($file2);
         Flight::json($data);
         exit;
     }
@@ -700,8 +706,11 @@ Flight::route('POST /novedades/totales', function () {
         $data = getNovedadesTotalesDT($payload);
         $nameFile = $payload['flag'];
         $file = fopen("json/total_novedades_$nameFile.json", "w") or die ("Unable to open file!");
+        $file2 = fopen("json/payload_novedades_$nameFile.json", "w") or die ("Unable to open file!");
         fwrite($file, json_encode($data));
+        fwrite($file2, json_encode($payload));
         fclose($file);
+        fclose($file2);
         Flight::json($data);
         exit;
     }
@@ -710,47 +719,106 @@ Flight::route('POST /novedades/totales', function () {
 
     Flight::json($data);
 });
+Flight::route('GET /horas/payload', function () {
+
+    $payload = Flight::request()->query->getData();
+    $payload['flag'] = $payload['flag'] ?? false;
+    $payload['VPorFormato'] = $payload['VPorFormato'] ?? '';
+    $payload['VPor'] = $payload['VPor'] ?? '';
+
+    $file = "json/payload_horas_" . $payload['flag'] . ".json";
+    if (file_exists($file)) {
+        $dataPayload = file_get_contents($file);
+        $dataPayload = json_decode($dataPayload, true);
+    }
+    if ($payload['VPorFormato']) {
+        $dataPayload['Formato'] = $payload['VPorFormato'] ?? 'json';
+    }
+    if ($payload['VPor']) {
+        $dataPayload['VPor'] = $payload['VPor'] ?? 'json';
+    }
+
+    $nameFile = $payload['flag'];
+    $file2 = fopen("json/payload_horas_$nameFile.json", "w") or die ("Unable to open file!");
+    fwrite($file2, json_encode($dataPayload));
+    fclose($file2);
+
+    // Flight::json($dataPayload);
+});
 Flight::route('GET /export/totales', function () {
     $payload = Flight::request()->query->getData();
     $payload['flag'] = $payload['flag'] ?? false;
 
     if ($payload['flag']) {
         $fileHoras = "json/total_horas_" . $payload['flag'] . ".json";
+        $filePayloadNovedades = "json/payload_novedades_" . $payload['flag'] . ".json";
+        $filePayloadHoras = "json/payload_horas_" . $payload['flag'] . ".json";
+
+        if (file_exists($filePayloadNovedades)) {
+            $dataPayloadNovedades = file_get_contents($filePayloadNovedades);
+            $dataPayloadNovedades = json_decode($dataPayloadNovedades, true);
+        }
+
+        if (file_exists($filePayloadHoras)) {
+            $dataPayloadHoras = file_get_contents($filePayloadHoras);
+            $dataPayloadHoras = json_decode($dataPayloadHoras, true);
+        }
+
         if (file_exists($fileHoras)) {
             $dataHoras = file_get_contents($fileHoras);
             $dataHoras = json_decode($dataHoras, true);
+            $dataHorasTotales = $dataHoras['totales'];
+            // Flight::json($dataHorasTotales) . exit;
+            $dataHorasTotalesTryAT = $dataHoras['totalesTryAT'];
+            $dataHorasTiposHoras = $dataHoras['tiposHoras'];
             $dataHorasData = $dataHoras['data'];
         }
         $fileNovedades = "json/total_novedades_" . $payload['flag'] . ".json";
         if (file_exists($fileNovedades)) {
             $dataNovedades = file_get_contents($fileNovedades);
             $dataNovedades = json_decode($dataNovedades, true);
-            $dataNovedades = $dataNovedades['data'];
+            // Flight::json($dataNovedades) . exit;
+            $dataNovedadesNove = $dataNovedades['novedades'];
+            $dataNovedadesTotales = $dataNovedades['totales'];
+            $dataNovedadesData = $dataNovedades['data'];
         }
     }
     // Array para almacenar los resultados agrupados
-    $array_agrupado = [];
+    $data = [];
 
     $array_original = [
         "horas" => $dataHorasData ?? [],
-        "novedades" => $dataNovedades ?? []
+        "novedades" => $dataNovedadesData ?? []
     ];
 
     // Agrupar por Lega los arrays Totales de horas
     foreach ($array_original['horas'] as $hora) {
         $lega = $hora['Lega'];
         unset ($hora['Lega']);
-        $array_agrupado[$lega]['TotalesHoras'] = $hora['Totales'] ?? [];
+        $data['legajos'][$lega]['LegApNo'] = $hora['LegApNo'] ?? '';
+        $data['legajos'][$lega]['Lega'] = $lega ?? '';
+        $data['legajos'][$lega]['TotalesHoras'] = $hora['Totales'] ?? [];
     }
 
     // Agrupar por Lega los arrays Totales de novedades
     foreach ($array_original['novedades'] as $novedad) {
         $lega = $novedad['Lega'];
         unset ($novedad['Lega']);
-        $array_agrupado[$lega]['TotalesNovedades'] = $novedad['Totales'] ?? [];
+        $data['legajos'][$lega]['Lega'] = $lega ?? '';
+        $data['legajos'][$lega]['LegApNo'] = $novedad['LegApNo'] ?? '';
+        $data['legajos'][$lega]['TotalesNovedades'] = $novedad['Totales'] ?? [];
     }
+    $data['totalesTryATHs'] = $dataHorasTotalesTryAT ?? '';
+    $data['tiposDeHs'] = $dataHorasTiposHoras ?? '';
+    $data['totalesHs'] = $dataHorasTotales ?? '';
+    $data['totalesNovedades'] = $dataNovedadesTotales ?? '';
+    $data['novedades'] = $dataNovedadesNove ?? '';
+    $data['payloadNovedades'] = $dataPayloadNovedades ?? '';
+    $data['payloadHoras'] = $dataPayloadHoras ?? '';
 
-    Flight::json($array_agrupado);
+    include '../informes/reporte/xls.php';
+
+    // Flight::json($array_agrupado);
 
 });
 Flight::route('/fechas/horas', function () {

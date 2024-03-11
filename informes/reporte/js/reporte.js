@@ -63,6 +63,8 @@ const dateRange = async () => {
     })
     loaderIn('#_dr', false);
 }
+var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
+ActiveBTN(false, "#ExportarXLS", 'Exportando', IconExcel)
 
 const VTodo = (value) => {
     if (value == "horas") {
@@ -95,6 +97,7 @@ $('input[name="VPor"]').on('change', function () {
     ls.set(LS_FILTROS + 'VPor', (verPor));
     verTabla();
     VTodo(ls.get(LS_FILTROS + 'VPor'));
+    axios.get('../../app-data/horas/payload?flag=' + now + '&VPor=' + $(this).val());
 });
 $('input[name="VPorFormato"]').on('change', function () {
     if ($(this).val() == 'enDecimal') {
@@ -104,7 +107,37 @@ $('input[name="VPorFormato"]').on('change', function () {
         $('.enHoras').removeClass('d-none').addClass('animate__animated animate__fadeIn');
         $('.enDecimales').addClass('d-none').removeClass('animate__animated animate__fadeIn');
     }
+    axios.get('../../app-data/horas/payload?flag=' + now + '&VPorFormato=' + $(this).val());
 });
+
+const validarFormatoHoras = (selector) => {
+
+    let string = $(selector);
+    let valorHora = string.val().split(':');
+
+    if (!string.val()) {
+        string.val('00:00').trigger('change');
+        return false;
+    }
+
+    let horas = valorHora[0];
+    let minutos = valorHora[1];
+
+    if (minutos === undefined) {
+        string.val(pad(horas, 2) + ':00').trigger('change');
+        return false;
+    }
+
+    if (minutos.length === 1) {
+        string.val(pad(horas, 2) + ':' + pad(minutos, 2)).trigger('change');
+        return false;
+    }
+
+    if (string.val().length === 5) {
+        return true;
+    }
+    return false;
+}
 
 const verTabla = () => {
     if (ls.get(LS_FILTROS + 'VPor') == "horas") {
@@ -280,12 +313,20 @@ dateRange().then(() => {
         ajaxSelect2("#select_thora", "Tipos de Horas", "THora");
         ajaxSelect2("#select_nove", "Novedades", "Nove");
         // $('#Filtros').off('shown.bs.collapse');
+        $('#HoraMin').mask('00:00');
+        $('#HoraMax').mask('00:00');
     });
 
     let trash_allInputs = () => {
         $('#Filtros input').val('');
         $('#Filtros select').val(null).trigger('change');
         $('#Filtros .select2').val(null).trigger('change');
+        $('#HoraMin').val('00:01');
+        $('#HoraMax').val('23:59');
+        $('#SHoras1').prop('checked', true).val('1');
+        $('#SHoras0').prop('checked', false).val('0');
+        $('#labelSHoras1').addClass('active');
+        $('#labelSHoras0').removeClass('active');
         jsonData = {
             "Estruct": "",
             "Desc": "",
@@ -312,6 +353,9 @@ dateRange().then(() => {
             "FechIni": getValuesDate().startDate,
             "FechaFin": getValuesDate().endDate,
             "FechFin": getValuesDate().endDate,
+            "HoraMin": "00:01",
+            "HoraMax": "23:59",
+            "MinMaxH": "1",
             "start": 0,
             "length": 1000
         }
@@ -322,7 +366,6 @@ dateRange().then(() => {
     let trash_allIn = document.getElementById('trash_allIn');
     trash_allIn.addEventListener('click', trash_allInputs, false);
 
-    // console.log((jsonData));
     $('#_dr').on('apply.daterangepicker', function (ev, picker) {
         jsonData.FechIni = picker.startDate.format('YYYY-MM-DD');
         jsonData.FechaIni = picker.startDate.format('YYYY-MM-DD');
@@ -334,6 +377,15 @@ dateRange().then(() => {
         getNovedades();
     });
 
+    $('#HoraMin').change(function () {
+        (validarFormatoHoras('#HoraMin')) ? getHoras() : '';
+    });
+    $('#HoraMax').change(function () {
+        (validarFormatoHoras('#HoraMax')) ? getHoras() : '';
+    });
+    $('input[name="SHoras"]').change(function () {
+        getHoras()
+    });
     getHoras();
     getNovedades();
     exportarXls();
@@ -384,6 +436,11 @@ const getHoras = async () => {
                 data.length = 1000000;
                 data.DTHoras = true;
                 data.HsTrAT = 1;
+                data.HoraMin = $('#HoraMin').val();
+                data.HoraMax = $('#HoraMax').val();
+                data.MinMaxH = $('input[name="SHoras"]:checked').val();
+                data.Formato = $('input[name="VPorFormato"]:checked').val();
+                data.VPor = $('input[name="VPor"]:checked').val();
                 data.flag = now;
             },
             error: function () {
@@ -705,7 +762,7 @@ const getHorasTotales = async (data, dataATyTr) => {
         HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
         html2 += `
             <div class="col-12 col-md-6 col-lg-6">
-                <div class="card" style="border:1px solid #dee2e6 !important">
+                <div class="card mb-sm-0 mb-2" style="border:1px solid #dee2e6 !important">
                     <div class="card-header border-0">
                         <div class="d-flex justify-content-center align-items-center">
                             <div class="font09">Horas a Trabajar</div>

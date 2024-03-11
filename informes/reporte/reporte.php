@@ -9,6 +9,11 @@
     <title>
         <?= MODULOS['reporte'] ?>
     </title>
+    <style>
+        .card-header {
+            background-color: #e9e2e2;
+        }
+    </style>
 </head>
 
 <body class="bg-secondary">
@@ -21,20 +26,20 @@
         <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['reporte'], ''); ?>
         <!-- Fin Encabezado -->
         <div class="row pt-3">
-            <div class="col-12 col-sm-6 mb-sm-0 mb-3">
+            <div class="col-12 col-sm-6 mb-sm-0 mb-3 d-flex align-items-center">
                 <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
                     <label
-                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        class="btn font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Horas y Novedades">
                         <input type="radio" name="VPor" id="VTodo" value="todo"> Todo
                     </label>
                     <label
-                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        class="btn font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Novedades">
                         <input type="radio" name="VPor" id="VNovedades" value="novedades"> Novedades
                     </label>
                     <label
-                        class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        class="btn font08 btn-outline-custom border-0 radius w100 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                         aria-label="Visualizar Horas">
                         <input type="radio" name="VPor" id="VHoras" value="horas"> Horas
                     </label>
@@ -86,6 +91,8 @@
     require __DIR__ . "../../../js/DataTable.php";
 
     ?>
+
+    <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <!-- moment.min.js -->
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <!-- daterangepicker.min.js -->

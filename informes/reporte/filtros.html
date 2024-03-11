@@ -1,32 +1,27 @@
-<div class="mb-2 mt-3 row" id="div_formato" style="display:none">
+<div class="mb-2 pt-2 row" id="div_formato" style="display:none">
     <div class="col-12">
         <button class="text-pop-up-top btn btn-outline-custom border font08" type=" button" data-toggle="collapse"
             data-target="#Filtros" aria-expanded="false" aria-controls="Filtros">
             <i class="bi bi-filter"></i> Filtros
         </button>
         <button
-            class="text-pop-up-top btn btn-outline-custom border font08 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
+            class="text-pop-up-top btn btn-light text-success border font08 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
             aria-label="Exportar a XLS" type="button" id="ExportarXLS" disabled>
-            <svg xmlns="http://www.w3.org/2000/svg" class="bi" width="16" height="16" viewBox="0 0 24 24"
-                stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                <path d="M12.5 21h-7.5a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5" />
-                <path d="M3 10h18" />
-                <path d="M10 3v18" />
-                <path d="M16 19h6" />
-                <path d="M19 16l3 3l-3 3" />
-            </svg>
         </button>
         <div class="btn-group btn-group-toggle bg-light border radius p-1 float-right" data-toggle="buttons">
             <label
-                class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow"
-                aria-label="Visualizar en Decimal">
-                <input type="radio" name="VPorFormato" id="VEnDecimal" value="enDecimal"> En Decimal
+                class="btn btn-sm font08 btn-outline-custom border-0 radius hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                aria-label="Visualizar en Horas Decimal">
+                <input type="radio" name="VPorFormato" id="VEnDecimal" value="enDecimal">
+                <span class="d-none d-sm-block">En Decimal</span>
+                <span class="d-block d-sm-none">Decimal</span>
             </label>
             <label
-                class="btn btn-sm font08 btn-outline-custom border-0 radius w100 hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                class="btn btn-sm font08 btn-outline-custom border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
                 aria-label="Visualizar en Horas">
-                <input type="radio" name="VPorFormato" id="VEnHoras" checked value="enHoras"> En Horas
+                <input type="radio" name="VPorFormato" id="VEnHoras" checked value="enHoras">
+                <span class="d-none d-sm-block">En Horas</span>
+                <span class="d-block d-sm-none">Horas</span>
             </label>
         </div>
     </div>
@@ -100,7 +95,47 @@
             </select>
         </div>
     </div>
-    <div class="row">
+    <div class="row mt-2">
+        <div class="col-12">
+            <!-- Min -->
+            <div>
+                <label for="HoraMin" class="mb-1 font08">Horas Min / Max
+                    <span class="hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        aria-label="Sobre día procesado">
+                        <i class="bi bi-info-circle"></i>
+                    </span>
+                </label>
+            </div>
+            <div class="d-inline-flex">
+                <div class="d-flex align-items-center">
+                    <input type="tel" data-mask="00:00" reverse="true" id="HoraMin" class="w80 form-control h40"
+                        placeholder="00:00" value="00:01">
+                    <input type="tel" data-mask="00:00" reverse="true" id="HoraMax" class="ml-2 w80 form-control h40"
+                        placeholder="00:00" value="23:59">
+                </div>
+
+                <div class="d-flex align-items-end ml-2">
+                    <div class="btn-group btn-group-toggle border radius p-1 bg-light" data-toggle="buttons">
+                        <label
+                            class="btn font08 btn-outline-custom border-0 radius hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                            aria-label="Sobre Horas Hechas" for="SHoras0" id="labelSHoras0">
+                            <input type="radio" name="SHoras" id="SHoras0" value="0">
+                            <span class="d-none d-sm-block">Hechas</span>
+                            <span class="d-block d-sm-none">Hechas</span>
+                        </label>
+                        <label
+                            class="btn font08 btn-outline-custom border-0 radius hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                            aria-label="Sobre Horas Autorizadas" for="SHoras1" id="labelSHoras1">
+                            <input checked type="radio" name="SHoras" id="SHoras1" value="1">
+                            <span class="d-none d-sm-block">Autorizadas</span>
+                            <span class="d-block d-sm-none">Autor.</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row pb-2">
         <div class="col-12">
             <span id="trash_allIn" title="Limpiar Filtros"
                 class="font08 pointer align-middle pb-0 float-right mt-2 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"

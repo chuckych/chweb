@@ -135,6 +135,14 @@ function Modal_LG_XL(selector) {
     $(selector).removeClass('modal-lg')
     $(selector).addClass('modal-xl')
 }
+/**
+  * Rellena un número con un carácter específico hasta la longitud deseada.
+  *
+  * @param {number} num: el número que se va a rellenar.
+  * @param {number} largo - La longitud deseada del número rellenado.
+  * @param {string} [char='0'] - El carácter utilizado para el relleno. El valor predeterminado es '0'.
+  * @returns {string} El número rellenado.
+  */
 function pad(num, largo, char) {
     char = char || '0';
     num = num + '';

@@ -2700,6 +2700,57 @@ function borrarLogs($path, $dias, $ext)
         ($dateDiff >= $dias) ? unlink($file) : ''; //elimino el fichero
     }
 }
+function borrarFileHoras($path, $horas, $ext)
+{
+    // Convertir horas a segundos
+    $segundos = $horas * 3600;
+
+    // Obtener la fecha actual
+    $fechaActual = time();
+
+    // Abrir directorio
+    $directorio = opendir($path);
+
+    // Recorrer archivos del directorio
+    while ($archivo = readdir($directorio)) {
+
+        // Obtener la fecha de modificación del archivo
+        $fechaModificacion = filemtime($path . "/" . $archivo);
+
+        // Calcular la diferencia en segundos entre la fecha actual y la de modificación del archivo
+        $diferenciaSegundos = $fechaActual - $fechaModificacion;
+
+        // Si la diferencia en segundos es mayor a la cantidad de segundos especificada, eliminar el archivo
+        if ($diferenciaSegundos > $segundos) {
+
+            // Verificar si la extensión del archivo coincide con la extensión especificada
+            if (pathinfo($archivo, PATHINFO_EXTENSION) === $ext) {
+
+                unlink($path . "/" . $archivo);
+            }
+        }
+    }
+
+    // Cerrar directorio
+    closedir($directorio);
+}
+function borrarFile($path, $ext)
+{
+    // Abrir directorio
+    $directorio = opendir($path);
+
+    // Recorrer archivos del directorio
+    while ($archivo = readdir($directorio)) {
+        // Verificar si la extensión del archivo coincide con la extensión especificada
+        if (pathinfo($archivo, PATHINFO_EXTENSION) === $ext) {
+            unlink($path . "/" . $archivo);
+        }
+    }
+
+    // Cerrar directorio
+    closedir($directorio);
+}
+
 function fechaHora()
 {
     timeZone();
@@ -2837,6 +2888,13 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para
         // }
     }
     return $a;
+}
+function filtrarElementoArray($array, $key, $value)
+{
+    $result = array_filter($array, function ($item) use ($key, $value) {
+        return ($item[$key] === $value);
+    });
+    return $result;
 }
 function tipoAud($tipo)
 {
