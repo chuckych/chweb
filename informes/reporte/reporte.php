@@ -11,7 +11,9 @@
     </title>
     <style>
         .card-header {
-            background-color: #e9e2e2;
+            /* background-color: #e9e2e2; */
+            background-color: #fff;
+            backdrop-filter: blur(13px);
         }
     </style>
 </head>
@@ -69,7 +71,7 @@
         <?php require 'filtros.html'; ?>
         <section id="section_tablas" class="mb-3" style="display:none">
             <div id="div_tabla">
-                <p class="bg-custom opa8 mb-2 p-2 text-white text-center">Horas</p>
+                <p class="font-weight-bold opa8 mb-1 p-1 text-left text-uppercase font09">Horas</p>
                 <div id="card_totales"></div>
                 <table id="tabla" class="table w-100 text-nowrap">
                 </table>
@@ -77,7 +79,7 @@
                 </table>
             </div>
             <div class="mt-2" id="div_tabla_novedades">
-                <p class="bg-custom opa8 mb-2 p-2 text-white text-center">Novedades</p>
+                <p class="font-weight-bold opa8 mb-1 p-1 text-left text-uppercase font09">Novedades</p>
                 <div id="card_totales_nove"></div>
                 <table id="tabla_novedades" class="table w-100 text-nowrap">
                 </table>

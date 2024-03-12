@@ -755,41 +755,43 @@ const getHorasTotales = async (data, dataATyTr) => {
     }
 
     if (dataATyTr) {
-        let html2 = '<div class="form-row animate__animated animate__fadeIn mt-2">';
+        let html2 = '<div class="form-row animate__animated animate__fadeIn mt-2 mb-0">';
         let HsTrEnDecimal = (dataATyTr.HsTrEnDecimal);
         HsTrEnDecimal = (Math.round((HsTrEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
         let HsATEnDecimal = (dataATyTr.HsATEnDecimal);
         HsATEnDecimal = (Math.round((HsATEnDecimal + Number.EPSILON) * 100) / 100).toFixed(2);
         html2 += `
-            <div class="col-12 col-md-6 col-lg-6">
-                <div class="card mb-sm-0 mb-2" style="border:1px solid #dee2e6 !important">
-                    <div class="card-header border-0">
+            <div class="col-12">
+                <div class="w-100 d-flex" style="border:1px solid #ccc !important">
+                <div class="card mb-sm-0 mb-2 w-100">
+                    <div class="card-header border-0 pb-0 text-center">
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="font09">Horas a Trabajar</div>
+                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">A Trabajar</div>
+                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">Horas a Trabajar</div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body py-1">
                         <div class="d-flex flex-column justify-content-center align-items-center">
                             <div class="font-weight-bold font11 enHoras">${dataATyTr.HsATEnHoras}</div>
                             <div class="font-weight-bold font11 enDecimales">${HsATEnDecimal}</div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-6">
-                <div class="card" style="border:1px solid #dee2e6 !important">
-                    <div class="card-header border-0">
+                <div class="card w-100">
+                    <div class="card-header border-0 pb-0 text-center">
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="font09">Horas Trabajadas</div>
+                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">Trabajadas</div>
+                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">Horas Trabajadas</div>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body py-1">
                         <div class="d-flex flex-column justify-content-center align-items-center">
                             <div class="font-weight-bold font11 enHoras">${dataATyTr.HsTrEnHoras}</div>
                             <div class="font-weight-bold font11 enDecimales">${HsTrEnDecimal}</div>
                         </div>
                     </div>
                 </div>
+            </div>
             </div>
             `;
         html2 += '</div>';
@@ -798,7 +800,7 @@ const getHorasTotales = async (data, dataATyTr) => {
 
     if (data.length > 0) {
         let col = (data.length < 3) ? 6 : 4;
-        let html = '<div class="form-row animate__animated animate__fadeIn my-2">';
+        let html = '<div class="form-row animate__animated animate__fadeIn mb-2 mt-1">';
         data.forEach(element => {
             let colorAuto = '';
             colorAuto = (element.EnHoras2 == '00:00') ? 'text-danger' : '';
@@ -808,22 +810,23 @@ const getHorasTotales = async (data, dataATyTr) => {
             EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
             html += `
                 <div class="col-12 col-md-6 col-lg-${col} mt-2">
-                    <div class="card" style="border:1px solid #dee2e6 !important">
-                        <div class="card-header border-0">
+                    <div class="card" style="border:1px solid #ccc !important">
+                        <div class="card-header border-0 pb-0">
                             <div class="d-flex justify-content-center align-items-center">
-                                <div class="font09">${element.THoDesc}</div>
+                                <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">${element.THoDesc2}</div>
+                                <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">${element.THoDesc}</div>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body pt-2 pb-2 d-flex justify-content-center">
                             <div class="d-flex flex-column justify-content-center align-items-center">
+                                <div class="font07 text-secondary ">Hechas</div>
+                                <div class="font11 enDecimales">${EnHorasDecimal}</div>
+                                <div class="font11 enHoras">${element.EnHoras}</div>
+                            </div>
+                            <div class="ml-3 d-flex flex-column justify-content-center align-items-center">
                                 <div class="font07 text-secondary">Autorizadas</div>
                                 <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras2}</div>
                                 <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal2}</div>
-                            </div>
-                            <div class="d-flex flex-column justify-content-center align-items-center">
-                                <div class="font07 text-secondary">Hechas</div>
-                                <div class="font09 enHoras">${element.EnHoras}</div>
-                                <div class="font09 enDecimales">${EnHorasDecimal}</div>
                             </div>
                         </div>
                     </div>
@@ -932,21 +935,21 @@ const getNovedadesTotales = async (data) => {
         EnHorasDecimal2 = (Math.round((EnHorasDecimal2 + Number.EPSILON) * 100) / 100).toFixed(2);
         html += `
         <div class="col-12 col-md-6 col-lg-${col} mt-2">
-            <div class="card" style="border:1px solid #dee2e6 !important">
-                <div class="card-header border-0">
+            <div class="card" style="border:1px solid #ccc !important">
+                <div class="card-header border-0 pb-0">
                     <div class="d-flex justify-content-center align-items-center">
-                        <div class="font09">${element.NovDesc}</div>
+                        <div class="font08 text-uppercase bg-light p-1 px-3 opa8">${element.NovDesc}</div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body pt-1 pb-2">
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font07 text-secondary">Horas</div>
-                        <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras}</div>
-                        <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal}</div>
+                        <div class="font07 text-secondary d-none">Horas</div>
+                        <div class="font-weight-bold font11 enHoras ${colorAuto}">${element.EnHoras} <span class="font07">Hs.</span> </div>
+                        <div class="font-weight-bold font11 enDecimales ${colorAuto}">${EnHorasDecimal} <span class="font07">Hs.</span></div>
                     </div>
                     <div class="d-flex flex-column justify-content-center align-items-center">
-                        <div class="font07 text-secondary">Cantidad</div>
-                        <div class="font11 ${colorAuto}">${element.Cantidad}</div>
+                        <div class="font07 text-secondary d-none">Cantidad</div>
+                        <div class="font09 ${colorAuto}"><span class="font07">Cant:</span> ${element.Cantidad}</div>
                     </div>
                 </div>
             </div>

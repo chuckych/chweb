@@ -40,7 +40,15 @@
  }
 
  .border-custom, .border-custom:hover {
-     border: 1px solid var(--main-bg-modcolor) !important;
+     border-color: 1px solid var(--main-bg-modcolor) !important;
+ }
+
+ .border-custom-top, .border-custom-top:hover {
+     border-top: 1px solid var(--main-bg-modcolor) !important;
+ }
+
+ .border-custom-bottom, .border-custom-bottom:hover {
+     border-bottom: 1px solid var(--main-bg-modcolor) !important;
  }
 
  .bg-ddd {
