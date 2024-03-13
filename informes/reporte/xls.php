@@ -51,20 +51,60 @@ $encabezado = [
     "Legajo",
     "Nombre",
 ];
+$countEncabezados = count($encabezado);
+$TituloReporte = 'Reporte de Totales';
+
 if ($VPor == 'todo' || $VPor == 'horas') {
     if ($tiposDeHoras) {
-        foreach ($tiposDeHoras as $tipo) {
+        foreach ($tiposDeHoras as $key => $tipo) {
             $encabezado[] = $tipo['THoDesc2'];
         }
     }
+    $TituloReporte = 'Reporte de Totales de Horas';
+
+    foreach ($encabezado as $key => $value) {
+        if ($key >= $countEncabezados) {
+            $letraCol = numberToLetter($key);
+            switch ($Formato) {
+                case 'enHoras':
+                    $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('[h]:mm');
+                    break;
+                case 'enDecimal':
+                    $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('0.00');
+                    break;
+            }
+        }
+    }
+    $countEncabezados = count($encabezado);
 }
+
 if ($VPor == 'todo' || $VPor == 'novedades') {
     if ($novedades) {
         foreach ($novedades as $nov) {
             $encabezado[] = $nov['NovDesc'];
         }
     }
+    $TituloReporte = 'Reporte de Totales de Novedades';
+
+    foreach ($encabezado as $key => $value) {
+        if ($key >= $countEncabezados) {
+            $letraCol = numberToLetter($key);
+            switch ($Formato) {
+                case 'enHoras':
+                    $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('[h]:mm');
+                    break;
+                case 'enDecimal':
+                    $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('0.00');
+                    break;
+            }
+        }
+    }
+    $countEncabezados = count($encabezado);
 }
+if ($VPor == 'todo') {
+    $TituloReporte = 'Reporte de Totales de Horas y Novedades';
+}
+
 $last_key = count($encabezado) - 1;
 function numberToLetter($num)
 {
@@ -135,15 +175,14 @@ try {
             if ($TotalesHoras) {
                 foreach ($TotalesHoras as $keyTh => $valueTh) {
                     $siguienteColumna = $ultimaColumna++;
-                    $valorDecimal = $valueTh['EnHorasDecimal2'] ? round($valueTh['EnHorasDecimal2'], 2) : '';
                     switch ($Formato) {
                         case 'enHoras':
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valueTh['EnHoras2']);
-                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('h:mm');
+                            $valorEnHoras = $valueTh['EnHoras2'] ? HorasToExcelMas24($valueTh['EnHoras2']) : '';
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorEnHoras);
                             break;
                         case 'enDecimal':
+                            $valorDecimal = $valueTh['EnHorasDecimal2'] ? round($valueTh['EnHorasDecimal2'], 2) : '';
                             $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
-                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('0.00');
                             break;
                     }
                 }
@@ -177,15 +216,14 @@ try {
             if ($TotalesNovedades) {
                 foreach ($TotalesNovedades as $keyNov => $valueNov) {
                     $siguienteColumna = $ultimaColumna++;
-                    $valorDecimal = $valueNov['EnHorasDecimal'] ? round($valueNov['EnHorasDecimal'], 2) : '';
                     switch ($Formato) {
                         case 'enHoras':
-                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valueNov['EnHoras']);
-                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('hh:mm');
+                            $valorEnHorasNov = $valueNov['EnHoras'] ? HorasToExcelMas24($valueNov['EnHoras']) : '';
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorEnHorasNov);
                             break;
                         case 'enDecimal':
+                            $valorDecimal = $valueNov['EnHorasDecimal'] ? round($valueNov['EnHorasDecimal'], 2) : '';
                             $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
-                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('0.00');
                             break;
                     }
                 }
@@ -198,7 +236,7 @@ try {
 } catch (\Throwable $th) {
     $errores[] = $th->getMessage();
 }
-// Flight::json($rs) . exit;
+// Flight::json($valor) . exit;
 
 
 # Crear un "escritor"

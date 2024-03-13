@@ -1,22 +1,20 @@
 <?php
-function FormatoHoraToExcel($Hora)
+/**
+ * Converts a time value to a decimal representation of hours, considering values greater than 24 hours.
+ *
+ * @param string $Hora The time value to convert (format: HH:MM:SS).
+ * @return float The decimal representation of the time value.
+ */
+function HorasToExcelMas24($Hora)
 {
     $Hora = !empty($Hora) ? $Hora : '00:00:00';
-    $timestamp = new \DateTime($Hora);
-    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
-    $excelDate = floor($excelTimestamp);
-    $Hora = ($excelTimestamp - $excelDate) == 0 ? '' : $excelTimestamp - $excelDate;
-    return $Hora;
+    $timeParts = explode(':', $Hora);
+    $h = $timeParts[0];
+    $m = isset($timeParts[1]) ? $timeParts[1] : 0;
+    $s = isset($timeParts[2]) ? $timeParts[2] : 0;
+    $decimalHours = $h / 24 + $m / (24 * 60) + $s / (24 * 60 * 60); // Converts the time to a decimal value
+    return $decimalHours;
 }
-function FormatoFechaToExcel($Fecha)
-{
-    $timestamp = new \DateTime($Fecha);
-    $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
-    $excelDate = floor($excelTimestamp);
-    $Fecha = ($excelTimestamp);
-    return $Fecha;
-}
-
 $styleArray = [
     'font' => [
         'bold' => true,
@@ -49,7 +47,7 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Encabezado y Pie de Pagina */
 $dateIni = FechaFormatVar($FechaIni, 'd/m/Y');
 $dateFin = FechaFormatVar($FechaFin, 'd/m/Y');
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE TOTALES. DESDE ' . ($dateIni) . ' A ' . $dateFin);
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&B' . $TituloReporte . '. Periodo: ' . ($dateIni) . ' a ' . $dateFin);
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
 /** Para mostrar / ocultar las líneas de cuadrícula al imprimir */
 $spreadsheet->setShowGridlines(true);
@@ -60,37 +58,14 @@ $spreadsheet->getStyle($PrimerYUltima)->getAlignment()->setVertical(\PhpOffice\P
 
 $spreadsheet->getColumnDimension('A')->setWidth(10);
 $spreadsheet->getColumnDimension('B')->setWidth(33);
-// $spreadsheet->getColumnDimension('C')->setWidth(12);
-// $spreadsheet->getColumnDimension('D')->setWidth(13);
-// $spreadsheet->getColumnDimension('E')->setWidth(13);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
-// $Letras = range("H","U");
-// foreach ($Letras as $col) {
-// }
-// $spreadsheet->getColumnDimension('F')->setWidth(8);
-// $spreadsheet->getColumnDimension('G')->setWidth(22);
-// $spreadsheet->getColumnDimension('J')->setWidth(22);
-// $spreadsheet->getColumnDimension('K')->setWidth(8);
-// $spreadsheet->getColumnDimension('L')->setWidth(22);
-
-
-// $Letras = range("F","G");
-// foreach ($Letras as $col) {
-//     $spreadsheet->getColumnDimension($col)->setWidth(12);
-// }
 
 /** establecer el nivel de zoom de la hoja */
 $spreadsheet->getSheetView()->setZoomScale(100);
 /** Color de pestaña de hoja */
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
-
-// $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-// $Letras = array('A', 'B', 'C', 'D', 'E', 'G', 'J', 'L');
-// foreach ($Letras as $col) {
-//     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-// }
 
 // $Letras = array('F', 'H', 'I', 'K');
 // foreach ($Letras as $col) {
@@ -102,9 +77,9 @@ $spreadsheet->getTabColor()->setRGB('FFFFFF');
 //     ->getNumberFormat()
 //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
 
-// $spreadsheet->getStyle('H')
+// $spreadsheet->getStyle('C')
 //     ->getNumberFormat()
-//     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
+//     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME4);
 // $spreadsheet->getStyle('I')
 //     ->getNumberFormat()
 //     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
