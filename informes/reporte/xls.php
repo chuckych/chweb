@@ -37,7 +37,9 @@ $spreadsheet->setTitle("TOTALES");
 
 // Flight::json($data);
 // exit;
-$payload = $data['payloadHoras'];
+$payload = $data['payloadHoras'] ?? [];
+$Formato = $payload['Formato'] ?? '';
+$VPor = $payload['VPor'] ?? '';
 
 $FechaIni = $payload['FechIni'];
 $FechaFin = $payload['FechFin'];
@@ -49,15 +51,18 @@ $encabezado = [
     "Legajo",
     "Nombre",
 ];
-
-if ($tiposDeHoras) {
-    foreach ($tiposDeHoras as $tipo) {
-        $encabezado[] = $tipo['THoDesc2'];
+if ($VPor == 'todo' || $VPor == 'horas') {
+    if ($tiposDeHoras) {
+        foreach ($tiposDeHoras as $tipo) {
+            $encabezado[] = $tipo['THoDesc2'];
+        }
     }
 }
-if ($novedades) {
-    foreach ($novedades as $nov) {
-        $encabezado[] = $nov['NovDesc'];
+if ($VPor == 'todo' || $VPor == 'novedades') {
+    if ($novedades) {
+        foreach ($novedades as $nov) {
+            $encabezado[] = $nov['NovDesc'];
+        }
     }
 }
 $last_key = count($encabezado) - 1;
@@ -79,66 +84,122 @@ include 'estilosXls.php';
 
 $numeroDeFila = 2;
 
-// Flight::json($data);
-// exit;
-foreach ($detalle as $key => $r) {
+// Flight::json($payload) . exit;
+try {
+    foreach ($detalle as $key => $r) {
 
-    $objeto = $r;
+        $objeto = $r;
 
-    // foreach ($objeto as $k => $row) {
+        $Lega = $objeto['Lega'];
+        $LegApNo = $objeto['LegApNo'];
+        $TotalesHoras = $objeto['TotalesHoras'] ?? [];
+        $TotalesNovedades = $objeto['TotalesNovedades'] ?? [];
 
-    // Flight::json($objeto['LegApNo']);
-    // exit;
+        // # Escribirlos en el documento
+        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Lega);
+        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $LegApNo);
 
-    $Lega = $objeto['Lega'];
-    $LegApNo = $objeto['LegApNo'];
-    $TotalesHoras = $objeto['TotalesHoras'] ?? [];
+        $ultimaColumna = 3;
 
-    // # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Lega);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $LegApNo);
-    // $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $TotalesHoras);
-    // get the name of the column 3
-    $columnLetter = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3);
-    // get the value of the cell at column 3 and row $numeroDeFila
-    $cellValue = $spreadsheet->getCell($columnLetter . '1')->getValue();
+        if ($VPor == 'todo' || $VPor == 'horas') {
+            foreach ($tiposDeHoras as $tipoHora) {
+                $existe = false;
+                foreach ($TotalesHoras as $total) {
+                    if ($total['HoraCodi'] === $tipoHora['HoraCodi']) {
+                        $existe = true;
+                        break;
+                    }
+                }
+                if (!$existe) {
+                    $TotalesHoras[] = [
+                        "HoraCodi" => $tipoHora['HoraCodi'],
+                        "THoDesc" => $tipoHora['THoDesc'],
+                        "THoDesc2" => $tipoHora['THoDesc2'],
+                        "Cantidad" => 0,
+                        "EnHoras" => "00:00",
+                        "EnHoras1" => "00:00",
+                        "EnHoras2" => "",
+                        "EnMinutos" => 0,
+                        "EnMinutos1" => 0,
+                        "EnMinutos2" => 0,
+                        "EnHorasDecimal" => 0,
+                        "EnHorasDecimal1" => 0,
+                        "EnHorasDecimal2" => ''
+                    ];
+                }
+            }
+            usort($TotalesHoras, function ($a, $b) {
+                return $a['HoraCodi'] <=> $b['HoraCodi'];
+            });
 
-    // if ($TotalesHoras) {
-    //     foreach ($TotalesHoras as $keyTh => $th) {
-    //         if ($th['THoDesc2']) {
-    //             $dato = filtrarElementoArray($TotalesHoras, $cellValue, $th['THoDesc2']);
-    //             $spreadsheet->setCellValueByColumnAndRow($TotalesHoras + 3, $numeroDeFila, $th);
-    //             Flight::json($dato);
-    //             exit;
-    //         }
-    //     }
-    // } else {
-    //     $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, '00:00');
-    // }
-    $ultimaColumna = 3;
-    if ($tiposDeHoras) {
-        foreach ($tiposDeHoras as $keyTh => $valueTh) {
-            $siguienteColumna = $ultimaColumna++;
-            $valorDeLaCelda = ($TotalesHoras) ? filtrarElementoArray($TotalesHoras, 'HoraCodi', $valueTh['HoraCodi']) : '00:00';
-            $valorDeLaCelda = ($valorDeLaCelda != '00:00') ? ($valorDeLaCelda[0]['EnHoras2']) : '00:00';
-            // Flight::json($TotalesHoras);
-            // exit;
-            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDeLaCelda);
-            unset($valorDeLaCelda);
+            if ($TotalesHoras) {
+                foreach ($TotalesHoras as $keyTh => $valueTh) {
+                    $siguienteColumna = $ultimaColumna++;
+                    $valorDecimal = $valueTh['EnHorasDecimal2'] ? round($valueTh['EnHorasDecimal2'], 2) : '';
+                    switch ($Formato) {
+                        case 'enHoras':
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valueTh['EnHoras2']);
+                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('h:mm');
+                            break;
+                        case 'enDecimal':
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
+                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('0.00');
+                            break;
+                    }
+                }
+            }
         }
-    } else {
-        foreach ($tiposDeHoras as $keyTh => $valueTh) {
-            $siguienteColumna = $ultimaColumna++;
-            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, '00:00');
+
+        if ($VPor == 'todo' || $VPor == 'novedades') {
+            foreach ($novedades as $novedad) {
+                $existe = false;
+                foreach ($TotalesNovedades as $totalNov) {
+                    if ($totalNov['NovCodi'] === $novedad['NovCodi']) {
+                        $existe = true;
+                        break;
+                    }
+                }
+                if (!$existe) {
+                    $TotalesNovedades[] = [
+                        "NovCodi" => $novedad['NovCodi'],
+                        "NovDesc" => $novedad['NovDesc'],
+                        "Cantidad" => 12,
+                        "EnHoras" => "",
+                        "EnMinutos" => 0,
+                        "EnHorasDecimal" => ''
+                    ];
+                }
+            }
+            usort($TotalesNovedades, function ($a, $b) {
+                return $a['NovCodi'] <=> $b['NovCodi'];
+            });
+
+            if ($TotalesNovedades) {
+                foreach ($TotalesNovedades as $keyNov => $valueNov) {
+                    $siguienteColumna = $ultimaColumna++;
+                    $valorDecimal = $valueNov['EnHorasDecimal'] ? round($valueNov['EnHorasDecimal'], 2) : '';
+                    switch ($Formato) {
+                        case 'enHoras':
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valueNov['EnHoras']);
+                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('hh:mm');
+                            break;
+                        case 'enDecimal':
+                            $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
+                            $spreadsheet->getStyleByColumnAndRow($siguienteColumna, $numeroDeFila)->getNumberFormat()->setFormatCode('0.00');
+                            break;
+                    }
+                }
+            }
         }
+
+        $numeroDeFila++;
+
     }
-
-    $numeroDeFila++;
-    // }
+} catch (\Throwable $th) {
+    $errores[] = $th->getMessage();
 }
+// Flight::json($rs) . exit;
 
-// Flight::json($rows);
-// exit;
 
 # Crear un "escritor"
 try {
@@ -152,7 +213,7 @@ try {
     $writer->save('archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo, 'errores' => $errores ?? []);
     echo json_encode($data);
     exit;
 

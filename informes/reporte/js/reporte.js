@@ -449,7 +449,7 @@ const getHoras = async () => {
         },
         columns: [
             {
-                data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
+                data: 'LegApNo', className: '', targets: '', title: 'LEGAJO',
                 "render": function (data, type, row, meta) {
                     return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}<br>${row.Lega}</div>`;
                 },
@@ -636,7 +636,7 @@ const getNovedades = async () => {
         },
         columns: [
             {
-                data: 'LegApNo', className: '', targets: '', title: 'NOMBRE',
+                data: 'LegApNo', className: '', targets: '', title: 'LEGAJO',
                 "render": function (data, type, row, meta) {
                     return `<div class="text-truncate" style="min-width:220px; max-width:220px">${data}<br>${row.Lega}</div>`;
                 },
@@ -737,10 +737,23 @@ const getNovedades = async () => {
 
 const exportarXls = async () => {
     let button = document.getElementById('ExportarXLS');
-    button.disabled = false;
     button.addEventListener('click', async function () {
+        button.disabled = true;
+        notify('Aguarde ..', 'dark', 60000, 'right')
         let rs = await axios.get('../../app-data/export/totales?flag=' + now);
-        console.log(rs.data);
+        if (rs.data.status == 'ok') {
+            $.notifyClose();
+            notify('<b>Reporte Generado correctamente</b>.<br><div id="downloadXls" class="shadow-sm w100"><a href="../../app-data/' + rs.data.archivo + '" class="btn btn-custom px-3 btn-sm mt-2 fontq" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+            button.disabled = false;
+            let downloadXls = document.getElementById('downloadXls');
+            downloadXls.addEventListener('click', function () {
+                $.notifyClose();
+            }, false);
+        } else {
+            $.notifyClose();
+            notify('Error al generar el reporte', 'danger', 0, 'right')
+            button.disabled = false;
+        }
     });
 }
 
@@ -766,8 +779,8 @@ const getHorasTotales = async (data, dataATyTr) => {
                 <div class="card mb-sm-0 mb-2 w-100">
                     <div class="card-header border-0 pb-0 text-center">
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">A Trabajar</div>
-                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">Horas a Trabajar</div>
+                            <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-block d-sm-none">A Trabajar</div>
+                            <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-none d-sm-block">Horas a Trabajar</div>
                         </div>
                     </div>
                     <div class="card-body py-1">
@@ -780,8 +793,8 @@ const getHorasTotales = async (data, dataATyTr) => {
                 <div class="card w-100">
                     <div class="card-header border-0 pb-0 text-center">
                         <div class="d-flex justify-content-center align-items-center">
-                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">Trabajadas</div>
-                            <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">Horas Trabajadas</div>
+                            <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-block d-sm-none">Trabajadas</div>
+                            <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-none d-sm-block">Horas Trabajadas</div>
                         </div>
                     </div>
                     <div class="card-body py-1">
@@ -813,8 +826,8 @@ const getHorasTotales = async (data, dataATyTr) => {
                     <div class="card" style="border:1px solid #ccc !important">
                         <div class="card-header border-0 pb-0">
                             <div class="d-flex justify-content-center align-items-center">
-                                <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-block d-sm-none">${element.THoDesc2}</div>
-                                <div class="font08 text-uppercase bg-light p-1 px-3 opa8 d-none d-sm-block">${element.THoDesc}</div>
+                                <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-block d-sm-none">${element.THoDesc2}</div>
+                                <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8 d-none d-sm-block">${element.THoDesc}</div>
                             </div>
                         </div>
                         <div class="card-body pt-2 pb-2 d-flex justify-content-center">
@@ -938,7 +951,7 @@ const getNovedadesTotales = async (data) => {
             <div class="card" style="border:1px solid #ccc !important">
                 <div class="card-header border-0 pb-0">
                     <div class="d-flex justify-content-center align-items-center">
-                        <div class="font08 text-uppercase bg-light p-1 px-3 opa8">${element.NovDesc}</div>
+                        <div class="font08 text-uppercase bg-light text-custom border fw5 p-1 px-3 opa8">${element.NovDesc}</div>
                     </div>
                 </div>
                 <div class="card-body pt-1 pb-2">

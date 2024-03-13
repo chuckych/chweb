@@ -126,7 +126,7 @@ function tipoFic($regTipo)
     }
     return $t;
 }
-function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
+function filtrarObjetoArr($array, $key, $valor) // Función para filtrar un objeto por un valor
 {
     $a = array();
     if ($array && $key && $valor) {
@@ -138,7 +138,7 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     }
     return $a;
 }
-function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
+function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Función para filtrar un objeto por dos valores
 {
     $a = array();
     if ($array && $key && $key2 && $valor && $valor2) {
@@ -159,7 +159,7 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para
 // lz = leading zero
 function lz($num)
 {
-    return (strlen($num) < 2) ? "0{$num}" : $num;
+    return(strlen($num) < 2) ? "0{$num}" : $num;
 }
 /** 
  * @param {String} Zona Horaria. Por defecto America/Argentina/Buenos_Aires
@@ -328,12 +328,12 @@ function cleanFile($path, $Dias, $ext) // borra los archivo a partir de una cant
 $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
     try {
-        $resultSet = array();
+        $resultSet = array ();
         $stmt = $conn->query($query);
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $resultSet[] = $r;
@@ -346,19 +346,19 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
     try {
-        $resultSet = array();
+        $resultSet = array ();
         $stmt = $conn->query($query);
         if ($stmt) {
             $stmt = null;
@@ -374,14 +374,14 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
@@ -393,7 +393,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtFalse.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmt: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+            (response(array (), 0, $e, 400, timeStart(), 0, ''));
         }
 
         // execute the stored procedure
@@ -402,7 +402,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtExecute.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmtExecute: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+            (response(array (), 0, $e, 400, timeStart(), 0, ''));
         }
 
         $stmt = null;
@@ -413,7 +413,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
@@ -501,7 +501,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
             return $e[$key] === $valor;
         });
         foreach ($r as $key => $value) {
-            return ($value);
+            return($value);
         }
     }
     return false;
@@ -1358,7 +1358,7 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,
-        array(
+        array (
             "Accept: */*",
             'Content-Type: application/json',
             'Authorization: Basic ' . $authBasic,
@@ -1548,7 +1548,7 @@ function arrFecha($array, $format)
 $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     if ($method != $value) {
         http_response_code(400);
-        (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
+        (response(array (), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
         exit;
     }
 };

@@ -2871,7 +2871,7 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
     }
     return $v;
 }
-function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto
+function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto 
 {
     $a = array();
     if ($array && $key && $key2 && $valor && $valor2) {
@@ -2892,7 +2892,7 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para
 function filtrarElementoArray($array, $key, $value)
 {
     $result = array_filter($array, function ($item) use ($key, $value) {
-        return ($item[$key] === $value);
+        return $item[$key] === $value ?? [];
     });
     return $result;
 }

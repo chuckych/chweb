@@ -59,7 +59,7 @@ $spreadsheet->freezePane('A2');
 $spreadsheet->getStyle($PrimerYUltima)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
 $spreadsheet->getColumnDimension('A')->setWidth(10);
-$spreadsheet->getColumnDimension('B')->setWidth(27);
+$spreadsheet->getColumnDimension('B')->setWidth(33);
 // $spreadsheet->getColumnDimension('C')->setWidth(12);
 // $spreadsheet->getColumnDimension('D')->setWidth(13);
 // $spreadsheet->getColumnDimension('E')->setWidth(13);

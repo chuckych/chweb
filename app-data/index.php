@@ -15,7 +15,8 @@ if (!$_SESSION) {
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
 
-// borrarLogs('json', 1, 'json');
+borrarLogs('json', 1, 'json');
+borrarLogs('archivos', 1, 'xls');
 // borrarFileHoras('json', 1, 'json');
 // borrarFileHoras('archivos', 1, 'xls');
 // borrarFile('json', 'json');

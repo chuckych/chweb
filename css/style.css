@@ -51,6 +51,10 @@
      border-bottom: 1px solid var(--main-bg-modcolor) !important;
  }
 
+ .text-custom {
+     color: var(--main-bg-modcolor) !important;
+ }
+
  .bg-ddd {
      background-color: #efefef !important;
  }
