@@ -999,6 +999,7 @@ class Novedades
         $DiaF = $datos['DiaF'] ?? [];
         $Nove = $datos['Nove'] ?? [];
         $NoTi = $datos['NoTi'] ?? [];
+        $Estruct = $datos['Estruct'] ?? '';
 
         $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
         $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
@@ -1029,6 +1030,7 @@ class Novedades
             'DiaF' => !is_array($DiaF) ? [] : $DiaF,
             'Nove' => !is_array($Nove) ? [] : $Nove,
             'NoTi' => !is_array($NoTi) ? [] : $NoTi,
+            'Estruct' => empty($Estruct) ? 0 : $Estruct,
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),
         );
@@ -1064,6 +1066,7 @@ class Novedades
                 'DiaF' => ['arrAllowed01'],
                 'Nove' => ['arrSmallint'],
                 'NoTi' => ['arrSmallint'],
+                'Estruct' => ['allowed01'],
                 'start' => ['intempty'],
                 'length' => ['intempty'],
             ];
@@ -1114,6 +1117,7 @@ class Novedades
             $DiaF = implode(",", $datos["DiaF"]);
             $Nove = implode(",", $datos["Nove"]);
             $NoTi = implode(",", $datos["NoTi"]);
+            $Estruct = intval($datos['Estruct']); // Estructura a consultar 0 = Personal, 1 = Fichas.
 
             $wc[] = ($datos["LegApNo"]) ? " PERSONAL.LegApNo LIKE :LegApNo" : '';
             $wc[] = ($datos["LegDocu"]) ? " PERSONAL.LegDocu IN ($LegDocu)" : '';
@@ -1180,16 +1184,62 @@ class Novedades
                 "PERSONAL.LegApNo AS 'LegApNo'",
             ];
 
+            $columnasEstruct = [
+                "PERSONAL.LegEmpr AS 'Empr'",
+                "PERSONAL.LegPlan AS 'Plan'",
+                "PERSONAL.LegConv AS 'Conv'",
+                "PERSONAL.LegSect AS 'Sect'",
+                "PERSONAL.LegSec2 AS 'Secc'",
+                "PERSONAL.LegGrup AS 'Grup'",
+                "PERSONAL.LegSucu AS 'Sucu'"
+            ];
+            $groupByEstruct = [
+                "PERSONAL.LegEmpr",
+                "PERSONAL.LegPlan",
+                "PERSONAL.LegConv",
+                "PERSONAL.LegSect",
+                "PERSONAL.LegSec2",
+                "PERSONAL.LegGrup",
+                "PERSONAL.LegSucu"
+            ];
+
+            if ($Estruct === 1) {
+                unset($columnasEstruct);
+                unset($groupByEstruct);
+                $columnasEstruct = [
+                    "FICHAS.FicEmpr AS 'Empr'",
+                    "FICHAS.FicPlan AS 'Plan'",
+                    "FICHAS.FicConv AS 'Conv'",
+                    "FICHAS.FicSect AS 'Sect'",
+                    "FICHAS.FicSec2 AS 'Secc'",
+                    "FICHAS.FicGrup AS 'Grup'",
+                    "FICHAS.FicSucu AS 'Sucu'"
+                ];
+                $groupByEstruct = [
+                    "FICHAS.FicEmpr",
+                    "FICHAS.FicPlan",
+                    "FICHAS.FicConv",
+                    "FICHAS.FicSect",
+                    "FICHAS.FicSec2",
+                    "FICHAS.FicGrup",
+                    "FICHAS.FicSucu"
+                ];
+            }
+
+            $groupByEstruct = implode(", ", $groupByEstruct);
+            $columnasEstruct = implode(", ", $columnasEstruct);
+
             $columnas2 = implode(", ", $countNoveCols);
             $columnas3 = implode(", ", $sumNoveCols);
             $columnas = implode(", ", $columnas);
-            $sql = "SELECT $columnas, $columnas2, $columnas3 FROM FICHAS3";
+            $sql = "SELECT $columnas, $columnasEstruct, $columnas2, $columnas3 FROM FICHAS3";
             $sql .= " INNER JOIN FICHAS ON FICHAS3.FicLega = FICHAS.FicLega AND FICHAS3.FicFech = FICHAS.FicFech AND FICHAS3.FicTurn = FICHAS.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicNove > 0";
             $sql .= " AND FICHAS3.FicFech BETWEEN '$FechIni' AND '$FechFin'";
             $sql .= $whereConditions;
             $sql .= " GROUP BY FICHAS3.FicLega, PERSONAL.LegApNo";
+            $sql .= ", $groupByEstruct";
             $sql .= " ORDER BY FICHAS3.FicLega";
             $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
 
@@ -1198,7 +1248,8 @@ class Novedades
             $stmt1->execute(); // Ejecuto la consulta
             $novedades = $stmt1->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
 
-            $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) as 'Total' FROM FICHAS";
+            // $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) as 'Total' FROM FICHAS";
+            $sql = "SELECT COUNT(DISTINCT CONCAT($groupByEstruct)) AS 'Total' FROM FICHAS";
             $sql .= " INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicNove > 0";
@@ -1220,6 +1271,13 @@ class Novedades
                 $nuevo_elemento = array(
                     'Lega' => $elemento['Lega'],
                     'LegApNo' => $elemento['LegApNo'],
+                    'Empr' => intval($elemento['Empr']),
+                    'Plan' => intval($elemento['Plan']),
+                    'Conv' => intval($elemento['Conv']),
+                    'Sect' => intval($elemento['Sect']),
+                    'Secc' => intval($elemento['Secc']),
+                    'Grup' => intval($elemento['Grup']),
+                    'Sucu' => intval($elemento['Sucu']),
                     'Totales' => array()
                 );
 

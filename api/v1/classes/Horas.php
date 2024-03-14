@@ -582,6 +582,7 @@ class Horas
         $HoraMin = $datos['HoraMin'] ?? ''; // Hora minima
         $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
         $MinMaxH = $datos['MinMaxH'] ?? 0; // Si se quiere el mínimo y máximo de horas
+        $Estruct = $datos['Estruct'] ?? 0; //  Estructura a consultar 0 = Personal, 1 = Fichas.
 
         $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
         $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
@@ -611,6 +612,7 @@ class Horas
             'HoraMin' => empty($HoraMin) ? '' : ($HoraMin),
             'HoraMax' => empty($HoraMax) ? '' : ($HoraMax),
             'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
+            'Estruct' => empty($Estruct) ? 0 : ($Estruct),
             'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
             'start' => empty($start) ? 0 : ($start),
             'length' => empty($length) ? 5 : ($length),
@@ -647,6 +649,7 @@ class Horas
                 'HoraMax' => ['time'],
                 'MinMaxH' => ['allowed01'],
                 'HsTrAT' => ['allowed01'],
+                'Estruct' => ['allowed01'],
                 'start' => ['intempty'],
                 'length' => ['intempty'],
             ];
@@ -696,6 +699,7 @@ class Horas
             $HoraMax = $datos['HoraMax']; // Hora maxima
             $MinMaxH = $datos['MinMaxH']; // Sobre horas hechas o autorizadas `0` = Hechas (defecto); `1` = Autorizadas
             $HsTrAT = intval($datos['HsTrAT']); // retorna horas trabajadas y a trabajar. `0` = No, `1` = Si
+            $Estruct = intval($datos['Estruct']); // Estructura a consultar 0 = Personal, 1 = Fichas.
 
             $wc[] = ($datos["LegApNo"]) ? " PERSONAL.LegApNo LIKE :LegApNo" : '';
             $wc[] = ($datos["LegDocu"]) ? " PERSONAL.LegDocu IN ($LegDocu)" : '';
@@ -775,12 +779,57 @@ class Horas
                 "PERSONAL.LegApNo AS 'LegApNo'",
             ];
 
+            $columnasEstruct = [
+                "PERSONAL.LegEmpr AS 'Empr'",
+                "PERSONAL.LegPlan AS 'Plan'",
+                "PERSONAL.LegConv AS 'Conv'",
+                "PERSONAL.LegSect AS 'Sect'",
+                "PERSONAL.LegSec2 AS 'Secc'",
+                "PERSONAL.LegGrup AS 'Grup'",
+                "PERSONAL.LegSucu AS 'Sucu'"
+            ];
+            $groupByEstruct = [
+                "PERSONAL.LegEmpr",
+                "PERSONAL.LegPlan",
+                "PERSONAL.LegConv",
+                "PERSONAL.LegSect",
+                "PERSONAL.LegSec2",
+                "PERSONAL.LegGrup",
+                "PERSONAL.LegSucu"
+            ];
+
+            if ($Estruct === 1) {
+                unset($columnasEstruct);
+                unset($groupByEstruct);
+                $columnasEstruct = [
+                    "FICHAS.FicEmpr AS 'Empr'",
+                    "FICHAS.FicPlan AS 'Plan'",
+                    "FICHAS.FicConv AS 'Conv'",
+                    "FICHAS.FicSect AS 'Sect'",
+                    "FICHAS.FicSec2 AS 'Secc'",
+                    "FICHAS.FicGrup AS 'Grup'",
+                    "FICHAS.FicSucu AS 'Sucu'"
+                ];
+                $groupByEstruct = [
+                    "FICHAS.FicEmpr",
+                    "FICHAS.FicPlan",
+                    "FICHAS.FicConv",
+                    "FICHAS.FicSect",
+                    "FICHAS.FicSec2",
+                    "FICHAS.FicGrup",
+                    "FICHAS.FicSucu"
+                ];
+            }
+
+            $groupByEstruct = implode(", ", $groupByEstruct);
+            $columnasEstruct = implode(", ", $columnasEstruct);
+
             $columnas = implode(", ", $columnas);
             $columnas2 = implode(", ", $countHoraCols);
             $columnas3 = implode(", ", $sumHoraCols);
             $columnas4 = implode(", ", $sumHoraCols2);
             $columnas5 = implode(", ", $sumHoraCols3);
-            $sql = "SELECT $columnas, $columnas2, $columnas3, $columnas4";
+            $sql = "SELECT $columnas, $columnasEstruct, $columnas2, $columnas3, $columnas4";
             $sql .= ", $columnas5";
             $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsTr)), 0) as 'Horas_Tr'";
             $sql .= " ,COALESCE(SUM(dbo.fn_STRMinutos(FICHAS.FicHsAT)), 0) as 'Horas_AT'";
@@ -791,6 +840,7 @@ class Horas
             $sql .= " AND FICHAS1.FicFech BETWEEN '$FechIni' AND '$FechFin'";
             $sql .= $whereConditions;
             $sql .= " GROUP BY FICHAS1.FicLega, PERSONAL.LegApNo";
+            $sql .= ", $groupByEstruct";
             $sql .= " ORDER BY FICHAS1.FicLega";
             $sql .= " OFFSET $datos[start] ROWS FETCH NEXT $datos[length] ROWS ONLY"; // Paginación
             // print_r($sql) . exit;
@@ -806,7 +856,8 @@ class Horas
                 $horasATyTR = $this->horasATyTR($legajos, $FechIni, $FechFin);
             }
 
-            $sql = "SELECT COUNT(DISTINCT(FICHAS.FicLega)) AS 'Total' FROM FICHAS";
+            $sql = "SELECT COUNT(DISTINCT CONCAT($groupByEstruct)) AS 'Total'";
+            $sql .= " FROM FICHAS";
             $sql .= " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicHora > 0";
@@ -845,8 +896,15 @@ class Horas
                 $arrayHsATyTR = $arrayHsATyTR ?? [];
 
                 $nuevo_elemento = array(
-                    'Lega' => $elemento['Lega'],
+                    'Lega' => intval($elemento['Lega']),
                     'LegApNo' => $elemento['LegApNo'],
+                    'Empr' => intval($elemento['Empr']),
+                    'Plan' => intval($elemento['Plan']),
+                    'Conv' => intval($elemento['Conv']),
+                    'Sect' => intval($elemento['Sect']),
+                    'Secc' => intval($elemento['Secc']),
+                    'Grup' => intval($elemento['Grup']),
+                    'Sucu' => intval($elemento['Sucu']),
                     'HsATyTR' => $arrayHsATyTR,
                     'Totales' => array()
                 );

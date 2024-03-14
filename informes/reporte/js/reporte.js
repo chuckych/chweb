@@ -64,7 +64,7 @@ const dateRange = async () => {
     loaderIn('#_dr', false);
 }
 var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
-ActiveBTN(false, "#ExportarXLS", 'Exportando', IconExcel)
+ActiveBTN(false, "#ExportarXLS", 'Exportando', 'Exportar')
 
 const VTodo = (value) => {
     if (value == "horas") {
@@ -98,6 +98,29 @@ $('input[name="VPor"]').on('change', function () {
     verTabla();
     VTodo(ls.get(LS_FILTROS + 'VPor'));
     axios.get('../../app-data/horas/payload?flag=' + now + '&VPor=' + $(this).val());
+});
+
+let btnCantidades = document.querySelector('button[name="cantidades"]');
+
+const statusBtn = (name) => {
+    let btn = document.querySelector(`button[name="${name}"]`);
+    btn.addEventListener('click', function (e) {
+        if (btn.classList.contains('active')) {
+            btn.classList.remove('active');
+            btn.value = 0;
+        } else {
+            btn.classList.add('active');
+            btn.value = 1;
+        }
+        console.log(btn.value);
+        axios.get('../../app-data/horas/payload?flag=' + now + '&' + name + '=' + btn.value);
+    });
+}
+statusBtn('cantidades');
+statusBtn('estructura');
+
+$('input[name="extension"]').on('change', function () {
+    axios.get('../../app-data/horas/payload?flag=' + now + '&extension=' + $(this).val());
 });
 $('input[name="VPorFormato"]').on('change', function () {
     if ($(this).val() == 'enDecimal') {

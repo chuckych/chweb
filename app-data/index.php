@@ -129,6 +129,32 @@ function getNoveCausas($novedad)
 
     return array_values($rs) ?? array();
 }
+function estructuras($estructuras)
+{
+    // estructuras
+    // {
+    //     "Empr": "100,1,2,300,200",
+    //     "Plan": "1,2,4,5,8,19,3,9,18,10,7,13",
+    //     "Conv": "2,4",
+    //     "Sect": "100,2,200,3,1",
+    //     "Secc": "21,12",
+    //     "Grup": "1,2",
+    //     "Sucu": "1,6,3,4"
+    // }
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/estructuras";
+
+    $data = ch_api($endpoint, $estructuras, 'POST', '');
+
+    $arrayData = json_decode($data, true);
+
+    $arrayData['arrayData'] = $arrayData['DATA'] ?? '';
+
+    if (empty($arrayData['DATA'])) {
+        return [];
+    }
+
+    return $arrayData['DATA'] ?? array();
+}
 /**
  * Obtiene los datos de una ficha de novedades y horarios de forma simplificada.
  *
@@ -738,13 +764,22 @@ Flight::route('GET /horas/payload', function () {
     if ($payload['VPor']) {
         $dataPayload['VPor'] = $payload['VPor'] ?? 'json';
     }
+    if (array_key_exists('estructura', $payload)) {
+        $dataPayload['estructura'] = $payload['estructura'];
+    }
+    if (array_key_exists('cantidades', $payload)) {
+        $dataPayload['cantidades'] = $payload['cantidades'];
+    }
+    if (array_key_exists('extension', $payload)) {
+        $dataPayload['extension'] = $payload['extension'];
+    }
 
     $nameFile = $payload['flag'];
     $file2 = fopen("json/payload_horas_$nameFile.json", "w") or die ("Unable to open file!");
     fwrite($file2, json_encode($dataPayload));
     fclose($file2);
 
-    // Flight::json($dataPayload);
+    Flight::json($dataPayload);
 });
 Flight::route('GET /export/totales', function () {
     $payload = Flight::request()->query->getData();
@@ -792,13 +827,38 @@ Flight::route('GET /export/totales', function () {
         "novedades" => $dataNovedadesData ?? []
     ];
 
+    $estructEmpr = [];
+    $estructPlan = [];
+    $estructConv = [];
+    $estructSect = [];
+    $estructSecc = [];
+    $estructGrup = [];
+    $estructSucu = [];
+
+
     // Agrupar por Lega los arrays Totales de horas
     foreach ($array_original['horas'] as $hora) {
         $lega = $hora['Lega'];
         unset ($hora['Lega']);
         $data['legajos'][$lega]['LegApNo'] = $hora['LegApNo'] ?? '';
         $data['legajos'][$lega]['Lega'] = $lega ?? '';
+        $data['legajos'][$lega]['Empr'] = $hora['Empr'] ?? '';
+        $data['legajos'][$lega]['Plan'] = $hora['Plan'] ?? '';
+        $data['legajos'][$lega]['Conv'] = $hora['Conv'] ?? '';
+        $data['legajos'][$lega]['Sect'] = $hora['Sect'] ?? '';
+        $data['legajos'][$lega]['Secc'] = $hora['Secc'] ?? '';
+        $data['legajos'][$lega]['Grup'] = $hora['Grup'] ?? '';
+        $data['legajos'][$lega]['Sucu'] = $hora['Sucu'] ?? '';
         $data['legajos'][$lega]['TotalesHoras'] = $hora['Totales'] ?? [];
+
+        $estructEmpr[$hora['Empr']] = $hora['Empr'];
+        $estructPlan[$hora['Plan']] = $hora['Plan'];
+        $estructConv[$hora['Conv']] = $hora['Conv'];
+        $estructSect[$hora['Sect']] = $hora['Sect'];
+        $estructSecc[$hora['Secc']] = $hora['Sect'] . $hora['Secc'] == 00 ? '' : ($hora['Sect'] . $hora['Secc']);
+        $estructGrup[$hora['Grup']] = $hora['Grup'];
+        $estructSucu[$hora['Sucu']] = $hora['Sucu'];
+
     }
 
     // Agrupar por Lega los arrays Totales de novedades
@@ -807,8 +867,34 @@ Flight::route('GET /export/totales', function () {
         unset ($novedad['Lega']);
         $data['legajos'][$lega]['Lega'] = $lega ?? '';
         $data['legajos'][$lega]['LegApNo'] = $novedad['LegApNo'] ?? '';
+        $data['legajos'][$lega]['Empr'] = $novedad['Empr'] ?? '';
+        $data['legajos'][$lega]['Plan'] = $novedad['Plan'] ?? '';
+        $data['legajos'][$lega]['Conv'] = $novedad['Conv'] ?? '';
+        $data['legajos'][$lega]['Sect'] = $novedad['Sect'] ?? '';
+        $data['legajos'][$lega]['Secc'] = $novedad['Secc'] ?? '';
+        $data['legajos'][$lega]['Grup'] = $novedad['Grup'] ?? '';
+        $data['legajos'][$lega]['Sucu'] = $novedad['Sucu'] ?? '';
         $data['legajos'][$lega]['TotalesNovedades'] = $novedad['Totales'] ?? [];
+
+        $estructEmpr[$novedad['Empr']] = $novedad['Empr'];
+        $estructPlan[$novedad['Plan']] = $novedad['Plan'];
+        $estructConv[$novedad['Conv']] = $novedad['Conv'];
+        $estructSect[$novedad['Sect']] = $novedad['Sect'];
+        $estructSecc[$novedad['Secc']] = $novedad['Sect'] . $novedad['Secc'] == 00 ? '' : ($novedad['Sect'] . $novedad['Secc']);
+        $estructGrup[$novedad['Grup']] = $novedad['Grup'];
+        $estructSucu[$novedad['Sucu']] = $novedad['Sucu'];
     }
+
+    $estructuras = [
+        "Empr" => implode(',', array_filter($estructEmpr)),
+        "Plan" => implode(',', array_filter($estructPlan)),
+        "Conv" => implode(',', array_filter($estructConv)),
+        "Sect" => implode(',', array_filter($estructSect)),
+        "Secc" => implode(',', array_filter($estructSecc)),
+        "Grup" => implode(',', array_filter($estructGrup)),
+        "Sucu" => implode(',', array_filter($estructSucu)),
+    ];
+
     $data['totalesTryATHs'] = $dataHorasTotalesTryAT ?? '';
     $data['tiposDeHs'] = $dataHorasTiposHoras ?? '';
     $data['totalesHs'] = $dataHorasTotales ?? '';
@@ -816,10 +902,13 @@ Flight::route('GET /export/totales', function () {
     $data['novedades'] = $dataNovedadesNove ?? '';
     $data['payloadNovedades'] = $dataPayloadNovedades ?? '';
     $data['payloadHoras'] = $dataPayloadHoras ?? '';
+    $data['estructuras'] = estructuras($estructuras) ?? '';
+
+    // Flight::json($data['estructuras']) . exit;
+
 
     include '../informes/reporte/xls.php';
 
-    // Flight::json($array_agrupado);
 
 });
 Flight::route('/fechas/horas', function () {

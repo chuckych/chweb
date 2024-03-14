@@ -53,11 +53,18 @@ $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . 
 $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
 $spreadsheet->getStyle('A:' . $ultimaLetra)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->freezePane('A2');
+// $spreadsheet->freezePane('A2');
+$spreadsheet->freezePane('C2');
+/** Ajustar automáticamente el ancho de las columnas */
+$spreadsheet->getColumnDimension('A')->setAutoSize(true);
+$spreadsheet->getColumnDimension('B')->setAutoSize(true);
+
 $spreadsheet->getStyle($PrimerYUltima)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
-$spreadsheet->getColumnDimension('A')->setWidth(10);
-$spreadsheet->getColumnDimension('B')->setWidth(33);
+// $spreadsheet->getColumnDimension('A')->setWidth(12);
+// $spreadsheet->getColumnDimension('B')->setWidth(33);
+// $spreadsheet->getColumnDimension('C')->setWidth(25);
+// $spreadsheet->getColumnDimension('F')->setWidth(30);
 
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);

@@ -15,6 +15,7 @@ $response = new Classes\Response;
 $log = new Classes\Log;
 $horas = new Classes\Horas;
 $fichas = new Classes\Fichas;
+$estructuras = new Classes\Estructuras;
 $novedades = new Classes\Novedades;
 $RRHHWebService = new Classes\RRHHWebService;
 $ConnectSqlSrv = new Classes\ConnectSqlSrv;
@@ -36,6 +37,7 @@ $api->route('GET /horas/dateMinMax', [$horas, 'dateMinMax']);
 $api->route('GET /fichas/dateMinMax', [$fichas, 'dateMinMax']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
+$api->route('POST /estructuras/', [$estructuras, 'estructuras']);
 $api->route('GET /novedades/data', [$novedades, 'data']);
 $api->route('/paragene', [$ParaGene, 'get']);
 
@@ -52,7 +54,7 @@ $api->map('error', function ($ex) {
     } elseif ($ex instanceof PDOException) {
         $log->write($ex->getMessage(), $nameLog);
     }
-    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
+    Flight::json(array ('status' => 'error', 'message' => $ex->getMessage()), 400);
 });
 
 $api->start();

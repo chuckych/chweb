@@ -1,12 +1,12 @@
-<div class="mb-2 pt-2 row" id="div_formato" style="display:none">
+<div class="pb-2 pt-3 row" id="div_formato" style="display:none">
     <div class="col-12">
         <button class="text-pop-up-top btn btn-outline-custom border font08" type=" button" data-toggle="collapse"
             data-target="#Filtros" aria-expanded="false" aria-controls="Filtros">
             <i class="bi bi-filter"></i> Filtros
         </button>
-        <button
-            class="text-pop-up-top btn btn-light text-success border font08 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
-            aria-label="Exportar a XLS" type="button" id="ExportarXLS" disabled>
+        <button class="text-pop-up-top btn btn-outline-custom border font08" type=" button" data-toggle="collapse"
+            data-target="#Exportar" aria-expanded="false" aria-controls="Exportar">
+            <i class="bi bi-download"></i> Exportar
         </button>
         <div class="btn-group btn-group-toggle bg-light border radius p-1 float-right" data-toggle="buttons">
             <label
@@ -26,8 +26,43 @@
         </div>
     </div>
 </div>
+<section class="collapse" id="Exportar">
+    <div class="row pb-2 pt-1">
+
+        <div class="col-12 d-flex">
+            <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
+                <label class="btn btn-sm font08 btn-outline-secondary border-0 radius">
+                    <input type="radio" name="extension" value="csv">
+                    <span>CSV</span>
+                </label>
+                <label class="btn btn-sm font08 btn-outline-success border-0 radius">
+                    <input type="radio" name="extension" checked value="xls">
+                    <span>XLS</span>
+                </label>
+            </div>
+            <div class="bg-light border radius p-1 ml-1">
+                <button
+                    class="btn btn-sm font08 btn-outline-primary border-0 radius border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                    aria-label="Incluir estructura organizacional" value="0" name="estructura">
+                    <span>Estructura</span>
+                </button>
+            </div>
+            <div class="bg-light border radius p-1 ml-1 d-none">
+                <button class="btn btn-sm font08 btn-outline-primary border-0 radius" value="0" name="cantidades">
+                    <span>Cantidades</span>
+                </button>
+            </div>
+            <div class="bg-light border radius p-1 ml-1">
+                <button class="text-pop-up-top btn btn-sm btn-light text-success border-0 radius font08" type="button"
+                    id="ExportarXLS" disabled>
+                </button>
+            </div>
+        </div>
+
+    </div>
+</section>
 <section class="collapse invisible" id="Filtros">
-    <div class="row mt-2">
+    <div class="row py-2">
         <div class="col-12 col-sm-4">
             <!-- Empresa -->
             <label for="select_empresa" class="mb-1">Empresas</label>

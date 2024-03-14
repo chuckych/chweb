@@ -21,6 +21,8 @@ require_once __DIR__ . '../../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 
 $documento = new Spreadsheet();
@@ -35,22 +37,47 @@ $documento
 $spreadsheet = $documento->getActiveSheet();
 $spreadsheet->setTitle("TOTALES");
 
-// Flight::json($data);
-// exit;
+
 $payload = $data['payloadHoras'] ?? [];
 $Formato = $payload['Formato'] ?? '';
 $VPor = $payload['VPor'] ?? '';
+$getEstructura = $payload['estructura'] ?? '';
+$extension = $payload['extension'] ?? '';
 
 $FechaIni = $payload['FechIni'];
 $FechaFin = $payload['FechFin'];
 $detalle = $data['legajos'] ?? [];
 $tiposDeHoras = $data['tiposDeHs'] ?? [];
 $novedades = $data['novedades'] ?? [];
+$estructuras = $data['estructuras'] ?? [];
+
+// Flight::json($estructuras) . exit;
 # Escribir encabezado de los productos
 $encabezado = [
     "Legajo",
     "Nombre",
 ];
+if ($getEstructura == '1') {
+
+    $encabezadoEstructuras = [
+        "Empresa",
+        "Planta",
+        "Convenio",
+        "Sector",
+        "Sección",
+        "Grupo",
+        "Sucursal"
+    ];
+
+    foreach ($encabezadoEstructuras as $key => $value) {
+        $encabezado[] = $value;
+    }
+    $letras = ['C', 'D', 'E', 'F', 'G', 'H', 'I'];
+    foreach ($letras as $key => $value) {
+        $spreadsheet->getColumnDimension($value)->setAutoSize(true);
+    }
+}
+
 $countEncabezados = count($encabezado);
 $TituloReporte = 'Reporte de Totales';
 
@@ -65,6 +92,7 @@ if ($VPor == 'todo' || $VPor == 'horas') {
     foreach ($encabezado as $key => $value) {
         if ($key >= $countEncabezados) {
             $letraCol = numberToLetter($key);
+            $spreadsheet->getColumnDimension($letraCol)->setAutoSize(true);
             switch ($Formato) {
                 case 'enHoras':
                     $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('[h]:mm');
@@ -89,6 +117,7 @@ if ($VPor == 'todo' || $VPor == 'novedades') {
     foreach ($encabezado as $key => $value) {
         if ($key >= $countEncabezados) {
             $letraCol = numberToLetter($key);
+            $spreadsheet->getColumnDimension($letraCol)->setAutoSize(true);
             switch ($Formato) {
                 case 'enHoras':
                     $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('[h]:mm');
@@ -125,13 +154,66 @@ include 'estilosXls.php';
 $numeroDeFila = 2;
 
 // Flight::json($payload) . exit;
+
+function filtrarEstructura($estructura, $campo, $valor)
+{
+    if (empty($estructura))
+        return '';
+
+    if (intval($valor) === 0)
+        return '';
+
+    try {
+        $resultado = array_filter($estructura, function ($estructura) use ($campo, $valor) {
+            return $estructura[$campo] == $valor;
+        });
+        $data = array_values($resultado);
+        return $data[0] ?? '';
+    } catch (\Throwable $th) {
+        return '';
+    }
+
+}
+function filtrarSeccion($estructura, $sector, $seccion)
+{
+    if (empty($estructura))
+        return '';
+
+    if (intval($sector) === 0)
+        return '';
+
+    if (intval($seccion) === 0)
+        return '';
+
+    try {
+        foreach ($estructura as $key => $value) {
+            if ($value['Se2Codi'] == $seccion && $value['SecCodi'] == $sector) {
+                return $value['Se2Desc'];
+            }
+        }
+    } catch (\Throwable $th) {
+        return '';
+    }
+}
+
 try {
     foreach ($detalle as $key => $r) {
 
         $objeto = $r;
 
         $Lega = $objeto['Lega'];
-        $LegApNo = $objeto['LegApNo'];
+        $LegApNo = trim($objeto['LegApNo']);
+
+        if ($getEstructura == '1') {
+            $Empr = filtrarEstructura($estructuras['Empresas'] ?? '', 'EmpCodi', $objeto['Empr'])['EmpRazon'] ?? '';
+            $Plan = filtrarEstructura($estructuras['Plantas'] ?? '', 'PlaCodi', $objeto['Plan'])['PlaDesc'] ?? '';
+            $Conv = filtrarEstructura($estructuras['Convenios'] ?? '', 'ConCodi', $objeto['Conv'])['ConDesc'] ?? '';
+            $Sect = filtrarEstructura($estructuras['Sectores'] ?? '', 'SecCodi', $objeto['Sect'])['SecDesc'] ?? '';
+            $Secc = filtrarSeccion($estructuras['Secciones'] ?? '', $objeto['Sect'], $objeto['Secc']);
+            $Grup = filtrarEstructura($estructuras['Grupos'] ?? '', 'GruCodi', $objeto['Grup'])['GruDesc'] ?? '';
+            $Sucu = filtrarEstructura($estructuras['Sucursales'] ?? '', 'SucCodi', $objeto['Sucu'])['SucDesc'] ?? '';
+        }
+
         $TotalesHoras = $objeto['TotalesHoras'] ?? [];
         $TotalesNovedades = $objeto['TotalesNovedades'] ?? [];
 
@@ -140,6 +222,18 @@ try {
         $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $LegApNo);
 
         $ultimaColumna = 3;
+
+        if ($getEstructura == '1') {
+            $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Empr);
+            $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Plan);
+            $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Conv);
+            $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $Sect);
+            $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $Secc);
+            $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $Grup);
+            $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $Sucu);
+            $ultimaColumna = 10;
+        }
+
 
         if ($VPor == 'todo' || $VPor == 'horas') {
             foreach ($tiposDeHoras as $tipoHora) {
@@ -230,9 +324,12 @@ try {
             }
         }
 
+        $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(25);
+        // aplicar sangria a las celdas
+        $spreadsheet->getStyle('A' . $numeroDeFila . ':' . $ultimaLetra . $numeroDeFila)->getAlignment()->setIndent(1);
         $numeroDeFila++;
-
     }
+    $spreadsheet->getStyle('A1:' . $ultimaLetra . $numeroDeFila)->getAlignment()->setIndent(1);
 } catch (\Throwable $th) {
     $errores[] = $th->getMessage();
 }
@@ -243,11 +340,18 @@ try {
 try {
     BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_Totales_" . $MicroTime . ".xls";
+    $TituloReporte = str_replace(' ', '_', $TituloReporte) . '_' . date('YmdHis');
 
-    $writer = new Xls($documento);
-    # Le pasamos la ruta de guardado
-    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    if ($extension == 'csv') {
+        $NombreArchivo = "$TituloReporte.csv";
+        $writer = new Csv($documento);
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Csv');
+    } else {
+        $NombreArchivo = "$TituloReporte.xls";
+        $writer = new Xls($documento);
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    }
+
     $writer->save('archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 

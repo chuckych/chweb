@@ -58,6 +58,10 @@ class ConnectSqlSrv
     {
         return $this->conn;
     }
+    public function close($conn)
+    {
+        $conn = null;
+    }
     /**
      * Ejecuta una consulta SQL
      * @param string $sql Consulta SQL
