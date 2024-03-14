@@ -773,6 +773,9 @@ Flight::route('GET /horas/payload', function () {
     if (array_key_exists('extension', $payload)) {
         $dataPayload['extension'] = $payload['extension'];
     }
+    if (array_key_exists('totales', $payload)) {
+        $dataPayload['totales'] = $payload['totales'];
+    }
 
     $nameFile = $payload['flag'];
     $file2 = fopen("json/payload_horas_$nameFile.json", "w") or die ("Unable to open file!");

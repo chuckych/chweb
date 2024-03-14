@@ -1,6 +1,10 @@
 const homehost = $("#_homehost").val();
 const LS_FILTROS = homehost + '_reporte_totales_filtros';
 const LS_TOTAL_HORAS = homehost + '_reporte_totales_horas';
+const LS_CANTIDADES = homehost + '_reporte_totales_cantidades';
+const LS_ESTRUCTURA = homehost + '_reporte_totales_estructura';
+const LS_TOTALES = homehost + '_reporte_totales_totales';
+const LS_EXTENSION = homehost + '_reporte_totales_extension';
 const now = new Date().getTime();
 
 const dateRange = async () => {
@@ -63,8 +67,6 @@ const dateRange = async () => {
     })
     loaderIn('#_dr', false);
 }
-var IconExcel = '.xls <img src="../../img/xls.png" class="w15" alt="Exportar Excel">'
-ActiveBTN(false, "#ExportarXLS", 'Exportando', 'Exportar')
 
 const VTodo = (value) => {
     if (value == "horas") {
@@ -90,6 +92,7 @@ if (!ls.get(LS_FILTROS + 'VPor')) {
     $("#select_nove").prop('disabled', false);
 }
 
+
 VTodo(ls.get(LS_FILTROS + 'VPor'));
 
 $('input[name="VPor"]').on('change', function () {
@@ -100,28 +103,75 @@ $('input[name="VPor"]').on('change', function () {
     axios.get('../../app-data/horas/payload?flag=' + now + '&VPor=' + $(this).val());
 });
 
-let btnCantidades = document.querySelector('button[name="cantidades"]');
-
 const statusBtn = (name) => {
     let btn = document.querySelector(`button[name="${name}"]`);
+    let LS_ = ''
+    switch (name) {
+        case 'cantidades':
+            if (ls.get(LS_CANTIDADES) == 1) {
+                btn.classList.add('active');
+                btn.value = 1;
+            } else {
+                btn.classList.remove('active');
+                btn.value = 0;
+            }
+            LS_ = LS_CANTIDADES;
+            break;
+        case 'estructura':
+            if (ls.get(LS_ESTRUCTURA) == 1) {
+                btn.classList.add('active');
+                btn.value = 1;
+            } else {
+                btn.classList.remove('active');
+                btn.value = 0;
+            }
+            LS_ = LS_ESTRUCTURA;
+            break;
+        case 'totales':
+            if (ls.get(LS_TOTALES) == 1) {
+                btn.classList.add('active');
+                btn.value = 1;
+            } else {
+                btn.classList.remove('active');
+                btn.value = 0;
+            }
+            LS_ = LS_TOTALES;
+            break;
+    }
+
     btn.addEventListener('click', function (e) {
         if (btn.classList.contains('active')) {
             btn.classList.remove('active');
             btn.value = 0;
+            ls.set(LS_, 0);
         } else {
             btn.classList.add('active');
             btn.value = 1;
+            ls.set(LS_, 1);
         }
-        console.log(btn.value);
         axios.get('../../app-data/horas/payload?flag=' + now + '&' + name + '=' + btn.value);
     });
 }
 statusBtn('cantidades');
 statusBtn('estructura');
+statusBtn('totales');
+
+const extension = (value) => {
+    let d = {
+        'xls': 'optXls',
+        'csv': 'optCsv'
+    }
+    if (value) {
+        $(`#${d[value]}`).prop('checked', true);
+    }
+}
+extension(ls.get(LS_EXTENSION));
 
 $('input[name="extension"]').on('change', function () {
     axios.get('../../app-data/horas/payload?flag=' + now + '&extension=' + $(this).val());
+    ls.set(LS_EXTENSION, $(this).val());
 });
+
 $('input[name="VPorFormato"]').on('change', function () {
     if ($(this).val() == 'enDecimal') {
         $('.enHoras').addClass('d-none').removeClass('animate__animated animate__fadeIn');
@@ -464,6 +514,10 @@ const getHoras = async () => {
                 data.MinMaxH = $('input[name="SHoras"]:checked').val();
                 data.Formato = $('input[name="VPorFormato"]:checked').val();
                 data.VPor = $('input[name="VPor"]:checked').val();
+                data.extension = $('input[name="extension"]:checked').val();
+                data.cantidades = $('button[name="cantidades"]').val();
+                data.estructura = $('button[name="estructura"]').val();
+                data.totales = $('button[name="totales"]').val();
                 data.flag = now;
             },
             error: function () {
@@ -732,6 +786,7 @@ const getNovedades = async () => {
                 minimumResultsForSearch: Infinity,
             });
             loaderIn('#tabla_novedades', false);
+            $('#ExportarXLS').prop('disabled', false);
         },
         preDrawCallback: function () {
             loaderIn('#tabla_novedades', true);
@@ -771,6 +826,8 @@ const exportarXls = async () => {
             let downloadXls = document.getElementById('downloadXls');
             downloadXls.addEventListener('click', function () {
                 $.notifyClose();
+                let collapseExportar = document.getElementById('Exportar');
+                collapseExportar.classList.remove('show');
             }, false);
         } else {
             $.notifyClose();

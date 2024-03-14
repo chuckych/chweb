@@ -27,39 +27,58 @@
     </div>
 </div>
 <section class="collapse" id="Exportar">
-    <div class="row pb-2 pt-1">
+    <div class="">
+        <div class="row pb-2 pt-1">
 
-        <div class="col-12 d-flex">
-            <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
-                <label class="btn btn-sm font08 btn-outline-secondary border-0 radius">
-                    <input type="radio" name="extension" value="csv">
-                    <span>CSV</span>
-                </label>
-                <label class="btn btn-sm font08 btn-outline-success border-0 radius">
-                    <input type="radio" name="extension" checked value="xls">
-                    <span>XLS</span>
-                </label>
+            <div class="col-12 d-flex">
+                <div class="btn-group btn-group-toggle bg-light border radius p-1 hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                    aria-label="Tipo de Archivo" data-toggle="buttons">
+                    <label class="btn btn-sm font08 btn-outline-secondary border-0 radius">
+                        <input type="radio" name="extension" id="optCsv" value="csv">
+                        <span>.csv</span>
+                    </label>
+                    <label class="btn btn-sm font08 btn-outline-secondary border-0 radius">
+                        <input type="radio" name="extension" id="optXls" value="xls">
+                        <span>.xls</span>
+                    </label>
+                </div>
+                <div class="bg-light border radius p-1 ml-1">
+                    <button
+                        class="btn btn-sm font08 btn-outline-secondary border-0 radius border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        aria-label="Incluir estructura organizacional" value="0" name="estructura">
+                        <span class="d-none d-sm-block">Estructura</span>
+                        <span class="d-block d-sm-none">Estruc.</span>
+                    </button>
+                </div>
+                <div class="bg-light border radius p-1 ml-1">
+                    <button
+                        class="btn btn-sm font08 btn-outline-secondary border-0 radius border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        aria-label="Incluir cantidades de Novedades" value="0" name="cantidades">
+                        <span class="d-none d-sm-block">Cantidades</span>
+                        <span class="d-block d-sm-none">Cant.</span>
+                    </button>
+                </div>
+                <div class="bg-light border radius p-1 ml-1">
+                    <button
+                        class="btn btn-sm font08 btn-outline-secondary border-0 radius border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                        aria-label="Incluir Totales" value="0" name="totales">
+                        <span class="d-none d-sm-block">Totales</span>
+                        <span class="d-block d-sm-none">Tot.</span>
+                    </button>
+                </div>
+                <div class="bg-light border radius p-1 ml-1 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                    aria-label="Exportar archivo">
+                    <button class="text-pop-up-top btn btn-sm btn-outline-success border-0 radius font08" type="button"
+                        id="ExportarXLS" disabled>
+                        <span class="d-none d-sm-block"><i class="bi bi-arrow-right-short mr-1"></i>Exportar</span>
+                        <span class="d-block d-sm-none"><i class="bi bi-arrow-right-short"></i></span>
+                    </button>
+                </div>
             </div>
-            <div class="bg-light border radius p-1 ml-1">
-                <button
-                    class="btn btn-sm font08 btn-outline-primary border-0 radius border-0 radius hint--bottom hint--rounded hint--no-arrow hint--default hint--no-shadow"
-                    aria-label="Incluir estructura organizacional" value="0" name="estructura">
-                    <span>Estructura</span>
-                </button>
-            </div>
-            <div class="bg-light border radius p-1 ml-1 d-none">
-                <button class="btn btn-sm font08 btn-outline-primary border-0 radius" value="0" name="cantidades">
-                    <span>Cantidades</span>
-                </button>
-            </div>
-            <div class="bg-light border radius p-1 ml-1">
-                <button class="text-pop-up-top btn btn-sm btn-light text-success border-0 radius font08" type="button"
-                    id="ExportarXLS" disabled>
-                </button>
-            </div>
+
         </div>
-
     </div>
+    <div class="py-2"></div>
 </section>
 <section class="collapse invisible" id="Filtros">
     <div class="row py-2">

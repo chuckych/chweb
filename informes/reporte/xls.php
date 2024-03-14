@@ -21,7 +21,7 @@ require_once __DIR__ . '../../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+// use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 
 
@@ -50,8 +50,10 @@ $detalle = $data['legajos'] ?? [];
 $tiposDeHoras = $data['tiposDeHs'] ?? [];
 $novedades = $data['novedades'] ?? [];
 $estructuras = $data['estructuras'] ?? [];
+$cantidades = $payload['cantidades'] ?? '';
+$totales = $payload['totales'] ?? '';
 
-// Flight::json($estructuras) . exit;
+// Flight::json($totales) . exit;
 # Escribir encabezado de los productos
 $encabezado = [
     "Legajo",
@@ -80,6 +82,9 @@ if ($getEstructura == '1') {
 
 $countEncabezados = count($encabezado);
 $TituloReporte = 'Reporte de Totales';
+$letrasColHoras = [];
+$letrasColNovedades = [];
+$letrasColCantidad = [];
 
 if ($VPor == 'todo' || $VPor == 'horas') {
     if ($tiposDeHoras) {
@@ -101,6 +106,7 @@ if ($VPor == 'todo' || $VPor == 'horas') {
                     $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('0.00');
                     break;
             }
+            $letrasColHoras[] = $letraCol;
         }
     }
     $countEncabezados = count($encabezado);
@@ -110,6 +116,9 @@ if ($VPor == 'todo' || $VPor == 'novedades') {
     if ($novedades) {
         foreach ($novedades as $nov) {
             $encabezado[] = $nov['NovDesc'];
+            if ($cantidades == '1') {
+                $encabezado[] = 'Cant';
+            }
         }
     }
     $TituloReporte = 'Reporte de Totales de Novedades';
@@ -125,6 +134,12 @@ if ($VPor == 'todo' || $VPor == 'novedades') {
                 case 'enDecimal':
                     $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('0.00');
                     break;
+            }
+            if ($value == 'Cant') {
+                $spreadsheet->getStyle($letraCol)->getNumberFormat()->setFormatCode('0');
+                $letrasColCantidad[] = $letraCol;
+            } else {
+                $letrasColNovedades[] = $letraCol;
             }
         }
     }
@@ -296,7 +311,7 @@ try {
                     $TotalesNovedades[] = [
                         "NovCodi" => $novedad['NovCodi'],
                         "NovDesc" => $novedad['NovDesc'],
-                        "Cantidad" => 12,
+                        "Cantidad" => "",
                         "EnHoras" => "",
                         "EnMinutos" => 0,
                         "EnHorasDecimal" => ''
@@ -306,7 +321,7 @@ try {
             usort($TotalesNovedades, function ($a, $b) {
                 return $a['NovCodi'] <=> $b['NovCodi'];
             });
-
+            // Flight::json($TotalesNovedades) . exit;
             if ($TotalesNovedades) {
                 foreach ($TotalesNovedades as $keyNov => $valueNov) {
                     $siguienteColumna = $ultimaColumna++;
@@ -320,16 +335,45 @@ try {
                             $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorDecimal);
                             break;
                     }
+                    if ($cantidades == '1') {
+                        $siguienteColumna = $ultimaColumna++;
+                        $valorCantidad = $valueNov['Cantidad'];
+                        $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorCantidad);
+                    }
+
                 }
             }
         }
-
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(25);
-        // aplicar sangria a las celdas
-        $spreadsheet->getStyle('A' . $numeroDeFila . ':' . $ultimaLetra . $numeroDeFila)->getAlignment()->setIndent(1);
+        $ultimaFila = $numeroDeFila;
         $numeroDeFila++;
     }
-    $spreadsheet->getStyle('A1:' . $ultimaLetra . $numeroDeFila)->getAlignment()->setIndent(1);
+    function subTotales($arrayLetrasCol, $fila, $spreadsheet)
+    {
+        if (!$arrayLetrasCol)
+            return;
+        foreach ($arrayLetrasCol as $value) {
+            $UltimaFila = $fila - 1;
+            $UltimaFila2 = $fila;
+            $Ultima = $value . ($UltimaFila);
+            $Ultima_2 = $value . ($UltimaFila2);
+            $FormulaHechas = '=SUBTOTAL(9,' . $value . '2:' . $Ultima . ')';
+            $spreadsheet->setCellValue($Ultima_2, $FormulaHechas);
+            $spreadsheet->getStyle($Ultima_2)->getAlignment()->setIndent(1);
+            $spreadsheet->getStyle($Ultima_2)->getFont()->setBold(true);
+            $spreadsheet->getColumnDimension($value)->setAutoSize(true);
+        }
+    }
+    if ($totales == '1') {
+        subTotales($letrasColHoras, $numeroDeFila, $spreadsheet);
+        subTotales($letrasColNovedades, $numeroDeFila, $spreadsheet);
+        subTotales($letrasColCantidad, $numeroDeFila, $spreadsheet);
+    }
+
+    $todasLasCeldas = 'A1:' . $ultimaLetra . $ultimaFila;
+    $spreadsheet->getStyle($todasLasCeldas)->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle('A1')->getAlignment()->setIndent(1);
+
 } catch (\Throwable $th) {
     $errores[] = $th->getMessage();
 }
@@ -355,7 +399,14 @@ try {
     $writer->save('archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo, 'errores' => $errores ?? []);
+    $data = array(
+        'status' => 'ok',
+        'archivo' => 'archivos/' . $NombreArchivo,
+        // 'letrasColHoras' => $letrasColHoras,
+        // 'letrasColNovedades' => $letrasColNovedades,
+        // 'letrasColCantidad' => $letrasColCantidad,
+        'errores' => $errores ?? []
+    );
     echo json_encode($data);
     exit;
 
