@@ -831,8 +831,12 @@ const exportarXls = async () => {
             }, false);
         } else {
             $.notifyClose();
-            notify('Error al generar el reporte', 'danger', 0, 'right')
             button.disabled = false;
+            if (rs.data.mensaje ?? '') {
+                notify(rs.data.mensaje, 'danger', 0, 'right')
+                return false;
+            }
+            notify('Error al generar el reporte', 'danger', 0, 'right')
         }
     });
 }

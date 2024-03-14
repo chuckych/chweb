@@ -53,7 +53,12 @@ $estructuras = $data['estructuras'] ?? [];
 $cantidades = $payload['cantidades'] ?? '';
 $totales = $payload['totales'] ?? '';
 
-// Flight::json($totales) . exit;
+// Flight::json($detalle) . exit;
+if (!$detalle) {
+    $data = array('status' => 'error', 'mensaje' => 'No hay datos para exportar');
+    echo json_encode($data);
+    exit;
+}
 # Escribir encabezado de los productos
 $encabezado = [
     "Legajo",
@@ -365,14 +370,16 @@ try {
         }
     }
     if ($totales == '1') {
-        subTotales($letrasColHoras, $numeroDeFila, $spreadsheet);
-        subTotales($letrasColNovedades, $numeroDeFila, $spreadsheet);
-        subTotales($letrasColCantidad, $numeroDeFila, $spreadsheet);
+        subTotales($letrasColHoras, $numeroDeFila, $spreadsheet); // Horas
+        subTotales($letrasColNovedades, $numeroDeFila, $spreadsheet); // Novedades
+        subTotales($letrasColCantidad, $numeroDeFila, $spreadsheet); // Cantidad
+        $spreadsheet->getStyle('A' . $numeroDeFila . ':' . $ultimaLetra . $numeroDeFila)->getBorders()->getTop()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN); // Set border top
+        $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(30); // Set row height
     }
 
     $todasLasCeldas = 'A1:' . $ultimaLetra . $ultimaFila;
-    $spreadsheet->getStyle($todasLasCeldas)->getAlignment()->setIndent(1);
-    $spreadsheet->getStyle('A1')->getAlignment()->setIndent(1);
+    $spreadsheet->getStyle($todasLasCeldas)->getAlignment()->setIndent(1); // Set indent
+    $spreadsheet->getStyle('A1')->getAlignment()->setIndent(1); // Set indent
 
 } catch (\Throwable $th) {
     $errores[] = $th->getMessage();
@@ -402,16 +409,13 @@ try {
     $data = array(
         'status' => 'ok',
         'archivo' => 'archivos/' . $NombreArchivo,
-        // 'letrasColHoras' => $letrasColHoras,
-        // 'letrasColNovedades' => $letrasColNovedades,
-        // 'letrasColCantidad' => $letrasColCantidad,
         'errores' => $errores ?? []
     );
     echo json_encode($data);
     exit;
 
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = array('status' => 'error', 'mensaje' => $e->getMessage());
     echo json_encode($data);
     exit;
 }
