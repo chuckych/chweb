@@ -1,10 +1,29 @@
 // $(document).ready(function () {
-const loadingTableDevices = (selectortable) => {
-    $(selectortable + ' td div').addClass('bg-light text-light border-0')
-    // $(selectortable + ' td div').css('height', '')
-    $(selectortable + ' td img').addClass('invisible')
-    $(selectortable + ' td i').addClass('invisible')
-    $(selectortable + ' td span').addClass('invisible')
+const LS_MODAL_DEVICE = homehost + '_mobile_modal_device';
+const LS_MODAL_SETTING = homehost + '_mobile_modal_setting';
+
+if (!ls.get(LS_MODAL_DEVICE)) {
+    axios.get('modalDevice.php').then((response) => {
+        ls.set(LS_MODAL_DEVICE, response.data);
+    }).catch(() => {
+        ls.remove(LS_MODAL_DEVICE);
+    });
+}
+
+if (!ls.get(LS_MODAL_SETTING)) {
+    axios.get('modalSetting.php').then((response) => {
+        ls.set(LS_MODAL_SETTING, response.data);
+    }).catch(() => {
+        ls.remove(LS_MODAL_SETTING);
+    });
+}
+
+const loadingTableDevices = (selectorTable) => {
+    $(selectorTable + ' td div').addClass('bg-light text-light border-0')
+    // $(selectorTable + ' td div').css('height', '')
+    $(selectorTable + ' td img').addClass('invisible')
+    $(selectorTable + ' td i').addClass('invisible')
+    $(selectorTable + ' td span').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableDevices = $('#tableDevices').DataTable({
@@ -38,10 +57,10 @@ if ($(window).width() < 540) {
                     let setDevice = ''
                     let setDeviceTitle = ''
 
-                    if(row.regid){
+                    if (row.regid) {
                         setDevice = "btn-outline-secondary setDevice"
                         setDeviceTitle = 'data-titlel="Configurar dispositivo"'
-                    }else{
+                    } else {
                         setDevice = "btn-outline-secondary disabled"
                         setDeviceTitle = 'data-titlel="Falta Regid"'
                     }
@@ -58,7 +77,7 @@ if ($(window).width() < 540) {
                         ${del}
                     </div>
                     `
-                    return datacol;                    
+                    return datacol;
                 },
             },
         ],
@@ -148,10 +167,10 @@ if ($(window).width() < 540) {
                     if (row.totalChecks > 1) {
                         del = `<span data-titlel="No se puede eliminar" class="ml-1 btn btn-outline-custom border-0 bi bi-trash disabled"></span>`
                     }
-                    if(row.regid){
+                    if (row.regid) {
                         setDevice = "btn-outline-secondary setDevice"
                         setDeviceTitle = 'data-titlel="Configurar dispositivo"'
-                    }else{
+                    } else {
                         setDevice = "btn-outline-secondary disabled"
                         setDeviceTitle = 'data-titlel="Falta Regid"'
                     }
@@ -205,222 +224,213 @@ tableDevices.on('xhr.dt', function (e, settings, json) {
 });
 $(document).on("click", ".addDevice", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-    axios({
-        method: 'post',
-        url: 'modalDevice.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalDevice .modal-title').html('Nuevo Dispositivo')
-        $('#formDevicePhoneID').val(data.phoneid)
-        $('#modalDevice').modal('show');
-        $('#formDevice .requerido').html('(*)')
-        $('#formDevice .form-control').attr('autocomplete', 'off')
-        $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
-        $('#formDevice #formDeviceTipo').val('add_device')
 
-        setTimeout(() => {
-            $('#formDevice #formDeviceNombre').focus();
-        }, 500);
+    let modalDevice = ls.get(LS_MODAL_DEVICE);
 
-    }).then(function () {
+    if (!modalDevice) {
+        return;
+    }
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formDevice").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'del_device':
-                    tipoStatus = 'eliminado';
-                    break;
-                case 'upd_device':
-                    tipoStatus = 'actualizado';
-                    break;
-                case 'add_device':
-                    tipoStatus = 'Creado';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    $('#modales').html(modalDevice)
+    $('#modalDevice .modal-title').html('Nuevo Dispositivo')
+    $('#formDevicePhoneID').val(data.phoneid)
+    $('#modalDevice').modal('show');
+    $('#formDevice .requerido').html('(*)')
+    $('#formDevice .form-control').attr('autocomplete', 'off')
+    $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
+    $('#formDevice #formDeviceTipo').val('add_device')
+
+    setTimeout(() => {
+        $('#formDevice #formDeviceNombre').focus();
+    }, 500);
+
+    $("#formDevice").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formDevice #formDeviceTipo').val()) {
+            case 'del_device':
+                tipoStatus = 'eliminado';
+                break;
+            case 'upd_device':
+                tipoStatus = 'actualizado';
+                break;
+            case 'add_device':
+                tipoStatus = 'Creado';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableDevices').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalDevice').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
+                    let deviceName = data.Mensaje.deviceName
+                    notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableDevices').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalDevice').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
-        $('#modalDevice').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
-        });
+    });
+    $('#modalDevice').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
     });
 
 });
 const setDevice = (data) => {
-    axios({
-        method: 'post',
-        url: 'modalSetting.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalSetting .modal-title').html('Configurar Dispositivo <br><span class="fontq">' + data.deviceName + '</span>')
-        $('#modalSetting').modal('show');
 
-    }).then(function () {
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
+    let modalSettings = ls.get(LS_MODAL_SETTING);
 
-        $("#deviceSetting").bind("submit", function (e) {
-            e.preventDefault();
-            $.ajax({
-                type: 'post',
-                url: 'crud.php',
-                data: {
-                    tipo: 'send_DeviceSet',
-                    deviceID: data.deviceID,
-                    deviceName: data.deviceName,
-                    devicePhoneID: data.phoneID,
-                    deviceIDCompany: data.idCompany,
-                    deviceRegid: data.regid,
-                    deviceAppVersion: data.appVersion,
-                    deviceUser: $('#deviceSettingUsuario').val(),
-                    deviceTMEF: $('#deviceSettingTMEF').val(),
-                    deviceRememberUser: $('input[name=deviceSettingRememberUser]:checked').val(),
-                    deviceInitialize: $('input[name=deviceInitialize]').is(':checked') ? 1 : 0
-                },
-                beforeSend: function (data) {
-                    CheckSesion()
+    if (!modalSettings) {
+        return;
+    }
+    $('#modales').html(modalSettings)
+
+    $('#modalSetting .modal-title').html('Configurar Dispositivo <br><span class="fontq">' + data.deviceName + '</span>')
+    $('#modalSetting').modal('show');
+
+
+
+    $("#deviceSetting").bind("submit", function (e) {
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: 'crud.php',
+            data: {
+                tipo: 'send_DeviceSet',
+                deviceID: data.deviceID,
+                deviceName: data.deviceName,
+                devicePhoneID: data.phoneID,
+                deviceIDCompany: data.idCompany,
+                deviceRegid: data.regid,
+                deviceAppVersion: data.appVersion,
+                deviceUser: $('#deviceSettingUsuario').val(),
+                deviceTMEF: $('#deviceSettingTMEF').val(),
+                deviceRememberUser: $('input[name=deviceSettingRememberUser]:checked').val(),
+                deviceInitialize: $('input[name=deviceInitialize]').is(':checked') ? 1 : 0
+            },
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo configurado correctamente.', 'success', 5000, 'right')
-                        ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalSetting').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-            e.stopImmediatePropagation();
+                    let deviceName = data.Mensaje.deviceName
+                    notify('Dispositivo configurado correctamente.', 'success', 5000, 'right')
+                    ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalSetting').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitSetting", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
-        $('#modalSetting').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
-        });
+        e.stopImmediatePropagation();
     });
+    $('#modalSetting').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+
 }
 const updDevice = (data) => {
-    axios({
-        method: 'post',
-        url: 'modalDevice.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalDevice .modal-title').html('Editar Dispositivo <br><span class="fontq">' + data.deviceName+'</span>')
-        $('#formDevicePhoneID').val(data.phoneID)
-        $('#modalDevice').modal('show');
-        $('#formDevice .requerido').html('(*)')
-        $('#formDevice .form-control').attr('autocomplete', 'off')
-        $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
-        $('#formDevice #formDeviceTipo').val('upd_device')
-        $('#formDevice #formDevicePhoneID').val(data.phoneID)
-        $('#formDevice #formDeviceNombre').val(data.deviceName).select()
-        $('#formDevice #formDeviceEvento').val(data.deviceEvent ?? '0')
-        setTimeout(() => {
-            focusEndText('#formDevice #formDeviceNombre')
-            // $('#formDevice #formDeviceNombre').val(data.deviceName).select()
-        }, 500);
 
-    }).then(function () {
+    let modalDevice = ls.get(LS_MODAL_DEVICE);
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formDevice").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'del_device':
-                    tipoStatus = 'Eliminado';
-                    break;
-                case 'upd_device':
-                    tipoStatus = 'Actualizado';
-                    break;
-                case 'add_device':
-                    tipoStatus = 'Creado';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    if (!modalDevice) {
+        return;
+    }
+    $('#modales').html(modalDevice)
+
+    $('#modalDevice .modal-title').html('Editar Dispositivo <br><span class="fontq">' + data.deviceName + '</span>')
+    $('#formDevicePhoneID').val(data.phoneID)
+    $('#modalDevice').modal('show');
+    $('#formDevice .requerido').html('(*)')
+    $('#formDevice .form-control').attr('autocomplete', 'off')
+    $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
+    $('#formDevice #formDeviceTipo').val('upd_device')
+    $('#formDevice #formDevicePhoneID').val(data.phoneID)
+    $('#formDevice #formDeviceNombre').val(data.deviceName).select()
+    $('#formDevice #formDeviceEvento').val(data.deviceEvent ?? '0')
+    // setTimeout(() => {
+    // focusEndText('#formDevice #formDeviceNombre')
+    // $('#formDevice #formDeviceNombre').val(data.deviceName).select()
+    // }, 500);
+
+    $("#formDevice").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formDevice #formDeviceTipo').val()) {
+            case 'del_device':
+                tipoStatus = 'Eliminado';
+                break;
+            case 'upd_device':
+                tipoStatus = 'Actualizado';
+                break;
+            case 'add_device':
+                tipoStatus = 'Creado';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        // $('#table-mobile').DataTable().columns.adjust().draw();
-                        $('#tableDevices').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalDevice').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
+                    let deviceName = data.Mensaje.deviceName
+                    notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    // $('#table-mobile').DataTable().columns.adjust().draw();
+                    $('#tableDevices').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalDevice').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
-        $('#modalDevice').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
-        });
+    });
+    $('#modalDevice').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
     });
 }
 $(document).on("click", ".updDevice", function (e) {
@@ -438,155 +448,168 @@ $(document).on("click", ".updDeviceTable", function (e) {
 
 $(document).on("click", ".delDevice", function (e) {
     let data = tableDevices.row($(this).parents('tr')).data();
-    console.log(data);
-    axios({
-        method: 'post',
-        url: 'modalDevice.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalDevice .modal-title').html('¿Eliminar Dispositivo ' + data.deviceName + '?')
-        $('#modalDevice .modal-title').addClass('text-danger')
-        $('#formDevicePhoneID').val(data.phoneID)
-        $('#modalDevice').modal('show');
-        $('#formDevice #formDeviceTipo').val('del_device');
-        $('#formDevice #formDevicePhoneID').val(data.phoneID).attr('hidden', 'hidden')
-        $('#formDevice #formDeviceNombre').val(data.deviceName).attr('disabled', 'disabled')
-        $('#formDevice #formDeviceEvento').val(data.deviceEvent).attr('disabled', 'disabled')
-        // $('#formDevice .modal-boy').html('')
-    }).then(function () {
+    let modalDevice = ls.get(LS_MODAL_DEVICE);
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formDevice").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'del_device':
-                    tipoStatus = 'Eliminado';
-                    break;
-                case 'upd_device':
-                    tipoStatus = 'Actualizado';
-                    break;
-                case 'add_device':
-                    tipoStatus = 'Creado';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    if (!modalDevice) {
+        return;
+    }
+    $('#modales').html(modalDevice)
+
+    // console.log(data);
+    // axios({
+    // method: 'post',
+    // url: 'modalDevice.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // }).then(function () {
+    $('#modalDevice .modal-title').html('¿Eliminar Dispositivo ' + data.deviceName + '?')
+    $('#modalDevice .modal-title').addClass('text-danger')
+    $('#formDevicePhoneID').val(data.phoneID)
+    $('#modalDevice').modal('show');
+    $('#formDevice #formDeviceTipo').val('del_device');
+    $('#formDevice #formDevicePhoneID').val(data.phoneID).attr('hidden', 'hidden')
+    $('#formDevice #formDeviceNombre').val(data.deviceName).attr('disabled', 'disabled')
+    $('#formDevice #formDeviceEvento').val(data.deviceEvent).attr('disabled', 'disabled')
+    // $('#formDevice .modal-boy').html('')
+    // }).then(function () {
+
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formDevice").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formDevice #formDeviceTipo').val()) {
+            case 'del_device':
+                tipoStatus = 'Eliminado';
+                break;
+            case 'upd_device':
+                tipoStatus = 'Actualizado';
+                break;
+            case 'add_device':
+                tipoStatus = 'Creado';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableDevices').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalDevice').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalDevice').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let deviceName = data.Mensaje.deviceName
+                    notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableDevices').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalDevice').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalDevice').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 $(document).on("click", "#addDevice", function (e) {
-    axios({
-        method: 'post',
-        url: 'modalDevice.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalDevice .modal-title').html('Nuevo Dispositivo')
-        $('#modalDevice').modal('show');
-        $('#formDevice .requerido').html('(*)')
-        $('#formDevice .form-control').attr('autocomplete', 'off')
-        $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
-        $('#formDevice #formDevicePhoneID').mask('00000000000000000000', { reverse: false });
-        $('#formDevice #formDeviceTipo').val('add_device')
+    let modalDevice = ls.get(LS_MODAL_DEVICE);
 
-        setTimeout(() => {
-            $('#formDevice #formDevicePhoneID').focus();
-            $('#formDevice #formDevicePhoneID').removeAttr('readonly')
-        }, 500);
+    if (!modalDevice) {
+        return;
+    }
+    $('#modales').html(modalDevice)
+    // axios({
+    // method: 'post',
+    // url: 'modalDevice.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // }).then(function () {
+    $('#modalDevice .modal-title').html('Nuevo Dispositivo')
+    $('#modalDevice').modal('show');
+    $('#formDevice .requerido').html('(*)')
+    $('#formDevice .form-control').attr('autocomplete', 'off')
+    $('#formDevice #formDeviceEvento').mask('0000', { reverse: false });
+    $('#formDevice #formDevicePhoneID').mask('00000000000000000000', { reverse: false });
+    $('#formDevice #formDeviceTipo').val('add_device')
 
-    }).then(function () {
+    setTimeout(() => {
+        $('#formDevice #formDevicePhoneID').focus();
+        $('#formDevice #formDevicePhoneID').removeAttr('readonly')
+    }, 500);
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formDevice").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formDevice #formDeviceTipo').val()) {
-                case 'del_device':
-                    tipoStatus = 'eliminado';
-                    break;
-                case 'upd_device':
-                    tipoStatus = 'actualizado';
-                    break;
-                case 'add_device':
-                    tipoStatus = 'Creado';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    // }).then(function () {
+
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formDevice").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formDevice #formDeviceTipo').val()) {
+            case 'del_device':
+                tipoStatus = 'eliminado';
+                break;
+            case 'upd_device':
+                tipoStatus = 'actualizado';
+                break;
+            case 'add_device':
+                tipoStatus = 'Creado';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let deviceName = data.Mensaje.deviceName
-                        notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableDevices').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalDevice').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalDevice').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let deviceName = data.Mensaje.deviceName
+                    notify('Dispositivo ' + deviceName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableDevices').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalDevice').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalDevice').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });

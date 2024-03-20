@@ -1,6 +1,6 @@
 <!-- Modal -->
 <form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="deviceSetting">
-    <div class="modal fade" id="modalSetting" tabindex="-1" aria-labelledby="modalSettingLabel" aria-hidden="true">
+    <div class="modal" id="modalSetting" tabindex="-1" aria-labelledby="modalSettingLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -40,12 +40,13 @@
                         </div>
                         <div class="col-12 mt-2">
                             <div class="custom-control custom-switch custom-control-inline d-flex justify-content-end">
-                                <input type="checkbox" class="custom-control-input" id="deviceInitialize" name="deviceInitialize"
-                                    value="0">
+                                <input type="checkbox" class="custom-control-input" id="deviceInitialize"
+                                    name="deviceInitialize" value="0">
                                 <label class="custom-control-label" for="deviceInitialize" style="padding-top: 3px;">
                                     <span class="text-dark">Inhabilitar Dispositivo</span>
                                     <span
-                                    data-titlel="Inactiva el dispositivo. Para activar, requiere Token o configurar." class="bi bi-info-circle"></span>
+                                        data-titlel="Inactiva el dispositivo. Para activar, requiere Token o configurar."
+                                        class="bi bi-info-circle"></span>
                                 </label>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
 <!-- Modal -->
 <form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formUser">
-    <div class="modal fade" id="modalUser" tabindex="-1" aria-labelledby="modalUserLabel" aria-hidden="true">
+    <div class="modal" id="modalUser" tabindex="-1" aria-labelledby="modalUserLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header border-0">

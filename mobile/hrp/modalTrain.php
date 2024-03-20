@@ -1,7 +1,7 @@
 <!-- Modal -->
 <form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formTrain">
-    <div class="modal fade" id="modalTrain" tabindex="-1" aria-labelledby="modalTrainLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal" id="modalTrain" tabindex="-1" aria-labelledby="modalTrainLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" style="min-height:500px">
             <div class="modal-content">
                 <div class="modal-header border-0">
                     <p class="modal-title h6" id="modalTrainLabel"></p>

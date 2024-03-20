@@ -1,6 +1,6 @@
 <!-- Modal -->
-<form action="" method="post" class="border px-3 pb-3 shadow-sm mt-1" id="formZone">
-    <div class="modal fade" id="modalZone" tabindex="-1" aria-labelledby="modalZoneLabel" aria-hidden="true">
+<form action="" method="post" class="border px-3 pb-3 mt-1" id="formZone">
+    <div class="modal" id="modalZone" tabindex="-1" aria-labelledby="modalZoneLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header border-0">
@@ -29,20 +29,23 @@
                                     </div> -->
                                 <div id="divLatLng" style="display: none;">
                                     <div class="col-6 mb-2">
-                                        <input name="lat" type="" class="form-control border-0" id="formZoneLat" readonly>
+                                        <input name="lat" type="" class="form-control border-0" id="formZoneLat"
+                                            readonly>
                                     </div>
                                     <div class="col-6 mb-2">
-                                        <input name="lng" type="" class="form-control border-0" id="formZoneLng" readonly>
+                                        <input name="lng" type="" class="form-control border-0" id="formZoneLng"
+                                            readonly>
                                     </div>
                                 </div>
                                 <div class="col-12 col-sm-8">
-                                    <label for="formZoneNombre" class="text-nowrap fontq w80">Nombre <span class="requerido"></span></label>
-                                    <input type="text" class="form-control h40" id="formZoneNombre" 
-                                        name="formZoneNombre" placeholder="Nombre de la zona"
-                                        maxlength="50">
+                                    <label for="formZoneNombre" class="text-nowrap fontq w80">Nombre <span
+                                            class="requerido"></span></label>
+                                    <input type="text" class="form-control h40" id="formZoneNombre"
+                                        name="formZoneNombre" placeholder="Nombre de la zona" maxlength="50">
                                 </div>
                                 <div class="col-12 col-sm-4 mt-2 mt-sm-0">
-                                    <label for="formZoneRadio" class="text-nowrap fontq w80">Radio <span class="requerido"></span></label>
+                                    <label for="formZoneRadio" class="text-nowrap fontq w80">Radio <span
+                                            class="requerido"></span></label>
                                     <select name="formZoneRadio" id="formZoneRadio" class="form-control">
                                         <option value="100">100</option>
                                         <option value="200">200</option>
@@ -77,12 +80,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div id="divNearZone"class="col-12"></div>
+                                <div id="divNearZone" class="col-12"></div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 px-sm-3" id="divMapCanva">
                             <div class="parentMapCanvas">
-                                <div class="map_canvas shadow-sm" id="map_canvas"></div>
+                                <div class="map_canvas" id="map_canvas"></div>
                             </div>
                         </div>
                     </div>

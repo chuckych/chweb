@@ -1,17 +1,27 @@
-// $(document).ready(function () {
-const loadingTableZones = (selectortable) => {
-    $(selectortable + ' td div').addClass('bg-light text-light border-0')
-    $(selectortable + ' td p').addClass('bg-light text-light border-0')
-    $(selectortable + ' td img').addClass('invisible')
-    $(selectortable + ' td i').addClass('invisible')
-    $(selectortable + ' td span').addClass('invisible')
-    $(selectortable + ' td p').addClass('invisible')
+
+const LS_MODAL_ZONE = homehost + '_mobile_modal_zone';
+
+if (!ls.get(LS_MODAL_ZONE)) {
+    axios.get('modalZone.php').then((response) => {
+        ls.set(LS_MODAL_ZONE, response.data);
+    }).catch(() => {
+        ls.remove(LS_MODAL_ZONE);
+    });
+}
+
+const loadingTableZones = (selectorTable) => {
+    $(selectorTable + ' td div').addClass('bg-light text-light border-0')
+    $(selectorTable + ' td p').addClass('bg-light text-light border-0')
+    $(selectorTable + ' td img').addClass('invisible')
+    $(selectorTable + ' td i').addClass('invisible')
+    $(selectorTable + ' td span').addClass('invisible')
+    $(selectorTable + ' td p').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableZones = $('#tableZones').DataTable({
         dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-                "<'row '<'col-12 table-responsive't>>" +
-                "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getZonesMobile.php",
             type: "POST",
@@ -62,8 +72,8 @@ if ($(window).width() < 540) {
 } else {
     tableZones = $('#tableZones').DataTable({
         dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-        "<'row '<'col-12 table-responsive't>>" +
-        "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>",
+            "<'row '<'col-12 table-responsive't>>" +
+            "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>",
         ajax: {
             url: "getZonesMobile.php",
             type: "POST",
@@ -108,8 +118,8 @@ if ($(window).width() < 540) {
                     return datacol;
                 },
             },
-              /** Columna Lat / Lng */
-              {
+            /** Columna Lat / Lng */
+            {
                 className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
                 "render": function (data, type, row, meta) {
                     let datacol = `<div data-titlet="" class="ls1 w90 fontp text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
@@ -158,7 +168,7 @@ if ($(window).width() < 540) {
 tableZones.on('init.dt', function (e, settings) {
     $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h40 opa8 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>')
     $('#tableZones_filter input').removeClass('form-control-sm')
-    $('#tableZones_filter input').attr("style","height: 40px !important");
+    $('#tableZones_filter input').attr("style", "height: 40px !important");
     select2Simple('#tableZones_length select', '', false, false)
 });
 tableZones.on('draw.dt', function (e, settings) {
@@ -174,80 +184,90 @@ tableZones.on('xhr', function (e, settings, json) {
 });
 $(document).on("click", ".addZone", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-    axios({
-        method: 'post',
-        url: 'modalZone.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-    }).then(function () {
-        $('#modalZone .modal-title').html('Nueva Zona')
-        $('#formZonePhoneID').val(data.phoneid)
-        $('#modalZone').modal('show');
-        $('#formZone .requerido').html('(*)')
-        $('#formZone .form-control').attr('autocomplete', 'off')
-        $('#formZone #formZoneEvento').mask('0000', { reverse: false });
-        $('#formZone #formZoneTipo').val('add_zone')
 
-        setTimeout(() => {
-            $('#formZone #formZoneNombre').focus();
-        }, 500);
+    let modalZone = ls.get(LS_MODAL_ZONE);
 
-    }).then(function () {
+    if (!data) {
+        return;
+    }
+    if (!modalZone) {
+        return;
+    }
+    $('#modales').html(modalZone)
+    // axios({
+    // method: 'post',
+    // url: 'modalZone.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // }).then(function () {
+    $('#modalZone .modal-title').html('Nueva Zona')
+    $('#formZonePhoneID').val(data.phoneid)
+    $('#modalZone').modal('show');
+    $('#formZone .requerido').html('(*)')
+    $('#formZone .form-control').attr('autocomplete', 'off')
+    $('#formZone #formZoneEvento').mask('0000', { reverse: false });
+    $('#formZone #formZoneTipo').val('add_zone')
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formZone").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formZone #formZoneTipo').val()) {
-                case 'del_zone':
-                    tipoStatus = 'eliminado';
-                    break;
-                case 'upd_zone':
-                    tipoStatus = 'actualizado';
-                    break;
-                case 'add_zone':
-                    tipoStatus = 'Creado';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    setTimeout(() => {
+        $('#formZone #formZoneNombre').focus();
+    }, 500);
+
+    // }).then(function () {
+
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formZone").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formZone #formZoneTipo').val()) {
+            case 'del_zone':
+                tipoStatus = 'eliminado';
+                break;
+            case 'upd_zone':
+                tipoStatus = 'actualizado';
+                break;
+            case 'add_zone':
+                tipoStatus = 'Creado';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let zoneName = data.Mensaje.zoneName
-                        notify('Dispositivo ' + zoneName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableZones').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalZone').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalZone').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let zoneName = data.Mensaje.zoneName
+                    notify('Dispositivo ' + zoneName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableZones').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalZone').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalZone').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 let mapZone = (latitud, longitud, zoom = 4) => {
@@ -333,94 +353,113 @@ let select2Radio = (selector) => {
     })
 }
 $(document).on("click", "#addZone", function (e) {
-    axios({
-        method: 'post',
-        url: 'modalZone.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-        // $('#RowTableZones').html(response.data)
-    }).then(function () {
-        $('#modalZone .modal-title').html('Nueva Zona')
-        $('#modalZone').modal('show');
-        $('#formZone .requerido').html('(*)')
+
+    let modalZone = ls.get(LS_MODAL_ZONE);
+
+    if (!modalZone) {
+        return;
+    }
+    $('#modales').html(modalZone)
+
+    // axios({
+    // method: 'post',
+    // url: 'modalZone.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // $('#RowTableZones').html(response.data)
+    // }).then(function () {
+    $('#modalZone .modal-title').html('Nueva Zona')
+    $('#modalZone').modal('show');
+    $('#formZone .requerido').html('(*)')
+    $('#formZone .form-control').attr('autocomplete', '_chweb_off')
+    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
+    $('#formZone #formZoneTipo').val('add_zone')
+    select2Radio("#formZone #formZoneRadio");
+    setTimeout(() => {
         $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-        // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-        $('#formZone #formZoneTipo').val('add_zone')
-        select2Radio("#formZone #formZoneRadio");
-        setTimeout(() => {
-            $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-            $('#formZone #geocomplete').focus();
-            $('#formZone #geocomplete').removeAttr('readonly')
-        }, 500);
+        $('#formZone #geocomplete').focus();
+        $('#formZone #geocomplete').removeAttr('readonly')
+    }, 500);
 
-    }).then(function () {
+    // }).then(function () {
 
-        let defaulLat = -38.416097;
-        let defaulLng = -63.616671;
-        mapZoneNear(defaulLat, defaulLng);
+    let defaulLat = -38.416097;
+    let defaulLng = -63.616671;
+    mapZoneNear(defaulLat, defaulLng);
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formZone").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formZone #formZoneTipo').val()) {
-                case 'del_zone':
-                    tipoStatus = 'eliminada';
-                    break;
-                case 'upd_zone':
-                    tipoStatus = 'actualizada';
-                    break;
-                case 'add_zone':
-                    tipoStatus = 'Creada';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formZone").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formZone #formZoneTipo').val()) {
+            case 'del_zone':
+                tipoStatus = 'eliminada';
+                break;
+            case 'upd_zone':
+                tipoStatus = 'actualizada';
+                break;
+            case 'add_zone':
+                tipoStatus = 'Creada';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let zoneName = data.Mensaje.zoneName
-                        notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableZones').DataTable().search(zoneName).draw();
-                        classEfect('#tableZones_filter input', 'border-custom')
-                        $('#tableZones').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalZone').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalZone').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let zoneName = data.Mensaje.zoneName
+                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableZones').DataTable().search(zoneName).draw();
+                    classEfect('#tableZones_filter input', 'border-custom')
+                    $('#tableZones').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalZone').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalZone').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 $(document).on("click", ".updZone", function (e) {
     // alert('Aca estamos')
     // get data datatable row
     let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
+
+    let modalZone = ls.get(LS_MODAL_ZONE);
+
+    if (!data) {
+        return;
+    }
+    if (!modalZone) {
+        return;
+    }
+    $('#modales').html(modalZone)
+
     // console.log(data);
     let zoneLat = data.zoneLat;
     let zoneLng = data.zoneLng;
@@ -428,100 +467,111 @@ $(document).on("click", ".updZone", function (e) {
     let zoneName = data.zoneName;
     let idZone = data.zoneID;
     let zoneEvent = data.zoneEvent;
+
     // return false;
-    axios({
-        method: 'post',
-        url: 'modalZone.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-        // $('#RowTableZones').html(response.data)
-    }).then(function () {
-        $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
-        $('#formZone #divGeocomplete').hide();
-        $('#modalZone').modal('show');
-        $('#formZone .requerido').html('(*)')
-        // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-        $('#formZone #formZoneTipo').val('upd_zone')
-        $('#formZone #formZoneNombre').val(zoneName)
-        $('#formZone #formZoneLat').val(zoneLat)
-        $('#formZone #formZoneLng').val(zoneLng)
-        $('#formZone #formZoneRadio').val(zoneRadio)
-        $('#formZone #formZoneEvento').val(zoneEvent)
+    // axios({
+    // method: 'post',
+    // url: 'modalZone.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // $('#RowTableZones').html(response.data)
+    // }).then(function () {
+    $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+    $('#formZone #divGeocomplete').hide();
+    $('#modalZone').modal('show');
+    $('#formZone .requerido').html('(*)')
+    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
+    $('#formZone #formZoneTipo').val('upd_zone')
+    $('#formZone #formZoneNombre').val(zoneName)
+    $('#formZone #formZoneLat').val(zoneLat)
+    $('#formZone #formZoneLng').val(zoneLng)
+    $('#formZone #formZoneRadio').val(zoneRadio)
+    $('#formZone #formZoneEvento').val(zoneEvent)
 
-        select2Radio("#formZone #formZoneRadio");
+    select2Radio("#formZone #formZoneRadio");
 
-        setTimeout(() => {
-            $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-            focusEndText('#formZone #formZoneNombre')
-            $('#formZone #geocomplete').removeAttr('readonly')
-        }, 500);
+    setTimeout(() => {
+        $('#formZone .form-control').attr('autocomplete', '_chweb_off')
+        focusEndText('#formZone #formZoneNombre')
+        $('#formZone #geocomplete').removeAttr('readonly')
+    }, 500);
 
-    }).then(function () {
+    // }).then(function () {
 
-        let defaulLat = zoneLat;
-        let defaulLng = zoneLng;
-        mapZoneNear(defaulLat, defaulLng, 16);
+    let defaulLat = zoneLat;
+    let defaulLng = zoneLng;
+    mapZoneNear(defaulLat, defaulLng, 16);
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formZone").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formZone #formZoneTipo').val()) {
-                case 'del_zone':
-                    tipoStatus = 'eliminada';
-                    break;
-                case 'upd_zone':
-                    tipoStatus = 'actualizada';
-                    break;
-                case 'add_zone':
-                    tipoStatus = 'Creada';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formZone").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formZone #formZoneTipo').val()) {
+            case 'del_zone':
+                tipoStatus = 'eliminada';
+                break;
+            case 'upd_zone':
+                tipoStatus = 'actualizada';
+                break;
+            case 'add_zone':
+                tipoStatus = 'Creada';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let zoneName = data.Mensaje.zoneName
-                        notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableZones').DataTable().search(zoneName).draw();
-                        classEfect('#tableZones_filter input', 'border-custom')
-                        $('#tableZones').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalZone').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalZone').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let zoneName = data.Mensaje.zoneName
+                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableZones').DataTable().search(zoneName).draw();
+                    classEfect('#tableZones_filter input', 'border-custom')
+                    $('#tableZones').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalZone').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalZone').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 $(document).on("click", ".delZone", function (e) {
     let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
+
+    let modalZone = ls.get(LS_MODAL_ZONE);
+
+    if (!data) {
+        return;
+    }
+    if (!modalZone) {
+        return;
+    }
+    $('#modales').html(modalZone)
     // console.log(data);
     let zoneLat = data.zoneLat;
     let zoneLng = data.zoneLng;
@@ -529,85 +579,85 @@ $(document).on("click", ".delZone", function (e) {
     let zoneName = data.zoneName;
     let idZone = data.zoneID;
     // return false;
-    axios({
-        method: 'post',
-        url: 'modalZone.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-        // $('#RowTableZones').html(response.data)
-    }).then(function () {
-        $('#modalZone .modal-title').html('<div class="text-danger">¿Eliminar Zona?</div><div class="">' + zoneName + '</div>')
-        $('#modalZone').modal('show');
-        // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-        $('#formZone #formZoneTipo').val('del_zone').attr('disabled', 'disabled')
-        // $('#formZone #geocomplete').hide();
-        $('#formZone .modal-dialog').removeClass('modal-lg');
-        $('#formZone .modal-body').html('');
-        // $('#formZone #divForm').removeClass('col-lg-6');
-        // $('#formZone #divMapCanva').remove();
-        // $('#formZone #reset').remove();
-        // $('#formZone #formZoneNombre').val(zoneName).attr('disabled', 'disabled')
-        // $('#formZone #formZoneLat').val(zoneLat).attr('disabled', 'disabled')
-        // $('#formZone #formZoneLng').val(zoneLng).attr('disabled', 'disabled')
-        // $('#formZone #formZoneRadio').val(zoneRadio).attr('disabled', 'disabled')
+    // axios({
+    // method: 'post',
+    // url: 'modalZone.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // $('#RowTableZones').html(response.data)
+    // }).then(function () {
+    $('#modalZone .modal-title').html('<div class="text-danger">¿Eliminar Zona?</div><div class="">' + zoneName + '</div>')
+    $('#modalZone').modal('show');
+    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
+    $('#formZone #formZoneTipo').val('del_zone').attr('disabled', 'disabled')
+    // $('#formZone #geocomplete').hide();
+    $('#formZone .modal-dialog').removeClass('modal-lg');
+    $('#formZone .modal-body').html('');
+    // $('#formZone #divForm').removeClass('col-lg-6');
+    // $('#formZone #divMapCanva').remove();
+    // $('#formZone #reset').remove();
+    // $('#formZone #formZoneNombre').val(zoneName).attr('disabled', 'disabled')
+    // $('#formZone #formZoneLat').val(zoneLat).attr('disabled', 'disabled')
+    // $('#formZone #formZoneLng').val(zoneLng).attr('disabled', 'disabled')
+    // $('#formZone #formZoneRadio').val(zoneRadio).attr('disabled', 'disabled')
 
-        // select2Radio("#formZone #formZoneRadio");
+    // select2Radio("#formZone #formZoneRadio");
 
-    }).then(function () {
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formZone").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formZone #formZoneTipo').val()) {
-                case 'del_zone':
-                    tipoStatus = 'eliminada';
-                    break;
-                case 'upd_zone':
-                    tipoStatus = 'actualizada';
-                    break;
-                case 'add_zone':
-                    tipoStatus = 'Creada';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    // }).then(function () {
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formZone").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formZone #formZoneTipo').val()) {
+            case 'del_zone':
+                tipoStatus = 'eliminada';
+                break;
+            case 'upd_zone':
+                tipoStatus = 'actualizada';
+                break;
+            case 'add_zone':
+                tipoStatus = 'Creada';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let zoneName = data.Mensaje.zoneName
-                        notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        $('#tableZones').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalZone').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalZone').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let zoneName = data.Mensaje.zoneName
+                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    $('#tableZones').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalZone').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalZone').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 function getNearZonesTable($lat, $lng, createZone = false) {
@@ -665,7 +715,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             },
             /** Columna Radio */
             {
-                className: 'align-middle py-2 fontq text-right', targets: '', title:'Radio',
+                className: 'align-middle py-2 fontq text-right', targets: '', title: 'Radio',
                 "render": function (data, type, row, meta) {
                     let datacol = `<div class="float-right fontq">${row.zoneRadio}</div>`
                     return datacol;
@@ -802,9 +852,9 @@ let processRegZone = (lat, lng, reguid) => {
                 let result = data.Mensaje.result
                 let zoneDistance = (parseFloat(data.Mensaje.zoneDistance) * 1000).toFixed(2)
                 if (result) {
-                    notify('Registro Procesado correctamente.<br>Zona: <b>'+zoneName+'</b><br>Distancia: <b>'+zoneDistance+' Mts</b>', 'success', 5000, 'right')
+                    notify('Registro Procesado correctamente.<br>Zona: <b>' + zoneName + '</b><br>Distancia: <b>' + zoneDistance + ' Mts</b>', 'success', 5000, 'right')
                     $('#table-mobile').DataTable().ajax.reload(null, false);
-                }else{
+                } else {
                     notify('Zona no encontrada', 'info', 5000, 'right')
                 }
                 ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
@@ -813,7 +863,7 @@ let processRegZone = (lat, lng, reguid) => {
                 $.notifyClose();
                 if (data.Mensaje == "There are no areas available") {
                     notify('No hay Zonas disponibles', 'danger', 5000, 'right')
-                }else{
+                } else {
                     notify(data.Mensaje, 'danger', 5000, 'right')
                 }
                 ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
@@ -826,6 +876,17 @@ let processRegZone = (lat, lng, reguid) => {
 $(document).on("click", ".createZoneOut", function (e) {
     e.preventDefault();
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+
+    let modalZone = ls.get(LS_MODAL_ZONE);
+
+    if (!data) {
+        return;
+    }
+    if (!modalZone) {
+        return;
+    }
+    $('#modales').html(modalZone)
+
     let zoneLat = data.regLat;
     let zoneLng = data.regLng;
     let zoneRadio = 100;
@@ -834,100 +895,100 @@ $(document).on("click", ".createZoneOut", function (e) {
     let regUID = data.regUID;
 
     // return false;
-    axios({
-        method: 'post',
-        url: 'modalZone.html?v=' + $.now(),
-    }).then(function (response) {
-        $('#modales').html(response.data)
-        // $('#RowTableZones').html(response.data)
-    }).then(function () {
-        $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
-        $('#modalZone').modal('show');
-        $('#formZone .requerido').html('(*)')
-        $('#formZone #divGeocomplete').hide();
-        // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-        $('#formZone #formZoneTipo').val('create_zone')
-        $('#formZone #formZoneNombre').val(zoneName)
-        $('#formZone #formZoneLat').val(zoneLat)
-        $('#formZone #formZoneLng').val(zoneLng)
-        $('#formZone #formZoneRadio').val(zoneRadio)
-        select2Radio("#formZone #formZoneRadio");
+    // axios({
+    // method: 'post',
+    // url: 'modalZone.html?v=' + $.now(),
+    // }).then(function (response) {
+    // $('#modales').html(response.data)
+    // $('#RowTableZones').html(response.data)
+    // }).then(function () {
+    $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+    $('#modalZone').modal('show');
+    $('#formZone .requerido').html('(*)')
+    $('#formZone #divGeocomplete').hide();
+    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
+    $('#formZone #formZoneTipo').val('create_zone')
+    $('#formZone #formZoneNombre').val(zoneName)
+    $('#formZone #formZoneLat').val(zoneLat)
+    $('#formZone #formZoneLng').val(zoneLng)
+    $('#formZone #formZoneRadio').val(zoneRadio)
+    select2Radio("#formZone #formZoneRadio");
 
-        setTimeout(() => {
-            $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-            focusEndText('#formZone #formZoneNombre')
-            $('#formZone #geocomplete').removeAttr('readonly')
-        }, 500);
+    setTimeout(() => {
+        $('#formZone .form-control').attr('autocomplete', '_chweb_off')
+        focusEndText('#formZone #formZoneNombre')
+        $('#formZone #geocomplete').removeAttr('readonly')
+    }, 500);
 
-    }).then(function () {
-        getNearZonesTable(zoneLat, zoneLng, 'createZoneOut');
-        let defaulLat = zoneLat;
-        let defaulLng = zoneLng;
-        mapZoneNear(defaulLat, defaulLng, 16, true);
+    // }).then(function () {
+    getNearZonesTable(zoneLat, zoneLng, 'createZoneOut');
+    let defaulLat = zoneLat;
+    let defaulLng = zoneLng;
+    mapZoneNear(defaulLat, defaulLng, 16, true);
 
-                
-        $('#formZone .modal-body').append(`
+
+    $('#formZone .modal-body').append(`
         <input type="hidden" name="regLat" value="${zoneLat}" id="vlat">
         <input type="hidden" name="regLng" value="${zoneLng}" id="vlng">
         <input type="hidden" name="regUID" value="${regUID}" id="vregUID">
         `)
 
-    }).catch(function (error) {
-        alert(error)
-    }).then(function () {
-        $("#formZone").bind("submit", function (e) {
-            e.preventDefault();
-            let tipoStatus = '';
-            switch ($('#formZone #formZoneTipo').val()) {
-                case 'del_zone':
-                    tipoStatus = 'eliminada';
-                    break;
-                case 'upd_zone':
-                    tipoStatus = 'actualizada';
-                    break;
-                case 'add_zone':
-                    tipoStatus = 'Creada';
-                    break;
-                default:
-                    tipoStatus = '';
-                    break;
-            }
-            $.ajax({
-                type: $(this).attr("method"),
-                url: 'crud.php',
-                data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-                // dataType: "json",
-                beforeSend: function (data) {
-                    CheckSesion()
+    // }).catch(function (error) {
+    // alert(error)
+    // }).then(function () {
+    $("#formZone").bind("submit", function (e) {
+        e.preventDefault();
+        let tipoStatus = '';
+        switch ($('#formZone #formZoneTipo').val()) {
+            case 'del_zone':
+                tipoStatus = 'eliminada';
+                break;
+            case 'upd_zone':
+                tipoStatus = 'actualizada';
+                break;
+            case 'add_zone':
+                tipoStatus = 'Creada';
+                break;
+            default:
+                tipoStatus = '';
+                break;
+        }
+        $.ajax({
+            type: $(this).attr("method"),
+            url: 'crud.php',
+            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
+            // dataType: "json",
+            beforeSend: function (data) {
+                CheckSesion()
+                $.notifyClose();
+                notify('Aguarde..', 'info', 0, 'right')
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+            },
+            success: function (data) {
+                if (data.status == "ok") {
                     $.notifyClose();
-                    notify('Aguarde..', 'info', 0, 'right')
-                    ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                },
-                success: function (data) {
-                    if (data.status == "ok") {
-                        $.notifyClose();
-                        let zoneName = data.Mensaje.zoneName
-                        notify('Zona <b>' + zoneName + '</b>.<br />Creada correctamente.', 'success', 5000, 'right')
-                        // $('#tableUsuarios').DataTable().ajax.reload();
-                        $('#table-mobile').DataTable().ajax.reload(null, false);
-                        // $('#tableZones').DataTable().search(zoneName).draw();
-                        // classEfect('#tableZones_filter input', 'border-custom')
-                        $('#tableZones').DataTable().ajax.reload();
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                        $('#modalZone').modal('hide');
-                    } else {
-                        $.notifyClose();
-                        notify(data.Mensaje, 'danger', 5000, 'right')
-                        ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    }
-                },
-                error: function () { }
-            });
-        });
-        $('#modalZone').on('hidden.bs.modal', function () {
-            $('#modales').html(' ');
+                    let zoneName = data.Mensaje.zoneName
+                    notify('Zona <b>' + zoneName + '</b>.<br />Creada correctamente.', 'success', 5000, 'right')
+                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    // $('#tableZones').DataTable().search(zoneName).draw();
+                    // classEfect('#tableZones_filter input', 'border-custom')
+                    $('#tableZones').DataTable().ajax.reload();
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    $('#modalZone').modal('hide');
+                } else {
+                    $.notifyClose();
+                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                }
+            },
+            error: function () { }
         });
     });
+    $('#modalZone').on('hidden.bs.modal', function () {
+        $('#modales').html(' ');
+    });
+    // });
 
 });
 
