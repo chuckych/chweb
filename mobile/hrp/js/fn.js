@@ -24,11 +24,11 @@ const greenMarker = L.icon({
     iconColor: '#FF0000'
 });
 
-const loadingTable = (selectortable) => {
-    $(selectortable + ' td div').addClass('bg-light text-light border-0 h50')
-    $(selectortable + ' td img').addClass('invisible')
-    $(selectortable + ' td i').addClass('invisible')
-    $(selectortable + ' td span').addClass('invisible')
+const loadingTable = (selectorTable) => {
+    $(selectorTable + ' td div').addClass('bg-light text-light border-0 h50')
+    $(selectorTable + ' td img').addClass('invisible')
+    $(selectorTable + ' td i').addClass('invisible')
+    $(selectorTable + ' td span').addClass('invisible')
 }
 const actualizarRegistros = (selector, reload = false, loading = true) => {
     if (loading) {
@@ -184,9 +184,11 @@ function fetchCreatedDate(url) {
             .catch(err => console.log(err));
     });
 }
-function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, datetime, zoneID) {
+const getMap = async (lat, lng, zoom, zona, radio, latZona, lngZona, mtsZona, user, dateTime, zoneID) => {
+
     RemoveExistingMap(map)
     initializingMap()
+
     map = L.map('mapzone').setView([lat, lng], zoom);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -206,8 +208,8 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
     } else {
         marker = L.marker([lat, lng], { icon: redMarker }).addTo(map);
     }
-    let distancia = (mtszona > 0) ? '<br>Distancia: ' + mtszona : '';
-    marker.bindTooltip("<b>" + user + "</b><br>" + datetime + "<br>" + zona + distancia)
+    let distancia = (mtsZona > 0) ? '<br>Distancia: ' + mtsZona : '';
+    marker.bindTooltip("<b>" + user + "</b><br>" + dateTime + "<br>" + zona + distancia)
 
     let circleOptions2 = {
         color: 'green',
@@ -216,15 +218,15 @@ function getMap(lat, lng, zoom, zona, radio, latzona, lngzona, mtszona, user, da
     };
 
     if ((zoneID > 0)) {
-        let circle = L.circle([latzona, lngzona], {
+        let circle = L.circle([latZona, lngZona], {
             color: 'green',
             fillColor: 'green',
             fillOpacity: 0.1,
             radius: radio,
             weight: 1
         }).addTo(map);
-        circle2 = L.circle([latzona, lngzona], { ...circleOptions2, radius: 1 }).addTo(map);
-        start = L.latLng([latzona, lngzona])
+        circle2 = L.circle([latZona, lngZona], { ...circleOptions2, radius: 1 }).addTo(map);
+        start = L.latLng([latZona, lngZona])
         end = L.latLng([lat, lng])
         let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(map);
 

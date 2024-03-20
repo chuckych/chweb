@@ -854,150 +854,159 @@ $(function () {
             }
         }
     });
-    $(document).on("click", ".pic", function (e) {
+    $(document).on("click", ".pic", async function (e) {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
+
+        if (!data) {
+            return;
+        }
+
+        let modalRegistro = document.getElementById('modalRegistro');
+        let getModal = await axios.get('modal.php');
+        modalRegistro.innerHTML = getModal.data;
+
         $('#pic').modal('show')
-        let url_foto = `${data.imageData.img}`;
-        // let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
-        let path = '';
-        let apiMobile = document.getElementById('apiMobile').value;
-        if (apiMobile == 'http://localhost:8050') {
-            path = ''
-        } else {
-            path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
-        }
 
-        let picfoto = data.imageData.img ? path + url_foto : '';
-        let picnombre = data.userName;
-        let picDevice = data.deviceName
-        let picIDUser = data.userID
-        let pichora = data.regTime
-        let picdia = data.regDay + ' ' + data.regDate + ' ' + data.regTime
-        let _lat = data.regLat
-        let _lng = data.regLng
-        let locked = data.locked
-        let id_api = data.id_api
-        let error = data.error
-        let confidenceFaceStr = data.confidenceFaceStr;
-        let basePhoto = data.basePhoto;
-        let zoneLat = data.zoneLat
-        let zoneLng = data.zoneLng
-        let zoneRadio = data.zoneRadio
-        let zoneDistance = data.zoneDistance
-        let createdDate = data.createdDate
-        let zoneName = (data.zoneID > 0) ? '<span class="text-success">' + data.zoneName + '</span>' : '<span class="text-danger">Fuera de Zona</span>'
-        let mts = (data.zoneID > 0) ? '<span class="text-success font-weight-bold"><small> (' + zoneDistance + ' mts)<small></span>' : ''
-        let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
-        let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
+        $(document).on("shown.bs.modal", "#pic", function (e) {
 
-        picDevice = (!picDevice) ? `${data.phoneID}` : picDevice;
-
-        // if (data.basePhoto) {
-        //     picfoto = `<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w40 h40 radius img-fluid" />`
-        // }
-
-        $('#latitud').val(_lat)
-        $('#longitud').val(_lng)
-        $('#modalFoto').val(picfoto)
-        $('#modalNombre').val(picnombre)
-        $("input[name=lat]").val(_lat);
-        $("input[name=lng]").val(_lng);
-
-        if (picfoto) {
-            if (data.basePhoto) {
-                $('.picFoto').html(`<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w150 img-fluid rounded" />`)
+            let url_foto = `${data.imageData.img}`;
+            // let path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
+            let path = '';
+            let apiMobile = document.getElementById('apiMobile').value;
+            if (apiMobile == 'http://localhost:8050') {
+                path = ''
             } else {
-                $('.picFoto').html('<img loading="lazy" src= "' + picfoto + '" class="w150 img-fluid shadow"/>');
+                path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
             }
-            $('.divFoto').show()
-        } else {
-            $('.divFoto').hide()
-        }
 
-        if (data.attPhoto == 1) {
-            $('.divFoto').hide()
-        }
+            let picFoto = data.imageData.img ? path + url_foto : '';
+            let picNombre = data.userName;
+            let picDevice = data.deviceName
+            let picIDUser = data.userID
+            let picHora = data.regTime
+            let picdia = data.regDay + ' ' + data.regDate + ' ' + data.regTime
+            let _lat = data.regLat
+            let _lng = data.regLng
+            let locked = data.locked
+            let id_api = data.id_api
+            let error = data.error
+            let confidenceFaceStr = data.confidenceFaceStr;
+            let basePhoto = data.basePhoto;
+            let zoneLat = data.zoneLat
+            let zoneLng = data.zoneLng
+            let zoneRadio = data.zoneRadio
+            let zoneDistance = data.zoneDistance
+            let createdDate = data.createdDate
+            let zoneName = (data.zoneID > 0) ? '<span class="text-success">' + data.zoneName + '</span>' : '<span class="text-danger">Fuera de Zona</span>'
+            let mts = (data.zoneID > 0) ? '<span class="text-success font-weight-bold"><small> (' + zoneDistance + ' mts)<small></span>' : ''
+            let zoneName2 = (data.zoneID > 0) ? data.zoneName : 'Fuera de Zona'
+            let Distance = (data.zoneID > 0) ? '. Distancia: ' + data.zoneDistance + ' metros' : ''
 
-        if (locked == '1') {
-            $('#divError').show()
-            $('#divError').html(`
+            picDevice = (!picDevice) ? `${data.phoneID}` : picDevice;
+
+            // if (data.basePhoto) {
+            //     picFoto = `<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w40 h40 radius img-fluid" />`
+            // }
+
+            $('#latitud').val(_lat)
+            $('#longitud').val(_lng)
+            $('#modalFoto').val(picFoto)
+            $('#modalNombre').val(picNombre)
+            $("input[name=lat]").val(_lat);
+            $("input[name=lng]").val(_lng);
+
+            $('#pic label').removeClass('bg-loading')
+
+            if (picFoto) {
+                if (data.basePhoto) {
+                    $('.picFoto').html(`<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="img-fluid rounded" style="width:150px;"; aspect-ratio: 131/174; objet-fit:cover" />`)
+                } else {
+                    $('.picFoto').html('<img loading="lazy" src= "' + picFoto + '" class="w150 rounded img-fluid shadow" style="width:150px;"/>');
+                }
+                $('.divFoto').show()
+            } else {
+                $('.divFoto').hide()
+            }
+
+            if (data.attPhoto == 1) {
+                $('.divFoto').hide()
+            }
+
+            if (locked == '1') {
+                $('#divError').show()
+                $('#divError').html(`
             <div class="col-12 text-danger mt-3 mb-0 fontq shadow-sm p-2" role="alert">
                 <label class="w70 fontp text-secondary">Error: </label>
                 <div class="font-weight-bold">${error}</div>
             </div>
         `)
-        } else {
-            $('#divError').hide();
-            $('#divError').html('');
-        }
+            } else {
+                $('#divError').hide();
+                $('#divError').html('');
+            }
 
-        if (confidenceFaceStr == 'Identificado') {
-            confidenceFaceStr = `<span class="text-success">${confidenceFaceStr}</span>`
-        } else if (confidenceFaceStr == 'No Identificado') {
-            confidenceFaceStr = `<span class="text-danger">${confidenceFaceStr}</span>`
-        } else if (confidenceFaceStr == 'No Enrolado') {
-            confidenceFaceStr = `<span class="text-primary">${confidenceFaceStr}</span>`
-        } else if (confidenceFaceStr == 'Entrenamiento Inválido') {
-            confidenceFaceStr = `<span class="text-info">No enrolado</span>`
-        }
+            if (confidenceFaceStr == 'Identificado') {
+                confidenceFaceStr = `<span class="text-success">${confidenceFaceStr}</span>`
+            } else if (confidenceFaceStr == 'No Identificado') {
+                confidenceFaceStr = `<span class="text-danger">${confidenceFaceStr}</span>`
+            } else if (confidenceFaceStr == 'No Enrolado') {
+                confidenceFaceStr = `<span class="text-primary">${confidenceFaceStr}</span>`
+            } else if (confidenceFaceStr == 'Entrenamiento Inválido') {
+                confidenceFaceStr = `<span class="text-info">No enrolado</span>`
+            }
 
-        $('.picFace').html(confidenceFaceStr);
-        $('.picName').html(picnombre);
-        $('.picDevice').html(picDevice);
-        $('.picIDUser').html(picIDUser);
-        $('.picHora').html('<b>' + pichora + '</b>');
-        $('.picZona').html(zoneName + mts);
+            $('.picFace').html(confidenceFaceStr);
+            $('.picName').html(picNombre);
+            $('.picDevice').html(picDevice);
+            $('.picIDUser').html(picIDUser);
+            $('.picHora').html('<b>' + picHora + '</b>');
+            $('.picZona').html(zoneName + mts);
 
-        let evento = '';
-        switch (data.operationType) {
-            case '-1':
+            let evento = '';
+            switch (data.operationType) {
+                case '-1':
+                    evento = 'Fichada';
+                    break;
+                case '1':
+                    evento = 'Ronda';
+                    break;
+                case '3':
+                    evento = 'Evento';
+                    break;
+                default:
+                    evento = 'Desconocido';
+                    break;
+            }
+            if (data.operationType == '0' && data.eventType == '2') {
                 evento = 'Fichada';
-                break;
-            case '1':
-                evento = 'Ronda';
-                break;
-            case '3':
-                evento = 'Evento';
-                break;
-            default:
-                evento = 'Desconocido';
-                break;
-        }
-        if (data.operationType == '0' && data.eventType == '2') {
-            evento = 'Fichada';
-        }
-        data.operation = (data.operation == '0') ? '' : data.operation;
-        let picTipo = `${evento} ${data.operation}`
-        $('.picTipo').html(picTipo);
-        $('.picDia').html(picdia);
+            }
+            data.operation = (data.operation == '0') ? '' : data.operation;
+            let picTipo = `${evento} ${data.operation}`
+            $('.picTipo').html(picTipo);
+            $('.picDia').html(picdia);
 
-        let position = (parseFloat(_lat) + parseFloat(_lng))
-        if (position != '0') {
-            $('#mapzone').show()
-            $('.modal-body #noGPS').html('')
-            // initMap()
-            let lati = parseFloat($('#latitud').val())
-            let long = parseFloat($('#longitud').val())
-            let zone = ($('#zona').val())
-            zone = (zone) ? zone : 'Fuera de Zona';
-            let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
-            setTimeout(() => {
+            let position = (parseFloat(_lat) + parseFloat(_lng))
+            if (position != '0') {
+                // $('#mapzone').show()
+                $('.modal-body #noGPS').html('')
+                // initMap()
+                let lati = parseFloat($('#latitud').val())
+                let long = parseFloat($('#longitud').val())
+                let zone = ($('#zona').val())
+                zone = (zone) ? zone : 'Fuera de Zona';
+                let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
                 getMap(lati, long, 15, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID)
-                $('#mapzone').removeClass('invisible');
-                $('#mapzone').addClass('visible');
-                $('#mapzone').addClass('animate__animated animate__fadeIn');
-            }, 200);
-
-        } else {
-            $('#mapzone').hide();
-            $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 fontq alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
-        }
+                // $('#mapzone').removeClass('invisible');
+                // $('#mapzone').addClass('visible');
+            } else {
+                $('#mapzone').html('');
+                $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 fontq alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
+            }
+        });
     });
     $(document).on("hidden.bs.modal", "#pic", function (e) {
-        $('#mapzone').addClass('invisible');
-        $('#mapzone').removeClass('visible');
-        $('#mapzone').removeClass('animate__animated animate__fadeIn');
-        clean()
+        modalRegistro.innerHTML = '';
+        // clean()
     })
     $(document).on("click", ".processRegFace", function (e) {
         // ActiveBTN(true, ".processRegFace", loading, '')

@@ -9,13 +9,21 @@ E_ALL();
 if (valida_campo($_GET['_c'])) {
     PrintRespuestaJson('error', 'Campo Legajo requerido');
     exit;
-};
+}
+;
 require __DIR__ . '../../../config/conect_mssql.php';
 
-$stmt  = sqlsrv_query($link, "SELECT @@VERSION");
+$stmt = sqlsrv_query($link, "SELECT @@VERSION");
+
+
 if (($stmt)) {
-    $rs=sqlsrv_fetch_array($stmt);
-    PrintRespuestaJson('ok', "<h6>Conexión exitosa . . .</h6>" . nl2br($rs[0]));
+    $info = sqlsrv_server_info($link);
+    $rs = sqlsrv_fetch_array($stmt);
+    $CurrentDatabase = $info['CurrentDatabase'];
+    $SQLServerVersion = $info['SQLServerVersion'];
+    $SQLServerName = $info['SQLServerName'];
+    $InfoHTML = "<br>Database: <b>$CurrentDatabase</b> <br> Server Version: <b>$SQLServerVersion</b> <br> Server Name: <b>$SQLServerName</b> <br>";
+    PrintRespuestaJson('ok', "<h6>Conexión exitosa . . .</h6>" . nl2br($rs[0] . $InfoHTML));
     sqlsrv_free_stmt($stmt);
     sqlsrv_close($link);
     exit;

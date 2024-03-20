@@ -55,6 +55,12 @@
      color: var(--main-bg-modcolor) !important;
  }
 
+ .bg-loading {
+     background-color: #efefef !important;
+     color: #efefef !important;
+     border: 1px solid #efefef !important;
+ }
+
  .bg-ddd {
      background-color: #efefef !important;
  }
