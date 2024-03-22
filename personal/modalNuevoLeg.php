@@ -13,27 +13,28 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-12">
-                            <label for="LegNume" class="mr-2 w120">Legajo:</label>
-                            <input class="form-control h40" type="tel" name="LegNume" id="LegNume" autofocus
-                                placeholder="Número de legajo">
+                            <label class="mr-2">Legajo:
+                                <input class="form-control h40 mt-2" type="tel" name="LegNume" id="LegNume" autofocus
+                                    placeholder="Número de legajo"></label>
                             <input type="hidden" name="ALTALeg" value="true">
                         </div>
                         <div class="col-12 mt-2">
-                            <label for="LegApNo" class="mr-2 w120">Nombre y Apellido</label>
-                            <input class="form-control h40" type="text" name="LegApNo" id="LegApNo" maxlength="40"
-                                placeholder="Nombre y Apellido">
+                            <label class="mr-2 w-100">Apellido y Nombres
+                                <input class="form-control h40 mt-2 w-100" type="text" name="LegApNo" id="LegApNo"
+                                    maxlength="40" placeholder="Apellido y Nombres"></label>
                         </div>
                         <div class="col-12 mt-2">
                             <!-- Empresa -->
-                            <label for="LegEmpr" class="mr-2">Empresa</label>
-                            <select class="form-control h40" id="LegEmpr" name="LegEmpr">
-                            </select>
+                            <label class="mr-2 w-100">
+                                <div class="mb-2">Empresa</div>
+                                <select class="form-control h40 mt-2" id="LegEmpr" name="LegEmpr">
+                                </select>
+                            </label>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="submit" class="btn text-white fontq <?= $bgcolor ?>"
-                        id="NuevoLeg">Aceptar</button>
+                    <button type="submit" class="btn text-white fontq <?= $bgcolor ?>" id="NuevoLeg">Aceptar</button>
                 </div>
 
             </form>
