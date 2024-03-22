@@ -1,7 +1,7 @@
 <?php
 /** FUNCIÓN PARA ESCRIBIR UN ARCHIVO */
 E_ALL();
-if (isset($_GET['_c'])) {
+if (isset ($_GET['_c'])) {
 	// require __DIR__ . '/conect_mysql.php';
 	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
 	// $result = mysqli_query($link, $querydb);
@@ -24,7 +24,7 @@ if (isset($_GET['_c'])) {
 	$auth = $_SESSION["CONEXION_MS"]['auth']; // 0 = SQL Server Authentication, 1 = Windows Authentication
 	$conexionSesion = true;
 }
-if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion SQL
+if ((empty ($db . $user . $pass . $serverName))) { // Si no hay datos de conexion SQL
 	$data = array();
 	PrintRespuestaJson('Error', 'Error: no hay datos de conexion SQL');
 	exit; // Termina el script
@@ -40,7 +40,7 @@ switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 }
 
 /********************************************************************************* */
-/** conexion mediante autenticacion de windows */
+/** conexion mediante autenticación de windows */
 //$connectionInfo = array("Database"=>$base, "CharacterSet" => "UTF-8");
 /********************************************************************************* */
 // header("Content-Type: application/json");
@@ -57,8 +57,8 @@ if ($link === false) {
 			$date = date('d-m-Y H:i:s');
 			$errorHTML = "<div class=''>" . $date . "<br />SQLSTATE: <b>" . $error['SQLSTATE'] . "</b><br />Code: <b>" . $error['code'] . "</b><br />Mensaje: <b>" . $error['message'] . "</b></div>"; // Texto Error en HTML
 			$errorHTML2 = $date . PHP_EOL . "SQLSTATE: " . $error['SQLSTATE'] . "\nCode: " . $error['code'] . "\nMensaje: " . $error['message']; // Texto Error en HTML
-			$SQLSTATE = $error['SQLSTATE']; // Codigo de error SQLSTATE
-			$code = $error['code']; // Codigo de error SQL
+			$SQLSTATE = $error['SQLSTATE']; // Código de error SQLSTATE
+			$code = $error['code']; // Código de error SQL
 			$message = $error['message']; // Mensaje de error
 			$text = "\nSQLSTATE: \"$SQLSTATE\"\ncode: \"$code\"\nMessage: \"$message\""; // Texto Error
 			$text .= ($key === 1) ? "\n----" : ''; // Separador
@@ -68,7 +68,7 @@ if ($link === false) {
 			$ruta_archivo = __DIR__ . "../../logs/error/" . date('Ymd') . "_Error_Conn.log"; // Ruta del archivo de error
 			fileLog($text, $ruta_archivo); // Función para escribir en el archivo de error
 		}
-		if (!$conexionSesion) { // Si no se esta usando la conexion de sesion
+		if (!$conexionSesion) { // Si no se esta usando la conexion de sesión
 			header("Content-Type: application/json"); // Tipo de contenido de la respuesta
 			// echo '<pre>';
 			PrintRespuestaJson('Error', $errorHTML);

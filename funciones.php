@@ -2668,11 +2668,11 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
 // Obtiene la version de la base de datos
 function getVerDBCH($link)
 {
-    $query = "SELECT TOP 1 PARACONT.ParPath1 FROM PARACONT WHERE PARACONT.ParCodi = 10"; // Query
-    $stmt = sqlsrv_query($link, $query); // Ejecucion del query
+    $query = "SELECT * FROM DBData"; // Query
+    $stmt = sqlsrv_query($link, $query); // Ejecución del query
     $path = '';
     while ($a = sqlsrv_fetch_array($stmt)) { // Recorre el resultado
-        $path = $a['ParPath1']; // Asigna el valor a la variable
+        $path = $a['BDVersion']; // Asigna el valor a la variable
     }
     sqlsrv_free_stmt($stmt); // Libera el query
     return $path; // Retorna el valor
