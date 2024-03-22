@@ -48,7 +48,7 @@ function secure_auth_ch()
     $_SESSION['VER_DB_LOCAL'] = $_SESSION['VER_DB_LOCAL'] ?? ''; // Si no existe la variable la crea
     if (
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
+        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
         || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
@@ -56,7 +56,7 @@ function secure_auth_ch()
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
-        if (isset($_SERVER['HTTP_REFERER'])) {
+        if (isset ($_SERVER['HTTP_REFERER'])) {
             header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
         } else {
             header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login
@@ -92,7 +92,7 @@ function secure_auth_ch_json()
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
     if (
         $_SESSION["secure_auth_ch"] !== true
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID']))
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
@@ -130,7 +130,7 @@ function secure_auth_ch2()
     timeZone_lang();
     if (
         $_SESSION["secure_auth_ch"] !== true
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID']))
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
@@ -283,7 +283,7 @@ function token()
 }
 function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 {
-    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
     $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
@@ -306,7 +306,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 }
 function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
 {
-    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
     $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
@@ -365,7 +365,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
         // $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
         $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
     }
-    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
         if (BrowserIE()) {
             $svg = $icon_clock_history;
@@ -428,7 +428,7 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
     if ($countModRol != '1') {
         $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
     }
-    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
     } elseif ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/usuarios/perfil/index.php') {
     } else {
@@ -469,13 +469,13 @@ function valida_campo($name)
 }
 function pagina($pagina)
 {
-    $pag = (!isset($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
+    $pag = (!isset ($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
     return $pag;
 }
 
 function UnsetGet($variable)
 {
-    $_GET[$variable] = isset($_GET[$variable]) ? $_GET[$variable] : '';
+    $_GET[$variable] = isset ($_GET[$variable]) ? $_GET[$variable] : '';
     return $_GET[$variable];
 }
 /** Función UnsetPost() */
@@ -526,7 +526,7 @@ function MinExcel($min)
     $min = ($min / 24);
     return $min;
 }
-function test_input($data)
+function test_input_old($data)
 {
     if (!$data)
         return '';
@@ -538,7 +538,22 @@ function test_input($data)
     $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
     $data = str_ireplace("script", '', $data);
     $data = htmlentities($data, ENT_QUOTES);
-    return($data);
+
+    return ($data);
+}
+function test_input($data)
+{
+    if (!$data)
+        return '';
+    $data = $data ?? '';
+    $data = utf8str($data);
+    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
+    $data = str_ireplace("script", '', $data);
+    $data = htmlentities($data, ENT_QUOTES);
+    $data = str_replace('&nbsp;', ' ', $data); // Reemplaza &nbsp; con un espacio en blanco
+    $data = trim($data);
+
+    return ($data);
 }
 function hoy()
 {
@@ -787,14 +802,14 @@ function inicio()
     $sql = "SELECT usuarios.id FROM usuarios";
     $rs = array_pdoQuery($sql);
     $numrows = count($rs);
-    return($numrows);
+    return ($numrows);
 }
 function principal($rol)
 {
     if ($rol) {
         $sql = "SELECT usuarios.id FROM usuarios JOIN roles ON usuarios.rol=roles.id WHERE usuarios.principal='1' AND roles.recid='$rol' LIMIT 1";
         $rs = simple_pdoQuery($sql);
-        return($rs) ? true : false;
+        return ($rs) ? true : false;
     }
 }
 function token_exist($recid_cliente)
@@ -805,7 +820,7 @@ function token_exist($recid_cliente)
     $sql = "SELECT clientes.id FROM clientes
     WHERE clientes.tkmobile !='' AND clientes.recid = '$recid_cliente'";
     $rs = simple_pdoQuery($sql);
-    return($rs) ? true : false;
+    return ($rs) ? true : false;
 }
 function dnone($var)
 {
@@ -1514,14 +1529,14 @@ function nov_cta_cte()
 
     sqlsrv_free_stmt($rs);
     sqlsrv_close($link);
-    return($array);
+    return ($array);
     // exit;
 }
 function super_unique($array, $key)
 {
     $temp_array = [];
     foreach ($array as &$v) {
-        if (!isset($temp_array[$v[$key]]))
+        if (!isset ($temp_array[$v[$key]]))
             $temp_array[$v[$key]] = &$v;
     }
     $array = array_values($temp_array);
@@ -1861,7 +1876,7 @@ function PerCierre($FechaStr, $Legajo)
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
     }
-    $perCierre = !empty($perCierre) ? $perCierre : '17530101';
+    $perCierre = !empty ($perCierre) ? $perCierre : '17530101';
     sqlsrv_free_stmt($stmt);
     if (intval($FechaStr) <= intval($perCierre)) {
         return true;
@@ -1871,7 +1886,7 @@ function PerCierre($FechaStr, $Legajo)
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
-        $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
+        $ParCierr = !empty ($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if (intval($FechaStr) <= intval($ParCierr)) {
             sqlsrv_close($link);
@@ -1893,7 +1908,7 @@ function PerCierreFech($FechaStr, $Legajo)
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
     }
-    $perCierre = !empty($perCierre) ? $perCierre : '17530101';
+    $perCierre = !empty ($perCierre) ? $perCierre : '17530101';
     sqlsrv_free_stmt($stmt);
 
     if ($FechaStr <= $perCierre) {
@@ -1905,7 +1920,7 @@ function PerCierreFech($FechaStr, $Legajo)
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
-        $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
+        $ParCierr = !empty ($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if ($FechaStr <= $ParCierr) {
             sqlsrv_close($link);
@@ -1926,7 +1941,7 @@ function respuestaWebService($respuesta)
 {
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    return($respuesta[0]);
+    return ($respuesta[0]);
 }
 function EstadoProceso($url)
 {
@@ -1961,7 +1976,7 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
-    return($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
+    return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
 // Funcion para validar que el Webservice de Control Horario esta disponible
 function pingWS()
@@ -1983,7 +1998,7 @@ function pingWS()
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
-    return($http_code == 201) ? true : false; // escribir en el log
+    return ($http_code == 201) ? true : false; // escribir en el log
 }
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
 {
@@ -2269,7 +2284,7 @@ function datosGetIn($Get, $Col)
 ;
 function datosGet($Get, $Col)
 {
-    $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
+    $texto = !empty ($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
 }
 ;
@@ -2488,7 +2503,7 @@ function mod_roles($recid_rol)
 function TokenMobile($token, $data)
 {
     /** data = "appcode" devuelve Aplication Code, "token" = devuelve el token */
-    if (!empty($token)) {
+    if (!empty ($token)) {
         $t = explode('@', $token);
         switch ($data) {
             case 'appcode':
@@ -2794,7 +2809,7 @@ function count_pdoQuery($sql)
     try {
         $stmt = $connpdo->prepare($sql);
         $stmt->execute();
-        return($stmt->fetchColumn() > 0) ? true : false;
+        return ($stmt->fetchColumn() > 0) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2820,7 +2835,7 @@ function insert_pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return($stmt->execute()) ? true : false;
+        return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2832,7 +2847,7 @@ function pdoQuery($sql)
     require __DIR__ . '/config/conect_pdo.php';
     try {
         $stmt = $connpdo->prepare($sql);
-        return($stmt->execute()) ? true : false;
+        return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
@@ -2858,7 +2873,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
         return $e[$key] === $valor;
     });
     foreach ($r as $key => $value) {
-        return($value);
+        return ($value);
     }
 }
 function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
@@ -3037,7 +3052,7 @@ function getIniCuenta($recidCuenta, $key = false)
             // break;
         }
     }
-    return($key) ? $urlHost[0][$key] : $urlHost[0];
+    return ($key) ? $urlHost[0][$key] : $urlHost[0];
 }
 function getDataIni($url) // obtiene el json de la url
 {
@@ -3126,7 +3141,7 @@ function pingApiMobileHRP($urlAppMobile)
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $file_contents = curl_exec($ch);
     curl_close($ch);
-    return($file_contents) ? $file_contents : false;
+    return ($file_contents) ? $file_contents : false;
     // exit;
 }
 function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = true)
@@ -3155,7 +3170,7 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
         exit; // salimos del script
     }
     curl_close($ch);
-    return($file_contents) ? $file_contents : false;
+    return ($file_contents) ? $file_contents : false;
 }
 function confidenceFaceStr($confidence, $id_api, $threshold)
 {
@@ -3578,17 +3593,17 @@ function FileSizeConvert($bytes)
 function get_client_ip(): string
 {
     $ipaddress = '';
-    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
+    if (isset ($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-    } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    } else if (isset ($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else if (isset($_SERVER['HTTP_X_FORWARDED'])) {
+    } else if (isset ($_SERVER['HTTP_X_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-    } else if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
+    } else if (isset ($_SERVER['HTTP_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-    } else if (isset($_SERVER['HTTP_FORWARDED'])) {
+    } else if (isset ($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } else if (isset($_SERVER['REMOTE_ADDR'])) {
+    } else if (isset ($_SERVER['REMOTE_ADDR'])) {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
     } else {
         $ipaddress = 'UNKNOWN';
@@ -3601,7 +3616,7 @@ function setParamsOrSession($params, $session)
         return $params;
     }
 
-    if (empty($session)) {
+    if (empty ($session)) {
         return [];
     }
 
@@ -3609,7 +3624,7 @@ function setParamsOrSession($params, $session)
 }
 function explodeSession($session)
 {
-    if (empty($session)) {
+    if (empty ($session)) {
         return [];
     }
 
