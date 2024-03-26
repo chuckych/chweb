@@ -910,3 +910,32 @@ if ($verDB < 20240219) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20240325) {
+
+    $verDB = 20240325; // nueva version de la DB
+
+    $query = "CREATE FUNCTION fn_Tipo_Lista_Estruct( viLista INT ) ";
+    $query .= "RETURNS VARCHAR(15) ";
+    $query .= "DETERMINISTIC ";
+    $query .= "READS SQL DATA ";
+    $query .= "BEGIN ";
+    $query .= "DECLARE viResultado VARCHAR(15); ";
+    $query .= "SET viResultado = CASE viLista ";
+    $query .= "WHEN 1 THEN 'Empresa' ";
+    $query .= "WHEN 2 THEN 'Planta' ";
+    $query .= "WHEN 3 THEN 'Convenio' ";
+    $query .= "WHEN 4 THEN 'Sector' ";
+    $query .= "WHEN 5 THEN 'Seccion' ";
+    $query .= "WHEN 6 THEN 'Grupo' ";
+    $query .= "WHEN 7 THEN 'Sucursal' ";
+    $query .= "WHEN 8 THEN 'Personal' ";
+    $query .= "ELSE '' ";
+    $query .= "END; ";
+    $query .= "RETURN viResultado; ";
+    $query .= "END";
+    pdoQuery($query);
+
+    fileLog("Se creó función \"fn_Tipo_Lista_Estruct\"", $pathLog);
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+}

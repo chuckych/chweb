@@ -293,6 +293,44 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta')) {
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
+    if ($systemVersion >= 70) { // si la version es mayor o igual a 7.0
+
+        $payload = Flight::request()->data;
+
+        if (valida_campo($payload['desc_planta'] ?? '')) {
+            $data = array('status' => 'requerido');
+            Flight::json($data);
+            exit;
+        }
+
+        $payload = [
+            "Estruct" => "Plan",
+            "Desc" => $payload['desc_planta'],
+            "EvEntra" => "",
+            "EvSale" => ""
+        ];
+
+        $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/estructuras/alta";
+        $rs = curlAPI($endpoint, $payload, 'POST', $token);
+        $result = json_decode($rs, true);
+        $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+
+        if ($result['MESSAGE'] == "OK") {
+            $PlaCodi = $result['DATA']['Cod'];
+            $desc_planta = $result['DATA']['Desc'];
+            $Dato = 'Planta: ' . $desc_planta . ': ' . $PlaCodi;
+            audito_ch('A', $Dato, '10');
+            $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
+        } else {
+            $data = array('status' => 'error', 'dato' => $result['MESSAGE'], 'cod' => '', 'desc' => $payload['desc_planta']);
+        }
+        Flight::json($data);
+        exit;
+    }
+
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $data = array();
@@ -307,7 +345,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
         echo json_encode($data);
         exit;
     }
-    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PLANTAS.PlaDesc FROM PLANTAS WHERE PLANTAS.PlaDesc = '$desc_planta' COLLATE Latin1_General_CI_AI";
@@ -323,7 +360,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
     }
     /** fin */
 
-    /** Query para obtener el ultimo codigo disponible y sumarle 1 */
+    /** Query para obtener el ultimo código disponible y sumarle 1 */
     $query = "SELECT TOP 1 PLANTAS.PlaCodi, PLANTAS.PlaDesc
     FROM PLANTAS
     ORDER BY PLANTAS.PlaCodi DESC";
@@ -342,7 +379,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             );
 
             $sql = "exec DATA_PLANTASInsert @PlaCodi=?,@PlaDesc=?,@FechaHora=?";
-            /** Query del Store Prcedure */
+            /** Query del Store Procedure */
             $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
             /** preparar la sentencia */
 

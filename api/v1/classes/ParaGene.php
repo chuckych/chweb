@@ -29,6 +29,10 @@ class ParaGene
         $this->conect = new ConnectSqlSrv;
         $this->tools = new Tools;
     }
+
+    /**
+     * Recupera datos de la tabla PARAGENE.
+     */
     public function get()
     {
         $inicio = microtime(true);
@@ -68,7 +72,12 @@ class ParaGene
         }
         $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
     }
-    public function return ()
+    /**
+     * Devuelve una matriz de datos de la tabla PARAGENE.
+     *
+     * @return array La matriz de datos de la tabla PARAGENE.
+     */
+    public function return()
     {
         $sql = "SELECT * FROM PARAGENE";
         $Data = $this->conect->executeQueryWhithParams($sql);
@@ -105,5 +114,26 @@ class ParaGene
             );
         }
         return $rs;
+    }
+
+    /**
+     * Recupera datos de la tabla DBData.
+     */
+    public function dbData()
+    {
+        $inicio = microtime(true);
+        try {
+            $sql = "SELECT TOP 1 * FROM DBData";
+            $Data = $this->conect->executeQueryWhithParams($sql);
+            $Data = ($Data[0]);
+            $BDVersion = $Data['BDVersion'];
+            $BDVersion = explode("_", $BDVersion);
+            $Data['SystemVer'] = intval($BDVersion[1]) ?? 0;
+            $Data['FechaHora'] = $this->tools->formatDateTime($Data['FechaHora']);
+            $this->resp->respuesta($Data, 0, 'OK', 200, $inicio, 0, 0);
+        } catch (\Throwable $th) {
+            $this->log->write($th->getMessage(), 'error');
+            $this->resp->respuesta($th->getMessage(), 1, 'Error', 400, $inicio, 0, 0);
+        }
     }
 }

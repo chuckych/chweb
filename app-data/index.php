@@ -242,7 +242,7 @@ function getHorasTotales($payload)
     if (empty($arrayData['DATA'])) {
         return [];
     }
-    return($arrayData['DATA']);
+    return ($arrayData['DATA']);
 }
 function getNovedadesTotales($payload)
 {
@@ -254,7 +254,7 @@ function getNovedadesTotales($payload)
     if (empty($arrayData['DATA'])) {
         return [];
     }
-    return($arrayData['DATA']);
+    return ($arrayData['DATA']);
 }
 function getHorasTotalesDT($payload)
 {
@@ -274,7 +274,7 @@ function getHorasTotalesDT($payload)
         "totalesTryAT" => $arrayData['DATA']['totalesTryAT'] ?? '',
         "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? [],
     );
-    return($dt_data);
+    return ($dt_data);
 }
 function getNovedadesTotalesDT($payload)
 {
@@ -291,7 +291,7 @@ function getNovedadesTotalesDT($payload)
         "totales" => $arrayData['DATA']['totales'] ?? [],
         "novedades" => $arrayData['DATA']['novedades'] ?? [],
     );
-    return($dt_data);
+    return ($dt_data);
 }
 /**
  * Obtiene el cierre de ficha para un legajo y fecha específicos.
@@ -331,7 +331,7 @@ function getNovedad($novedad)
     $data = ch_api($endpoint, '', $method, $queryParams);
 
     $arrayData = json_decode($data, true);
-    return($arrayData['DATA']) ?? array();
+    return ($arrayData['DATA']) ?? array();
 }
 function novedadesRol()
 {
@@ -348,8 +348,28 @@ function novedadesRol()
  */
 function mergeArray($arr1, $arr2)
 {
-    return($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
+    return ($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
 }
+Flight::route('POST /estructuras/alta', function () {
+
+    $payload = Flight::request()->data;
+    print_r($payload) . exit;
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
+
+    $rs = ch_api($endpoint, array ($payload), 'POST', '');
+
+    $result = json_decode($rs, true);
+
+    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+
+    if ($result['MESSAGE'] == "OK") {
+        //$aud = 'Alta Novedad: (' . $payload['Nove'] . ') ' . $getNovedad[0]['Desc'] . ' de Legajo: ' . $legajo . ' Fecha: ' . fechformat($fecha);
+        // audito_ch('A', $aud, '2');
+    }
+
+    Flight::json($result);
+    // Flight::json($result);
+});
 Flight::route('/novedades-all', function () {
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";

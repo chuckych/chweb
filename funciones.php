@@ -16,7 +16,7 @@ function version($html = false)
 }
 function verDBLocal()
 {
-    return 20240219; // Version de la base de datos local
+    return 20240325; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -48,7 +48,7 @@ function secure_auth_ch()
     $_SESSION['VER_DB_LOCAL'] = $_SESSION['VER_DB_LOCAL'] ?? ''; // Si no existe la variable la crea
     if (
         $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
-        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
         || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
@@ -56,7 +56,7 @@ function secure_auth_ch()
     ) {
         // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
         // PrintRespuestaJson('error', 'Sesión Expirada');
-        if (isset ($_SERVER['HTTP_REFERER'])) {
+        if (isset($_SERVER['HTTP_REFERER'])) {
             header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
         } else {
             header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login
@@ -92,7 +92,7 @@ function secure_auth_ch_json()
     $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
     if (
         $_SESSION["secure_auth_ch"] !== true
-        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
@@ -130,7 +130,7 @@ function secure_auth_ch2()
     timeZone_lang();
     if (
         $_SESSION["secure_auth_ch"] !== true
-        || (empty ($_SESSION['UID']) || is_int($_SESSION['UID']))
+        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
@@ -283,7 +283,7 @@ function token()
 }
 function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 {
-    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
     $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
@@ -306,7 +306,7 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
 }
 function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
 {
-    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
     $VER_DB_LOCAL = $_SESSION['VER_DB_LOCAL'] ?? '';
 
@@ -365,7 +365,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
         // $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
         $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
     }
-    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
         if (BrowserIE()) {
             $svg = $icon_clock_history;
@@ -428,7 +428,7 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
     if ($countModRol != '1') {
         $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
     }
-    $QueryString = empty ($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
+    $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
     } elseif ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/usuarios/perfil/index.php') {
     } else {
@@ -469,13 +469,13 @@ function valida_campo($name)
 }
 function pagina($pagina)
 {
-    $pag = (!isset ($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
+    $pag = (!isset($_GET['p']) or $_GET['p'] == "index.php") ? $pagina : $_GET['p'];
     return $pag;
 }
 
 function UnsetGet($variable)
 {
-    $_GET[$variable] = isset ($_GET[$variable]) ? $_GET[$variable] : '';
+    $_GET[$variable] = isset($_GET[$variable]) ? $_GET[$variable] : '';
     return $_GET[$variable];
 }
 /** Función UnsetPost() */
@@ -1536,7 +1536,7 @@ function super_unique($array, $key)
 {
     $temp_array = [];
     foreach ($array as &$v) {
-        if (!isset ($temp_array[$v[$key]]))
+        if (!isset($temp_array[$v[$key]]))
             $temp_array[$v[$key]] = &$v;
     }
     $array = array_values($temp_array);
@@ -1876,7 +1876,7 @@ function PerCierre($FechaStr, $Legajo)
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
     }
-    $perCierre = !empty ($perCierre) ? $perCierre : '17530101';
+    $perCierre = !empty($perCierre) ? $perCierre : '17530101';
     sqlsrv_free_stmt($stmt);
     if (intval($FechaStr) <= intval($perCierre)) {
         return true;
@@ -1886,7 +1886,7 @@ function PerCierre($FechaStr, $Legajo)
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
-        $ParCierr = !empty ($ParCierr) ? $ParCierr : '17530101';
+        $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if (intval($FechaStr) <= intval($ParCierr)) {
             sqlsrv_close($link);
@@ -1908,7 +1908,7 @@ function PerCierreFech($FechaStr, $Legajo)
     while ($row = sqlsrv_fetch_array($stmt)) {
         $perCierre = $row['CierreFech']->format('Ymd');
     }
-    $perCierre = !empty ($perCierre) ? $perCierre : '17530101';
+    $perCierre = !empty($perCierre) ? $perCierre : '17530101';
     sqlsrv_free_stmt($stmt);
 
     if ($FechaStr <= $perCierre) {
@@ -1920,7 +1920,7 @@ function PerCierreFech($FechaStr, $Legajo)
         while ($row = sqlsrv_fetch_array($stmt)) {
             $ParCierr = $row['ParCierr']->format('Ymd');
         }
-        $ParCierr = !empty ($ParCierr) ? $ParCierr : '17530101';
+        $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
         sqlsrv_free_stmt($stmt);
         if ($FechaStr <= $ParCierr) {
             sqlsrv_close($link);
@@ -2284,7 +2284,7 @@ function datosGetIn($Get, $Col)
 ;
 function datosGet($Get, $Col)
 {
-    $texto = !empty ($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
+    $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
 }
 ;
@@ -2503,7 +2503,7 @@ function mod_roles($recid_rol)
 function TokenMobile($token, $data)
 {
     /** data = "appcode" devuelve Aplication Code, "token" = devuelve el token */
-    if (!empty ($token)) {
+    if (!empty($token)) {
         $t = explode('@', $token);
         switch ($data) {
             case 'appcode':
@@ -3593,17 +3593,17 @@ function FileSizeConvert($bytes)
 function get_client_ip(): string
 {
     $ipaddress = '';
-    if (isset ($_SERVER['HTTP_CLIENT_IP'])) {
+    if (isset($_SERVER['HTTP_CLIENT_IP'])) {
         $ipaddress = $_SERVER['HTTP_CLIENT_IP'];
-    } else if (isset ($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    } else if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
-    } else if (isset ($_SERVER['HTTP_X_FORWARDED'])) {
+    } else if (isset($_SERVER['HTTP_X_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_X_FORWARDED'];
-    } else if (isset ($_SERVER['HTTP_FORWARDED_FOR'])) {
+    } else if (isset($_SERVER['HTTP_FORWARDED_FOR'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
-    } else if (isset ($_SERVER['HTTP_FORWARDED'])) {
+    } else if (isset($_SERVER['HTTP_FORWARDED'])) {
         $ipaddress = $_SERVER['HTTP_FORWARDED'];
-    } else if (isset ($_SERVER['REMOTE_ADDR'])) {
+    } else if (isset($_SERVER['REMOTE_ADDR'])) {
         $ipaddress = $_SERVER['REMOTE_ADDR'];
     } else {
         $ipaddress = 'UNKNOWN';
@@ -3616,7 +3616,7 @@ function setParamsOrSession($params, $session)
         return $params;
     }
 
-    if (empty ($session)) {
+    if (empty($session)) {
         return [];
     }
 
@@ -3624,7 +3624,7 @@ function setParamsOrSession($params, $session)
 }
 function explodeSession($session)
 {
-    if (empty ($session)) {
+    if (empty($session)) {
         return [];
     }
 

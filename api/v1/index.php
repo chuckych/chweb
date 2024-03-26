@@ -25,6 +25,8 @@ use flight\Engine;
 
 $api = new Engine();
 
+// print_r(Flight::request()) . exit;
+
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
 $api->route('PUT /novedades', [$novedades, 'update']);
@@ -38,8 +40,11 @@ $api->route('GET /fichas/dateMinMax', [$fichas, 'dateMinMax']);
 $api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 $api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
 $api->route('POST /estructuras/', [$estructuras, 'estructuras']);
+$api->route('POST /estructuras/alta', [$estructuras, 'create']);
 $api->route('GET /novedades/data', [$novedades, 'data']);
 $api->route('/paragene', [$ParaGene, 'get']);
+$api->route('GET /parametros/paragene', [$ParaGene, 'get']);
+$api->route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
 
 $api->map('notFound', [$response, 'notFound']);
 $api->set('flight.log_errors', true);
