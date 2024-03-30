@@ -271,7 +271,7 @@ $(function () {
                             } else {
                                 path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                             }
-                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid">`;
+                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid animate__animated animate__flipInX">`;
                         } else {
                             url_foto = ``;
                             // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -283,7 +283,7 @@ $(function () {
                             foto = ``;
                         }
                         if (row.basePhoto) {
-                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid" />`
+                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid animate__animated animate__flipInX" />`
                         }
                         let datacol = `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                         return datacol;
