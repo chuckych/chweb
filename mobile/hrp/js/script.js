@@ -117,18 +117,21 @@ $(function () {
                             } else {
                                 path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                             }
-                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w60 h60 radius img-fluid"></img>`;
+                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w60 h60 img-fluid"></img>`;
                         } else {
                             url_foto = ``;
-                            foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            foto = ``;
                             // foto = `<img loading="lazy" src="${row.imageData.img}" class="w40 h40 radius img-fluid"></img>`;
                         }
 
                         if (row.attPhoto == 1) {
-                            foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            foto = ``;
+
                         }
                         if (row.basePhoto) {
-                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 radius img-fluid" />`
+                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 img-fluid" />`
                         }
 
                         let datacol = `<div class="pic w70 h70 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
@@ -151,13 +154,13 @@ $(function () {
                         let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
 
                         btnAdd = `<span class="ml-2">
-                        <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                        <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                        <span title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                        <span title="Procesar Zona" class="text-secondary font07 btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
                     </span>`;
                         if (row.regLat == 0) {
                             btnAdd = `<span class="text-danger p-0 m-0">Sin datos GPS</span>`;
                         }
-                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="text-truncate" style="max-width:170px"><span class="">${zoneName}</span><span class="text-secondary fontp ml-2">${Distance2}</span></div>`;
+                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 font08">${zoneName}</label>${btnAdd}</div>` : `<div class="text-truncate" style="max-width:170px"><span class="">${zoneName}</span><span class="text-secondary font07 ml-2">${Distance2}</span></div>`;
 
 
                         let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
@@ -268,16 +271,19 @@ $(function () {
                             } else {
                                 path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                             }
-                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 radius img-fluid">`;
+                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid">`;
                         } else {
                             url_foto = ``;
-                            foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            foto = ``;
+
                         }
                         if (row.attPhoto == 1) {
-                            foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
+                            foto = ``;
                         }
                         if (row.basePhoto) {
-                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 radius img-fluid" />`
+                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid" />`
                         }
                         let datacol = `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                         return datacol;
@@ -293,7 +299,7 @@ $(function () {
                         let datacol = `
                         <div class="smtdcol">
                             <div class="searchName pointer text-truncate" style="width: 150px;">${nameuser}</div>
-                            <div class="searchID pointer text-secondary fontp">${row.userID}</div>
+                            <div class="searchID pointer text-secondary font07">${row.userID}</div>
                         </div>
                         `
                         return datacol;
@@ -308,7 +314,7 @@ $(function () {
                         let datacol = `
                         <div class="w70">
                             <span class="">${row.regDate}</span><br>
-                            <span class="text-secondary fontp">${row.regDay}</span>
+                            <span class="text-secondary font07">${row.regDay}</span>
                         </div>
                         `
                         return datacol;
@@ -329,21 +335,27 @@ $(function () {
                         let confidenceFaceStr = '';
                         let datacol = '';
                         let processRegFace = 'processRegFace pointer';
-                        // console.log(row.confidenceFaceStr);
+                        let hintClass = (color) => `hint--right hint--rounded hint--no-arrow hint--${color} hint--no-shadow`;
+                        console.log(hintClass);
+
                         if (row.confidenceFaceStr == 'Identificado') {
-                            confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-success bi bi-person-bounding-box"></span>`
+                            confidenceFaceStr = `<span class="${hintClass('success')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-success bi bi-person-bounding-box"></span></span>`
                         } else if (row.confidenceFaceStr == 'No Identificado') {
-                            confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-danger bi bi-person-bounding-box"></span>`
+                            confidenceFaceStr = `<span class="${hintClass('error')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-danger bi bi-person-bounding-box"></span></span>`
                         } else if (row.confidenceFaceStr == 'No Enrolado') {
-                            confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-warning bi bi-person-bounding-box"></span>`
+
+                            confidenceFaceStr = `<span class="${hintClass('warning')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`
+
                         } else if (row.confidenceFaceStr == 'Foto Inválida') {
-                            confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-info bi bi-person-bounding-box"></span>`
+                            confidenceFaceStr = `<span class="${hintClass('info')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-info bi bi-person-bounding-box"></span></span>`
                         } else if (row.confidenceFaceStr == 'No Disponible') {
-                            confidenceFaceStr = `<span data-titler="${row.confidenceFaceStr}" class="font1 text-primary bi bi-person-bounding-box"></span>`
+
+                            confidenceFaceStr = `<span class="${hintClass('primary')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-primary bi bi-person-bounding-box"></span></span>`
+
                             datacol = `<div class="w40">${confidenceFaceStr}</div>`
                             return datacol;
                         } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
-                            confidenceFaceStr = `<span data-titler="No enrolado" class="font1 text-warning bi bi-person-bounding-box"></span>`
+                            confidenceFaceStr = `<span class="${hintClass('warning')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`
                             datacol = `<div class="w40">${confidenceFaceStr}</div>`
                             return datacol;
                         }
@@ -355,23 +367,22 @@ $(function () {
                 {
                     className: '', targets: '', title: '<div class="w120">Zona</div>',
                     "render": function (data, type, row, meta) {
-                        // let btnAdd = `<button data-titlet="Agregar Dispositivo" class="btn btn-sm btn-outline-success border-0 ml-1 addDevice" data-phoneID='${row.phoneID}'><i class="bi bi-plus-circle"></i></button>`;
                         let btnAdd = ''
                         let zoneName = (row.zoneID > 0) ? '<div class="text-success">' + row.zoneName + '</div>' : '<div class="text-danger">Fuera de Zona</div>'
                         let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                         let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                         let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
 
-                        btnAdd = `<div>
-                        <span title="Crear Zona" class="text-secondary fontp btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                        <span title="Procesar Zona" class="text-secondary fontp btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
-                    </div>`;
+                        btnAdd = `<div style="padding-bottom: 3px;">
+                                    <span title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
+                                    <span title="Procesar Zona" class="text-secondary font07 btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                                </div>`;
                         if (row.regLat == 0) {
-                            btnAdd = `<div class="text-secondary fontp p-0 m-0">Sin datos GPS</div>`;
+                            btnAdd = `<div class="text-secondary font07 p-0 m-0">Sin datos GPS</div>`;
                         }
-                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 fontq">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary fontp">${Distance2}</div>`;
+                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 font08">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary font07">${Distance2}</div>`;
 
-                        let datacol = `<div title="${zoneName2}" class="w120 text-truncate py-2">${device}</div>`
+                        let datacol = `<div title="${zoneName2}" class="w120 text-truncate">${device}</div>`
                         return datacol;
                     },
                 },
@@ -420,15 +431,15 @@ $(function () {
                     className: '', targets: '', title: '<div class="w140" >Dispositivo</div>',
                     "render": function (data, type, row, meta) {
 
-                        let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary fontp btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                        let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary font07 btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
 
                         let colorDevice = (row.deviceName == row.phoneID) ? 'text-danger' : '';
-                        let iconEditDevice = (row.deviceName == row.phoneID) ? '<i class="bi bi-pencil-fill fontp ml-2 text-primary"></i>' : '';
+                        let iconEditDevice = (row.deviceName == row.phoneID) ? '<i class="bi bi-pencil-fill font07 ml-2 text-primary"></i>' : '';
 
-                        let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 fontq">${row.phoneID}</label><br>${btnAdd}</div>` : `<div class="d-flex align-items-center updDeviceTable pointer ${colorDevice} hint--rounded hint--no-arrow hint--default hint--no-shadow"
-                        aria-label="Editar Dispositivo" >${row.deviceName} ${iconEditDevice}</div><div class="text-secondary fontp">${row.phoneID}</div>`;
+                        let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 font08">${row.phoneID}</label><br>${btnAdd}</div>` : `<div class="d-flex align-items-center updDeviceTable pointer ${colorDevice} hint--rounded hint--no-arrow hint--secondary hint--no-shadow"
+                        aria-label="Editar Dispositivo" >${row.deviceName} ${iconEditDevice}</div><div class="text-secondary font07">${row.phoneID}</div>`;
 
-                        let datacol = `<div class="smtdcol text-truncate">${device}</div>`
+                        let datacol = `<div class="smtdcol text-truncate" style="max-width:180px">${device}</div>`
                         return datacol;
                     },
                 },
@@ -436,7 +447,7 @@ $(function () {
                 {
                     className: '', targets: '', title: '',
                     "render": function (data, type, row, meta) {
-                        let datacol = `<div class="fontp text-secondary">${row.appVersion}</div>`
+                        let datacol = `<div class="font07 text-secondary">${row.appVersion}</div>`
                         return datacol;
                     },
                 },
@@ -496,17 +507,19 @@ $(function () {
 
     $('#table-mobile').DataTable().on('init.dt', function (e, settings, json) {
         $('.dr').append(`
-        <div class="mx-2" data-titlet="Filtrar Fechas">
+        <div class="mx-2 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--top"
+        aria-label="Seleccionar periodo">
             <input type="text" readonly class="pointer h40 form-control text-center w250 ls1 bg-white" name="_dr" id="_drMob">
         </div>
-        <div class="btn-group dropright d-none d-sm-block" data-titlet="Exportar txt, xls">
+        <div class="btn-group dropright d-none d-sm-block hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--top"
+        aria-label="Exportar txt, xls">
             <button type="button" class="btn btn-sm h40 btn-outline-secondary border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <i class="bi bi-three-dots-vertical"></i>
             </button>
             <div class="dropdown-menu shadow border-0 p-0 radius">
                 <ul class="list-group">
-                    <button class="btn btn-outline-custom border-0 radius fontq" id="downloadTxt" ><div class="ml-1"><span>Exportar</span> .txt</div></button>
-                    <button class="btn btn-outline-custom border-0 radius fontq" id="downloadXls" ><div class="ml-1">Exportar .xls</div></button>
+                    <button class="btn btn-outline-custom border-0 radius font08" id="downloadTxt" ><div class="ml-1"><span>Exportar</span> .txt</div></button>
+                    <button class="btn btn-outline-custom border-0 radius font08" id="downloadXls" ><div class="ml-1">Exportar .xls</div></button>
                 </ul>
             </div>
         </div>
@@ -522,7 +535,8 @@ $(function () {
         $('#RowTableMobile').removeClass('invisible')
         // $('#table-mobile_filter input').addClass('w250')
         $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
-        $('.Filter').html(`<button class="btn btn-light border h40" data-titlet="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
+        $('.Filter').html(`<button class="btn btn-light bg-white border radius h40 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--left"
+        aria-label="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
         <i class="bi bi-funnel-fill text-secondary"></i>
         </button>`)
         $('#table-mobile_filter input').removeClass('form-control-sm')
@@ -544,7 +558,13 @@ $(function () {
             $('#table-mobile').DataTable().search('').draw();
             // actualizarRegistros('#table-mobile', true)
         });
+        let counterShown = 0;
         $('#collapseFilterChecks').on('shown.bs.collapse', function () {
+            counterShown++;
+
+            if (counterShown > 1) {
+                return;
+            }
 
             $('.FilterUser').select2({
                 multiple: true,
@@ -778,7 +798,7 @@ $(function () {
             if (!file.data) {
                 notify('No hay datos a exportar', 'danger', 3000, 'right');
             } else {
-                notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadTxt" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+                notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 font08 downloadTxt" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
             }
             $(".downloadTxt").click(function () {
                 $.notifyClose();
@@ -804,7 +824,7 @@ $(function () {
             if (!file.data) {
                 notify('No hay datos a exportar', 'danger', 3000, 'right');
             } else {
-                notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 fontq downloadXls" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
+                notify('<b>Archivo exportado correctamente</b>.<br>Tiempo: ' + file.timeScript + ' segundos.<br/><div class="shadow-sm w100"><a href="' + file.data + '" class="btn btn-custom px-3 btn-sm mt-2 font08 downloadXls" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
             }
             $(".downloadXls").click(function () {
                 $.notifyClose();
@@ -957,8 +977,8 @@ $(function () {
         if (locked == '1') {
             $('#divError').show()
             $('#divError').html(`
-            <div class="col-12 text-danger mt-3 mb-0 fontq shadow-sm p-2" role="alert">
-                <label class="w70 fontp text-secondary">Error: </label>
+            <div class="col-12 text-danger mt-3 mb-0 font08 shadow-sm p-2" role="alert">
+                <label class="w70 font07 text-secondary">Error: </label>
                 <div class="font-weight-bold">${error}</div>
             </div>
         `)
@@ -1022,7 +1042,7 @@ $(function () {
             // $('#mapzone').addClass('visible');
         } else {
             $('#mapzone').html('');
-            $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 fontq alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
+            $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 font08 alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
         }
         // });
     });
@@ -1139,7 +1159,7 @@ $(function () {
                 tipo: 'transferir'
             },
             beforeSend: function (data) {
-                ActiveBTN(true, "#" + dataRecid, '<i class="spinner-border fontp wh15"></i>', '<i class="bi bi-forward fontt"></i>')
+                ActiveBTN(true, "#" + dataRecid, '<i class="spinner-border font07 wh15"></i>', '<i class="bi bi-forward fontt"></i>')
             },
             success: function (data) {
                 if (data.status == "ok") {

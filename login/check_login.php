@@ -305,4 +305,4 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	header('Location:/' . HOMEHOST . '/login/?error');
 	access_log('Login incorrecto');
 }
-mysqli_close($link);
+// mysqli_close($link);

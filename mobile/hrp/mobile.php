@@ -14,7 +14,7 @@
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
-    <div class="container shadow pb-2" style="animation-fill-mode: unset" id="container">
+    <div class="container shadow pb-2 bg" style="animation-fill-mode: unset" id="container">
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
@@ -33,10 +33,10 @@
         // print_r($url);
         $api = json_decode($api, true);
         $arrayFech = $api['RESPONSE_DATA'] ?? '';
-        $min = !empty ($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
-        $max = !empty ($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
-        $aniomin = !empty ($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
-        $aniomax = !empty ($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
+        $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
+        $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
+        $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
+        $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
         echo '<input type="hidden"  id="min" value="' . $min . '">';
         echo '<input type="hidden"  id="max" value="' . $max . '">';
         echo '<input type="hidden"  id="aniomin" value="' . $aniomin . '">';
@@ -55,58 +55,74 @@
         }
         ?>
         <?php require __DIR__ . '../menuBtn.html' ?>
-        <div class="wrapper">
-            <div class="row bg-white invisible my-2" id="RowTableMobile">
+        <div class="wrapper bg">
+            <div class="row invisible" id="RowTableMobile">
                 <div class="col-12">
-                    <div class="collapse border p-3 mb-3 shadow-sm animate__animated animate__fadeIn"
+                    <div class="collapse border-0 radius bg-white animate__animated animate__fadeIn"
                         id="collapseFilterChecks">
-                        <div class="form-row">
-                            <div class="col-12 col-sm-4 d-flex flex-column">
-                                <label for="FilterUser">Usuarios</label>
-                                <select name="FilterUser" id="FilterUser"
-                                    class="form-control w-100 FilterUser invisible h40"></select>
-                            </div>
-                            <div class="col-12 col-sm-4  d-flex flex-column mt-2 mt-sm-0">
-                                <label for="FilterZones">Zonas</label>
-                                <select name="FilterZones" id="FilterZones"
-                                    class="form-control w-100 FilterZones invisible h40"></select>
-                            </div>
-                            <div class="col-12 col-sm-4 d-flex flex-column mt-2 mt-sm-0">
-                                <label for="FilterDevice">Dispositivos</label>
-                                <select name="FilterDevice" id="FilterDevice"
-                                    class="form-control w-100 FilterDevice invisible h40"></select>
-                            </div>
-                            <div class="col-12 col-sm-6 mt-3">
-                            </div>
-                            <div class="col-12 col-sm-6 mt-3 d-flex align-items-center justify-content-end">
-                                <div class="btn-group btn-group-toggle border p-1 bg-white mr-1">
-                                    <button class="btn-light btn border-0" data-titlet="Borrar Filtros"
-                                        id="ClearFilter">
-                                        <i class="text-secondary bi bi-eraser-fill"></i>
-                                    </button>
-                                </div>
-                                <div class="btn-group btn-group-toggle border p-1 bg-white" data-toggle="buttons">
-                                    <label class="btn btn-outline-light border-0" data-titlet="Identificado">
-                                        <input type="radio" name="FilterIdentified" id="FilterIdentified1" value="1"> <i
-                                            class="text-success bi bi-person-bounding-box"></i>
-                                    </label>
-                                    <label class="btn btn-outline-light border-0" data-titlet="No Identificado">
-                                        <input type="radio" name="FilterIdentified" id="FilterIdentified2" value="2"> <i
-                                            class="text-danger bi bi-person-bounding-box"></i>
-                                    </label>
-                                    <label class="btn btn-outline-light border-0" data-titlet="Todos">
-                                        <input type="radio" name="FilterIdentified" id="FilterIdentified3" value=""
-                                            checked> <i class="text-secondary bi bi-person-bounding-box"></i>
+                        <div class="pt-2">
+                            <div class="form-row p-3">
+                                <div class="col-12 col-sm-4 d-flex flex-column">
+                                    <label>Usuarios
+                                        <div class="mt-2"></div>
+                                        <select name="FilterUser" id="FilterUser"
+                                            class="form-control w-100 FilterUser invisible h40"></select>
                                     </label>
                                 </div>
-                            </div>
+                                <div class="col-12 col-sm-4  d-flex flex-column mt-2 mt-sm-0">
+                                    <label>Zonas
+                                        <div class="mt-2"></div>
+                                        <select name="FilterZones" id="FilterZones"
+                                            class="form-control w-100 FilterZones invisible h40"></select>
+                                    </label>
+                                </div>
+                                <div class="col-12 col-sm-4 d-flex flex-column mt-2 mt-sm-0">
+                                    <label>Dispositivos
+                                        <div class="mt-2"></div>
+                                        <select name="FilterDevice" id="FilterDevice"
+                                            class="form-control w-100 FilterDevice invisible h40"></select>
+                                    </label>
+                                </div>
+                                <div class="col-12 col-sm-6 mt-3">
+                                </div>
+                                <div class="col-12 col-sm-6 mt-3 d-flex align-items-center justify-content-end">
+                                    <div class="btn-group btn-group-toggle border-0 p-1 bg mr-1">
+                                        <button
+                                            class="btn border-0 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--left"
+                                            aria-label="Borrar Filtros" id="ClearFilter">
+                                            <i class="text-secondary bi bi-eraser-fill"></i>
+                                        </button>
+                                    </div>
+                                    <div class="btn-group btn-group-toggle border-0 p-1 bg" data-toggle="buttons">
+                                        <label
+                                            class="btn btn-outline-success border-0 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--top"
+                                            aria-label="Identificado">
+                                            <input type="radio" name="FilterIdentified" id="FilterIdentified1"
+                                                value="1"> <i class="bi bi-person-bounding-box"></i>
+                                        </label>
+                                        <label
+                                            class="btn btn-outline-danger border-0 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--bottom"
+                                            aria-label="No Identificado">
+                                            <input type="radio" name="FilterIdentified" id="FilterIdentified2"
+                                                value="2"> <i class="bi bi-person-bounding-box"></i>
+                                        </label>
+                                        <label
+                                            class="btn btn-outline-secondary border-0 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--top"
+                                            aria-label="Todos">
+                                            <input type="radio" name="FilterIdentified" id="FilterIdentified3" value=""
+                                                checked> <i class="bi bi-person-bounding-box"></i>
+                                        </label>
+                                    </div>
+                                </div>
 
+                            </div>
                         </div>
                     </div>
+                    <div class="pb-2"></div>
                 </div>
                 <div class="col-12" id="divTableMobile">
-                    <table class="table text-nowrap w-100 border shadow p-2" id="table-mobile">
-                        <thead class="fontq">
+                    <table class="table text-nowrap w-100 border-0 radius p-2 bg-white" id="table-mobile">
+                        <thead class="font08">
                         </thead>
                     </table>
                 </div>
@@ -123,37 +139,38 @@
                 endif;
                 ?>
                 <div class="col-12 mt-3">
-                    <div id="dataT"></div>
-                    <div id="mapid"></div>
+                    <div id="mapid" class="bg-white"></div>
+                    <hr>
+                    <div id="dataT" class="mt-2"></div>
                 </div>
             </div>
-            <div class="bg-white invisible mt-2" id="RowTableUsers">
+            <div class="invisible mt-2" id="RowTableUsers">
                 <div class="row">
                     <div class="col-12 col-sm-8">
-                        <table class="table text-nowrap w-100 border shadow p-2" id="tableUsuarios">
-                            <thead class="fontq"></thead>
+                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableUsuarios">
+                            <thead class="font08"></thead>
                         </table>
                     </div>
                     <div class="col-12 col-sm-4">
                     </div>
                 </div>
             </div>
-            <div class="bg-white invisible mt-2" id="RowTableDevices">
+            <div class="invisible mt-2" id="RowTableDevices">
                 <div class="row">
                     <div class="col-12">
-                        <table class="table text-nowrap w-100 border shadow p-2" id="tableDevices">
-                            <thead class="fontq"></thead>
+                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableDevices">
+                            <thead class="font08"></thead>
                         </table>
                     </div>
                     <div class="col-12 col-sm-4">
                     </div>
                 </div>
             </div>
-            <div class="bg-white invisible mt-2" id="RowTableZones">
+            <div class="invisible mt-2" id="RowTableZones">
                 <div class="row">
                     <div class="col-12 col-lg-8">
-                        <table class="table text-nowrap w-100 border shadow p-2" id="tableZones">
-                            <thead class="fontq"></thead>
+                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableZones">
+                            <thead class="font08"></thead>
                         </table>
                     </div>
                     <div class="col-12 col-lg-4"></div>

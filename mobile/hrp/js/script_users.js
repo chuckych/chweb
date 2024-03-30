@@ -33,7 +33,7 @@ if ($(window).width() < 540) {
         },
         dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
             "<'row '<'col-12 table-responsive't>>" +
-            "<'fixed-bottom'<'bg-white'<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+            "<'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
             url: "getUsuariosMobile.php",
             type: "POST",
@@ -103,8 +103,8 @@ if ($(window).width() < 540) {
         },
         dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
             "<'row '<'col-12 table-responsive't>>" +
-            "<'row d-none d-sm-block'<'col-12 d-flex bg-white align-items-center justify-content-between'ip>>" +
-            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 bg-white d-flex align-items-center justify-content-center'p>>" +
+            "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
+            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 d-flex align-items-center justify-content-center'p>>" +
             "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
         ajax: {
             url: "getUsuariosMobile.php",

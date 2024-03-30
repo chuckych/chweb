@@ -25,7 +25,7 @@ const greenMarker = L.icon({
 });
 
 const loadingTable = (selectorTable) => {
-    $(selectorTable + ' td div').addClass('bg-light text-light border-0 h50')
+    $(selectorTable + ' td div').addClass('bg-light text-light border-0 radius h50 Mw40')
     $(selectorTable + ' td img').addClass('invisible')
     $(selectorTable + ' td i').addClass('invisible')
     $(selectorTable + ' td span').addClass('invisible')
@@ -115,7 +115,7 @@ const focusBtn = (selector) => {
     $('#btnMenu .btn').parents('li').removeClass('shadow');
     $('#btnMenu .btn').addClass('btn-outline-custom');
     $(selector).removeClass('btn-outline-custom').addClass('btn-custom');
-    $(selector).parents('li').addClass('shadow');
+    // $(selector).parents('li').addClass('shadow');
 }
 const focusRowTables = () => {
     $('#RowTableMobile').hide();
@@ -774,27 +774,7 @@ const formatDateTime = (date) => {
     return day + '/' + month + '/' + year + ' ' + hours + ':' + minutes;
 }
 
-// {/* <div class="copyRegig" data-clipboard-text="HOLA A TODO">HOLA</div> */ }
-// let copyRegig = new ClipboardJS('.copyRegig');
-// copyRegig.on('success', function (e) {
-//     $.notifyClose();
-//     notify('Copiado', 'warning', 1000, 'right')
-//     setTimeout(function () {
-//         $.notifyClose();
-//     }, 1000);
-//     e.clearSelection();
-// });
-
-// copyRegig.on('error', function (e) {
-//     $.notifyClose();
-//     notify('Error al copiar', 'danger', 1000, 'right')
-//     setTimeout(function () {
-//         $.notifyClose();
-//     }, 1000);
-//     e.clearSelection();
-// });
-
-function loadMap(data, customid) {
+function loadMap(data, customId) {
 
     // console.log(data.length);
     $('#mapid').html('');
@@ -805,7 +785,7 @@ function loadMap(data, customid) {
     }
     // Crea el mapa
     $('#mapid').show();
-    $('#mapid').html('<div style="width:100%; height:550px;" id="' + customid + '"></div>');
+    $('#mapid').html('<div style="width:100%; height:550px;" id="' + customId + '"></div>');
 
     let ubicacionesParaMapa = [];
     let uniqueZones = new Map();
@@ -833,21 +813,21 @@ function loadMap(data, customid) {
         path = ''
     }
 
-    data.forEach((ubicacion) => {
+    data.forEach((pos) => {
         ubicacionesParaMapa.push(
             {
-                lat: ubicacion.regLat,
-                lon: ubicacion.regLng,
-                zoneID: ubicacion.zoneID,
-                user: ubicacion.userName,
-                datetime: ubicacion.regDate + ' ' + ubicacion.regHora,
-                distancia: (ubicacion.zoneDistance > 0) ? 'Distancia: ' + ubicacion.zoneDistance + ' m.' : '',
-                zona: (ubicacion.zoneName != null) ? '<span class="text-success">' + ubicacion.zoneName + '</b>' : '<span class="text-danger"><span>Fuera de zona</b></span>',
-                img: path + ubicacion.imageData['img'],
-                zoneLat: ubicacion.zoneLat,
-                zoneLng: ubicacion.zoneLng,
-                regLat: ubicacion.regLat,
-                regLng: ubicacion.regLng
+                lat: pos.regLat,
+                lon: pos.regLng,
+                zoneID: pos.zoneID,
+                user: pos.userName,
+                datetime: pos.regDate + ' ' + pos.regHora,
+                distancia: (pos.zoneDistance > 0) ? 'Distancia: ' + pos.zoneDistance + ' m.' : '',
+                zona: (pos.zoneName != null) ? '<span class="text-success">' + pos.zoneName + '</b>' : '<span class="text-danger"><span>Fuera de zona</b></span>',
+                img: path + pos.imageData['img'],
+                zoneLat: pos.zoneLat,
+                zoneLng: pos.zoneLng,
+                regLat: pos.regLat,
+                regLng: pos.regLng
             }
         );
     });
@@ -856,12 +836,12 @@ function loadMap(data, customid) {
     let latitud = primerElemento.lat
     let longitud = primerElemento.lon
 
-    let mymap = L.map(customid).setView([latitud, longitud], 16);
+    let myMap = L.map(customId).setView([latitud, longitud], 16);
     // Agrega el layer de OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        // attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        attribution: `Zonas encontradas: ${uniqueZonesArray.length}`,
         maxZoom: 20
-    }).addTo(mymap);
+    }).addTo(myMap);
 
 
     let circleOptions = {
@@ -888,14 +868,14 @@ function loadMap(data, customid) {
         radius: 7
     };
 
-    mymap.addControl(new L.Control.Fullscreen({
+    myMap.addControl(new L.Control.Fullscreen({
         title: {
             'false': 'Expandir mapa',
             'true': 'Contraer mapa'
         }
     }));
 
-    // let markersLayer = L.layerGroup().addTo(mymap);
+    // let markersLayer = L.layerGroup().addTo(myMap);
     // markersLayer.clearLayers();
 
     // let iconZone = L.icon({
@@ -905,27 +885,27 @@ function loadMap(data, customid) {
     let markersLayer = ''
     // });    
     for (let i = 0; i < ubicacionesParaMapa.length; i++) {
-        let ubicacion = ubicacionesParaMapa[i];
-        if (ubicacion.zoneID > 0) {
-            start = L.latLng([ubicacion.regLat, ubicacion.regLng])
-            end = L.latLng([ubicacion.zoneLat, ubicacion.zoneLng])
-            markersLayer = L.marker([ubicacion.lat, ubicacion.lon], { icon: greenMarker }).addTo(mymap);
-            // circle3 = L.circleMarker([ubicacion.lat,ubicacion.lon],{...circleOptions3}).addTo(mymap);
-            let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(mymap);
+        let pos = ubicacionesParaMapa[i];
+        if (pos.zoneID > 0) {
+            start = L.latLng([pos.regLat, pos.regLng])
+            end = L.latLng([pos.zoneLat, pos.zoneLng])
+            markersLayer = L.marker([pos.lat, pos.lon], { icon: greenMarker }).addTo(myMap);
+            // circle3 = L.circleMarker([pos.lat,pos.lon],{...circleOptions3}).addTo(myMap);
+            let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(myMap);
         } else {
-            markersLayer = L.marker([ubicacion.lat, ubicacion.lon], { icon: redMarker }).addTo(mymap);
-            // circle3 = L.circleMarker([ubicacion.lat,ubicacion.lon],{...circleOptions4}).addTo(mymap);
+            markersLayer = L.marker([pos.lat, pos.lon], { icon: redMarker }).addTo(myMap);
+            // circle3 = L.circleMarker([pos.lat,pos.lon],{...circleOptions4}).addTo(myMap);
         }
 
         let infoMarker = `
         <div class='d-inline-flex'>
-            <img src='${ubicacion.img}' style='width:40px; height:40px'></img>
+            <img src='${pos.img}' style='width:40px; height:40px'></img>
             <div class='d-flex flex-column ml-2'>
-                <span>${ubicacion.user}</span> </span>${ubicacion.datetime}</span>
+                <span>${pos.user}</span> </span>${pos.datetime}</span>
             </div>
         </div>
         <div class='d-flex flex-column'>
-            <span>Zona: ${ubicacion.zona}</span> </span>${ubicacion.distancia}</span>
+            <span>Zona: ${pos.zona}</span> </span>${pos.distancia}</span>
         </div>
         `
 
@@ -937,15 +917,15 @@ function loadMap(data, customid) {
         circle = L.circle([zone.zoneLat, zone.zoneLng], {
             ...circleOptions,
             radius: zone.zoneRadio
-        }).addTo(mymap);
+        }).addTo(myMap);
         circle2 = L.circle([zone.zoneLat, zone.zoneLng], {
             ...circleOptions2,
             radius: 1
-        }).addTo(mymap);
+        }).addTo(myMap);
         circle.bindTooltip("Zona: <b>" + zone.zoneName + "</b><br>Radio: " + zone.zoneRadio)
     }
 
-    $('#mapid').append(`<div class="pt-2 fontp float-right">Total Zonas: ${uniqueZonesArray.length}.</div>`)
+    // $('#mapid').append(`<div class="mt-3 float-right badge badge-secondary"><span class="font07">ZONAS: ${uniqueZonesArray.length}</span></div>`)
 
 }
 const getToken = () => {
@@ -989,11 +969,11 @@ const getToken = () => {
         //     "status": "ok"
         // }
         let d = document.getElementById('dataT')
-        // create elemente table
-        let tabledata = ''
+        // create element table
+        let tableData = ''
         let t = ''
 
-        t += `<table class="table table-responsive p-2 border animate__animated animate__fadeIn" id="tableToken">`
+        t += `<table class="table table-responsive p-2 border radius bg-white animate__animated animate__fadeIn" id="tableToken">`
         t += `<thead>`
         t += `<tr>`
         t += `<th data-titler="Token de activación de App Mobile">Token</th>`
@@ -1011,24 +991,24 @@ const getToken = () => {
 
         data.data.forEach(element => {
             if (element.dateDelete == null) {
-                tabledata += `<tr>`
-                tabledata += `<td class="user-select-all">${element.token}</td>`
-                tabledata += `<td>${element.expirationDate}</td>`
-                // tabledata += `<td>${(element.dateDelete == null) ? 'No' : 'Sí'}</td>`
-                tabledata += `<td class="text-center">${element.tmef} s</td>`
-                tabledata += `<td class="text-center">${(element.rememberEmployeId == true) ? 'Sí' : 'No'}</td>`
-                tabledata += `<td class="w-100"></td>`
-                tabledata += `</tr>`
+                tableData += `<tr>`
+                tableData += `<td class="user-select-all">${element.token}</td>`
+                tableData += `<td>${element.expirationDate}</td>`
+                // tableData += `<td>${(element.dateDelete == null) ? 'No' : 'Sí'}</td>`
+                tableData += `<td class="text-center">${element.tmef} s</td>`
+                tableData += `<td class="text-center">${(element.rememberEmployeId == true) ? 'Sí' : 'No'}</td>`
+                tableData += `<td class="w-100"></td>`
+                tableData += `</tr>`
             }
 
         });
-        tabledata += `<tr>`
-        tabledata += `<td colspan="5" class="">`
-        tabledata += `<a href="https://play.google.com/store/apps/details?id=com.dysi.hrprocessmobile" class="btn btn-sm btn-custom" target="_blank" ><i class="bi bi-google-play mr-2"></i>HRProcess Mobile</a>`
-        tabledata += `</td>`
-        tabledata += `</tr>`
+        tableData += `<tr>`
+        tableData += `<td colspan="5" class="">`
+        tableData += `<a href="https://play.google.com/store/apps/details?id=com.dysi.hrprocessmobile" class="btn btn-sm btn-custom" target="_blank" ><i class="bi bi-google-play mr-2"></i>HRProcess Mobile</a>`
+        tableData += `</td>`
+        tableData += `</tr>`
         let table = document.querySelector('#tableToken tbody')
-        table.innerHTML = tabledata
+        table.innerHTML = tableData
 
 
     }).catch(function (error) {

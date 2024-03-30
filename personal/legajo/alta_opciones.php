@@ -590,7 +590,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
                     $sql = "exec DATA_SECCIONInsert @SecCodi=?,@Se2Codi=?,@Se2Desc=?,@FechaHora=?";
                     $stmt = sqlsrv_prepare($link, $sql, $procedure_params_seccion);
                     if (!$stmt) {
-                        throw new Exception(sqlsrv_errors());
+                        throw new Exception(implode(", ", sqlsrv_errors()));
                     }
                     sqlsrv_execute($stmt); // ejecuto la sentencia
                 } catch (Exception $e) {
