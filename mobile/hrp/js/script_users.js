@@ -20,11 +20,13 @@ if (!ls.get(LS_MODAL_TRAIN)) {
 
 
 const loadingTableUser = (selectorTable) => {
-    $(selectorTable + ' td div').addClass('bg-light text-light border-0')
-    $(selectorTable + ' td div').css('height', '31px')
-    $(selectorTable + ' td img').addClass('invisible')
-    $(selectorTable + ' td i').addClass('invisible')
-    $(selectorTable + ' td span').addClass('invisible')
+    $(selectorTable).addClass('loader-in');
+
+    // $(selectorTable + ' td div').addClass('bg-light text-light border-0')
+    // $(selectorTable + ' td div').css('height', '31px')
+    // $(selectorTable + ' td img').addClass('invisible')
+    // $(selectorTable + ' td i').addClass('invisible')
+    // $(selectorTable + ' td span').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableUsuarios = $('#tableUsuarios').DataTable({
@@ -214,6 +216,7 @@ tableUsuarios.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')
     $('#RowTableUsers').removeClass('invisible')
+    $('#tableUsuarios').removeClass('loader-in');
 });
 tableUsuarios.on('page.dt', function (e, settings) {
     loadingTableUser('#tableUsuarios')

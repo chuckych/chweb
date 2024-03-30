@@ -25,10 +25,11 @@ const greenMarker = L.icon({
 });
 
 const loadingTable = (selectorTable) => {
-    $(selectorTable + ' td div').addClass('bg-light text-light border-0 radius h50 Mw40')
-    $(selectorTable + ' td img').addClass('invisible')
-    $(selectorTable + ' td i').addClass('invisible')
-    $(selectorTable + ' td span').addClass('invisible')
+    $(selectorTable).addClass('loader-in');
+    // $(selectorTable + ' td div').addClass('bg-light text-light border-0 radius h50 Mw40')
+    // $(selectorTable + ' td img').addClass('invisible')
+    // $(selectorTable + ' td i').addClass('invisible')
+    // $(selectorTable + ' td span').addClass('invisible')
 }
 const actualizarRegistros = (selector, reload = false, loading = true) => {
     if (loading) {

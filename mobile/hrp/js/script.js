@@ -780,7 +780,12 @@ $(function () {
                 $('.FilterZones').removeClass('invisible')
             }, 100);
         })
+        $('.navbar').removeClass('loader-in');
     });
+    $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
+        $('#table-mobile').removeClass('loader-in');
+    });
+
 
     $(document).on('click', '#downloadTxt', function (e) {
         e.preventDefault();

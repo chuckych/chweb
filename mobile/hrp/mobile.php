@@ -147,7 +147,7 @@
             <div class="invisible mt-2" id="RowTableUsers">
                 <div class="row">
                     <div class="col-12 col-sm-8">
-                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableUsuarios">
+                        <table class="table text-nowrap w-100 border-0 radius p-2 bg-white" id="tableUsuarios">
                             <thead class="font08"></thead>
                         </table>
                     </div>
@@ -158,7 +158,7 @@
             <div class="invisible mt-2" id="RowTableDevices">
                 <div class="row">
                     <div class="col-12">
-                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableDevices">
+                        <table class="table text-nowrap w-100 border-0 radius shadow p-2 bg-white" id="tableDevices">
                             <thead class="font08"></thead>
                         </table>
                     </div>
@@ -169,7 +169,7 @@
             <div class="invisible mt-2" id="RowTableZones">
                 <div class="row">
                     <div class="col-12 col-lg-8">
-                        <table class="table text-nowrap w-100 border radius shadow p-2 bg-white" id="tableZones">
+                        <table class="table text-nowrap w-100 border-0 radius shadow p-2 bg-white" id="tableZones">
                             <thead class="font08"></thead>
                         </table>
                     </div>

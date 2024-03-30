@@ -10,12 +10,14 @@ if (!ls.get(LS_MODAL_ZONE)) {
 }
 
 const loadingTableZones = (selectorTable) => {
-    $(selectorTable + ' td div').addClass('bg-light text-light border-0')
-    $(selectorTable + ' td p').addClass('bg-light text-light border-0')
-    $(selectorTable + ' td img').addClass('invisible')
-    $(selectorTable + ' td i').addClass('invisible')
-    $(selectorTable + ' td span').addClass('invisible')
-    $(selectorTable + ' td p').addClass('invisible')
+    $(selectorTable).addClass('loader-in');
+
+    // $(selectorTable + ' td div').addClass('bg-light text-light border-0')
+    // $(selectorTable + ' td p').addClass('bg-light text-light border-0')
+    // $(selectorTable + ' td img').addClass('invisible')
+    // $(selectorTable + ' td i').addClass('invisible')
+    // $(selectorTable + ' td span').addClass('invisible')
+    // $(selectorTable + ' td p').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableZones = $('#tableZones').DataTable({
@@ -175,6 +177,8 @@ tableZones.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableZones_filter .form-control-sm').attr('placeholder', 'Buscar Zonas')
     $('#RowTableZones').removeClass('invisible')
+    $('#tableZones').removeClass('loader-in');
+
 });
 tableZones.on('page.dt', function (e, settings) {
     loadingTableZones('#tableZones')

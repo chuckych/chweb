@@ -19,11 +19,13 @@ if (!ls.get(LS_MODAL_SETTING)) {
 }
 
 const loadingTableDevices = (selectorTable) => {
-    $(selectorTable + ' td div').addClass('bg-light text-light border-0')
-    // $(selectorTable + ' td div').css('height', '')
-    $(selectorTable + ' td img').addClass('invisible')
-    $(selectorTable + ' td i').addClass('invisible')
-    $(selectorTable + ' td span').addClass('invisible')
+    $(selectorTable).addClass('loader-in');
+
+    // $(selectorTable + ' td div').addClass('bg-light text-light border-0')
+    // // $(selectorTable + ' td div').css('height', '')
+    // $(selectorTable + ' td img').addClass('invisible')
+    // $(selectorTable + ' td i').addClass('invisible')
+    // $(selectorTable + ' td span').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableDevices = $('#tableDevices').DataTable({
@@ -215,6 +217,7 @@ tableDevices.on('draw.dt', function (e, settings) {
     // $('#modalUsuarios').modal('show')
     $('#tableDevices_filter .form-control-sm').attr('placeholder', 'Buscar Dispositivos')
     $('#RowTableDevices').removeClass('invisible')
+    $('#tableDevices').removeClass('loader-in');
 });
 tableDevices.on('page.dt', function (e, settings) {
     loadingTableDevices('#tableDevices')
