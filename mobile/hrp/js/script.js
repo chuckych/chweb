@@ -24,19 +24,20 @@ $(function () {
     document.addEventListener("visibilitychange", function () {
         let state = document.visibilityState;
         sessionStorage.setItem('tab_32', state);
+        if (state == 'visible') {
+            fetchCreatedDate('api/createdDate.php');
+        }
     });
     $(window).on('load', function () {
         $('.loading').hide()
     });
 
-    // if ((host != 'https://localhost') && (host != 'http://localhost')) {
-    setInterval(() => {
-        if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
-            let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-            fetchCreatedDate('api/createdDate.php')
-        }
-    }, 5000); // cada 5 segundos
-    // }
+    // setInterval(() => {
+    //     if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
+    //         let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+    //         fetchCreatedDate('api/createdDate.php')
+    //     }
+    // }, 5000); // cada 5 segundos
 
     $.fn.DataTable.ext.pager.numbers_length = 5;
     // $('#btnFiltrar').removeClass('d-sm-block');
@@ -336,7 +337,6 @@ $(function () {
                         let datacol = '';
                         let processRegFace = 'processRegFace pointer';
                         let hintClass = (color) => `hint--right hint--rounded hint--no-arrow hint--${color} hint--no-shadow`;
-                        console.log(hintClass);
 
                         if (row.confidenceFaceStr == 'Identificado') {
                             confidenceFaceStr = `<span class="${hintClass('success')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-success bi bi-person-bounding-box"></span></span>`
@@ -535,10 +535,16 @@ $(function () {
         $('#RowTableMobile').removeClass('invisible')
         // $('#table-mobile_filter input').addClass('w250')
         $('#table-mobile_filter input').attr('placeholder', 'Filtrar ID / Nombre')
-        $('.Filter').html(`<button class="btn btn-light bg-white border radius h40 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--left"
+        $('.Filter').html(`<button class="btn btn-light bg-white border radius h40 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--bottom"
         aria-label="Filtros avanzados" type="button" data-toggle="collapse" data-target="#collapseFilterChecks" aria-expanded="false" aria-controls="collapseFilterChecks">
         <i class="bi bi-funnel-fill text-secondary"></i>
         </button>`)
+        $('.Filter').prepend(`<span class="mr-1 hint--rounded hint--no-arrow hint--secondary hint--no-shadow hint--top" aria-label="Actualizar registros" >
+            <button id="refreshReg" class="h40 btn btnRefresh"
+            type="button">
+            <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 3l0 18" /><path d="M10 6l-3 -3l-3 3" /><path d="M20 18l-3 3l-3 -3" /><path d="M17 21l0 -18" /></svg>
+            </button>
+        </span>`)
         $('#table-mobile_filter input').removeClass('form-control-sm')
         $('#table-mobile_filter input').attr("style", "height: 40px !important");
         select2Simple('#table-mobile_length select', '', false, false)
@@ -781,9 +787,19 @@ $(function () {
             }, 100);
         })
         $('.navbar').removeClass('loader-in');
+        let refreshReg = document.getElementById('refreshReg');
+        refreshReg.addEventListener('click', function (e) {
+            e.preventDefault();
+            refreshReg.disabled = true;
+            actualizarRegistros('#table-mobile')
+        });
     });
     $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
         $('#table-mobile').removeClass('loader-in');
+        let refreshReg = document.getElementById('refreshReg');
+        if (refreshReg) {
+            refreshReg.disabled = false;
+        }
     });
 
 

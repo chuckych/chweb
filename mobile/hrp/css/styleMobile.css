@@ -383,3 +383,18 @@ img {
     border-radius: 4px !important;
     padding: 5px !important;
 }
+
+.rotate {
+    transform: rotate(360deg);
+}
+
+.btnRefresh {
+    background-color: #f5f7fb !important;
+    border: 0px solid #dee2e6 !important;
+    border-radius: 4px !important;
+    color: green !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.5s !important;
+}

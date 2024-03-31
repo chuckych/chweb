@@ -32,6 +32,11 @@ const loadingTable = (selectorTable) => {
     // $(selectorTable + ' td span').addClass('invisible')
 }
 const actualizarRegistros = (selector, reload = false, loading = true) => {
+
+    if (!$.fn.DataTable.isDataTable(selector)) {
+        return false
+    }
+
     if (loading) {
         loadingTable(selector)
     }
@@ -155,8 +160,8 @@ const minmaxDate = () => {
     });
 }
 const setStorageDate = (date) => {
-    let lastdate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
-    if (lastdate < parseInt(date)) { // si la fecha del json es mayor a la del localstorage
+    let lastDate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
+    if (lastDate < parseInt(date)) { // si la fecha del json es mayor a la del localstorage
         sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (date)); // actualizar la fecha del localstorage
         minmaxDate(); // actualizar las tablas
     } else {
