@@ -3,6 +3,7 @@ $(function () {
 
     const homehost = $("#_homehost").val();
     const LS_MODAL = homehost + '_mobile_modal';
+    const LS_DIR_NAME = homehost + '_position_dir_name_';
 
     if (!ls.get(LS_MODAL)) {
 
@@ -911,6 +912,19 @@ $(function () {
             }
         }
     });
+
+    let idTableBody = '#table-mobile tbody';
+
+    // $(document).on("click", idTableBody, function (e) {
+    //     if (e.target.closest('tr').tagName) {
+    //         let data = $('#table-mobile').DataTable().row(e.target.closest('tr')).data();
+    //         if (data) {
+    //             obtenerPost(data.regLat, data.regLng);
+    //         }
+    //     }
+    // })
+
+
     $(document).on("click", ".pic", async function (e) {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data(); // obtener datos de la fila seleccionada
 
@@ -1058,13 +1072,23 @@ $(function () {
             let zone = ($('#zona').val())
             zone = (zone) ? zone : 'Fuera de Zona';
             let user = ($('#modalNombre').val()) ? $('#modalNombre').val() : 'Inválido';
-            getMap(lati, long, 15, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID)
-            // $('#mapzone').removeClass('invisible');
-            // $('#mapzone').addClass('visible');
+            getMap(lati, long, 15, zoneName, zoneRadio, zoneLat, zoneLng, zoneDistance, user, picdia, data.zoneID).then(() => {
+                let positionData = document.getElementById('positionData');
+                if (positionData) {
+                    positionData.innerHTML = '';
+                }
+                obtenerPost(data.regLat, data.regLng).then((response) => {
+                    $('.modal-body').append(`<span class="animate__animated animate__fadeIn" id="positionData">
+                        <div class="font07 pb-1"><i class="bi bi-signpost mr-1"></i>Dirección aproximada:</div>
+                        <div class="font08 alert alert-success"><span>${response}</span></div>
+                    </span>`);
+                });
+            });
         } else {
             $('#mapzone').html('');
             $('.modal-body #noGPS').html('<div class="text-center mt-2 m-0 mt-2 font08 alert alert-info mt-2"><span>Ubicación GPS no disponible</span></div>')
         }
+
         // });
     });
     $(document).on("hidden.bs.modal", "#pic", function (e) {
@@ -1202,4 +1226,44 @@ $(function () {
             }
         });
     });
+
+    /**
+      * Recupera el nombre de una ubicación en función de su latitud y longitud.
+      * Si el nombre ya está almacenado en el almacenamiento local, devuelve el nombre almacenado.
+      * De lo contrario, realiza una solicitud a la API de OpenStreetMap para obtener el nombre y lo almacena en el almacenamiento local.
+     * @param {number} lat - La latitud de la ubicación.
+     * @param {number} lng - La longitud de la ubicación.
+     * @returns {Promise<string>} El nombre de la ubicación.
+     */
+    const obtenerPost = async (lat, lng) => {
+
+        let lsDirNames = ls.get(LS_DIR_NAME);
+        if (lsDirNames) {
+            let pos = lat + ',' + lng;
+            let dirName = lsDirNames.find(x => x.pos === pos);
+            if (dirName) {
+                return dirName.name;
+            }
+        }
+
+        let url = `data/position_data/${lat}/${lng}`;
+        let response = await axios.get(url);
+
+        let array_dirNames = [];
+        if (LS_DIR_NAME) {
+            array_dirNames = ls.get(LS_DIR_NAME);
+        }
+        // Comprueba si array_dirNames es null
+        if (array_dirNames === null) {
+            array_dirNames = [];
+        }
+        array_dirNames.push({
+            pos: lat + ',' + lng,
+            name: response.data.data
+        });
+
+        ls.set(LS_DIR_NAME, array_dirNames);
+
+        return response.data.data ?? '';
+    }
 });
