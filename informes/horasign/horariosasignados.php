@@ -76,7 +76,7 @@
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="/<?= HOMEHOST ?>/informes/horasign/js/data.js?<?= version_file("/informes/horasign/js/data.js") ?>"></script>
-    <script src="/<?= HOMEHOST ?>/informes/horasign/js/toExport-min.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
+    <script src="/<?= HOMEHOST ?>/informes/horasign/js/toExport.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
 </body>
 <script>
     // document.addEventListener('DOMContentLoaded', (e) => {

@@ -6,7 +6,7 @@ $(document).on('click', '#btnExcel', function (e) {
     $.notifyClose();
     e.preventDefault();
     CheckSesion()
-    axios.get('js/bodyModal.html?'+time).then(function (response) {
+    axios.get('js/bodyModal.html?' + time).then(function (response) {
         bootbox.confirm({
             // title: '',
             message: response.data,
@@ -66,18 +66,15 @@ function toExport() {
     $.notifyClose();
     notify('Exportando <span class = "dotting mr-1"> </span> ' + loading, 'info', 0, 'right')
 
-    let getObjVal = (selector, key, formdata) => {
+    let getObjVal = (selector, key, formData) => {
         if (!selector) return false
-        let s = ''
         if ($(selector).val()) {
-            s = $(selector).val().forEach((a => {
-                formdata.append(key + "[]", a)
+            let s = $(selector).val().forEach((a => {
+                formData.append(key + "[]", a)
             }));
             return s
         } else {
-            s = ''
-            // console.log('No existe el selector ' + selector);
-            return s
+            return ''
         }
     }
 
@@ -100,24 +97,19 @@ function toExport() {
 
     axios({
         method: 'POST',
-        url: '/' + getSelectorVal('#_homehost') + '/status_ws.php?status=ws',
-        dataType: "json",
         url: url,
-        responseType: 'stream',
         data: data,
     }).then(function (response) {
         if (response.data) {
             if (response.data.status == "ok") {
                 ActiveBTN(false, "#btnExcel", 'Exportando', IconExcel)
                 let file = response.data
-                // window.location = file.data
+
                 $.notifyClose();
                 if (!file.archivo) {
                     notify('No hay datos a exportar', 'danger', 3000, 'right');
                 } else {
                     notify('<b>Archivo exportado correctamente</b>.<br><div class="shadow-sm w100"><a href="' + file.archivo + '" class="btn btn-custom px-3 btn-sm mt-2 fontq download" target="_blank" download><div class="d-flex align-items-center"><span>Descargar</span><i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a></div>', 'warning', 0, 'right')
-                    // window.location = file.archivo
-                    // window.open(file.archivo)
                 }
                 $(document).on('click', '.download', function (e) {
                     setTimeout(() => {
@@ -129,7 +121,6 @@ function toExport() {
     }).catch(function (error) {
         console.log(error.message);
         $.notifyClose();
-        console.log(error.request);
         notify(error.message, 'warning', 0, 'right')
     });;
 }
