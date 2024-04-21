@@ -56,7 +56,7 @@ if (array_key_exists('lista', $_POST)) {
         }
 
         $CheckLista = CountRegMayorCeroMySql("SELECT 1 FROM lista_estruct WHERE uid = '$uid' and lista = '$lista' LIMIT 1");
-        // $datos = str_replace(32768, 0, $datos);
+        $datos = str_replace(32768, 0, $datos);
         if ($CheckLista) {
             $update = "UPDATE lista_estruct SET datos = '$datos', fecha = '$fechaHora' WHERE uid = '$uid' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
@@ -160,7 +160,7 @@ if (array_key_exists('listaEstruct', $_POST)) {
         require __DIR__ . '../../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT uid, lista, datos FROM lista_estruct WHERE uid = '$uid'");
         // print_r($query); exit;
-        $data=array();
+        $data = array();
         if (($stmt)) {
             if (mysqli_num_rows($stmt) > 0) {
                 while ($row = mysqli_fetch_assoc($stmt)) {
@@ -175,7 +175,7 @@ if (array_key_exists('listaEstruct', $_POST)) {
             mysqli_free_result($stmt);
             mysqli_close($link);
 
-           $uLista = simple_pdoQuery("SELECT usuarios.id as 'id', usuarios.nombre as 'nombre', clientes.id as 'idc', clientes.nombre as 'nombrec' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id=$uid");
+            $uLista = simple_pdoQuery("SELECT usuarios.id as 'id', usuarios.nombre as 'nombre', clientes.id as 'idc', clientes.nombre as 'nombrec' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id WHERE usuarios.id=$uid");
 
             foreach ($arrDatos as $key => $valueDatos) {
                 /** Recorremos los checks seleccionados */

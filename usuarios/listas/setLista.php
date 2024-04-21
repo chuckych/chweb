@@ -46,8 +46,8 @@ if (array_key_exists('lista', $_POST)) {
             PrintRespuestaJson('error', 'Rol Inválido');
             exit;
         }
-        $CheckLista = CountRegMayorCeroMySql("SELECT 1 FROM lista_roles WHERE id_rol = '$id_rol' and lista = '$lista' LIMIT 1");      
-        // $datos = str_replace(32768, 0, $datos);
+        $CheckLista = CountRegMayorCeroMySql("SELECT 1 FROM lista_roles WHERE id_rol = '$id_rol' and lista = '$lista' LIMIT 1");
+        $datos = str_replace(32768, 0, $datos);
         if ($CheckLista) {
             $update = "UPDATE lista_roles SET datos = '$datos', fecha = '$fechaHora' WHERE id_rol = '$id_rol' and lista = '$lista'";
             if (UpdateRegistroMySql($update)) {
@@ -101,7 +101,7 @@ if (array_key_exists('listaRol', $_POST)) {
         require __DIR__ . '../../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT id_rol, lista, datos FROM lista_roles WHERE id_rol = '$id_rol'");
         // print_r($query); exit;
-        $data=array();
+        $data = array();
         if (($stmt)) {
             if (mysqli_num_rows($stmt) > 0) {
                 while ($row = mysqli_fetch_assoc($stmt)) {
@@ -130,7 +130,7 @@ if (array_key_exists('listaRol', $_POST)) {
                 $rLista = simple_pdoQuery("SELECT roles.id, roles.nombre FROM roles WHERE id = '$valueDatos'");
                 auditoria("Copia lista Rol ($id_rol) $nRol[nombre] a ($rLista[id]) $rLista[nombre]", 'A', $audCuenta['id'], '1');
             }
-            $data = array('status' => 'ok', 'Mensaje' => 'Valores copiados correctamente a los roles:<br><span class="ls1">'.json_encode($arrDatos).'</span>', 'data' => ($arrDatos));
+            $data = array('status' => 'ok', 'Mensaje' => 'Valores copiados correctamente a los roles:<br><span class="ls1">' . json_encode($arrDatos) . '</span>', 'data' => ($arrDatos));
             echo json_encode($data);
             exit;
         } else {

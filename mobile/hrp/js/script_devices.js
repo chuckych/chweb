@@ -109,13 +109,15 @@ if ($(window).width() < 540) {
             "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 d-flex align-items-center justify-content-center'p>>" +
             "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
         ajax: {
-            url: "getDevicesMobile.php",
-            type: "POST",
+            url: "data/devices",
+            // url: "getDevicesMobile.php",
+            type: "GET",
             "data": function (data) { },
             error: function () { },
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
+            $(row).addClass('align-middle');
+            // $(row).addClass('animate__animated animate__fadeIn align-middle');
         },
         columns: [
             /** Columna Nombre */
@@ -189,21 +191,20 @@ if ($(window).width() < 540) {
         ],
         lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
         bProcessing: false,
-        serverSide: true,
+        serverSide: false,
         deferRender: true,
         searchDelay: 250,
         paging: true,
         searching: true,
         info: true,
-        ordering: false,
+        ordering: true,
         // scrollY: '52vh',
-        scrollY: '360px',
-        scrollCollapse: true,
+        // scrollY: '360px',
+        // scrollCollapse: true,
         // scrollX: true,
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-
     });
 }
 
@@ -219,9 +220,9 @@ tableDevices.on('draw.dt', function (e, settings) {
     $('#RowTableDevices').removeClass('invisible')
     $('#tableDevices').removeClass('loader-in');
 });
-tableDevices.on('page.dt', function (e, settings) {
-    loadingTableDevices('#tableDevices')
-});
+// tableDevices.on('page.dt', function (e, settings) {
+//     loadingTableDevices('#tableDevices')
+// });
 tableDevices.on('xhr.dt', function (e, settings, json) {
     tableDevices.off('xhr.dt');
 });

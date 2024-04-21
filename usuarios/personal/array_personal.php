@@ -14,7 +14,7 @@ require __DIR__ . '../../../config/conect_mssql.php';
 
 $queryPersonal  = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', (CASE PERSONAL.LegFeEg WHEN '1753-01-01 00:00:00.000' THEN '0' ELSE '1' END) AS 'pers_estado' FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegFeEg='1753-01-01 00:00:00.000' ORDER BY pers_legajo";
 
-function filtrar($array, $key, $valor) // Funcion para filtrar un objeto
+function filtrar($array, $key, $valor) // Función para filtrar un objeto
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
         return $e[$key] == $valor;
@@ -28,9 +28,10 @@ $params    = array();
 $options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $stmt  = sqlsrv_query($link, $queryPersonal, $params, $options);
 if ($stmt) {
-    while ($row = sqlsrv_fetch_array($stmt)) {
-        $filtro = filtrar($arrLega, 'legajo', $row['pers_legajo']);
-        if (!($filtro['legajo'])) {
+    while ($row = sqlsrv_fetch_array($stmt,  SQLSRV_FETCH_ASSOC)) {
+        $filtro = filtrar($arrLega, 'legajo', $row['pers_legajo']) ?? '';
+
+        if (!isset($filtro['legajo'])) {
             $pers_legajo    = $row['pers_legajo'];
             $pers_nombre    = $row['pers_nombre'];
             $pers_dni       = $row['pers_dni'];
@@ -89,7 +90,6 @@ if ($stmt) {
     $pathLog = __DIR__ . '../../../logs/error/' . date('Ymd') . '_errorQuery.log';
     fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje, $pathLog); // escribir en el log
 }
-// $dataPer  = $data;
 $_c = $_GET['_c'];
 
 foreach ($data as $value) {

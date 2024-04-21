@@ -16,6 +16,7 @@ if (!$_SESSION) {
 $token = sha1($_SESSION['RECID_CLIENTE']);
 $idCliente = $_SESSION['ID_CLIENTE'] ?? '';
 
+
 // borrarLogs('json', 1, 'json');
 
 /**
@@ -114,6 +115,32 @@ function call_api()
     }
 }
 
+function get_data($url)
+{
+    $ch = curl_init();
+
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+    curl_setopt($ch, CURLOPT_FAILONERROR, true);
+
+    $output = curl_exec($ch);
+
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno) : $curl_error $url"; // set error message
+        $pathLog = date('Ymd') . '_get_data.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+        curl_close($ch);
+        return false;
+    }
+    curl_close($ch);
+    return $output;
+}
+
 Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
 
     try {
@@ -121,7 +148,7 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
             throw new Exception('No se han recibido los datos necesarios');
         }
 
-        $position_data = array ();
+        $position_data = array();
 
         $idCliente = str_pad($_SESSION['ID_CLIENTE'], 2, '0', STR_PAD_LEFT) ?? '';
 
@@ -143,7 +170,7 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
             foreach ($position_data as $key => $value) {
                 if ($value['pos'] == $pos) {
                     Flight::json(
-                        array (
+                        array(
                             "status" => "success",
                             "data" => $value['name']
                         )
@@ -177,15 +204,14 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
         fclose($file);
 
         Flight::json(
-            array (
+            array(
                 "status" => "success",
                 "data" => $display_name
             )
         );
-
     } catch (\Throwable $th) {
         Flight::json(
-            array (
+            array(
                 "status" => "error",
                 "error" => $th->getMessage()
             )
@@ -193,13 +219,31 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
     }
 });
 
+Flight::route('GET /devices', function () { // Ruta para obtener los dispositivos de la empresa (cache)
+
+    $id = $_SESSION['ID_CLIENTE'] ?? ''; // ID de la empresa
+    $baseDevices = $_SESSION["APIMOBILEHRP"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
+    $endpointSetCache = "$baseDevices/cache.php?idCompany=$id"; // Endpoint para actualizar la cache
+    $endpointGetCache = "$baseDevices/cache_$id.txt"; // Endpoint para obtener la cache
+
+    $output = get_data($endpointGetCache); // Obtener la cache
+
+    if (!$output) { // Si no hay cache
+        actualizar_cache($endpointSetCache); // Actualizar la cache
+        $output = get_data($endpointGetCache); // Obtener la cache
+    }
+
+    $data = ($output) ? (unserialize(stripcslashes($output))) : ''; // Deserializer la cache
+    Flight::json(array('data' => $data ?? '')); // Responder con la cache
+});
+
 Flight::map('notFound', function () {
-    Flight::json(array ('status' => 'error', 'message' => 'Not found'), 404);
+    Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);
 });
 Flight::set('flight.log_errors', true);
 
 Flight::map('error', function ($ex) {
-    Flight::json(array ('status' => 'error', 'message' => $ex->getMessage()), 400);
+    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
 });
 
 Flight::start(); // Inicio FlightPHP
