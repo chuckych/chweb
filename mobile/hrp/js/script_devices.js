@@ -1,6 +1,7 @@
 // $(document).ready(function () {
 const LS_MODAL_DEVICE = homehost + '_mobile_modal_device';
 const LS_MODAL_SETTING = homehost + '_mobile_modal_setting';
+const LS_MODAL_DEVICE_DATA = homehost + '_mobile_modal_device_data';
 
 if (!ls.get(LS_MODAL_DEVICE)) {
     axios.get('modalDevice.php').then((response) => {
@@ -116,6 +117,7 @@ if ($(window).width() < 540) {
             "data": function (data) { },
             error: function () { },
         },
+        // data: (ls.get(LS_MODAL_DEVICE_DATA)),
         createdRow: function (row, data, dataIndex) {
             $(row).addClass('align-middle');
             // $(row).addClass('animate__animated animate__fadeIn align-middle');
@@ -139,14 +141,14 @@ if ($(window).width() < 540) {
                     return datacol;
                 },
             },
-            /** Columna Fecha */
-            {
-                className: '', targets: '', title: '<div class="w150">Actualizado</div>',
-                "render": function (data, type, row, meta) {
-                    datacol = `<div class="ls1 w150">${formatDateTime(row.lastUpdate)}</div>`
-                    return datacol;
-                },
-            },
+            // /** Columna Fecha */
+            // {
+            //     className: '', targets: '', title: '<div class="w150">Actualizado</div>',
+            //     "render": function (data, type, row, meta) {
+            //         datacol = `<div class="ls1 w150">${formatDateTime(row.lastUpdate)}</div>`
+            //         return datacol;
+            //     },
+            // },
             /** Columna appVersion */
             {
                 className: 'text-center', targets: '', title: '<div class="w100">Versión App</div>',
@@ -209,7 +211,7 @@ if ($(window).width() < 540) {
     });
 }
 
-tableDevices.on('init.dt', function (e, settings) {
+tableDevices.on('init.dt', function (e, settings, json) {
     $('#tableDevices_filter').prepend('<button data-titlel="Nuevo Dispositivo" class="btn btn-sm btn-custom h40 opa8 px-3" id="addDevice"><i class="bi bi-plus-lg"></i></button>')
     $('#tableDevices_filter input').removeClass('form-control-sm')
     $('#tableDevices_filter input').attr("style", "height: 40px !important");
