@@ -101,7 +101,6 @@ if ($(window).width() < 540) {
         language: {
             "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
         },
-
     });
 } else {
     tableDevices = $('#tableDevices').DataTable({
@@ -201,6 +200,7 @@ if ($(window).width() < 540) {
         searching: true,
         info: true,
         ordering: true,
+        order: [[1, 'desc']],
         // scrollY: '52vh',
         // scrollY: '360px',
         // scrollCollapse: true,
