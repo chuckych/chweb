@@ -3628,7 +3628,7 @@ function explodeSession($session)
 function actualizar_cache($endpoint)
 {
     try {
-        filelog($endpoint, 'url.log');
+        // filelog($endpoint, 'url.log');
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $endpoint);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
