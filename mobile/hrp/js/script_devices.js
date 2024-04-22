@@ -33,13 +33,14 @@ if ($(window).width() < 540) {
             "<'row '<'col-12 table-responsive't>>" +
             "<'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
         ajax: {
-            url: "getDevicesMobile.php",
-            type: "POST",
+            // url: "getDevicesMobile.php",
+            url: "data/devices",
+            type: "GET",
             "data": function (data) { },
             error: function () { },
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
+            $(row).addClass('align-middle');
         },
         columns: [
             /** Columna Nombre Mobile*/
@@ -85,7 +86,7 @@ if ($(window).width() < 540) {
         ],
         lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
         bProcessing: false,
-        serverSide: true,
+        serverSide: false,
         deferRender: true,
         searchDelay: 1000,
         paging: true,
