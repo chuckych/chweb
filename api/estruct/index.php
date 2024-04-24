@@ -138,7 +138,7 @@ foreach ($arrDP as $key => $p) {
         $e = array_unique($e);
         if (($e)) {
             if (count($e) > 1) {
-                $e = "'" . implode("','", $e) . "'";
+                $e = "'" . join("','", $e) . "'";
                 $wc .= " AND $tabla.$pref$key IN ($e)";
             } else {
                 foreach ($e as $v) {
@@ -173,10 +173,14 @@ $TipoNovedad = ($dp['Estruct'] == 'Nov') ? ", NOVEDAD.NovTipo, dbo.fn_TipoNoveda
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
 $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
-
 // print_r($query) . exit;
 
 $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
+
+if ($dp['Estruct'] == 'Con') {
+    $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC";
+    $queryCount = "SELECT count(1) as 'count' FROM $tabla";
+}
 
 if ($wc) {
     $query .= $wc;

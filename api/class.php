@@ -6,8 +6,9 @@ use donatj\UserAgent\UserAgentParser;
 
 class requestControl
 {
-    public function check_get($queryParams = array(), $url)
+    public function check_get($queryParams, $url)
     {
+        $queryParams = $queryParams ?? [];
         $url_parts = parse_url($url);
         if (isset($url_parts['query'])) {
             parse_str($url_parts['query'], $params);

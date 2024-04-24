@@ -192,7 +192,6 @@ function filtrarEstructura($estructura, $campo, $valor)
     } catch (\Throwable $th) {
         return '';
     }
-
 }
 function filtrarSeccion($estructura, $sector, $seccion)
 {
@@ -345,7 +344,6 @@ try {
                         $valorCantidad = $valueNov['Cantidad'];
                         $spreadsheet->setCellValueByColumnAndRow($siguienteColumna, $numeroDeFila, $valorCantidad);
                     }
-
                 }
             }
         }
@@ -389,7 +387,8 @@ try {
 
 # Crear un "escritor"
 try {
-    BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
+    BorrarArchivosPDF('archivos/*.xls');
+    /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
     $TituloReporte = str_replace(' ', '_', $TituloReporte) . '_' . date('YmdHis');
 
@@ -413,7 +412,6 @@ try {
     );
     echo json_encode($data);
     exit;
-
 } catch (\Exception $e) {
     $data = array('status' => 'error', 'mensaje' => $e->getMessage());
     echo json_encode($data);
