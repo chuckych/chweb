@@ -16,7 +16,7 @@ $data = array();
 $params = $_REQUEST;
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
-}else{
+} else {
     $json_data = array(
         "draw"            => intval($params['draw']),
         "recordsTotal"    => 0,
@@ -36,7 +36,7 @@ $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
-$sql_query="SELECT DISTINCT FICHAS2.FicLega AS 'nov_LegNume', FICHAS2.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS2.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario' FROM FICHAS2 INNER JOIN FICHAS ON FICHAS2.FicLega=FICHAS.FicLega AND FICHAS2.FicFech=FICHAS.FicFech AND FICHAS2.FicTurn=FICHAS.FicTurn INNER JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi INNER JOIN PERSONAL ON FICHAS2.FicLega=PERSONAL.LegNume WHERE FICHAS2.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS2.FicLega='$legajo' AND FICHAS2.FicONov >0 $FilterEstruct $FilterEstruct2 $FiltrosFichas";
+$sql_query = "SELECT DISTINCT FICHAS2.FicLega AS 'nov_LegNume', FICHAS2.FicFech AS 'nov_Fecha', dbo.fn_DiaDeLaSemana(FICHAS2.FicFech) AS 'nov_dia_semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'nov_horario' FROM FICHAS2 LEFT JOIN FICHAS ON FICHAS2.FicLega=FICHAS.FicLega AND FICHAS2.FicFech=FICHAS.FicFech AND FICHAS2.FicTurn=FICHAS.FicTurn INNER JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi INNER JOIN PERSONAL ON FICHAS2.FicLega=PERSONAL.LegNume WHERE FICHAS2.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS2.FicLega='$legajo' AND FICHAS2.FicONov >0 $FilterEstruct $FilterEstruct2 $FiltrosFichas";
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
@@ -67,7 +67,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) :
     $nov_dia_semana = $row['nov_dia_semana'];
     $nov_horario    = $row['nov_horario'];
 
-    $query_Nov = "SELECT FICHAS2.FicONov AS 'nov_novedad', OTRASNOV.ONovDesc AS 'nov_descripcion', OTRASNOV.ONovTipo AS 'nov_tipo', FICHAS2.FicValor AS 'nov_horas', FICHAS2.FicObsN AS 'nov_observ' FROM FICHAS2 INNER JOIN FICHAS ON FICHAS2.FicLega=FICHAS.FicLega AND FICHAS2.FicFech=FICHAS.FicFech AND FICHAS2.FicTurn=FICHAS.FicTurn INNER JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi WHERE FICHAS2.FicFech='$nov_Fecha2' and FICHAS2.FicLega='$nov_LegNume' $FilterEstruct2";
+    $query_Nov = "SELECT FICHAS2.FicONov AS 'nov_novedad', OTRASNOV.ONovDesc AS 'nov_descripcion', OTRASNOV.ONovTipo AS 'nov_tipo', FICHAS2.FicValor AS 'nov_horas', FICHAS2.FicObsN AS 'nov_observ' FROM FICHAS2 LEFT JOIN FICHAS ON FICHAS2.FicLega=FICHAS.FicLega AND FICHAS2.FicFech=FICHAS.FicFech AND FICHAS2.FicTurn=FICHAS.FicTurn INNER JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi WHERE FICHAS2.FicFech='$nov_Fecha2' and FICHAS2.FicLega='$nov_LegNume' $FilterEstruct2";
 
     // print_r($query_Nov).PHP_EOL; exit;
     $Novedad = array();

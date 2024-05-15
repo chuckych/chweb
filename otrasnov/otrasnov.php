@@ -51,14 +51,14 @@
         $FechaMinMax2 = (fecha_min_max2('FICHAS2', 'FICHAS2.FicFech'));
         $FechaFinEnd = $FechaMinMax2['max'];
         /** FirstDate */
-        $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
+        $FirstYear = Fech_Format_Var($FechaMinMax2['min'], 'Y');
         /** FirstYear */
-        $maxDate   = $FechaMinMax['max'];
+        $maxDate   = $FechaMinMax2['max'];
         /** maxDate */
         $maxYear   = date('Y');
         /** maxYear */
-        $FechaIni = $FechaMinMax['max'];
-        $FechaFin = $FechaMinMax['max'];
+        $FechaIni = $FechaMinMax2['max'];
+        $FechaFin = $FechaMinMax2['max'];
         // $FechaIni = date("Y-m-d", strtotime(hoy() . "- 1 month"));
         // $FechaFin = date("Y-m-d", strtotime(hoy() . "- 0 days"));
         ?>
@@ -135,10 +135,10 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?=vjs()?>"></script>
-    <script src="js/select.js?v=<?=vjs()?>"></script>
-    <script src="js/trashSelect.js?v=<?=vjs()?>"></script>
-    <script src="js/ONovXLS.js?v=<?=vjs()?>"></script>
+    <script src="js/data.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
+    <script src="js/ONovXLS.js?v=<?= vjs() ?>"></script>
 </body>
 
 </html>
