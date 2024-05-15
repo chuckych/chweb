@@ -592,13 +592,13 @@ function getHorarioActual(legajo, fecha, HorFichas) {
         },
         success: function (data) {
             if (data.status == "ok") {
-                $('#FicHorario').html('<span class="animate__animated animate__fadeIn">'+data.Mensaje+'</span>')
+                $('#FicHorario').html('<span class="animate__animated animate__fadeIn">' + data.Mensaje + '</span>')
             } else {
-                $('#FicHorario').html('<span class="">Horario: '+HorFichas+'</span>')
+                $('#FicHorario').html('<span class="">Horario: ' + HorFichas + '</span>')
             }
         },
         error: function (data) {
-            $('#FicHorario').html('<span class="">Horario: '+HorFichas+'</span>')
+            $('#FicHorario').html('<span class="">Horario: ' + HorFichas + '</span>')
         }
     })
 }
@@ -1895,12 +1895,19 @@ $(document).on("click", ".open-modal", function (e) {
     });
     // });
     /** ALTA, MOD, BAJA OTRAS NOVEDADES */
+    dobleDatePicker('#FicONovFechas', 'bottom', true)
+    let data = Datos; // result 12978638-20240513; legajo-fecha
+    let fecha = data.split('-')[1];
+    fecha = fecha.substring(6, 8) + '/' + fecha.substring(4, 6) + '/' + fecha.substring(0, 4);
+
+    $('#FicONovFechas').data('daterangepicker').setStartDate(fecha);
+    $('#FicONovFechas').data('daterangepicker').setEndDate(fecha);
+
     $(".Form_OtraNovedad").bind("submit", function (e) {
         e.preventDefault();
         CheckSesion()
         $.ajax({
             type: $(this).attr("method"),
-            // contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1916,14 +1923,20 @@ $(document).on("click", ".open-modal", function (e) {
                     ClearFormONov()
                     /** refresh datatable */
                     RefreshDataTables();
+                    $.notifyClose();
                     /** Notificación */
                     if (data.tipo == 'mod') {
-                        var Textsuccess = 'Novedad modificada.';
+                        let Textsuccess = 'Novedad modificada.';
+                        notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                     } else {
-                        var Textsuccess = 'Novedad creada.';
+                        let Textsuccess = 'Novedad creada.';
+                        if (Array.isArray(data.Mensaje)) {
+                            let Mensaje = data.Mensaje.join('<br>')
+                            notify(Textsuccess + '<br>' + Mensaje, 'success', 5000, 'right')
+                        } else {
+                            notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                        }
                     }
-                    $.notifyClose();
-                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                 } else {
                     $(".submit_btn_OtrasNov").prop("disabled", false);
                     $(".respuesta_OtrasNov").html("");
