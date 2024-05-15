@@ -178,7 +178,7 @@ OTRASNOV.ONovTipo AS 'Tipo',
 FICHAS2.FicValor AS 'Valor',
 FICHAS2.FicObsN AS 'Observacion'
 FROM FICHAS2
-LEFT JOIN FICHAS ON FICHAS2.FicLega = FICHAS.FicLega AND FICHAS2.FicFech = FICHAS.FicFech AND FICHAS2.FicTurn = FICHAS.FicTurn
+INNER JOIN FICHAS ON FICHAS2.FicLega = FICHAS.FicLega AND FICHAS2.FicFech = FICHAS.FicFech AND FICHAS2.FicTurn = FICHAS.FicTurn
 INNER JOIN OTRASNOV ON FICHAS2.FicONov = OTRASNOV.ONovCodi 
 INNER JOIN PERSONAL ON FICHAS2.FicLega = PERSONAL.LegNume
 WHERE FICHAS2.FicFech BETWEEN '$FechaIni' AND '$FechaFin' 
@@ -234,6 +234,10 @@ while ($row = sqlsrv_fetch_array($result)) {
 
     $numeroDeFila++;
 }
+
+// ocultar la columna e
+$spreadsheet->getColumnDimension('E')->setVisible(false);
+
 sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 # Crear un "escritor"

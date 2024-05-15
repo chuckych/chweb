@@ -87,7 +87,7 @@
                                 <th class="fw4">NOMBRE</th> -->
                                 <th class="fw4">FECHA</th>
                                 <th class="fw4">DÍA</th>
-                                <th class="fw4">HORARIO</th>
+                                <!-- <th class="fw4">HORARIO</th> -->
                                 <th class="fw4 text-center">COD</th>
                                 <th class="fw4">NOVEDAD</th>
                                 <th class="fw4">VALOR</th>
@@ -107,7 +107,7 @@
                             <tr>
                                 <th class="fw4">LEGAJO</th>
                                 <th class="fw4">NOMBRE</th>
-                                <th class="fw4">HORARIO</th>
+                                <!-- <th class="fw4">HORARIO</th> -->
                                 <th class="fw4 text-center">COD</th>
                                 <th class="fw4">NOVEDAD</th>
                                 <th class="fw4">VALOR</th>
