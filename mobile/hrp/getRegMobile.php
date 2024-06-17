@@ -190,6 +190,7 @@ if ($api['COUNT'] ?? 0 > 0) {
             'regLng'            => $r['regLng'],
             'regHora'           => $r['regTime'],
             'regTime'           => $hora,
+            'r2FileName'        => $r['r2FileName'] ?? '',
             'userCompany'       => $r['userCompany'],
             'userID'            => $r['userID'],
             'userName'          => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
