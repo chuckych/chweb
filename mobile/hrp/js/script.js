@@ -109,6 +109,15 @@ $(function () {
                         evento = evento + operation;
 
                         let foto = '';
+
+                        if (row.r2FileName && row.attPhoto != 1) {
+                            /** si tenemos imagen en R2 */
+                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w60 h60 img-fluid"></img>`;
+
+                            return `<div class="pic w70 h70 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
+
+                        }
+
                         if (row.imageData.img) {
                             // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
                             let path = '';
@@ -264,6 +273,14 @@ $(function () {
                         evento = evento + operation;
 
                         let foto = '';
+
+                        if (row.r2FileName && row.attPhoto != 1) {
+                            /** si tenemos imagen en R2 */
+                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w60 h60 img-fluid"></img>`;
+
+                            return `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
+
+                        }
                         if (row.imageData.img) {
                             let path = '';
                             let url_foto = `${row.imageData.img}`;
