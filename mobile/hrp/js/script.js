@@ -974,6 +974,9 @@ $(function () {
         }
 
         let picFoto = data.imageData.img ? path + url_foto : '';
+        if (data.r2FileName) {
+            picFoto = `${data.r2FileName}`;
+        }
         let picNombre = data.userName;
         let picDevice = data.deviceName
         let picIDUser = data.userID
