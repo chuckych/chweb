@@ -276,7 +276,7 @@ $(function () {
 
                         if (row.r2FileName && row.attPhoto != 1) {
                             /** si tenemos imagen en R2 */
-                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w60 h60 img-fluid"></img>`;
+                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w45 h45 img-fluid animate__animated animate__flipInX"></img>`;
 
                             return `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
 
