@@ -14,22 +14,38 @@ E_ALL();
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $start_time = microtime(true);
 
-    $_format = FusNuloPOST('_format', 'A4'); /** Tipo de Hoja */
-    $_orientation = FusNuloPOST('_orientation', 'L'); /** L: Horizontal; P: Vertical */
-    $_destino = FusNuloPOST('_destino', 'F'); /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
-    $_password = FusNuloPOST('_password', ''); /** Password de apertura del archivo */
-    $_print = FusNuloPOST('_print', ''); /**  Bloquea la impresion del archivo */
-    $_modify = FusNuloPOST('_modify', ''); /**  Bloquea la modificacion archivo */
-    $_copy = FusNuloPOST('_copy', ''); /**  Bloquea la copiar datos del archivo */
-    $_annotforms = FusNuloPOST('_annotforms', ''); /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
-    $_nombre = FusNuloPOST('_nombre', "FicNoveHoras"); /**  Nombre del archivo*/
-    $_titulo = FusNuloPOST('_titulo', ""); /**  titulo del reporte*/
-    $_SaltoPag = FusNuloPOST('_SaltoPag', "0"); /** salto de pagina por legajo */
-    $_TotHoras = FusNuloPOST('_TotHoras', "0"); /** Mostrar Total de Horas por legajos */
-    $_TotNove = FusNuloPOST('_TotNove', "0"); /** Mostrar Total de Novedades por legajos */
-    $_VerHoras = FusNuloPOST('_VerHoras', "0"); /** Mostrar Horas */
-    $_VerNove = FusNuloPOST('_VerNove', "0"); /** Mostrar Novedades */
-    $_VerFic = FusNuloPOST('_VerFic', "0"); /** Mostrar Fichadas */
+    $_format = FusNuloPOST('_format', 'A4');
+    /** Tipo de Hoja */
+    $_orientation = FusNuloPOST('_orientation', 'L');
+    /** L: Horizontal; P: Vertical */
+    $_destino = FusNuloPOST('_destino', 'F');
+    /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
+    $_password = FusNuloPOST('_password', '');
+    /** Password de apertura del archivo */
+    $_print = FusNuloPOST('_print', '');
+    /**  Bloquea la impresión del archivo */
+    $_modify = FusNuloPOST('_modify', '');
+    /**  Bloquea la modificación archivo */
+    $_copy = FusNuloPOST('_copy', '');
+    /**  Bloquea la copiar datos del archivo */
+    $_annotforms = FusNuloPOST('_annotforms', '');
+    /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
+    $_nombre = FusNuloPOST('_nombre', "FicNoveHoras");
+    /**  Nombre del archivo*/
+    $_titulo = FusNuloPOST('_titulo', "");
+    /**  titulo del reporte*/
+    $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
+    /** salto de pagina por legajo */
+    $_TotHoras = FusNuloPOST('_TotHoras', "0");
+    /** Mostrar Total de Horas por legajos */
+    $_TotNove = FusNuloPOST('_TotNove', "0");
+    /** Mostrar Total de Novedades por legajos */
+    $_VerHoras = FusNuloPOST('_VerHoras', "0");
+    /** Mostrar Horas */
+    $_VerNove = FusNuloPOST('_VerNove', "0");
+    /** Mostrar Novedades */
+    $_VerFic = FusNuloPOST('_VerFic', "0");
+    /** Mostrar Fichadas */
 
     $_titulo = $_titulo == '' ? 'REPORTE CONTROL HORARIO' : $_titulo;
     $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
@@ -55,13 +71,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     // echo $diff->days . ' dias'; exit;
 
     if ($diff->days > '31') {
-        $data = array('status' => 'error', 'Mensaje' => 'Error: Rango de fechas supierior a 31 d&iacute;as');
+        $data = array('status' => 'error', 'Mensaje' => 'Error: Rango de fechas superior a 31 d&iacute;as');
         echo json_encode($data);
         exit;
     }
     try {
 
-        BorrarArchivosPDF('archivos/*.pdf'); /** Borra los archivos anteriores a la fecha actual */
+        BorrarArchivosPDF('archivos/*.pdf');
+        /** Borra los archivos anteriores a la fecha actual */
         ini_set("pcre.backtrack_limit", "5000000");
 
         ob_start();
@@ -89,9 +106,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf->simpleTables = true;
         $mpdf->useSubstitutions = false;
 
-        $_watermark = FusNuloPOST("_watermark", ''); /** Marca de Agua */
+        $_watermark = FusNuloPOST("_watermark", '');
+        /** Marca de Agua */
         if (($_watermark)) {
-            $mpdf->SetWatermarkText($_watermark); /** MARCA DE AGUA */
+            $mpdf->SetWatermarkText($_watermark);
+            /** MARCA DE AGUA */
             $mpdf->showWatermarkText = true;
             $mpdf->watermark_font = 'Arial';
             $mpdf->watermarkTextAlpha = 0.1;

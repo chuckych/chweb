@@ -6,7 +6,7 @@ require __DIR__ . '/dataApi.php';
 $groupLega = _group_by_keys($dataApi['DATA'], $keys = array('Lega')); // Agrupamos los datos obtenidos de la api por legajo. 
 if ($THColu) {
     foreach ($THColu as $cc) {
-        $TotalHorasGeneral[$cc['Desc']] = array(); // creamos array vacios de los codigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
+        $TotalHorasGeneral[$cc['Desc']] = array(); // creamos array vacíos de los códigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
     }
 }
 $TotalLegajos = count($groupLega);
@@ -14,7 +14,7 @@ foreach ($groupLega as $key => $encabezado) {
     $ResumenNovedades = array();
     if ($THColu) {
         foreach ($THColu as $c) {
-            $TotalHoras[$c['Hora']] = array(); // creamos array vacios de los codigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
+            $TotalHoras[$c['Hora']] = array(); // creamos array vacíos de los códigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
         }
     }
     $f1 = '<div style="page-break-inside: avoid">';

@@ -1279,14 +1279,7 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
             break;
     }
     require __DIR__ . '/config/conect_mssql.php';
-    // $usuario    = explode("-", $_SESSION["user"]);
 
-    // $AudUser   = substr($_SESSION["user"], 4, 10);
-    // if (isset($usuario[1])) {
-    //     $AudUser   = substr(ucfirst($usuario[1]), 0, 10);
-    // } else {
-    //     $AudUser   = $_SESSION["user"];
-    // }
     $AudUser = substr($_SESSION["NOMBRE_SESION"], 0, 10);
     $ipCliente = substr($ipCliente, 0, 20);
     // $AudTerm   = gethostname();
@@ -1295,6 +1288,7 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     $FechaHora = fechaHora();
     $AudFech = fechaHora();
     $AudHora = date('H:i:s');
+    $AudZonaHoraria = '(UTC-03:00) Ciudad de Buenos Aires';
 
     $procedure_params = array(
         array(&$AudFech),
@@ -1305,9 +1299,10 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
         array(&$AudTipo),
         array(&$AudDato),
         array(&$FechaHora),
+        array(&$AudZonaHoraria),
     );
 
-    $sql = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?";
+    $sql = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?, @AudZonaHoraria=?";
     $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
 
     if (!$stmt) {
@@ -1322,7 +1317,7 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
         /** ejecuto la sentencia */
         $dataAud = array("auditor" => "ok");
         // echo json_encode($dataAud); 
-        auditoria($AudDato, $AudTipo, '', $modulo);
+        auditoria($AudDato, $AudTipo, '', $modulo); // insertamos en la tabla de auditoria de la base de datos mysql
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -3520,6 +3515,7 @@ function horarioApi($ent, $sal, $labo, $Feri)
     $h = $ent . ' a ' . $sal;
     $h = ($labo == '0') ? 'Franco' : $h;
     $h = ($Feri == '1') ? 'Feriado' : $h;
+    $h = ($Feri == '1' && $labo == '1') ? $ent . ' a ' . $sal : $h;
     return $h;
 }
 function mergeArrayIfValue($arr1, $arr2, $key)
