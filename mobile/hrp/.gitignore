@@ -14,3 +14,4 @@ fotos/*.jpg
 logs/descargas/*.php
 api/**
 *.7z
+*.delete
