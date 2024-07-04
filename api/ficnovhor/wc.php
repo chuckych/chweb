@@ -113,6 +113,10 @@ $dp['HorD'] = vp($dp['HorD'], 'HorD', 'strArrayMMlength', 5); // Min y max 5 car
 $dp['Falta'] = ($dp['Falta']) ?? [];
 $dp['Falta'] = vp($dp['Falta'], 'Falta', 'numArray01', 1); // 0 = normal 1 = Impar (iconsistencias)
 
+$arrDPSec2 = array(
+    'Sec2' => $dp['Sec2'],
+    // Seccion {int} {array}
+);
 $arrDPFichas = array(
     'Lega' => $dp['Lega'],
     // Legajo {int} {array}
@@ -122,8 +126,6 @@ $arrDPFichas = array(
     // Planta {int} {array}
     'Conv' => $dp['Conv'],
     // Convenio {int} {array}
-    'Sec2' => $dp['Sec2'],
-    // Seccion {int} {array}
     'Sect' => $dp['Sect'],
     // Sector {int} {array}
     'Grup' => $dp['Grup'],
@@ -145,7 +147,7 @@ $arrDPFichas = array(
     'HsAT' => $dp['HsAT'],
     // Horas A trabajar {string} HH:MM
     'HsTr' => $dp['HsTr'],
-    // Horas A trabajajadas {string} HH:MM
+    // Horas A trabajadas {string} HH:MM
     'HorE' => $dp['HorE'],
     // Horario de entrada {string} HH:MM del día
     'HorS' => $dp['HorS'],
@@ -300,6 +302,34 @@ foreach ($arrDPFichas as $key => $Fichas) {
         }
     }
 }
+foreach ($arrDPSec2 as $key => $Fichas) {
+    $e = array();
+    if (is_array($Fichas)) {
+        $v = '';
+        $e = array_filter($Fichas, function ($v) {
+            return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
+        });
+        $e = array_unique($e);
+        $FichasSeccion = " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2)";
+        if (($e)) {
+            if (count($e) > 1) {
+                $e = "'" . implode("','", $e) . "'";
+                $wc .= "$FichasSeccion IN ($e)";
+            } else {
+                foreach ($e as $v) {
+                    if ($v !== NULL) {
+                        $wc .= "$FichasSeccion = '$v'";
+                    }
+                }
+            }
+        }
+    } else {
+        if ($v) {
+            $wc .= "$FichasSeccion = '$v'";
+        }
+    }
+}
+// exit;
 foreach ($arrDPPersonal as $key => $v) {
 
     if (is_array($v)) {
@@ -360,7 +390,7 @@ if ($dp['LegaD']) {
 if ($dp['onlyHsTr']) {
     $wc .= " AND dbo.fn_STRMinutos(FICHAS.FicHstr) > 0";
 }
-// $pathLogss = __DIR__ . '../../logs/' . date('Ymd') . '_wc.log';
+// $pathLogss = __DIR__ . '' . date('Ymd') . '_wc.log';
 // writeLog(PHP_EOL . 'DP: ' . json_encode($dp), $pathLogss);
 // writeLog(PHP_EOL . 'Wc: ' . $wc, $pathLogss);
 // print_r($wcFicFech) . exit;

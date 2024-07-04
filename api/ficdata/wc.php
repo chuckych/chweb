@@ -106,12 +106,15 @@ $dp['HorD'] = vp($dp['HorD'], 'HorD', 'strArrayMMlength', 5); // Min y max 5 car
 $dp['Falta'] = ($dp['Falta']) ?? [];
 $dp['Falta'] = vp($dp['Falta'], 'Falta', 'numArray01', 1); // 0 = normal 1 = Impar (iconsistencias)
 
+$arrDPSec2 = array(
+    'Sec2' => $dp['Sec2'],
+    // Seccion {int} {array}
+);
 $arrDPFichas = array(
     'Lega' => $dp['Lega'], // Legajo {int} {array}
     'Empr' => $dp['Empr'], // Empresa {int} {array}
     'Plan' => $dp['Plan'], // Planta {int} {array}
     'Conv' => $dp['Conv'], // Convenio {int} {array}
-    'Sec2' => $dp['Sec2'], // Seccion {int} {array}
     'Sect' => $dp['Sect'], // Sector {int} {array}
     'Grup' => $dp['Grup'], // Grupos {int} {array}
     'Sucu' => $dp['Sucu'], // Sucursales {int} {array}
@@ -128,6 +131,33 @@ $arrDPFichas = array(
     'HorD' => $dp['HorD'], // Horas de descanso del día {string} HH:MM
     'Falta' => $dp['Falta'], // Si hay Fichadas Inconsistentes {int} 0 = normal (pares), 1 = si (impares) 
 );
+foreach ($arrDPSec2 as $key => $Fichas) {
+    $e = array();
+    if (is_array($Fichas)) {
+        $v = '';
+        $e = array_filter($Fichas, function ($v) {
+            return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
+        });
+        $e = array_unique($e);
+        $FichasSeccion = " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2)";
+        if (($e)) {
+            if (count($e) > 1) {
+                $e = "'" . implode("','", $e) . "'";
+                $wc .= "$FichasSeccion IN ($e)";
+            } else {
+                foreach ($e as $v) {
+                    if ($v !== NULL) {
+                        $wc .= "$FichasSeccion = '$v'";
+                    }
+                }
+            }
+        }
+    } else {
+        if ($v) {
+            $wc .= "$FichasSeccion = '$v'";
+        }
+    }
+}
 $dp['Nove'] = $dp['Nove'] ?? [];
 $dp['Nove'] = vp($dp['Nove'], 'Nove', 'intArray', 5);
 $dp['NoTi'] = $dp['NoTi'] ?? [];
