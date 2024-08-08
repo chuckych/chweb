@@ -499,35 +499,34 @@ class Novedades
                 throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 400);
             }
 
-            $Cod = ($datos['Cod']); // Código de la estructura
-            $Lega = ($datos['Lega']); // Legajo
-            $Empr = ($datos['Empr']); // Empresa
-            $Plan = ($datos['Plan']); // Planta
-            $Conv = ($datos['Conv']); // Convenio
-            $Sect = ($datos['Sect']); // Sector
-            $Sec2 = ($datos['Sec2']); // Sección
-            $Grup = ($datos['Grup']); // Grupo
-            $Sucu = ($datos['Sucu']); // Sucursal
-            $Tare = ($datos['TareProd']); // Tarea de producción
-            $RegCH = ($datos['RegCH']); // Regla de Control Horario
-            $Tipo = ($datos['Tipo']); // Tipo de Personal
-            $Docu = ($datos['Docu']); // DNI Del Legajo
-            $Sector = ($datos['Sector']); // Sector
+            $Cod      = $datos['Cod']; // Código de la estructura
+            $Lega     = $datos['Lega']; // Legajo
+            $Empr     = $datos['Empr']; // Empresa
+            $Plan     = $datos['Plan']; // Planta
+            $Conv     = $datos['Conv']; // Convenio
+            $Sect     = $datos['Sect']; // Sector
+            $Sec2     = $datos['Sec2']; // Sección
+            $Grup     = $datos['Grup']; // Grupo
+            $Sucu     = $datos['Sucu']; // Sucursal
+            $Tare     = $datos['TareProd']; // Tarea de producción
+            $RegCH    = $datos['RegCH']; // Regla de Control Horario
+            $Tipo     = $datos['Tipo']; // Tipo de Personal
+            $Docu     = $datos['Docu']; // DNI Del Legajo
+            $Sector   = $datos['Sector']; // Sector
+            $Esta     = $datos['Esta']; // Estado de la ficha hora (FicEsta)
+            $Nove     = $datos['Nove']; // Código novedad
+            $NoveTipo = $datos['NoveTipo']; // Código tipo novedad
+            $NovI     = $datos['NovI']; // Si Novedad Incumplimiento
+            $NovA     = $datos['NovA']; // Si Novedad Ausentismo
+            $NovS     = $datos['NovS']; // Si Novedad Salida anticipada
+            $NovT     = $datos['NovT']; // Si Novedad Tardanza
+            $DiaL     = $datos['DiaL']; // Si Día Laboral
+            $DiaF     = $datos['DiaF']; // Si Día Feriado
 
-            $Esta = ($datos['Esta']); // Estado de la ficha hora (FicEsta)
-            $Nove = ($datos['Nove']); // Código novedad
-            $NoveTipo = ($datos['NoveTipo']); // Código tipo novedad
-            $NovI = ($datos['NovI']); // Si Novedad Incumplimiento
-            $NovA = ($datos['NovA']); // Si Novedad Ausentismo
-            $NovS = ($datos['NovS']); // Si Novedad Salida anticipada
-            $NovT = ($datos['NovT']); // Si Novedad Tardanza
-            $DiaL = ($datos['DiaL']); // Si Día Laboral
-            $DiaF = ($datos['DiaF']); // Si Día Feriado
-
-            $start = $datos['start']; // Pagina de inicio
-            $length = $datos['length']; // Cantidad de registros
-            $Desc = $datos['Desc']; // Descripción de la estructura
-            $ApNo = $datos['ApNo']; // Apellido y Nombre
+            $start    = $datos['start']; // Pagina de inicio
+            $length   = $datos['length']; // Cantidad de registros
+            $Desc     = $datos['Desc']; // Descripción de la estructura
+            $ApNo     = $datos['ApNo']; // Apellido y Nombre
             $ApNoLega = $datos['ApNoLega']; // Apellido y Nombre + legajo
 
             /** De este Fragmento de código se defino si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
@@ -572,9 +571,9 @@ class Novedades
                 ':start' => intval($start),
                 ':length' => intval($length)
             ];
-            ($Desc) ? $params[':Desc'] = '%' . $Desc . '%' : '';
-            ($paramPers && $ApNo) ? $params[':ApNo'] = '%' . $ApNo . '%' : '';
-            ($paramPers && $ApNoLega) ? $params[':ApNoLega'] = '%' . $ApNoLega . '%' : '';
+            $Desc ? $params[':Desc'] = "%{$Desc}%" : '';
+            ($paramPers && $ApNo) ? $params[':ApNo'] = "%{$ApNo}%" : '';
+            ($paramPers && $ApNoLega) ? $params[':ApNoLega'] = "%{$ApNoLega}%" : '';
             /**  FIN DE PARÁMETROS DE LA CONSULTA SQL */
             // print_r($params) . exit;
             $data = $this->conect->executeQueryWhithParams($sql, $params);
@@ -686,7 +685,7 @@ class Novedades
         $cod = 'Cod';
         $count = 'Count';
 
-        $labelEstruct = ($this->paraGene->return());
+        $labelEstruct = $this->paraGene->return();
 
         $sinEmpr = "Sin " . $labelEstruct['Etiquetas']['EmprSin'];
         $sinPlan = "Sin " . $labelEstruct['Etiquetas']['PlanSin'];
@@ -774,7 +773,7 @@ class Novedades
     }
     private function queryEstructSect($estruct, $Sector)
     {
-        if (!($Sector))
+        if (!$Sector)
             return '';
         $arr = [
             'sec2' => " AND FICHAS.FicSect IN (" . implode(",", $Sector) . ")"
@@ -783,7 +782,7 @@ class Novedades
     }
     private function joinPersonalEstruct($paramPers)
     {
-        return($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
+        return ($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
     }
     private function joinFichas3Estruct()
     {
@@ -814,9 +813,14 @@ class Novedades
 
         foreach ($FiltrosNombres as $Nombre) {
             if (!empty($Filtros[$Nombre])) { // Si el filtro no esta vacío
+                if ($Nombre == 'Sec2') {
+                    $sql .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN (" . implode(",", $Filtros[$Nombre]) . ")";
+                    continue;
+                }
                 $sql .= " AND FICHAS.Fic{$Nombre} IN (" . implode(",", $Filtros[$Nombre]) . ")";
             }
         }
+        // file_put_contents('queryFichasEstruct.log', print_r($sql, true) . PHP_EOL, FILE_APPEND);
         return $sql;
     }
     private function queryPersonalEstruct($paramPers, $ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare)
@@ -893,7 +897,6 @@ class Novedades
             } else {
                 $this->resp->respuesta($novedades, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
             }
-
         } catch (\PDOException $e) {
             $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_dataNovedades_' . ID_COMPANY . '.log');
@@ -1174,7 +1177,6 @@ class Novedades
 
             $sumNoveCols = array_map(function ($v) {
                 return "COALESCE(SUM(CASE WHEN FICHAS3.FicNove = " . $v['NovCodi'] . " THEN dbo.fn_STRMinutos(FICHAS3.FicHoras) END), 0) as 'Horas_" . $v['NovCodi'] . "'";
-
             }, $colNovedades);
 
             /** **********************************  */
@@ -1356,7 +1358,6 @@ class Novedades
             ];
 
             $this->resp->respuesta($array, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
-
         } catch (\PDOException $e) {
             $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_totalesNovedades_' . ID_COMPANY . '.log');
@@ -1383,7 +1384,7 @@ class Novedades
     private function round_down($number, $precision = 2)
     {
         $fig = (int) str_pad('1', $precision, '0');
-        return(floor($number * $fig) / $fig);
+        return (floor($number * $fig) / $fig);
     }
     private function minutosAHorasDecimal($minutos)
     {
