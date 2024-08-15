@@ -1,5 +1,6 @@
 <!-- Modal -->
-<div class="modal fade" id="altaPerRelo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabelPerRelo" aria-hidden="true">
+<div class="modal fade" id="altaPerRelo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog"
+    aria-labelledby="staticBackdropLabelPerRelo" aria-hidden="true">
     <div class="modal-dialog w350">
         <div class="modal-content">
             <div class="modal-header border-bottom-0">
@@ -9,7 +10,7 @@
                 </button>
             </div>
             <div class="modal-body pb-0">
-                <form action="alta_opciones.php" method="post" class="form-PerRelo"> 
+                <form action="alta_opciones.php" method="post" class="form-PerRelo">
                     <div class="row">
                         <div class="col-12 form-inline">
                             <label for="ReloMarca" class="mr-2 w80">Dispositivo</label>
@@ -20,7 +21,7 @@
                         </div>
                         <div class="col-12 form-inline mt-2">
                             <label for="" class="mr-2 w80">Desde el: </label>
-                            <input class="form-control w200" value="<?=date('Y-m-d')?>"type="date" name="RelFech">
+                            <input class="form-control w200" value="<?=date('Y-m-d')?>" type="date" name="RelFech">
                         </div>
                         <div class="col-12 form-inline mt-2">
                             <label for="" class="mr-2 w80">Vencimiento: </label>
@@ -28,10 +29,12 @@
                         </div>
                         <div class="col-12 my-3">
                             <div class="form-PerRelo d-flex justify-content-end">
-                                <button type="submit" class="btn btn-sm text-white fontq <?= $bgcolor ?>" id="btnPerRelo">Aceptar</button>
+                                <button type="submit" class="btn btn-sm text-white fontq <?= $bgcolor ?>"
+                                    id="btnPerRelo">Aceptar</button>
                             </div>
                         </div>
-                        <div id="alerta_PerRelo" class="radius fontq alert m-0 d-none animate__animated animate__fadeIn w-100" role="alert">
+                        <div id="alerta_PerRelo"
+                            class="radius fontq alert m-0 d-none animate__animated animate__fadeIn w-100" role="alert">
                             <strong class="respuesta_PerRelo fw5"></strong>
                             <span class="mensaje_PerRelo fw4"></span>
                         </div>

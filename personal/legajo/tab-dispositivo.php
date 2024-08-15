@@ -37,9 +37,10 @@
                 <div class="form-inline bg-custom p-2">
                     <label for="" class="mx-2 fw4 p-2 text-white">Dispositivos habilitados con vencimiento:</label>
                     <span data-toggle="modal" data-target="#altaPerRelo" class="pointer">
-                    <button id="btn__PerRelo" type="button" class="ml-1 btn btn-sm btn-light text-secondary" data-toggle="tooltip" data-placement="right" title="Agregar Dispositivo">
-                        <i class="bi bi-plus-lg"></i>
-                    </button>
+                        <button id="btn__PerRelo" type="button" class="ml-1 btn btn-sm btn-light text-secondary"
+                            data-toggle="tooltip" data-placement="right" title="Agregar Dispositivo">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
                     </span>
                 </div>
                 <div class="px-2 table-responsive">
@@ -57,7 +58,6 @@
                         </thead>
                     </table>
                 </div>
-                <?php require __DIR__ . '/modalPerRelo.php' ?>
             </div>
         </div>
     </div>

@@ -37,13 +37,14 @@ class ConnectSqlSrv
             if (!$pass) {
                 throw new \PDOException("No hay datos de contraseña SQL");
             }
+            // file_put_contents('conect_sql.log', "serverName: {$serverName} - db: {$db} - user: {$user} - pass: {$pass}");
             $this->conn = new \PDO( // Instancia de la clase PDO
                 "sqlsrv:server=$serverName;Database=$db", // DSN
                 $user,
                 $pass,
-                array(
+                [
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
-                )
+                ]
             );
         } catch (\PDOException $e) {
             $this->log->write(($e->getMessage()), date('Ymd') . '_sqlsr_connect_' . ID_COMPANY . '.log');

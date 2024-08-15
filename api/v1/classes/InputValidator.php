@@ -68,6 +68,7 @@ class InputValidator
             'date' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
             'time' => "El campo $field debe ser una hora válida con formato hh:mm",
             'varchar40' => "El campo $field debe tener una longitud menor a 40 caracteres",
+            'varcharMax' => "El campo $field debe tener una longitud menor a 2147483647 caracteres",
             'allowed01' => "El campo $field debe tener un valor permitido. [0, 1]",
             'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
             'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
@@ -149,6 +150,12 @@ class InputValidator
                     throw new ValidationException($this->generateErrorMessage($field, $rule));
                 }
                 break;
+            case 'varcharMax':
+                if (strlen($value) > 2147483647) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule));
+                }
+                break;
+
             case 'allowed012':
                 if (!in_array($value, ['0', '1', '2'])) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule));

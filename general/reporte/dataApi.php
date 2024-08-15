@@ -98,7 +98,7 @@ $dataParametros = array(
     'LegaD' => $LegDe,
     'LegaH' => $LegHa,
     'Falta' => $FicFalta,
-    // Fichadas Inconsitentes
+    // Fichadas Inconsistentes
     'LegTipo' => $LegTipo,
     'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
     'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),

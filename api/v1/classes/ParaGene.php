@@ -39,8 +39,8 @@ class ParaGene
         $sql = "SELECT * FROM PARAGENE";
         $Data = $this->conect->executeQueryWhithParams($sql);
         foreach ($Data as &$element) {
-            $rs = array(
-                'Etiquetas' => array(
+            $rs = [
+                'Etiquetas' => [
                     'EmprSin' => $element['ParEmprSin'],
                     'EmprPlu' => $element['ParEmprPlu'],
                     'PlanSin' => $element['ParPlanSin'],
@@ -53,8 +53,8 @@ class ParaGene
                     'SectPlu' => $element['ParSectPlu'],
                     'SeccSin' => $element['ParSeccSin'],
                     'SeccPlu' => $element['ParSeccPlu'],
-                ),
-                'ParDato' => array(
+                ],
+                'ParDato' => [
                     'LegDocu' => $element['ParDatoLegDocu'],
                     'LegCUIL' => $element['ParDatoLegCUIL'],
                     'LegEmpr' => $element['ParDatoLegEmpr'],
@@ -66,9 +66,9 @@ class ParaGene
                     'LegTare' => $element['ParDatoLegTare'],
                     'LegFeIn' => $element['ParDatoLegFeIn'],
                     'LegReCH' => $element['ParDatoLegReCH'],
-                ),
+                ],
                 'FechaHora' => $element['FechaHora'],
-            );
+            ];
         }
         $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
     }
@@ -82,8 +82,8 @@ class ParaGene
         $sql = "SELECT * FROM PARAGENE";
         $Data = $this->conect->executeQueryWhithParams($sql);
         foreach ($Data as &$element) {
-            $rs = array(
-                'Etiquetas' => array(
+            $rs = [
+                'Etiquetas' => [
                     'EmprSin' => $element['ParEmprSin'],
                     'EmprPlu' => $element['ParEmprPlu'],
                     'PlanSin' => $element['ParPlanSin'],
@@ -96,8 +96,8 @@ class ParaGene
                     'SectPlu' => $element['ParSectPlu'],
                     'SeccSin' => $element['ParSeccSin'],
                     'SeccPlu' => $element['ParSeccPlu'],
-                ),
-                'ParDato' => array(
+                ],
+                'ParDato' => [
                     'LegDocu' => $element['ParDatoLegDocu'],
                     'LegCUIL' => $element['ParDatoLegCUIL'],
                     'LegEmpr' => $element['ParDatoLegEmpr'],
@@ -109,10 +109,11 @@ class ParaGene
                     'LegTare' => $element['ParDatoLegTare'],
                     'LegFeIn' => $element['ParDatoLegFeIn'],
                     'LegReCH' => $element['ParDatoLegReCH'],
-                ),
+                ],
                 'FechaHora' => $element['FechaHora'],
-            );
+            ];
         }
+        // file_put_contents('paragene.log', print_r($rs, true));
         return $rs;
     }
 

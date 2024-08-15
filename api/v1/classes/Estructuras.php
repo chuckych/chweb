@@ -53,6 +53,7 @@ class Estructuras
         $data['Secc'] = $data['Secc'] ?? '';
         $data['Grup'] = $data['Grup'] ?? '';
         $data['Sucu'] = $data['Sucu'] ?? '';
+        $data['Tare'] = $data['Tare'] ?? '';
 
         $estructuras = [];
 
@@ -133,11 +134,20 @@ class Estructuras
             $estructuras['Sucursales'] = $array['Sucursales'];
         }
 
+        if ($data['Tare']) {
+            $tareas = explode(',', $data['Tare']);
+            $tareas = array_map('intval', $tareas);
+            $tareas = implode(',', $tareas);
+            $sql = "SELECT TareCodi, TareDesc FROM TAREAS WHERE TareCodi IN ($tareas)";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(); // Ejecuto la consulta
+            $array['tareas'] = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+            $estructuras['tareas'] = $array['tareas'];
+        }
+
         $this->conect->close($conn);
 
         $this->resp->respuesta($estructuras, 1, 'OK', 200, microtime(true), 0, 0);
-
-
     }
     public function create()
     {
@@ -158,9 +168,8 @@ class Estructuras
                 'Sec2' => "SELECT ISNULL(MAX(Se2Codi), 0) + 1 AS ProxCodi FROM SECCION WHERE SecCodi = :SecCodi",
                 'Grup' => "SELECT ISNULL(MAX(GruCodi), 0) + 1 AS ProxCodi FROM GRUPOS",
                 'Sucu' => "SELECT ISNULL(MAX(SucCodi), 0) + 1 AS ProxCodi FROM SUCURSALES",
+                'Tare' => 'SELECT ISNULL(MAX(TareCodi), 0) + 1 AS ProxCodi FROM TAREAS',
             ];
-
-
 
             $stmt = $conn->prepare($queryProx[$Estruct]);
             if ($Estruct == 'Sec2') {
@@ -169,7 +178,6 @@ class Estructuras
             $stmt->execute(); // Ejecuto la consulta
             $prox = $stmt->fetch(\PDO::FETCH_ASSOC);
             $datos['Cod'] = $prox['ProxCodi'];
-
         }
 
         // validar si ya existe el codigo
@@ -181,6 +189,7 @@ class Estructuras
             'Sec2' => "SELECT Se2Codi FROM SECCION WHERE SecCodi = :SecCodi AND Se2Codi = :Cod",
             'Grup' => "SELECT GruCodi FROM GRUPOS WHERE GruCodi = :Cod",
             'Sucu' => "SELECT SucCodi FROM SUCURSALES WHERE SucCodi = :Cod",
+            'Tare' => 'SELECT TareCodi FROM TAREAS WHERE TareCodi = :Cod',
         ];
 
         $stmt = $conn->prepare($queryValidaCod[$Estruct]);
@@ -207,6 +216,7 @@ class Estructuras
             'Sec2' => "SELECT Se2Desc FROM SECCION WHERE Se2Desc = :Desc AND SecCodi = :SecCodi",
             'Grup' => "SELECT GruDesc FROM GRUPOS WHERE GruDesc = :Desc",
             'Sucu' => "SELECT SucDesc FROM SUCURSALES WHERE SucDesc = :Desc",
+            'Tare' => 'SELECT TareDesc FROM TAREAS WHERE TareDesc = :Desc',
         ];
 
         $stmt = $conn->prepare($queryValidaDesc[$Estruct]);
@@ -224,12 +234,13 @@ class Estructuras
 
         $queryEstruct = [
             'Empr' => "INSERT INTO EMPRESAS (EmpCodi, EmpRazon, FechaHora) VALUES (:Cod, :Desc, :FechaHora)",
-            'Plan' => "INSERT INTO PLANTAS (PlaCodi, PlaDesc, PlaEvEntra, PlaEvSale, FechaHora) VALUES (:Cod, :Desc, :EvEntra, :EvSale, :FechaHora)",
+            'Plan' => "INSERT INTO PLANTAS (PlaCodi, PlaDesc, PlaEvEntra, PlaEvSale, PlaZonaHoraria, FechaHora) VALUES (:Cod, :Desc, :EvEntra, :EvSale, :PlaZonaHoraria, :FechaHora)",
             'Conv' => "INSERT INTO CONVENIO (ConCodi, ConDesc, FechaHora) VALUES (:Cod, :Desc, :FechaHora)",
             'Sect' => "INSERT INTO SECTORES (SecCodi, SecDesc, SecTaIn, FechaHora) VALUES (:Cod, :Desc, '', :FechaHora)",
             'Sec2' => "INSERT INTO SECCION (Se2Codi, SecCodi , Se2Desc, FechaHora) VALUES (:Cod, :SecCodi, :Desc, :FechaHora)",
             'Grup' => "INSERT INTO GRUPOS (GruCodi, GruDesc, FechaHora) VALUES (:Cod, :Desc, :FechaHora)",
             'Sucu' => "INSERT INTO SUCURSALES (SucCodi, SucDesc, FechaHora) VALUES (:Cod, :Desc, :FechaHora)",
+            'Tare' => 'INSERT INTO TAREAS (TareCodi, TareDesc, TareEstado, FechaHora) VALUES (:Cod, :Desc, 0, :FechaHora)',
         ];
 
         $stmt = $conn->prepare($queryEstruct[$Estruct]);
@@ -243,6 +254,7 @@ class Estructuras
         if ($Estruct == 'Plan') {
             $stmt->bindParam(':EvEntra', $datos['EvEntra'], \PDO::PARAM_INT);
             $stmt->bindParam(':EvSale', $datos['EvSale'], \PDO::PARAM_INT);
+            $stmt->bindParam(':PlaZonaHoraria', $datos['PlaZonaHoraria'], \PDO::PARAM_STR);
         }
         $stmt->bindParam(':Cod', $datos['Cod'], \PDO::PARAM_INT);
         if ($Estruct == 'Sec2') {
@@ -262,13 +274,13 @@ class Estructuras
         if ($Estruct == 'Plan') {
             $data['EvEntra'] = $datos['EvEntra'];
             $data['EvSale'] = $datos['EvSale'];
+            $data['PlaZonaHoraria'] = $datos['PlaZonaHoraria'];
         }
         if ($Estruct == 'Sec2') {
             $data['SecCodi'] = $datos['SecCodi'];
         }
 
         $this->resp->respuesta($data, 1, 'OK', 200, microtime(true), 0, 0);
-
     }
     private function validarDataEstruct()
     {
@@ -288,6 +300,7 @@ class Estructuras
         $Desc = $datos['Desc'] ?? '';
         $EvEntra = $datos['EvEntra'] ?? '';
         $EvSale = $datos['EvSale'] ?? '';
+        $PlaZonaHoraria = $datos['PlaZonaHoraria'] ?? '';
         $SecCodi = $datos['SecCodi'] ?? '';
 
         $datosRecibidos = array( // Valores por defecto
@@ -297,6 +310,7 @@ class Estructuras
             'Desc' => empty($Desc) ? '' : $Desc,
             'EvEntra' => empty($EvEntra) ? '' : $EvEntra,
             'EvSale' => empty($EvSale) ? '' : $EvSale,
+            'PlaZonaHoraria' => empty($PlaZonaHoraria) ? 'Argentina Standard Time' : $PlaZonaHoraria,
         );
 
         try {
@@ -312,7 +326,8 @@ class Estructuras
                 'Sect',
                 'Sec2',
                 'Grup',
-                'Sucu'
+                'Sucu',
+                'Tare'
             ];
 
             if (!in_array($Estruct, $estructurasValidas)) {
@@ -325,8 +340,9 @@ class Estructuras
             ];
 
             if ($Estruct == 'Plan') {
-                $rules['EvEntra'] = ['smallintEmpty'];
-                $rules['EvSale'] = ['smallintEmpty'];
+                $rules['EvEntra']        = ['smallintEmpty'];
+                $rules['EvSale']         = ['smallintEmpty'];
+                $rules['PlaZonaHoraria'] = ['varcharMax'];
             }
 
             if ($Estruct == 'Sec2') {

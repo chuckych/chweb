@@ -59,7 +59,7 @@ $api->map('error', function ($ex) {
     } elseif ($ex instanceof PDOException) {
         $log->write($ex->getMessage(), $nameLog);
     }
-    Flight::json(array ('status' => 'error', 'message' => $ex->getMessage()), 400);
+    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
 });
 
 $api->start();

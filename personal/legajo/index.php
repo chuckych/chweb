@@ -3,7 +3,7 @@ session_start();
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
-$Modulo='10';
+$Modulo = '10';
 ExisteModRol($Modulo);
 existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetPersonal';
@@ -82,33 +82,33 @@ $Grup     = explode(',', $_SESSION['GrupRol']);
 $Sucu     = explode(',', $_SESSION['SucuRol']);
 
 $dataParametros = array(
-    'Nume'     => ($EstrUser),
-    'ApNo'     => "",
-    'Docu'     => [],
-    'ApNoNume' => "",
-    'Empr'     => ($Empr),
-    'Plan'     => ($Plan),
-    'Sect'     => ($Sect),
-    'Sec2'     => ($Sec2),
-    'Conv'     => ($Conv),
-    'Grup'     => ($Grup),
-    'Sucu'     => ($Sucu),
-    'TareProd' => [],
-    'RegCH'    => [],
-    'Tipo'     => [],
-    "Baja"=> [],
-    "IntExt"=> [],
-    "getDatos"=> 0,
-    "getLiqui"=> 0,
-    "getEstruct"=> 0,
-    "getControl"=> 0,
-    "getHorarios"=> 0,
-    "getAcceso"=> 0,
-    'start'   => 0,
-    'length'  => 5000
+   'Nume'     => ($EstrUser),
+   'ApNo'     => "",
+   'Docu'     => [],
+   'ApNoNume' => "",
+   'Empr'     => ($Empr),
+   'Plan'     => ($Plan),
+   'Sect'     => ($Sect),
+   'Sec2'     => ($Sec2),
+   'Conv'     => ($Conv),
+   'Grup'     => ($Grup),
+   'Sucu'     => ($Sucu),
+   'TareProd' => [],
+   'RegCH'    => [],
+   'Tipo'     => [],
+   "Baja" => [],
+   "IntExt" => [],
+   "getDatos" => 0,
+   "getLiqui" => 0,
+   "getEstruct" => 0,
+   "getControl" => 0,
+   "getHorarios" => 0,
+   "getAcceso" => 0,
+   'start'   => 0,
+   'length'  => 5000
 );
 
-$url = gethostCHWeb()."/".HOMEHOST."/api/personal/";
+$url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
 
 $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
@@ -129,8 +129,8 @@ try {
       exit;
    }
 } catch (Exception $e) {
-    echo 'Error: ' . $e->getMessage();
-    echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
+   echo 'Error: ' . $e->getMessage();
+   echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
    exit;
 }
 require pagina('alta.php');

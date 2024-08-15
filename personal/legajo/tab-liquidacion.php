@@ -13,40 +13,40 @@
                 </select>
                 <!-- Tipo personal -->
 
-                <?php 
+                <?php
 
-                if($persLegFeEg){
+                if ($persLegFeEg) {
                     $persLegFeEg = Fech_Format_Var($persLegFeEg, 'd/m/Y');
-                } else{
+                } else {
                     $persLegFeEg = '';
                 }
-                if($persLegFeIn){
+                if ($persLegFeIn) {
                     $persLegFeIn = Fech_Format_Var($persLegFeIn, 'd/m/Y');
-                } else{
+                } else {
                     $persLegFeIn = '';
                 }
-                
+
                 ?>
-                
+
                 <label for="LegFeIn" class="mx-2">Ingreso</label>
                 <input class="form-control text-center ls1" type="text" id="LegFeIn" name="LegFeIn" value="<?= ($persLegFeIn) ?>">
                 <!-- <input class="form-control text-center ls1" type="text" value="<?= $persLegFeIn ?>" id="LegFeIn" name="LegFeIn"> -->
                 <span id="trash_LegFeIn" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                 <label for="LegFeEg" class="mx-2">Egreso</label>
                 <input class="form-control text-center ls1" type="text" value="<?= ($persLegFeEg) ?>" id="LegFeEg" name="LegFeEg">
-                <!-- <input class="form-control" type="date" value="<?= ($persLegFeEg) ?>" id="LegFeEg" name="LegFeEg" max="<?=date('Y-m-d')?>"> -->
+                <!-- <input class="form-control" type="date" value="<?= ($persLegFeEg) ?>" id="LegFeEg" name="LegFeEg" max="<?= date('Y-m-d') ?>"> -->
                 <span id="trash_LegFeEg" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
             </div>
         </div>
         <div class="col-sm-10 col-12 py-2">
             <div class="mt-2 shadow-sm p-0">
                 <div class="form-inline mt-2 <?= $bgcolor ?> p-2">
-                    <label for="" class="mx-2 fw4 text-white p-2">Historial:</label>
+                    <label class="mx-2 fw4 text-white p-2">Historial:</label>
                     <button data-titlet="Nuevo Ingreso y Egreso" type="button" class="px-2 btn btn-sm btn-light fontq text-secondary" data-toggle="modal" data-target="#altahistorial">
                         <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
-                
+
                 <div class="p-2">
                     <table class="table text-nowrap w-100" id="Perineg">
                         <thead class="border-top-0">
@@ -63,7 +63,7 @@
                         <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
-                
+
                 <div class="p-2">
                     <table class="table w-100 text-nowrap table-sm" id="Perpremio">
                         <thead class="border-top-0">
@@ -86,7 +86,7 @@
                         <i class="bi bi-plus-lg"></i>
                     </button>
                 </div>
-                
+
                 <div class="p-2">
                     <table class="table w-100 text-nowrap table-sm" id="OtrosConLeg">
                         <thead class="border-top-0">

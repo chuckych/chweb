@@ -65,8 +65,6 @@ foreach ($groupLega as $key => $encabezado) {
     }
     foreach ($cuerpoLegajo as $key => $valueLegajo) {
 
-
-
         $ent = $valueLegajo['Tur']['ent'];
         $sal = $valueLegajo['Tur']['sal'];
         $labo = $valueLegajo['Labo'];

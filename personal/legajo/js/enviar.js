@@ -1,14 +1,16 @@
 $(document).ready(function () {
-    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
-    $(".Update_Leg").bind("submit", function (e) {
-        e.preventDefault();
 
-        // alert($('#LegFeEg').val());
+    const btnAltaEmpresa = document.querySelector('[data-target="#altaEmpresa"]');
+    btnAltaEmpresa && btnAltaEmpresa.remove();
+
+    ActiveBTN(false, "#btnGuardar", 'Aguarde..', 'Aceptar')
+    const formUpdLeg = document.querySelector('.Update_Leg');
+    formUpdLeg && formUpdLeg.addEventListener('submit', function (e) {
+        e.preventDefault();
         function submitForm() {
             let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
             $.ajax({
                 type: $(".Update_Leg").attr("method"),
-                contetnType: "application_json; charset=utf-8",
                 url: $(".Update_Leg").attr("action"),
                 data: $(".Update_Leg").serialize(),
                 beforeSend: function (data) {
@@ -46,8 +48,6 @@ $(document).ready(function () {
                 }
             });
         }
-
-
         if (($('#LegEmpr').val() == null) || ($('#LegEmpr').val() == '' || $('#LegEmpr').val() == '0')) {
             $.notifyClose();
             notify(`<span class="font-weight-bold">Campo empresa es requerido.</span>`, 'danger', 5000, 'right')
@@ -57,12 +57,7 @@ $(document).ready(function () {
         } else {
             $(".ReqLegEmpr").removeClass('text-danger font-weight-bold')
         }
-
-
         if ($('#LegFeEg').val()) {
-
-            // console.log(dataClean);
-
             bootbox.confirm({
                 // centerVertical: true,
                 title: '<span class="fontq font-weight-bold"><i class="bi bi-exclamation-circle"></i> Se está dando de baja el legajo. Fecha de egreso: <span class="ls1">' + $('#LegFeEg').val() + '</span></span>',
@@ -96,66 +91,53 @@ $(document).ready(function () {
         }
 
     });
-});
 
-$(document).on('shown.bs.modal', '#altaEmpresa', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaPlanta', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaconvenio', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaSector', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaseccion', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaGrupo', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altasucur', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altatarea', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaProvincia', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaLocalidad', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altahistorial', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaidentifica', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaidentifica', function () {
-    $(this).find('[autofocus]').focus();
-});
-$(document).on('shown.bs.modal', '#altaNacion', function () {
-    $(this).find('[autofocus]').focus();
-});
-
-var LegNume = $('#LegNume').val();
-
-$(document).ready(function () {
-    $("#Update_Leg").bind("submit", function (e) {
-        e.preventDefault();
+    $(document).on('shown.bs.modal', '#altaEmpresa', function () {
+        $(this).find('[autofocus]').focus();
     });
-});
-
-/** NACIONES */
-$(document).ready(function () {
-    $(".Form_Nacion").bind("submit", function () {
-        event.preventDefault();
+    $(document).on('shown.bs.modal', '#altaPlanta', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaconvenio', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaSector', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaseccion', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaGrupo', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altasucur', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altatarea', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaProvincia', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaLocalidad', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altahistorial', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaidentifica', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    $(document).on('shown.bs.modal', '#altaNacion', function () {
+        $(this).find('[autofocus]').focus();
+    });
+    const LegNume = $('#LegNume').val();
+    /** NACIONES */
+    const formNac = document.querySelector('.Form_Nacion');
+    formNac && formNac.addEventListener('submit', function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (respuesta) {
@@ -218,13 +200,11 @@ $(document).ready(function () {
                 }
             }
         });
-        // return false;
     });
-});
-/** PROVINCIAS */
-$(document).ready(function () {
-    $(".form-provincias").bind("submit", function () {
-        event.preventDefault();
+    /** PROVINCIAS */
+    const formProvincias = document.querySelector('.form-provincias');
+    formProvincias && formProvincias.addEventListener('submit', function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),
@@ -294,17 +274,13 @@ $(document).ready(function () {
                 }
             }
         });
-        // return false;
     });
-});
-/** LOCALIDADES */
-$(document).ready(function () {
-
-    $(".form-localidad").bind("submit", function (e) {
+    /** LOCALIDADES */
+    const formLocalidad = document.querySelector('.form-localidad');
+    formLocalidad && formLocalidad.addEventListener('submit', function (e) {
         e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -375,17 +351,16 @@ $(document).ready(function () {
         });
         // return false;
     });
-});
-/** EMPRESAS */
-$(document).ready(function () {
-    $(".form-empresas").bind("submit", function () {
+    /** EMPRESAS */
+    const formEmpresa = document.querySelector('.form-empresas');
+    formEmpresa && formEmpresa.addEventListener('submit', function (e) {
+        e.preventDefault();
 
         $('#altaEmpresa').on('hidden.bs.modal', function (e) {
             $("#alerta_empresa").addClass("d-none");
             $(".form-empresas")[0].reset();
-        }),
+        })
 
-            event.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),
@@ -395,7 +370,7 @@ $(document).ready(function () {
                 $(".respuesta_empresa").html('');
                 $(".mensaje_empresa").html("");
                 $("#btnEmpresa").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
+            <span class="sr-only"></span>`);
                 $("#btnEmpresa").prop('disabled', true);
             },
             success: function (data) {
@@ -437,478 +412,79 @@ $(document).ready(function () {
                 }
             }
         });
-        //return false;
     });
-});
-/** PLANTA */
-$(document).ready(function () {
-    $(".form-plantas").bind("submit", function () {
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_planta").addClass("d-none");
-                $(".respuesta_planta").html('');
-                $(".mensaje_planta").html("");
-                $("#btnPlanta").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
-                $("#btnPlanta").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    var dato = data.dato;
-                    $("#alerta_planta").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_planta").html("¡Bien hecho!");
-                    $(".mensaje_planta").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-plantas")[0].reset();
-                    $('.selectjs_plantas').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_plantas').append(newOption).trigger('change');
-                    // $('#altaplanta').modal('hide')
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaPlanta').on('hidden.bs.modal', function (e) {
-                        $("#alerta_planta").addClass("d-none");
-                        $(".form-plantas")[0].reset();
-                    })
-                    $("#btnPlanta").html('Aceptar');
-                    $("#btnPlanta").prop('disabled', false);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_planta").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_planta").html("¡Atención!");
-                    $(".mensaje_planta").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaPlanta').on('hidden.bs.modal', function (e) {
-                        $("#alerta_planta").addClass("d-none");
-                        $(".form-plantas")[0].reset();
-                    })
-                    $("#btnPlanta").html('Aceptar');
-                    $("#btnPlanta").prop('disabled', false);
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_planta").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_planta").html("¡Error!");
-                    $(".mensaje_planta").html(`Campo requerido.`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaPlanta').on('hidden.bs.modal', function (e) {
-                        $("#alerta_planta").addClass("d-none");
-                    })
-                    $("#btnPlanta").html('Aceptar');
-                    $("#btnPlanta").prop('disabled', false);
-
-                } else {
-                    $("#alerta_planta").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_planta").html("Error!");
-                    $(".mensaje_planta").html("Error al enviar..");
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaPlanta').on('hidden.bs.modal', function (e) {
-                        $("#alerta_planta").addClass("d-none");
-                    })
-                    $("#btnPlanta").html('Aceptar');
-                    $("#btnPlanta").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
+    /** PLANTA */
+    const formPlantas = document.querySelector('.form-plantas');
+    formPlantas && formPlantas.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formPlantas);
+        data.append('Desc', data.get('desc_planta'));
+        data.append('Estruct', 'Plan');
+        altaEstruct(data, ".form-plantas", '.selectjs_plantas', '#altaPlanta', "#btnPlanta");
     });
-});
-/** SECTORES */
-$(document).ready(function () {
-    $(".form-sector").bind("submit", function () {
-        $('#altaSector').on('hidden.bs.modal', function (e) {
-            $("#alerta_sector").addClass("d-none");
-            $(".form-sector")[0].reset();
-        })
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_sector").addClass("d-none");
-                $(".respuesta_sector").html('');
-                $(".mensaje_sector").html("");
-                $("#btnSect").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
-                $("#btnSect").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    // var dato = data.dato;
-                    $("#alerta_sector").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    $(".respuesta_sector").html("¡Bien hecho!");
-                    $(".mensaje_sector").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-sector")[0].reset();
-                    $('.selectjs_sectores').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_sectores').append(newOption).trigger('change');
-                    $('.selectjs_secciones').val(null).trigger('change');
-
-                    $("#btnSect").html('Aceptar');
-                    $("#btnSect").prop('disabled', false);
-                    $('#SecCodi').val(`${data.cod}`);
-                    $("#select_seccion").removeClass("d-none");
-                    var nombresector = data.desc;
-                    $("#SectorHelpBlock").html('Sector: ' + nombresector);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_sector").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_sector").html("¡Atención!");
-                    $(".mensaje_sector").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $("#btnSect").html('Aceptar');
-                    $("#btnSect").prop('disabled', false);
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_sector").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_sector").html("¡Error!");
-                    $(".mensaje_sector").html(`Campo requerido.`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaSector').on('hidden.bs.modal', function (e) {
-                        $("#alerta_sector").addClass("d-none");
-                    })
-                    $("#btnSect").html('Aceptar');
-                    $("#btnSect").prop('disabled', false);
-
-                } else {
-                    $("#alerta_sector").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_sector").html("Error!");
-                    $(".mensaje_sector").html("Error al enviar..");
-                    $("#btnSect").html('Aceptar');
-                    $("#btnSect").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
+    /** SECTORES */
+    const formSector = document.querySelector('.form-sector');
+    formSector && formSector.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formSector);
+        data.append('Desc', data.get('desc_sector'));
+        data.append('Estruct', 'Sect');
+        altaEstruct(data, ".form-sector", '.selectjs_sectores', '#altaSector', "#btnSect");
     });
-});
-/** SECCIONES */
-$(document).ready(function () {
-    /** Funcion para ocultar el alert al cerra el modal */
-    $('#altaseccion').on('hidden.bs.modal', function (e) {
-        $("#alerta_seccion").addClass("d-none");
-        $("#Se2Desc").val(null);
-        $("#btnSec2").html('Aceptar');
-        $("#btnSec2").prop('disabled', false);
+    /** SECCIONES */
+    const formSe2 = document.querySelector('.form-seccion');
+    formSe2 && formSe2.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formSe2);
+        data.append('Desc', data.get('Se2Desc'));
+        data.append('SecCodi', data.get('SecCodi'));
+        data.append('Estruct', 'Sec2');
+        altaEstruct(data, ".form-seccion", '.selectjs_secciones', '#altaseccion', "#btnSec2");
+    });
+    /** GRUPOS */
+    const formGrupo = document.querySelector('.form-grupo');
+    formGrupo && formGrupo.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formGrupo);
+        data.append('Desc', data.get('desc_grupo'));
+        data.append('Estruct', 'Grup');
+        altaEstruct(data, ".form-grupo", '.selectjs_grupos', '#altaGrupo', "#btnGrup");
+    });
+    /** SUCURSALES */
+    const formSucu = document.querySelector('.form-sucur');
+    formSucu && formSucu.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formSucu);
+        data.append('Desc', data.get('desc_sucur'));
+        data.append('Estruct', 'Sucu');
+        altaEstruct(data, ".form-sucur", '.selectjs_sucursal', '#altasucur', "#btnSucur");
+    });
+    /** TAREAS DE PRODUCCIÓN */
+    const formTarea = document.querySelector('.form-tarea');
+    formTarea && formTarea.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const data = new FormData(formTarea);
+        data.append('Desc', data.get('desc_tarea'));
+        data.append('Estruct', 'Tare');
+        altaEstruct(data, ".form-tarea", '.selectjs_tarea', '#altatarea', "#btnTarea");
+    });
+    /** CONVENIOS */
+    $('#altaconvenio').on('hidden.bs.modal', function (e) {
+        $("#alerta_convenio").addClass("d-none");
+        $(".form-convenio")[0].reset();
+        $(".form-diasvac")[0].reset();
+        $('input[name = dato_conv]').val("alta_convenio");
+        $('input[name = codConv]').val("");
+        $('#ConvVaca').DataTable().clear().draw().destroy();
+        $('#ConvFeri').DataTable().clear().draw().destroy();
+        $("#rowConvVac").addClass("d-none"); /** Agregar la clase d-none */
+        $("#ConvVacaTabla").addClass("d-none");
+        $("#ConvFeriTabla").addClass("d-none");
     })
-    $(".form-seccion").bind("submit", function () {
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_seccion").addClass("d-none");
-                $(".respuesta_seccion").html('');
-                $(".mensaje_seccion").html("");
-                $("#btnSec2").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
-                $("#btnSec2").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    var dato = data.dato;
-                    $("#alerta_seccion").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_seccion").html("¡Bien hecho!");
-                    $(".mensaje_seccion").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $("#Se2Desc").val(null);
-                    $('.selectjs_secciones').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_secciones').append(newOption).trigger('change');
-
-                    $("#btnSec2").html('Aceptar');
-                    $("#btnSec2").prop('disabled', false);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_seccion").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_seccion").html("¡Atención!");
-                    $(".mensaje_seccion").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-
-                    $("#btnSec2").html('Aceptar');
-                    $("#btnSec2").prop('disabled', false);
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_seccion").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_seccion").html("¡Error!");
-                    $(".mensaje_seccion").html(`Campo requerido.`);
-                    $("#btnSec2").html('Aceptar');
-                    $("#btnSec2").prop('disabled', false);
-
-                } else {
-                    $("#alerta_seccion").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_seccion").html("Error!");
-                    $(".mensaje_seccion").html(`Error al enviar.. ${data.dato}`);
-                    $("#btnSec2").html('Aceptar');
-                    $("#btnSec2").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
-    });
-});
-/** GRUPOS */
-$(document).ready(function () {
-    $(".form-grupo").bind("submit", function () {
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_grupo").addClass("d-none");
-                $(".respuesta_grupo").html('');
-                $(".mensaje_grupo").html("");
-                $("#btnGrup").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status">
-                <span class="sr-only"></span>`);
-                $("#btnGrup").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    var dato = data.dato;
-                    $("#alerta_grupo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_grupo").html("¡Bien hecho!");
-                    $(".mensaje_grupo").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-grupo")[0].reset();
-                    $('.selectjs_grupos').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_grupos').append(newOption).trigger('change');
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaGrupo').on('hidden.bs.modal', function (e) {
-                        $("#alerta_grupo").addClass("d-none");
-                        $(".form-grupo")[0].reset();
-                    })
-                    $("#btnGrup").html('Aceptar');
-                    $("#btnGrup").prop('disabled', false);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_grupo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_grupo").html("¡Atención!");
-                    $(".mensaje_grupo").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaGrupo').on('hidden.bs.modal', function (e) {
-                        $("#alerta_grupo").addClass("d-none");
-                        $(".form-grupo")[0].reset();
-                    })
-                    $("#btnGrup").html('Aceptar');
-                    $("#btnGrup").prop('disabled', false);
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_grupo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_grupo").html("¡Error!");
-                    $(".mensaje_grupo").html(`Campo requerido.`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altaGrupo').on('hidden.bs.modal', function (e) {
-                        $("#alerta_grupo").addClass("d-none");
-                    })
-                    $("#btnGrup").html('Aceptar');
-                    $("#btnGrup").prop('disabled', false);
-
-                } else {
-                    $("#alerta_grupo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_grupo").html("Error!");
-                    $(".mensaje_grupo").html("Error al enviar..");
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altagrupo').on('hidden.bs.modal', function (e) {
-                        $("#alerta_grupo").addClass("d-none");
-                    })
-                    $("#btnGrup").html('Aceptar');
-                    $("#btnGrup").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
-    });
-});
-/** SUCURSALES */
-$(document).ready(function () {
-    $(".form-sucur").bind("submit", function () {
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_sucur").addClass("d-none");
-                $(".respuesta_sucur").html('');
-                $(".mensaje_sucur").html("");
-                $("#btnSucur").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status"><span class="sr-only"></span>`);
-                $("#btnSucur").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    var dato = data.dato;
-                    $("#alerta_sucur").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_sucur").html("¡Bien hecho!");
-                    $(".mensaje_sucur").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-sucur")[0].reset();
-                    $('.selectjs_sucursal').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_sucursal').append(newOption).trigger('change');
-                    // $('#altasucur').modal('hide')
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altasucur').on('hidden.bs.modal', function (e) {
-                        $("#alerta_sucur").addClass("d-none");
-                        $(".form-sucur")[0].reset();
-                    })
-                    $("#btnSucur").html(`Aceptar`);
-                    $("#btnSucur").prop('disabled', false);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_sucur").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_sucur").html("¡Atención!");
-                    $(".mensaje_sucur").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altasucur').on('hidden.bs.modal', function (e) {
-                        $("#alerta_sucur").addClass("d-none");
-                        $(".form-sucur")[0].reset();
-                    })
-                    $("#btnSucur").html(`Aceptar`);
-                    $("#btnSucur").prop('disabled', false);
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_sucur").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_sucur").html("¡Error!");
-                    $(".mensaje_sucur").html(`Campo requerido.`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altasucur').on('hidden.bs.modal', function (e) {
-                        $("#alerta_sucur").addClass("d-none");
-                    })
-                    $("#btnSucur").html(`Aceptar`);
-                    $("#btnSucur").prop('disabled', false);
-
-                } else {
-                    $("#alerta_sucur").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_sucur").html("Error!");
-                    $(".mensaje_sucur").html("Error al enviar..");
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altasucur').on('hidden.bs.modal', function (e) {
-                        $("#alerta_sucur").addClass("d-none");
-                    })
-                    $("#btnSucur").html(`Aceptar`);
-                    $("#btnSucur").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
-    });
-});
-/** TAREAS DE PRODUCCION */
-$(document).ready(function () {
-    $(".form-tarea").bind("submit", function () {
-        event.preventDefault();
-        $.ajax({
-            type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
-            url: $(this).attr("action"),
-            data: $(this).serialize(),
-            beforeSend: function (data) {
-                $("#alerta_tarea").addClass("d-none");
-                $(".respuesta_tarea").html('');
-                $(".mensaje_tarea").html("");
-                $("#btnTarea").html(`Aceptar <div class="fontq spinner-border spinner-border-sm text-white" role="status"><span class="sr-only"></span>`);
-                $("#btnTarea").prop('disabled', true);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    var dato = data.dato;
-                    $("#alerta_tarea").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_tarea").html("¡Bien hecho!");
-                    $(".mensaje_tarea").html(`<br />Se guardó correctamente.<br/ >Cod: ${data.cod} <br />Desc: ${data.desc} <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    $(".form-tarea")[0].reset();
-                    $('.selectjs_tarea').val(null).trigger('change');
-                    var newOption = new Option(data.desc, data.cod, true, true);
-                    $('.selectjs_tarea').append(newOption).trigger('change');
-                    // $('#altatarea').modal('hide')
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altatarea').on('hidden.bs.modal', function (e) {
-                        $("#alerta_tarea").addClass("d-none");
-                        $(".form-tarea")[0].reset();
-                    })
-                    $("#btnTarea").html(`Aceptar`);
-                    $("#btnTarea").prop('disabled', false);
-
-                } else if (data.status == "duplicado") {
-                    $("#alerta_tarea").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-warning");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_tarea").html("¡Atención!");
-                    $(".mensaje_tarea").html(`El dato ${data.desc} ya existe. <a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altatarea').on('hidden.bs.modal', function (e) {
-                        $("#alerta_tarea").addClass("d-none");
-                        $(".form-tarea")[0].reset();
-                    })
-                    $("#btnTarea").html(`Aceptar`);
-                    $("#btnTarea").prop('disabled', false);
-                    // $('#altaLocalidad').modal('hide')
-
-                } else if (data.status == "requerido") {
-                    $("#alerta_tarea").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-success").addClass("alert-danger");
-                    // $(".ocultar").addClass("d-none");
-                    $(".respuesta_tarea").html("¡Error!");
-                    $(".mensaje_tarea").html(`Campo requerido.`);
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altatarea').on('hidden.bs.modal', function (e) {
-                        $("#alerta_tarea").addClass("d-none");
-                    })
-                    $("#btnTarea").html(`Aceptar`);
-                    $("#btnTarea").prop('disabled', false);
-
-                } else {
-                    $("#alerta_tarea").removeClass("d-none").removeClass("alert-danger").removeClass("alert-success").addClass("alert-danger");
-                    $(".respuesta_tarea").html("Error!");
-                    $(".mensaje_tarea").html("Error al enviar..");
-                    /** Funcion para ocultar el alert al cerra el modal */
-                    $('#altatarea').on('hidden.bs.modal', function (e) {
-                        $("#alerta_tarea").addClass("d-none");
-                    })
-                    $("#btnTarea").html(`Aceptar`);
-                    $("#btnTarea").prop('disabled', false);
-                }
-            }
-        });
-        // return false;
-    });
-});
-/** CONVENIOS */
-$('#altaconvenio').on('hidden.bs.modal', function (e) {
-    $("#alerta_convenio").addClass("d-none");
-    $(".form-convenio")[0].reset();
-    $(".form-diasvac")[0].reset();
-    $('input[name = dato_conv]').val("alta_convenio");
-    $('input[name = codConv]').val("");
-    $('#ConvVaca').DataTable().clear().draw().destroy();
-    $('#ConvFeri').DataTable().clear().draw().destroy();
-    $("#rowConvVac").addClass("d-none"); /** Agregar la clase d-none */
-    $("#ConvVacaTabla").addClass("d-none");
-    $("#ConvFeriTabla").addClass("d-none");
-})
-$(document).ready(function () {
     $(".form-convenio").bind("submit", function (e) {
         e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1049,14 +625,11 @@ $(document).ready(function () {
         });
         // return false;
     });
-});
-/** ALTA CONVENIO DIAS VACACIONES*/
-$(document).ready(function () {
-    $(".form-diasvac").bind("submit", function () {
-        event.preventDefault();
+    /** ALTA CONVENIO DIAS VACACIONES*/
+    $(".form-diasvac").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1081,47 +654,44 @@ $(document).ready(function () {
             }
         });
     });
-});
-/** BORARR DIAS VAC CONVENIO*/
-$(document).on('click', '.delete_convVaca', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var del_cod = $(this).attr('data');
-    var del_anios = $(this).attr('data2');
-    var del_meses = $(this).attr('data3');
-    var del_dias = $(this).attr('data4');
-    var del_ConvVac = $(this).attr('data5');
+    /** BORRAR DIAS VAC CONVENIO*/
+    $(document).on('click', '.delete_convVaca', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        var del_cod = $(this).attr('data');
+        var del_anios = $(this).attr('data2');
+        var del_meses = $(this).attr('data3');
+        var del_dias = $(this).attr('data4');
+        var del_ConvVac = $(this).attr('data5');
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            del_cod,
-            del_anios,
-            del_meses,
-            del_dias,
-            del_ConvVac
-        },
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                del_cod,
+                del_anios,
+                del_meses,
+                del_dias,
+                del_ConvVac
+            },
 
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#ConvVaca').DataTable().ajax.reload();
-                $("#alerta_convenio").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-info");
-                $(".respuesta_convenio").html("Se eliminó correctamente.!");
-                $(".mensaje_convenio").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-            } else {
-                $('#ConvVaca').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    $('#ConvVaca').DataTable().ajax.reload();
+                    $("#alerta_convenio").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-info");
+                    $(".respuesta_convenio").html("Se eliminó correctamente.!");
+                    $(".mensaje_convenio").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
+                } else {
+                    $('#ConvVaca').DataTable().ajax.reload();
+                }
             }
-        }
+        });
     });
-});
-/** ALTA CONVENIO FERIADOS*/
-$(document).ready(function () {
-    $(".form-fericonv").bind("submit", function () {
-        event.preventDefault();
+    /** ALTA CONVENIO FERIADOS*/
+    $(".form-fericonv").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1168,61 +738,56 @@ $(document).ready(function () {
             }
         });
     });
-});
-/** BORARR FERIADOS CONVENIO*/
-$(document).on('click', '.delete_convFeri', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var CFConv = $(this).attr('data');
-    var CFDesc = $(this).attr('data2');
-    var CFFech = $(this).attr('data3');
-    var del_ConvFeri = $(this).attr('data4');
+    /** BORRAR FERIADOS CONVENIO*/
+    $(document).on('click', '.delete_convFeri', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        var CFConv = $(this).attr('data');
+        var CFDesc = $(this).attr('data2');
+        var CFFech = $(this).attr('data3');
+        var del_ConvFeri = $(this).attr('data4');
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            CFConv,
-            CFDesc,
-            CFFech,
-            del_ConvFeri,
-        },
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                CFConv,
+                CFDesc,
+                CFFech,
+                del_ConvFeri,
+            },
 
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#ConvFeri').DataTable().ajax.reload();
-                $("#alerta_convenio").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-info");
-                $(".respuesta_convenio").html("Se eliminó correctamente.!");
-                $(".mensaje_convenio").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
-            } else {
-                $('#ConvFeri').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    $('#ConvFeri').DataTable().ajax.reload();
+                    $("#alerta_convenio").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-info");
+                    $(".respuesta_convenio").html("Se eliminó correctamente.!");
+                    $(".mensaje_convenio").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
+                } else {
+                    $('#ConvFeri').DataTable().ajax.reload();
+                }
             }
-        }
+        });
     });
-});
+    /** ALTA HISTORIAl INGRESOS LEGAJOS*/
+    $('#altahistorial').on('hidden.bs.modal', function (e) {
+        $("#alerta_historial").addClass("d-none");
+        $(".form-perineg")[0].reset();
+        $("#btnHisto").html('Aceptar');
+        $("#btnHisto").prop('disabled', false);
 
-/** ALTA HISTORIAl INGRESOS LEGAJOS*/
-$('#altahistorial').on('hidden.bs.modal', function (e) {
-    $("#alerta_historial").addClass("d-none");
-    $(".form-perineg")[0].reset();
-    $("#btnHisto").html('Aceptar');
-    $("#btnHisto").prop('disabled', false);
-
-    $('#InEgFeIn').val('').prop('disabled', false)
-    $('#trash_InEgFeIn').removeClass('d-none')
-    $('#InEgFeEg').val('')
-    $('#InEgCaus').val('')
-    $('#btnHisto').attr('type', 'submit')
-    $('#btnHisto').show()
-    $('#btnHisto2').hide()
-    $('#Perineg').DataTable().ajax.reload();
-})
-$(document).ready(function () {
-    $(".form-perineg").bind("submit", function (event) {
-        event.preventDefault();
+        $('#InEgFeIn').val('').prop('disabled', false)
+        $('#trash_InEgFeIn').removeClass('d-none')
+        $('#InEgFeEg').val('')
+        $('#InEgCaus').val('')
+        $('#btnHisto').attr('type', 'submit')
+        $('#btnHisto').show()
+        $('#btnHisto2').hide()
+    })
+    $(".form-perineg").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1233,7 +798,7 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status == "ok") {
                     notify(data.dato, 'success', 3000, 'right')
-                    $('#Perineg').DataTable().ajax.reload();
+                    tablePerInEg();
                     $('#altahistorial').modal('hide');
 
                 } else {
@@ -1245,127 +810,93 @@ $(document).ready(function () {
             }
         });
     });
-});
-/** BORARR HISTORIAl INGRESOS LEGAJOS*/
-$(document).on('click', '.delete_perineg', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var DelInEgFeIn = $(this).attr('data');
-    var DelInEgLega = $(this).attr('data2');
-    var DelPerineg = $(this).attr('data3');
+    /** BORRAR HISTORIAl INGRESOS LEGAJOS*/
+    $(document).on('click', '.delete_perineg', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        var DelInEgFeIn = $(this).attr('data');
+        var DelInEgLega = $(this).attr('data2');
+        var DelPerineg = $(this).attr('data3');
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            DelInEgFeIn,
-            DelInEgLega,
-            DelPerineg
-        },
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                notify(data.dato, 'success', 3000, 'right')
-                $('#Perineg').DataTable().ajax.reload();
-            } else {
-                notify(data.dato, 'danger', 3000, 'right')
-                $('#Perineg').DataTable().ajax.reload();
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                DelInEgFeIn,
+                DelInEgLega,
+                DelPerineg
+            },
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    notify(data.dato, 'success', 3000, 'right')
+                    tablePerInEg();
+                } else {
+                    notify(data.dato, 'danger', 3000, 'right')
+                    tablePerInEg();
+                }
             }
-        }
-    });
-});
-/** EDITA HISTORIAl INGRESOS LEGAJOS*/
-$(document).on('click', '.edita_perineg', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    let InEgFeIn = $(this).attr('data');
-    let InEgLega = $(this).attr('data2');
-    let Perineg = $(this).attr('data3');
-    let InEgFeEg = $(this).attr('data4');
-    let InEgCaus = $(this).attr('data5');
-
-    $('#InEgFeIn').val(InEgFeIn).prop('disabled', true)
-    $('#trash_InEgFeIn').addClass('d-none')
-    $('#InEgFeEg').val(InEgFeEg)
-    $('#InEgCaus').val(InEgCaus)
-    // $('#btnHisto').attr('type', 'button')
-    $('#altahistorial').modal('show')
-    $('#btnHisto').hide()
-    $('#btnHisto2').show()
-
-    let btnHisto2 = document.getElementById('btnHisto2')
-
-    btnHisto2.addEventListener("click", function (e) {
-
-        e.preventDefault()
-        e.stopImmediatePropagation()
-
-        btnHisto2.disabled = true
-        btnHisto2.innerHTML = 'Aguarde'
-
-        let formData = new FormData();
-        formData.append("dato", 'edita_perineg');
-        formData.append("InEgFeIn", $('#InEgFeIn').val());
-        formData.append("InEgLega", InEgLega);
-        formData.append("InEgFeEg", $('#InEgFeEg').val());
-        formData.append("InEgCaus", $('#InEgCaus').val());
-
-        axios.post('alta_opciones.php', formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        }).then(response => {
-            btnHisto2.disabled = false
-            btnHisto2.innerHTML = 'Aceptar'
-
-            if (response.data.status != 'ok') {
-                notify(response.data.dato, 'danger', 3000, 'right')
-                return
-            }
-            notify(response.data.dato, 'success', 3000, 'right')
-            $('#altahistorial').modal('hide')
-        }).catch(error => {
-            btnHisto2.disabled = false
-            btnHisto2.innerHTML = 'Aceptar'
-            console.error('Error:', error);
         });
+    });
+    /** EDITA HISTORIAl INGRESOS LEGAJOS*/
+    $(document).on('click', '.edita_perineg', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        let InEgFeIn = $(this).attr('data');
+        let InEgLega = $(this).attr('data2');
+        let Perineg = $(this).attr('data3');
+        let InEgFeEg = $(this).attr('data4');
+        let InEgCaus = $(this).attr('data5');
 
+        $('#InEgFeIn').val(InEgFeIn).prop('disabled', true)
+        $('#trash_InEgFeIn').addClass('d-none')
+        $('#InEgFeEg').val(InEgFeEg)
+        $('#InEgCaus').val(InEgCaus)
+        // $('#btnHisto').attr('type', 'button')
+        $('#altahistorial').modal('show')
+        $('#btnHisto').hide()
+        $('#btnHisto2').show()
 
-        // axios.post('alta_opciones.php', {
-        //     data:{
+        let btnHisto2 = document.getElementById('btnHisto2')
 
-        //     }
-        // }).then(function (response) {
-        //     $('#altahistorial').modal('hide')
-        //     $('#Perineg').DataTable().ajax.reload();
-        // }).catch(function (error) {
-        //     console.log(error);
-        // });
-        // // e.preventDefault();
-        // $.ajax({
-        //     type: "POST",
-        //     url: "alta_opciones.php",
-        //     'data': {
-        //         dato: 'edita_perineg',
-        //         InEgFeIn: InEgFeIn,
-        //         InEgLega: InEgLega,
-        //         InEgFeEg: InEgFeEg,
-        //         InEgCaus: InEgCaus
-        //     },
+        btnHisto2.addEventListener("click", function (e) {
 
-        //     success: function (data) {
-        //         if (data.status == "ok") {
-        //             $('#Perineg').DataTable().ajax.reload();
-        //         } else {
-        //             $('#Perineg').DataTable().ajax.reload();
-        //         }
-        //     }
-        // });
+            e.preventDefault()
+            e.stopImmediatePropagation()
 
+            btnHisto2.disabled = true
+            btnHisto2.innerHTML = 'Aguarde'
 
-    }, false)
-});
-/** ALTA PERSONAL PREMIOS */
-$(document).ready(function () {
+            let formData = new FormData();
+            formData.append("dato", 'edita_perineg');
+            formData.append("InEgFeIn", $('#InEgFeIn').val());
+            formData.append("InEgLega", InEgLega);
+            formData.append("InEgFeEg", $('#InEgFeEg').val());
+            formData.append("InEgCaus", $('#InEgCaus').val());
+
+            axios.post('alta_opciones.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                btnHisto2.disabled = false
+                btnHisto2.innerHTML = 'Aceptar'
+
+                if (response.data.status != 'ok') {
+                    notify(response.data.dato, 'danger', 3000, 'right')
+                    return
+                }
+                notify(response.data.dato, 'success', 3000, 'right')
+                tablePerInEg();
+                $('#altahistorial').modal('hide')
+            }).catch(error => {
+                btnHisto2.disabled = false
+                btnHisto2.innerHTML = 'Aceptar'
+                console.error('Error:', error);
+            });
+
+        }, false)
+    });
+    /** ALTA PERSONAL PREMIOS */
     $('#altapremios').on('hidden.bs.modal', function (e) {
         $("#alerta_premios").addClass("d-none");
         $("#btnPremios").html('Aceptar');
@@ -1373,11 +904,10 @@ $(document).ready(function () {
         $('.selectjs_premios').val(null).trigger("change");
     })
 
-    $(".form-premios").bind("submit", function () {
-        event.preventDefault();
+    $(".form-premios").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1388,7 +918,7 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok") {
-                    $('#Perpremio').DataTable().ajax.reload();
+                    tablePerPremio();
                     $("#alerta_premios").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_premios").html("Se agregó correctamente.!");
                     $(".mensaje_premios").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1398,7 +928,7 @@ $(document).ready(function () {
                     $('#altapremios').modal('hide');
 
                 } else if (data.status == "existe") {
-                    $('#Perpremio').DataTable().ajax.reload();
+                    tablePerPremio();
                     $("#alerta_premios").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_premios").html("¡Ya existe!");
                     $(".mensaje_premios").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1406,7 +936,7 @@ $(document).ready(function () {
                     $("#btnPremios").prop('disabled', false);
                     // $('#ConvVaca').DataTable().ajax.reload();
                 } else {
-                    $('#Perpremio').DataTable().ajax.reload();
+                    tablePerPremio();
                     $("#alerta_premios").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_premios").html("¡Error!");
                     $(".mensaje_premios").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1417,36 +947,33 @@ $(document).ready(function () {
             }
         });
     });
-});
-/** BORARR PERSONAL PREMIOS*/
-$(document).on('click', '.delete_perpremi', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var DelLPreLega = $(this).attr('data');
-    var DelLPreCodi = $(this).attr('data2');
-    var DelPerPremi = $(this).attr('data3');
+    /** BORRAR PERSONAL PREMIOS*/
+    $(document).on('click', '.delete_perpremi', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        var DelLPreLega = $(this).attr('data');
+        var DelLPreCodi = $(this).attr('data2');
+        var DelPerPremi = $(this).attr('data3');
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            DelLPreLega,
-            DelLPreCodi,
-            DelPerPremi
-        },
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                DelLPreLega,
+                DelLPreCodi,
+                DelPerPremi
+            },
 
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#Perpremio').DataTable().ajax.reload();
-            } else {
-                $('#Perpremio').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    tablePerPremio();
+                } else {
+                    tablePerPremio();
+                }
             }
-        }
+        });
     });
-});
-
-/** ALTA PERSONAL OTROS CONCEPTOS */
-$(document).ready(function () {
+    /** ALTA PERSONAL OTROS CONCEPTOS */
     $('#altaconceptos').on('hidden.bs.modal', function (e) {
         $("#alerta_conceptos").addClass("d-none");
         $("#btnconceptos").html('Aceptar');
@@ -1455,11 +982,10 @@ $(document).ready(function () {
         $('#OTROConValor').val(null);
     })
 
-    $(".form-otrosconleg").bind("submit", function () {
-        event.preventDefault();
+    $(".form-otrosconleg").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1470,7 +996,7 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok") {
-                    $('#OtrosConLeg').DataTable().ajax.reload();
+                    tableOtrosConLeg();
                     $("#alerta_conceptos").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_conceptos").html("Se agregó correctamente.!");
                     $(".mensaje_conceptos").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1480,7 +1006,7 @@ $(document).ready(function () {
                     $('#altaconceptos').modal('hide');
 
                 } else if (data.status == "existe") {
-                    $('#OtrosConLeg').DataTable().ajax.reload();
+                    tableOtrosConLeg();
                     $("#alerta_conceptos").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_conceptos").html("¡Ya existe!");
                     $(".mensaje_conceptos").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1488,7 +1014,7 @@ $(document).ready(function () {
                     $("#btnconceptos").prop('disabled', false);
                     // $('#ConvVaca').DataTable().ajax.reload();
                 } else {
-                    $('#OtrosConLeg').DataTable().ajax.reload();
+                    tableOtrosConLeg();
                     $("#alerta_conceptos").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_conceptos").html("¡Error!");
                     $(".mensaje_conceptos").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1498,37 +1024,33 @@ $(document).ready(function () {
             }
         });
     });
-});
+    /** BORRAR PERSONAL OTROS CONCEPTOS*/
+    $(document).on('click', '.delete_otrosconleg', function (e) {
+        e.preventDefault();
+        // var parent = $(this).parent().parent().attr('id');
+        var OTROConLega = $(this).attr('data');
+        var OTROConCodi = $(this).attr('data2');
+        var DelOtroConLeg = $(this).attr('data3');
 
-/** BORARR PERSONAL OTROS CONCEPTOS*/
-$(document).on('click', '.delete_otrosconleg', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var OTROConLega = $(this).attr('data');
-    var OTROConCodi = $(this).attr('data2');
-    var DelOtroConLeg = $(this).attr('data3');
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                OTROConLega,
+                OTROConCodi,
+                DelOtroConLeg
+            },
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            OTROConLega,
-            OTROConCodi,
-            DelOtroConLeg
-        },
-
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#OtrosConLeg').DataTable().ajax.reload();
-            } else {
-                $('#OtrosConLeg').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    tableOtrosConLeg();
+                } else {
+                    tableOtrosConLeg();
+                }
             }
-        }
+        });
     });
-});
-
-/** ALTA PERSONAL HORARIO ALTERNATIVO */
-$(document).ready(function () {
+    /** ALTA PERSONAL HORARIO ALTERNATIVO */
     $('#altahorarioal').on('hidden.bs.modal', function (e) {
         $("#alerta_horarioal").addClass("d-none");
         $("#btnhorarioal").html('Aceptar');
@@ -1537,11 +1059,10 @@ $(document).ready(function () {
         $('#OTROConValor').val(null);
     })
 
-    $(".form-PerHoAl").bind("submit", function () {
-        event.preventDefault();
+    $(".form-PerHoAl").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1552,7 +1073,7 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok") {
-                    $('#PerHoAlt').DataTable().ajax.reload();
+                    tablePerHoAlt();
                     $("#alerta_horarioal").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_horarioal").html("Se agregó correctamente.!");
                     $(".mensaje_horarioal").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1562,7 +1083,7 @@ $(document).ready(function () {
                     $('#altahorarioal').modal('hide');
 
                 } else if (data.status == "existe") {
-                    $('#PerHoAlt').DataTable().ajax.reload();
+                    tablePerHoAlt();
                     $("#alerta_horarioal").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_horarioal").html("¡Ya existe!");
                     $(".mensaje_horarioal").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1570,7 +1091,7 @@ $(document).ready(function () {
                     $("#btnhorarioal").prop('disabled', false);
                     // $('#ConvVaca').DataTable().ajax.reload();
                 } else {
-                    $('#PerHoAlt').DataTable().ajax.reload();
+                    tablePerHoAlt();
                     $("#alerta_horarioal").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_horarioal").html("¡Error!");
                     $(".mensaje_horarioal").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1580,37 +1101,32 @@ $(document).ready(function () {
             }
         });
     });
-});
+    /** BORRAR PERSONAL HORARIO ALTERNATIVO*/
+    $(document).on('click', '.delete_perhoalt', function (e) {
+        e.preventDefault();
+        var LeHALega = $(this).attr('data');
+        var LeHAHora = $(this).attr('data2');
+        var DelPerHoAl = $(this).attr('data3');
 
-/** BORARR PERSONAL HORARIO ALTERNATIVO*/
-$(document).on('click', '.delete_perhoalt', function (e) {
-    e.preventDefault();
-    // var parent = $(this).parent().parent().attr('id');
-    var LeHALega = $(this).attr('data');
-    var LeHAHora = $(this).attr('data2');
-    var DelPerHoAl = $(this).attr('data3');
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                LeHALega,
+                LeHAHora,
+                DelPerHoAl
+            },
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            LeHALega,
-            LeHAHora,
-            DelPerHoAl
-        },
-
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#PerHoAlt').DataTable().ajax.reload();
-            } else {
-                $('#PerHoAlt').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    tablePerHoAlt();
+                } else {
+                    tablePerHoAlt();
+                }
             }
-        }
+        });
     });
-});
-
-/** ALTA IDENTIFICA */
-$(document).ready(function () {
+    /** ALTA IDENTIFICA */
     $('#altaidentifica').on('hidden.bs.modal', function (e) {
         $("#alerta_identifica").addClass("d-none");
         $("#btnidentifica").html('Aceptar');
@@ -1622,7 +1138,6 @@ $(document).ready(function () {
         e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1634,7 +1149,7 @@ $(document).ready(function () {
             success: function (data) {
                 $.notifyClose();
                 if (data.status == "ok") {
-                    $('#Identifica-table').DataTable().ajax.reload();
+                    tableIdentifica();
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_identifica").html("Se agregó correctamente.!");
                     $(".mensaje_identifica").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1645,7 +1160,7 @@ $(document).ready(function () {
                     notify('Datos guardados correctamente<br>' + data.dato, 'success', 3000, 'right')
 
                 } else if (data.status == "existe") {
-                    $('#Identifica-table').DataTable().ajax.reload();
+                    tableIdentifica();
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_identifica").html("¡Ya existe!");
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1653,7 +1168,7 @@ $(document).ready(function () {
                     $("#btnidentifica").prop('disabled', false);
                     notify(data.dato, 'info', 3000, 'right')
                 } else {
-                    $('#Identifica-table').DataTable().ajax.reload();
+                    tableIdentifica();
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_identifica").html("¡Error!");
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1664,43 +1179,38 @@ $(document).ready(function () {
             }
         });
     });
-});
+    /** BORRAR IDENTIFICA*/
+    $(document).on('click', '.delete_identifica', function (e) {
+        e.preventDefault();
+        const IDCodigo = $(this).attr('data');
+        const IDLegajo = $(this).attr('data2');
+        const DelIdentifica = $(this).attr('data3');
 
-/** BORARR IDENTIFICA*/
-$(document).on('click', '.delete_identifica', function (e) {
-    e.preventDefault();
-    var IDCodigo = $(this).attr('data');
-    var IDLegajo = $(this).attr('data2');
-    var DelIdentifica = $(this).attr('data3');
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                IDCodigo,
+                IDLegajo,
+                DelIdentifica
+            },
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            IDCodigo,
-            IDLegajo,
-            DelIdentifica
-        },
-
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#Identifica-table').DataTable().ajax.reload();
-            } else {
-                $('#Identifica-table').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    tableIdentifica();
+                } else {
+                    tableIdentifica();
+                }
             }
-        }
+        });
     });
-});
-
-/** UPDATE GRUPO CAPTURADORES */
-$(document).ready(function () {
-    // $(document).on('click', '#grupocapt', function (e) {
+    /** UPDATE GRUPO CAPTURADORES */
     $('.selectjs_grupocapt').on('select2:select', function (e) {
         e.preventDefault();
 
-        var LegajoGrHa = $('#LegajoGrHa').val()
-        var GrupoHabi = $('#GrupoHabi').val()
-        var LegGrHa2 = $('#LegGrHa2').val()
+        const LegajoGrHa = $('#LegajoGrHa').val()
+        const GrupoHabi = $('#GrupoHabi').val()
+        const LegGrHa2 = $('#LegGrHa2').val()
 
         $.ajax({
             type: "POST",
@@ -1751,17 +1261,14 @@ $(document).ready(function () {
                     $("#btngrupocapt").prop('disabled', false);
 
                 } else {
-                    $('#GrupoCapt').DataTable().ajax.reload();
+                    tableGrupoCapt();
                     $("#btngrupocapt").html('Aceptar');
                     $("#btngrupocapt").prop('disabled', false);
                 }
             }
         });
     });
-});
-
-/** ALTA PERRelo */
-$(document).ready(function () {
+    /** ALTA PERRelo */
     $('#altaPerRelo').on('hidden.bs.modal', function (e) {
         $("#alerta_PerRelo").addClass("d-none");
         $("#btnPerRelo").html('Aceptar');
@@ -1770,11 +1277,10 @@ $(document).ready(function () {
         $('.selectjs_Relojes').val(null).trigger('change');
     })
 
-    $(".form-PerRelo").bind("submit", function () {
-        event.preventDefault();
+    $(".form-PerRelo").bind("submit", function (e) {
+        e.preventDefault();
         $.ajax({
             type: $(this).attr("method"),
-            contetnType: "application_json; charset=utf-8",
             url: $(this).attr("action"),
             data: $(this).serialize(),
             beforeSend: function (data) {
@@ -1785,7 +1291,7 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok") {
-                    $('#TablePerRelo').DataTable().ajax.reload();
+                    tablePerRelo();
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_PerRelo").html("Se agregó correctamente.!");
                     $(".mensaje_PerRelo").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1795,7 +1301,7 @@ $(document).ready(function () {
                     $('#altaPerRelo').modal('hide');
 
                 } else if (data.status == "existe") {
-                    $('#TablePerRelo').DataTable().ajax.reload();
+                    tablePerRelo();
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_PerRelo").html("¡Ya existe!");
                     $(".mensaje_PerRelo").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1803,7 +1309,7 @@ $(document).ready(function () {
                     $("#btnPerRelo").prop('disabled', false);
                     // $('#ConvVaca').DataTable().ajax.reload();
                 } else {
-                    $('#TablePerRelo').DataTable().ajax.reload();
+                    tablePerRelo();
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_PerRelo").html("¡Error!");
                     $(".mensaje_PerRelo").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1813,64 +1319,64 @@ $(document).ready(function () {
             }
         });
     });
-});
+    /** BORRAR PERRelo*/
+    $(document).on('click', '.delete_perrelo', function (e) {
+        e.preventDefault();
+        const RelRelo = $(this).attr('data');
+        const RelReMa = $(this).attr('data2');
+        const RelLega = $(this).attr('data3');
+        const DelPerrelo = $(this).attr('data4');
 
-/** BORARR PERRelo*/
-$(document).on('click', '.delete_perrelo', function (e) {
-    e.preventDefault();
-    var RelRelo = $(this).attr('data');
-    var RelReMa = $(this).attr('data2');
-    var RelLega = $(this).attr('data3');
-    var DelPerrelo = $(this).attr('data4');
+        $.ajax({
+            type: "POST",
+            url: "alta_opciones.php",
+            'data': {
+                RelRelo,
+                RelReMa,
+                RelLega,
+                DelPerrelo
+            },
 
-    $.ajax({
-        type: "POST",
-        url: "alta_opciones.php",
-        'data': {
-            RelRelo,
-            RelReMa,
-            RelLega,
-            DelPerrelo
-        },
-
-        success: function (data) {
-            if (data.status == "ok_delete") {
-                $('#TablePerRelo').DataTable().clear().draw().destroy();
-                $('#TablePerRelo').DataTable({
-                    "ajax": {
-                        url: "../../data/GetPerRelo.php",
-                        type: "GET",
-                        'data': {
-                            q2: LegNume,
-                        },
-                    },
-                    columns: [
-                        { "class": "align-middle ls1", "data": "Serie" },
-                        { "class": "align-middle ls1", "data": "Descrip" },
-                        { "class": "align-middle", "data": "Marca" },
-                        { "class": "align-middle ls1", "data": "Desde" },
-                        { "class": "align-middle ls1 fw4", "data": "Vence" },
-                        { "class": "align-middle text-center", "data": "eliminar" },
-                        { "class": "align-middle w-100", "data": "null" }
-                    ],
-                    paging: false,
-                    // scrollY: '40vh',
-                    scrollX: false,
-                    scrollCollapse: false,
-                    searching: false,
-                    info: false,
-                    ordering: false,
-                    language: {
-                        "url": "../../js/DataTableSpanish.json"
-                    },
-                });
-                // $('#altaPerRelo').DataTable().ajax.reload();
-            } else {
-                $('#altaPerRelo').DataTable().ajax.reload();
+            success: function (data) {
+                if (data.status == "ok_delete") {
+                    tablePerRelo();
+                } else {
+                    tablePerRelo();
+                }
             }
-        }
+        });
     });
+    const altaEstruct = (FormData, selectorForm, selectorSelect, selectorModal, btn) => {
+        const post = axios.post('../../app-data/estructuras/alta/', FormData);
+        post.then((rs) => {
+
+            $(btn).prop('disabled', true); // Deshabilitar botón
+
+            if (rs.data.MESSAGE != "OK") { // Si no es OK
+                notify(rs.data.MESSAGE, 'danger', 3000, 'right'); // Mostrar mensaje de error
+                return;
+            }
+
+            notify('Registro creado', 'success', 3000, 'right'); // Mostrar mensaje de exito
+            const Cod = rs.data.DATA.Cod ?? '';
+            const Desc = rs.data.DATA.Desc ?? '';
+            $(selectorForm)[0].reset(); // Limpiar formulario
+
+            if (Cod != '' && Desc != '') {
+                $(selectorSelect).val(null).trigger('change'); // Limpiar select
+                var newOption = new Option(Desc, Cod, true, true);
+                $(selectorSelect).append(newOption).trigger('change');
+                if (selectorSelect == '.selectjs_sectores') {
+                    $('.selectjs_secciones').val(null).trigger('change');
+                }
+            }
+            $(selectorModal).modal('hide');
+
+        }).catch((error) => {
+            notify('Error', 'danger', 3000, 'right'); // Mostrar mensaje de error
+            console.log(error);
+        }).finally(() => {
+            $(btn).prop('disabled', false); // Habilitar botón
+        });
+    }
 });
-//   window.onbeforeunload = function(e) {
-//     return 'Texto de avisosssss';
-//   };

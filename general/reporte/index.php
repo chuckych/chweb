@@ -60,7 +60,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
     $NombreArchivo2 = str_replace(' ', '_', $NombreArchivo2);
 
-
     $DateRange = explode(' al ', $_POST['_dr']);
     $FechaIni = test_input(dr_fecha($DateRange[0]));
     $FechaFin = test_input(dr_fecha($DateRange[1]));
