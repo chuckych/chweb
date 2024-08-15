@@ -1290,6 +1290,11 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     $AudHora = date('H:i:s');
     $AudZonaHoraria = '(UTC-03:00) Ciudad de Buenos Aires';
 
+    $VER_DB_CH = $_SESSION['VER_DB_CH']; // Ver_61_20230622
+    $VER_DB_CH = explode('_', $VER_DB_CH);
+    $VER_DB_CH = $VER_DB_CH[1] ?? 60;
+    // file_put_contents(__DIR__ . '/' . date('Ymd') . '_errorQueryMS.log', print_r($VER_DB_CH, true));
+
     $procedure_params = array(
         array(&$AudFech),
         array(&$AudHora),
@@ -1299,12 +1304,14 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
         array(&$AudTipo),
         array(&$AudDato),
         array(&$FechaHora),
-        array(&$AudZonaHoraria),
+        ($VER_DB_CH >= 70) ? array(&$AudZonaHoraria) : '',
     );
 
-    $sql = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?, @AudZonaHoraria=?";
-    $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
+    $execAuditor70 = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?, @AudZonaHoraria=?";
+    $execAuditor60 = "exec DATA_AUDITORInsert @AudFech=?,@AudHora=?,@AudUser=?,@AudTerm=?,@AudModu=?,@AudTipo=?,@AudDato=?,@FechaHora=?";
+    $sql = ($VER_DB_CH >= 70) ? $execAuditor70 : $execAuditor60;
 
+    $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
     if (!$stmt) {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
@@ -1316,6 +1323,7 @@ function audito_ch($AudTipo, $AudDato, $modulo = '')
     if (sqlsrv_execute($stmt)) {
         /** ejecuto la sentencia */
         $dataAud = array("auditor" => "ok");
+        // file_put_contents(__DIR__ . '/' . date('Ymd') . '_errorQueryMS.log', print_r($stmt, true));
         // echo json_encode($dataAud); 
         auditoria($AudDato, $AudTipo, '', $modulo); // insertamos en la tabla de auditoria de la base de datos mysql
     } else {
@@ -3512,7 +3520,7 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
 }
 function horarioApi($ent, $sal, $labo, $Feri)
 {
-    $h = $ent . ' a ' . $sal;
+    $h = $ent . ' a ' . $sal; // Horario de trabajo
     $h = ($labo == '0') ? 'Franco' : $h;
     $h = ($Feri == '1') ? 'Feriado' : $h;
     $h = ($Feri == '1' && $labo == '1') ? $ent . ' a ' . $sal : $h;
