@@ -297,7 +297,6 @@ $(function () {
             dt_getHorale2('#Horale2', asign['desde-hasta'] ?? [])
             dt_getRotacion('#table-rota', asign['rotacion'] ?? [])
             dt_getCitacion('#table-citacion', asign['citacion'] ?? [])
-            accionesMasivas(PERMISOS['aTur'], PERMISOS['aCit']);
         });
         return await tablePersonal;
     }
@@ -430,6 +429,7 @@ $(function () {
         dt_custom_search('.searchDesdeHasta', table)
     }
     const dt_getCitacion = async (selector, data) => { // Tabla de Citaciones
+        const PERMISOS = getAcciones();
         tableData4 = data; // almacena los datos en el ámbito exterior
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
@@ -595,9 +595,11 @@ $(function () {
         return `<'table-responsive table-hover pointer fadeIn't>`
     }
     const get_horarios = async () => {
-        await axios.get('../../app-data/horarios').then((response) => {
-            ls.set(LS_HORARIOS, response.data);
-        });
+        axios.get('../../app-data/horarios').then(async (response) => {
+            await ls.set(LS_HORARIOS, response.data);
+            accionesMasivas(response.data.acciones['aTur'], response.data.acciones['aCit']);
+        })
+
     }
     const get_horarios_asign = async (Legajo) => {
         if (!Legajo) return;
@@ -917,8 +919,8 @@ $(function () {
         const acciones = horarios.acciones ?? [];
         return acciones;
     }
-    const PERMISOS = getAcciones();
     const grillaHorarios2 = (row, fecha) => {
+        const PERMISOS = getAcciones();
 
         const Desc = row.Desc
         const Cod = row.Codi
@@ -1045,7 +1047,7 @@ $(function () {
         return grillaSemanaHtml
     }
     const grillaRotaciones2 = (row, fecha) => {
-
+        const PERMISOS = getAcciones();
         const RotDesc = row.RotDesc
         const RotCodi = row.RotCodi
         const RotData = row.RotData
@@ -1142,6 +1144,7 @@ $(function () {
         return div;
     }
     const accionesMasivas = (horarios, citacion) => {
+        // console.log(horarios, citacion);
         if (!horarios) {
             qs('.l_horale1').hidden = true;
             qs('.m_horale1').hidden = true;
@@ -1157,8 +1160,6 @@ $(function () {
             qs('[aria-controls="collapseMasivos"]').hidden = true;
         }
     }
-    accionesMasivas(PERMISOS['aTur'], PERMISOS['aCit']);
-
     const remove_tr_selected = (selector) => {
         if (!selector) return;
         const tableBody = document.querySelector(selector);
@@ -1241,6 +1242,7 @@ $(function () {
     }
     const getModal = async (data) => {
         CheckSesion();
+        const PERMISOS = getAcciones();
 
         if ($(`${ID_MODAL}`).hasClass('show')) {
             return false;
@@ -1612,7 +1614,6 @@ $(function () {
 
     }
     get_horarios();
-
     const autoCompletarInputsHora = (elements, ElementResult) => {
 
         if (!elements || !ElementResult) return;
