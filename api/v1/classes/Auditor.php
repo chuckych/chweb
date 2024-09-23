@@ -37,16 +37,15 @@ class Auditor
 
         $get_dbdata = $this->get_dbdata();
         $get_dbdata = $get_dbdata ? explode("_", $get_dbdata[0]['BDVersion']) : '';
-        $get_dbdata = intval($get_dbdata[1] ?? 60) ?? '';
+        $get_dbdata = intval($get_dbdata[1] ?? 60) ?? ''; // Ver_61_20230622
 
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora, :AudZonaHoraria)";
+            $sqlMas70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora, :AudZonaHoraria)";
+            $sqlMenos70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora)"; // se omite el campo AudZonaHoraria en la consulta
 
-            if ($get_dbdata < 70) { // Si la versión de la base de datos es menor a 70
-                $sql = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora"; // se omite el campo AudZonaHoraria en la consulta
-            }
+            $sql = $get_dbdata < 70 ? $sqlMenos70 : $sqlMas70;
 
             $totalAffectedRows = 0;
             $seconds = 0.0001;
@@ -63,7 +62,7 @@ class Auditor
                 $stmt->bindValue(':AudTipo', $dato['AudTipo'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudDato', $AudDato, \PDO::PARAM_STR);
                 $stmt->bindValue(':FechaHora', $dato['FechaHora'], \PDO::PARAM_STR);
-                ($get_dbdata < 70) ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
+                $get_dbdata < 70 ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
                 $seconds += 0.0004;
                 $stmt->execute(); // Ejecuta la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Devuelve el número de filas afectadas por la última sentencia SQL
@@ -74,8 +73,8 @@ class Auditor
             }
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_HorariosDesde_' . ID_COMPANY . '.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_Auditor_' . ID_COMPANY . '.log');
+            // $this->resp->respuesta($datos, 0, $e->getMessage(), 400, $inicio, 0, 0);
         }
     }
 

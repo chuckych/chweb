@@ -832,7 +832,7 @@ $(function () {
 
             }).catch((error) => {
                 $.notifyClose();
-                notify(error.response.data.message ?? 'Error', 'danger', 5000, 'right');
+                notify(error, 'danger', 5000, 'right');
             });
 
         } catch (error) {

@@ -1,9 +1,0 @@
-2024-09-01 09:08:23 SQLSTATE[08S01]: [Microsoft][ODBC Driver 17 for SQL Server]Communication link failure
-2024-09-01 09:44:51 Call to a member function prepare() on null
-2024-09-01 09:45:43 Call to a member function prepare() on null
-2024-09-01 09:52:13 Call to a member function prepare() on null
-2024-09-01 09:52:34 Call to a member function prepare() on null
-2024-09-01 09:54:18 Call to a member function prepare() on null
-2024-09-01 09:54:44 Call to a member function prepare() on null
-2024-09-01 09:55:20 Call to a member function prepare() on null
-2024-09-01 12:16:05 Cannot modify header information - headers already sent by (output started at C:\Users\nch\OneDrive\Documentos\htdocs\chweb\api\v1\vendor\mikecao\flight\flight\net\Response.php:317)
