@@ -20,6 +20,7 @@
               "params": {
                 "overrides": {
                   "removeUnknownsAndDefaults": {
+                    "keepDataAttrs": false,
                     "keepRoleAttr": true
                   },
                   "removeViewBox": false
@@ -28,13 +29,11 @@
             },
             "cleanupListOfValues",
             "removeXMLNS",
-            "sortAttrs",
             {
               "name": "removeAttrs",
               "params": {
                 "attrs": [
                   "clip-rule",
-                  "data-name",
                   "fill"
                 ]
               }

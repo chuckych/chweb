@@ -17,9 +17,9 @@ if (session_status() == PHP_SESSION_NONE) {
 	]);
 }
 
-$_POST["guarda"] = $_POST["guarda"] ?? '';
+$guarda = $_POST["guarda"] ?? '';
 
-if ($_POST["guarda"] == "on") {
+if ($guarda == "on") {
 	##  GUARDAR COOKIE ## 
 	// setcookie("user", strtolower($_POST["user"]), time() + 3600 * 24 * 30);
 	setcookie('user', strtolower($_POST["user"]), [
@@ -44,8 +44,8 @@ if ($_POST["guarda"] == "on") {
 /** Consultamos el si el usuario y clave son correctos */
 // require __DIR__ . '../../config/conect_mysql.php';
 
-$userLogin = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
-$passLogin = (isset($_GET['conf'])) ? $_GET['conf'] : strip_tags($_POST['clave']);
+$userLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
+$passLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags($_POST['clave']);
 $userLogin = test_input($userLogin);
 $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);

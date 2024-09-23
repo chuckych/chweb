@@ -5,12 +5,13 @@
     <?php require __DIR__ . "../../../llamadas.php"; ?>
     <title><?= MODULOS['cuentas'] ?></title>
     <style>
-    .dtrg-level-0 td{
-        border-bottom: 1px solid #DEE2E6 !important;
-    }
-    thead{
-        display: none;
-    }
+        .dtrg-level-0 td {
+            border-bottom: 1px solid #DEE2E6 !important;
+        }
+
+        /* thead {
+            display: none;
+        } */
     </style>
 </head>
 
@@ -20,16 +21,15 @@
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <?=
-            encabezado_mod2('bg-custom', 'white', 'diagram-3-fill',  MODULOS['cuentas'], '25', 'text-white mr-2');
+        encabezado_mod2('bg-custom', 'white', 'diagram-3-fill',  MODULOS['cuentas'], '25', 'text-white mr-2');
         ?>
-            <div class="row mt-3">
-                <div class="col-12 col-sm-6">
-                    <table class="table table-borderless text-nowrap w-100 border p-sm-3" id="GetClientes">
-                        
-                    </table>
-                </div>
+        <div class="row mt-3">
+            <div class="col-12 col-sm-8">
+                <table class="table table-hover text-nowrap w-100 p-3" id="tableClientes">
+                </table>
             </div>
-            <?php require 'modalFormCuenta.html';?>
+        </div>
+        <?php require 'form.html'; ?>
         <!-- fin container -->
         <?php
         /** INCLUIMOS LIBRERÍAS JQUERY */
@@ -39,7 +39,8 @@
         <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../js/bootbox.min.js"></script>
         <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
-        <script src="data.js?v=<?=vjs()?>"></script>
+        <script src="clientes.js?<?= version_file("/usuarios/clientes/clientes.js") ?>"></script>
+
 </body>
 
 </html>

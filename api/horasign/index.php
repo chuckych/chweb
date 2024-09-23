@@ -13,7 +13,7 @@ $checkMethod('POST');
 
 $stmtHorarios = $dbApiQuery("SELECT HorCodi, HorDesc, HorID FROM HORARIOS") ?? '';
 
-function pingWebService($textError, $webService) // Funcion para validar que el Webservice de Control Horario esta disponible
+function pingWebService($textError, $webService) // Función para validar que el Webservice de Control Horario esta disponible
 {
     $url = rutaWebService($webService, "Ping?");
     $ch = curl_init(); // Inicializar el objeto curl

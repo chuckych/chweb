@@ -13,13 +13,15 @@ $Cliente = ExisteCliente($_GET['_c']);
             background-color: #ffffff;
             /* border-radius: 5px; */
         }
-        .dtrg-level-0 td{
+
+        .dtrg-level-0 td {
             padding-bottom: 0px;
             /* font-family: 'Montserrat-SemiBold'; */
             /* font-weight: 300 !important; */
             border-top: 1px solid #e3e3e3 !important;
         }
-        td{
+
+        td {
             border: 0px solid #e3e3e3 !important;
         }
     </style>
@@ -46,8 +48,8 @@ $Cliente = ExisteCliente($_GET['_c']);
         </div>
         <div class="row">
             <div class="col-12">
-            <?php $classSKF = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'w-auto text-nowrap':'w-100 text-wrap';?>
-                <table class="table border p-2 <?=$classSKF?>" id="GetRoles">
+                <?php $classSKF = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'w-auto text-nowrap' : 'w-100 text-wrap'; ?>
+                <table class="table border p-2 <?= $classSKF ?>" id="GetRoles">
                     <thead class="text-uppercase">
                         <tr>
                             <th>id</th>
@@ -60,13 +62,13 @@ $Cliente = ExisteCliente($_GET['_c']);
                             <th>modulos</th>
                             <th>Listas</th>
                             <th>abm</th>
-                            <?php $ocultar = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'style="display: none;"':'';?>
-                                <th><span <?=$ocultar ?> >empresas</span></th>
-                                <th><span <?=$ocultar ?> >plantas</span></th>
-                                <th><span <?=$ocultar ?> >convenios</span></th>
-                                <th><span <?=$ocultar ?> >sectores</span></th>
-                                <th><span <?=$ocultar ?> >grupos</span></th>
-                                <th><span <?=$ocultar ?> >sucursal</span></th>
+                            <?php $ocultar = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'style="display: none;"' : ''; ?>
+                            <th><span <?= $ocultar ?>>empresas</span></th>
+                            <th><span <?= $ocultar ?>>plantas</span></th>
+                            <th><span <?= $ocultar ?>>convenios</span></th>
+                            <th><span <?= $ocultar ?>>sectores</span></th>
+                            <th><span <?= $ocultar ?>>grupos</span></th>
+                            <th><span <?= $ocultar ?>>sucursal</span></th>
                             <th>fecha_alta</th>
                             <th>fecha_mod</th>
                             <th></th>
@@ -109,13 +111,13 @@ $Cliente = ExisteCliente($_GET['_c']);
     require __DIR__ . "../../../js/DataTable.php";
     ?>
     <script>
-        fetch('../clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == "Error") {
-                    notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 0, 'right')
-                }
-            });
+        // fetch('../clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status == "Error") {
+        //             notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 0, 'right')
+        //         }
+        //     });
     </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

@@ -17,11 +17,11 @@
                             <select class="form-control selectjs_Relojes w200" name="ReloMarca" id="ReloMarca">
                             </select>
                             <input type="hidden" name="PERRELO" value="true">
-                            <input type="hidden" name="RelLega" value="<?=$_GET['_leg']?>">
+                            <input type="hidden" name="RelLega" value="<?= $_GET['_leg'] ?>">
                         </div>
                         <div class="col-12 form-inline mt-2">
                             <label for="" class="mr-2 w80">Desde el: </label>
-                            <input class="form-control w200" value="<?=date('Y-m-d')?>" type="date" name="RelFech">
+                            <input class="form-control w200" value="<?= date('Y-m-d') ?>" type="date" name="RelFech">
                         </div>
                         <div class="col-12 form-inline mt-2">
                             <label for="" class="mr-2 w80">Vencimiento: </label>

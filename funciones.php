@@ -1462,6 +1462,54 @@ function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
     }
     $connpdo = null; // cierra la conexion
 }
+
+function auditoria_multiple($array, $AudMod)
+{
+    timeZone();
+
+    $values = [];
+    $params = [];
+    $index = 0;
+    foreach ($array as $value) {
+        $values[] = "(:id_sesion{$index} , :usuario{$index} , :nombre{$index} , :cuenta{$index} , :audcuenta{$index} , :fecha{$index} , :hora{$index} , :tipo{$index} , :dato{$index} , :modulo{$index})";
+
+        $params[":id_sesion{$index}"]   = $_SESSION['ID_SESION'];
+        $params[":usuario{$index}"]     = $_SESSION["user"] ?? 'Sin usuario';
+        $params[":nombre{$index}"]      = $_SESSION["NOMBRE_SESION"] ?? 'Sin nombre';
+        $params[":cuenta{$index}"]      = $_SESSION["ID_CLIENTE"] ?? '';
+        $params[":audcuenta{$index}"]   = $_SESSION["ID_CLIENTE"] ?? '';
+        $params[":fecha{$index}"]       = date("Y-m-d");
+        $params[":hora{$index}"]        = date("H:i:s");
+        $params[":tipo{$index}"]        = $value['AudTipo'] ?? 'Null';
+        $params[":dato{$index}"]        = trim($value['AudDato']) ?? 'No se especificaron datos';
+        $params[":modulo{$index}"]      = $AudMod ?? '';
+        $index++;
+    }
+
+    $valuesList = implode(',', $values);
+
+    // return $valuesList;
+
+    require __DIR__ . '/config/conect_pdo.php'; //Conexion a la base de datos
+    $connpdo->beginTransaction();
+    try {
+        $sql = "INSERT INTO auditoria( id_sesion, usuario, nombre, cuenta, audcuenta, fecha, hora, tipo, dato, modulo) VALUES $valuesList";
+        $stmt = $connpdo->prepare($sql); // prepara la consulta
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+        }
+        $stmt->execute();
+        $connpdo->commit(); // si todo salio bien, confirma la transacción
+        return true;
+    } catch (\Throwable $th) { // si hay error
+        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de exito
+        $connpdo->rollBack(); // revierte la transacción
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorAudito.log'; // ruta del archivo de Log
+        fileLog($th->getMessage() . "\n $message", $pathLog); // escribir en el log de errores
+    }
+    $connpdo = null; // cierra la conexion
+    return false;
+}
 function fecha_min_max($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
@@ -2665,7 +2713,7 @@ function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
     return $arrayFechas;
 }
 // Obtiene la version de la base de datos
-function getVerDBCH($link)
+function getVerDBCH_old($link)
 {
     $query = "SELECT * FROM DBData"; // Query
     $stmt = sqlsrv_query($link, $query); // Ejecución del query
@@ -2675,6 +2723,41 @@ function getVerDBCH($link)
     }
     sqlsrv_free_stmt($stmt); // Libera el query
     return $path; // Retorna el valor
+}
+function getVerDBCH($link)
+{
+    // Primero, verificamos si la tabla 'DBData' existe
+    $checkTableQuery = "IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'DBData') SELECT 1 ELSE SELECT 0";
+    $checkTableStmt = sqlsrv_query($link, $checkTableQuery);
+
+    if ($checkTableStmt === false) {
+        // Error al ejecutar la consulta
+        return false;
+    }
+
+    $tableExists = sqlsrv_fetch_array($checkTableStmt, SQLSRV_FETCH_NUMERIC)[0];
+    sqlsrv_free_stmt($checkTableStmt);
+
+    if (!$tableExists) {
+        // La tabla no existe
+        return false;
+    }
+
+    // Si la tabla existe, procedemos con la consulta original
+    $query = "SELECT * FROM DBData";
+    $stmt = sqlsrv_query($link, $query);
+
+    if ($stmt === false) {
+        // Error al ejecutar la consulta
+        return false;
+    }
+
+    $path = '';
+    while ($a = sqlsrv_fetch_array($stmt)) {
+        $path = $a['BDVersion'];
+    }
+    sqlsrv_free_stmt($stmt);
+    return $path;
 }
 function fileLog($text, $ruta_archivo, $type = false)
 {
@@ -2998,25 +3081,23 @@ function write_apiKeysFile()
     // $assoc = $assoc_arr;
 
     foreach ($assoc_arr as $key => $value) {
-        $assoc[] = (
-            array(
-                'idCompany' => $value['idCompany'],
-                'nameCompany' => $value['nameCompany'],
-                'recidCompany' => $value['recidCompany'],
-                'urlAppMobile' => $value['urlAppMobile'],
-                'apiMobileHRP' => $value['apiMobileHRP'],
-                'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
-                'hostCHWeb' => $value['hostCHWeb'],
-                'homeHost' => HOMEHOST,
-                'DBHost' => $value['hostDB'],
-                'DBUser' => $value['userDB'],
-                'DBPass' => $value['passDB'],
-                'DBName' => $value['DB'],
-                'DBAuth' => $value['authDB'],
-                'Token' => sha1($value['recidCompany']),
-                'WebServiceCH' => ($value['WebService']),
-            )
-        );
+        $assoc[] = [
+            'idCompany' => $value['idCompany'],
+            'nameCompany' => $value['nameCompany'],
+            'recidCompany' => $value['recidCompany'],
+            'urlAppMobile' => $value['urlAppMobile'],
+            'apiMobileHRP' => $value['apiMobileHRP'],
+            'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
+            'hostCHWeb' => $value['hostCHWeb'],
+            'homeHost' => HOMEHOST,
+            'DBHost' => $value['hostDB'],
+            'DBUser' => $value['userDB'],
+            'DBPass' => $value['passDB'],
+            'DBName' => $value['DB'],
+            'DBAuth' => $value['authDB'],
+            'Token' => sha1($value['recidCompany']),
+            'WebServiceCH' => ($value['WebService']),
+        ];
     }
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
     foreach ($assoc as $key => $elem) {
@@ -3072,15 +3153,11 @@ function getDataIni($url) // obtiene el json de la url
 function gethostCHWeb()
 {
     $token = sha1($_SESSION['RECID_CLIENTE']);
-    $iniData = (getDataIni(__DIR__ . './mobileApikey.php'));
-
+    $iniData = getDataIni(__DIR__ . './mobileApikey.php');
     foreach ($iniData as $v) {
         if ($v['Token'] == $token) {
-            $data = array(
-                $v
-            );
+            $data = [$v];
             return $data[0]['hostCHWeb'];
-            // break;
         }
     }
 };
@@ -3099,11 +3176,11 @@ function padLeft($str, $length, $pad = ' ')
  * @param {String} $key Property to sort by.
  * @param {Array} $data Array that stores multiple associative arrays.
  */
-function _group_by_keys($array, $keys = array())
+function _group_by_keys($array, $keys = [])
 {
-    if (($array)) {
-        $return = array();
-        $append = (count($keys) > 1 ? "_" : null);
+    if ($array) {
+        $return = [];
+        $append = (count($keys) > 1) ? "_" : null;
         foreach ($array as $val) {
             $final_key = "";
             foreach ($keys as $theKey) {
@@ -3120,7 +3197,7 @@ function _group_by_keys($array, $keys = array())
             $arrGroup3[] = $value2[0];
         }
     } else {
-        $arrGroup3[] = array();
+        $arrGroup3[] = [];
     }
     return $arrGroup3;
 }
@@ -3392,11 +3469,11 @@ function MSQuery($query)
 }
 function arrMSQuery($query)
 {
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query);
-    if (($stmt)) {
+    if ($stmt) {
         while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
             $registros[] = $r;
         }
@@ -3407,7 +3484,7 @@ function arrMSQuery($query)
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+                $data[] = ["status" => "error", "dato" => $mensaje[3]];
                 $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
                 fileLog(PHP_EOL . 'Message: ' . json_encode($mensaje, JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
             }

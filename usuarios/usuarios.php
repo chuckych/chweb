@@ -91,16 +91,16 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     require __DIR__ . "../../js/DataTable.php";
     ?>
     <script>
-        fetch('clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status == "Error") {
-                    setTimeout(() => {
-                        notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?=$Cliente?></strong>', 'warning', 5000, 'right')
-                    }, 1000);
-                    $('#btnImportar').hide()
-                }
-            });
+        // fetch('clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         if (data.status == "Error") {
+        //             setTimeout(() => {
+        //                 notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 5000, 'right')
+        //             }, 1000);
+        //             $('#btnImportar').hide()
+        //         }
+        //     });
     </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

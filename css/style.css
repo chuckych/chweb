@@ -301,6 +301,10 @@
      font-size: .7rem !important
  }
 
+ .font06 {
+     font-size: .6rem !important
+ }
+
  .fontq {
      font-size: .8rem !important
  }
@@ -763,12 +767,20 @@
      height: 30px !important
  }
 
+ .h25 {
+     height: 25px !important
+ }
+
  .h20 {
      height: 20px !important
  }
 
  .h10 {
      height: 10px !important
+ }
+
+ .h5 {
+     height: 5px !important
  }
 
  .form-group {
@@ -887,6 +899,28 @@
      box-shadow: none !important;
      outline: 0 !important;
      height: 35px !important
+ }
+
+ .search-input {
+     -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+     appearance: none !important;
+
+     ::-webkit-search-cancel-button {
+         display: none;
+     }
+
+     ::-webkit-search-decoration {
+         display: none;
+     }
+
+     ::-ms-clear {
+         display: none;
+     }
+
+     ::-ms-reveal {
+         display: none;
+     }
  }
 
  input[type=checkbox] {
@@ -1163,7 +1197,7 @@
  }
 
  table.dataTable tbody>tr.selected, table.dataTable tbody>tr>.selected {
-     background-color: #efefef !important;
+     background-color: #c9c8c8 !important;
  }
 
  table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
@@ -1313,14 +1347,30 @@
      box-shadow: 0px 0px 0px 0px var(--main-bg-modcolor) !important;
  }
 
+ .btn-outline-custom.custom-white {
+     background-color: #fff !important;
+ }
+
  .table-custom, .table-custom>td, .table-custom>th {
      background-color: var(--main-bg-modcolor);
  }
+
+ /* 
+ .table-active {
+     background-color: #fafafa !important;
+ } */
 
  .btn-outline-custom:hover {
      color: #fff !important;
      background-color: var(--main-bg-modcolor);
      border-color: var(--main-bg-modcolor);
+     box-shadow: 0px 0px 0px 0px var(--main-bg-modcolor) !important;
+ }
+
+ .btn-outline-custom.custom-white:hover {
+     color: #fff !important;
+     background-color: var(--main-bg-modcolor) !important;
+     border-color: var(--main-bg-modcolor) !important;
      box-shadow: 0px 0px 0px 0px var(--main-bg-modcolor) !important;
  }
 
@@ -1824,4 +1874,50 @@
 
  .hide {
      opacity: 0;
+ }
+
+ .fadeIn {
+     animation: fadeIn 0.5s ease-in-out;
+ }
+
+ .fadeInUp {
+     animation: fadeInUp 0.5s ease-in-out;
+ }
+
+ @keyframes fadeInDown {
+     0% {
+         opacity: 0;
+         transform: translateY(-20px);
+     }
+
+     100% {
+         opacity: 1;
+         transform: translateY(0);
+     }
+ }
+
+ .fadeInDown {
+     animation-name: fadeInDown;
+     animation-duration: 0.5s;
+     animation-timing-function: ease-in-out;
+     animation-fill-mode: both;
+ }
+
+ @keyframes fadeInLeft {
+     0% {
+         opacity: 0;
+         transform: translateX(-20px);
+     }
+
+     100% {
+         opacity: 1;
+         transform: translateX(0);
+     }
+ }
+
+ .fadeInLeft {
+     animation-name: fadeInLeft;
+     animation-duration: 0.7s;
+     animation-timing-function: ease-in-out;
+     animation-fill-mode: both;
  }

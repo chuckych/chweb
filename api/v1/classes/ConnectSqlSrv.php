@@ -4,51 +4,44 @@ namespace Classes;
 
 // use Classes\DataCompany;
 use Classes\Log;
+use Classes\InputValidator;
+use Classes\Tools;
+use Classes\Response;
+
+
+use Flight;
+// use Classes\Response;
+
 
 class ConnectSqlSrv
 {
     private $conn;
-    // private $dataCompany;
-
     private $log;
-
+    private $mapDB;
+    private $tools;
+    private $resp;
     public function __construct()
     {
-        $this->log = new Log; // Instancia de la clase Log
-
-        // $this->dataCompany = new DataCompany; // Instancia de la clase dataCompany
-        // $dataCompany = $this->dataCompany->get(); // Obtiene los datos de la empresa y valida el token
-
-        $db = $_SESSION['DataCompany']['DBName']; // Nombre de la base de datos
-        $user = $_SESSION['DataCompany']['DBUser']; // Usuario de la base de datos
-        $pass = $_SESSION['DataCompany']['DBPass']; // Contraseña de la base de datos
-        $serverName = $_SESSION['DataCompany']['DBHost']; // Host de la base de datos
-
-        try { // Intenta conectar a la base de datos
-            if (!$serverName) {
-                throw new \PDOException("No hay datos del servidor SQL");
+        $this->log  = new Log; // Instancia de la clase Log
+        // $this->resp = new Response;
+        $this->mapDB = [
+            'DBHost' => getenv('DB_HOST') !== false ? getenv('DB_HOST') : '', // Servidor de la base de datos
+            'DBUser' => getenv('DB_USER') !== false ? getenv('DB_USER') : '', //
+            'DBPass' => getenv('DB_PASS') !== false ? getenv('DB_PASS') : '', //
+            'DBName' => getenv('DB_NAME') !== false ? getenv('DB_NAME') : '' //
+        ];
+        $this->conn = $this->conn();
+        $this->check_data_connection($this->mapDB);
+    }
+    private function check_data_connection($mapDB = [])
+    {
+        if (!$mapDB) {
+            throw new \PDOException("No hay datos de conexión a la base de datos", 400);
+        }
+        foreach ($mapDB as $key => $value) {
+            if (empty($value)) {
+                throw new \PDOException("No hay datos de {$key}", 400);
             }
-            if (!$db) {
-                throw new \PDOException("No hay de base de datos SQL");
-            }
-            if (!$user) {
-                throw new \PDOException("No hay datos de usuario SQL");
-            }
-            if (!$pass) {
-                throw new \PDOException("No hay datos de contraseña SQL");
-            }
-            // file_put_contents('conect_sql.log', "serverName: {$serverName} - db: {$db} - user: {$user} - pass: {$pass}");
-            $this->conn = new \PDO( // Instancia de la clase PDO
-                "sqlsrv:server=$serverName;Database=$db", // DSN
-                $user,
-                $pass,
-                [
-                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
-                ]
-            );
-        } catch (\PDOException $e) {
-            $this->log->write(($e->getMessage()), date('Ymd') . '_sqlsr_connect_' . ID_COMPANY . '.log');
-            throw new \PDOException($e->getMessage(), (int) $e->getCode());
         }
     }
     /** 
@@ -57,7 +50,75 @@ class ConnectSqlSrv
      */
     public function conn()
     {
-        return $this->conn;
+        try { // Intenta conectar a la base de datos
+
+            // file_put_contents('conect_sql.log', "serverName: {$serverName} - db: {$db} - user: {$user} - pass: {$pass}");
+            $conectar = new \PDO( // Instancia de la clase PDO
+                "sqlsrv:server={$this->mapDB['DBHost']};Database={$this->mapDB['DBName']}", // DSN
+                $this->mapDB['DBUser'],
+                $this->mapDB['DBPass'],
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                ]
+            );
+        } catch (\PDOException $e) {
+            $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
+            $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_connect_' . $idCompany . '.log');
+            throw new \Exception($e->getMessage(), (int) $e->getCode());
+        }
+        return $conectar;
+    }
+    public function test_connect()
+    {
+        $inicio = microtime(true); // Inicio del script
+
+        $rules = [ // Reglas de validación
+            'DBHost' => ['required', 'varchar100'],
+            'DBName' => ['required', 'varchar100'],
+            'DBUser' => ['required', 'varchar100'],
+            'DBPass' => ['varchar100'],
+        ];
+        $customValueKey = [ // Valores por defecto
+            'DBHost' => "",
+            'DBName' => "",
+            'DBUser' => "",
+            'DBPass' => "",
+        ];
+        $this->tools = new Tools;
+
+        $data = Flight::request()->data->getData();
+        $datos = $this->tools->validar_datos($data, $rules, $customValueKey, 'test_connect');
+        $this->resp = new Response;
+        try { // Intenta conectar a la base de datos
+            $conectar = new \PDO( // Instancia de la clase PDO
+                "sqlsrv:server={$this->mapDB['DBHost']};Database={$datos['DBName']}", // DSN
+                $datos['DBUser'],
+                $datos['DBPass'],
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+                ]
+            );
+
+            $sql = "SELECT @@VERSION";
+            $stmt = $conectar->prepare($sql);
+            $stmt->execute();
+            $rs = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $versionStr = array_values($rs)[0];
+            $info = [
+                // 'SQLServerVersion' => $conectar->getAttribute(\PDO::ATTR_SERVER_VERSION),
+                'SQLServerName' => $conectar->getAttribute(\PDO::ATTR_SERVER_INFO),
+                // 'DriverName' => $conectar->getAttribute(\PDO::ATTR_DRIVER_NAME),
+                // 'ClientVersion' => $conectar->getAttribute(\PDO::ATTR_CLIENT_VERSION),
+                'VersionStr' => $versionStr
+            ];
+            $stmt = null;
+            $conectar = null;
+            $this->resp->respuesta($info, 1, 'OK', 200, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
+            $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_test_connect_' . $idCompany . '.log');
+            throw new \PDOException($e->getMessage(), (int) $e->getCode());
+        }
     }
     public function close($conn)
     {
@@ -78,7 +139,7 @@ class ConnectSqlSrv
      * );
      * $resultSet = $this->conect->executeQuery($sql, $params);
      */
-    public function executeQueryWhithParams($sql, $params = array())
+    public function executeQueryWhithParams($sql, $params = [])
     {
         try {
             $stmt = $this->conn->prepare($sql);
@@ -100,14 +161,15 @@ class ConnectSqlSrv
 
             $stmt->execute();
 
-            $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
             $stmt = null;
             $this->conn = null;
 
             return $resultSet;
         } catch (\PDOException $e) {
-            $this->log->write(($e->getMessage()), date('Ymd') . '_executeQuery_' . ID_COMPANY . '.log');
+            $this->log->write($e->getMessage(), date('Ymd') . '_executeQuery_' . ID_COMPANY . '.log');
+            throw new \PDOException($e->getMessage(), (int) $e->getCode());
         }
     }
 
@@ -131,7 +193,7 @@ class ConnectSqlSrv
      * );
      * $resultSet = $this->conect->executeQueryWithCondition('SELECT * FROM FICHAS1', $conditions, $params);
      */
-    public function executeQueryWithCondition($sql, $conditions = array(), $params = array())
+    public function executeQueryWithCondition($sql, $conditions = [], $params = [])
     {
         try {
             // Construye la parte WHERE de la consulta
@@ -172,11 +234,53 @@ class ConnectSqlSrv
             throw new \PDOException($e->getMessage(), (int) $e->getCode());
         }
     }
-    public function FechaHora()
+    /**
+     * Retorna la fecha y hora actual en la zona horaria especificada.
+     *
+     * @param string $timezone La zona horaria a utilizar. Por defecto 'America/Argentina/Buenos_Aires'.
+     * @return string La fecha y hora actual en el formato 'YYYYMMDD HH:MM:SS.mmm'.
+     */
+    public function FechaHora($timezone = 'America/Argentina/Buenos_Aires'): string
     {
-        date_default_timezone_set('America/Argentina/Buenos_Aires');
+        date_default_timezone_set($timezone);
         $t = explode(" ", microtime());
         $t = date("Ymd H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
-        return $t;
+        return $t ?? '';
+    }
+    public function Fecha($format = "Y-m-d", $timezone = 'America/Argentina/Buenos_Aires'): string
+    {
+        date_default_timezone_set($timezone);
+        $t = date($format);
+        return $t ?? '';
+    }
+    public function hora($timezone = 'America/Argentina/Buenos_Aires'): string
+    {
+        date_default_timezone_set($timezone);
+        $t = date("H:i:s");
+        return $t ?? '';
+    }
+    public function fn_aud_tipo($tipo)
+    {
+        switch ($tipo) {
+            case 'alta':
+                return 'A';
+            case 'baja':
+                return 'B';
+            case 'modificación':
+                return 'M';
+            case 'proceso':
+                return 'P';
+            default:
+                return '';
+        }
+    }
+    public function check_connection($connDB = '')
+    {
+        $connect = !empty($connDB) ? $connDB : $this->conn; // Si se proporciona una conexión, la utiliza, de lo contrario, utiliza la conexión actual
+
+        if (!$connect) {
+            throw new \Exception("No hay conexión a la base de datos", 400);
+        }
+        return $connect;
     }
 }

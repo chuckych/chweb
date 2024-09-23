@@ -1,0 +1,124 @@
+<!-- Modal -->
+<div class="modal" id="modalAsign" tabindex="-1" aria-labelledby="modalAsignLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable" style="max-width:650px">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0 bg-white">
+                <div class="d-flex flex-column w-100">
+                    <div class="modal-title"></div>
+                    <div class="modal-title-horario font08 px-3 border-0 radius"></div>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="modal-body p-0 bg-white shadow-sm" id="modalAsignBody">
+                <div class="p-3">
+                    <div class="sticky-top bg-white">
+                        <span class="label-fecha">
+                            <span class="divFecha">
+                                <div class="d-inline-flex w-100 pb-3" style="gap: 10px;">
+                                    <label class="font08 d-inline-flex align-items-center m-0 bg-ddd radius border">
+                                        <span class="mx-2 w50">Fecha:</span>
+                                        <input type="text" class="form-control text-center h40 w220 border-0 radius-0"
+                                            name="FDesde" id="inputH1FDesde">
+                                    </label>
+                                    <div id="divPeriodo" hidden>
+                                        <div class="hint--bottom hint--no-shadow radius h40 hint--info d-flex align-items-center ml-2"
+                                            aria-label="Cargar periodo de fechas">
+                                            <div class="custom-control custom-switch float-right">
+                                                <input type="checkbox" class="custom-control-input" name="Periodo"
+                                                    id="Periodo">
+                                                <label class="custom-control-label" for="Periodo"
+                                                    style="padding-top: 3px;">
+                                                    Periodo</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+                        </span>
+                        <div id="divDias" class="pb-3 mt-n2" style="display: none;">
+                            <span class="hint--right hint--no-shadow hint--info mt-1"
+                                aria-label="Día de inicio en la rotación">
+                                <label class="font08 d-inline-flex align-items-center m-0 bg-ddd radius border">
+                                    <span class="mx-2 w40">Día:</span>
+                                    <input type="number" min="1"
+                                        class="form-control text-center h40 w150 border-0 radius-0" name="FDias"
+                                        id="inputH1FDias" value="1" max="99">
+                                </label>
+                            </span>
+                        </div>
+                        <div class="HorarioEdit font08 mt-n2"></div>
+                        <div class="border w-100 shadow-sm my-3"></div>
+                        </span>
+                        <div id="inputCitacion" style="display: none;" class="mt-2 table-responsive">
+                            <table class="table table-sm w-auto font08 text-center table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Entrada
+                                        </th>
+                                        <th>
+                                            Salida
+                                        </th>
+                                        <th>
+                                            Descanso
+                                        </th>
+                                        <th>
+                                            Horas
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <input type="text" class="form-control text-center h40 w70 border radius"
+                                                id="inputH1FCitaEntra" placeholder="00:00" maxlength="5">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control text-center h40 w70 border radius"
+                                                id="inputH1FCitaSale" placeholder="00:00" maxlength="5">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control text-center h40 w70 border radius"
+                                                id="inputH1FCitaDesc" placeholder="00:00" maxlength="5">
+                                        </td>
+                                        <td>
+                                            <input type="text" disabled
+                                                class="form-control text-center h40 w70 border radius"
+                                                id="inputH1FCitaHoras" placeholder="00:00" maxlength="5">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <span class="d-none">
+                        <label class="font08">Horario:</label>
+                        <div class="d-inline-flex align-items-center w-100">
+                            <input type="tel" class="form-control w80 text-center h40" name="Codhor" readonly
+                                id="inputH1Codhor">
+                            <input type="text" class="form-control w-100 h40 ml-1" readonly id="inputH1horario">
+                        </div>
+                    </span>
+                    <div class="w-100 table-responsive pt-2" id="divtableHorarios"></div>
+                </div>
+            </div>
+            <div class="modal-footer bg-ddd">
+                <span class="btn-procesar">
+                    <div class="hint--left hint--no-shadow radius h40 hint--info opa9 d-flex align-items-center justify-content-center"
+                        aria-label="Procesar luego de asignar">
+                        <div class="custom-control custom-switch float-right">
+                            <input type="checkbox" class="custom-control-input" name="Procesar" id="Procesar">
+                            <label class="custom-control-label" for="Procesar"
+                                style="padding-top: 3px;">Procesar</label>
+                        </div>
+                    </div>
+                </span>
+                <button type="button" class="btn btn-light font08 h40 border radius"
+                    data-dismiss="modal">Cerrar</button>
+                <button type="button" id="submit" class="btn btn-custom px-5 font08 h40" disabled>Ingresar</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -76,7 +76,9 @@ class Response
             $ua->browserVersion();
             $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
         }
-        $nameLog = date('Ymd') . '_request_' . ID_COMPANY . '.log'; // path Log Api
+        // si ID_COMPANY no esta definido
+        $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
+        $nameLog = date('Ymd') . '_request_' . $idCompany . '.log'; // path Log Api
         /** start text log*/
         $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
         /** end text log*/
@@ -172,6 +174,7 @@ class Response
     }
     function notFound()
     {
-        $this->respuesta('', 0, 'Not Found', 404, 0, 0, 0);
+        $text = 'Not Found /v1' . Flight::request()->url . '. Method: ' . Flight::request()->method;
+        $this->respuesta([], 0, $text, 404, 0, 0, 0);
     }
 }

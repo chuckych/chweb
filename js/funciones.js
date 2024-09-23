@@ -513,24 +513,25 @@ function Select2Value(id, text, selector) {
         $(selector).append(newOption).trigger('change');
     }
 }
-function CheckUncheck(selector_check, selector_uncheck, selectorcheckbox, classactive) {
-    $(selector_check).click(function (e) {
-        $(selectorcheckbox).prop('checked', true)
-        $(selectorcheckbox).parents('tr').addClass('table-active')
+function CheckUncheck(selectorCheck, selectorUncheck, selectorCheckbox, classActive) {
+    $(selectorCheck).click(function (e) {
+        $(selectorCheckbox).prop('checked', true)
+        $(selectorCheckbox).parents('tr').addClass('table-active')
     });
-    $(selector_uncheck).click(function (e) {
-        $(selectorcheckbox).prop('checked', false)
-        $(selectorcheckbox).parents('tr').removeClass('table-active')
+    $(selectorUncheck).click(function (e) {
+        $(selectorCheckbox).prop('checked', false)
+        $(selectorCheckbox).parents('tr').removeClass('table-active')
     });
 }
-function singleDatePicker(selector, opens, drop, maxDate = '') {
+function singleDatePicker(selector, opens, drop, maxDate = '', autoUpdateInput = true, autoApply = false) {
     $(selector).attr('autocomplete', 'off')
     $(selector).daterangepicker({
         singleDatePicker: true,
         opens: opens,
         drops: drop,
-        autoUpdateInput: true,
-        autoApply: false,
+        showDropdowns: true,
+        autoUpdateInput: autoUpdateInput,
+        autoApply: autoApply,
         buttonClasses: "btn btn-sm fontq",
         applyButtonClasses: "btn-custom fw4 px-3 opa8",
         cancelClass: "btn-link fw4 text-gris",
@@ -650,7 +651,11 @@ function dobleDatePickerAuto(selector, opens, drop) {
         },
     });
 }
-function CheckSesion() {
+function CheckSesion(e = null) {
+    if (e) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+    }
 
     let _homehost = document.getElementById('_homehost')
 
@@ -935,4 +940,155 @@ const loaderIn = (selector, state) => {
     } else {
         $(selector).removeClass('loader-in')
     }
+}
+const notifyWait = (text) => {
+    if (!text) text = 'Aguarde <span class = "dotting mr-1"> </span> ';
+    return notify(text, 'info', 0, 'right');
+}
+function memoize(fn) {
+    const cache = new Map();
+    return function (...args) {
+        const key = JSON.stringify(args);
+        if (cache.has(key)) {
+            return cache.get(key);
+        }
+        const result = fn.apply(this, args);
+        cache.set(key, result);
+        return result;
+    }
+}
+const lenguaje_dt = (resultados = 'resultados') => {
+    const language = {
+        "sProcessing": "Actualizando . . .",
+        "sLengthMenu": "_MENU_",
+        "sZeroRecords": "",
+        "sEmptyTable": "",
+        "sInfo": "_START_ al _END_ de _TOTAL_ " + resultados,
+        "sInfoEmpty": "No se encontraron " + resultados,
+        "sInfoFiltered": "<br>(Filtrado de un total de _MAX_ " + resultados + ")",
+        "sInfoPostFix": "",
+        "sSearch": "",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+        "oPaginate": {
+            "sFirst": "<i class='bi bi-chevron-left'></i>",
+            "sLast": "<i class='bi bi-chevron-right'></i>",
+            "sNext": "<i class='bi bi-chevron-right'></i>",
+            "sPrevious": "<i class='bi bi-chevron-left'></i>"
+        },
+        "oAria": {
+            "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+            "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+        }
+    }
+    return language;
+}
+
+const dt_custom_search = (selector, table, placeholder = 'Buscar...', ms = 1000) => {
+    let searchTimeout;
+    const qs = document.querySelector(selector);
+    if (!qs) return;
+    const clases = ['form-control', 'form-control-sm', 'border', 'radius'];
+
+    // qs.style.setProperty('height', '25px', 'important');
+    qs.style.setProperty('font-size', '12px', 'important');
+    qs.setAttribute('placeholder', placeholder);
+    qs.classList.add(...clases);
+
+    const clearSearch = '<span class="position-absolute mr-2 hint--right hint--rounded hint--info hint--no-animate hint--no-shadow" aria-label="Limpiar" style="top: 50%; right: 5px; transform: translateY(-50%); cursor: pointer; color: #999; display: none;"><i class="bi bi-x"></i></span>';
+    qs.insertAdjacentHTML('afterend', clearSearch);
+
+    qs.classList.remove('d-none');
+
+    const span = qs.nextElementSibling ?? '';
+    if (!span) return;
+
+    span.addEventListener('click', function (e) {
+        qs.value = '';
+        table.search('').draw();
+        span.style.display = 'none';
+        qs.focus();
+        return;
+    });
+
+    qs.addEventListener('keyup', function (e) {
+
+        clearTimeout(searchTimeout);
+        const value = this.value;
+
+        if (value === '') {
+            span.style.display = 'none';
+            table.search('').draw();
+            return;
+        }
+
+        span.style.display = 'block';
+
+        if (e.key === 'Enter') {
+            table.search(value).draw();
+            return;
+        }
+
+        searchTimeout = setTimeout(() => {
+            table.search(value).draw();
+        }, ms);
+    });
+
+}
+const calcularHorasTrabajadas = (entrada, salida, descanso) => {
+    // Convertimos las horas a minutos desde la medianoche
+    const entradaMinutos = convertirAMinutos(entrada);
+    const salidaMinutos = convertirAMinutos(salida);
+    const descansoMinutos = convertirAMinutos(descanso);
+
+    let minutosTrabajoTotal = 0;
+
+    if (salidaMinutos < entradaMinutos) {
+        // La salida es al día siguiente
+        minutosTrabajoTotal = (24 * 60 - entradaMinutos) + salidaMinutos;
+    } else {
+        minutosTrabajoTotal = salidaMinutos - entradaMinutos;
+    }
+
+    // Restar el descanso si es distinto de '00:00'
+    if (descanso !== '00:00') {
+        minutosTrabajoTotal -= descansoMinutos;
+    }
+
+    // Asegurarse de que el resultado no sea negativo
+    minutosTrabajoTotal = Math.max(0, minutosTrabajoTotal);
+
+    // Convertir minutos a formato H:i
+    return convertirAHorasMinutos(minutosTrabajoTotal);
+}
+
+// Función auxiliar para convertir hora en formato "HH:mm" a minutos desde la medianoche
+const convertirAMinutos = (hora) => {
+    const [horas, minutos] = hora.split(':').map(Number);
+    return horas * 60 + minutos;
+}
+
+// Función auxiliar para convertir minutos a formato "H:i"
+const convertirAHorasMinutos = (minutos) => {
+    const horas = Math.floor(minutos / 60);
+    const minutosRestantes = minutos % 60;
+    return `${horas.toString().padStart(2, '0')}:${minutosRestantes.toString().padStart(2, '0')}`;
+}
+const selectInputsOnClick = (arraySelector) => {
+    if (!arraySelector) return;
+
+    arraySelector.forEach(selector => {
+        const input = document.querySelector(selector);
+        if (!input) return;
+        input.addEventListener('click', function (e) {
+            this.select();
+        });
+    });
+}
+const qs = (selector) => {
+    return document.querySelector(selector) || null;
+}
+const qsa = (selector) => {
+    return document.querySelectorAll(selector) || null;
 }

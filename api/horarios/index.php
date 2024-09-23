@@ -9,6 +9,37 @@ $request = Flight::request();
 
 $checkMethod('POST');
 
+function intToRgb($colorInt)
+{
+    // Convertir el entero a hexadecimal y quitar el prefijo '0x'
+    $hexColor = strtoupper(dechex($colorInt & 0xFFFFFF));
+
+    // Asegurarse de que el string tenga 6 caracteres (rellenar con ceros si es necesario)
+    $hexColor = str_pad($hexColor, 6, '0', STR_PAD_LEFT);
+
+    // Separar los componentes RGB
+    $red = hexdec(substr($hexColor, 0, 2));
+    $green = hexdec(substr($hexColor, 2, 2));
+    $blue = hexdec(substr($hexColor, 4, 2));
+
+    return [$red, $green, $blue];
+}
+
+function getBrightness($r, $g, $b)
+{
+    // Fórmula para calcular el brillo percibido
+    return ($r * 299 + $g * 587 + $b * 114) / 1000;
+}
+
+function getTextColor($backgroundColor)
+{
+    list($r, $g, $b) = intToRgb($backgroundColor);
+    $brightness = getBrightness($r, $g, $b);
+
+    // Si el brillo es alto, usa texto negro; si es bajo, usa texto blanco
+    return ($brightness > 128) ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
+}
+
 $wc = '';
 
 $dp = $request->data;
@@ -103,46 +134,62 @@ $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 // print_r($query).exit;
 $stmt = $dbApiQuery($query) ?? '';
 
-function arrDia($tipo, $de, $Ha, $Des, $li, $Ho){
-    
+function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
+{
+
     switch ($tipo) {
         case '0':
-            $tipo = 'No Laboral';
+            $tipoStr = 'No Laboral';
             break;
         case '1':
-            $tipo = 'No Laboral';
+            $tipoStr = 'Laboral';
             break;
         case '2':
-            $tipo = 'Según día';
+            $tipoStr = 'Según día';
             break;
         default:
-            $tipo = 'No definido';
+            $tipoStr = 'No definido';
             break;
     }
-        return array(
-            "Laboral"  => $tipo,
-            "Desde"    => $de,
-            "Hasta"    => $Ha,
-            "Descanso" => $Des,
-            "Limite"   => intval($li),
-            "Horas"    => $Ho,
-        );
+    return [
+        "Laboral"   => $tipoStr,
+        "LaboralID" => intval($tipo),
+        "Desde"     => $de,
+        "Hasta"     => $Ha,
+        "Descanso"  => $Des,
+        "Limite"    => intval($li),
+        "Horas"     => $Ho,
+    ];
 }
 foreach ($stmt  as $key => $v) {
+    $backgroundColorRgb = intToRgb($v['HorColor']);
+    $textColor = getTextColor($v['HorColor']);
+
+    $HorLun = arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']);
+    $HorMar = arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']);
+    $HorMie = arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']);
+    $HorJue = arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']);
+    $HorVie = arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']);
+    $HorSab = arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
+    $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
+    $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
+
     $data[] = array(
-        "Codi"       => $v['HorCodi'],
-        "Desc"       => $v['HorDesc'],
-        "ID"         => $v['HorID'],
-        "Color"      => floatval($v['HorColor']),
-        "FechaHora" => fecha($v['FechaHora'],'Y-m-d H:i:s'),
-        "Lunes"      => arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']),
-        "Martes"     => arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']),
-        "Miercoles"  => arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']),
-        "Jueves"     => arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']),
-        "Viernes"    => arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']),
-        "Sabado"     => arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']),
-        "Domingo"    => arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']),
-        "Feriado"    => arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']),
+        "Codi"      => $v['HorCodi'],
+        "Desc"      => $v['HorDesc'],
+        "ID"        => $v['HorID'],
+        "ColorInt"  => floatval($v['HorColor']),
+        "Color"     => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
+        "ColorText" => $textColor,
+        "FechaHora" => fecha($v['FechaHora'], 'Y-m-d H:i:s'),
+        "Lunes"     => $HorLun,
+        "Martes"    => $HorMar,
+        "Miércoles" => $HorMie,
+        "Jueves"    => $HorJue,
+        "Viernes"   => $HorVie,
+        "Sábado"    => $HorSab,
+        "Domingo"   => $HorDom,
+        "Feriado"   => $HorFer,
     );
 }
 

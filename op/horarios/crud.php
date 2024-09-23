@@ -70,7 +70,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -88,13 +88,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -163,7 +163,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -181,13 +181,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -217,6 +217,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         exit;
     }
 } else if ((array_key_exists('Codhor', $_POST)) && ($_POST['tipo'] == 'c_horale1')) {
+
     if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
@@ -228,7 +229,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     $Codhor  = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $FDesde   = test_input(($_POST['FDesde']));
+    $FDesde  = test_input(($_POST['FDesde']));
     $Fecha   = test_input(dr_fecha($_POST['FDesde']));
 
     if (valida_campo($Codhor)) {
@@ -256,11 +257,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (InsertRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        
+
         $Dato    = 'Horario Desde: ' . $FDesde . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -278,13 +279,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -357,10 +358,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (InsertRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        
+
         $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
             $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
@@ -377,13 +378,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -470,10 +471,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (UpdateRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        
+
         $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
             $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
@@ -490,13 +491,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -570,10 +571,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (UpdateRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        
+
         $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
             $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
@@ -590,13 +591,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -643,8 +644,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $RotDia  = test_input($_POST['RotDia']);
     $RoLVenc = test_input($_POST['RoLVenc']);
     $Fecha   = test_input(dr_fecha($_POST['RotFecha']));
-    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])): '20991231';
-    
+    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])) : '20991231';
+
     if (intval($RoLVenc) < intval($Fecha)) {
         PrintRespuestaJson('error', 'El <b>Vencimiento</b> no puede ser menor a la <b>Fecha</b> de inicio de la Rotación.');
         exit;
@@ -681,7 +682,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -699,13 +700,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -745,7 +746,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $_POST['RotFecha'] = $_POST['RotFecha'] ?? '';
     $_POST['RotDia']   = $_POST['RotDia'] ?? '';
     $_POST['RoLVenc']  = $_POST['RoLVenc'] ?? '';
-    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])): '20991231';
+    $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])) : '20991231';
 
     $Codhor  = test_input($_POST['Codhor']);
     $Codhor2 = test_input($_POST['Codhor2']);
@@ -790,7 +791,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -808,13 +809,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);
@@ -882,7 +883,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
-        $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+        $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
         $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
@@ -900,13 +901,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
                     } else {
                         $tiempo_fini = microtime(true);
                         $duracion = round($tiempo_fini - $tiempo_ini, 2);
-                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar '. $totalDias . ' días', 'Tiempo' => $duracion);
+                        $arrRespuesta[] = array('Desde' => $date['FechaIni'], 'Hasta' => $date['FechaFin'], 'Procesado' => 'Sin Procesar ' . $totalDias . ' días', 'Tiempo' => $duracion);
                     }
                 }
             } else {
                 $tiempo_ini = microtime(true);
                 $FechaFin = ($FechaFin > date('Ymd')) ? date('Ymd') : $FechaFin;
-                $totalDias = totalDiasFechas($FechaIni, $FechaFin)+1;
+                $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
                 $procesar = procesar_legajo($NumLega, $FechaIni, $FechaFin);
                 if (($procesar == 'Terminado')) {
                     $tiempo_fini = microtime(true);

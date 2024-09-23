@@ -9,54 +9,228 @@
         .table.dataTable {
             margin-top: 0 !important;
         }
-        #tableHorarios thead{
+
+        #tableHorarios thead {
             display: none;
+        }
+
+        .table td {
+            font-size: 14px !important;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+
+        }
+
+        .divFiltros {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dayGrilla {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 5px;
+            padding-left: 16px;
+            padding-right: 16px;
+            border: 1px solid #ddd;
+        }
+
+        .dayGrilla2 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 5px;
+            padding-left: 13px;
+            padding-right: 13px;
+            border: 1px solid #ddd;
+        }
+
+        #tableHorarios_paginate,
+        #tableHorarios_info {
+            margin-top: 0px !important;
+            padding-top: 0px !important;
+        }
+
+        .pagination-bottom .dataTables_paginate {
+            margin-top: 0px !important;
+            padding-top: 0px !important;
+        }
+
+        #tableHorarios td {
+            border-top: 0px solid #dee2e6;
+        }
+
+        tr .action {
+            opacity: 0.2;
+        }
+
+        tr:hover .action {
+            opacity: 1;
         }
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
-    <div class="container shadow pb-2">
+    <div class="container shadow pb-">
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'reloj.png', 'Administración de ' . MODULOS['horarios'], '') ?>
-        <div class="row bg-white py-3 invisible" id="PersonalTable">
-            <div class="col-12">
-                <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal" data-target="#Filtros">
-                    Filtros
-                </button>
-                <span id="trash_all" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Limpiar Filtros</b>" class="fontq text-secondary mx-1 pointer"><i class="bi bi-trash"></i></span>
-                <!-- </div> -->
-                <div class="custom-control custom-switch float-right pt-1">
-                    <input type="checkbox" class="custom-control-input" name="_eg" id="_eg">
-                    <label class="custom-control-label" for="_eg" style="padding-top: 3px;" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Filtrar Legajos Inactivos</b>">De Baja</label>
+        <div class="row bg-white p-2 mt-1">
+            <div class="col-12 w-100 divFiltros">
+                <div class="d-inline-flex">
+                    <div class="d-flex flex-row border radius">
+                        <button type="button" class="btn btn-outline-custom hint--top border-0 Filtros" data-toggle="modal" data-target="#Filtros" aria-label="Filtrar datos">
+                            <span class="fontq">Filtros</span>
+                        </button>
+                        <button id="trash_all" aria-label="Limpiar Filtros" class="hint--top btn border-0 btn-outline-custom fontq"><i class="bi bi-trash"></i></button>
+                    </div>
+                    <button class="ml-1 btn border radius btn-outline-custom font08 hint--top" data-toggle="collapse" href="#collapseMasivos" role="button" aria-expanded="false" aria-controls="collapseMasivos" aria-label="Según filtros">
+                        Ingreso Masivo
+                    </button>
                 </div>
-                <div class="custom-control custom-switch float-right pt-1 mr-2">
-                    <input type="checkbox" class="custom-control-input" name="_porApNo" id="_porApNo">
-                    <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;" data-toggle="tooltip" data-placement="top" data-html="true" title="" data-original-title="<b>Ordenar por Nombre</b>">Por Nombre</label>
+                <div>
+                    <span class="hint--top d-none" aria-label="Filtrar Legajos Inactivos">
+                        <div class="custom-control custom-switch float-right pt-1">
+                            <input type="checkbox" class="custom-control-input" name="_eg" id="_eg">
+                            <label class="custom-control-label" for="_eg" style="padding-top: 3px;">De Baja</label>
+                        </div>
+                    </span>
+
+                    <span class="hint--top" aria-label="Ordenar por Nombre">
+                        <div class="custom-control custom-switch float-right pt-1 mr-2">
+                            <input type="checkbox" class="custom-control-input" checked name="_porApNo" id="_porApNo">
+                            <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;">Por Nombre</label>
+                        </div>
+                    </span>
                 </div>
             </div>
-            <div class="col-12 col-sm-5 pt-3">
+            <div class="col-12 d-flex">
+                <div class="collapse" id="collapseMasivos">
+                    <div class="pt-2"></div>
+                    <div class="bg-ddd d-flex p-1 border radius" style="gap: 5px;">
+                        <button class="btn btn-sm border-0 btn-outline-custom m_horale1 custom-white">
+                        </button>
+                        <button class="btn btn-sm border-0 btn-outline-custom m_rota custom-white">
+                        </button>
+                        <button class="btn btn-sm border-0 btn-outline-custom m_cita custom-white">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row bg-white invisible m-1 px-2" id="PersonalTable">
+            <div class="col-12 col-sm-5">
                 <table class="table table-hover text-nowrap w-100" id="tablePersonal"></table>
             </div>
-            <div class="col-12 col-sm-7 mt-sm-4 w-100">
-                <div class="h-100">
-                    <div class="" id="divData"></div>
-                    <div class="mb-2" id="divHorarioActual"></div>
-                    <div class="animate__animated animate__fadeIn" id="detalleHorario">
-                        <div class="text-secondary text-center w-100 mt-5 d-flex align-items-center justify-content-center w-100" style="height: 200px;"><p>Seleccionar un Legajo</p></div>
+            <div class="col-12 col-sm-7 w-100">
+                <div class="h-100 border radius p-2 bg-ddd">
+                    <div id="divData">
+
+                    </div>
+                    <div class="fadeIn" id="detalleHorario" hidden>
+
+                        <div class="divTablas" style="display: none;">
+
+                            <div class="dataLegajo p-1 fw5 text-secondary">
+
+                            </div>
+
+                            <div class="mb-2 d-flex p-1 border-0 w-100 radius justify-content-between fadeIn" style="gap: 5px;">
+                                <div>
+                                    <button class="btn btn-sm border btn-outline-custom l_horale1 custom-white" aria-label="Añadir Horario">
+                                    </button>
+                                    <button class="btn btn-sm border btn-outline-custom l_rota custom-white" aria-label="Añadir Rotación">
+                                    </button>
+                                    <button class="btn btn-sm border btn-outline-custom l_cita custom-white" aria-label="Añadir Citación">
+                                    </button>
+                                </div>
+                                <div class="btn-group-toggle border radius bg-white p-1" data-toggle="buttons">
+                                    <label class="btn btn-sm btn-outline-secondary border-0 radius active font07 verHorarios" aria-label="Ver Horarios">
+                                        <input type="checkbox" checked> Horarios
+                                    </label>
+                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verRotaciones" aria-label="Ver Rotaciones">
+                                        <input type="checkbox" checked> Rotaciones
+                                    </label>
+                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verCitaciones" aria-label="Ver Citaciones">
+                                        <input type="checkbox" checked> Citaciones
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="radius mb-2 bg-white p-2 border" id="divHorariosDesde">
+                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleDesde">
+                                        Horarios Desde
+                                    </div>
+                                    <div class="position-relative p-1">
+                                        <input type="text" class="d-none searchDesde h25">
+                                    </div>
+                                </div>
+                                <div class="overflow-auto w-100" style="max-height:250px">
+                                    <table class="table w-100 text-nowrap" id="Horale1"></table>
+                                </div>
+                            </div>
+                            <div class="radius mb-2 bg-white p-2 border" id="divHorariosDesdeHasta">
+                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleDesdeHasta">Horarios Desde Hasta</div>
+                                    <div class="position-relative p-1">
+                                        <input type="text" class="d-none searchDesdeHasta h25">
+                                    </div>
+                                </div>
+                                <div class="overflow-auto w-100" style="max-height:250px">
+                                    <table class="table text-nowrap w-100" id="Horale2"></table>
+                                </div>
+                            </div>
+                            <div class="radius mb-2 bg-white p-2 border" id="divRotaciones">
+                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleRotaciones">Rotaciones</div>
+                                    <div class="position-relative p-1">
+                                        <input type="text" class="d-none searchRotaciones h25">
+                                    </div>
+                                </div>
+                                <div class="overflow-auto w-100" style="max-height:250px">
+                                    <table class="table text-nowrap w-100" id="table-rota"></table>
+                                </div>
+                            </div>
+                            <div class="toast RotaDeta border-0" role="alert" aria-live="polite" data-autohide="false" aria-atomic="true">
+                            </div>
+                            <div class="radius mb-2 bg-white p-2 border" id="divCitaciones">
+                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleCitaciones">Citaciones</div>
+                                    <div class="position-relative p-1">
+                                        <input type="text" class="d-none searchCitaciones h25">
+                                    </div>
+                                </div>
+                                <div class="overflow-auto w-100" style="max-height:250px">
+                                    <table class="table text-nowrap w-100" id="table-citacion"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <span id="divSelectLegajo">
+                            <div class="text-center w-100 mt-5 d-flex align-items-center justify-content-center w-100" style="height: 200px;">
+                                <p class="p-2 px-3 bg-light radius">Seleccionar un Legajo</p>
+                            </div>
+                        </span>
                     </div>
                 </div>
             </div>
             <div class="col-12">
-                <div class="p-3" id="divGrillaHorario"></div>
+                <div class="p-2" id="divGrillaHorario"></div>
             </div>
-            <div id="divModal"></div>
-            <div id="divactModal"></div>
-            <div id="divactModalCit"></div>
-                
         </div>
+        <div id="divModal"></div>
+        <div id="modal_horale1"></div>
+        <div id="divactModal"></div>
+        <div id="divactModalCit"></div>
+
+    </div>
     </div>
     <!-- Fin Encabezado -->
     </div>
@@ -74,8 +248,7 @@
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/select2.min.js"></script>
-    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
-    <script src="getSelect/select.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?<?= version_file("/op/horarios/js/data.js") ?>"></script>
 </body>
 
 </html>

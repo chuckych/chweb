@@ -8,12 +8,14 @@ secure_auth_ch_json();
 header("Content-Type: application/json");
 
 if (!$_SESSION) {
-    Flight::json(array("error" => "Sesión finalizada."));
+    Flight::json(["error" => "Sesión finalizada."]);
     exit;
 }
 // sleep(1);
-
 $token = sha1($_SESSION['RECID_CLIENTE']);
+
+define('HOSTCHWEB', gethostCHWeb());
+define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
 
 borrarLogs('json', 1, 'json');
 borrarLogs('archivos', 1, 'xls');
@@ -49,7 +51,7 @@ function ch_api()
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
 
-        $endpoint = ($queryParams) ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
+        $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
 
         $ch = curl_init(); // Inicializo curl
 
@@ -60,36 +62,39 @@ function ch_api()
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
-            ($payload) ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
+            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
         }
         if ($method == 'GET') {
             curl_setopt($ch, CURLOPT_HTTPGET, true);
         }
         if ($method == 'PUT') {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-            ($payload) ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
+            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
         }
         if ($method == 'DELETE') {
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-            ($payload) ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
+            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
         }
 
         $token = sha1($_SESSION['RECID_CLIENTE']);
-        $headers = array(
+        $AGENT = $_SERVER['HTTP_USER_AGENT'];
+        $headers = [
             "Accept: */*",
             'Content-Type: application/json',
-            "Token:" . $token . "",
-        );
+            "Token: {$token}",
+            "User-Agent: {$AGENT}",
+        ];
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
-
         $file_contents = curl_exec($ch); // Ejecuto curl
+        // file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
 
         $curl_errno = curl_errno($ch); // get error code
         $curl_error = curl_error($ch); // get error information
 
         if ($curl_errno > 0) { // si hay error
             $text = "cURL Error ($curl_errno): $curl_error"; // set error message
+            // file_put_contents(__DIR__ . '/logs/api.log', $text . PHP_EOL, FILE_APPEND); // log error
             throw new Exception($text);
         }
         if (!$file_contents) {
@@ -333,6 +338,26 @@ function getNovedad($novedad)
     $arrayData = json_decode($data, true);
     return ($arrayData['DATA']) ?? array();
 }
+function getPersonal($payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
+    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($personal, true);
+    if ($arrayData['RESPONSE_CODE'] == '200') {
+        $arrayData = $arrayData['DATA'] ?? [];
+    } else {
+        $arrayData = [];
+    }
+    return $arrayData;
+}
+Flight::map('personal', function ($payload) {
+    $endpoint = URLAPI . "/api/personal/";
+    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($personal, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData['DATA'] : [];
+    return $result;
+});
+
 function novedadesRol()
 {
     $novedadesRol = $_SESSION['ListaNov'] ?? '';
@@ -348,7 +373,10 @@ function novedadesRol()
  */
 function mergeArray($arr1, $arr2)
 {
-    return ($arr2) ? array_unique(array_merge($arr1, $arr2)) : $arr1;
+    if (!is_array($arr1)) {
+        $arr1 = [];
+    }
+    return $arr2 ? array_unique(array_merge($arr1, $arr2)) : $arr1;
 }
 Flight::route('/novedades-all', function () {
 
@@ -931,6 +959,382 @@ Flight::route('/fechas/fichas', function () {
     }
     Flight::json($arrayData ?? array());
 });
+function get_horario_actual($Legajos)
+{
+    if (!$Legajos) {
+        return [];
+    }
+
+    $payload = [
+        "FechaDesde" => date('Y-m-d'),
+        "FechaHasta" => date('Y-m-d'),
+        "LegajoDesde" => 1,
+        "LegajoHasta" => 99999999,
+        "TipoDePersonal" => 0,
+        'Legajos' => $Legajos,
+        "Empresa" => 0,
+        "Planta" => 0,
+        "Sector" => 0,
+        "Seccion" => 0,
+        "Sucursal" => 0,
+        "Grupo" => 0,
+    ];
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/horasign/";
+    $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    $data = $arrayData['DATA'] ?? '';
+    if (empty($data)) {
+        return [];
+    }
+    return $data;
+};
+Flight::route('POST /get_personal_horarios', function () {
+    require __DIR__ . '../../op/horarios/getPersonal.php';
+    $horarioLegajos = get_horario_actual($arrLegajos) ?? [];
+    // $dataPersonal = ($json_data['data']) ?? [];
+    if ($horarioLegajos) {
+        foreach ($data as $key => $value) {
+            // encontrar el legajo en el array de horarios y agregarlo al array de personal
+            $horario = array_filter($horarioLegajos, function ($element) use ($value) {
+                return $element['Legajo'] == $value['pers_legajo'];
+            });
+            $horario = array_values($horario);
+            $data[$key]['pers_horario'] = $horario[0] ?? [];
+        }
+    }
+
+    $json_data = [
+        "draw"            => intval($params['draw']),
+        "recordsTotal"    => intval($totalRecords),
+        "recordsFiltered" => intval($totalRecords),
+        "data" => $data ?? [],
+        "horarios" => $horarioLegajos ?? [],
+        "legajos" => $arrLegajos ?? [],
+        "request" => Flight::request()->data
+    ];
+
+    Flight::json($json_data);
+});
+Flight::route('/horarios', function () {
+    $endpoint  = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/";
+    $data      = ch_api($endpoint, '', 'GET', '');
+    $arrayDataHorarios = json_decode($data, true);
+    $arrayDataHorarios = ($arrayDataHorarios['RESPONSE_CODE'] == '200 OK') ? $arrayDataHorarios['DATA'] ?? [] : [];
+
+    $endpoint  = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
+    $data      = ch_api($endpoint, '', 'GET', '');
+    $arrayDataRotacion = json_decode($data, true);
+    $arrayDataRotacion = ($arrayDataRotacion['RESPONSE_CODE'] == '200 OK') ? $arrayDataRotacion['DATA'] ?? [] : [];
+
+    $horariosColumn = $arrayDataHorarios ? array_column($arrayDataHorarios, null, 'Codi') : [];
+    $rotacionColumn = $arrayDataRotacion ? array_column($arrayDataRotacion, null, 'RotCodi') : [];
+
+    $datos = [
+        'rotacion' => $arrayDataRotacion,
+        'horarios' => $arrayDataHorarios,
+        'horariosColumn' => $horariosColumn,
+        'rotacionColumn' => $rotacionColumn,
+        'acciones' => [
+            'aCit' => intval($_SESSION['ABM_ROL']['aCit']) ?? 0,
+            'mCit' => intval($_SESSION['ABM_ROL']['mCit']) ?? 0,
+            'bCit' => intval($_SESSION['ABM_ROL']['bCit']) ?? 0,
+            'aTur' => intval($_SESSION['ABM_ROL']['aTur']) ?? 0,
+            'mTur' => intval($_SESSION['ABM_ROL']['mTur']) ?? 0,
+            'bTur' => intval($_SESSION['ABM_ROL']['bTur']) ?? 0,
+            'Proc' => intval($_SESSION['ABM_ROL']['Proc']) ?? 0,
+        ]
+    ];
+    Flight::json($datos ?? []);
+});
+Flight::route('/horarios/asign/@legajo', function ($legajo) {
+
+    $endpoint  = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asign/legajo/$legajo";
+    $data      = ch_api($endpoint, '', 'GET', '');
+    $asign = json_decode($data, true);
+    // sleep(1);
+    $asign = ($asign['RESPONSE_CODE'] == '200 OK') ? $asign['DATA'] ?? [] : [];
+    Flight::json($asign ?? []);
+});
+Flight::route('/rotacion', function () {
+    $endpoint  = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
+    $data      = ch_api($endpoint, '', 'GET', '');
+    $arrayData = json_decode($data, true);
+    $arrayData = ($arrayData['RESPONSE_CODE'] == '200 OK') ? $arrayData['DATA'] ?? [] : [];
+    Flight::json($arrayData ?? []);
+});
+Flight::route('POST /horarios/@tipo', function ($tipo) {
+
+    $urlValid = [
+        '/horarios/desde',
+        '/horarios/desde-hasta',
+        '/horarios/legajo-desde',
+        '/horarios/delete-legajo-desde',
+        '/horarios/legajo-desde-hasta',
+        '/horarios/delete-legajo-desde-hasta',
+        '/horarios/delete-legajo-citacion',
+        '/horarios/rotacion',
+        '/horarios/legajo-rotacion',
+        '/horarios/citacion',
+        '/horarios/legajo-citacion',
+        '/horarios/edit-legajo-citacion',
+        '/horarios/edit-legajo-rotacion',
+        '/horarios/delete-legajo-rotacion',
+    ];
+
+    $acciones = new stdClass();
+    $acciones->aCit = intval($_SESSION['ABM_ROL']['aCit']) ?? 0;
+    $acciones->mCit = intval($_SESSION['ABM_ROL']['mCit']) ?? 0;
+    $acciones->bCit = intval($_SESSION['ABM_ROL']['bCit']) ?? 0;
+    $acciones->aTur = intval($_SESSION['ABM_ROL']['aTur']) ?? 0;
+    $acciones->mTur = intval($_SESSION['ABM_ROL']['mTur']) ?? 0;
+    $acciones->bTur = intval($_SESSION['ABM_ROL']['bTur']) ?? 0;
+    $acciones->Proc = intval($_SESSION['ABM_ROL']['Proc']) ?? 0;
+
+    $request = Flight::request();
+    $url = $request->url ?? '';
+    $method = $request->method ?? '';
+
+    if (!in_array($url, $urlValid)) {
+        Flight::notFound();
+    }
+
+    $payload = $request->data;
+
+    $LegNume  = $payload['LegNume'] ?? '';
+    $Procesar  = $payload['Procesar'] ?? false;
+
+    if ($Procesar) {
+        if ($acciones->Proc == 0) {
+            throw new Exception('No tiene permisos para procesar horarios', 400);
+        }
+    }
+
+    $Empr   = $payload['Filtros']['Emp'] ?? [];
+    $Plan   = $payload['Filtros']['Plan'] ?? [];
+    $Conv   = $payload['Filtros']['Conv'] ?? [];
+    $Sect   = $payload['Filtros']['Sect'] ?? [];
+    $Sec2   = $payload['Filtros']['Sec2'] ?? [];
+    $Grup   = $payload['Filtros']['Grup'] ?? [];
+    $Sucu   = $payload['Filtros']['Sucur'] ?? [];
+    $Lega   = $payload['Filtros']['Per'] ?? [];
+    $Regla  = $payload['Filtros']['Regla'] ?? [];
+    $Tare   = $payload['Filtros']['Tare'] ?? [];
+    $Search = $payload['Filtros']['search']['value'] ?? '';
+    $Entr   = $payload['Entr'] ?? '00:00';
+    $Sale   = $payload['Sale'] ?? '00:00';
+    $Desc   = $payload['Desc'] ?? '00:00';
+
+    $Codi   = $payload['Codi'] ?? '';
+    $Fecha  = $payload['Fecha'] ?? '';
+    $FechaD = $payload['FechaD'] ?? '';
+    $FechaH = $payload['FechaH'] ?? '';
+    $Vence  = $payload['Vence'] ?? '';
+    $Dias   = $payload['Dias'] ?? '';
+
+    if (!$payload['Fecha']) {
+        throw new Exception('La fecha es requerida', 200);
+    }
+
+    $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
+    $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
+    $convRol = ($_SESSION['ConvRol']) ? explode(',', $_SESSION['ConvRol']) : [];
+    $sectRol = ($_SESSION['SectRol']) ? explode(',', $_SESSION['SectRol']) : [];
+    $sec2Rol = ($_SESSION['Sec2Rol']) ? explode(',', $_SESSION['Sec2Rol']) : [];
+    $grupRol = ($_SESSION['GrupRol']) ? explode(',', $_SESSION['GrupRol']) : [];
+    $sucuRol = ($_SESSION['SucuRol']) ? explode(',', $_SESSION['SucuRol']) : [];
+    $persRol = ($_SESSION['EstrUser']) ? explode(',', $_SESSION['EstrUser']) : [];
+
+    $payload['Empr']  = (!$Empr) ? mergeArray($Empr, $emprRol) : $Empr;
+    $payload['Plan']  = (!$Plan) ? mergeArray($Plan, $planRol) : $Plan;
+    $payload['Conv']  = (!$Conv) ? mergeArray($Conv, $convRol) : $Conv;
+    $payload['Sect']  = (!$Sect) ? mergeArray($Sect, $sectRol) : $Sect;
+    $payload['Sec2']  = (!$Sec2) ? mergeArray($Sec2, $sec2Rol) : $Sec2;
+    $payload['Grup']  = (!$Grup) ? mergeArray($Grup, $grupRol) : $Grup;
+    $payload['Sucu']  = (!$Sucu) ? mergeArray($Sucu, $sucuRol) : $Sucu;
+    $payload['Lega']  = (!$Lega) ? mergeArray($Lega, $persRol) : $Lega;
+    $payload['Regla'] = $Regla;
+    $payload['Tare']  = $Tare;
+
+    $Legajos = [];
+    $textOK = '';
+
+    $user = $_SESSION['NOMBRE_SESION'];
+
+    $payloadPersonal = [
+        "Empr"  => $payload['Empr'],
+        "Plan"  => $payload['Plan'],
+        "Conv"  => $payload['Conv'],
+        "Sect"  => $payload['Sect'],
+        "Sec2"  => $payload['Sec2'],
+        "Grup"  => $payload['Grup'],
+        "Sucu"  => $payload['Sucu'],
+        "Nume"  => $payload['Lega'],
+        "RegCH" => $payload['Regla'],
+        "TareProd"  => $payload['Tare'],
+        "ApNoNume" => $Search,
+        "length" => 10000,
+        "Baja" => [0],
+        "getEstruct" => 0
+    ];
+
+    if ($url == '/horarios/desde' || $url == '/horarios/desde-hasta' || $url == '/horarios/rotacion') {
+
+        if ($acciones->aTur == 0) {
+            throw new Exception('No tiene permisos para asignar horarios', 400);
+        }
+
+        $personal = Flight::personal($payloadPersonal);
+        if ($personal) {
+            foreach ($personal as $key => $p) {
+                $Legajos[] = $p['Lega'];
+            }
+            $payloadHorarios = [
+                "Lega"   => $Legajos,
+                "Fecha"  => $Fecha,
+                "FechaD" => $FechaD,
+                "FechaH" => $FechaH,
+                "Vence"  => $Vence,
+                "Dias"   => $Dias,
+                "Codi"   => $Codi,
+                "User"   => $user,
+                "Proc"   => $Procesar
+            ];
+        }
+    }
+
+    if ($url === '/horarios/legajo-desde' || $url === '/horarios/legajo-desde-hasta' || $url === '/horarios/delete-legajo-desde' || $url === '/horarios/delete-legajo-desde-hasta' || $url === '/horarios/delete-legajo-citacion' || $url == '/horarios/edit-legajo-citacion' || $url == '/horarios/edit-legajo-rotacion' || $url == '/horarios/delete-legajo-rotacion') {
+
+        if (!$LegNume) {
+            throw new Exception('El legajo es requerido', 400);
+        }
+
+        if ($acciones->aTur == 0) {
+            throw new Exception('No tiene permisos para asignar horarios', 400);
+        }
+
+        $payloadHorarios = [
+            "Fecha"  => $Fecha,
+            "FechaD" => $FechaD,
+            "FechaH" => $FechaH,
+            "Entr"   => $Entr,
+            "Sale"   => $Sale,
+            "Desc"   => $Desc,
+            "Vence"  => $Vence,
+            "Dias"   => $Dias,
+            "Proc"   => $Procesar,
+            "Codi"   => $Codi,
+            "User"   => $user,
+            "Lega"   => [$LegNume],
+        ];
+
+        if ($url === '/horarios/delete-legajo-desde') {
+            if ($acciones->bTur == 0) {
+                throw new Exception('No tiene permisos para eliminar horarios', 400);
+            }
+            $method = 'DELETE';
+            $tipo = 'desde';
+        }
+        if ($url === '/horarios/delete-legajo-desde-hasta') {
+            if ($acciones->bTur == 0) {
+                throw new Exception('No tiene permisos para eliminar horarios', 400);
+            }
+            $method = 'DELETE';
+            $tipo = 'desde-hasta';
+        }
+        if ($url === '/horarios/delete-legajo-citacion') {
+            if ($acciones->bCit == 0) {
+                throw new Exception('No tiene permisos para eliminar citaciones', 400);
+            }
+            $method = 'DELETE';
+            $tipo = 'citacion';
+            $textOK = "Citacion eliminada";
+        }
+        if ($url === '/horarios/edit-legajo-citacion') {
+            if ($acciones->bCit == 0) {
+                throw new Exception('No tiene permisos para eliminar citaciones', 400);
+            }
+            $tipo = 'citacion';
+            $textOK = "Citacion editada";
+        }
+        if ($url === '/horarios/edit-legajo-rotacion') {
+            if ($acciones->bTur == 0) {
+                throw new Exception('No tiene permisos para eliminar rotaciones', 400);
+            }
+            $tipo = 'rotacion';
+            $textOK = "Rotación editada";
+        }
+        if ($url === '/horarios/delete-legajo-rotacion') {
+            if ($acciones->bTur == 0) {
+                throw new Exception('No tiene permisos para eliminar rotaciones', 400);
+            }
+            $method = 'DELETE';
+            $tipo = 'rotacion';
+            $textOK = "Rotación eliminada";
+        }
+    }
+    if ($url == '/horarios/citacion' || $url == '/horarios/legajo-citacion') {
+        if ($acciones->aCit == 0) {
+            throw new Exception('No tiene permisos para asignar citaciones', 400);
+        }
+        if ($url == '/horarios/citacion') {
+            $personal = Flight::personal($payloadPersonal);
+            if ($personal) {
+                foreach ($personal as $key => $p) {
+                    $Legajos[] = $p['Lega'];
+                }
+            }
+        }
+        if ($url == '/horarios/legajo-citacion') {
+            if (!$LegNume) {
+                throw new Exception('El legajo es requerido', 400);
+            }
+            $Legajos = [$LegNume];
+        }
+
+        $payloadHorarios = [
+            "Fecha" => $Fecha,
+            "Proc" => $Procesar,
+            "Entr" => $Entr,
+            "Sale" => $Sale,
+            "Desc" => $Desc,
+            "User" => $user,
+            "Lega" => $Legajos,
+        ];
+        $textOK = "Citaciones asignadas";
+    }
+
+    $endpoint   = URLAPI . "/api/v1/horarios/{$tipo}/"; // URL API
+    $data       = ch_api($endpoint, $payloadHorarios, $method, ''); // Consumimos API
+    $arrayData  = json_decode($data, true); // Decodificamos JSON
+    $result     = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? true : false;
+    $status     = $result ? 'ok' : 'error'; // Estado de la respuesta
+    $total      = $result ? $arrayData['TOTAL'] ?? 0 : 0; // Total de registros
+    $data       = $result ? $arrayData['DATA'] ?? 0 : 0; // Datos de la respuesta
+    $messageErr = !$result ? $arrayData['MESSAGE'] ?? 'Error al asignar horarios' : ''; // Mensaje de error
+    if ($textOK == '') {
+        $textOK = ($method == 'POST') ? "Horarios asignados" : "Horarios eliminados";
+    }
+    $messageOk  = "{$textOK} ({$total})"; // Mensaje de éxito
+    $message    = $result ? $messageOk : $messageErr; // Mensaje de respuesta
+
+    if ($data) {
+        $aud = auditoria_multiple($data, 33);
+    }
+    Flight::json([
+        'status'  => $status,
+        'message' => $message,
+        'aud'     => $aud ?? false
+    ]);
+});
+Flight::route('POST /test_connect', function () {
+    $endpoint  = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/conectar";
+    $payload   = Flight::request()->data;
+    $data      = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    Flight::json($arrayData ?? []);
+});
+
 Flight::route('POST /estruct/fichas/', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/fichasestruct/";
     $payload = Flight::request()->data;
@@ -965,14 +1369,36 @@ Flight::route('POST /estructuras/alta/', function () {
     Flight::json($arrayData ?? array());
 });
 
-
+Flight::map('Forbidden', function ($mensaje) {
+    Flight::json(['status' => 'error', 'message' => $mensaje], 403);
+    exit;
+});
 Flight::map('notFound', function () {
-    Flight::json(array('status' => 'error', 'message' => 'Not found'), 404);
+    $request = Flight::request();
+    $url = $request->url ?? '';
+    $method = $request->method ?? '';
+    Flight::json(['status' => 'error', 'message' => "Not found: ({$method}) {$url}"], 404);
+    exit;
 });
 Flight::set('flight.log_errors', true);
 
 Flight::map('error', function ($ex) {
-    Flight::json(array('status' => 'error', 'message' => $ex->getMessage()), 400);
+    $code_protected = $ex->getCode() ?? 400;
+
+    switch ($code_protected) {
+        case 404:
+            Flight::notFound();
+            break;
+        case 403:
+            Flight::Forbidden($ex->getMessage());
+            break;
+    }
+
+    if ($code_protected == 404) {
+        Flight::notFound();
+    }
+    $text = $ex->getMessage();
+    Flight::json(['status' => 'error', 'message' => $text], $code_protected);
 });
 
 Flight::start(); // Inicio FlightPHP

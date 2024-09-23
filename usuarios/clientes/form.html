@@ -1,0 +1,175 @@
+<!-- Modal -->
+<form action="crud.php" method="POST" id="FormCuenta">
+    <div class="modal" id="modalFormCuenta" tabindex="-1" aria-labelledby="modalFormCuentaLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content bg-light">
+                <div class="modal-header border-0">
+                    <div class="font1 fw5">
+                        <p id="nombreCuenta">Nueva Cuenta</p>
+                    </div>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="bi bi-x"></i>
+                        </span>
+                    </button>
+                </div>
+
+                <input type="hidden" name="submit" id="submitFormCuenta" value="altaCuenta">
+                <div class="modal-body mt-n3">
+                    <div class="p-3 border shadow-sm bg-white">
+                        <ul class="nav nav-tabs font08 bg-light" id="myTab" role="tablist">
+                            <li class="nav-item text-secondary hint--top" aria-label="Datos de la cuenta"
+                                role="presentation">
+                                <a class="nav-link text-secondary active" id="Cuenta-tab" data-toggle="tab"
+                                    href="#Cuenta" role="tab" aria-controls="Cuenta" aria-selected="true">Cuenta</a>
+                            </li>
+                            <li class="nav-item text-secondary hint--top" aria-label="Conexión a base de datos CH"
+                                role="presentation">
+                                <a class="nav-link text-secondary" id="ConexionSQL-tab" data-toggle="tab"
+                                    href="#ConexionSQL" role="tab" aria-controls="ConexionSQL"
+                                    aria-selected="false">DB</a>
+                            </li>
+                            <li class="nav-item text-secondary hint--top" aria-label="Conexión a Fichadas Mobile HRP"
+                                role="presentation">
+                                <a class="nav-link text-secondary" id="Mobile-tab" data-toggle="tab" href="#Mobile"
+                                    role="tab" aria-controls="Mobile" aria-selected="false">Mobile</a>
+                            </li>
+                            <li class="nav-item text-secondary d-none" role="presentation">
+                                <a class="nav-link text-secondary" id="XmartClock-tab" data-toggle="tab"
+                                    href="#XmartClock" role="tab" aria-controls="XmartClock"
+                                    aria-selected="false">XmartClock</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content py-2 mt-1" id="myTabContent">
+                            <div class="tab-pane show active" id="Cuenta" role="tabpanel" aria-labelledby="Cuenta-tab">
+                                <div class="form-row">
+                                    <div class="col-12 col-sm-7">
+                                        <p class="fontq mb-1">Nombre de la Cuenta: </p>
+                                        <input type="text" title="campo obligatorio" name="nombre" id="nombre"
+                                            placeholder="Nombre de Cuenta (*)" class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-12 col-sm-5">
+                                        <p class="fontq mb-1">Identificador: </p>
+                                        <input
+                                            title="El identificador puede quedar en blanco. El mismo se genera automáticamente"
+                                            type="text" maxlength="3" name="ident" id="ident"
+                                            placeholder="Identificador de Cuenta" class="my-2 h40 form-control">
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="fontq mb-1">Host:</p>
+                                        <input type="text" title="Host CHWEB" name="hostCHWeb" id="hostCHWeb"
+                                            placeholder="Ej: http://192.168.1.220:8050 o http://hostname:8050"
+                                            class="h40 form-control mr-sm-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="ConexionSQL" role="tabpanel" aria-labelledby="ConexionSQL-tab">
+                                <div class="form-row">
+                                    <div class="col-12 col-sm-6">
+                                        <p class="fontq mb-1">Host: </p>
+                                        <input type="text" name="host" id="host" placeholder="Host"
+                                            class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-12 col-sm-6">
+                                        <p class="fontq mb-1">Base de Datos: </p>
+                                        <input type="text" name="db" id="db" placeholder="Base de Datos"
+                                            class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-6 col-sm-6 mt-sm-2">
+                                        <p class="fontq mb-1">Usuario: </p>
+                                        <input type="text" name="user" id="user" placeholder="Usuario"
+                                            class="h40 form-control my-2">
+                                    </div>
+                                    <div class="col-6 col-sm-6 mt-sm-2">
+                                        <p class="fontq mb-1">Password: </p>
+                                        <input type="text" name="pass" id="pass" placeholder="Password"
+                                            class="h40 form-control my-2">
+                                        <input type="hidden" name="recid" id="recid" placeholder="recid" class="">
+                                    </div>
+                                    <div class="col-12 d-inline-flex w-100 mt-2">
+                                        <div class="custom-control custom-switch">
+                                            <input type="checkbox" name="auth" class="custom-control-input" id="auth"
+                                                value="1">
+                                            <label class="custom-control-label fw4" for="auth">
+                                                <p class="mt-1 text-secondary">Autenticación de Windows</p>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <p class="fontq mb-1">Path WebService CH:</p>
+                                        <input type="text" title="WebService" name="WebService" id="WebService"
+                                            placeholder="Ejemplo: http://192.168.1.202:6400"
+                                            class="h40 form-control my-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="Mobile" role="tabpanel" aria-labelledby="Mobile-tab">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col-12 col-sm-6 mt-2">
+                                                <p class="fontq mb-1">Path API Mobile Frontend:</p>
+                                                <input type="text" title="Api Mobile HRP" name="ApiMobileHRP"
+                                                    id="ApiMobileHRP" placeholder="Ejemplo: http://192.168.1.220:8050"
+                                                    class="h40 form-control mr-sm-2">
+                                            </div>
+                                            <div class="col-12 col-sm-6 mt-2">
+                                                <p class="fontq mb-1">Path API Mobile App:</p>
+                                                <input type="text" title="Path API Mobile App:" name="ApiMobileHRPApp"
+                                                    id="ApiMobileHRPApp"
+                                                    placeholder="Ejemplo: http://207.191.165.3:7500"
+                                                    class="h40 form-control mr-sm-2">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <div class="font08 mb-2 hint--top" aria-label="Para cuentas locales">
+                                            Descargar Fichadas Mobile CHWEB</div>
+                                    </div>
+                                    <div class="col-6 col-sm-4">
+                                        <div class="btn-group btn-group-toggle border p-1 w-100" data-toggle="buttons">
+                                            <label class="btn btn-outline-secondary fontq border-0" id="labelActivo">
+                                                <input value="0" type="radio" name="localCH" id="localCHSI"> Si
+                                            </label>
+                                            <label class="btn btn-outline-secondary fontq border-0 ml-1"
+                                                id="labelInactivo">
+                                                <input type="radio" value="1" name="localCH" id="localCHNO"> No
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 mt-3">
+                                        <p class="fontq mb-1">App Code:</p>
+                                        <input type="text" title="App Code" name="AppCode" id="AppCode"
+                                            placeholder="App Code: 8 dígitos" maxlength="8"
+                                            class="h40 form-control mr-sm-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="XmartClock" role="tabpanel" aria-labelledby="XmartClock-tab">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <p class="fontq mb-1">Token Mobile XClock:</p>
+                                        <input type="text" title="" name="tkmobile" id="tkmobile"
+                                            placeholder="Token Mobile" class="h40 form-control mr-sm-2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" id="cancelarAlta" class="btn fontq border btn-outline-custom btn-mobile"
+                        data-dismiss="modal">Cancelar</button>
+                    <button style="display: none;" type="button" id="submitAdd"
+                        class="btn fontq btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Agregar</button>
+                    <button style="display: none;" type="button" id="submitEdit"
+                        class="btn fontq btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Aplicar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</form>

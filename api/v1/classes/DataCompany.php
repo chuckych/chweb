@@ -91,14 +91,16 @@ class DataCompany
     function checkToken()
     {
         $iniData = $this->iniData;
-        $token = $this->token;
+        $token   = $this->token;
 
         try {
 
             if (!isset($token) || empty($token) || !$token) {
-                throw new \Exception("El token es requerido");
+                define('ID_COMPANY', 0); // ID de la empresa
+                throw new \Exception("El token es requerido", 401);
             }
             if (!is_array($iniData) || empty($iniData) || !$iniData || !isset($iniData)) {
+                define('ID_COMPANY', 0); // ID de la empresa
                 throw new \Exception("Error de configuración");
             }
 
@@ -111,12 +113,8 @@ class DataCompany
             if ($dataCompany === false) {
                 throw new \Exception("Invalid Token");
             }
-            $_SESSION['DataCompany'] = $dataCompany;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 401, microtime(true), 0, ID_COMPANY);
-            $this->log->write($e->getMessage(), date('Ymd') . '_getToken_' . ID_COMPANY . '.log');
-            session_destroy();
-            exit;
+            $this->log->write($e->getMessage(), date('Ymd') . '_getToken_.log');
         }
     }
 }
