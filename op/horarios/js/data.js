@@ -652,7 +652,7 @@ $(function () {
                             return grillaHorarios(row);
                         }
                         // Para ordenamiento y filtrado, devolver un valor simple
-                        return mapRotacion[action] ? row.RotDesc : row.Desc + row.TotalHorasCalc;
+                        return mapRotacion[action] ? row.RotDesc + row.RotCodi : row.Desc + row.TotalHorasCalc + row.Codi;
                     },
                 }
             ],
