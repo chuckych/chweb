@@ -1232,7 +1232,6 @@ class Horarios
         $conn = $this->conect->check_connection($connDB);
 
         $getCache = $this->tools->return_cache($conn, 'HORARIOS', 'fechaHoraHorarios', 'horariosFull');
-
         if ($getCache->data) {
             $total = $getCache->total;
             return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
@@ -1259,10 +1258,10 @@ class Horarios
             $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs'], $this->tools);
             $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs'], $this->tools);
 
-            $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'] + $HorFer['Mins'];
-            $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'] + $HorFer['MinsCalc'];
-            $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'] + $HorFer['MinsCalcDesc'];
-            $TotalDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'] + $HorFer['MinsDescanso'];
+            $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'];
+            $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'];
+            $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'];
+            $TotalDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'];
             $horarios[] = [
                 "Codi"      => $v['HorCodi'],
                 "Desc"      => $v['HorDesc'],

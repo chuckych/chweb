@@ -180,10 +180,6 @@ class Tools
         $obj->FHora = $FHora;
         $obj->total = 0;
 
-        if ($FHoraCache < 20240924004403) { // este fragmento se usa para actualizar toda la cache manualmente si es necesario 
-            return $obj;
-        }
-
         if ($FHoraCache >= $FHora) { // Si la fecha de cache es mayor o igual a la fecha de la tabla
             $cache = $this->log->get_cache($cacheName); // Obtener cache
             if ($cache) { // Si existe cache
