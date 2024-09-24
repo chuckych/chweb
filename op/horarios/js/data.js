@@ -652,7 +652,7 @@ $(function () {
                             return grillaHorarios(row);
                         }
                         // Para ordenamiento y filtrado, devolver un valor simple
-                        return mapRotacion[action] ? row.RotDesc : row.Desc;
+                        return mapRotacion[action] ? row.RotDesc : row.Desc + row.TotalHorasCalc;
                     },
                 }
             ],
@@ -849,6 +849,7 @@ $(function () {
         const checkIcon = `<i class="bi bi-check-circle-fill text-success"></i>`;
         const dashIcon = `<i class="bi bi-dash-circle text-secondary"></i>`;
         const styleColor = `style="background-color: ${colorRgb}; color: ${colorText}"`
+        const TotalHorasCalc = row.TotalHorasCalc ?? '00:00';
 
         const iconCheck = (day) => {
             const spanIcon = row[day].LaboralID ? checkIcon : dashIcon
@@ -869,47 +870,50 @@ $(function () {
         }
         const grillaSemanaHtml = `
         <div class="radius p-1 bg-white">
-        <div class="select d-flex justify-content-between p-1 font08">
-            <div class="fw5">(${Cod}) ${Desc}</div>
-            <div class="d-inline-flex align-items-center">
-                <div class="font08">(${ID})</div>
-                <div ${styleColor} class="h10 px-3 radius ml-2"></div>
+            <div class="select d-flex justify-content-between p-1 font08">
+                <div class="fw5">(${Cod}) ${Desc}</div>
+                <div class="d-inline-flex align-items-center">
+                    <div class="font08">(${ID})</div>
+                    <div ${styleColor} class="h10 px-3 radius ml-2"></div>
+                </div>
             </div>
-        </div>
-        <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
-            <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
-                <span>Lun</span>
-                <span>${iconCheck('Lunes')}</span>
+            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
+                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
+                    <span>Lun</span>
+                    <span>${iconCheck('Lunes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
+                    <span>Mar</span>
+                    <span>${iconCheck('Martes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
+                    <span>Mie</span>
+                    <span>${iconCheck('Miércoles')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
+                    <span>Jue</span>
+                    <span>${iconCheck('Jueves')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
+                    <span>Vie</span>
+                    <span>${iconCheck('Viernes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
+                    <span>Sab</span>
+                    <span>${iconCheck('Sábado')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
+                    <span>Dom</span>
+                    <span>${iconCheck('Domingo')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
+                    <span>Fer</span>
+                    <span>${iconCheck('Feriado')}</span>
+                </div>
             </div>
-            <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
-                <span>Mar</span>
-                <span>${iconCheck('Martes')}</span>
+            <div class="font08 text-right w-100">
+                Horas: ${TotalHorasCalc}
             </div>
-            <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
-                <span>Mie</span>
-                <span>${iconCheck('Miércoles')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
-                <span>Jue</span>
-                <span>${iconCheck('Jueves')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
-                <span>Vie</span>
-                <span>${iconCheck('Viernes')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
-                <span>Sab</span>
-                <span>${iconCheck('Sábado')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
-                <span>Dom</span>
-                <span>${iconCheck('Domingo')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
-                <span>Fer</span>
-                <span>${iconCheck('Feriado')}</span>
-            </div>
-        </div>
         </div>
         `
         return grillaSemanaHtml
@@ -950,47 +954,47 @@ $(function () {
         }
         const grillaSemanaHtml = `
         <div class="">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="text-dark">${fecha}<br>(${Cod}) ${Desc}</div>
-            <div class="d-inline-flex align-items-center" style="gap: 5px;">
-                ${accionesBtnHorarios(PERMISOS['mTur'], PERMISOS['bTur'])}
-                <div ${styleColor} class=" p-1 radius ml-2 text-center">${ID ?? '-'}</div>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-dark">${fecha}<br>(${Cod}) ${Desc}</div>
+                <div class="d-inline-flex align-items-center" style="gap: 5px;">
+                    ${accionesBtnHorarios(PERMISOS['mTur'], PERMISOS['bTur'])}
+                    <div ${styleColor} class=" p-1 radius ml-2 text-center">${ID ?? '-'}</div>
+                </div>
             </div>
-        </div>
-        <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
-            <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
-                <span>Lun</span>
-                <span>${iconCheck('Lunes')}</span>
+            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
+                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
+                    <span>Lun</span>
+                    <span>${iconCheck('Lunes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
+                    <span>Mar</span>
+                    <span>${iconCheck('Martes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
+                    <span>Mie</span>
+                    <span>${iconCheck('Miércoles')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
+                    <span>Jue</span>
+                    <span>${iconCheck('Jueves')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
+                    <span>Vie</span>
+                    <span>${iconCheck('Viernes')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
+                    <span>Sab</span>
+                    <span>${iconCheck('Sábado')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
+                    <span>Dom</span>
+                    <span>${iconCheck('Domingo')}</span>
+                </div>
+                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
+                    <span>Fer</span>
+                    <span>${iconCheck('Feriado')}</span>
+                </div>
             </div>
-            <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
-                <span>Mar</span>
-                <span>${iconCheck('Martes')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
-                <span>Mie</span>
-                <span>${iconCheck('Miércoles')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
-                <span>Jue</span>
-                <span>${iconCheck('Jueves')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
-                <span>Vie</span>
-                <span>${iconCheck('Viernes')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
-                <span>Sab</span>
-                <span>${iconCheck('Sábado')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
-                <span>Dom</span>
-                <span>${iconCheck('Domingo')}</span>
-            </div>
-            <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
-                <span>Fer</span>
-                <span>${iconCheck('Feriado')}</span>
-            </div>
-        </div>
         </div>
         `
         return grillaSemanaHtml

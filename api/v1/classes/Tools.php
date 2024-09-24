@@ -180,17 +180,21 @@ class Tools
         $obj->FHora = $FHora;
         $obj->total = 0;
 
-        if ($FHoraCache >= $FHora) {
-            $cache = $this->log->get_cache($cacheName);
-            if ($cache) {
-                $obj->data = $cache;
-                $obj->total = count($cache);
-                return $obj;
-            } else {
-                return $obj;
+        if ($FHoraCache < 20240924004403) { // este fragmento se usa para actualizar toda la cache manualmente si es necesario 
+            return $obj;
+        }
+
+        if ($FHoraCache >= $FHora) { // Si la fecha de cache es mayor o igual a la fecha de la tabla
+            $cache = $this->log->get_cache($cacheName); // Obtener cache
+            if ($cache) { // Si existe cache
+                $obj->data = $cache; // Asignar cache a data
+                $obj->total = count($cache); // Asignar total de registros
+                return $obj; // Retornar objeto
+            } else { // Si no existe cache
+                return $obj; // Retornar objeto vacío
             }
         }
-        return $obj;
+        return $obj; // Retornar objeto vacío
     }
     public function validar_datos($datos, $rules, $customValueKey, $nameLog)
     {
@@ -256,7 +260,7 @@ class Tools
         // Validamos si el descanso es mayor o igual al tiempo total trabajado
         return $descanso_minutos >= $tiempo_total;
     }
-    public function calcularHorasTrabajadas($entrada, $salida, $descanso)
+    public function calcularHorasTrabajadas($entrada, $salida, $descanso): string
     {
         // Convertimos las horas a minutos desde la medianoche
         $entradaMinutos = $this->convertirAMinutos($entrada);

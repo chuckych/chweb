@@ -1203,21 +1203,29 @@ class Horarios
     }
     public function get_horarios($connDB = '')
     {
-        function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
+        function arrDia($tipo, $de, $Ha, $Des, $li, $Ho, $tools)  // $tipo, $de, $Ha, $Des, $li, $Ho, $tools
         {
             $mapTipo = [
                 '0' => 'No Laboral',
                 '1' => 'Laboral',
                 '2' => 'Según día',
             ];
+            $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
+            $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
             return [
-                "Laboral"   => $mapTipo[$tipo],
-                "LaboralID" => intval($tipo),
-                "Desde"     => $de,
-                "Hasta"     => $Ha,
-                "Descanso"  => $Des,
-                "Limite"    => intval($li),
-                "Horas"     => $Ho,
+                "Laboral"       => $mapTipo[$tipo],
+                "LaboralID"     => intval($tipo),
+                "Desde"         => $de,
+                "Hasta"         => $Ha,
+                "Descanso"      => $Des,
+                "Limite"        => intval($li),
+                "Horas"         => $Ho,
+                "HorasCalc"     => $HorasCalc,
+                "HorasCalcDesc" => $HorasCalcDescanso,
+                "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
+                "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
+                "MinsCalcDesc" => $tools->convertirAMinutos($HorasCalcDescanso),
+                "MinsDescanso" => $tipo != 0 ? $tools->convertirAMinutos($Des) : 0,
             ];
         }
 
@@ -1236,20 +1244,25 @@ class Horarios
         $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $conn = null;
 
+
         foreach ($data as $key => $v) {
 
             $backgroundColorRgb = $this->intToRgb($v['HorColor']);
             $textColor = $this->getTextColor($v['HorColor']);
 
-            $HorLun = arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']);
-            $HorMar = arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']);
-            $HorMie = arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']);
-            $HorJue = arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']);
-            $HorVie = arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']);
-            $HorSab = arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
-            $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
-            $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
+            $HorLun = arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs'], $this->tools);
+            $HorMar = arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs'], $this->tools);
+            $HorMie = arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs'], $this->tools);
+            $HorJue = arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs'], $this->tools);
+            $HorVie = arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs'], $this->tools);
+            $HorSab = arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs'], $this->tools);
+            $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs'], $this->tools);
+            $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs'], $this->tools);
 
+            $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'] + $HorFer['Mins'];
+            $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'] + $HorFer['MinsCalc'];
+            $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'] + $HorFer['MinsCalcDesc'];
+            $TotalDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'] + $HorFer['MinsDescanso'];
             $horarios[] = [
                 "Codi"      => $v['HorCodi'],
                 "Desc"      => $v['HorDesc'],
@@ -1266,6 +1279,14 @@ class Horarios
                 "Sábado"    => $HorSab,
                 "Domingo"   => $HorDom,
                 "Feriado"   => $HorFer,
+                "TotalHoras" => $this->tools->convertirAHorasMinutos($TotalMins),
+                // "TotalMins" => $TotalMins,
+                "TotalHorasCalc" => $this->tools->convertirAHorasMinutos($TotalMinsCalc),
+                // "TotalMinsCalc" => $TotalMinsCalc,
+                "TotalHorasCalcDesc" => $this->tools->convertirAHorasMinutos($TotalMinsCalcDesc),
+                // "TotalMinsCalcDesc" => $TotalMinsCalcDesc,
+                "TotalDescanso" => $this->tools->convertirAHorasMinutos($TotalDescanso),
+                // "TotalMinsDescanso" => $TotalDescanso,
             ];
         }
 
