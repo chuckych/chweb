@@ -82,16 +82,16 @@
         <?php require __DIR__ . '../../../nav.php'; ?>
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'reloj.png', 'Administración de ' . MODULOS['horarios'], '') ?>
-        <div class="row bg-white p-2 mt-1">
-            <div class="col-12 w-100 divFiltros">
-                <div class="d-inline-flex">
+        <div class="row bg-white m-0 my-3">
+            <div class="col-12 w-100 divFiltros px-2">
+                <div class="d-inline-flex" style="gap:5px">
                     <div class="d-flex flex-row border radius">
                         <button type="button" class="btn btn-outline-custom hint--top border-0 Filtros" data-toggle="modal" data-target="#Filtros" aria-label="Filtrar datos">
                             <span class="fontq">Filtros</span>
                         </button>
                         <button id="trash_all" aria-label="Limpiar Filtros" class="hint--top btn border-0 btn-outline-custom fontq"><i class="bi bi-trash"></i></button>
                     </div>
-                    <button class="ml-1 btn border radius btn-outline-custom font08 hint--top" data-toggle="collapse" href="#collapseMasivos" role="button" aria-expanded="false" aria-controls="collapseMasivos" aria-label="Según filtros">
+                    <button class="btn border radius btn-outline-custom font08 hint--top" data-toggle="collapse" href="#collapseMasivos" role="button" aria-expanded="false" aria-controls="collapseMasivos" aria-label="Según filtros">
                         Ingreso Masivo
                     </button>
                 </div>
@@ -103,7 +103,7 @@
                         </div>
                     </span>
 
-                    <span class="hint--top" aria-label="Ordenar por Nombre">
+                    <span class="hint--top d-none d-sm-block" aria-label="Ordenar por Nombre">
                         <div class="custom-control custom-switch float-right pt-1 mr-2">
                             <input type="checkbox" class="custom-control-input" checked name="_porApNo" id="_porApNo">
                             <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;">Por Nombre</label>
@@ -125,11 +125,11 @@
                 </div>
             </div>
         </div>
-        <div class="row bg-white invisible m-1 px-2" id="PersonalTable">
+        <div class="row bg-white invisible m-0 m-sm-2" id="PersonalTable">
             <div class="col-12 col-sm-5">
                 <table class="table table-hover text-nowrap w-100" id="tablePersonal"></table>
             </div>
-            <div class="col-12 col-sm-7 w-100">
+            <div class="col-12 col-sm-7 w-100 mt-sm-0 mt-2">
                 <div class="h-100 border radius p-2 bg-ddd">
                     <div id="divData">
 
@@ -151,15 +151,15 @@
                                     <button class="btn btn-sm border btn-outline-custom l_cita custom-white" aria-label="Añadir Citación">
                                     </button>
                                 </div>
-                                <div class="btn-group-toggle border radius bg-white p-1" data-toggle="buttons">
+                                <div class="btn-group-toggle border radius bg-white p-1 d-none d-sm-block" data-toggle="buttons">
                                     <label class="btn btn-sm btn-outline-secondary border-0 radius active font07 verHorarios" aria-label="Ver Horarios">
-                                        <input type="checkbox" checked> Horarios
+                                        <input type="checkbox" checked> <span>Horarios</span>
                                     </label>
                                     <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verRotaciones" aria-label="Ver Rotaciones">
-                                        <input type="checkbox" checked> Rotaciones
+                                        <input type="checkbox" checked> <span>Rotaciones</span>
                                     </label>
                                     <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verCitaciones" aria-label="Ver Citaciones">
-                                        <input type="checkbox" checked> Citaciones
+                                        <input type="checkbox" checked> <span>Citaciones</span>
                                     </label>
                                 </div>
                             </div>

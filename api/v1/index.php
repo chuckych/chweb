@@ -42,74 +42,82 @@ $Personal       = new Classes\Personal;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
-use flight\Engine;
+// use flight\Engine;
 
-$api  = new Engine();
+// $api  = new Engine();
 
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
 
-$api->route('PUT /novedades', [$novedades, 'update']);
-$api->route('DELETE /novedades', [$novedades, 'delete']);
-$api->route('POST /novedades', [$novedades, 'add']);
-$api->route('POST /novedades/totales', [$novedades, 'totales']);
-$api->route('POST /horas/totales', [$horas, 'totales']);
-$api->route('PUT /horas', [$horas, 'update']);
-$api->route('GET /horas/dateMinMax', [$horas, 'dateMinMax']);
-$api->route('GET /fichas/dateMinMax', [$fichas, 'dateMinMax']);
-$api->route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
-$api->route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
-$api->route('POST /estructuras/', [$estructuras, 'estructuras']);
-$api->route('POST /estructuras/alta', [$estructuras, 'create']);
-$api->route('GET /novedades/data', [$novedades, 'data']);
-$api->route('/paragene', [$ParaGene, 'get']);
-$api->route('GET /parametros/paragene', [$ParaGene, 'get']);
-$api->route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
-$api->route('GET /horarios/', [$horarios, 'get_horarios']);
-$api->route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
-$api->route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
-$api->route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);
-$api->route('GET /horarios/asign/rotacion/(@Legajo)', [$horarios, 'get_rotaleg']);
-$api->route('GET /horarios/asign/citacion/(@Legajo)', [$horarios, 'get_citacion']);
-$api->route('GET /horarios/asign/legajo/(@Legajo)', [$horarios, 'get_asign_legajo']);
-$api->route('POST /horarios/rotacion', [$horarios, 'set_rotacion']);
-$api->route('POST /horarios/legajo-rotacion', [$horarios, 'set_rotacion']);
-$api->route('POST /horarios/desde', [$horarios, 'set_horario']);
-$api->route('DELETE /horarios/desde', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/legajo-desde', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/desde-hasta', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/legajo-desde-hasta', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/citacion', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/legajo-citacion', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/rotacion', [$horarios, 'delete_horario']);
-$api->route('DELETE /horarios/legajo-rotacion', [$horarios, 'delete_horario']);
-$api->route('POST /horarios/legajo-desde', [$horarios, 'set_horario']);
-$api->route('POST /horarios/desde-hasta', [$horarios, 'set_horario']);
-$api->route('POST /horarios/legajo-desde-hasta', [$horarios, 'set_horario']);
-$api->route('POST /horarios/citacion', [$horarios, 'set_horario']);
-$api->route('POST /horarios/legajo-citacion', [$horarios, 'set_horario']);
-$api->route('POST /auditor', [$auditor, 'add']);
-$api->route('GET /personal/legajos', [$Personal, 'legajos']);
-$api->route('POST /conectar', [$connectSqlSrv, 'test_connect']);
-$api->map('notFound', [$response, 'notFound']);
-$api->set('flight.log_errors', true);
+Flight::route('PUT /novedades', [$novedades, 'update']);
+Flight::route('DELETE /novedades', [$novedades, 'delete']);
+Flight::route('POST /novedades', [$novedades, 'add']);
+Flight::route('POST /novedades/totales', [$novedades, 'totales']);
+Flight::route('POST /horas/totales', [$horas, 'totales']);
+Flight::route('PUT /horas', [$horas, 'update']);
+Flight::route('GET /horas/dateMinMax', [$horas, 'dateMinMax']);
+Flight::route('GET /fichas/dateMinMax', [$fichas, 'dateMinMax']);
+Flight::route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
+Flight::route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);
+Flight::route('POST /estructuras/', [$estructuras, 'estructuras']);
+Flight::route('POST /estructuras/alta', [$estructuras, 'create']);
+Flight::route('GET /novedades/data', [$novedades, 'data']);
+Flight::route('/paragene', [$ParaGene, 'get']);
+Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
+Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
+Flight::route('GET /horarios/', [$horarios, 'get_horarios']);
+// Flight::route('GET /horarios', function () {
+//     $horarios = new Classes\Horarios;
+//     $horarios->get_horarios();
+// });
+Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
+Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
+Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);
+Flight::route('GET /horarios/asign/rotacion/(@Legajo)', [$horarios, 'get_rotaleg']);
+Flight::route('GET /horarios/asign/citacion/(@Legajo)', [$horarios, 'get_citacion']);
+Flight::route('GET /horarios/asign/legajo/(@Legajo)', [$horarios, 'get_asign_legajo']);
+Flight::route('POST /horarios/rotacion', [$horarios, 'set_rotacion']);
+Flight::route('POST /horarios/legajo-rotacion', [$horarios, 'set_rotacion']);
+Flight::route('POST /horarios/desde', [$horarios, 'set_horario']);
+Flight::route('DELETE /horarios/desde', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/legajo-desde', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/desde-hasta', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/legajo-desde-hasta', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/citacion', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/legajo-citacion', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/rotacion', [$horarios, 'delete_horario']);
+Flight::route('DELETE /horarios/legajo-rotacion', [$horarios, 'delete_horario']);
+Flight::route('POST /horarios/legajo-desde', [$horarios, 'set_horario']);
+Flight::route('POST /horarios/desde-hasta', [$horarios, 'set_horario']);
+Flight::route('POST /horarios/legajo-desde-hasta', [$horarios, 'set_horario']);
+Flight::route('POST /horarios/citacion', [$horarios, 'set_horario']);
+Flight::route('POST /horarios/legajo-citacion', [$horarios, 'set_horario']);
+Flight::route('POST /auditor', [$auditor, 'add']);
+Flight::route('GET /personal/legajos', [$Personal, 'legajos']);
+// Flight::route('POST /conectar', [$connectSqlSrv, 'test_connect']);
+Flight::route('POST /conectar', function () {
+    $connectSqlSrv = new Classes\ConnectSqlSrv;
+    return $connectSqlSrv->test_connect();
+});
+Flight::map('notFound', [$response, 'notFound']);
+Flight::set('flight.log_errors', true);
 
-$api->map('Forbidden', function ($mensaje) use ($response) {
+Flight::map('Forbidden', function ($mensaje) use ($response) {
     $inicio = microtime(true);
     $response->respuesta('', 0, $mensaje, 403, $inicio, 0, 0);
     exit;
 });
 
-$api->map('error', function ($ex) use ($api, $response, $log) {
+Flight::map('error', function ($ex) use ($response, $log) {
 
     $code_protected = $ex->getCode() ?? 400;
     $error_message  = $ex->getMessage() ?? 'Error desconocido';
 
     switch ($code_protected) {
         case 404:
-            $api->notFound();
+            Flight::notFound();
             break;
         case 403:
-            $api->Forbidden($ex->getMessage());
+            Flight::Forbidden($ex->getMessage());
             break;
         case 1:
             $error_message = 'Error interno';
@@ -130,4 +138,4 @@ $api->map('error', function ($ex) use ($api, $response, $log) {
     $response->respuesta('', 0, $error_message, $code_protected, $inicio, 0, $company);
 });
 
-$api->start();
+Flight::start();

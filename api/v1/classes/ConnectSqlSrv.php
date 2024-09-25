@@ -30,8 +30,8 @@ class ConnectSqlSrv
             'DBPass' => getenv('DB_PASS') !== false ? getenv('DB_PASS') : '', //
             'DBName' => getenv('DB_NAME') !== false ? getenv('DB_NAME') : '' //
         ];
-        $this->conn = $this->conn();
         $this->check_data_connection($this->mapDB);
+        // $this->conn = $this->conn();
     }
     private function check_data_connection($mapDB = [])
     {
@@ -50,10 +50,12 @@ class ConnectSqlSrv
      */
     public function conn()
     {
-        try { // Intenta conectar a la base de datos
+        if ($this->conn) { // Si ya hay una conexión establecida
+            return $this->conn; // Retorna la conexión existente si ya está establecida
+        }
 
-            // file_put_contents('conect_sql.log', "serverName: {$serverName} - db: {$db} - user: {$user} - pass: {$pass}");
-            $conectar = new \PDO( // Instancia de la clase PDO
+        try { // Intenta conectar a la base de datos
+            $this->conn = new \PDO( // Instancia de la clase PDO
                 "sqlsrv:server={$this->mapDB['DBHost']};Database={$this->mapDB['DBName']}", // DSN
                 $this->mapDB['DBUser'],
                 $this->mapDB['DBPass'],
@@ -61,12 +63,13 @@ class ConnectSqlSrv
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
                 ]
             );
+            // file_put_contents('log.log', print_r('log', true) . PHP_EOL, FILE_APPEND); // genera log
         } catch (\PDOException $e) {
             $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
             $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_connect_' . $idCompany . '.log');
             throw new \Exception($e->getMessage(), (int) $e->getCode());
         }
-        return $conectar;
+        return $this->conn;
     }
     public function test_connect()
     {
@@ -276,7 +279,7 @@ class ConnectSqlSrv
     }
     public function check_connection($connDB = '')
     {
-        $connect = !empty($connDB) ? $connDB : $this->conn; // Si se proporciona una conexión, la utiliza, de lo contrario, utiliza la conexión actual
+        $connect = !empty($connDB) ? $connDB : $this->conn(); // Si se proporciona una conexión, la utiliza, de lo contrario, utiliza la conexión actual
 
         if (!$connect) {
             throw new \Exception("No hay conexión a la base de datos", 400);
