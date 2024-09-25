@@ -50,7 +50,7 @@ class Novedades
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = :FechaHora, FicCate = :Cate WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
+            $sql = "UPDATE FICHAS3 SET FicNove = :NoveM, FicNoTi= :FicNoTi, FicHoras = :Horas, FicEsta = :Esta, FicCaus = :Causa, FicObse = :Obse, FechaHora = CONVERT(datetime, :FechaHora, 121), FicCate = :Cate WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicNove = :Nove";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
@@ -152,7 +152,7 @@ class Novedades
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "INSERT INTO FICHAS3 (FicLega, FicFech, FicTurn, FicNove, FicNoTi, FicHoras, FicEsta, FicCaus, FicObse, FechaHora, FicCate, FicJust, FicComp) VALUES (:Lega, :Fecha, 1, :Nove, :FicNoTi, :Horas, :Esta, :Causa, :Obse, :FechaHora, :Cate, :Comp, :Just)";
+            $sql = "INSERT INTO FICHAS3 (FicLega, FicFech, FicTurn, FicNove, FicNoTi, FicHoras, FicEsta, FicCaus, FicObse, FechaHora, FicCate, FicJust, FicComp) VALUES (:Lega, :Fecha, 1, :Nove, :FicNoTi, :Horas, :Esta, :Causa, :Obse, CONVERT(datetime, :FechaHora, 121), :Cate, :Comp, :Just)";
 
             $stmt = $conn->prepare($sql);
 

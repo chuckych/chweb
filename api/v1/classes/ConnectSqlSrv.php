@@ -243,11 +243,18 @@ class ConnectSqlSrv
      * @param string $timezone La zona horaria a utilizar. Por defecto 'America/Argentina/Buenos_Aires'.
      * @return string La fecha y hora actual en el formato 'YYYYMMDD HH:MM:SS.mmm'.
      */
-    public function FechaHora($timezone = 'America/Argentina/Buenos_Aires'): string
+    public function FechaHora_old($timezone = 'America/Argentina/Buenos_Aires'): string
     {
         date_default_timezone_set($timezone);
         $t = explode(" ", microtime());
         $t = date("Ymd H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
+        return $t ?? '';
+    }
+    public function FechaHora($timezone = 'America/Argentina/Buenos_Aires'): string
+    {
+        date_default_timezone_set($timezone);
+        $t = explode(" ", microtime());
+        $t = date("Y-m-d H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
         return $t ?? '';
     }
     public function Fecha($format = "Y-m-d", $timezone = 'America/Argentina/Buenos_Aires'): string

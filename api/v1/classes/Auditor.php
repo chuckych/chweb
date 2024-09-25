@@ -42,14 +42,15 @@ class Auditor
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sqlMas70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora, :AudZonaHoraria)";
-            $sqlMenos70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, :FechaHora)"; // se omite el campo AudZonaHoraria en la consulta
+            $sqlMas70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, CONVERT(datetime, :FechaHora, 121), :AudZonaHoraria)";
+            $sqlMenos70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, CONVERT(datetime, :FechaHora, 121))"; // se omite el campo AudZonaHoraria en la consulta
 
             $sql = $get_dbdata < 70 ? $sqlMenos70 : $sqlMas70;
-
             $totalAffectedRows = 0;
             $seconds = 0.0001;
+            $FechaHora = $this->conect->FechaHora();
             foreach ($datos as $dato) { // Recorro los datos
+                // $this->log->write($dato['FechaHora'], date('Ymd') . '_Auditor_sql_' . ID_COMPANY . '.log');
                 $stmt = $conn->prepare($sql); // Preparo la consulta
                 $AudUser = substr($dato['AudUser'], 0, 10);
                 $AudDato = substr($dato['AudDato'], 0, 100); // Limita la cantidad de caracteres a 100
@@ -61,7 +62,7 @@ class Auditor
                 $stmt->bindValue(':AudModu', $dato['AudModu'], \PDO::PARAM_INT);
                 $stmt->bindValue(':AudTipo', $dato['AudTipo'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudDato', $AudDato, \PDO::PARAM_STR);
-                $stmt->bindValue(':FechaHora', $dato['FechaHora'], \PDO::PARAM_STR);
+                $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
                 $get_dbdata < 70 ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
                 $seconds += 0.0004;
                 $stmt->execute(); // Ejecuta la consulta
@@ -136,12 +137,23 @@ class Auditor
         $resultSet = $this->conect->executeQueryWhithParams($sql, $params);
         return $resultSet;
     }
-    public function sumar_segundos_a_fecha($fecha, $seconds)
+    public function sumar_segundos_a_fecha_old($fecha, $seconds)
     {
         $fecha = \DateTime::createFromFormat('Ymd H:i:s.u', $fecha);
         $fecha->modify("+{$seconds} seconds");
         $fechaStr = $fecha->format('Ymd H:i:s.u');
         $fechaStr = substr($fechaStr, 0, 21);
         return $fechaStr;
+    }
+    private function sumar_segundos_a_fecha($fecha, $segundos)
+    {
+        try {
+            $date = new \DateTime($fecha);
+            $date->modify("+{$segundos} seconds");
+            return $date->format('Y-m-d H:i:s');
+        } catch (\Exception $e) {
+            // Manejo de errores
+            return false;
+        }
     }
 }

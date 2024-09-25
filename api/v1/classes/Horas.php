@@ -44,7 +44,7 @@ class Horas
         try {
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = :FechaHora, FicValor = :Valor WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
+            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = CONVERT(datetime, :FechaHora, 121), FicValor = :Valor WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
@@ -132,7 +132,7 @@ class Horas
             }
             foreach ($datos as $dato) {
                 $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
-                $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', '$FechaHoraActual')";
+                $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', CONVERT(datetime, $FechaHoraActual, 121))";
                 $stmt = $conn->prepare($sql);
                 $stmt->execute(); // Ejecuto la consulta
             }
