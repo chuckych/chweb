@@ -94,7 +94,7 @@ class ConnectSqlSrv
         $this->resp = new Response;
         try { // Intenta conectar a la base de datos
             $conectar = new \PDO( // Instancia de la clase PDO
-                "sqlsrv:server={$this->mapDB['DBHost']};Database={$datos['DBName']}", // DSN
+                "sqlsrv:server={$datos['DBHost']};Database={$datos['DBName']}", // DSN
                 $datos['DBUser'],
                 $datos['DBPass'],
                 [
