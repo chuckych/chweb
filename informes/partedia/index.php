@@ -2,7 +2,7 @@
 session_start();
 require __DIR__ . '../../../config/index.php';
 secure_auth_ch();
-$Modulo='21';
+$Modulo = '21';
 ExisteModRol($Modulo);
 existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $bgcolor = 'bg-custom';
@@ -11,15 +11,15 @@ define("TIPO_HOJA", [
     'Oficio' => 'LEGAL',
     'Carta'  => 'LETTER',
     'A3'     => 'A3',
- ]);
+]);
 define("ORIENTACION", [
     'Vertical'   => 'P',
     'Horizontal' => 'L',
- ]);
+]);
 define("DESTINO", [
     'Mostrar Pantalla' => 'I',
     'En Otra Pestaña'  => 'V',
- ]);
+]);
 define("AGRUPAR", [
     ''         => '',
     'Empresa'  => 'a_Empr',
@@ -27,13 +27,12 @@ define("AGRUPAR", [
     'Sector'   => 'a_Sect',
     'Grupo'    => 'a_Grup',
     'Sucursal' => 'a_Sucu',
- ]);
+]);
 define("RESALTAR", [
     ''                    => '',
     'Llegadas Tarde'      => 'r_tar',
     'Incumplimientos'     => 'r_inc',
     'Salidas anticipadas' => 'r_sal',
     'Ausencias'           => 'r_aus',
- ]);
+]);
 require pagina('partediario.php');
-

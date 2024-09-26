@@ -78,47 +78,6 @@
             color: var(--main-bg-modcolor) !important;
             opacity: 0.8;
         }
-
-        .my-check {
-            border: 3px solid red;
-            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
-            background-size: 100% 100%;
-            background-position: center;
-            background-repeat: no-repeat;
-            width: 300px;
-            height: 300px;
-            appearance: none;
-            display: inline-block;
-            vertical-align: middle;
-            background-origin: border-box;
-            padding: 0;
-            user-select: none;
-            flex-shrink: 0;
-            background-color: #888;
-            border-color: #6b7280;
-            border-width: 1px;
-            border-radius: 0.25rem;
-            width: 14px;
-            height: 14px;
-            appearance: none;
-            border: 1px solid #888;
-            transition: background-color 0.3s ease-in-out;
-            cursor: pointer;
-            background-color: #fff;
-        }
-
-        .my-check:checked {
-            background-color: #333
-        }
-
-        .my-check:focus {
-            border-color: #333;
-        }
-
-        .my-check:disabled {
-            background-color: rgb(198, 198, 198);
-            background-image: none;
-        }
     </style>
 </head>
 
