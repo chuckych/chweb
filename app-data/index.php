@@ -1124,6 +1124,7 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
     $Entr   = $payload['Entr'] ?? '00:00';
     $Sale   = $payload['Sale'] ?? '00:00';
     $Desc   = $payload['Desc'] ?? '00:00';
+    $Marcados = $payload['Marcados'] ?? [];
 
     $Codi   = $payload['Codi'] ?? '';
     $Fecha  = $payload['Fecha'] ?? '';
@@ -1184,23 +1185,27 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
             throw new Exception('No tiene permisos para asignar horarios', 400);
         }
 
-        $personal = Flight::personal($payloadPersonal);
-        if ($personal) {
-            foreach ($personal as $key => $p) {
-                $Legajos[] = $p['Lega'];
+        if ($Marcados) {
+            $Legajos = $Marcados;
+        } else {
+            $personal = Flight::personal($payloadPersonal);
+            if ($personal) {
+                foreach ($personal as $key => $p) {
+                    $Legajos[] = $p['Lega'];
+                }
             }
-            $payloadHorarios = [
-                "Lega"   => $Legajos,
-                "Fecha"  => $Fecha,
-                "FechaD" => $FechaD,
-                "FechaH" => $FechaH,
-                "Vence"  => $Vence,
-                "Dias"   => $Dias,
-                "Codi"   => $Codi,
-                "User"   => $user,
-                "Proc"   => $Procesar
-            ];
         }
+        $payloadHorarios = [
+            "Lega"   => $Legajos,
+            "Fecha"  => $Fecha,
+            "FechaD" => $FechaD,
+            "FechaH" => $FechaH,
+            "Vence"  => $Vence,
+            "Dias"   => $Dias,
+            "Codi"   => $Codi,
+            "User"   => $user,
+            "Proc"   => $Procesar
+        ];
     }
 
     if ($url === '/horarios/legajo-desde' || $url === '/horarios/legajo-desde-hasta' || $url === '/horarios/delete-legajo-desde' || $url === '/horarios/delete-legajo-desde-hasta' || $url === '/horarios/delete-legajo-citacion' || $url == '/horarios/edit-legajo-citacion' || $url == '/horarios/edit-legajo-rotacion' || $url == '/horarios/delete-legajo-rotacion') {
@@ -1278,10 +1283,15 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
             throw new Exception('No tiene permisos para asignar citaciones', 400);
         }
         if ($url == '/horarios/citacion') {
-            $personal = Flight::personal($payloadPersonal);
-            if ($personal) {
-                foreach ($personal as $key => $p) {
-                    $Legajos[] = $p['Lega'];
+
+            if ($Marcados) {
+                $Legajos = $Marcados;
+            } else {
+                $personal = Flight::personal($payloadPersonal);
+                if ($personal) {
+                    foreach ($personal as $key => $p) {
+                        $Legajos[] = $p['Lega'];
+                    }
                 }
             }
         }

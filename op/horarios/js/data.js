@@ -23,8 +23,14 @@ $(function () {
     const DT_TABLE_PERSONAL = `#tablePersonal`;
     const ID_MODAL = `#modalAsign`;
     const LS_VALUE_FECHA = `${homehost}_value_fecha`;
+    const LS_MARCADOS = `${homehost}_marcados`;
+    const LS_MARCADOS_PAGE = `${homehost}_marcados_page`;
+    const LS_PAGE_PERSONAL = `${homehost}_page_personal`;
 
     ls.set(LS_LEGAJO, '');
+    ls.set(LS_PAGE_PERSONAL, 1);
+    ls.set(LS_MARCADOS_PAGE, 0);
+    ls.set(LS_MARCADOS, {});
 
     ls.set(LS_HORARIOS_ASIGN_CACHE, {});
 
@@ -77,16 +83,25 @@ $(function () {
     const divRotaciones = qs('#divRotaciones');
     const divCitaciones = qs('#divCitaciones');
 
-    inputVerHorarios.addEventListener('click', () => {
+    inputVerHorarios.addEventListener('click', (e) => {
+        const label = e.target.closest('label');
+        const hint = !inputVerHorarios.checked ? 'Mostrar Horarios' : 'Ocultar Horarios';
+        label.setAttribute('aria-label', hint);
         divHorarioDesde.hidden = !inputVerHorarios.checked;
         divHorarioDesdeHasta.hidden = !inputVerHorarios.checked;
     });
 
-    inputVerRotaciones.addEventListener('click', () => {
+    inputVerRotaciones.addEventListener('click', (e) => {
+        const label = e.target.closest('label');
+        const hint = !inputVerRotaciones.checked ? 'Mostrar Rotaciones' : 'Ocultar Rotaciones';
+        label.setAttribute('aria-label', hint);
         divRotaciones.hidden = !inputVerRotaciones.checked;
     });
 
-    inputVerCitaciones.addEventListener('click', () => {
+    inputVerCitaciones.addEventListener('click', (e) => {
+        const label = e.target.closest('label');
+        const hint = !inputVerCitaciones.checked ? 'Mostrar Citaciones' : 'Ocultar Citaciones';
+        label.setAttribute('aria-label', hint);
         divCitaciones.hidden = !inputVerCitaciones.checked;
     });
 
@@ -146,6 +161,18 @@ $(function () {
         }
         $('#divData').html('')
     });
+    const countMarcados = (bool = false, count = 0) => {
+        const textCount = `<span class="font09 text-secondary text-monospace ml-1">${count}</span>`
+        const icon = !bool ? `<i class="bi bi-check-square"></i>${textCount}` : `<i class="bi bi-check-square-fill"></i>${textCount}`
+        qs('.countMarcados').innerHTML = `<span class="pointer">${icon}</span>`
+    }
+    const actualizarMarcados = (input, legajo, marcados) => {
+        if (input.checked) {
+            marcados[legajo] = true;
+        } else {
+            delete marcados[legajo];
+        }
+    }
 
     const dt_tablePersonal = async (nullFalse = false) => {
 
@@ -165,12 +192,10 @@ $(function () {
             bProcessing: true,
             serverSide: true,
             deferRender: true,
-            stateSave: true,
-            stateDuration: -1,
             dom: `
                 <'row'
                     <'d-flex justify-content-between align-items-center col-12 px-0'
-                        <l>
+                        <'d-inline-flex align-items-center'l<'ml-2 countMarcados'>>
                         <f>
                     >
                 >
@@ -208,6 +233,13 @@ $(function () {
                 $(row).attr('data-legajo', data.pers_legajo);
 
                 const legajoSelected = ls.get(LS_LEGAJO)?.pers_legajo ?? '';
+                const marcados = ls.get(LS_MARCADOS) ?? {};
+                if (marcados[data.pers_legajo]) {
+                    const checkbox = $(row).find('.checkLega');
+                    if (checkbox) {
+                        checkbox.prop('checked', true);
+                    }
+                }
                 if (data.pers_legajo === legajoSelected) {
                     $(row).addClass('table-active');
                 } else {
@@ -217,20 +249,30 @@ $(function () {
             },
             columns: [
                 {
-                    className: 'w-100 view', targets: '', title: '',
+                    data: 'pers_legajo', className: 'pr-0', render: function (data, type, row, meta) {
+                        return `
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input checkLega" id="check_${data}">
+                                <label class="custom-control-label" for="check_${data}"></label>
+                            </div>
+                        `;
+                    },
+                },
+                {
+                    className: 'w-100', targets: '', title: '',
                     "render": function (data, type, row, meta) {
                         const pers_nombre = row['pers_nombre'];
-                        const pers_Legajo = row['pers_legajo'];
+                        const pers_legajo = row['pers_legajo'];
                         const pers_horario = row['pers_horario'] ?? [];
                         const horario = pers_horario?.TipoAsignStr ?? '';
                         return `
-                        <div class="d-flex flex-column">
-                            <div>
-                                <span class="font08">(${pers_Legajo})</span> 
-                                <span class="">${pers_nombre}</span>
-                            </div> 
-                            <div class="font08 text-truncate opa9" title="${horario}" style="max-width:400px">${horario}</div>
-                        </div>`;
+                            <div class="d-flex flex-column">
+                                <div>
+                                    <span class="font08">(${pers_legajo})</span> 
+                                    <span class="">${pers_nombre}</span>
+                                </div> 
+                                <div class="font08 text-truncate opa9" title="${horario}" style="max-width:350px">${horario}</div>
+                            </div>`;
                     },
                 },
             ],
@@ -258,22 +300,80 @@ $(function () {
             $("#tablePersonal_filter .form-control").css('width', '200px')
             $("#tablePersonal_wrapper thead").remove();
             qs('#detalleHorario').hidden = false;
+            countMarcados(false);
         });
         tablePersonal.on('page.dt', function (e, settings, json) {
             $(DT_TABLE_PERSONAL).addClass('loader-in');
+            const start = settings._iDisplayStart || 0;
+            const length = settings._iDisplayLength || 5;
+            const page = start / length + 1
+            ls.set(LS_PAGE_PERSONAL, page);
         });
         $.fn.DataTable.ext.pager.numbers_length = 5;
+
+        qs('.countMarcados').addEventListener('click', (e) => {
+
+            const table = $(DT_TABLE_PERSONAL).DataTable();
+            const page = ls.get(LS_PAGE_PERSONAL) || 1;
+            const marcadosPage = ls.get(LS_MARCADOS_PAGE) || 1;
+            const marcados = ls.get(LS_MARCADOS) || {};
+
+            if (e.target.className === 'bi bi-check-square-fill') { // Desmarcar
+
+                if (marcados && marcadosPage != page) {  // Si hay marcados y la página actual es diferente a la página de los marcados
+                    table.$('tr').each((i, el) => {
+                        table.$('input[type="checkbox"]').prop('checked', true); // Marca todos los checkbox
+                        const legajo = el.getAttribute('data-legajo'); // Obtiene el legajo
+                        marcados[legajo] = true; // Marca el legajo
+                    });
+                    const cuenta = Object.keys(marcados).length; // Cuenta los marcados
+                    countMarcados(cuenta, cuenta); // Actualiza el contador
+                    ls.set(LS_MARCADOS, marcados); // Guarda los marcados
+                    ls.set(LS_MARCADOS_PAGE, page); // Guarda la página actual de los marcados
+                    return; // Sale de la función
+                }
+
+                countMarcados(false); // Actualiza el contador
+                table.$('input[type="checkbox"]').prop('checked', false); // Desmarca todos los checkbox
+                ls.set(LS_MARCADOS, {}); // Limpia los marcados
+                return;
+            } else if (e.target.className === 'bi bi-check-square') { // Marcar
+                table.$('input[type="checkbox"]').prop('checked', true); // Marca todos los checkbox
+                const marcados = {}; // Inicializa los marcados
+                table.$('tr').each((i, el) => { // Recorre las filas
+                    const legajo = el.getAttribute('data-legajo'); // Obtiene el legajo
+                    marcados[legajo] = true; // Marca el legajo
+                });
+                const cuenta = Object.keys(marcados).length; // Cuenta los marcados
+                countMarcados(cuenta, cuenta); // Actualiza el contador
+                ls.set(LS_MARCADOS, marcados); // Guarda los marcados
+            }
+        });
         tablePersonal.on('click', 'tbody tr', async (e) => {
+
             e.preventDefault();
             e.stopImmediatePropagation();
             qs('#detalleHorario').hidden = false;
 
-            this.querySelectorAll('tr').forEach(tr => tr.classList.remove('table-active'));
-            const tr = e.target.closest('tr');
-            tr.classList.add('table-active');
-            const data = $(DT_TABLE_PERSONAL).DataTable().row($(tr)).data();
-            ls.set(LS_LEGAJO, data);
 
+            const tr = e.target.closest('tr');
+            const data = $(DT_TABLE_PERSONAL).DataTable().row($(tr)).data();
+            this.querySelectorAll('tr').forEach(tr => tr.classList.remove('table-active'));
+            // Verifica si el elemento es un checkbox
+            if (e.target.tagName === 'LABEL') {
+                const input = e.target.previousElementSibling; // Obtiene el input checkbox
+                input.checked = !input.checked;
+                const legajo = data.pers_legajo;
+
+                let marcados = ls.get(LS_MARCADOS) || {};
+                actualizarMarcados(input, legajo, marcados);
+                const cuenta = Object.keys(marcados).length;
+                countMarcados(cuenta, cuenta);
+                ls.set(LS_MARCADOS, marcados);
+                return;
+            }
+            ls.set(LS_LEGAJO, data);
+            tr.classList.add('table-active');
             $(".divTablas").addClass('loader-in');
             $(DT_TABLE_PERSONAL).addClass('loader-in');
             await get_horarios_asign(data.pers_legajo);
@@ -757,7 +857,9 @@ $(function () {
     }
     const setAsignación = (data) => {
         const tipo = ls.get(LS_ACTION_SET);
-
+        const marcados = ls.get(LS_MARCADOS) ?? {};
+        // convertir objeto en array
+        const keysMarcado = Object.keys(marcados);
         try {
             if (!data || !tipo) {
                 throw new Error('Error en los datos');
@@ -779,6 +881,7 @@ $(function () {
                 'Desc': data.Desc ?? '00:00',
                 'Entr': data.Entr ?? '00:00',
                 'Sale': data.Sale ?? '00:00',
+                'Marcados': keysMarcado,
             }).then(async (response) => {
                 $.notifyClose();
                 if (response.data.status == 'error') {
@@ -1148,7 +1251,6 @@ $(function () {
         return div;
     }
     const accionesMasivas = (horarios, citacion) => {
-        // console.log(horarios, citacion);
         if (!horarios) {
             qs('.l_horale1').hidden = true;
             qs('.m_horale1').hidden = true;
@@ -1188,6 +1290,7 @@ $(function () {
         let dataLegajo = ls.get(LS_LEGAJO) || {};
         const nombre = dataLegajo?.pers_nombre ?? '';
         const legajo = dataLegajo?.pers_legajo ?? '';
+        const textMarcados = textMarcadosModal();
 
         const periodo = qs('#Periodo');
         periodo.addEventListener('change', (e) => {
@@ -1202,7 +1305,7 @@ $(function () {
                 ls.set(LS_PERIODO, e.target.checked)
                 if (action == 'm_rota') {
                     ls.set(LS_ACTION_SET, 'rotacion')
-                    modalTitle.innerHTML = 'Ingreso masivo de rotación por periodo'
+                    modalTitle.innerHTML = 'Ingreso masivo de rotación por periodo ' + textMarcados
                 }
                 if (action == 'l_rota') {
                     ls.set(LS_ACTION_SET, 'rotacion')
@@ -1210,7 +1313,7 @@ $(function () {
                 }
                 if (action == 'm_horale1') {
                     ls.set(LS_ACTION_SET, 'desde-hasta')
-                    modalTitle.innerHTML = 'Ingreso masivo de horario por periodo'
+                    modalTitle.innerHTML = 'Ingreso masivo de horario por periodo' + textMarcados
                 }
                 if (action == 'l_horale1' || action == 'e_horale1') {
                     ls.set(LS_ACTION_SET, 'legajo-desde-hasta')
@@ -1221,7 +1324,7 @@ $(function () {
                 singleDatePicker('#inputH1FDesde', 'right', 'down')
                 if (action == 'm_rota') {
                     ls.set(LS_ACTION_SET, 'rotacion')
-                    modalTitle.innerHTML = 'Ingreso masivo de rotación desde una fecha'
+                    modalTitle.innerHTML = 'Ingreso masivo de rotación desde una fecha' + textMarcados
                 }
                 if (action == 'l_rota') {
                     ls.set(LS_ACTION_SET, 'rotacion')
@@ -1229,7 +1332,7 @@ $(function () {
                 }
                 if (action == 'm_horale1') {
                     ls.set(LS_ACTION_SET, 'desde')
-                    modalTitle.innerHTML = 'Ingreso masivo de horario desde una fecha'
+                    modalTitle.innerHTML = 'Ingreso masivo de horario desde una fecha' + textMarcados
                 }
                 if (action == 'l_horale1' || action == 'e_horale1') {
                     ls.set(LS_ACTION_SET, 'desde')
@@ -1244,9 +1347,18 @@ $(function () {
             modalTitleHor();
         });
     }
+    const textMarcadosModal = () => {
+        const Marcados = ls.get(LS_MARCADOS) ?? {};
+        const cantidadMarcados = Object.keys(Marcados).length;
+        const textNoMarcados = `<br> <span class="font08 text-danger fw5">No hay Legajos Marcados. Se ingresará a todos según filtro aplicado.</span>`
+        const textMarcados = cantidadMarcados > 0 ? `<br> <span class="font08 text-primary fw5">Legajos Marcados : (${cantidadMarcados})</span>` : textNoMarcados;
+        return textMarcados;
+    }
     const getModal = async (data) => {
         CheckSesion();
         const PERMISOS = getAcciones();
+
+        const textMarcados = textMarcadosModal();
 
         if ($(`${ID_MODAL}`).hasClass('show')) {
             return false;
@@ -1279,9 +1391,9 @@ $(function () {
             'l_horale1': `Ingreso horario desde una fecha<br><span class="font08 fw5">${nombre} (${legajo})</span>`,
             'e_horale1': `Editar horario asignado<br><span class="font08 fw5">${nombre} (${legajo})</span>`,
             'e_horale2': `Editar horario asignado<br><span class="font08 fw5">${nombre} (${legajo})</span>`,
-            'm_horale1': `Ingreso masivo de horario desde una fecha`,
-            'm_rota': `Ingreso masivo de rotación desde una fecha`,
-            'm_cita': `Ingreso masivo de citaciones`,
+            'm_horale1': `Ingreso masivo de horario desde una fecha. ${textMarcados}`,
+            'm_rota': `Ingreso masivo de rotación desde una fecha. ${textMarcados}`,
+            'm_cita': `Ingreso masivo de citaciones. ${textMarcados}`,
             'l_rota': `Ingreso de rotación desde una fecha<br><span class="font08 fw5">${nombre} (${legajo})</span>`,
             'l_cita': `Ingreso de citación<br><span class="font08 fw5">${nombre} (${legajo})</span>`,
             'edit_horale1': `Editar horario desde una fecha<br><span class="font08 fw5">${nombre} (${legajo})</span>`,

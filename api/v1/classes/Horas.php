@@ -181,12 +181,12 @@ class Horas
 
             foreach ($datos as $dato) { // Recorro los datos recibidos
                 foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
-                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacio
+                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
                         $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
                     }
                 }
                 $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancio la clase InputValidator y le paso los datos y las reglas de validacion del array $rules
+                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
             return $datosModificados;
@@ -355,13 +355,13 @@ class Horas
             $keyString = ['ApNo', 'ApNoLega', 'Desc'];
 
             foreach ($keyString as $key) {
-                $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacio
+                $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacío
             }
 
             $keysArray = ['Sector', 'Cod', 'Lega', 'Docu', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'TareProd', 'RegCH', 'Tipo', 'THora', 'Esta', 'DiaL', 'DiaF'];
 
             foreach ($keysArray as $key) { // Recorro las claves del array $keysArray
-                $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacio
+                $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
             }
         } catch (\Throwable $th) {
             $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);

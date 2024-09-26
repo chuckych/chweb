@@ -1355,6 +1355,10 @@
      background-color: var(--main-bg-modcolor);
  }
 
+ .table-light, .table-light>td, .table-light>th {
+     background-color: #f8f9fa;
+ }
+
  /* 
  .table-active {
      background-color: #fafafa !important;
