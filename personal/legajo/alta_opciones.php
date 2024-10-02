@@ -54,8 +54,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT NACIONES.NacDesc
@@ -138,8 +137,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PROVINCI.ProDesc FROM PROVINCI WHERE PROVINCI.ProDesc = '$desc_prov' COLLATE Latin1_General_CI_AI";
@@ -222,8 +220,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT LOCALIDA.LocDesc FROM LOCALIDA WHERE LOCALIDA.LocDesc = '$desc_local' COLLATE Latin1_General_CI_AI";
@@ -451,8 +448,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT EMPRESAS.EmpRazon FROM EMPRESAS WHERE EMPRESAS.EmpRazon = '$EmpRazon' COLLATE Latin1_General_CI_AI";
@@ -530,8 +526,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECTORES.SecDesc FROM SECTORES WHERE SECTORES.SecDesc = '$desc_sector' COLLATE Latin1_General_CI_AI";
@@ -643,8 +638,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECCION.Se2Desc FROM SECCION WHERE SECCION.Se2Desc = '$Se2Desc' COLLATE Latin1_General_CI_AI AND SECCION.SecCodi='$SecCodi'";
@@ -738,8 +732,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT GRUPOS.GruDesc FROM GRUPOS WHERE GRUPOS.GruDesc = '$desc_grupo' COLLATE Latin1_General_CI_AI";
@@ -822,8 +815,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SUCURSALES.SucDesc FROM SUCURSALES WHERE SUCURSALES.SucDesc = '$desc_sucur' COLLATE Latin1_General_CI_AI";
@@ -906,8 +898,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT TAREAS.TareDesc FROM TAREAS WHERE TAREAS.TareDesc = '$desc_tarea' COLLATE Latin1_General_CI_AI";
@@ -996,8 +987,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI";
@@ -1089,8 +1079,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
     /** Query para comparar datos de la bd con lo enviado. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConCodi = '$codConv' AND CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI AND CONVENIO.ConDias='$ConDias' AND CONVENIO.ConTDias = '$ConTDias'";
 
@@ -1166,8 +1155,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
         $data = array('status' => 'cod_requerido');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1297,8 +1285,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1316,8 +1303,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     $CFCodM = test_input($_POST['CFCodM']);
     $CFCodJ = test_input($_POST['CFCodJ']);
     $CFInfM = ($_POST['CFInfM'] == 'on') ? '1' : '0';
-    $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';
-    ;
+    $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';;
     $CFCodM2 = test_input($_POST['CFCodM2']);
     $CFCodJ2 = test_input($_POST['CFCodJ2']);
     $CFCodM3 = test_input($_POST['CFCodM3']);
@@ -1446,8 +1432,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
         $data = array('status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
@@ -1485,12 +1470,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
         audito_ch('A', $Dato, '10');
         $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
         echo json_encode($data);
-
     } else {
 
         $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
         echo json_encode($data);
-
     }
 
     exit;
@@ -1635,8 +1618,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
@@ -1674,16 +1656,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
         audito_ch('M', $Dato, '10');
         $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
         echo json_encode($data);
-
     } else {
 
         $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
         echo json_encode($data);
-
     }
 
     exit;
-
 }
 /** BAJAS HISTORIAl INGRESOS LEGAJOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) {
@@ -1693,8 +1672,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $InEgLega = test_input($_POST['DelInEgLega']);
     $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'], 'Y-m-d'));
@@ -1722,12 +1700,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
 
         audito_ch('B', $Dato, '10');
         exit;
-
     } else {
 
         $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
         Flight::json($data);
-
     }
 
     exit;
@@ -1788,8 +1764,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1906,8 +1881,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2027,8 +2001,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2139,14 +2112,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) 
 
 /** ALTAS IDENTIFICA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFICA')) {
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
     require_once __DIR__ . '../../../config/conect_mssql.php';
 
     if (valida_campo($_POST['IDCodigo'])) {
-        $data = array('status' => 'cod_requerido', 'dato' => 'Identicador requerido.');
+        $data = ['status' => 'cod_requerido', 'dato' => 'Identificador requerido.'];
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
     $_POST['IDVence'] = $_POST['IDVence'] ?? '';
     $_POST['IDCap01'] = $_POST['IDCap01'] ?? '';
     $_POST['IDCap02'] = $_POST['IDCap02'] ?? '';
@@ -2155,9 +2131,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $_POST['IDCap05'] = $_POST['IDCap05'] ?? '';
     $_POST['IDCap06'] = $_POST['IDCap06'] ?? '';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
     $_POST['IDTarjeta'] = $_POST['IDTarjeta'] ?? '';
     $IDCodigo = test_input($_POST['IDCodigo']);
     $IDLegajo = test_input($_POST['IDLegajo']);
@@ -2175,14 +2151,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $IDFichada = '1';
     $FechaHora = date('Ymd H:i:s');
 
-    $Dato = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
+    $Dato = "Identificador: ({$IDCodigo}). Legajo: {$IDLegajo}";
 
     /** Query revisar si existe un registro igual */
     $query = "SELECT TOP 1 IDENTIFICA.IDLegajo, PERSONAL.LegApNo FROM IDENTIFICA INNER JOIN PERSONAL ON IDENTIFICA.IDLegajo=PERSONAL.LegNume WHERE IDENTIFICA.IDCodigo='$IDCodigo'";
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'ID asignado al legajo:<br /> <strong>' . $fila['IDLegajo'] . ' - ' . $fila['LegApNo'] . '</strong>');
+            $data = [
+                'status' => 'existe',
+                'dato' => 'ID asignado al legajo:<br /> <strong>' . $fila['IDLegajo'] . ' - ' . $fila['LegApNo'] . '</strong>'
+            ];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -2192,7 +2171,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $a = simpleQueryDataMS("SELECT TOP 1 I.IDLegajo, P.LegApNo, I.IDTarjeta, I.IDCodigo FROM IDENTIFICA I INNER JOIN PERSONAL P ON I.IDLegajo=P.LegNume WHERE I.IDTarjeta='$IDTarjeta' AND I.IDTarjeta !=''");
     // if ((CountRegistrosMayorCero("SELECT TOP 1 IDTarjeta FROM IDENTIFICA WHERE IDTarjeta='$IDTarjeta' AND IDTarjeta !=''")))
     if ($a) {
-        $data = array('status' => 'existe', 'dato' => "La tarjeta se encuentra asignada a ($a[IDLegajo]) $a[LegApNo]", 'otro' => $a);
+        $data = [
+            'status' => 'existe',
+            'dato' => "La tarjeta se encuentra asignada a ($a[IDLegajo]) $a[LegApNo]",
+            'otro' => $a
+        ];
         echo json_encode($data);
         exit;
     }
@@ -2218,12 +2201,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $IDFing7 = '0';
     $IDFing8 = '0';
     $IDFing9 = '0';
-    // $IDCap01 = $IDCap01;
-    // $IDCap02 = $IDCap02;
-    // $IDCap03 = $IDCap03;
-    // $IDCap04 = $IDCap04;
-    // $IDCap05 = $IDCap05;
-    // $IDCap06 = $IDCap06;
     $IDSupTarj = '';
     $IDSupAdmLev = '0';
     $IDSupAutMod = '0';
@@ -2233,53 +2210,395 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $IDSupDuress1 = '0';
     $IDSupFinger2 = '0';
     $IDSupDuress2 = '0';
-    $IDSupStart = '17530101';
-    $IDSupExpiry = '17530101';
+    $IDSupStart = '';
+    $IDSupExpiry = '';
     $IDSupTarjFC = '0';
-    /** fin */
-    // $procedure_params = array(
-    //     array(&$IDCodigo),array(&$IDFichada),array(&$IDComedor),array(&$IDInvitado),array(&$IDAcceso),array(&$IDAlerta),array(&$IDProvis),array(&$IDVence),array(&$IDAsigna),array(&$IDLegajo),array(&$IDTDoc),array(&$IDDocu),array(&$IDDisp),array(&$IDPrivi),array(&$IDPass),array(&$IDFing),array(&$IDFing1),array(&$IDFing2),array(&$IDFing3),array(&$IDFing4),array(&$IDFing5),array(&$IDFing6),array(&$IDFing7),array(&$IDFing8),array(&$IDFing9),array(&$IDCap01),array(&$IDCap02),array(&$IDCap03),array(&$IDCap04),array(&$IDCap05),array(&$IDTarjeta),array(&$IDSupTarj),array(&$IDSupAdmLev),array(&$IDSupAutMod),array(&$IDSupName),array(&$IDSupPass),array(&$IDSupFinger1),array(&$IDSupDuress1),array(&$IDSupFinger2),array(&$IDSupDuress2),array(&$IDSupStart),array(&$IDSupExpiry),array(&$IDSupTarjFC),array(&$FechaHora)
-    // );        
+    $IDCap07 = '0';
+    $IDConIdFing = '0';
+    $IDConIdRegistration = '0';
+    $IDConIdName = '0';
+    $IDConIdPassword = '0';
+    $IDConIdSalt = '0';
+    $IDConIdUserType = '0';
+    $IDConIdBegin_time = '1753-01-01';
+    $IDConIdEnd_time = '1753-01-01';
+    $IDConIdUserGroup = '0';
+    $IDConIdCardNo = '0';
+    $IDDominio = '0';
+    $IDCodQR = '';
+    $IDCap08 = '0';
+    $IDITKFing = '0';
+    $IDITKPassword = '0';
+    $IDITKStatus = '0';
+    $IDITKSec_level = '0';
+    // Convertir FechaHora a formato datetime
+    $FechaHora = date('Y-m-d H:i:s', strtotime(date('Y-m-d H:i:s')));
+    $IDVence = date('Y-m-d', strtotime($IDVence));
 
-    // $sql = "exec DATA_IDENTIFICAInsert @IDCodigo=?,@IDFichada=?,@IDComedor=?,@IDInvitado=?,@IDAcceso=?,@IDAlerta=?,@IDProvis=?,@IDVence=?,@IDAsigna=?,@IDLegajo=?,@IDTDoc=?,@IDDocu=?,@IDDisp=?,@IDPrivi=?,@IDPass=?,@IDFing=?,@IDFing1=?,@IDFing2=?,@IDFing3=?,@IDFing4=?,@IDFing5=?,@IDFing6=?,@IDFing7=?,@IDFing8=?,@IDFing9=?,@IDCap01=?,@IDCap02=?,@IDCap03=?,@IDCap04=?,@IDCap05=?,@IDTarjeta=?,@IDSupTarj=?,@IDSupAdmLev=?,@IDSupAutMod=?,@IDSupName=?,@IDSupPass=?,@IDSupFinger1=?,@IDSupDuress1=?,@IDSupFinger2=?,@IDSupDuress2=?,@IDSupStart=?,@IDSupExpiry=?,@IDSupTarjFC=?,@FechaHora=?"; /** Query del Store Prcedure */
 
-    $sql = "INSERT INTO IDENTIFICA(
-                [IDCodigo],[IDFichada],[IDComedor],[IDInvitado],[IDAcceso],[IDAlerta],[IDProvis],[IDVence],[IDAsigna],[IDLegajo],[IDTDoc],[IDDocu],[IDDisp],[IDPrivi],[IDPass],[IDFing],[IDFing1],[IDFing2],[IDFing3],[IDFing4],[IDFing5],[IDFing6],[IDFing7],[IDFing8],[IDFing9],[IDCap01],[IDCap02],[IDCap03],[IDCap04],[IDCap05],[IDCap06],[IDTarjeta],[IDSupTarj],[IDSupAdmLev],[IDSupAutMod],[IDSupName],[IDSupPass],[IDSupFinger1],[IDSupDuress1],[IDSupFinger2],[IDSupDuress2],[IDSupStart],[IDSupExpiry],[IDSupTarjFC],[FechaHora]
-               )
-               VALUES (
-                '$IDCodigo','$IDFichada','$IDComedor','$IDInvitado','$IDAcceso','$IDAlerta','$IDProvis','$IDVence','$IDAsigna','$IDLegajo','$IDTDoc','$IDDocu','$IDDisp','$IDPrivi','$IDPass','$IDFing','$IDFing1','$IDFing2','$IDFing3','$IDFing4','$IDFing5','$IDFing6','$IDFing7','$IDFing8','$IDFing9','$IDCap01','$IDCap02','$IDCap03','$IDCap04','$IDCap05','$IDCap06','$IDTarjeta','$IDSupTarj','$IDSupAdmLev','$IDSupAutMod','$IDSupName','$IDSupPass','$IDSupFinger1','$IDSupDuress1','$IDSupFinger2','$IDSupDuress2','$IDSupStart','$IDSupExpiry','$IDSupTarjFC','$FechaHora'
-               )";
-    //    print_r($sql); exit;
+    $cols60 = [
+        "IDCodigo", // 0
+        "IDFichada",
+        "IDComedor",
+        "IDInvitado",
+        "IDAcceso",
+        "IDAlerta",
+        "IDProvis",
+        "IDVence", // 7
+        "IDAsigna",
+        "IDLegajo",
+        "IDTDoc", // 10
+        "IDDocu",
+        "IDDisp",
+        "IDPrivi",
+        "IDPass",
+        "IDFing", // 15
+        "IDFing1",
+        "IDFing2",
+        "IDFing3",
+        "IDFing4",
+        "IDFing5",
+        "IDFing6", // 21
+        "IDFing7",
+        "IDFing8",
+        "IDFing9",
+        "IDCap01",
+        "IDCap02", // 26
+        "IDCap03",
+        "IDCap04",
+        "IDTarjeta",
+        "FechaHora", // 30
+        "IDCap05", // 31
+        "IDSupTarj",
+        "IDSupAdmLev",
+        "IDSupAutMod",
+        "IDSupName",
+        "IDSupPass",
+        "IDSupFinger1",
+        "IDSupDuress1", // 38
+        "IDSupFinger2",
+        "IDSupDuress2",
+        "IDSupStart",   // 41
+        "IDSupExpiry", // 42
+        "IDSupTarjFC",
+        "IDCap06",
+        "IDHikvFing1",
+        "IDHikvFing2",
+        "IDHikvFing3",
+        "IDHikvFing4",
+        "IDHikvFing5",
+        "IDHikvFing6",
+        "IDHikvFing7",
+        "IDHikvFing8",
+        "IDHikvFing9",
+        "IDHikvFing10",
+        "IDHikvCardNo",
+        "IDHikvName",
+        "IDHikvPassword",
+        "IDHikvUserType",
+        "IDCap07",
+        "IDConIdFing",
+        "IDConIdRegistration",
+        "IDConIdName",
+        "IDConIdPassword",
+        "IDConIdSalt",
+        "IDConIdUserType",
+        "IDConIdBegin_time",
+        "IDConIdEnd_time",
+        "IDConIdUserGroup",
+        "IDConIdCardNo"
+    ];
 
-    // $stmt = sqlsrv_prepare($link, $sql, $procedure_params); /** preparar la sentencia */
+    $values60 = [
+        $IDCodigo, // 0
+        $IDFichada,
+        $IDComedor,
+        $IDInvitado,
+        $IDAcceso,
+        $IDAlerta,
+        $IDProvis,
+        $IDVence, // 7
+        $IDAsigna,
+        $IDLegajo,
+        $IDTDoc,
+        $IDDocu,
+        $IDDisp,
+        $IDPrivi,
+        $IDPass,
+        $IDFing,
+        $IDFing1,
+        $IDFing2,
+        $IDFing3,
+        $IDFing4,
+        $IDFing5,
+        $IDFing6,
+        $IDFing7,
+        $IDFing8,
+        $IDFing9,
+        $IDCap01,
+        $IDCap02,
+        $IDCap03,
+        $IDCap04,
+        $IDTarjeta,
+        $FechaHora, // 30
+        $IDCap05, // 31
+        $IDSupTarj,
+        $IDSupAdmLev,
+        $IDSupAutMod, // 34
+        $IDSupName,
+        $IDSupPass,
+        $IDSupFinger1, // 37
+        $IDSupDuress1,
+        $IDSupFinger2, // 39
+        $IDSupDuress2,
+        $IDSupStart, // 41
+        $IDSupExpiry, // 42
+        $IDSupTarjFC,
+        $IDCap06,
+        $IDHikvFing1,
+        $IDHikvFing2,
+        $IDHikvFing3,
+        $IDHikvFing4,
+        $IDHikvFing5,
+        $IDHikvFing6, // 50
+        $IDHikvFing7,
+        $IDHikvFing8,
+        $IDHikvFing9,
+        $IDHikvFing10,
+        $IDHikvCardNo,
+        $IDHikvName,
+        $IDHikvPassword,
+        $IDHikvUserType,
+        $IDCap07,
+        $IDConIdFing, // 60
+        $IDConIdRegistration,
+        $IDConIdName,
+        $IDConIdPassword,
+        $IDConIdSalt,
+        $IDConIdUserType,
+        $IDConIdBegin_time, // 66
+        $IDConIdEnd_time, // 67
+        $IDConIdUserGroup,
+        $IDConIdCardN // 69
+    ];
+
+    $cols70 = [
+        "IDCodigo", // 0
+        "IDFichada", // 1
+        "IDComedor", // 2
+        "IDInvitado", // 3
+        "IDAcceso", // 4
+        "IDAlerta", // 5
+        "IDProvis", // 6
+        "IDVence", // 7
+        "IDAsigna", // 8
+        "IDLegajo", // 9
+        "IDTDoc", // 10
+        "IDDocu", // 11
+        "IDDisp", // 12
+        "IDPrivi", // 13
+        "IDPass", // 14
+        "IDFing", // 15
+        "IDFing1", // 16
+        "IDFing2", // 17
+        "IDFing3", // 18
+        "IDFing4", // 19
+        "IDFing5", // 20
+        "IDFing6", // 21
+        "IDFing7", // 22
+        "IDFing8", // 23
+        "IDFing9", // 24
+        "IDCap01", // 25
+        "IDCap02", // 26
+        "IDCap03", // 27
+        "IDCap04", // 28
+        "IDTarjeta", // 29
+        "FechaHora", // 30
+        "IDCap05", // 31
+        "IDSupTarj", // 32
+        "IDSupAdmLev", // 33
+        "IDSupAutMod", // 34
+        "IDSupName", // 35
+        "IDSupPass", // 36
+        "IDSupFinger1", // 37
+        "IDSupDuress1", // 38
+        "IDSupFinger2", // 39
+        "IDSupDuress2", // 40
+        "IDSupStart", // 41
+        "IDSupExpiry", // 42
+        "IDSupTarjFC", // 43
+        "IDCap06", // 44
+        "IDHikvFing1", // 45
+        "IDHikvFing2", // 46
+        "IDHikvFing3", // 47
+        "IDHikvFing4", // 48
+        "IDHikvFing5", // 49
+        "IDHikvFing6", // 50
+        "IDHikvFing7", // 51
+        "IDHikvFing8", // 52
+        "IDHikvFing9", // 53
+        "IDHikvFing10", // 54
+        "IDHikvCardNo", // 55
+        "IDHikvName", // 56
+        "IDHikvPassword", // 57
+        "IDHikvUserType", // 58
+        "IDCap07", // 59
+        "IDConIdFing", // 60
+        "IDConIdRegistration", // 61
+        "IDConIdName", // 62
+        "IDConIdPassword", // 63
+        "IDConIdSalt", // 64
+        "IDConIdUserType", // 65
+        "IDConIdBegin_time", // 66
+        "IDConIdEnd_time", // 67
+        "IDConIdUserGroup", // 68
+        "IDConIdCardNo", // 69
+        "IDDominio", // 70
+        "IDCodQR", // 71
+        "IDCap08", // 72
+        "IDITKFing", // 73
+        "IDITKPassword", // 74
+        "IDITKStatus", // 75
+        "IDITKSec_level" // 76
+    ];
+    $values70 = [
+        $IDCodigo, // 0
+        $IDFichada, // 1
+        $IDComedor, // 2
+        $IDInvitado,
+        $IDAcceso,
+        $IDAlerta,
+        $IDProvis,
+        $IDVence,   // 7
+        $IDAsigna,
+        $IDLegajo,
+        $IDTDoc,
+        $IDDocu,
+        $IDDisp,
+        $IDPrivi,
+        $IDPass,
+        $IDFing,
+        $IDFing1,
+        $IDFing2,
+        $IDFing3,
+        $IDFing4, // 19
+        $IDFing5,
+        $IDFing6,
+        $IDFing7,
+        $IDFing8,
+        $IDFing9, // 24
+        $IDCap01,
+        $IDCap02,
+        $IDCap03,
+        $IDCap04,
+        $IDTarjeta,
+        $FechaHora, // 30
+        $IDCap05,
+        $IDSupTarj,
+        $IDSupAdmLev,
+        $IDSupAutMod,
+        $IDSupName,
+        $IDSupPass,
+        $IDSupFinger1,
+        $IDSupDuress1,
+        $IDSupFinger2,
+        $IDSupDuress2,
+        $IDSupStart,    // 41
+        $IDSupExpiry,  // 42
+        $IDSupTarjFC,
+        $IDCap06, // 44
+        $IDHikvFing1 ?? '0',
+        $IDHikvFing2 ?? '0',
+        $IDHikvFing3 ?? '0',
+        $IDHikvFing4 ?? '0',
+        $IDHikvFing5 ?? '0',
+        $IDHikvFing6 ?? '0',
+        $IDHikvFing7 ?? '0',
+        $IDHikvFing8 ?? '0',
+        $IDHikvFing9 ?? '0',
+        $IDHikvFing10 ?? '0',
+        $IDHikvCardNo ?? '0',
+        $IDHikvName,
+        $IDHikvPassword,
+        $IDHikvUserType,
+        $IDCap07,
+        $IDConIdFing,
+        $IDConIdRegistration,
+        $IDConIdName,
+        $IDConIdPassword,
+        $IDConIdSalt,
+        $IDConIdUserType,
+        $IDConIdBegin_time, // 66
+        $IDConIdEnd_time, // 67
+        $IDConIdUserGroup, // 68
+        $IDConIdCardNo,
+        $IDDominio, // 70
+        $IDCodQR,
+        $IDCap08, // 72
+        $IDITKFing,
+        $IDITKPassword, // 74
+        $IDITKStatus,
+        $IDITKSec_level // 76
+    ];
+
+    if ($systemVersion >= 70) {
+        $values70[7] = "CONVERT(datetime, '$IDVence', 120)"; // $IDVence
+        $values70[30] = "CONVERT(datetime, '$FechaHora', 121)"; // $FechaHora
+        $values70[41] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDSupStart
+        $values70[42] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDSupExpiry
+        $values70[66] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDConIdBegin_time
+        $values70[67] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDConIdEnd_time
+    } else {
+        $values60[7] = "CONVERT(datetime, '$IDVence', 120)"; // $IDVence
+        $values60[30] = "CONVERT(datetime, '$FechaHora', 121)"; // $FechaHora
+        $values60[41] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDSupStart
+        $values60[42] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDSupExpiry
+        $values70[66] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDConIdBegin_time
+        $values70[67] = "CONVERT(datetime, '1753-01-01', 120)"; // $IDConIdEnd_time
+    }
+
+    $cols = ($systemVersion >= 70) ? $cols70 : $cols60;
+    $cols = implode(',', $cols);
+
+    $values = ($systemVersion >= 70) ? $values70 : $values60;
+    // Aquí el 'implode' no usa comillas simples para valores que ya tienen una conversión CONVERT
+    $values = implode(',', array_map(function ($value) {
+        return is_numeric($value) || strpos($value, "CONVERT") !== false ? $value : "'$value'";
+    }, $values));
+
+    $sql = "INSERT INTO IDENTIFICA($cols) VALUES ($values)";
+
     $stmt = sqlsrv_query($link, $sql, $params, $options);
     /** preparar la sentencia */
 
     if (!$stmt) {
         // die(print_r(sqlsrv_errors(), true));
-        $data = array('status' => 'error', 'dato' => 'Error');
+        $data = ['status' => 'error', 'dato' => 'Error'];
         echo json_encode($data);
         exit;
     }
-    if (($stmt)) {
+    if ($stmt) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = [
+            'status' => 'ok',
+            'dato' => $Dato
+        ];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = [
+            'status' => 'error',
+            'dato' => $Dato
+        ];
         echo json_encode($data);
         die(print_r(sqlsrv_errors(), true));
     }
 
     sqlsrv_close($link);
-
-    // echo json_encode($data);
-
 }
 
 /** BAJAS IDENTIFICA */
@@ -2382,8 +2701,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Datos requeridos.');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
 
     $params = array();
@@ -2404,8 +2722,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'error', 'dato' => 'Fecha Inválida.');
         echo json_encode($data);
         exit;
-    }
-    ;
+    };
 
     $Dato = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
 

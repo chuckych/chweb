@@ -64,6 +64,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         exit;
     }
 
+
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
     $Hora = explode(':', $_POST['RegHora']);
     $datos_fichada = explode('-', $_POST['datos_fichada']);
 
@@ -114,8 +121,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
     $RegHoRe = $RegHora;
     $RegTran = '1';
     $RegSect = '0';
-    $RegRelo = '';
-    $RegLect = '';
+    $RegRelo = '0';
+    $RegLect = '0';
 
     $ExisteRegistro = CountRegistrosMayorCero("SELECT TOP 1 REGISTRO.RegTarj FROM REGISTRO WHERE RegTarj = '$RegTarj' and RegFech = '$RegFech' and RegHora = '$RegHora' ORDER BY RegTarj,RegFech,RegHora");
 
@@ -124,8 +131,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         $Dato = 'Alta Fichada: (' . $RegHora . '). Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd-m-Y');
         $Dato2 = 'Hora: <span class="ls1 fw5">' . $RegHora . '</span>Hs. Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd/m/Y');
 
-        if (UpdateRegistro("UPDATE REGISTRO Set RegTipo = '$RegTipo',RegLega = '$RegLega',RegFeAs = '$RegFeAs',RegFeRe = '$RegFeRe',RegHoRe = '$RegHoRe',RegTran = '$RegTran',RegSect = '$RegSect',RegRelo = '$RegRelo',RegLect = '$RegLect',FechaHora = '$FechaHora' WHERE RegTarj = '$RegTarj' and RegFech = '$RegFech' and RegHora = '$RegHora'")) {
+        $columnFicUsua = ($systemVersion >= 70) ? ", RegUsua='$FicUsua'" : '';
+        $sql = "UPDATE REGISTRO Set RegTipo = '$RegTipo',RegLega = '$RegLega',RegFeAs = '$RegFeAs',RegFeRe = '$RegFeRe',RegHoRe = '$RegHoRe',RegTran = '$RegTran',RegSect = '$RegSect',RegRelo = '$RegRelo',RegLect = '$RegLect',FechaHora = '$FechaHora' $columnFicUsua WHERE RegTarj = '$RegTarj' and RegFech = '$RegFech' and RegHora = '$RegHora'";
 
+        if (UpdateRegistro($sql)) {
             audito_ch('A', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFeAs, $RegFeAs) == 'Terminado') {
                 $Procesado = " - Procesado.";
@@ -142,11 +151,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
             exit;
         }
     } else {
-        /** Si no existe un registro en la tabla registro donde la regtarj, regfech y reghora existen Insertartamos fichada nueva */
+        /** Si no existe un registro en la tabla registro donde la regtarj, regfech y reghora existen Insertamos fichada nueva */
         $Dato = 'Alta Fichada: (' . $_POST['RegHora'] . '). Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd-m-Y');
         $Dato2 = 'Hora: <span class="ls1 fw5">' . $_POST['RegHora'] . '</span>Hs. Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd/m/Y');
 
-        if (InsertRegistro("INSERT INTO REGISTRO (RegTarj,RegFech,RegHora,RegTipo,RegLega,RegFeAs,RegFeRe,RegHoRe,RegTran,RegSect,RegRelo,RegLect,FechaHora) Values('$RegTarj','$RegFech','$RegHora','$RegTipo','$RegLega','$RegFeAs','$RegFeRe','$RegHoRe','$RegTran','$RegSect','$RegRelo','$RegLect','$FechaHora')")) {
+        $columnFicUsua = ($systemVersion >= 70) ? ", RegUsua" : '';
+        $valueFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
+
+        if (InsertRegistro("INSERT INTO REGISTRO (RegTarj,RegFech,RegHora,RegTipo,RegLega,RegFeAs,RegFeRe,RegHoRe,RegTran,RegSect,RegRelo,RegLect,FechaHora $columnFicUsua) Values('$RegTarj','$RegFech','$RegHora','$RegTipo','$RegLega','$RegFeAs','$RegFeRe','$RegHoRe','$RegTran','$RegSect','$RegRelo','$RegLect','$FechaHora' $valueFicUsua)")) {
             audito_ch('A', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFeAs, $RegFeAs) == 'Terminado') {
                 $Procesado = " - Procesado.";
@@ -244,6 +256,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
         exit;
     };
 
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
     $datos = explode('-', $_POST['datos_fichada_mod']);
 
     $RegFech1 = $datos[0];
@@ -314,7 +332,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
         $Dato = 'Modificación Fichada: (' . $RegHora . '). Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd-m-Y');
         $Dato2 = 'Hora: <span class="ls1 fw5">' . $RegHora . '</span>Hs. Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd/m/Y');
 
-        if (UpdateRegistro("UPDATE REGISTRO SET RegTipo = $RegTipo, RegLega = '$RegLega',RegFeAs = '$RegFeAs', RegFeRe = '$RegFeRe', RegHoRe = '$RegHora',RegTran = $RegTran,RegSect = '$RegSect',RegRelo = '',RegLect = '',FechaHora = '$FechaHora' WHERE RegTarj='$RegTarj' AND RegFech='$RegFech1' AND RegHora = '$RegHora1'")) {
+        $columnFicUsua = ($systemVersion >= 70) ? ", RegUsua='$FicUsua'" : '';
+
+        if (UpdateRegistro("UPDATE REGISTRO SET RegTipo = $RegTipo, RegLega = '$RegLega',RegFeAs = '$RegFeAs', RegFeRe = '$RegFeRe', RegHoRe = '$RegHora',RegTran = $RegTran,RegSect = '$RegSect',RegRelo = '0',RegLect = '0',FechaHora = '$FechaHora' $columnFicUsua WHERE RegTarj='$RegTarj' AND RegFech='$RegFech1' AND RegHora = '$RegHora1'")) {
 
             audito_ch('M', $Dato, '4');
             if (procesar_legajo($RegLega, $RegFech1, $RegFech1) == 'Terminado') {
@@ -486,8 +506,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
         DeleteRegistro("DELETE FROM FICHAS3 WHERE FicLega = '$Fic3FicLega' and FicFech = '$Fi3FicFech' $deletNov");
         // exit;
     }
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
+    $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
+    $valueFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
     /** Luego insertamos la novedad en Fichas3 */
-    if (InsertRegistro("INSERT INTO FICHAS3 (FicLega,FicFech,FicTurn,FicNove,FicNoTi,FicHoras,FicJust,FicObse,FicCaus,FicEsta,FicCate,FicComp,FechaHora) Values('$FicLega','$FicFech',1,'$FicNove','$NovTipo','$FicHoras','$FicJust','$FicObse','$FicCaus',1,'$FicCate','00:00','$FechaHora')")) {
+    if (InsertRegistro("INSERT INTO FICHAS3 (FicLega,FicFech,FicTurn,FicNove,FicNoTi,FicHoras,FicJust,FicObse,FicCaus,FicEsta,FicCate,FicComp,FechaHora $columnFicUsua) Values('$FicLega','$FicFech',1,'$FicNove','$NovTipo','$FicHoras','$FicJust','$FicObse','$FicCaus',1,'$FicCate','00:00','$FechaHora' $valueFicUsua)")) {
         audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
@@ -510,6 +538,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
 }
 /** MODIFICACIÓN NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod')) {
+
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
 
     if ($_SESSION["ABM_ROL"]['mNov'] == '0') {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para modificar Novedades.');
@@ -595,7 +629,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     sqlsrv_free_stmt($result);
 
     $MNove = explode('-', $_POST['CNove']);
-    /** Cod Nov, Tipo y Categoria */
+    /** Cod Nov, Tipo y Categoría */
     $MNoveCod = test_input($MNove[0]);
     $MNoveTipo = test_input($MNove[1]);
     $MNoveCat = test_input($MNove[2]);
@@ -603,7 +637,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     $Dato = 'Novedad: (' . $NovCodi . ') ' . $NovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Nov: (' . $NovCodi . ') ' . $NovDesc;
 
-    if (UpdateRegistro("UPDATE FICHAS3 SET FicNove = '$FicNove', FicNoTi='$NovTipo', FicHoras='$FicHoras', FicJust='$FicJust', FicObse='$FicObse', FicCaus='$FicCaus', FicCate='$FicCate', FicEsta= 1, FechaHora = '$FechaHora' WHERE FicNove = '$MNoveCod' AND FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn='1'")) {
+    $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua= '$FicUsua'" : '';
+
+    if (UpdateRegistro("UPDATE FICHAS3 SET FicNove = '$FicNove', FicNoTi='$NovTipo', FicHoras='$FicHoras', FicJust='$FicJust', FicObse='$FicObse', FicCaus='$FicCaus', FicCate='$FicCate', FicEsta= 1, FechaHora = '$FechaHora' $columnFicUsua WHERE FicNove = '$MNoveCod' AND FicLega = '$FicLega' AND FicFech = '$FicFech' AND FicTurn='1'")) {
         audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
@@ -680,6 +716,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
         exit;
     };
 
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
     $_POST['Fic1Hora'] = $_POST['Fic1Hora'] ?? '';
     $_POST['Fic1HsAu2'] = $_POST['Fic1HsAu2'] ?? '';
     $_POST['Fic1Caus'] = $_POST['Fic1Caus'] ?? '0';
@@ -753,7 +795,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
     $Dato = 'Alta Hora: (' . $Fic1Hora . ') ' . $THoDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
 
-    if (InsertRegistro("INSERT INTO FICHAS1 (FicLega,FicFech,FicTurn,FicHora,FicHsHe,FicHsAu,FicHsAu2,FicEsta,FechaHora,FicObse,FicCaus) Values('$FicLega','$FicFech',1,'$Fic1Hora','$Fic1HsAu2','$Fic1HsAu2','$Fic1HsAu2',2,'$FechaHora','$Fic1Observ','$Fic1Caus ')")) {
+    $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
+    $valueFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
+
+    if (InsertRegistro("INSERT INTO FICHAS1 (FicLega,FicFech,FicTurn,FicHora,FicHsHe,FicHsAu,FicHsAu2,FicEsta,FechaHora,FicObse,FicCaus, FicValor $columnFicUsua) Values('$FicLega','$FicFech',1,'$Fic1Hora','$Fic1HsAu2','$Fic1HsAu2','$Fic1HsAu2',2,'$FechaHora','$Fic1Observ','$Fic1Caus', '0' $valueFicUsua)")) {
         audito_ch('A', $Dato, '4');
         /** Grabamos en Auditor */
         if (procesar_legajo($FicLega, $FicFech, $FicFech) == 'Terminado') {
@@ -828,6 +873,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         echo json_encode($data);
         exit;
     };
+
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
 
     $_POST['Fic1Hora'] = $_POST['Fic1Hora'] ?? '';
     $_POST['Fic1HsAu2'] = $_POST['Fic1HsAu2'] ?? '';
@@ -911,7 +962,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     $Dato = 'Modificación Hora: (' . $Fic1Hora . ') ' . $THoDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
     $Dato2 = 'Hora: (' . $Fic1Hora . ') ' . $THoDesc;
     //UPDATE FICHAS1 Set FicHsHe = '$FicHsAu', FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'
-    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
+
+    $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua = '$FicUsua'" : '';
+
+    if (UpdateRegistro("UPDATE FICHAS1 Set FicHsAu = '$FicHsAu',FicHsAu2 = '$Fic1HsAu2', FicEsta = '2', FechaHora = '$FechaHora',FicObse = '$Fic1Observ', FicCaus = '$Fic1Caus', FicValor = '0' $columnFicUsua WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicHora = '$Fic1Hora'")) {
         /** Grabamos en Auditor */
         audito_ch('M', $Dato, '4');
         //setup request to send json via POST
@@ -944,6 +998,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
         echo json_encode($data);
         exit;
     };
+
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
 
     if (isset($_POST['FicONovFechas']) && !empty($_POST['FicONovFechas'])) {
         $DateRange = explode(' al ', $_POST['FicONovFechas']);
@@ -1027,7 +1087,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
 
         if (!$ExisteRegistro) {
 
-            $insert = InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora')");
+            $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
+            $valuesFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
+            $insert = InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora $columnFicUsua) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora' $valuesFicUsua)");
             if (!$insert) {
                 $data = array('status' => 'Error', 'Mensaje' => $Dato);
                 echo json_encode($data);
@@ -1038,8 +1100,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
             audito_ch('A', $Dato, '4');
             $arrayRegistrosInsertados[] = $Dato2;
         } else {
-
-            $update = UpdateRegistro("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+            $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
+            $update = UpdateRegistro("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
 
             if (!$update) {
                 $data = array('status' => 'Error', 'Mensaje' => $Dato);
@@ -1124,6 +1186,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         exit;
     };
 
+
+    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
+
+    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+    $systemVersion = intval($systemVersion[1]) ?? '';
+
     $_POST['FicONov'] = $_POST['FicONov'] ?? '';
     $_POST['FicValor'] = $_POST['FicValor'] ?? '';
     $_POST['FicObsN'] = $_POST['FicObsN'] ?? '';
@@ -1183,7 +1252,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
     $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc;
 
     /** Luego UPDATE  */
-    if (UpdateRegistro("UPDATE FICHAS2 Set FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicONov = '$FicONov'")) {
+    $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
+    if (UpdateRegistro("UPDATE FICHAS2 Set FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicLega = '$FicLega' and FicFech = '$FicFech' and FicTurn = 1 and FicONov = '$FicONov'")) {
         $data = array('status' => 'ok', 'Mensaje' => $Dato2, 'tipo' => 'mod');
         audito_ch('M', $Dato, '4');
         /** Grabamos en Auditor */
