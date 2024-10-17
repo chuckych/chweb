@@ -7,7 +7,7 @@ tzLang();
 errorReport();
 
 $iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $colCierre = $joinCierres = $onlyRegCount = '';
-$IlegFic = array();
+$IlegFic = [];
 
 $control->check_method("POST");
 $control->check_json();
@@ -48,7 +48,7 @@ if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax
         $HoraMinMax = " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
     }
 }
-$colEstruct = array('FicConv', 'FicPlan', 'FicGrup', 'FicSect', 'FicSec2', 'FicEmpr', 'FicSucu');
+$colEstruct = ['FicConv', 'FicPlan', 'FicGrup', 'FicSect', 'FicSec2', 'FicEmpr', 'FicSucu'];
 $colEstruct = implode(',', $colEstruct);
 
 $queryDateFirst = "SET DATEFIRST 7";
@@ -108,25 +108,25 @@ if (empty($stmtFic)) {
     exit;
 }
 
-$iLega = (implodeArrayByKey($stmtFic, 'FicLega'));
+$iLega = implodeArrayByKey($stmtFic, 'FicLega');
 
-$IlegNoV = array();
-$IlegHor = array();
+$IlegNoV = [];
+$IlegHor = [];
 foreach ($stmtFic as $key => $i) {
-    $IlegFic[]['FicLega'] = ($i['FicLega']);
+    $IlegFic[]['FicLega'] = $i['FicLega'];
 
-    $s = array_sum(array($i['FicNovA'], $i['FicNovS'], $i['FicNovT'], $i['FicNovI']));
+    $s = array_sum([$i['FicNovA'], $i['FicNovS'], $i['FicNovT'], $i['FicNovI']]);
     if ($s) {
-        $IlegNoV[]['FicLega'] = ($i['FicLega']);
+        $IlegNoV[]['FicLega'] = $i['FicLega'];
     }
     if ($i['FicHsTr']) {
-        $IlegHor[]['FicLega'] = ($i['FicLega']);
+        $IlegHor[]['FicLega'] = $i['FicLega'];
     }
 }
 if ($dp['getNov']) {
 
-    $IlegNoV = (implodeArrayByKey($IlegNoV, 'FicLega'));
-    $IlegNoV = ($IlegNoV) ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
+    $IlegNoV = implodeArrayByKey($IlegNoV, 'FicLega');
+    $IlegNoV = $IlegNoV ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
 
     $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta, FICHAS3.FicCate FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
@@ -138,8 +138,8 @@ if ($dp['getNov']) {
     $stmtNov = $dbApiQuery($qNov);
 }
 if ($dp['getONov']) {
-    $IlegONov = (implodeArrayByKey($IlegFic, 'FicLega'));
-    $IlegONov = ($IlegONov) ? " AND FICHAS2.FicLega IN ($IlegONov)" : "";
+    $IlegONov = implodeArrayByKey($IlegFic, 'FicLega');
+    $IlegONov = $IlegONov ? " AND FICHAS2.FicLega IN ($IlegONov)" : "";
 
     $qONov = "SELECT FICHAS2.FicFech AS 'Fecha', FICHAS2.FicLega, FicONov, FicValor, FicObsN, ONovDesc, ONovTipo, CASE ONovTipo WHEN 0 THEN 'Valor' ELSE 'Horas' END as 'Tipo' FROM FICHAS2 LEFT JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi WHERE FICHAS2.FicLega >0 $wcFicFechONov $IlegONov";
     if ($dp['ONovEx']) {
@@ -152,8 +152,8 @@ if ($dp['getONov']) {
 }
 if ($dp['getHor']) {
 
-    $IlegHor = (implodeArrayByKey($IlegHor, 'FicLega'));
-    $IlegHor = ($IlegHor) ? " AND FICHAS1.FicLega IN ($IlegHor)" : "";
+    $IlegHor = implodeArrayByKey($IlegHor, 'FicLega');
+    $IlegHor = $IlegHor ? " AND FICHAS1.FicLega IN ($IlegHor)" : "";
 
     $qHor = "SELECT FICHAS1.FicFech AS 'Fecha', FicLega, FicHora, THoDesc, THoDesc2, THoID, THoColu, FicObse, FicEsta, FICHAS1.FicHsHe AS 'HorasCalc', FICHAS1.FicHsAu AS 'HorasHechas', FICHAS1.FicHsAu2 AS 'HorasAuto', THoCCodi, THoCDesc FROM FICHAS1 LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora WHERE FICHAS1.FicLega > 0 $wcFicFechHor $IlegHor";
 
@@ -171,8 +171,8 @@ if ($dp['getHor']) {
 }
 if ($dp['getReg']) {
 
-    $IlegFic = (implodeArrayByKey($IlegFic, 'FicLega'));
-    $IlegFic = ($IlegFic) ? " AND REGISTRO.RegLega IN ($IlegFic)" : "";
+    $IlegFic = implodeArrayByKey($IlegFic, 'FicLega');
+    $IlegFic = $IlegFic ? " AND REGISTRO.RegLega IN ($IlegFic)" : "";
 
     $qReg = "SELECT REGISTRO.RegFeAs AS 'Fecha', RegLega, RegTarj, RegFech, RegHora, RegTipo, RegFeAs, RegFeRe, RegHoRe, RegRelo, RegLect FROM REGISTRO WHERE REGISTRO.RegLega > 0 $wcFicFechReg $IlegFic ORDER BY REGISTRO.RegFeRe, REGISTRO.RegHoRe";
     $stmtRegistros = $dbApiQuery($qReg);
@@ -180,49 +180,49 @@ if ($dp['getReg']) {
 
 foreach ($stmtFic as $key => $v) {
 
-    $arrNov = array();
-    $dataNov = array();
-    $arrONov = array();
-    $dataONov = array();
-    $dataHora = array();
-    $dataHoras = array();
-    $dataFichada = array();
-    $dataFichadas = array();
+    $arrNov = [];
+    $dataNov = [];
+    $arrONov = [];
+    $dataONov = [];
+    $dataHora = [];
+    $dataHoras = [];
+    $dataFichada = [];
+    $dataFichadas = [];
 
-    $SumNov = array_sum(array($v['FicNovA'], $v['FicNovS'], $v['FicNovT'], $v['FicNovI']));
+    // $SumNov = array_sum([$v['FicNovA'], $v['FicNovS'], $v['FicNovT'], $v['FicNovI']]);
     if ($dp['getNov']) {
-        if ($SumNov) {
-            if (($stmtNov)) {
-                $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-                foreach ($arrNov as $key => $n) {
-                    $dataNov[] = array(
-                        'Codi' => $n['NovCodi'],
-                        'Desc' => $n['NovDesc'],
-                        'Horas' => $n['FicHoras'],
-                        'Obse' => $n['FicObse'],
-                        'NoTi' => $n['FicNoTi'],
-                        'NoTiD' => novedadTipo(array($n['FicNoTi'])),
-                        'Esta' => $n['FicEsta'],
-                        'CCodi' => $n['NovCCodi'],
-                        'CDesc' => $n['NovCDesc'],
-                        'Cate' => $n['FicCate']
-                    );
-                }
+        // if ($SumNov) {
+        if ($stmtNov) {
+            $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
+            foreach ($arrNov as $key => $n) {
+                $dataNov[] = [
+                    'Codi'  => $n['NovCodi'],
+                    'Desc'  => $n['NovDesc'],
+                    'Horas' => $n['FicHoras'],
+                    'Obse'  => $n['FicObse'],
+                    'NoTi'  => $n['FicNoTi'],
+                    'NoTiD' => novedadTipo([$n['FicNoTi']]),
+                    'Esta'  => $n['FicEsta'],
+                    'CCodi' => $n['NovCCodi'],
+                    'CDesc' => $n['NovCDesc'],
+                    'Cate'  => $n['FicCate']
+                ];
             }
         }
+        // }
     }
     if ($dp['getONov']) {
-        if (($stmtONov)) {
+        if ($stmtONov) {
             $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
             foreach ($arrONov as $key => $vo) {
-                $dataONov[] = array(
-                    'ONov' => $vo['FicONov'],
+                $dataONov[] = [
+                    'ONov'  => $vo['FicONov'],
                     'Valor' => ($vo['ONovTipo']) ? decimalToTime($vo['FicValor']) : $vo['FicValor'],
-                    'ObsN' => $vo['FicObsN'],
-                    'Desc' => $vo['ONovDesc'],
-                    'Tipo' => $vo['ONovTipo'],
+                    'ObsN'  => $vo['FicObsN'],
+                    'Desc'  => $vo['ONovDesc'],
+                    'Tipo'  => $vo['ONovTipo'],
                     'TipoS' => $vo['Tipo'],
-                );
+                ];
             }
         }
     }
@@ -232,7 +232,7 @@ foreach ($stmtFic as $key => $v) {
             $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
 
             foreach ($dataHora as $key => $h) {
-                $dataHoras[] = array(
+                $dataHoras[] = [
                     'Hora' => $h['FicHora'],
                     'Desc' => $h['THoDesc'],
                     'Desc2' => $h['THoDesc2'],
@@ -243,11 +243,11 @@ foreach ($stmtFic as $key => $v) {
                     'Calc' => $h['HorasCalc'],
                     'Hechas' => $h['HorasHechas'],
                     'Auto' => $h['HorasAuto'],
-                    'Causa' => array(
+                    'Causa' => [
                         'Cod' => ($h['THoCCodi']) ? $h['THoCCodi'] : '',
                         'Desc' => trim($h['THoCDesc']),
-                    )
-                );
+                    ],
+                ];
             }
             // }
         }
@@ -259,7 +259,7 @@ foreach ($stmtFic as $key => $v) {
                 $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
                 foreach ($dataFichada as $key => $r) {
                     $esta = ($r['RegHora'] == $r['RegHoRe']) ? '' : 'Modificada';
-                    $dataFichadas[] = array(
+                    $dataFichadas[] = [
                         'Tarj' => $r['RegTarj'],
                         // 'Fech' => $r['RegFech']->format('Y-m-d'), 
                         'FeRe' => fechFormat($r['RegFeRe'], 'Y-m-d'),
@@ -270,25 +270,25 @@ foreach ($stmtFic as $key => $v) {
                         'Lect' => $r['RegLect'],
                         'Tipo' => tipoFic($r['RegTipo']),
                         'Esta' => $esta,
-                    );
+                    ];
                 }
             }
         }
     }
-    $horario = array(
+    $horario = [
         'ent' => $v['FicHorE'],
         'sal' => $v['FicHorS'],
         'des' => $v['FicHorD']
-    );
-    $CheckNov = array(
+    ];
+    $CheckNov = [
         'Aus' => $v['FicNovA'],
         'Sal' => $v['FicNovS'],
         'Tar' => $v['FicNovT'],
         'Inc' => $v['FicNovI'],
-    );
+    ];
     $estruct = [];
     if ($dp['getEstruct']) {
-        $estruct = array(
+        $estruct = [
             'Empr' => $v['FicEmpr'],
             'Plan' => $v['FicPlan'],
             'Conv' => $v['FicConv'],
@@ -296,7 +296,7 @@ foreach ($stmtFic as $key => $v) {
             'Sec2' => $v['FicSec2'],
             'Grup' => $v['FicGrup'],
             'Sucu' => $v['FicSucu'],
-        );
+        ];
     }
     $cierre = [];
 
@@ -323,13 +323,13 @@ foreach ($stmtFic as $key => $v) {
                 $EstaCierre = (intval($Fech2) <= intval($FechCierre2)) ? 'cerrado' : 'abierto';
             }
         }
-        $cierre = array(
+        $cierre = [
             'PerFech' => ($FechCierre == '1753-01-01') ? '' : fechFormat($v['CierreFech'], 'Y-m-d'),
             'GenFech' => ($genCierre == '1753-01-01') ? '' : $genCierre,
             'Estado' => $EstaCierre,
-        );
+        ];
     }
-    $data[] = array(
+    $data[] = [
         'Lega' => $v['FicLega'],
         'ApNo' => trim(str_replace(' ', '', $v['LegApNo'])),
         'Docu' => ($v['LegDocu'] > 0) ? $v['LegDocu'] : '',
@@ -353,7 +353,7 @@ foreach ($stmtFic as $key => $v) {
         'Horas' => $dataHoras,
         'Estruct' => $estruct,
         'Cierre' => $cierre,
-    );
+    ];
 }
 $countData = count($data);
 http_response_code(200);

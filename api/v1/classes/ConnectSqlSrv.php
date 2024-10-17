@@ -22,7 +22,7 @@ class ConnectSqlSrv
     private $resp;
     public function __construct()
     {
-        $this->log  = new Log; // Instancia de la clase Log
+        $this->log = new Log; // Instancia de la clase Log
         // $this->resp = new Response;
         $this->mapDB = [
             'DBHost' => getenv('DB_HOST') !== false ? getenv('DB_HOST') : '', // Servidor de la base de datos
@@ -145,7 +145,8 @@ class ConnectSqlSrv
     public function executeQueryWhithParams($sql, $params = [])
     {
         try {
-            $stmt = $this->conn->prepare($sql);
+            $conn = $this->check_connection($this->conn);
+            $stmt = $conn->prepare($sql);
 
             foreach ($params as $paramName => $paramValue) {
                 $paramType = \PDO::PARAM_STR; // Tipo de dato por defecto
@@ -167,7 +168,8 @@ class ConnectSqlSrv
             $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
             $stmt = null;
-            $this->conn = null;
+            // $this->conn = null;
+            $conn = null;
 
             return $resultSet;
         } catch (\PDOException $e) {
@@ -211,7 +213,9 @@ class ConnectSqlSrv
             // Construye la consulta completa
             $sql = $sql . $where;
             // Prepara y ejecuta la consulta
-            $stmt = $this->conn->prepare($sql);
+            // $stmt = $this->conn->prepare($sql);
+            $conn = $this->check_connection($this->conn);
+            $stmt = $conn->prepare($sql);
 
             foreach ($params as $paramName => &$paramValue) {
                 if (is_int($paramValue)) {
@@ -230,7 +234,8 @@ class ConnectSqlSrv
             $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
             $stmt = null;
-            $this->conn = null;
+            // $this->conn = null;
+            $conn = null;
 
             return $resultSet;
         } catch (\PDOException $e) {

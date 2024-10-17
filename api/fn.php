@@ -11,7 +11,7 @@ header('Access-Control-Allow-Origin: *');
 
 $time_start = timeStart(); // Inicio
 $pathLog = __DIR__ . '/logs/'; // path de Logs Api
-cleanFile($pathLog, 1, '.log'); // Elimina logs de los ultimos 7 días.
+cleanFile($pathLog, 1, '.log'); // Elimina logs de los últimos 7 días.
 $iniData = (getIni(__DIR__ . '../../mobileApikey.php'));
 header('WWW-Authenticate: Basic');
 $_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
@@ -159,7 +159,7 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Función par
 // lz = leading zero
 function lz($num)
 {
-    return(strlen($num) < 2) ? "0{$num}" : $num;
+    return (strlen($num) < 2) ? "0{$num}" : $num;
 }
 /** 
  * @param {String} Zona Horaria. Por defecto America/Argentina/Buenos_Aires
@@ -192,7 +192,7 @@ function errorReport()
     }
 }
 /** 
- * @url Ruta del archivo INI de configuracion de cuentas
+ * @url Ruta del archivo INI de configuración de cuentas
  */
 function getIni($url) // obtiene el json de la url
 {
@@ -212,10 +212,10 @@ function getIni($url) // obtiene el json de la url
  * @token {string} token api
  * @inidata {array} array data
  */
-function checkToken($token, $iniData = array())
+function checkToken($token, $iniData = [])
 {
     $vkey = $idCompany = '';
-    $data = array();
+    $data = [];
     if ($iniData) {
         foreach ($iniData as $v) {
             if ($v['Token'] == $token) {
@@ -229,12 +229,12 @@ function checkToken($token, $iniData = array())
         }
         if (!$vkey) {
             http_response_code(400);
-            (response(array(), 0, 'Invalid Token', 400, timeStart(), 0, $idCompany));
+            (response([], 0, 'Invalid Token', 400, timeStart(), 0, $idCompany));
             exit;
         }
     } else {
         http_response_code(400);
-        (response(array(), 0, 'Required Data Ini', 400, timeStart(), 0, $idCompany));
+        (response([], 0, 'Required Data Ini', 400, timeStart(), 0, $idCompany));
         exit;
     }
     return $data[0];
@@ -328,12 +328,12 @@ function cleanFile($path, $Dias, $ext) // borra los archivo a partir de una cant
 $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
     try {
-        $resultSet = array ();
+        $resultSet = array();
         $stmt = $conn->query($query);
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $resultSet[] = $r;
@@ -346,19 +346,19 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
     try {
-        $resultSet = array ();
+        $resultSet = array();
         $stmt = $conn->query($query);
         if ($stmt) {
             $stmt = null;
@@ -374,14 +374,14 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array (), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . './connectDBPDO.php';
@@ -393,7 +393,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtFalse.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmt: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array (), 0, $e, 400, timeStart(), 0, ''));
+            (response(array(), 0, $e, 400, timeStart(), 0, ''));
         }
 
         // execute the stored procedure
@@ -402,7 +402,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtExecute.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmtExecute: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array (), 0, $e, 400, timeStart(), 0, ''));
+            (response(array(), 0, $e, 400, timeStart(), 0, ''));
         }
 
         $stmt = null;
@@ -413,7 +413,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array (), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
@@ -501,7 +501,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
             return $e[$key] === $valor;
         });
         foreach ($r as $key => $value) {
-            return($value);
+            return ($value);
         }
     }
     return false;
@@ -572,27 +572,27 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'int01') {
             if ($value) {
                 switch ($value) {
-                    case(!is_numeric($value)):
+                    case (!is_numeric($value)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(!filter_var($value, FILTER_VALIDATE_INT)):
+                    case (!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(strlen($value) > $length):
+                    case (strlen($value) > $length):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(($value) < 0):
+                    case (($value) < 0):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(($value) > 1):
+                    case (($value) > 1):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
@@ -910,27 +910,27 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'int01') {
             if ($value) {
                 switch ($value) {
-                    case(!is_numeric($value)):
+                    case (!is_numeric($value)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(!filter_var($value, FILTER_VALIDATE_INT)):
+                    case (!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(strlen($value) > $length):
+                    case (strlen($value) > $length):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(($value) < 0):
+                    case (($value) < 0):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
-                    case(($value) > 1):
+                    case (($value) > 1):
                         http_response_code(400);
                         (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
@@ -1358,7 +1358,7 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,
-        array (
+        array(
             "Accept: */*",
             'Content-Type: application/json',
             'Authorization: Basic ' . $authBasic,
@@ -1548,7 +1548,7 @@ function arrFecha($array, $format)
 $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     if ($method != $value) {
         http_response_code(400);
-        (response(array (), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
+        (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
         exit;
     }
 };

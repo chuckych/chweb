@@ -499,34 +499,34 @@ class Novedades
                 throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 400);
             }
 
-            $Cod      = $datos['Cod']; // Código de la estructura
-            $Lega     = $datos['Lega']; // Legajo
-            $Empr     = $datos['Empr']; // Empresa
-            $Plan     = $datos['Plan']; // Planta
-            $Conv     = $datos['Conv']; // Convenio
-            $Sect     = $datos['Sect']; // Sector
-            $Sec2     = $datos['Sec2']; // Sección
-            $Grup     = $datos['Grup']; // Grupo
-            $Sucu     = $datos['Sucu']; // Sucursal
-            $Tare     = $datos['TareProd']; // Tarea de producción
-            $RegCH    = $datos['RegCH']; // Regla de Control Horario
-            $Tipo     = $datos['Tipo']; // Tipo de Personal
-            $Docu     = $datos['Docu']; // DNI Del Legajo
-            $Sector   = $datos['Sector']; // Sector
-            $Esta     = $datos['Esta']; // Estado de la ficha hora (FicEsta)
-            $Nove     = $datos['Nove']; // Código novedad
+            $Cod = $datos['Cod']; // Código de la estructura
+            $Lega = $datos['Lega']; // Legajo
+            $Empr = $datos['Empr']; // Empresa
+            $Plan = $datos['Plan']; // Planta
+            $Conv = $datos['Conv']; // Convenio
+            $Sect = $datos['Sect']; // Sector
+            $Sec2 = $datos['Sec2']; // Sección
+            $Grup = $datos['Grup']; // Grupo
+            $Sucu = $datos['Sucu']; // Sucursal
+            $Tare = $datos['TareProd']; // Tarea de producción
+            $RegCH = $datos['RegCH']; // Regla de Control Horario
+            $Tipo = $datos['Tipo']; // Tipo de Personal
+            $Docu = $datos['Docu']; // DNI Del Legajo
+            $Sector = $datos['Sector']; // Sector
+            $Esta = $datos['Esta']; // Estado de la ficha hora (FicEsta)
+            $Nove = $datos['Nove']; // Código novedad
             $NoveTipo = $datos['NoveTipo']; // Código tipo novedad
-            $NovI     = $datos['NovI']; // Si Novedad Incumplimiento
-            $NovA     = $datos['NovA']; // Si Novedad Ausentismo
-            $NovS     = $datos['NovS']; // Si Novedad Salida anticipada
-            $NovT     = $datos['NovT']; // Si Novedad Tardanza
-            $DiaL     = $datos['DiaL']; // Si Día Laboral
-            $DiaF     = $datos['DiaF']; // Si Día Feriado
+            $NovI = $datos['NovI']; // Si Novedad Incumplimiento
+            $NovA = $datos['NovA']; // Si Novedad Ausentismo
+            $NovS = $datos['NovS']; // Si Novedad Salida anticipada
+            $NovT = $datos['NovT']; // Si Novedad Tardanza
+            $DiaL = $datos['DiaL']; // Si Día Laboral
+            $DiaF = $datos['DiaF']; // Si Día Feriado
 
-            $start    = $datos['start']; // Pagina de inicio
-            $length   = $datos['length']; // Cantidad de registros
-            $Desc     = $datos['Desc']; // Descripción de la estructura
-            $ApNo     = $datos['ApNo']; // Apellido y Nombre
+            $start = $datos['start']; // Pagina de inicio
+            $length = $datos['length']; // Cantidad de registros
+            $Desc = $datos['Desc']; // Descripción de la estructura
+            $ApNo = $datos['ApNo']; // Apellido y Nombre
             $ApNoLega = $datos['ApNoLega']; // Apellido y Nombre + legajo
 
             /** De este Fragmento de código se defino si paramsPers es true o false. Si es true se utiliza para el INNER JOIN  PERSONAL */
@@ -535,12 +535,12 @@ class Novedades
             $estructTare = in_array($estruct, $estructuras); // Si la estructura esta en el array $estructuras
             $paramPers = $estructTare || in_array(true, $parámetros); // Si la estructura esta en el array $estructuras o si algún parámetro esta en el array $parámetros
             /** FIN Fragmento */
+
             /** SELECT */
             $sql = "SELECT";
             $sql .= $this->columnsEstruct($estruct); // Columnas de la estructura, campos Descripción, Código y cantidad
             $sql .= " FROM FICHAS";
             $sql .= $this->joinFichas3Estruct(); // Join con la tabla FICHAS3 (NOVEDADES)
-
             /** JOIN PERSONAL */
             $sql .= $this->joinPersonalEstruct($paramPers); // Join con la tabla PERSONAL
             /** JOIN ESTRUCTURA */
@@ -563,7 +563,7 @@ class Novedades
             /** GROUP, ORDER BY, PAGINACIÓN */
             $sql .= $this->groupByEstruct($estruct); // Group By de la estructura
             $sql .= " OFFSET :start ROWS FETCH NEXT :length ROWS ONLY"; // Paginación
-            // print_r($sql) . exit;
+
             /** PARÁMETROS DE LA CONSULTA SQL */
             $params = [
                 ':FechaIni' => $FechaIni,

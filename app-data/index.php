@@ -174,10 +174,7 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         return false;
     if (!$fecha)
         return false;
-
-    // $opt = array("getNov" => "0", "getONov" => "0", "getHor" => "0", "getFic" => "0", "getEstruct" => "0", "getCierre" => "0", "EstaNov" => [0, 1, 2]);
-
-    $payload = array(
+    $payload = [
         "FechIni" => $fecha,
         "FechFin" => $fecha,
         "onlyReg" => "0",
@@ -224,18 +221,15 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         "EstaNov" => $opt['EstaNov'] ?? [],
         "start" => 0,
         "length" => $opt['length'] ?? 1
-    );
-
-    // Flight::json($payload) . exit;
-
+    ];
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
-    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
-    if (empty($arrayData['DATA'])) {
+    $DATA = $arrayData['DATA'] ?? [];
+    if (empty($DATA)) {
         return [];
     }
-    return array($arrayData['DATA'][0]);
+    return [$DATA[0]];
 }
 function getHorasTotales($payload)
 {
@@ -488,15 +482,15 @@ Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
 });
 Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
 
-    $opt = array("getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1");
-    $data = array();
+    $opt = ["getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1"];
+    $data = [];
     $data = getFicNovHorSimple($legajo, $fecha, $opt);
 
     if ($data) {
         $data[0]['NoveDelete'] = $_SESSION['ABM_ROL']['bNov'];
         $data[0]['NoveAdd'] = $_SESSION['ABM_ROL']['aNov'];
     }
-
+    // print_r($data) . exit;
     Flight::json($data);
 });
 Flight::route('PUT /novedad', function () {
