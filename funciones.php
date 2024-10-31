@@ -917,11 +917,11 @@ function Cliente_c($recid)
     $url = host() . "/" . HOMEHOST . "/data/GetClientes.php?tk=" . token() . "&recid=" . $recid;
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['clientes'];
-    if (is_array($data)) :
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
+        foreach ($data as $value):
             $id_c = $value['id'];
             $ident = $value['ident'];
             $recid_c = $value['recid'];
@@ -938,11 +938,11 @@ function Rol_Recid($recid)
     // $array = getRemoteFile($url);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
-    if (is_array($data)) :
+    if (is_array($data)):
         // $r = array_filter($data, function ($e) {
         //     return $e['recid'] == $_GET['_c'];
         // });
-        foreach ($data as $value) :
+        foreach ($data as $value):
             $id_Rol = $value['id'];
             $nombreRol = $value['nombre'];
             $clienteRol = $value['cliente'];
@@ -997,8 +997,8 @@ function ListaRoles($Recid_C)
     // $array        = json_decode($json, TRUE);
     $array = json_decode(getRemoteFile($url), true);
     $data = $array[0]['roles'];
-    if (is_array($array)) :
-        foreach ($data as $value) :
+    if (is_array($array)):
+        foreach ($data as $value):
             $nombre = $value['nombre'];
             $id = $value['id'];
             echo '<option value="' . $id . '">' . $nombre . '</option>';
@@ -1238,7 +1238,8 @@ function _data_last_month_day($y, $m)
     $day = date("d", mktime(0, 0, 0, $month + 1, 0, $year));
 
     return date('Ymd', mktime(0, 0, 0, $month, $day, $year));
-};
+}
+;
 // echo _data_last_month_day('2020','04').PHP_EOL;
 
 /** Actual month first day **/
@@ -1473,16 +1474,16 @@ function auditoria_multiple($array, $AudMod)
     foreach ($array as $value) {
         $values[] = "(:id_sesion{$index} , :usuario{$index} , :nombre{$index} , :cuenta{$index} , :audcuenta{$index} , :fecha{$index} , :hora{$index} , :tipo{$index} , :dato{$index} , :modulo{$index})";
 
-        $params[":id_sesion{$index}"]   = $_SESSION['ID_SESION'];
-        $params[":usuario{$index}"]     = $_SESSION["user"] ?? 'Sin usuario';
-        $params[":nombre{$index}"]      = $_SESSION["NOMBRE_SESION"] ?? 'Sin nombre';
-        $params[":cuenta{$index}"]      = $_SESSION["ID_CLIENTE"] ?? '';
-        $params[":audcuenta{$index}"]   = $_SESSION["ID_CLIENTE"] ?? '';
-        $params[":fecha{$index}"]       = date("Y-m-d");
-        $params[":hora{$index}"]        = date("H:i:s");
-        $params[":tipo{$index}"]        = $value['AudTipo'] ?? 'Null';
-        $params[":dato{$index}"]        = trim($value['AudDato']) ?? 'No se especificaron datos';
-        $params[":modulo{$index}"]      = $AudMod ?? '';
+        $params[":id_sesion{$index}"] = $_SESSION['ID_SESION'];
+        $params[":usuario{$index}"] = $_SESSION["user"] ?? 'Sin usuario';
+        $params[":nombre{$index}"] = $_SESSION["NOMBRE_SESION"] ?? 'Sin nombre';
+        $params[":cuenta{$index}"] = $_SESSION["ID_CLIENTE"] ?? '';
+        $params[":audcuenta{$index}"] = $_SESSION["ID_CLIENTE"] ?? '';
+        $params[":fecha{$index}"] = date("Y-m-d");
+        $params[":hora{$index}"] = date("H:i:s");
+        $params[":tipo{$index}"] = $value['AudTipo'] ?? 'Null';
+        $params[":dato{$index}"] = trim($value['AudDato']) ?? 'No se especificaron datos';
+        $params[":modulo{$index}"] = $AudMod ?? '';
         $index++;
     }
 
@@ -2330,12 +2331,14 @@ function datosGetIn($Get, $Col)
         $t = ($v) ? "AND " . $Col . " IN (" . (test_input($Get)) . ") " : '';
         return test_input($t);
     }
-};
+}
+;
 function datosGet($Get, $Col)
 {
     $texto = !empty($Get) ? "AND " . $Col . " = '" . $Get . "' " : '';
     return $texto;
-};
+}
+;
 function MinHora($Min)
 {
     if ($Min == 0) {
@@ -2343,7 +2346,8 @@ function MinHora($Min)
     }
     if (!$Min || !is_int($Min)) {
         return false;
-    };
+    }
+    ;
     $segundos = $Min * 60;
     $horas = floor($segundos / 3600);
     $minutos = floor(($segundos - ($horas * 3600)) / 60);
@@ -2501,7 +2505,7 @@ function curlAPI($url, $payload, $method, $token, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Accept: */*", 'Content-Type: application/json', "Token: $token",));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array("Accept: */*", 'Content-Type: application/json', "Token: $token", ));
     $file_contents = curl_exec($ch);
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
@@ -2556,14 +2560,14 @@ function TokenMobile($token, $data)
             case 'appcode':
                 $t[1] = $t[1] ?? '';
                 return $t[1];
-                // break;
+            // break;
             case 'token':
                 $t[0] = $t[0] ?? '';
                 return $t[0];
-                // break;
+            // break;
             default:
                 return '';
-                // break;
+            // break;
         }
     } else {
         return '';
@@ -2632,25 +2636,25 @@ function listaRol($idLista = '0')
     switch ($idLista) {
         case 0:
             return 'Todos';
-            // break;
+        // break;
         case 1:
             return 'Novedades';
-            // break;
+        // break;
         case 2:
             return 'Otras Novedades';
-            // break;
+        // break;
         case 3:
             return 'Horarios';
-            // break;
+        // break;
         case 4:
             return 'Rotaciones';
-            // break;
+        // break;
         case 5:
             return 'Tipos de Hora';
-            // break;
+        // break;
         default:
             return 'Todos';
-            // break;
+        // break;
     }
 }
 function listaEstruct($idLista = '0')
@@ -2659,34 +2663,34 @@ function listaEstruct($idLista = '0')
     switch ($idLista) {
         case 0:
             return 'Todos';
-            // break;
+        // break;
         case 1:
             return 'Empresas';
-            // break;
+        // break;
         case 2:
             return 'Plantas';
-            // break;
+        // break;
         case 3:
             return 'Convenios';
-            // break;
+        // break;
         case 4:
             return 'Sectores';
-            // break;
+        // break;
         case 5:
             return 'Secciones';
-            // break;
+        // break;
         case 6:
             return 'Grupos';
-            // break;
+        // break;
         case 7:
             return 'Sucursales';
-            // break;
+        // break;
         case 8:
             return 'Personal';
-            // break;
+        // break;
         default:
             return 'Todos';
-            // break;
+        // break;
     }
 }
 function totalDiasFechas($fecha_inicial, $fecha_final)
@@ -3153,6 +3157,9 @@ function getDataIni($url) // obtiene el json de la url
 function gethostCHWeb()
 {
     $token = sha1($_SESSION['RECID_CLIENTE']);
+    if (!file_exists(__DIR__ . './mobileApikey.php')) {
+        return false;
+    }
     $iniData = getDataIni(__DIR__ . './mobileApikey.php');
     foreach ($iniData as $v) {
         if ($v['Token'] == $token) {
@@ -3160,7 +3167,8 @@ function gethostCHWeb()
             return $data[0]['hostCHWeb'];
         }
     }
-};
+}
+;
 /**
  * @param $str = string a escapar
  * @param $length = cantidad de caracteres a devolver
@@ -3409,7 +3417,7 @@ function diffStartEnd($start, $end)
 }
 function implode_keys_values($key, $separator, $array = array())
 {
-    if (!$array) :
+    if (!$array):
         return $array;
     endif;
     $key = array_column($array, $key);

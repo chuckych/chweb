@@ -5,6 +5,10 @@ E_ALL();
 // secure_auth_ch();
 $Modulo = '999';
 $bgcolor = 'bg-custom ';
+$ident = $nombre = $ErrNombre = $error = $duplicado = '';
+$REQUEST_SCHEME = $_SERVER['REQUEST_SCHEME'] ?? 'http';
+$HTTP_HOST = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$urlBase = "{$REQUEST_SCHEME}://{$HTTP_HOST}";
 /** ALTA DE CLIENTE */
 $border = $ErrNombre = $error = $duplicado = '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
@@ -32,6 +36,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
             while ($a = mysqli_fetch_assoc($rs)) {
                 $cliente = $a['id'];
             }
+
+            $queryParams = "INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$urlBase', '$cliente')";
+            mysqli_query($link, $queryParams);
+
+            write_apiKeysFile();
+
             mysqli_free_result($rs);
             $nombre = 'SISTEMA';
             $query = "SELECT roles.nombre FROM roles WHERE roles.cliente='$cliente' AND roles.nombre = '$nombre'";
