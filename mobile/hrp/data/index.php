@@ -220,15 +220,12 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
 });
 
 Flight::route('GET /devices', function () { // Ruta para obtener los dispositivos de la empresa (cache)
-    // echo '<pre>';
-    // print_r($_SESSION);
-    // return;
+
     $id = $_SESSION['ID_CLIENTE'] ?? ''; // ID de la empresa
     $recid = $_SESSION['RECID_CLIENTE'] ?? ''; // ID de la empresa
     $baseDevices = $_SESSION["APIMOBILEHRP"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
-    $endpointSetCache = "$baseDevices/cache.php?idCompany=$recid"; // Endpoint para actualizar la cache
+    $endpointSetCache = "$baseDevices/cache.php?key=$recid"; // Endpoint para actualizar la cache
     $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
-
     $output = get_data($endpointGetCache); // Obtener la cache
 
     if (!$output) { // Si no hay cache
