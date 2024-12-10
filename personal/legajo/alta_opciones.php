@@ -54,7 +54,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT NACIONES.NacDesc
@@ -137,7 +138,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PROVINCI.ProDesc FROM PROVINCI WHERE PROVINCI.ProDesc = '$desc_prov' COLLATE Latin1_General_CI_AI";
@@ -220,7 +222,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT LOCALIDA.LocDesc FROM LOCALIDA WHERE LOCALIDA.LocDesc = '$desc_local' COLLATE Latin1_General_CI_AI";
@@ -448,7 +451,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT EMPRESAS.EmpRazon FROM EMPRESAS WHERE EMPRESAS.EmpRazon = '$EmpRazon' COLLATE Latin1_General_CI_AI";
@@ -526,7 +530,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECTORES.SecDesc FROM SECTORES WHERE SECTORES.SecDesc = '$desc_sector' COLLATE Latin1_General_CI_AI";
@@ -638,7 +643,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECCION.Se2Desc FROM SECCION WHERE SECCION.Se2Desc = '$Se2Desc' COLLATE Latin1_General_CI_AI AND SECCION.SecCodi='$SecCodi'";
@@ -732,7 +738,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT GRUPOS.GruDesc FROM GRUPOS WHERE GRUPOS.GruDesc = '$desc_grupo' COLLATE Latin1_General_CI_AI";
@@ -815,7 +822,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SUCURSALES.SucDesc FROM SUCURSALES WHERE SUCURSALES.SucDesc = '$desc_sucur' COLLATE Latin1_General_CI_AI";
@@ -898,7 +906,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT TAREAS.TareDesc FROM TAREAS WHERE TAREAS.TareDesc = '$desc_tarea' COLLATE Latin1_General_CI_AI";
@@ -987,7 +996,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI";
@@ -1079,7 +1089,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
         $data = array('status' => 'requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     /** Query para comparar datos de la bd con lo enviado. */
     $query = "SELECT CONVENIO.ConDesc FROM CONVENIO WHERE CONVENIO.ConCodi = '$codConv' AND CONVENIO.ConDesc = '$desc_convenio' COLLATE Latin1_General_CI_AI AND CONVENIO.ConDias='$ConDias' AND CONVENIO.ConTDias = '$ConTDias'";
 
@@ -1155,7 +1166,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
         $data = array('status' => 'cod_requerido');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1285,7 +1297,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1303,7 +1316,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     $CFCodM = test_input($_POST['CFCodM']);
     $CFCodJ = test_input($_POST['CFCodJ']);
     $CFInfM = ($_POST['CFInfM'] == 'on') ? '1' : '0';
-    $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';;
+    $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';
+    ;
     $CFCodM2 = test_input($_POST['CFCodM2']);
     $CFCodJ2 = test_input($_POST['CFCodJ2']);
     $CFCodM3 = test_input($_POST['CFCodM3']);
@@ -1432,7 +1446,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
         $data = array('status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
@@ -1618,7 +1633,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     FusNuloPOST('InEgFeIn', '');
     FusNuloPOST('InEgFeEg', '');
@@ -1672,7 +1688,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
         $data = array('status' => 'requeridos');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $InEgLega = test_input($_POST['DelInEgLega']);
     $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'], 'Y-m-d'));
@@ -1764,7 +1781,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1881,7 +1899,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2001,7 +2020,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2122,7 +2142,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $data = ['status' => 'cod_requerido', 'dato' => 'Identificador requerido.'];
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $_POST['IDVence'] = $_POST['IDVence'] ?? '';
     $_POST['IDCap01'] = $_POST['IDCap01'] ?? '';
     $_POST['IDCap02'] = $_POST['IDCap02'] ?? '';
@@ -2355,18 +2376,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $IDSupExpiry, // 42
         $IDSupTarjFC,
         $IDCap06,
-        $IDHikvFing1,
-        $IDHikvFing2,
-        $IDHikvFing3,
-        $IDHikvFing4,
-        $IDHikvFing5,
-        $IDHikvFing6, // 50
-        $IDHikvFing7,
-        $IDHikvFing8,
-        $IDHikvFing9,
-        $IDHikvFing10,
-        $IDHikvCardNo,
-        $IDHikvName,
+        $IDHikvFing1 ?? '0',
+        $IDHikvFing2 ?? '0',
+        $IDHikvFing3 ?? '0',
+        $IDHikvFing4 ?? '0',
+        $IDHikvFing5 ?? '0',
+        $IDHikvFing6 ?? '0', // 50
+        $IDHikvFing7 ?? '0',
+        $IDHikvFing8 ?? '0',
+        $IDHikvFing9 ?? '0',
+        $IDHikvFing10 ?? '0',
+        $IDHikvCardNo ?? '0',
+        $IDHikvName ?? '0',
         $IDHikvPassword,
         $IDHikvUserType,
         $IDCap07,
@@ -2701,7 +2722,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Datos requeridos.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $params = array();
@@ -2722,7 +2744,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         $data = array('status' => 'error', 'dato' => 'Fecha Inválida.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $Dato = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
 
