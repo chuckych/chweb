@@ -72,7 +72,6 @@ $sqlTot .= $where_condition;
 $sqlRec .= $where_condition;
 
 $sqlRec .= "$OrderBy OFFSET {$params['start']} ROWS FETCH NEXT {$params['length']} ROWS ONLY";
-file_put_contents('sqlRec.log', print_r($sqlRec, true));
 try {
 
     $totalRecords = simple_MSQuery($sqlTot)['total'];
@@ -96,7 +95,7 @@ try {
 
             $data[] = [
                 'pers_legajo' => $pers_legajo,
-                'pers_nombre' => ucwords(strtolower($pers_nombre)),
+                'pers_nombre' => ucwords(mb_strtolower($pers_nombre, 'UTF-8')),
                 'pers_tipo' => $pers_tipo_nombre,
                 'pers_empresa' => $pers_empresa,
                 'pers_planta' => $pers_planta,
