@@ -119,7 +119,7 @@ Flight::route('PUT /clientes/@id', function ($id) {
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
-Flight::route('POST /clientes/', function () {
+Flight::route('POST /clientes', function () {
     $data = Flight::request()->data->getData();
     $url = URLAPI . "/api/_local/clientes/";
     $request = local_api($url, $data, 'POST', '');

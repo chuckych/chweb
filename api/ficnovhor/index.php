@@ -128,7 +128,7 @@ if ($dp['getNov']) {
     $IlegNoV = implodeArrayByKey($IlegNoV, 'FicLega');
     $IlegNoV = $IlegNoV ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
 
-    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta, FICHAS3.FicCate FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
+    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta, FICHAS3.FicCate, NOVEDAD.NovCol1, NOVEDAD.NovCol2, NOVEDAD.NovCol3, NOVEDAD.NovCol4 FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
         if ($wcNov) {
             $qNov .= $wcNov;
@@ -196,16 +196,20 @@ foreach ($stmtFic as $key => $v) {
             $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
             foreach ($arrNov as $key => $n) {
                 $dataNov[] = [
-                    'Codi'  => $n['NovCodi'],
-                    'Desc'  => $n['NovDesc'],
+                    'Codi' => $n['NovCodi'],
+                    'Desc' => $n['NovDesc'],
                     'Horas' => $n['FicHoras'],
-                    'Obse'  => $n['FicObse'],
-                    'NoTi'  => $n['FicNoTi'],
+                    'Obse' => $n['FicObse'],
+                    'NoTi' => $n['FicNoTi'],
                     'NoTiD' => novedadTipo([$n['FicNoTi']]),
-                    'Esta'  => $n['FicEsta'],
+                    'Esta' => $n['FicEsta'],
                     'CCodi' => $n['NovCCodi'],
                     'CDesc' => $n['NovCDesc'],
-                    'Cate'  => $n['FicCate']
+                    'Cate' => $n['FicCate'],
+                    'CodM1' => $n['NovCol1'],
+                    'CodM2' => $n['NovCol2'],
+                    'CodJ1' => $n['NovCol3'],
+                    'CodJ2' => $n['NovCol4'],
                 ];
             }
         }
@@ -216,18 +220,18 @@ foreach ($stmtFic as $key => $v) {
             $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
             foreach ($arrONov as $key => $vo) {
                 $dataONov[] = [
-                    'ONov'  => $vo['FicONov'],
+                    'ONov' => $vo['FicONov'],
                     'Valor' => ($vo['ONovTipo']) ? decimalToTime($vo['FicValor']) : $vo['FicValor'],
-                    'ObsN'  => $vo['FicObsN'],
-                    'Desc'  => $vo['ONovDesc'],
-                    'Tipo'  => $vo['ONovTipo'],
+                    'ObsN' => $vo['FicObsN'],
+                    'Desc' => $vo['ONovDesc'],
+                    'Tipo' => $vo['ONovTipo'],
                     'TipoS' => $vo['Tipo'],
                 ];
             }
         }
     }
     if ($dp['getHor']) {
-        if (($stmtHoras)) {
+        if ($stmtHoras) {
             // if (horaMin($v['FicHsTr']) > 0) {
             $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
 

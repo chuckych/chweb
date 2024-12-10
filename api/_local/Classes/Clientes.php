@@ -18,27 +18,27 @@ class Clientes
 
     public function __construct()
     {
-        $this->conect   = new ConnectDB;
+        $this->conect = new ConnectDB;
         $this->response = new Response;
-        $this->request  = Flight::request();
-        $this->getData  = $this->request->data->getData();
-        $this->tools    = new Tools;
+        $this->request = Flight::request();
+        $this->getData = $this->request->data->getData();
+        $this->tools = new Tools;
     }
     public function get_clientes()
     {
         try {
-            $conn     = $this->conect->conn();
-            $inicio   = microtime(true); // Inicio del script
+            $conn = $this->conect->conn();
+            $inicio = microtime(true); // Inicio del script
 
-            $sql      = "SELECT * FROM clientes";
+            $sql = "SELECT * FROM clientes";
             $sql .= " LEFT JOIN params ON clientes.id = params.cliente AND params.modulo = 1 AND params.descripcion = 'host'";
-            $stmt     = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql);
             $stmt->execute();
             $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $count_usuarios = $this->count_usuarios_clientes($conn);
             $count_roles = $this->count_usuarios_rol($conn);
-            $stmt     = null;
-            $conn     = null;
+            $stmt = null;
+            $conn = null;
             $count = count($clientes);
 
             foreach ($clientes as $key => $value) {
@@ -98,34 +98,34 @@ class Clientes
             }
 
             $rules = [ // Reglas de validación
-                'Nombre'       => ['required', 'varchar50'],
-                'Ident'        => ['varchar3'],
-                'Host'         => ['required', 'varchar50'],
-                'DBHost'       => ['varchar100'],
-                'DBName'       => ['varchar50'],
-                'DBUser'       => ['varchar50'],
-                'DBPass'       => ['varchar50'],
-                'DBAuth'       => ['allowed01'],
-                'AppCode'      => ['varchar8'],
-                'WebService'   => ['varchar100'],
-                'ApiMobile'    => ['varchar100'],
+                'Nombre' => ['required', 'varchar50'],
+                'Ident' => ['varchar3'],
+                'Host' => ['required', 'varchar50'],
+                'DBHost' => ['varchar100'],
+                'DBName' => ['varchar50'],
+                'DBUser' => ['varchar50'],
+                'DBPass' => ['varchar50'],
+                'DBAuth' => ['allowed01'],
+                'AppCode' => ['varchar8'],
+                'WebService' => ['varchar100'],
+                'ApiMobile' => ['varchar100'],
                 'ApiMobileApp' => ['varchar100'],
-                'LocalCH'      => ['allowed01'],
+                'LocalCH' => ['allowed01'],
             ];
             $customValueKey = [ // Valores por defecto
-                'Nombre'       => '',
-                'Ident'        => '',
-                'Host'         => '',
-                'DBHost'       => '',
-                'DBName'       => '',
-                'DBUser'       => '',
-                'DBPass'       => '',
-                'DBAuth'       => '0',
-                'AppCode'      => '',
-                'WebService'   => '',
-                'ApiMobile'    => '',
+                'Nombre' => '',
+                'Ident' => '',
+                'Host' => '',
+                'DBHost' => '',
+                'DBName' => '',
+                'DBUser' => '',
+                'DBPass' => '',
+                'DBAuth' => '0',
+                'AppCode' => '',
+                'WebService' => '',
+                'ApiMobile' => '',
                 'ApiMobileApp' => '',
-                "LocalCH"      => '0',
+                "LocalCH" => '0',
             ];
             $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
             $dato = $datos;
@@ -151,22 +151,21 @@ class Clientes
         $conn = $this->conect->conn();
         $inicio = microtime(true);
 
-        $Nombre         = $datos['Nombre']; // Nombre de la cuenta
-        $Ident          = $datos['Ident']; // Identificador de la cuenta
-        $Host           = $datos['Host']; // Host de la cuenta eje: https://chweb.local
-        $DBHost         = $datos['DBHost']; // Host de la base de datos
-        $DBName         = $datos['DBName']; // Nombre de la base de datos
-        $DBUser         = $datos['DBUser']; // Usuario de la base de datos
-        $DBPass         = $datos['DBPass']; // Contraseña de la base de datos
-        $DBAuth         = $datos['DBAuth']; // Autenticación de la base de datos
-        $LocalCH        = $datos['LocalCH']; // Local de CH eje: 0 o 1. Esto es para saber si la cuenta es local o no. En función de esto se insertan fichadas mobile en la base datos SQL Server de la tabla FICHADAS al momento de descargar fichadas mobile.
-        $n_ident        = str_replace(" ", "", $datos['Nombre']); // Nombre de la cuenta sin espacios
-        $Ident          = empty($Ident) ? substr(strtoupper($n_ident), 0, 3) : $Ident; // Identificador de la cuenta si no se envía se toma las primeras 3 letras del nombre
-        $WebService     = $datos['WebService']; // WebService de la cuenta
-        $ApiMobile      = $datos['ApiMobile']; // Api Mobile de la cuenta. Eje: https://cloudhr.ar Esto es donde se aloja la API de mobile. Si la cuenta usa la app de mobile siempre va https://cloudhr.ar.
-        $ApiMobileApp   = $datos['ApiMobileApp']; // Api Mobile App de la cuenta. Eje: http://awsapi.chweb.ar:7575 Esto es donde se aloja la API de mobile de la app en aws. Si la cuenta usa la app de mobile siempre va http://awsapi.chweb.ar:7575.
+        $Nombre = $datos['Nombre']; // Nombre de la cuenta
+        $Ident = $datos['Ident']; // Identificador de la cuenta
+        $Host = $datos['Host']; // Host de la cuenta eje: https://chweb.local
+        $DBHost = $datos['DBHost']; // Host de la base de datos
+        $DBName = $datos['DBName']; // Nombre de la base de datos
+        $DBUser = $datos['DBUser']; // Usuario de la base de datos
+        $DBPass = $datos['DBPass']; // Contraseña de la base de datos
+        $DBAuth = $datos['DBAuth']; // Autenticación de la base de datos
+        $LocalCH = $datos['LocalCH']; // Local de CH eje: 0 o 1. Esto es para saber si la cuenta es local o no. En función de esto se insertan fichadas mobile en la base datos SQL Server de la tabla FICHADAS al momento de descargar fichadas mobile.
+        $n_ident = str_replace(" ", "", $datos['Nombre']); // Nombre de la cuenta sin espacios
+        $Ident = empty($Ident) ? substr(strtoupper($n_ident), 0, 3) : $Ident; // Identificador de la cuenta si no se envía se toma las primeras 3 letras del nombre
+        $WebService = $datos['WebService']; // WebService de la cuenta
+        $ApiMobile = $datos['ApiMobile']; // Api Mobile de la cuenta. Eje: https://cloudhr.ar Esto es donde se aloja la API de mobile. Si la cuenta usa la app de mobile siempre va https://cloudhr.ar.
+        $ApiMobileApp = $datos['ApiMobileApp']; // Api Mobile App de la cuenta. Eje: http://awsapi.chweb.ar:7575 Esto es donde se aloja la API de mobile de la app en aws. Si la cuenta usa la app de mobile siempre va http://awsapi.chweb.ar:7575.
         $Recid = (!$datos['AppCode']) ? $this->tools->recid() : $datos['AppCode']; // Recid de la cuenta
-
         if ($this->si_existe_nombre_cliente($Nombre, $conn)) {
             throw new \ValueError("Ya existe una cuenta con el nombre: {$Nombre}", 400);
         }
@@ -191,13 +190,17 @@ class Clientes
     }
     private function si_existe_ident($ident, $conn)
     {
-        $sql    = "SELECT ident FROM clientes WHERE ident = :ident";
-        $stmt   = $conn->prepare($sql);
+        if (!$ident) {
+            return false;
+        }
+
+        $sql = "SELECT ident FROM clientes WHERE ident = :ident";
+        $stmt = $conn->prepare($sql);
         $stmt->bindParam(':ident', $ident, \PDO::PARAM_STR);
         $stmt->execute();
-        $count  = $stmt->rowCount() ?? 0;
-        $stmt   = null;
-        $conn   = null;
+        $count = $stmt->rowCount() ?? 0;
+        $stmt = null;
+        $conn = null;
         return ($count > 0) ? true : false;
     }
     private function si_existe_nombre_cliente($nombre, $conn, $IDCliente = null)
@@ -210,7 +213,7 @@ class Clientes
             $stmt->bindParam(':id', $IDCliente, \PDO::PARAM_INT);
         }
         $stmt->execute();
-        $count  = $stmt->rowCount() ?? 0;
+        $count = $stmt->rowCount() ?? 0;
         return $count ? true : false;
     }
     private function si_no_existe_id_cliente($IDCliente, $conn)
@@ -224,13 +227,13 @@ class Clientes
     }
     private function si_existe_recid($recid, $conn)
     {
-        $sql    = "SELECT recid FROM clientes WHERE recid = :recid";
-        $stmt   = $conn->prepare($sql);
+        $sql = "SELECT recid FROM clientes WHERE recid = :recid";
+        $stmt = $conn->prepare($sql);
         $stmt->bindParam(':recid', $recid, \PDO::PARAM_STR);
         $stmt->execute();
-        $count  = $stmt->rowCount() ?? 0;
-        $stmt   = null;
-        $conn   = null;
+        $count = $stmt->rowCount() ?? 0;
+        $stmt = null;
+        $conn = null;
         return ($count > 0) ? true : false;
     }
     private function insert_cliente($data, $conn)
@@ -249,8 +252,9 @@ class Clientes
         $params[':Fecha'] = $this->tools->formatDateTime('now');
         $params[':LocalCH'] = $data['LocalCH'];
         $params[':ApiMobileHRPApp'] = $data['ApiMobileApp'];
+        $params[':tkmobile'] = '';
 
-        $sql = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, WebService, ApiMobileHRP, fecha_alta, localCH, UrlAppMobile, fecha ) VALUES(:Recid, :Ident, :Nombre, :DBHost, :DBName, :DBUser, :DBPass, :DBAuth, :WebService, :ApiMobileHRP, :Fecha, :LocalCH, :ApiMobileHRPApp, :Fecha)";
+        $sql = "INSERT INTO clientes (recid, ident, nombre, host, db, user, pass, auth, WebService, ApiMobileHRP, fecha_alta, localCH, tkmobile, UrlAppMobile, fecha ) VALUES(:Recid, :Ident, :Nombre, :DBHost, :DBName, :DBUser, :DBPass, :DBAuth, :WebService, :ApiMobileHRP, :Fecha, :LocalCH, :tkmobile, :ApiMobileHRPApp, :Fecha)";
 
         try {
             $stmt = $conn->prepare($sql);
@@ -285,8 +289,8 @@ class Clientes
     }
     private function set_params_host($host, $id, $conn)
     {
-        $sqlI   = "INSERT INTO `params` (`descripcion`, `modulo`, `cliente`, `valores`) VALUES ('host', 1, :id, :host)";
-        $sqlU   = "UPDATE `params` SET `valores` = :host WHERE `descripcion` = 'host' and `modulo` = 1 and `cliente` = :id";
+        $sqlI = "INSERT INTO `params` (`descripcion`, `modulo`, `cliente`, `valores`) VALUES ('host', 1, :id, :host)";
+        $sqlU = "UPDATE `params` SET `valores` = :host WHERE `descripcion` = 'host' and `modulo` = 1 and `cliente` = :id";
         $sql = $this->si_existe_params_host($id, $conn) ? $sqlU : $sqlI;
 
         $stmt = $conn->prepare($sql);
@@ -311,7 +315,7 @@ class Clientes
     private function write_apiKeysFile($conn)
     {
 
-        $path =  PATH_APIKEY;
+        $path = PATH_APIKEY;
 
         if (!file_exists($path)) {
             throw new \Exception("El archivo api_key no existe: " . PATH_APIKEY, 500);
@@ -324,20 +328,20 @@ class Clientes
 
         foreach ($assoc_arr as $key => $value) {
             $assoc[] = [
-                'idCompany'    => $value['idCompany'],
-                'nameCompany'  => $value['nameCompany'],
+                'idCompany' => $value['idCompany'],
+                'nameCompany' => $value['nameCompany'],
                 'recidCompany' => $value['recidCompany'],
                 'urlAppMobile' => $value['urlAppMobile'],
                 'apiMobileHRP' => $value['apiMobileHRP'],
-                'localCH'      => ($value['localCH'] == '') ? "0" : $value['localCH'],
-                'hostCHWeb'    => $value['hostCHWeb'],
-                'homeHost'     => HOMEHOST,
-                'DBHost'       => $value['hostDB'],
-                'DBUser'       => $value['userDB'],
-                'DBPass'       => $value['passDB'],
-                'DBName'       => $value['DB'],
-                'DBAuth'       => $value['authDB'],
-                'Token'        => sha1($value['recidCompany']),
+                'localCH' => ($value['localCH'] == '') ? "0" : $value['localCH'],
+                'hostCHWeb' => $value['hostCHWeb'],
+                'homeHost' => HOMEHOST,
+                'DBHost' => $value['hostDB'],
+                'DBUser' => $value['userDB'],
+                'DBPass' => $value['passDB'],
+                'DBName' => $value['DB'],
+                'DBAuth' => $value['authDB'],
+                'Token' => sha1($value['recidCompany']),
                 'WebServiceCH' => ($value['WebService']),
             ];
         }

@@ -27,18 +27,18 @@ foreach ($arrEnv as $key => $value) {
 }
 
 $tools = new Classes\Tools; // Instancia de la clase Tools
-$response       = new Classes\Response;
-$log            = new Classes\Log;
-$horas          = new Classes\Horas;
-$fichas         = new Classes\Fichas;
-$estructuras    = new Classes\Estructuras;
-$horarios       = new Classes\Horarios;
-$auditor        = new Classes\Auditor;
-$novedades      = new Classes\Novedades;
+$response = new Classes\Response;
+$log = new Classes\Log;
+$horas = new Classes\Horas;
+$fichas = new Classes\Fichas;
+$estructuras = new Classes\Estructuras;
+$horarios = new Classes\Horarios;
+$auditor = new Classes\Auditor;
+$novedades = new Classes\Novedades;
 $RRHHWebService = new Classes\RRHHWebService;
-$connectSqlSrv  = new Classes\ConnectSqlSrv;
-$ParaGene       = new Classes\ParaGene;
-$Personal       = new Classes\Personal;
+$connectSqlSrv = new Classes\ConnectSqlSrv;
+$ParaGene = new Classes\ParaGene;
+$Personal = new Classes\Personal;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -64,6 +64,7 @@ Flight::route('GET /novedades/data', [$novedades, 'data']);
 Flight::route('/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
+Flight::route('GET /parametros/liquid', [$ParaGene, 'liquid']);
 Flight::route('GET /horarios/', [$horarios, 'get_horarios']);
 // Flight::route('GET /horarios', function () {
 //     $horarios = new Classes\Horarios;
@@ -110,7 +111,7 @@ Flight::map('Forbidden', function ($mensaje) use ($response) {
 Flight::map('error', function ($ex) use ($response, $log) {
 
     $code_protected = $ex->getCode() ?? 400;
-    $error_message  = $ex->getMessage() ?? 'Error desconocido';
+    $error_message = $ex->getMessage() ?? 'Error desconocido';
 
     switch ($code_protected) {
         case 404:
@@ -124,7 +125,7 @@ Flight::map('error', function ($ex) use ($response, $log) {
             break;
     }
 
-    $inicio  = microtime(true);
+    $inicio = microtime(true);
     $nameLog = date('Ymd') . '_error_.log'; // path Log Api
 
     if ($ex instanceof Exception) {

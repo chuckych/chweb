@@ -180,8 +180,10 @@ $(function () {
             $(DT_TABLE_PERSONAL).addClass('loader-in');
             return new Promise((resolve, reject) => {
                 if (nullFalse) {
+                    // $(DT_TABLE_PERSONAL).DataTable().clear().destroy();
                     $(DT_TABLE_PERSONAL).DataTable().ajax.reload(null, false);
                 } else {
+                    // $(DT_TABLE_PERSONAL).DataTable().clear().destroy();
                     $(DT_TABLE_PERSONAL).DataTable().ajax.reload();
                 }
                 ls.set(LS_HORARIOS_ASIGN_CACHE, {});

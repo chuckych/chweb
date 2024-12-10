@@ -46,12 +46,27 @@ class Fichas
         $array = $stmt->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
         $array['min'] = date('Y-m-d', strtotime($array['min']));
         $array['max'] = date('Y-m-d', strtotime($array['max']));
-        $a = array(
-            'min' => ($array['min']),
-            'max' => $array['max']
-        );
-        $this->resp->respuesta($array, 1, 'OK', 200, microtime(true), 0, 0);
-        $stmt->closeCursor(); // Cierro el cursor
 
+        $minYear = (int) date('Y', strtotime($array['min']));
+        $maxYear = (int) date('Y', strtotime($array['max']));
+        $years = range($minYear, $maxYear);
+
+        $yearsWithMonths = [];
+
+        foreach ($years as $year) { // Recorro los años para obtener los meses de cada año 
+            $startMonth = ($year == $minYear) ? (int) date('m', strtotime($array['min'])) : 1; // Si el año es igual al año mínimo, el mes inicial es el mes mínimo, sino es 1
+            $endMonth = ($year == $maxYear) ? (int) date('m', strtotime($array['max'])) : 12; // Si el año es igual al año máximo, el mes final es el mes máximo, sino es 12
+            $months = range($startMonth, $endMonth); // Obtengo los meses del año
+            $yearsWithMonths[$year] = $months; // Guardo los meses en el array
+        }
+
+        $a = [
+            'min' => $array['min'], // "min": "2024-09-01",
+            'max' => $array['max'], // "max": "2024-10-23"
+            'años' => $yearsWithMonths, // "years": {2024: [9, 10], 2025: [1, 2, ..., 12]}
+        ];
+
+        $this->resp->respuesta($a, 1, 'OK', 200, microtime(true), 0, 0);
+        $stmt->closeCursor(); // Cierro el cursor
     }
 }

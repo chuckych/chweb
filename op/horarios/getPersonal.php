@@ -7,6 +7,7 @@ $params = $_REQUEST;
 $where_condition = "";
 $arrLegajos = [];
 $data = [];
+$error = '';
 
 $cols = [
     "PERSONAL.LegNume AS 'pers_legajo'",
@@ -70,8 +71,8 @@ $where_condition .= $SearchValue ? $SearchLike : '';
 $sqlTot .= $where_condition;
 $sqlRec .= $where_condition;
 
-$sqlRec .=  "$OrderBy OFFSET {$params['start']} ROWS FETCH NEXT {$params['length']} ROWS ONLY";
-
+$sqlRec .= "$OrderBy OFFSET {$params['start']} ROWS FETCH NEXT {$params['length']} ROWS ONLY";
+file_put_contents('sqlRec.log', print_r($sqlRec, true));
 try {
 
     $totalRecords = simple_MSQuery($sqlTot)['total'];
@@ -79,37 +80,37 @@ try {
 
     if ($records) {
         foreach ($records as $row) {
-            $pers_legajo      = $row['pers_legajo'];
-            $pers_nombre      = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
-            $pers_estado      = ($row['pers_estado'] == 0) ? 'Activo' : 'De Baja';
-            $pers_empresa     = ceronull($row['pers_empresa']);
-            $pers_planta      = ceronull($row['pers_planta']);
-            $pers_convenio    = ceronull($row['pers_convenio']);
-            $pers_sector      = ceronull($row['pers_sector']);
-            $pers_seccion     = ceronull($row['pers_seccion']);
-            $pers_grupo       = ceronull($row['pers_grupo']);
-            $pers_sucur       = ceronull($row['pers_sucur']);
-            $RCHDesc          = ceronull($row['RCHDesc']);
-            $pers_tipo        = ($row['pers_tipo'] == 0) ? 'M' : 'J';
+            $pers_legajo = $row['pers_legajo'];
+            $pers_nombre = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
+            $pers_estado = ($row['pers_estado'] == 0) ? 'Activo' : 'De Baja';
+            $pers_empresa = ceronull($row['pers_empresa']);
+            $pers_planta = ceronull($row['pers_planta']);
+            $pers_convenio = ceronull($row['pers_convenio']);
+            $pers_sector = ceronull($row['pers_sector']);
+            $pers_seccion = ceronull($row['pers_seccion']);
+            $pers_grupo = ceronull($row['pers_grupo']);
+            $pers_sucur = ceronull($row['pers_sucur']);
+            $RCHDesc = ceronull($row['RCHDesc']);
+            $pers_tipo = ($row['pers_tipo'] == 0) ? 'M' : 'J';
             $pers_tipo_nombre = ($row['pers_tipo'] == 0) ? 'Mensual' : 'Jornal';
 
             $data[] = [
-                'pers_legajo'   => $pers_legajo,
-                'pers_nombre'   => ucwords(strtolower($pers_nombre)),
-                'pers_tipo'     => $pers_tipo_nombre,
-                'pers_empresa'  => $pers_empresa,
-                'pers_planta'   => $pers_planta,
+                'pers_legajo' => $pers_legajo,
+                'pers_nombre' => ucwords(strtolower($pers_nombre)),
+                'pers_tipo' => $pers_tipo_nombre,
+                'pers_empresa' => $pers_empresa,
+                'pers_planta' => $pers_planta,
                 'pers_convenio' => $pers_convenio,
-                'RCHDesc'       => $RCHDesc,
-                'pers_sector'   => $pers_sector,
-                'pers_seccion'  => $pers_seccion,
-                'pers_grupo'    => $pers_grupo,
-                'pers_sucur'    => $pers_sucur,
-                'pers_horario'  => '',
+                'RCHDesc' => $RCHDesc,
+                'pers_sector' => $pers_sector,
+                'pers_seccion' => $pers_seccion,
+                'pers_grupo' => $pers_grupo,
+                'pers_sucur' => $pers_sucur,
+                'pers_horario' => '',
             ];
             $arrLegajos[] = $pers_legajo;
         }
     }
 } catch (Exception $th) {
-    return false;
+    $error = $th->getMessage();
 }

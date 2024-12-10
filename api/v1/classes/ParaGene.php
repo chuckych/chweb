@@ -72,6 +72,25 @@ class ParaGene
         }
         $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
     }
+    public function liquid()
+    {
+        $inicio = microtime(true);
+        $cols = ['ParPeMeD', 'ParPeMeH', 'ParPeJ1D', 'ParPeJ1H', 'ParPeJ2D', 'ParPeJ2H', 'FechaHora'];
+        $sql = "SELECT " . implode(", ", $cols) . " FROM PARACONT WHERE ParCodi=0";
+        $Data = $this->conect->executeQueryWhithParams($sql);
+        foreach ($Data as &$element) {
+            $rs = [
+                'MensDesde' => intval($element['ParPeMeD']),
+                'MensHasta' => intval($element['ParPeMeH']),
+                'Jor1Desde' => intval($element['ParPeJ1D']),
+                'Jor1Hasta' => intval($element['ParPeJ1H']),
+                'Jor2Desde' => intval($element['ParPeJ2D']),
+                'Jor2Hasta' => intval($element['ParPeJ2H']),
+                // 'FechaHora' => $element['FechaHora'],
+            ];
+        }
+        $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
+    }
     /**
      * Devuelve una matriz de datos de la tabla PARAGENE.
      *
