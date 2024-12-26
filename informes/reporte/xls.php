@@ -235,6 +235,17 @@ try {
 
         $TotalesHoras = $objeto['TotalesHoras'] ?? [];
         $TotalesNovedades = $objeto['TotalesNovedades'] ?? [];
+        $HsATyTR = $objeto['HsATyTR'] ?? [];
+
+        // Array HsATyTR
+        // (
+        //     [HsTrEnMinutos] => 10141
+        //     [HsTrEnHoras] => 169:01
+        //     [HsTrEnDecimal] => 169.01666666667
+        //     [HsATEnMinutos] => 10800
+        //     [HsATEnHoras] => 180:00
+        //     [HsATEnDecimal] => 180
+        // )
 
         // # Escribirlos en el documento
         $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Lega);

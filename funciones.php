@@ -16,7 +16,7 @@ function version($html = false)
 }
 function verDBLocal()
 {
-    return 20240325; // Version de la base de datos local
+    return 20241226; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -98,7 +98,7 @@ function secure_auth_ch_json()
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
         $_SERVER['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'] ?? '';
-        $f = 'Sesi&oacute;n Expirada. Incie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesi&oacute;n </a>';
+        $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesi&oacute;n </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
     } else {
@@ -163,7 +163,7 @@ function secure_auth_ch2()
     E_ALL();
 }
 /** ultimaacc */
-// Funcion para obtener la fecha hora del ultimo acceso
+// Función para obtener la fecha hora del ultimo acceso
 function ultimoacc()
 {
     return $_SESSION["ultimoAcceso"] = date("Y-m-d H:i:s"); // Actualizo la fecha de la sesión
@@ -273,7 +273,7 @@ function BorrarArchivosPDF($RutaFiles)
         $timeDiff = abs($currentTime - $lastModifiedTime) / (60 * 60);
         /** Genera el resulta en Horas decimal */
         if (is_file($file) && $timeDiff > 1)
-            /** borra arcchivos con diferencia de horas mayor a 1 */
+            /** borra archivos con diferencia de horas mayor a 1 */
             unlink($file); //elimino el fichero
     }
 }
@@ -665,7 +665,7 @@ function DiaSemana($Ymd)
     timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
-    $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
+    $days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     $day = date('w', strtotime($scheduled_day));
     $scheduled_day = "$days[$day] " . date('d/m/Y', strtotime($scheduled_day));
     return $scheduled_day;
@@ -728,7 +728,7 @@ function DiaSemana4($Ymd)
     timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
-    $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
+    $days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     $day = date('w', strtotime($scheduled_day));
     $scheduled_day = "$days[$day]" . '&nbsp;' . date('d/m/Y', strtotime($scheduled_day));
     return $scheduled_day;
@@ -738,7 +738,7 @@ function DiaSemana3($Ymd)
     timeZone();
     setlocale(LC_TIME, "spanish");
     $scheduled_day = $Ymd;
-    $days = ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sábado'];
+    $days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
     $day = date('w', strtotime($scheduled_day));
     $scheduled_day = $days[$day];
     return $scheduled_day;
@@ -1419,7 +1419,7 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
  * @param {$dato} string texto de auditoria
  * @param {$tipo} string a:insert, b:update, m:delete; p: proceso
  * @param {$audcuenta} integer id de cuenta
- * @param {$modulo} modulo de la aplicacion
+ * @param {$modulo} modulo de la aplicación
  */
 function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
 {
@@ -1454,10 +1454,10 @@ function auditoria($dato, $tipo, $audcuenta = '', $modulo = '')
         $stmt->bindParam(':dato', $data['dato']);
         $stmt->bindParam(':modulo', $data['modulo']);
         $stmt->execute();
-        $connpdo->commit(); // si todo salio bien, confirma la transaccion
+        $connpdo->commit(); // si todo salio bien, confirma la transacción
     } catch (\Throwable $th) { // si hay error
-        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de exito
-        $connpdo->rollBack(); // revierte la transaccion
+        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de éxito
+        $connpdo->rollBack(); // revierte la transacción
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorAudito.log'; // ruta del archivo de Log
         fileLog($th->getMessage() . "\n $message", $pathLog); // escribir en el log de errores
     }
@@ -1503,7 +1503,7 @@ function auditoria_multiple($array, $AudMod)
         $connpdo->commit(); // si todo salio bien, confirma la transacción
         return true;
     } catch (\Throwable $th) { // si hay error
-        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de exito
+        $message = "Error -> auditoria. Usuario : \"$data[usuario]\" Dato: \"$data[dato]\"  Tipo: \"$data[tipo]\"  Fecha: \"$data[fecha]\"  Hora: \"$data[hora]\" Cuenta (\"$data[audcuenta]\")"; // mensaje de éxito
         $connpdo->rollBack(); // revierte la transacción
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorAudito.log'; // ruta del archivo de Log
         fileLog($th->getMessage() . "\n $message", $pathLog); // escribir en el log de errores
@@ -1915,7 +1915,7 @@ function CountRegistrosMayorCero($query)
         exit;
     }
 }
-/** Fin Querys MS-SQL */
+/** Fin Query MS-SQL */
 function PerCierre($FechaStr, $Legajo)
 {
     $params = array();
@@ -2006,7 +2006,7 @@ function EstadoProceso($url)
     } while (respuestaWebService($respuesta) == 'Pendiente');
     return respuestaWebService($respuesta);
 }
-function pingWebService($textError) // Funcion para validar que el Webservice de Control Horario esta disponible
+function pingWebService($textError) // Función para validar que el Webservice de Control Horario esta disponible
 {
     $url = rutaWebService("Ping?");
     $ch = curl_init(); // Inicializar el objeto curl
@@ -2029,7 +2029,7 @@ function pingWebService($textError) // Funcion para validar que el Webservice de
     curl_close($ch); // close curl handle
     return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
-// Funcion para validar que el Webservice de Control Horario esta disponible
+// Función para validar que el Webservice de Control Horario esta disponible
 function pingWS()
 {
     $url = rutaWebService("Ping?");
@@ -2791,14 +2791,14 @@ function dateDifference($date_1, $date_2, $differenceFormat = '%a')
     return $interval->format($differenceFormat); // devuelvo el número de días
 }
 // borra los logs a partir de una cantidad de días
-function borrarLogs($path, $dias, $ext)
+function borrarLogs($path, $days, $ext)
 {
     $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
     foreach ($files as $file) { // recorremos todos los ficheros.
         $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
         $currentTime = time(); // obtenemos la fecha actual
         $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
-        ($dateDiff >= $dias) ? unlink($file) : ''; //elimino el fichero
+        ($dateDiff >= $days) ? unlink($file) : ''; //elimino el fichero
     }
 }
 function borrarFileHoras($path, $horas, $ext)

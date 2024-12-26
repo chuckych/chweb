@@ -168,6 +168,9 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                             case 'Reporte de Totales':
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/reporte/>" . $Modulo2 . "</a>";
                                                 break;
+                                            case 'Reporte Prysmian':
+                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/custom/prysmian>" . $Modulo2 . "</a>";
+                                                break;
                                         }
                                     }
                                     ?>

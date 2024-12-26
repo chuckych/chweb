@@ -15,7 +15,8 @@
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>"
 	type="text/css">
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css?v=<?= version_file("/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css") ?>"
+<link rel="stylesheet"
+	href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css?v=<?= version_file("/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css") ?>"
 	type="text/css">
 <?php
 switch ($Modulo) {
@@ -45,11 +46,11 @@ switch ($Modulo) {
 		echo '<style>:root { --main-bg-modcolor : #68518f; } </style>';
 		break;
 	case '5':
-		/** Modulo mobile fichadas. Color predeterminado */
+	/** Modulo mobile fichadas. Color predeterminado */
 	case '25':
-		/** Modulo mobile zonas. Color predeterminado */
+	/** Modulo mobile zonas. Color predeterminado */
 	case '26':
-		/** Modulo mobile Usuarios. Color predeterminado */
+	/** Modulo mobile Usuarios. Color predeterminado */
 	case '27':
 		/** Modulo mobile Mensajes. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #b71c1c; } </style>';
@@ -135,6 +136,10 @@ switch ($Modulo) {
 	case '45':
 		/** Modulo custom2. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #d9403a; } </style>';
+		break;
+	case '46':
+		/** Modulo Liquidar. Color predeterminado */
+		echo '<style>:root { --main-bg-modcolor : #343a40; } </style>';
 		break;
 	default:
 		echo '<style>:root { --main-bg-modcolor : #17a2b8; } </style>';

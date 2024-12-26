@@ -2,6 +2,7 @@
 require __DIR__ . '../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../config/index.php';
+require __DIR__ . '/fn_app-data.php';
 
 ultimoacc();
 secure_auth_ch_json();
@@ -17,377 +18,9 @@ $token = sha1($_SESSION['RECID_CLIENTE']);
 define('HOSTCHWEB', gethostCHWeb());
 define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
 
-borrarLogs('json', 1, 'json');
-borrarLogs('archivos', 1, 'xls');
-// borrarFileHoras('json', 1, 'json');
-// borrarFileHoras('archivos', 1, 'xls');
-// borrarFile('json', 'json');
+clean_files('json/', 1, 'json');
+clean_files('archivos/', 1, 'xls');
 
-/**
- * Realiza una llamada a la API CH.
- *
- * @param string $endpoint El endpoint de la API.
- * @param array $payload El payload de la solicitud (opcional).
- * @param string $method El método de la solicitud (opcional, por defecto es GET).
- * @param array $queryParams Los parámetros de la consulta (opcional).
- * @return mixed Los datos devueltos por la API o false si hay un error.
- * @throws Exception Si ocurre un error durante la llamada a la API.
- */
-function ch_api()
-{
-    timeZone();
-    timeZone_lang();
-
-    $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
-    $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
-    $payload = $argumento[1] ?? array(); // Obtengo el payload
-    $method = $argumento[2] ?? 'GET'; // Obtengo el método
-    $queryParams = $argumento[3] ?? array(); // Obtengo los parámetro de la query
-    $method = strtoupper($method); // Convierto el método a mayúsculas
-
-    try {
-
-        if (!$endpoint) {
-            throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
-        }
-
-        $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
-
-        $ch = curl_init(); // Inicializo curl
-
-        curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
-        if ($method == 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-        if ($method == 'GET') {
-            curl_setopt($ch, CURLOPT_HTTPGET, true);
-        }
-        if ($method == 'PUT') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-        if ($method == 'DELETE') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-
-        $token = sha1($_SESSION['RECID_CLIENTE']);
-        $AGENT = $_SERVER['HTTP_USER_AGENT'];
-        $headers = [
-            "Accept: */*",
-            'Content-Type: application/json',
-            "Token: {$token}",
-            "User-Agent: {$AGENT}",
-        ];
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
-        $file_contents = curl_exec($ch); // Ejecuto curl
-        // file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
-
-        $curl_errno = curl_errno($ch); // get error code
-        $curl_error = curl_error($ch); // get error information
-
-        if ($curl_errno > 0) { // si hay error
-            $text = "cURL Error ($curl_errno): $curl_error"; // set error message
-            // file_put_contents(__DIR__ . '/logs/api.log', $text . PHP_EOL, FILE_APPEND); // log error
-            throw new Exception($text);
-        }
-        if (!$file_contents) {
-            throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
-        }
-        curl_close($ch);
-        $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
-        return $file_contents;
-    } catch (\Exception $e) {
-        curl_close($ch);
-        return false;
-    }
-}
-/**
- * Obtiene las causas de una novedad específica.
- *
- * @param string $novedad El código de la novedad.
- * @return array Un array con las causas de la novedad o un array vacío si no se encuentran causas.
- */
-function getNoveCausas($novedad)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
-    $method = 'GET';
-    $queryParams = array(
-        "start" => 0,
-        "length" => 5000,
-        "Estruct" => "NovC"
-    );
-
-    $data = ch_api($endpoint, '', $method, $queryParams);
-
-    $arrayData = json_decode($data, true);
-
-    $rs = array_filter($arrayData['DATA'], function ($element) use ($novedad) {
-        return $element['CodiNov'] == $novedad;
-    });
-
-    return array_values($rs) ?? array();
-}
-function getParamLiquid()
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/parametros/liquid";
-    $method = 'GET';
-    $data = ch_api($endpoint, '', $method, []);
-    $arrayData = json_decode($data, true);
-    return $arrayData['DATA'] ?? [];
-}
-function getFichasMinMax()
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
-    $method = 'GET';
-    $data = ch_api($endpoint, '', $method, []);
-    $arrayData = json_decode($data, true);
-    return $arrayData['DATA'] ?? [];
-}
-function estructuras($estructuras)
-{
-    // estructuras
-    // {
-    //     "Empr": "100,1,2,300,200",
-    //     "Plan": "1,2,4,5,8,19,3,9,18,10,7,13",
-    //     "Conv": "2,4",
-    //     "Sect": "100,2,200,3,1",
-    //     "Secc": "21,12",
-    //     "Grup": "1,2",
-    //     "Sucu": "1,6,3,4"
-    // }
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/estructuras";
-
-    $data = ch_api($endpoint, $estructuras, 'POST', '');
-
-    $arrayData = json_decode($data, true);
-
-    $arrayData['arrayData'] = $arrayData['DATA'] ?? '';
-
-    if (empty($arrayData['DATA'])) {
-        return [];
-    }
-
-    return $arrayData['DATA'] ?? array();
-}
-/**
- * Obtiene los datos de una ficha de novedades y horarios de forma simplificada.
- *
- * @param string $legajo El legajo del empleado.
- * @param string $fecha La fecha para la cual se obtendrán los datos.
- * @param array $opt Opciones adicionales para filtrar los datos.
- * @return array|false Los datos de la ficha de novedades y horarios, o false si no se proporciona el legajo o la fecha.
- */
-function getFicNovHorSimple($legajo, $fecha, $opt)
-{
-    if (!$legajo)
-        return false;
-    if (!$fecha)
-        return false;
-    $payload = [
-        "FechIni" => $fecha,
-        "FechFin" => $fecha,
-        "onlyReg" => "0",
-        "getReg" => $opt['getFic'] ?? 0,
-        "getNov" => $opt['getNov'] ?? 0,
-        "getONov" => $opt['getONov'] ?? 0,
-        "getHor" => $opt['getHor'] ?? 0,
-        "getEstruct" => $opt['getEstruct'] ?? 0,
-        "getCierre" => $opt['getCierre'] ?? 1,
-        "NovEx" => "",
-        "ONovEx" => "",
-        "HoraEx" => "",
-        "LegApNo" => "",
-        "LegDocu" => [],
-        "LegRegCH" => [],
-        "LegTipo" => [],
-        "LegaD" => "",
-        "LegaH" => "",
-        "Lega" => [$legajo],
-        "Empr" => [],
-        "Plan" => [],
-        "Conv" => [],
-        "Sec2" => [],
-        "Sect" => [],
-        "Grup" => [],
-        "Sucu" => [],
-        "NovT" => [],
-        "NovS" => [],
-        "NovA" => [],
-        "NovI" => [],
-        "DiaL" => [],
-        "DiaF" => [],
-        "HsAT" => [],
-        "HsTr" => [],
-        "HorE" => [],
-        "HorS" => [],
-        "HorD" => [],
-        "Falta" => [],
-        "Nove" => [],
-        "NoTi" => [],
-        "ONov" => [],
-        "Hora" => [],
-        "Esta" => [],
-        "EstaNov" => $opt['EstaNov'] ?? [],
-        "start" => 0,
-        "length" => $opt['length'] ?? 1
-    ];
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    $DATA = $arrayData['DATA'] ?? [];
-    if (empty($DATA)) {
-        return [];
-    }
-    return [$DATA[0]];
-}
-function getHorasTotales($payload)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    // print_r($payload) . exit;
-    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
-    if (empty($arrayData['DATA'])) {
-        return [];
-    }
-    return ($arrayData['DATA']);
-}
-function getNovedadesTotales($payload)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    // print_r($payload) . exit;
-    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
-    if (empty($arrayData['DATA'])) {
-        return [];
-    }
-    return ($arrayData['DATA']);
-}
-function getHorasTotalesDT($payload)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
-    // print_r($payload) . exit;
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    $arrayData['DATA'] = $arrayData['DATA'] ?? [];
-    // if (empty($arrayData['DATA'])) {
-    //     return [];
-    // }
-    $dt_data = array(
-        "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
-        "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
-        "data" => $arrayData['DATA']['data'] ?? [],
-        "totales" => $arrayData['DATA']['totales'] ?? [],
-        "totalesTryAT" => $arrayData['DATA']['totalesTryAT'] ?? '',
-        "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? [],
-    );
-    return ($dt_data);
-}
-function getNovedadesTotalesDT($payload)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
-    // print_r($payload) . exit;
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    $arrayData['DATA'] = $arrayData['DATA'] ?? [];
-
-    $dt_data = array(
-        "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
-        "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
-        "data" => $arrayData['DATA']['data'] ?? [],
-        "totales" => $arrayData['DATA']['totales'] ?? [],
-        "novedades" => $arrayData['DATA']['novedades'] ?? [],
-    );
-    return ($dt_data);
-}
-/**
- * Obtiene el cierre de ficha para un legajo y fecha específicos.
- *
- * @param string $legajo El legajo del empleado.
- * @param string $fecha La fecha para la cual se desea obtener el cierre de ficha.
- * @return array El cierre de ficha para el legajo y fecha especificados.
- */
-function getCierreFicha($legajo, $fecha)
-{
-    if (!$legajo || !$fecha) {
-        return array();
-    }
-
-    $opt = array("getNov" => "0", "getONov" => "0", "getHor" => "0", "getFic" => "0");
-    $data = getFicNovHorSimple($legajo, $fecha, $opt);
-    $cierre = $data[0]['Cierre'] ?? array();
-    return $cierre;
-}
-/**
- * Retrieves a specific novedad from the API.
- *
- * @param string | array $novedad The code of the novedad to retrieve.
- * @return array The data of the novedad, or an empty array if not found.
- */
-function getNovedad($novedad)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
-    $method = 'GET';
-    $queryParams = array(
-        "start" => 0,
-        "length" => 5000,
-        "Estruct" => "Nov",
-        "Codi" => (is_array($novedad)) ? $novedad : [$novedad]
-    );
-
-    $data = ch_api($endpoint, '', $method, $queryParams);
-
-    $arrayData = json_decode($data, true);
-    return ($arrayData['DATA']) ?? array();
-}
-function getPersonal($payload)
-{
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
-    $personal = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($personal, true);
-    if ($arrayData['RESPONSE_CODE'] == '200') {
-        $arrayData = $arrayData['DATA'] ?? [];
-    } else {
-        $arrayData = [];
-    }
-    return $arrayData;
-}
-Flight::map('personal', function ($payload) {
-    $endpoint = URLAPI . "/api/personal/";
-    $personal = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($personal, true);
-    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData['DATA'] : [];
-    return $result;
-});
-
-function novedadesRol()
-{
-    $novedadesRol = $_SESSION['ListaNov'] ?? '';
-    $novedadesRol = ($novedadesRol && $novedadesRol != '-') ? explode(',', $novedadesRol) : [];
-    return $novedadesRol;
-}
-/**
- * Combina dos arrays eliminando duplicados.
- *
- * @param array $arr1 El primer array.
- * @param array $arr2 El segundo array.
- * @return array El array resultante de combinar los dos arrays sin duplicados.
- */
-function mergeArray($arr1, $arr2)
-{
-    if (!is_array($arr1)) {
-        $arr1 = [];
-    }
-    return $arr2 ? array_unique(array_merge($arr1, $arr2)) : $arr1;
-}
 Flight::route('/novedades-all', function () {
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
@@ -874,8 +507,8 @@ Flight::route('GET /export/totales', function () {
     $estructGrup = [];
     $estructSucu = [];
 
-
-    // Agrupar por Lega los arrays Totales de horas
+    // print_r($array_original) . exit;
+    // Agrupar por Lega los arrays Totales de Horas
     foreach ($array_original['horas'] as $hora) {
         $lega = $hora['Lega'];
         unset($hora['Lega']);
@@ -889,6 +522,7 @@ Flight::route('GET /export/totales', function () {
         $data['legajos'][$lega]['Grup'] = $hora['Grup'] ?? '';
         $data['legajos'][$lega]['Sucu'] = $hora['Sucu'] ?? '';
         $data['legajos'][$lega]['TotalesHoras'] = $hora['Totales'] ?? [];
+        $data['legajos'][$lega]['HsATyTR'] = $hora['HsATyTR'] ?? [];
 
         $estructEmpr[$hora['Empr']] = $hora['Empr'];
         $estructPlan[$hora['Plan']] = $hora['Plan'];
@@ -942,9 +576,6 @@ Flight::route('GET /export/totales', function () {
     $data['payloadHoras'] = $dataPayloadHoras ?? '';
     $data['estructuras'] = estructuras($estructuras) ?? '';
 
-    // Flight::json($data['estructuras']) . exit;
-
-
     include '../informes/reporte/xls.php';
 });
 Flight::route('/fechas/horas', function () {
@@ -969,37 +600,6 @@ Flight::route('/fechas/fichas', function () {
     }
     Flight::json($arrayData ?? array());
 });
-function get_horario_actual($Legajos)
-{
-    if (!$Legajos) {
-        return [];
-    }
-
-    $payload = [
-        "FechaDesde" => date('Y-m-d'),
-        "FechaHasta" => date('Y-m-d'),
-        "LegajoDesde" => 1,
-        "LegajoHasta" => 99999999,
-        "TipoDePersonal" => 0,
-        'Legajos' => $Legajos,
-        "Empresa" => 0,
-        "Planta" => 0,
-        "Sector" => 0,
-        "Seccion" => 0,
-        "Sucursal" => 0,
-        "Grupo" => 0,
-    ];
-
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/horasign/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
-    $arrayData = json_decode($data, true);
-    $data = $arrayData['DATA'] ?? '';
-    if (empty($data)) {
-        return [];
-    }
-    return $data;
-}
-;
 Flight::route('POST /get_personal_horarios', function () {
     require __DIR__ . '../../op/horarios/getPersonal.php';
     $horarioLegajos = get_horario_actual($arrLegajos) ?? [];
@@ -1356,7 +956,6 @@ Flight::route('POST /test_connect', function () {
     $arrayData = json_decode($data, true);
     Flight::json($arrayData ?? []);
 });
-
 Flight::route('POST /estruct/fichas/', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/fichasestruct/";
     $payload = Flight::request()->data;
@@ -1390,7 +989,6 @@ Flight::route('POST /estructuras/alta/', function () {
 
     Flight::json($arrayData ?? array());
 });
-
 Flight::route('/parametros/liquid', function () {
     $data = getParamLiquid();
     Flight::json($data);
@@ -1398,6 +996,58 @@ Flight::route('/parametros/liquid', function () {
 Flight::route('/fichas/dates', function () {
     $data = getFichasMinMax();
     Flight::json($data);
+});
+/** Reporte custom 
+ * - Prysmian - 
+ * */
+Flight::route('POST /prysmian/@tipo', function ($tipo) {
+    try {
+
+        $validRequestTypes = ['view', 'xls']; // Tipos de reporte válidos
+
+        if (!in_array($tipo, $validRequestTypes)) {
+            throw new Exception('Tipo de reporte no válido', 400);
+        }
+
+        $request = Flight::request() ?? []; // Obtener la petición
+        $payload = $request->data ?? []; // Obtener los datos de la petición
+
+        if (!$payload) { // Si no hay datos, retornar un array vacío
+            throw new Exception('No se recibieron datos', 204);
+        }
+
+        switch ($payload['Reporte'] ?? '') { // Según el tipo de reporte
+            case '1':
+                $data = fic_nove_horas($payload) ?? []; // Obtener datos novedades
+                if (!$data) { // Si no hay datos, retornar un array vacío
+                    return Flight::json([]);
+                }
+                $Datos = procesar_por_intervalos($data, $payload);
+
+                if ($tipo == 'view') {
+                    Flight::json($Datos['Data']);
+                }
+                if ($tipo == 'xls') {
+                    require __DIR__ . '/fn_spreadsheet.php';
+                    include __DIR__ . '../../informes/custom/prysmian/xls.php';
+                }
+                break;
+            default:
+                Flight::json([]);
+                break;
+        }
+    } catch (\Throwable $th) {
+        $code = $th->getCode() ?? 400;
+        switch ($code) {
+            case 404:
+                Flight::notFound();
+                break;
+            default:
+                Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+                break;
+        }
+    }
+
 });
 
 Flight::map('Forbidden', function ($mensaje) {

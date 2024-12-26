@@ -939,3 +939,23 @@ if ($verDB < 20240325) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
 }
+if ($verDB < 20241226) {
+
+    $sql = "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;";
+    $sql .= "DELETE FROM `tipo_modulo` WHERE  `id`=2 AND `descripcion`='error' AND `estado`='1' LIMIT 1;";
+    $sql .= "SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1);";
+    pdoQuery($sql);
+
+    $verDB = 20241226; // nueva version de la DB
+
+    $insert_modulo = "INSERT INTO `modulos` (`id`, `recid`, `nombre`, `orden`, `estado`, `idtipo`) VALUES (46, 'pry5m14n', 'Reporte Prysmian', 13, '1', 2)";
+
+    if (pdoQuery($insert_modulo)) {
+        fileLog("Se creo modulo \"Reporte Prysmian\" en la tabla \"modulos\"", $pathLog);
+        pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+        fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+    } else {
+        fileLog("Error al crear modulo \"Reporte Prysmian\" en la tabla \"modulos\"", $pathLog);
+    }
+}
+
