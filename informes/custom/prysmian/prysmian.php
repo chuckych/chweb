@@ -80,9 +80,9 @@
                             <label for="reporte" class="mr-2 w120">Reporte</label>
                             <select class="selectjs_reporte form-control w200" id="reporte">
                                 <option value="1">Inasistencias</option>
-                                <!-- <option disabled value="2">Reporte de Actividad</option>
-                                <option disabled value="3">Conceptos a Liquidar - Jornales</option>
-                                <option disabled value="4">Conceptos a Liquidar - Mensuales</option> -->
+                                <!-- <option value="2">Reporte de Actividad</option> -->
+                                <!-- <option disabled value="3">Conceptos a Liquidar - Jornales</option> -->
+                                <!-- <option disabled value="4">Conceptos a Liquidar - Mensuales</option> -->
                             </select>
                         </div>
                         <!-- Button Generar -->
@@ -141,6 +141,11 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="row bg-white p-4 radius">
+            <div class="col-12 col-sm-6 col-lg-4 border p-4 shadow-sm" id="div_table_tipo_hora"
+                style="min-height:500px;" hidden>
             </div>
         </div>
         <div class="row bg-white p-4 radius">

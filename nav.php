@@ -326,6 +326,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         && ($Modulo2 != 'Empresas')
                                         // &&($Modulo2 != 'Mis Horas')
                                         && ($Modulo2 != 'Horas Costeadas')
+                                        && ($Modulo2 != 'Reporte Prysmian')
                                     ) { ?>
                                 <li class="nav-item mx-1"><a class="nav-link fontq fw4 text-dark"
                                         href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/">

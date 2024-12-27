@@ -55,6 +55,7 @@ Flight::route('POST /novedades/totales', [$novedades, 'totales']);
 Flight::route('POST /horas/totales', [$horas, 'totales']);
 Flight::route('PUT /horas', [$horas, 'update']);
 Flight::route('GET /horas/dateMinMax', [$horas, 'dateMinMax']);
+Flight::route('GET /horas/tipohora', [$horas, 'get_tipo_hora']);
 Flight::route('GET /fichas/dateMinMax', [$fichas, 'dateMinMax']);
 Flight::route('POST /horas/estruct/@estruct', [$horas, 'estruct']);
 Flight::route('POST /novedades/estruct/@estruct', [$novedades, 'estruct']);

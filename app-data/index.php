@@ -997,9 +997,11 @@ Flight::route('/fichas/dates', function () {
     $data = getFichasMinMax();
     Flight::json($data);
 });
-/** Reporte custom 
- * - Prysmian - 
- * */
+Flight::route('GET /horas/tipohora', function () {
+    $data = get_tipo_hora();
+    Flight::json($data);
+});
+
 Flight::route('POST /prysmian/@tipo', function ($tipo) {
     try {
 

@@ -44,13 +44,16 @@ const LS_PARAM_LIQUID = 'chweb_param_liquid'
 const LS_VALOR_LIQUID = 'chweb_valor_liquid'
 const LS_FECHAS = 'chweb_fechas'
 const LS_VALORES = 'chweb_valores'
+const LS_TIPO_HORA = 'chweb_tipo_hora'
 const LS_VALOR_FECHA = 'chweb_valor_fecha'
 const FLAG = Date.now();
 const DT_GRILLA = 'dt_grilla';
+const DT_TIPO_HORA = 'dt_tipo_hora';
 
 ls.set(LS_PARAM_LIQUID, {});
 ls.set(LS_VALOR_LIQUID, {});
 ls.set(LS_FECHAS, {});
+const DIR_APP_DATA = '../../../app-data';
 
 const getLiquid = async () => {
     try {
@@ -66,6 +69,16 @@ const getFechas = async () => {
     try {
         const { data } = await axios.get('../../../app-data/fichas/dates');
         await ls.set(LS_FECHAS, data ?? {});
+        return data ?? {};
+    } catch (error) {
+        console.error(error);
+        return {};
+    }
+}
+const getTipoHora = async () => {
+    try {
+        const { data } = await axios.get(DIR_APP_DATA + '/horas/tipohora');
+        await ls.set(LS_TIPO_HORA, data ?? {});
         return data ?? {};
     } catch (error) {
         console.error(error);
@@ -120,7 +133,7 @@ const tipoPerString = {
     "1": "Jornal"
 };
 getFechas().then(data => {
-
+    getTipoHora();
     const years = data.años ?? {};
     if (!Object.keys(years).length) return;
 
@@ -203,11 +216,32 @@ getFechas().then(data => {
         setPicker(datePickerInstance);
     });
 
+    $('.selectjs_reporte').on('select2:select', function (e) {
+        const value = e.params.data.id;
+        const datos = ls.get(LS_TIPO_HORA) ?? [];
+        if (value == 2) {
+            console.log(datos);
+            const columnConfigs = [
+                { data: 'THoCodi', title: 'Hora', className: '', render: (data, type, row, meta) => data },
+                { data: 'THoDesc2', title: 'Descripción', className: '', render: (data, type, row, meta) => data },
+                { data: 'THoID', title: 'ID', className: '', render: (data, type, row, meta) => data },
+                { data: '', title: '', className: 'w-100', render: (data, type, row, meta) => '' },
+            ];
+            dt_grilla(`#${DT_TIPO_HORA}`, datos, columnConfigs, '#div_table_tipo_hora');
+        } else {
+            const divTableTipoHora = document.querySelector('#div_table_tipo_hora');
+            divTableTipoHora.hidden = true;
+        }
+    });
+
+
     setTimeout(() => {
         setPicker(datePickerInstance);
     }, 100);
     const divTable = document.querySelector('#div_table');
+    const divTableTipoHora = document.querySelector('#div_table_tipo_hora');
     divTable.innerHTML = `<table id="${DT_GRILLA}" class="table w-100 text-nowrap"></table>`;
+    divTableTipoHora.innerHTML = `<table id="${DT_TIPO_HORA}" class="table w-100 text-nowrap"></table>`;
 
     getData('view');
     getData('xls');
@@ -300,7 +334,6 @@ const inputVal = () => {
     ls.set(LS_VALOR_LIQUID, obj);
     return obj;
 }
-
 const setPicker = async (datePickerInstance) => {
     const div_fechas = document.querySelector('.div_fechas');
     const classes = ['font-weight-bold', 'text-secondary'] ?? [];
@@ -435,7 +468,6 @@ const getData = (action) => {
         });
     }
 }
-
 const submitData = async (action) => {
 
     const tipo = action;
@@ -485,13 +517,17 @@ const submitData = async (action) => {
                 { data: '', title: '', className: 'w-100', render: () => '' }
             ];
             if (tipo == 'view') {
-                dt_grilla(`#${DT_GRILLA}`, datos, columnConfigs);
+                dt_grilla(`#${DT_GRILLA}`, datos, columnConfigs, '#div_table');
             } else if (tipo == 'xls') {
                 $.notifyClose();
+                const archivo = datos.archivo ?? '';
+                if (!archivo) {
+                    throw new Error('No se pudo generar el archivo.');
+                }
                 const bannerDownload = `
                     <div class="d-flex flex-column">
                         <div class="font-weight-bold">Reporte generado.</div>
-                        <a href="../../../app-data/${datos.archivo}" class="btn btn-custom px-3 btn-sm mt-2 font08 download" target="_blank" download><div class="d-flex align-items-center">Descargar <i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a>
+                        <a href="../../../app-data/${archivo}" class="btn btn-custom px-3 btn-sm mt-2 font08 download" target="_blank" download><div class="d-flex align-items-center">Descargar <i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a>
                     </div>
                 `;
                 notify(bannerDownload, 'warning', 0, 'right');
@@ -506,13 +542,13 @@ const submitData = async (action) => {
             }
         }
     }).catch((error) => {
-        const errorMessage = error.response.data.message ?? error.message ?? 'Error';
+        const errorMessage = error.response?.data?.message ?? error.message
         notify(errorMessage, 'danger', 2000, 'right');
     });
 }
-
-const dt_grilla = (idTable, dataSource, columnConfigs) => {
-    const divTable = document.querySelector('#div_table');
+const dt_grilla = (idTable, dataSource, columnConfigs, selectorDiv) => {
+    // const divTable = document.querySelector('#div_table');
+    const divTable = document.querySelector(selectorDiv);
     if ($.fn.DataTable.isDataTable(idTable)) {
         $(idTable).DataTable().destroy();
     }

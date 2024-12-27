@@ -516,3 +516,12 @@ function procesar_por_intervalos($data, $payload)
         'LegTipo' => $LegTipo,
     ];
 }
+
+function get_tipo_hora()
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/tipohora";
+    $data = ch_api($endpoint, '', 'GET', []);
+
+    $arrayData = json_decode($data, true);
+    return $arrayData['DATA'] ?? [];
+}
