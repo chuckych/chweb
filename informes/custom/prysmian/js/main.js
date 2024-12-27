@@ -527,7 +527,11 @@ const submitData = async (action) => {
                 const bannerDownload = `
                     <div class="d-flex flex-column">
                         <div class="font-weight-bold">Reporte generado.</div>
-                        <a href="../../../app-data/${archivo}" class="btn btn-custom px-3 btn-sm mt-2 font08 download" target="_blank" download><div class="d-flex align-items-center">Descargar <i class="bi bi-file-earmark-arrow-down ml-1 font1"></i></div></a>
+                        <a href="${DIR_APP_DATA}/${archivo}" class="btn btn-custom px-2 btn-sm mt-2 font08 download" target="_blank" download>
+                        <div class="d-flex align-items-center w-100 justify-content-center" style="gap:5px">
+                            <span>Descargar</span> <i class="bi bi-file-earmark-arrow-down font1"></i>
+                        </div>
+                        </a>
                     </div>
                 `;
                 notify(bannerDownload, 'warning', 0, 'right');

@@ -444,46 +444,21 @@ function procesar_por_intervalos($data, $payload)
     $Desde = dateCustomDay($desdeVariable); // Día de inicio
     // $Hasta = date('Y-m-d', strtotime(date('Y-m-') . $hastaVariable));
     $Hasta = dateCustomDay($hastaVariable); // Día de fin
+    try {
+        foreach ($data as $record) {
 
-    foreach ($data as $record) {
+            if (empty($record['Nove'])) {
+                continue;
+            }
 
-        if (empty($record['Nove'])) {
-            continue;
-        }
+            $fecha = $record['Fech']; // Fecha de la novedad
+            $lega = $record['Lega']; // Legajo
 
-        $fecha = $record['Fech']; // Fecha de la novedad
-        $lega = $record['Lega']; // Legajo
+            foreach ($record['Nove'] as $novedad) {
+                $codigo = $novedad['Codi']; // Código de la novedad
+                $key = "{$codigo}-{$lega}"; // Clave para agrupar intervalos
 
-        foreach ($record['Nove'] as $novedad) {
-            $codigo = $novedad['Codi']; // Código de la novedad
-            $key = "{$codigo}-{$lega}"; // Clave para agrupar intervalos
-
-            if (!isset($currentIntervals[$key])) { // Si no existe el intervalo, crear uno nuevo
-                $currentIntervals[$key] = [
-                    'Action' => '',
-                    'Company' => 1256,
-                    'Employee' => $lega,
-                    'EmployeeStr' => $record['ApNo'],
-                    'Digit' => '',
-                    'Cod Inasistencia' => $codigo,
-                    'Novedad' => $novedad['Codi'],
-                    'NovedadStr' => $novedad['Desc'],
-                    'Fecha inicio' => $fecha,
-                    'Fecha fin' => $fecha,
-                    'codigo' => $codigo,
-                    'lega' => $lega,
-                    'descripcion' => $novedad['Desc']
-                ];
-            } else { // Si ya existe el intervalo, actualizar la fecha final
-                $prevDate = date('Y-m-d', strtotime($currentIntervals[$key]['Fecha fin']));
-                $nextDate = date('Y-m-d', strtotime("{$prevDate} +1 day"));
-
-                if ($fecha == $nextDate) { // Si es un día consecutivo, actualizar la fecha final
-                    // Es un día consecutivo, actualizar la fecha final
-                    $currentIntervals[$key]['Fecha fin'] = $fecha;
-                } else { // No es consecutivo, guardar el intervalo actual y crear uno nuevo
-                    // No es consecutivo, guardar el intervalo actual y crear uno nuevo
-                    $intervals[] = $currentIntervals[$key]; // Guardar el intervalo actual
+                if (!isset($currentIntervals[$key])) { // Si no existe el intervalo, crear uno nuevo
                     $currentIntervals[$key] = [
                         'Action' => '',
                         'Company' => 1256,
@@ -499,22 +474,51 @@ function procesar_por_intervalos($data, $payload)
                         'lega' => $lega,
                         'descripcion' => $novedad['Desc']
                     ];
-                }
-            }
-            // En Action se coloca 2 si el primer día de la licencia es dentro de la quincena actual y 3 si es de una quincena anterior.
-            $action = $fecha >= $Desde && $fecha <= $Hasta ? 2 : 3;
-            $currentIntervals[$key]['Action'] = $action;
-        }
-    }
+                } else { // Si ya existe el intervalo, actualizar la fecha final
+                    $prevDate = date('Y-m-d', strtotime($currentIntervals[$key]['Fecha fin']));
+                    $nextDate = date('Y-m-d', strtotime("{$prevDate} +1 day"));
 
-    // Agregar los últimos intervalos pendientes
-    foreach ($currentIntervals as $interval) {
-        $intervals[] = $interval;
+                    if ($fecha == $nextDate) { // Si es un día consecutivo, actualizar la fecha final
+                        // Es un día consecutivo, actualizar la fecha final
+                        $currentIntervals[$key]['Fecha fin'] = $fecha;
+                    } else { // No es consecutivo, guardar el intervalo actual y crear uno nuevo
+                        // No es consecutivo, guardar el intervalo actual y crear uno nuevo
+                        $intervals[] = $currentIntervals[$key]; // Guardar el intervalo actual
+                        $currentIntervals[$key] = [
+                            'Action' => '',
+                            'Company' => 1256,
+                            'Employee' => $lega,
+                            'EmployeeStr' => $record['ApNo'],
+                            'Digit' => '',
+                            'Cod Inasistencia' => $codigo,
+                            'Novedad' => $novedad['Codi'],
+                            'NovedadStr' => $novedad['Desc'],
+                            'Fecha inicio' => $fecha,
+                            'Fecha fin' => $fecha,
+                            'codigo' => $codigo,
+                            'lega' => $lega,
+                            'descripcion' => $novedad['Desc']
+                        ];
+                    }
+                }
+                // En Action se coloca 2 si el primer día de la licencia es dentro de la quincena actual y 3 si es de una quincena anterior.
+                $action = $fecha >= $Desde && $fecha <= $Hasta ? 2 : 3;
+                $currentIntervals[$key]['Action'] = $action;
+            }
+        }
+
+        // Agregar los últimos intervalos pendientes
+        foreach ($currentIntervals as $interval) {
+            $intervals[] = $interval;
+        }
+        return [
+            'Data' => $intervals,
+            'LegTipo' => $LegTipo,
+        ];
+    } catch (\Throwable $th) {
+        file_put_contents(__DIR__ . '/logs/api.log', print_r($th, true) . PHP_EOL, FILE_APPEND); // log error
+        throw new Exception($th);
     }
-    return [
-        'Data' => $intervals,
-        'LegTipo' => $LegTipo,
-    ];
 }
 
 function get_tipo_hora()
