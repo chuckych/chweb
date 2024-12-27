@@ -1040,6 +1040,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
         }
     } catch (\Throwable $th) {
         $code = $th->getCode() ?? 400;
+        file_put_contents('error.log', $th->getMessage() . PHP_EOL, FILE_APPEND);
         switch ($code) {
             case 404:
                 Flight::notFound();

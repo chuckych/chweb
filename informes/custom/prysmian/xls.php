@@ -155,5 +155,6 @@ try {
     Flight::json($data);
 } catch (\Exception $e) {
     $data = ['status' => 'error', 'mensaje' => $e->getMessage()];
+    file_put_contents('error.log', $e->getMessage() . PHP_EOL, FILE_APPEND);
     Flight::json($data);
 }
