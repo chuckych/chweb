@@ -24,15 +24,15 @@ require_once __DIR__ . '../../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
     ->getProperties()
     ->setCreator("CHWEB")
     ->setLastModifiedBy('CHWEB')
-    ->setTitle('Exportado desde Proyectos '.$_SERVER['REMOTE_ADDR'])
+    ->setTitle('Exportado desde Proyectos ' . $_SERVER['REMOTE_ADDR'])
     ->setDescription('Reporte de Tareas');
 
 # Como ya hay una hoja por defecto, la obtenemos, no la creamos
@@ -174,8 +174,8 @@ foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
     $spreadsheet->getStyle($colN . '1')->getAlignment()->setIndent(1);
 }
-$ColumnCount=2;
-$RowIndex=2;
+$ColumnCount = 2;
+$RowIndex = 2;
 $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
@@ -186,7 +186,7 @@ $respuesta = array();
 
 function FormatoHoraToExcel($Hora)
 {
-    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -196,10 +196,10 @@ function FormatoHoraToExcel($Hora)
 function FormatoFechaToExcel($Fecha)
 {
     if (($Fecha != '0000-00-00')) {
-        $timestamp      = new \DateTime($Fecha);
+        $timestamp = new \DateTime($Fecha);
         $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
-        $excelDate      = floor($excelTimestamp);
-        $Fecha          = ($excelTimestamp);
+        $excelDate = floor($excelTimestamp);
+        $Fecha = ($excelTimestamp);
         return $Fecha;
     } else {
         return '';
@@ -208,25 +208,25 @@ function FormatoFechaToExcel($Fecha)
 if ($xlsData) {
     foreach ($xlsData as $key => $valor) {
 
-        $idTar             = $valor['TareID'];
-        $nombreProy        = $valor['proyecto']['nombre'];
-        $nombreProceso     = $valor['proceso']['nombre'];
-        $costoProceso      = $valor['totales']['cost'];
-        $plano             = $valor['plano']['nombre'];
-        $nombreEmpresa     = $valor['empresa']['nombre'];
+        $idTar = $valor['TareID'];
+        $nombreProy = $valor['proyecto']['nombre'];
+        $nombreProceso = $valor['proceso']['nombre'];
+        $costoProceso = $valor['totales']['cost'];
+        $plano = $valor['plano']['nombre'];
+        $nombreEmpresa = $valor['empresa']['nombre'];
         $nombreResponsable = $valor['responsable']['nombre'];
-        $fechaInicio       = FechaFormatVar($valor['fechas']['TareIni'], 'Y-m-d');
-        $horaInicio        = $valor['fechas']['inicioHora'];
-        $fechaFin          = FechaFormatVar($valor['fechas']['TareFin'], 'Y-m-d');
+        $fechaInicio = FechaFormatVar($valor['fechas']['TareIni'], 'Y-m-d');
+        $horaInicio = $valor['fechas']['inicioHora'];
+        $fechaFin = FechaFormatVar($valor['fechas']['TareFin'], 'Y-m-d');
         if (empty($fechaFin)) {
             $fechaFin = '';
         } else {
             $fechaFin = FormatoFechaToExcel($fechaFin);
         }
-        $horaFin           = $valor['fechas']['finHora'];
-        $duracion          = $valor['fechas']['duracion'];
-        $estado            = $valor['estado'];
-        $tipoFin           = $valor['fechas']['finTipo'];
+        $horaFin = $valor['fechas']['finHora'];
+        $duracion = $valor['fechas']['duracion'];
+        $estado = $valor['estado'];
+        $tipoFin = $valor['fechas']['finTipo'];
 
         $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $idTar);
         $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $nombreProy);
@@ -245,30 +245,30 @@ if ($xlsData) {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
         $numeroDeFila++;
     }
-    $UltimaFila    = $numeroDeFila - 1;
-    $UltimaFila2   = $numeroDeFila;
-    $UltimaL       = 'L' . ($UltimaFila);
-    $UltimaL_2     = 'L' . ($UltimaFila2);
-    $FormulaHechas      = '=SUBTOTAL(109,L2:' . $UltimaL . ')';
-    $UltimaA_2     = 'A' . ($UltimaFila2);
-    $UltimaN_2     = 'N' . ($UltimaFila2);
+    $UltimaFila = $numeroDeFila - 1;
+    $UltimaFila2 = $numeroDeFila;
+    $UltimaL = 'L' . ($UltimaFila);
+    $UltimaL_2 = 'L' . ($UltimaFila2);
+    $FormulaHechas = '=SUBTOTAL(109,L2:' . $UltimaL . ')';
+    $UltimaA_2 = 'A' . ($UltimaFila2);
+    $UltimaN_2 = 'N' . ($UltimaFila2);
     $spreadsheet->setCellValue($UltimaL_2, $FormulaHechas);
     $spreadsheet->getStyle($UltimaL_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
     $spreadsheet->getStyle($UltimaA_2 . ':' . $UltimaN_2)->applyFromArray($styleArray2);
 
-    $UltimaD       = 'D' . ($UltimaFila);
-    $UltimaD_2     = 'D' . ($UltimaFila2);
+    $UltimaD = 'D' . ($UltimaFila);
+    $UltimaD_2 = 'D' . ($UltimaFila2);
     // $UltimaD_3     = 'D' . ($UltimaFila2+1);
-    $FormulaHechas      = '=SUBTOTAL(109,D2:' . $UltimaD . ')';
+    $FormulaHechas = '=SUBTOTAL(109,D2:' . $UltimaD . ')';
     // $FormulaPromedio      = '=SUBTOTAL(101,D2:' . $UltimaD . ')';
     $spreadsheet->setCellValue($UltimaD_2, $FormulaHechas);
     // $spreadsheet->setCellValue($UltimaD_3, $FormulaPromedio);
     $spreadsheet->getStyle($UltimaD_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
     // $spreadsheet->getStyle($UltimaD_3)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
 
-    $UltimaA       = 'A' . ($UltimaFila);
-    $UltimaA_2     = 'A' . ($UltimaFila2);
-    $FormulaHechas      = '=SUBTOTAL(2,A2:' . $UltimaA . ')';
+    $UltimaA = 'A' . ($UltimaFila);
+    $UltimaA_2 = 'A' . ($UltimaFila2);
+    $FormulaHechas = '=SUBTOTAL(2,A2:' . $UltimaA . ')';
     $spreadsheet->setCellValue($UltimaA_2, $FormulaHechas);
     $spreadsheet->getStyle($UltimaA_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 
