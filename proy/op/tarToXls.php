@@ -116,7 +116,7 @@ $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . 
 $spreadsheet->setShowGridlines(true);
 /**  alineación centrada de texto */
 $spreadsheet->getStyle($ColIni2 . ':' . $ColFin2)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
-$spreadsheet->getStyle($ColIni, $ColFin)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+// $spreadsheet->getStyle($ColIni, $ColFin)->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
 /** cálculo automático de ancho de columna */
 // foreach (range($ColIni .':'. $ColFin, $spreadsheet->getHighestDataColumn()) as $col) {
@@ -156,8 +156,8 @@ $spreadsheet->getStyle('J')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpre
 
 $spreadsheet->getStyle('I')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
 $spreadsheet->getStyle('K')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-$spreadsheet->getStyle('L')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
-$spreadsheet->getStyle('D')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+$spreadsheet->getStyle('L')->getNumberFormat()->setFormatCode('[hh]:mm');
+$spreadsheet->getStyle('D')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_INTEGER);
 
 // $spreadsheet->getStyle('A')
 //     ->getNumberFormat()
@@ -253,7 +253,7 @@ if ($xlsData) {
     $UltimaA_2 = 'A' . ($UltimaFila2);
     $UltimaN_2 = 'N' . ($UltimaFila2);
     $spreadsheet->setCellValue($UltimaL_2, $FormulaHechas);
-    $spreadsheet->getStyle($UltimaL_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
+    $spreadsheet->getStyle($UltimaL_2)->getNumberFormat()->setFormatCode('[hh]:mm');
     $spreadsheet->getStyle($UltimaA_2 . ':' . $UltimaN_2)->applyFromArray($styleArray2);
 
     $UltimaD = 'D' . ($UltimaFila);
