@@ -50,17 +50,17 @@ class Horarios
             '/horarios/legajo-rotacion/' => ['rotacion' => true],
         ];
 
-        $this->resp    = new Response;
+        $this->resp = new Response;
         $this->request = Flight::request();
         $this->getData = $this->request->data->getData();
         // $this->query   = $this->request->query->getData();
-        $this->log     = new Log;
-        $this->conect  = new ConnectSqlSrv;
-        $this->ws      = new RRHHWebService;
-        $this->tools   = new Tools;
+        $this->log = new Log;
+        $this->conect = new ConnectSqlSrv;
+        $this->ws = new RRHHWebService;
+        $this->tools = new Tools;
         $this->auditor = new Auditor;
-        $this->url     = (substr($this->request->url, -1) !== '/') ? "{$this->request->url}/" : $this->request->url;
-        $this->method  = $this->request->method;
+        $this->url = (substr($this->request->url, -1) !== '/') ? "{$this->request->url}/" : $this->request->url;
+        $this->method = $this->request->method;
 
         if (isset($this->urlMap[$this->url])) {
             $this->desde = $this->urlMap[$this->url]['desde'];
@@ -81,24 +81,24 @@ class Horarios
         try {
 
             $inicio = microtime(true); // Inicio del script
-            $datos  = $this->validar_request_horarios(); // Valida los datos
-            $conn   = $this->conect->conn(); // Conexión a la base de datos
+            $datos = $this->validar_request_horarios(); // Valida los datos
+            $conn = $this->conect->conn(); // Conexión a la base de datos
 
             $conn->beginTransaction(); // Iniciar transacción
 
             $filas = 0;
-            $arrayAud  = [];
+            $arrayAud = [];
             $auditorCH = [];
-            $Proc      = $datos['Proc'];
-            $Fecha     = $datos['Fecha'];
-            $Legajos   = $datos['Lega'];
-            $FechaD    = $datos['FechaD'];
-            $FechaH    = $datos['FechaH'];
-            $Codi      = $datos['Codi'];
-            $User      = $datos['User'];
-            $Entr      = $datos['Entr'];
-            $Sale      = $datos['Sale'];
-            $Desc      = $datos['Desc'];
+            $Proc = $datos['Proc'];
+            $Fecha = $datos['Fecha'];
+            $Legajos = $datos['Lega'];
+            $FechaD = $datos['FechaD'];
+            $FechaH = $datos['FechaH'];
+            $Codi = $datos['Codi'];
+            $User = $datos['User'];
+            $Entr = $datos['Entr'];
+            $Sale = $datos['Sale'];
+            $Desc = $datos['Desc'];
 
             $this->personal->check_legajos($Legajos, $conn);
 
@@ -120,16 +120,16 @@ class Horarios
                 $AudText = "Horario desde {$fechaFormat}";
 
                 if ($legajosUpdate) {
-                    $filas     += $this->update_desde([$conn, $legajosUpdate, $Codi, $Fecha]); // Actualiza los horarios
+                    $filas += $this->update_desde([$conn, $legajosUpdate, $Codi, $Fecha]); // Actualiza los horarios
                     $audUDesde = $this->auditoria([$legajosUpdate, $Codi, 'M', $AudText, $User]);
                 }
 
                 if ($legajosInsert) {
-                    $filas    += $this->insert_desde([$conn, $legajosInsert, $Codi, $Fecha]); // Inserta los horarios
+                    $filas += $this->insert_desde([$conn, $legajosInsert, $Codi, $Fecha]); // Inserta los horarios
                     $audIDesde = $this->auditoria([$legajosInsert, $Codi, 'A', $AudText, $User]);
                 }
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
             }
 
@@ -145,16 +145,16 @@ class Horarios
                 $AudText = "Horario de {$fechaDFormat} a {$fechaHFormat}";
 
                 if ($legajosUpdate) {
-                    $filas     += $this->update_desde_hasta([$conn, $legajosUpdate, $Codi, $FechaD]); // Actualiza los horarios
+                    $filas += $this->update_desde_hasta([$conn, $legajosUpdate, $Codi, $FechaD]); // Actualiza los horarios
                     $audUDesdeH = $this->auditoria([$legajosUpdate, $Codi, 'M', $AudText, $User]);
                 }
 
                 if ($legajosInsert) {
-                    $filas     += $this->insert_desde_hasta([$conn, $legajosInsert, $Codi, $FechaD, $FechaH]); // Inserta los horarios
+                    $filas += $this->insert_desde_hasta([$conn, $legajosInsert, $Codi, $FechaD, $FechaH]); // Inserta los horarios
                     $audIDesdeH = $this->auditoria([$legajosInsert, $Codi, 'A', $AudText, $User]);
                 }
 
-                $arrayAud  = array_merge($arrayAud, $audIDesdeH['auditor'] ?? [], $audUDesdeH['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesdeH['auditor'] ?? [], $audUDesdeH['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesdeH['auditorCH'] ?? [], $audUDesdeH['auditorCH'] ?? []); // Auditoría para CH
             }
 
@@ -169,16 +169,16 @@ class Horarios
                 $AudText = "Citación: Fecha {$fechaFormat}. Entra: {$Entr}. Sale: {$Sale}. Desc: {$Desc}";
 
                 if ($legajosUpdate) {
-                    $filas     += $this->update_citacion([$conn, $legajosUpdate, $Fecha, $Entr, $Sale, $Desc]); // Actualiza los horarios
+                    $filas += $this->update_citacion([$conn, $legajosUpdate, $Fecha, $Entr, $Sale, $Desc]); // Actualiza los horarios
                     $audUDesde = $this->auditoria([$legajosUpdate, '', 'M', $AudText, $User], 'citaciones');
                 }
 
                 if ($legajosInsert) {
-                    $filas    += $this->insert_citacion([$conn, $legajosInsert, $Fecha, $Entr, $Sale, $Desc]); // Inserta los horarios
+                    $filas += $this->insert_citacion([$conn, $legajosInsert, $Fecha, $Entr, $Sale, $Desc]); // Inserta los horarios
                     $audIDesde = $this->auditoria([$legajosInsert, '', 'A', $AudText, $User], 'citaciones');
                 }
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
             }
 
@@ -209,20 +209,20 @@ class Horarios
     {
         try {
             $inicio = microtime(true); // Inicio del script
-            $datos  = $this->validar_delete(); // Valida los datos
+            $datos = $this->validar_delete(); // Valida los datos
 
             $conn = $this->conect->conn();
 
             $conn->beginTransaction();
 
             $filas = 0;
-            $arrayAud  = [];
+            $arrayAud = [];
             $auditorCH = [];
-            $Proc      = $datos['Proc'];
-            $Fecha     = $datos['Fecha'];
-            $Legajos   = $datos['Lega'];
-            $User      = $datos['User'];
-            $Codi      = $datos['Codi'];
+            $Proc = $datos['Proc'];
+            $Fecha = $datos['Fecha'];
+            $Legajos = $datos['Lega'];
+            $User = $datos['User'];
+            $Codi = $datos['Codi'];
 
             if (!$this->rotacion) {
                 $ListHorarios = $Codi ? $this->return_horarios($conn) : []; // Devuelve los horarios si el código es distinto de 0
@@ -251,7 +251,7 @@ class Horarios
                 $filas += $this->delete_desde([$conn, $Legajos, $Fecha]); // Actualiza los horarios
                 $audUDesde = $this->auditoria([$Legajos, $Codi, 'B', $AudText, $User], 'horarios-delete');
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
 
             }
@@ -281,7 +281,7 @@ class Horarios
 
                 $audUDesde = $this->auditoria([$Legajos, $Codi, 'B', $AudText, $User], 'horarios-delete');
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
 
             }
@@ -318,7 +318,7 @@ class Horarios
 
                 $audUDesde = $this->auditoria([$Legajos, $Codi, 'B', $AudText, $User], 'rotaciones-delete');
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
 
             }
@@ -338,7 +338,7 @@ class Horarios
                 $filas += $this->delete_citacion([$conn, $Legajos, $Fecha]); // Actualiza los horarios
                 $audUDesde = $this->auditoria([$Legajos, '', 'B', $AudText, $User], 'citaciones');
 
-                $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+                $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
                 $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
 
             }
@@ -374,20 +374,20 @@ class Horarios
         try {
 
             $inicio = microtime(true); // Inicio del script
-            $datos  = $this->validar_request_rotacion(); // Valida los datos
-            $conn   = $this->conect->conn(); // Conexión a la base de datos
+            $datos = $this->validar_request_rotacion(); // Valida los datos
+            $conn = $this->conect->conn(); // Conexión a la base de datos
             $conn->beginTransaction(); // Iniciar transacción
 
             $filas = 0;
-            $arrayAud  = [];
+            $arrayAud = [];
             $auditorCH = [];
-            $Proc      = $datos['Proc'];
-            $Fecha     = $datos['Fecha'];
-            $Vence     = $datos['Vence'];
-            $Legajos   = $datos['Lega'];
-            $Codi      = $datos['Codi'];
-            $Dias      = $datos['Dias'];
-            $User      = $datos['User'];
+            $Proc = $datos['Proc'];
+            $Fecha = $datos['Fecha'];
+            $Vence = $datos['Vence'];
+            $Legajos = $datos['Lega'];
+            $Codi = $datos['Codi'];
+            $Dias = $datos['Dias'];
+            $User = $datos['User'];
 
             //             Array de Datos
             // (
@@ -435,16 +435,16 @@ class Horarios
             $AudText = "Rotación {$fechaFormat}";
 
             if ($legajosUpdate) {
-                $filas     += $this->update_rotacion([$conn, $legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
+                $filas += $this->update_rotacion([$conn, $legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
                 $audUDesde = $this->auditoria([$legajosUpdate, $Codi, 'M', $AudText, $User], 'rotaciones');
             }
 
             if ($legajosInsert) {
-                $filas    += $this->insert_rotacion([$conn, $legajosInsert, $Codi, $Fecha, $Dias, $Vence]); // Inserta los horarios
+                $filas += $this->insert_rotacion([$conn, $legajosInsert, $Codi, $Fecha, $Dias, $Vence]); // Inserta los horarios
                 $audIDesde = $this->auditoria([$legajosInsert, $Codi, 'A', $AudText, $User], 'rotaciones');
             }
 
-            $arrayAud  = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
+            $arrayAud = array_merge($arrayAud, $audIDesde['auditor'] ?? [], $audUDesde['auditor'] ?? []); // Auditoría para respuesta
             $auditorCH = array_merge($auditorCH, $audIDesde['auditorCH'] ?? [], $audUDesde['auditorCH'] ?? []); // Auditoría para CH
 
             $conn->commit(); // Confirmar la transacción
@@ -648,12 +648,12 @@ class Horarios
             $conn = $this->conect->check_connection($connDB);
             $getCache = $this->tools->return_cache($conn, 'HORARIOS', 'fechaHoraHorarios', 'horarios');
 
-            if ($getCache->data) {
-                return $getCache->data;
-            }
+            // if ($getCache->data) {
+            //     return $getCache->data;
+            // }
 
             // $sql  = "SELECT * FROM HORARIOS";
-            $sql  = "SELECT HorCodi, HorDesc FROM HORARIOS";
+            $sql = "SELECT HorCodi, HorDesc FROM HORARIOS";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -682,7 +682,7 @@ class Horarios
                 return $getCache->data;
             }
 
-            $sql  = "SELECT RotCodi, RotDesc FROM ROTACION";
+            $sql = "SELECT RotCodi, RotDesc FROM ROTACION";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -705,7 +705,7 @@ class Horarios
         try {
             $conn = $this->conect->check_connection($connDB);
 
-            $sql  = "SELECT sum(RotDias) FROM ROTACIO1 WHERE RotCodi = :Codi";
+            $sql = "SELECT sum(RotDias) FROM ROTACIO1 WHERE RotCodi = :Codi";
             $stmt = $conn->prepare($sql);
             $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
             $stmt->execute();
@@ -727,10 +727,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Codi      = $arrayData[2];
-        $Fecha     = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Codi = $arrayData[2];
+        $Fecha = $arrayData[3];
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
@@ -741,7 +741,7 @@ class Horarios
         $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
         $stmt->execute();
         $filas = $stmt->rowCount();
-        return  $filas ?? 0;
+        return $filas ?? 0;
     }
     private function delete_desde($arrayData): int
     {
@@ -751,9 +751,9 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
 
         $legajosList = implode(',', $legajos);
         $sql = "DELETE FROM HORALE1 WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
@@ -761,7 +761,7 @@ class Horarios
         $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
         $stmt->execute();
         $filas = $stmt->rowCount();
-        return  $filas ?? 0;
+        return $filas ?? 0;
     }
     private function check_delete_legajos($arrayData): array
     {
@@ -771,10 +771,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Codi      = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Codi = $arrayData[3];
 
         $legajosList = implode(',', $legajos);
 
@@ -803,7 +803,7 @@ class Horarios
         (!$this->citacion) ? $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT) : '';
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        return  $result ? array_column($result, 'LegNume') : [];
+        return $result ? array_column($result, 'LegNume') : [];
     }
     private function get_fecha_fin($arrayData)
     {
@@ -813,10 +813,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Codi      = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Codi = $arrayData[3];
         $legajosList = implode(',', $legajos);
 
         if ($this->desdeHasta) {
@@ -841,10 +841,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Codi      = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Codi = $arrayData[3];
 
         $legajosList = implode(',', $legajos);
         $sql = "DELETE FROM HORALE2 WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :Fecha, 120) AND Ho2Hora = :Codi";
@@ -853,7 +853,7 @@ class Horarios
         $stmt->bindValue(':Codi', $Codi, $Codi ? \PDO::PARAM_INT : \PDO::PARAM_STR);
         $stmt->execute();
         $filas = $stmt->rowCount();
-        return  $filas ?? 0;
+        return $filas ?? 0;
     }
     private function delete_rotacion($arrayData): int
     {
@@ -863,10 +863,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Codi      = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Codi = $arrayData[3];
 
         $legajosList = implode(',', $legajos);
         $sql = "DELETE FROM ROTALEG WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120) AND RolRota = :Codi";
@@ -875,17 +875,17 @@ class Horarios
         $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
         $stmt->execute();
         $filas = $stmt->rowCount();
-        return  $filas ?? 0;
+        return $filas ?? 0;
     }
     private function update_citacion($arrayData): int
     {
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Entr      = $arrayData[3];
-        $Sale      = $arrayData[4];
-        $Desc      = $arrayData[5];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Entr = $arrayData[3];
+        $Sale = $arrayData[4];
+        $Desc = $arrayData[5];
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
@@ -908,9 +908,9 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
 
         $legajosList = implode(',', $legajos);
         $sql = "DELETE FROM CITACION WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
@@ -928,12 +928,12 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Codi      = $arrayData[2];
-        $Fecha     = $arrayData[3];
-        $Dias      = $arrayData[4];
-        $Vence     = $arrayData[5];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Codi = $arrayData[2];
+        $Fecha = $arrayData[3];
+        $Dias = $arrayData[4];
+        $Vence = $arrayData[5];
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
@@ -946,7 +946,7 @@ class Horarios
         $stmt->bindValue(':RolDias', $Dias, \PDO::PARAM_INT);
         $stmt->execute();
         $filas = $stmt->rowCount();
-        return  $filas ?? 0;
+        return $filas ?? 0;
     }
     private function update_desde_hasta($arrayData)
     {
@@ -956,10 +956,10 @@ class Horarios
             }
         }
 
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Codi      = $arrayData[2];
-        $FechaD    = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Codi = $arrayData[2];
+        $FechaD = $arrayData[3];
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
@@ -983,10 +983,10 @@ class Horarios
         $values = [];
         $params = [];
         $index = 0;
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Codi      = $arrayData[2];
-        $Fecha     = $arrayData[3];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Codi = $arrayData[2];
+        $Fecha = $arrayData[3];
         $FechaHora = $this->conect->FechaHora();
 
         foreach ($legajos as $lega) {
@@ -1015,12 +1015,12 @@ class Horarios
         $values = [];
         $params = [];
         $index = 0;
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Fecha     = $arrayData[2];
-        $Entr      = $arrayData[3];
-        $Sale      = $arrayData[4];
-        $Desc      = $arrayData[5];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Fecha = $arrayData[2];
+        $Entr = $arrayData[3];
+        $Sale = $arrayData[4];
+        $Desc = $arrayData[5];
         $Turn = 1;
         $FechaHora = $this->conect->FechaHora();
 
@@ -1059,12 +1059,12 @@ class Horarios
         $values = [];
         $params = [];
         $index = 0;
-        $conn    = $arrayData[0];
+        $conn = $arrayData[0];
         $legajos = $arrayData[1];
-        $Codi    = $arrayData[2];
-        $Fecha   = $arrayData[3];
-        $Dias    = $arrayData[4];
-        $Vence   = $arrayData[5];
+        $Codi = $arrayData[2];
+        $Fecha = $arrayData[3];
+        $Dias = $arrayData[4];
+        $Vence = $arrayData[5];
         $FechaHora = $this->conect->FechaHora();
         try {
             foreach ($legajos as $lega) {
@@ -1106,11 +1106,11 @@ class Horarios
         $values = [];
         $params = [];
         $index = 0;
-        $conn      = $arrayData[0];
-        $legajos   = $arrayData[1];
-        $Codi      = $arrayData[2];
-        $FechaD    = $arrayData[3];
-        $FechaH    = $arrayData[4];
+        $conn = $arrayData[0];
+        $legajos = $arrayData[1];
+        $Codi = $arrayData[2];
+        $FechaD = $arrayData[3];
+        $FechaH = $arrayData[4];
         $FechaHora = $this->conect->FechaHora();
 
         foreach ($legajos as $lega) {
@@ -1143,11 +1143,11 @@ class Horarios
             }
         }
 
-        $legajos      = $arrayData[0];
-        $Codi         = $arrayData[1];
-        $AudTipo      = $arrayData[2];
-        $AudTipoText  = $arrayData[3];
-        $User         = $arrayData[4];
+        $legajos = $arrayData[0];
+        $Codi = $arrayData[1];
+        $AudTipo = $arrayData[2];
+        $AudTipoText = $arrayData[3];
+        $User = $arrayData[4];
 
         $CodiHorario = $Codi ? "{$Codi}" : '0';
         // $CodiStr = $Codi ? LIST_HORARIOS[$Codi] : 'Franco';
@@ -1213,14 +1213,14 @@ class Horarios
             $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
             $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
             return [
-                "Laboral"       => $mapTipo[$tipo],
-                "LaboralID"     => intval($tipo),
-                "Desde"         => $de,
-                "Hasta"         => $Ha,
-                "Descanso"      => $Des,
-                "Limite"        => intval($li),
-                "Horas"         => $Ho,
-                "HorasCalc"     => $HorasCalc,
+                "Laboral" => $mapTipo[$tipo],
+                "LaboralID" => intval($tipo),
+                "Desde" => $de,
+                "Hasta" => $Ha,
+                "Descanso" => $Des,
+                "Limite" => intval($li),
+                "Horas" => $Ho,
+                "HorasCalc" => $HorasCalc,
                 "HorasCalcDesc" => $HorasCalcDescanso,
                 "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
                 "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
@@ -1263,21 +1263,21 @@ class Horarios
             $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'];
             $TotalDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'];
             $horarios[] = [
-                "Codi"      => $v['HorCodi'],
-                "Desc"      => $v['HorDesc'],
-                "ID"        => $v['HorID'],
-                "ColorInt"  => floatval($v['HorColor']),
-                "Color"     => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
+                "Codi" => $v['HorCodi'],
+                "Desc" => $v['HorDesc'],
+                "ID" => $v['HorID'],
+                "ColorInt" => floatval($v['HorColor']),
+                "Color" => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
                 "ColorText" => $textColor,
                 "FechaHora" => $this->tools->formatDateTime($v['FechaHora'], 'Y-m-d H:i:s'),
-                "Lunes"     => $HorLun,
-                "Martes"    => $HorMar,
+                "Lunes" => $HorLun,
+                "Martes" => $HorMar,
                 "Miércoles" => $HorMie,
-                "Jueves"    => $HorJue,
-                "Viernes"   => $HorVie,
-                "Sábado"    => $HorSab,
-                "Domingo"   => $HorDom,
-                "Feriado"   => $HorFer,
+                "Jueves" => $HorJue,
+                "Viernes" => $HorVie,
+                "Sábado" => $HorSab,
+                "Domingo" => $HorDom,
+                "Feriado" => $HorFer,
                 "TotalHoras" => $this->tools->convertirAHorasMinutos($TotalMins),
                 // "TotalMins" => $TotalMins,
                 "TotalHorasCalc" => $this->tools->convertirAHorasMinutos($TotalMinsCalc),
@@ -1325,10 +1325,10 @@ class Horarios
                     $Horario = $ListHorarios[$d['RotHora']] ?? [];
                     $RotHoraStr = $d['RotHora'] ? $Horario : 'Franco';
                     $rotDias[] = [
-                        "RotItem"    => $d['RotItem'],
-                        "RotHora"    => $d['RotHora'],
+                        "RotItem" => $d['RotItem'],
+                        "RotHora" => $d['RotHora'],
                         "RotHoraStr" => $RotHoraStr,
-                        "RotDias"    => $d['RotDias'],
+                        "RotDias" => $d['RotDias'],
                     ];
                     $totalDias += $d['RotDias'];
                     // $arrHorarios[] = $Horarios;
@@ -1449,7 +1449,7 @@ class Horarios
         $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $conn = null;
 
-        $ListRotaciones = $this->return_rotaciones($connDB) ??  []; // Devuelve las 
+        $ListRotaciones = $this->return_rotaciones($connDB) ?? []; // Devuelve las 
 
         foreach ($data as $key => $value) {
             $data[$key]['RolRotaStr'] = $ListRotaciones[$value['RoLRota']] ?? '';
