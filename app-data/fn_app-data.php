@@ -30,15 +30,13 @@ function ch_api()
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
     $queryParams = $argumento[3] ?? array(); // Obtengo los parámetro de la query
     $method = strtoupper($method); // Convierto el método a mayúsculas
-
     try {
 
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
-
+        //file_put_contents('params.log', print_r(http_build_query($queryParams), true) . PHP_EOL, FILE_APPEND); // log error
         $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
-
         $ch = curl_init(); // Inicializo curl
 
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
@@ -46,6 +44,8 @@ function ch_api()
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Permitir seguir redirecciones
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 10); // Máximo de redirecciones
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
             $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
@@ -73,7 +73,7 @@ function ch_api()
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
         $file_contents = curl_exec($ch); // Ejecuto curl
-        // file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
+        //file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
 
         $curl_errno = curl_errno($ch); // get error code
         $curl_error = curl_error($ch); // get error information
@@ -237,6 +237,29 @@ function fic_nove_horas($payload)
 {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($data, true);
+    $DATA = $arrayData['DATA'] ?? [];
+    if (empty($DATA)) {
+        return [];
+    }
+    return $DATA;
+}
+function v1_api($endpoint, $method, $payload)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1" . $endpoint;
+    $data = ch_api($endpoint, $payload, $method, '');
+    $arrayData = json_decode($data, true);
+    $DATA = $arrayData['DATA'] ?? [];
+    if (empty($DATA)) {
+        return [];
+    }
+    return $DATA;
+}
+
+function get_estructura($query)
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct";
+    $data = ch_api($endpoint, [], 'GET', $query);
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
     if (empty($DATA)) {
@@ -523,9 +546,128 @@ function procesar_por_intervalos($data, $payload)
 
 function get_tipo_hora()
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/tipohora";
-    $data = ch_api($endpoint, '', 'GET', []);
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/data";
+    $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
 
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
+}
+function get_novedades()
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/data";
+    $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
+
+    $arrayData = json_decode($data, true);
+    return $arrayData['DATA'] ?? [];
+}
+function get_params($queryParams = [])
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/_local/params";
+    $data = ch_api($endpoint, '', 'GET', $queryParams);
+    $arrayData = json_decode($data, true);
+    return $arrayData['DATA'] ?? [];
+}
+function add_params($payloadParams = [])
+{
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/_local/params";
+    $data = ch_api($endpoint, $payloadParams, 'POST', '');
+    $arrayData = json_decode($data, true);
+    return $arrayData['DATA'] ?? [];
+}
+function horasCustom($params)
+{
+    if (!$params) {
+        return [];
+    }
+    foreach ($params as $key => $valueParams) {
+        if (in_array($valueParams['descripcion'], ['columnas', 'columnasSorted'])) {
+            continue;
+        }
+        $horasParams[] = [
+            'THoCodi' => "3300{$key}",
+            'THoDesc' => $valueParams['descripcion'],
+            'THoDesc2' => $valueParams['descripcion'],
+            'THoID' => '',
+            'THoColu' => 0,
+            'ThoValores' => $valueParams['valores'],
+            'FechaHora' => '',
+        ];
+    }
+    return $horasParams ?? [];
+}
+function colsExcel(): array
+{
+    $horas = get_tipo_hora();
+    $queryParams = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => '', 'modulo' => 46, 'valores' => ''];
+    $params = get_params($queryParams) ?? [];
+    $horasParams = horasCustom($params);
+
+
+    array_push($horas, ...$horasParams);
+
+    $queryColumnSorted = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => 'columnasSorted', 'modulo' => 46];
+    $columnas = get_params($queryColumnSorted) ?? [];
+    $columnasValores = $columnas[0]['valores'];
+    if (!$columnasValores) {
+        throw new Exception('No se encontraron columnas', 400);
+    }
+
+    if ($columnasValores) {
+        // Convertir $columnasValores en un array de enteros
+        $columnasValores = array_map('intval', explode(',', $columnasValores));
+        // Crear un array asociativo con THoCodi como clave y el array como valor
+        $horas = array_column($horas, null, 'THoCodi');
+        // Crear un nuevo array ordenado según $valoresSorted
+        $horasOrdenadas = [];
+        foreach ($columnasValores as $THoCodi) {
+            if (isset($horas[$THoCodi])) {
+                $horasOrdenadas[$THoCodi] = $horas[$THoCodi];
+            }
+        }
+    }
+    $colsExcel = [];
+    foreach ($horasOrdenadas as $key => $value) {
+        $colsExcel[$value['THoDesc2']] = [
+            'ancho' => 15,
+            'key' => $value['THoDesc2'],
+            'align' => 'HORIZONTAL_CENTER',
+            'format' => '0',
+            'type' => 'string',
+        ];
+    }
+    return $colsExcel ?? [];
+}
+function minutos_a_horas($min)
+{
+    if (!is_int($min) || $min < 0) {
+        return false;
+    }
+    if ($min === 0) {
+        return '00:00';
+    }
+
+    $horas = floor($min / 60);
+    $minutos = $min % 60;
+    return sprintf('%02d:%02d', $horas, $minutos);
+}
+function horas_custom($legajosColumn, $payload, $claveCustom)
+{
+    $lc = $legajosColumn;
+    $tot = v1_api('/novedades/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
+    $totData = $tot['data'] ?? []; // Obtener datos de horas totales por legajo
+    $totColumn = array_column($totData ?? [], null, 'Lega');
+    // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
+    array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
+        if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
+            foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
+                $clave = $lc[$Lega][$claveCustom] ?? ''; // Obtener el valor de $claveCustom
+                $totResult = $total['EnMinutos'] ?? 0; // Obtener 'EnMinutos'
+                if ($clave) { // Si $clave no está vacío
+                    $clave += $totResult; // Asignar 'EnHoras' a $claveCustom
+                }
+            }
+            // $lc[$Lega][$claveCustom] = minutos_a_horas($lc[$Lega][$claveCustom]);
+        }
+    });
+    return $lc;
 }

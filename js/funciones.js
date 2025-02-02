@@ -1092,3 +1092,18 @@ const qs = (selector) => {
 const qsa = (selector) => {
     return document.querySelectorAll(selector) || null;
 }
+function slugify(string) {
+    // Reemplazar caracteres especiales con sus equivalentes ASCII
+    string = string.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+    // Convertir a minúsculas
+    string = string.toLowerCase();
+
+    // Reemplazar todo lo que no sea una letra, número o guion por guiones
+    string = string.replace(/[^a-z0-9]+/g, '-');
+
+    // Eliminar guiones al principio y al final
+    string = string.replace(/^-+|-+$/g, '');
+
+    return string;
+}

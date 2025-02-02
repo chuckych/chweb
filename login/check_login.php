@@ -40,12 +40,12 @@ if ($guarda == "on") {
 		'samesite' => $sameSite // Establece el valor de SameSite
 	]);
 }
-
-/** Consultamos el si el usuario y clave son correctos */
-// require __DIR__ . '../../config/conect_mysql.php';
-
-$userLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags(strtolower($_POST['user']));
-$passLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags($_POST['clave']);
+if (!$_POST['user'] || !$_POST['clave']) {
+	header('Location:/' . HOMEHOST . '/login/?error');
+	exit;
+}
+$userLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags(strtolower($_POST['user'] ?? ''));
+$passLogin = isset($_GET['conf']) ? $_GET['conf'] : strip_tags($_POST['clave'] ?? '');
 $userLogin = test_input($userLogin);
 $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);

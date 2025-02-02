@@ -13,7 +13,8 @@ require __DIR__ . '../../config/conect_mssql.php';
 E_ALL();
 
 $params = $_REQUEST;
-$data = array();
+$data = [];
+$json_data = [];
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
@@ -29,7 +30,7 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
 
 require __DIR__ . '../valores.php';
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

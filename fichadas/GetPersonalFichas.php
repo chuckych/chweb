@@ -48,19 +48,19 @@ $Sec2 = setParamsOrSession($params['Sec2'], $_SESSION['Sec2Rol']);
 $FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
 $LegTipo = $params['Tipo'] ? $params['Tipo'] : array();
 
-$Legajos = ($Per2) ? ($Per2) : $Per;
-$Legajos = ($Per) ? ($Per) : $Legajos;
+$Legajos = $Per2 ? $Per2 : $Per;
+$Legajos = $Per ? $Per : $Legajos;
 
 $dataParametros = array(
-    'Lega' => ($Legajos),
+    'Lega' => $Legajos,
     'Falta' => $FicFalta,
-    'Empr' => ($Empr),
-    'Plan' => ($Plan),
-    'Sect' => ($Sect),
-    'Grup' => ($Grup),
-    'Sucu' => ($Sucu),
-    'Sec2' => ($Sec2),
-    'LegTipo' => ($LegTipo),
+    'Empr' => $Empr,
+    'Plan' => $Plan,
+    'Sect' => $Sect,
+    'Grup' => $Grup,
+    'Sucu' => $Sucu,
+    'Sec2' => $Sec2,
+    'LegTipo' => $LegTipo,
     'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
     'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
     'start' => intval($params['start']),
@@ -71,13 +71,13 @@ $dataParametros = array(
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficdata/";
 
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+$DATA = $dataApi['DATA'] ?? [];
+$MESSAGE = $dataApi['MESSAGE'] ?? '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 
-if ($dataApi['DATA']) {
-    foreach ($dataApi['DATA'] as $row) {
+if ($DATA) {
+    foreach ($DATA as $row) {
         $pers_legajo = $row['Lega'];
         $pers_nombre = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
         $data[] = array(
@@ -92,7 +92,7 @@ $json_data = array(
     "recordsFiltered" => intval($dataApi['TOTAL'] ?? 0),
     "data" => $data,
     "dataParametros" => $dataParametros,
-    "Mensaje" => $dataApi['MESSAGE']
+    "Mensaje" => $MESSAGE
 );
 
 echo json_encode($json_data);

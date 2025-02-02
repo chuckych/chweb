@@ -78,12 +78,19 @@
                         <!-- Tipo Reporte -->
                         <div class="d-flex flex-column">
                             <label for="reporte" class="mr-2 w120">Reporte</label>
-                            <select class="selectjs_reporte form-control w200" id="reporte">
-                                <option value="1">Inasistencias</option>
-                                <!-- <option value="2">Reporte de Actividad</option> -->
-                                <!-- <option disabled value="3">Conceptos a Liquidar - Jornales</option> -->
-                                <!-- <option disabled value="4">Conceptos a Liquidar - Mensuales</option> -->
-                            </select>
+                            <div class="d-inline-flex align-items-end" style="gap:10px;">
+                                <select class="selectjs_reporte form-control w200" id="reporte">
+                                    <option value="1">Inasistencias</option>
+                                    <option value="2">Reporte de Actividad</option>
+                                    <!-- <option disabled value="3">Conceptos a Liquidar - Jornales</option> -->
+                                    <!-- <option disabled value="4">Conceptos a Liquidar - Mensuales</option> -->
+                                </select>
+                                <button hidden
+                                    class="btn btn-sm btn-outline-secondary p-2 border px-3 hint--top hint--rounded hint--default hint--no-shadow"
+                                    aria-label="Configurar conceptos" id="config-actividad">
+                                    <i class="bi bi-gear"></i>
+                                </button>
+                            </div>
                         </div>
                         <!-- Button Generar -->
                         <div class="d-inline-flex" style="gap:5px;">
@@ -143,13 +150,32 @@
                 </table>
             </div>
         </div>
-        <div class="row bg-white p-4 radius">
-            <div class="col-12 col-sm-6 col-lg-4 border p-4 shadow-sm" id="div_table_tipo_hora"
-                style="min-height:500px;" hidden>
+        <div class="form-row bg-white p-2">
+            <div class="col-12 col-sm-6 col-md-7" id="div_table_tipo_hora" style="min-height:500px;" hidden>
+            </div>
+            <div class="col-12 col-sm-6" id="div_table_novedades" style="min-height:500px;" hidden>
             </div>
         </div>
-        <div class="row bg-white p-4 radius">
-            <div class="col-12 border p-4 shadow-sm" id="div_table" hidden>
+        <div class="row bg-white p-2">
+            <div class="col-12" id="div_table" hidden>
+            </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fadeIn" id="configModal" tabindex="-1" aria-labelledby="configModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h6 class="modal-title" id="configModalLabel">Modal title</h6>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true"><i class="bi bi-x-lg"></i></span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -163,6 +189,7 @@
     <script src="../../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../../js/moment.min.js"></script>
     <script src="../../../js/select2.min.js"></script>
+    <script src="../../../js/Sortable.min.js"></script>
 
     <script src="js/main.js?<?= version_file("/informes/custom/prysmian/js/main.js") ?>"></script>
 </body>

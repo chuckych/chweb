@@ -8,7 +8,7 @@ header("Content-Type: application/json");
 E_ALL();
 
 $params = $_REQUEST;
-$data = array();
+$data = [];
 $authBasic = base64_encode('chweb:' . HOMEHOST);
 $token = sha1($_SESSION['RECID_CLIENTE']);
 
@@ -73,13 +73,13 @@ $dataParametros = array(
 );
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficdatafech/";
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+$DATA = $dataApi['DATA'] ?? [];
+$MESSAGE = $dataApi['MESSAGE'] ?? '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 
-if ($dataApi['DATA']) {
-    foreach ($dataApi['DATA'] as $row) {
+if ($DATA) {
+    foreach ($DATA as $row) {
         $data[] = array(
             'FechaFormat' => FechaFormatVar($row['Fecha'], 'd/m/Y'),
             'Dia' => DiaSemana3($row['Fecha']),
@@ -93,7 +93,7 @@ $json_data = array(
     "recordsFiltered" => intval($dataApi['TOTAL'] ?? 0),
     "data" => $data,
     "dataParametros" => $dataParametros,
-    "Mensaje" => $dataApi['MESSAGE']
+    "Mensaje" => $MESSAGE
 );
 
 echo json_encode($json_data);

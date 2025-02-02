@@ -4,7 +4,9 @@ namespace Classes;
 
 use DateTime;
 
-class ValidationException extends \Exception {}
+class ValidationException extends \Exception
+{
+}
 
 class InputValidator
 {
@@ -58,36 +60,38 @@ class InputValidator
     private function generateErrorMessage($field, $rule)
     {
         $messages = [
-            'allowed01'        => "El campo $field debe tener un valor permitido. [0, 1]",
-            'allowed012'       => "El campo $field debe tener un valor permitido. [0, 1, 2]",
-            'arrAllowed01'     => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
-            'arrAllowed012'    => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
-            'arrInt'           => "El campo $field debe ser un arreglo de números enteros",
-            'arrSmallint'      => "El campo $field debe ser un arreglo de números enteros y menor a 32767",
+            'allowed01' => "El campo $field debe tener un valor permitido. [0, 1]",
+            'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
+            'allowed1a7' => "El campo $field debe tener un valor permitido. [1, 2, 3, 4, 5, 6, 7]",
+            'arrAllowed01' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
+            'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
+            'arrAllowed1a7' => "El campo $field debe ser un arreglo con valores permitidos. [1, 2, 3, 4, 5, 6, 7]",
+            'arrInt' => "El campo $field debe ser un arreglo de números enteros",
+            'arrSmallint' => "El campo $field debe ser un arreglo de números enteros y menor a 32767",
             'arrSmallintEmpty' => "El campo $field debe ser un arreglo de números y menor a 32767",
-            'boolean'          => "El campo $field debe ser un valor booleano",
-            'date'             => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
-            'dateEmpty'        => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd o vacío",
-            'datetime'         => "El campo $field debe ser una fecha y hora válida con formato yyyy-mm-dd hh:mm:ss",
-            'decima12.2'       => "El campo $field debe ser un número decimal con 2 decimales y menor a 12 dígitos",
-            'email'            => "El campo $field debe ser una dirección de correo válida",
-            'int'              => "El campo $field debe ser un número entero y menor a 2147483647",
-            'intempty'         => "El campo $field debe ser un número entero",
-            'numeric'          => "El campo $field debe ser un número",
-            'numeric10'        => "El campo $field debe ser un número y menor a 10 dígitos",
-            'numeric5'         => "El campo $field debe ser un número y menor a 5 dígitos",
-            'required'         => "El campo $field es requerido",
-            'smallint'         => "El campo $field debe ser un número entero y menor a 32767",
-            'smallintEmpty'    => "El campo $field debe ser un número entero y menor a 32767 o vacío",
-            'time'             => "El campo $field debe ser una hora válida con formato hh:mm",
-            'timeEmpty'        => "El campo $field debe ser una hora válida con formato hh:mm o vacío",
-            'varchar1'         => "El campo $field debe tener una longitud menor a 1 caracteres",
-            'varchar10'        => "El campo $field debe tener una longitud menor a 10 caracteres",
-            'varchar100'       => "El campo $field debe tener una longitud menor a 100 caracteres",
-            'varchar200'       => "El campo $field debe tener una longitud menor a 200 caracteres",
-            'varchar20'        => "El campo $field debe tener una longitud menor a 20 caracteres",
-            'varchar40'        => "El campo $field debe tener una longitud menor a 40 caracteres",
-            'varcharMax'       => "El campo $field debe tener una longitud menor a 2147483647 caracteres",
+            'boolean' => "El campo $field debe ser un valor booleano",
+            'date' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
+            'dateEmpty' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd o vacío",
+            'datetime' => "El campo $field debe ser una fecha y hora válida con formato yyyy-mm-dd hh:mm:ss",
+            'decima12.2' => "El campo $field debe ser un número decimal con 2 decimales y menor a 12 dígitos",
+            'email' => "El campo $field debe ser una dirección de correo válida",
+            'int' => "El campo $field debe ser un número entero y menor a 2147483647",
+            'intempty' => "El campo $field debe ser un número entero",
+            'numeric' => "El campo $field debe ser un número",
+            'numeric10' => "El campo $field debe ser un número y menor a 10 dígitos",
+            'numeric5' => "El campo $field debe ser un número y menor a 5 dígitos",
+            'required' => "El campo $field es requerido",
+            'smallint' => "El campo $field debe ser un número entero y menor a 32767",
+            'smallintEmpty' => "El campo $field debe ser un número entero y menor a 32767 o vacío",
+            'time' => "El campo $field debe ser una hora válida con formato hh:mm",
+            'timeEmpty' => "El campo $field debe ser una hora válida con formato hh:mm o vacío",
+            'varchar1' => "El campo $field debe tener una longitud menor a 1 caracteres",
+            'varchar10' => "El campo $field debe tener una longitud menor a 10 caracteres",
+            'varchar100' => "El campo $field debe tener una longitud menor a 100 caracteres",
+            'varchar200' => "El campo $field debe tener una longitud menor a 200 caracteres",
+            'varchar20' => "El campo $field debe tener una longitud menor a 20 caracteres",
+            'varchar40' => "El campo $field debe tener una longitud menor a 40 caracteres",
+            'varcharMax' => "El campo $field debe tener una longitud menor a 2147483647 caracteres",
         ];
 
         return $messages[$rule] ?? "Error desconocido en la regla de validación";
@@ -220,6 +224,17 @@ class InputValidator
                 }
                 foreach ($value as $val) {
                     if (!in_array($val, ['0', '1', '2'])) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                    }
+                }
+                break;
+            case 'arrAllowed1a7':
+                $valor = $value ?? [];
+                if (!is_array($valor)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                foreach ($valor as $val) {
+                    if (!in_array($val, ['1', '2', '3', '4', '5', '6', '7'])) {
                         throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                     }
                 }

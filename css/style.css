@@ -702,16 +702,8 @@
      min-width: 40px !important
  }
 
- .w30 {
-     width: 30px !important
- }
-
  .w25 {
      width: 25px !important
- }
-
- .w20 {
-     width: 20px !important
  }
 
  .w15 {
@@ -1924,4 +1916,8 @@
      animation-duration: 0.7s;
      animation-timing-function: ease-in-out;
      animation-fill-mode: both;
+ }
+
+ button:focus {
+     outline: 0px auto -webkit-focus-ring-color !important;
  }

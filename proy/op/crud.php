@@ -15,31 +15,31 @@ function emptyData($data, $err)
     return empty($data) ? PrintRespuestaJson('error', $err) . exit : '';
 }
 // sleep(1);
-$_POST['EmpSubmit']      = ($_POST['EmpSubmit']) ?? '';
-$_POST['EstSubmit']      = ($_POST['EstSubmit']) ?? '';
-$_POST['ProcSubmit']     = ($_POST['ProcSubmit']) ?? '';
-$_POST['PlanoSubmit']    = ($_POST['PlanoSubmit']) ?? '';
-$_POST['PlantSubmit']    = ($_POST['PlantSubmit']) ?? '';
-$_POST['plantillaProc']  = ($_POST['plantillaProc']) ?? '';
+$_POST['EmpSubmit'] = ($_POST['EmpSubmit']) ?? '';
+$_POST['EstSubmit'] = ($_POST['EstSubmit']) ?? '';
+$_POST['ProcSubmit'] = ($_POST['ProcSubmit']) ?? '';
+$_POST['PlanoSubmit'] = ($_POST['PlanoSubmit']) ?? '';
+$_POST['PlantSubmit'] = ($_POST['PlantSubmit']) ?? '';
+$_POST['plantillaProc'] = ($_POST['plantillaProc']) ?? '';
 $_POST['plantillaPlano'] = ($_POST['plantillaPlano']) ?? '';
-$_POST['ProySubmit']     = ($_POST['ProySubmit']) ?? '';
-$_POST['conf']           = ($_POST['conf']) ?? '';
-$_POST['setDescAll']     = ($_POST['setDescAll']) ?? '';
-$_POST['setDesc']        = ($_POST['setDesc']) ?? '';
+$_POST['ProySubmit'] = ($_POST['ProySubmit']) ?? '';
+$_POST['conf'] = ($_POST['conf']) ?? '';
+$_POST['setDescAll'] = ($_POST['setDescAll']) ?? '';
+$_POST['setDesc'] = ($_POST['setDesc']) ?? '';
 
 $FechaHora = FechaHora2();
 
 
 if ($_POST['conf']) {
-    $_POST['getConf']     = $_POST['getConf'] ?? '';
-    $_POST['setConf']     = $_POST['setConf'] ?? '';
+    $_POST['getConf'] = $_POST['getConf'] ?? '';
+    $_POST['setConf'] = $_POST['setConf'] ?? '';
     $_POST['ProcPendTar'] = $_POST['ProcPendTar'] ?? '0';
-    $_POST['ProcRedTar']  = $_POST['ProcRedTar'] ?? '0';
+    $_POST['ProcRedTar'] = $_POST['ProcRedTar'] ?? '0';
     $_POST['ProcDescTar'] = $_POST['ProcDescTar'] ?? '0';
-    $_POST['HoraCierre']  = $_POST['HoraCierre'] ?? '00:00';
-    $_POST['LimitTar']    = $_POST['LimitTar'] ?? '00:00';
-    $_POST['MinimoDesc']  = $_POST['MinimoDesc'] ?? '';
-    $_POST['RecRedTar']   = $_POST['RecRedTar'] ?? '';
+    $_POST['HoraCierre'] = $_POST['HoraCierre'] ?? '00:00';
+    $_POST['LimitTar'] = $_POST['LimitTar'] ?? '00:00';
+    $_POST['MinimoDesc'] = $_POST['MinimoDesc'] ?? '';
+    $_POST['RecRedTar'] = $_POST['RecRedTar'] ?? '';
 
     if ($_POST['getConf']) {
         $confTar = (getDataIni('confTarea.php'));
@@ -51,11 +51,11 @@ if ($_POST['conf']) {
             'confTar' => array(
                 'ProcPendTar' => $_POST['ProcPendTar'],
                 'ProcDescTar' => $_POST['ProcDescTar'],
-                'ProcRedTar'  => $_POST['ProcRedTar'],
-                'HoraCierre'  => $_POST['HoraCierre'],
-                'MinimoDesc'  => $_POST['MinimoDesc'],
-                'LimitTar'    => $_POST['LimitTar'],
-                'RecRedTar'   => $_POST['RecRedTar'],
+                'ProcRedTar' => $_POST['ProcRedTar'],
+                'HoraCierre' => $_POST['HoraCierre'],
+                'MinimoDesc' => $_POST['MinimoDesc'],
+                'LimitTar' => $_POST['LimitTar'],
+                'RecRedTar' => $_POST['RecRedTar'],
             ),
         );
         confTar($assoc, 'confTarea.php');
@@ -65,23 +65,23 @@ if ($_POST['conf']) {
     exit;
 }
 
-$_POST['toExcel']   = ($_POST['toExcel']) ?? '';
-$_POST['EmpDesc']   = ($_POST['EmpDesc']) ?? '';
-$_POST['EmpTel']    = ($_POST['EmpTel']) ?? '';
-$_POST['EmpObs']    = ($_POST['EmpObs']) ?? '';
-$_POST['EmpID']     = ($_POST['EmpID']) ?? '';
+$_POST['toExcel'] = ($_POST['toExcel']) ?? '';
+$_POST['EmpDesc'] = ($_POST['EmpDesc']) ?? '';
+$_POST['EmpTel'] = ($_POST['EmpTel']) ?? '';
+$_POST['EmpObs'] = ($_POST['EmpObs']) ?? '';
+$_POST['EmpID'] = ($_POST['EmpID']) ?? '';
 
 $_POST['ProcDesc'] = ($_POST['ProcDesc']) ?? '';
 $_POST['ProcCost'] = ($_POST['ProcCost']) ?? '';
-$_POST['ProcObs']  = ($_POST['ProcObs']) ?? '';
-$_POST['ProcID']   = ($_POST['ProcID']) ?? '';
+$_POST['ProcObs'] = ($_POST['ProcObs']) ?? '';
+$_POST['ProcID'] = ($_POST['ProcID']) ?? '';
 
 $_POST['PlanoDesc'] = ($_POST['PlanoDesc']) ?? '';
-$_POST['PlanoCod']  = ($_POST['PlanoCod']) ?? '';
-$_POST['PlanoObs']  = ($_POST['PlanoObs']) ?? '';
-$_POST['PlanoID']   = ($_POST['PlanoID']) ?? '';
+$_POST['PlanoCod'] = ($_POST['PlanoCod']) ?? '';
+$_POST['PlanoObs'] = ($_POST['PlanoObs']) ?? '';
+$_POST['PlanoID'] = ($_POST['PlanoID']) ?? '';
 
-$_POST['PlantID']   = ($_POST['PlantID']) ?? '';
+$_POST['PlantID'] = ($_POST['PlantID']) ?? '';
 $_POST['PlantDesc'] = ($_POST['PlantDesc']) ?? '';
 $_POST['PlantMod'] = ($_POST['PlantMod']) ?? '';
 
@@ -89,63 +89,63 @@ $_POST['PlaPlanoID'] = ($_POST['PlaPlanoID']) ?? '';
 $_POST['PlanPlaDesc'] = ($_POST['PlanPlaDesc']) ?? '';
 $_POST['checkPlanos'] = ($_POST['checkPlanos']) ?? '';
 
-$_POST['EstDesc']  = ($_POST['EstDesc']) ?? '';
+$_POST['EstDesc'] = ($_POST['EstDesc']) ?? '';
 $_POST['EstColor'] = ($_POST['EstColor']) ?? '';
-$_POST['EstID']    = ($_POST['EstID']) ?? '';
-$_POST['EstTipo']  = ($_POST['EstTipo']) ?? '';
+$_POST['EstID'] = ($_POST['EstID']) ?? '';
+$_POST['EstTipo'] = ($_POST['EstTipo']) ?? '';
 
 $_POST['checkProc'] = ($_POST['checkProc']) ?? '';
 $_POST['PlaProPlan'] = ($_POST['PlaProPlan']) ?? '';
 $_POST['PlaProDesc'] = ($_POST['PlaProDesc']) ?? '';
 
 $_POST['EmpDesc'] = test_input($_POST['EmpDesc']) ?? '';
-$_POST['EmpTel']  = test_input($_POST['EmpTel']) ?? '';
-$_POST['EmpObs']  = test_input($_POST['EmpObs']) ?? '';
-$_POST['EmpID']   = test_input($_POST['EmpID']) ?? '';
+$_POST['EmpTel'] = test_input($_POST['EmpTel']) ?? '';
+$_POST['EmpObs'] = test_input($_POST['EmpObs']) ?? '';
+$_POST['EmpID'] = test_input($_POST['EmpID']) ?? '';
 
 $_POST['ProcDesc'] = test_input($_POST['ProcDesc']) ?? '';
 $_POST['ProcCost'] = test_input($_POST['ProcCost']) ?? '';
-$_POST['ProcObs']  = test_input($_POST['ProcObs']) ?? '';
-$_POST['ProcID']   = test_input($_POST['ProcID']) ?? '';
+$_POST['ProcObs'] = test_input($_POST['ProcObs']) ?? '';
+$_POST['ProcID'] = test_input($_POST['ProcID']) ?? '';
 
-$_POST['PlantID']   = test_input($_POST['PlantID']) ?? '';
+$_POST['PlantID'] = test_input($_POST['PlantID']) ?? '';
 $_POST['PlantDesc'] = test_input($_POST['PlantDesc']) ?? '';
 
-$_POST['PlanoID']   = test_input($_POST['PlanoID']) ?? '';
+$_POST['PlanoID'] = test_input($_POST['PlanoID']) ?? '';
 $_POST['PlanoDesc'] = test_input($_POST['PlanoDesc']) ?? '';
-$_POST['PlanoCod']  = test_input($_POST['PlanoCod']) ?? '';
-$_POST['PlanoObs']  = test_input($_POST['PlanoObs']) ?? '';
-$_POST['PlanoEsta']  = ($_POST['PlanoEsta']) ?? '';
+$_POST['PlanoCod'] = test_input($_POST['PlanoCod']) ?? '';
+$_POST['PlanoObs'] = test_input($_POST['PlanoObs']) ?? '';
+$_POST['PlanoEsta'] = ($_POST['PlanoEsta']) ?? '';
 $PlanoEsta = ($_POST['PlanoEsta'] == 'on') ? '0' : '1';
 
-$_POST['EstDesc']  = test_input($_POST['EstDesc']) ?? '';
+$_POST['EstDesc'] = test_input($_POST['EstDesc']) ?? '';
 $_POST['EstColor'] = test_input($_POST['EstColor']) ?? '';
-$_POST['EstID']    = test_input($_POST['EstID']) ?? '';
-$_POST['EstTipo']  = test_input($_POST['EstTipo']) ?? 'Abierto';
+$_POST['EstID'] = test_input($_POST['EstID']) ?? '';
+$_POST['EstTipo'] = test_input($_POST['EstTipo']) ?? 'Abierto';
 
 $_POST['checkProc'] = test_input($_POST['checkProc']) ?? '';
 $_POST['PlaProPlan'] = test_input($_POST['PlaProPlan']) ?? '';
 $_POST['PlaProDesc'] = test_input($_POST['PlaProDesc']) ?? '';
 
-$_POST['ProyIniFin']      = $_POST['ProyIniFin'] ?? '';
-$_POST['ProyDesc']        = $_POST['ProyDesc'] ?? '';
-$_POST['ProyNom']         = $_POST['ProyNom'] ?? '';
-$_POST['ProyEmpr']        = $_POST['ProyEmpr'] ?? '';
-$_POST['ProyPlant']       = $_POST['ProyPlant'] ?? '';
-$_POST['ProyResp']        = $_POST['ProyResp'] ?? '';
-$_POST['ProyEsta']        = $_POST['ProyEsta'] ?? '';
-$_POST['ProyObs']         = $_POST['ProyObs'] ?? '';
+$_POST['ProyIniFin'] = $_POST['ProyIniFin'] ?? '';
+$_POST['ProyDesc'] = $_POST['ProyDesc'] ?? '';
+$_POST['ProyNom'] = $_POST['ProyNom'] ?? '';
+$_POST['ProyEmpr'] = $_POST['ProyEmpr'] ?? '';
+$_POST['ProyPlant'] = $_POST['ProyPlant'] ?? '';
+$_POST['ProyResp'] = $_POST['ProyResp'] ?? '';
+$_POST['ProyEsta'] = $_POST['ProyEsta'] ?? '';
+$_POST['ProyObs'] = $_POST['ProyObs'] ?? '';
 $_POST['ProyPlantPlanos'] = $_POST['ProyPlantPlanos'] ?? 'NULL';
 $_POST['PlantPlano'] = $_POST['PlantPlano'] ?? '';
 $_POST['ProyLiPlanos'] = $_POST['ProyLiPlanos'] ?? '';
 $_POST['ProyIniFin'] = test_input($_POST['ProyIniFin']);
-$_POST['ProyDesc']   = test_input($_POST['ProyDesc']);
-$_POST['ProyNom']    = test_input($_POST['ProyNom']);
-$_POST['ProyEmpr']   = test_input($_POST['ProyEmpr']);
-$_POST['ProyPlant']  = test_input($_POST['ProyPlant']);
-$_POST['ProyResp']   = test_input($_POST['ProyResp']);
-$_POST['ProyEsta']   = test_input($_POST['ProyEsta']);
-$_POST['ProyObs']    = test_input($_POST['ProyObs']);
+$_POST['ProyDesc'] = test_input($_POST['ProyDesc']);
+$_POST['ProyNom'] = test_input($_POST['ProyNom']);
+$_POST['ProyEmpr'] = test_input($_POST['ProyEmpr']);
+$_POST['ProyPlant'] = test_input($_POST['ProyPlant']);
+$_POST['ProyResp'] = test_input($_POST['ProyResp']);
+$_POST['ProyEsta'] = test_input($_POST['ProyEsta']);
+$_POST['ProyObs'] = test_input($_POST['ProyObs']);
 $_POST['PlantPlano'] = test_input($_POST['PlantPlano']);
 
 $_SESSION['RECID_USER'] = $_SESSION['RECID_USER'] ?? '';
@@ -541,11 +541,11 @@ if ($_POST['EmpSubmit'] == 'alta') {
     }
     if (isset($_POST['ProyIniFin']) && !empty($_POST['ProyIniFin'])) {
         $DateRange = explode(' al ', $_POST['ProyIniFin']);
-        $ProyIni  = test_input(dr_fecha($DateRange[0]));
-        $ProyFin  = test_input(dr_fecha($DateRange[1]));
+        $ProyIni = test_input(dr_fecha($DateRange[0]));
+        $ProyFin = test_input(dr_fecha($DateRange[1]));
     } else {
-        $ProyIni  = date('Ymd');
-        $ProyFin  = date('Ymd');
+        $ProyIni = date('Ymd');
+        $ProyFin = date('Ymd');
     }
 
     /** Inicio de proceso de asignacion de planos */
@@ -577,9 +577,9 @@ if ($_POST['EmpSubmit'] == 'alta') {
     $ProyPlantPlanos = $_POST['ProyPlantPlanos'];
 
     $DateRange = explode(' al ', $_POST['ProyIniFin']);
-    $ProyIni   = test_input(dr_fecha($DateRange[0]));
-    $ProyFin   = test_input(dr_fecha($DateRange[1]));
-    $proyObs   = test_input($_POST['ProyObs']);
+    $ProyIni = test_input(dr_fecha($DateRange[0]));
+    $ProyFin = test_input(dr_fecha($DateRange[1]));
+    $proyObs = test_input($_POST['ProyObs']);
     $query = "UPDATE proy_proyectos SET ProyDesc='$_POST[ProyDesc]', ProyNom='$_POST[ProyNom]', ProyPlant='$_POST[ProyPlant]', ProyPlantPlano=$ProyPlantPlanos, ProyResp='$_POST[ProyResp]', ProyEsta='$_POST[ProyEsta]', ProyObs='$proyObs', ProyIni = '$ProyIni', ProyFin = '$ProyFin' WHERE ProyID='$_POST[ProyID]'";
     $updateProyecto = pdoQuery($query);
     if ($updateProyecto) {
@@ -604,12 +604,12 @@ if ($_POST['EmpSubmit'] == 'alta') {
 } else if ($_POST['toExcel'] == true) {
 
     $_POST['_c'] = ($_POST['_c']) ?? '';
-    $_GET['_c']  = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
+    $_GET['_c'] = $_POST['_c']; // recid de la cuenta para poder conectarnos a la base de datos de SQL Server
     emptyData($_POST['_c'], 'No se recibieron datos de cuenta'); // Validar que se recibieron datos
-    $dataCuenta  = getIniCuenta($_POST['_c']); // Obtener el host de la cuenta
-    // print_r($dataCuenta).exit;
-    $urlHost  = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
-    $idCliente  = $dataCuenta['idCompany']; // Obtener el host de la cuenta
+    $dataCuenta = getIniCuenta($_POST['_c']); // Obtener el host de la cuenta
+    // print_r($dataCuenta) . exit;
+    $urlHost = $dataCuenta['hostCHWeb']; // Obtener el host de la cuenta
+    $idCliente = $dataCuenta['idCompany']; // Obtener el host de la cuenta
 
     $dataRequest = $_REQUEST;
     $dataRequest['idCliente'] = $idCliente;
@@ -634,7 +634,7 @@ if ($_POST['EmpSubmit'] == 'alta') {
 
     $iniVal = (intval(str_replace(':', '', $ini)));
     $finVal = (intval(str_replace(':', '', $fin)));
-    
+
     if ($iniVal > $finVal) {
         PrintRespuestaJson('error', 'La hora de inicio debe ser menor a la hora de Fin');
         exit;
@@ -647,11 +647,11 @@ if ($_POST['EmpSubmit'] == 'alta') {
         }
     }
 
-    if(strlen($ini) < 5) {
+    if (strlen($ini) < 5) {
         PrintRespuestaJson('error', 'Formato de hora de inicio incorrecto');
         exit;
     }
-    
+
     if (strlen($fin) < 5) {
         PrintRespuestaJson('error', 'Formato de hora de fin incorrecto');
         exit;
@@ -665,7 +665,7 @@ if ($_POST['EmpSubmit'] == 'alta') {
         $qUser = "SELECT usr.id AS 'idUser' FROM usuarios usr INNER JOIN mod_roles mrol ON usr.rol=mrol.id_rol LEFT JOIN proy_tareas_desc ON usr.id = proy_tareas_desc.TarDesUsr WHERE usr.cliente='$_SESSION[ID_CLIENTE]' AND mrol.modulo=43 AND usr.estado='0' GROUP BY usr.id ORDER BY `usr`.`nombre` ASC";
         $r = array_pdoQuery($qUser);
 
-            $all = ",(NULL, '$ini', '$fin')";
+        $all = ",(NULL, '$ini', '$fin')";
         foreach ($r as $key => $v) {
             $user[] = "($v[idUser], '$ini', '$fin')";
         }
@@ -682,17 +682,17 @@ if ($_POST['EmpSubmit'] == 'alta') {
     }
 } else if ($_POST['setDesc'] == '1') {
 
-    $_POST['TarDesUsr']  = ($_POST['TarDesUsr']) ?? '';
-    $_POST['TarDesNom']  = ($_POST['TarDesNom']) ?? '';
-    $_POST['TarDesLeg']  = ($_POST['TarDesLeg']) ?? '';
-    $_POST['TarDesIni']  = ($_POST['TarDesIni']) ?? '';
-    $_POST['TarDesFin']  = ($_POST['TarDesFin']) ?? '';
+    $_POST['TarDesUsr'] = ($_POST['TarDesUsr']) ?? '';
+    $_POST['TarDesNom'] = ($_POST['TarDesNom']) ?? '';
+    $_POST['TarDesLeg'] = ($_POST['TarDesLeg']) ?? '';
+    $_POST['TarDesIni'] = ($_POST['TarDesIni']) ?? '';
+    $_POST['TarDesFin'] = ($_POST['TarDesFin']) ?? '';
     $_POST['TarDesEsta'] = ($_POST['TarDesEsta']) ?? '';
     $_POST['usuarioUsr'] = ($_POST['usuarioUsr']) ?? '';
 
-    $ini    = test_input($_POST['TarDesIni']); // hora de inicio
-    $fin    = test_input($_POST['TarDesFin']); // hora de fin
-    $user   = test_input($_POST['usuarioUsr']); // usuario de login
+    $ini = test_input($_POST['TarDesIni']); // hora de inicio
+    $fin = test_input($_POST['TarDesFin']); // hora de fin
+    $user = test_input($_POST['usuarioUsr']); // usuario de login
     $nombre = test_input($_POST['TarDesNom']); // nombre del usuario
     $userID = test_input($_POST['TarDesUsr']); // userid
     $legajo = test_input($_POST['TarDesLeg']); // Legajo
@@ -713,11 +713,11 @@ if ($_POST['EmpSubmit'] == 'alta') {
         }
     }
 
-    if(strlen($ini) < 5) {
+    if (strlen($ini) < 5) {
         PrintRespuestaJson('error', 'Formato de hora de inicio incorrecto');
         exit;
     }
-    
+
     if (strlen($fin) < 5) {
         PrintRespuestaJson('error', 'Formato de hora de fin incorrecto');
         exit;
@@ -736,13 +736,13 @@ if ($_POST['EmpSubmit'] == 'alta') {
     emptyData($userID, 'Usuario requerido'); // Validar que se recibieron datos
 
     $d = "DELETE FROM `proy_tareas_desc` WHERE TarDesUsr = $userID";
-    if($userID=='null'){
+    if ($userID == 'null') {
         $d = "DELETE FROM `proy_tareas_desc` WHERE TarDesUsr IS NULL";
     }
     if (pdoQuery($d)) {
         $i = "INSERT INTO `proy_tareas_desc` (`TarDesUsr`, `TarDesIni`, `TarDesFin`, `TarDesEsta`) VALUES ($userID, '$ini', '$fin', '$estado')";
         if (pdoQuery($i)) {
-            $estaStr = ($estado == '0') ? "activo":"inactivo";
+            $estaStr = ($estado == '0') ? "activo" : "inactivo";
             PrintRespuestaJson('ok', 'Datos guardados');
             auditoria("Proyectos - Tareas: Se configuró descanso de usuario $nombre. De $ini a $fin. Estado $estaStr", 'A', '', '37');
             exit;

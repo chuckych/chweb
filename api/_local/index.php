@@ -2,15 +2,29 @@
 
 require __DIR__ . '../../../vendor/autoload.php';
 
-foreach (glob(__DIR__ . '/Classes/*.php') as $filename) {
+foreach (glob(__DIR__ . '/Classes/*.php') as $filename) { // Incluye las clases
     require $filename;
 }
 
-$_SERVER['HTTP_TOKEN'] ?? ''; // Token de la petición
+$HTTP_TOKEN = $_SERVER['HTTP_TOKEN'] ?? ''; // Token de la petición
 $inicio = microtime(true); // Tiempo de inicio del proceso
 
 $env = new Classes\Env; // Instancia de la clase Env
 
+function getIni($url) // obtiene el json de la url
+{
+    if (!file_exists($url)) { // Si no existe el archivo
+        writeLog("No existe archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getIni.log", ''); // escribimos en el log
+        return false; // devolvemos false
+    }
+    $data = file_get_contents($url); // obtenemos el contenido del archivo
+    if (!$data) { // si el contenido está vacío
+        writeLog("No hay informacion en el archivo \"$url\"", __DIR__ . "/logs/" . date('Ymd') . "_getIni.log", ''); // escribimos en el log
+        return false; // devolvemos false
+    }
+    $data = parse_ini_file($url, true); // Obtenemos los datos del data.php
+    return $data ?? []; // devolvemos el json
+}
 foreach ($env->get() as $key => $value) {
     putenv("$key=$value");
 }
@@ -21,17 +35,9 @@ $base = explode('/', $base); // Divide el nombre del directorio en un array
 define('HOMEHOST', $base[1] ?? 'chweb'); // Nombre del directorio actual
 define('PATH_APIKEY', '../../mobileApikey.php'); // Path Apikey
 
-$response = new Classes\Response;
-$clientes = new Classes\Clientes; // Instancia de la clase Clientes
 use flight\Engine;
-
-$api  = new Engine();
-
-// Flight::json($conectar->getConn());
-
-$api->route('GET /clientes', [$clientes, 'get_clientes']); // Obtiene los clientes
-$api->route('POST /clientes', [$clientes, 'alta_cliente']); // Obtiene los clientes
-$api->route('PUT /clientes/@IDCliente', [$clientes, 'edita_cliente']); // Obtiene los clientes
+$api = new Engine();
+$response = new Classes\Response;
 
 $api->map('notFound', [$response, 'notFound']);
 $api->map('Forbidden', function ($mensaje) use ($response) {
@@ -43,7 +49,7 @@ $api->map('Forbidden', function ($mensaje) use ($response) {
 $api->map('error', function ($ex) use ($api, $response) {
 
     $code_protected = $ex->getCode() ?? 400;
-    $error_message  = $ex->getMessage() ?? 'Error desconocido';
+    $error_message = $ex->getMessage() ?? 'Error desconocido';
 
     switch ($code_protected) {
         case 404:
@@ -57,7 +63,7 @@ $api->map('error', function ($ex) use ($api, $response) {
             break;
     }
 
-    $inicio  = microtime(true);
+    $inicio = microtime(true);
     $nameLog = date('Ymd') . '_error_.log'; // path Log Api
     $nameInstance = get_class($ex);
 
@@ -86,7 +92,26 @@ $api->map('error', function ($ex) use ($api, $response) {
     $nameInstance = $nameInstance !== '' ? "{$nameInstance}: " : '';
 
     $company = getenv('ID_COMPANY') !== false ? getenv('ID_COMPANY') : '';
-    $response->respuesta([], 0,  "{$nameInstance}{$error_message}", $code_protected, $inicio, 0, $company);
+    $response->respuesta([], 0, "{$nameInstance}{$error_message}", $code_protected, $inicio, 0, $company);
 });
+
+$iniData = getIni(PATH_APIKEY) ?? []; // Obtiene los datos del archivo de configuración de la api
+
+if (isset($iniData[0]['Token'])) { // Si el token está definido
+    $iniData = array_column($iniData, null, 'Token'); // indexa el array por el token
+    $validToken = $iniData[$HTTP_TOKEN] ?? $api->Forbidden('Token inválido'); // Si el token no es válido, devuelve un error
+} else {
+    $api->Forbidden('Token inválido');
+}
+
+$clientes = new Classes\Clientes; // Instancia de la clase Clientes
+$params = new Classes\Params; // Instancia de la clase Params
+
+$api->route('GET /clientes', [$clientes, 'get_clientes']); // Obtiene los clientes
+$api->route('POST /clientes', [$clientes, 'alta_cliente']); // Obtiene los clientes
+$api->route('PUT /clientes/@IDCliente', [$clientes, 'edita_cliente']); // Obtiene los clientes
+$api->route('GET /params', [$params, 'get']); // Obtiene los params
+$api->route('POST /params', [$params, 'alta_multiple']); // alta de params
+$api->route('DELETE /params', [$params, 'delete']); // Eliminar params
 
 $api->start();

@@ -584,6 +584,7 @@ class Horas
         $DiaF = $datos['DiaF'] ?? [];
         $Hora = $datos['Hora'] ?? [];
         $Esta = $datos['Esta'] ?? [];
+        $Dias = $datos['Dias'] ?? []; // Dias de la semana
         $HsTrAT = $datos['HsTrAT'] ?? '';
         $HoraMin = $datos['HoraMin'] ?? ''; // Hora minima
         $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
@@ -613,6 +614,7 @@ class Horas
             'Sucu' => !is_array($Sucu) ? [] : $Sucu,
             'DiaL' => !is_array($DiaL) ? [] : $DiaL,
             'DiaF' => !is_array($DiaF) ? [] : $DiaF,
+            'Dias' => !is_array($Dias) ? [] : $Dias,
             'Hora' => !is_array($Hora) ? [] : $Hora,
             'Esta' => !is_array($Esta) ? [] : $Esta,
             'HoraMin' => empty($HoraMin) ? '' : ($HoraMin),
@@ -649,6 +651,7 @@ class Horas
                 'Sucu' => ['arrSmallint'],
                 'DiaL' => ['arrAllowed01'],
                 'DiaF' => ['arrAllowed01'],
+                'Dias' => ['arrAllowed1a7'],
                 'Hora' => ['arrSmallint'],
                 'Esta' => ['arrSmallint'],
                 'HoraMin' => ['time'],
@@ -723,9 +726,10 @@ class Horas
             $wc[] = ($datos["Sucu"]) ? " FICHAS.FicSucu IN ($Sucu)" : '';
             $wc[] = ($datos["DiaL"]) ? " FICHAS.FicDiaL IN ($DiaL)" : '';
             $wc[] = ($datos["DiaF"]) ? " FICHAS.FicDiaF IN ($DiaF)" : '';
+            $wc[] = ($datos["Dias"]) ? " DATEPART(dw, FICHAS1.FicFech) IN (" . implode(",", $datos["Dias"]) . ")" : '';
             $wc[] = ($datos["Hora"]) ? " FICHAS1.FicHora IN ($Hora)" : '';
             $wc[] = ($datos["Esta"]) ? " FICHAS1.FicEsta IN ($Esta)" : '';
-            $ColFiltroMinMax = ($MinMaxH) ? "FICHAS1.FicHsAu2" : "FICHAS1.FicHsAu";
+            $ColFiltroMinMax = $MinMaxH ? "FICHAS1.FicHsAu2" : "FICHAS1.FicHsAu";
             $wc[] = ($datos["HoraMin"]) ? " $ColFiltroMinMax >= '$HoraMin'" : '';
             $wc[] = ($datos["HoraMax"]) ? " $ColFiltroMinMax <= '$HoraMax'" : '';
             // $wc[] = ($datos["HoraMin"]) ? " dbo.fn_STRMinutos($ColFiltroMinMax) >= dbo.fn_STRMinutos('$HoraMin')" : '';
@@ -841,6 +845,7 @@ class Horas
             $sql .= " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume";
             $sql .= " WHERE FicHora > 0";
             $sql .= " AND FICHAS1.FicFech BETWEEN '$FechIni' AND '$FechFin'";
+            // $sql .= " AND DATEPART(dw, FICHAS1.FicFech) IN (2, 3, 4, 5, 6, 7)";
             $sql .= $whereConditions;
             $sql .= " GROUP BY FICHAS1.FicLega, PERSONAL.LegApNo";
             $sql .= ", $groupByEstruct";
@@ -877,7 +882,7 @@ class Horas
             $stmt1->closeCursor(); // Cierro el cursor
             $stmt2->closeCursor(); // Cierro el cursor
 
-            $nuevo_array = array();
+            $nuevo_array = [];
 
             // Recorremos el array original y reestructuramos los datos
             foreach ($horas as $elemento) {
@@ -963,7 +968,7 @@ class Horas
                 );
             }
 
-            $sumas = array();
+            $sumas = [];
 
             foreach ($nuevo_array as $empleado) {
                 $datHsATyTR[] = ($HsTrAT == 1) ? $empleado['HsATyTR'] : []; // Si se quiere el total de horas trabajadas y a trabajar, creamos un array con los valores de horas trabajadas y a trabajar
@@ -1102,7 +1107,7 @@ class Horas
         $stmt->closeCursor();
         return $data;
     }
-    public function get_tipo_hora()
+    public function data()
     {
         $conn = $this->conect->conn();
         $sql = "SELECT THoCodi, THoDesc, THoDesc2, THoID, THoColu, FechaHora FROM TIPOHORA WHERE TIPOHORA.THoCodi > 0";

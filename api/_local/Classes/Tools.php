@@ -143,7 +143,8 @@ class Tools
     }
     public function agrupar_por($array, $key)
     {
-        if (!$array) return [];
+        if (!$array)
+            return [];
         $result = [];
         foreach ($array as $item) {
             $result[$item[$key]][] = $item;

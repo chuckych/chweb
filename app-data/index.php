@@ -997,13 +997,110 @@ Flight::route('/fichas/dates', function () {
     $data = getFichasMinMax();
     Flight::json($data);
 });
-Flight::route('GET /horas/tipohora', function () {
+Flight::route('GET /horas', function () {
     $data = get_tipo_hora();
     Flight::json($data);
+});
+Flight::route('GET /novedades', function () {
+    $data = get_novedades();
+    Flight::json($data);
+});
+Flight::route('GET /nove-horas/data', function () {
+    $nove = get_novedades();
+    $horas = get_tipo_hora();
+    $queryParams = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => '', 'modulo' => 46, 'valores' => ''];
+    $params = get_params($queryParams) ?? [];
+
+    $paramsKeyDescripcion = array_column($params, null, 'descripcion');
+
+    $mapParams = [
+        'Enferm',
+        'Accid',
+        'Varias',
+        'Incid',
+        'Susp. Disc',
+        'Ideales',
+        'Vac',
+        'Susp',
+        'Paro',
+    ];
+    $tiposHoras = $horas;
+
+    $Existentes = array_filter($paramsKeyDescripcion, function ($key) use ($mapParams) {
+        return in_array($key, $mapParams);
+    }, ARRAY_FILTER_USE_KEY);
+
+    // Obtener los valores de $mapParams que no están en $Existentes
+    $NoExistentes = array_filter($mapParams, function ($key) use ($Existentes) {
+        return !array_key_exists($key, $Existentes);
+    });
+
+    $NoExistentes = array_values($NoExistentes); // Re-indexar el array
+
+    if ($NoExistentes) {
+        $params = [];
+        foreach ($NoExistentes as $key => $value) {
+            $bodyAdd[] = [
+                'descripcion' => $value,
+                'valores' => '',
+                'modulo' => 46,
+                'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+            ];
+        }
+        add_params($bodyAdd);
+        $params = get_params($queryParams) ?? [];
+    }
+
+    $horasParams = horasCustom($params);
+
+    array_push($horas, ...$horasParams);
+
+    $queryColumn = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => 'columnas', 'modulo' => 46, 'valores' => ''];
+    $columnas = get_params($queryColumn) ?? [];
+    $valores = $columnas[0]['valores'] ?? [];
+
+    $queryColumnSorted = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => 'columnasSorted', 'modulo' => 46, 'valores' => ''];
+    $columnasSorted = get_params($queryColumnSorted) ?? [];
+    $valoresSorted = $columnasSorted[0]['valores'] ?? [];
+
+    if ($valores) {
+        $valores = explode(',', $valores);
+        $valores = array_map('intval', $valores);
+    }
+
+
+    if ($valoresSorted) {
+        // Convertir $valoresSorted en un array de enteros
+        $valoresSorted = array_map('intval', explode(',', $valoresSorted));
+        // Crear un array asociativo con THoCodi como clave y el array como valor
+        $horas = array_column($horas, null, 'THoCodi');
+        // Crear un nuevo array ordenado según $valoresSorted
+        $horasOrdenadas = [];
+        foreach ($valoresSorted as $THoCodi) {
+            if (isset($horas[$THoCodi])) {
+                $horasOrdenadas[$THoCodi] = $horas[$THoCodi];
+            }
+        }
+
+        $horasRestantes = array_diff_key($horas, $horasOrdenadas);
+        $horas = array_merge($horasOrdenadas, $horasRestantes);
+    }
+
+    Flight::json([
+        'novedades' => $nove ?? [],
+        'horas' => $horas ?? [],
+        'tiposHoras' => $tiposHoras ?? [],
+        'params' => $params ?? [],
+        'columnas' => $valores ?? [],
+        'columnasSorted' => $valoresSorted ?? [],
+        'horasOrdenadas' => $horasOrdenadas ?? [],
+        'horasRestantes' => $horasRestantes ?? [],
+    ]);
 });
 
 Flight::route('POST /prysmian/@tipo', function ($tipo) {
     try {
+        $cliente = $_SESSION['ID_CLIENTE'] ?? ''; // Obtener el ID del cliente
 
         $validRequestTypes = ['view', 'xls']; // Tipos de reporte válidos
 
@@ -1013,7 +1110,6 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
 
         $request = Flight::request() ?? []; // Obtener la petición
         $payload = $request->data ?? []; // Obtener los datos de la petición
-
         if (!$payload) { // Si no hay datos, retornar un array vacío
             throw new Exception('No se recibieron datos', 204);
         }
@@ -1034,6 +1130,207 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     include __DIR__ . '../../informes/custom/prysmian/xls.php';
                 }
                 break;
+            case '2':
+                try {
+                    unset($payload['data']);
+
+                    $payload['NovA'] = [];
+                    $payload['getHor'] = "1";
+                    $payload['getNov'] = "1";
+
+                    foreach (['FechIni', 'FechFin'] as $key) {
+                        if (!$payload[$key] ?? '') { // Validar que las fechas estén presentes
+                            throw new Exception("{$key} es requerida", 400);
+                        }
+                        $payload[$key] = date('Y-m-d', strtotime($payload[$key])); // Convertir la fecha a formato 'Y-m-d'
+                    }
+                    // Obtener la lista de legajos según los parámetros especificados en $payload
+                    $legajos = v1_api('/fichas/legajos', 'POST', $payload) ?? []; // Obtener legajos
+
+                    if (!$legajos) { // Si no hay datos, retornar un array vacío
+                        throw new Exception('No se encontraron legajos', 200);
+                    }
+
+                    // Itera sobre la estructura obtenida con los parámetros especificados
+                    foreach (get_estructura(['length' => 1000, 'Estruct' => 'Sec']) ?? [] as $sector) {
+                        // Asigna al array $sectores el código del sector como clave y la primera palabra de la descripción como valor
+                        // Si no hay un espacio en la descripción, usa la descripción completa
+                        $sectores[$sector['Codi']] = strstr($sector['Desc'], ' ', true) ?: $sector['Desc'];
+                    }
+
+                    $payload['length'] = 100000;
+                    $payload['LegTipo'] = [];
+
+                    array_walk($legajos, function (&$value) use ($sectores) {
+                        // Asigna a 'FicSectStr' el valor correspondiente del array $sectores
+                        // Si no existe una clave en $sectores para 'FicSectStr', asigna una cadena vacía
+                        $value['FicSectStr'] = $sectores[$value['FicSect']] ?? '';
+                    });
+
+                    $colsExcel = colsExcel();
+
+                    if (!$colsExcel) { // Si no hay datos, retornar un array vacío
+                        return Flight::json([]);
+                    }
+
+                    $keysHoras = array_keys($colsExcel);
+                    $legajosColumn = array_column($legajos, null, 'FicLega');
+                    $defaultValues = array_fill_keys($keysHoras, 0); // añadir keyHoras a legajosColumn con el valor 0
+                    array_walk($legajosColumn, function (&$item) use ($defaultValues) { // Iterar sobre legajosColumn
+                        $item += $defaultValues; // Añadir valores por defecto
+                    });
+
+                    $payload['HsTrAT'] = 1;
+                    $horas = v1_api('/horas/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
+                    $horasData = $horas['data'] ?? []; // Obtener datos de horas totales por legajo
+                    $horasColumn = array_column($horasData, null, 'Lega');
+
+                    $payload['Dias'] = [2, 3, 4, 5, 6, 7];
+                    $payload['Hora'] = [90];
+                    $payload['HoraMin'] = "00:01";
+                    $ideales = v1_api('/horas/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
+                    $idealesData = $ideales['data'] ?? []; // Obtener datos de horas totales por legajo
+                    $idealesColumn = array_column($idealesData, null, 'Lega');
+                    foreach (['Dias', 'Hora', 'HoraMin'] as $value) {
+                        unset($payload[$value]);
+                    }
+
+                    // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
+                    array_walk($horasColumn, function ($value, $Lega) use (&$legajosColumn) {
+                        if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
+                            foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
+                                if (isset($total['THoDesc2'], $total['EnMinutos2'])) { // Si existen 'THoDesc2' y 'EnHoras2'
+                                    $legajosColumn[$Lega][$total['THoDesc2']] = $total['EnMinutos2']; // Asignar 'EnHoras2' a 'THoDesc2'
+                                }
+                            }
+                        }
+                        $hsTr = $value['HsATyTR'] ?? ''; // Obtener 'HsATyTR'
+                        if (!empty($hsTr)) { // Si hay datos en 'HsATyTR'
+                            $legajosColumn[$Lega]['HsATr'] = $hsTr['HsATEnMinutos']; // Asignar 'HsATr' a 'HsATEnHoras'
+                            $legajosColumn[$Lega]['HsTr'] = $hsTr['HsTrEnMinutos']; // Asignar 'HsTr' a 'HsTrEnHoras'
+                        }
+                    });
+
+                    array_walk($idealesColumn, function ($value, $Lega) use (&$legajosColumn) {
+                        if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
+                            foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
+                                if (isset($total['THoDesc2'], $total['EnMinutos2'])) { // Si existen 'THoDesc2' y 'EnHoras2'
+                                    $legajosColumn[$Lega]['Ideales'] = $total['EnMinutos2']; // Asignar 'EnHoras2' a 'THoDesc2'
+                                }
+                            }
+                        }
+                    });
+
+                    $clavesCustom = [
+                        'Enferm' => 'Enferm',
+                        'Accid' => 'Accid',
+                        'Susp. Disc' => 'SuspDisc',
+                        'Vac' => 'Vac',
+                        'Susp' => 'Susp',
+                        'Paro' => 'Paro',
+                        'Incid' => 'Incid',
+                    ];
+
+                    $valoresCustom = get_params(['cliente' => $cliente, 'descripcion' => '', 'modulo' => 46]) ?? [];
+                    $params = $valoresCustom;
+                    $valoresCustom = array_column($valoresCustom, null, 'descripcion');
+                    foreach ($clavesCustom as $key => $clave) {
+                        $codigosNove = explode(',', $valoresCustom[$key]['valores'] ?? '') ?? []; // Obtener los codigos de novedad de 'valoresCustom' segun $key y convertirlos en un array
+                        $payload['Nove'] = $codigosNove;
+                        $legajosColumn = horas_custom($legajosColumn, $payload, $key);
+                        unset($payload['Nove']);
+                    }
+
+                    $tipoHora = v1_api('/horas/data', 'GET', []) ?? []; // Obtener legajos
+
+                    $horasParams = horasCustom($params);
+
+                    array_push($horasParams, ...$tipoHora);
+                    $detalleTipoHoras = array_column($horasParams, null, 'THoCodi');
+
+                    $tipoHora = array_column($tipoHora, null, 'THoCodi');
+                    $strMerienda = $tipoHora['50']['THoDesc2'] ?? 'MERIENDA'; // Obtener la descripcion 2 de 'HORAS MERIENDA'
+                    $strNormales = $tipoHora['90']['THoDesc2'] ?? 'NORMAL'; // Obtener la descripcion 2 de 'HORAS NORMALES'
+
+                    foreach ($legajosColumn as $key => $value) {
+                        $horasATrabajar = $value['HsATr'] ?? 0;
+                        $horasMerienda = $value[$strMerienda] ?? 0;
+                        $horasNormales = $value[$strNormales] ?? 0;
+                        $varias = array_sum([$horasATrabajar, $horasMerienda]);
+
+                        $variasARestar = array_sum([
+                            $horasNormales,
+                            $value['Enferm'] ?? 0,
+                            $value['Accid'] ?? 0,
+                            $value['Susp. Disc'] ?? 0,
+                            $value['Vac'] ?? 0,
+                            $value['Susp'] ?? 0,
+                            $value['Paro'] ?? 0,
+                            $value['Incid'] ?? 0
+                        ]);
+
+                        $calculoVarias = $varias - $variasARestar;
+                        $legajosColumn[$key]['Varias'] = $calculoVarias >= 0 ? $calculoVarias : 0;
+                    }
+
+                    // recorrer legajosColumn y todos los valores que sean del tipo integer aplicarle al funcion minutos_a_horas
+                    array_walk_recursive($legajosColumn, function (&$item, $key) {
+                        if (is_int($item)) {
+                            $item = minutos_a_horas($item);
+                        }
+                    });
+
+                    $columnasSorted = $valoresCustom['columnasSorted']['valores'] ?? '';
+                    $columnasSorted = explode(',', $columnasSorted);
+                    $columnasSorted = array_map('intval', $columnasSorted);
+
+
+                    $initKeys = [
+                        'FicSectStr' => [
+                            'titulo' => 'Sector',
+                            'tipo' => 'string',
+                        ],
+                        'FicLega' => [
+                            'titulo' => 'Legajo',
+                            'tipo' => 'string',
+                        ],
+                        'FicApNo' => [
+                            'titulo' => 'Apellido y Nombre',
+                            'tipo' => 'string',
+                        ],
+                    ];
+
+                    foreach ($columnasSorted as $key => $value) {
+                        $clave = $detalleTipoHoras[$value]['THoDesc2'] ?? '';
+                        $columnKeys[$clave] = [
+                            'titulo' => $clave,
+                            'tipo' => 'number',
+                        ];
+                    }
+
+                    $columnKeys = array_merge($initKeys, $columnKeys);
+
+                    $rs = [
+                        'data' => array_values($legajosColumn),
+                        'columnKeys' => $columnKeys,
+                    ];
+
+                    if ($tipo == 'view') {
+                        return Flight::json($rs);
+                    }
+
+                    if ($tipo == 'xls') {
+                        $Datos['Data'] = $legajosColumn;
+                        $colsExcel = colsExcel();
+                        require __DIR__ . '/fn_spreadsheet.php';
+                        include __DIR__ . '../../informes/custom/prysmian/xls2.php';
+                    }
+
+                } catch (\Throwable $th) {
+                    throw new Exception($th->getMessage(), 400);
+                }
+
+                break;
             default:
                 Flight::json([]);
                 break;
@@ -1052,6 +1349,26 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
     }
 
 });
+
+Flight::route('POST /params', function () {
+
+    $request = Flight::request();
+    $payload = $request->data;
+    $payload['cliente'] = $_SESSION['ID_CLIENTE'] ?? '';
+
+    Flight::json(add_params([$payload]));
+
+});
+Flight::route('GET /params', function () {
+    $request = Flight::request();
+    $queryData = $request->query ?? '';
+
+    $queryColumn = ['cliente' => $_SESSION['ID_CLIENTE'] ?? '', 'descripcion' => $queryData['descripcion'], 'modulo' => $queryData['modulo'], 'valores' => ''];
+
+    $params = get_params($queryColumn) ?? [];
+    Flight::json($params);
+});
+
 
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
