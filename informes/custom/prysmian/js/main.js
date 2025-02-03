@@ -926,11 +926,12 @@ const submitData = async (action) => {
     }).catch((error) => {
         const errorMessage = error.response?.data?.message ?? error.message
         notify(errorMessage, 'danger', 2000, 'right');
+        $('#div_table').removeClass('loader-in');
+        selectorClick.classList.toggle('loader-in', false);
     });
 }
 const dt_grilla = async (idTable, dataSource, columnConfigs, selectorDiv, titulo = '', opt = {}) => {
     const divTable = selectorDiv && document.querySelector(selectorDiv);
-    console.log({ idTable, dataSource, columnConfigs, selectorDiv, divTable });
 
     if (!divTable) return;
     // console.log({ idTable, dataSource, columnConfigs, selectorDiv, divTable });
