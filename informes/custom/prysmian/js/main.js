@@ -233,9 +233,10 @@ getFechas().then(data => {
         e.stopImmediatePropagation();
 
         const value = e.params.data.id;
-        const dataHoras = ls.get(LS_TIPO_HORA) ?? [];
+        // const dataHoras = ls.get(LS_TIPO_HORA) ?? [];
         const dataNovedades = ls.get(LS_NOVEDADES) ?? [];
         const btnConfigAct = document.querySelector('#config-actividad');
+        const div_table_tipo_hora = document.querySelector('#div_table_tipo_hora') ?? null;
 
         if (value == 2) {
 
@@ -245,54 +246,66 @@ getFechas().then(data => {
                 e.preventDefault();
                 e.stopImmediatePropagation();
 
-                const textTHoDesc = (THoDesc, THoDesc2 = '') => `
-                <div class="d-flex flex-column">
-                    <div>${THoDesc}</div>
-                    <div class="text-secondary font07">${THoDesc2}</div>
-                </div>
-            `;
+                btnConfigAct.classList.add('loader-in');
+                if (div_table_tipo_hora) div_table_tipo_hora.classList.add('loader-in');
 
-                const colCheckBox = (row) => {
-                    const id = row.THoCodi !== '' ? row.THoCodi : slugify(row.THoDesc);
-                    return `
+                noveHorasData().then(data => {
+
+                    const dataHoras = data.horas ?? [];
+
+                    btnConfigAct.classList.remove('loader-in');
+                    if (div_table_tipo_hora) div_table_tipo_hora.classList.remove('loader-in');
+
+                    const textTHoDesc = (THoDesc, THoDesc2 = '') => `
+                        <div class="d-flex flex-column">
+                            <div>${THoDesc}</div>
+                            <div class="text-secondary font07">${THoDesc2}</div>
+                        </div>
+                    `;
+
+                    const colCheckBox = (row) => {
+                        const id = row.THoCodi !== '' ? row.THoCodi : slugify(row.THoDesc);
+                        return `
                     <div class="custom-control custom-checkbox">
                         <input type="checkbox" class="custom-control-input" value="${id}" id="THoCodi-${id}">
                         <label class="custom-control-label" for="THoCodi-${id}"></label>
                     </div>
                 `;
-                };
-                const colCustom = (row) => {
-                    const btn = `<div class="hint--top hint--rounded hint--default hint--no-shadow" aria-label="Configurar Novedad">
+                    };
+                    const colCustom = (row) => {
+                        const btn = `<div class="hint--top hint--rounded hint--default hint--no-shadow" aria-label="Configurar Novedad">
                                     <button
                                         class="btn-nov btn btn-sm btn-outline-secondary border" type="button">
                                         <i class="bi bi-list"></i>
                                     </button>
                                 </div>`;
-                    return btn;
-                };
-                const columnHoras = [
-                    // { title: '#', render: (data, type, row, meta) => meta.row + 1 },
-                    { data: 'THoCodi', className: 'THoCodi', title: '', render: (data, type, row, meta) => data },
-                    { data: 'THoCodi', className: '', title: 'Tipo', render: (data, type, row, meta) => data < 3000 ? 'Hora' : 'Custom' },
-                    { data: 'THoDesc', title: 'Descripción', className: 'w-100', render: (data, type, row, meta) => textTHoDesc(data, row.THoDesc2) },
-                    { data: 'THoCodi', title: '', render: (data, type, row, meta) => data < 3000 ? '' : colCustom() },
-                    { data: 'THoCodi', className: 'w-100', render: (data, type, row, meta) => colCheckBox(row) },
-                ];
-                const titleConceptos = `
-                <div class="mb-2 font-weight-bolder font09 text-secondary">
-                    Conceptos
-                </div>`;
+                        return btn;
+                    };
+                    const columnHoras = [
+                        // { title: '#', render: (data, type, row, meta) => meta.row + 1 },
+                        { data: 'THoCodi', className: 'THoCodi', title: '', render: (data, type, row, meta) => data },
+                        { data: 'THoCodi', className: '', title: 'Tipo', render: (data, type, row, meta) => data < 3000 ? 'Hora' : 'Custom' },
+                        { data: 'THoDesc', title: 'Descripción', className: 'w-100', render: (data, type, row, meta) => textTHoDesc(data, row.THoDesc2) },
+                        { data: 'THoCodi', title: '', render: (data, type, row, meta) => data < 3000 ? '' : colCustom() },
+                        { data: 'THoCodi', className: 'w-100', render: (data, type, row, meta) => colCheckBox(row) },
+                    ];
+                    const titleConceptos = `
+                        <div class="mb-2 font-weight-bolder font09 text-secondary">
+                            Conceptos
+                        </div>
+                    `;
 
-                const opt = {
-                    paging: false,
-                    search: false,
-                    classTable: 'max-h-500 overflow-auto pr-1'
-                }
-                dt_grilla(`${DT_TIPO_HORA}`, dataHoras, columnHoras, '#div_table_tipo_hora', titleConceptos, opt).then(() => {
-                    marcarColumnas(`#${DT_TIPO_HORA}`); // marcar las columnas seleccionadas
-                    guardarColumna(`#${DT_TIPO_HORA}`); // guardar las columnas seleccionadas
-                    configNovedad(`#${DT_TIPO_HORA}`); // configurar las novedades
-                    sortedCols(`#${DT_TIPO_HORA}`); // ordenar las columnas seleccionadas
+                    const opt = {
+                        paging: false,
+                        search: false,
+                        classTable: 'max-h-500 overflow-auto pr-1'
+                    }
+                    dt_grilla(`${DT_TIPO_HORA}`, dataHoras, columnHoras, '#div_table_tipo_hora', titleConceptos, opt).then(() => {
+                        marcarColumnas(`#${DT_TIPO_HORA}`); // marcar las columnas seleccionadas
+                        guardarColumna(`#${DT_TIPO_HORA}`); // guardar las columnas seleccionadas
+                        configNovedad(`#${DT_TIPO_HORA}`); // configurar las novedades
+                        sortedCols(`#${DT_TIPO_HORA}`); // ordenar las columnas seleccionadas
+                    });
                 });
             });
         } else {
@@ -327,7 +340,7 @@ const marcarColumnas = (selectorTable) => {
         const table = `${selectorTable}`; // obtener la tabla
 
         if (!$.fn.DataTable.isDataTable(table)) {
-            console.log('no datatable ' + selectorTable);
+            alert('no hay tabla ' + selectorTable);
             return;
         }
 
@@ -346,12 +359,18 @@ const marcarColumnas = (selectorTable) => {
 }
 const marcarNovedades = (selectorTable, row) => {
     const tableCustom = document.querySelector(selectorTable);
-    if (!tableCustom) return;
-    const dtCustom = $(tableCustom).DataTable();
+    if (!tableCustom) return; // si no hay tabla, salir
+
+    const dtCustom = $(selectorTable).DataTable(); // obtener la instancia de la tabla
+    if (!dtCustom) return; // si no hay instancia de la tabla, salir
 
     tableCustom.addEventListener('click', (e) => {
         const targetCustom = e.target;
+
         if (targetCustom.matches('input[type="checkbox"]')) {
+            // obtener el id del checkbox marcado
+            const idCheckbox = targetCustom.id;
+
             // recorrer la tabla y obtener el value de los checkbox marcados
             const rows = dtCustom.rows().data(); // obtener los datos de la tabla
             let values = []; // array para almacenar los valores de los checkbox marcados
@@ -368,7 +387,13 @@ const marcarNovedades = (selectorTable, row) => {
                 descripcion: row.THoDesc,
                 modulo: 46
             }).then((data) => {
+                const checkbox = document.querySelector(`#dt_novedades_${row.THoCodi} #${idCheckbox}`);
+                const style = document.querySelector('style');
+                const label = `#dt_novedades_${row.THoCodi} label[for="${idCheckbox}"]`;
+                const opacity = checkbox.checked ? 1 : .7;
+                style.innerHTML += ` ${label}::before { opacity: ${opacity}; } `;
             }).catch((error) => {
+                alert('Error al guardar las novedades');
             });
             return;
         };
@@ -443,7 +468,7 @@ const saveSorted = (selectorTable) => {
         axios.post(DIR_APP_DATA + '/params', {
             valores: values, descripcion: 'columnasSorted', modulo: 46
         }).then(() => {
-            noveHorasData();
+
         })
     }
 
@@ -520,14 +545,15 @@ const configNovedad = (selectorTable) => {
                 { data: 'NovCodi', className: '', render: (data, type, row, meta) => colCheckBox(row) },
             ];
 
-            body.innerHTML = `<table id="${DT_NOVEDADES}_${row.THoCodi}" class="table w-100 text-nowrap"></table>`;
+            // body.innerHTML = `<table id="${DT_NOVEDADES}_${row.THoCodi}" class="table w-100 text-nowrap"></table>`;
+            body.innerHTML = `<div id="${DT_NOVEDADES}_${row.THoCodi}" class="table w-100 text-nowrap"></table>`;
             const opt = {
                 paging: false,
                 search: false,
                 info: false,
                 classTable: 'max-h-400 overflow-auto pr-1'
             }
-            dt_grilla(`${DT_NOVEDADES}_${row.THoCodi}`, dataNovedades, columnNovedades, '', '', opt);
+            dt_grilla(`${DT_NOVEDADES}_${row.THoCodi}`, dataNovedades, columnNovedades, '#configModal .modal-body', '', opt);
             $(`#${DT_NOVEDADES}_${row.THoCodi} thead`).remove();
 
             const dataColumn = axios.get(DIR_APP_DATA + '/params', {
@@ -536,7 +562,6 @@ const configNovedad = (selectorTable) => {
                     modulo: 46
                 }
             }).then((data) => {
-
                 const valores = data.data[0]['valores'] ?? '';
                 let count = 0;
                 if (valores) {
@@ -553,10 +578,9 @@ const configNovedad = (selectorTable) => {
                             checkbox.checked = true;
                         }
                     });
+                    marcarNovedades(`#${DT_NOVEDADES}_${row.THoCodi}`, row);
                 }
             });
-
-            marcarNovedades(`#${DT_NOVEDADES}_${row.THoCodi}`, row);
         }
     });
 }
@@ -900,7 +924,7 @@ const submitData = async (action) => {
 const dt_grilla = async (idTable, dataSource, columnConfigs, selectorDiv, titulo = '', opt = {}) => {
     const divTable = selectorDiv && document.querySelector(selectorDiv);
     if (!divTable) return;
-
+    // console.log({ idTable, dataSource, columnConfigs, selectorDiv, divTable });
     if ($.fn.DataTable.isDataTable(`#${idTable}`)) {
         $(`#${idTable}`).DataTable().destroy();
     }

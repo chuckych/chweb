@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+    <link href="estilos.css" rel="stylesheet" type="text/css" />
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "../../../../llamadas.php"; ?>
     <title><?= MODULOS['prysmian'] ?></title>
@@ -87,7 +88,7 @@
                                 </select>
                                 <button hidden
                                     class="btn btn-sm btn-outline-secondary p-2 border px-3 hint--top hint--rounded hint--default hint--no-shadow"
-                                    aria-label="Configurar conceptos" id="config-actividad">
+                                    aria-label="Configurar conceptos" id="config-actividad" style="width:60px;">
                                     <i class="bi bi-gear"></i>
                                 </button>
                             </div>

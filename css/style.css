@@ -229,11 +229,11 @@
 
  .custom-control-input:checked~.custom-control-label::before {
      color: #fff !important;
-     border-color: var(--main-bg-modcolor) !important;
-     background-color: var(--main-bg-modcolor) !important;
+     border-color: var(--main-bg-modcolor);
+     background-color: var(--main-bg-modcolor);
      box-shadow: none !important;
      outline: 0 !important;
-     opacity: .7 !important
+     opacity: .7;
  }
 
  .sub_menu:hover {
