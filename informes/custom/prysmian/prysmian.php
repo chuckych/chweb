@@ -16,7 +16,7 @@
             encabezado_mod2('bg-custom', 'white', 'folder-symlink-fill', MODULOS['prysmian'], '25', 'text-white mr-2');
         ?>
         <!-- Fin Encabezado -->
-        <div class="row bg-white p-2 radius">
+        <div class="row bg-white p-2 radius wrapper" hidden>
             <div class="col-12 col-sm-8">
                 <div class="form-row">
                     <!-- Tipo personal -->

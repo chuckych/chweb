@@ -62,7 +62,7 @@ const DIR_APP_DATA = '../../../app-data';
 
 const getLiquid = async () => {
     try {
-        const { data } = await axios.get('../../../app-data/parametros/liquid');
+        const { data } = await axios.get(DIR_APP_DATA + '/parametros/liquid');
         await ls.set(LS_PARAM_LIQUID, data ?? {});
         return data ?? {};
     } catch (error) {
@@ -72,7 +72,7 @@ const getLiquid = async () => {
 }
 const getFechas = async () => {
     try {
-        const { data } = await axios.get('../../../app-data/fichas/dates');
+        const { data } = await axios.get(DIR_APP_DATA + '/fichas/dates');
         await ls.set(LS_FECHAS, data ?? {});
         return data ?? {};
     } catch (error) {
@@ -141,8 +141,18 @@ const tipoPerString = {
 };
 getFechas().then(data => {
     noveHorasData();
+    const wrapper = document.querySelector('.wrapper');
+
     const years = data.años ?? {};
-    if (!Object.keys(years).length) return;
+    if (!Object.keys(years).length) {
+        notify('No hay fechas disponible.', 'danger', 0, 'right');
+        return;
+    };
+
+    setTimeout(() => {
+        wrapper.hidden = false;
+        wrapper.classList.add('fadeIn');
+    }, 200);
 
     const currentYear = new Date().getFullYear(); // año actual
     Object.keys(years).forEach(el => { // recorrer años
@@ -166,11 +176,6 @@ getFechas().then(data => {
 
     // const months = years[selectYear.value] ?? [];
     const months = years[yearsKeys[0]] ?? [];
-    // const anioSeleccionado = yearsKeys[0];
-    // currentMonth = new Date().getMonth() + 1;
-    // if (anioSeleccionado == currentYear) { // si el año seleccionado es el actual 
-    //     delete months[currentMonth]; 
-    // }
 
     months.sort((a, b) => b - a);
 
@@ -287,7 +292,6 @@ getFechas().then(data => {
                     marcarColumnas(`#${DT_TIPO_HORA}`); // marcar las columnas seleccionadas
                     guardarColumna(`#${DT_TIPO_HORA}`); // guardar las columnas seleccionadas
                     configNovedad(`#${DT_TIPO_HORA}`); // configurar las novedades
-
                     sortedCols(`#${DT_TIPO_HORA}`); // ordenar las columnas seleccionadas
                 });
             });
@@ -359,7 +363,7 @@ const marcarNovedades = (selectorTable, row) => {
                 }
             });
 
-            axios.post('../../../app-data/params', {
+            axios.post(DIR_APP_DATA + '/params', {
                 valores: values.join(','), // valores de los checkbox marcados
                 descripcion: row.THoDesc,
                 modulo: 46
@@ -403,7 +407,7 @@ const guardarColumna = (selectorTable) => {
             ls.set(COLUMNAS_MARCADAS, columnasMarcadas);
             const splitColumnasMarcadas = columnasMarcadas.join(',');
 
-            axios.post('../../../app-data/params', {
+            axios.post(DIR_APP_DATA + '/params', {
                 valores: splitColumnasMarcadas,
                 descripcion: 'columnas',
                 modulo: 46
@@ -418,9 +422,11 @@ const saveSorted = (selectorTable) => {
 
     const tBody = document.querySelector(`${selectorTable} tbody`);
     if (!tBody) return;
+
     let sortedContent = [];
     const checkedRows = tBody.querySelectorAll(`tr.sortable-row input[type="checkbox"]:checked`);
     if (!checkedRows) return;
+
     checkedRows.forEach(row => {
         let value = row.value; // obtener el valor del checkbox
         if (row.value) {
@@ -434,9 +440,11 @@ const saveSorted = (selectorTable) => {
     }
 
     const post = (values) => {
-        axios.post('../../../app-data/params', {
+        axios.post(DIR_APP_DATA + '/params', {
             valores: values, descripcion: 'columnasSorted', modulo: 46
-        });
+        }).then(() => {
+            noveHorasData();
+        })
     }
 
     if (sortedContent.length) {
@@ -640,7 +648,9 @@ const inputVal = () => {
     return obj;
 }
 const setPicker = async (datePickerInstance) => {
+    if (!datePickerInstance) return;
     const div_fechas = document.querySelector('.div_fechas');
+    if (!div_fechas) return;
     const classes = ['font-weight-bold', 'text-secondary'] ?? [];
     div_fechas.classList.add(...classes);
     let { year, month, tipo, jornal } = inputVal();
@@ -660,9 +670,6 @@ const setPicker = async (datePickerInstance) => {
 
     const lastDayOfMonth = moment(`${month}/${year}`, 'MM/YYYY').daysInMonth();
 
-    // console.clear();
-    // console.log({ month });
-
     if (!isLeapYear && MensDesde === 29 && monthHastaCalculado === 3) {
         MensDesde = moment(`${monthDesdeCalculado - 1}/${year}`, 'MM/YYYY').daysInMonth();
     }
@@ -670,8 +677,6 @@ const setPicker = async (datePickerInstance) => {
     if (!isLeapYear && Jor1Desde === 29 && monthHastaCalculado === 3) {
         Jor1Desde = moment(`${monthDesdeCalculado - 1}/${year}`, 'MM/YYYY').daysInMonth();
     }
-
-    // console.log({ isLeapYear, MensDesde, monthHastaCalculado, monthDesdeCalculado });
 
     // Validar MensDesde y MensHasta
     if (MensDesde >= MensHasta) {
@@ -800,7 +805,7 @@ const submitData = async (action) => {
     const Params = ls.get(LS_PARAM_LIQUID) ?? {};
     const Values = ls.get(LS_VALOR_LIQUID) ?? {};
 
-    axios.post('../../../app-data/prysmian/' + action, {
+    axios.post(DIR_APP_DATA + '/prysmian/' + action, {
         FechIni: FechaIni,
         FechFin: FechaFin,
         getNov: 1,
