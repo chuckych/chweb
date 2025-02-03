@@ -546,40 +546,47 @@ const configNovedad = (selectorTable) => {
             ];
 
             // body.innerHTML = `<table id="${DT_NOVEDADES}_${row.THoCodi}" class="table w-100 text-nowrap"></table>`;
-            body.innerHTML = `<div id="${DT_NOVEDADES}_${row.THoCodi}" class="table w-100 text-nowrap"></table>`;
+            body.innerHTML = `<div id="div_${DT_NOVEDADES}_${row.THoCodi}" class="loader-in"></div>`;
             const opt = {
                 paging: false,
                 search: false,
                 info: false,
                 classTable: 'max-h-400 overflow-auto pr-1'
             }
-            dt_grilla(`${DT_NOVEDADES}_${row.THoCodi}`, dataNovedades, columnNovedades, '#configModal .modal-body', '', opt);
-            $(`#${DT_NOVEDADES}_${row.THoCodi} thead`).remove();
 
-            const dataColumn = axios.get(DIR_APP_DATA + '/params', {
-                params: {
-                    descripcion: row.THoDesc,
-                    modulo: 46
-                }
-            }).then((data) => {
-                const valores = data.data[0]['valores'] ?? '';
-                let count = 0;
-                if (valores) {
-                    const valoresSplit = valores.split(',');
-                    count = valoresSplit.length;
+            dt_grilla(`${DT_NOVEDADES}_${row.THoCodi}`, dataNovedades, columnNovedades, `#div_${DT_NOVEDADES}_${row.THoCodi}`, '', opt).then(() => {
+                $(`#${DT_NOVEDADES}_${row.THoCodi} thead`).remove();
 
-                    const tableCustom = document.querySelector(`#${DT_NOVEDADES}_${row.THoCodi}`);
-                    const dtCustom = $(tableCustom).DataTable();
-                    const rows = dtCustom.rows().data();
-                    rows.each((row, index) => {
-                        const id = row.NovCodi;
-                        const checkbox = tableCustom.querySelector(`#NovCodi-${id}`);
-                        if (valoresSplit.includes(id)) {
-                            checkbox.checked = true;
-                        }
-                    });
+                $(`#div_${DT_NOVEDADES}_${row.THoCodi}`).addClass('loader-in');
+
+                const dataColumn = axios.get(DIR_APP_DATA + '/params', {
+                    params: {
+                        descripcion: row.THoDesc,
+                        modulo: 46
+                    }
+                }).then((data) => {
+                    const valores = data.data[0]['valores'] ?? '';
+                    let count = 0;
+                    if (valores) {
+                        const valoresSplit = valores.split(',');
+                        count = valoresSplit.length;
+
+                        const tableCustom = document.querySelector(`#${DT_NOVEDADES}_${row.THoCodi}`);
+                        const dtCustom = $(tableCustom).DataTable();
+                        const rows = dtCustom.rows().data();
+                        rows.each((row, index) => {
+                            const id = row.NovCodi;
+                            const checkbox = tableCustom.querySelector(`#NovCodi-${id}`);
+                            if (valoresSplit.includes(id)) {
+                                checkbox.checked = true;
+                            }
+                        });
+                    }
                     marcarNovedades(`#${DT_NOVEDADES}_${row.THoCodi}`, row);
-                }
+                }).then(() => {
+                    $(`#div_${DT_NOVEDADES}_${row.THoCodi}`).removeClass('loader-in');
+                }).finally(() => {
+                });
             });
         }
     });
@@ -923,6 +930,8 @@ const submitData = async (action) => {
 }
 const dt_grilla = async (idTable, dataSource, columnConfigs, selectorDiv, titulo = '', opt = {}) => {
     const divTable = selectorDiv && document.querySelector(selectorDiv);
+    console.log({ idTable, dataSource, columnConfigs, selectorDiv, divTable });
+
     if (!divTable) return;
     // console.log({ idTable, dataSource, columnConfigs, selectorDiv, divTable });
     if ($.fn.DataTable.isDataTable(`#${idTable}`)) {
