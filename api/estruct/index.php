@@ -6,259 +6,252 @@ tz();
 tzLang();
 errorReport();
 
-$FechaHora = date('Ymd H:i:s');
-$checkMethod('GET');
+try {
+    $FechaHora = date('Ymd H:i:s');
+    $checkMethod('GET');
 
-if ($method == 'POST') {
-    // require __DIR__ . '/postEstruct.php';
-    exit;
-}
-if ($method == 'PUT') {
-    // require __DIR__ . '/putEstruct.php';
-    exit;
-}
-if ($method == 'DELETE') {
-    // require __DIR__ . '/delEstruct.php';
-    exit;
-}
-// Flight::json($request).exit;
+    $wc = '';
+    $dp = $request->query; // dataPayload
+    $start = start();
+    $length = length();
 
-$wc = '';
-$dp = ($request->query); // dataPayload
-$start = start();
-$length = length();
+    $dp['Codi'] = ($dp['Codi']) ?? [];
+    $dp['Codi'] = vp($dp['Codi'], 'Codi', 'intArrayM0', 11);
 
-$dp['Codi'] = ($dp['Codi']) ?? [];
-$dp['Codi'] = vp($dp['Codi'], 'Codi', 'intArrayM0', 11);
-
-$dp['Estruct'] = ($dp['Estruct']) ?? [];
-$dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'str', 11);
+    $dp['Estruct'] = ($dp['Estruct']) ?? [];
+    $dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'str', 11);
 
 
-if (empty($dp['Estruct'])) {
-    http_response_code(400);
-    (response("Parámetro 'Estruct' es requerido", 0, "Parámetro 'Estruct' es requerido", 400, timeStart(), 0, 0));
-    exit;
-}
+    if (empty($dp['Estruct'])) {
+        throw new Exception("Parámetro 'Estruct' es requerido", 400);
+    }
 
-$arrDP = array(
-    'Codi' => $dp['Codi'], // Codigo de tipo de hora {int} {array}
-);
+    $arrDP = [
+        'Codi' => $dp['Codi'], // Codigo de tipo de hora {int} {array}
+    ];
 
-switch ($dp['Estruct']) {
-    case 'Emp':
-        $tabla = 'EMPRESAS';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Pla':
-        $tabla = 'PLANTAS';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Sec':
-        $tabla = 'SECTORES';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Con':
-        $tabla = 'CONVENIO';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Se2':
-        $tabla = 'SECCION';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Gru':
-        $tabla = 'GRUPOS';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Suc':
-        $tabla = 'SUCURSALES';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Nov':
-        $tabla = 'NOVEDAD';
-        $pref = $dp['Estruct'];
-        break;
-    case 'ONov':
-        $tabla = 'OTRASNOV';
-        $pref = $dp['Estruct'];
-        break;
-    case 'THo':
-        $tabla = 'TIPOHORA';
-        $pref = $dp['Estruct'];
-        break;
-    case 'THoC':
-        $tabla = 'TIPOHORACAUSA';
-        $pref = $dp['Estruct'];
-        break;
-    case 'NovC':
-        $tabla = 'NOVECAUSA';
-        $pref = $dp['Estruct'];
-        break;
-    case 'RC':
-        $tabla = 'REGLASCH';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Hor':
-        $tabla = 'HORARIOS';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Loc':
-        $tabla = 'LOCALIDA';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Nac':
-        $tabla = 'NACIONES';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Pro':
-        $tabla = 'PROVINCI';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Tare':
-        $tabla = 'TAREAS';
-        $pref = $dp['Estruct'];
-        break;
-    case 'Gua':
-        $tabla = 'GUARDIAS';
-        $pref = $dp['Estruct'];
-    case 'Lega':
-        $tabla = 'PERSONAL';
-        $pref = $dp['Estruct'];
-        break;
-    default:
-        http_response_code(400);
-        (response("Parámetro 'Estruct' es inválido", 0, "Parámetro 'Estruct' es inválido", 400, timeStart(), 0, 0));
-        exit;
-}
+    $mapEstructValid = [
+        'Emp' => [
+            'tabla' => 'EMPRESAS',
+            'pref' => 'Emp',
+        ],
+        'Pla' => [
+            'tabla' => 'PLANTAS',
+            'pref' => 'Pla',
+        ],
+        'Sec' => [
+            'tabla' => 'SECTORES',
+            'pref' => 'Sec',
+        ],
+        'Con' => [
+            'tabla' => 'CONVENIO',
+            'pref' => 'Con',
+        ],
+        'Se2' => [
+            'tabla' => 'SECCION',
+            'pref' => 'Se2',
+        ],
+        'Gru' => [
+            'tabla' => 'GRUPOS',
+            'pref' => 'Gru',
+        ],
+        'Suc' => [
+            'tabla' => 'SUCURSALES',
+            'pref' => 'Suc',
+        ],
+        'Nov' => [
+            'tabla' => 'NOVEDAD',
+            'pref' => 'Nov',
+        ],
+        'ONov' => [
+            'tabla' => 'OTRASNOV',
+            'pref' => 'ONov',
+        ],
+        'THo' => [
+            'tabla' => 'TIPOHORA',
+            'pref' => 'THo',
+        ],
+        'THoC' => [
+            'tabla' => 'TIPOHORACAUSA',
+            'pref' => 'THoC',
+        ],
+        'NovC' => [
+            'tabla' => 'NOVECAUSA',
+            'pref' => 'NovC',
+        ],
+        'RC' => [
+            'tabla' => 'REGLASCH',
+            'pref' => 'RC',
+        ],
+        'Hor' => [
+            'tabla' => 'HORARIOS',
+            'pref' => 'Hor',
+        ],
+        'Loc' => [
+            'tabla' => 'LOCALIDA',
+            'pref' => 'Loc',
+        ],
+        'Nac' => [
+            'tabla' => 'NACIONES',
+            'pref' => 'Nac',
+        ],
+        'Pro' => [
+            'tabla' => 'PROVINCI',
+            'pref' => 'Pro',
+        ],
+        'Tare' => [
+            'tabla' => 'TAREAS',
+            'pref' => 'Tare',
+        ],
+        'Gua' => [
+            'tabla' => 'GUARDIAS',
+            'pref' => 'Gua',
+        ],
+        'Lega' => [
+            'tabla' => 'PERSONAL',
+            'pref' => 'Leg',
+        ],
+    ];
 
-foreach ($arrDP as $key => $p) {
-    $e = array();
-    if (is_array($p)) {
-        $v = '';
-        $e = array_filter($p, function ($v) {
-            return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
-        });
-        $e = array_unique($e);
-        if (($e)) {
-            if (count($e) > 1) {
-                $e = "'" . join("','", $e) . "'";
-                $wc .= " AND $tabla.$pref$key IN ($e)";
-            } else {
-                foreach ($e as $v) {
-                    if ($v !== NULL) {
-                        $wc .= " AND $tabla.$pref$key = '$v'";
+    if (!array_key_exists($dp['Estruct'], $mapEstructValid)) {
+        throw new Exception("Parámetro {$dp['Estruct']} en 'Estruct' es inválido", 400);
+    }
+
+    $tabla = $mapEstructValid[$dp['Estruct']]['tabla'];
+    $pref = $mapEstructValid[$dp['Estruct']]['pref'];
+
+    function validarCodi(int $valor, string $tabla): void
+    {
+        if ($tabla === 'PERSONAL' && $valor > 9999999999) {
+            throw new Exception("Valor {$valor} en 'Codi' debe ser menor o igual a 9999999999", 400);
+        }
+        if ($tabla !== 'PERSONAL' && $valor > 32767) {
+            throw new Exception("Valor {$valor} en 'Codi' debe ser menor o igual a 32767", 400);
+        }
+    }
+
+    if (!empty($dp['Codi'])) {
+        foreach ($dp['Codi'] as $val) {
+            $valor = intval($val);
+            validarCodi($valor, $tabla);
+        }
+    }
+
+    foreach ($arrDP as $key => $p) {
+        $e = [];
+        $columna = ($tabla === 'PERSONAL') ? 'LegNume' : "{$pref}{$key}";
+        if (is_array($p)) {
+            $v = '';
+            $e = array_filter($p, function ($v) {
+                return $v !== false && !is_null($v) && ($v != '' || $v == '0');
+            });
+            $e = array_unique($e);
+            if ($e) {
+                if (count($e) > 1) {
+                    $e = "'" . join("','", $e) . "'";
+                    $wc .= " AND $tabla.$columna IN ($e)";
+                } else {
+                    foreach ($e as $v) {
+                        if ($v !== NULL) {
+                            $wc .= " AND $tabla.$columna = '$v'";
+                        }
                     }
                 }
             }
-        }
-    } else {
-        if ($v) {
-            $wc .= " AND $tabla.$pref$key = '$v'";
+        } else {
+            if ($v) {
+                $wc .= " AND $tabla.$pref$key = '$v'";
+            }
         }
     }
-}
 
-$Codi = $pref . 'Codi';
-$Desc = ($dp['Estruct'] == 'Emp') ? $pref . 'Razon' : $pref . 'Desc';
-$Sec = ($dp['Estruct'] == 'Se2') ? true : '';
-$THoC = ($dp['Estruct'] == 'THoC') ? true : '';
-$Lega = ($dp['Estruct'] == 'Lega') ? true : '';
-$NovC = ($dp['Estruct'] == 'NovC') ? true : '';
-$Nov = ($dp['Estruct'] == 'Nov') ? true : '';
-$JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
-$SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
+    $Codi = "{$pref}Codi";
+    $Desc = ($dp['Estruct'] == 'Emp') ? "{$pref}Razon" : "{$pref}Desc";
+    $Sec = ($dp['Estruct'] == 'Se2') ? true : '';
+    $THoC = ($dp['Estruct'] == 'THoC') ? true : '';
+    $Lega = ($dp['Estruct'] == 'Lega') ? true : '';
+    $NovC = ($dp['Estruct'] == 'NovC') ? true : '';
+    $Nov = ($dp['Estruct'] == 'Nov') ? true : '';
+    $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
+    $SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
-$JoinTHora = ($dp['Estruct'] == 'THoC') ? "INNER JOIN TIPOHORA ON TIPOHORACAUSA.THoCHora = TIPOHORA.THoCodi" : '';
-// $THoraDesc = ($dp['Estruct'] == 'THoC') ? ",TIPOHORA.THoDesc" : '';
-$JoinNovC = ($dp['Estruct'] == 'NovC') ? "INNER JOIN NOVEDAD ON NOVECAUSA.NovCNove = NOVEDAD.NovCodi" : '';
-$TipoNovedad = ($dp['Estruct'] == 'Nov') ? ", NOVEDAD.NovTipo, dbo.fn_TipoNovedad(NOVEDAD.NovTipo) as 'NovTipoDesc' " : '';
+    $JoinTHora = ($dp['Estruct'] == 'THoC') ? "INNER JOIN TIPOHORA ON TIPOHORACAUSA.THoCHora = TIPOHORA.THoCodi" : '';
+    // $THoraDesc = ($dp['Estruct'] == 'THoC') ? ",TIPOHORA.THoDesc" : '';
+    $JoinNovC = ($dp['Estruct'] == 'NovC') ? "INNER JOIN NOVEDAD ON NOVECAUSA.NovCNove = NOVEDAD.NovCodi" : '';
+    $TipoNovedad = ($dp['Estruct'] == 'Nov') ? ", NOVEDAD.NovTipo, dbo.fn_TipoNovedad(NOVEDAD.NovTipo) as 'NovTipoDesc' " : '';
 
-if ($Lega) {
-    $Codi = 'LegNume';
-    $Desc = 'LegApNo';
-}
+    if ($Lega) {
+        $Codi = 'LegNume';
+        $Desc = 'LegApNo';
+    }
 
-$wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
+    $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
+    $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
 
-$query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
-// print_r($query) . exit;
+    $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
 
-$queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
+    if ($dp['Estruct'] == 'Con') {
+        $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC";
+        $queryCount = "SELECT count(1) as 'count' FROM $tabla";
+    }
 
-if ($dp['Estruct'] == 'Con') {
-    $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC";
-    $queryCount = "SELECT count(1) as 'count' FROM $tabla";
-}
+    if ($wc) {
+        $query .= $wc;
+        $queryCount .= $wc;
+    }
 
-if ($wc) {
-    $query .= $wc;
-    $queryCount .= $wc;
-}
+    $stmtCount = $dbApiQuery($queryCount)[0]['count'] ?? '';
 
-$stmtCount = $dbApiQuery($queryCount)[0]['count'] ?? '';
+    $query .= " ORDER BY $Codi";
+    $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
-$query .= " ORDER BY $Codi";
-$query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
+    $stmt = $dbApiQuery($query) ?? '';
 
-$stmt = $dbApiQuery($query) ?? '';
-
-foreach ($stmt as $key => $v) {
-
-    if ($Sec) {
-        $data[] = array(
+    foreach ($stmt as $v) {
+        $item = [
             "Codi" => $v[$Codi],
             "Desc" => $v[$Desc],
-            "Sector" => array(
-                "Codi" => $v['SecCodi'],
-                "Desc" => $v['SecDesc'],
-            ),
-            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-        );
-    } else if ($THoC) {
-        $data[] = array(
-            "Codi" => $v[$Codi],
-            "Desc" => $v[$Desc],
-            "CodiHora" => $v['THoCodi'],
-            "DescHora" => $v['THoDesc'],
-            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-        );
-    } else if ($NovC) {
-        $data[] = array(
-            "Codi" => $v[$Codi],
-            "Desc" => $v[$Desc],
-            "CodiNov" => $v['NovCodi'],
-            "DescNov" => $v['NovDesc'],
-            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-        );
-    } else if ($Lega) {
-        $data[] = [
-            "Codi" => $v['LegNume'],
-            "Desc" => $v['LegApNo'],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         ];
-    } else if ($Nov) {
-        $data[] = array(
-            "Codi" => $v[$Codi],
-            "Desc" => $v[$Desc],
-            "Tipo" => $v['NovTipo'],
-            "TipoDesc" => $v['NovTipoDesc'],
-            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-        );
-    } else {
-        $data[] = array(
-            "Codi" => $v[$Codi],
-            "Desc" => $v[$Desc],
-            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
-        );
-    }
-}
 
-if (empty($data)) {
+        switch (true) {
+            case $Sec:
+                $item["Sector"] = [
+                    "Codi" => $v['SecCodi'],
+                    "Desc" => $v['SecDesc'],
+                ];
+                break;
+            case $THoC:
+                $item["CodiHora"] = $v['THoCodi'];
+                $item["DescHora"] = $v['THoDesc'];
+                break;
+            case $NovC:
+                $item["CodiNov"] = $v['NovCodi'];
+                $item["DescNov"] = $v['NovDesc'];
+                break;
+            case $Nov:
+                $item["Tipo"] = $v['NovTipo'];
+                $item["TipoDesc"] = $v['NovTipoDesc'];
+                break;
+        }
+
+        $data[] = $item;
+    }
+
+    if (empty($data)) {
+        http_response_code(200);
+        (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
+        exit;
+    }
+    $countData = count($data);
     http_response_code(200);
-    (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
-    exit;
+    (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
+} catch (\Throwable $th) {
+    $code = $th->getCode();
+
+    http_response_code($code);
+    if ($code == 0) {
+        $code = 400;
+    }
+    (response($th->getMessage(), 0, 'ERROR', $code, $time_start, 0, $idCompany));
 }
-$countData = count($data);
-http_response_code(200);
-(response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
-exit;

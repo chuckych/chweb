@@ -250,7 +250,7 @@ function checkToken($token, $iniData = [])
  */
 $start = start();
 $length = length();
-function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
+function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
 {
     $code = intval($code);
     $start = ($code != 400) ? start() : 0;
@@ -259,7 +259,7 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
     $time_end = microtime(true);
     $tiempoScript = number_format($time_end - $time_start, 4);
 
-    $array = array(
+    $array = [
         'RESPONSE_CODE' => http_response_code($code),
         'START' => intval($start),
         'LENGTH' => intval($length),
@@ -269,7 +269,7 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
         'TIME' => floatval($tiempoScript),
         // 'REQUEST_URI'   => $_SERVER['REQUEST_URI'],
         'DATA' => $data,
-    );
+    ];
 
     Response::json($array);
 
@@ -282,8 +282,8 @@ function response($data = array(), $total = 0, $msg = 'OK', $code = 200, $time_s
 
     $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
 
-    $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-    $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $ipAdress = $_SERVER['REMOTE_ADDR'] ?? '';
+    $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
     // $idCompany    = $idCompany;
 
     if ($agent) {
@@ -1548,7 +1548,7 @@ function arrFecha($array, $format)
 $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     if ($method != $value) {
         http_response_code(400);
-        (response(array(), 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
+        (response([], 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
         exit;
     }
 };
