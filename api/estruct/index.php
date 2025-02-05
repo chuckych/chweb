@@ -121,6 +121,9 @@ switch ($dp['Estruct']) {
     case 'Gua':
         $tabla = 'GUARDIAS';
         $pref = $dp['Estruct'];
+    case 'Lega':
+        $tabla = 'PERSONAL';
+        $pref = $dp['Estruct'];
         break;
     default:
         http_response_code(400);
@@ -159,6 +162,7 @@ $Codi = $pref . 'Codi';
 $Desc = ($dp['Estruct'] == 'Emp') ? $pref . 'Razon' : $pref . 'Desc';
 $Sec = ($dp['Estruct'] == 'Se2') ? true : '';
 $THoC = ($dp['Estruct'] == 'THoC') ? true : '';
+$Lega = ($dp['Estruct'] == 'Lega') ? true : '';
 $NovC = ($dp['Estruct'] == 'NovC') ? true : '';
 $Nov = ($dp['Estruct'] == 'Nov') ? true : '';
 $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
@@ -169,6 +173,10 @@ $JoinTHora = ($dp['Estruct'] == 'THoC') ? "INNER JOIN TIPOHORA ON TIPOHORACAUSA.
 $JoinNovC = ($dp['Estruct'] == 'NovC') ? "INNER JOIN NOVEDAD ON NOVECAUSA.NovCNove = NOVEDAD.NovCodi" : '';
 $TipoNovedad = ($dp['Estruct'] == 'Nov') ? ", NOVEDAD.NovTipo, dbo.fn_TipoNovedad(NOVEDAD.NovTipo) as 'NovTipoDesc' " : '';
 
+if ($Lega) {
+    $Codi = 'LegNume';
+    $Desc = 'LegApNo';
+}
 
 $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
 
@@ -222,12 +230,18 @@ foreach ($stmt as $key => $v) {
             "DescNov" => $v['NovDesc'],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         );
+    } else if ($Lega) {
+        $data[] = [
+            "Codi" => $v['LegNume'],
+            "Desc" => $v['LegApNo'],
+            "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
+        ];
     } else if ($Nov) {
         $data[] = array(
-            "Codi"      => $v[$Codi],
-            "Desc"      => $v[$Desc],
-            "Tipo"      => $v['NovTipo'],
-            "TipoDesc"  => $v['NovTipoDesc'],
+            "Codi" => $v[$Codi],
+            "Desc" => $v[$Desc],
+            "Tipo" => $v['NovTipo'],
+            "TipoDesc" => $v['NovTipoDesc'],
             "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
         );
     } else {
