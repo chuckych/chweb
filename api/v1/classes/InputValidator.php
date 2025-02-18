@@ -129,12 +129,14 @@ class InputValidator
                 }
                 break;
             case 'numeric10':
-                if (!is_numeric($value) || strlen($value) > 10) {
+                // if (!is_numeric($value) || strlen($value) > 10) {
+                if (!is_numeric($value) || ($value !== null && strlen($value) > 10)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'numeric5':
-                if (!is_numeric($value) || strlen($value) > 5) {
+                // if (!is_numeric($value) || strlen($value) > 5) {
+                if (!is_numeric($value) || ($value !== null && strlen($value) > 5)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
@@ -173,36 +175,57 @@ class InputValidator
                 }
                 break;
             case 'varchar40':
-                if (strlen($value) > 40) {
+                // if (strlen($value) > 40) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 40) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar10':
-                if (strlen($value) > 10) {
+                // if (strlen($value) > 10) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 10) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar20':
-                if (strlen($value) > 20) {
+                // if (strlen($value) > 20) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 20) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar1':
-                if (strlen($value) > 1) {
+                // if (strlen($value) > 1) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 1) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
             case 'varchar100':
-                if (strlen($value) > 100) {
+                // if (strlen($value) > 100) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 100) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varchar200':
-                if (strlen($value) > 200) {
+                // if (strlen($value) > 200) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 200) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
             case 'varcharMax':
-                if (strlen($value) > 2147483647) {
+                // if (strlen($value) > 2147483647) {
+                //     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                // }
+                if ($value !== null && strlen($value) > 2147483647) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;

@@ -160,7 +160,7 @@ class Horas
                 'Hora' => ['required', 'smallint'],
                 'HsAu' => ['required', 'time'],
                 'Esta' => ['allowed012'],
-                'Obse' => ['varchar40'],
+                'Obse' => ['varcharMax'],
                 'Moti' => ['smallint'],
                 'Valor' => ['decima12.2'],
             ];

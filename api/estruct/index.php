@@ -186,6 +186,8 @@ try {
     }
 
     $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
+    $wc .= ($dp['Estruct'] == 'Lega') ? " AND PERSONAL.LegFeEg = '1753-01-01 00:00:00.000'" : '';
+
     $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
 
     $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
