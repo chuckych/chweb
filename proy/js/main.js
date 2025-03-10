@@ -48,7 +48,7 @@ $(function () {
             });
             getPag("#proyHome", "inicio"); // Home
             $("#mainTitleBar").html(capitalize(proy_page)); // Title
-            $("#navName").html(proy_info["name"]);
+            $("#navName").html(proy_info["name"] ?? '');
             $("#navLega").html(proy_info["lega"]);
         });
 
@@ -464,9 +464,15 @@ function formatHour(date) {
     return hora;
 }
 function formatDuracion(hours) {
-    if (!hours) {  
-        return '' 
-    } 
+    if (!hours) {
+        return ''
+    }
     let d = hours.split(':');
-    return(d[0]+':'+d[1]);
+    return (d[0] + ':' + d[1]);
 }
+$(document).ready(function () {
+    axios.get('op/api/import-proy');
+    setInterval(() => {
+        axios.get('op/api/import-proy');
+    }, 3600000); // 60 minutos
+});

@@ -1326,6 +1326,7 @@ return array(
     'TCPDF_STATIC' => $vendorDir . '/tecnickcom/tcpdf/include/tcpdf_static.php',
     'UnhandledMatchError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/UnhandledMatchError.php',
     'ValueError' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/ValueError.php',
+    'Verot\\Upload\\Upload' => $vendorDir . '/verot/class.upload.php/src/class.upload.php',
     'ZipStream\\Bigint' => $vendorDir . '/maennchen/zipstream-php/src/Bigint.php',
     'ZipStream\\DeflateStream' => $vendorDir . '/maennchen/zipstream-php/src/DeflateStream.php',
     'ZipStream\\Exception' => $vendorDir . '/maennchen/zipstream-php/src/Exception.php',

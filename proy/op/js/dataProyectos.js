@@ -1,7 +1,8 @@
 $(function () {
     "use strict"; // Start of use strict
-    let tableProyectos = $("#tableProyectos").dataTable({ //inicializar datatable
+    const tableProyectos = $("#tableProyectos").dataTable({ //inicializar datatable
         lengthMenu: [[3, 10, 25, 50, 100], [3, 10, 25, 50, 100]], //mostrar cantidad de registros
+        pageLength: 25, //cantidad de registros por pagina
         bProcessing: true,
         serverSide: true,
         deferRender: true,
@@ -9,6 +10,7 @@ $(function () {
         responsive: true,
         dom:
             "<'row mt-3'<'col-12 col-sm-6 d-flex justify-content-start'l<'divFiltrosProy'>><'col-12 col-sm-6 d-flex justify-content-end'<'divAltaProy'>f>>" +
+            "<'row mt-2'<'col-12 collapseConfig'>>" +
             "<'row' <'col-12 mt-2 divEstados mh40'>>" +
             "<'row '<'col-12 table-responsive't>>" +
             "<'row '<'col-12 col-sm-5'i><'col-12 col-sm-7 d-flex justify-content-end'p>>",
@@ -271,7 +273,7 @@ $(function () {
             datos.append('PlanoCod', PlanoCod);
             datos.append('PlanoObs', PlanoObs);
             datos.append('PlanoEsta', 'on');
-            datos.append('PlanoSubmit', 'alta');           
+            datos.append('PlanoSubmit', 'alta');
 
             axios({
                 method: "post",
@@ -362,7 +364,7 @@ $(function () {
     } //fin bindForm
     tableProyectos.on("init.dt", function (e, settings) { // Cuando se inicializa la tabla
         let idTable = `#${e.target.id}`; // Se obtiene el id de la tabla
-        if ($("#tableProyectos_filter input").val()){ // si el input searchbox de la tabla tiene contenido. Lo lomipiamos y digujamos la tabla nuevamente
+        if ($("#tableProyectos_filter input").val()) { // si el input searchbox de la tabla tiene contenido. Lo lomipiamos y digujamos la tabla nuevamente
             $(idTable).DataTable().search('').draw()
         }
         $("thead").remove(); // Se remueve el thead
@@ -1463,9 +1465,19 @@ $(function () {
                 });
             });
         $(".divFiltrosProy").html(`
-            <button type="button" data-titlel="Filtros" class="shadow-sm ms-1 btn btn-outline-tabler h50 shadow" id="ProyShowFiltros" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltros" aria-controls="offcanvasFiltros"><i class="bi bi-filter font12"></i></button>
-            <button class="shadow-sm btn btn-outline-info h50 font08 ProyLimpiaFiltro" data-titler="Limpiar Filtros"><i class="bi bi-eraser font1"></i></button>
-        `)
+            <button type="button" data-titlel="Filtros" class="shadow-sm ms-1 btn btn-outline-tabler h50 shadow" id="ProyShowFiltros" data-bs-toggle="offcanvas" data-bs-target="#offcanvasFiltros" aria-controls="offcanvasFiltros">
+                <i class="bi bi-filter font12"></i>
+            </button>
+            <button class="shadow-sm btn btn-outline-info h50 font08 ProyLimpiaFiltro" data-titler="Limpiar Filtros">
+                <i class="bi bi-eraser font1"></i>
+            </button>
+            <button class="shadow-sm btn btn-outline-info h50 font08" data-titler="Configurar" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="false" aria-controls="collapseConfig">
+                <i class="bi bi-gear font1"></i>
+            </button>
+        `);
+
+        htmlCollapseConfig('.collapseConfig');
+
         fetch(`op/proyFiltros.php?${Date.now()}`) // Se hace la peticion ajax para obtener el modal
             .then(response => response.text()) // Se obtiene la respuesta
             .then(data => {
@@ -1492,4 +1504,294 @@ $(function () {
         tableProyectos.off('xhr.dt');
     });
     $.fn.DataTable.ext.pager.numbers_length = 5; // Se agrega el numero de paginas a mostrar en el paginador
+    const htmlCollapseConfig = async (selector) => {
+        $(selector).html(`<div class="collapse" id="collapseConfig">
+            <div class="card card-body">
+                <div class="bg-indigo-lt p-3">
+                    <div class="row">
+                        <div class="mb-3 col-12 d-inline-flex align-items-center justify-content-between w-100">
+                            <label class="form-check form-switch flex-center-start gap-2">
+                                <input class="form-check-input" type="checkbox" id="importarPlanillaCheckbox">
+                                <div class="form-check-label">Importar planilla de proyectos.</div>
+                            </label>
+                            <span class="bi bi-x-lg text-tabler pointer" id="closeConfig"></span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="mb-3 col-12">
+                            <label for="rutaPlanilla" class="form-label w180">Directorio Planilla</label>
+                            <input type="text" class="form-control" id="rutaPlanilla">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group mb-3">
+                            <label class="form-label">Plantilla Procesos</label>
+                                <select required class="form-control w-100" name="ProyPlantConf" id="ProyPlantConf"></select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="form-group mb-3">
+                                <label class="form-label">Responsable</label>
+                                <select required class="form-control w-100" name="ProyRespConf" id="ProyRespConf"></select>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4">
+                            <div class="mb-3">
+                                <label for="duracionProyecto" class="form-label">Duración de proyecto</label>
+                                <input type="number" required class="form-control" min="1" max="365" id="duracionProyecto" value="30" maxlength="3">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-inline-flex gap-2 float-end">
+                                <button type="button" class="btn btn-teal" id="guardarConfPlanilla">Guardar</button>
+                                <button type="button" class="btn btn-tabler" id="ejecutarImportacion">Ejecutar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>`);
+
+        const select2 = (selector, placeholder, url) => {
+
+            const template = (data) => {
+                if ($(data.html).length === 0) {
+                    return data.text;
+                }
+                return $(data.html);
+            };
+
+            $(selector).select2({
+                language: "es",
+                multiple: false,
+                allowClear: false,
+                placeholder: placeholder,
+                templateResult: template,
+                minimumInputLength: 0,
+                minimumResultsForSearch: 10,
+                maximumInputLength: 10,
+                selectOnClose: true,
+                language: {
+                    noResults: function () {
+                        return "No hay resultados..";
+                    },
+                    inputTooLong: function (args) {
+                        let message =
+                            "Máximo " +
+                            10 +
+                            " caracteres. Elimine " +
+                            overChars +
+                            " caracter";
+                        if (overChars != 1) {
+                            message += "es";
+                        }
+                        return message;
+                    },
+                    searching: function () {
+                        return "Buscando..";
+                    },
+                    errorLoading: function () {
+                        return "Sin datos..";
+                    },
+                    removeAllItems: function () {
+                        return "Borrar";
+                    },
+                    inputTooShort: function () {
+                        return "Ingresar " + 0 + " o mas caracteres";
+                    },
+                    maximumSelected: function () {
+                        return "Puede seleccionar solo una opción";
+                    },
+                    loadingMore: function () {
+                        return "Cargando más resultados…";
+                    },
+                },
+                ajax: {
+                    url: url,
+                    dataType: "json",
+                    type: "POST",
+                    delay: 300,
+                    data: function (params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data,
+                        };
+                    },
+                },
+            });
+        }
+
+        select2("#ProyPlantConf", "Plantilla procesos", "../proy/data/select/selPlantilla.php");
+        select2("#ProyRespConf", "Responsable del proyecto", "../proy/data/select/selResponsable.php");
+
+        const getConf = async () => {
+            const data = await axios.get("op/api/conf-proy");
+
+            if (data.status == 200) {
+                const datos = data.data.data;
+
+                select2Value(datos.ProyectoProcesos, decodeEntities(datos.ProyectoProcesosStr), '#ProyPlantConf');
+                select2Value(datos.ProyectoResponsable, decodeEntities(datos.ProyectoResponsableStr), '#ProyRespConf');
+                $('#duracionProyecto').val(datos.ProyectoDuracion);
+                $('#importarPlanillaCheckbox').prop('checked', datos.ProyectoImportar === "true");
+                $('#rutaPlanilla').val(datos.ProyectoPlanilla);
+
+            }
+        };
+        getConf();
+
+        const validar = () => {
+
+            if ($('#importarPlanillaCheckbox').is(':checked') && !$('#rutaPlanilla').val()) {
+                notify('Debe ingresar la ruta de la planilla', "danger", 3000, "right");
+                return false;
+            }
+
+            if ($('#importarPlanillaCheckbox').is(':checked')) {
+                if ($('#rutaPlanilla').val().length < 10) {
+                    notify('El directorio debe contener 10 caracteres como mínimo', "danger", 3000, "right");
+                    return false;
+                }
+            }
+
+            if (!$('#ProyPlantConf').val()) {
+                notify('Debe seleccionar una plantilla de procesos', "danger", 3000, "right");
+                return false;
+            }
+            if (!$('#ProyRespConf').val()) {
+                notify('Debe seleccionar un responsable', "danger", 3000, "right");
+                return false;
+            }
+            if (!$('#duracionProyecto').val()) {
+                notify('Debe ingresar la duración del proyecto', "danger", 3000, "right");
+                return false;
+            }
+
+            return true;
+        }
+
+        $(document).on('click', '#closeConfig', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            $('#collapseConfig').collapse('hide');
+        });
+
+        $(document).on('click', '#ejecutarImportacion', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (!validar()) return;
+
+            const btn = $(this);
+            btn.prop('disabled', true);
+
+            $.ajax({
+                type: 'GET',
+                url: "op/api/import-proy",
+                beforeSend: function (data) {
+                    $.notifyClose();
+                    notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
+                },
+                success: function (data) {
+
+                    if (data.status != "200") {
+                        $.notifyClose();
+                        notify((data.error ?? 'Ocurrió un error'), "danger", 3000, "right");
+                        btn.prop('disabled', false);
+                        return;
+                    }
+                    let html = '';
+
+                    const htmlDiv = (label, value) => {
+                        return `<div><label class="w180">${label}:</label> <span class="font-monospace">${value}</span></div>`
+                    }
+                    if (data.data) {
+                        html = `<div class="d-flex flex-column gap-2">`
+                        html += `<div class="font-weight-bold">${data.message}</div>`
+                        html += htmlDiv("Proyectos creados", data.data.proyectos_creados);
+                        html += htmlDiv("Estados actualizados", data.data.proyectos_actualizados);
+                        html += htmlDiv("Empresas creadas", data.data.empresas_creadas);
+                        html += `<div class="font08 lh-lg">Archivo:<br>${data.data.archivo}</div>`;
+                        html += `</div>`
+                    } else {
+                        html += `<div>No hay datos disponibles.</div>`;
+                    }
+                    $.notifyClose();
+                    notify(html, "success", 2000, "right");
+
+                    btn.prop('disabled', false);
+                    $("#tableProyectos").DataTable().ajax.reload(null, false); // Se recarga la tabla
+                },
+                error: function (data) {
+                    $.notifyClose();
+                    notify('Error', "danger", 3000, "right");
+                    btn.prop('disabled', false);
+                }
+            });
+
+
+        });
+
+        $(document).on('click', '#guardarConfPlanilla', function (e) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (!validar()) return;
+
+            const PlantConf = $('#ProyPlantConf').val();
+            const PlantConfStr = $('#ProyPlantConf option:selected').text();
+            const RespConf = $('#ProyRespConf').val();
+            const RespConfStr = $('#ProyRespConf option:selected').text();
+            const Duracion = $('#duracionProyecto').val();
+            const Checkbox = $('#importarPlanillaCheckbox').is(':checked');
+            const Ruta = $('#rutaPlanilla').val();
+            const btn = $(this);
+
+            btn.prop('disabled', true);
+
+            const payload = {
+                ProyectoProcesos: PlantConf,
+                ProyectoResponsable: RespConf,
+                ProyectoDuracion: Duracion,
+                ProyectoImportar: Checkbox,
+                ProyectoPlanilla: Ruta,
+                ProyectoProcesosStr: PlantConfStr,
+                ProyectoResponsableStr: RespConfStr
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: "op/api/conf-proy",
+                data: payload,
+                beforeSend: function (data) {
+                    $.notifyClose();
+                    notify("Aguarde <span class='animated-dots'></span>", "dark", 0, "right");
+                },
+                success: function (data) {
+
+                    if (data.status != "200") {
+                        $.notifyClose();
+                        btn.prop('disabled', false);
+                        notify((data.message ?? 'Ocurrió un error'), "danger", 3000, "right");
+                        return;
+                    }
+
+                    $.notifyClose();
+                    notify('Configuración actualizada', "success", 2000, "right");
+                    getConf();
+
+                    btn.prop('disabled', false);
+                },
+                error: function (data) {
+                    $.notifyClose();
+                    notify('Error', "danger", 3000, "right");
+                    btn.prop('disabled', false);
+                }
+            });
+        });
+
+    }
 });

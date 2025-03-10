@@ -1,11 +1,11 @@
 {
     "require": {
         "igorescobar/jquery-mask-plugin": "^1.14",
-        "spipu/html2pdf": "*",
-        "mpdf/mpdf": "8.0.4",
-        "phpoffice/phpspreadsheet": "1.29",
-        "nesbot/carbon": "2.57",
         "mikecao/flight": "^1.3",
+        "mpdf/mpdf": "8.0.4",
+        "nesbot/carbon": "2.57",
+        "phpoffice/phpspreadsheet": "1.29",
+        "spipu/html2pdf": "*",
         "twbs/bootstrap-icons": "^1.10",
         "vlucas/phpdotenv": "^5.3"
     },
