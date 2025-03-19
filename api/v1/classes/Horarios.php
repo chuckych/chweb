@@ -658,18 +658,19 @@ class Horarios
             $stmt->execute();
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (!$result) {
-                throw new \Exception("No se encontraron horarios", 400);
-            }
+            // if (!$result) {
+            //     throw new \Exception("No se encontraron horarios", 400);
+            // }
 
-            $result = array_column($result, 'HorDesc', 'HorCodi');
+            // $result = array_column($result, 'HorDesc', 'HorCodi');
+            $result = $result ? array_column($result, 'HorDesc', 'HorCodi') : [];
 
             $this->log->cache($result, 'horarios');
             $this->log->cache($getCache->FHora, 'fechaHoraHorarios', '.txt');
             return $result;
         } catch (\Throwable $th) {
-            throw new \Exception("Error al obtener horarios", 400);
-            // throw new \Exception("Error al obtener horarios: " . $th->getMessage(), 400);
+            // throw new \Exception("Error al obtener horarios", 400);
+            throw new \Exception("Error al obtener horarios: " . $th->getMessage(), 400);
         }
     }
     private function return_rotaciones($connDB = ''): array
@@ -678,26 +679,28 @@ class Horarios
             $conn = $this->conect->check_connection($connDB);
             $getCache = $this->tools->return_cache($conn, 'ROTACION', 'fechaHoraRotaciones', 'rotaciones');
 
-            if ($getCache->data) {
-                return $getCache->data;
-            }
+            // if ($getCache->data) {
+            //     return $getCache->data;
+            // }
 
             $sql = "SELECT RotCodi, RotDesc FROM ROTACION";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (!$result) {
-                throw new \Exception("No se encontraron horarios", 400);
-            }
+            // if (!$result) {
+            //     throw new \Exception("No se encontraron rotaciones", 400);
+            // }
 
-            $result = array_column($result, 'RotDesc', 'RotCodi');
+            $result = $result ? array_column($result, 'RotDesc', 'RotCodi') : [];
 
             $this->log->cache($result, 'rotaciones');
             $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
             return $result;
         } catch (\Throwable $th) {
-            throw new \Exception("Error al obtener horarios", 400);
+            // throw new \Exception("Error al obtener rotaciones", 400);
+            throw new \Exception("Error al obtener rotaciones: " . $th->getMessage(), 400);
+
         }
     }
     private function return_total_dias_rotacion($connDB = '', $Codi)
