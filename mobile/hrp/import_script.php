@@ -1,6 +1,6 @@
 <?php
 // Deshabilitar la visualización de errores en producción
-ini_set('display_errors', 1);
+ini_set('display_errors', 0);
 error_reporting(E_ALL);
 
 // Establecer tiempo máximo de ejecución para evitar scripts infinitos
