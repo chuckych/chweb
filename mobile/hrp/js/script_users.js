@@ -896,3 +896,303 @@ $(document).on("click", ".trainUser", function (e) {
     });
     // });
 });
+const importUserBtn = document.getElementById('importUser');
+const modalImport = document.getElementById('modalImport');
+importUserBtn.addEventListener('click', async function () {
+    importUserBtn.disabled = true;
+    importUserBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...';
+    // const importUserModal = new bootstrap.Modal(document.getElementById('importUserModal'));
+    const importHtml = await axios.get('import.php');
+    modalImport.innerHTML = await importHtml.data;
+
+    await $('#importUserModal').modal('show');
+    // on show
+    procesarImportar();
+    importUserBtn.disabled = false;
+    importUserBtn.innerHTML = 'Importar usuarios';
+    // on hide
+    $('#importUserModal').on('hidden.bs.modal', function () {
+        modalImport.innerHTML = '';
+    });
+
+});
+
+const procesarImportar = async () => {
+    // Botón para abrir el modal
+    const importUserBtn = document.getElementById('importUser');
+    const submitImportBtn = document.getElementById('submitImport');
+    const userFileInput = document.getElementById('userFile');
+    const fileError = document.getElementById('fileError');
+    const importUserForm = document.getElementById('importUserForm');
+
+    // Validación al cambiar el archivo
+    userFileInput.addEventListener('change', function () {
+        validateFile();
+    });
+
+    // Validación al hacer clic en importar
+    submitImportBtn.addEventListener('click', function () {
+        if (validateFile()) {
+            // Crear FormData y añadir el archivo
+            const formData = new FormData();
+            formData.append('userFile', userFileInput.files[0]);
+
+            // Incluir token CSRF
+            const csrfToken = document.getElementById('csrf_token').value;
+            formData.append('csrf_token', csrfToken);
+
+            // Añadir timestamp para evitar caché
+            formData.append('_', new Date().getTime());
+
+            // Mostrar indicador de carga
+            submitImportBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...';
+            submitImportBtn.disabled = true;
+
+            // Enviar petición AJAX con Axios
+            axios.post('import_script.php', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(function (response) {
+                    const data = response.data;
+
+                    const detalleErrores = (data) => {
+                        // Si no hay errores, retornamos una cadena vacía
+                        if (!data.errors || data.errors.length === 0) {
+                            return '';
+                        }
+
+                        // Construimos el contenido del HTML
+                        const erroresHTML = data.errors.map(error => `
+                        <li class="list-group-item">
+                            <ul class="mb-0 pl-2">
+                                ${error.errors.map(errorMsg => `<li class="small">(Fila ${error.row}) ${errorMsg}</li>`).join('')}
+                            </ul>
+                        </li>
+                    `).join('');
+
+                        // Retornamos el HTML completo usando una plantilla literal
+                        return `
+                        <a class="btn btn-link border bg-light font08 mt-2" href="#" data-toggle="collapse" data-target="#collapseErrors" aria-expanded="false" aria-controls="collapseErrors" style="width:200px;">
+                            <i class="bi bi-chevron-down"></i> Detalle de errores
+                        </a>
+                        <div id="collapseErrors" class="collapse py-2">
+                            <ul class="list-group list-group-flush border">
+                                ${erroresHTML}
+                            </ul>
+                        </div>
+                    `;
+                    };
+                    const detalleCorrectos = (data) => {
+                        let resultHTML = '';
+                        if (data.data.valid_rows > 0) {
+                            // Construir la tabla completa
+                            const classfilaLetras = 'bg-secondary text-white text-monospace font09 sticky-header';
+                            resultHTML = `
+                            <p class="my-2 font09">Filas procesadas correctamente:</p>
+                            <div class="table-responsive overflow-auto">
+                                <table class="table table-sm table-bordered border">
+                                    <thead class="sticky-header">
+                                        <tr class="text-center ">
+                                            <td class="${classfilaLetras}">
+                                                <div class="icon-index"><i class="bi bi-chevron-right"></i></div>
+                                            </td>
+                                            <td class="${classfilaLetras}">A</td>
+                                            <td class="${classfilaLetras}">B</td>
+                                            <td class="${classfilaLetras}">C</td>
+                                            <td class="${classfilaLetras}">D</td>
+                                            <td class="${classfilaLetras}">E</td>
+                                            <td class="${classfilaLetras}">F</td>
+                                        </tr>
+                                        <tr class="table-primary">
+                                            <td class="bg-secondary text-white text-center border-0">1</td>
+                                            <th class="sticky-header">ID</th>
+                                            <th class="sticky-header">Nombre y Apellido</th>
+                                            <th class="sticky-header">Estado</th>
+                                            <th class="sticky-header">Visualizar zona</th>
+                                            <th class="sticky-header">Bloqueo Fecha inicio</th>
+                                            <th class="sticky-header">Bloqueo Fecha Fin</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${data.data.processed_rows.map(row => `
+                                            <tr>
+                                                <td class="text-monospace text-center bg-secondary text-white font09">${row.row}</td>
+                                                <td>${row.id}</td>
+                                                <td>${row.nombre_apellido}</td>
+                                                <td><span class="${row.estado === 'activo' ? 'text-success' : 'text-danger'}">${row.estado}</span></td>
+                                                <td><span class="${row.visualizar_zona === 'activo' ? 'text-success' : 'text-danger'}">${row.visualizar_zona}</span></td>
+                                                <td>${row.bloqueo_fecha_inicio || '—'}</td>
+                                                <td>${row.bloqueo_fecha_fin || '—'}</td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        `;
+                        }
+                        return resultHTML;
+                    };
+
+                    if (data.success) {
+                        // Crear una presentación más compacta y visual de los resultados
+                        let resultHTML = `
+                        <div class="p-3 border bg-white rounded">
+                            <div class="d-flex flex-column">
+                                <p class="mb-1 font1">Filas procesadas: <span class="text-monospace">${data.data.total_rows}</span> </p>
+                                <div class="d-flex flex-column small-info">
+                                    <span> - ${data.data.valid_rows} correctas</span>
+                                    <span> - ${data.data.error_rows} con errores</span>
+                                </div>
+                                ${detalleErrores(data)}
+                            </div>`;
+
+                        // Mostrar tabla con las filas procesadas si hay filas válidas
+                        resultHTML += detalleCorrectos(data);
+                        // Añadir botón para cerrar el modal
+                        if (data.data.valid_rows > 0) {
+                            resultHTML += `
+                        <div class="mt-3 text-center">
+                            <button type="button" class="submit-import" id="confirm-import" data-bs-dismiss="modal" data-flag="${data.flag}">
+                                <i class="bi bi-check-circle pr-1"></i>Confirmar
+                                </button>
+                            </div>
+                            <div class="mt-3 text-center respuesta-import"></div>
+                        </div>`;
+
+                            // Limpiar y mostrar resultados
+
+                            importUserForm.innerHTML = resultHTML;
+                            confirmImport();
+                        } else {
+                            importUserForm.innerHTML = resultHTML;
+                        }
+
+                    } else {
+                        // Mostrar error
+                        fileError.textContent = data.message;
+                        fileError.classList.remove('d-none');
+
+                        // Restablecer botón
+                        submitImportBtn.innerHTML = 'Importar';
+                        submitImportBtn.disabled = false;
+                    }
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+
+                    // Mensaje de error más detallado si está disponible
+                    let errorMsg = 'Error al procesar la solicitud. Inténtelo de nuevo.';
+
+                    if (error.response) {
+                        // El servidor respondió con un código de estado diferente de 2xx
+                        console.log('Error data:', error.response.data);
+                        console.log('Error status:', error.response.status);
+
+                        if (error.response.data && error.response.data.message) {
+                            errorMsg = error.response.data.message;
+                        } else if (error.response.status === 500) {
+                            errorMsg = 'Error interno del servidor. Contacte al administrador.';
+                        }
+                    } else if (error.request) {
+                        // La petición fue hecha pero no se recibió respuesta
+                        errorMsg = 'No se recibió respuesta del servidor. Verifique su conexión.';
+                    }
+
+                    fileError.textContent = errorMsg;
+                    fileError.classList.remove('d-none');
+
+                    // Restablecer botón
+                    submitImportBtn.innerHTML = 'Importar';
+                    submitImportBtn.disabled = false;
+                });
+        }
+    });
+
+    const confirmImport = async () => {
+        const confirmImportBtn = document.getElementById('confirm-import');
+        const respuestImport = document.querySelector('.respuesta-import');
+        confirmImportBtn.addEventListener('click', function () {
+            const flag = this.getAttribute('data-flag');
+            confirmImportBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> importando...';
+            confirmImportBtn.disabled = true;
+            respuestImport.innerHTML = '';
+            respuestImport.classList.remove('alert', 'alert-success', 'alert-danger', 'fadeInUp');
+            if (!flag) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('tipo', 'add_usuarios');
+            formData.append('flag', flag);
+            // notify('Aguarde..', 'info', 0, 'right');
+            // Enviar petición AJAX con Axios
+            axios.post('crud.php', formData)
+                .then(function (response) {
+                    const data = response.data;
+                    const MESSAGE = data.MESSAGE ?? 'Error';
+                    const RESPONSE_DATA = data.RESPONSE_DATA ?? null;
+
+
+                    if (MESSAGE == 'OK') {
+                        const html = `
+                        <div>Usuarios importados correctamente</div>
+                        <div>Creados: ${RESPONSE_DATA.totalInsert ?? 0}</div>
+                        <div>Actualizados: ${RESPONSE_DATA.totalUpdate ?? 0}</div>
+                    `
+                        respuestImport.innerHTML = html;
+                        respuestImport.classList.add('alert', 'alert-success', 'fadeInUp');
+                        // notify(html, 'success', 5000, 'right')
+                        // importUserModal.hide();
+                        $('#tableUsuarios').DataTable().ajax.reload();
+                    } else {
+                        respuestImport.innerHTML = '<div>Error al importar usuarios.</div>';
+                        respuestImport.classList.add('alert', 'alert-danger', 'fadeInUp');
+                        // notify('Error al importar usuarios.', 'error', 5000, 'right');
+                    }
+                    confirmImportBtn.innerHTML = '<i class="bi bi-check-circle pr-1"></i>Importar';
+                    confirmImportBtn.disabled = false;
+                })
+                .catch(function (error) {
+                    console.error('Error:', error);
+                    confirmImportBtn.innerHTML = '<i class="bi bi-check-circle pr-1"></i>Importar';
+                    confirmImportBtn.disabled = false;
+                });
+
+        });
+    };
+
+    function validateFile() {
+        fileError.classList.add('d-none');
+
+        // Verificar si se ha seleccionado un archivo
+        if (!userFileInput.files || userFileInput.files.length === 0) {
+            fileError.textContent = 'Por favor, seleccione un archivo.';
+            fileError.classList.remove('d-none');
+            return false;
+        }
+
+        const file = userFileInput.files[0];
+        const fileName = file.name;
+        const fileExt = fileName.split('.').pop().toLowerCase();
+
+        // Verificar la extensión del archivo
+        if (fileExt !== 'xls' && fileExt !== 'xlsx') {
+            fileError.textContent = 'Solo se permiten archivos Excel (.xls o .xlsx).';
+            fileError.classList.remove('d-none');
+            return false;
+        }
+
+        // Verificar el tamaño del archivo (2MB máximo = 2 * 1024 * 1024 bytes)
+        const maxSizeBytes = 2 * 1024 * 1024;
+        if (file.size > maxSizeBytes) {
+            fileError.textContent = `El archivo es demasiado grande. El tamaño máximo permitido es 2MB.`;
+            fileError.classList.remove('d-none');
+            return false;
+        }
+
+        return true;
+    }
+}
+

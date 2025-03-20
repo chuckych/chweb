@@ -12,6 +12,7 @@ processBase.php
 fotos/temp
 fotos/*.jpg
 logs/descargas/*.php
+temp/*.json
 api/**
 *.7z
 *.delete

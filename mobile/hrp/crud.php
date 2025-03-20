@@ -288,6 +288,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         echo json_encode($json_data);
         exit;
+    } else if ($_POST['tipo'] == 'add_usuarios') {
+        $pathTemp = __DIR__ . '/temp';
+        $flag = $_POST['flag'] ?? '';
+
+        if (!$flag) {
+            PrintRespuestaJson('error', 'Flag no proporcionado');
+            exit;
+        }
+
+        $fileData = "{$flag}.json";
+        $file = "{$pathTemp}/{$fileData}";
+
+        if (!file_exists($file)) {
+            PrintRespuestaJson('error', 'Archivo no encontrado');
+            exit;
+        }
+
+        $data = json_decode(file_get_contents($file), true);
+
+        if ($data === null) {
+            PrintRespuestaJson('error', 'Error al leer el archivo de datos.');
+            exit;
+        }
+
+        $idCompany = $_SESSION['ID_CLIENTE'];
+
+        $payload = [
+            'key' => $_SESSION["RECID_CLIENTE"],
+            'usuarios' => $data,
+        ];
+
+        $api = "api/v1/users/adds/";
+        // $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = "https://chweb.local" . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+
+        // Aquí estamos usando la función modificada sendRemoteData
+        $api = sendRemoteDatausuarios($url, $payload, 10);
+
+        // Para depuración, verificamos la respuesta
+        print_r($api);
+        exit;
+
+        // ...existing code...
     } else if ($_POST['tipo'] == 'upd_usuario') { //auditado
 
         $post = $_POST;
@@ -1160,3 +1203,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     exit;
 }
 exit;
+function sendRemoteDatausuarios($url, $payload, $timeout = 10)
+{
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+    // Si el payload contiene arrays complejos, convertirlo a JSON
+    if (is_array($payload) && array_key_exists('usuarios', $payload)) {
+        $jsonPayload = json_encode($payload);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
+    } else {
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+    }
+
+    $file_contents = curl_exec($ch);
+    $curl_errno = curl_errno($ch); // get error code
+    $curl_error = curl_error($ch); // get error information
+
+    if ($curl_errno > 0) { // si hay error
+        $text = "cURL Error ($curl_errno) : $curl_error $url " . json_encode($payload); // set error message
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog($text, $pathLog); // escribir en el log de errores el error
+    }
+    curl_close($ch);
+    if ($file_contents) {
+        return $file_contents;
+    } else {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
+        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+    }
+    exit;
+}
