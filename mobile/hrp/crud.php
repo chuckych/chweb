@@ -323,14 +323,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         // $url = "https://chweb.local" . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 
-        // Aquí estamos usando la función modificada sendRemoteData
+        // Aquí estamos  enviando los datos a la api
         $api = sendRemoteDatausuarios($url, $payload, 10);
 
-        // Para depuración, verificamos la respuesta
         print_r($api);
-        exit;
 
-        // ...existing code...
     } else if ($_POST['tipo'] == 'upd_usuario') { //auditado
 
         $post = $_POST;
