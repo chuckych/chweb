@@ -1,7 +1,9 @@
 <?php
-
+require __DIR__ . '/config/function.php';
 require __DIR__ . '/vendor/autoload.php';
-$routeEnv = __DIR__ . '../../../config_chweb/';
+
+// $routeEnv = __DIR__ . '../../../config_chweb/';
+$routeEnv = getConfigPath();
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 
@@ -28,7 +30,8 @@ function checkDBLocal()
 }
 function E_ALL()
 {
-    if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
+    $SERVER_NAME = $_SERVER['SERVER_NAME'] ?? '';
+    if ($SERVER_NAME == 'localhost') { // Si es localhost
         error_reporting(E_ALL); // Muestra todos los errores
         ini_set('display_errors', '1'); // Muestra todos los errores
     } else {

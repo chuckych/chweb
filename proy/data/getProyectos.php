@@ -4,23 +4,22 @@ header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
-$totalRecords = $data = array();
+$totalRecords = $data = [];
 $params = $_REQUEST;
-
 $tiempo_inicio = microtime(true);
 $where_condition = $sqlTot = $sqlRec = "";
 $params['search']['value'] = test_input($params['search']['value']) ?? '';
 
-$where_condition .= (!empty($params['search']['value'])) ?  " AND CONCAT_WS(' ', ProyID, EmpDesc, ProyNom, nombre) LIKE '%" . $params['search']['value'] . "%'" : '';
+$where_condition .= (!empty($params['search']['value'])) ? " AND CONCAT_WS(' ', ProyID, EmpDesc, ProyNom, nombre) LIKE '%" . $params['search']['value'] . "%'" : '';
 $params['FiltroEstTipo'] = test_input(($params['FiltroEstTipo']) ?? 'Abierto');
 
 if (($params['ProyFiltroFechas'] ?? '')) {
     $DateRange = explode(' al ', $params['ProyFiltroFechas']);
-    $ProyIni  = test_input(dr_fecha($DateRange[0]));
-    $ProyFin  = test_input(dr_fecha($DateRange[1]));
+    $ProyIni = test_input(dr_fecha($DateRange[0]));
+    $ProyFin = test_input(dr_fecha($DateRange[1]));
     if ($ProyIni == $ProyFin) {
-        $where_condition .= " AND ProyIni = '" . $ProyIni. "'";
-    }else{
+        $where_condition .= " AND ProyIni = '" . $ProyIni . "'";
+    } else {
         $where_condition .= " AND ProyIni >= '" . $ProyIni . "' AND ProyFin <= '" . $ProyFin . "'";
     }
 }
@@ -51,7 +50,7 @@ if (isset($where_condition) && $where_condition != '') {
     $queryCount .= $where_condition;
 }
 
-$query .=  " ORDER BY proy_proyectos.ProyNom DESC LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$query .= " ORDER BY proy_proyectos.ProyNom DESC LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 $totalRecords = simple_pdoQuery($queryCount);
 $count = $totalRecords['count'];
 $records = array_pdoQuery($query);
@@ -59,61 +58,61 @@ $records = array_pdoQuery($query);
 // print_r($query);exit;
 foreach ($records as $key => $row) {
 
-    $EmpDesc   = $row['EmpDesc'];
-    $EstColor  = $row['EstColor'];
-    $EstDesc   = $row['EstDesc'];
-    $EstTipo   = $row['EstTipo'];
+    $EmpDesc = $row['EmpDesc'];
+    $EstColor = $row['EstColor'];
+    $EstDesc = $row['EstDesc'];
+    $EstTipo = $row['EstTipo'];
     $PlantDesc = $row['PlantDesc'];
     $PlantPlano = $row['PlantPlano'];
     $ProyPlantPlano = $row['ProyPlantPlano'];
-    $ProyDesc  = $row['ProyDesc'];
-    $ProyEmpr  = $row['ProyEmpr'];
-    $ProyEsta  = $row['ProyEsta'];
-    $ProyFin   = $row['ProyFin'];
-    $ProyID    = $row['ProyID'];
-    $ProyIni   = $row['ProyIni'];
-    $ProyNom   = $row['ProyNom'];
-    $ProyObs   = $row['ProyObs'];
+    $ProyDesc = $row['ProyDesc'];
+    $ProyEmpr = $row['ProyEmpr'];
+    $ProyEsta = $row['ProyEsta'];
+    $ProyFin = $row['ProyFin'];
+    $ProyID = $row['ProyID'];
+    $ProyIni = $row['ProyIni'];
+    $ProyNom = $row['ProyNom'];
+    $ProyObs = $row['ProyObs'];
     $ProyPlant = $row['ProyPlant'];
-    $ProyResp  = $row['ProyResp'];
-    $RespDesc  = $row['RespDesc'];
-    $ProyMin   = intval($row['ProyMin']);
+    $ProyResp = $row['ProyResp'];
+    $RespDesc = $row['RespDesc'];
+    $ProyMin = intval($row['ProyMin']);
 
     $data[] = array(
-        'ProyFech'   => array(
+        'ProyFech' => array(
             'Inicio' => ($ProyIni),
-            'Fin'    => ($ProyFin)
+            'Fin' => ($ProyFin)
         ),
-        'ProyEmpr'   => array(
+        'ProyEmpr' => array(
             'Nombre' => ($EmpDesc),
-            'ID'     => intval($ProyEmpr)
+            'ID' => intval($ProyEmpr)
         ),
-        'ProyData'   => array(
+        'ProyData' => array(
             'Nombre' => ($ProyNom),
-            'Desc'   => ($ProyDesc),
-            'ID'     => intval($ProyID),
-            'Obs'    => ($ProyObs)
+            'Desc' => ($ProyDesc),
+            'ID' => intval($ProyID),
+            'Obs' => ($ProyObs)
         ),
-        'ProyPlant'   => array(
+        'ProyPlant' => array(
             'Nombre' => ($PlantDesc),
-            'ID'     => intval($ProyPlant)
+            'ID' => intval($ProyPlant)
         ),
-        'ProyPlantPlano'   => array(
+        'ProyPlantPlano' => array(
             'Nombre' => ($PlantPlano),
-            'ID'     => intval($ProyPlantPlano)
+            'ID' => intval($ProyPlantPlano)
         ),
-        'ProyResp'   => array(
+        'ProyResp' => array(
             'Nombre' => ($RespDesc),
-            'ID'     => intval($ProyResp)
+            'ID' => intval($ProyResp)
         ),
-        'ProyEsta'   => array(
+        'ProyEsta' => array(
             'Nombre' => ($EstDesc),
-            'ID'     => intval($ProyEsta),
-            'Color'  => ($EstColor),
-            'Tipo'   => ($EstTipo)
+            'ID' => intval($ProyEsta),
+            'Color' => ($EstColor),
+            'Tipo' => ($EstTipo)
         ),
-        'ProyCalc'   => array(
-            'Horas'   => MinHora($ProyMin),
+        'ProyCalc' => array(
+            'Horas' => MinHora($ProyMin),
             'Minutos' => ($ProyMin)
         ),
     );
@@ -123,11 +122,11 @@ $tiempo_fin = microtime(true);
 $tiempo = ($tiempo_fin - $tiempo_inicio);
 
 $json_data = array(
-    "draw"            => intval($params['draw']),
-    "recordsTotal"    => intval($count),
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($count),
     "recordsFiltered" => intval($count),
-    "data"            => $data,
-    "tiempo"          => round($tiempo, 2)
+    "data" => $data,
+    "tiempo" => round($tiempo, 2)
 );
 echo json_encode($json_data);
 exit;

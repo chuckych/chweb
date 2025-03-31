@@ -1,4 +1,5 @@
 <?php
+require __DIR__ . '../../../../../config/function.php';
 require __DIR__ . '../../../../../config/conect_pdo.php';
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 require __DIR__ . '/funciones-import.php';

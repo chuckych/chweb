@@ -1,13 +1,12 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../config/index.php';
+require_once __DIR__ . '../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
-// <br /><b>Notice</b>:  Undefined index: _rol in <b>C:\Users\nch\OneDrive\Documentos\htdocs\chweb\usuarios\usuarios.php</b> on line <b>21</b><br />
-$data = array();
+$data = [];
 require __DIR__ . '../../config/conect_mysql.php';
 
 $params = $columns = $totalRecords = '';
@@ -16,9 +15,6 @@ $where_condition = $sqlTot = $sqlRec = "";
 
 FusNuloPOST('recid_c', '');
 $recid_c = test_input($_POST['recid_c']);
-
-// print_r($recid_c).PHP_EOL; exit;
-// $recid_c = 'Hh9tzrQZ';
 
 $sql_query = "SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access', uident.ident as 'tarjeta' FROM usuarios 
 LEFT JOIN roles ON usuarios.rol=roles.id 

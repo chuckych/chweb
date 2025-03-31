@@ -42,7 +42,7 @@ function redondearTareFin($tareID, $fechahora)
 	/** redondeamos TareHoraFin */
 	$idCtar = simple_pdoQuery("SELECT c.recid FROM clientes c INNER JOIN proy_tareas pt ON c.id = pt.Cliente WHERE pt.TareID = '$tareID' LIMIT 1"); // Obtenemos el recid de la cuenta
 	$d = getIniCuenta($idCtar['recid']);
-	$params = array("datetime" => $fechahora);
+	$params = ["datetime" => $fechahora];
 	$urlHost = $d['hostCHWeb']; // Obtener el host de la cuenta
 	$url = $urlHost . "/" . HOMEHOST . "/proy/api/?redondear=1";
 	$rs = sendRemoteData($url, ($params));
@@ -91,9 +91,9 @@ function emptyData($data, $err)
 (!$_SERVER['REQUEST_METHOD'] == 'POST') ? PrintRespuestaJson('error', 'Invalid Request Method') . exit : '';
 
 if (($_POST['tarSubmit'])) { // Crear Tarea
-	$_POST['data'] = $_POST['data'] ?? '';
-	emptyData($_POST['data'], 'No se recibieron datos'); // Validar que se recibieron datos
-	$data = json_decode($_POST['data']);
+	$POSTDATA = $_POST['data'] ?? '';
+	emptyData($POSTDATA, 'No se recibieron datos'); // Validar que se recibieron datos
+	$data = json_decode($POSTDATA);
 
 	$EmpDesc = $data->EmpDesc ?? '';
 	$EmpID = $data->EmpID ?? '';
@@ -148,7 +148,9 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 	$PlanoID = empty($PlanoID) ? 'NULL' : $PlanoID;
 
 	try {
-		$i = "INSERT INTO `proy_tareas` (`TareEmp`, `TareProy`, `TareResp`, `TareProc`, `TarePlano`, `TareCost`, `TareIni`, `TareFin`, `Cliente`) VALUES ( '$EmpID', '$ProyID', '$User', '$ProcID', $PlanoID, '$ProcCost', '$FechaHora', '', '$Cliente')";
+		$i = "INSERT INTO `proy_tareas` (`TareEmp`, `TareProy`, `TareResp`, `TareProc`, `TarePlano`, `TareCost`, `TareIni`, `TareFin`, `Cliente`) VALUES ( '$EmpID', '$ProyID', '$User', '$ProcID', $PlanoID, '$ProcCost', '$FechaHora', '0000-00-00 00:00:00', '$Cliente')";
+
+		error_log($i); // Log de la consulta SQL
 
 		if (!pdoQuery($i)) {
 			throw new Exception("Error al iniciar la tarea");

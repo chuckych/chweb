@@ -1,7 +1,8 @@
 <?php
-
+// require __DIR__ . '/function.php';
 require __DIR__ . '../../vendor/autoload.php';
-$routeEnv = __DIR__ . '../../../../config_chweb/';
+
+$routeEnv = getConfigPath();
 
 if (!is_dir($routeEnv)) {
 	if (file_exists(__DIR__ . './dataconnmysql.php')) {
@@ -16,7 +17,10 @@ if (!is_dir($routeEnv)) {
 	if (!file_exists($routeEnv . '.env')) {
 		$environment = "DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
 		file_put_contents($routeEnv . '.env', $environment);
-
+		$dataconnmysql = __DIR__ . './dataconnmysql.php';
+		if (!file_exists($dataconnmysql)) {
+			return false;
+		}
 		if (!unlink(__DIR__ . './dataconnmysql.php')) {
 			// echo ("Error deleting");
 		} else {

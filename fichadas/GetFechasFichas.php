@@ -73,10 +73,11 @@ $dataParametros = array(
 );
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficdatafech/";
-$DATA = $dataApi['DATA'] ?? [];
-$MESSAGE = $dataApi['MESSAGE'] ?? '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
+
+$DATA = $dataApi['DATA'] ?? [];
+$MESSAGE = $dataApi['MESSAGE'] ?? '';
 
 if ($DATA) {
     foreach ($DATA as $row) {

@@ -6,7 +6,7 @@ timeZone();
 timeZone_lang();
 define("HOMEHOST", 'chweb');
 define("CUSTOMER", 'HRConsulting');
-$array_mod = array(
+$array_mod = [
        'cuentas' => 'Cuentas', // Cuentas ID 01
        'novedades' => 'Novedades', // Novedades ID 02
        'fichadas' => 'Fichadas', // Fichadas ID 03
@@ -43,5 +43,5 @@ $array_mod = array(
        'Proyectos' => 'Proyectos', // Proyectos ID 35
        'reporte' => 'Reporte de Totales', // Reporte de totales ID 45
        'prysmian' => 'Reporte Prysmian' // Reporte de totales ID 46
-);
+];
 define("MODULOS", $array_mod);

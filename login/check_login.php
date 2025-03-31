@@ -1,5 +1,7 @@
 <?php
 // obtener el dominio con $Server
+// try {
+
 $Server = $_SERVER['SERVER_NAME'] ?? '';
 
 // Configuración de la cookie
@@ -51,6 +53,7 @@ $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);
 
 require_once __DIR__ . '../../config/conect_pdo.php'; //Conexión a la base de datos
+
 try {
 	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
@@ -305,4 +308,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	header('Location:/' . HOMEHOST . '/login/?error');
 	access_log('Login incorrecto');
 }
-// mysqli_close($link);
+
+// } catch (\Throwable $th) {
+// 	error_log($th->getMessage()); // escribir en el log de errores
+// }

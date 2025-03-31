@@ -32,12 +32,12 @@
         }
     }
 </style>
-<div class="animate__animated animate__fadeIn container">
+<div class="fadeIn container" style="display:none">
     <div class="row">
         <div class="col-12 bg-white">
             <table class="table text-nowrap invisible border p-3 w-100" id="tableProyectos"></table>
         </div>
     </div>
 </div>
-<script src="op/js/dataProyectos.js?<?=version_file("/proy/op/js/dataProyectos.js")?>"></script>
-<script src="op/js/select.js?<?=version_file("/proy/op/js/select.js")?>"></script>
+<script src="op/js/dataProyectos.js?<?= version_file("/proy/op/js/dataProyectos.js") ?>"></script>
+<script src="op/js/select.js?<?= version_file("/proy/op/js/select.js") ?>"></script>

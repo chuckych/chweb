@@ -1,9 +1,11 @@
 <?php
 E_ALL();
-// require __DIR__ . '../dataconnmysql.php';
 
+// require __DIR__ . '/function.php';
 require __DIR__ . '../../vendor/autoload.php';
-$routeEnv = __DIR__ . '../../../../config_chweb/';
+
+$routeEnv = getConfigPath();
+
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 $host = $_ENV['DB_CHWEB_HOST'] ?? '';

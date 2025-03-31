@@ -1,6 +1,6 @@
 $(function () {
     "use strict"; // Start of use strict
-    let tableAsignasTareas = $("#tableAsignasTareas").dataTable({ //inicializar datatable
+    const tableAsignasTareas = $("#tableAsignasTareas").dataTable({ //inicializar datatable
         lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]], //mostrar cantidad de registros
         bProcessing: true,
         serverSide: false,
@@ -24,7 +24,7 @@ $(function () {
             }
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass("animate__animated animate__fadeIn");
+            $(row).addClass("fadeIn");
         },
         columns: [
             /** Nombre */
@@ -208,9 +208,9 @@ $(function () {
             $(this).find('.btnDots').toggleClass("invisible");
         });
         setTimeout(() => {
-            $(idTable + " tr").removeClass("animate__fadeIn");
+            $(idTable + " tr").removeClass("fadeIn");
         }, 500);
-
+        $("#tableAsignasTareas").css("display", "block");
     });
     tableAsignasTareas.on("xhr.dt", function (e, settings, json) {
         tableAsignasTareas.off('xhr.dt');

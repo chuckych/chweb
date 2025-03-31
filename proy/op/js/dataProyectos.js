@@ -1,5 +1,6 @@
 $(function () {
     "use strict"; // Start of use strict
+    notify('Aguarde . . .', "info", 0, "right");
     const tableProyectos = $("#tableProyectos").dataTable({ //inicializar datatable
         lengthMenu: [[3, 10, 25, 50, 100], [3, 10, 25, 50, 100]], //mostrar cantidad de registros
         pageLength: 25, //cantidad de registros por pagina
@@ -42,7 +43,7 @@ $(function () {
             },
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass("animate__animated animate__fadeIn");
+            $(row).addClass("fadeIn");
         },
         columns: [
             /** Estado */
@@ -165,13 +166,17 @@ $(function () {
             url: `../js/DataTableSpanishShort2.json?${Date.now()}`
         }
     });
+    tableProyectos.on("init.dt", function (e, settings) { // Cuando se dibuja la tabla
+        $('.container').show(); // Se muestra el contenedor
+        $.notifyClose();
+    });
     let idPlano = new Array();
     let planos = new Array()
     function addLiPlanos(selector, id, text, cod) {
         let idPlano = new Array();
 
         $(selector).prepend(`
-            <div class="list-group-item animate__animated animate__fadeIn" id="list_${id}">
+            <div class="list-group-item fadeIn" id="list_${id}">
                 <div class="row align-items-center">
                     <div class="col text-truncate">
                         <input type="hidden" hidden class"idPlano" value="${id}">
@@ -1721,7 +1726,7 @@ $(function () {
                         html += `<div>No hay datos disponibles.</div>`;
                     }
                     $.notifyClose();
-                    notify(html, "success", 2000, "right");
+                    notify(html, "success", 4000, "right");
 
                     btn.prop('disabled', false);
                     $("#tableProyectos").DataTable().ajax.reload(null, false); // Se recarga la tabla
