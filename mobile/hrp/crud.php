@@ -1137,7 +1137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-    } else if ($_POST['tipo'] == 'getTokenMobile') { // enrolar fotos
+    } else if ($_POST['tipo'] == 'getTokenMobile') { // getTokenMobile
 
         $post = $_POST;
 
