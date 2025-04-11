@@ -223,22 +223,17 @@ Flight::route('GET /devices', function () { // Ruta para obtener los dispositivo
 
     $id = $_SESSION['ID_CLIENTE'] ?? ''; // ID de la empresa
     $recid = $_SESSION['RECID_CLIENTE'] ?? ''; // ID de la empresa
-    $baseDevices = $_SESSION["APIMOBILEHRP"] . "/chweb/mobile/hrp/api/v1/devices?key=$recid"; // URL base de la API
-    // $endpointSetCache = "$baseDevices/cache.php?key=$recid"; // Endpoint para actualizar la cache
-    // $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
-    // $output = get_data($endpointGetCache); // Obtener la cache 
+    $baseDevices = $_SESSION["APIMOBILEHRP"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
+    $endpointSetCache = "$baseDevices/cache.php?key=$recid"; // Endpoint para actualizar la cache
+    $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
+    $output = get_data($endpointGetCache); // Obtener la cache
 
-    // if (!$output) { // Si no hay cache
-    //     actualizar_cache($endpointSetCache); // Actualizar la cache
-    //     $output = get_data($endpointGetCache); // Obtener la cache
-    // }
-
-    // $data = ($output) ? (unserialize(stripcslashes($output))) : ''; // Deserializer la cache
-    $data = get_data($baseDevices); // Obtener los datos de la API
-    if (!$data) { // Si no hay datos
-        Flight::json(array('status' => 'error', 'message' => 'No se han podido obtener los datos')); // Responder con error
-        exit;
+    if (!$output) { // Si no hay cache
+        actualizar_cache($endpointSetCache); // Actualizar la cache
+        $output = get_data($endpointGetCache); // Obtener la cache
     }
+
+    $data = ($output) ? (unserialize(stripcslashes($output))) : ''; // Deserializer la cache
     Flight::json(array('data' => $data ?? '')); // Responder con la cache
 });
 
