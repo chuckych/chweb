@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -21,7 +21,7 @@ function pingWebService($textError, $webService) // Función para validar que el
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
-    $response   = curl_exec($ch); // extract information from response
+    $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
     if ($curl_errno > 0) { // si hay error
@@ -81,14 +81,14 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $text = "Error al obtener Horario. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
     if ($curl_errno > 0) {
-        writeLog($text, __DIR__ . "../../logs/" . date('Ymd') . "_errorGetHorario.log", '');
+        writeLog($text, __DIR__ . "/../logs/" . date('Ymd') . "_errorGetHorario.log", '');
         http_response_code(400);
         (response($text, '0', 'Error', 400, $time_start, 0, ''));
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
-        writeLog($text, __DIR__ . '../../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        writeLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'dato' => $respuesta);
         http_response_code(400);
         (response($respuesta, '0', 'Error', 400, $time_start, 0, ''));
@@ -103,7 +103,7 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
         return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
         // exit;
     } else {
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        fileLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
 }
 
@@ -111,44 +111,44 @@ $wc = '';
 
 $dp = $request->data;
 
-$start  = start();
+$start = start();
 $length = length();
 
-$dp->FechaDesde     = ($dp->FechaDesde) ?? [];
-$dp->FechaDesde     = vp($dp->FechaDesde, 'FechaDesde', 'str', 10);
+$dp->FechaDesde = ($dp->FechaDesde) ?? [];
+$dp->FechaDesde = vp($dp->FechaDesde, 'FechaDesde', 'str', 10);
 
-$dp->FechaHasta     = ($dp->FechaHasta) ?? [];
-$dp->FechaHasta     = vp($dp->FechaHasta, 'FechaHasta', 'str', 10);
+$dp->FechaHasta = ($dp->FechaHasta) ?? [];
+$dp->FechaHasta = vp($dp->FechaHasta, 'FechaHasta', 'str', 10);
 
-$dp->LegajoDesde    = ($dp->LegajoDesde) ?? [];
-$dp->LegajoDesde    = vp($dp->LegajoDesde, 'LegajoDesde', 'str', 9);
+$dp->LegajoDesde = ($dp->LegajoDesde) ?? [];
+$dp->LegajoDesde = vp($dp->LegajoDesde, 'LegajoDesde', 'str', 9);
 
 $dp->Legajos = ($dp->Legajos) ?? [];
 $dp->Legajos = vp($dp->Legajos, 'Legajos', 'strArray', 9);
 
-$dp->LegajoHasta    = ($dp->LegajoHasta) ?? [];
-$dp->LegajoHasta    = vp($dp->LegajoHasta, 'LegajoHasta', 'str', 9);
+$dp->LegajoHasta = ($dp->LegajoHasta) ?? [];
+$dp->LegajoHasta = vp($dp->LegajoHasta, 'LegajoHasta', 'str', 9);
 
 $dp->TipoDePersonal = ($dp->TipoDePersonal) ?? [];
 $dp->TipoDePersonal = vp($dp->TipoDePersonal, 'TipoDePersonal', 'int', 1);
 
-$dp->Empresa        = ($dp->Empresa) ?? [];
-$dp->Empresa        = vp($dp->Empresa, 'Empresa', 'int', 4);
+$dp->Empresa = ($dp->Empresa) ?? [];
+$dp->Empresa = vp($dp->Empresa, 'Empresa', 'int', 4);
 
-$dp->Planta         = ($dp->Planta) ?? [];
-$dp->Planta         = vp($dp->Planta, 'Planta', 'int', 4);
+$dp->Planta = ($dp->Planta) ?? [];
+$dp->Planta = vp($dp->Planta, 'Planta', 'int', 4);
 
-$dp->Sucursal       = ($dp->Sucursal) ?? [];
-$dp->Sucursal       = vp($dp->Sucursal, 'Sucursal', 'int', 4);
+$dp->Sucursal = ($dp->Sucursal) ?? [];
+$dp->Sucursal = vp($dp->Sucursal, 'Sucursal', 'int', 4);
 
-$dp->Grupo          = ($dp->Grupo) ?? [];
-$dp->Grupo          = vp($dp->Grupo, 'Grupo', 'int', 4);
+$dp->Grupo = ($dp->Grupo) ?? [];
+$dp->Grupo = vp($dp->Grupo, 'Grupo', 'int', 4);
 
-$dp->Sector         = ($dp->Sector) ?? [];
-$dp->Sector         = vp($dp->Sector, 'Sector', 'int', 4);
+$dp->Sector = ($dp->Sector) ?? [];
+$dp->Sector = vp($dp->Sector, 'Sector', 'int', 4);
 
-$dp->Seccion        = ($dp->Seccion) ?? [];
-$dp->Seccion        = vp($dp->Seccion, 'Seccion', 'int', 4);
+$dp->Seccion = ($dp->Seccion) ?? [];
+$dp->Seccion = vp($dp->Seccion, 'Seccion', 'int', 4);
 
 $getHorario = getHorario(
     ($dp->FechaDesde),
@@ -175,17 +175,17 @@ if ($getHorario && $getHorario['Estado'] != 'Terminado') {
     // $arrHorario = preg_split("/[\s]+/", $getHorario['Estado'], -1, 1);
     // print_r($arrHorario) . exit;
     foreach ($arrHorario as $key => $value) {
-        $explode    = explode(',', $value);
-        $legajo     = $explode[0];
-        $fecha      = fecha(str_replace('/', '-', $explode[1]));
-        $desde      = $explode[2];
-        $hasta      = $explode[3];
-        $descanso   = $explode[4];
-        $laboral    = $explode[5];
-        $feriado    = $explode[6];
+        $explode = explode(',', $value);
+        $legajo = $explode[0];
+        $fecha = fecha(str_replace('/', '-', $explode[1]));
+        $desde = $explode[2];
+        $hasta = $explode[3];
+        $descanso = $explode[4];
+        $laboral = $explode[5];
+        $feriado = $explode[6];
         $asignacion = $explode[7];
-        $codigo     = $explode[8];
-        $dia        = diaSemana($fecha);
+        $codigo = $explode[8];
+        $dia = diaSemana($fecha);
 
         $horariodesc = '';
         if ($codigo > 0) {
@@ -193,7 +193,7 @@ if ($getHorario && $getHorario['Estado'] != 'Terminado') {
 
             foreach ($filtroHorarios as $key => $a) {
                 $horario = array(
-                    'cod'  => $a['HorCodi'],
+                    'cod' => $a['HorCodi'],
                     'desc' => $a['HorDesc'],
                     'horID' => $a['HorID']
                 );
@@ -279,24 +279,24 @@ if ($getHorario && $getHorario['Estado'] != 'Terminado') {
         $HorarioID = (($horario['horID'])) ? $horario['horID'] : '-';
 
         $data[] = array(
-            'Codigo'       => intval($codigo),
-            'Horario'      => $Horario,
-            'HorarioID'      => $HorarioID,
-            'Fecha'        => $fecha,
-            'Dia'          => $dia,
-            'Feriado'      => ($diaFeriado),
-            'Laboral'      => ($diaLaboral),
-            'Desde'        => $desde,
-            'Hasta'        => $hasta,
-            'Descanso'     => $descanso,
-            'Legajo'       => intval($legajo),
-            'TipoAsign'    => ($tipo),
+            'Codigo' => intval($codigo),
+            'Horario' => $Horario,
+            'HorarioID' => $HorarioID,
+            'Fecha' => $fecha,
+            'Dia' => $dia,
+            'Feriado' => ($diaFeriado),
+            'Laboral' => ($diaLaboral),
+            'Desde' => $desde,
+            'Hasta' => $hasta,
+            'Descanso' => $descanso,
+            'Legajo' => intval($legajo),
+            'TipoAsign' => ($tipo),
             'TipoAsignStr' => $Mensaje
         );
     }
 }
 
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, '0', 'OK', 200, $time_start, $countData, $idCompany));
 exit;

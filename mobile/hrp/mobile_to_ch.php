@@ -1,6 +1,6 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 
 error_reporting(E_ALL);
@@ -10,7 +10,7 @@ function MSQuery2($query)
 {
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    require __DIR__ . '../../../config/conect_mssql.php';
+    require __DIR__ . '/../../config/conect_mssql.php';
     try {
         $stmt = sqlsrv_query($link, $query, $params, $options);
         if ($stmt === false) {
@@ -28,20 +28,21 @@ function MSQuery2($query)
         fileLog($th->getMessage(), $pathLog . '/' . date('Ymd') . '_error_MSQuery.log');
     }
 }
-function json($v, $code = 200){
+function json($v, $code = 200)
+{
     return Flight::json($v);
 }
 
 $r = Flight::request();
 
-($r->method != 'POST') ? json("Invalid request method :" .$r->method).exit : '';
+($r->method != 'POST') ? json("Invalid request method :" . $r->method) . exit : '';
 
 $dp = $r->data;
 
-$user   = $dp->user ?? '';
+$user = $dp->user ?? '';
 $inicio = $dp->inicio ?? '';
-$fin    = $dp->fin ?? '';
-$recid  = $dp->recid ?? '';
+$fin = $dp->fin ?? '';
+$recid = $dp->recid ?? '';
 
 $_GET['_c'] = $recid; // para la conexion SQL
 
@@ -71,7 +72,7 @@ foreach ($user as $key => $v) {
     $u[] = intval($v);
 }
 
-$u = implode(',',array_unique($u));
+$u = implode(',', array_unique($u));
 
 $query = "SELECT `id_user`, `fechaHora`, `eventZone` FROM `reg_` `r` WHERE `r`.`id_user` IN ($u) AND `r`.`fechahora` BETWEEN '$inicio' AND '$fin'";
 $ar = array_pdoQuery($query);
@@ -96,13 +97,13 @@ foreach ($ar as $key => $v) {
 
 }
 echo json_encode(array(
-    "Fichadas encontradas"  => count($ar), 
-    "Fichadas insertadas"   => count($i), 
-    "Fichadas detalle"      => $i, 
-    "Errores"               => count($error),
-    "_request_data"         =>$r->data,
-    "_request_ip"           =>$r->ip,
-    '_usersClean'            =>$u
+    "Fichadas encontradas" => count($ar),
+    "Fichadas insertadas" => count($i),
+    "Fichadas detalle" => $i,
+    "Errores" => count($error),
+    "_request_data" => $r->data,
+    "_request_ip" => $r->ip,
+    '_usersClean' => $u
 ), JSON_PRETTY_PRINT);
 exit;
 

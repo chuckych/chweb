@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 header('Access-Control-Allow-Origin: *');
 header("Content-Type: application/json");
 secure_auth_ch_json();

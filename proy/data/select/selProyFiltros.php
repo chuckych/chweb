@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -22,11 +22,11 @@ $where_condition .= (test_input($params['ProyNomFiltro'] ?? '')) ? " AND ProyID 
 
 if (($params['ProyFiltroFechas'] ?? '')) {
     $DateRange = explode(' al ', $params['ProyFiltroFechas']);
-    $ProyIni  = test_input(dr_fecha($DateRange[0]));
-    $ProyFin  = test_input(dr_fecha($DateRange[1]));
+    $ProyIni = test_input(dr_fecha($DateRange[0]));
+    $ProyFin = test_input(dr_fecha($DateRange[1]));
     if ($ProyIni == $ProyFin) {
-        $where_condition .= " AND ProyIni = '" . $ProyIni. "'";
-    }else{
+        $where_condition .= " AND ProyIni = '" . $ProyIni . "'";
+    } else {
         $where_condition .= " AND ProyIni >= '" . $ProyIni . "' AND ProyFin <= '" . $ProyFin . "'";
     }
 }
@@ -71,20 +71,21 @@ switch ($params['NomFiltro']) {
             }
             // $text = '(' . $row['ProyID'] . ') ' . $row['ProyNom'];
             $text = $row['ProyNom'];
-            $html = "<div title='$row[EstDesc]' class='flex-center-between'><span>".utf8str($text)."</span><span class='' title='$textIcon'>$icon</span></div>";
+            $html = "<div title='$row[EstDesc]' class='flex-center-between'><span>" . utf8str($text) . "</span><span class='' title='$textIcon'>$icon</span></div>";
 
             $data[] = array(
-                'id'       => $row['ProyID'],
-                'empresa'  => utf8str($row['EmpDesc']),
-                'text'     => utf8str($text),
-                'EstDesc'  => ($row['EstDesc']),
+                'id' => $row['ProyID'],
+                'empresa' => utf8str($row['EmpDesc']),
+                'text' => utf8str($text),
+                'EstDesc' => ($row['EstDesc']),
                 'EstColor' => ($row['EstColor']),
                 'html' => $html,
             );
         }
         function groupAssoc($input, $sortkey)
         {
-            foreach ($input as $key => $val) $output[$val[$sortkey]][] = $val;
+            foreach ($input as $key => $val)
+                $output[$val[$sortkey]][] = $val;
             return $output;
         }
         $myArray = groupAssoc($data, 'empresa');
@@ -113,7 +114,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['ProyEmpr'],
+                'id' => $row['ProyEmpr'],
                 'text' => utf8str($row['EmpDesc']),
             );
         }
@@ -135,7 +136,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['ProyResp'],
+                'id' => $row['ProyResp'],
                 'text' => utf8str($row['nombre']),
             );
         }
@@ -158,7 +159,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['ProyPlant'],
+                'id' => $row['ProyPlant'],
                 'text' => utf8str($row['PlantDesc']),
             );
         }
@@ -204,16 +205,16 @@ switch ($params['NomFiltro']) {
             }
             // $html = "<div title='$row[EstDesc]' class='flex-center-between'><span>".utf8str($text)."</span><span style='background:$row[EstColor]' class='ms-1 p-1 me-1'></span></div>";
             $data[] = array(
-                'id'   => $row['ProyEsta'],
+                'id' => $row['ProyEsta'],
                 'text' => utf8str($row['EstDesc']),
-                'html'  => html($row['EstDesc'], $row['EstColor'], $icon, $textIcon),
+                'html' => html($row['EstDesc'], $row['EstColor'], $icon, $textIcon),
             );
         }
         echo json_encode($data);
         break;
     default:
         $data[] = array(
-            'id'   => '',
+            'id' => '',
             'text' => 'Error..',
         );
         echo json_encode($data);

@@ -4,14 +4,14 @@
 <head>
     <link href="estilos.css" rel="stylesheet" type="text/css" />
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../../llamadas.php"; ?>
     <title><?= MODULOS['prysmian'] ?></title>
 </head>
 
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container">
-        <?php require __DIR__ . '../../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../../nav.php'; ?>
         <!-- Encabezado -->
         <?=
             encabezado_mod2('bg-custom', 'white', 'folder-symlink-fill', MODULOS['prysmian'], '25', 'text-white mr-2');

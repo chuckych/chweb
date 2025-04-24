@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['horarios'] ?></title>
     <style>
         .table.dataTable {
@@ -84,19 +84,23 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'reloj.png', 'Administración de ' . MODULOS['horarios'], '') ?>
         <div class="row bg-white m-0 my-3">
             <div class="col-12 w-100 divFiltros px-2">
                 <div class="d-inline-flex" style="gap:5px">
                     <div class="d-flex flex-row border radius">
-                        <button type="button" class="btn btn-outline-custom hint--top border-0 Filtros" data-toggle="modal" data-target="#Filtros" aria-label="Filtrar datos">
+                        <button type="button" class="btn btn-outline-custom hint--top border-0 Filtros"
+                            data-toggle="modal" data-target="#Filtros" aria-label="Filtrar datos">
                             <span class="fontq">Filtros</span>
                         </button>
-                        <button id="trash_all" aria-label="Limpiar Filtros" class="hint--top btn border-0 btn-outline-custom fontq"><i class="bi bi-trash"></i></button>
+                        <button id="trash_all" aria-label="Limpiar Filtros"
+                            class="hint--top btn border-0 btn-outline-custom fontq"><i class="bi bi-trash"></i></button>
                     </div>
-                    <button class="btn border radius btn-outline-custom font08 hint--top" data-toggle="collapse" href="#collapseMasivos" role="button" aria-expanded="false" aria-controls="collapseMasivos" aria-label="Según filtros">
+                    <button class="btn border radius btn-outline-custom font08 hint--top" data-toggle="collapse"
+                        href="#collapseMasivos" role="button" aria-expanded="false" aria-controls="collapseMasivos"
+                        aria-label="Según filtros">
                         Ingreso Masivo
                     </button>
                 </div>
@@ -111,7 +115,8 @@
                     <span class="hint--top d-none d-sm-block" aria-label="Ordenar por Nombre">
                         <div class="custom-control custom-switch float-right pt-1 mr-2">
                             <input type="checkbox" class="custom-control-input" checked name="_porApNo" id="_porApNo">
-                            <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;">Por Nombre</label>
+                            <label class="custom-control-label" for="_porApNo" style="padding-top: 3px;">Por
+                                Nombre</label>
                         </div>
                     </span>
                 </div>
@@ -147,31 +152,42 @@
 
                             </div>
 
-                            <div class="mb-2 d-flex p-1 border-0 w-100 radius justify-content-between fadeIn" style="gap: 5px;">
+                            <div class="mb-2 d-flex p-1 border-0 w-100 radius justify-content-between fadeIn"
+                                style="gap: 5px;">
                                 <div>
-                                    <button class="btn btn-sm border btn-outline-custom l_horale1 custom-white" aria-label="Añadir Horario">
+                                    <button class="btn btn-sm border btn-outline-custom l_horale1 custom-white"
+                                        aria-label="Añadir Horario">
                                     </button>
-                                    <button class="btn btn-sm border btn-outline-custom l_rota custom-white" aria-label="Añadir Rotación">
+                                    <button class="btn btn-sm border btn-outline-custom l_rota custom-white"
+                                        aria-label="Añadir Rotación">
                                     </button>
-                                    <button class="btn btn-sm border btn-outline-custom l_cita custom-white" aria-label="Añadir Citación">
+                                    <button class="btn btn-sm border btn-outline-custom l_cita custom-white"
+                                        aria-label="Añadir Citación">
                                     </button>
                                 </div>
-                                <div class="btn-group-toggle border radius bg-white p-1 d-none d-sm-block" data-toggle="buttons">
-                                    <label class="btn btn-sm btn-outline-secondary border-0 radius active font07 verHorarios" aria-label="Ocultar Horarios">
+                                <div class="btn-group-toggle border radius bg-white p-1 d-none d-sm-block"
+                                    data-toggle="buttons">
+                                    <label
+                                        class="btn btn-sm btn-outline-secondary border-0 radius active font07 verHorarios"
+                                        aria-label="Ocultar Horarios">
                                         <input type="checkbox" checked> Horarios
                                     </label>
-                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verRotaciones" aria-label="Ocultar Rotaciones">
+                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verRotaciones"
+                                        aria-label="Ocultar Rotaciones">
                                         <input type="checkbox" checked> Rotaciones
                                     </label>
-                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verCitaciones" aria-label="Ocultar Citaciones">
+                                    <label class="btn btn-sm btn-outline-secondary border-0 radius font07 verCitaciones"
+                                        aria-label="Ocultar Citaciones">
                                         <input type="checkbox" checked> Citaciones
                                     </label>
                                 </div>
                             </div>
 
                             <div class="radius mb-2 bg-white p-2 border" id="divHorariosDesde">
-                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
-                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleDesde">
+                                <div class="d-inline-flex justify-content-between w-100"
+                                    style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center"
+                                        id="titleDesde">
                                         Horarios Desde
                                     </div>
                                     <div class="position-relative p-1">
@@ -183,8 +199,10 @@
                                 </div>
                             </div>
                             <div class="radius mb-2 bg-white p-2 border" id="divHorariosDesdeHasta">
-                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
-                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleDesdeHasta">Horarios Desde Hasta</div>
+                                <div class="d-inline-flex justify-content-between w-100"
+                                    style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center"
+                                        id="titleDesdeHasta">Horarios Desde Hasta</div>
                                     <div class="position-relative p-1">
                                         <input type="text" class="d-none searchDesdeHasta h25">
                                     </div>
@@ -194,8 +212,10 @@
                                 </div>
                             </div>
                             <div class="radius mb-2 bg-white p-2 border" id="divRotaciones">
-                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
-                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleRotaciones">Rotaciones</div>
+                                <div class="d-inline-flex justify-content-between w-100"
+                                    style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center"
+                                        id="titleRotaciones">Rotaciones</div>
                                     <div class="position-relative p-1">
                                         <input type="text" class="d-none searchRotaciones h25">
                                     </div>
@@ -204,11 +224,14 @@
                                     <table class="table text-nowrap w-100" id="table-rota"></table>
                                 </div>
                             </div>
-                            <div class="toast RotaDeta border-0" role="alert" aria-live="polite" data-autohide="false" aria-atomic="true">
+                            <div class="toast RotaDeta border-0" role="alert" aria-live="polite" data-autohide="false"
+                                aria-atomic="true">
                             </div>
                             <div class="radius mb-2 bg-white p-2 border" id="divCitaciones">
-                                <div class="d-inline-flex justify-content-between w-100" style="border-bottom: 1px solid #ddd;">
-                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center" id="titleCitaciones">Citaciones</div>
+                                <div class="d-inline-flex justify-content-between w-100"
+                                    style="border-bottom: 1px solid #ddd;">
+                                    <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center"
+                                        id="titleCitaciones">Citaciones</div>
                                     <div class="position-relative p-1">
                                         <input type="text" class="d-none searchCitaciones h25">
                                     </div>
@@ -219,7 +242,8 @@
                             </div>
                         </div>
                         <span id="divSelectLegajo">
-                            <div class="text-center w-100 mt-5 d-flex align-items-center justify-content-center w-100" style="height: 200px;">
+                            <div class="text-center w-100 mt-5 d-flex align-items-center justify-content-center w-100"
+                                style="height: 200px;">
                                 <p class="p-2 px-3 bg-light radius">Seleccionar un Legajo</p>
                             </div>
                         </span>
@@ -243,11 +267,11 @@
     <?php
 
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../../js/DateRanger.php";
+    require __DIR__ . "/../../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/DataTable.php";
     ?>
     <script src="../../js/bootbox.min.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -10,15 +10,15 @@ $checkMethod('POST');
 
 // Flight::json($dataC).exit;
 
-$FicEstruct    = '';
-$ColEstruc     = '';
+$FicEstruct = '';
+$ColEstruc = '';
 $ColEstrucDesc = '';
-$ColEstrucCod  = '';
-$wc            = '';
+$ColEstrucCod = '';
+$wc = '';
 
 $validEstruct = array('Empr', 'Plan', 'Grup', 'Sect', 'Sucu', 'Tare', 'Conv', 'Regla', 'Sec2', 'Tipo', 'Lega');
-$dp['estruct']    = ($dp['Estruct']) ?? '';
-$dp['Estruct']    = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); // str de estructura 
+$dp['estruct'] = ($dp['Estruct']) ?? '';
+$dp['Estruct'] = vp($dp['Estruct'], 'Estruct', 'strValid', '', $validEstruct); // str de estructura 
 
 $dp['Desc'] = ($dp['Desc']) ?? '';
 $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 20); // str de estructura
@@ -38,31 +38,31 @@ if ($dp['Sector'] && $dp['estruct'] == 'Sec2') {
     $dp['Sector'] = vp($dp['Sector'], 'Sector', 'intArray', 11, $validEstruct);
 }
 
-$dp['Nume']     = ($dp['Nume']) ?? [];
-$dp['Nume']     = vp($dp['Nume'], 'Nume', 'intArray', 11);
-$dp['Docu']     = ($dp['Docu']) ?? [];
-$dp['Docu']     = vp($dp['Docu'], 'Docu', 'intArray', 11);
-$dp['IntExt']   = ($dp['IntExt']) ?? [];
-$dp['IntExt']   = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
-$dp['ApNo']     = $dp['ApNo'] ?? '';
-$dp['ApNo']     = vp($dp['ApNo'], 'ApNo', 'str', 40);
+$dp['Nume'] = ($dp['Nume']) ?? [];
+$dp['Nume'] = vp($dp['Nume'], 'Nume', 'intArray', 11);
+$dp['Docu'] = ($dp['Docu']) ?? [];
+$dp['Docu'] = vp($dp['Docu'], 'Docu', 'intArray', 11);
+$dp['IntExt'] = ($dp['IntExt']) ?? [];
+$dp['IntExt'] = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
+$dp['ApNo'] = $dp['ApNo'] ?? '';
+$dp['ApNo'] = vp($dp['ApNo'], 'ApNo', 'str', 40);
 $dp['ApNoNume'] = $dp['ApNoNume'] ?? '';
 $dp['ApNoNume'] = vp($dp['ApNoNume'], 'ApNoNume', 'str', 40);
 
-$dp['Empr']     = ($dp['Empr']) ?? [];
-$dp['Empr']     = vp($dp['Empr'], 'Empr', 'intArray', 5);
-$dp['Plan']     = ($dp['Plan']) ?? [];
-$dp['Plan']     = vp($dp['Plan'], 'Plan', 'intArray', 5);
-$dp['Conv']     = ($dp['Conv']) ?? [];
-$dp['Conv']     = vp($dp['Conv'], 'Conv', 'intArray', 5);
-$dp['Sec2']     = ($dp['Sec2']) ?? [];
-$dp['Sec2']     = vp($dp['Sec2'], 'Sec2', 'intArray', 5);
-$dp['Sect']     = ($dp['Sect']) ?? [];
-$dp['Sect']     = vp($dp['Sect'], 'Sect', 'intArray', 5);
-$dp['Grup']     = ($dp['Grup']) ?? [];
-$dp['Grup']     = vp($dp['Grup'], 'Grup', 'intArray', 5);
-$dp['Sucu']     = ($dp['Sucu']) ?? [];
-$dp['Sucu']     = vp($dp['Sucu'], 'Sucu', 'intArray', 5);
+$dp['Empr'] = ($dp['Empr']) ?? [];
+$dp['Empr'] = vp($dp['Empr'], 'Empr', 'intArray', 5);
+$dp['Plan'] = ($dp['Plan']) ?? [];
+$dp['Plan'] = vp($dp['Plan'], 'Plan', 'intArray', 5);
+$dp['Conv'] = ($dp['Conv']) ?? [];
+$dp['Conv'] = vp($dp['Conv'], 'Conv', 'intArray', 5);
+$dp['Sec2'] = ($dp['Sec2']) ?? [];
+$dp['Sec2'] = vp($dp['Sec2'], 'Sec2', 'intArray', 5);
+$dp['Sect'] = ($dp['Sect']) ?? [];
+$dp['Sect'] = vp($dp['Sect'], 'Sect', 'intArray', 5);
+$dp['Grup'] = ($dp['Grup']) ?? [];
+$dp['Grup'] = vp($dp['Grup'], 'Grup', 'intArray', 5);
+$dp['Sucu'] = ($dp['Sucu']) ?? [];
+$dp['Sucu'] = vp($dp['Sucu'], 'Sucu', 'intArray', 5);
 $dp['TareProd'] = ($dp['TareProd']) ?? [];
 $dp['TareProd'] = vp($dp['TareProd'], 'TareProd', 'intArray', 5);
 $dp['RegCH'] = ($dp['RegCH']) ?? [];
@@ -71,21 +71,21 @@ $dp['Tipo'] = ($dp['Tipo']) ?? [];
 $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'numArray01', 1);
 
 $arrDPPersonal = array(
-    'Nume'     => $dp['Nume'], // Codigo de Horario {int} {array}
-    'ApNo'     => $dp['ApNo'], // Nombre y apellido {string}
-    'Docu'     => $dp['Docu'], // Documento {string}
+    'Nume' => $dp['Nume'], // Codigo de Horario {int} {array}
+    'ApNo' => $dp['ApNo'], // Nombre y apellido {string}
+    'Docu' => $dp['Docu'], // Documento {string}
     'ApNoNume' => $dp['ApNoNume'], // Nombre y apellido y Legajo {string}
-    'IntExt'   => $dp['IntExt'], // Tipo de legajo. Interno, Externo {int} {array}
-    'Empr'     => $dp['Empr'], // Empresa {int} {array}
-    'Plan'     => $dp['Plan'], // Planta {int} {array}
-    'Conv'     => $dp['Conv'], // Convenio {int} {array}
-    'Sect'     => $dp['Sect'], // Sector {int} {array}
-    'Sec2'     => $dp['Sec2'], // Seccion {int} {array}
-    'Grup'     => $dp['Grup'], // Grupos {int} {array}
-    'Sucu'     => $dp['Sucu'], // Sucursales {int} {array}
+    'IntExt' => $dp['IntExt'], // Tipo de legajo. Interno, Externo {int} {array}
+    'Empr' => $dp['Empr'], // Empresa {int} {array}
+    'Plan' => $dp['Plan'], // Planta {int} {array}
+    'Conv' => $dp['Conv'], // Convenio {int} {array}
+    'Sect' => $dp['Sect'], // Sector {int} {array}
+    'Sec2' => $dp['Sec2'], // Seccion {int} {array}
+    'Grup' => $dp['Grup'], // Grupos {int} {array}
+    'Sucu' => $dp['Sucu'], // Sucursales {int} {array}
     'TareProd' => $dp['TareProd'], // Tareas de produccion {int} {array}
-    'RegCH'    => $dp['RegCH'], // Regla de control horario {int} {array}
-    'Tipo'     => $dp['Tipo'], // Tipo de personal {int} {array}
+    'RegCH' => $dp['RegCH'], // Regla de control horario {int} {array}
+    'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
 );
 
 foreach ($arrDPPersonal as $key => $per) {
@@ -109,7 +109,7 @@ foreach ($arrDPPersonal as $key => $per) {
                     }
                     $dataSec2 = implode(',', $dataSec2);
                     // print_r($dataSec2).exit;
-                    $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                    $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)";
                 } else {
                     $wc .= " AND PERSONAL.Leg$key IN ($e)";
                 }
@@ -122,7 +122,7 @@ foreach ($arrDPPersonal as $key => $per) {
                             // $secSec2 = explode('-', $dp['Sec2'][0]);
                             $dataSec2 = implode(',', $dp['Sec2']);
                             // Flight::json($dataSec2).exit;
-                            $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                            $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)";
                         } else {
                             $wc .= " AND PERSONAL.Leg$key = '$v'";
                         }
@@ -176,59 +176,59 @@ foreach ($arrDPPersonalBaja as $key => $baja) {
 
 switch ($dp['Estruct']) {
     case 'Empr':
-        $FicEstruct    = 'PERSONAL.LegEmpr';
-        $ColEstruc     = 'EMPRESAS';
+        $FicEstruct = 'PERSONAL.LegEmpr';
+        $ColEstruc = 'EMPRESAS';
         $ColEstrucDesc = 'EMPRESAS.EmpRazon';
-        $ColEstrucCod  = 'EMPRESAS.EmpCodi';
+        $ColEstrucCod = 'EMPRESAS.EmpCodi';
         break;
     case 'Plan':
-        $FicEstruct    = 'PERSONAL.LegPlan';
-        $ColEstruc     = 'PLANTAS';
+        $FicEstruct = 'PERSONAL.LegPlan';
+        $ColEstruc = 'PLANTAS';
         $ColEstrucDesc = 'PLANTAS.PlaDesc';
-        $ColEstrucCod  = 'PLANTAS.PlaCodi';
+        $ColEstrucCod = 'PLANTAS.PlaCodi';
         break;
     case 'Grup':
-        $FicEstruct    = 'PERSONAL.LegGrup';
-        $ColEstruc     = 'GRUPOS';
+        $FicEstruct = 'PERSONAL.LegGrup';
+        $ColEstruc = 'GRUPOS';
         $ColEstrucDesc = 'GRUPOS.GruDesc';
-        $ColEstrucCod  = 'GRUPOS.GruCodi';
+        $ColEstrucCod = 'GRUPOS.GruCodi';
         break;
     case 'Sect':
-        $FicEstruct    = 'PERSONAL.LegSect';
-        $ColEstruc     = 'SECTORES';
+        $FicEstruct = 'PERSONAL.LegSect';
+        $ColEstruc = 'SECTORES';
         $ColEstrucDesc = 'SECTORES.SecDesc';
-        $ColEstrucCod  = 'SECTORES.SecCodi';
+        $ColEstrucCod = 'SECTORES.SecCodi';
         break;
     case 'Sucu':
-        $FicEstruct    = 'PERSONAL.LegSucu';
-        $ColEstruc     = 'SUCURSALES';
+        $FicEstruct = 'PERSONAL.LegSucu';
+        $ColEstruc = 'SUCURSALES';
         $ColEstrucDesc = 'SUCURSALES.SucDesc';
-        $ColEstrucCod  = 'SUCURSALES.SucCodi';
+        $ColEstrucCod = 'SUCURSALES.SucCodi';
         break;
     case 'Tare':
-        $FicEstruct    = 'PERSONAL.LegTareProd';
-        $ColEstruc     = 'TAREAS';
+        $FicEstruct = 'PERSONAL.LegTareProd';
+        $ColEstruc = 'TAREAS';
         $ColEstrucDesc = 'TAREAS.TareDesc';
-        $ColEstrucCod  = 'TAREAS.TareCodi';
+        $ColEstrucCod = 'TAREAS.TareCodi';
         break;
     case 'Conv':
-        $FicEstruct    = 'PERSONAL.LegConv';
-        $ColEstruc     = 'CONVENIO';
+        $FicEstruct = 'PERSONAL.LegConv';
+        $ColEstruc = 'CONVENIO';
         $ColEstrucDesc = 'CONVENIO.ConDesc';
-        $ColEstrucCod  = 'CONVENIO.ConCodi';
+        $ColEstrucCod = 'CONVENIO.ConCodi';
         break;
     case 'Regla':
-        $FicEstruct    = 'PERSONAL.LegRegCH';
-        $ColEstruc     = 'REGLASCH';
+        $FicEstruct = 'PERSONAL.LegRegCH';
+        $ColEstruc = 'REGLASCH';
         $ColEstrucDesc = 'REGLASCH.RCDesc';
-        $ColEstrucCod  = 'REGLASCH.RCCodi';
+        $ColEstrucCod = 'REGLASCH.RCCodi';
         break;
     case 'Tipo':
-        $ColEstruc     = 'PERSONAL';
-        $ColEstrucCod  = 'PERSONAL.LegTipo';
+        $ColEstruc = 'PERSONAL';
+        $ColEstrucCod = 'PERSONAL.LegTipo';
         break;
 }
-$FiltroQ  = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
+$FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT($ColEstrucCod, $ColEstrucDesc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
 
 switch ($dp['Estruct']) {
     case 'Tipo':
@@ -240,22 +240,22 @@ switch ($dp['Estruct']) {
         $dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
 
         $dataParamPerson = array(
-            "Nume"     => $dp['Nume'],
+            "Nume" => $dp['Nume'],
             "ApNoNume" => $dp['Desc'],
             "getDatos" => 1,
-            "Baja"     => ($dp['Baja']),
-            "Empr"     => ($dp['Empr']),
-            "Plan"     => ($dp['Plan']),
-            "Sect"     => ($dp['Sect']),
-            "Sec2"     => ($dp['Sec2']),
-            "Grup"     => ($dp['Grup']),
-            "Sucu"     => ($dp['Sucu']),
-            "Conv"     => ($dp['Conv']),
+            "Baja" => ($dp['Baja']),
+            "Empr" => ($dp['Empr']),
+            "Plan" => ($dp['Plan']),
+            "Sect" => ($dp['Sect']),
+            "Sec2" => ($dp['Sec2']),
+            "Grup" => ($dp['Grup']),
+            "Sucu" => ($dp['Sucu']),
+            "Conv" => ($dp['Conv']),
             "TareProd" => ($dp['Tare']),
-            "RegCH"    => ($dp['RegCH']),
-            "Tipo"     => ($dp['Tipo']),
-            "start"    => $start,
-            "length"   => $length,
+            "RegCH" => ($dp['RegCH']),
+            "Tipo" => ($dp['Tipo']),
+            "start" => $start,
+            "length" => $length,
         );
         $url = "$dataC[hostCHWeb]/$dataC[homeHost]/api/personal/";
         // Flight::json($url) . exit;
@@ -263,11 +263,11 @@ switch ($dp['Estruct']) {
         $dataApiPerson = json_decode($requestApi($url, $dataParamPerson, 10), true);
 
         foreach ($dataApiPerson['DATA'] as $key => $v) {
-            $id   = $v['Lega'];
+            $id = $v['Lega'];
             $text = $v['ApNo'];
             $data[] = array(
-                'Cod'    => $id,
-                'Desc'  => $text,
+                'Cod' => $id,
+                'Desc' => $text,
                 'Docu' => $v['Datos']['Docu'],
                 'CUIL' => $v['Datos']['CUIT'],
             );
@@ -277,8 +277,8 @@ switch ($dp['Estruct']) {
         // exit;
         break;
     case 'Sec2':
-        $sectorSecc = implode(',',$dp['Sector']);
-        $FiltroQ  = (!empty($dp['Desc'])) ? "AND CONCAT(SECCION.SecCodi, SECCION.Se2Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
+        $sectorSecc = implode(',', $dp['Sector']);
+        $FiltroQ = (!empty($dp['Desc'])) ? "AND CONCAT(SECCION.SecCodi, SECCION.Se2Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$dp[Desc]%'" : '';
         $query = "SELECT PERSONAL.LegSec2 AS 'Cod', SECCION.Se2Desc AS 'Desc', SECCION.SecCodi AS 'SecCodi', SECTORES.SecDesc, COUNT(*) AS 'Count' FROM PERSONAL INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND PERSONAL.LegSect=SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi WHERE PERSONAL.LegSec2 > 0 AND PERSONAL.LegSect IN ($sectorSecc) $wc $FiltroQ GROUP BY PERSONAL.LegSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc ORDER BY PERSONAL.LegSec2";
         break;
     default:
@@ -295,41 +295,41 @@ if (empty($stmt)) {
     exit;
 }
 
-foreach ($stmt as $key => $row) :
+foreach ($stmt as $key => $row):
 
     switch ($dp['Estruct']) {
         case 'Tipo':
-            $Cod   = $row['Cod'];
+            $Cod = $row['Cod'];
             $Count = $row['Count'];
-            $id2   = ($Cod == 0) ? 0 : 1;
-            $Desc  = ($Cod == '0') ? 'Mensuales' : 'Jornales';
+            $id2 = ($Cod == 0) ? 0 : 1;
+            $Desc = ($Cod == '0') ? 'Mensuales' : 'Jornales';
             $data[] = array(
-                'Cod'   => $id2,
-                'Desc'  => $Desc,
+                'Cod' => $id2,
+                'Desc' => $Desc,
                 'Count' => $Count,
             );
             break;
         case 'Sec2':
-            $Cod   = $row['Cod'];
+            $Cod = $row['Cod'];
             $Count = $row['Count'];
-            $Desc  = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
+            $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
             $data[] = array(
-                'Cod'   => $Cod,
-                'Desc'  => $Desc,
+                'Cod' => $Cod,
+                'Desc' => $Desc,
                 'Count' => $Count,
                 'Sect' => $row['SecCodi'],
                 'SectDesc' => $row['SecDesc'],
             );
             break;
         default:
-            $Cod   = $row['id'];
-            $Count   = $row['Count'];
+            $Cod = $row['id'];
+            $Count = $row['Count'];
             $Desc = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
             $data[] = array(
-                'Cod'   => $Cod,
-                'Desc'  => $Desc,
+                'Cod' => $Cod,
+                'Desc' => $Desc,
                 'Count' => $Count,
             );
             break;
@@ -337,7 +337,7 @@ foreach ($stmt as $key => $row) :
 
 endforeach;
 
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $countData, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

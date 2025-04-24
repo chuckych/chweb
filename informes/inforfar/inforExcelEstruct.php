@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -116,26 +116,26 @@ $spreadsheet->getStyle('A1:M1')->getAlignment()->setIndent(1);
 $spreadsheet->getStyle('A:M')->getAlignment()->setIndent(1);
 $numeroDeFila = 2;
 
-require __DIR__ . './getHorasEstruct.php';
+require __DIR__ . '/getHorasEstruct.php';
 
-$incio = FechaFormatVar($FechaIni,'d-m-Y');
-$fin   = FechaFormatVar($FechaFin,'d-m-Y');
+$incio = FechaFormatVar($FechaIni, 'd-m-Y');
+$fin = FechaFormatVar($FechaFin, 'd-m-Y');
 $spreadsheet->setTitle("Informe $incio a $fin");
 // $data[] = array(
-    // [compania] => COMPANIA 1
-    // [seccion] => WORKER
-    // [sectorLinea] => WAREHOUSE
-    // [90] => 345124
-    // [3] => 660
-    // [80] => 3105
-    // [70] => 240
-    // [50] => 5100
-    // [2] => 0
-    // [4] => 13335
-    // [trNorm] => 5822.57
-    // [trExtras] => 140.75
-    // [capExtras] => 
-    // [subExtras] => 140.75
+// [compania] => COMPANIA 1
+// [seccion] => WORKER
+// [sectorLinea] => WAREHOUSE
+// [90] => 345124
+// [3] => 660
+// [80] => 3105
+// [70] => 240
+// [50] => 5100
+// [2] => 0
+// [4] => 13335
+// [trNorm] => 5822.57
+// [trExtras] => 140.75
+// [capExtras] => 
+// [subExtras] => 140.75
 // );
 // print_r($data); exit;
 // $data  = array();
@@ -159,14 +159,14 @@ foreach ($data as $col) {
 }
 $spreadsheet->getHeaderFooter()->setOddHeader("&L&BINFORME HORAS FAR POR ESTRUCTURA DESDE $FechaIni A $FechaFin");
 
-$UltimaFila    = $numeroDeFila - 1;
-$UltimaFila2   = $numeroDeFila;
+$UltimaFila = $numeroDeFila - 1;
+$UltimaFila2 = $numeroDeFila;
 $spreadsheet->getRowDimension($UltimaFila2)->setRowHeight(25);
 
 foreach (range('D', 'M') as $letra) {
-    $UltimaI   = $letra . ($UltimaFila);
+    $UltimaI = $letra . ($UltimaFila);
     $UltimaI_2 = $letra . ($UltimaFila2);
-    $Formula   = '=SUBTOTAL(109,' . $letra . '2:' . $UltimaI . ')';
+    $Formula = '=SUBTOTAL(109,' . $letra . '2:' . $UltimaI . ')';
     $spreadsheet->setCellValue($UltimaI_2, $Formula);
     $spreadsheet->getStyle($UltimaI_2)->applyFromArray($styleArray);
 }
@@ -184,7 +184,7 @@ try {
     // $writer->save('php://output');
     // $desde = $FechaIni;
     // $hasta = $FechaFin;
-    $data = array('status' => 'ok', 'desde' => fechFormat($FechaIni), 'hasta' =>fechFormat($FechaFin), 'archivo' => 'archivos/' . $NombreArchivo);
+    $data = array('status' => 'ok', 'desde' => fechFormat($FechaIni), 'hasta' => fechFormat($FechaFin), 'archivo' => 'archivos/' . $NombreArchivo);
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {

@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -18,18 +18,18 @@ foreach ($data as $key => $value) {
     }
 }
 
-$_SESSION['ID_CLIENTE']    = $data['idCompany'];
+$_SESSION['ID_CLIENTE'] = $data['idCompany'];
 $_SESSION['RECID_CLIENTE'] = $data['recidCompany'];
-$_SESSION["APIMOBILEHRP"]  = $data['apiMobileHRP'];
-$_SESSION["CLIENTE"]       = $data['nameCompany'];
+$_SESSION["APIMOBILEHRP"] = $data['apiMobileHRP'];
+$_SESSION["CLIENTE"] = $data['nameCompany'];
 
 do {
     $data = array(
-        'status'       => 'ok',
-        'api'          => $data['apiMobileHRP'],
+        'status' => 'ok',
+        'api' => $data['apiMobileHRP'],
         // 'idCompany'    => $_SESSION['ID_CLIENTE'],
         // 'recidCompany' => $_SESSION['RECID_CLIENTE'],
-        'cliente'      => $_SESSION['CLIENTE'],
+        'cliente' => $_SESSION['CLIENTE'],
     );
 } while ($_SESSION['ID_CLIENTE'] != $recid);
 

@@ -1,13 +1,13 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 
-// require __DIR__ . '../../../filtros/filtros.php';
-require __DIR__ . '../../../config/conect_mssql.php';
+// require __DIR__ . '/../../filtros/filtros.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 
 $data = array();
 E_ALL();
@@ -19,9 +19,9 @@ $query = "SELECT NACIONES.NacDesc AS 'descripcion', NACIONES.NacCodi AS 'codigo'
 // print_r($query).PHP_EOL; exit;
 $rs = sqlsrv_query($link, $query, $params, $options);
 if (sqlsrv_num_rows($rs) > 0) {
-    while ($r = sqlsrv_fetch_array($rs)) :
+    while ($r = sqlsrv_fetch_array($rs)):
         $descripcion = $r['descripcion'];
-        $codigo      = $r['codigo'];
+        $codigo = $r['codigo'];
         $data[] = array($codigo, $descripcion);
     endwhile;
 }

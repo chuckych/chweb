@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <link rel="stylesheet" href="css/styleMobile.css?=<?= version_file("/mobile/hrp/css/styleMobile.css") ?>">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
         integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
@@ -15,7 +15,7 @@
 <body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2 bg" style="animation-fill-mode: unset" id="container">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <div id="encabezado" class="sticky-top">
             <?php encabezado_mod3('bg-mob', 'white', '../../img/mobile-hrp-3.svg', '' . MODULOS['mobile'] . ' HRP', 'color: #fff; width:30px', 'mr-2'); ?>
@@ -54,7 +54,7 @@
             echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
         }
         ?>
-        <?php require __DIR__ . '../menuBtn.html' ?>
+        <?php require __DIR__ . '/menuBtn.html' ?>
         <div class="wrapper bg">
             <div class="row invisible" id="RowTableMobile">
                 <div class="col-12">
@@ -198,9 +198,9 @@
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
     // require 'modal.php';
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/DataTable.php";
     ?>
     <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
         integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>

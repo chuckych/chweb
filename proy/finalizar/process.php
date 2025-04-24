@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../../config/index.php';
-// require __DIR__ . '../../../vendor/autoload.php';
+require __DIR__ . '/../../config/index.php';
+// require __DIR__ . '/../../vendor/autoload.php';
 use Carbon\Carbon;
 
 session_start();
@@ -455,7 +455,7 @@ if (($_POST['tarSubmit'])) { // Crear Tarea
 } else if (($_POST['calCosto'])) {
 
 	$_SESSION['UID'] = '';
-	require __DIR__ . '../../data/wcGetTar.php'; //  require where_conditions y variables
+	require __DIR__ . '/../data/wcGetTar.php'; //  require where_conditions y variables
 	$w_c .= " AND `proy_tare_horas`.`TareHorMin` IS NOT NULL"; // Agregamos la condicion de que la tarea ya este finalizada
 	$w_c .= " AND `proy_estados`.`EstTipo` != 'cerrado'"; // Solo de proyectos Abiertos
 	$w_c .= " AND `proy_tareas`.`Cliente` = '$_SESSION[ID_CLIENTE]'";

@@ -3,14 +3,14 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title><?= MODULOS['procesar'] ?></title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-custom', 'white', 'rueda2.png', MODULOS['procesar'], '') ?>
         <!-- Fin Encabezado -->
@@ -33,8 +33,10 @@
                             </div>
                         </div>
                         <div class="col-6 d-flex align-items-center justify-content-end">
-                            <div class="custom-control custom-switch custom-control-inline d-flex align-items-center justify-content-end mt-4">
-                                <input disabled checked type="checkbox" class="custom-control-input" id="Legajos" name="CheckLegajos">
+                            <div
+                                class="custom-control custom-switch custom-control-inline d-flex align-items-center justify-content-end mt-4">
+                                <input disabled checked type="checkbox" class="custom-control-input" id="Legajos"
+                                    name="CheckLegajos">
                                 <label class="custom-control-label" for="Legajos" style="padding-top: 3px;">
                                     <span>Todos los Legajos</span>
                                 </label>
@@ -92,7 +94,8 @@
                             <label for="ProcSec2">Sección</label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
                                 <!-- Seccion -->
-                                <select class="form-control select_seccion w-100" id="ProcSec2" name="ProcSec2"></select>
+                                <select class="form-control select_seccion w-100" id="ProcSec2"
+                                    name="ProcSec2"></select>
                                 <!-- <span id="trash_secc" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
@@ -100,7 +103,8 @@
                             <label for="ProcGrup">Grupos</label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
                                 <!-- Grupos -->
-                                <select class="form-control selectjs_grupos w-100" id="ProcGrup" name="ProcGrup"></select>
+                                <select class="form-control selectjs_grupos w-100" id="ProcGrup"
+                                    name="ProcGrup"></select>
                                 <!-- <span id="trash_grup" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
@@ -108,14 +112,16 @@
                             <label for="ProcSucur">Sucursal</label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
                                 <!-- Grupos -->
-                                <select class="form-control selectjs_sucursal w-100" id="ProcSucur" name="ProcSucur"></select>
+                                <select class="form-control selectjs_sucursal w-100" id="ProcSucur"
+                                    name="ProcSucur"></select>
                                 <!-- <span id="trash_sucur" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12 pt-4 d-flex justify-content-end" id="footer">
-                            <button type="submit" class="btn btn-custom btn-sm text-white fontq h40 btn-mobile px-5" id="submit"></button>
+                            <button type="submit" class="btn btn-custom btn-sm text-white fontq h40 btn-mobile px-5"
+                                id="submit"></button>
                         </div>
                     </div>
                     <input type="hidden" name="SelEmpresa" id="SelEmpresa">
@@ -136,7 +142,8 @@
                             <tr>
                                 <th>
                                     <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" name="select_all" value="1" id="Personal-select-all" type="checkbox">
+                                        <input class="custom-control-input" name="select_all" value="1"
+                                            id="Personal-select-all" type="checkbox">
                                         <label class="custom-control-label" for="Personal-select-all"></label>
                                     </div>
                                 </th>
@@ -152,11 +159,11 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../js/jquery.php";
+    require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../js/DateRanger.php";
+    require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/DataTable.php";
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

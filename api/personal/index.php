@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -10,46 +10,46 @@ $checkMethod('POST');
 
 // Flight::json($dp) . exit;
 
-$dp['getDatos']    = ($dp['getDatos']) ?? '';
-$dp['getDatos']    = vp($dp['getDatos'], 'getDatos', 'int01', 1); // Traer Datos
-$dp['getLiqui']    = ($dp['getLiqui']) ?? '';
-$dp['getLiqui']    = vp($dp['getLiqui'], 'getLiqui', 'int01', 1); // Traer Liquidacion
-$dp['getEstruct']  = ($dp['getEstruct']) ?? '';
-$dp['getEstruct']  = vp($dp['getEstruct'], 'getEstruct', 'int01', 1); // Traer Estructura
+$dp['getDatos'] = ($dp['getDatos']) ?? '';
+$dp['getDatos'] = vp($dp['getDatos'], 'getDatos', 'int01', 1); // Traer Datos
+$dp['getLiqui'] = ($dp['getLiqui']) ?? '';
+$dp['getLiqui'] = vp($dp['getLiqui'], 'getLiqui', 'int01', 1); // Traer Liquidacion
+$dp['getEstruct'] = ($dp['getEstruct']) ?? '';
+$dp['getEstruct'] = vp($dp['getEstruct'], 'getEstruct', 'int01', 1); // Traer Estructura
 $dp['getHorarios'] = ($dp['getHorarios']) ?? '';
 $dp['getHorarios'] = vp($dp['getHorarios'], 'getHorarios', 'int01', 1); // Traer Horarios
-$dp['getControl']  = ($dp['getControl']) ?? '';
-$dp['getControl']  = vp($dp['getControl'], 'getControl', 'int01', 1); // Traer Control y Procesos
-$dp['getAcceso']   = ($dp['getAcceso']) ?? '';
-$dp['getAcceso']   = vp($dp['getAcceso'], 'getAcceso', 'int01', 1); // Traer Acceso
+$dp['getControl'] = ($dp['getControl']) ?? '';
+$dp['getControl'] = vp($dp['getControl'], 'getControl', 'int01', 1); // Traer Control y Procesos
+$dp['getAcceso'] = ($dp['getAcceso']) ?? '';
+$dp['getAcceso'] = vp($dp['getAcceso'], 'getAcceso', 'int01', 1); // Traer Acceso
 
-$dp['Nume']     = ($dp['Nume']) ?? [];
-$dp['Nume']     = vp($dp['Nume'], 'Nume', 'intArray', 11);
-$dp['Docu']     = ($dp['Docu']) ?? [];
-$dp['Docu']     = vp($dp['Docu'], 'Docu', 'intArray', 11);
-$dp['Baja']     = ($dp['Baja']) ?? [];
-$dp['Baja']     = vp($dp['Baja'], 'Baja', 'numArray01', 1);
-$dp['IntExt']   = ($dp['IntExt']) ?? [];
-$dp['IntExt']   = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
-$dp['ApNo']     = $dp['ApNo'] ?? '';
-$dp['ApNo']     = vp($dp['ApNo'], 'ApNo', 'str', 40);
+$dp['Nume'] = ($dp['Nume']) ?? [];
+$dp['Nume'] = vp($dp['Nume'], 'Nume', 'intArray', 11);
+$dp['Docu'] = ($dp['Docu']) ?? [];
+$dp['Docu'] = vp($dp['Docu'], 'Docu', 'intArray', 11);
+$dp['Baja'] = ($dp['Baja']) ?? [];
+$dp['Baja'] = vp($dp['Baja'], 'Baja', 'numArray01', 1);
+$dp['IntExt'] = ($dp['IntExt']) ?? [];
+$dp['IntExt'] = vp($dp['IntExt'], 'IntExt', 'numArray01', 1);
+$dp['ApNo'] = $dp['ApNo'] ?? '';
+$dp['ApNo'] = vp($dp['ApNo'], 'ApNo', 'str', 40);
 $dp['ApNoNume'] = $dp['ApNoNume'] ?? '';
 $dp['ApNoNume'] = vp($dp['ApNoNume'], 'ApNoNume', 'str', 40);
 
-$dp['Empr']     = ($dp['Empr']) ?? [];
-$dp['Empr']     = vp($dp['Empr'], 'Empr', 'intArray', 5);
-$dp['Plan']     = ($dp['Plan']) ?? [];
-$dp['Plan']     = vp($dp['Plan'], 'Plan', 'intArray', 5);
-$dp['Conv']     = ($dp['Conv']) ?? [];
-$dp['Conv']     = vp($dp['Conv'], 'Conv', 'intArray', 5);
-$dp['Sec2']     = ($dp['Sec2']) ?? [];
-$dp['Sec2']     = vp($dp['Sec2'], 'Sec2', 'strArray', 10);
-$dp['Sect']     = ($dp['Sect']) ?? [];
-$dp['Sect']     = vp($dp['Sect'], 'Sect', 'intArray', 5);
-$dp['Grup']     = ($dp['Grup']) ?? [];
-$dp['Grup']     = vp($dp['Grup'], 'Grup', 'intArray', 5);
-$dp['Sucu']     = ($dp['Sucu']) ?? [];
-$dp['Sucu']     = vp($dp['Sucu'], 'Sucu', 'intArray', 5);
+$dp['Empr'] = ($dp['Empr']) ?? [];
+$dp['Empr'] = vp($dp['Empr'], 'Empr', 'intArray', 5);
+$dp['Plan'] = ($dp['Plan']) ?? [];
+$dp['Plan'] = vp($dp['Plan'], 'Plan', 'intArray', 5);
+$dp['Conv'] = ($dp['Conv']) ?? [];
+$dp['Conv'] = vp($dp['Conv'], 'Conv', 'intArray', 5);
+$dp['Sec2'] = ($dp['Sec2']) ?? [];
+$dp['Sec2'] = vp($dp['Sec2'], 'Sec2', 'strArray', 10);
+$dp['Sect'] = ($dp['Sect']) ?? [];
+$dp['Sect'] = vp($dp['Sect'], 'Sect', 'intArray', 5);
+$dp['Grup'] = ($dp['Grup']) ?? [];
+$dp['Grup'] = vp($dp['Grup'], 'Grup', 'intArray', 5);
+$dp['Sucu'] = ($dp['Sucu']) ?? [];
+$dp['Sucu'] = vp($dp['Sucu'], 'Sucu', 'intArray', 5);
 $dp['TareProd'] = ($dp['TareProd']) ?? [];
 $dp['TareProd'] = vp($dp['TareProd'], 'TareProd', 'intArray', 5);
 $dp['RegCH'] = ($dp['RegCH']) ?? [];
@@ -64,21 +64,21 @@ $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'intArray', 1);
 // $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 40);
 
 $arrDPPersonal = array(
-    'Nume'     => $dp['Nume'], // Codigo de Horario {int} {array}
-    'ApNo'     => $dp['ApNo'], // Nombre y apellido {string}
-    'Docu'     => $dp['Docu'], // Documento {string}
+    'Nume' => $dp['Nume'], // Codigo de Horario {int} {array}
+    'ApNo' => $dp['ApNo'], // Nombre y apellido {string}
+    'Docu' => $dp['Docu'], // Documento {string}
     'ApNoNume' => $dp['ApNoNume'], // Nombre y apellido y Legajo {string}
-    'IntExt'   => $dp['IntExt'], // Tipo de legajo. Interno, Externo {int} {array}
-    'Empr'     => $dp['Empr'], // Empresa {int} {array}
-    'Plan'     => $dp['Plan'], // Planta {int} {array}
-    'Conv'     => $dp['Conv'], // Convenio {int} {array}
-    'Sec2'     => $dp['Sec2'], // Seccion {int} {array}
-    'Sect'     => $dp['Sect'], // Sector {int} {array}
-    'Grup'     => $dp['Grup'], // Grupos {int} {array}
-    'Sucu'     => $dp['Sucu'], // Sucursales {int} {array}
+    'IntExt' => $dp['IntExt'], // Tipo de legajo. Interno, Externo {int} {array}
+    'Empr' => $dp['Empr'], // Empresa {int} {array}
+    'Plan' => $dp['Plan'], // Planta {int} {array}
+    'Conv' => $dp['Conv'], // Convenio {int} {array}
+    'Sec2' => $dp['Sec2'], // Seccion {int} {array}
+    'Sect' => $dp['Sect'], // Sector {int} {array}
+    'Grup' => $dp['Grup'], // Grupos {int} {array}
+    'Sucu' => $dp['Sucu'], // Sucursales {int} {array}
     'TareProd' => $dp['TareProd'], // Tareas de produccion {int} {array}
-    'RegCH'    => $dp['RegCH'], // Regla de control horario {int} {array}
-    'Tipo'     => $dp['Tipo'], // Tipo de personal {int} {array}
+    'RegCH' => $dp['RegCH'], // Regla de control horario {int} {array}
+    'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
 );
 $arrDPPersonalBaja = array(
     'Baja' => $dp['Baja'], // Codigo de Horario {int} {array}
@@ -108,7 +108,7 @@ foreach ($arrDPPersonal as $key => $per) {
                     }
                     $dataSec2 = implode(',', $dataSec2);
                     // print_r($dataSec2).exit;
-                    $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                    $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)";
                 } else {
                     $wc .= " AND PERSONAL.Leg$key IN ($e)";
                 }
@@ -121,7 +121,7 @@ foreach ($arrDPPersonal as $key => $per) {
                             // $secSec2 = explode('-', $dp['Sec2'][0]);
                             $dataSec2 = implode(',', $dp['Sec2']);
                             // Flight::json($dataSec2).exit;
-                            $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)"; 
+                            $wc .= " AND CONCAT(PERSONAL.LegSect, PERSONAL.LegSec2) IN ($dataSec2)";
                         } else {
                             $wc .= " AND PERSONAL.Leg$key = '$v'";
                         }
@@ -280,22 +280,22 @@ $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
 $stmt = $dbApiQuery($query) ?? '';
 $_1753 = '1753-01-01 00:00:00.000';
-foreach ($stmt  as $key => $v) {
+foreach ($stmt as $key => $v) {
 
-    $Datos          = array();
-    $Liquidacion    = array();
-    $Estructura     = array();
-    $Control        = array();
-    $Horarios       = array();
-    $Acceso         = array();
-    $arrPerHoAlt    = array();
-    $arrIdentifica  = array();
-    $dataPerHoAlt   = array();
+    $Datos = array();
+    $Liquidacion = array();
+    $Estructura = array();
+    $Control = array();
+    $Horarios = array();
+    $Acceso = array();
+    $arrPerHoAlt = array();
+    $arrIdentifica = array();
+    $dataPerHoAlt = array();
     $dataIdentifica = array();
-    $dataReloHabi   = array();
-    $arrReloHabi    = array();
-    $dataPerRelo   = array();
-    $arrPerRelo    = array();
+    $dataReloHabi = array();
+    $arrReloHabi = array();
+    $dataPerRelo = array();
+    $arrPerRelo = array();
 
     if ($dp['getDatos']) {
 
@@ -309,80 +309,80 @@ foreach ($stmt  as $key => $v) {
         $Domicilio .= ($v['LegProv']) ? ', ' . $v['ProDesc'] : '';
         $Domicilio .= ($v['LegDoOb']) ? ', Observ: ' . $v['LegDoOb'] . '.' : '.';
 
-        $Edad    = ($v['LegFeNa'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeNa'], 'Y-m-d'))->format('%y')) : '';
+        $Edad = ($v['LegFeNa'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeNa'], 'Y-m-d'))->format('%y')) : '';
         $EdadStr = calculaEdadStr(fechFormat($v['LegFeNa'], 'Y-m-d'));
 
         $CUIL = trim($v['LegCUIT']);
 
-        if(empty($CUIL) && strlen($v['LegDocu']) >= 7 && strlen($v['LegDocu']) <= 8) {
-            $CUIL = getCuil($v['LegDocu'], ($v['LegSexo']== 0) ? 'f':'m');
+        if (empty($CUIL) && strlen($v['LegDocu']) >= 7 && strlen($v['LegDocu']) <= 8) {
+            $CUIL = getCuil($v['LegDocu'], ($v['LegSexo'] == 0) ? 'f' : 'm');
         }
 
         $Datos = array(
-            "TDoc"    => intval($v['LegTDoc']), // Tipo de Documento 0=DU 1=DNI 2=CI 3=LC 4=LE 5=PAS
+            "TDoc" => intval($v['LegTDoc']), // Tipo de Documento 0=DU 1=DNI 2=CI 3=LC 4=LE 5=PAS
             "TDocStr" => $v['LegTDocStr'], // Tipo de Documento String
-            "Docu"    => intval($v['LegDocu']), // Documento
-            "CUIT"    => $CUIL, // CUIT
-            "Naci"    => intval($v['LegNaci']), // Código de Nacionalidad
+            "Docu" => intval($v['LegDocu']), // Documento
+            "CUIT" => $CUIL, // CUIT
+            "Naci" => intval($v['LegNaci']), // Código de Nacionalidad
             "NaciStr" => $v['NacDesc'], // Nacionalidad
-            "EsCi"    => intval($v['LegEsCi']), // Estado Civil 0=Soltero/a 1=Casado/a 2=Viudo/a 3=Divorciado/a
+            "EsCi" => intval($v['LegEsCi']), // Estado Civil 0=Soltero/a 1=Casado/a 2=Viudo/a 3=Divorciado/a
             "EsCiStr" => $v['LegEsCiStr'], // Estado Civil String
-            "Sexo"    => intval($v['LegSexo']), // Sexo
+            "Sexo" => intval($v['LegSexo']), // Sexo
             "SexoStr" => $v['LegSexoStr'], // Sexo
-            "FeNa"    => fechFormat($v['LegFeNa'], 'Y-m-d'), // Fecha de Nacimiento
-            "Edad"    => $Edad, // Edad
+            "FeNa" => fechFormat($v['LegFeNa'], 'Y-m-d'), // Fecha de Nacimiento
+            "Edad" => $Edad, // Edad
             "EdadStr" => $EdadStr, // Edad String
-            "Domi"    => $v['LegDomi'], // Dirección Calle
-            "DoNu"    => $v['LegDoNu'], // Dirección Número
-            "DoPi"    => $v['LegDoPi'], // Dirección Piso
-            "DoDP"    => $v['LegDoDP'], // Dirección Depto
-            "DoOb"    => $v['LegDoOb'], // Dirección Observacion
-            "COPO"    => $v['LegCOPO'], // Dirección Código Postal
-            "Prov"    => intval($v['LegProv']), // Dirección Código Provincia
+            "Domi" => $v['LegDomi'], // Dirección Calle
+            "DoNu" => $v['LegDoNu'], // Dirección Número
+            "DoPi" => $v['LegDoPi'], // Dirección Piso
+            "DoDP" => $v['LegDoDP'], // Dirección Depto
+            "DoOb" => $v['LegDoOb'], // Dirección Observacion
+            "COPO" => $v['LegCOPO'], // Dirección Código Postal
+            "Prov" => intval($v['LegProv']), // Dirección Código Provincia
             "ProvStr" => $v['ProDesc'], // Dirección Provincia
-            "Loca"    => intval($v['LegLoca']), // Dirección Código Localidad
+            "Loca" => intval($v['LegLoca']), // Dirección Código Localidad
             "LocaStr" => $v['LocDesc'], // Dirección Localidad
             "DomiStr" => $Domicilio, // Domicilio String
-            "Tel1"    => $v['LegTel1'], // Telefono 1
-            "TeO1"    => $v['LegTeO1'], // Observacion Telefono 1
-            "Tel2"    => $v['LegTel2'], // Telefono 2
-            "TeO2"    => $v['LegTeO2'], // Observacion Telefono2
+            "Tel1" => $v['LegTel1'], // Telefono 1
+            "TeO1" => $v['LegTeO1'], // Observacion Telefono 1
+            "Tel2" => $v['LegTel2'], // Telefono 2
+            "TeO2" => $v['LegTeO2'], // Observacion Telefono2
         );
     }
     if ($dp['getLiqui']) {
-        $Anti    = ($v['LegFeIn'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeIn'], 'Y-m-d'))->format('%y')) : '';
+        $Anti = ($v['LegFeIn'] != $_1753) ? intval(calculaEdad(fechFormat($v['LegFeIn'], 'Y-m-d'))->format('%y')) : '';
         $AntiStr = calculaEdadStr(fechFormat($v['LegFeIn'], 'Y-m-d'));
         $Liquidacion = array(
-            "Tipo"    => intval($v['LegTipo']), // Tipo de Legajo 0=Mensual 1=Jornal
+            "Tipo" => intval($v['LegTipo']), // Tipo de Legajo 0=Mensual 1=Jornal
             "TipoStr" => $v['LegTipoStr'], // Tipo de Legajo String
-            "FeIn"    => fechFormat($v['LegFeIn'], 'Y-m-d'), // Fecha de Ingreso
-            "FeEg"    => ($v['LegFeEg'] != $_1753) ? fechFormat($v['LegFeEg'], 'Y-m-d') : '', // Fecha de Egreso
-            "Baja"    => ($v['LegFeEg'] == $_1753) ? 0 : 1, // Si esta de baja
+            "FeIn" => fechFormat($v['LegFeIn'], 'Y-m-d'), // Fecha de Ingreso
+            "FeEg" => ($v['LegFeEg'] != $_1753) ? fechFormat($v['LegFeEg'], 'Y-m-d') : '', // Fecha de Egreso
+            "Baja" => ($v['LegFeEg'] == $_1753) ? 0 : 1, // Si esta de baja
             "BajaStr" => ($v['LegFeEg'] == $_1753) ? 'No' : 'Si', // Si esta de baja Str
-            "Antig"    => $Anti, // Antiguedad
+            "Antig" => $Anti, // Antiguedad
             "AntigStr" => $AntiStr, // Antiguedad String
         );
     }
     if ($dp['getEstruct']) {
-        $Estructura   = array(
-            "Empr"     => intval($v['LegEmpr']), // Código de Empresa; 0 ó valor según Tabla
-            "EmprStr"  => $v['EmpRazon'], // Nombre de la empresa
-            "Plan"     => intval($v['LegPlan']), // Código de planta; 0 ó valor según Tabla
-            "PlanStr"  => trim($v['PlaDesc']), // Nombre de la Planta
-            "Conv"     => intval($v['LegConv']), // Código de Convenio; 0 ó valor según Tabla
-            "ConvStr"  => trim($v['ConDesc']), // Nombre del convenio
-            "Sect"     => intval($v['LegSect']), // Código de Sector; 0 ó valor según Tabla
-            "SectStr"  => trim($v['SecDesc']), // Nombre del sector
-            "Sec2"     => intval($v['LegSec2']), // código de Sección; 0 ó valor según Tabla
-            "Sec2Str"  => trim($v['Se2Desc']), // Nombre de la seccion
-            "Grup"     => intval($v['LegGrup']), // Código de Grupo; 0 ó valor según Tabla
-            "GrupStr"  => trim($v['GruDesc']), // Nombre del Grupo
-            "Sucu"     => intval($v['LegSucu']), // Código de sucursal; 0 ó valor según Tabla
-            "SucuStr"  => trim($v['SucDesc']), // Nombre de la sucursal
+        $Estructura = array(
+            "Empr" => intval($v['LegEmpr']), // Código de Empresa; 0 ó valor según Tabla
+            "EmprStr" => $v['EmpRazon'], // Nombre de la empresa
+            "Plan" => intval($v['LegPlan']), // Código de planta; 0 ó valor según Tabla
+            "PlanStr" => trim($v['PlaDesc']), // Nombre de la Planta
+            "Conv" => intval($v['LegConv']), // Código de Convenio; 0 ó valor según Tabla
+            "ConvStr" => trim($v['ConDesc']), // Nombre del convenio
+            "Sect" => intval($v['LegSect']), // Código de Sector; 0 ó valor según Tabla
+            "SectStr" => trim($v['SecDesc']), // Nombre del sector
+            "Sec2" => intval($v['LegSec2']), // código de Sección; 0 ó valor según Tabla
+            "Sec2Str" => trim($v['Se2Desc']), // Nombre de la seccion
+            "Grup" => intval($v['LegGrup']), // Código de Grupo; 0 ó valor según Tabla
+            "GrupStr" => trim($v['GruDesc']), // Nombre del Grupo
+            "Sucu" => intval($v['LegSucu']), // Código de sucursal; 0 ó valor según Tabla
+            "SucuStr" => trim($v['SucDesc']), // Nombre de la sucursal
             "TareProd" => intval($v['LegTareProd']), // Código de Tarea de Produccion; 0 ó valor según Tabla
-            "TareStr"  => trim($v['TareDesc']), // Nombre de la tarea
-            "Tel"      => trim($v['LegTel3']), // Telefono Empresa
-            "Mail"     => trim($v['LegMail']), // Correo electrónico Empresa
+            "TareStr" => trim($v['TareDesc']), // Nombre de la tarea
+            "Tel" => trim($v['LegTel3']), // Telefono Empresa
+            "Mail" => trim($v['LegMail']), // Correo electrónico Empresa
         );
     }
     if ($dp['getHorarios']) {
@@ -391,52 +391,52 @@ foreach ($stmt  as $key => $v) {
             $arrPerHoAlt = filtrarObjetoArr($stmtPerHoAlt, 'LeHALega', $v['LegNume']);
             foreach ($arrPerHoAlt as $key => $n) {
                 $dataPerHoAlt[] = array(
-                    'HAHora'  => $n['LeHAHora'],
+                    'HAHora' => $n['LeHAHora'],
                     'HorDesc' => $n['HorDesc'],
-                    'HorID'   => $n['HorID'],
+                    'HorID' => $n['HorID'],
                 );
             }
         }
 
         $Horarios = array(
-            "HoAl"    => $v['LegHoAl'], // Tipo de asignacion horaria; 0 = Segun Asignacion 1 = Alternativos Segun Fichadas
+            "HoAl" => $v['LegHoAl'], // Tipo de asignacion horaria; 0 = Segun Asignacion 1 = Alternativos Segun Fichadas
             "HoAlStr" => LegHoAlStr($v['LegHoAl']), // Tipo de asignacion String
-            "HorAlt"  => $dataPerHoAlt,
-            "HoLi"    => ($v['LegHoLi']), // Limite de horario para cambio a alternativo
+            "HorAlt" => $dataPerHoAlt,
+            "HoLi" => ($v['LegHoLi']), // Limite de horario para cambio a alternativo
             "HLPlani" => $v['LegHLPlani'], // Usar Planificación 0=Deshabilitar 1=Habilitar
-            "HLDe"    => intval($v['LegHLDe']), // Asignación por Legajo desde una Fecha; 0=Deshabilitar 1=Habilitar
-            "HLDH"    => intval($v['LegHLDH']), // Asignación por Legajo desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
-            "HLRo"    => intval($v['LegHLRo']), // Asignación por Legajo de Rotación; 0=Deshabilitar 1=Habilitar
-            "HGDe"    => intval($v['LegHGDe']), // Asignación por Grupo desde una Fecha; 0=Deshabilitar 1=Habilitar
-            "HGDH"    => intval($v['LegHGDH']), // Asignación por Grupo desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
-            "HGRo"    => intval($v['LegHGRo']), // Asignación por Grupo de Rotación; 0=Deshabilitar 1=Habilitar
-            "HSDe"    => intval($v['LegHSDe']), // Asignación por Sector desde una Fecha; 0=Deshabilitar 1=Habilitar
-            "HSDH"    => intval($v['LegHSDH']), // Asignación por Sector desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
-            "HSRo"    => intval($v['LegHSRo']) // Asignación por Sector de Rotación; 0=Deshabilitar 1=Habilitar
+            "HLDe" => intval($v['LegHLDe']), // Asignación por Legajo desde una Fecha; 0=Deshabilitar 1=Habilitar
+            "HLDH" => intval($v['LegHLDH']), // Asignación por Legajo desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
+            "HLRo" => intval($v['LegHLRo']), // Asignación por Legajo de Rotación; 0=Deshabilitar 1=Habilitar
+            "HGDe" => intval($v['LegHGDe']), // Asignación por Grupo desde una Fecha; 0=Deshabilitar 1=Habilitar
+            "HGDH" => intval($v['LegHGDH']), // Asignación por Grupo desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
+            "HGRo" => intval($v['LegHGRo']), // Asignación por Grupo de Rotación; 0=Deshabilitar 1=Habilitar
+            "HSDe" => intval($v['LegHSDe']), // Asignación por Sector desde una Fecha; 0=Deshabilitar 1=Habilitar
+            "HSDH" => intval($v['LegHSDH']), // Asignación por Sector desde-hasta una Fecha; 0=Deshabilitar 1=Habilitar
+            "HSRo" => intval($v['LegHSRo']) // Asignación por Sector de Rotación; 0=Deshabilitar 1=Habilitar
         );
     }
     if ($dp['getControl']) {
         $Control = array(
-            "Esta"     => intval($v['LegEsta']), // No controla horario 0 = si 1 = no
-            "EstaStr"  => (intval($v['LegEsta']) == 0) ? "Controla horario" : "No controla horario", // No controla horario 0 = si 1 = no
-            "IncTi"    => intval($v['LegIncTi']),
+            "Esta" => intval($v['LegEsta']), // No controla horario 0 = si 1 = no
+            "EstaStr" => (intval($v['LegEsta']) == 0) ? "Controla horario" : "No controla horario", // No controla horario 0 = si 1 = no
+            "IncTi" => intval($v['LegIncTi']),
             "IncTiStr" => IncTiStr($v['LegIncTi']),
-            "ToTa"     => intval($v['LegToTa']), // Tolerancia tarde
-            "ToSa"     => intval($v['LegToSa']), // Tolerancia Salida
-            "ToIn"     => intval($v['LegToIn']), // Tolerancia Incumplimiento
-            "ReTa"     => intval($v['LegReTa']), // Recorte de Horas Tarde
-            "ReIn"     => intval($v['LegReIn']), // Recorte de Horas Incumpliemnto
-            "ReSa"     => intval($v['LegReSa']), // Recorte de Horas Salida
-            "RegCH"    => intval($v['LegRegCH']), // Código Regla de Control 0 ó valor según Tabla
+            "ToTa" => intval($v['LegToTa']), // Tolerancia tarde
+            "ToSa" => intval($v['LegToSa']), // Tolerancia Salida
+            "ToIn" => intval($v['LegToIn']), // Tolerancia Incumplimiento
+            "ReTa" => intval($v['LegReTa']), // Recorte de Horas Tarde
+            "ReIn" => intval($v['LegReIn']), // Recorte de Horas Incumpliemnto
+            "ReSa" => intval($v['LegReSa']), // Recorte de Horas Salida
+            "RegCH" => intval($v['LegRegCH']), // Código Regla de Control 0 ó valor según Tabla
             "RegCHStr" => $v['RCDesc'], // Regla de Control String
-            "PrCo"     => intval($v['LegPrCo']), // Procesar por Convenio 0=No 1=Si
-            "PrSe"     => intval($v['LegPrSe']), // Procesar por Sector 0=No 1=Si
-            "PrGr"     => intval($v['LegPrGr']), // Procesar por Grupo 0=No 1=Si
-            "PrHo"     => intval($v['LegPrHo']), // Procesar por Horario 0=No 1=Si
-            "PrRe"     => intval($v['LegPrRe']), // Procesar por Regla de control 0=No 1=Si
-            "PrPl"     => intval($v['LegPrPl']), // Procesar por Planta 0=No 1=Si
-            "ValHora"  => $v['LegValHora'], // Valor Hora
-            "No24"     => intval($v['LegNo24']), // No Partir Novedades 24Hs  0=No 1=Si
+            "PrCo" => intval($v['LegPrCo']), // Procesar por Convenio 0=No 1=Si
+            "PrSe" => intval($v['LegPrSe']), // Procesar por Sector 0=No 1=Si
+            "PrGr" => intval($v['LegPrGr']), // Procesar por Grupo 0=No 1=Si
+            "PrHo" => intval($v['LegPrHo']), // Procesar por Horario 0=No 1=Si
+            "PrRe" => intval($v['LegPrRe']), // Procesar por Regla de control 0=No 1=Si
+            "PrPl" => intval($v['LegPrPl']), // Procesar por Planta 0=No 1=Si
+            "ValHora" => $v['LegValHora'], // Valor Hora
+            "No24" => intval($v['LegNo24']), // No Partir Novedades 24Hs  0=No 1=Si
             "PrCosteo" => intval($v['LegPrCosteo']), // Procesar costeo  0=No 1=Si
             "Cierre" => ($v['CierreFech'] != $_1753) ? fechFormat($v['CierreFech'], 'Y-m-d') : '', // Fecha de cierre
         );
@@ -447,14 +447,14 @@ foreach ($stmt  as $key => $v) {
             $arrIdentifica = filtrarObjetoArr($stmtIdentifica, 'IDLegajo', $v['LegNume']);
             foreach ($arrIdentifica as $key => $n) {
                 $dataIdentifica[] = array(
-                    'Codigo'   => ($n['IDCodigo']),
-                    'Fichada'  => intval($n['IDFichada']),
-                    'Tarjeta'  => $n['IDTarjeta'],
-                    'Legajo'   => intval($n['IDLegajo']),
-                    'Vence'    => ($n['IDVence'] != $_1753) ? fechFormat($n['IDVence'], 'Y-m-d') : '',
-                    'Cap04'    => intval($n['IDCap04']),
-                    'Cap05'    => intval($n['IDCap05']),
-                    'Cap06'    => intval($n['IDCap06']),
+                    'Codigo' => ($n['IDCodigo']),
+                    'Fichada' => intval($n['IDFichada']),
+                    'Tarjeta' => $n['IDTarjeta'],
+                    'Legajo' => intval($n['IDLegajo']),
+                    'Vence' => ($n['IDVence'] != $_1753) ? fechFormat($n['IDVence'], 'Y-m-d') : '',
+                    'Cap04' => intval($n['IDCap04']),
+                    'Cap05' => intval($n['IDCap05']),
+                    'Cap06' => intval($n['IDCap06']),
                 );
             }
         }
@@ -473,37 +473,37 @@ foreach ($stmt  as $key => $v) {
             $arrPerRelo = filtrarObjetoArr($stmtPerRelo, 'RelLega', $v['LegNume']);
             foreach ($arrPerRelo as $key => $n) {
                 $dataPerRelo[] = array(
-                    'ReMa'  => intval($n['RelReMa']),
-                    'Relo'  => intval($n['RelRelo']),
-                    'DeRe'  => trim($n['RelDeRe']),
-                    'Seri'  => trim($n['RelSeri']),
-                    'Lega'  => intval($n['RelLega']),
-                    'Desde'  => ($n['RelFech'] != $_1753) ? fechformat($n['RelFech'], 'Y-m-d') : '',
+                    'ReMa' => intval($n['RelReMa']),
+                    'Relo' => intval($n['RelRelo']),
+                    'DeRe' => trim($n['RelDeRe']),
+                    'Seri' => trim($n['RelSeri']),
+                    'Lega' => intval($n['RelLega']),
+                    'Desde' => ($n['RelFech'] != $_1753) ? fechformat($n['RelFech'], 'Y-m-d') : '',
                     'Vence' => ($n['RelFech2'] != $_1753) ? fechformat($n['RelFech2'], 'Y-m-d') : '',
                 );
             }
         }
 
         $Acceso = array(
-            "GrHa"     => $v['LegGrHa'], // Grupo de Capturadores
-            "GrHaStr"  => $v['GHaDesc'], // Grupo de Capturadores String
-            "Identif"  => $dataIdentifica, // Array de identificadores 
+            "GrHa" => $v['LegGrHa'], // Grupo de Capturadores
+            "GrHaStr" => $v['GHaDesc'], // Grupo de Capturadores String
+            "Identif" => $dataIdentifica, // Array de identificadores 
             "ReloHabi" => $dataReloHabi, // Array de relojes habilitados
-            "PerRelo"  => $dataPerRelo, // Array de relojes habilitados con vencimiento
+            "PerRelo" => $dataPerRelo, // Array de relojes habilitados con vencimiento
         );
     }
 
     $data[] = array(
-        "Lega"         => intval($v['LegNume']), // Número de Legajo
-        "ApNo"         => trim(str_replace(' ', '', $v['LegApNo'])), // Apellido y Nombre
-        "IntExt"       => $v['LegIntExt'], // Tipo de Legajo
+        "Lega" => intval($v['LegNume']), // Número de Legajo
+        "ApNo" => trim(str_replace(' ', '', $v['LegApNo'])), // Apellido y Nombre
+        "IntExt" => $v['LegIntExt'], // Tipo de Legajo
         "IntExtString" => ($v['LegIntExt'] == '0') ? 'Interno' : 'Externo', // Tipo de Legajo
-        "FechaHora"    => fechFormat($v['FechaHora'], 'Y-m-d H:i:s'), // lasta update
-        "Datos"        => $Datos, // Datos del Legajos
-        "Liquidacion"  => $Liquidacion, // Datos de liquidacion
-        "Estructura"   => $Estructura, // Estructura organizacional del Legajo
-        "Control"      => $Control, // Datos de Control
-        "Horarios"     => $Horarios, // Datos de Horarios
+        "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s'), // lasta update
+        "Datos" => $Datos, // Datos del Legajos
+        "Liquidacion" => $Liquidacion, // Datos de liquidacion
+        "Estructura" => $Estructura, // Estructura organizacional del Legajo
+        "Control" => $Control, // Datos de Control
+        "Horarios" => $Horarios, // Datos de Horarios
         "Acceso" => $Acceso // Datos de Acceso. 
     );
 }
@@ -513,7 +513,7 @@ if (empty($stmt)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

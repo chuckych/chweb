@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -15,7 +15,7 @@ header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
 ultimoacc();
 secure_auth_ch();
@@ -23,7 +23,7 @@ $Modulo = '10';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 // require __DIR__ . '/valores.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -225,7 +225,7 @@ foreach ($ColFecha as $colF) {
 
 
 $numeroDeFila = 2;
-require __DIR__ . '../../filtros/filtros.php';
+require __DIR__ . '/../filtros/filtros.php';
 require __DIR__ . '/valores.php';
 
 $sql_query = "SELECT PERSONAL.LegNume AS 'LegNume', PERSONAL.LegApNo AS 'LegApNo', PERSONAL.LegTipo AS 'LegTipo', PERSONAL.LegDocu AS 'LegDocu', PERSONAL.LegCUIT AS 'LegCUIT', PERSONAL.LegEmpr AS 'EmpCodi', EMPRESAS.EmpRazon AS 'EmpRazo', PERSONAL.LegPlan AS 'PlaCodi', PLANTAS.PlaDesc AS 'PlaDesc', PERSONAL.LegConv AS 'ConCodi', CONVENIO.ConDesc AS 'ConDesc', PERSONAL.LegSect AS 'SecCodi', SECTORES.SecDesc AS 'SecDesc', PERSONAL.LegSec2 AS 'Se2Codi', SECCION.Se2Desc AS 'Se2Desc', PERSONAL.LegGrup AS 'GruCodi', GRUPOS.GruDesc AS 'GruDesc', PERSONAL.LegSucu AS 'SucCodi', SUCURSALES.SucDesc AS 'SucDesc', PERSONAL.LegMail AS 'LegMail', PERSONAL.LegDomi AS 'LegDomi', PERSONAL.LegDoNu AS 'LegDoNu', PERSONAL.LegDoOb AS 'LegDoOb', PERSONAL.LegDoPi AS 'LegDoPi', PERSONAL.LegDoDP AS 'LegDoDP', LOCALIDA.LocDesc AS 'LocDesc', PERSONAL.LegCOPO AS 'LegCOPO', PROVINCI.ProDesc AS 'ProDesc', NACIONES.NacDesc AS 'NacDesc', (CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END) AS 'LegEsta', PERSONAL.LegFeEg AS 'LegFeEg', PERSONAL.LegFeIn AS 'LegFeIn', PERSONAL.LegTel1 AS 'LegTel1', PERSONAL.LegTeO1 AS 'LegTeO1', PERSONAL.LegTel2 AS 'LegTel2', PERSONAL.LegTeO2 AS 'LegTeO2', PERSONAL.LegRegCH AS 'LegRegl', REGLASCH.RCDesc AS 'RCHDesc' FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi LEFT JOIN REGLASCH ON PERSONAL.LegRegCH=REGLASCH.RCCodi WHERE PERSONAL.LegNume >'0' $filtros $FilterEstruct $OrderBy";

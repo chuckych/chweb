@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -13,7 +13,7 @@ $iLega2 = $total = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 
 $control->check_method("POST");
 $control->check_json();
 
-require __DIR__ . '../wc.php';
+require __DIR__ . '/wc.php';
 
 if ($dp['getReg']) {
     $joinFichas4 = " LEFT JOIN REGISTRO ON FICHAS.FicLega = REGISTRO.RegLega AND FICHAS.FicFech = REGISTRO.RegFeAs ";

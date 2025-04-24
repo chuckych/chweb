@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 session_start();
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -17,19 +17,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo Legajo es requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo(test_input($_POST['LegApNo']))) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo Nombre es requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo(test_input($_POST['LegEmpr']))) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo Empresa es requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -192,11 +195,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['ALTALeg'] == 'true')) {
     $systemVersion = intval($systemVersion[1]) ?? '';
 
     $sql = "INSERT INTO PERSONAL (LegNume,LegApNo,LegEsta,LegEmpr,LegPlan,LegSucu,LegGrup,LegSect,LegSec2,LegTDoc,LegDocu,LegCUIT,LegDomi,LegDoNu,LegDoPi,LegDoDP,LegDoOb,LegCOPO,LegProv,LegLoca,LegTel1,LegTeO1,LegTel2,LegTeO2,LegTel3,LegMail,LegNaci,LegEsCi,LegSexo,LegFeNa,LegTipo,LegFeIn,LegFeEg,LegPrCo,LegPrSe,LegPrGr,LegPrPl,LegPrRe,LegPrHo,LegToTa,LegToIn,LegToSa,LegReTa,LegReIn,LegReSa,LegIncTi,LegDesc,LegHLDe,LegHLDH,LegHLRo,LegHGDe,LegHGDH,LegHGRo,LegHSDe,LegHSDH,LegHSRo,LegHoAl,LegHoLi,LegGrHa,LegArea,LegAvisa,LegChkHo,LegAntes,LegDespu,LegTarde,LegRegCH,LegRegCO,LegCant,LegValHora,LegHabSali,LegJornada,LegForPago,LegMoneda,LegBanco,LegBanSuc,LegBanCTA,LegBanCBU,LegConv,LegCalif,LegTare,LegObs,LegObsPlan,LegZona,LegRedu,LegAFJP,LegSind,LegActi,LegModa,LegSitu,LegCond,LegSine,LegTicket,LegBasico,LegImporte1,LegImporte2,LegImporte3,LegImporte4,LegImporte5,LegImporte6,LegTopeAde,LegCapiLRT,LegCalcGan,LegTareProd,LegNo24,LegTZ,LegTZ1,LegTZ2,LegTZ3,LegBandHor,FechaHora, LegAFIPCCT, LegAFIPSCVO, LegAFIPLoc, LegAFIPRedu, LegHLPlani, LegPrCosteo, LegIntExt, LegTZConId";
-    $sql .= ($systemVersion >= 70) ?  ", LegCtaTP, LegNume2, LegAGPass" : '';
+    $sql .= ($systemVersion >= 70) ? ", LegCtaTP, LegNume2, LegAGPass" : '';
     $sql .= ") ";
 
     $sql .= " VALUES ('$LegNume','$LegApNo',0,'$LegEmpr',0,0,0,0,0,1,0,'','',0,0,'','','',0,0,'','','','','','',0,0,0, CONVERT(datetime, '1753-01-01', 120),0, CONVERT(datetime, '1753-01-01', 120), CONVERT(datetime, '1753-01-01', 120),0,0,0,0,1,0,0,0,0,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,'01:00',0,0,0,0,'00:00','00:00','00:00',0,0,0, 0,'00:00',0,1,0,0,0,'','',0,0,0,0,0,1, 30,0,0,49,8,1,1,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,1,0,0,0,0,'1111111111111111', CONVERT(datetime, '$FechaHora', 121),0,0,0,0,0,0,0,0";
-    $sql .= ($systemVersion >= 70) ?  ",0,0,0" : '';
+    $sql .= ($systemVersion >= 70) ? ",0,0,0" : '';
     $sql .= ")";
     // print_r($sql);
     // exit;

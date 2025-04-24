@@ -3,36 +3,36 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "spanish");
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 
 switch ($_GET['e']) {
     case 'secciones':
-        $tabla       = 'SECCION';
-        $ColCodiSec  = 'SecCodi';
-        $ColCodi     = 'Se2Codi';
-        $ColDesc     = 'Se2Desc';
+        $tabla = 'SECCION';
+        $ColCodiSec = 'SecCodi';
+        $ColCodi = 'Se2Codi';
+        $ColDesc = 'Se2Desc';
         $ColPersCodi = 'LegSec2';
-        $DescSin     = 'Sin Seccion';
-        $valorarray  = 'sectores';
+        $DescSin = 'Sin Seccion';
+        $valorarray = 'sectores';
         $valorarray2 = 'seccion';
         $valorarray3 = 'seccion';
-        $GetValRol   = 'GetEstructRol';
+        $GetValRol = 'GetEstructRol';
         break;
     default:
         exit;
-        // break;
+    // break;
 }
 // session_start();
 UnsetGet('tk');
 UnsetGet('q');
 UnsetGet('_r');
 UnsetGet('sect');
-$respuesta  = '';
+$respuesta = '';
 /** CONSULTAMOS SECTORES DEL ROL GET PARA LUEGO FILTRARLOS EN LA CONSULTA */
 // $roles = sector_rol($_GET['_r']);
 
-$url   = host() . "/" . HOMEHOST . "/data/GetEstructRol.php?tk=" . token() . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'] . "&sect=1";
+$url = host() . "/" . HOMEHOST . "/data/GetEstructRol.php?tk=" . token() . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'] . "&sect=1";
 // echo $url; br();
 // $json  = file_get_contents($url);
 // $array = json_decode($json, TRUE);
@@ -56,9 +56,9 @@ if ($_GET['tk'] == $token) {
             $Codi = ($roles) ? "AND CONCAT(SECCION.SecCodi,SECCION.Se2Codi) NOT IN ($roles)" : "";
             // $Codi = ($roles) ? "AND SECCION.Se2Codi NOT IN ($roles)" : "";
         }
-        require __DIR__ . '../../config/conect_mssql.php';
-        $q     = $_GET['q'];
-   
+        require __DIR__ . '/../config/conect_mssql.php';
+        $q = $_GET['q'];
+
         $query = "SELECT SECCION.Se2Codi AS cod, SECCION.Se2Desc AS 'desc',SECCION.SecCodi AS cod_sector,
         (SELECT COUNT(PERSONAL.LegNume) FROM PERSONAL WHERE PERSONAL.LegSec2 = SECCION.Se2Codi AND PERSONAL.LegFeEg = '17530101' AND PERSONAL.LegSect = SECCION.SecCodi) AS cant_legajos_act,
         (SELECT COUNT(PERSONAL.LegNume) FROM PERSONAL WHERE PERSONAL.LegSec2 = SECCION.Se2Codi AND PERSONAL.LegFeEg != '17530101' AND PERSONAL.LegSect = SECCION.SecCodi) AS cant_legajos_baja,
@@ -69,26 +69,26 @@ if ($_GET['tk'] == $token) {
         // print_r($query);
         // exit;
 
-        $params  = array();
+        $params = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        $result  = sqlsrv_query($link, $query, $params, $options);
-        $data    = array();
+        $result = sqlsrv_query($link, $query, $params, $options);
+        $data = array();
         if (sqlsrv_num_rows($result) > 0) {
-            while ($row = sqlsrv_fetch_array($result)) :
-                $cod               = $row['cod'];
-                $desc              = $row['desc'];
-                $desc              = (!$cod) ? 'Sin Sección' : $desc;
-                $cant_legajos_act  = $row['cant_legajos_act'];
+            while ($row = sqlsrv_fetch_array($result)):
+                $cod = $row['cod'];
+                $desc = $row['desc'];
+                $desc = (!$cod) ? 'Sin Sección' : $desc;
+                $cant_legajos_act = $row['cant_legajos_act'];
                 $cant_legajos_baja = $row['cant_legajos_baja'];
-                $cant_legajos      = $row['cant_legajos'];
-                $cod_sector        = $row['cod_sector'];
+                $cant_legajos = $row['cant_legajos'];
+                $cod_sector = $row['cod_sector'];
                 $data[] = array(
-                    'cod'               => $cod,
-                    'desc'              => $desc,
-                    'cant_legajos_act'  => $cant_legajos_act,
+                    'cod' => $cod,
+                    'desc' => $desc,
+                    'cant_legajos_act' => $cant_legajos_act,
                     'cant_legajos_baja' => $cant_legajos_baja,
-                    'cant_legajos'      => $cant_legajos,
-                    'cod_sector'        => $cod_sector
+                    'cant_legajos' => $cant_legajos,
+                    'cod_sector' => $cod_sector
                 );
             endwhile;
             sqlsrv_free_stmt($result);
@@ -99,11 +99,11 @@ if ($_GET['tk'] == $token) {
         }
     } else {
         $Codi = '';
-        require_once __DIR__ . '../../config/conect_mssql.php';
+        require_once __DIR__ . '/../config/conect_mssql.php';
         $query = "SELECT COUNT($tabla.$ColCodi) AS count_cod
         FROM $tabla";
         $result = sqlsrv_query($link, $query);
-        while ($row = sqlsrv_fetch_array($result)) :
+        while ($row = sqlsrv_fetch_array($result)):
             $count_cod = $row['count_cod'];
         endwhile;
         sqlsrv_free_stmt($result);

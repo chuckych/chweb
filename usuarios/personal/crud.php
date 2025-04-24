@@ -2,7 +2,7 @@
 ini_set('max_execution_time', 300); //300 seconds = 5 minutes
 session_start(); //Inicia una nueva sesión o reanuda la existente
 header('Content-type: text/html; charset=utf-8'); //Para evitar problemas de acentos
-require __DIR__ . '../../../config/index.php'; //config
+require __DIR__ . '/../../config/index.php'; //config
 ultimoacc(); //Actualiza el ultimo acceso del usuario
 secure_auth_ch_json(); // Chequeo de authenticacion
 header("Content-Type: application/json");
@@ -12,11 +12,11 @@ E_ALL(); // Report all PHP errors
 $_POST['LegaPass'] = $_POST['LegaPass'] ?? '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) {
 
-    $rol    = test_input($_POST['rol']); // Rol
-    $id_c_  = test_input($_POST['id_c']); // id_c
+    $rol = test_input($_POST['rol']); // Rol
+    $id_c_ = test_input($_POST['id_c']); // id_c
     $ident_ = test_input($_POST['ident']); // ident
 
-    $fecha  = fechaHora2(); // Fecha y hora actual
+    $fecha = fechaHora2(); // Fecha y hora actual
     /* Comprobamos campos vacios  */
     if (empty($_POST['_l'])) { // si no se selecciono ningun legajo
         PrintRespuestaJson('error', 'Debe seleccionar al menos un legajo');
@@ -31,8 +31,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
     $getFicLega = implode(",", $_POST['_l']); // Fichero con legajos 
     $query = "SELECT DISTINCT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni' FROM personal WHERE PERSONAL.LegNume > 0 AND PERSONAL.LegFeEg='1753-01-01 00:00:00.000' AND PERSONAL.LegNume IN ($getFicLega) ORDER BY pers_nombre ASC";
 
-    $data =  arrayQueryDataMS($query); // traemos los datos del personal seleccionado en la lista
-    $textError  = '';
+    $data = arrayQueryDataMS($query); // traemos los datos del personal seleccionado en la lista
+    $textError = '';
     foreach ($data as $value) { // recorremos los legajos seleccionados
 
 
@@ -40,13 +40,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
         $legajo = intval($value['pers_legajo']);
 
         if (test_input($_POST['LegaPass']) == 'true') {
-            $userauto   = $value['pers_legajo'];
+            $userauto = $value['pers_legajo'];
             $contraauto = password_hash($value['pers_dni'], PASSWORD_DEFAULT);
         } else {
-            $caract      = array(",", "-", ":", "|", ".", "´", ";", "ñ", "Ñ");
-            $nombre_u    = str_replace($caract, "", $value['pers_nombre']);
-            $userauto    = strtolower($ident_) . '-' . strtok(strtolower($nombre_u), " \n\t") . "-" . $legajo;
-            $contraauto  = password_hash($userauto, PASSWORD_DEFAULT);
+            $caract = array(",", "-", ":", "|", ".", "´", ";", "ñ", "Ñ");
+            $nombre_u = str_replace($caract, "", $value['pers_nombre']);
+            $userauto = strtolower($ident_) . '-' . strtok(strtolower($nombre_u), " \n\t") . "-" . $legajo;
+            $contraauto = password_hash($userauto, PASSWORD_DEFAULT);
         }
         $recid = recid();
         /* INSERTAMOS */
@@ -67,7 +67,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
 
                 if (!empty($a['legajo'])) { // si existe
                     $textError .= "<br>La tarjeta $IDTarjeta se encuentra registrada al usuario $a[usuario] ($a[nombre]). Legajo: $a[legajo]";
-                }else {
+                } else {
                     $q2 = "INSERT INTO `uident` (`usuario`, `ident`,`login`,`descripcion`, `expira`) VALUES ( '$dataUser[id_user]', '$IDTarjeta', '0', '', '2099-11-11')";
                     pdoQuery($q2);
                 }
@@ -80,9 +80,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'Importar')) 
             exit;
         }
     }
-    $count       = count($data); // conteo de los legajos seleccionados
+    $count = count($data); // conteo de los legajos seleccionados
     $tiempo_fini = microtime(true); // tiempo final
-    $duracion    = round($tiempo_fini - $tiempo_ini, 2); // tiempo de ejecucion
+    $duracion = round($tiempo_fini - $tiempo_ini, 2); // tiempo de ejecucion
     PrintRespuestaJson('ok', "<b>Usuarios importados correctamente</b><br>Duración: $duracion Segundos.<br>Usuarios importados: $count.$textError"); // enviamos la respuesta
     exit; // salimos del script
 }

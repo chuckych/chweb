@@ -3,7 +3,7 @@ ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 $Modulo = '19';
@@ -11,36 +11,36 @@ timeZone();
 timeZone_lang();
 ExisteModRol($Modulo);
 E_ALL();
-$request   = Flight::request();
-$method    = $request->method;
-$params    = $request->data;
+$request = Flight::request();
+$method = $request->method;
+$params = $request->data;
 $authBasic = base64_encode('chweb:' . HOMEHOST);
-$token     = sha1($_SESSION['RECID_CLIENTE']);
+$token = sha1($_SESSION['RECID_CLIENTE']);
 
 if (($method == "POST")) {
     $start_time = microtime(true);
 
-    $_format      = FusNuloPOST('_format', 'A4');
+    $_format = FusNuloPOST('_format', 'A4');
     /** Tipo de Hoja */
     $_orientation = FusNuloPOST('_orientation', 'P');
     /** L: Horizontal; P: Vertical */
-    $_destino     = FusNuloPOST('_destino', 'D');
+    $_destino = FusNuloPOST('_destino', 'D');
     /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
-    $_password    = FusNuloPOST('_password', '');
+    $_password = FusNuloPOST('_password', '');
     /** Password de apertura del archivo */
-    $_print       = FusNuloPOST('_print', '');
+    $_print = FusNuloPOST('_print', '');
     /**  Bloquea la impresion del archivo */
-    $_modify      = FusNuloPOST('_modify', '');
+    $_modify = FusNuloPOST('_modify', '');
     /**  Bloquea la modificacion archivo */
-    $_copy        = FusNuloPOST('_copy', '');
+    $_copy = FusNuloPOST('_copy', '');
     /**  Bloquea la copiar datos del archivo */
-    $_annotforms  = FusNuloPOST('_annotforms', '');
+    $_annotforms = FusNuloPOST('_annotforms', '');
     /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
-    $_nombre      = FusNuloPOST('_nombre', "HorAsign");
+    $_nombre = FusNuloPOST('_nombre', "HorAsign");
     /**  Nombre del archivo*/
-    $_titulo      = FusNuloPOST('_titulo', "");
+    $_titulo = FusNuloPOST('_titulo', "");
     /**  titulo del reporte*/
-    $_SaltoPag    = FusNuloPOST('_SaltoPag', "0");
+    $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
     /** salto de pagina por legajo */
 
     $_titulo = $_titulo == '' ? 'HORARIOS ASIGNADOS' : $_titulo;
@@ -48,17 +48,17 @@ if (($method == "POST")) {
     // h1($_nombre); exit;
     $title = ($_nombre == 'HorAsign') ? strtoupper($_titulo) : $_nombre;
 
-    $_path          = $_SERVER['DOCUMENT_ROOT'] . '/' . HOMEHOST . '/informes/horasign/archivos/';
-    $fecha          = new DateTime();
-    $MicroTime      = microtime(true);
-    $NombreArchivo  = $_path . $_nombre . "_" . $MicroTime . ".pdf";
-    $NombreArchivo  = str_replace(' ', '_', $NombreArchivo);
+    $_path = $_SERVER['DOCUMENT_ROOT'] . '/' . HOMEHOST . '/informes/horasign/archivos/';
+    $fecha = new DateTime();
+    $MicroTime = microtime(true);
+    $NombreArchivo = $_path . $_nombre . "_" . $MicroTime . ".pdf";
+    $NombreArchivo = str_replace(' ', '_', $NombreArchivo);
     $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
     $NombreArchivo2 = str_replace(' ', '_', $NombreArchivo2);
 
     $DateRange = explode(' al ', $_POST['_drhorarios']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
 
     $fecha1 = new DateTime($FechaIni);
     $fecha2 = new DateTime($FechaFin);
@@ -75,7 +75,7 @@ if (($method == "POST")) {
         borrarLogs($_path, 1, '.pdf');
         // ini_set("pcre.backtrack_limit", "5000000");
         ob_start();
-        require_once  'toPdf.php';
+        require_once 'toPdf.php';
         $buffer = ob_get_clean();
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'c',
@@ -138,18 +138,18 @@ if (($method == "POST")) {
 
         //$mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
         $chunks = explode("chunk", $buffer);
-        foreach($chunks as $key => $val) {
+        foreach ($chunks as $key => $val) {
             $mpdf->WriteHTML($buffer, \Mpdf\HTMLParserMode::HTML_BODY);
         }
 
-        
+
         // $mpdf->WriteHTML($buffer, 2);
 
         ob_end_clean();
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
 
-        $data = array('status' => 'ok', 'Mensaje' => 'Reporte Creado', 'archivo' => 'archivos/'.$NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
+        $data = array('status' => 'ok', 'Mensaje' => 'Reporte Creado', 'archivo' => 'archivos/' . $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {

@@ -1,14 +1,14 @@
 <?php
 session_start();
 // header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
 FusNuloPOST('q', '');
 $q = $_POST['q'];
@@ -21,18 +21,18 @@ $mes = $_POST['Mes'];
 $query = "SELECT ARCHIVOS.ArchPath AS 'ArchPath', ARCHIVOS.ArchDesc AS 'ArchDesc', ARCHIVOS.ArchNomb AS 'ArchNomb', PARACONT.ParPeMeD AS 'MensDesde', PARACONT.ParPeMeH AS 'MensHasta', PARACONT.ParPeJ1D AS 'Jor1Desde', PARACONT.ParPeJ1H AS 'Jor1Hasta', PARACONT.ParPeJ2D AS 'Jor2Desde', PARACONT.ParPeJ2H AS 'Jor2Hasta' FROM PARACONT INNER JOIN ARCHIVOS ON PARACONT.ParCodi=ARCHIVOS.ArchModu WHERE PARACONT.ParCodi='0' AND ARCHIVOS.ArchModu='0' AND ARCHIVOS.ArchTipo='0' AND ARCHIVOS.ArchCodi='0'";
 // print_r($query); exit;
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 // $path = $_SERVER['SCRIPT_FILENAME'];
 // $path = str_replace("getParacont.php", "", $path);
 // UpdateRegistro("UPDATE ARCHIVOS SET ArchPath='$path' WHERE ARCHIVOS.ArchModu='0' AND ARCHIVOS.ArchTipo='0' AND ARCHIVOS.ArchCodi='0'");
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
         $ArchPath = $row['ArchPath'];
         // $ArchPath = str_replace("","",$ArchPath );

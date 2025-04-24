@@ -1,7 +1,7 @@
 <?php
 session_start(); // Inicia la sesión
 header('Content-type: text/html; charset=utf-8'); // Corregir posible error de codificación
-require __DIR__ . '../../../config/index.php'; //config
+require __DIR__ . '/../../config/index.php'; //config
 header("Content-Type: application/json"); //return json
 E_ALL(); // Report all PHP errors
 $totalRecords = $data = array(); // Arreglo para almacenar el total de registros
@@ -31,9 +31,9 @@ if ($params['Plantilla']) {
 
     if ($params['planosPlant']) {
         if ($dataObj['plan']) {
-            $where_condition  = " AND PlanoID IN ($dataObj[plan]) AND PlanoEsta = '0'";
+            $where_condition = " AND PlanoID IN ($dataObj[plan]) AND PlanoEsta = '0'";
         } else {
-            $where_condition  = " AND PlanoID = 0";
+            $where_condition = " AND PlanoID = 0";
         }
     }
 
@@ -44,7 +44,7 @@ if ($params['Plantilla']) {
         $queryCount .= $where_condition; // Agrega condiciones de busqueda
     }
 
-    $query .=  " ORDER BY proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " "; // Add limit
+    $query .= " ORDER BY proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " "; // Add limit
     $totalRecords = simple_pdoQuery($queryCount);
     $count = $totalRecords['count']; // Total records
     $records = array_pdoQuery($query); // Records
@@ -53,26 +53,26 @@ if ($params['Plantilla']) {
 
     // print_r($query);exit;
     foreach ($records as $key => $row) {
-        $PlanoSet  = false; // Variable para saber si el plano esta en la plantilla
+        $PlanoSet = false; // Variable para saber si el plano esta en la plantilla
         foreach ($objProc as $value) {
             if ((($value) == ($row['PlanoID']))) { // si el plano esta en la plantilla
                 $PlanoSet = true; // se setea el valor en true
                 break; // se sale del ciclo
             }
         }
-        $PlanoID   = $row['PlanoID']; // ID del plano
+        $PlanoID = $row['PlanoID']; // ID del plano
         $PlanoDesc = $row['PlanoDesc']; // Descripcion del plano
         $PlanoEsta = $row['PlanoEsta']; // Costo del plano
-        $PlanoObs  = $row['PlanoObs']; // Observaciones del plano
-        $PlanoCod  = $row['PlanoCod']; // Codigo del plano
+        $PlanoObs = $row['PlanoObs']; // Observaciones del plano
+        $PlanoCod = $row['PlanoCod']; // Codigo del plano
 
         $data[] = array(
-            "PlanoID"   => $PlanoID,
+            "PlanoID" => $PlanoID,
             "PlanoDesc" => $PlanoDesc,
             "PlanoEsta" => $PlanoEsta,
-            "PlanoObs"  => $PlanoObs,
-            "PlanoSet"  => $PlanoSet,
-            "PlanoCod"  => $PlanoCod,
+            "PlanoObs" => $PlanoObs,
+            "PlanoSet" => $PlanoSet,
+            "PlanoCod" => $PlanoCod,
         );
     }
 
@@ -84,7 +84,7 @@ if ($params['Plantilla']) {
         array_multisort($aux, SORT_DESC, $aux2, SORT_ASC, $data); // Ordena los planos de la plantilla
     }
 } else {
-    $data    = array();
+    $data = array();
     $objProc = array();
     $count = '';
 }
@@ -92,14 +92,14 @@ $tiempo_fin = microtime(true); // Tiempo final
 $tiempo = ($tiempo_fin - $tiempo_inicio); // Tiempo de plano
 
 $json_data = array( // Arreglo para formar el json
-    "draw"            => intval($params['draw']), // Variable para saber que numero de pedido es
-    "recordsTotal"    => intval($count), // Cantidad de registros
+    "draw" => intval($params['draw']), // Variable para saber que numero de pedido es
+    "recordsTotal" => intval($count), // Cantidad de registros
     "recordsFiltered" => intval($count), // Cantidad de registros
-    "data"            => $data, // Array de datos
-    "tiempo"          => round($tiempo, 2), // Tiempo de plano
-    "objProc"         => $objProc, // Array de planos de la plantilla
-    "objPlanoLength"   => $objPlanoLength, // count planos de la plantilla
-    "Plantilla"       => $params['Plantilla'], // Array de planos de la plantilla
+    "data" => $data, // Array de datos
+    "tiempo" => round($tiempo, 2), // Tiempo de plano
+    "objProc" => $objProc, // Array de planos de la plantilla
+    "objPlanoLength" => $objPlanoLength, // count planos de la plantilla
+    "Plantilla" => $params['Plantilla'], // Array de planos de la plantilla
 );
 echo json_encode($json_data);
 exit;

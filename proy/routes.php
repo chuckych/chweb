@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 session_start();
 E_ALL();
 $_SESSION["RECID_ROL"] = $_SESSION["RECID_ROL"] ?? '';
@@ -58,35 +58,35 @@ function checkModulo($modulo)
 ($_SESSION["MODS_ROL_PROY"] == 'error') ? exit : '';
 
 $rutas = array(
-    'log_rfid'   => array(
+    'log_rfid' => array(
         "url" => 'login/login_rfid.php',
         "mod" => 0,
     ),
-    'log_user'   => array(
+    'log_user' => array(
         "url" => 'login/login_user.php',
         "mod" => 0,
     ),
-    'inicio'     => array(
+    'inicio' => array(
         "url" => 'inicio/index.php',
         "mod" => 43,
     ),
-    'salir'      => array(
+    'salir' => array(
         "url" => 'salir.php',
         "mod" => 0,
     ),
-    'empresas'   => array(
+    'empresas' => array(
         "url" => 'op/empresas.php',
         "mod" => 42,
     ),
-    'estados'    => array(
+    'estados' => array(
         "url" => 'op/estados.php',
         "mod" => 38,
     ),
-    'procesos'   => array(
+    'procesos' => array(
         "url" => 'op/procesos.php',
         "mod" => 39,
     ),
-    'planos'     => array(
+    'planos' => array(
         "url" => 'op/planos.php',
         "mod" => 41,
     ),
@@ -98,31 +98,31 @@ $rutas = array(
         "url" => 'op/plantillasPlanos.php',
         "mod" => 44,
     ),
-    'proyectos'  => array(
+    'proyectos' => array(
         "url" => 'op/proyectos.php',
         "mod" => 35,
     ),
-    'tareas'     => array(
+    'tareas' => array(
         "url" => 'op/tareas.php',
         "mod" => 37,
     ),
-    'mistareas'  => array(
+    'mistareas' => array(
         "url" => 'op/misTareas.php',
         "mod" => 36,
     ),
-    'selProc'    => array(
+    'selProc' => array(
         "url" => 'selProc/index.php',
         "mod" => 0,
     ),
-    'selPlano'   => array(
+    'selPlano' => array(
         "url" => 'selPlano/index.php',
         "mod" => 0,
     ),
-    'finalizar'  => array(
+    'finalizar' => array(
         "url" => 'finalizar/index.php',
         "mod" => 0,
     ),
-    'finTar'     => array(
+    'finTar' => array(
         "url" => 'finalizar/fin.php',
         "mod" => 0,
     ),

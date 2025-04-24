@@ -1,17 +1,17 @@
 <?php
-// require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../../config/conect_mssql.php';
+// require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 // E_ALL();
 $data = array();
 
 $params = $_REQUEST;
 
-require './filtros.php';
+require '/filtros.php';
 
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$params = $columns = $totalRecords ='';
+$params = $columns = $totalRecords = '';
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
@@ -34,32 +34,32 @@ WHERE FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND (dbo.fn_STRMinutos
 $queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryRecords);
 
-while ($r = sqlsrv_fetch_array($queryRecords)) :
-    $trNorm = ((($r['90']-$r['3'])+($r['4']-($r['80']+$r['70']+$r['50']+$r['2'])))/60);
-    $trNorm = round($trNorm,2);
-    $trExtras = ((($r['80']+$r['70']+$r['50']+$r['2']))/60);
-    $trExtras = round($trExtras,2);
-    $capExtras = ($r['2']/60);
-    $capExtras = round($capExtras,2);
-    $subExtras = ((($r['80']+$r['70']+$r['50']))/60);
-    $subExtras = round($subExtras,2);
+while ($r = sqlsrv_fetch_array($queryRecords)):
+    $trNorm = ((($r['90'] - $r['3']) + ($r['4'] - ($r['80'] + $r['70'] + $r['50'] + $r['2']))) / 60);
+    $trNorm = round($trNorm, 2);
+    $trExtras = ((($r['80'] + $r['70'] + $r['50'] + $r['2'])) / 60);
+    $trExtras = round($trExtras, 2);
+    $capExtras = ($r['2'] / 60);
+    $capExtras = round($capExtras, 2);
+    $subExtras = ((($r['80'] + $r['70'] + $r['50'])) / 60);
+    $subExtras = round($subExtras, 2);
 
 
     $data[] = array(
-        'compania'    => $r['Compania'],
-        'seccion'     => $r['Seccion'],
+        'compania' => $r['Compania'],
+        'seccion' => $r['Seccion'],
         'sectorLinea' => $r['Sector/Linea'],
-        '90'          => $r['90'],
-        '3'           => $r['3'],
-        '80'          => $r['80'],
-        '70'          => $r['70'],
-        '50'          => $r['50'],
-        '2'           => $r['2'],
-        '4'           => $r['4'],
-        'trNorm'      => ($trNorm > 0) ? $trNorm : '',
-        'trExtras'    => ($trExtras > 0) ? $trExtras : '',
-        'capExtras'   => ($capExtras > 0) ? $capExtras : '',
-        'subExtras'   => ($subExtras > 0) ? $subExtras : '',
+        '90' => $r['90'],
+        '3' => $r['3'],
+        '80' => $r['80'],
+        '70' => $r['70'],
+        '50' => $r['50'],
+        '2' => $r['2'],
+        '4' => $r['4'],
+        'trNorm' => ($trNorm > 0) ? $trNorm : '',
+        'trExtras' => ($trExtras > 0) ? $trExtras : '',
+        'capExtras' => ($capExtras > 0) ? $capExtras : '',
+        'subExtras' => ($subExtras > 0) ? $subExtras : '',
     );
 endwhile;
 sqlsrv_free_stmt($queryRecords);

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ini_set('max_execution_time', 900); // 900 segundos 15 minutos
 session_start();
 header("Content-Type: application/json");
@@ -15,12 +15,12 @@ function hoyStr()
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST))) {
     pingWebService('Horario no disponible');
-    
-    $_POST['Legajo']  = $_POST['Legajo'] ?? '';
-    $_POST['Fecha']  = $_POST['Fecha'] ?? '';
+
+    $_POST['Legajo'] = $_POST['Legajo'] ?? '';
+    $_POST['Fecha'] = $_POST['Fecha'] ?? '';
     $Legajo = test_input($_POST['Legajo']);
     $Fecha2 = test_input($_POST['Fecha']);
-    $Fecha = empty($Fecha2) ? hoyStr():$Fecha2;
+    $Fecha = empty($Fecha2) ? hoyStr() : $Fecha2;
 
     $getHorario = getHorario($Fecha, $Fecha, $Legajo, $Legajo, '0', '0', '0', '0', '0', '0', '0');
 
@@ -28,15 +28,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
     if ($getHorario) {
         $explode = explode(',', $getHorario['Estado']);
         // PrintRespuestaJson('ok',json_encode($getHorario));exit;
-        $legajo     = $explode[0];
-        $fecha      = $explode[1];
-        $desde      = $explode[2];
-        $hasta      = $explode[3];
-        $descanso   = $explode[4];
-        $laboral    = $explode[5];
-        $feriado    = $explode[6];
+        $legajo = $explode[0];
+        $fecha = $explode[1];
+        $desde = $explode[2];
+        $hasta = $explode[3];
+        $descanso = $explode[4];
+        $laboral = $explode[5];
+        $feriado = $explode[6];
         $asignacion = $explode[7];
-        $codigo     = $explode[8];
+        $codigo = $explode[8];
 
         $horario = horarioCH($codigo);
 
@@ -114,21 +114,21 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Legajo', $_POST
         $Mensaje = (($getHorario['Estado'])) ? $tipo . ' (' . $vsHorario . ')' . $horariodesc : 'No hay Conexión';
 
         $data = array(
-            'Mensaje'    => $Mensaje,
+            'Mensaje' => $Mensaje,
             'asignacion' => intval($asignacion),
-            'codigo'     => intval($codigo),
-            'descanso'   => $descanso,
-            'desde'      => $desde,
+            'codigo' => intval($codigo),
+            'descanso' => $descanso,
+            'desde' => $desde,
             'diaFeriado' => ($diaFeriado),
             'diaLaboral' => ($diaLaboral),
-            'fecha'      => $fecha,
-            'feriado'    => intval($feriado),
-            'hasta'      => $hasta,
-            'horario'    => $horario['desc'],
-            'laboral'    => intval($laboral),
-            'legajo'     => intval($legajo),
-            'status'     => 'ok',
-            'tipoAsign'  => ($tipo),
+            'fecha' => $fecha,
+            'feriado' => intval($feriado),
+            'hasta' => $hasta,
+            'horario' => $horario['desc'],
+            'laboral' => intval($laboral),
+            'legajo' => intval($legajo),
+            'status' => 'ok',
+            'tipoAsign' => ($tipo),
         );
         echo json_encode($data);
         exit;

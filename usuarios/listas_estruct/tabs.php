@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../../../config/index.php';
+require_once __DIR__ . '/../../config/index.php';
 ?>
 <!-- Empresas Tab -->
 <div class="tab-pane fade show active invisible" id="empresa" role="tabpanel" aria-labelledby="empresa-tab">
@@ -88,7 +88,8 @@ require_once __DIR__ . '../../../config/index.php';
 <div class="tab-pane fade invisible" id="copyListas" role="tabpanel" aria-labelledby="copyListas-tab">
     <div class="row">
         <div class="col-12 col-sm-6">
-            <div class="alert alert-warning fw5 fontq mt-3">Copiar configuracion de la estructura del usuario:<br /><span class="font-weight-bold nombreUsuario"></span><br/>a la siguiente selección</div>
+            <div class="alert alert-warning fw5 fontq mt-3">Copiar configuracion de la estructura del
+                usuario:<br /><span class="font-weight-bold nombreUsuario"></span><br />a la siguiente selección</div>
         </div>
     </div>
     <div class="row">

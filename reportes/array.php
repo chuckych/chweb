@@ -2,10 +2,10 @@
 session_start();
 E_ALL();
 
-require __DIR__ . '../../config/index.php';
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/index.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $query = "SELECT 
@@ -46,52 +46,52 @@ ORDER BY .FICHAS.FicFech, FICHAS.FicLega, TIPOHORA.THoColu";
 
 $queryRecords = sqlsrv_query($link, $query, $param, $options);
 
-while ($row = sqlsrv_fetch_array($queryRecords)) :
+while ($row = sqlsrv_fetch_array($queryRecords)):
     $Fecha = $row['Fecha']->format('Ymd');
     $row['Dia_Sem'] = nombre_dias($row['Dia_Sem'], false);
     $Fic_Asignada = ($row['Fic_Asignada']) ? $row['Fic_Asignada']->format('Ymd') : null;
     $data[] = array(
-        'Lega'          => $row['Lega'],
-        'Nombre'        => $row['Nombre'],
-        'Fecha'         => $Fecha,
-        'Dia_Sem'       => $row['Dia_Sem'],
-        'Horario'       => $row['Horario'],
-        'Hora'          => $row['Hora'],
-        'HoraDesc'      => $row['HoraDesc'],
-        'HoraDesc2'     => $row['HoraDesc2'],
-        'HsHechas'      => $row['HsHechas'],
-        'HsCalculadas'  => $row['HsCalculadas'],
+        'Lega' => $row['Lega'],
+        'Nombre' => $row['Nombre'],
+        'Fecha' => $Fecha,
+        'Dia_Sem' => $row['Dia_Sem'],
+        'Horario' => $row['Horario'],
+        'Hora' => $row['Hora'],
+        'HoraDesc' => $row['HoraDesc'],
+        'HoraDesc2' => $row['HoraDesc2'],
+        'HsHechas' => $row['HsHechas'],
+        'HsCalculadas' => $row['HsCalculadas'],
         'HsAutorizadas' => $row['HsAutorizadas'],
-        'FicNove'       => $row['FicNove'],
-        'NovDesc'       => $row['NovDesc'],
-        'NovTipo'       => $row['NovTipo'],
-        'Horas'         => $row['Horas'],
-        'HorasJust'     => $row['HorasJust'],
-        'HorasNoJust'   => $row['HorasNoJust'],
-        'Dias'          => $row['Dias'],
-        'DiasJust'      => $row['DiasJust'],
-        'DiasNoJust'    => $row['DiasNoJust'],
-        'THoColu'       => $row['THoColu'],
-        'Fic_Asignada'  => $Fic_Asignada,
-        'Fic_Hora'      => $row['Fic_Hora'],
-        'Fic_Tipo'      => $row['Fic_Tipo'],
-        'Fic_Estado'    => $row['Fic_Estado'],
+        'FicNove' => $row['FicNove'],
+        'NovDesc' => $row['NovDesc'],
+        'NovTipo' => $row['NovTipo'],
+        'Horas' => $row['Horas'],
+        'HorasJust' => $row['HorasJust'],
+        'HorasNoJust' => $row['HorasNoJust'],
+        'Dias' => $row['Dias'],
+        'DiasJust' => $row['DiasJust'],
+        'DiasNoJust' => $row['DiasNoJust'],
+        'THoColu' => $row['THoColu'],
+        'Fic_Asignada' => $Fic_Asignada,
+        'Fic_Hora' => $row['Fic_Hora'],
+        'Fic_Tipo' => $row['Fic_Tipo'],
+        'Fic_Estado' => $row['Fic_Estado'],
     );
     $dataLega[] = array(
-        'Lega'          => $row['Lega'],
-        'Nombre'        => $row['Nombre'],
+        'Lega' => $row['Lega'],
+        'Nombre' => $row['Nombre'],
     );
     $dataFecha[] = array(
         'Fecha' => $Fecha,
     );
     $dataFichadas[] = array(
-        'Lega'         => $row['Lega'],
-        'Nombre'       => $row['Nombre'],
-        'Fecha'        => $Fecha,
+        'Lega' => $row['Lega'],
+        'Nombre' => $row['Nombre'],
+        'Fecha' => $Fecha,
         'Fic_Asignada' => $Fic_Asignada,
-        'Fic_Hora'     => $row['Fic_Hora'],
-        'Fic_Tipo'     => $row['Fic_Tipo'],
-        'Fic_Estado'   => $row['Fic_Estado'],
+        'Fic_Hora' => $row['Fic_Hora'],
+        'Fic_Tipo' => $row['Fic_Tipo'],
+        'Fic_Estado' => $row['Fic_Estado'],
     );
 endwhile;
 

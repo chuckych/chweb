@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -23,7 +23,7 @@ ExisteModRol($Modulo);
 
 E_ALL();
 
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
@@ -52,17 +52,17 @@ $spreadsheet->fromArray($encabezado, null, 'A1');
 // print_r($data['data']); exit;
 foreach ($data['data'] as $r) {
 
-    $legajo          = $r['legajo'];
-    $nombre          = $r['nombre'];
-    $desde           = $r['desde'];
-    $hasta           = $r['hasta'];
-    $_presentes      = $r['_presentes'];
-    $_ausentes       = $r['_ausentes'];
-    $_totaldias      = $r['_totaldias'];
-    $_convpres       = $r['_convpres'];
-    $_convaus        = $r['_convaus'];
-    $_convpres       = str_replace(",", ".", $_convpres);
-    $_convaus        = str_replace(",", ".", $_convaus);
+    $legajo = $r['legajo'];
+    $nombre = $r['nombre'];
+    $desde = $r['desde'];
+    $hasta = $r['hasta'];
+    $_presentes = $r['_presentes'];
+    $_ausentes = $r['_ausentes'];
+    $_totaldias = $r['_totaldias'];
+    $_convpres = $r['_convpres'];
+    $_convaus = $r['_convaus'];
+    $_convpres = str_replace(",", ".", $_convpres);
+    $_convaus = str_replace(",", ".", $_convaus);
     $_totalmesesconv = $r['_totalmesesconv'];
 
     # Escribirlos en el documento

@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 $totalRecords = $data = array();
@@ -12,7 +12,7 @@ $tiempo_inicio = microtime(true);
 $where_condition = $sqlTot = $sqlRec = "";
 
 if (!empty($params['search']['value'])) {
-    $where_condition .=    " AND proy_empresas.EmpDesc LIKE '%" . $params['search']['value'] . "%'";
+    $where_condition .= " AND proy_empresas.EmpDesc LIKE '%" . $params['search']['value'] . "%'";
 }
 $query = "SELECT EmpID, EmpDesc, EmpTel, EmpObs FROM proy_empresas WHERE proy_empresas.EmpID > 0";
 $queryCount = "SELECT COUNT(*) as 'count' FROM proy_empresas WHERE proy_empresas.EmpID > 0";
@@ -24,7 +24,7 @@ if (isset($where_condition) && $where_condition != '') {
     $queryCount .= $where_condition;
 }
 
-$query .=  " ORDER BY proy_empresas.EmpDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$query .= " ORDER BY proy_empresas.EmpDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 $totalRecords = simple_pdoQuery($queryCount);
 $count = $totalRecords['count'];
 $records = array_pdoQuery($query);
@@ -32,16 +32,16 @@ $records = array_pdoQuery($query);
 // print_r($query);exit;
 foreach ($records as $key => $row) {
 
-    $EmpID   = $row['EmpID'];
+    $EmpID = $row['EmpID'];
     $EmpDesc = $row['EmpDesc'];
-    $EmpTel  = $row['EmpTel'];
-    $EmpObs  = $row['EmpObs'];
+    $EmpTel = $row['EmpTel'];
+    $EmpObs = $row['EmpObs'];
 
     $data[] = array(
-        "EmpID"   => $EmpID,
+        "EmpID" => $EmpID,
         "EmpDesc" => $EmpDesc,
-        "EmpTel"  => $EmpTel,
-        "EmpObs"  => $EmpObs,
+        "EmpTel" => $EmpTel,
+        "EmpObs" => $EmpObs,
     );
 }
 
@@ -49,11 +49,11 @@ $tiempo_fin = microtime(true);
 $tiempo = ($tiempo_fin - $tiempo_inicio);
 
 $json_data = array(
-    "draw"            => intval($params['draw']),
-    "recordsTotal"    => intval($count),
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($count),
     "recordsFiltered" => intval($count),
-    "data"            => $data,
-    "tiempo"          => round($tiempo, 2)
+    "data" => $data,
+    "tiempo" => round($tiempo, 2)
 );
 echo json_encode($json_data);
 exit;

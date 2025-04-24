@@ -14,20 +14,20 @@ header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 
-// require __DIR__ . '../../../config/conect_mssql.php';
+// require __DIR__ . '/../../config/conect_mssql.php';
 ultimoacc();
 secure_auth_ch();
 $Modulo = '32';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
@@ -107,9 +107,9 @@ $spreadsheet->getPageSetup()->setFitToHeight(0);
 /** Encabezado y Pie de Pagina */
 // $spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS MOBILE');
 
-$DateRange  = explode(' al ', $_POST['_drMob2']);
+$DateRange = explode(' al ', $_POST['_drMob2']);
 $start_date = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[0]))));
-$end_date   = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
+$end_date = date("d-m-Y", strtotime((str_replace("/", "-", $DateRange[1]))));
 
 $spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE FICHADAS MOBILE. DESDE ' . ($start_date) . ' A ' . $end_date);
 $spreadsheet->getHeaderFooter()->setOddFooter('&L' . $spreadsheet->getTitle() . '&RPágina &P de &N');
@@ -190,7 +190,7 @@ $respuesta = array();
 
 function FormatoHoraToExcel($Hora)
 {
-    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -210,12 +210,12 @@ if ($xlsData) {
         $timestamp = $valor['timestamp'];
         $datetimeFormat = 'd/m/Y';
         $datetimeFormat2 = 'Y-m-d';
-        $dates           = new \DateTime(); // current date/time
-        $dates           = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')); // current date/time
+        $dates = new \DateTime(); // current date/time
+        $dates = new \DateTime('now', new \DateTimeZone('America/Argentina/Buenos_Aires')); // current date/time
         $dates->setTimestamp($timestamp); // set new timestamp
-        $Fecha           = $dates->format($datetimeFormat2); // output = 2012-03-15
-        $LinkMapa        = "https://www.google.com/maps/place/" . $valor['regLat'] . "," . $valor['regLng']; // Link Maps google
-        $gps             = ($valor['regLat'] != '0') ? '' : 'Sin GPS';
+        $Fecha = $dates->format($datetimeFormat2); // output = 2012-03-15
+        $LinkMapa = "https://www.google.com/maps/place/" . $valor['regLat'] . "," . $valor['regLng']; // Link Maps google
+        $gps = ($valor['regLat'] != '0') ? '' : 'Sin GPS';
         switch ($valor['operationType'] ?? '') {
             case '-1':
                 $operationType = 'Fichada';
@@ -230,19 +230,19 @@ if ($xlsData) {
                 $operationType = 'Desconocido';
                 break;
         }
-        $userID      = $valor['userID']; // ID del usuario
-        $userName    = $valor['userName']; // Nombre del usuario
-        $regDay      = $valor['regDay']; // Dia de la fichada
-        $Fecha       = FormatoFechaToExcel($valor['regDate']); // Fecha de la fichada
+        $userID = $valor['userID']; // ID del usuario
+        $userName = $valor['userName']; // Nombre del usuario
+        $regDay = $valor['regDay']; // Dia de la fichada
+        $Fecha = FormatoFechaToExcel($valor['regDate']); // Fecha de la fichada
         // $Fecha    = FormatoFechaToExcel($Fecha); // Fecha de la fichada
-        $regHora     = FormatoHoraToExcel($valor['regHora']); // Hora de la fichada
-        $zoneName    = (!empty($valor['zoneName'])) ? $valor['zoneName'] : 'Fuera de Zona'; // Zona de la fichada
-        $confidence  = $valor['confidenceFaceStr'];
-        $tipo        = $operationType;
-        $device      = $valor['device'];
+        $regHora = FormatoHoraToExcel($valor['regHora']); // Hora de la fichada
+        $zoneName = (!empty($valor['zoneName'])) ? $valor['zoneName'] : 'Fuera de Zona'; // Zona de la fichada
+        $confidence = $valor['confidenceFaceStr'];
+        $tipo = $operationType;
+        $device = $valor['device'];
         $eventDevice = $valor['eventDevice'];
-        $eventZone   = $valor['eventZone'];
-        $appVersion  = $valor['appVersion'];
+        $eventZone = $valor['eventZone'];
+        $appVersion = $valor['appVersion'];
 
         if (is_numeric($device)) {
             $spreadsheet->getStyle('J' . $numeroDeFila)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);

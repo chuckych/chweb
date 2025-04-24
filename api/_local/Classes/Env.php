@@ -13,7 +13,7 @@ class Env
 
     function __construct()
     {
-        // $this->fileEnv = __DIR__ . '../../../../../../config_chweb/';
+        // $this->fileEnv = __DIR__ . '/../../../../../config_chweb/';
         $this->fileEnv = $this->getConfigPath();
         $this->dotenv = \Dotenv\Dotenv::createImmutable($this->fileEnv);
         $this->dotenv->load();

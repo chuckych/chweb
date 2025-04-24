@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 $totalRecords = $data = $count = array();
@@ -54,7 +54,7 @@ if (isset($where_condition) && $where_condition != '') {
     $queryCount .= $where_condition;
 }
 
-$query .=  " ORDER BY proy_planos.PlanoEsta, proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
+$query .= " ORDER BY proy_planos.PlanoEsta, proy_planos.PlanoDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 if (empty($_POST['selectPlano'])) { // sino viene de un select
     $totalRecords = simple_pdoQuery($queryCount);
     $count = $totalRecords['count'];
@@ -63,10 +63,10 @@ $records = array_pdoQuery($query);
 // print_r($query);exit;
 foreach ($records as $key => $row) {
 
-    $PlanoID   = $row['PlanoID'];
+    $PlanoID = $row['PlanoID'];
     $PlanoDesc = utf8str($row['PlanoDesc']);
-    $PlanoCod  = $row['PlanoCod'];
-    $PlanoObs  = $row['PlanoObs'];
+    $PlanoCod = $row['PlanoCod'];
+    $PlanoObs = $row['PlanoObs'];
     $PlanoEsta = $row['PlanoEsta'];
 
     if (!empty($_POST['selectPlano'])) {
@@ -77,18 +77,18 @@ foreach ($records as $key => $row) {
             $html = "<span>$PlanoDesc</span><span class='badge bg-indigo-lt'>-</span>";
         }
         $data[] = array(
-            'id'    => $PlanoID,
-            'text'  => ($PlanoDesc),
+            'id' => $PlanoID,
+            'text' => ($PlanoDesc),
             'title' => utf8str($text),
-            'html'  => "<div class='w-100 d-flex justify-content-between'>$html</div>"
+            'html' => "<div class='w-100 d-flex justify-content-between'>$html</div>"
         );
     } else {
         $data[] = array(
-            "PlanoID"   => $PlanoID,
+            "PlanoID" => $PlanoID,
             "PlanoDesc" => $PlanoDesc,
             "PlanoCod" => $PlanoCod,
-            "PlanoObs"  => $PlanoObs,
-            "PlanoEsta"  => $PlanoEsta,
+            "PlanoObs" => $PlanoObs,
+            "PlanoEsta" => $PlanoEsta,
             "dataPlantilla" => $planos
         );
     }
@@ -102,11 +102,11 @@ if (!empty($_POST['selectPlano'])) {
     exit;
 }
 $json_data = array(
-    "draw"            => intval($params['draw']),
-    "recordsTotal"    => intval($count),
+    "draw" => intval($params['draw']),
+    "recordsTotal" => intval($count),
     "recordsFiltered" => intval($count),
-    "data"            => $data,
-    "tiempo"          => round($tiempo, 2)
+    "data" => $data,
+    "tiempo" => round($tiempo, 2)
 );
 echo json_encode($json_data);
 exit;

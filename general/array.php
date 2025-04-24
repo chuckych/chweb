@@ -3,10 +3,10 @@ ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 E_ALL();
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
-// require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
+// require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
 $query_Fic = "SELECT REGISTRO.RegLega, REGISTRO.RegHoRe, REGISTRO.RegFeAs FROM REGISTRO WHERE REGISTRO.RegLega = '121' AND REGISTRO.RegFeAs BETWEEN '20200801' AND '20200824' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
 

@@ -1,8 +1,8 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
-require __DIR__ . '../../../vendor/autoload.php';
+require __DIR__ . '/../../config/index.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 use Carbon\Carbon;
 
@@ -18,12 +18,12 @@ $r = "SELECT MIN($p[f1]) AS 'min', MAX($p[f1]) AS 'max' FROM $p[t] WHERE Cliente
 
 $a = simple_pdoQuery($r);
 
-$min       = !empty($a['min']) ? Carbon::parse($a['min'], 'UTC')->format('Y-m-d') : date('Y-m-d');
-$max       = !empty($a['max']) ? Carbon::parse($a['max'], 'UTC')->format('Y-m-d') : date('Y-m-d');
+$min = !empty($a['min']) ? Carbon::parse($a['min'], 'UTC')->format('Y-m-d') : date('Y-m-d');
+$max = !empty($a['max']) ? Carbon::parse($a['max'], 'UTC')->format('Y-m-d') : date('Y-m-d');
 $minFormat = !empty($a['min']) ? Carbon::parse($a['min'], 'UTC')->format('d/m/Y') : date('d/m/Y');
 $maxFormat = !empty($a['max']) ? Carbon::parse($a['max'], 'UTC')->format('d/m/Y') : date('d/m/Y');
-$aniomin   = !empty($a['min']) ? Carbon::parse($a['min'], 'UTC')->format('Y') : date('Y');
-$aniomax   = !empty($a['max']) ? Carbon::parse($a['max'], 'UTC')->format('Y') : date('Y');
+$aniomin = !empty($a['min']) ? Carbon::parse($a['min'], 'UTC')->format('Y') : date('Y');
+$aniomax = !empty($a['max']) ? Carbon::parse($a['max'], 'UTC')->format('Y') : date('Y');
 
 $data = array(
     "anio" => array(
@@ -38,5 +38,5 @@ $data = array(
     )
 );
 
-PrintRespuestaJson('ok',$data);
+PrintRespuestaJson('ok', $data);
 exit;

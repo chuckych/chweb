@@ -1,11 +1,11 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('q2');
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 $q2 = $_GET['q2'];
 $query = "SELECT [IDCodigo] ,[IDFichada], [FechaHora], [IDVence], [IDTarjeta], [IDCap01], [IDCap03], [IDCap04], [IDCap05], [IDCap06] FROM IDENTIFICA WHERE IDLegajo='$q2' ORDER BY FechaHora DESC";
 //    print_r($query);

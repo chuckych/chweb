@@ -1,4 +1,4 @@
-<?php 
+<?php
 ExisteModRol('1');
 secure_auth_ch();
 ?>
@@ -6,14 +6,14 @@ secure_auth_ch();
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title>Login Logs</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod($bgcolor, 'white', 'login.png', 'Login Logs ', '') ?>
         <!-- Fin Encabezado -->
@@ -40,9 +40,9 @@ secure_auth_ch();
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../js/jquery.php";
+    require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/DataTable.php";
     ?>
     <script>
         $('#login_logs').dataTable({
@@ -52,7 +52,7 @@ secure_auth_ch();
             "ajax": {
                 url: "?p=data.php",
                 type: "POST",
-                error: function() {
+                error: function () {
                     $("#login_logs_processing").css("display", "none");
                 }
             },
@@ -90,17 +90,17 @@ secure_auth_ch();
                     "data": "agent"
                 }
             ],
-                scrollY: '50vh',
-                scrollX: true,
-                paging: 1,
-                searching: 1,
-                scrollCollapse: true,
-                info: 1,
-                ordering: 0,
-                responsive: 0,
-                language: {
-                    "url": "/<?= HOMEHOST ?>/js/DataTableSpanish.json"
-                }
+            scrollY: '50vh',
+            scrollX: true,
+            paging: 1,
+            searching: 1,
+            scrollCollapse: true,
+            info: 1,
+            ordering: 0,
+            responsive: 0,
+            language: {
+                "url": "/<?= HOMEHOST ?>/js/DataTableSpanish.json"
+            }
         });
     </script>
 </body>

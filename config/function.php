@@ -33,9 +33,9 @@ function getConfigPath(string $configFile = 'path_config.txt'): string
         }
 
         // Verificar si la ruta existe
-        if (!is_dir($path)) {
-            return $defaultPath;
-        }
+        // if (!is_dir($path)) {
+        //     return $defaultPath;
+        // }
 
         return $path . DIRECTORY_SEPARATOR;
     } catch (\Throwable $th) {

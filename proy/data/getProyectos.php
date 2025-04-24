@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 $totalRecords = $data = [];

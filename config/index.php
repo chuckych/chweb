@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../funciones.php';
+require __DIR__ . '/../funciones.php';
 E_ALL();
 header("Content-Type: text/html;charset=UTF-8");
 timeZone();

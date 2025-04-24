@@ -2,24 +2,24 @@
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 E_ALL();
-require __DIR__ . '../../../filtros/filtros.php';
-require __DIR__ . '../../../config/conect_mssql.php';
+require __DIR__ . '/../../filtros/filtros.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 timeZone();
 $_POST['datos'] = $_POST['datos'] ?? '';
 
-if(empty($_POST['datos'])){
+if (empty($_POST['datos'])) {
     echo json_encode(['error' => 'No se recibieron datos']);
     exit;
 }
 
 $Datos = (json_decode($_POST['datos'], true));
 $Legajo = $Datos['legajo'];
-$ApNo   = $Datos['nombre'];
-$Tabla  = $Datos['tabla'];
+$ApNo = $Datos['nombre'];
+$Tabla = $Datos['tabla'];
 
 $aTur = intval($_SESSION["ABM_ROL"]['aTur']);
 $bTur = intval($_SESSION["ABM_ROL"]['bTur']);
@@ -34,13 +34,13 @@ $where_condition = $sqlTot = $sqlRec = $TotalCit = $sql_query = $queryRecords = 
 
 $ListaHorarios = $_SESSION['ListaHorarios'];
 $filtroListaHorarios = '';
-if ($ListaHorarios  != "-") {
+if ($ListaHorarios != "-") {
     $ListaHorarios1 = str_replace(32768, 0, $ListaHorarios);
     $filtroListaHorarios = " AND HORARIOS.HorCodi IN ($ListaHorarios1)";
 }
 $filtroListaRotaciones = '';
 $ListaRotaciones = $_SESSION['ListaRotaciones'];
-if ($ListaRotaciones  != "-") {
+if ($ListaRotaciones != "-") {
     $filtroListaRotaciones = " AND ROTACION.RotCodi IN ($ListaRotaciones)";
 }
 // print_r($Tabla);
@@ -62,23 +62,23 @@ switch ($Tabla) {
             $sqlTot .= $where_condition;
             $sqlRec .= $where_condition;
         }
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 
         while ($r = sqlsrv_fetch_array($queryRecords)) {
-            $fecha   = $r['fecha'];
-            $codHor  = $r['codHor'];
+            $fecha = $r['fecha'];
+            $codHor = $r['codHor'];
             $horario = $r['horario'];
             $data[] = array(
-                'Fecha'    => $fecha->format('d/m/Y'),
+                'Fecha' => $fecha->format('d/m/Y'),
                 'FechaStr' => intval($fecha->format('Ymd')),
-                'CodHor'   => $codHor,
-                'Horario'  => $horario,
-                'Legajo'   => $Legajo,
-                'ApNo'     => $ApNo
+                'CodHor' => $codHor,
+                'Horario' => $horario,
+                'Legajo' => $Legajo,
+                'ApNo' => $ApNo
             );
         }
         break;
@@ -92,7 +92,7 @@ switch ($Tabla) {
             $sqlTot .= $where_condition;
             $sqlRec .= $where_condition;
         }
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
@@ -108,8 +108,8 @@ switch ($Tabla) {
                 'Ho2Fec2' => $Ho2Fec2->format('d/m/Y'),
                 'Ho2Hora' => $Ho2Hora,
                 'HorDesc' => $HorDesc,
-                'Legajo'  => $Legajo,
-                'ApNo'    => $ApNo,
+                'Legajo' => $Legajo,
+                'ApNo' => $ApNo,
             );
         }
         break;
@@ -126,25 +126,25 @@ switch ($Tabla) {
         $sqlTot .= $sql_query;
         $sqlRec .= $sql_query;
 
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 
         while ($r = sqlsrv_fetch_array($queryRecords)) {
-            $CitLega  = $r['CitLega'];
-            $CitFech  = $r['CitFech'];
+            $CitLega = $r['CitLega'];
+            $CitFech = $r['CitFech'];
             $CitEntra = $r['CitEntra'];
-            $CitSale  = $r['CitSale'];
-            $CitDesc  = $r['CitDesc'];
+            $CitSale = $r['CitSale'];
+            $CitDesc = $r['CitDesc'];
             $data[] = array(
-                'CitFech'  => $CitFech->format('d/m/Y'),
-                'CitLega'  => $CitLega,
+                'CitFech' => $CitFech->format('d/m/Y'),
+                'CitLega' => $CitLega,
                 'CitEntra' => $CitEntra,
-                'CitSale'  => $CitSale,
-                'CitDesc'  => $CitDesc,
-                'ApNo'     => $ApNo,
+                'CitSale' => $CitSale,
+                'CitDesc' => $CitDesc,
+                'ApNo' => $ApNo,
             );
         }
         break;
@@ -159,12 +159,12 @@ switch ($Tabla) {
             $sqlTot .= $where_condition;
             $sqlRec .= $where_condition;
         }
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
-        
+
         while ($r = sqlsrv_fetch_array($queryRecords)) {
             $RoLLega = $r['RoLLega'];
             $RoLFech = $r['RoLFech'];
@@ -179,13 +179,13 @@ switch ($Tabla) {
                 'RotDesc' => $RotDesc,
                 'RoLDias' => $RoLDias,
                 'RoLVenc' => ($RoLVenc->format('d/m/Y') == '31/12/2099') ? '' : $RoLVenc->format('d/m/Y'),
-                'ApNo'    => $ApNo,
+                'ApNo' => $ApNo,
             );
         }
         break;
     case 'RotaDeta':
         $Datos = (json_decode($_POST['datos'], true));
-        $Rota  = $Datos['RoLRota'];
+        $Rota = $Datos['RoLRota'];
         $sql_query = "SELECT ROTACIO1.RotItem, ROTACION.RotCodi, ROTACION.RotDesc, ROTACIO1.RotDias, ROTACIO1.RotHora, HORARIOS.HorDesc
         FROM ROTACIO1
         INNER JOIN ROTACION ON ROTACIO1.RotCodi = ROTACION.RotCodi
@@ -193,7 +193,7 @@ switch ($Tabla) {
         WHERE ROTACIO1.RotCodi = $Rota
         ORDER BY ROTACIO1.RotItem";
         $sqlRec .= $sql_query;
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
@@ -219,14 +219,14 @@ switch ($Tabla) {
         sqlsrv_close($link);
         echo json_encode($data);
         exit;
-        // break;
+    // break;
     case 'Horario':
         $Datos = (json_decode($_POST['datos'], true));
-        $HorCodi  = $Datos['HorCodi'];
+        $HorCodi = $Datos['HorCodi'];
         $sql_query = "SELECT
         [HorCodi] ,[HorDesc] ,[HorID] , [HorDomi] ,[HorLune] ,[HorMart] ,[HorMier] ,[HorJuev] ,[HorVier] ,[HorSaba] ,[HorFeri] ,[HorDoDe] ,[HorLuDe] ,[HorMaDe] ,[HorMiDe] ,[HorJuDe] ,[HorViDe] ,[HorSaDe] ,[HorFeDe] ,[HorDoHa] ,[HorLuHa] ,[HorMaHa] ,[HorMiHa] ,[HorJuHa] ,[HorViHa] ,[HorSaHa] ,[HorFeHa] ,[HorDoRe] ,[HorLuRe] ,[HorMaRe] ,[HorMiRe] ,[HorJuRe] ,[HorViRe] ,[HorSaRe] ,[HorFeRe] ,[HorDoLi] ,[HorLuLi] ,[HorMaLi] ,[HorMiLi] ,[HorJuLi] ,[HorViLi] ,[HorSaLi] ,[HorFeLi] ,[HorDoHs] ,[HorLuHs] ,[HorMaHs] ,[HorMiHs] ,[HorJuHs] ,[HorViHs] ,[HorSaHs] ,[HorFeHs] FROM HORARIOS WHERE HorCodi = $HorCodi";
         $sqlRec .= $sql_query;
-        $param  = array();
+        $param = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
@@ -236,7 +236,7 @@ switch ($Tabla) {
             $data = array(
                 'HorCodi' => $r['HorCodi'],
                 'HorDesc' => $r['HorDesc'],
-                'HorID'   => $r['HorID'],
+                'HorID' => $r['HorID'],
                 'HorDomi' => $r['HorDomi'],
                 'HorLune' => $r['HorLune'],
                 'HorMart' => $r['HorMart'],
@@ -291,7 +291,7 @@ switch ($Tabla) {
         sqlsrv_close($link);
         echo json_encode($data);
         exit;
-        // break;
+    // break;
     case 'ListHorarios':
         $sql_query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS WHERE HorCodi >=0 $filtroListaHorarios";
         // print_r($sql_query); exit;
@@ -299,7 +299,7 @@ switch ($Tabla) {
         $sqlRec .= $sql_query;
 
         if (!empty($params['search']['value'])) {
-            $where_condition .=    " AND ";
+            $where_condition .= " AND ";
             $where_condition .= " (dbo.fn_Concatenar(HorCodi,HorDesc)) collate SQL_Latin1_General_CP1_CI_AS LIKE '%" . $params['search']['value'] . "%'";
         }
 
@@ -307,8 +307,8 @@ switch ($Tabla) {
             $sqlTot .= $where_condition;
             $sqlRec .= $where_condition;
         }
-        $param        = array();
-        $options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+        $param = array();
+        $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
         $sqlRec .= " ORDER BY HorCodi OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
         $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
@@ -320,15 +320,15 @@ switch ($Tabla) {
             $data[] = array(
                 'HorCodi' => $r['HorCodi'],
                 'HorDesc' => $r['HorDesc'],
-                'HorID'   => $r['HorID']
+                'HorID' => $r['HorID']
             );
         }
         header("Content-Type: application/json");
         $json_data = array(
-            "draw"            => intval($params['draw']),
-            "recordsTotal"    => intval($totalRecords),
+            "draw" => intval($params['draw']),
+            "recordsTotal" => intval($totalRecords),
             "recordsFiltered" => intval($totalRecords),
-            "data"            => $data
+            "data" => $data
         );
         sqlsrv_free_stmt($queryRecords);
         sqlsrv_close($link);
@@ -341,9 +341,9 @@ switch ($Tabla) {
         $sqlTot .= $sql_query;
         $sqlRec .= $sql_query;
 
-        $param        = array();
-        $options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        $queryTot     = sqlsrv_query($link, $sqlTot, $param, $options);
+        $param = array();
+        $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+        $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
         $totalRecords = sqlsrv_num_rows($queryTot);
         $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 
@@ -360,17 +360,17 @@ sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 
 $json_data = array(
-    "draw"            => 0,
-    "recordsTotal"    => intval($totalRecords),
+    "draw" => 0,
+    "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
-    "data"            => $data,
-    "TotalCit"        => $TotalCit,
-    '_aTur'            => $aTur,
-    '_bTur'            => $bTur,
-    '_mTur'            => $mTur,
-    '_aCit'            => $aCit,
-    '_bCit'            => $bCit,
-    '_mCit'            => $mCit
+    "data" => $data,
+    "TotalCit" => $TotalCit,
+    '_aTur' => $aTur,
+    '_bTur' => $bTur,
+    '_mTur' => $mTur,
+    '_aCit' => $aCit,
+    '_bCit' => $bCit,
+    '_mCit' => $mCit
 
 );
 echo json_encode($json_data);

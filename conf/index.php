@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 // secure_auth_ch();
 $Modulo = '999';
@@ -12,7 +12,7 @@ $urlBase = "{$REQUEST_SCHEME}://{$HTTP_HOST}";
 /** ALTA DE CLIENTE */
 $border = $ErrNombre = $error = $duplicado = '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
-    require __DIR__ . '../../config/conect_mysql.php';
+    require __DIR__ . '/../config/conect_mysql.php';
     $nombre = test_input($_POST['nombre']);
     $ident = test_input($_POST['ident']);
     $n_ident = str_replace(" ", "", $nombre);
@@ -102,7 +102,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title>Iniciar</title>
 </head>
 
@@ -134,7 +134,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
             header("Location:/" . HOMEHOST . "/login/");
         } ?>
     </div>
-    <?php require __DIR__ . "../../js/jquery.php"; ?>
+    <?php require __DIR__ . "/../js/jquery.php"; ?>
 </body>
 
 </html>

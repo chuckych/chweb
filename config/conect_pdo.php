@@ -1,12 +1,12 @@
 <?php
 // require __DIR__ . '/function.php';
-require __DIR__ . '../../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 $routeEnv = getConfigPath();
 
 if (!is_dir($routeEnv)) {
-	if (file_exists(__DIR__ . './dataconnmysql.php')) {
-		require __DIR__ . './dataconnmysql.php';
+	if (file_exists(__DIR__ . '/dataconnmysql.php')) {
+		require __DIR__ . '/dataconnmysql.php';
 	} else {
 		$host = "localhost";
 		$user = "root";
@@ -17,11 +17,11 @@ if (!is_dir($routeEnv)) {
 	if (!file_exists($routeEnv . '.env')) {
 		$environment = "DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
 		file_put_contents($routeEnv . '.env', $environment);
-		$dataconnmysql = __DIR__ . './dataconnmysql.php';
+		$dataconnmysql = __DIR__ . '/dataconnmysql.php';
 		if (!file_exists($dataconnmysql)) {
 			return false;
 		}
-		if (!unlink(__DIR__ . './dataconnmysql.php')) {
+		if (!unlink(__DIR__ . '/dataconnmysql.php')) {
 			// echo ("Error deleting");
 		} else {
 			// echo ("Deleted");
@@ -44,7 +44,7 @@ try {
 	$connpdo = new PDO($dsn, $user, $pw, $options);
 } catch (PDOException $e) {
 	$msj = trim($e->getMessage());
-	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorConexionPDO.log';
+	$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorConexionPDO.log';
 	fileLog($msj, $pathLog); // escribir en el log de errores
 	header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirection a login
 	exit;

@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -13,27 +13,27 @@ $border = $ErrNombre = $ErrUsuario = $ErrRol = $ErrContraseña = $duplicado = $n
 $fecha = date("Y/m/d H:i:s");
 /** ALTA DE USUARIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
-    require __DIR__ . '../../config/conect_mysql.php';
+    require __DIR__ . '/../config/conect_mysql.php';
 
-    $a_nombre  = test_input($_POST["a_nombre"]);
+    $a_nombre = test_input($_POST["a_nombre"]);
     $a_usuario = test_input($_POST["a_usuario"]);
-    $a_legajo  = test_input($_POST["a_legajo"]);
-    $a_tarjeta  = test_input($_POST["a_tarjeta"]);
-    $a_rol     = test_input($_POST["a_rol"]);
-    $a_recid   = test_input($_POST["a_recid"]);
+    $a_legajo = test_input($_POST["a_legajo"]);
+    $a_tarjeta = test_input($_POST["a_tarjeta"]);
+    $a_rol = test_input($_POST["a_rol"]);
+    $a_recid = test_input($_POST["a_recid"]);
 
     $query = "SELECT clientes.id as 'id', clientes.ident as 'ident' FROM clientes WHERE recid='$a_recid'";
-    $stmt  = mysqli_query($link, $query);
+    $stmt = mysqli_query($link, $query);
     while ($row = mysqli_fetch_assoc($stmt)) {
-        $ident   = $row['ident'];
+        $ident = $row['ident'];
         $cliente = $row['id'];
     }
     mysqli_free_result($stmt);
-    $userauto    = (empty($a_usuario)) ? strtolower($ident) . '-' . strtok(strtolower($a_nombre), " \n\t") . "-" . sprintf("%04d", rand(0, 9999)) : strtolower($ident) . '-' . $a_usuario . "-" . sprintf("%04d", rand(0, 9999));
-    $contraseña  = '';
-    $contraauto  = password_hash($userauto, PASSWORD_DEFAULT);
+    $userauto = (empty($a_usuario)) ? strtolower($ident) . '-' . strtok(strtolower($a_nombre), " \n\t") . "-" . sprintf("%04d", rand(0, 9999)) : strtolower($ident) . '-' . $a_usuario . "-" . sprintf("%04d", rand(0, 9999));
+    $contraseña = '';
+    $contraauto = password_hash($userauto, PASSWORD_DEFAULT);
     $contraseña1 = (empty($contraseña)) ? $contraauto : password_hash($contraseña, PASSWORD_DEFAULT);
-    $recid       = recid();
+    $recid = recid();
     /* Comprobamos campos vacíos  */
     // if ((valida_campo($nombre)) or (valida_campo($usuario)) or (valida_campo($rol)) or (valida_campo($contraseña))) {
     if ((valida_campo($a_nombre) or (valida_campo($cliente) or (valida_campo($a_rol))))) {
@@ -75,13 +75,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
 /** FIN ALTA DE USUARIO */
 /** MODIFICACIÓN DE USUARIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
-    require __DIR__ . '../../config/conect_mysql.php';
-    $e_nombre  = test_input($_POST["e_nombre"]);
+    require __DIR__ . '/../config/conect_mysql.php';
+    $e_nombre = test_input($_POST["e_nombre"]);
     $e_usuario = test_input($_POST["e_usuario"]);
-    $e_legajo  = test_input($_POST["e_legajo"]);
-    $e_tarjeta  = test_input($_POST["e_tarjeta"]);
-    $e_rol     = test_input($_POST["e_rol"]);
-    $e_uid     = test_input($_POST["e_uid"]);
+    $e_legajo = test_input($_POST["e_legajo"]);
+    $e_tarjeta = test_input($_POST["e_tarjeta"]);
+    $e_rol = test_input($_POST["e_rol"]);
+    $e_uid = test_input($_POST["e_uid"]);
     /* Comprobamos campos vacíos  */
     if ((valida_campo($e_nombre)) or (valida_campo($e_usuario)) or (valida_campo($e_rol))) {
         PrintRespuestaJson('error', 'Campos Requeridos');
@@ -96,17 +96,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
 
             $textError = '';
 
-            (!$e_tarjeta) ? pdoQuery("DELETE FROM `uident` WHERE usuario='$dataUser[id_user]'"):''; // Eliminamos la tarjeta si no se ingreso ninguna
+            (!$e_tarjeta) ? pdoQuery("DELETE FROM `uident` WHERE usuario='$dataUser[id_user]'") : ''; // Eliminamos la tarjeta si no se ingreso ninguna
 
             if ($e_tarjeta) {
 
                 $qmysql = "SELECT ui.ident, ui.usuario, u.nombre, u.legajo FROM uident ui LEFT JOIN usuarios u ON ui.usuario=u.id WHERE ui.ident=$e_tarjeta AND ui.usuario != '$dataUser[id_user]' LIMIT 1"; // chequeamos si la tarjeta ya existe en la base de datos
                 $a = simple_pdoQuery($qmysql);
-                
+
                 if (($a)) { // si existe
                     $a['legajo'] = " Leg: $a[legajo]" ?? '';
                     $textError .= "<br><span class='text-danger font-weight-bold'>Tarjeta ($e_tarjeta) registrada a $a[nombre].$a[legajo]</span>";
-                }else{
+                } else {
                     $r = simple_pdoQuery("SELECT * FROM uident WHERE usuario = '$dataUser[id_user]' LIMIT 1");
                     if ($r) {
                         $q = "UPDATE `uident` SET `ident`='$e_tarjeta' WHERE usuario='$dataUser[id_user]'";
@@ -141,11 +141,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editar')) {
 /** FIN MODIFICACIÓN DE USUARIO */
 /** MODIFICACIÓN DE ESTADO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'estado')) {
-    require __DIR__ . '../../config/conect_mysql.php';
+    require __DIR__ . '/../config/conect_mysql.php';
 
-    $id         = test_input($_POST["uid"]);
-    $nombre     = test_input($_POST["nombre"]);
-    $estado     = (test_input($_POST["estado"]) == 0) ? '1' : '0';
+    $id = test_input($_POST["uid"]);
+    $nombre = test_input($_POST["nombre"]);
+    $estado = (test_input($_POST["estado"]) == 0) ? '1' : '0';
     $textEstado = (test_input($_POST["estado"]) == 0) ? 'inhabilitó' : 'habilitó';
 
     $query = "UPDATE usuarios SET usuarios.estado='$estado', usuarios.fecha='$fecha' WHERE usuarios.id='$id'";
@@ -169,8 +169,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'estado')) {
 /** FIN MODIFICACIÓN DE ESTADO */
 /** BORRAR DE USUARIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'delete')) {
-    require __DIR__ . '../../config/conect_mysql.php';
-    $id     = test_input($_POST["uid"]);
+    require __DIR__ . '/../config/conect_mysql.php';
+    $id = test_input($_POST["uid"]);
     $nombre = test_input($_POST["nombre"]);
     /* Comprobamos campos vacíos  */
 
@@ -199,12 +199,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'delete')) {
 /** FIN BORRAR DE USUARIO */
 /** RESETEAR CONTRASEÑA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'key')) {
-    require __DIR__ . '../../config/conect_mysql.php';
-    $usuario    = test_input($_POST["usuario"]);
-    $nombre     = urlencode(test_input($_POST["nombre"]));
+    require __DIR__ . '/../config/conect_mysql.php';
+    $usuario = test_input($_POST["usuario"]);
+    $nombre = urlencode(test_input($_POST["nombre"]));
     $contraauto = password_hash($usuario, PASSWORD_DEFAULT);
-    $uid      = test_input($_POST["uid"]);
-    $fecha      = date("Y/m/d H:i:s");
+    $uid = test_input($_POST["uid"]);
+    $fecha = date("Y/m/d H:i:s");
 
     /* Comprobamos campos vacíos  */
     if ((valida_campo($uid)) or (valida_campo($usuario)) or (valida_campo($nombre))) {

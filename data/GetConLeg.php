@@ -1,11 +1,11 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('q2');
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 // $q = $_GET['q'];
 $q2 = $_GET['q2'];
 $query = "SELECT OTROCONLEG.OTROConLega,OTROCONLEG.OTROConCodi, OTROConValor, OTROCONLEG.FechaHora, OTROCONCEP.OTROConDesc

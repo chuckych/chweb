@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -15,9 +15,9 @@ header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
 header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 
-require __DIR__ . '../../config/conect_mssql.php';
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../valores.php';
+require __DIR__ . '/../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/valores.php';
 
 ultimoacc();
 secure_auth_ch();
@@ -25,13 +25,13 @@ $Modulo = '17';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param        = array();
-$options      = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $documento = new Spreadsheet();
 $documento
@@ -189,7 +189,7 @@ $result = sqlsrv_query($link, $query, $param, $options);
 
 function FormatoHoraToExcel($Hora)
 {
-    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -207,15 +207,15 @@ function FormatoFechaToExcel($Fecha)
 
 while ($row = sqlsrv_fetch_array($result)) {
     # Obtener los datos de la base de datos
-    $Legajo      = $row['Legajo'];
-    $Nombre      = $row['Nombre'];
-    $Fecha       = $row['Fecha']->format('Y-m-d');
-    $Dia         = $row['Dia'];
-    $Horario     = $row['Horario'];
-    $Cod         = $row['Cod'];
-    $Novedad     = $row['Novedad'];
-    $Tipo        = ($row['Tipo'] == '1') ? 'Horas' : 'Valor';
-    $Valor       = $row['Valor'];
+    $Legajo = $row['Legajo'];
+    $Nombre = $row['Nombre'];
+    $Fecha = $row['Fecha']->format('Y-m-d');
+    $Dia = $row['Dia'];
+    $Horario = $row['Horario'];
+    $Cod = $row['Cod'];
+    $Novedad = $row['Novedad'];
+    $Tipo = ($row['Tipo'] == '1') ? 'Horas' : 'Valor';
+    $Valor = $row['Valor'];
     $Observacion = $row['Observacion'];
 
     $Fecha = FormatoFechaToExcel($Fecha);

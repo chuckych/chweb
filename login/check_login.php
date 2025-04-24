@@ -52,7 +52,7 @@ $userLogin = test_input($userLogin);
 $userLogin = filter_input(INPUT_POST, 'user', FILTER_DEFAULT);
 $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);
 
-require_once __DIR__ . '../../config/conect_pdo.php'; //Conexión a la base de datos
+require_once __DIR__ . '/../config/conect_pdo.php'; //Conexión a la base de datos
 
 try {
 	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
@@ -63,7 +63,7 @@ try {
 	$connpdo = null; // cierra la conexión con la base de datos
 
 } catch (\Throwable $th) { // si hay error en la consulta
-	$pathLog = __DIR__ . '../../logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log de errores
+	$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log de errores
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
 	exit; // termina la ejecución
 }
@@ -72,14 +72,14 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 
 
 	if ($Server == 'localhost') { // Si es localhost
-		borrarLogs(__DIR__ . '../../logs/', 1, '.log');
-		borrarLogs(__DIR__ . '../../logs/error/', 1, '.log');
+		borrarLogs(__DIR__ . '/../logs/', 1, '.log');
+		borrarLogs(__DIR__ . '/../logs/error/', 1, '.log');
 	} else {
-		borrarLogs(__DIR__ . '../../logs/', 7, '.log');
-		borrarLogs(__DIR__ . '../../logs/error/', 7, '.log');
+		borrarLogs(__DIR__ . '/../logs/', 7, '.log');
+		borrarLogs(__DIR__ . '/../logs/error/', 7, '.log');
 	}
 
-	$pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
+	$pathLog = __DIR__ . '/../logs/info/' . date('Ymd') . '_cambios_db.log';
 
 	if (!checkTable('params')) {
 		pdoQuery("CREATE TABLE IF NOT EXISTS params(modulo TINYINT NULL DEFAULT NULL, descripcion VARCHAR(50) NULL DEFAULT NULL, valores TEXT NULL DEFAULT NULL, cliente TINYINT NULL DEFAULT NULL)");
@@ -100,8 +100,8 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$verDB = intval($a['valores']); // valor de la version de la DB mysql
 	// $a = simpleQueryData("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1", $link); // Traigo el valor de la version de la DB mysql
 
-	//require_once __DIR__ . './table_estruct.php'; // crear tablas en la DB
-	require_once __DIR__ . './cambios.php'; // Cambios en la DB
+	//require_once __DIR__ . '/table_estruct.php'; // crear tablas en la DB
+	require_once __DIR__ . '/cambios.php'; // Cambios en la DB
 
 	$_SESSION['VER_DB_LOCAL'] = $verDB; // Version de la DB local
 
@@ -145,7 +145,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	function estructura_recid_rol($recid_rol, $e, $data)
 	{
 		E_ALL();
-		require __DIR__ . '../../config/conect_mysql.php';
+		require __DIR__ . '/../config/conect_mysql.php';
 		$concat = '';
 		switch ($e) {
 			case 'sectores':

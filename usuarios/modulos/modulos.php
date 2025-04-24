@@ -5,20 +5,20 @@ $modulo = '2';
 // UnsetGet('_r');
 // list($id_Rol, $nombreRol, $clienteRol, $UsuariosRol, $recid_clienteRol) = Rol_Recid($_GET['_r']);
 $Cliente = ExisteCliente($_GET['_c']);
-$Rol     = ExisteRol2($_GET['_r'])
-?>
+$Rol = ExisteRol2($_GET['_r'])
+    ?>
 <!doctype html>
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['cuentas'] ?> » Rol » M&oacute;dulos</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <?= encabezado_mod('bg-custom', 'white', 'estructura.png', 'M&oacutedulos', '') ?>
         <div class="row pl-1 py-3">
             <div class="col-12 col-sm-6">
@@ -30,7 +30,8 @@ $Rol     = ExisteRol2($_GET['_r'])
                 </div>
             </div>
             <div class="col-12 col-sm-6">
-                <a href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_GET['_c'] ?>" class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
+                <a href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_GET['_c'] ?>"
+                    class="btn fontq mt-1 float-right m-0 opa7 btn-custom">Volver a Roles</a>
             </div>
         </div>
         <?php if (!principal($_GET['_r'])) {
@@ -154,7 +155,8 @@ $Rol     = ExisteRol2($_GET['_r'])
                         </div>
                     </div>
                     <div class="col-6 col-sm-6 col-md-4 col-xl-3 p-3 d-flex align-items-end">
-                        <button type="submit" class="fontq fw4 btn btn-custom border px-3 opa7" id="submitABM">Guardar</button>
+                        <button type="submit" class="fontq fw4 btn btn-custom border px-3 opa7"
+                            id="submitABM">Guardar</button>
                         <span class="ml-2 fw5 fontq align-middle respuestaabm p-2"></span>
                     </div>
                 </div>
@@ -166,7 +168,7 @@ $Rol     = ExisteRol2($_GET['_r'])
     </div>
     <!-- fin container -->
     <?php
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

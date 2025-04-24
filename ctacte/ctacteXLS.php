@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -16,8 +16,8 @@ header('Pragma: public'); // HTTP/1.0
 header("Content-Type: application/json");
 $novedad = $periodo = '';
 
-require __DIR__ . '../../config/conect_mssql.php';
-require __DIR__ . '../../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
 
 ultimoacc();
 secure_auth_ch();
@@ -25,9 +25,9 @@ $Modulo = '9';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__ . '../valores.php';
+require __DIR__ . '/valores.php';
 $periodo2 = $periodo + 1;
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -49,7 +49,7 @@ sqlsrv_free_stmt($res);
 $Lega = ((isset($_GET['_per'])) && (!empty($_GET['_per']))) ? implode(",", $_GET['_per']) : $CTA2Lega;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -159,7 +159,7 @@ foreach ($Letras as $col) {
 }
 $Letras = array('K', 'L');
 foreach ($Letras as $col) {
-    $spreadsheet->getStyle($col)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME10);
+    $spreadsheet->getStyle($col)->getNumberFormat()->setFormatCode('mmm - yyyy');
 }
 $Letras = array('C', 'D', 'F', 'G', 'H', 'I', 'J', 'K', 'L');
 foreach ($Letras as $col) {
@@ -243,18 +243,18 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Consumidos = $row['Consumidos'];
 
     # Escribirlos en el documento
-    /** A */$spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
-    /** B */$spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $Nombre);
-    /** C */$spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Periodo);
-    /** D */$spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $CodNov);
-    /** E */$spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Novedad);
-    /** F */$spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, ($Saldo + $Cantidad) - $Consumidos);
-    /** G */$spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $Consumidos);
-    /** H */$spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $Saldo + $Cantidad);
-    /** I */$spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $Cantidad);
-    /** J */$spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $Saldo);
-    /** K */$spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $Desde);
-    /** L */$spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $Hasta);
+    $spreadsheet->setCellValue("A" . $numeroDeFila, $Legajo);
+    $spreadsheet->setCellValue("B" . $numeroDeFila, $Nombre);
+    $spreadsheet->setCellValue("C" . $numeroDeFila, $Periodo);
+    $spreadsheet->setCellValue("D" . $numeroDeFila, $CodNov);
+    $spreadsheet->setCellValue("E" . $numeroDeFila, $Novedad);
+    $spreadsheet->setCellValue("F" . $numeroDeFila, ($Saldo + $Cantidad) - $Consumidos);
+    $spreadsheet->setCellValue("G" . $numeroDeFila, $Consumidos);
+    $spreadsheet->setCellValue("H" . $numeroDeFila, $Saldo + $Cantidad);
+    $spreadsheet->setCellValue("I" . $numeroDeFila, $Cantidad);
+    $spreadsheet->setCellValue("J" . $numeroDeFila, $Saldo);
+    $spreadsheet->setCellValue("K" . $numeroDeFila, $Desde);
+    $spreadsheet->setCellValue("L" . $numeroDeFila, $Hasta);
 
     /** Formato Condicional */
     /** Si el valor es menor 0, texto en color rojo COLOR_RED*/
@@ -283,15 +283,13 @@ while ($row = sqlsrv_fetch_array($result)) {
 sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 try {
+    BorrarArchivosPDF('archivos/*.xlsx'); /** Borra los archivos anteriores a la fecha actual */
     BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_CtaCteNovedades_" . $MicroTime . ".xls";
+    $NombreArchivo = "Reporte_CtaCteNovedades_" . $MicroTime . ".xlsx";
 
-    $writer = new Xls($documento);
-    # Le pasamos la ruta de guardado
-    $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
+    $writer = new Xlsx($documento); // Usar el escritor para .xlsx
     $writer->save('archivos/' . $NombreArchivo);
-    // $writer->save('php://output');
 
     $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo, 'filas' => $numeroDeFila - 1);
     echo json_encode($data);

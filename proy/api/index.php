@@ -1,6 +1,6 @@
 <?php
 require '../../vendor/autoload.php';
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 
 use Carbon\Carbon;
@@ -8,7 +8,7 @@ $rsEnd = false;
 $data = array();
 $request = Flight::request();
 
-$endPoints=array("/?redondear=1", "/?descanso=1");
+$endPoints = array("/?redondear=1", "/?descanso=1");
 
 foreach ($endPoints as $v) {
     if ($v == $request->url) {
@@ -18,8 +18,8 @@ foreach ($endPoints as $v) {
 
 if (!$rsEnd) {
     $data = array(
-        'status'  => 'error',
-        'msg'     => 'Not Found: ' . $request->url,
+        'status' => 'error',
+        'msg' => 'Not Found: ' . $request->url,
     );
     Flight::json($data, 404);
     exit;
@@ -27,8 +27,8 @@ if (!$rsEnd) {
 
 if ($request->method != 'POST') {
     $data = array(
-        'status'  => 'error',
-        'msg'     => 'Method Not Allowed: ' . $request->method,
+        'status' => 'error',
+        'msg' => 'Method Not Allowed: ' . $request->method,
         'request' => $request,
     );
     Flight::json($data, 405);
@@ -41,8 +41,8 @@ if ($request->query->redondear == '1') {
 
     if (empty($fechahora)) {
         $data = array(
-            'status'    => 'error',
-            'msg'       => 'datetime required',
+            'status' => 'error',
+            'msg' => 'datetime required',
         );
         Flight::json($data, 400);
         exit;
@@ -51,45 +51,45 @@ if ($request->query->redondear == '1') {
     foreach (getConfTar() as $v) {
         $confTar = array(
             'ProcDescTar' => $v['ProcDescTar'],
-            'ProcRedTar'  => $v['ProcRedTar'],
-            'MinimoDesc'  => HoraMin($v['MinimoDesc']),
-            'LimitTar'    => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
-            'RecRedTar'   => ($v['RecRedTar']), // Recorte y redondeo de tareas
+            'ProcRedTar' => $v['ProcRedTar'],
+            'MinimoDesc' => HoraMin($v['MinimoDesc']),
+            'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
+            'RecRedTar' => ($v['RecRedTar']), // Recorte y redondeo de tareas
         );
     }
 
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
         $RecRedTar = explode('/', $confTar['RecRedTar']);
-        $limite    = $RecRedTar[0];
+        $limite = $RecRedTar[0];
         $redondear = $RecRedTar[1];
     } else {
-        $limite    = 0;
+        $limite = 0;
         $redondear = 0;
     }
 
     function redondear($fechahora, $redondearEn, $limite)
     {
         try {
-            $date  = new DateTime($fechahora);
-            $year  = $date->format("Y");
+            $date = new DateTime($fechahora);
+            $year = $date->format("Y");
             $month = $date->format("m");
-            $day   = $date->format("d");
-            $hour  = $date->format("H");
-            $min   = $date->format("i");
+            $day = $date->format("d");
+            $hour = $date->format("H");
+            $min = $date->format("i");
             $date = Carbon::create($year, $month, $day, $hour, $min, 0);
-            $nearestSec      = $redondearEn * 60;
-            $minimumMoment   = $date->subMinute($limite);
+            $nearestSec = $redondearEn * 60;
+            $minimumMoment = $date->subMinute($limite);
             $futureTimestamp = ceil($minimumMoment->timestamp / $nearestSec) * $nearestSec;
-            $futureMoment    = Carbon::createFromTimestamp($futureTimestamp);
+            $futureMoment = Carbon::createFromTimestamp($futureTimestamp);
             $futureMoment->startOfMinute()->format("Y-m-d H:i");
             return ($futureMoment);
         } catch (exception $e) {
             $data = array(
-                'status'    => 'error',
-                'msg'       => $e->getMessage(),
+                'status' => 'error',
+                'msg' => $e->getMessage(),
                 "resultado" => '',
                 "redondear" => $redondearEn,
-                "limite"    => $limite
+                "limite" => $limite
             );
             Flight::json($data, 400);
             exit;
@@ -97,18 +97,18 @@ if ($request->query->redondear == '1') {
     }
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
         $rs = (redondear($fechahora, $redondear, $limite));
-        $rs  = new DateTime($rs);
+        $rs = new DateTime($rs);
     } else {
-        $d  = new DateTime($fechahora);
+        $d = new DateTime($fechahora);
         $rs = $d;
     }
 
     $data = array(
-        'status'    => 'ok',
-        'msg'       => '',
+        'status' => 'ok',
+        'msg' => '',
         "resultado" => $rs,
         "redondear" => $redondear,
-        "limite"    => $limite
+        "limite" => $limite
     );
     Flight::json($data);
     exit;
@@ -118,44 +118,44 @@ if ($request->query->descanso == '1') {
     foreach (getConfTar() as $key => $v) {
         $confTar = array(
             'ProcDescTar' => $v['ProcDescTar'],
-            'MinimoDesc'  => HoraMin($v['MinimoDesc']),
-            'LimitTar'    => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
+            'MinimoDesc' => HoraMin($v['MinimoDesc']),
+            'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
         );
     }
 
     $start = ($request->data->start);
-    $end   = ($request->data->end);
-    $user  = ($request->data->user);
+    $end = ($request->data->end);
+    $user = ($request->data->user);
 
     try {
-        $start  = new DateTime($start);
-        $start  = $start->format("Y-m-d H:i");
+        $start = new DateTime($start);
+        $start = $start->format("Y-m-d H:i");
     } catch (exception $e) {
         $data = array(
-            'status'    => 'error',
-            'msg'       => $e->getMessage()
+            'status' => 'error',
+            'msg' => $e->getMessage()
         );
         Flight::json($data, 400);
         exit;
     }
     try {
-        $end  = new DateTime($end);
-        $end  = $end->format("Y-m-d H:i");
+        $end = new DateTime($end);
+        $end = $end->format("Y-m-d H:i");
     } catch (exception $e) {
         $data = array(
-            'status'    => 'error',
-            'msg'       => $e->getMessage()
+            'status' => 'error',
+            'msg' => $e->getMessage()
         );
         Flight::json($data, 400);
         exit;
     }
 
-    $confUser    = array();
+    $confUser = array();
     $confGeneral = array();
-    $confDesc    = array();
-    $calcDesc    = array();
+    $confDesc = array();
+    $calcDesc = array();
     $status = '';
-    $msg    = '';
+    $msg = '';
     $diff_1 = 0;
     $diff_2 = 0;
     $diff_3 = 0;
@@ -163,10 +163,10 @@ if ($request->query->descanso == '1') {
     $diff_5 = 0;
     $diff_desc = 0;
 
-    $startInt     = intval(FechaFormatVar($start, 'YmdHi'));
+    $startInt = intval(FechaFormatVar($start, 'YmdHi'));
     $startDateInt = intval(FechaFormatVar($start, 'Ymd'));
-    $endInt       = intval(FechaFormatVar($end, 'YmdHi'));
-    $endDateInt   = intval(FechaFormatVar($end, 'Ymd'));
+    $endInt = intval(FechaFormatVar($end, 'YmdHi'));
+    $endDateInt = intval(FechaFormatVar($end, 'Ymd'));
 
     function horarioInt($hora)
     {
@@ -196,12 +196,12 @@ if ($request->query->descanso == '1') {
                         $iniInt = intval($startDateInt . horarioInt($h['TarDesIni']));
                         $finInt = intval($endDateInt . horarioInt($h['TarDesFin']));
                         $confGeneral = array(
-                            "User"    => -1,
+                            "User" => -1,
                             "IniInt" => ($h['TarDesIni'] == '00:00') ? intval($iniInt . "000") : $iniInt,
-                            "Ini"    => ($h['TarDesIni']),
+                            "Ini" => ($h['TarDesIni']),
                             "FinInt" => ($h['TarDesFin'] == '00:00') ? intval($finInt . "000") : $finInt,
-                            "Fin"    => ($h['TarDesFin']),
-                            "Esta"   => $h['TarDesEsta'],
+                            "Fin" => ($h['TarDesFin']),
+                            "Esta" => $h['TarDesEsta'],
                         );
                     }
                 }
@@ -212,12 +212,12 @@ if ($request->query->descanso == '1') {
                         $iniInt = intval($startDateInt . horarioInt($h['TarDesIni']));
                         $finInt = intval($endDateInt . horarioInt($h['TarDesFin']));
                         $confUser = array(
-                            "User"   => intval($h['TarDesUsr']),
+                            "User" => intval($h['TarDesUsr']),
                             "IniInt" => ($h['TarDesIni'] == '00:00') ? intval($iniInt . "000") : $iniInt,
-                            "Ini"    => ($h['TarDesIni']),
+                            "Ini" => ($h['TarDesIni']),
                             "FinInt" => ($h['TarDesFin'] == '00:00') ? intval($finInt . "000") : $finInt,
-                            "Fin"    => ($h['TarDesFin']),
-                            "Esta"   => $h['TarDesEsta'],
+                            "Fin" => ($h['TarDesFin']),
+                            "Esta" => $h['TarDesEsta'],
                         );
                     }
                 }
@@ -229,13 +229,13 @@ if ($request->query->descanso == '1') {
      * Arrancamos con los calculos de horario de descanso
      */
     if ($confDesc) {
-        $a  = ($start); // Fecha Hora de Inicio en formato estandar 2022-12-06 09:00
+        $a = ($start); // Fecha Hora de Inicio en formato estandar 2022-12-06 09:00
         $a1 = ($startInt); // Fecha Hora de Inicio en formato int 202212060900
-        $b  = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estandar 2022-12-06 12:00
+        $b = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estandar 2022-12-06 12:00
         $b1 = ($confDesc['IniInt']); // Fecha Hora de Inicio Descanso en formato int 202212061200
-        $c  = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estandar 2022-12-06 13:00
+        $c = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estandar 2022-12-06 13:00
         $c1 = ($confDesc['FinInt']); // Fecha Hora de Fin en formato int 202212061300
-        $d  = ($end); // Fecha Hora de Fin en formato estandar 2022-12-06 15:00
+        $d = ($end); // Fecha Hora de Fin en formato estandar 2022-12-06 15:00
         $d1 = ($endInt); // Fecha Hora de Fin en formato int 202212061500
 
         /** 
@@ -254,7 +254,7 @@ if ($request->query->descanso == '1') {
         /** particion 2 * ejemplo de 11:00 a 13:00 (antes del descanso y fin durante el descanso)*/
         if (intval($confTar['MinimoDesc']) > 0) {
             $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $b) : 0;
-            $diff_desc2 = ($diff_2) ?  diffStartEnd($b, $d) : 0; // calculo tiempo de descanso
+            $diff_desc2 = ($diff_2) ? diffStartEnd($b, $d) : 0; // calculo tiempo de descanso
             $diff_desc = (intval($diff_desc2['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc2 : 0; // comparo total desc. con delta de config.desc.
         } else {
             $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $d) : 0;
@@ -266,7 +266,7 @@ if ($request->query->descanso == '1') {
         /** */
         /** particion 4 * ejemplo de 11:00 a 14:00 (antes y despues del descanso)*/
         $diff_4 = ($a1 < $b1 && $d1 > $c1) ? diffStartEnd($a, $d) : 0;
-        $diff_desc_4 = ($diff_4) ?  diffStartEnd($b, $c) : 0; // calculo tiempo de descanso
+        $diff_desc_4 = ($diff_4) ? diffStartEnd($b, $c) : 0; // calculo tiempo de descanso
         if ($diff_desc_4['diffInMinutes']) {
             $diff_4['diffInMinutes'] = ($diff_4['diffInMinutes'] - $diff_desc_4['diffInMinutes']); // resto descanso del total 
             $diff_desc_4 = 0;
@@ -274,7 +274,7 @@ if ($request->query->descanso == '1') {
 
         /** particion 5 * ejemplo de 12:30 a 18:00 (inicio dentro del descanso y fin fuera del descanso)*/
         $diff_5 = ($a1 >= $b1 && $d1 > $c1 && $a1 < $c1) ? diffStartEnd($c, $d) : 0;
-        $diff_desc5 = ($diff_5) ?  diffStartEnd($a, $c) : 0; // calculo tiempo de descanso
+        $diff_desc5 = ($diff_5) ? diffStartEnd($a, $c) : 0; // calculo tiempo de descanso
         $diff_desc_5 = (intval($diff_desc5['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc5 : 0; // comparo total desc. con delta de config.desc.
         /** */
 
@@ -307,35 +307,35 @@ if ($request->query->descanso == '1') {
         }
 
         $calcDesc = array(
-            "part_1"    => $diff_1['diffInMinutes'],
-            "part_2"    => $diff_2['diffInMinutes'],
-            "part_3"    => $diff_3['diffInMinutes'],
-            "part_4"    => $diff_4['diffInMinutes'],
-            "part_5"    => $diff_5['diffInMinutes'],
-            "part_6"    => $diff_6['diffInMinutes'],
+            "part_1" => $diff_1['diffInMinutes'],
+            "part_2" => $diff_2['diffInMinutes'],
+            "part_3" => $diff_3['diffInMinutes'],
+            "part_4" => $diff_4['diffInMinutes'],
+            "part_5" => $diff_5['diffInMinutes'],
+            "part_6" => $diff_6['diffInMinutes'],
             "part_desc" => $diff_desc['diffInMinutes'],
-            "tipo"      => '1', // en descanso
-            "min"       => $totalMin,
-            "horas"     => MinHora($totalMin)
+            "tipo" => '1', // en descanso
+            "min" => $totalMin,
+            "horas" => MinHora($totalMin)
         );
     }
     /** Arrancamos con el calculo */
-    $f       = Carbon::parse($start); // Fecha hora de inicio
-    $f2      = Carbon::parse($end); // Fecha hora de finalizacion
+    $f = Carbon::parse($start); // Fecha hora de inicio
+    $f2 = Carbon::parse($end); // Fecha hora de finalizacion
     $minutos = ($f2->diffInMinutes($f)); // Diferencia en minutos -> 360
-    $total   = MinHora($f2->diffInMinutes($f)); // Diferencia en formato Horas y minutos -> 06:00
+    $total = MinHora($f2->diffInMinutes($f)); // Diferencia en formato Horas y minutos -> 06:00
 
     if (!$confDesc) {
         $calcDesc = array(
             "tipo" => '0', // sin calculo de descanso
-            "min"   => $minutos,
+            "min" => $minutos,
             "horas" => MinHora($minutos)
         );
     }
 
     $calculos = array(
         "reales" => array(
-            'min'  => $minutos,
+            'min' => $minutos,
             'horas' => $total,
         ),
         "calculadas" => $calcDesc
@@ -343,8 +343,8 @@ if ($request->query->descanso == '1') {
 
     $data = array(
         'totales' => $calculos,
-        'status'   => 'ok',
-        'msg'      => $msg,
+        'status' => 'ok',
+        'msg' => $msg,
     );
 
     Flight::json($data);

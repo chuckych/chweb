@@ -6,7 +6,7 @@ $Cliente = ExisteCliente($_GET['_c']);
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title>Roles</title>
     <style>
         .dtrg-level-0 {
@@ -30,10 +30,10 @@ $Cliente = ExisteCliente($_GET['_c']);
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?=
-        encabezado_mod2('bg-custom', 'white', 'sliders',  'Roles: ' . $Cliente, '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'sliders', 'Roles: ' . $Cliente, '25', 'text-white mr-2');
         ?>
         <span id="respuesta"></span>
         <input type="hidden" id="recid_cRol" value="<?= $_GET['_c'] ?>">
@@ -41,9 +41,11 @@ $Cliente = ExisteCliente($_GET['_c']);
         <div class="row my-3">
             <div class="col-12">
                 <?php if (modulo_cuentas() == '1') { ?>
-                    <a href="../clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
+                    <a href="../clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i
+                            class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
                 <?php } ?>
-                <a href="../?_c=<?= $_GET['_c'] ?>" class="btn mr-1 fontq float-right m-0 opa7 btn-custom"><i class="bi bi-people-fill mr-2"></i>Usuarios</a>
+                <a href="../?_c=<?= $_GET['_c'] ?>" class="btn mr-1 fontq float-right m-0 opa7 btn-custom"><i
+                        class="bi bi-people-fill mr-2"></i>Usuarios</a>
             </div>
         </div>
         <div class="row">
@@ -85,7 +87,8 @@ $Cliente = ExisteCliente($_GET['_c']);
             </div>
         </div>
         <!-- Modal -->
-        <div class="modal animate__animated animate__fadeIn" id="modalListas" data-backdrop="static" data-keyboard="true" tabindex="-1" aria-labelledby="modalListasLabel" aria-hidden="true">
+        <div class="modal animate__animated animate__fadeIn" id="modalListas" data-backdrop="static"
+            data-keyboard="true" tabindex="-1" aria-labelledby="modalListasLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0">
@@ -97,7 +100,8 @@ $Cliente = ExisteCliente($_GET['_c']);
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer bg-light border-0">
-                        <button type="button" class="btn btn-outline-custom border btn-sm fontq px-3" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-outline-custom border btn-sm fontq px-3"
+                            data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -107,8 +111,8 @@ $Cliente = ExisteCliente($_GET['_c']);
     <!-- fin container -->
     <?php
     require "modal_abm.html";
-    require __DIR__ .  '../../../js/jquery.php';
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . '/../../js/jquery.php';
+    require __DIR__ . "/../../js/DataTable.php";
     ?>
     <script>
         // fetch('../clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')

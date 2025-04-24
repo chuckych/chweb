@@ -1,15 +1,15 @@
 <?php
-require __DIR__ . '../../../config/session_start.php';
+require __DIR__ . '/../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
-require __DIR__ . '../../valores.php';
+require __DIR__ . '/../valores.php';
 
-require __DIR__ . '../../../filtros/filtros.php';
-require __DIR__ . '../../../config/conect_mssql.php';
+require __DIR__ . '/../../filtros/filtros.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 
 $id = 'FICHAS.FicSec2';
 $id2 = 'CONCAT(FICHAS.FicSect,FICHAS.FicSec2)';

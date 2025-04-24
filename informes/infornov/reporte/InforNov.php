@@ -1,17 +1,20 @@
 <body>
-chunk
+    chunk
     <?php
-    require __DIR__ . '../data.php';
+    require __DIR__ . '/data.php';
     ?>
     <!-- Encabezado -->
     <?php
+    $v = [];
+    $todo = [];
     $colorRes = 'style="background:#ffff8d"';
+    // if ($dataAgrup ?? '') {
     foreach ($dataAgrup as $key => $valueAgrup) {
         /** Recorremos matriz de legajos o fecha segun fecha Ini y Fin */
-    ?>
+        ?>
         <div style="page-break-inside: avoid">
             <!-- <div class="mt-1" style="background:#333"></div> -->
-           <hr>
+            <hr>
             <table class="">
                 <tr>
                     <th style="width:5%" class="">
@@ -81,7 +84,7 @@ chunk
                         $_res_tipo = '99';
                         break;
                 }
-                require __DIR__ . '../data2.php';
+                require __DIR__ . '/data2.php';
 
 
                 $count = count($dataNovedades);
@@ -125,7 +128,7 @@ chunk
                         $style = ($ValueDataNovedades['TipoN'] == "$_res_tipo") ? $colorRes : '';
                     }
 
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <?php
                         if ($_Por == 'Fech') {
@@ -143,7 +146,7 @@ chunk
                         <td class="px-2"><?= $ValueDataNovedades['Causa'] ?></td>
                         <td class="px-2"><?= $ValueDataNovedades['Observacion'] ?></td>
                     </tr>
-                <?php
+                    <?php
                 }
                 ?>
             </table>
@@ -159,112 +162,112 @@ chunk
                 <?php
                 if ($tc['Llegada tarde'] ?? '') {
                     $style = ($_resaltar == 'r_tar') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Llegadas Tarde</td>
                         <td class="px-2 center"><?= MinHora(array_sum($t)) ?></td>
                         <td class="px-2 center"><?= $tc['Llegada tarde'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($t);
                 }
-                if ($sc['Salida anticipada'] ??'') {
+                if ($sc['Salida anticipada'] ?? '') {
                     $style = ($_resaltar == 'r_sal') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Salidas Anticipadas</td>
                         <td class="px-2 center"><?= MinHora(array_sum($s)) ?></td>
                         <td class="px-2 center"><?= $sc['Salida anticipada'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($s);
                 }
-                if ($ic['Incumplimiento']?? '') {
+                if ($ic['Incumplimiento'] ?? '') {
                     $style = ($_resaltar == 'r_inc') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Incumplimientos</td>
                         <td class="px-2 center"><?= MinHora(array_sum($i)) ?></td>
                         <td class="px-2 center"><?= $ic['Incumplimiento'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($i);
                 }
                 if ($ac['Ausencia'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Ausencias</td>
                         <td class="px-2 center"><?= MinHora(array_sum($a)) ?></td>
                         <td class="px-2 center"><?= $ac['Ausencia'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($a);
                 }
                 if ($lc['Licencia'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Licencias</td>
                         <td class="px-2 center"><?= MinHora(array_sum($l)) ?></td>
                         <td class="px-2 center"><?= $lc['Licencia'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($l);
                 }
                 if ($acc['Accidente'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Accidentes</td>
                         <td class="px-2 center"><?= MinHora(array_sum($ac1)) ?></td>
                         <td class="px-2 center"><?= $acc['Accidente'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($ac1);
                 }
                 if ($vc['Vacaciones'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Vacaciones</td>
                         <td class="px-2 center"><?= MinHora(array_sum($v)) ?></td>
                         <td class="px-2 center"><?= $vc['Vacaciones'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($v);
                 }
                 if ($suc['Suspensión'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">Suspensiones</td>
                         <td class="px-2 center"><?= MinHora(array_sum($sus)) ?></td>
                         <td class="px-2 center"><?= $suc['Suspensión'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($sus);
                 }
                 if ($arc['ART'] ?? '') {
                     $style = ($_resaltar == 'r_aus') ? $colorRes : '';
-                ?>
+                    ?>
                     <tr <?= $style ?>>
                         <td class="px-2">ART</td>
                         <td class="px-2 center"><?= MinHora(array_sum($art)) ?></td>
                         <td class="px-2 center"><?= $arc['ART'] ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($art);
                 }
                 if ($todoc) {
                     // $style=($_resaltar== 'r_aus' ) ? $colorRes:'';
-                ?>
+                    ?>
                     <tr>
                         <td class="px-2"></td>
                         <td class="px-2 center"><?= MinHora(array_sum($todo)) ?></td>
                         <td class="px-2 center"><?= $todoc ?></td>
                     </tr>
-                <?php
+                    <?php
                     unset($todo);
                 }
                 ?>
@@ -273,7 +276,7 @@ chunk
             <p class="my-1">Total Novedades : <?= $count ?></p>
             <!-- <hr class="border-top"> -->
         </div>
-    <?php
+        <?php
         $countLega = count($dataAgrup);
         if ($_SaltoPag == '1') {
             /** Si se activa el salto de pagina por legajo */
@@ -285,8 +288,9 @@ chunk
 
         // unset($dataNovedades);
     }
-    /** FIN  matriz de legajos segun fecha Ini y Fin */
     unset($dataAgrup);
+    // }
+    /** FIN  matriz de legajos segun fecha Ini y Fin */
     sqlsrv_close($link);
     ?>
 </body>

@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title><?= MODULOS['Dashboard'] ?></title>
     <style>
         /* .highcharts-figure, .highcharts-data-table table {
@@ -15,9 +15,10 @@
             height: 400px;
         }
 
-        .highcharts-credits{
+        .highcharts-credits {
             display: none;
         }
+
         .highcharts-figure,
         .highcharts-data-table table {
             min-width: 320px;
@@ -70,9 +71,9 @@
 
 <body class="animate__animated animate__fadeIn">
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <?=
-        encabezado_mod2('bg-custom', 'white', 'graph-up',  MODULOS['Dashboard'], '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'graph-up', MODULOS['Dashboard'], '25', 'text-white mr-2');
         ?>
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
@@ -80,9 +81,9 @@
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
         /** FirstYear */
-        $maxDate   = $FechaMinMax['max'];
+        $maxDate = $FechaMinMax['max'];
         /** maxDate */
-        $maxYear   = date('Y');
+        $maxYear = date('Y');
         /** maxYear */
         $FechaIni = $FechaMinMax['max'];
         $FechaFin = $FechaMinMax['max'];
@@ -102,8 +103,10 @@
                                 </svg>
                             </span>
                         </div>
-                        <input type="text" readonly class="form-control text-center border-0 radius-0 ls2 h40" name="_dr" id="_dr">
-                        <button title="Actualizar" type="button" id="Refresh" class="btn fontq border-0 btn-default" style=" border-top-left-radius: 0em 0em; border-bottom-left-radius: 0em 0em;background-color: #E9ECEF">
+                        <input type="text" readonly class="form-control text-center border-0 radius-0 ls2 h40"
+                            name="_dr" id="_dr">
+                        <button title="Actualizar" type="button" id="Refresh" class="btn fontq border-0 btn-default"
+                            style=" border-top-left-radius: 0em 0em; border-bottom-left-radius: 0em 0em;background-color: #E9ECEF">
                             <svg class="bi mr-1 border-0 arrow-repeat" width="18" height="18" fill="currentColor">
                                 <use xlink:href="../img/bootstrap-icons.svg#arrow-repeat" />
                             </svg>
@@ -142,7 +145,7 @@
         </div>
     </div>
     <?php
-    require __DIR__ . "../../js/jquery.php";
+    require __DIR__ . "/../js/jquery.php";
     ?>
     <!-- moment.min.js -->
     <script type="text/javascript" src="../js/dateranger/moment.min.js"></script>

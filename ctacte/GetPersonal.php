@@ -1,13 +1,13 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
+require __DIR__ . '/../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 E_ALL();
 
 E_ALL();
@@ -21,7 +21,7 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaFin = date('Ymd');
 }
 
-require __DIR__ . '../valores.php';
+require __DIR__ . '/valores.php';
 
 $params = $columns = $totalRecords = $data = array();
 $params = $_REQUEST;

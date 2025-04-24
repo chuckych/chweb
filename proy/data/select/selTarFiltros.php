@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -42,8 +42,8 @@ $w_c .= (test_input($params['tarProyEsta'])) ? " AND proy_estados.EstTipo = '$pa
 
 if (($params['FiltroTarFechas'] ?? '')) {
     $DateRange = explode(' al ', $params['FiltroTarFechas']);
-    $TareIni   = test_input(dr_($DateRange[0]) . ' 00:00:00');
-    $TareIni2  = test_input(dr_($DateRange[1]) . ' 23:59:59');
+    $TareIni = test_input(dr_($DateRange[0]) . ' 00:00:00');
+    $TareIni2 = test_input(dr_($DateRange[1]) . ' 23:59:59');
     $w_c .= " AND TareIni BETWEEN '$TareIni' AND '$TareIni2'";
 }
 
@@ -66,15 +66,16 @@ switch ($params['NomFiltro']) {
             $text = '(' . $row['TareProy'] . ') ' . $row['ProyNom'];
 
             $data[] = array(
-                'id'      => $row['TareProy'],
+                'id' => $row['TareProy'],
                 'empresa' => utf8str($row['EmpDesc']),
-                'text'    => utf8str($text),
+                'text' => utf8str($text),
             );
         }
 
         function groupAssoc($input, $sortkey)
         {
-            foreach ($input as $val) $output[$val[$sortkey]][] = $val;
+            foreach ($input as $val)
+                $output[$val[$sortkey]][] = $val;
             return $output;
         }
 
@@ -110,7 +111,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['TareEmp'],
+                'id' => $row['TareEmp'],
                 'text' => utf8str($row['EmpDesc']),
             );
         }
@@ -138,7 +139,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['TareProc'],
+                'id' => $row['TareProc'],
                 'text' => utf8str($row['ProcDesc']),
             );
         }
@@ -166,7 +167,7 @@ switch ($params['NomFiltro']) {
         foreach ($r as $key => $row) {
 
             $data[] = array(
-                'id'   => $row['TarePlano'],
+                'id' => $row['TarePlano'],
                 'text' => utf8str($row['PlanoDesc']),
             );
         }
@@ -192,7 +193,7 @@ switch ($params['NomFiltro']) {
 
         foreach ($r as $key => $row) {
             $data[] = array(
-                'id'   => $row['TareResp'],
+                'id' => $row['TareResp'],
                 'text' => utf8str($row['nombre']),
             );
         }

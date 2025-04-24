@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -21,8 +21,8 @@ if (strlen($dp) > 0 && isValidJSON($dp)) {
     (response(array(), 0, 'Invalid json Payload', 400, $time_start, 0, $idCompany));
 }
 
-$dp['ParCodi']  = ($dp['ParCodi']) ?? '';
-$dp['ParCodi']  = vp($dp['ParCodi'], 'ParCodi', 'int', 2); // Traer Solo Fichadas
+$dp['ParCodi'] = ($dp['ParCodi']) ?? '';
+$dp['ParCodi'] = vp($dp['ParCodi'], 'ParCodi', 'int', 2); // Traer Solo Fichadas
 // CONVERT(VARCHAR(20),FICHAS.FicFech,120) AS 'Fecha',
 $query = "SELECT * FROM PARAGENE WHERE PARAGENE.ParCodi = '$dp[ParCodi]'";
 
@@ -34,7 +34,7 @@ if (empty($stmt)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($stmt);
+$countData = count($stmt);
 http_response_code(200);
 (response($stmt, 0, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

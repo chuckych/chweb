@@ -1,5 +1,5 @@
 <?php
-$pathLog = __DIR__ . '../../logs/info/' . date('Ymd') . '_cambios_db.log';
+$pathLog = __DIR__ . '/../logs/info/' . date('Ymd') . '_cambios_db.log';
 
 function createTable($tableName, $fields, $engine, $pathLog)
 {

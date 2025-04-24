@@ -23,7 +23,7 @@ function Filtro_Personal($get_per)
     $get_per = (!isset($_GET['_per'])) ? '' : $_GET['_per'];
     $cond = ((!empty($get_per)));
     $Filtro_Per = $cond ? "WHERE PERSONAL.LegNume IN (" . implode(',', $get_per) . ")" : '';
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
     $query = "SELECT PERSONAL.LegNume AS pers_legajo FROM PERSONAL $Filtro_Per";
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

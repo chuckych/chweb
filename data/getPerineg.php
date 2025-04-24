@@ -1,8 +1,8 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('q');
 $data = array();
@@ -55,7 +55,7 @@ if ($sendApi['MESSAGE'] == 'OK') {
 }
 
 
-// require __DIR__ . '../../config/conect_mssql.php';
+// require __DIR__ . '/../config/conect_mssql.php';
 // $q2 = $_GET['q2'];
 // $query = "SELECT [InEgLega] ,[InEgFeIn] ,[InEgFeEg] ,[InEgCaus] ,[FechaHora] FROM PERINEG WHERE InEgLega = '$q2' ORDER BY InEgLega ,InEgFeIn";
 // //    print_r($query);

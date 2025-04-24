@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 // session_start();
-// require __DIR__ . '../../../config/index.php';
+// require __DIR__ . '/../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -20,7 +20,7 @@ $Modulo = '19';
 ExisteModRol($Modulo);
 E_ALL();
 $UltimaFic = $PrimeraFic = '';
-//require_once __DIR__ . '../../../vendor/autoload.php';
+//require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -107,7 +107,7 @@ $numeroDeFila = 2;
 
 function FormatoHoraToExcel($Hora)
 {
-    $Hora      = !empty($Hora) ? $Hora : '00:00:00';
+    $Hora = !empty($Hora) ? $Hora : '00:00:00';
     $timestamp = new \DateTime($Hora);
     $excelTimestamp = \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel($timestamp);
     $excelDate = floor($excelTimestamp);
@@ -123,22 +123,22 @@ function FormatoFechaToExcel($Fecha)
     return $Fecha;
 }
 
-$params           = $_REQUEST;
-$data             = array();
-$authBasic        = base64_encode('chweb:' . HOMEHOST);
-$token            = sha1($_SESSION['RECID_CLIENTE']);
-$params['start']  = $params['start'] ?? '0';
+$params = $_REQUEST;
+$data = array();
+$authBasic = base64_encode('chweb:' . HOMEHOST);
+$token = sha1($_SESSION['RECID_CLIENTE']);
+$params['start'] = $params['start'] ?? '0';
 $params['length'] = $params['length'] ?? '99999';
-$_POST['_dr']     = $_POST['_dr'] ?? '';
+$_POST['_dr'] = $_POST['_dr'] ?? '';
 // (!$_POST['_dr']) ? exit : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
 } else {
-    $FechaIni  = date('Ymd');
-    $FechaFin  = date('Ymd');
+    $FechaIni = date('Ymd');
+    $FechaFin = date('Ymd');
 }
 
 $fileJson = (file_get_contents("archivos/full_" . $request->data->time . ".json"));
@@ -148,7 +148,7 @@ if ($dataLega) {
     foreach ($dataLega as $row) {
 
         $Legajo = $row['InfoLega']['Legajo'];
-        $ApNo   = $row['InfoLega']['Nombre'];
+        $ApNo = $row['InfoLega']['Nombre'];
 
         $Horario = "$row[Desde] a $row[Hasta]";
         $Horario = ($row['Laboral'] == 'No') ? 'Franco' : $Horario;
@@ -173,7 +173,7 @@ if ($dataLega) {
 $spreadsheet->freezePane('A2');
 $spreadsheet->getRowDimension('1')->setRowHeight(30);
 $ColumnCount = 3;
-$RowIndex    = 2;
+$RowIndex = 2;
 $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 
 $spreadsheet->getStyle('A1:I1')->applyFromArray($styleArray);

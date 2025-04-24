@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
@@ -26,7 +26,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
     }
     ;
 
-    require __DIR__ . '../../../config/conect_mssql.php';
+    require __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -171,12 +171,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
     /** Formato Variables */
 
     // $LegFeNa    = !empty(($LegFeNa)) ? FechaString($LegFeNa) : '17530101';
-    $LegFeIn = !empty (($LegFeIn)) ? dr_fecha($LegFeIn) : '17530101';
-    $LegFeEg = !empty (($LegFeEg)) ? dr_fecha($LegFeEg) : '17530101';
-    $LegFeNa = !empty (($LegFeNa)) ? dr_fecha($LegFeNa) : '17530101';
-    $CierreFech = !empty (($CierreFech)) ? dr_fecha($CierreFech) : '17530101';
+    $LegFeIn = !empty(($LegFeIn)) ? dr_fecha($LegFeIn) : '17530101';
+    $LegFeEg = !empty(($LegFeEg)) ? dr_fecha($LegFeEg) : '17530101';
+    $LegFeNa = !empty(($LegFeNa)) ? dr_fecha($LegFeNa) : '17530101';
+    $CierreFech = !empty(($CierreFech)) ? dr_fecha($CierreFech) : '17530101';
 
-    if ((empty ($LegDocu)) && !empty ($LegCUIT)) {
+    if ((empty($LegDocu)) && !empty($LegCUIT)) {
         $Cuil = explode("-", $LegCUIT);
         $LegDocu = $Cuil[1];
     }

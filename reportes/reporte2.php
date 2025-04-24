@@ -35,15 +35,19 @@
         /* font-size: small; */
         font-family: Arial, Helvetica, sans-serif;
     }
-    .text-primary{
-        color:blue;
+
+    .text-primary {
+        color: blue;
     }
-    .text-dark{
+
+    .text-dark {
         color: #333333;
     }
-    .text-danger{
+
+    .text-danger {
         color: crimson;
     }
+
     .titulo {
         font-size: 8pt;
         margin: 5mm;
@@ -51,7 +55,7 @@
     }
 
     .dato {
-        font-weight:bold;
+        font-weight: bold;
     }
 
     .contenedor {
@@ -112,26 +116,28 @@
     .pb-6 {
         padding-bottom: 6px;
     }
-    .page-break{
-        page-break-after:always;
+
+    .page-break {
+        page-break-after: always;
     }
-    .bg-light{
+
+    .bg-light {
         background-color: #fafafa;
     }
 </style>
 
 <?php
-require __DIR__. '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 
-$check_dl = (isset($_GET['_dl'])) ? "AND FICHAS.FicDiaL = '1'": ''; /** Filtrar Dia Laboral */
+$check_dl = (isset($_GET['_dl'])) ? "AND FICHAS.FicDiaL = '1'" : ''; /** Filtrar Dia Laboral */
 
-$FechaIni=test_input($_GET['FechaIni']);
-$FechaFin=test_input($_GET['FechaFin']);
+$FechaIni = test_input($_GET['FechaIni']);
+$FechaFin = test_input($_GET['FechaFin']);
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__. '../../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $FechaIni = '20200401';
@@ -160,43 +166,45 @@ INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi
 INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi
 WHERE PERSONAL.LegFeEg = '17530101' AND FICHAS.FicLega IN (30366320,29988600) AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $check_dl $filtros ORDER BY FICHAS.FicLega";
 // print_r($sql_query); exit;
-$queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
+$queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
 ?>
-<page backtop="30pt" backbottom="5pt"class="contenedor">
-<?php 
-    while ($row = sqlsrv_fetch_array($queryRecords)) :
-        $Gen_Lega       = $row['Gen_Lega'];
-        $Gen_TDoc       = $row['Gen_TDoc'];
-        $Gen_Docu       = $row['Gen_Docu'];
-        $Gen_Nombre     = $row['Gen_Nombre'];
-        $Gen_empresa    = $row['Gen_empresa'];
-        $Gen_planta     = $row['Gen_planta'];
-        $Gen_convenio   = $row['Gen_convenio'];
-        $Gen_sector     = $row['Gen_sector'];
-        $Gen_seccion    = $row['Gen_seccion'];
-        $Gen_grupo      = $row['Gen_grupo'];
-        $Gen_sucur      = $row['Gen_sucur'];
-       
-    $matriz[] = array(
-        'Gen_TDoc'     => TipoDoc($Gen_TDoc),
-        'Gen_Docu'     => $Gen_Docu,
-        'Gen_Lega'     => $Gen_Lega,
-        'Gen_Nombre'   => $Gen_Nombre,
-        'Gen_empresa'  => $Gen_empresa,
-        'Gen_planta'   => $Gen_planta,
-        'Gen_convenio' => $Gen_convenio,
-        'Gen_sector'   => $Gen_sector,
-        'Gen_seccion'  => $Gen_seccion,
-        'Gen_grupo'    => $Gen_grupo,
-        'Gen_sucur'    => $Gen_sucur,
-    );
-endwhile; 
-// echo '<pre>';
+<page backtop="30pt" backbottom="5pt" class="contenedor">
+    <?php
+    while ($row = sqlsrv_fetch_array($queryRecords)):
+        $Gen_Lega = $row['Gen_Lega'];
+        $Gen_TDoc = $row['Gen_TDoc'];
+        $Gen_Docu = $row['Gen_Docu'];
+        $Gen_Nombre = $row['Gen_Nombre'];
+        $Gen_empresa = $row['Gen_empresa'];
+        $Gen_planta = $row['Gen_planta'];
+        $Gen_convenio = $row['Gen_convenio'];
+        $Gen_sector = $row['Gen_sector'];
+        $Gen_seccion = $row['Gen_seccion'];
+        $Gen_grupo = $row['Gen_grupo'];
+        $Gen_sucur = $row['Gen_sucur'];
+
+        $matriz[] = array(
+            'Gen_TDoc' => TipoDoc($Gen_TDoc),
+            'Gen_Docu' => $Gen_Docu,
+            'Gen_Lega' => $Gen_Lega,
+            'Gen_Nombre' => $Gen_Nombre,
+            'Gen_empresa' => $Gen_empresa,
+            'Gen_planta' => $Gen_planta,
+            'Gen_convenio' => $Gen_convenio,
+            'Gen_sector' => $Gen_sector,
+            'Gen_seccion' => $Gen_seccion,
+            'Gen_grupo' => $Gen_grupo,
+            'Gen_sucur' => $Gen_sucur,
+        );
+    endwhile;
+    // echo '<pre>';
 // print_r($matriz); exit;
- ?>
+    ?>
     <page_header>
         <div class="">
-            <div class="titulo border-bottom pb-4">FICHADAS NOVEDADES Y HORAS Desde <span class="dato"><?=FechaFormatVar($FechaIni, 'd/m/Y')?></span> hasta <span class="dato"><?=FechaFormatVar($FechaFin, 'd/m/Y')?></span></div>
+            <div class="titulo border-bottom pb-4">FICHADAS NOVEDADES Y HORAS Desde <span
+                    class="dato"><?= FechaFormatVar($FechaIni, 'd/m/Y') ?></span> hasta <span
+                    class="dato"><?= FechaFormatVar($FechaFin, 'd/m/Y') ?></span></div>
         </div>
     </page_header>
     <page_footer>
@@ -205,68 +213,70 @@ endwhile;
         </p>
     </page_footer>
     <?php
-        foreach ($matriz as $key => $value) {
+    foreach ($matriz as $key => $value) {
+        //$ColorFranco = ($value['Gen_Horario'] == 'Franco' || $value['Gen_Horario'] == 'Feriado') ? 'bg-light':'';
+        ?>
+        <table class="encabezado" border="0" style="margin-top:0mm">
+            <tr>
+                <td class="label">Legajo:</td>
+                <td class="label"><span class="dato"><?= $value['Gen_Lega'] ?></span> | <?= ($value['Gen_TDoc']) ?>:
+                    <?= ($value['Gen_Docu']) ?>
+                </td>
+                <td class="label">Nombre:</td>
+                <td class="label"><span class="dato"><?= ($value['Gen_Nombre']) ?></span></td>
+                <td class="label">Empresa:</td>
+                <td class="label"><span class=""><?= ($value['Gen_empresa']) ?></span></td>
+            </tr>
+            <tr>
+                <td class="label">Planta:</td>
+                <td class="label"><span class=""><?= ($value['Gen_planta']) ?></span></td>
+                <td class="label">Convenio:</td>
+                <td class="label"><span class=""><?= ($value['Gen_convenio']) ?></span></td>
+                <td class="label">Sector:</td>
+                <td class="label"><span class=""><?= ($value['Gen_sector']) ?></span></td>
+            </tr>
+            <tr>
+                <td class="label">Sección:</td>
+                <td class="label"><span class=""><?= ($value['Gen_seccion']) ?></span></td>
+                <td class="label">Grupo:</td>
+                <td class="label"><span class=""><?= ($value['Gen_grupo']) ?></span></td>
+                <td class="label">Sucursal:</td>
+                <td class="label"><span class=""><?= ($value['Gen_sucur']) ?></span></td>
+            </tr>
+        </table>
+        <!-- <div class="page-break"></div> -->
+        <table border="0" style="margin-top:-3mm">
+            <!-- <thead> -->
+            <tr>
+                <!-- 1 -->
+                <td class="label border-y">Fecha</td>
+                <!-- 2 -->
+                <td class="label border-y">Dia</td>
+                <!-- 3 -->
+                <td class="label border-y">Horario</td>
+                <!-- 4 -->
+                <!-- <td class="label border-y text-center">Ent</td> -->
+                <!-- 5 -->
+                <!-- <td class="label border-y text-center">Sal</td> -->
+                <!-- 6 -->
+                <!-- <td class="label border-y">Cod</td> -->
+                <!-- 7 -->
+                <!-- <td class="label border-y">Novedades</td> -->
+                <!-- 8 -->
+                <!-- <td class="label border-y"></td> -->
+                <!-- 9 -->
+                <!-- <td class="label border-y">Tipo de Hora</td> -->
+                <!-- 10 -->
+                <!-- <td class="label border-y text-center bg-light">Autor.</td> -->
+                <!-- 11 -->
+                <!-- <td class="label border-y text-center">Hechas</td> -->
+                <!-- 12 -->
+                <!-- <td class="label border-y text-center">Calc.</td> -->
+            </tr>
+            <?php
+            //foreach ($matriz as $key => $value) {
             //$ColorFranco = ($value['Gen_Horario'] == 'Franco' || $value['Gen_Horario'] == 'Feriado') ? 'bg-light':'';
-    ?>
-    <table class="encabezado" border="0" style="margin-top:0mm">
-        <tr>
-            <td class="label">Legajo:</td>
-            <td class="label"><span class="dato"><?=$value['Gen_Lega']?></span> | <?=($value['Gen_TDoc'])?>: <?=($value['Gen_Docu'])?></td>
-            <td class="label">Nombre:</td>
-            <td class="label"><span class="dato"><?=($value['Gen_Nombre'])?></span></td>
-            <td class="label">Empresa:</td>
-            <td class="label"><span class=""><?=($value['Gen_empresa'])?></span></td>
-        </tr>
-        <tr>
-            <td class="label">Planta:</td>
-            <td class="label"><span class=""><?=($value['Gen_planta'])?></span></td>
-            <td class="label">Convenio:</td>
-            <td class="label"><span class=""><?=($value['Gen_convenio'])?></span></td>
-            <td class="label">Sector:</td>
-            <td class="label"><span class=""><?=($value['Gen_sector'])?></span></td>
-        </tr>
-        <tr>
-            <td class="label">Sección:</td>
-            <td class="label"><span class=""><?=($value['Gen_seccion'])?></span></td>
-            <td class="label">Grupo:</td>
-            <td class="label"><span class=""><?=($value['Gen_grupo'])?></span></td>
-            <td class="label">Sucursal:</td>
-            <td class="label"><span class=""><?=($value['Gen_sucur'])?></span></td>
-        </tr>
-    </table>
-    <!-- <div class="page-break"></div> -->
-    <table border="0" style="margin-top:-3mm">
-        <!-- <thead> -->
-        <tr>
-            <!-- 1 -->
-            <td class="label border-y">Fecha</td>
-            <!-- 2 -->
-            <td class="label border-y">Dia</td>
-            <!-- 3 -->
-            <td class="label border-y">Horario</td>
-            <!-- 4 -->
-            <!-- <td class="label border-y text-center">Ent</td> -->
-            <!-- 5 -->
-            <!-- <td class="label border-y text-center">Sal</td> -->
-            <!-- 6 -->
-            <!-- <td class="label border-y">Cod</td> -->
-            <!-- 7 -->
-            <!-- <td class="label border-y">Novedades</td> -->
-            <!-- 8 -->
-            <!-- <td class="label border-y"></td> -->
-            <!-- 9 -->
-            <!-- <td class="label border-y">Tipo de Hora</td> -->
-            <!-- 10 -->
-            <!-- <td class="label border-y text-center bg-light">Autor.</td> -->
-            <!-- 11 -->
-            <!-- <td class="label border-y text-center">Hechas</td> -->
-            <!-- 12 -->
-            <!-- <td class="label border-y text-center">Calc.</td> -->
-        </tr>
-        <?php
-        //foreach ($matriz as $key => $value) {
-            //$ColorFranco = ($value['Gen_Horario'] == 'Franco' || $value['Gen_Horario'] == 'Feriado') ? 'bg-light':'';
-    ?>
+            ?>
             <tr class="">
                 <!-- 1 -->
                 <td class="label"></td>
@@ -275,34 +285,34 @@ endwhile;
                 <!-- 3 -->
                 <td class="label"></td>
                 <!-- 4 -->
-                <!-- <td class="label text-center"><?=ceronull($value['Gen_Entrada'])?></td> -->
+                <!-- <td class="label text-center"><?= ceronull($value['Gen_Entrada']) ?></td> -->
                 <!-- 5 -->
-                <!-- <td class="label text-center"><?=ceronull($value['Gen_Salida'])?></td> -->
+                <!-- <td class="label text-center"><?= ceronull($value['Gen_Salida']) ?></td> -->
                 <!-- 6 -->
-                <!-- <td class="label"><?=ceronull($value['Cod'])?></td> -->
+                <!-- <td class="label"><?= ceronull($value['Cod']) ?></td> -->
                 <!-- 7 -->
-                <!-- <td class="label"><?=ceronull($value['Novedades'])?></td> -->
+                <!-- <td class="label"><?= ceronull($value['Novedades']) ?></td> -->
                 <!-- 8 -->
-                <!-- <td class="label"><?=ceronull($value['NovHor'])?></td> -->
+                <!-- <td class="label"><?= ceronull($value['NovHor']) ?></td> -->
                 <!-- 9 -->
-                <!-- <td class="label"><?=ceronull($value['DescHoras'])?></td> -->
+                <!-- <td class="label"><?= ceronull($value['DescHoras']) ?></td> -->
                 <!-- 10 -->
-                <!-- <td class="label text-center bg-light"><?=$value['HsAuto']?></td> -->
+                <!-- <td class="label text-center bg-light"><?= $value['HsAuto'] ?></td> -->
                 <!-- 11 -->
-                <!-- <td class="label text-center"><?=$value['HsHechas']?></td> -->
+                <!-- <td class="label text-center"><?= $value['HsHechas'] ?></td> -->
                 <!-- 12 -->
-                <!-- <td class="label text-center"><?=$value['HsCalc']?></td> -->
+                <!-- <td class="label text-center"><?= $value['HsCalc'] ?></td> -->
             </tr>
 
-        <tr>
-            <td colspan="12" class="border-bottom" style="padding:0px"></td>
-        </tr>
-    </table>
-    <?php 
-        }
-        //unset($matriz);  
-            ?>
-<!-- Totales -->
+            <tr>
+                <td colspan="12" class="border-bottom" style="padding:0px"></td>
+            </tr>
+        </table>
+        <?php
+    }
+    //unset($matriz);  
+    ?>
+    <!-- Totales -->
     <!-- <p class="mx-5" style="margin-top:-3mm">Totales Novedades</p>
     <table border="1" style="margin-top:-2mm">
         <tr>
@@ -337,7 +347,7 @@ endwhile;
         </tr>
     </table> -->
     <!-- <div class="page-break"></div> -->
-<!-- Fin Totales -->
+    <!-- Fin Totales -->
 </page>
 <?php //}
 sqlsrv_free_stmt($queryRecords);

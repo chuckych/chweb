@@ -1,7 +1,7 @@
 <?php
 
 try {
-    $pathArchivo = __DIR__ . '../../archivos/conf-import-proy.json';
+    $pathArchivo = __DIR__ . '/../archivos/conf-import-proy.json';
     if (!file_exists($pathArchivo)) {
         $configuracion = [
             'ProyectoDuracion' => 30,

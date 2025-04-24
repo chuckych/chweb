@@ -1,5 +1,5 @@
 <?php
-// require __DIR__ . '../../vendor/autoload.php';
+// require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/v1/vendor/autoload.php';
 
 use donatj\UserAgent\UserAgentParser;
@@ -114,7 +114,7 @@ class requestControl
         // $idCompany    = $idCompany;
 
         if ($agent) {
-            // require __DIR__ . '../../control/PhpUserAgent/src/UserAgentParser.php';
+            // require __DIR__ . '/../control/PhpUserAgent/src/UserAgentParser.php';
             // $parsedagent[] = parse_user_agent($agent);
             // foreach ($parsedagent as $key => $value) {
             //     $platform = $value['platform'];
@@ -770,7 +770,7 @@ class querydb
             exit;
         }
 
-        require __DIR__ . './connectDBPDO.php';
+        require __DIR__ . '/connectDBPDO.php';
         try {
             $resultSet = array();
             $stmt = $conn->query($query);
@@ -809,7 +809,7 @@ class querydb
             (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
             exit;
         }
-        require __DIR__ . './connectDBPDO.php';
+        require __DIR__ . '/connectDBPDO.php';
         try {
             $resultSet = array();
             $stmt = $conn->query($query);

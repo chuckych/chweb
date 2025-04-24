@@ -18,7 +18,8 @@ function notif_ok_var($get, $texto)
 <!doctype html>
 <html lang="es">
 
-<head><?php require __DIR__ . "../../../llamadas.php"; ?><title>Cambiar Contrase&ntilde;a</title>
+<head><?php require __DIR__ . "/../../llamadas.php"; ?>
+    <title>Cambiar Contrase&ntilde;a</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
@@ -30,13 +31,13 @@ function notif_ok_var($get, $texto)
         } else {
             echo '<div class="d-none">';
         }
-        require __DIR__ . '../../../nav.php';
+        require __DIR__ . '/../../nav.php';
         echo '</div>';
-        $_GET['true'] = $_GET['true'] ??'';
+        $_GET['true'] = $_GET['true'] ?? '';
         $ocultar = $_GET['true'] == true ? 'd-none' : '';
         ?>
         <?=
-        encabezado_mod2('bg-custom', 'white', 'shield-lock-fill', 'Cambiar Contrase&ntilde;a', '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'shield-lock-fill', 'Cambiar Contrase&ntilde;a', '25', 'text-white mr-2');
         ?>
         <div class="row">
             <div class="col-12 col-sm-10 col-md-6 col-xl-5">
@@ -51,7 +52,8 @@ function notif_ok_var($get, $texto)
                         <?= $icon_person ?>
                         <span class="fw5 ml-1">&nbsp;<?= $_SESSION["user"] ?></span>
                     </p>
-                    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" name="perfil" onsubmit="return validar_form()" class="<?= $ocultar ?>">
+                    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" name="perfil"
+                        onsubmit="return validar_form()" class="<?= $ocultar ?>">
                         <label for="clave" class="fw4 d-flex align-items-center">
                             <?= $icon_key ?>
                             <span class="ml-1">Cambiar Contraseña</span>
@@ -59,12 +61,18 @@ function notif_ok_var($get, $texto)
                         <div class="form-inline">
                             <div class="input-group">
                                 <div class="input-group-prepend" style="width:100% !important">
-                                    <input required type="password" autofocus class="form-control h50 w350" name="clave" id="clave" placeholder="" onKeyUp="contar(this.form)">
-                                    <div class="border border-0 pointer" id="uc_mostrar" style="position: absolute;right:15px; top:13px"><i class="bi bi-eye-slash-fill text-secondary"></i></div>
+                                    <input required type="password" autofocus class="form-control h50 w350" name="clave"
+                                        id="clave" placeholder="" onKeyUp="contar(this.form)">
+                                    <div class="border border-0 pointer" id="uc_mostrar"
+                                        style="position: absolute;right:15px; top:13px"><i
+                                            class="bi bi-eye-slash-fill text-secondary"></i></div>
                                 </div>
                             </div>
-                            <input type="text" class="d-none d-sm-block form-control w40 border-0 ml-2 h50 bg-white text-dark fw5" readonly name="escritos">
-                            <input type="hidden" class="" name="recid" id="" placeholder="" value="<?= $_SESSION["RECID_USER"] ?>">
+                            <input type="text"
+                                class="d-none d-sm-block form-control w40 border-0 ml-2 h50 bg-white text-dark fw5"
+                                readonly name="escritos">
+                            <input type="hidden" class="" name="recid" id="" placeholder=""
+                                value="<?= $_SESSION["RECID_USER"] ?>">
                         </div>
                         <div class="text-danger mt-2 fontq fw5"><?= $error_clave ?></div>
                         <div class="alert alert-info mt-3 radius" style="max-width:350px;" role="alert">
@@ -74,14 +82,15 @@ function notif_ok_var($get, $texto)
                             <p class="mb-0 fontq fw4 ml-1">- Letras minúsculas</p>
                             <p class="mb-0 fontq fw4 ml-1">- Números</p>
                         </div>
-                        <button type="submit" name="aceptar" class="btn bg-custom w350 h40 text-white opa8 btn-sm px-5 btn-mobile">Aceptar</button>
+                        <button type="submit" name="aceptar"
+                            class="btn bg-custom w350 h40 text-white opa8 btn-sm px-5 btn-mobile">Aceptar</button>
                     </form>
                     <a href="../../inicio/" class="btn btn-outline-custom px-4 pt-2 btn-mobile fontq mt-3">Salir</a>
                 </div>
             </div>
         </div>
-    </div><?php require __DIR__ . "../../../js/jquery.php"; ?>
-    <script src="../../login/login-min.js?v=<?=vjs()?>"></script>
+    </div><?php require __DIR__ . "/../../js/jquery.php"; ?>
+    <script src="../../login/login-min.js?v=<?= vjs() ?>"></script>
     <script>
         function validaCampos() {
             var clave = $("#clave").val();
@@ -94,7 +103,7 @@ function notif_ok_var($get, $texto)
     <script language="javascript" type="text/javascript">
         function validar_form() {
             var contrasenna = document.getElementById('clave').value;
-            if (validar_clave(contrasenna) == true) {} else {
+            if (validar_clave(contrasenna) == true) { } else {
                 alert('La contraseña ingresada no cumple los requisitos mínimos');
                 return false;
             }

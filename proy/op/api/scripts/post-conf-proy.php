@@ -27,7 +27,7 @@ try {
         'ProyectoResponsableStr' => $ProyectoResponsableStr
     ];
 
-    $pathArchivo = __DIR__ . '../../archivos/conf-import-proy.json';
+    $pathArchivo = __DIR__ . '/../archivos/conf-import-proy.json';
 
     file_put_contents($pathArchivo, json_encode($configuracion, JSON_PRETTY_PRINT));
 

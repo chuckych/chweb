@@ -1,12 +1,12 @@
 <?php
-require __DIR__ . '../../../config/session_start.php';
+require __DIR__ . '/../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 
-require __DIR__ . '../../../config/conect_mssql.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 
 $data = array();
 

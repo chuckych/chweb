@@ -21,7 +21,7 @@ class DataCompany
 
     function __construct()
     {
-        $this->urlData = __DIR__ . '../../../../mobileApikey.php'; // url del archivo ;
+        $this->urlData = __DIR__ . '/../../../mobileApikey.php'; // url del archivo ;
         $this->resp = new Response;
         $this->request = Flight::request();
         $this->log = new Log;
@@ -91,7 +91,7 @@ class DataCompany
     function checkToken()
     {
         $iniData = $this->iniData;
-        $token   = $this->token;
+        $token = $this->token;
 
         try {
 

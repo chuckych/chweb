@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -12,7 +12,7 @@ $IlegFic = [];
 $control->check_method("POST");
 $control->check_json();
 
-require __DIR__ . '../wc.php';
+require __DIR__ . '/wc.php';
 
 if ($dp['getReg']) {
     $FicCountSelect = "(SELECT count(1) FROM REGISTRO R WHERE R.RegFeAs = FICHAS.FicFech AND R.RegLega = FICHAS.FicLega) AS 'FicCount',";

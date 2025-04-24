@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <title><?= MODULOS['horasign'] ?></title>
@@ -17,7 +17,7 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['horasign'], ''); ?>
         <input type="hidden" id="time" value="<?= microtime(true) ?>">
@@ -25,10 +25,12 @@
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">
-                <button type="button" disabled class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none" data-toggle="modal" data-target="#Filtros">
+                <button type="button" disabled class="btn btn-outline-custom border btn-sm fontq Filtros d-print-none"
+                    data-toggle="modal" data-target="#Filtros">
                     Filtros
                 </button>
-                <button type="button" class="ml-1 btn btn-outline-custom border btn-sm fontq d-print-none" disabled id="btnExcel">
+                <button type="button" class="ml-1 btn btn-outline-custom border btn-sm fontq d-print-none" disabled
+                    id="btnExcel">
                 </button>
                 <span id="trash_all" title="Limpiar Filtros" class="trash align-middle pb-0 d-print-none"></span>
             </div>
@@ -42,15 +44,18 @@
                                 </svg>
                             </span>
                         </div>
-                        <div><input type="text" class="form-control text-center border-0 ls1 h40 w250" name="_drHorarios" id="_drHorarios" data-ddg-inputtype="unknown"></div>
+                        <div><input type="text" class="form-control text-center border-0 ls1 h40 w250"
+                                name="_drHorarios" id="_drHorarios" data-ddg-inputtype="unknown"></div>
                     </div>
                 </div>
             </div>
         </div>
         <div id="tablas">
             <div class="row bg-white pb-sm-3">
-                <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn table-responsive">
-                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal"></table>
+                <div
+                    class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn table-responsive">
+                    <table class="table table-borderless text-nowrap w-auto table-sm invisible" id="GetPersonal">
+                    </table>
                 </div>
             </div>
             <div class="row mt-sm-n5">
@@ -64,8 +69,8 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/jquery.php";
+    require __DIR__ . "/../../js/DataTable.php";
 
     ?>
     <!-- moment.min.js -->
@@ -75,17 +80,19 @@
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-    <script src="/<?= HOMEHOST ?>/informes/horasign/js/data.js?<?= version_file("/informes/horasign/js/data.js") ?>"></script>
-    <script src="/<?= HOMEHOST ?>/informes/horasign/js/toExport.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
+    <script
+        src="/<?= HOMEHOST ?>/informes/horasign/js/data.js?<?= version_file("/informes/horasign/js/data.js") ?>"></script>
+    <script
+        src="/<?= HOMEHOST ?>/informes/horasign/js/toExport.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
 </body>
 <script>
     // document.addEventListener('DOMContentLoaded', (e) => {
     axios({
-            method: 'get',
-            url: '/' + getSelectorVal('#_homehost') + '/status_ws.php?status=ws',
-            responseType: 'stream'
-        })
-        .then(function(response) {
+        method: 'get',
+        url: '/' + getSelectorVal('#_homehost') + '/status_ws.php?status=ws',
+        responseType: 'stream'
+    })
+        .then(function (response) {
             if (response.data) {
                 $.notifyClose();
                 notify(response.data.Mensaje, 'info', 2000, 'right')

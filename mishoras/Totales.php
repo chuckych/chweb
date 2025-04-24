@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -8,21 +8,21 @@ setlocale(LC_TIME, "es_ES");
 session_start();
 secure_auth_ch_json();
 
-$data      = array();
-$legajo    = test_input($_POST['_lega']);
+$data = array();
+$legajo = test_input($_POST['_lega']);
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni  = test_input(dr_fecha($DateRange[0]));
-    $FechaFin  = test_input(dr_fecha($DateRange[1]));
-}else{
-    $FechaIni  = date('Ymd');
-    $FechaFin  = date('Ymd');
+    $FechaIni = test_input(dr_fecha($DateRange[0]));
+    $FechaFin = test_input(dr_fecha($DateRange[1]));
+} else {
+    $FechaIni = date('Ymd');
+    $FechaFin = date('Ymd');
 }
 
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 E_ALL();
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 if (test_input($_POST['Tipo']) == 'Horas') {
     $query_Horas = "SELECT FICHAS1.FicHora AS Hora, MAX(TIPOHORA.THoDesc) AS HoraDesc, MAX(TIPOHORA.THoDesc2) AS HoraDesc2, SUM( LEFT(FICHAS1.FicHsHe, 2) * 60 + RIGHT(FICHAS1.FicHsHe, 2) ) AS HsHechas, SUM( LEFT(FICHAS1.FicHsAu, 2) * 60 + RIGHT(FICHAS1.FicHsAu, 2) ) AS HsCalculadas, SUM( LEFT(FICHAS1.FicHsAu2, 2) * 60 + RIGHT(FICHAS1.FicHsAu2, 2) ) AS HsAutorizadas FROM FICHAS1, FICHAS, TIPOHORA, PERSONAL WHERE TIPOHORA.THoColu >'0' AND FICHAS.FicLega='$legajo' AND FICHAS.FicLega=PERSONAL.LegNume AND FICHAS1.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND FICHAS1.FicTurn=1 AND FICHAS1.FicLega=FICHAS.FicLega AND FICHAS1.FicFech=FICHAS.FicFech AND FICHAS1.FicHora=TIPOHORA.THoCodi GROUP BY TIPOHORA.THoDesc, FICHAS1.FicHora ORDER by FICHAS1.FicHora";
@@ -32,14 +32,14 @@ if (test_input($_POST['Tipo']) == 'Horas') {
     // print_r($query_Horas); exit;
 
     if (sqlsrv_num_rows($result_Hor) > 0) {
-        while ($row = sqlsrv_fetch_array($result_Hor)) :
+        while ($row = sqlsrv_fetch_array($result_Hor)):
             $Horas[] = array(
-                'Cod'          => $row['Hora'],
-                'Descripcion'  => $row['HoraDesc'],
+                'Cod' => $row['Hora'],
+                'Descripcion' => $row['HoraDesc'],
                 'Descripcion2' => $row['HoraDesc2'],
-                'HsHechas'     => FormatHora($row['HsHechas']),
-                'HsCalc'       => FormatHora($row['HsCalculadas']),
-                'HsAuto'       => FormatHora($row['HsAutorizadas'])
+                'HsHechas' => FormatHora($row['HsHechas']),
+                'HsCalc' => FormatHora($row['HsCalculadas']),
+                'HsAuto' => FormatHora($row['HsAutorizadas'])
             );
         endwhile;
         sqlsrv_free_stmt($result_Hor);
@@ -52,22 +52,22 @@ if (test_input($_POST['Tipo']) == 'Novedades') {
     $result_nov = sqlsrv_query($link, $query_Novedades, $params, $options);
 
     if (sqlsrv_num_rows($result_nov) > 0) {
-        while ($row = sqlsrv_fetch_array($result_nov)) :
+        while ($row = sqlsrv_fetch_array($result_nov)):
             $Novedades[] = array(
-                'Cod'         => $row['Novedad'],
+                'Cod' => $row['Novedad'],
                 'Descripcion' => $row['Descrip'],
-                'Tipo'        => TipoNov($row['Tipo']),
-                'Horas'       => FormatHora($row['Horas']),
-                'HorasJust'   => FormatHora($row['HorasJust']),
+                'Tipo' => TipoNov($row['Tipo']),
+                'Horas' => FormatHora($row['Horas']),
+                'HorasJust' => FormatHora($row['HorasJust']),
                 'HorasNoJust' => FormatHora($row['HorasNoJust']),
-                'Dias'        => $row['Dias'],
-                'DiasJust'    => $row['DiasJust'],
-                'DiasNoJust'  => $row['DiasNoJust']
+                'Dias' => $row['Dias'],
+                'DiasJust' => $row['DiasJust'],
+                'DiasNoJust' => $row['DiasNoJust']
             );
         endwhile;
         sqlsrv_free_stmt($result_nov);
     } else {
-        $Novedades[] = array('Cod' => '-', 'Descripcion' => '-', 'Tipo' => '-', 'Horas' => '-', 'HorasJust' => '-', 'HorasNoJust' => '-', 'Dias' => '-', 'DiasJust' => '-', 'DiasNoJust' => '-',);
+        $Novedades[] = array('Cod' => '-', 'Descripcion' => '-', 'Tipo' => '-', 'Horas' => '-', 'HorasJust' => '-', 'HorasNoJust' => '-', 'Dias' => '-', 'DiasJust' => '-', 'DiasNoJust' => '-', );
     }
 }
 if (test_input($_POST['Tipo']) == 'NovTipo') {
@@ -77,16 +77,16 @@ if (test_input($_POST['Tipo']) == 'NovTipo') {
     // print_r($query_NovTipo); exit;
 
     if (sqlsrv_num_rows($result_NovTipo) > 0) {
-        while ($row = sqlsrv_fetch_array($result_NovTipo)) :
+        while ($row = sqlsrv_fetch_array($result_NovTipo)):
             $NovTipo[] = array(
-                'Tipo'        => $row['Tipo'],
+                'Tipo' => $row['Tipo'],
                 'Descripcion' => TipoNov($row['Tipo']),
-                'Horas'       => FormatHora($row['Horas']),
-                'HorasJust'   => FormatHora($row['HorasJust']),
+                'Horas' => FormatHora($row['Horas']),
+                'HorasJust' => FormatHora($row['HorasJust']),
                 'HorasNoJust' => FormatHora($row['HorasNoJust']),
-                'Dias'        => $row['Dias'],
-                'DiasJust'    => $row['DiasJust'],
-                'DiasNoJust'  => $row['DiasNoJust']
+                'Dias' => $row['Dias'],
+                'DiasJust' => $row['DiasJust'],
+                'DiasNoJust' => $row['DiasNoJust']
             );
         endwhile;
         sqlsrv_free_stmt($result_NovTipo);

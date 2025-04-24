@@ -7,7 +7,7 @@ secure_auth_ch();
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title>Auditoria</title>
     <style>
         .select2-container {
@@ -23,9 +23,9 @@ secure_auth_ch();
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2" style="animation-fill-mode: unset">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod2('bg-custom', 'white', 'journal-check',  'Auditoría', '25', 'text-white mr-2'); ?>
+        <?= encabezado_mod2('bg-custom', 'white', 'journal-check', 'Auditoría', '25', 'text-white mr-2'); ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white" id="divTableAud" style="display: none;">
             <div class="col-12">
@@ -39,9 +39,9 @@ secure_auth_ch();
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/DataTable.php";
     ?>
     <!-- <script src="../../js/moment.min.js"></script> -->
     <!-- moment.min.js -->

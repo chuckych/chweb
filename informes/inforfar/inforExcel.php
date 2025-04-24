@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -21,11 +21,11 @@ ExisteModRol('34');
 
 E_ALL();
 
-$_POST['datos'] =  $_POST['datos'] ?? '';
-$_POST['datos'] =  json_decode($_POST['datos'], true);
+$_POST['datos'] = $_POST['datos'] ?? '';
+$_POST['datos'] = json_decode($_POST['datos'], true);
 
 if (intval($_POST['datos']['agrup']) == 1) {
-    require __DIR__ . './inforExcelLegajo.php';
-}else {
-    require __DIR__ . './inforExcelEstruct.php';
+    require __DIR__ . '/inforExcelLegajo.php';
+} else {
+    require __DIR__ . '/inforExcelEstruct.php';
 }

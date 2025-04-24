@@ -19,7 +19,7 @@ $self = $self[1];
 
 <head>
     <title>Ingreso CH WEB</title>
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <style>
         @media only screen and (max-width: 320px) {
             .ancho {
@@ -34,7 +34,7 @@ $self = $self[1];
         }
     </style>
 </head>
-<?php require __DIR__ . '../../config/conect_pdo.php'; ?>
+<?php require __DIR__ . '/../config/conect_pdo.php'; ?>
 
 <body class="body">
     <div class="vh-100 p-4 fw4 fadeIn">
@@ -91,7 +91,7 @@ $self = $self[1];
                 </div>
         </form>
     </div>
-    <?php require __DIR__ . "../../js/jquery.php"; ?>
+    <?php require __DIR__ . "/../js/jquery.php"; ?>
     <script src="login-min.js?v=<?= version_file("/login/login-min.js") ?>"></script>
 
 </body>

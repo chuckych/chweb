@@ -35,15 +35,19 @@
         /* font-size: small; */
         font-family: Arial, Helvetica, sans-serif;
     }
-    .text-primary{
-        color:blue;
+
+    .text-primary {
+        color: blue;
     }
-    .text-dark{
+
+    .text-dark {
         color: #333333;
     }
-    .text-danger{
+
+    .text-danger {
         color: crimson;
     }
+
     .titulo {
         font-size: 8pt;
         margin: 5mm;
@@ -51,7 +55,7 @@
     }
 
     .dato {
-        font-weight:bold;
+        font-weight: bold;
     }
 
     .contenedor {
@@ -112,26 +116,28 @@
     .pb-6 {
         padding-bottom: 6px;
     }
-    .page-break{
-        page-break-after:always;
+
+    .page-break {
+        page-break-after: always;
     }
-    .bg-light{
+
+    .bg-light {
         background-color: #fafafa;
     }
 </style>
 
 <?php
-require __DIR__. '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 
-$check_dl = (isset($_GET['_dl'])) ? "AND FICHAS.FicDiaL = '1'": ''; /** Filtrar Dia Laboral */
+$check_dl = (isset($_GET['_dl'])) ? "AND FICHAS.FicDiaL = '1'" : ''; /** Filtrar Dia Laboral */
 
-$FechaIni=test_input($_GET['FechaIni']);
-$FechaFin=test_input($_GET['FechaFin']);
+$FechaIni = test_input($_GET['FechaIni']);
+$FechaFin = test_input($_GET['FechaFin']);
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__. '../../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 
-$param  = array();
+$param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
 $FechaIni = '20200401';
@@ -163,30 +169,30 @@ INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi
 INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi
 WHERE PERSONAL.LegFeEg = '17530101' AND FICHAS.FicLega IN (30366320) AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $check_dl $filtros ORDER BY .FICHAS.FicFech, FICHAS.FicLega";
 // print_r($sql_query); exit;
-$queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
+$queryRecords = sqlsrv_query($link, $sql_query, $param, $options);
 
 
 ?>
-<page backtop="30pt" backbottom="5pt"class="contenedor">
-<?php 
-    while ($row = sqlsrv_fetch_array($queryRecords)) :
-        $Gen_Lega       = $row['Gen_Lega'];
-        $Gen_TDoc       = $row['Gen_TDoc'];
-        $Gen_Docu       = $row['Gen_Docu'];
-        $Gen_Nombre     = $row['Gen_Nombre'];
-        $Gen_empresa    = $row['Gen_empresa'];
-        $Gen_planta     = $row['Gen_planta'];
-        $Gen_convenio   = $row['Gen_convenio'];
-        $Gen_sector     = $row['Gen_sector'];
-        $Gen_seccion    = $row['Gen_seccion'];
-        $Gen_grupo      = $row['Gen_grupo'];
-        $Gen_sucur      = $row['Gen_sucur'];
-        $Gen_Fecha      = $row['Gen_Fecha']->format('d/m/Y');
-        $Gen_Fecha2     = $row['Gen_Fecha']->format('Ymd');
+<page backtop="30pt" backbottom="5pt" class="contenedor">
+    <?php
+    while ($row = sqlsrv_fetch_array($queryRecords)):
+        $Gen_Lega = $row['Gen_Lega'];
+        $Gen_TDoc = $row['Gen_TDoc'];
+        $Gen_Docu = $row['Gen_Docu'];
+        $Gen_Nombre = $row['Gen_Nombre'];
+        $Gen_empresa = $row['Gen_empresa'];
+        $Gen_planta = $row['Gen_planta'];
+        $Gen_convenio = $row['Gen_convenio'];
+        $Gen_sector = $row['Gen_sector'];
+        $Gen_seccion = $row['Gen_seccion'];
+        $Gen_grupo = $row['Gen_grupo'];
+        $Gen_sucur = $row['Gen_sucur'];
+        $Gen_Fecha = $row['Gen_Fecha']->format('d/m/Y');
+        $Gen_Fecha2 = $row['Gen_Fecha']->format('Ymd');
         $Gen_Dia_Semana = $row['Gen_Dia_Semana'];
-        $Gen_Horario    = $row['Gen_Horario'];
-    
-    /** FICHADAS */
+        $Gen_Horario = $row['Gen_Horario'];
+
+        /** FICHADAS */
         $query_Fic = "SELECT
         REGISTRO.RegHoRe AS Fic_Hora, /** HORA */
         Fic_Tipo = CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, /** TIPO */
@@ -194,33 +200,33 @@ $queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
         FROM REGISTRO
         WHERE REGISTRO.RegFeAs = '$Gen_Fecha2' AND REGISTRO.RegLega = '$Gen_Lega'
         ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
-        
+
         $result_Fic = sqlsrv_query($link, $query_Fic, $param, $options);
         // print_r($query_Fic).PHP_EOL; exit;
         if (sqlsrv_num_rows($result_Fic) > 0) {
-            while ($row_Fic = sqlsrv_fetch_array($result_Fic)) :
+            while ($row_Fic = sqlsrv_fetch_array($result_Fic)):
                 $Fic_Hora[] = array(
-                    'Fic'    => $row_Fic['Fic_Hora'],
+                    'Fic' => $row_Fic['Fic_Hora'],
                     'Estado' => $row_Fic['Fic_Estado'],
-                    'Tipo'   => $row_Fic['Fic_Tipo']
+                    'Tipo' => $row_Fic['Fic_Tipo']
                 );
             endwhile;
             sqlsrv_free_stmt($result_Fic);
-                $primero = (array_key_first($Fic_Hora));
-                $ultimo  = (array_key_last($Fic_Hora));
-                $primero = (array_values($Fic_Hora)[$primero]);
-                $ultimo  = (array_values($Fic_Hora)[$ultimo]);
-                $ultimo = ($ultimo==$primero) ? array('Fic'=>"", 'Estado'=>"", 'Tipo'=>"") : $ultimo;
+            $primero = (array_key_first($Fic_Hora));
+            $ultimo = (array_key_last($Fic_Hora));
+            $primero = (array_values($Fic_Hora)[$primero]);
+            $ultimo = (array_values($Fic_Hora)[$ultimo]);
+            $ultimo = ($ultimo == $primero) ? array('Fic' => "", 'Estado' => "", 'Tipo' => "") : $ultimo;
         } else {
-            $Fic_Hora[] = array('Fic'=>"", 'Estado'=>"", 'Tipo'=>"");
-            $primero  = array('Fic'=>"", 'Estado'=>"", 'Tipo'=>"");
-            $ultimo   = array('Fic'=>"", 'Estado'=>"", 'Tipo'=>"");
+            $Fic_Hora[] = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
+            $primero = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
+            $ultimo = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
         }
         $entrada = color_fichada(array($primero));
-        $salida  = color_fichada(array($ultimo));
-    /** FIN FICHADAS */
+        $salida = color_fichada(array($ultimo));
+        /** FIN FICHADAS */
 
-    /** NOVEDADES */
+        /** NOVEDADES */
         $query_Nov = "SELECT  
         FICHAS3.FicNove AS nov_novedad,
         NOVEDAD.NovDesc AS nov_descripcion,
@@ -235,40 +241,40 @@ $queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
         ORDER BY FICHAS3.FICFech";
         $result_Nov = sqlsrv_query($link, $query_Nov, $param, $options);
         // print_r($query_Nov); exit;
-
+    
         if (sqlsrv_num_rows($result_Nov) > 0) {
-        while ($row_Nov = sqlsrv_fetch_array($result_Nov)) :
+            while ($row_Nov = sqlsrv_fetch_array($result_Nov)):
                 $Novedad[] = array(
-                    'Cod'         => $row_Nov['nov_novedad'],
+                    'Cod' => $row_Nov['nov_novedad'],
                     'Descripcion' => $row_Nov['nov_descripcion'],
-                    'Horas'       => $row_Nov['nov_horas'],
-                    'Tipo'        => $row_Nov['nov_tipo']);
+                    'Horas' => $row_Nov['nov_horas'],
+                    'Tipo' => $row_Nov['nov_tipo']);
             endwhile;
             sqlsrv_free_stmt($result_Nov);
         } else {
-            $Novedad[]=array(
-                'Cod'         => "",
+            $Novedad[] = array(
+                'Cod' => "",
                 'Descripcion' => "",
-                'Horas'       => "",
-                'Tipo'        => ""
+                'Horas' => "",
+                'Tipo' => ""
             );
         }
         if (is_array($Novedad)) {
             foreach ($Novedad as $fila) {
-                $Cod[]   = ($fila["Cod"]);
+                $Cod[] = ($fila["Cod"]);
                 $desc2[] = ($fila["Descripcion"]);
                 $desc3[] = ($fila["Horas"]);
             }
-            $CodNov        = implode("<br/>", $Cod);
+            $CodNov = implode("<br/>", $Cod);
             $Novedad = implode("<br/>", $desc2);
-            $NoveHoras  = implode("<br/>", $desc3);
+            $NoveHoras = implode("<br/>", $desc3);
             unset($Cod);
             unset($desc2);
             unset($desc3);
         }
-    /** FIN NOVEDADES */
-    
-    /** HORAS */
+        /** FIN NOVEDADES */
+
+        /** HORAS */
         $query_Horas = "SELECT FICHAS1.FicHora AS Hora, TIPOHORA.THoDesc AS HoraDesc, TIPOHORA.THoDesc2 AS HoraDesc2, FICHAS1.FicHsHe AS HsHechas, FICHAS1.FicHsAu AS HsCalculadas, FICHAS1.FicHsAu2 AS HsAutorizadas
         FROM FICHAS1,TIPOHORA,TIPOHORACAUSA
         WHERE FICHAS1.FicLega = '$Gen_Lega' AND FICHAS1.FicFech = '$Gen_Fecha2' AND FICHAS1.FicHora = TIPOHORA.THoCodi AND FICHAS1.FicHora = TIPOHORACAUSA.THoCHora AND FICHAS1.FicCaus = TIPOHORACAUSA.THoCCodi AND TIPOHORA.THoColu > 0
@@ -276,36 +282,36 @@ $queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
         $result_Hor = sqlsrv_query($link, $query_Horas, $param, $options);
         // print_r($query_Horas);
         // exit;
-
+    
         if (sqlsrv_num_rows($result_Hor) > 0) {
-            while ($row_Hor = sqlsrv_fetch_array($result_Hor)) :
-                    $Horas[] = array(
-                        'Cod'          => $row_Hor['Hora'],
-                        'Descripcion'  => $row_Hor['HoraDesc'],
-                        'Descripcion2' => $row_Hor['HoraDesc2'],
-                        'HsHechas'     => $row_Hor['HsHechas'],
-                        'HsCalc'       => $row_Hor['HsCalculadas'],
-                        'HsAuto'       => $row_Hor['HsAutorizadas']
-                    );
-                endwhile;
-                sqlsrv_free_stmt($result_Hor);
-            } else {
-                $Horas[]=array(
-                    'Cod'          => '',
-                    'Descripcion'  => '',
-                    'Descripcion2' => '',
-                    'HsHechas'     => '',
-                    'HsCalc'       => '',
-                    'HsAuto'       => ''
+            while ($row_Hor = sqlsrv_fetch_array($result_Hor)):
+                $Horas[] = array(
+                    'Cod' => $row_Hor['Hora'],
+                    'Descripcion' => $row_Hor['HoraDesc'],
+                    'Descripcion2' => $row_Hor['HoraDesc2'],
+                    'HsHechas' => $row_Hor['HsHechas'],
+                    'HsCalc' => $row_Hor['HsCalculadas'],
+                    'HsAuto' => $row_Hor['HsAutorizadas']
                 );
+            endwhile;
+            sqlsrv_free_stmt($result_Hor);
+        } else {
+            $Horas[] = array(
+                'Cod' => '',
+                'Descripcion' => '',
+                'Descripcion2' => '',
+                'HsHechas' => '',
+                'HsCalc' => '',
+                'HsAuto' => ''
+            );
         }
         if (is_array($Horas)) {
             foreach ($Horas as $fila) {
                 $DescHora[] = ($fila["Descripcion"]);
                 $DescHora2[] = ($fila["Descripcion2"]);
                 $HsHechas[] = ceronull($fila["HsHechas"]);
-                $HsCalc[]   = ceronull($fila["HsCalc"]);
-                $HsAuto[]   = ceronull($fila["HsAuto"]);
+                $HsCalc[] = ceronull($fila["HsCalc"]);
+                $HsAuto[] = ceronull($fila["HsAuto"]);
             }
             $Hora = implode("<br/>", $DescHora); /** Descripcion 1 del tipo de hora */
             $Hora2 = implode("<br/>", $DescHora2); /** Descripcion 2 del tipo de hora */
@@ -319,58 +325,60 @@ $queryRecords = sqlsrv_query($link, $sql_query,$param, $options);
             unset($HsAuto);
             // var_export($Novedades); 
         }
-    /** Fin HORAS */
-    
-    $matriz[] = array(
-        'Gen_TDoc'     => TipoDoc($Gen_TDoc),
-        'Gen_Docu'     => $Gen_Docu,
-        'Gen_Lega'     => $Gen_Lega,
-        'Gen_Nombre'   => $Gen_Nombre,
-        'Gen_empresa'  => $Gen_empresa,
-        'Gen_planta'   => $Gen_planta,
-        'Gen_convenio' => $Gen_convenio,
-        'Gen_sector'   => $Gen_sector,
-        'Gen_seccion'  => $Gen_seccion,
-        'Gen_grupo'    => $Gen_grupo,
-        'Gen_sucur'    => $Gen_sucur,
-        'Gen_Fecha'      => $Gen_Fecha,
-        'Gen_Dia_Semana' => $Gen_Dia_Semana,
-        'Gen_Horario'    => $Gen_Horario,
-        'Gen_Entrada'    => $entrada['Fic'],
-        'Gen_Salida'     => ($salida['Fic']),
-        'Cod'            => $CodNov,
-        'Novedades'      => $Novedad,
-        'NovHor'         => $NoveHoras,
-        'DescHoras'      => $Hora,
-        'HsHechas'       => ($horas3),
-        'HsCalc'         => ($horas4),
-        'HsAuto'         => ($horas5),
-    );
-    // $encabezado[] = array(
-    //     'Gen_TDoc'     => TipoDoc($Gen_TDoc),
-    //     'Gen_Docu'     => $Gen_Docu,
-    //     'Gen_Lega'     => $Gen_Lega,
-    //     'Gen_Nombre'   => $Gen_Nombre,
-    //     'Gen_empresa'  => $Gen_empresa,
-    //     'Gen_planta'   => $Gen_planta,
-    //     'Gen_convenio' => $Gen_convenio,
-    //     'Gen_sector'   => $Gen_sector,
-    //     'Gen_seccion'  => $Gen_seccion,
-    //     'Gen_grupo'    => $Gen_grupo,
-    //     'Gen_sucur'    => $Gen_sucur
-    // );
-    unset($Fic_Hora);
-    unset($Novedad);
-    unset($primero);
-    unset($ultimo);
-    unset($Horas);
-endwhile; 
-// echo '<pre>';
+        /** Fin HORAS */
+
+        $matriz[] = array(
+            'Gen_TDoc' => TipoDoc($Gen_TDoc),
+            'Gen_Docu' => $Gen_Docu,
+            'Gen_Lega' => $Gen_Lega,
+            'Gen_Nombre' => $Gen_Nombre,
+            'Gen_empresa' => $Gen_empresa,
+            'Gen_planta' => $Gen_planta,
+            'Gen_convenio' => $Gen_convenio,
+            'Gen_sector' => $Gen_sector,
+            'Gen_seccion' => $Gen_seccion,
+            'Gen_grupo' => $Gen_grupo,
+            'Gen_sucur' => $Gen_sucur,
+            'Gen_Fecha' => $Gen_Fecha,
+            'Gen_Dia_Semana' => $Gen_Dia_Semana,
+            'Gen_Horario' => $Gen_Horario,
+            'Gen_Entrada' => $entrada['Fic'],
+            'Gen_Salida' => ($salida['Fic']),
+            'Cod' => $CodNov,
+            'Novedades' => $Novedad,
+            'NovHor' => $NoveHoras,
+            'DescHoras' => $Hora,
+            'HsHechas' => ($horas3),
+            'HsCalc' => ($horas4),
+            'HsAuto' => ($horas5),
+        );
+        // $encabezado[] = array(
+        //     'Gen_TDoc'     => TipoDoc($Gen_TDoc),
+        //     'Gen_Docu'     => $Gen_Docu,
+        //     'Gen_Lega'     => $Gen_Lega,
+        //     'Gen_Nombre'   => $Gen_Nombre,
+        //     'Gen_empresa'  => $Gen_empresa,
+        //     'Gen_planta'   => $Gen_planta,
+        //     'Gen_convenio' => $Gen_convenio,
+        //     'Gen_sector'   => $Gen_sector,
+        //     'Gen_seccion'  => $Gen_seccion,
+        //     'Gen_grupo'    => $Gen_grupo,
+        //     'Gen_sucur'    => $Gen_sucur
+        // );
+        unset($Fic_Hora);
+        unset($Novedad);
+        unset($primero);
+        unset($ultimo);
+        unset($Horas);
+    endwhile;
+    // echo '<pre>';
 // print_r($matriz); exit;
- ?>
+    ?>
     <page_header>
         <div class="">
-            <div class="titulo border-bottom pb-4">FICHADAS NOVEDADES Y HORAS Desde <span class="dato"><?=FechaFormatVar($FechaIni, 'd/m/Y')?></span> hasta <span class="dato"><?=FechaFormatVar($FechaFin, 'd/m/Y')?></span></div>
+            <div class="titulo border-bottom pb-4">FICHADAS NOVEDADES Y HORAS Desde <span
+                    class="dato"><?= FechaFormatVar($FechaIni, 'd/m/Y') ?></span> hasta <span
+                    class="dato"><?= FechaFormatVar($FechaFin, 'd/m/Y') ?></span></div>
         </div>
     </page_header>
     <page_footer>
@@ -381,27 +389,28 @@ endwhile;
     <table class="encabezado" border="0" style="margin-top:0mm">
         <tr>
             <td class="label">Legajo:</td>
-            <td class="label"><span class="dato"><?=$Gen_Lega?></span> | <?=TipoDoc($Gen_TDoc)?>: <?=$Gen_Docu?></td>
+            <td class="label"><span class="dato"><?= $Gen_Lega ?></span> | <?= TipoDoc($Gen_TDoc) ?>: <?= $Gen_Docu ?>
+            </td>
             <td class="label">Nombre:</td>
-            <td class="label"><span class="dato"><?=$Gen_Nombre ?></span></td>
+            <td class="label"><span class="dato"><?= $Gen_Nombre ?></span></td>
             <td class="label">Empresa:</td>
-            <td class="label"><span class=""><?=$Gen_empresa?></span></td>
+            <td class="label"><span class=""><?= $Gen_empresa ?></span></td>
         </tr>
         <tr>
             <td class="label">Planta:</td>
-            <td class="label"><span class=""><?=$Gen_planta?></span></td>
+            <td class="label"><span class=""><?= $Gen_planta ?></span></td>
             <td class="label">Convenio:</td>
-            <td class="label"><span class=""><?=$Gen_convenio?></span></td>
+            <td class="label"><span class=""><?= $Gen_convenio ?></span></td>
             <td class="label">Sector:</td>
-            <td class="label"><span class=""><?=$Gen_sector?></span></td>
+            <td class="label"><span class=""><?= $Gen_sector ?></span></td>
         </tr>
         <tr>
             <td class="label">Sección:</td>
-            <td class="label"><span class=""><?=$Gen_seccion?></span></td>
+            <td class="label"><span class=""><?= $Gen_seccion ?></span></td>
             <td class="label">Grupo:</td>
-            <td class="label"><span class=""><?=$Gen_grupo?></span></td>
+            <td class="label"><span class=""><?= $Gen_grupo ?></span></td>
             <td class="label">Sucursal:</td>
-            <td class="label"><span class=""><?=$Gen_sucur?></span></td>
+            <td class="label"><span class=""><?= $Gen_sucur ?></span></td>
         </tr>
     </table>
     <!-- <div class="page-break"></div> -->
@@ -435,43 +444,43 @@ endwhile;
         </tr>
         <?php
         foreach ($matriz as $key => $value) {
-            $ColorFranco = ($value['Gen_Horario'] == 'Franco' || $value['Gen_Horario'] == 'Feriado') ? 'bg-light':'';
-        ?>
-            <tr class="<?=$ColorFranco?>">
-                <!-- 1 -->
-                <td class="label"><?=$value['Gen_Fecha']?></td>
-                <!-- 2 -->
-                <td class="label"><?=nombre_dias($value['Gen_Dia_Semana'], false)?></td>
-                <!-- 3 -->
-                <td class="label"><?=$value['Gen_Horario']?></td>
-                <!-- 4 -->
-                <td class="label text-center"><?=ceronull($value['Gen_Entrada'])?></td>
-                <!-- 5 -->
-                <td class="label text-center"><?=ceronull($value['Gen_Salida'])?></td>
-                <!-- 6 -->
-                <td class="label"><?=ceronull($value['Cod'])?></td>
-                <!-- 7 -->
-                <td class="label"><?=ceronull($value['Novedades'])?></td>
-                <!-- 8 -->
-                <td class="label"><?=ceronull($value['NovHor'])?></td>
-                <!-- 9 -->
-                <td class="label"><?=ceronull($value['DescHoras'])?></td>
-                <!-- 10 -->
-                <td class="label text-center bg-light"><?=$value['HsAuto']?></td>
-                <!-- 11 -->
-                <td class="label text-center"><?=$value['HsHechas']?></td>
-                <!-- 12 -->
-                <td class="label text-center"><?=$value['HsCalc']?></td>
-            </tr>
-            <?php 
-        }
-        unset($matriz);  
+            $ColorFranco = ($value['Gen_Horario'] == 'Franco' || $value['Gen_Horario'] == 'Feriado') ? 'bg-light' : '';
             ?>
+            <tr class="<?= $ColorFranco ?>">
+                <!-- 1 -->
+                <td class="label"><?= $value['Gen_Fecha'] ?></td>
+                <!-- 2 -->
+                <td class="label"><?= nombre_dias($value['Gen_Dia_Semana'], false) ?></td>
+                <!-- 3 -->
+                <td class="label"><?= $value['Gen_Horario'] ?></td>
+                <!-- 4 -->
+                <td class="label text-center"><?= ceronull($value['Gen_Entrada']) ?></td>
+                <!-- 5 -->
+                <td class="label text-center"><?= ceronull($value['Gen_Salida']) ?></td>
+                <!-- 6 -->
+                <td class="label"><?= ceronull($value['Cod']) ?></td>
+                <!-- 7 -->
+                <td class="label"><?= ceronull($value['Novedades']) ?></td>
+                <!-- 8 -->
+                <td class="label"><?= ceronull($value['NovHor']) ?></td>
+                <!-- 9 -->
+                <td class="label"><?= ceronull($value['DescHoras']) ?></td>
+                <!-- 10 -->
+                <td class="label text-center bg-light"><?= $value['HsAuto'] ?></td>
+                <!-- 11 -->
+                <td class="label text-center"><?= $value['HsHechas'] ?></td>
+                <!-- 12 -->
+                <td class="label text-center"><?= $value['HsCalc'] ?></td>
+            </tr>
+            <?php
+        }
+        unset($matriz);
+        ?>
         <tr>
             <td colspan="12" class="border-bottom" style="padding:0px"></td>
         </tr>
     </table>
-    
+
     <!-- <p class="mx-5" style="margin-top:-3mm">Totales Novedades</p>
     <table border="1" style="margin-top:-2mm">
         <tr>

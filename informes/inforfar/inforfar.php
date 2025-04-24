@@ -3,14 +3,14 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['inforhora'] ?></title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['inforfar'], '') ?>
         <!-- Fin Encabezado -->
@@ -20,9 +20,9 @@
         /** FirstDate */
         $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
         /** FirstYear */
-        $maxDate   = $FechaMinMax['max'];
+        $maxDate = $FechaMinMax['max'];
         /** maxDate */
-        $maxYear   = date('Y');
+        $maxYear = date('Y');
         /** maxYear */
         $FechaIni = $FechaMinMax['max'];
         $FechaFin = $FechaMinMax['max'];
@@ -103,16 +103,23 @@
             <div class="row py-3">
                 <div class="col-12 d-flex justify-content-end">
                     <!-- Por Legajo -->
-                    <div class="custom-control custom-switch custom-control-inline mt-2" data-titlet="Agrupar por Legajo">
-                        <input checked="" type="radio" class="custom-control-input" id="agrupLegajo" name="agrup" value="1">
-                        <label class="custom-control-label" for="agrupLegajo" style="padding-top: 3px;"><span class="text-dark">Por Legajo</span></label>
+                    <div class="custom-control custom-switch custom-control-inline mt-2"
+                        data-titlet="Agrupar por Legajo">
+                        <input checked="" type="radio" class="custom-control-input" id="agrupLegajo" name="agrup"
+                            value="1">
+                        <label class="custom-control-label" for="agrupLegajo" style="padding-top: 3px;"><span
+                                class="text-dark">Por Legajo</span></label>
                     </div>
                     <!-- Por Estructura -->
-                    <div class="custom-control custom-switch custom-control-inline mt-2" data-titlet="Agrupar por Estructura">
+                    <div class="custom-control custom-switch custom-control-inline mt-2"
+                        data-titlet="Agrupar por Estructura">
                         <input type="radio" class="custom-control-input" id="agrupEstruct" name="agrup" value="2">
-                        <label class="custom-control-label" for="agrupEstruct" style="padding-top: 3px;"><span class="text-dark">Por Estructura</span></label>
+                        <label class="custom-control-label" for="agrupEstruct" style="padding-top: 3px;"><span
+                                class="text-dark">Por Estructura</span></label>
                     </div>
-                    <div class="border"><button class="btn btn-light btn-sm fontq px-3 btn-mobile h40 border-0 w150 text-dark" type="submit" id="btnExportar">Exportar</button></div>
+                    <div class="border"><button
+                            class="btn btn-light btn-sm fontq px-3 btn-mobile h40 border-0 w150 text-dark" type="submit"
+                            id="btnExportar">Exportar</button></div>
                 </div>
             </div>
         </div>
@@ -120,13 +127,14 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../../js/DateRanger.php";
+    require __DIR__ . "/../../js/DateRanger.php";
     ?>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../js/select2.min.js"></script>
     <script src="js/select-min.js?v=<?= vjs() ?>"></script>
     <script src="js/export-min.js?v=<?= vjs() ?>"></script>
 </body>
+
 </html>

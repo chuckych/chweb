@@ -1,17 +1,17 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 E_ALL();
 
-require __DIR__ . '../../../config/conect_mysql.php';
+require __DIR__ . '/../../config/conect_mysql.php';
 
 $fechaHora = date("Y-m-d H:i:s");
 
-$id_rol   = (test_input($_POST['id_rol']));
+$id_rol = (test_input($_POST['id_rol']));
 if ($id_rol) {
     $audCuenta = simple_pdoQuery("SELECT clientes.id 'id', roles.nombre as 'nombre_rol' FROM roles INNER JOIN clientes ON roles.cliente = clientes.id WHERE roles.id = $id_rol LIMIT 1");
 }
@@ -20,15 +20,15 @@ $audCuenta['id'] = $audCuenta['id'] ?? '';
 if (array_key_exists('lista', $_POST)) {
     if (!empty($_POST['lista'])) {
 
-        $_POST['check']     = $_POST['check'] ?? '';
-        $_POST['id_rol']    = $_POST['id_rol'] ?? '';
+        $_POST['check'] = $_POST['check'] ?? '';
+        $_POST['id_rol'] = $_POST['id_rol'] ?? '';
         $_POST['recid_rol'] = $_POST['recid_rol'] ?? '';
         // $count = count($_POST['check']);
-        $datos     = json_decode(test_input(($_POST['check'])));
-        $datos     = implode(',', ($datos));
+        $datos = json_decode(test_input(($_POST['check'])));
+        $datos = implode(',', ($datos));
         $recid_rol = (test_input($_POST['recid_rol']));
-        $id_rol    = (test_input($_POST['id_rol']));
-        $lista     = (test_input($_POST['lista']));
+        $id_rol = (test_input($_POST['id_rol']));
+        $lista = (test_input($_POST['lista']));
 
         $NombreLista = listaRol($lista);
         // $rLista = simple_pdoQuery("SELECT roles.id, roles.nombre FROM roles WHERE id = '$id_rol'");
@@ -69,16 +69,16 @@ if (array_key_exists('lista', $_POST)) {
 if (array_key_exists('listaRol', $_POST)) {
     if (!empty($_POST['listaRol'])) {
 
-        $_POST['check']     = $_POST['check'] ?? '';
-        $_POST['id_rol']    = $_POST['id_rol'] ?? '';
+        $_POST['check'] = $_POST['check'] ?? '';
+        $_POST['id_rol'] = $_POST['id_rol'] ?? '';
         $_POST['recid_rol'] = $_POST['recid_rol'] ?? '';
         // $count     = count($_POST['check']);
-        $arrDatos  = json_decode(test_input(($_POST['check'])));
-        $datos     = json_decode(test_input(($_POST['check'])));
-        $datos     = implode(',', ($datos));
+        $arrDatos = json_decode(test_input(($_POST['check'])));
+        $datos = json_decode(test_input(($_POST['check'])));
+        $datos = implode(',', ($datos));
         $recid_rol = (test_input($_POST['recid_rol']));
-        $id_rol    = (test_input($_POST['id_rol']));
-        $lista     = (test_input($_POST['listaRol']));
+        $id_rol = (test_input($_POST['id_rol']));
+        $lista = (test_input($_POST['listaRol']));
         $nRol = simple_pdoQuery("SELECT roles.nombre FROM roles WHERE id = '$id_rol'");
         $NombreLista = listaRol($lista);
 
@@ -98,7 +98,7 @@ if (array_key_exists('listaRol', $_POST)) {
             deleteRegistroMySql($delete);
         }
 
-        require __DIR__ . '../../../config/conect_mysql.php';
+        require __DIR__ . '/../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT id_rol, lista, datos FROM lista_roles WHERE id_rol = '$id_rol'");
         // print_r($query); exit;
         $data = array();
@@ -107,8 +107,8 @@ if (array_key_exists('listaRol', $_POST)) {
                 while ($row = mysqli_fetch_assoc($stmt)) {
                     $data[] = array(
                         'id_rol' => $row['id_rol'],
-                        'lista'  => $row['lista'],
-                        'datos'  => $row['datos']
+                        'lista' => $row['lista'],
+                        'datos' => $row['datos']
                     );
                 }
             }
@@ -121,8 +121,8 @@ if (array_key_exists('listaRol', $_POST)) {
                 foreach ($data as $key => $value) {
                     /** Recorremos el resultado del select de arriba para insertar los valores*/
                     $id_rol = $value['id_rol'];
-                    $lista  = $value['lista'];
-                    $datos  = $value['datos'];
+                    $lista = $value['lista'];
+                    $datos = $value['datos'];
 
                     $insert = "INSERT INTO lista_roles (id_rol, lista, datos, fecha) VALUES ('$valueDatos', '$lista', '$datos', '$fechaHora')";
                     InsertRegistroMySql($insert);

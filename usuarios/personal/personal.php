@@ -22,7 +22,7 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['cuentas'] ?> » Personal CH</title>
     <style>
         .dataTables_info {
@@ -47,16 +47,17 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <?=
-        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Importar Personal: ' . $Cliente_c['nombre'], '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'people-fill', 'Importar Personal: ' . $Cliente_c['nombre'], '25', 'text-white mr-2');
         ?>
         <div class="mt-1">
             <div class="row mt-3">
                 <?= notif_error_var('error', '<span class="fw5">Los campos legajo y Rol son obligatorios</span>') ?>
             </div>
-            <form action="<?= htmlspecialchars('crud.php?_c='.$_GET['_c'])?>" name="f1" id="f1" method="POST" class="w-100">
-            <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()"> -->
+            <form action="<?= htmlspecialchars('crud.php?_c=' . $_GET['_c']) ?>" name="f1" id="f1" method="POST"
+                class="w-100">
+                <!-- <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>?<?= $_SERVER['QUERY_STRING'] ?>" name="f1" id="f1" method="POST" class="w-100" onsubmit="ShowLoading()"> -->
                 <div class="row">
                     <div class="col-12 col-sm-9">
                         <div class="form-inline <?= dnone($rowcount) ?> mb-2">
@@ -64,16 +65,20 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
                             <select name="rol" id="rol" class="h40 form-control custom-select w250 SelecRol">
                             </select>
                             <input type="hidden" hidden id="_crecid" value="<?= ($_GET['_c']) ?>">
-                            <div class="mt-2 mt-sm-0 custom-control custom-switch custom-control-inline ml-2" id="DivLegaPass">
+                            <div class="mt-2 mt-sm-0 custom-control custom-switch custom-control-inline ml-2"
+                                id="DivLegaPass">
                                 <input id="LegaPass" class="custom-control-input" type="checkbox" name="LegaPass">
                                 <label for="LegaPass" class="custom-control-label" style="padding-top: 3px;">
-                                    <span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<span class='w150 fw5 text-dark'>Legajo como Usuario<br>DNI como Contraseña.<br>Si el DNI esta vacío, no se importará.</span>">Importar Legajo y DNI</span>
+                                    <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                        data-original-title="<span class='w150 fw5 text-dark'>Legajo como Usuario<br>DNI como Contraseña.<br>Si el DNI esta vacío, no se importará.</span>">Importar
+                                        Legajo y DNI</span>
                                 </label>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-sm-3">
-                        <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>" class="d-flex align-items-center btn fontq float-right opa7 btn-custom">
+                        <a href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_GET['_c'] ?>"
+                            class="d-flex align-items-center btn fontq float-right opa7 btn-custom">
                             <span class=""><i class="bi bi-people-fill mr-2"></i>Usuarios</span>
                         </a>
                     </div>
@@ -98,7 +103,9 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
                             </thead>
                         </table>
                         <div class="">
-                            <button type="submit" name="submit" class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile" value="Importar" id="submit"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
+                            <button type="submit" name="submit"
+                                class="px-4 btn btn-custom border fontq mt-2 <?= dnone($rowcount) ?>  btn-mobile"
+                                value="Importar" id="submit"><i class="bi-download font1 mr-2"></i>IMPORTAR</button>
                         </div>
                     </div>
                 </div>
@@ -107,8 +114,8 @@ $Cliente_c = simple_pdoQuery("SELECT clientes.recid as 'recid', clientes.ident a
     </div>
     <!-- fin container -->
     <?php
-    require __DIR__ . "../../../js/jquery.php";
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/jquery.php";
+    require __DIR__ . "/../../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS JQUERY */
     ?>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

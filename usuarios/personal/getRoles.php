@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
@@ -14,7 +14,7 @@ $q = $params['q'];
 $data = array();
 $where_condition = '';
 
-$params['_c']   = test_input($params['_c']);
+$params['_c'] = test_input($params['_c']);
 
 $where_condition .= (!empty($params['_c'])) ? " AND clientes.recid = '$params[_c]'" : "";
 
@@ -27,8 +27,8 @@ $r = array_pdoQuery($query);
 
 foreach ($r as $key => $row) {
     $data[] = array(
-        'id'    => $row['id'],
-        'text'  => $row['nombre'],
+        'id' => $row['id'],
+        'text' => $row['nombre'],
         // 'html'  => '<div style="color:green">'.$row['nombre'].'</div>'
     );
 }

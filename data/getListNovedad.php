@@ -1,8 +1,8 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 UnsetGet('q');
 E_ALL();
 
@@ -12,7 +12,7 @@ if ($ListaNov != "-") {
     $filtroNov = " AND NOVEDAD.NovCodi IN ($ListaNov)";
 }
 
-require_once __DIR__ . '../../config/conect_mssql.php';
+require_once __DIR__ . '/../config/conect_mssql.php';
 
 $params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

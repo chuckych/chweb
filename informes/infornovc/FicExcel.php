@@ -1,7 +1,7 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 header('Cache-Control: max-age=0');
 $datehis = date('YmdHis');
@@ -23,7 +23,7 @@ ExisteModRol($Modulo);
 
 E_ALL();
 
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -42,8 +42,8 @@ $spreadsheet = $documento->getActiveSheet();
 $data = ($_POST['datos']);
 $data = json_decode(($data), true);
 
-$Desde = $data['data'][0]['desde']; 
-$Hasta = $data['data'][0]['hasta']; 
+$Desde = $data['data'][0]['desde'];
+$Hasta = $data['data'][0]['hasta'];
 $Desde = str_replace("/", "-", $Desde);
 $Hasta = str_replace("/", "-", $Hasta);
 // print_r($Hasta);
@@ -76,7 +76,7 @@ $styleArray = [
         ],
     ],
 ];
-$titleHoja = 'Del '.$Desde.' al '.$Hasta;
+$titleHoja = 'Del ' . $Desde . ' al ' . $Hasta;
 $spreadsheet->setTitle($titleHoja);
 $spreadsheet->getStyle('A1:J1')->applyFromArray($styleArray);
 // $spreadsheet->getStyle('E:F')->applyFromArray($styleArray2);
@@ -110,11 +110,11 @@ $spreadsheet->getColumnDimension('B')->setWidth(27);
 /** La altura de una fila. Fila 1 de encabezados */
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
 
-$Letras = array("C","D");
+$Letras = array("C", "D");
 foreach ($Letras as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(11);
 }
-$Letras = array("E","F","G","H","I","J");
+$Letras = array("E", "F", "G", "H", "I", "J");
 foreach ($Letras as $col) {
     $spreadsheet->getColumnDimension($col)->setWidth(10);
 }
@@ -156,17 +156,17 @@ $numeroDeFila = 2;
 // print_r($data['data']); exit;
 foreach ($data['data'] as $r) {
     $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(19);
-    $legajo          = $r['legajo'];
-    $nombre          = $r['nombre'];
-    $desde           = $r['desde'];
-    $hasta           = $r['hasta'];
-    $_presentes      = $r['_presentes'];
-    $_ausentes       = $r['_ausentes'];
-    $_totaldias      = $r['_totaldias'];
-    $_convpres       = $r['_convpres'];
-    $_convaus        = $r['_convaus'];
-    $_convpres       = str_replace(",", ".", $_convpres);
-    $_convaus        = str_replace(",", ".", $_convaus);
+    $legajo = $r['legajo'];
+    $nombre = $r['nombre'];
+    $desde = $r['desde'];
+    $hasta = $r['hasta'];
+    $_presentes = $r['_presentes'];
+    $_ausentes = $r['_ausentes'];
+    $_totaldias = $r['_totaldias'];
+    $_convpres = $r['_convpres'];
+    $_convaus = $r['_convaus'];
+    $_convpres = str_replace(",", ".", $_convpres);
+    $_convaus = str_replace(",", ".", $_convaus);
     $_totalmesesconv = $r['_totalmesesconv'];
 
     # Escribirlos en el documento
@@ -182,7 +182,7 @@ foreach ($data['data'] as $r) {
     $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $_totalmesesconv);
     $numeroDeFila++;
 }
-$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE PRESENTISMO DESDE '.$desde.' A '.$hasta);
+$spreadsheet->getHeaderFooter()->setOddHeader('&L&BREPORTE DE PRESENTISMO DESDE ' . $desde . ' A ' . $hasta);
 
 # Crear un "escritor"
 try {
@@ -196,7 +196,7 @@ try {
     $writer->save('archivos/' . $NombreArchivo);
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'desde'=>$desde, 'hasta'=>$hasta , 'archivo' => 'archivos/' . $NombreArchivo);
+    $data = array('status' => 'ok', 'desde' => $desde, 'hasta' => $hasta, 'archivo' => 'archivos/' . $NombreArchivo);
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {

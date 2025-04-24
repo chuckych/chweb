@@ -1,14 +1,14 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
 
-require __DIR__ . '../../filtros/filtros.php';
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../filtros/filtros.php';
+require __DIR__ . '/../config/conect_mssql.php';
 E_ALL();
 
 $data = array();
@@ -26,7 +26,7 @@ if (isset($_POST['_f']) && !empty($_POST['_f'])) {
     exit;
 }
 
-require __DIR__ . '../valores.php';
+require __DIR__ . '/valores.php';
 
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

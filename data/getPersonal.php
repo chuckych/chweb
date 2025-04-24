@@ -3,8 +3,8 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "spanish");
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 UnsetGet('tk');
 UnsetGet('q');
 header("Content-Type: application/json");
@@ -56,8 +56,8 @@ $FicLega = (isset($_GET['_l'])) ? "AND PERSONAL.LegNume IN ($getFicLega)" : "";
 $token = token();
 $data = array();
 if ($_GET['tk'] == $token) {
-    require __DIR__ . '../../filtros/filtros.php';
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../filtros/filtros.php';
+    require __DIR__ . '/../config/conect_mssql.php';
     $q = $_GET['q'];
 
     // $hoy=date("Ymd",strtotime(hoy()."- 0 day"))

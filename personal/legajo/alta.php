@@ -4,7 +4,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <style>
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             line-height: 20px;
@@ -28,7 +28,7 @@
 <body class="animate__animated  animate__fadeIn" <?= $CalcEdad ?>>
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-fich', 'white', 'usuarios.png', 'Legajo: ' . $_GET['_leg'] . ' &#8250; ' . $pers['LegApNo'], '') ?>
         <!-- Fin Encabezado -->
@@ -41,13 +41,27 @@
                 <div class="col-12 p-3">
                     <nav class="fontq">
                         <div class="nav nav-tabs bg-light" id="nav-tab" role="tablist">
-                            <a class="p-3 nav-item nav-link active text-secondary" id="home-tab" data-toggle="tab" href="#datos" role="tab" aria-controls="datos" aria-selected="true"><span class="text-tab">Datos Personales</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="empresa-tab" data-toggle="tab" href="#empresa" role="tab" aria-controls="empresa" aria-selected="true"><span class="text-tab">Empresa</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="liquid-tab" data-toggle="tab" href="#liquid" role="tab" aria-controls="liquid" aria-selected="true"><span class="text-tab">Liquidación</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="control-tab" data-toggle="tab" href="#control" role="tab" aria-controls="control" aria-selected="true"><span class="text-tab">Control y Procesos</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="horarios-tab" data-toggle="tab" href="#horarios" role="tab" aria-controls="horarios" aria-selected="true"><span class="text-tab">Horarios</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="identifica-tab" data-toggle="tab" href="#identifica" role="tab" aria-controls="identifica" aria-selected="true"><span class="text-tab">Identificadores</span></a>
-                            <a class="p-3 nav-item nav-link text-secondary" id="dispositivo-tab" data-toggle="tab" href="#dispositivo" role="tab" aria-controls="dispositivo" aria-selected="true"><span class="text-tab">Dispositivo</span></a>
+                            <a class="p-3 nav-item nav-link active text-secondary" id="home-tab" data-toggle="tab"
+                                href="#datos" role="tab" aria-controls="datos" aria-selected="true"><span
+                                    class="text-tab">Datos Personales</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="empresa-tab" data-toggle="tab"
+                                href="#empresa" role="tab" aria-controls="empresa" aria-selected="true"><span
+                                    class="text-tab">Empresa</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="liquid-tab" data-toggle="tab"
+                                href="#liquid" role="tab" aria-controls="liquid" aria-selected="true"><span
+                                    class="text-tab">Liquidación</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="control-tab" data-toggle="tab"
+                                href="#control" role="tab" aria-controls="control" aria-selected="true"><span
+                                    class="text-tab">Control y Procesos</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="horarios-tab" data-toggle="tab"
+                                href="#horarios" role="tab" aria-controls="horarios" aria-selected="true"><span
+                                    class="text-tab">Horarios</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="identifica-tab" data-toggle="tab"
+                                href="#identifica" role="tab" aria-controls="identifica" aria-selected="true"><span
+                                    class="text-tab">Identificadores</span></a>
+                            <a class="p-3 nav-item nav-link text-secondary" id="dispositivo-tab" data-toggle="tab"
+                                href="#dispositivo" role="tab" aria-controls="dispositivo" aria-selected="true"><span
+                                    class="text-tab">Dispositivo</span></a>
                         </div>
                     </nav>
                     <div class="tab-content" id="nav-tabContent">
@@ -61,7 +75,8 @@
                     </div>
                 </div>
                 <div class="col-12 d-flex justify-content-end pb-2 align-items-center">
-                    <a href="../" class="px-3 btn btn-sm fontq btn-outline-custom border mr-2 p-2"><span class="">Salir</span></a>
+                    <a href="../" class="px-3 btn btn-sm fontq btn-outline-custom border mr-2 p-2"><span
+                            class="">Salir</span></a>
                     <button type="submit" class="p-2 px-3 btn btn-sm fontq btn-custom" id="btnGuardar">Guardar</button>
                 </div>
                 <div id="alerta_UpdateLega" class="fontq text-right d-none mt-2 col-12">
@@ -91,10 +106,10 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/jquery.php";
+    require __DIR__ . "/../../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../../js/DateRanger.php";
+    require __DIR__ . "/../../js/DateRanger.php";
     ?>
     <script>
         const NUMERO_LEGAJO = '<?= $_GET['_leg'] ?>';
@@ -115,12 +130,12 @@
     <script src="js/mascaras.js?v=<?= version_file("/personal/legajo/js/mascaras.js") ?>"></script>
     <script src="js/calculaEdad.js?v=<?= version_file("/personal/legajo/js/calculaEdad.js") ?>"></script>
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $('.select2').select2({
                 minimumResultsForSearch: -1
             });
 
-            $("#LegFeNa").change(function() {
+            $("#LegFeNa").change(function () {
                 calcularEdad();
             });
         });
@@ -143,26 +158,26 @@
                 maximumInputLength: 10,
                 selectOnClose: 0,
                 language: {
-                    noResults: function() {
+                    noResults: function () {
                         return 'No hay resultados..'
                     },
-                    inputTooLong: function(args) {
+                    inputTooLong: function (args) {
                         var message = 'Máximo 10 caracteres. Elimine ' + overChars + ' caracter';
                         if (overChars != 1) {
                             message += 'es'
                         }
                         return message
                     },
-                    searching: function() {
+                    searching: function () {
                         return 'Buscando..'
                     },
-                    errorLoading: function() {
+                    errorLoading: function () {
                         return 'Sin datos..'
                     },
-                    inputTooShort: function() {
+                    inputTooShort: function () {
                         return 'Ingresar 0 o mas caracteres'
                     },
-                    maximumSelected: function() {
+                    maximumSelected: function () {
                         return 'Puede seleccionar solo una opción'
                     }
                 },
@@ -171,7 +186,7 @@
                     dataType: "json",
                     type: "GET",
                     delay: 250,
-                    data: function(params) {
+                    data: function (params) {
                         return {
                             q: params.term,
                             _c: $("#_c").val(),
@@ -179,7 +194,7 @@
                             sect: $("#LegSect").val() || '',
                         }
                     },
-                    processResults: function(data) {
+                    processResults: function (data) {
                         return {
                             results: data
                         }
@@ -214,12 +229,12 @@
         }
         ?>
         /** Select Naciones */
-        $(document).ready(function() {
+        $(document).ready(function () {
             selectEstruct(".selectjs_naciones", "getNaciones.php");
             selectEstruct(".selectjs_provincias", "getProvincias.php");
             selectEstruct(".selectjs_localidad", "getLocalidad.php");
         });
-        $('.selectjs_sectores').on('select2:select', function(e) {
+        $('.selectjs_sectores').on('select2:select', function (e) {
             $("#select_seccion").removeClass("d-none");
             $("#trash_sect").removeClass("d-none");
             $('.selectjs_secciones').val(null).trigger('change');
@@ -230,11 +245,11 @@
             $("#SectorHelpBlock").html('Sector: ' + nombresector);
         });
 
-        $('.selectjs_secciones').on('select2:select', function(e) {
+        $('.selectjs_secciones').on('select2:select', function (e) {
             $("#trash_secc").removeClass("d-none");
         });
 
-        $('#empresa-tab').on('show.bs.tab', function(e) {
+        $('#empresa-tab').on('show.bs.tab', function (e) {
             selectEstruct(".selectjs_empresas", "getEmpresas.php");
             selectEstruct(".selectjs_provinciasEmp", "getProvincias.php?");
             selectEstruct(".selectjs_localidadEmp", "getLocalidad.php?");

@@ -1,5 +1,5 @@
 <?php
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 secure_auth_ch();
-header("Location:/".HOMEHOST."/ctacte/horas/");
+header("Location:/" . HOMEHOST . "/ctacte/horas/");

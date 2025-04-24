@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title><?= MODULOS['cierres'] ?></title>
     <style>
 
@@ -14,7 +14,7 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-custom', 'white', 'task.png', MODULOS['cierres'], '') ?>
         <!-- Fin Encabezado -->
@@ -34,7 +34,8 @@
                                     }
                                     ?>
                                 </select>
-                                <button type="button" class="fontq btn btn-link text-decoration-none text-secondary" id="trash_all">Limpiar Filtro</button>
+                                <button type="button" class="fontq btn btn-link text-decoration-none text-secondary"
+                                    id="trash_all">Limpiar Filtro</button>
                             </div>
                         </div>
                         <div class="col-12 mt-3">
@@ -94,9 +95,12 @@
                             </div>
                             <div class="form-inline mt-3">
                                 <!-- Eliminar Cierres -->
-                                <div class="custom-control custom-switch" data-toggle="tooltip" id="switch" data-placement="right" data-html="true" title="<span class''>AL ACTIVAR ESTA OPCION, SE QUITARAN LOS CIERRES DE LOS LEGAJOS SELECCIONADOS</span>">
+                                <div class="custom-control custom-switch" data-toggle="tooltip" id="switch"
+                                    data-placement="right" data-html="true"
+                                    title="<span class''>AL ACTIVAR ESTA OPCION, SE QUITARAN LOS CIERRES DE LOS LEGAJOS SELECCIONADOS</span>">
                                     <input type="checkbox" class="custom-control-input" id="EliminaCierre" name="Quita">
-                                    <label class="custom-control-label" style="padding-top: 2px;" for="EliminaCierre">Quitar Cierres</label>
+                                    <label class="custom-control-label" style="padding-top: 2px;"
+                                        for="EliminaCierre">Quitar Cierres</label>
                                 </div>
                             </div>
 
@@ -115,7 +119,8 @@
                             <tr>
                                 <th>
                                     <div class="custom-control custom-checkbox">
-                                        <input class="custom-control-input" name="select_all" value="1" id="Personal-select-all" type="checkbox">
+                                        <input class="custom-control-input" name="select_all" value="1"
+                                            id="Personal-select-all" type="checkbox">
                                         <label class="custom-control-label" for="Personal-select-all"></label>
                                     </div>
                                 </th>
@@ -142,10 +147,10 @@
     </div>
     <!-- fin container -->
     <?php
-    require __DIR__ . "../../js/jquery.php";
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/jquery.php";
+    require __DIR__ . "/../js/DataTable.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../js/DateRanger.php";
+    require __DIR__ . "/../js/DateRanger.php";
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header("Content-Type: application/json");
 ultimoacc();

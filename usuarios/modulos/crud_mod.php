@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
@@ -30,7 +30,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
     function DeleteModRol($recidRol, $TipoMod)
     {
-        require __DIR__ . '../../../config/conect_mysql.php';
+        require __DIR__ . '/../../config/conect_mysql.php';
         $Query = "DELETE mod_roles FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
         if (mysqli_query($link, $Query)) {
             /** Hacemos el delete de todos los modulos del tipo */
@@ -49,16 +49,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             return false;
         }
     }
-    
-    $Modulo   = ($_POST['amod']);
-    $TipoMod  = test_input($_POST['TipoMod']);
+
+    $Modulo = ($_POST['amod']);
+    $TipoMod = test_input($_POST['TipoMod']);
     $recidRol = test_input($_POST['recidRol']);
-    $IdRol    = test_input($_POST['IdRol']);
-    $Fecha    = date("Y-m-d H:i:s");
+    $IdRol = test_input($_POST['IdRol']);
+    $Fecha = date("Y-m-d H:i:s");
 
     $audCuenta = simple_pdoQuery("SELECT clientes.id as 'id', clientes.nombre 'nombre', roles.nombre as 'nombre_rol' FROM roles INNER JOIN clientes on roles.cliente = clientes.id WHERE roles.id = $IdRol LIMIT 1");
 
-    $obj_modulos=array_pdoQuery("SELECT modulos.id AS 'id_modulo', modulos.nombre AS 'nombre_modulo', tipo_modulo.descripcion AS 'tipo_modulo', modulos.idtipo as 'idtipo' FROM modulos INNER JOIN tipo_modulo ON modulos.idtipo=tipo_modulo.id WHERE modulos.idtipo=$TipoMod");
+    $obj_modulos = array_pdoQuery("SELECT modulos.id AS 'id_modulo', modulos.nombre AS 'nombre_modulo', tipo_modulo.descripcion AS 'tipo_modulo', modulos.idtipo as 'idtipo' FROM modulos INNER JOIN tipo_modulo ON modulos.idtipo=tipo_modulo.id WHERE modulos.idtipo=$TipoMod");
 
     $Query = "SELECT * FROM mod_roles LEFT JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol = '$recidRol' AND modulos.idtipo = '$TipoMod'";
     /** Hacemos Select para ver si existen modulos del tipo */

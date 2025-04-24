@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 ultimoacc();
 secure_auth_ch_json();
@@ -27,11 +27,11 @@ $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : 
 $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
 
 $data = array(
-    'aniomax'   => $aniomax,
-    'aniomin'   => $aniomin,
-    'max'       => $max,
+    'aniomax' => $aniomax,
+    'aniomin' => $aniomin,
+    'max' => $max,
     'maxFormat' => $maxFormat,
-    'min'       => $min,
+    'min' => $min,
     'minFormat' => $minFormat,
 );
 

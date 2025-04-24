@@ -17,7 +17,7 @@ $Modulo = '45';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;

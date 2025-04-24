@@ -2,10 +2,10 @@
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 // session_start();
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 
-$url   = host() . "/" . HOMEHOST . "/data/GetEstructuraSeccion.php?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r']."&e=" . $_GET['e']."&act&q=".$_GET['q'];
+$url = host() . "/" . HOMEHOST . "/data/GetEstructuraSeccion.php?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'] . "&act&q=" . $_GET['q'];
 // echo $url;
 
 // $json  = file_get_contents($url);
@@ -13,14 +13,14 @@ $url   = host() . "/" . HOMEHOST . "/data/GetEstructuraSeccion.php?tk=" . token(
 $array = json_decode(getRemoteFile($url), true);
 $datos = $array[0][$_GET['e']];
 
-if(isset($_GET['q'])){
+if (isset($_GET['q'])) {
     $q = $_GET['q'];
-foreach ($datos as $key => $value) {
-    $data[]= array(
-        'id'   => $value['cod'],
-        'text' => $value['desc'],
-    );
-}
+    foreach ($datos as $key => $value) {
+        $data[] = array(
+            'id' => $value['cod'],
+            'text' => $value['desc'],
+        );
+    }
 }
 
 echo json_encode($data);

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -21,11 +21,11 @@ if ($method == 'DELETE') {
 
 $wc = '';
 $dp = ($request->query); // dataPayload
-$start  = start();
-$length  = length();
+$start = start();
+$length = length();
 
-$dp['Lega']  = ($dp['Lega']) ?? [];
-$dp['Lega']  = vp($dp['Lega'], 'Lega', 'intArrayM0', 11);
+$dp['Lega'] = ($dp['Lega']) ?? [];
+$dp['Lega'] = vp($dp['Lega'], 'Lega', 'intArrayM0', 11);
 
 $dp['Caus'] = $dp['Caus'] ?? '';
 $dp['Caus'] = vp($dp['Caus'], 'Caus', 'str', 30);
@@ -74,7 +74,7 @@ $wc .= ($dp['FeIn']) ? " AND PERINEG.InEgFeIn = '$dp[FeIn]'" : '';
 $wc .= ($dp['FeEg']) ? " AND PERINEG.InEgFeEg = '$dp[FeEg]'" : '';
 $wc .= ($dp['Caus']) ? " AND PERINEG.InEgCaus LIKE '%$dp[Caus]%'" : '';
 
-$query="SELECT * FROM PERINEG WHERE PERINEG.InEgLega > 0";
+$query = "SELECT * FROM PERINEG WHERE PERINEG.InEgLega > 0";
 $queryCount = "SELECT count(1) as 'count' FROM PERINEG WHERE PERINEG.InEgLega > 0";
 
 if ($wc) {
@@ -90,16 +90,16 @@ $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 $stmt = $dbApiQuery($query) ?? '';
 $_1753 = '1753-01-01 00:00:00.000';
 
-foreach ($stmt  as $key => $v) {
+foreach ($stmt as $key => $v) {
 
-    $EdadStr = ($v['InEgFeEg'] != $_1753) ? calculaEdadStr(fechFormat($v['InEgFeIn'], 'Y-m-d'), fechFormat($v['InEgFeEg'], 'Y-m-d')): '';
+    $EdadStr = ($v['InEgFeEg'] != $_1753) ? calculaEdadStr(fechFormat($v['InEgFeIn'], 'Y-m-d'), fechFormat($v['InEgFeEg'], 'Y-m-d')) : '';
 
     $data[] = array(
-        "Lega"      => $v['InEgLega'],
-        "FeIn"      => fechFormat($v['InEgFeIn'], 'Y-m-d'),
-        "FeEg"      => ($v['InEgFeEg'] == '1753-01-01 00:00:00.000') ? '': fechFormat($v['InEgFeEg']),
-        "Caus"      => $v['InEgCaus'],
-        "Diff"      => $EdadStr,
+        "Lega" => $v['InEgLega'],
+        "FeIn" => fechFormat($v['InEgFeIn'], 'Y-m-d'),
+        "FeEg" => ($v['InEgFeEg'] == '1753-01-01 00:00:00.000') ? '' : fechFormat($v['InEgFeEg']),
+        "Caus" => $v['InEgCaus'],
+        "Diff" => $EdadStr,
         "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s')
     );
 }
@@ -109,7 +109,7 @@ if (empty($data)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

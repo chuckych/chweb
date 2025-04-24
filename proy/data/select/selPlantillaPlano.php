@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -29,11 +29,11 @@ foreach ($r as $key => $row) {
     $text = utf8str($row['PlantDesc']);
     $planosTotal = ($planos != [""]) ? count($planos) : 0;
     $data[] = array(
-        'id'     => $row['PlantID'],
-        'text'   => $text,
+        'id' => $row['PlantID'],
+        'text' => $text,
         'planos' => $planos,
         'planosTotal' => $planosTotal,
-        'html'  => "<div class='flex-center-between' title='Planos: $planosTotal'><span>$text</span><span class='ms-2 badge bg-azure-lt'>$planosTotal</span></div>"
+        'html' => "<div class='flex-center-between' title='Planos: $planosTotal'><span>$text</span><span class='ms-2 badge bg-azure-lt'>$planosTotal</span></div>"
     );
 }
 echo json_encode($data);

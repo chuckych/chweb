@@ -1,20 +1,20 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
 
-require __DIR__ . '../../valores.php';
+require __DIR__ . '/../valores.php';
 
-require __DIR__ . '../../../filtros/filtros.php';
-require __DIR__ . '../../../config/conect_mssql.php';
+require __DIR__ . '/../../filtros/filtros.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 
-$FiltroQ  = (!empty($q)) ? "AND CONCAT(FICHAS2.FicONov, OTRASNOV.ONovDesc) LIKE '%$q%'":'';
+$FiltroQ = (!empty($q)) ? "AND CONCAT(FICHAS2.FicONov, OTRASNOV.ONovDesc) LIKE '%$q%'" : '';
 
- $query="SELECT FICHAS2.FicONov AS 'id',
+$query = "SELECT FICHAS2.FicONov AS 'id',
  OTRASNOV.ONovDesc AS 'text'
 FROM FICHAS2
  INNER JOIN OTRASNOV ON FICHAS2.FicONov = OTRASNOV.ONovCodi
@@ -27,22 +27,22 @@ ORDER BY FICHAS2.FicONov";
 
 // print_r($query); exit;
 
-$params  = array();
+$params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 
-$result  = sqlsrv_query($link, $query, $params, $options);
-$data    = array();
+$result = sqlsrv_query($link, $query, $params, $options);
+$data = array();
 
 if (sqlsrv_num_rows($result) > 0) {
-    while ($row = sqlsrv_fetch_array($result)) :
+    while ($row = sqlsrv_fetch_array($result)):
 
-        $id   = $row['id'];
+        $id = $row['id'];
         $text = $row['text'];
 
         $data[] = array(
-            'id'    => $id,
-            'text'  => $text,
-            'title' => $id.' - '.$text,
+            'id' => $id,
+            'text' => $text,
+            'title' => $id . ' - ' . $text,
         );
     endwhile;
 }

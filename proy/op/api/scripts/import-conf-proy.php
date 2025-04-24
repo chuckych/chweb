@@ -1,9 +1,9 @@
 <?php
-require __DIR__ . '../../../../../config/function.php';
-require __DIR__ . '../../../../../config/conect_pdo.php';
+require __DIR__ . '/../../../../config/function.php';
+require __DIR__ . '/../../../../config/conect_pdo.php';
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 require __DIR__ . '/funciones-import.php';
-$dirname = __DIR__ . '../../archivos/logs';
+$dirname = __DIR__ . '/../archivos/logs';
 try {
 
     /**
@@ -30,7 +30,7 @@ try {
      * | (0) Eliminar archivos de logs antiguos                        |    
      * +---------------------------------------------------------------+
      */
-    deleteOldLogs(2, __DIR__ . '../../archivos/logs');
+    deleteOldLogs(2, __DIR__ . '/../archivos/logs');
     /**
      * +---------------------------------------------------------------+
      * | (1) Importar configuración de proyectos desde archivo .json   |
@@ -40,7 +40,7 @@ try {
      * +---------------------------------------------------------------+
      */
     logger('Inicio de importación de configuración de proyectos');
-    $pathArchivo = __DIR__ . '../../archivos/conf-import-proy.json';
+    $pathArchivo = __DIR__ . '/../archivos/conf-import-proy.json';
 
     if (!file_exists($pathArchivo)) {
         throw new Exception("No existe el archivo", 400);

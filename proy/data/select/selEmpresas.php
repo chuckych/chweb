@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -21,7 +21,8 @@ $query .= $where_condition;
 $query .= ' ORDER BY proy_empresas.EmpDesc';
 $r = array_pdoQuery($query);
 
-function html($EmpDesc, $EmpTel){
+function html($EmpDesc, $EmpTel)
+{
     $a = "
     <div title='$EmpTel' class='form-selectgroup-label bg-azure text-white' style='border-radius:0px; border:1px solid #ddd;'>
         $EmpDesc
@@ -32,9 +33,9 @@ function html($EmpDesc, $EmpTel){
 
 foreach ($r as $key => $row) {
     $data[] = array(
-        'id'    => $row['EmpID'],
-        'text'  => utf8str($row['EmpDesc']),
-        'html'  => html($row['EmpDesc'], $row['EmpTel'])
+        'id' => $row['EmpID'],
+        'text' => utf8str($row['EmpDesc']),
+        'html' => html($row['EmpDesc'], $row['EmpTel'])
     );
 }
 

@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
@@ -40,7 +40,7 @@ $_POST['EmpCodi'] = $_POST['EmpCodi'] ?? '';
 
 /** ALTA NACIONES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -124,7 +124,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
 }
 /** ALTA PROVINCIAS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta_provincia')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -207,7 +207,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
 }
 /** ALTA LOCALIDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta_localidad')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -291,7 +291,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
 }
 /** ALTA PLANTA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
     $systemVersion = intval($systemVersion[1]) ?? '';
@@ -412,7 +412,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
 }
 /** ALTA EMPRESAS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -515,7 +515,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
 }
 /** ALTA SECTOR */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -626,7 +626,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
 }
 /** ALTA SECCION */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -723,7 +723,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
 }
 /** ALTA GRUPOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -807,7 +807,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
 }
 /** ALTA SUCURSALES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -891,7 +891,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
 }
 /** ALTA TAREAS DE PRODUCCIÓN */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -977,7 +977,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
 }
 /** ALTA CONVENIOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_convenio')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1068,7 +1068,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
 }
 /** UPDATE CONVENIOS */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_convenio')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1159,7 +1159,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
 }
 /** ALTAS DIAS VACACIONES CONVENIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-diasvac')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
     if (valida_campo($_POST['cod-diasvac'])) {
@@ -1236,7 +1236,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
 }
 /** BAJAS DIAS VACACIONES CONVENIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1290,7 +1290,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true'))
 }
 /** ALTAS FERIADOS CONVENIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-feriConv')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
     if (valida_campo($_POST['CFConv']) || valida_campo($_POST['CFFech']) || valida_campo($_POST['CFDesc'])) {
@@ -1392,7 +1392,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
 }
 /** BAJAS DIAS FERIADOS CONVENIO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1495,7 +1495,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
 
 
 
-    // require_once __DIR__ . '../../../config/conect_mssql.php';
+    // require_once __DIR__ . '/../../config/conect_mssql.php';
     // if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
     //     $data = array('status' => 'requeridos');
     //     echo json_encode($data);
@@ -1725,7 +1725,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
 
     exit;
 
-    // require_once __DIR__ . '../../../config/conect_mssql.php';
+    // require_once __DIR__ . '/../../config/conect_mssql.php';
 
     // $params  = array();
     // $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1773,7 +1773,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
 }
 /** ALTAS PREMIOS PERSONAL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
     $_POST['LPreCodi'] = $_POST['LPreCodi'] ?? '';
@@ -1845,7 +1845,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
 }
 /** BAJAS PREMIOS PERSONAL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1893,7 +1893,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
 }
 /** ALTAS OTROS CONCEPTOS LEGAJO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONLEG')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     $_POST['OTROConCodi'] = $_POST['OTROConCodi'] ?? '';
     if (valida_campo($_POST['OTROConCodi'])) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
@@ -1965,7 +1965,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
 
 /** BAJAS OTROS CON LEG */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2014,7 +2014,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
 
 /** ALTAS PERSONAL HORARIO ALTERNATIVO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     $_POST['LegHoAl'] = $_POST['LegHoAl'] ?? '';
     if (valida_campo($_POST['LegHoAl'])) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
@@ -2084,7 +2084,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
 
 /** BAJAS PERSONAL HORARIO ALTERNATIVO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2136,7 +2136,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
     $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
     $systemVersion = intval($systemVersion[1]) ?? '';
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     if (valida_campo($_POST['IDCodigo'])) {
         $data = ['status' => 'cod_requerido', 'dato' => 'Identificador requerido.'];
@@ -2624,7 +2624,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
 
 /** BAJAS IDENTIFICA */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2672,7 +2672,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
 
 /** UPDATE GRUPO CAPTURADORES */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -2716,7 +2716,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
 
 /** ALTAS PERRELO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     if (valida_campo($_POST['ReloMarca']) or valida_campo($_POST['RelFech']) or valida_campo($_POST['RelFech2'])) {
         $data = array('status' => 'cod_requerido', 'dato' => 'Datos requeridos.');
@@ -2802,7 +2802,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
 
 /** BAJAS PERRELO */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) {
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

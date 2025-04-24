@@ -1,13 +1,13 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require_once __DIR__ . '../../config/index.php';
+require_once __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
 $data = [];
-require __DIR__ . '../../config/conect_mysql.php';
+require __DIR__ . '/../config/conect_mysql.php';
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;

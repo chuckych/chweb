@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -44,24 +44,24 @@ $wc = '';
 
 $dp = $request->data;
 
-$start  = start();
+$start = start();
 $length = length();
 
-$dp->Codi  = ($dp->Codi) ?? [];
-$dp->Codi  = vp($dp->Codi, 'Codi', 'intArrayM0', 11);
+$dp->Codi = ($dp->Codi) ?? [];
+$dp->Codi = vp($dp->Codi, 'Codi', 'intArrayM0', 11);
 
-$dp->ID  = ($dp->ID) ?? [];
-$dp->ID  = vp($dp->ID, 'ID', 'strArray', 3);
+$dp->ID = ($dp->ID) ?? [];
+$dp->ID = vp($dp->ID, 'ID', 'strArray', 3);
 
 $dp->Desc = $dp->Desc ?? '';
 $dp->Desc = vp($dp->Desc, 'Desc', 'str', 40);
 
 $arrDPHorarios = array(
     'Codi' => $dp->Codi, // Codigo de Horario {int} {array}
-    'ID'   => $dp->ID, // ID de Horario {int} {array}
+    'ID' => $dp->ID, // ID de Horario {int} {array}
 );
 $arrDPSTR = array(
-    'Desc'  => $dp->Desc, // Descripcion de Horario {string}
+    'Desc' => $dp->Desc, // Descripcion de Horario {string}
 );
 
 foreach ($arrDPHorarios as $key => $Horarios) {
@@ -152,16 +152,16 @@ function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
             break;
     }
     return [
-        "Laboral"   => $tipoStr,
+        "Laboral" => $tipoStr,
         "LaboralID" => intval($tipo),
-        "Desde"     => $de,
-        "Hasta"     => $Ha,
-        "Descanso"  => $Des,
-        "Limite"    => intval($li),
-        "Horas"     => $Ho,
+        "Desde" => $de,
+        "Hasta" => $Ha,
+        "Descanso" => $Des,
+        "Limite" => intval($li),
+        "Horas" => $Ho,
     ];
 }
-foreach ($stmt  as $key => $v) {
+foreach ($stmt as $key => $v) {
     $backgroundColorRgb = intToRgb($v['HorColor']);
     $textColor = getTextColor($v['HorColor']);
 
@@ -175,21 +175,21 @@ foreach ($stmt  as $key => $v) {
     $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
 
     $data[] = array(
-        "Codi"      => $v['HorCodi'],
-        "Desc"      => $v['HorDesc'],
-        "ID"        => $v['HorID'],
-        "ColorInt"  => floatval($v['HorColor']),
-        "Color"     => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
+        "Codi" => $v['HorCodi'],
+        "Desc" => $v['HorDesc'],
+        "ID" => $v['HorID'],
+        "ColorInt" => floatval($v['HorColor']),
+        "Color" => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
         "ColorText" => $textColor,
         "FechaHora" => fecha($v['FechaHora'], 'Y-m-d H:i:s'),
-        "Lunes"     => $HorLun,
-        "Martes"    => $HorMar,
+        "Lunes" => $HorLun,
+        "Martes" => $HorMar,
         "Miércoles" => $HorMie,
-        "Jueves"    => $HorJue,
-        "Viernes"   => $HorVie,
-        "Sábado"    => $HorSab,
-        "Domingo"   => $HorDom,
-        "Feriado"   => $HorFer,
+        "Jueves" => $HorJue,
+        "Viernes" => $HorVie,
+        "Sábado" => $HorSab,
+        "Domingo" => $HorDom,
+        "Feriado" => $HorFer,
     );
 }
 
@@ -198,7 +198,7 @@ if (empty($stmt)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

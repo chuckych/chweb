@@ -1,10 +1,10 @@
 <?php
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 UnsetGet('q');
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 $q = $_GET['q'];
 $query = "SELECT EMPRESAS.EmpRazon, EMPRESAS.EmpCodi FROM EMPRESAS WHERE EMPRESAS.EmpRazon LIKE '%$q%'";
 // print_r($query);exit;

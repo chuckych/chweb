@@ -1,7 +1,7 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
+require __DIR__ . '/../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 require __DIR__ . '/fn_app-data.php';
 
 ultimoacc();
@@ -601,7 +601,7 @@ Flight::route('/fechas/fichas', function () {
     Flight::json($arrayData ?? array());
 });
 Flight::route('POST /get_personal_horarios', function () {
-    require __DIR__ . '../../op/horarios/getPersonal.php';
+    require __DIR__ . '/../op/horarios/getPersonal.php';
     $horarioLegajos = get_horario_actual($arrLegajos) ?? [];
     // $dataPersonal = ($json_data['data']) ?? [];
     if ($horarioLegajos) {
@@ -1127,7 +1127,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                 }
                 if ($tipo == 'xls') {
                     require __DIR__ . '/fn_spreadsheet.php';
-                    include __DIR__ . '../../informes/custom/prysmian/xls.php';
+                    include __DIR__ . '/../informes/custom/prysmian/xls.php';
                 }
                 break;
             case '2':
@@ -1323,7 +1323,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                         $Datos['Data'] = $legajosColumn;
                         $colsExcel = colsExcel();
                         require __DIR__ . '/fn_spreadsheet.php';
-                        include __DIR__ . '../../informes/custom/prysmian/xls2.php';
+                        include __DIR__ . '/../informes/custom/prysmian/xls2.php';
                     }
 
                 } catch (\Throwable $th) {

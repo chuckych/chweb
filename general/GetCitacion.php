@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 180); //180 seconds = 3 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -13,7 +13,7 @@ $Datos = explode('-', $_GET['Datos']);
 $Fecha = test_input($Datos[1]);
 $Legajo = test_input($Datos[0]);
 $data = array();
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 $param = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 /** CITACION */

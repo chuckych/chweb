@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['page'] == 'sidebar')) {
     session_start();

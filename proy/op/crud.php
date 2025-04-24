@@ -1,7 +1,7 @@
 <?php
 session_start(); // Inicia la sesión
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -618,7 +618,7 @@ if ($_POST['EmpSubmit'] == 'alta') {
     $xlsData = json_decode($tareasPendientes, true); // Lo decodificamos en un array
     $xlsData = $xlsData['data']; // Obtenemos el array de tareas pendientes
 
-    require __DIR__ . './tarToXls.php';
+    require __DIR__ . '/tarToXls.php';
 
     echo PrintRespuestaJson('ok', $routeFile);
     auditoria("Proyectos - Tareas: Se exporto excel", 'A', '', '37');

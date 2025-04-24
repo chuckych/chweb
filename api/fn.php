@@ -12,7 +12,7 @@ header('Access-Control-Allow-Origin: *');
 $time_start = timeStart(); // Inicio
 $pathLog = __DIR__ . '/logs/'; // path de Logs Api
 cleanFile($pathLog, 1, '.log'); // Elimina logs de los últimos 7 días.
-$iniData = (getIni(__DIR__ . '../../mobileApikey.php'));
+$iniData = (getIni(__DIR__ . '/../mobileApikey.php'));
 header('WWW-Authenticate: Basic');
 $_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
 $dataC = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
@@ -331,7 +331,7 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
-    require __DIR__ . './connectDBPDO.php';
+    require __DIR__ . '/connectDBPDO.php';
     try {
         $resultSet = array();
         $stmt = $conn->query($query);
@@ -356,7 +356,7 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
         (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
-    require __DIR__ . './connectDBPDO.php';
+    require __DIR__ . '/connectDBPDO.php';
     try {
         $resultSet = array();
         $stmt = $conn->query($query);
@@ -384,7 +384,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
         (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
-    require __DIR__ . './connectDBPDO.php';
+    require __DIR__ . '/connectDBPDO.php';
     try {
 
         $stmt = sqlsrv_prepare($conn, $query, $procedure_params);

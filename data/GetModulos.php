@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 ultimoacc();
 // secure_auth_ch();
 header("Content-Type: application/json");
@@ -22,7 +22,7 @@ $recidRol = (isset($_GET['recidRol'])) ? "AND modulos.id NOT IN (SELECT mod_role
 
 if ($_GET['tk'] == $token) {
     if (isset($_GET['tk']) && ($_GET['tk'] == $token)) {
-        require __DIR__ . '../../config/conect_mysql.php';
+        require __DIR__ . '/../config/conect_mysql.php';
         $query = "SELECT modulos.id AS 'id', modulos.recid AS 'recid', modulos.nombre AS 'nombre', modulos.idtipo as 'tipo'
         FROM modulos 
         WHERE modulos.id>'0' $recid $recidRol $idtipo AND modulos.estado ='0'

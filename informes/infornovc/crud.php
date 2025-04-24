@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -10,21 +10,21 @@ E_ALL();
 /** ALTA DE PARAMS AUSENTES, PRESENTES, FRANCOS Y FERIADOS*/
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
     // sleep(1);
-    $Franco    = test_input($_POST['Franco']);
-    $Feriados  = test_input($_POST['Feriados']);
+    $Franco = test_input($_POST['Franco']);
+    $Feriados = test_input($_POST['Feriados']);
     $presentes = $_POST['presentes'] ?? '';
-    $ausentes  = $_POST['ausentes'] ?? '';
-    $cliente   = $_SESSION['ID_CLIENTE'];
-    if($presentes){
+    $ausentes = $_POST['ausentes'] ?? '';
+    $cliente = $_SESSION['ID_CLIENTE'];
+    if ($presentes) {
         $presentes = test_input(implode(',', $presentes));
         $presentes .= '@' . $Franco . '@' . $Feriados;
-    }else{
+    } else {
         $presentes = '';
     }
-    $ausentes  = test_input(implode(',', $ausentes));
+    $ausentes = test_input(implode(',', $ausentes));
     // $ausentes .= '@'.$Franco.','.$Feriados;
 
-    require __DIR__ . '../../../config/conect_mysql.php';
+    require __DIR__ . '/../../config/conect_mysql.php';
 
     /* Comprobamos campos vacíos  */
     if ((valida_campo($presentes)) && (valida_campo($ausentes))) {
@@ -39,9 +39,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'params')) {
 
         if ($rs_a && $rs_p) {
             $_SESSION["CONCEPTO_PRESENTES"] = $presentes;
-            $_SESSION["CONCEPTO_AUSENTES"]  = $ausentes;
-            $_SESSION["DIAS_FRANCO"]        = $Franco;
-            $_SESSION["DIAS_FERIADOS"]      = $Feriados;
+            $_SESSION["CONCEPTO_AUSENTES"] = $ausentes;
+            $_SESSION["DIAS_FRANCO"] = $Franco;
+            $_SESSION["DIAS_FERIADOS"] = $Feriados;
             PrintRespuestaJson('ok', 'Datos guardados correctamente');
             mysqli_close($link);
             exit;

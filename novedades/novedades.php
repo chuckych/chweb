@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title>
         <?= MODULOS['novedades'] ?>
     </title>
@@ -26,7 +26,7 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
 
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'novedades.png', MODULOS['novedades'], '') ?>
@@ -128,11 +128,11 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../js/jquery.php";
+    require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../js/DateRanger.php";
+    require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/DataTable.php";
     require 'modal_Filtros.html';
     ?>
     <script src="../js/bootbox.min.js"></script>

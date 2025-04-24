@@ -6,7 +6,7 @@ class Log
     private $date;
     function __construct()
     {
-        $this->path = __DIR__ . '../../logs/';
+        $this->path = __DIR__ . '/../logs/';
         $this->date = $this->dateTimeNow();
     }
     function write($text, $nameFile, $type = false)

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -8,18 +8,18 @@ date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
 secure_auth_ch_json();
 
-// require __DIR__ . '../../../vendor/autoload.php';
+// require __DIR__ . '/../../vendor/autoload.php';
 
 // use Carbon\Carbon;
 
 E_ALL();
 
-require __DIR__ . '../../../config/conect_mssql.php';
-$params    = array();
-$options   = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$data      = array();
+require __DIR__ . '/../../config/conect_mssql.php';
+$params = array();
+$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$data = array();
 $FechaHora = date('Ymd H:i:s');
-$FechaHoy  = date('Ymd');
+$FechaHoy = date('Ymd');
 
 $_POST['tipo'] = $_POST['tipo'] ?? '';
 
@@ -27,34 +27,39 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
-    };
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
     $_POST['Codhor2'] = $_POST['Codhor2'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['Fecha']   = $_POST['Fecha'] ?? '';
+    $_POST['Fecha'] = $_POST['Fecha'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $Codhor2 = test_input($_POST['Codhor2']);
     /** Horario Original */
     $NumLega = test_input($_POST['NumLega']);
-    $Fecha   = test_input($_POST['Fecha']);
+    $Fecha = test_input($_POST['Fecha']);
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Codhor2)) {
         PrintRespuestaJson('error', 'El horario original es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE1 WHERE Ho1Hora = '$Codhor2' AND Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega'";
 
@@ -67,14 +72,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (UpdateRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -114,7 +119,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
 
@@ -128,27 +133,31 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
-    };
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['Fecha']   = $_POST['Fecha'] ?? '';
+    $_POST['Fecha'] = $_POST['Fecha'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $Fecha   = test_input($_POST['Fecha']);
+    $Fecha = test_input($_POST['Fecha']);
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE1 WHERE Ho1Hora = '$Codhor' AND Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega'";
 
@@ -160,14 +169,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "DELETE FROM HORALE1 WHERE Ho1Hora = '$Codhor' AND Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega'";
     if (UpdateRegistro($query)) {
         $tiempo_inicio_proceso = microtime(true);
-        $Dato    = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -207,7 +216,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('B', $Dato, '33');
@@ -221,29 +230,33 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
-    };
+    }
+    ;
 
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['FDesde']   = $_POST['FDesde'] ?? '';
+    $_POST['FDesde'] = $_POST['FDesde'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $FDesde  = test_input(($_POST['FDesde']));
-    $Fecha   = test_input(dr_fecha($_POST['FDesde']));
+    $FDesde = test_input(($_POST['FDesde']));
+    $Fecha = test_input(dr_fecha($_POST['FDesde']));
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE1 WHERE Ho1Fech = '$Fecha' AND Ho1Lega = '$NumLega'";
 
@@ -258,14 +271,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
         $tiempo_inicio_proceso = microtime(true);
 
-        $Dato    = 'Horario Desde: ' . $FDesde . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde: ' . $FDesde . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -305,7 +318,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('A', $Dato, '33');
@@ -318,16 +331,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
-    };
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['FDesde']   = $_POST['FDesde'] ?? '';
+    $_POST['FDesde'] = $_POST['FDesde'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
     $Fecha = explode(' al ', $_POST['FDesdeHasta']);
-    $FechaIni   = test_input(dr_fecha($Fecha[0]));
-    $FechaFin   = test_input(dr_fecha($Fecha[1]));
+    $FechaIni = test_input(dr_fecha($Fecha[0]));
+    $FechaFin = test_input(dr_fecha($Fecha[1]));
 
     // PrintRespuestaJson('error', $FechaFin);
     //     exit;
@@ -335,15 +349,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE2 WHERE Ho2Fec1 = '$FechaIni' AND Ho2Lega = '$NumLega'";
     // PrintRespuestaJson('error', $query);
@@ -359,12 +376,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
         $tiempo_inicio_proceso = microtime(true);
 
-        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -404,7 +421,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación creada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('A', $Dato, '33');
@@ -417,42 +434,48 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
-    };
-    $_POST['Codhor']  = $_POST['Codhor'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
     $_POST['Codhor2'] = $_POST['Codhor2'] ?? '';
     $_POST['NumLega'] = $_POST['NumLega'] ?? '';
-    $_POST['FDesde']  = $_POST['FDesde'] ?? '';
-    $_POST['FHasta']  = $_POST['FHasta'] ?? '';
+    $_POST['FDesde'] = $_POST['FDesde'] ?? '';
+    $_POST['FHasta'] = $_POST['FHasta'] ?? '';
     $_POST['FHasta2'] = $_POST['FHasta2'] ?? '';
 
-    $Codhor           = test_input($_POST['Codhor']);
-    $Codhor2          = test_input($_POST['Codhor2']);
+    $Codhor = test_input($_POST['Codhor']);
+    $Codhor2 = test_input($_POST['Codhor2']);
     /** Horario Original */
-    $NumLega          = test_input($_POST['NumLega']);
-    $FechaIni         = test_input(dr_fecha($_POST['FDesde']));
-    $FechaFin         = test_input(dr_fecha($_POST['FHasta']));
-    $FechaFin2        = test_input(dr_fecha($_POST['FHasta2']));
+    $NumLega = test_input($_POST['NumLega']);
+    $FechaIni = test_input(dr_fecha($_POST['FDesde']));
+    $FechaFin = test_input(dr_fecha($_POST['FHasta']));
+    $FechaFin2 = test_input(dr_fecha($_POST['FHasta2']));
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Codhor2)) {
         PrintRespuestaJson('error', 'El horario original es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($FechaIni)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
     if (valida_campo($FechaFin)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE2 WHERE Ho2Hora = '$Codhor2' AND Ho2Fec1 = '$FechaIni' AND Ho2Fec2 = '$FechaFin2' AND Ho2Lega = '$NumLega'";
 
@@ -472,12 +495,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
         $tiempo_inicio_proceso = microtime(true);
 
-        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -517,7 +540,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('M', $Dato, '33');
@@ -531,34 +554,39 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
-    };
-    $_POST['Codhor']   = $_POST['Codhor'] ?? '';
-    $_POST['NumLega']  = $_POST['NumLega'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
+    $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['FechaIni'] = $_POST['FechaIni'] ?? '';
-    $_POST['Fecha']    = $_POST['Fecha'] ?? '';
+    $_POST['Fecha'] = $_POST['Fecha'] ?? '';
     $_POST['FechaFin'] = $_POST['FechaFin'] ?? '';
 
-    $Codhor   = test_input($_POST['Codhor']);
-    $NumLega  = test_input($_POST['NumLega']);
+    $Codhor = test_input($_POST['Codhor']);
+    $NumLega = test_input($_POST['NumLega']);
     $FechaIni = test_input(dr_fecha($_POST['FechaIni']));
     $FechaFin = test_input(dr_fecha($_POST['FechaFin']));
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'El horario es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($FechaIni)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
     if (valida_campo($FechaFin)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM HORALE2 WHERE Ho2Hora = '$Codhor' AND Ho2Fec1 = '$FechaIni' AND Ho2Fec2 = '$FechaFin' AND Ho2Lega = '$NumLega'";
 
@@ -572,12 +600,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
         $tiempo_inicio_proceso = microtime(true);
 
-        $Dato    = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Horario Desde Hasta: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' - ' . Fech_Format_Var($FechaFin, 'd/m/Y') . '. Horario: ' . $Codhor . '. Legajo: ' . $NumLega;
 
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -617,7 +645,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Asignación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
 
@@ -632,40 +660,46 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['aTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para asignar horarios');
         exit;
-    };
-    $_POST['Codhor']   = $_POST['Codhor'] ?? '';
-    $_POST['NumLega']  = $_POST['NumLega'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
+    $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['RotFecha'] = $_POST['RotFecha'] ?? '';
-    $_POST['RotDia']   = $_POST['RotDia'] ?? '';
-    $_POST['RoLVenc']  = $_POST['RoLVenc'] ?? '';
+    $_POST['RotDia'] = $_POST['RotDia'] ?? '';
+    $_POST['RoLVenc'] = $_POST['RoLVenc'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $RotDia  = test_input($_POST['RotDia']);
+    $RotDia = test_input($_POST['RotDia']);
     $RoLVenc = test_input($_POST['RoLVenc']);
-    $Fecha   = test_input(dr_fecha($_POST['RotFecha']));
+    $Fecha = test_input(dr_fecha($_POST['RotFecha']));
     $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])) : '20991231';
 
     if (intval($RoLVenc) < intval($Fecha)) {
         PrintRespuestaJson('error', 'El <b>Vencimiento</b> no puede ser menor a la <b>Fecha</b> de inicio de la Rotación.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'La rotación es requerida.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($RotDia)) {
         PrintRespuestaJson('error', 'Dia de comienzo requerido.');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM ROTALEG WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
 
@@ -679,14 +713,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (InsertRegistro($query)) {
 
         $tiempo_inicio_proceso = microtime(true);
-        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -727,7 +761,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
         }
         audito_ch('A', $Dato, '33');
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación asignada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         exit;
@@ -739,41 +773,47 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['mTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para modificar horarios');
         exit;
-    };
-    $_POST['Codhor']   = $_POST['Codhor'] ?? '';
-    $_POST['Codhor2']  = $_POST['Codhor2'] ?? '';
-    $_POST['NumLega']  = $_POST['NumLega'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
+    $_POST['Codhor2'] = $_POST['Codhor2'] ?? '';
+    $_POST['NumLega'] = $_POST['NumLega'] ?? '';
     $_POST['RotFecha'] = $_POST['RotFecha'] ?? '';
-    $_POST['RotDia']   = $_POST['RotDia'] ?? '';
-    $_POST['RoLVenc']  = $_POST['RoLVenc'] ?? '';
+    $_POST['RotDia'] = $_POST['RotDia'] ?? '';
+    $_POST['RoLVenc'] = $_POST['RoLVenc'] ?? '';
     $RoLVenc = ($_POST['RoLVenc']) ? test_input(dr_fecha($_POST['RoLVenc'])) : '20991231';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $Codhor2 = test_input($_POST['Codhor2']);
     $NumLega = test_input($_POST['NumLega']);
-    $RotDia  = test_input($_POST['RotDia']);
-    $Fecha   = test_input(dr_fecha($_POST['RotFecha']));
+    $RotDia = test_input($_POST['RotDia']);
+    $Fecha = test_input(dr_fecha($_POST['RotFecha']));
 
     if (intval($RoLVenc) < intval($Fecha)) {
         PrintRespuestaJson('error', 'El <b>Vencimiento</b> no puede ser menor a la <b>Fecha</b> de inicio de la Rotación.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'La rotación es requerida.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida.');
         exit;
-    };
+    }
+    ;
     if (valida_campo($RotDia)) {
         PrintRespuestaJson('error', 'Dia de comienzo requerido.');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM ROTALEG WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
 
@@ -788,14 +828,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
 
     if (UpdateRegistro($query)) {
         $tiempo_inicio_proceso = microtime(true);
-        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -835,7 +875,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación modificada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('M', $Dato, '33');
@@ -848,27 +888,31 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     if (($_SESSION["ABM_ROL"]['bTur'] == '0')) {
         PrintRespuestaJson('error', 'No tiene permisos para eliminar horarios');
         exit;
-    };
-    $_POST['Codhor']   = $_POST['Codhor'] ?? '';
-    $_POST['NumLega']  = $_POST['NumLega'] ?? '';
-    $_POST['Fecha']    = $_POST['Fecha'] ?? '';
+    }
+    ;
+    $_POST['Codhor'] = $_POST['Codhor'] ?? '';
+    $_POST['NumLega'] = $_POST['NumLega'] ?? '';
+    $_POST['Fecha'] = $_POST['Fecha'] ?? '';
 
-    $Codhor  = test_input($_POST['Codhor']);
+    $Codhor = test_input($_POST['Codhor']);
     $NumLega = test_input($_POST['NumLega']);
-    $Fecha   = test_input(dr_fecha($_POST['Fecha']));
+    $Fecha = test_input(dr_fecha($_POST['Fecha']));
 
     if (valida_campo($Codhor)) {
         PrintRespuestaJson('error', 'la rotación es requerida');
         exit;
-    };
+    }
+    ;
     if (valida_campo($NumLega)) {
         PrintRespuestaJson('error', 'El Legajo es requerido');
         exit;
-    };
+    }
+    ;
     if (valida_campo($Fecha)) {
         PrintRespuestaJson('error', 'La Fecha es requerida');
         exit;
-    };
+    }
+    ;
 
     $query = "SELECT 1 FROM ROTALEG WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
 
@@ -880,14 +924,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
     $query = "DELETE FROM ROTALEG WHERE RolFech = '$Fecha' AND RolLega = '$NumLega'";
     if (UpdateRegistro($query)) {
         $tiempo_inicio_proceso = microtime(true);
-        $Dato    = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
+        $Dato = 'Rotación: ' . Fech_Format_Var($Fecha, 'd/m/Y') . '. Rotación: ' . $Codhor . '. Legajo: ' . $NumLega;
         $FechaIni = $Fecha;
         $FechaFin = date('Ymd');
         $totalDias = totalDiasFechas($FechaIni, $FechaFin) + 1;
-        $arrayFechas    = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
+        $arrayFechas = (fechaIniFinDias(FechaString($Fecha), date('Ymd'), 31));
 
         if ($FechaIni <= date('Ymd')) {
-            $arrayFechas    = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
+            $arrayFechas = (fechaIniFinDias(($FechaIni), $FechaFin, 31));
             $arrRespuesta = array();
             if ($totalDias > 31) {
                 foreach ($arrayFechas as $date) {
@@ -927,7 +971,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && (array_key_exists('Codhor', $_POST
             $arrRespuesta[] = array('Desde' => Fech_Format_Var($FechaIni, 'd/m/Y'), 'Hasta' => Fech_Format_Var($FechaFin, 'd/m/Y'), 'Procesado' => 'Sin Procesar. Fecha Posterior a la actual ' . $totalDias . ' días', 'Tiempo' => $duracion);
         }
         $tiempo_fin_proceso = microtime(true);
-        $duracion_proceso    = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
+        $duracion_proceso = round($tiempo_fin_proceso - $tiempo_inicio_proceso, 2);
         $data = array('status' => 'ok', 'Mensaje' => 'Rotación eliminada correctamente', 'Detalle' => $arrRespuesta, 'Duracion' => $duracion_proceso);
         echo json_encode($data);
         audito_ch('B', $Dato, '33');

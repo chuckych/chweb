@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../fn.php';
+require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
@@ -13,17 +13,17 @@ $wc = '';
 
 $dp = $request->data;
 
-$start  = start();
+$start = start();
 $length = length();
 
-$dp->Fech  = ($dp->Fech) ?? [];
-$dp->Fech  = vp($dp->Fech, 'Fech', 'arrfecha', '');
+$dp->Fech = ($dp->Fech) ?? [];
+$dp->Fech = vp($dp->Fech, 'Fech', 'arrfecha', '');
 
-$dp->Tras  = ($dp->Tras) ?? [];
-$dp->Tras  = vp($dp->Tras, 'Tras', 'arrfecha', '');
+$dp->Tras = ($dp->Tras) ?? [];
+$dp->Tras = vp($dp->Tras, 'Tras', 'arrfecha', '');
 
-$dp->TrasIniFin  = ($dp->TrasIniFin) ?? [];
-$dp->TrasIniFin  = vp($dp->TrasIniFin, 'TrasIniFin', 'arrfecha', '');
+$dp->TrasIniFin = ($dp->TrasIniFin) ?? [];
+$dp->TrasIniFin = vp($dp->TrasIniFin, 'TrasIniFin', 'arrfecha', '');
 
 $dp->Desc = $dp->Desc ?? '';
 $dp->Desc = vp($dp->Desc, 'Desc', 'str', 40);
@@ -58,7 +58,7 @@ if (count($dp->TrasIniFin) == 2) {
 // Flight::json(($wc)) . exit;
 
 $arrDPSTR = array(
-    'Desc'  => $dp->Desc, // Descripcion de Horario {string}
+    'Desc' => $dp->Desc, // Descripcion de Horario {string}
 );
 
 foreach ($arrDPFeriados as $key => $FERIADOS) {
@@ -174,12 +174,12 @@ function FerTipo($v)
     }
     return $TipoStr;
 }
-foreach ($stmt  as $key => $v) {
+foreach ($stmt as $key => $v) {
     // $data[] = $v;
     $data[] = array(
         'Descripcion' => $v['FerDesc'],
-        'Tipo'        => $v['FerTipo'],
-        'TipoStr'     => FerTipo($v['FerTipo']),
+        'Tipo' => $v['FerTipo'],
+        'TipoStr' => FerTipo($v['FerTipo']),
         'Fecha' => array(
             'Fecha' => fecha($v['FerFech']),
             'Dia' => diaSemana($v['FerFech']),
@@ -190,24 +190,24 @@ foreach ($stmt  as $key => $v) {
         ),
         'CodigosLiqui' => array(
             'Mensuales' => array(
-                'Mens'          => $v['FerCodM'],
-                'MensTrab'      => $v['FerCodM2'],
-                'Mens3'         => $v['FerCodM3'],
-                'MensInfH'      => $v['FerInfM'],
-                'MensInfoEn'    => $v['FerInMeNL'],
+                'Mens' => $v['FerCodM'],
+                'MensTrab' => $v['FerCodM2'],
+                'Mens3' => $v['FerCodM3'],
+                'MensInfH' => $v['FerInfM'],
+                'MensInfoEn' => $v['FerInMeNL'],
                 'MensInfoEnStr' => InfoEn($v['FerInMeNL']),
             ),
             'Jornales' => array(
-                'Jorn'          => $v['FerCodJ'],
-                'Jorntrab'      => $v['FerCodJ2'],
-                'Jorn3'         => $v['FerCodJ3'],
-                'JornInfh'      => $v['FerInfJ'],
-                'JornInfoEn'    => $v['FerInJoNL'],
+                'Jorn' => $v['FerCodJ'],
+                'Jorntrab' => $v['FerCodJ2'],
+                'Jorn3' => $v['FerCodJ3'],
+                'JornInfh' => $v['FerInfJ'],
+                'JornInfoEn' => $v['FerInJoNL'],
                 'JornInfoEnStr' => InfoEn($v['FerInJoNL']),
             ),
         ),
         'InfoFerTrab' => $v['FerInFeTR'],
-        'FechaHora'   => fecha($v['FechaHora'], 'Y-m-d H:i:s'),
+        'FechaHora' => fecha($v['FechaHora'], 'Y-m-d H:i:s'),
     );
 }
 
@@ -216,7 +216,7 @@ if (empty($stmt)) {
     (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData    = count($data);
+$countData = count($data);
 http_response_code(200);
 (response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

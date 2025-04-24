@@ -3,67 +3,68 @@ ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 $Modulo = '21';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
 try {
     if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
-        $_format      = FusNuloPOST('_format', 'A4');
+        $_format = FusNuloPOST('_format', 'A4');
         $_orientation = FusNuloPOST('_orientation', 'L');
-        $_destino     = FusNuloPOST('_destino', 'F');
-        $_password    = FusNuloPOST('_password', '');
-        $_print       = FusNuloPOST('_print', '');
-        $_modify      = FusNuloPOST('_modify', '');
-        $_copy        = FusNuloPOST('_copy', '');
-        $_annotforms  = FusNuloPOST('_annotforms', '');
-        $_nombre      = FusNuloPOST('_nombre', "ParteDiario");
-        $_titulo      = FusNuloPOST('_titulo', "");
-        $_PerSN       = FusNuloPOST('_PerSN', "");
+        $_destino = FusNuloPOST('_destino', 'F');
+        $_password = FusNuloPOST('_password', '');
+        $_print = FusNuloPOST('_print', '');
+        $_modify = FusNuloPOST('_modify', '');
+        $_copy = FusNuloPOST('_copy', '');
+        $_annotforms = FusNuloPOST('_annotforms', '');
+        $_nombre = FusNuloPOST('_nombre', "ParteDiario");
+        $_titulo = FusNuloPOST('_titulo', "");
+        $_PerSN = FusNuloPOST('_PerSN', "");
 
         if (
             test_input(
                 $_POST['FicNovA'] == '1'
-                    && test_input($_POST['FicNovI'] == '0')
-                    && test_input($_POST['FicNovS'] == '0')
-                    && test_input($_POST['FicNovT'] == '0')
+                && test_input($_POST['FicNovI'] == '0')
+                && test_input($_POST['FicNovS'] == '0')
+                && test_input($_POST['FicNovT'] == '0')
             )
         ) {
             $_titulo = 'PARTE DIARIO (AUSENCIAS)';
         } elseif (
             test_input(
                 $_POST['FicNovT'] == '1'
-                    && test_input($_POST['FicNovI'] == '0')
-                    && test_input($_POST['FicNovS'] == '0')
-                    && test_input($_POST['FicNovA'] == '0')
+                && test_input($_POST['FicNovI'] == '0')
+                && test_input($_POST['FicNovS'] == '0')
+                && test_input($_POST['FicNovA'] == '0')
             )
         ) {
             $_titulo = 'PARTE DIARIO (LLEGADAS TARDES)';
         } elseif (
             test_input(
                 $_POST['FicNovI'] == '1'
-                    && test_input($_POST['FicNovT'] == '0')
-                    && test_input($_POST['FicNovS'] == '0')
-                    && test_input($_POST['FicNovA'] == '0')
+                && test_input($_POST['FicNovT'] == '0')
+                && test_input($_POST['FicNovS'] == '0')
+                && test_input($_POST['FicNovA'] == '0')
             )
         ) {
             $_titulo = 'PARTE DIARIO (INCUMPLIMIENTOS)';
         } else if (
             test_input(
                 $_POST['FicNovS'] == '1'
-                    && test_input($_POST['FicNovT'] == '0')
-                    && test_input($_POST['FicNovI'] == '0')
-                    && test_input($_POST['FicNovA'] == '0')
+                && test_input($_POST['FicNovT'] == '0')
+                && test_input($_POST['FicNovI'] == '0')
+                && test_input($_POST['FicNovA'] == '0')
             )
         ) {
             $_titulo = 'PARTE DIARIO (SALIDAS ANTICIPADAS)';
-        };
+        }
+        ;
 
         $_titulo = $_titulo == '' ? 'PARTE DIARIO' : $_titulo;
         $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
@@ -75,13 +76,13 @@ try {
         $NombreArchivo = $_path . $_nombre . "_" . $MicroTime . ".pdf";
         $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
 
-        $FechaIni  = test_input(dr_fecha($_POST['_dr']));
+        $FechaIni = test_input(dr_fecha($_POST['_dr']));
 
         BorrarArchivosPDF('archivos/*.pdf');
         ini_set("pcre.backtrack_limit", "5000000");
 
         ob_start();
-        require_once  'ParteDiario.php';
+        require_once 'ParteDiario.php';
 
         $buffer = ob_get_clean();
 

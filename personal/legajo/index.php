@@ -1,60 +1,60 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 secure_auth_ch();
 $Modulo = '10';
 ExisteModRol($Modulo);
 existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetPersonal';
-$_datos  = 'personal';
+$_datos = 'personal';
 $bgcolor = 'bg-custom';
-$token     = sha1($_SESSION['RECID_CLIENTE']);
+$token = sha1($_SESSION['RECID_CLIENTE']);
 define("TIPO_DOC", [
-   'DU'  => '0',
+   'DU' => '0',
    'DNI' => '1',
-   'CI'  => '2',
-   'LC'  => '3',
-   'LE'  => '4'
+   'CI' => '2',
+   'LC' => '3',
+   'LE' => '4'
 ]);
 define("ESTADO_CIVIL", [
-   'Soltero/a'  => '0',
+   'Soltero/a' => '0',
    'Casado/a' => '1',
-   'Viudo/a'  => '2',
-   'Divorciado/a'  => '3',
-   'No Determinado'  => '4',
+   'Viudo/a' => '2',
+   'Divorciado/a' => '3',
+   'No Determinado' => '4',
 ]);
 define("INFOR_EN_HORAS", [
-   'En todos los días'  => '0',
+   'En todos los días' => '0',
    'En laboral' => '1',
-   'En no laboral'  => '2',
-   'En hábiles'  => '3',
-   'En no hábiles'  => '4',
+   'En no laboral' => '2',
+   'En hábiles' => '3',
+   'En no hábiles' => '4',
 ]);
 define("ConTDias", [
-   'Días trabajados'  => '0',
+   'Días trabajados' => '0',
    'Días hábiles' => '1',
-   'Días'  => '2'
+   'Días' => '2'
 ]);
 define("SEXO", [
    'Masculino' => '1',
-   'Femenino'  => '0',
+   'Femenino' => '0',
 ]);
 define("TIPO_EMP", [
-   'Interna'  => '0',
+   'Interna' => '0',
    'Externa' => '1',
 ]);
 define("TIPO_PER", [
-   'Mensual'  => '0',
+   'Mensual' => '0',
    'Jornal' => '1',
 ]);
 define("TIPO_ASIGN", [
-   'Según asignación'  => '0',
+   'Según asignación' => '0',
    'Alternativo según fichadas' => '1',
 ]);
 define("INCUMPLIMIENTO", [
-   'Estándar sin control de descanso'  => '0',
-   'Estándar con control de descanso'  => '1',
+   'Estándar sin control de descanso' => '0',
+   'Estándar con control de descanso' => '1',
    '(Hs. a Trabajar - Hs. Trabajadas)' => '2',
    '(Hs. a Trabajar - Hs. Trabajadas) - Descanso como tolerancia' => '3',
    '(Hs. a Trabajar - Hs. Trabajadas) + Incumplimiento de descanso' => '4',
@@ -73,29 +73,29 @@ if (empty($_leg)) {
 }
 
 $EstrUser = explode(',', $_SESSION['EstrUser']);
-$Empr     = explode(',', $_SESSION['EmprRol']);
-$Plan     = explode(',', $_SESSION['PlanRol']);
-$Conv     = explode(',', $_SESSION['ConvRol']);
-$Sect     = explode(',', $_SESSION['SectRol']);
-$Sec2     = explode(',', $_SESSION['Sec2Rol']);
-$Grup     = explode(',', $_SESSION['GrupRol']);
-$Sucu     = explode(',', $_SESSION['SucuRol']);
+$Empr = explode(',', $_SESSION['EmprRol']);
+$Plan = explode(',', $_SESSION['PlanRol']);
+$Conv = explode(',', $_SESSION['ConvRol']);
+$Sect = explode(',', $_SESSION['SectRol']);
+$Sec2 = explode(',', $_SESSION['Sec2Rol']);
+$Grup = explode(',', $_SESSION['GrupRol']);
+$Sucu = explode(',', $_SESSION['SucuRol']);
 
 $dataParametros = array(
-   'Nume'     => ($EstrUser),
-   'ApNo'     => "",
-   'Docu'     => [],
+   'Nume' => ($EstrUser),
+   'ApNo' => "",
+   'Docu' => [],
    'ApNoNume' => "",
-   'Empr'     => ($Empr),
-   'Plan'     => ($Plan),
-   'Sect'     => ($Sect),
-   'Sec2'     => ($Sec2),
-   'Conv'     => ($Conv),
-   'Grup'     => ($Grup),
-   'Sucu'     => ($Sucu),
+   'Empr' => ($Empr),
+   'Plan' => ($Plan),
+   'Sect' => ($Sect),
+   'Sec2' => ($Sec2),
+   'Conv' => ($Conv),
+   'Grup' => ($Grup),
+   'Sucu' => ($Sucu),
    'TareProd' => [],
-   'RegCH'    => [],
-   'Tipo'     => [],
+   'RegCH' => [],
+   'Tipo' => [],
    "Baja" => [],
    "IntExt" => [],
    "getDatos" => 0,
@@ -104,8 +104,8 @@ $dataParametros = array(
    "getControl" => 0,
    "getHorarios" => 0,
    "getAcceso" => 0,
-   'start'   => 0,
-   'length'  => 5000
+   'start' => 0,
+   'length' => 5000
 );
 
 $url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";

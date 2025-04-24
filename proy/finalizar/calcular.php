@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
 use Carbon\Carbon;
 
@@ -10,44 +10,44 @@ $fechahora = $_GET['fechahora'];
 foreach (getConfTar() as $key => $v) {
     $confTar = array(
         'ProcDescTar' => $v['ProcDescTar'],
-        'ProcRedTar'  => $v['ProcRedTar'],
-        'MinimoDesc'  => HoraMin($v['MinimoDesc']),
-        'LimitTar'    => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
-        'RecRedTar'   => ($v['RecRedTar']), // Recorte y redondeo de tareas
+        'ProcRedTar' => $v['ProcRedTar'],
+        'MinimoDesc' => HoraMin($v['MinimoDesc']),
+        'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
+        'RecRedTar' => ($v['RecRedTar']), // Recorte y redondeo de tareas
     );
 }
 
 if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
     $RecRedTar = explode('/', $confTar['RecRedTar']);
-    $limite    = $RecRedTar[0];
+    $limite = $RecRedTar[0];
     $redondear = $RecRedTar[1];
 } else {
-    $limite    = 0;
+    $limite = 0;
     $redondear = 0;
 }
 
 function redondear($fechahora, $redondearEn, $limite)
 {
     try {
-        $date  = new DateTime($fechahora);
-        $year  = $date->format("Y");
+        $date = new DateTime($fechahora);
+        $year = $date->format("Y");
         $month = $date->format("m");
-        $day   = $date->format("d");
-        $hour  = $date->format("H");
-        $min   = $date->format("i");
+        $day = $date->format("d");
+        $hour = $date->format("H");
+        $min = $date->format("i");
         $date = Carbon::create($year, $month, $day, $hour, $min, 0);
-        $nearestSec      = $redondearEn * 60;
-        $minimumMoment   = $date->subMinute($limite);
+        $nearestSec = $redondearEn * 60;
+        $minimumMoment = $date->subMinute($limite);
         $futureTimestamp = ceil($minimumMoment->timestamp / $nearestSec) * $nearestSec;
-        $futureMoment    = Carbon::createFromTimestamp($futureTimestamp);
+        $futureMoment = Carbon::createFromTimestamp($futureTimestamp);
         return $futureMoment->startOfMinute()->format("Y-m-d H:i");
     } catch (exception $e) {
         $data = array(
-            'status'    => 'error',
-            'msg'       => $e->getMessage(),
+            'status' => 'error',
+            'msg' => $e->getMessage(),
             "resultado" => '',
             "redondear" => $redondearEn,
-            "limite"    => $limite
+            "limite" => $limite
         );
         echo json_encode($data, JSON_PRETTY_PRINT);
         exit;
@@ -55,54 +55,54 @@ function redondear($fechahora, $redondearEn, $limite)
 }
 if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
     $rs = (redondear($fechahora, $redondear, $limite));
-} else{
-    $d  = new DateTime($fechahora);
+} else {
+    $d = new DateTime($fechahora);
     $rs = $d->format("Y-m-d H:i");
 }
 
 $data = array(
-    'status'    => 'ok',
-    'msg'       => '',
+    'status' => 'ok',
+    'msg' => '',
     "resultado" => $rs,
     "redondear" => $redondear,
-    "limite"    => $limite
+    "limite" => $limite
 );
 echo json_encode($data, JSON_PRETTY_PRINT);
 exit;
 
 $start = $_GET['start'];
-$end   = $_GET['end'];
-$user  = 2;
+$end = $_GET['end'];
+$user = 2;
 
 try {
-    $start  = new DateTime($start);
-    $start  = $start->format("Y-m-d H:i");
+    $start = new DateTime($start);
+    $start = $start->format("Y-m-d H:i");
 } catch (exception $e) {
     $data = array(
-        'status'    => 'error',
-        'msg'       => $e->getMessage(),
+        'status' => 'error',
+        'msg' => $e->getMessage(),
     );
     echo json_encode($data, JSON_PRETTY_PRINT);
     exit;
 }
 try {
-    $end  = new DateTime($end);
-    $end  = $end->format("Y-m-d H:i");
+    $end = new DateTime($end);
+    $end = $end->format("Y-m-d H:i");
 } catch (exception $e) {
     $data = array(
-        'status'    => 'error',
-        'msg'       => $e->getMessage(),
+        'status' => 'error',
+        'msg' => $e->getMessage(),
     );
     echo json_encode($data, JSON_PRETTY_PRINT);
     exit;
 }
 
-$confUser    = array();
+$confUser = array();
 $confGeneral = array();
-$confDesc    = array();
-$calcDesc    = array();
+$confDesc = array();
+$calcDesc = array();
 $status = '';
-$msg    = '';
+$msg = '';
 $diff_1 = 0;
 $diff_2 = 0;
 $diff_3 = 0;
@@ -110,10 +110,10 @@ $diff_4 = 0;
 $diff_5 = 0;
 $diff_desc = 0;
 
-$startInt     = intval(FechaFormatVar($start, 'YmdHi'));
+$startInt = intval(FechaFormatVar($start, 'YmdHi'));
 $startDateInt = intval(FechaFormatVar($start, 'Ymd'));
-$endInt       = intval(FechaFormatVar($end, 'YmdHi'));
-$endDateInt   = intval(FechaFormatVar($end, 'Ymd'));
+$endInt = intval(FechaFormatVar($end, 'YmdHi'));
+$endDateInt = intval(FechaFormatVar($end, 'Ymd'));
 
 function horarioInt($hora)
 {
@@ -143,12 +143,12 @@ if ($confTar['ProcDescTar'] == '1') {
                     $iniInt = intval($startDateInt . horarioInt($h['TarDesIni']));
                     $finInt = intval($endDateInt . horarioInt($h['TarDesFin']));
                     $confGeneral = array(
-                        "User"    => -1,
+                        "User" => -1,
                         "IniInt" => ($h['TarDesIni'] == '00:00') ? intval($iniInt . "000") : $iniInt,
-                        "Ini"    => ($h['TarDesIni']),
+                        "Ini" => ($h['TarDesIni']),
                         "FinInt" => ($h['TarDesFin'] == '00:00') ? intval($finInt . "000") : $finInt,
-                        "Fin"    => ($h['TarDesFin']),
-                        "Esta"   => $h['TarDesEsta'],
+                        "Fin" => ($h['TarDesFin']),
+                        "Esta" => $h['TarDesEsta'],
                     );
                 }
             }
@@ -159,12 +159,12 @@ if ($confTar['ProcDescTar'] == '1') {
                     $iniInt = intval($startDateInt . horarioInt($h['TarDesIni']));
                     $finInt = intval($endDateInt . horarioInt($h['TarDesFin']));
                     $confUser = array(
-                        "User"   => intval($h['TarDesUsr']),
+                        "User" => intval($h['TarDesUsr']),
                         "IniInt" => ($h['TarDesIni'] == '00:00') ? intval($iniInt . "000") : $iniInt,
-                        "Ini"    => ($h['TarDesIni']),
+                        "Ini" => ($h['TarDesIni']),
                         "FinInt" => ($h['TarDesFin'] == '00:00') ? intval($finInt . "000") : $finInt,
-                        "Fin"    => ($h['TarDesFin']),
-                        "Esta"   => $h['TarDesEsta'],
+                        "Fin" => ($h['TarDesFin']),
+                        "Esta" => $h['TarDesEsta'],
                     );
                 }
             }
@@ -176,13 +176,13 @@ if ($confTar['ProcDescTar'] == '1') {
  * Arrancamos con los calculos de horario de descanso
  */
 if ($confDesc) {
-    $a  = ($start); // Fecha Hora de Inicio en formato estandar 2022-12-06 09:00
+    $a = ($start); // Fecha Hora de Inicio en formato estandar 2022-12-06 09:00
     $a1 = ($startInt); // Fecha Hora de Inicio en formato int 202212060900
-    $b  = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estandar 2022-12-06 12:00
+    $b = FechaFormatVar($confDesc['IniInt'], 'Y-m-d H:i'); // Fecha Hora de Inicio Descanso en formato estandar 2022-12-06 12:00
     $b1 = ($confDesc['IniInt']); // Fecha Hora de Inicio Descanso en formato int 202212061200
-    $c  = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estandar 2022-12-06 13:00
+    $c = FechaFormatVar($confDesc['FinInt'], 'Y-m-d H:i'); // Fecha Hora de Fin en formato estandar 2022-12-06 13:00
     $c1 = ($confDesc['FinInt']); // Fecha Hora de Fin en formato int 202212061300
-    $d  = ($end); // Fecha Hora de Fin en formato estandar 2022-12-06 15:00
+    $d = ($end); // Fecha Hora de Fin en formato estandar 2022-12-06 15:00
     $d1 = ($endInt); // Fecha Hora de Fin en formato int 202212061500
 
     /** 
@@ -201,7 +201,7 @@ if ($confDesc) {
     /** particion 2 * ejemplo de 11:00 a 13:00 (antes del descanso y fin durante el descanso)*/
     if (intval($confTar['MinimoDesc']) > 0) {
         $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $b) : 0;
-        $diff_desc2 = ($diff_2) ?  diffStartEnd($b, $d) : 0; // calculo tiempo de descanso
+        $diff_desc2 = ($diff_2) ? diffStartEnd($b, $d) : 0; // calculo tiempo de descanso
         $diff_desc = (intval($diff_desc2['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc2 : 0; // comparo total desc. con delta de config.desc.
     } else {
         $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $d) : 0;
@@ -213,7 +213,7 @@ if ($confDesc) {
     /** */
     /** particion 4 * ejemplo de 11:00 a 14:00 (antes y despues del descanso)*/
     $diff_4 = ($a1 < $b1 && $d1 > $c1) ? diffStartEnd($a, $d) : 0;
-    $diff_desc_4 = ($diff_4) ?  diffStartEnd($b, $c) : 0; // calculo tiempo de descanso
+    $diff_desc_4 = ($diff_4) ? diffStartEnd($b, $c) : 0; // calculo tiempo de descanso
     if ($diff_desc_4['diffInMinutes']) {
         $diff_4['diffInMinutes'] = ($diff_4['diffInMinutes'] - $diff_desc_4['diffInMinutes']); // resto descanso del total 
         $diff_desc = 0;
@@ -221,7 +221,7 @@ if ($confDesc) {
 
     /** particion 5 * ejemplo de 12:30 a 18:00 (inicio dentro del descanso y fin fuera dell descanso)*/
     $diff_5 = ($a1 >= $b1 && $d1 > $c1 && $a1 < $c1) ? diffStartEnd($c, $d) : 0;
-    $diff_desc5 = ($diff_5) ?  diffStartEnd($a, $c) : 0; // calculo tiempo de descanso
+    $diff_desc5 = ($diff_5) ? diffStartEnd($a, $c) : 0; // calculo tiempo de descanso
     $diff_desc = (intval($diff_desc5['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc5 : 0; // comparo total desc. con delta de config.desc.
     /** */
 
@@ -250,55 +250,55 @@ if ($confDesc) {
     }
 
     $calcDesc = array(
-        "part_1"    => $diff_1['diffInMinutes'],
-        "part_2"    => $diff_2['diffInMinutes'],
-        "part_3"    => $diff_3['diffInMinutes'],
-        "part_4"    => $diff_4['diffInMinutes'],
-        "part_5"    => $diff_5['diffInMinutes'],
-        "part_6"    => $diff_6['diffInMinutes'],
+        "part_1" => $diff_1['diffInMinutes'],
+        "part_2" => $diff_2['diffInMinutes'],
+        "part_3" => $diff_3['diffInMinutes'],
+        "part_4" => $diff_4['diffInMinutes'],
+        "part_5" => $diff_5['diffInMinutes'],
+        "part_6" => $diff_6['diffInMinutes'],
         "part_desc" => $diff_desc['diffInMinutes'],
-        "tipo"      => '1', // en descanso
-        "min"       => $totalMin,
-        "horas"     => MinHora($totalMin)
+        "tipo" => '1', // en descanso
+        "min" => $totalMin,
+        "horas" => MinHora($totalMin)
     );
 }
 /** Arrancamos con el calculo */
-$f       = Carbon::parse($start); // Fecha hora de inicio
-$f2      = Carbon::parse($end); // Fecha hora de finalizacion
+$f = Carbon::parse($start); // Fecha hora de inicio
+$f2 = Carbon::parse($end); // Fecha hora de finalizacion
 $minutos = ($f2->diffInMinutes($f)); // Diferencia en minutos -> 360
-$total   = MinHora($f2->diffInMinutes($f)); // Diferencia en formato Horas y minutos -> 06:00
+$total = MinHora($f2->diffInMinutes($f)); // Diferencia en formato Horas y minutos -> 06:00
 
 if (!$confDesc) {
     $calcDesc = array(
-        "part_1"    => null,
-        "part_2"    => null,
-        "part_3"    => null,
-        "part_4"    => null,
-        "part_5"    => null,
-        "part_6"    => null,
+        "part_1" => null,
+        "part_2" => null,
+        "part_3" => null,
+        "part_4" => null,
+        "part_5" => null,
+        "part_6" => null,
         "part_desc" => null,
         "tipo" => '0', // sin calculo de descanso
-        "min"   => $minutos,
+        "min" => $minutos,
         "horas" => MinHora($minutos)
     );
 }
 
 $calculos = array(
     "reales" => array(
-        'min'  => $minutos,
+        'min' => $minutos,
         'horas' => $total,
     ),
     "calculadas" => $calcDesc
 );
 
 $data = array(
-    'start'    => $startInt,
-    'end'      => $endInt,
+    'start' => $startInt,
+    'end' => $endInt,
     'confDesc' => $confDesc,
-    'confTar'  => $confTar,
+    'confTar' => $confTar,
     'totales' => $calculos,
-    'status'   => $status,
-    'msg'      => $msg
+    'status' => $status,
+    'msg' => $msg
 );
 
 echo json_encode($data, JSON_PRETTY_PRINT);

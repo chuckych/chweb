@@ -1,7 +1,7 @@
 <?php
-require __DIR__ . '../../../config/session_start.php';
+require __DIR__ . '/../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -64,7 +64,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT EMPRESAS.EmpRazon FROM EMPRESAS WHERE EMPRESAS.EmpRazon = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -165,7 +165,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     $query = "UPDATE EMPRESAS SET 
     EmpRazon = '$Desc',
     EmpTipo      = '$EmpTipo',
@@ -227,7 +227,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
 
 
@@ -270,7 +270,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT PLANTAS.PlaDesc FROM PLANTAS WHERE PLANTAS.PlaDesc = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -351,7 +351,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     $query = "UPDATE PLANTAS SET PlaDesc = '$Desc', FechaHora = SYSDATETIME() WHERE PlaCodi = $Cod";
 
     $rs = sqlsrv_query($link, $query);
@@ -379,7 +379,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
 
 
@@ -422,7 +422,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SUCURSALES.SucDesc FROM SUCURSALES WHERE SUCURSALES.SucDesc = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -503,7 +503,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $query = "UPDATE SUCURSALES SET SucDesc = '$Desc', FechaHora = SYSDATETIME() WHERE SucCodi = $Cod";
 
@@ -533,7 +533,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si el personal contiene SUCURSALES. */
     $query = "SELECT PERSONAL.LegSucu FROM PERSONAL WHERE PERSONAL.LegSucu = $Cod";
@@ -574,7 +574,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT GRUPOS.GruDesc FROM GRUPOS WHERE GRUPOS.GruDesc = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -655,7 +655,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $query = "UPDATE GRUPOS SET GruDesc = '$Desc', FechaHora = SYSDATETIME() WHERE GruCodi = $Cod";
 
@@ -685,7 +685,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si el personal contiene GRUPOS. */
     $query = "SELECT PERSONAL.LegGrup FROM PERSONAL WHERE PERSONAL.LegGrup = $Cod";
@@ -726,7 +726,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT SECTORES.SecDesc FROM SECTORES WHERE SECTORES.SecDesc = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -808,7 +808,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $query = "UPDATE SECTORES SET SecDesc = '$Desc', FechaHora = SYSDATETIME() WHERE SecCodi = $Cod";
 
@@ -838,7 +838,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si el personal contiene SECTORES. */
     $query = "SELECT PERSONAL.LegSect FROM PERSONAL WHERE PERSONAL.LegSect = $Cod";
@@ -879,7 +879,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     }
     ;
 
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si la descripción ya existe. */
     $query = "SELECT TAREAS.tareDesc FROM TAREAS WHERE TAREAS.tareDesc = '$Desc' COLLATE Latin1_General_CI_AI";
@@ -961,7 +961,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     $query = "UPDATE TAREAS SET tareDesc = '$Desc', FechaHora = SYSDATETIME() WHERE TareCodi = $Cod";
 
@@ -991,7 +991,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
 
     /** Query revisar si el personal contiene TAREAS. */
     $query = "SELECT PERSONAL.LegTareProd FROM PERSONAL WHERE PERSONAL.LegTareProd = $Cod";
@@ -1060,7 +1060,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         exit;
     }
     ;
-    require_once __DIR__ . '../../../config/conect_mssql.php';
+    require_once __DIR__ . '/../../config/conect_mssql.php';
     foreach ($Checks as $key => $valor) {
         // sleep(1);
         $Checks = explode('@', $valor);

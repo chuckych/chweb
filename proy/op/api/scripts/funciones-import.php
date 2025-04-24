@@ -24,7 +24,7 @@ function deleteOldLogs($days = 2, $path)
 function logger($msg)
 {
     $fecha = date('Y-m-d');
-    $logFile = __DIR__ . '../../archivos/logs/' . $fecha . '_import-conf-proy.log';
+    $logFile = __DIR__ . '/../archivos/logs/' . $fecha . '_import-conf-proy.log';
     $log = date('Y-m-d H:i:s') . ' → ' . print_r($msg, true) . PHP_EOL;
     file_put_contents($logFile, $log, FILE_APPEND);
     // echo $log;
@@ -32,7 +32,7 @@ function logger($msg)
 function logger_clean()
 {
     $fecha = date('Y-m-d');
-    $logFile = __DIR__ . '../../archivos/logs/' . $fecha . '_import-conf-proy.log';
+    $logFile = __DIR__ . '/../archivos/logs/' . $fecha . '_import-conf-proy.log';
     file_put_contents($logFile, '');
 }
 function sumar_dias($fecha, $dias)
@@ -76,9 +76,9 @@ function datos_db($tabla, $connpdo)
         'proy_proyectos' => ['ProyNom', 'ProyID', 'ProyFeHo'],
     ];
 
-    $path_update = __DIR__ . '../../archivos/last_update_' . $tabla . '.json';
-    $path_tabla = __DIR__ . '../../archivos/' . $tabla . '.json';
-    $path_tabla_key = __DIR__ . '../../archivos/' . $tabla . '_key.json';
+    $path_update = __DIR__ . '/../archivos/last_update_' . $tabla . '.json';
+    $path_tabla = __DIR__ . '/../archivos/' . $tabla . '.json';
+    $path_tabla_key = __DIR__ . '/../archivos/' . $tabla . '_key.json';
     // Última fecha de actualización de datos
     $date = last_date($connpdo, $tabla, $conf[$tabla][2]);
 

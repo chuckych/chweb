@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
@@ -31,33 +31,34 @@ FusNuloPOST('IdRol', '');
 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['act_abm'] == 'true')) {
 
-    $aFic    = (test_input($_POST['aFic']) == 'on') ? '1' : '0';
-    $mFic    = (test_input($_POST['mFic']) == 'on') ? '1' : '0';
-    $bFic    = (test_input($_POST['bFic']) == 'on') ? '1' : '0';
-    $aNov    = (test_input($_POST['aNov']) == 'on') ? '1' : '0';
-    $mNov    = (test_input($_POST['mNov']) == 'on') ? '1' : '0';
-    $bNov    = (test_input($_POST['bNov']) == 'on') ? '1' : '0';
-    $aHor    = (test_input($_POST['aHor']) == 'on') ? '1' : '0';
-    $mHor    = (test_input($_POST['mHor']) == 'on') ? '1' : '0';
-    $bHor    = (test_input($_POST['bHor']) == 'on') ? '1' : '0';
-    $aONov   = (test_input($_POST['aONov']) == 'on') ? '1' : '0';
-    $mONov   = (test_input($_POST['mONov']) == 'on') ? '1' : '0';
-    $bONov   = (test_input($_POST['bONov']) == 'on') ? '1' : '0';
-    $Proc    = (test_input($_POST['Proc']) == 'on') ? '1' : '0';
-    $aCit    = (test_input($_POST['aCit']) == 'on') ? '1' : '0';
-    $mCit    = (test_input($_POST['mCit']) == 'on') ? '1' : '0';
-    $bCit    = (test_input($_POST['bCit']) == 'on') ? '1' : '0';
-    $aTur    = (test_input($_POST['aTur']) == 'on') ? '1' : '0';
-    $mTur    = (test_input($_POST['mTur']) == 'on') ? '1' : '0';
-    $bTur    = (test_input($_POST['bTur']) == 'on') ? '1' : '0';
+    $aFic = (test_input($_POST['aFic']) == 'on') ? '1' : '0';
+    $mFic = (test_input($_POST['mFic']) == 'on') ? '1' : '0';
+    $bFic = (test_input($_POST['bFic']) == 'on') ? '1' : '0';
+    $aNov = (test_input($_POST['aNov']) == 'on') ? '1' : '0';
+    $mNov = (test_input($_POST['mNov']) == 'on') ? '1' : '0';
+    $bNov = (test_input($_POST['bNov']) == 'on') ? '1' : '0';
+    $aHor = (test_input($_POST['aHor']) == 'on') ? '1' : '0';
+    $mHor = (test_input($_POST['mHor']) == 'on') ? '1' : '0';
+    $bHor = (test_input($_POST['bHor']) == 'on') ? '1' : '0';
+    $aONov = (test_input($_POST['aONov']) == 'on') ? '1' : '0';
+    $mONov = (test_input($_POST['mONov']) == 'on') ? '1' : '0';
+    $bONov = (test_input($_POST['bONov']) == 'on') ? '1' : '0';
+    $Proc = (test_input($_POST['Proc']) == 'on') ? '1' : '0';
+    $aCit = (test_input($_POST['aCit']) == 'on') ? '1' : '0';
+    $mCit = (test_input($_POST['mCit']) == 'on') ? '1' : '0';
+    $bCit = (test_input($_POST['bCit']) == 'on') ? '1' : '0';
+    $aTur = (test_input($_POST['aTur']) == 'on') ? '1' : '0';
+    $mTur = (test_input($_POST['mTur']) == 'on') ? '1' : '0';
+    $bTur = (test_input($_POST['bTur']) == 'on') ? '1' : '0';
     $act_abm = (test_input($_POST['act_abm']) == 'on') ? '1' : '0';
 
     if (valida_campo($_POST['RecidRol'])) {
         PrintRespuestaJson('Error', 'Error.');
         exit;
-    };
+    }
+    ;
 
-    $id_rol    = (test_input($_POST['IdRol']));
+    $id_rol = (test_input($_POST['IdRol']));
     $recid_rol = (test_input($_POST['RecidRol']));
     $FechaHora = date('Y-m-d H:i:s');
 

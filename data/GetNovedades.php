@@ -4,7 +4,7 @@ header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 setlocale(LC_TIME, "es_ES");
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('tk');
 // UnsetGet('k');
@@ -21,9 +21,9 @@ $FechaIni = ((isset($_GET['k']))) ? $FechaPag : $FechaIni;
 if ($_GET['tk'] == $token) {
     if (isset($_GET['tk']) && ($_GET['tk'] == $token)) {
 
-        require __DIR__ . '../../filtros/filtros.php';
+        require __DIR__ . '/../filtros/filtros.php';
 
-        require __DIR__ . '../../config/conect_mssql.php';
+        require __DIR__ . '/../config/conect_mssql.php';
 
         $params = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -118,10 +118,10 @@ if ($_GET['tk'] == $token) {
 
             sqlsrv_free_stmt($rs);
             sqlsrv_close($link);
-            $respuesta = array('success' => 'YES', 'error' => '0', 'Fecha' => $FechaIni, 'firstDate' => $firstDate, 'maxDate' => $maxDate, 'rango_fecha' => ($IndiFecha), /**'legajos' => array_unique($IndiLega),*/'novedades' => ($data));
+            $respuesta = array('success' => 'YES', 'error' => '0', 'Fecha' => $FechaIni, 'firstDate' => $firstDate, 'maxDate' => $maxDate, 'rango_fecha' => ($IndiFecha), /**'legajos' => array_unique($IndiLega),*/ 'novedades' => ($data));
         } else {
             $data[] = array('Fecha' => ($maxDate2), 'Fechastr' => $maxDate3, 'num_dia' => ($maxDate4));
-            $respuesta = array('success' => 'YES', 'error' => '0', 'Fecha' => $FechaIni, 'firstDate' => $firstDate, 'maxDate' => $maxDate, 'rango_fecha' => ($IndiFecha), /**'legajos' => array_unique($IndiLega),*/'novedades' => ($data));
+            $respuesta = array('success' => 'YES', 'error' => '0', 'Fecha' => $FechaIni, 'firstDate' => $firstDate, 'maxDate' => $maxDate, 'rango_fecha' => ($IndiFecha), /**'legajos' => array_unique($IndiLega),*/ 'novedades' => ($data));
         }
     } else {
         $respuesta = array('success' => 'NO', 'error' => true, 'novedades' => 'error');

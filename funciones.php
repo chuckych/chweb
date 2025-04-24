@@ -2,7 +2,7 @@
 require __DIR__ . '/config/function.php';
 require __DIR__ . '/vendor/autoload.php';
 
-// $routeEnv = __DIR__ . '../../../config_chweb/';
+// $routeEnv = __DIR__ . '/../../config_chweb/';
 $routeEnv = getConfigPath();
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
@@ -36,7 +36,7 @@ function E_ALL()
         ini_set('display_errors', '1'); // Muestra todos los errores
     } else {
         error_reporting(E_ALL);
-        ini_set('display_errors', '0');
+        ini_set('display_errors', '1');
     }
 }
 // Función para validar si esta autenticado
@@ -1407,7 +1407,7 @@ function audito_ch2($AudTipo, $AudDato, $modulo = '')
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
                 $dataAud[] = array("auditor" => "error", "dato" => 'Error Auditor');
-                $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQueryMS.log';
+                $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQueryMS.log';
                 fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje[3], $pathLog); // escribir en el log
                 return false;
             }
@@ -1686,7 +1686,7 @@ function InsertRegistroMySql($query)
 }
 function simpleQueryDataMS($query)
 {
-    require __DIR__ . './config/conect_mssql.php';
+    require __DIR__ . '/config/conect_mssql.php';
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -1701,14 +1701,14 @@ function simpleQueryDataMS($query)
             }
         }
 
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQuery.log';
         fileLog($_SERVER['REQUEST_URI'] . "\n" . $mensaje, $pathLog); // escribir en el log
         return false;
     }
 }
 function arrayQueryDataMS($query)
 {
-    require __DIR__ . './config/conect_mssql.php';
+    require __DIR__ . '/config/conect_mssql.php';
     $data = array();
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
@@ -1720,7 +1720,7 @@ function arrayQueryDataMS($query)
         sqlsrv_free_stmt($stmt);
         return $data;
     } else {
-        $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+        $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQuery.log';
         fileLog($_SERVER['REQUEST_URI'] . "\n", $pathLog); // escribir en el log
         return false;
     }
@@ -1804,7 +1804,7 @@ function dataListaEstruct($lista, $uid)
     //         return array('-');
     //     }
     // } else {
-    //     $pathLog = __DIR__ . './logs/error/' . date('Ymd') . '_errorQuery.log';
+    //     $pathLog = __DIR__ . '/logs/error/' . date('Ymd') . '_errorQuery.log';
     //     fileLog($_SERVER['REQUEST_URI'] . "\n" . mysqli_error($link), $pathLog); // escribir en el log
     //     return false;
     // }
@@ -2432,9 +2432,9 @@ function getRemoteFile($url, $timeout = 10)
 }
 function implodeArrayByKey(array $array, $key, $separator = ',')
 {
-    if ($array && $key) {
+    if (!empty($array) && !empty($key)) {
         $i = array_unique(array_column($array, $key));
-        $i = implode("$separator", $i);
+        $i = implode($separator, $i);
         return $i;
     }
     return false;
@@ -3160,10 +3160,10 @@ function getDataIni($url) // obtiene el json de la url
 function gethostCHWeb()
 {
     $token = sha1($_SESSION['RECID_CLIENTE']);
-    if (!file_exists(__DIR__ . './mobileApikey.php')) {
+    if (!file_exists(__DIR__ . '/mobileApikey.php')) {
         return false;
     }
-    $iniData = getDataIni(__DIR__ . './mobileApikey.php');
+    $iniData = getDataIni(__DIR__ . '/mobileApikey.php');
     foreach ($iniData as $v) {
         if ($v['Token'] == $token) {
             $data = [$v];

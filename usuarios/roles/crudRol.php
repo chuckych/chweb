@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -10,12 +10,12 @@ E_ALL();
 FusNuloPOST('submit', '');
 /** MODIFICACION DE ROL*/
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editarol')) {
-    // require __DIR__ . '../../../config/conect_mysql.php';
-    $nombre       = test_input($_POST["nombre"]);
+    // require __DIR__ . '/../../config/conect_mysql.php';
+    $nombre = test_input($_POST["nombre"]);
     $nombre_nuevo = test_input($_POST["nombre_nuevo"]);
-    $id           = test_input($_POST["id"]);
-    $recid_c      = test_input($_POST["recid_c"]);
-    $fecha        = date("Y/m/d H:i:s");
+    $id = test_input($_POST["id"]);
+    $recid_c = test_input($_POST["recid_c"]);
+    $fecha = date("Y/m/d H:i:s");
     $UpdateRol = ($nombre === $nombre_nuevo) ? false : true;
     /* Comprobamos campos vacios  */
     if ((valida_campo($nombre_nuevo)) or (valida_campo($recid_c)) or (valida_campo($id))) {
@@ -50,8 +50,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'editarol')) 
 /** FIN MODIFICACION DE ROL */
 /** BORRAR ROL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'deleteRol')) {
-    // require __DIR__ . '../../../config/conect_mysql.php';
-    $id     = test_input($_POST["id"]);
+    // require __DIR__ . '/../../config/conect_mysql.php';
+    $id = test_input($_POST["id"]);
     $nombre = test_input($_POST["nombre"]);
     // $recid_c = test_input($_POST["recid_c"]);
     /* Comprobamos campos vacíos  */
@@ -76,11 +76,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'deleteRol'))
 /** FIN BORRAR ROL */
 /** ALTA DE ROL */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'addRol')) {
-    // require __DIR__ . '../../../config/conect_mysql.php';
-    $nombre  = test_input($_POST["nombre"]);
+    // require __DIR__ . '/../../config/conect_mysql.php';
+    $nombre = test_input($_POST["nombre"]);
     $recid_c = test_input($_POST["recid_c"]);
-    $recid      = recid();
-    $fecha      = date("Y/m/d H:i:s");
+    $recid = recid();
+    $fecha = date("Y/m/d H:i:s");
     /* Comprobamos campos vacios  */
     if ((valida_campo($nombre)) or (valida_campo($recid_c))) {
         PrintRespuestaJson('error', 'Campo Requerido');

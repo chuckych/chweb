@@ -1,23 +1,23 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 header("Content-Type: application/json");
 
-require __DIR__ . '../../../config/conect_mssql.php';
+require __DIR__ . '/../../config/conect_mssql.php';
 
 $data = array();
 $countSet = '';
 $dataLista = array();
 $set = 0;
-$_GET['id_rol']    = $_GET['id_rol'] ?? '';
+$_GET['id_rol'] = $_GET['id_rol'] ?? '';
 $_GET['recid_rol'] = $_GET['recid_rol'] ?? '';
-$_GET['_c']        = $_GET['_c'] ?? '';
+$_GET['_c'] = $_GET['_c'] ?? '';
 
-$id_rol        = test_input($_GET['id_rol']);
-$lista         = test_input($_GET['lista']);
+$id_rol = test_input($_GET['id_rol']);
+$lista = test_input($_GET['lista']);
 $recid_cliente = test_input($_GET['_c']);
 
 if (!$id_rol) {
@@ -40,7 +40,7 @@ switch ($lista) {
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
             $countSet = count($dataLista);
-            while ($r = sqlsrv_fetch_array($rs)) :
+            while ($r = sqlsrv_fetch_array($rs)):
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['NovCodi']) ? 1 : 0;
                     if ($set === 1) {
@@ -48,12 +48,12 @@ switch ($lista) {
                     }
                 }
                 $data[] = array(
-                    'codigo'      => $r['NovCodi'],
+                    'codigo' => $r['NovCodi'],
                     'descripcion' => $r['NovDesc'],
-                    'id'          => $r['NovID'],
-                    'idtipo'      => ($r['NovTipo']),
-                    'tipo'        => TipoNov($r['NovTipo']),
-                    'set'         => ($set),
+                    'id' => $r['NovID'],
+                    'idtipo' => ($r['NovTipo']),
+                    'tipo' => TipoNov($r['NovTipo']),
+                    'set' => ($set),
                 );
             endwhile;
         }
@@ -65,7 +65,7 @@ switch ($lista) {
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
             $countSet = count($dataLista);
-            while ($r = sqlsrv_fetch_array($rs)) :
+            while ($r = sqlsrv_fetch_array($rs)):
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['ONovCodi']) ? 1 : 0;
                     if ($set === 1) {
@@ -73,11 +73,11 @@ switch ($lista) {
                     }
                 }
                 $data[] = array(
-                    'codigo'      => $r['ONovCodi'],
+                    'codigo' => $r['ONovCodi'],
                     'descripcion' => $r['ONovDesc'],
-                    'idtipo'      => $r['ONovTipo'],
-                    'set'         => ($set),
-                    'tipo'        => ($r['ONovTipo'] == 0) ? 'En Valor' : 'En Horas',
+                    'idtipo' => $r['ONovTipo'],
+                    'set' => ($set),
+                    'tipo' => ($r['ONovTipo'] == 0) ? 'En Valor' : 'En Horas',
                 );
             endwhile;
         }
@@ -88,7 +88,7 @@ switch ($lista) {
         $query = "SELECT HorCodi, HorDesc, HorID FROM HORARIOS";
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
-            while ($r = sqlsrv_fetch_array($rs)) :
+            while ($r = sqlsrv_fetch_array($rs)):
                 foreach ($dataLista as $key => $value) {
                     if ($value != '-') {
                         $value = ($value == '32768') ? 0 : $value;
@@ -99,10 +99,10 @@ switch ($lista) {
                     }
                 }
                 $data[] = array(
-                    'codigo'      => $r['HorCodi'],
+                    'codigo' => $r['HorCodi'],
                     'descripcion' => $r['HorDesc'],
-                    'id'          => $r['HorID'],
-                    'set'         => ($set),
+                    'id' => $r['HorID'],
+                    'set' => ($set),
                 );
             endwhile;
         }
@@ -114,7 +114,7 @@ switch ($lista) {
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
             $countSet = count($dataLista);
-            while ($r = sqlsrv_fetch_array($rs)) :
+            while ($r = sqlsrv_fetch_array($rs)):
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['RotCodi']) ? 1 : 0;
                     if ($set === 1) {
@@ -122,9 +122,9 @@ switch ($lista) {
                     }
                 }
                 $data[] = array(
-                    'codigo'      => $r['RotCodi'],
+                    'codigo' => $r['RotCodi'],
                     'descripcion' => $r['RotDesc'],
-                    'set'         => ($set),
+                    'set' => ($set),
                 );
             endwhile;
         }
@@ -136,7 +136,7 @@ switch ($lista) {
         $rs = sqlsrv_query($link, $query, $params, $options);
         if (sqlsrv_num_rows($rs) > 0) {
             $countSet = count($dataLista);
-            while ($r = sqlsrv_fetch_array($rs)) :
+            while ($r = sqlsrv_fetch_array($rs)):
                 foreach ($dataLista as $key => $value) {
                     $set = ($value == $r['THoCodi']) ? 1 : 0;
                     if ($set === 1) {
@@ -144,10 +144,10 @@ switch ($lista) {
                     }
                 }
                 $data[] = array(
-                    'codigo'      => $r['THoCodi'],
+                    'codigo' => $r['THoCodi'],
                     'descripcion' => $r['THoDesc'],
-                    'id'          => $r['THoID'],
-                    'set'         => ($set),
+                    'id' => $r['THoID'],
+                    'set' => ($set),
                 );
             endwhile;
         }
@@ -155,16 +155,16 @@ switch ($lista) {
         sqlsrv_close($link);
         break;
     case 10:
-        require __DIR__ . '../../../config/conect_mysql.php';
+        require __DIR__ . '/../../config/conect_mysql.php';
         $stmt = mysqli_query($link, "SELECT r.id, r.nombre FROM roles r INNER JOIN clientes c ON r.cliente = c.id WHERE c.recid = '$recid_cliente' AND r.id != '$id_rol' AND r.id != 1");
         // print_r($query); exit;
         if (($stmt)) {
             if (mysqli_num_rows($stmt) > 0) {
                 while ($row = mysqli_fetch_assoc($stmt)) {
                     $data[] = array(
-                        'codigo'      => $row['id'],
+                        'codigo' => $row['id'],
                         'descripcion' => $row['nombre'],
-                        'set'         => 0,
+                        'set' => 0,
                     );
                 }
             }

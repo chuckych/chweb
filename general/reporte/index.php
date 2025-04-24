@@ -1,14 +1,14 @@
 <?php
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-require __DIR__ . '../../../config/session_start.php';
+require __DIR__ . '/../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 $Modulo = '4';
 ExisteModRol($Modulo);
-require_once __DIR__ . '../../../vendor/autoload.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 E_ALL();
 
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {

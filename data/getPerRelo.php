@@ -1,11 +1,11 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('q2');
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 $q2 = $_GET['q2'];
 
 $query = "SELECT PERRELO.RelLega AS Legajo ,PERRELO.RelFech AS Desde, PERRELO.RelFech2 AS Vence, PERRELO.RelReMa AS Marca ,PERRELO.RelRelo AS Reloj ,RELOJES.RelDeRe AS Descrip, RELOJES.RelSeri AS Serie FROM PERRELO,RELOJES WHERE PERRELO.RelLega = '$q2' AND PERRELO.RelReMa = RELOJES.RelReMa AND PERRELO.RelRelo = RELOJES.RelRelo ORDER BY PERRELO.RelLega,PERRELO.RelReMa,PERRELO.RelRelo";

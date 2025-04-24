@@ -7,22 +7,23 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
 
 <head>
     <link href="../js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title>Usuarios</title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <?=
-        encabezado_mod2('bg-custom', 'white', 'people-fill',  'Usuarios: ' . $Cliente, '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'people-fill', 'Usuarios: ' . $Cliente, '25', 'text-white mr-2');
         ?>
         <input type="hidden" id="recid_c" value="<?= $_GET['_c'] ?>">
         <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
         <div class="row mt-3">
             <div class="col-12 col-sm-6">
-                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border" id="btnImportar">
+                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border"
+                    id="btnImportar">
                     <span class="mr-1 d-none d-sm-inline fw5">IMPORTAR PERSONAL</span>
                     <span class="mr-1 d-inline d-sm-none">IMPORTAR</span>
                     <i class="bi-download font1"></i>
@@ -30,9 +31,11 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
             </div>
             <div class="col-12 col-sm-6 mb-2">
                 <?php if (modulo_cuentas() == '1') { ?>
-                    <a href="clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
+                    <a href="clientes/" class="btn fontq float-right m-0 opa7 btn-custom"><i
+                            class="bi bi-diagram-3-fill mr-2"></i>Cuentas</a>
                 <?php } ?>
-                <a href="roles/?_c=<?= $_GET['_c'] ?>" class="mr-1 btn fontq float-right m-0 opa7 btn-custom"><i class="bi bi-sliders mr-2"></i>Roles</a>
+                <a href="roles/?_c=<?= $_GET['_c'] ?>" class="mr-1 btn fontq float-right m-0 opa7 btn-custom"><i
+                        class="bi bi-sliders mr-2"></i>Roles</a>
             </div>
         </div>
         <div class="mt-2">
@@ -65,7 +68,8 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
         </div>
 
         <!-- Modal -->
-        <div class="modal animate__animated animate__fadeIn" id="modalListas" data-backdrop="static" data-keyboard="true" tabindex="-1" aria-labelledby="modalListasLabel" aria-hidden="true">
+        <div class="modal animate__animated animate__fadeIn" id="modalListas" data-backdrop="static"
+            data-keyboard="true" tabindex="-1" aria-labelledby="modalListasLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header border-0">
@@ -77,7 +81,8 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
                     <div class="modal-body">
                     </div>
                     <div class="modal-footer bg-light border-0">
-                        <button type="button" class="btn btn-outline-custom border btn-sm fontq px-3" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-outline-custom border btn-sm fontq px-3"
+                            data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -87,8 +92,8 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     </div>
     <!-- fin container -->
     <?php
-    require __DIR__ . "../../js/jquery.php";
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/jquery.php";
+    require __DIR__ . "/../js/DataTable.php";
     ?>
     <script>
         // fetch('clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')

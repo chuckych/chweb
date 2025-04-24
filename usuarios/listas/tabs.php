@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '../../../config/index.php';
+require_once __DIR__ . '/../../config/index.php';
 ?>
 <!-- Novedaes Tab -->
 <div class="tab-pane fade invisible show active" id="novedades" role="tabpanel" aria-labelledby="novedades-tab">
@@ -60,7 +60,8 @@ require_once __DIR__ . '../../../config/index.php';
 <div class="tab-pane fade invisible" id="copyListas" role="tabpanel" aria-labelledby="copyListas-tab">
     <div class="row">
         <div class="col-12 col-lg-6">
-            <div class="alert alert-warning fw5 fontq mt-3">Copiar configuracion de las Listas del rol <span class="font-weight-bold nombreRol"></span> a Roles</div>
+            <div class="alert alert-warning fw5 fontq mt-3">Copiar configuracion de las Listas del rol <span
+                    class="font-weight-bold nombreRol"></span> a Roles</div>
         </div>
     </div>
     <div class="row">

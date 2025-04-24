@@ -3,14 +3,14 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../llamadas.php"; ?>
     <title><?= MODULOS['liquidar'] ?></title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../nav.php'; ?>
+        <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
         <?= encabezado_mod('bg-custom', 'white', 'descargar.png', MODULOS['liquidar'], '') ?>
         <!-- Fin Encabezado -->
@@ -30,19 +30,22 @@
                                     }
                                     ?>
                                 </select>
-                                <button type="button" class="fontq btn btn-outline-custom border-0 float-right" id="trash_all"><i class="bi bi-eraser"></i> Limpiar Filtros</button>
+                                <button type="button" class="fontq btn btn-outline-custom border-0 float-right"
+                                    id="trash_all"><i class="bi bi-eraser"></i> Limpiar Filtros</button>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 mt-2">
                             <div class="mt-2">
                                 <label for="LegaIni" class="w120">Legajo desde:</label>
-                                <input type="tel" name="LegaIni" id="LegaIni" class="form-control w-100 text-center h40" value="1" max="999999999">
+                                <input type="tel" name="LegaIni" id="LegaIni" class="form-control w-100 text-center h40"
+                                    value="1" max="999999999">
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 mt-2">
                             <div class="mt-2">
                                 <label for="LegaFin" class="mx-1">Legajo hasta:</label>
-                                <input type="tel" name="LegaFin" id="LegaFin" class="form-control w-100 text-center h40" value="999999999" max="999999999">
+                                <input type="tel" name="LegaFin" id="LegaFin" class="form-control w-100 text-center h40"
+                                    value="999999999" max="999999999">
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 mt-2">
@@ -123,7 +126,8 @@
 
                         <div class="col-12 mt-3">
                             <div class="form-inline mt-3 d-flex justify-content-end pb-3">
-                                <button type="submit" class="btn bg-custom btn-sm text-white fontq w150" id="submit"></button>
+                                <button type="submit" class="btn bg-custom btn-sm text-white fontq w150"
+                                    id="submit"></button>
                             </div>
                         </div>
                     </div>
@@ -207,9 +211,9 @@
     </div>
     <!-- fin container -->
     <?php
-    require __DIR__ . "../../js/jquery.php";
-    require __DIR__ . "../../js/DateRanger.php";
-    require __DIR__ . "../../js/DataTable.php";
+    require __DIR__ . "/../js/jquery.php";
+    require __DIR__ . "/../js/DateRanger.php";
+    require __DIR__ . "/../js/DataTable.php";
     ?>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

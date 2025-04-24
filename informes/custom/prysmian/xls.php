@@ -4,7 +4,7 @@
  */
 
 ini_set('max_execution_time', 600); //180 seconds = 3 minutes
-require __DIR__ . '../../../../vendor/autoload.php';
+require __DIR__ . '/../../../vendor/autoload.php';
 
 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'); // Tipo de contenido
 header('Cache-Control: max-age=0'); // No cache

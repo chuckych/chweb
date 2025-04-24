@@ -1,11 +1,11 @@
 <?php
 header("Content-type: application/json; charset=utf-8");
 header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 E_ALL();
 UnsetGet('q2');
-require __DIR__ . '../../config/conect_mssql.php';
+require __DIR__ . '/../config/conect_mssql.php';
 $q2 = $_GET['q2'];
 
 $query = "SELECT RELOHABI.RelGrup AS GrupoCod,  GRUPCAPT.GHaDesc as Grupo, RELOHABI.RelReMa AS Marca ,RELOJES.RelRelo AS Reloj ,RELOJES.RelSeri AS Serie, RELOJES.RelDeRe AS Descrip FROM RELOHABI,RELOJES,GRUPCAPT WHERE RELOHABI.RelGrup = '$q2' AND RELOHABI.RelGrup = GRUPCAPT.GHaCodi AND RELOHABI.RelReMa = RELOJES.RelReMa AND RELOHABI.RelRelo = RELOJES.RelRelo ORDER BY RELOHABI.RelGrup,RELOHABI.RelReMa,RELOHABI.RelRelo";

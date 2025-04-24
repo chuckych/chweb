@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header("Content-Type: application/json");
 ultimoacc();
@@ -65,16 +65,16 @@ if ($params['type'] == 'selectDevice') {
 }
 
 $paramsApi = array(
-    'key'        => $_SESSION["RECID_CLIENTE"],
-    'start'      => urlencode($params['start']),
-    'length'     => urlencode($params['length']),
-    'checks'     => urlencode($_POST['SoloFic']),
-    'startDate'  => test_input(dr_f($DateRange[0])),
-    'endDate'    => test_input(dr_f($DateRange[1])),
-    'users'      => $users ?? '',
-    'zones'      => $zones ?? '',
-    'devices'      => $device ?? '',
-    'groupBy'    => $groupBy ?? '',
+    'key' => $_SESSION["RECID_CLIENTE"],
+    'start' => urlencode($params['start']),
+    'length' => urlencode($params['length']),
+    'checks' => urlencode($_POST['SoloFic']),
+    'startDate' => test_input(dr_f($DateRange[0])),
+    'endDate' => test_input(dr_f($DateRange[1])),
+    'users' => $users ?? '',
+    'zones' => $zones ?? '',
+    'devices' => $device ?? '',
+    'groupBy' => $groupBy ?? '',
     'identified' => $params['identified'] ?? '',
     'userIDName' => urlencode($params['search']['value'] ?? $params['qUser']),
     'zoneIDName' => urlencode($params['qZone']),
@@ -171,58 +171,58 @@ if ($api['COUNT'] ?? 0 > 0) {
         }
 
         $arrayData[] = array(
-            'appVersion'        => $r['appVersion'],
-            'attPhoto'          => $r['attPhoto'],
-            'createdDate'       => $r['createdDate'],
-            'deviceName'        => $r['deviceName'],
-            'deviceEvent'       => $r['deviceEvent'],
-            'eventType'         => $r['eventType'],
-            'eventZone'         => $r['eventZone'],
-            'gpsStatus'         => $r['gpsStatus'],
-            'operation'         => $r['operation'],
-            'operationType'     => $r['operationType'],
-            'phoneID'           => $r['phoneid'],
-            'regDate'           => FechaFormatVar($r['regDate'], 'd/m/Y'),
-            'regDateTime'       => $r['regDateTime'],
-            'regDay'            => $r['regDay'],
-            'regUID'            => ($r['regUID']),
-            'regLat'            => $r['regLat'],
-            'regLng'            => $r['regLng'],
-            'regHora'           => $r['regTime'],
-            'regTime'           => $hora,
-            'r2FileName'        => $r['r2FileName'] ?? '',
-            'userCompany'       => $r['userCompany'],
-            'userID'            => $r['userID'],
-            'userName'          => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
-            'phoneRegId'        => $r['phoneRegID'],
-            'zoneID'            => $r['zoneID'],
-            'zoneName'          => $r['zoneName'],
-            'zoneLat'           => $r['zoneLat'],
-            'zoneLng'           => $r['zoneLng'],
-            'zoneRadio'         => $r['zoneRadio'],
-            'zoneDistance'      => $zoneDistance,
-            'locked'            => $r['locked'],
-            'error'             => $r['error'],
+            'appVersion' => $r['appVersion'],
+            'attPhoto' => $r['attPhoto'],
+            'createdDate' => $r['createdDate'],
+            'deviceName' => $r['deviceName'],
+            'deviceEvent' => $r['deviceEvent'],
+            'eventType' => $r['eventType'],
+            'eventZone' => $r['eventZone'],
+            'gpsStatus' => $r['gpsStatus'],
+            'operation' => $r['operation'],
+            'operationType' => $r['operationType'],
+            'phoneID' => $r['phoneid'],
+            'regDate' => FechaFormatVar($r['regDate'], 'd/m/Y'),
+            'regDateTime' => $r['regDateTime'],
+            'regDay' => $r['regDay'],
+            'regUID' => ($r['regUID']),
+            'regLat' => $r['regLat'],
+            'regLng' => $r['regLng'],
+            'regHora' => $r['regTime'],
+            'regTime' => $hora,
+            'r2FileName' => $r['r2FileName'] ?? '',
+            'userCompany' => $r['userCompany'],
+            'userID' => $r['userID'],
+            'userName' => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
+            'phoneRegId' => $r['phoneRegID'],
+            'zoneID' => $r['zoneID'],
+            'zoneName' => $r['zoneName'],
+            'zoneLat' => $r['zoneLat'],
+            'zoneLng' => $r['zoneLng'],
+            'zoneRadio' => $r['zoneRadio'],
+            'zoneDistance' => $zoneDistance,
+            'locked' => $r['locked'],
+            'error' => $r['error'],
             'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
             'confidenceFaceVal' => $r['confidenceFaceVal'],
-            'id_api'            => $r['id_api'],
-            'imageData'         => $r['imageData'],
-            'basePhoto'         => $r['basePhoto']
+            'id_api' => $r['id_api'],
+            'imageData' => $r['imageData'],
+            'basePhoto' => $r['basePhoto']
         );
         // print_r($arrayData).exit;
         if (($params['typeDownload'] ?? '') == 'downloadTxt') { //downloadTxt
 
             $txtData = array(
-                'userID'            => (padLeft($r['userID'], 11, ' ')),
-                'userName'          => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
-                'zoneID'            => $r['zoneID'],
-                'zoneName'          => ($r['zoneName']) ? trim($r['zoneName']) : 'Fuera de Zona',
-                'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
-                'locked'            => $r['locked'],
+                'userID' => (padLeft($r['userID'], 11, ' ')),
+                'userName' => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
+                'zoneID' => $r['zoneID'],
+                'zoneName' => ($r['zoneName']) ? trim($r['zoneName']) : 'Fuera de Zona',
+                'zoneDistance' => round(floatval($r['zoneDistance']) * 1000, 2),
+                'locked' => $r['locked'],
                 'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
-                'regDateTime'       => ($r['regDateTime']),
-                'eventZone'         => ($r['eventZone']),
-                'appVersion'        => $r['appVersion'],
+                'regDateTime' => ($r['regDateTime']),
+                'eventZone' => ($r['eventZone']),
+                'appVersion' => $r['appVersion'],
             );
             // print_r($txtData) . exit;
 
@@ -235,26 +235,26 @@ if ($api['COUNT'] ?? 0 > 0) {
         if (($params['typeDownload'] ?? '') == 'downloadXls') { //xls
             if ($r['userName']) {
                 $xlsData[] = array(
-                    'userID'            => $r['userID'],
-                    'userName'          => trim(html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8')),
-                    'zoneID'            => $r['zoneID'],
-                    'regDay'            => $r['regDay'],
-                    'regHora'           => $r['regTime'],
-                    'regDate'           => FechaFormatVar($r['regDateTime'], 'Y-m-d'),
-                    'zoneName'          => trim(html_entity_decode($r['zoneName'], ENT_QUOTES, 'UTF-8')),
-                    'zoneDistance'      => round(floatval($r['zoneDistance']) * 1000, 2),
-                    'locked'            => $r['locked'],
+                    'userID' => $r['userID'],
+                    'userName' => trim(html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8')),
+                    'zoneID' => $r['zoneID'],
+                    'regDay' => $r['regDay'],
+                    'regHora' => $r['regTime'],
+                    'regDate' => FechaFormatVar($r['regDateTime'], 'Y-m-d'),
+                    'zoneName' => trim(html_entity_decode($r['zoneName'], ENT_QUOTES, 'UTF-8')),
+                    'zoneDistance' => round(floatval($r['zoneDistance']) * 1000, 2),
+                    'locked' => $r['locked'],
                     'confidenceFaceStr' => $r['confidenceFaceStr'] ?? ($r['confidenceFaceVal']),
-                    'regDateTime'       => $r['regDateTime'],
-                    'regLat'            => $r['regLat'],
-                    'regLng'            => $r['regLng'],
-                    'device'            => ($r['deviceName']),
-                    'phoneid'           => ($r['phoneid']),
-                    'operationType'     => $r['operationType'],
-                    'timestamp'         => $r['createdDate'],
-                    'eventZone'         => ($r['eventZone']),
-                    'eventDevice'       => ($r['eventDevice']),
-                    'appVersion'        => $r['appVersion'],
+                    'regDateTime' => $r['regDateTime'],
+                    'regLat' => $r['regLat'],
+                    'regLng' => $r['regLng'],
+                    'device' => ($r['deviceName']),
+                    'phoneid' => ($r['phoneid']),
+                    'operationType' => $r['operationType'],
+                    'timestamp' => $r['createdDate'],
+                    'eventZone' => ($r['eventZone']),
+                    'eventDevice' => ($r['eventDevice']),
+                    'appVersion' => $r['appVersion'],
                 );
             }
         }
@@ -262,7 +262,7 @@ if ($api['COUNT'] ?? 0 > 0) {
 }
 
 if (($params['typeDownload'] ?? '') == 'downloadXls') {
-    require __DIR__ . './exportXls.php';
+    require __DIR__ . '/exportXls.php';
 }
 
 // print_r($api['COUNT'] ?? '') . exit;

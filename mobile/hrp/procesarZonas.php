@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 ini_set('max_execution_time', 1800); //1800 seconds = 30 minutes
 session_start();
 header("Content-Type: application/json");
@@ -35,10 +35,10 @@ $_GET['company'] = $_GET['company'] ?? '';
 if (empty($_GET['company'])) {
     $data = array(
         'Mensaje' => 'Falta de parametros',
-        'date'    => date('Y-m-d H:i:s'),
-        'status'  => 'no',
-        'time'    => '',
-        'total'   => '',
+        'date' => date('Y-m-d H:i:s'),
+        'status' => 'no',
+        'time' => '',
+        'total' => '',
     );
     echo json_encode(array('Response' => $data));
     exit;
@@ -54,10 +54,10 @@ $dataReg = array_pdoQuery($queryReg);
 if (empty($dataReg)) {
     $data = array(
         'Mensaje' => 'No hay Registros Fuera de Zona',
-        'date'    => date('Y-m-d H:i:s'),
-        'status'  => 'no',
-        'time'    => '',
-        'total'   => '',
+        'date' => date('Y-m-d H:i:s'),
+        'status' => 'no',
+        'time' => '',
+        'total' => '',
     );
     echo json_encode(array('Response' => $data));
     exit;
@@ -73,7 +73,7 @@ foreach ($dataReg as $key => $value) {
         $radio = (intval($zona['radio']) / 1000);
         $distancia = ($zona['distancia']) ? ($zona['distancia']) : 0;
         $idZone = ($distancia <= $radio) ? $zona['id'] : 0;
-        if ($idZone>0) {
+        if ($idZone > 0) {
             $update = "UPDATE `reg_` SET `idZone` = $idZone, `distance` = $distancia WHERE `rid` = " . $value['rid'];
             pdoQuery($update);
             $counter = $counter + 1;
@@ -84,7 +84,7 @@ foreach ($dataReg as $key => $value) {
             //     'distance' => $distancia,
             // );
             // echo json_encode(array($data), JSON_PRETTY_PRINT);
-        }else{
+        } else {
             // $counter = $counter + -1;
         }
     }
@@ -97,18 +97,18 @@ $time = round($end - $start, 2);
 if ($counter > 0) {
     $data = array(
         'Mensaje' => 'Se actualizaron ' . $counter . ' registros',
-        'date'    => date('Y-m-d H:i:s'),
-        'status'  => 'ok',
-        'time'    => ($time),
-        'total'   => $counter,
+        'date' => date('Y-m-d H:i:s'),
+        'status' => 'ok',
+        'time' => ($time),
+        'total' => $counter,
     );
 } else {
     $data = array(
         'Mensaje' => 'No se encontraron registros para actualizar',
-        'date'    => date('Y-m-d H:i:s'),
-        'status'  => 'no',
-        'time'    => ($time),
-        'total'   => $counter,
+        'date' => date('Y-m-d H:i:s'),
+        'status' => 'no',
+        'time' => ($time),
+        'total' => $counter,
     );
 }
 echo json_encode(array('Response' => $data));

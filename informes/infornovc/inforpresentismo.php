@@ -4,48 +4,54 @@
 <head>
     <meta charset="utf-8">
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['infornovc'] ?></title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['infornovc'], '') ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white py-2">
             <div class="col-12 col-sm-6 mt-2">
-            <input type="hidden" id="dl" value="<?=$_SESSION["DIAS_FRANCO"]?>">
-            <input type="hidden" id="df" value="<?=$_SESSION["DIAS_FERIADOS"]?>">
+                <input type="hidden" id="dl" value="<?= $_SESSION["DIAS_FRANCO"] ?>">
+                <input type="hidden" id="df" value="<?= $_SESSION["DIAS_FERIADOS"] ?>">
                 <div class="custom-control custom-switch custom-control-inline">
                     <input type="radio" class="custom-control-input" id="PorLegajo" name="ordenar" value="0">
-                    <label class="custom-control-label" for="PorLegajo" style="padding-top: 3px;"><span class="text-dark">Por Legajo</span></label>
+                    <label class="custom-control-label" for="PorLegajo" style="padding-top: 3px;"><span
+                            class="text-dark">Por Legajo</span></label>
                 </div>
                 <div class="custom-control custom-switch custom-control-inline ml-1">
                     <input type="radio" class="custom-control-input" id="PorNombre" name="ordenar" value="1">
-                    <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span class="text-dark">Por Nombre</span></label>
+                    <label class="custom-control-label" for="PorNombre" style="padding-top: 3px;"><span
+                            class="text-dark">Por Nombre</span></label>
                 </div>
                 <input type="hidden" id="ordenar">
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                    <button class="btn btn-outline-custom fontq border mr-1 btn-sm" type="button" data-toggle="modal" data-target="#ConceptosModal">Conceptos</button>
+                    <button class="btn btn-outline-custom fontq border mr-1 btn-sm" type="button" data-toggle="modal"
+                        data-target="#ConceptosModal">Conceptos</button>
 
-                    <button type="button" class="btn btn-outline-custom border btn-sm fontq" data-toggle="collapse" data-target="#rowFiltros" aria-expanded="false" aria-controls="rowFiltros">
+                    <button type="button" class="btn btn-outline-custom border btn-sm fontq" data-toggle="collapse"
+                        data-target="#rowFiltros" aria-expanded="false" aria-controls="rowFiltros">
                         Filtros
                     </button>
                     <span id="trash_allIn" title="Limpiar Filtros" class="trash align-middle mt-2 fw5 ml-1"></span>
                     <label for="_drnovc" class="d-none">Fecha</label>
-                    <input type="text" readonly class="ml-2 form-control text-center w250 ls2" name="_drnovc" id="_drnovc">
+                    <input type="text" readonly class="ml-2 form-control text-center w250 ls2" name="_drnovc"
+                        id="_drnovc">
                 </div>
             </div>
         </div>
         <div class="row bg-white collapse invisible" id="rowFiltros">
             <div class="col-12">
                 <!-- Tipo -->
-                <label for="Tipo" class="mb-1 fontq"><span class="mr-1 d-none d-sm-none d-md-none d-lg-block mb-1 fontq">Tipo de Personal: </span></label>
+                <label for="Tipo" class="mb-1 fontq"><span
+                        class="mr-1 d-none d-sm-none d-md-none d-lg-block mb-1 fontq">Tipo de Personal: </span></label>
                 <select class="selectjs_tipoper" id="Tipo" name="Tipo">
                 </select>
             </div>
@@ -120,11 +126,11 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
+    require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
-    require __DIR__ . "../../../js/DateRanger.php";
+    require __DIR__ . "/../../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/DataTable.php";
     ?>
     <script src="../../js/select2.min.js"></script>
     <script src="js/data-min.js?v=<?= vjs() ?>"></script>

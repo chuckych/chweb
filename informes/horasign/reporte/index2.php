@@ -3,7 +3,7 @@ ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 // session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-// require __DIR__ . '../../../../config/index.php';
+// require __DIR__ . '/../../../config/index.php';
 ultimoacc();
 secure_auth_ch_json();
 $Modulo = '19';
@@ -88,7 +88,7 @@ if (($method == "POST")) {
         $mpdf->SetCompression(true);
         $mpdf->simpleTables = true;
         $mpdf->useSubstitutions = false;
-        $mpdf->use_kwt = true; 
+        $mpdf->use_kwt = true;
 
         $mpdf->SetHTMLHeader('
             <table width="100%">

@@ -2,7 +2,7 @@
 <html lang="es">
 
 <head>
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['cuentas'] ?></title>
     <style>
         .dtrg-level-0 td {
@@ -18,10 +18,10 @@
 <body class="animate__animated animate__fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
-        <?php require __DIR__ . '../../../nav.php'; ?>
+        <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
         <?=
-        encabezado_mod2('bg-custom', 'white', 'diagram-3-fill',  MODULOS['cuentas'], '25', 'text-white mr-2');
+            encabezado_mod2('bg-custom', 'white', 'diagram-3-fill', MODULOS['cuentas'], '25', 'text-white mr-2');
         ?>
         <div class="row mt-3">
             <div class="col-12 col-sm-8">
@@ -33,8 +33,8 @@
         <!-- fin container -->
         <?php
         /** INCLUIMOS LIBRERÍAS JQUERY */
-        require __DIR__ . "../../../js/jquery.php";
-        require __DIR__ . "../../../js/DataTable.php";
+        require __DIR__ . "/../../js/jquery.php";
+        require __DIR__ . "/../../js/DataTable.php";
         ?>
         <script src="../../js/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../js/bootbox.min.js"></script>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 header("Content-Type: application/json");
 E_ALL();
 
@@ -18,7 +18,7 @@ $where_condition .= " AND proy_planos.Cliente = '$_SESSION[ID_CLIENTE]'";
 $where_condition .= " AND proy_planos.PlanoEsta = '0'";
 
 if ($params['notPlano']) {
-    $selPlano = implode(',',$params['notPlano']);
+    $selPlano = implode(',', $params['notPlano']);
     $where_condition .= " AND proy_planos.PlanoID NOT IN ($selPlano)";
 }
 
@@ -34,10 +34,10 @@ foreach ($r as $key => $row) {
     // $html = "<span class='font08'>$row[PlanoDesc]</span><br><span class='text-mutted font08'>$row[PlanoCod]</span>";
     // $html = "<span class='font08'>$row[PlanoDesc]</span>";
     $data[] = array(
-        'id'   => $row['PlanoID'],
+        'id' => $row['PlanoID'],
         'text' => utf8str($row['PlanoDesc']),
-        'cod'  => utf8str($row['PlanoCod']),
-        'obs'  => utf8str($row['PlanoObs']),
+        'cod' => utf8str($row['PlanoCod']),
+        'obs' => utf8str($row['PlanoObs']),
         // 'html'  => $html
     );
 }

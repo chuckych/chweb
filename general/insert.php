@@ -1,6 +1,6 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/session_start.php';
+require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 header("Content-Type: application/json");
 header('Access-Control-Allow-Origin: *');
@@ -34,7 +34,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para ingresar Fichadas.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (ValidaFormatoHora($_POST['RegHora'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto');
         echo json_encode($data);
@@ -45,18 +46,21 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'Campo requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo($_POST['datos_fichada'])) {
         $data = array('status' => 'error', 'Mensaje' => 'datos_fichada requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     if ((strlen($_POST['RegHora']) < '5') || (strlen($_POST['RegHora']) > '5')) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     if (ValidarHora($_POST['RegHora'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto: ' . $_POST['RegHora']);
@@ -78,7 +82,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $RegLega = $datos_fichada[0];
@@ -91,7 +96,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_fichada'] == 'true')
         exit;
     }
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $sql = "SELECT TOP 1 IDCodigo FROM IDENTIFICA WHERE IDAsigna = '1' AND IDLegajo = '$RegLega' AND IDFichada = '1' ORDER BY IDCodigo";
     $result = sqlsrv_query($link, $sql, $params, $options);
@@ -183,7 +188,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_fichada'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar Fichadas.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $datos = explode('-', $_POST['Datos']);
     $RegFech = $datos[0];
@@ -220,7 +226,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_fichada'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'Campos requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $Dato = 'Baja Fichada: (' . $RegHora . '). Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd-m-Y');
     $Dato2 = 'Hora: <span class="ls1 fw5">' . $RegHora . '</span>Hs. Legajo: ' . $RegLega . '. Fecha: ' . Fech_Format_Var($RegFech, 'd/m/Y');
@@ -254,7 +261,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
     if ($_SESSION["ABM_ROL"]['mFic'] == '0') {
         PrintRespuestaJson('error', 'No tiene permiso para modificar Fichadas');
         exit;
-    };
+    }
+    ;
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
     $FicUsua = strtoupper(substr($FicUsua, 0, 10));
@@ -283,12 +291,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
     if (valida_campo($_POST['RegHora_mod']) || ($_POST['RegHora_mod'] == '00:00')) {
         PrintRespuestaJson('error', 'Campo requerido.');
         exit;
-    };
+    }
+    ;
 
     if ((strlen($_POST['RegHora_mod']) < '5') || (strlen($_POST['RegHora_mod']) > '5')) {
         PrintRespuestaJson('error', 'Formato de Hora incorrecto');
         exit;
-    };
+    }
+    ;
 
     if (ValidarHora($_POST['RegHora_mod'])) {
         PrintRespuestaJson('error', 'Formato de Hora incorrecto: ' . $_POST['RegHora_mod']);
@@ -301,7 +311,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
     if (($Hora[0] > '23') || ($Hora[1] > '59')) {
         PrintRespuestaJson('error', 'Formato de Hora incorrecto');
         exit;
-    };
+    }
+    ;
 
     if (PerCierre($RegFech1, $RegLega)) {
         PrintRespuestaJson('error', 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($RegFech1, ('d/m/Y')));
@@ -324,7 +335,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['mod_fichada'] == 'true'))
     if ((valida_campo($_POST['datos_fichada_mod']))) {
         PrintRespuestaJson('error', 'Campos requerido');
         exit;
-    };
+    }
+    ;
 
     $ExisteRegistro = CountRegistrosMayorCero("SELECT TOP 1 REGISTRO.RegLega FROM REGISTRO WHERE RegLega='$RegLega' AND RegFech = '$RegFech1' and RegHora = '$RegHora1' ORDER BY RegLega,RegFech,RegHora");
     if ($ExisteRegistro) {
@@ -363,7 +375,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     if ($_SESSION["ABM_ROL"]['aNov'] == '0') {
         PrintRespuestaJson('error', 'No tiene permiso para agregar Novedades');
         exit;
-    };
+    }
+    ;
 
     $_POST['FicNove'] = $_POST['FicNove'] ?? '';
     $_POST['FicHoras'] = $_POST['FicHoras'] ?? '';
@@ -388,24 +401,28 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     if (($Hora[0] > '23') || ($Hora[1] > '59')) {
         PrintRespuestaJson('error', 'Formato de Hora incorrecto');
         exit;
-    };
+    }
+    ;
 
     if ((valida_campo($_POST['FicHoras'])) || (valida_campo($_POST['FicNove']))) {
         PrintRespuestaJson('error', 'Campo <strong>Horas y Novedad</strong> son requeridos!');
         exit;
-    };
+    }
+    ;
     if (valida_campo($_POST['datos_novedad'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_novedad</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     if (($Hora[0] > '23') || ($Hora[1] > '59')) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $FicLega = test_input($datos_novedad[0]);
     $FicFech = test_input($datos_novedad[1]);
 
@@ -424,7 +441,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'true')
     $FicCate = $FicCate == 'on' ? '2' : '0';
     $FicJust = $FicJust == 'on' ? '1' : '0';
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $DiaLaboral = CountRegistrosMayorCero("SELECT FicDiaL FROM FICHAS WHERE FICHAS.FicLega= '$FicLega' AND FICHAS.FicFech= '$FicFech' AND FICHAS.FicDiaL='1'");
 
@@ -549,7 +566,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para modificar Novedades.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $_POST['FicNove'] = $_POST['FicNove'] ?? '';
     $_POST['FicHoras'] = $_POST['FicHoras'] ?? '';
@@ -562,7 +580,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Horas y Novedad</strong> son requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     if (ValidaFormatoHora($_POST['FicHoras'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto');
@@ -580,7 +599,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_novedad</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $Hora = explode(':', $_POST['FicHoras']);
     $datos_novedad = explode('-', $_POST['datos_novedad']);
 
@@ -588,7 +608,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicLega = test_input($datos_novedad[0]);
     $FicFech = test_input($datos_novedad[1]);
@@ -608,7 +629,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == 'Mod'))
     $FicCate = $FicCate == 'on' ? '2' : '0';
     $FicJust = $FicJust == 'on' ? '1' : '0';
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $DiaLaboral = CountRegistrosMayorCero("SELECT FicDiaL FROM FICHAS WHERE FICHAS.FicLega= '$FicLega' AND FICHAS.FicFech= '$FicFech' AND FICHAS.FicDiaL='1'");
 
@@ -666,7 +687,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_novedad'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar Novedades.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $datos = explode('-', $_POST['Datos']);
     /** FicNov, FicFech, FicLega */
@@ -685,7 +707,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_novedad'] == 'true')
         $data = array('status' => 'error', 'Mensaje' => 'Campos requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $Dato = 'Baja Novedad: (' . $FicNov . ') ' . $NovDes . '. Legajo: ' . $FicLega . '. Fecha: ' . Fech_Format_Var($FicFech, 'd-m-Y');
@@ -714,7 +737,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para agregar Horas.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
     $FicUsua = strtoupper(substr($FicUsua, 0, 10));
@@ -738,13 +762,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Tipo Hora y Autorizadas</strong> son requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     if (valida_campo($_POST['datos_hora'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_novedad</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $Fic1HsAu2 = explode(':', $_POST['Fic1HsAu2']);
     $datos_hora = explode('-', $_POST['datos_hora']);
 
@@ -758,7 +784,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicLega = test_input($datos_hora[0]);
     $FicFech = test_input($datos_hora[1]);
@@ -775,7 +802,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'true')) 
     $Fic1Observ = test_input($_POST['Fic1Observ']);
 
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $Ausente = CountRegistrosMayorCero("SELECT TOP 1 REGISTRO.RegLega FROM REGISTRO WHERE REGISTRO.RegFeAs = '$FicFech' AND REGISTRO.RegLega = '$FicLega'");
 
@@ -825,7 +852,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Hora'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar Horas.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $datos = explode('-', $_POST['Datos']);
     /** FicHora, FicFech, FicLega */
@@ -844,7 +872,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Hora'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'Campos requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $Dato = 'Baja Hora: (' . $FicHora . ') ' . $HoraDesc . '. Legajo: ' . $FicLega . '. Fecha: ' . Fech_Format_Var($FicFech, 'd-m-Y');
     $Dato2 = 'Hora: (' . $FicHora . ') ' . $HoraDesc;
@@ -872,7 +901,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para modificar Horas.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
     $FicUsua = strtoupper(substr($FicUsua, 0, 10));
@@ -902,12 +932,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Tipo Hora y Autorizadas</strong> son requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo($_POST['datos_hora'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_novedad</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $Fic1HsAu2 = explode(':', $_POST['Fic1HsAu2']);
     $datos_hora = explode('-', $_POST['datos_hora']);
 
@@ -915,7 +947,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
         $data = array('status' => 'error', 'Mensaje' => 'Formato de Hora incorrecto.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicLega = test_input($datos_hora[0]);
     $FicFech = test_input($datos_hora[1]);
@@ -934,7 +967,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
     $NombreLega = test_input($_POST['NombreLega']);
     $FicHsAu = test_input($_POST['FicHsAu']);
 
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $Ausente = CountRegistrosMayorCero("SELECT TOP 1 RegLega FROM REGISTRO WHERE RegFeAs = '$FicFech' AND RegLega = '$FicLega' ORDER BY RegTarj, RegFech, RegHora");
 
@@ -997,7 +1030,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para agregar Otras Novedades.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
     $FicUsua = strtoupper(substr($FicUsua, 0, 10));
@@ -1007,8 +1041,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
 
     if (isset($_POST['FicONovFechas']) && !empty($_POST['FicONovFechas'])) {
         $DateRange = explode(' al ', $_POST['FicONovFechas']);
-        $FechaIni  = test_input(dr_fecha($DateRange[0]));
-        $FechaFin  = test_input(dr_fecha($DateRange[1]));
+        $FechaIni = test_input(dr_fecha($DateRange[0]));
+        $FechaFin = test_input(dr_fecha($DateRange[1]));
     }
 
     $FechaIni_F = FechaFormatVar($FechaIni, 'Y-m-d');
@@ -1031,12 +1065,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Novedad y Valor</strong> son requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo($_POST['datos_OtrasNov'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
 
     $FicLega = test_input($datos_OtrasNov[0]);
@@ -1059,7 +1095,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true'
     //     echo json_encode($data);
     //     exit;
     // }
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
     $result = sqlsrv_query($link, $query, $params, $options);
@@ -1143,7 +1179,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar Otras Novedades.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $datos = explode('-', $_POST['Datos']);
     /** FicOnov, FicFech, FicLega */
@@ -1162,7 +1199,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_ONov'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'Campos requerido.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $Dato = 'Baja Otra Novedad: (' . $FicONov . ') ' . $Descrip . '. Legajo: ' . $FicLega . '. Fecha: ' . Fech_Format_Var($FicFech, 'd-m-Y');
     $Dato2 = 'Otra Novedad: (' . $FicONov . ') ' . $Descrip;
@@ -1184,7 +1222,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para modificar Otras Novedades.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
@@ -1202,12 +1241,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Novedad y Valor</strong> son requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if (valida_campo($_POST['datos_OtrasNov'])) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
 
     $FicLega = test_input($datos_OtrasNov[0]);
@@ -1237,7 +1278,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         echo json_encode($data);
         exit;
     }
-    require __DIR__ . '../../config/conect_mssql.php';
+    require __DIR__ . '/../config/conect_mssql.php';
 
     $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
     $result = sqlsrv_query($link, $query, $params, $options);
@@ -1274,7 +1315,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para crear citaciones.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $_POST['CitEntra'] = $_POST['CitEntra'] ?? '';
@@ -1308,12 +1350,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         $data = array('status' => 'error', 'Mensaje' => 'Campos requeridos!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     if ((($CitEntra == '00:00') && ($CitSale == '00:00'))) {
         $data = array('status' => 'error', 'Mensaje' => 'Campos Entrada y Salida no pueden estar en 00:00');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
     // if ((($CitEntra == '00:00'))) {
     //     $data = array('status' => 'error', 'Mensaje' => 'Campo Entrada no puede estar en 00:00');
     //     echo json_encode($data);
@@ -1354,7 +1398,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>datos_Citacion</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
 
     $datos_Citacion = explode('-', $datos_Citacion);
@@ -1393,7 +1438,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
             }
             echo json_encode($data);
             exit;
-        };
+        }
+        ;
     } else {
         $Dato = 'Alta Citación: ' . $CitEntra . ' - ' . $CitSale . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
         if (InsertRegistro("INSERT INTO CITACION (CitLega,CitFech,CitTurn,CitEntra,CitSale,CitDesc,FechaHora) VALUES ( '$FicLega','$FicFech','1','$CitEntra','$CitSale','$CitDesc','$FechaHora' )")) {
@@ -1407,7 +1453,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_Citación'] == 'true
             }
             echo json_encode($data);
             exit;
-        };
+        }
+        ;
     }
 }
 /** BAJA CITACION */
@@ -1418,7 +1465,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'No tiene permiso para eliminar citaciones.');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $_POST['Datos'] = $_POST['Datos'] ?? '';
     $Datos = test_input($_POST['Datos']);
@@ -1428,7 +1476,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['baja_Cit'] == 'true')) {
         $data = array('status' => 'error', 'Mensaje' => 'Campo <strong>Datos</strong> requerido!');
         echo json_encode($data);
         exit;
-    };
+    }
+    ;
 
     $Datos = explode('-', $Datos);
     $FicLega = ($Datos[0]);

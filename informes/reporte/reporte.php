@@ -3,7 +3,7 @@
 
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
-    <?php require __DIR__ . "../../../llamadas.php"; ?>
+    <?php require __DIR__ . "/../../llamadas.php"; ?>
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <title>
@@ -21,7 +21,7 @@
 <body class="bg-secondary">
     <!-- inicio container -->
     <div class="container shadow pb-2">
-        <?php require __DIR__ . '../../../nav.php';
+        <?php require __DIR__ . '/../../nav.php';
         $svg = '<svg xmlns="http://www.w3.org/2000/svg" class="bi icon-tabler-chart-line" width="24" height="24" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 19l16 0" /><path d="M4 15l4 -6l4 2l4 -5l4 4" /></svg>';
         ?>
         <!-- Encabezado -->
@@ -89,8 +89,8 @@
     <!-- fin container -->
     <?php
     /** INCLUIMOS LIBRERÍAS JQUERY */
-    require __DIR__ . "../../../js/jquery.php";
-    require __DIR__ . "../../../js/DataTable.php";
+    require __DIR__ . "/../../js/jquery.php";
+    require __DIR__ . "/../../js/DataTable.php";
 
     ?>
 

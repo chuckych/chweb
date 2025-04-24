@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../filtros/filtros.php';
+require __DIR__ . '/../../filtros/filtros.php';
 require __DIR__ . '/valores.php';
 
 $columns = $where_condition = $totalRecords = '';

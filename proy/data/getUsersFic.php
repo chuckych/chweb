@@ -1,6 +1,6 @@
 <?php
 header('Content-type: text/html; charset=utf-8');
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header("Content-Type: application/json");
 ultimoacc();
@@ -26,7 +26,7 @@ $data = [];
 $data2 = [];
 
 (!$_SERVER['REQUEST_METHOD'] == 'POST') ? PrintRespuestaJson('error', 'Invalid Request Method') . exit : '';
-require __DIR__ . '../../data/wcGetUserFic.php'; //  require where_conditions y variables
+require __DIR__ . '/../data/wcGetUserFic.php'; //  require where_conditions y variables
 $qUser = "SELECT usr.id AS 'idUser', usr.nombre AS 'nameUser', usr.legajo AS 'legaUser', usr.usuario AS 'usuarioUsr' FROM usuarios usr INNER JOIN mod_roles mrol ON usr.rol=mrol.id_rol LEFT JOIN proy_tareas ptar ON usr.id = ptar.TareResp WHERE usr.legajo > 0";
 
 $qCount = "SELECT COUNT(*) as 'count' FROM usuarios usr INNER JOIN mod_roles mrol ON usr.rol=mrol.id_rol LEFT JOIN proy_tareas ptar ON usr.id = ptar.TareResp WHERE usr.legajo > 0";

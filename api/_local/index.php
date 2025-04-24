@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '../../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 
 foreach (glob(__DIR__ . '/Classes/*.php') as $filename) { // Incluye las clases
     require $filename;

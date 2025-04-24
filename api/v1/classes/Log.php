@@ -10,8 +10,8 @@ class Log
     private $optJson;
     function __construct()
     {
-        $this->path = __DIR__ . '../../logs/';
-        $this->pathCache = __DIR__ . '../../cache/';
+        $this->path = __DIR__ . '/../logs/';
+        $this->pathCache = __DIR__ . '/../cache/';
         $this->date = $this->dateTimeNow();
         $this->optJson = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT;
     }
@@ -24,7 +24,7 @@ class Log
     }
     public function cache($text, $nameFile, $ext = '.json')
     {
-        $path     = $this->pathCache;
+        $path = $this->pathCache;
         $fullPath = "{$path}" . ID_COMPANY . "_{$nameFile}{$ext}";
         if ($ext == '.json') {
             $text = json_encode($text, $this->optJson);

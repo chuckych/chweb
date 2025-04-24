@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '../../../config/index.php';
+require __DIR__ . '/../../config/index.php';
 session_start();
 header("Content-Type: application/json");
 ultimoacc();
@@ -16,11 +16,11 @@ $params = ($_REQUEST);
 
 if (empty($params['userID'])) {
     $json_data = array(
-        "draw"            => 0,
-        "recordsTotal"    => 0,
+        "draw" => 0,
+        "recordsTotal" => 0,
         "recordsFiltered" => 0,
-        "data"            => array(),
-        "timeScript"      => 0,
+        "data" => array(),
+        "timeScript" => 0,
     );
     echo json_encode($json_data);
     exit;
@@ -29,8 +29,8 @@ if (empty($params['userID'])) {
 $idCompany = $_SESSION['ID_CLIENTE'];
 
 $paramsApi = array(
-    'key'    => $_SESSION["RECID_CLIENTE"],
-    'start'  => 0,
+    'key' => $_SESSION["RECID_CLIENTE"],
+    'start' => 0,
     'length' => 50,
     'userID' => intval($params['userID']),
 );
@@ -72,12 +72,12 @@ $endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
 
 $json_data = array(
-    "draw"            => 0,
-    "recordsTotal"    => $api['TOTAL'],
+    "draw" => 0,
+    "recordsTotal" => $api['TOTAL'],
     "recordsFiltered" => $api['COUNT'],
-    "data"            => $data,
-    "data2"            => $data2,
-    "timeScript"      => $timeScript,
+    "data" => $data,
+    "data2" => $data2,
+    "timeScript" => $timeScript,
 );
 
 echo json_encode($json_data);

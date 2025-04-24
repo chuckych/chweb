@@ -3,77 +3,78 @@ ini_set('max_execution_time', 600); //180 seconds = 3 minutes
 session_start();
 header('Content-type: text/html; charset=utf-8');
 header("Content-Type: application/json");
-require __DIR__ . '../../../../config/index.php';
+require __DIR__ . '/../../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 $Modulo = '21';
 ExisteModRol($Modulo);
 E_ALL();
 
-require_once __DIR__ . '../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
-    $_format      = FusNuloPOST('_format', 'A4');
+    $_format = FusNuloPOST('_format', 'A4');
     /** Tipo de Hoja */
     $_orientation = FusNuloPOST('_orientation', 'L');
     /** L: Horizontal; P: Vertical */
-    $_destino     = FusNuloPOST('_destino', 'F');
+    $_destino = FusNuloPOST('_destino', 'F');
     /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
-    $_password    = FusNuloPOST('_password', '');
+    $_password = FusNuloPOST('_password', '');
     /** Password de apertura del archivo */
-    $_print       = FusNuloPOST('_print', '');
+    $_print = FusNuloPOST('_print', '');
     /**  Bloquea la impresión del archivo */
-    $_modify      = FusNuloPOST('_modify', '');
+    $_modify = FusNuloPOST('_modify', '');
     /**  Bloquea la modificación archivo */
-    $_copy        = FusNuloPOST('_copy', '');
+    $_copy = FusNuloPOST('_copy', '');
     /**  Bloquea la copiar datos del archivo */
-    $_annotforms  = FusNuloPOST('_annotforms', '');
+    $_annotforms = FusNuloPOST('_annotforms', '');
     /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
-    $_nombre      = FusNuloPOST('_nombre', "ParteDiario");
+    $_nombre = FusNuloPOST('_nombre', "ParteDiario");
     /**  Nombre del archivo*/
-    $_titulo      = FusNuloPOST('_titulo', "");
+    $_titulo = FusNuloPOST('_titulo', "");
     /**  Titulo del reporte*/
-    $_PerSN       = FusNuloPOST('_PerSN', "");
+    $_PerSN = FusNuloPOST('_PerSN', "");
     /**  Personal Sin Novedades*/
 
     // exit;
     if (
         test_input(
             $_POST['FicNovA'] == '1'
-                && test_input($_POST['FicNovI'] == '0')
-                && test_input($_POST['FicNovS'] == '0')
-                && test_input($_POST['FicNovT'] == '0')
+            && test_input($_POST['FicNovI'] == '0')
+            && test_input($_POST['FicNovS'] == '0')
+            && test_input($_POST['FicNovT'] == '0')
         )
     ) {
         $_titulo = 'PARTE DIARIO (AUSENCIAS)';
     } elseif (
         test_input(
             $_POST['FicNovT'] == '1'
-                && test_input($_POST['FicNovI'] == '0')
-                && test_input($_POST['FicNovS'] == '0')
-                && test_input($_POST['FicNovA'] == '0')
+            && test_input($_POST['FicNovI'] == '0')
+            && test_input($_POST['FicNovS'] == '0')
+            && test_input($_POST['FicNovA'] == '0')
         )
     ) {
         $_titulo = 'PARTE DIARIO (LLEGADAS TARDES)';
     } elseif (
         test_input(
             $_POST['FicNovI'] == '1'
-                && test_input($_POST['FicNovT'] == '0')
-                && test_input($_POST['FicNovS'] == '0')
-                && test_input($_POST['FicNovA'] == '0')
+            && test_input($_POST['FicNovT'] == '0')
+            && test_input($_POST['FicNovS'] == '0')
+            && test_input($_POST['FicNovA'] == '0')
         )
     ) {
         $_titulo = 'PARTE DIARIO (INCUMPLIMIENTOS)';
     } else if (
         test_input(
             $_POST['FicNovS'] == '1'
-                && test_input($_POST['FicNovT'] == '0')
-                && test_input($_POST['FicNovI'] == '0')
-                && test_input($_POST['FicNovA'] == '0')
+            && test_input($_POST['FicNovT'] == '0')
+            && test_input($_POST['FicNovI'] == '0')
+            && test_input($_POST['FicNovA'] == '0')
         )
     ) {
         $_titulo = 'PARTE DIARIO (SALIDAS ANTICIPADAS)';
-    };
+    }
+    ;
 
     $_titulo = $_titulo == '' ? 'PARTE DIARIO' : $_titulo;
     $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
@@ -86,7 +87,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $NombreArchivo = $_path . $_nombre . "_" . $MicroTime . ".pdf";
     $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
 
-    $FechaIni  = test_input(dr_fecha($_POST['_dr']));
+    $FechaIni = test_input(dr_fecha($_POST['_dr']));
 
     try {
         BorrarArchivosPDF('archivos/*.pdf');
@@ -94,7 +95,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         ini_set("pcre.backtrack_limit", "5000000");
 
         ob_start();
-        require_once  'ParteDiario.php';
+        require_once 'ParteDiario.php';
 
         $buffer = ob_get_clean();
 
@@ -175,7 +176,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {
-        echo $e->getMessage();;
+        echo $e->getMessage();
+        ;
         // echo $formatter->getHtmlMessage();
         file_put_contents("../../../logs/error/Error_PDF_InforFic_" . date('Ymd') . ".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
         exit();

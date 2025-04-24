@@ -1,9 +1,9 @@
 <?php
-require __DIR__ . '../../config/session_start.php';
+require __DIR__ . '/../config/session_start.php';
 ini_set('max_execution_time', 900); // 900 segundos 15 minutos
 header("Content-Type: application/json");
 // header('Access-Control-Allow-Origin: *');
-require __DIR__ . '../../config/index.php';
+require __DIR__ . '/../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
@@ -22,7 +22,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
     {
         $params = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        require __DIR__ . '../../config/conect_mssql.php';
+        require __DIR__ . '/../config/conect_mssql.php';
         $query = "SELECT NOVEDAD.NovCodi, NOVEDAD.NovDesc, NOVEDAD.NovTipo FROM NOVEDAD WHERE NOVEDAD.NovCodi = '$novCodi'";
         $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt)) {
@@ -37,7 +37,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         $rows = array();
         $params = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        require __DIR__ . '../../config/conect_mssql.php';
+        require __DIR__ . '/../config/conect_mssql.php';
         $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt))
             $rows[] = array(
@@ -55,7 +55,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_novedad'] == true)) 
         $rows = array();
         $params = array();
         $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-        require __DIR__ . '../../config/conect_mssql.php';
+        require __DIR__ . '/../config/conect_mssql.php';
         $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt))
             $rows = array(
