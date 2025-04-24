@@ -43,7 +43,7 @@ function E_ALL()
 function secure_auth_ch()
 {
     if (!$_SESSION) {
-        header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER']));
+        header("location:/" . HOMEHOST . "/login/?l=" . urlencode(($_SERVER['HTTP_REFERER'] ?? '')));
     }
     timeZone();
     timeZone_lang();
