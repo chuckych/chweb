@@ -10,11 +10,14 @@ class Env
     private $fileEnv;
     private $response;
     private $inicio;
+    private $OS;
 
     function __construct()
     {
         // $this->fileEnv = __DIR__ . '/../../../../../config_chweb/';
-        $this->fileEnv = $this->getConfigPath();
+        // $this->fileEnv = $this->getConfigPath();
+        $this->OS = $this->getOS();
+        $this->fileEnv = in_array($this->OS, ['linux', 'mac'], true) ? '/' : $this->getConfigPath();
         $this->dotenv = \Dotenv\Dotenv::createImmutable($this->fileEnv);
         $this->dotenv->load();
         $this->response = new Response;
@@ -24,9 +27,9 @@ class Env
     {
         $data = $this->dotenv->load() ?? '';
 
-        if (!$data) {
-            throw new \Exception('Error', 401);
-        }
+        // if (!$data) {
+        //     throw new \Exception('Error', 401);
+        // }
 
         foreach ($data as $key => $value) {
             $data[$key] = $value;
@@ -76,10 +79,22 @@ class Env
         }
 
         // Verificar si la ruta existe
-        if (!is_dir($path)) {
-            return $defaultPath;
-        }
+        // if (!is_dir($path)) {
+        //     return $defaultPath;
+        // }
 
         return $path . DIRECTORY_SEPARATOR;
+    }
+    private function getOS(): string
+    {
+        $os = strtolower(PHP_OS);
+        if (strpos($os, 'win') !== false) {
+            return 'windows';
+        } elseif (strpos($os, 'linux') !== false) {
+            return 'linux';
+        } elseif (strpos($os, 'darwin') !== false) {
+            return 'mac';
+        }
+        return 'unknown';
     }
 }
