@@ -46,6 +46,7 @@ function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Seteo el seguimiento de la ubicación
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
         if ($method == 'POST') {
