@@ -11,6 +11,7 @@ $HTTP_HOST = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $urlBase = "{$REQUEST_SCHEME}://{$HTTP_HOST}";
 /** ALTA DE CLIENTE */
 $border = $ErrNombre = $error = $duplicado = '';
+
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
     require __DIR__ . '/../config/conect_mysql.php';
     $nombre = test_input($_POST['nombre']);
@@ -20,13 +21,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
     $recid = recid();
     $fecha = date("Y/m/d H:i:s");
     $error = 'Campo obligatorio';
+
     /* Comprobamos campos vacíos  */
     if ((valida_campo($nombre))) {
         $ErrNombre = (valida_campo($nombre)) ? $error : '';
     } else {
         /* INSERTAMOS CLIENTE EN TABLA CLIENTES */
-        $query = "INSERT INTO clientes (recid, ident, nombre, fecha_alta, fecha ) VALUES('$recid', '$identauto','$nombre','$fecha', '$fecha')";
-        $rs_insert = mysqli_query($link, $query);
+        try {
+            $query = "INSERT INTO clientes (recid, ident, nombre, fecha_alta, fecha, host, db, user, pass, auth, tkmobile, WebService, ApiMobileHRP, UrlAppMobile ) VALUES('$recid', '$identauto','$nombre','$fecha', '$fecha', '', '', '', '', '0', '', '', '', '')";
+            $rs_insert = mysqli_query($link, $query);
+        } catch (Exception $e) {
+            error_log($e->getMessage());
+        }
 
         if (mysqli_errno($link) == 1062) {
             $duplicado = "<div class='fontq alert alert-danger animate__animated animate__fadeInDown mt-3 border-0 radius-0 fw4'>" . mysqli_error($link) . "</div>";
@@ -71,7 +77,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
                     $contraseña1 = (empty($contraseña)) ? $contraauto : password_hash($contraseña, PASSWORD_DEFAULT);
                     $fecha = date("Y/m/d H:i:s");
                     /* INSERTAMOS USUARIOS */
-                    $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, fecha_alta, fecha, principal) VALUES( '$recid', '$nombre', '$user_auto', '$rol', '$contraseña1', '$cliente', '$fecha', '$fecha','1')";
+                    $query = "INSERT INTO usuarios (recid, nombre, usuario, rol, clave, cliente, fecha_alta, fecha, principal, estado, legajo) VALUES( '$recid', '$nombre', '$user_auto', '$rol', '$contraseña1', '$cliente', '$fecha', '$fecha','1', '0', '0')";
                     $rs_insert = mysqli_query($link, $query);
 
                     if (mysqli_errno($link) == 1062) {

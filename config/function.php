@@ -43,3 +43,15 @@ function getConfigPath(string $configFile = 'path_config.txt'): string
         return '';
     }
 }
+function getOS(): string
+{
+    $os = strtolower(PHP_OS);
+    if (strpos($os, 'win') !== false) {
+        return 'windows';
+    } elseif (strpos($os, 'linux') !== false) {
+        return 'linux';
+    } elseif (strpos($os, 'darwin') !== false) {
+        return 'mac';
+    }
+    return 'unknown';
+}
