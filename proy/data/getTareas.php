@@ -36,11 +36,8 @@ endif;
 if (!$params['tarTotales']) {
     $qTar .= " ORDER BY `proy_tareas`.`TareID` DESC LIMIT " . $params['start'] . "," . $params['length'] . " ";
     $totalRecords = simple_pdoQuery($qCount);
-    $count = $totalRecords['count'];
-    $r = array_pdoQuery($qTar);
-    // print_r($qTar).exit;
-    // $pathLog = "qTar_" . date('Ymd') . ".log";
-    // fileLog($qTar, $pathLog); 
+    $count = $totalRecords['count'] ?? 0;
+    $r = array_pdoQuery($qTar) ?? [];
 
     foreach ($r as $key => $row) {
 

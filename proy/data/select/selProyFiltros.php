@@ -43,7 +43,7 @@ switch ($params['NomFiltro']) {
         $query .= $where_condition;
         $query .= ' GROUP BY ProyID, ProyNom';
         $query .= ' ORDER BY ProyID DESC';
-        $r = array_pdoQuery($query);
+        $r = array_pdoQuery($query) ?? [];
 
         // print_r($query);
         // exit;
@@ -109,7 +109,7 @@ switch ($params['NomFiltro']) {
         $query .= $where_condition;
         $query .= ' GROUP BY ProyEmpr, EmpDesc';
         $query .= ' ORDER BY ProyID DESC';
-        $r = array_pdoQuery($query);
+        $r = array_pdoQuery($query) ?? [];
 
         foreach ($r as $key => $row) {
 
@@ -131,7 +131,7 @@ switch ($params['NomFiltro']) {
         $query .= $where_condition;
         $query .= ' GROUP BY ProyResp, nombre';
         $query .= ' ORDER BY ProyID DESC';
-        $r = array_pdoQuery($query);
+        $r = array_pdoQuery($query) ?? [];
 
         foreach ($r as $key => $row) {
 
@@ -154,7 +154,7 @@ switch ($params['NomFiltro']) {
         $query .= $where_condition;
         $query .= ' GROUP BY ProyPlant, PlantDesc';
         $query .= ' ORDER BY ProyID DESC';
-        $r = array_pdoQuery($query);
+        $r = array_pdoQuery($query) ?? [];
 
         foreach ($r as $key => $row) {
 
@@ -180,7 +180,7 @@ switch ($params['NomFiltro']) {
         $query .= $where_condition;
         $query .= ' GROUP BY ProyEsta, EstDesc';
         $query .= ' ORDER BY ProyID DESC';
-        $r = array_pdoQuery($query);
+        $r = array_pdoQuery($query) ?? [];
 
         foreach ($r as $key => $row) {
 

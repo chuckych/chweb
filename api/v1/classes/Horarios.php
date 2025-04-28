@@ -63,10 +63,10 @@ class Horarios
         $this->method = $this->request->method;
 
         if (isset($this->urlMap[$this->url])) {
-            $this->desde = $this->urlMap[$this->url]['desde'];
-            $this->desdeHasta = $this->urlMap[$this->url]['desdeHasta'];
-            $this->citacion = $this->urlMap[$this->url]['citacion'];
-            $this->rotacion = $this->urlMap[$this->url]['rotacion'];
+            $this->desde = $this->urlMap[$this->url]['desde'] ?? false;
+            $this->desdeHasta = $this->urlMap[$this->url]['desdeHasta'] ?? false;
+            $this->citacion = $this->urlMap[$this->url]['citacion'] ?? false;
+            $this->rotacion = $this->urlMap[$this->url]['rotacion'] ?? false;
         } else {
             $this->desde = false;
             $this->desdeHasta = false;

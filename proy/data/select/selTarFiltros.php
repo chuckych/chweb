@@ -57,7 +57,7 @@ switch ($params['NomFiltro']) {
         $q .= $w_c;
         $q .= ' GROUP BY TareProy, ProyNom';
         $q .= ' ORDER BY TareProy DESC';
-        $r = array_pdoQuery($q);
+        $r = array_pdoQuery($q) ?? [];
 
         empty($r) ? print_r(json_encode($data2)) . exit : '';
 
@@ -102,7 +102,7 @@ switch ($params['NomFiltro']) {
         $q .= $w_c;
         $q .= ' GROUP BY TareEmp, EmpDesc';
         $q .= ' ORDER BY EmpDesc DESC';
-        $r = array_pdoQuery($q);
+        $r = array_pdoQuery($q) ?? [];
 
         // print_r(($q)).exit;
 
@@ -130,7 +130,7 @@ switch ($params['NomFiltro']) {
         $q .= $w_c;
         $q .= ' GROUP BY TareProc, ProcDesc';
         $q .= ' ORDER BY ProcDesc DESC';
-        $r = array_pdoQuery($q);
+        $r = array_pdoQuery($q) ?? [];
 
         // print_r(($q)).exit;
 
@@ -158,7 +158,7 @@ switch ($params['NomFiltro']) {
         $q .= $w_c;
         $q .= ' GROUP BY TarePlano, PlanoDesc';
         $q .= ' ORDER BY PlanoDesc DESC';
-        $r = array_pdoQuery($q);
+        $r = array_pdoQuery($q) ?? [];
 
         // print_r(($q)).exit;
 
@@ -185,7 +185,7 @@ switch ($params['NomFiltro']) {
         $q .= $w_c;
         $q .= ' GROUP BY TareResp, usuarios.nombre';
         $q .= ' ORDER BY usuarios.nombre DESC';
-        $r = array_pdoQuery($q);
+        $r = array_pdoQuery($q) ?? [];
 
         // print_r(($q)).exit;
 

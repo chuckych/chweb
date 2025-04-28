@@ -33,7 +33,7 @@ Flight::route('/novedades-all', function () {
 
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las novedades
     $arrayData = json_decode($data, true);
-    $novedades = $arrayData['DATA'] ?? array();
+    $novedades = $arrayData['DATA'] ?? [];
 
     $queryParams = array(
         "start" => 0,
@@ -42,7 +42,7 @@ Flight::route('/novedades-all', function () {
     );
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
     $arrayData = json_decode($data, true);
-    $causas = $arrayData['DATA'] ?? array();
+    $causas = $arrayData['DATA'] ?? [];
 
     $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
         $key = $item['TipoDesc'];
@@ -54,9 +54,9 @@ Flight::route('/novedades-all', function () {
     }, []);
 
     $arr = array(
-        "novedades" => $novedades ?? array(),
-        "causas" => $causas ?? array(),
-        "agrupadas" => $noveAgrupaPorTipo ?? array()
+        "novedades" => $novedades ?? [],
+        "causas" => $causas ?? [],
+        "agrupadas" => $noveAgrupaPorTipo ?? []
     );
 
     Flight::json($arr);
@@ -75,7 +75,7 @@ Flight::route('/novedades-agrupa', function () {
 
     $arrayData = json_decode($data, true);
 
-    $novedades = $arrayData['DATA'] ?? array();
+    $novedades = $arrayData['DATA'] ?? [];
 
     $noveAgrupaPorTipo = array_reduce($novedades, function ($result, $item) {
         $key = $item['TipoDesc'];
@@ -87,7 +87,7 @@ Flight::route('/novedades-agrupa', function () {
     }, []);
 
     $json = array(
-        "novedades" => ($noveAgrupaPorTipo) ?? array(),
+        "novedades" => ($noveAgrupaPorTipo) ?? [],
     );
     Flight::json($json);
 });
@@ -116,8 +116,8 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
     }
 
     $json = array(
-        "novedades" => array_values($novedades) ?? array(),
-        "causas" => (intval($NoveCodi) > 0) ? getNoveCausas($NoveCodi) ?? array() : array(),
+        "novedades" => array_values($novedades) ?? [],
+        "causas" => (intval($NoveCodi) > 0) ? getNoveCausas($NoveCodi) ?? [] : [],
         "NoveCodi" => $NoveCodi ?? '',
         "NoveTipo" => $NoveTipo ?? ''
     );
@@ -125,7 +125,7 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
 });
 Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
     $json = array(
-        "causas" => (getNoveCausas($NoveCodi)) ?? array(),
+        "causas" => (getNoveCausas($NoveCodi)) ?? [],
     );
     Flight::json($json);
 });
@@ -210,8 +210,8 @@ Flight::route('POST /novedad', function () {
 
     $opt = array("getNov" => "1", "getFic" => "1");
     $dataFicNov = getFicNovHorSimple($legajo, $fecha, $opt);
-    $data = $dataFicNov[0] ?? array();
-    $dataFic = $dataFicNov[0]['Fich'] ?? array();
+    $data = $dataFicNov[0] ?? [];
+    $dataFic = $dataFicNov[0]['Fich'] ?? [];
 
     $getNovedad = getNovedad($payload['Nove']);
 
@@ -220,8 +220,8 @@ Flight::route('POST /novedad', function () {
         return;
     }
 
-    $dataNovedad = $data['Nove'] ?? array(); // Obtenemos las novedades de la ficha
-    $dataCierra = $data['Cierre'] ?? array(); // Obtenemos el cierre de la ficha
+    $dataNovedad = $data['Nove'] ?? []; // Obtenemos las novedades de la ficha
+    $dataCierra = $data['Cierre'] ?? []; // Obtenemos el cierre de la ficha
     $tipoNovedadRecibida = intval($getNovedad[0]['Tipo']); // Obtenemos el tipo de novedad
 
     /** Si la ficha tiene fichadas y el tipo de novedad es del tipo ausencia y la novedad forzada es 0
@@ -342,7 +342,7 @@ Flight::route('POST /horas/totales', function () {
     $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
     $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
 
-    $data = array();
+    $data = [];
 
     if ($payload['DTHoras'] == 'true') {
         $data = getHorasTotalesDT($payload);
@@ -396,7 +396,7 @@ Flight::route('POST /novedades/totales', function () {
     $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
     $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
 
-    $data = array();
+    $data = [];
 
     if ($payload['DTNovedades'] == 'true') {
         $data = getNovedadesTotalesDT($payload);
@@ -582,23 +582,23 @@ Flight::route('/fechas/horas', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/dateMinMax";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayData = json_decode($data, true);
-    if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+    if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
+        $arrayData = $arrayData['DATA'] ?? [];
     } else {
-        $arrayData = array();
+        $arrayData = [];
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? []);
 });
 Flight::route('/fechas/fichas', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayData = json_decode($data, true);
-    if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+    if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
+        $arrayData = $arrayData['DATA'] ?? [];
     } else {
-        $arrayData = array();
+        $arrayData = [];
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? []);
 });
 Flight::route('POST /get_personal_horarios', function () {
     require __DIR__ . '/../op/horarios/getPersonal.php';
@@ -632,12 +632,12 @@ Flight::route('/horarios', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayDataHorarios = json_decode($data, true);
-    $arrayDataHorarios = ($arrayDataHorarios['RESPONSE_CODE'] == '200 OK') ? $arrayDataHorarios['DATA'] ?? [] : [];
+    $arrayDataHorarios = (($arrayDataHorarios['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayDataHorarios['DATA'] ?? [] : [];
 
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayDataRotacion = json_decode($data, true);
-    $arrayDataRotacion = ($arrayDataRotacion['RESPONSE_CODE'] == '200 OK') ? $arrayDataRotacion['DATA'] ?? [] : [];
+    $arrayDataRotacion = (($arrayDataRotacion['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayDataRotacion['DATA'] ?? [] : [];
 
     $horariosColumn = $arrayDataHorarios ? array_column($arrayDataHorarios, null, 'Codi') : [];
     $rotacionColumn = $arrayDataRotacion ? array_column($arrayDataRotacion, null, 'RotCodi') : [];
@@ -665,14 +665,14 @@ Flight::route('/horarios/asign/@legajo', function ($legajo) {
     $data = ch_api($endpoint, '', 'GET', '');
     $asign = json_decode($data, true);
     // sleep(1);
-    $asign = ($asign['RESPONSE_CODE'] == '200 OK') ? $asign['DATA'] ?? [] : [];
+    $asign = (($asign['RESPONSE_CODE'] ?? '') == '200 OK') ? $asign['DATA'] ?? [] : [];
     Flight::json($asign ?? []);
 });
 Flight::route('/rotacion', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
     $data = ch_api($endpoint, '', 'GET', '');
     $arrayData = json_decode($data, true);
-    $arrayData = ($arrayData['RESPONSE_CODE'] == '200 OK') ? $arrayData['DATA'] ?? [] : [];
+    $arrayData = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] ?? [] : [];
     Flight::json($arrayData ?? []);
 });
 Flight::route('POST /horarios/@tipo', function ($tipo) {
@@ -963,13 +963,13 @@ Flight::route('POST /estruct/fichas/', function () {
 
     $arrayData = json_decode($data, true);
 
-    if ($arrayData['RESPONSE_CODE'] == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? array();
+    if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
+        $arrayData = $arrayData['DATA'] ?? [];
     } else {
         Flight::json(array('status' => 'error', 'message' => $arrayData['MESSAGE']), 204);
         exit;
     }
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? []);
 });
 Flight::route('POST /estructuras/alta/', function () {
 
@@ -987,7 +987,7 @@ Flight::route('POST /estructuras/alta/', function () {
         audito_ch('A', $Dato, '10');
     }
 
-    Flight::json($arrayData ?? array());
+    Flight::json($arrayData ?? []);
 });
 Flight::route('/parametros/liquid', function () {
     $data = getParamLiquid();

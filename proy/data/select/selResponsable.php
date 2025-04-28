@@ -20,7 +20,7 @@ $query = "SELECT id, nombre FROM usuarios WHERE usuarios.id > 1";
 $query .= $FiltroQ;
 $query .= $where_condition;
 $query .= ' ORDER BY usuarios.nombre';
-$r = array_pdoQuery($query);
+$r = array_pdoQuery($query) ?? [];
 
 foreach ($r as $key => $row) {
 

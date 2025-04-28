@@ -192,5 +192,5 @@ $datos = array(
 );
 $data = array('status' => 'ok', 'Mensaje' => $datos);
 echo json_encode($data);
-session_regenerate_id();
+// session_regenerate_id();
 exit;

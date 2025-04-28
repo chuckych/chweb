@@ -9,12 +9,30 @@ $dotenv->safeLoad();
 
 function version($html = false)
 {
-    $version = shell_exec('git log -1 --pretty=%B');
-    $fecha = shell_exec('git log -1 --format=%ci');
-    $fecha_ultimo_commit = new DateTime($fecha);
-    $formato_fecha = $fecha_ultimo_commit->format('d/m/Y H:i');
-    $version = $html ? "<span class='text-white text-right'>$version - $formato_fecha</span>" : $version;
-    return $version; // Version de la aplicación
+    try {
+        $fileVersion = __DIR__ .'/_ver';
+
+        if(file_exists($fileVersion)) {
+            $version = file_get_contents($fileVersion);
+            $version = str_replace("\n", '', $version);
+            $version = str_replace("\r", '', $version);
+            $version = str_replace(" ", '', $version);
+            $version = str_replace("'", '', $version);
+            $version = str_replace('"', '', $version);
+        } else {
+            $version = '';
+        }
+
+        // $version = shell_exec('git log -1 --pretty=%B');
+        // $fecha = shell_exec('git log -1 --format=%ci');
+        // $fecha_ultimo_commit = new DateTime($fecha);
+        // $formato_fecha = $fecha_ultimo_commit->format('d/m/Y H:i');
+        // $version = $html ? "<span class='text-white text-right'>$version - $formato_fecha</span>" : trim($version);
+        return trim($version); // Version de la aplicación
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
+        return '';
+    }
 }
 function verDBLocal()
 {
@@ -2939,6 +2957,7 @@ function pdoQuery($sql)
         return ($stmt->execute()) ? true : false;
     } catch (\Throwable $th) { // si hay error en la consulta
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorPdoQuery.log'; // ruta del archivo de Log de errores
+        error_log($th->getMessage()); // escribir en el log de errores el error
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
     }
     $stmt = null;

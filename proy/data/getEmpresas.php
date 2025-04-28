@@ -26,8 +26,8 @@ if (isset($where_condition) && $where_condition != '') {
 
 $query .= " ORDER BY proy_empresas.EmpDesc LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 $totalRecords = simple_pdoQuery($queryCount);
-$count = $totalRecords['count'];
-$records = array_pdoQuery($query);
+$count = $totalRecords['count'] ?? 0;
+$records = array_pdoQuery($query) ?? [];
 // print_r($records); exit;
 // print_r($query);exit;
 foreach ($records as $key => $row) {

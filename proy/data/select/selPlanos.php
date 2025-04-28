@@ -28,7 +28,7 @@ $query .= $FiltroQ;
 $query .= $where_condition;
 $query .= ' ORDER BY proy_planos.PlanoID DESC';
 $query .= ' LIMIT 50';
-$r = array_pdoQuery($query);
+$r = array_pdoQuery($query) ?? [];
 
 foreach ($r as $key => $row) {
     // $html = "<span class='font08'>$row[PlanoDesc]</span><br><span class='text-mutted font08'>$row[PlanoCod]</span>";

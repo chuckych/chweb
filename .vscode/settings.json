@@ -1,8 +1,0 @@
-{
-    "intelephense.environment.includePaths": [
-        "C:/laragon/bin/php/php-7.4.33-Win32-vc15-x64/php.ini",
-        "C:/laragon/bin/php/php-7.4.33-Win32-vc15-x64/ext/php_pdo_sqlsrv_74_ts_x64",
-        "C:/laragon/bin/php/php-7.4.33-Win32-vc15-x64/ext/php_sqlsrv_74_ts_x64",
-        "C:/laragon/bin/php/php-7.4.33-Win32-vc15-x64/ext/",
-    ],
-}

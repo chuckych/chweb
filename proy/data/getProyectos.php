@@ -52,10 +52,9 @@ if (isset($where_condition) && $where_condition != '') {
 
 $query .= " ORDER BY proy_proyectos.ProyNom DESC LIMIT " . $params['start'] . " ," . $params['length'] . " ";
 $totalRecords = simple_pdoQuery($queryCount);
-$count = $totalRecords['count'];
-$records = array_pdoQuery($query);
-// print_r($records); exit;
-// print_r($query);exit;
+$count = $totalRecords['count'] ?? 0;
+$records = array_pdoQuery($query) ?? [];
+
 foreach ($records as $key => $row) {
 
     $EmpDesc = $row['EmpDesc'];

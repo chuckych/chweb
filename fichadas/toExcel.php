@@ -111,23 +111,6 @@ $spreadsheet->getStyle('B')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreads
 $spreadsheet->getStyle('C1:V1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 $spreadsheet->getStyle('C:V')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
-$spreadsheet->getStyle('C')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
-
-$spreadsheet->getStyle('G:V')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-
-$spreadsheet->getStyle('V')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-
-$spreadsheet->getStyle('A')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-$numeroDeFila = 2;
-
 function FormatoHoraToExcel($Hora)
 {
     $Hora = !empty($Hora) ? $Hora : '00:00:00';
@@ -223,6 +206,7 @@ $dataApi['DATA'] = $dataApi['DATA'] ?? '';
 $dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
+$numeroDeFila = 2;
 
 if ($dataApi['DATA']) {
     foreach ($dataApi['DATA'] as $row) {
@@ -235,16 +219,22 @@ if ($dataApi['DATA']) {
         $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $ficHorario;
         $ficHorario = ($row['Feri'] == '1') ? 'Feriado' : $ficHorario;
 
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $row['Lega']);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $row['ApNo']);
-        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, FormatoFechaToExcel($row['Fech']));
-        $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $dia);
-        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $ficHorario);
-        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $row['FichC']);
+        $spreadsheet->setCellValue("A" . $numeroDeFila, $row['Lega']);
+        $spreadsheet->setCellValue("B" . $numeroDeFila, $pers_nombre);
+        $spreadsheet->setCellValue("C" . $numeroDeFila, FormatoFechaToExcel($row['Fech']));
+        $spreadsheet->setCellValue("D" . $numeroDeFila, $dia);
+        $spreadsheet->setCellValue("E" . $numeroDeFila, $ficHorario);
+        $spreadsheet->setCellValue("F" . $numeroDeFila, $row['FichC']);
+
         $col = 6;
-        foreach ($row['Fich'] as $key => $fich) {
-            $col++;
-            $spreadsheet->setCellValueByColumnAndRow($col, $numeroDeFila, (FormatoHoraToExcel($fich['Hora'])));
+        try {
+            foreach ($row['Fich'] as $key => $fich) {
+                $col++;
+                $colString = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
+                $spreadsheet->setCellValue($colString . $numeroDeFila, $fich['Hora']);
+            }
+        } catch (\Throwable $th) {
+            error_log($th->getMessage());
         }
         $numeroDeFila++;
     }
@@ -256,8 +246,26 @@ foreach ($cols as $key => $value) {
 $spreadsheet->getRowDimension('1')->setRowHeight(25);
 $ColumnCount = 3;
 $RowIndex = 2;
-$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+// $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
+$cell = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($ColumnCount) . $RowIndex;
+$spreadsheet->freezePane($cell);
 # Crear un "escritor"
+$spreadsheet->getStyle('C')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+
+$spreadsheet->getStyle('G:V')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
+
+$spreadsheet->getStyle('V')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+
+$spreadsheet->getStyle('A')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+$numeroDeFila = 2;
 try {
     BorrarArchivosPDF('archivos/*.xls');
     /** Borra los archivos anteriores a la fecha actual */

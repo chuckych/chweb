@@ -20,7 +20,7 @@ $query = "SELECT PlantID, PlantDesc FROM proy_plantillas WHERE proy_plantillas.P
 $query .= $FiltroQ;
 $query .= $where_condition;
 $query .= ' ORDER BY proy_plantillas.PlantDesc';
-$r = array_pdoQuery($query);
+$r = array_pdoQuery($query) ?? [];
 
 foreach ($r as $key => $row) {
 

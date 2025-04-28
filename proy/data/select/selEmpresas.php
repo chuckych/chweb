@@ -19,7 +19,7 @@ $query = "SELECT EmpID, EmpDesc, EmpTel FROM proy_empresas WHERE proy_empresas.E
 $query .= $FiltroQ;
 $query .= $where_condition;
 $query .= ' ORDER BY proy_empresas.EmpDesc';
-$r = array_pdoQuery($query);
+$r = array_pdoQuery($query) ?? [];
 
 function html($EmpDesc, $EmpTel)
 {

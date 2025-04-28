@@ -19,7 +19,7 @@ $query = "SELECT EstID, EstDesc, EstColor, EstTipo FROM proy_estados WHERE proy_
 $query .= $FiltroQ;
 $query .= $where_condition;
 $query .= ' ORDER BY proy_estados.EstDesc';
-$r = array_pdoQuery($query);
+$r = array_pdoQuery($query) ?? [];
 
 function html($text, $color, $icon, $textIcon)
 {

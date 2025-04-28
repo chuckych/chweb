@@ -70,6 +70,19 @@ try {
 /** Si es correcto */
 if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
 
+	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
+
+	if (empty($checkHost)) {
+		$OriginalHost = $_SERVER['HTTP_ORIGIN'] ?? '';
+		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$OriginalHost', $row[id_cliente])");
+		write_apiKeysFile();
+		access_log('Host registrado: ' . $OriginalHost);
+	}
+
+	$filepiKeysFile = __DIR__ . '/../mobileApikey.php'; // ruta del archivo de apiKeys
+	if (!file_exists($filepiKeysFile)) {
+		write_apiKeysFile();
+	}
 
 	if ($Server == 'localhost') { // Si es localhost
 		borrarLogs(__DIR__ . '/../logs/', 1, '.log');
