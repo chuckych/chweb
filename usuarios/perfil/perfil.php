@@ -25,6 +25,7 @@ function notif_ok_var($get, $texto)
 <body class="animate__animated animate__fadeIn">
     <div class="container shadow pb-2">
         <?php
+        define('ID_MODULO', 99);
         $countModRol = (count($_SESSION['MODS_ROL']));
         if ($countModRol != '1') {
             echo '<div class="">';
