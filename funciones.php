@@ -3776,3 +3776,15 @@ function createDateRangeArray($strDateFrom, $strDateTo)
     }
     return $aryRange;
 }
+function OS()
+{
+    $os = strtolower(PHP_OS);
+    if (strpos($os, 'win') !== false) {
+        return 'windows';
+    } elseif (strpos($os, 'linux') !== false) {
+        return 'linux';
+    } elseif (strpos($os, 'darwin') !== false) {
+        return 'mac';
+    }
+    return 'unknown';
+}
