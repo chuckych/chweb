@@ -73,10 +73,17 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
 
 	if (empty($checkHost)) {
+		$linux = in_array(OS(), ['linux', 'mac'], true); // Si es linux o mac
+		$windows = in_array(OS(), ['windows'], true); // Si es windows
+
 		$OriginalHost = $_SERVER['HTTP_ORIGIN'] ?? '';
-		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$OriginalHost', $row[id_cliente])");
+
+		// si es linux o mac quitar el puerto del string $OriginaHost
+		$host = $linux ? preg_replace('/:[0-9]+$/', '', $OriginalHost) : $OriginalHost;
+
+		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$host', $row[id_cliente])");
 		write_apiKeysFile();
-		access_log('Host registrado: ' . $OriginalHost);
+		access_log('Host registrado: ' . $host);
 	}
 
 	$filepiKeysFile = __DIR__ . '/../mobileApikey.php'; // ruta del archivo de apiKeys
