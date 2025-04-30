@@ -10,9 +10,9 @@ $dotenv->safeLoad();
 function version($html = false)
 {
     try {
-        $fileVersion = __DIR__ .'/_ver';
+        $fileVersion = __DIR__ . '/_ver';
 
-        if(file_exists($fileVersion)) {
+        if (file_exists($fileVersion)) {
             $version = file_get_contents($fileVersion);
             $version = str_replace("\n", '', $version);
             $version = str_replace("\r", '', $version);
@@ -2814,13 +2814,31 @@ function dateDifference($date_1, $date_2, $differenceFormat = '%a')
 // borra los logs a partir de una cantidad de días
 function borrarLogs($path, $days, $ext)
 {
-    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
-    foreach ($files as $file) { // recorremos todos los ficheros.
-        $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
-        $currentTime = time(); // obtenemos la fecha actual
-        $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
-        ($dateDiff >= $days) ? unlink($file) : ''; //elimino el fichero
+
+    // si el directorio $path no existe throw error
+    if (!is_dir($path)) {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorBorrarLogs.log'; // ruta del archivo de Log de errores
+        fileLog('El directorio ' . $path . ' no existe', $pathLog); // escribir en el log de errores el error
+        return false;
     }
+    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    try {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_successBorrarLogs.log';
+        foreach ($files as $file) { // recorremos todos los ficheros.
+            $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
+            $currentTime = time(); // obtenemos la fecha actual
+            $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
+            if ($dateDiff >= $days) {
+                unlink($file); //elimino el fichero
+                fileLog("Se eliminó log {$file}", $pathLog);
+            }
+        }
+
+    } catch (\Throwable $th) {
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorBorrarLogs.log'; // ruta del archivo de Log de errores
+        fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
+    }
+
 }
 function borrarFileHoras($path, $horas, $ext)
 {
@@ -2886,7 +2904,7 @@ function fechaHora2()
     $t = date("Y-m-d H:i:s");
     return $t;
 }
-function timeZone()
+function timeZone(): bool
 {
     return date_default_timezone_set('America/Argentina/Buenos_Aires');
 }
@@ -3313,9 +3331,8 @@ function confidenceFaceStr($confidence, $id_api, $threshold)
 function access_log($Modulo)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        timeZone();
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
-        borrarLogs(__DIR__ . '/logs/access/', 30, '.log');
-        date_default_timezone_set('America/Argentina/Buenos_Aires');
         $_SESSION['NOMBRE_SESION'] = $_SESSION['NOMBRE_SESION'] ?? '';
         $_SESSION['CLIENTE'] = $_SESSION['CLIENTE'] ?? '';
         $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
@@ -3345,9 +3362,8 @@ function access_log($Modulo)
 function access_log_proy($Modulo)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+        timeZone();
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
-        borrarLogs(__DIR__, 30, $pathLog);
-        date_default_timezone_set('America/Argentina/Buenos_Aires');
         $_SESSION['NOMBRE_SESION'] = $_SESSION['NOMBRE_SESION'] ?? '';
         $_SESSION['CLIENTE'] = $_SESSION['CLIENTE'] ?? '';
         $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';

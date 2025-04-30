@@ -154,7 +154,7 @@ $(function () {
         $(".dataTables_scrollHead").remove();
         $('#selectProy_filter input').attr('placeholder', 'Buscar proyecto').addClass('p-3 w300');
         // setTimeout(() => {
-            // $('#selectProy_filter input').focus();
+        // $('#selectProy_filter input').focus();
         // }, 1500);
         $('.title').prepend(`
             <div class="w-100 d-sm-block d-none">

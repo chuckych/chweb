@@ -68,7 +68,7 @@ try {
 	exit; // termina la ejecución
 }
 /** Si es correcto */
-if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
+if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
 
 	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
 
@@ -91,13 +91,10 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		write_apiKeysFile();
 	}
 
-	if ($Server == 'localhost') { // Si es localhost
-		borrarLogs(__DIR__ . '/../logs/', 1, '.log');
-		borrarLogs(__DIR__ . '/../logs/error/', 1, '.log');
-	} else {
-		borrarLogs(__DIR__ . '/../logs/', 7, '.log');
-		borrarLogs(__DIR__ . '/../logs/error/', 7, '.log');
-	}
+	borrarLogs(__DIR__ . '/../logs/', 7, '.log');
+	borrarLogs(__DIR__ . '/../logs/error/', 7, '.log');
+	borrarLogs(__DIR__ . '/../logs/access/', 7, '.log');
+	borrarLogs(__DIR__ . '/../mobile/hrp/api/logs/', 7, '.log');
 
 	$pathLog = __DIR__ . '/../logs/info/' . date('Ymd') . '_cambios_db.log';
 
@@ -266,15 +263,6 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		$_SESSION['GrupRol'] = estructUsuario(intval($row['id']), 6);
 		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
 	}
-	// fileLog($_SESSION['Sec2Rol'], 'Sec2Rol');
-
-	// $_SESSION['EmprRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'empresas', 'empresa'));
-	// $_SESSION['PlanRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'plantas', 'planta'));
-	// $_SESSION['ConvRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'convenios', 'convenio'));
-	// $_SESSION['SectRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sectores', 'sector'));
-	// $_SESSION['Sec2Rol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'secciones', 'seccion'));
-	// $_SESSION['GrupRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'grupos', 'grupo'));
-	// $_SESSION['SucuRol'] = (estructura_rol('GetEstructRol', $row['recid_rol'], 'sucursales', 'sucursal'));
 
 	$_SESSION["CONEXION_MS"] = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
 	$_SESSION["secure_auth_ch"] = true;
@@ -323,6 +311,7 @@ if (($row) && (password_verify($passLogin, $row['clave']))) { // password_verify
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 	access_log('Login correcto');
+
 } else {
 	login_logs('2');
 	header('Location:/' . HOMEHOST . '/login/?error');

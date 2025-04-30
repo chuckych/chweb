@@ -150,7 +150,7 @@ function crear_proyectos_nuevos($conn, $array, $empresasDB, $estadosDB) // Crear
 
                 $values[] = "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"; // Agregar un valor al array de valores
                 $params[] = $proyecto['descripcion']; // Descripción del proyecto
-                $params[] = $proyecto['nombre']; // Nombre del proyecto
+                $params[] = $proyecto['nombreOri']; // Nombre del proyecto
                 $params[] = $empresa; // ID de la empresa
                 $params[] = $proyecto['procesos']; // ID de la plantilla de procesos
                 $params[] = $proyecto['responsable']; // ID del responsable
@@ -162,6 +162,8 @@ function crear_proyectos_nuevos($conn, $array, $empresasDB, $estadosDB) // Crear
                 $params[] = $proyecto['fecha_creacion']; // Fecha de creación del proyecto
                 $params[] = $proyecto['fecha_creacion']; // Fecha de modificación del proyecto
                 $params[] = 1;
+
+                // logger(print_r($params, true)); // Log de los parámetros
             }
             // Si existen valores
             if (!empty($values)) {
@@ -281,6 +283,7 @@ function procesarDatosPlanilla(
 
             $datos = [
                 'nombre' => str_ucwords($fila[0]),
+                'nombreOri' => trim($fila[0]) ?? '',
                 'descripcion' => trim($fila[2]),
                 'empresa' => str_ucwords(trim($fila[3])),
                 'observaciones' => trim($fila[4]),
