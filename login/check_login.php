@@ -76,10 +76,11 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 		$linux = in_array(OS(), ['linux', 'mac'], true); // Si es linux o mac
 		$windows = in_array(OS(), ['windows'], true); // Si es windows
 
-		$OriginalHost = $_SERVER['HTTP_ORIGIN'] ?? '';
+		$OriginalHost = $_SERVER['HTTP_ORIGIN'] ?? 'localhost';
 
 		// si es linux o mac quitar el puerto del string $OriginaHost
-		$host = $linux ? preg_replace('/:[0-9]+$/', '', $OriginalHost) : $OriginalHost;
+		$host = $linux ? 'localhost' : $OriginalHost;
+		// $host = $linux ? preg_replace('/:[0-9]+$/', '', $OriginalHost) : $OriginalHost;
 
 		pdoQuery("INSERT INTO params (modulo, descripcion, valores, cliente) VALUES (1, 'host', '$host', $row[id_cliente])");
 		write_apiKeysFile();
