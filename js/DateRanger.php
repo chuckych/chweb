@@ -1,15 +1,20 @@
 <?php
-$date        = date('Y-m-d');
-$FirstYear   = $FirstYear ?? date('Y');
-$maxYear     = $maxYear ?? date('Y');
-$FirstDate   = $FirstDate ?? ($date);
-$maxDate     = $maxDate ?? ($date);
-$FechaIni    = $FechaIni ?? ($date);
-$FechaFin    = $FechaFin ?? ($date);
-$FechaFin2    = $FechaFin ?? ($date);
+$date = date('Y-m-d');
+$FirstYear = $FirstYear ?? date('Y');
+$maxYear = $maxYear ?? date('Y');
+$FirstDate = $FirstDate ?? ($date);
+$maxDate = $maxDate ?? ($date);
+$FechaIni = $FechaIni ?? ($date);
+$FechaFin = $FechaFin ?? ($date);
+$FechaFin2 = $FechaFin ?? ($date);
 $FechaFinEnd = $FechaFinEnd ?? ($date);
 
 $FechaFin2 = (FechaString($FechaFinEnd) > FechaString($date)) ? $FechaFinEnd : $FechaFin;
+
+//$FechaIni viene en formato YYYY-MM-DD. Si $FechaIni es mayor a la fecha actual se le asigna la fecha actual
+$FechaIni = (FechaString($FechaIni) > FechaString($date)) ? $date : $FechaIni;
+$FechaFin = (FechaString($FechaFin) > FechaString($date)) ? $date : $FechaFin;
+
 ?>
 <!-- moment.min.js -->
 <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
@@ -18,7 +23,7 @@ $FechaFin2 = (FechaString($FechaFinEnd) > FechaString($date)) ? $FechaFinEnd : $
 <!-- daterangepicker.css -->
 <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
 <script>
-    $(function() {
+    $(function () {
         moment().locale('es');
         $('input[name="_dr"]').daterangepicker({
             singleDatePicker: false,
@@ -109,7 +114,7 @@ $FechaFin2 = (FechaString($FechaFinEnd) > FechaString($date)) ? $FechaFinEnd : $
                 applyButtonClasses: "text-white bg-custom",
             },
         });
-        $('input[name="_dr"]').on('apply.daterangepicker', function(ev, picker) {
+        $('input[name="_dr"]').on('apply.daterangepicker', function (ev, picker) {
             $("#range").submit();
         });
     });

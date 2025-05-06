@@ -78,30 +78,15 @@ $spreadsheet->setShowGridlines(true);
 $spreadsheet->getStyle('A:I')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 $spreadsheet->getStyle('A1:I1')->getAlignment()->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
 
-$spreadsheet->getColumnDimension('A')->setWidth(9);
-$spreadsheet->getColumnDimension('B')->setWidth(22);
+$spreadsheet->getColumnDimension('A')->setWidth(12);
+$spreadsheet->getColumnDimension('B')->setWidth(30);
 $spreadsheet->getColumnDimension('C')->setWidth(12);
 $spreadsheet->getColumnDimension('D')->setWidth(12);
-$spreadsheet->getColumnDimension('E')->setWidth(13);
-$spreadsheet->getColumnDimension('F')->setWidth(20);
+$spreadsheet->getColumnDimension('E')->setWidth(15);
+$spreadsheet->getColumnDimension('F')->setWidth(30);
 $spreadsheet->getColumnDimension('G')->setWidth(8);
 $spreadsheet->getColumnDimension('H')->setWidth(60);
 $spreadsheet->getColumnDimension('I')->setWidth(12);
-
-$spreadsheet->getStyle('C')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('C1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('E')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('E1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('G')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-$spreadsheet->getStyle('G1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-
-$spreadsheet->getStyle('C')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
-
-$spreadsheet->getStyle('A')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 
 $numeroDeFila = 2;
 
@@ -157,15 +142,15 @@ if ($dataLega) {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
         $Feriado = ($row['Feriado'] == 'Sí') ? 'Feriado' : '';
 
-        $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
-        $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $ApNo);
-        $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, FormatoFechaToExcel($Fecha));
-        $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $row['Dia']);
-        $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Horario);
-        $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $row['Horario']);
-        $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $row['HorarioID']);
-        $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $row['TipoAsignStr']);
-        $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $Feriado);
+        $spreadsheet->setCellValue("A" . $numeroDeFila, $Legajo);
+        $spreadsheet->setCellValue("B" . $numeroDeFila, $ApNo);
+        $spreadsheet->setCellValue("C" . $numeroDeFila, FormatoFechaToExcel($Fecha));
+        $spreadsheet->setCellValue("D" . $numeroDeFila, $row['Dia']);
+        $spreadsheet->setCellValue("E" . $numeroDeFila, $Horario);
+        $spreadsheet->setCellValue("F" . $numeroDeFila, $row['Horario']);
+        $spreadsheet->setCellValue("G" . $numeroDeFila, $row['HorarioID']);
+        $spreadsheet->setCellValue("H" . $numeroDeFila, $row['TipoAsignStr']);
+        $spreadsheet->setCellValue("I" . $numeroDeFila, $Feriado);
         $numeroDeFila++;
     }
 }
@@ -174,11 +159,23 @@ $spreadsheet->freezePane('A2');
 $spreadsheet->getRowDimension('1')->setRowHeight(30);
 $ColumnCount = 3;
 $RowIndex = 2;
-$spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 
 $spreadsheet->getStyle('A1:I1')->applyFromArray($styleArray);
 $spreadsheet->setAutoFilter('A1:I1');
 $spreadsheet->fromArray($encabezado, null, 'A1');
+
+$cols = range("A", "I");
+foreach ($cols as $key => $value) {
+    $spreadsheet->getStyle($value)->getAlignment()->setIndent(1);
+}
+
+$spreadsheet->getStyle('C')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+
+$spreadsheet->getStyle('A')
+    ->getNumberFormat()
+    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
 
 try {
     borrarLogs('archivos/', 1, '.xls');

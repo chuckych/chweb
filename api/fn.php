@@ -427,6 +427,7 @@ function writeLog($text, $path, $type = false)
     $log = fopen($path, 'a');
     $date = dateTimeNow();
     $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
+    // error_log($text);
     file_put_contents($path, $text, FILE_APPEND | LOCK_EX);
 }
 /** 
