@@ -864,7 +864,10 @@ const formNovedad = async (data) => {
             novedades = rsData.novedades.filter((nove) => nove.Tipo == data.NoTi);
         }
         // filtrar las causas por el código de la novedad
-        let causas = rsData.causas.filter((causa) => causa.CodiNov == data.Codi);
+        let causas = [];
+        if (rsData.causas) {
+            causas = rsData.causas.filter((causa) => causa.CodiNov == data.Codi);
+        }
 
         addSelectOptions(novedades, '#Nove') // Agrega las novedades al select
         addSelectOptions(causas, '#Causa') // Agrega las causas al select
@@ -1217,7 +1220,11 @@ $(document).on('select2:select', '#Nove', async function (e) {
 
     let rsData = ls.get(LS_NOVEDADES);
     if (!rsData) return;
-    let causas = rsData.causas.filter((causa) => causa.CodiNov == NovCodi) ?? [];
+
+    let causas = [];
+    if (rsData.causas) {
+        causas = rsData.causas.filter((causa) => causa.CodiNov == NovCodi) ?? [];
+    }
 
     addSelectOptions(causas, '#Causa') // Agrega las causas al select
     $('#Causa').append(`< option value = "" selected ></option > `); // Agrega un option vacío
