@@ -1,7 +1,7 @@
 <?php
 /** FUNCIÓN PARA ESCRIBIR UN ARCHIVO */
 E_ALL();
-if (isset ($_GET['_c'])) {
+if (isset($_GET['_c'])) {
 	// require __DIR__ . '/conect_mysql.php';
 	$querydb = "SELECT clientes.host, clientes.db, clientes.user, clientes.pass, clientes.auth FROM clientes WHERE clientes.recid = '$_GET[_c]'";
 	// $result = mysqli_query($link, $querydb);
@@ -24,7 +24,7 @@ if (isset ($_GET['_c'])) {
 	$auth = $_SESSION["CONEXION_MS"]['auth']; // 0 = SQL Server Authentication, 1 = Windows Authentication
 	$conexionSesion = true;
 }
-if ((empty ($db . $user . $pass . $serverName))) { // Si no hay datos de conexion SQL
+if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion SQL
 	$data = array();
 	PrintRespuestaJson('Error', 'Error: no hay datos de conexion SQL');
 	exit; // Termina el script
@@ -83,6 +83,11 @@ if ($link === false) {
 	if ($conexionSesion) {
 		if ((!$_SESSION['VER_DB_CH'])) { // Si no se ha verificado la version de la base de datos
 			$_SESSION['VER_DB_CH'] = getVerDBCH($link); // Obtiene la version de la base de datos
+
+			$VER_DB_CH = $_SESSION['VER_DB_CH']; // salida: Ver_71_20250528
+			$VER_DB_CH = str_replace('Ver_', '', $VER_DB_CH);
+			$VER_DB_CH = str_replace('_', '', $VER_DB_CH);
+			$_SESSION['DBDATA'] = intval($VER_DB_CH); // Guarda la version de la base de datos en la sesión;
 		}
 		if ((!$_SESSION['CONECT_MSSQL'])) { // Si no se ha conectado a la base de datos
 			$_SESSION['CONECT_MSSQL'] = true; // Se conecto a la base de datos

@@ -223,4 +223,99 @@ class RRHHWebService
             return false;
         }
     }
+    /** 
+     * Proyectar Horas a partir de un arreglo de legajos
+     * @param array $Legajos Arreglo de legajos
+     * @param string $FechaDesde Fecha desde
+     * @param string $FechaHasta Fecha hasta
+     * @return string Respuesta del WebService
+     * @example $Legajos = [1,2,3,4,5,6,7,8,9,10];
+     * @example $FechaDesde = '2023-08-23';
+     * @example $FechaHasta = '2023-08-26';
+     */
+    function proyectar_horas($Legajos = [], $FechaDesde, $FechaHasta)
+    {
+        try {
+
+            if (!$this->ping()) {
+                throw new \Exception('Error al conectar con el WebService', 1);
+            }
+
+            if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
+                throw new \Exception('Parametros no validos', 1);
+            }
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaDesde)) { // Valida la fecha desde 
+                throw new \Exception('Fecha desde no es valida', 1);
+            }
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaHasta)) { // Valida la fecha hasta
+                throw new \Exception('Fecha hasta no es valida', 1);
+            }
+
+            $ruta = $this->baseUrl() . '/' . "Proyectar"; // Ruta del WebService
+
+            $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta); // Divide las fechas en segmentos de 31 Dias
+
+            // Dividir legajos en bloques de 50 legajos
+            $LegajosSegment = array_chunk($Legajos, 50); // Dividir el arreglo en bloques de 50 legajos
+
+            // $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
+
+            if ($dateSegments) { // Si hay segmentos de fechas procesa los legajos en cada segmento
+
+                $ch = curl_init();
+
+                foreach ($LegajosSegment as $Legajos) { // Recorre los bloques de legajos
+
+                    $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
+
+                    foreach ($dateSegments as $segment) { // Recorre los segmentos
+
+                        $FechaDesde = date('d/m/Y', strtotime($segment['FechaMin']));
+                        $FechaHasta = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                        if (strtotime($segment['FechaMin']) <= time()) { // Si la fecha minima en menosr o o igual a la fecha actual.
+                            throw new \Exception('Fecha desde no puede ser menor o igual a la fecha actual', 1);
+                        }
+                        if (strtotime($segment['FechaMax']) <= time()) { // Si la fecha maxima es mayor a la fecha actual
+                            throw new \Exception('Fecha hasta no puede ser menor o igual a la fecha actual', 1);
+                        }
+
+                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legajos}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+
+                        curl_setopt($ch, CURLOPT_URL, $ruta);
+                        curl_setopt($ch, CURLOPT_POST, TRUE);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        // curl_setopt($ch, CURLOPT_TIMEOUT_MS, 500); // Establecer el tiempo de espera en milisegundos
+                        // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 1); // Tiempo de espera para la conexión
+                        $respuesta = curl_exec($ch);
+                        $curl_errno = curl_errno($ch);
+                        // $curl_error = curl_error($ch);
+                        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                        if ($curl_errno > 0) {
+                            $text = "{$curl_errno} : Error al procesar."; // set error 
+                            throw new \Exception($text, $httpCode);
+                        }
+                        if ($httpCode == 404) {
+                            $text = "{$respuesta} : Error al procesar."; // set error 
+                            throw new \Exception($text, $httpCode);
+                        }
+                        $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
+                        $text = "Legajos procesados [{$Legajos}] - {$FechaDesde} a {$FechaHasta} {$days} días";
+                        $this->log->write($text, date('Ymd') . '_proyectar_' . ID_COMPANY . '.log');
+                    }
+                }
+
+                curl_close($ch);
+                return true;
+            }
+            return false;
+        } catch (\Exception $e) {
+            $this->log->write($e->getMessage(), date('Ymd') . '_proyectar_' . ID_COMPANY . '.log');
+            return false;
+        }
+    }
 }

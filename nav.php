@@ -85,6 +85,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         $Modulo2 = ($Modulo2 == 'Cta Cte') ? 'Cta Cte Novedades' : $Modulo2;
                                         $Modulo2 = ($Modulo2 == 'Personal') ? 'Adm de Personal' : $Modulo2;
                                         $Modulo2 = ($Modulo2 == 'Procesar') ? 'Procesar Datos' : $Modulo2;
+                                        $Modulo2 = ($Modulo2 == 'Proyectar Horas') ? 'Proyectar Horas' : $Modulo2;
                                         switch ($Modulo2) {
                                             case 'Control General':
                                             case 'Mis Horas':
@@ -114,6 +115,9 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                                 break;
                                             case 'Auditoría':
                                                 echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/control/aud/>" . $Modulo2 . "</a>";
+                                                break;
+                                            case 'Proyectar Horas':
+                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/procesar/proyectar/>" . $Modulo2 . "</a>";
                                                 break;
                                             // case 'Proyectos':
                                             //     echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/proy/>" . $Modulo2 . "</a>";

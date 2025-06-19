@@ -298,4 +298,8 @@ class ConnectSqlSrv
         }
         return $connect;
     }
+    public function getMapDB()
+    {
+        return $this->mapDB;
+    }
 }

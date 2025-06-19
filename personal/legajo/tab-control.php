@@ -5,8 +5,10 @@
                 <div class="input-group">
                     <div class="form-check">
                         <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="LegEsta" name="LegEsta" <?= $persLegEsta ?>>
-                            <label class="custom-control-label" for="LegEsta" style="padding-top: 3px;">No Controlar Horario</label>
+                            <input type="checkbox" class="custom-control-input" id="LegEsta" name="LegEsta"
+                                <?= $persLegEsta ?>>
+                            <label class="custom-control-label" for="LegEsta" style="padding-top: 3px;">No Controlar
+                                Horario</label>
                         </div>
                     </div>
                 </div>
@@ -19,28 +21,33 @@
                 ?>
                 <div class="ml-5 input-group d-flex justify-content-end">
                     <label for="CierreFech" class="mr-2">Fecha de Cierre</label>
-                    <input type="text" class="form-control" value="<?= $persCierreFech ?>" id="CierreFech" name="CierreFech" placeholder="dd/mm/yyyy">
+                    <input type="text" class="form-control" value="<?= $persCierreFech ?>" id="CierreFech"
+                        name="CierreFech" placeholder="dd/mm/yyyy">
                     <!-- <span id="trash_CierreFech" class="ml-1 trash"></span> -->
-                    <span id="trash_CierreFech" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
+                    <span id="trash_CierreFech"
+                        class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Borrar ', 'w15'); ?></span>
                 </div>
             </div>
             <div class="form-inline mt-3">
                 <label for="LegToTa" class="mr-2 w120">Tolerancia Tarde</label>
                 <input class="form-control w60" type="tel" value="<?= $pers['LegToTa'] ?>" id="LegToTa" name="LegToTa">
                 <label for="LegReTa" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="tel" value="<?= $pers['LegReTa'] ?>" id="LegReTa" name="LegReTa" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReTa'] ?>" id="LegReTa" name="LegReTa"
+                    value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegToIn" class="mr-2 w120">Tolerancia Inc.</label>
                 <input class="form-control w60" type="tel" value="<?= $pers['LegToIn'] ?>" id="LegToIn" name="LegToIn">
                 <label for="LegReIn" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="tel" value="<?= $pers['LegReIn'] ?>" id="LegReIn" name="LegReIn" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReIn'] ?>" id="LegReIn" name="LegReIn"
+                    value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegToSa" class="mr-2 w120">Tolerancia Salida</label>
                 <input class="form-control w60" type="tel" value="<?= $pers['LegToSa'] ?>" id="LegToSa" name="LegToSa">
                 <label for="LegReSa" class="mx-2">Recorte</label>
-                <input class="form-control w60" type="tel" value="<?= $pers['LegReSa'] ?>" id="LegReSa" name="LegReSa" value="1">
+                <input class="form-control w60" type="tel" value="<?= $pers['LegReSa'] ?>" id="LegReSa" name="LegReSa"
+                    value="1">
             </div>
             <div class="form-inline mt-2">
                 <label for="LegIncTi" class="mr-2 w120">Incuplimiento</label>
@@ -63,18 +70,35 @@
             <div class="form-inline">
                 <div class="custom-control custom-checkbox mt-3">
                     <input type="checkbox" class="custom-control-input" <?= $persLegNo24 ?> id="LegNo24" name="LegNo24">
-                    <label class="custom-control-label" for="LegNo24" style="padding-top: 3px;">No partir novedades adicionales a las 24Hs del día.</label>
+                    <label class="custom-control-label" for="LegNo24" style="padding-top: 3px;">No partir novedades
+                        adicionales a las 24Hs del día.</label>
                 </div>
             </div>
             <div class="form-inline">
                 <div class="custom-control custom-checkbox mt-1">
-                    <input type="checkbox" class="custom-control-input" <?= $persLegPrCosteo ?> id="LegPrCosteo" name="LegPrCosteo">
-                    <label class="custom-control-label" for="LegPrCosteo" style="padding-top: 3px;">Calcular Horas Costeadas</label>
+                    <input type="checkbox" class="custom-control-input" <?= $persLegPrCosteo ?> id="LegPrCosteo"
+                        name="LegPrCosteo">
+                    <label class="custom-control-label" for="LegPrCosteo" style="padding-top: 3px;">Calcular Horas
+                        Costeadas</label>
+                </div>
+            </div>
+            <div class="form-inline">
+                <?php
+                $disabledLegProyeHoras = (($_SESSION['DBDATA'] ?? 0) >= 7120250528) ? '' : 'disabled';
+                $titleLegProyeHoras = (($_SESSION['DBDATA'] ?? 0) >= 7120250528) ? 'Calcula horas a futuro según horario asignado' : 'Requiere versión 7120250528 o superior';
+                ?>
+                <div class="custom-control custom-checkbox mt-1 hint--right" aria-label="<?= $titleLegProyeHoras ?>">
+                    <input type="checkbox" class="custom-control-input" <?= $persLegProyeHoras ?? '' ?>
+                        id="LegProyeHoras" name="LegProyeHoras" <?= $disabledLegProyeHoras ?>>
+                    <label class="custom-control-label" for="LegProyeHoras" style="padding-top: 3px;">
+                        Proyectar Horas
+                    </label>
                 </div>
             </div>
             <div class="form-inline mt-3">
                 <label for="LegValHora" class="mr-2 w120">Valor Hora</label>
-                <input class="form-control w100" type="text" value="<?= $LegValHora ?>" id="LegValHora" name="LegValHora" placeholder="0,00">
+                <input class="form-control w100" type="text" value="<?= $LegValHora ?>" id="LegValHora"
+                    name="LegValHora" placeholder="0,00">
             </div>
         </div>
         <div class="col-12 col-sm-5 pt-3">
@@ -82,11 +106,13 @@
             <div class="form-group">
                 <div class="custom-control custom-checkbox">
                     <input type="checkbox" class="custom-control-input" id="LegPrRe" name="LegPrRe" <?= $persLegPrRe ?>>
-                    <label class="custom-control-label mx-2" for="LegPrRe" style="padding-top: 3px;">Por Regla de Control</label>
+                    <label class="custom-control-label mx-2" for="LegPrRe" style="padding-top: 3px;">Por Regla de
+                        Control</label>
                 </div>
                 <div class="custom-control custom-checkbox mt-1">
                     <input type="checkbox" class="custom-control-input" id="LegPrCo" name="LegPrCo" <?= $persLegPrCo ?>>
-                    <label class="custom-control-label mx-2" for="LegPrCo" style="padding-top: 3px;">Por Convenio</label>
+                    <label class="custom-control-label mx-2" for="LegPrCo" style="padding-top: 3px;">Por
+                        Convenio</label>
                 </div>
                 <div class="custom-control custom-checkbox mt-1">
                     <input type="checkbox" class="custom-control-input" id="LegPrPl" name="LegPrPl" <?= $persLegPrPl ?>>

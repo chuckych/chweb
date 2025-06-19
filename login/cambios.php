@@ -958,4 +958,18 @@ if ($verDB < 20241226) {
         fileLog("Error al crear modulo \"Reporte Prysmian\" en la tabla \"modulos\"", $pathLog);
     }
 }
+if ($verDB < 20250619) {
+
+    $verDB = 20250619; // nueva version de la DB
+
+    $insert_modulo = "INSERT INTO `modulos` (`id`, `recid`, `nombre`, `orden`, `estado`, `idtipo`) VALUES (47, 'pr0y3c7a', 'Proyectar Horas', 66, '0', 1)";
+
+    if (pdoQuery($insert_modulo)) {
+        fileLog("Se creo modulo \"Proyectar Horas\" en la tabla \"modulos\"", $pathLog);
+        pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+        fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el log
+    } else {
+        fileLog("Error al crear modulo \"Proyectar Horas\" en la tabla \"modulos\"", $pathLog);
+    }
+}
 

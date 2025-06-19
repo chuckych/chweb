@@ -18,19 +18,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
         echo json_encode($data);
         exit;
     }
-    ;
     if (valida_campo(test_input($_POST['LegEmpr']))) {
         $data = array('status' => 'error', 'dato' => '<strong>El campo empresa Obligatorio</strong>.');
         echo json_encode($data);
         exit;
     }
-    ;
 
     require __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $query = "SELECT (COLUMN_NAME) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='PERSONAL'";
 
@@ -164,9 +162,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
     $LegRegCO = test_input($_POST['LegRegCO']);
     $LegTareProd = test_input($_POST['LegTareProd']);
     $LegPrCosteo = test_input($_POST['LegPrCosteo']);
+    $LegProyeHoras = test_input($_POST['LegProyeHoras'] ?? '');
     $LegHLPlani = test_input($_POST['LegHLPlani']);
     /** Fin Variables */
     $CierreFech = test_input($_POST['CierreFech']);
+
 
     /** Formato Variables */
 
@@ -199,6 +199,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
     $LegHSDe = $LegHSDe == 'on' ? '1' : '0';
     $LegHSRo = $LegHSRo == 'on' ? '1' : '0';
     $LegPrCosteo = $LegPrCosteo == 'on' ? '1' : '0';
+    $LegProyeHoras = $LegProyeHoras == 'on' ? '1' : '0';
     $LegHLPlani = $LegHLPlani == 'on' ? '1' : '0';
 
     $LegValHora = $LegValHora == '' ? '0' : $LegValHora;
@@ -206,9 +207,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['Update_Leg'] == 'true')) 
     /** Fin Formato Variables */
 
     $Dato = 'Legajo: ' . $LegNume . '. ' . $LegApNo;
+    $colLegProyeHoras = (($_SESSION['DBDATA'] ?? 0) >= 7120250528) ? ", [PERSONAL].[LegProyeHoras]='$LegProyeHoras'" : ''; /** Columna Proyectar Horas */
 
     $FechaHora = date('Ymd H:i:s');
-    $sql = "UPDATE PERSONAL SET [PERSONAL].[LegApNo]='$LegApNo', [PERSONAL].[LegEsta]='$LegEsta', [PERSONAL].[LegEmpr]='$LegEmpr', [PERSONAL].[LegPlan]='$LegPlan', [PERSONAL].[LegSucu]='$LegSucu', [PERSONAL].[LegGrup]='$LegGrup', [PERSONAL].[LegSect]='$LegSect', [PERSONAL].[LegSec2]='$LegSec2', [PERSONAL].[LegTDoc]='$LegTDoc', [PERSONAL].[LegDocu]='$LegDocu', [PERSONAL].[LegCUIT]='$LegCUIT', [PERSONAL].[LegDomi]='$LegDomi', [PERSONAL].[LegDoNu]='$LegDoNu', [PERSONAL].[LegDoPi]='$LegDoPi', [PERSONAL].[LegDoDP]='$LegDoDP', [PERSONAL].[LegDoOb]='$LegDoOb', [PERSONAL].[LegCOPO]='$LegCOPO', [PERSONAL].[LegProv]='$LegProv', [PERSONAL].[LegLoca]='$LegLoca', [PERSONAL].[LegTel1]='$LegTel1', [PERSONAL].[LegTeO1]='$LegTeO1', [PERSONAL].[LegTel2]='$LegTel2', [PERSONAL].[LegTeO2]='$LegTeO2', [PERSONAL].[LegTel3]='$LegTel3', [PERSONAL].[LegMail]='$LegMail', [PERSONAL].[LegNaci]='$LegNaci', [PERSONAL].[LegEsCi]='$LegEsCi', [PERSONAL].[LegSexo]='$LegSexo', [PERSONAL].[LegFeNa]='$LegFeNa', [PERSONAL].[LegTipo]='$LegTipo', [PERSONAL].[LegFeIn]='$LegFeIn', [PERSONAL].[LegFeEg]='$LegFeEg', [PERSONAL].[LegPrCo]='$LegPrCo', [PERSONAL].[LegPrSe]='$LegPrSe', [PERSONAL].[LegPrGr]='$LegPrGr', [PERSONAL].[LegPrPl]='$LegPrPl', [PERSONAL].[LegPrRe]='$LegPrRe', [PERSONAL].[LegPrHo]='$LegPrHo', [PERSONAL].[LegToTa]='$LegToTa', [PERSONAL].[LegToIn]='$LegToIn', [PERSONAL].[LegToSa]='$LegToSa', [PERSONAL].[LegReTa]='$LegReTa', [PERSONAL].[LegReIn]='$LegReIn', [PERSONAL].[LegReSa]='$LegReSa', [PERSONAL].[LegIncTi]='$LegIncTi', [PERSONAL].[LegHLDe]='$LegHLDe', [PERSONAL].[LegHLDH]='$LegHLDH', [PERSONAL].[LegHLRo]='$LegHLRo', [PERSONAL].[LegHGDe]='$LegHGDe', [PERSONAL].[LegHGDH]='$LegHGDH', [PERSONAL].[LegHGRo]='$LegHGRo', [PERSONAL].[LegHSDe]='$LegHSDe', [PERSONAL].[LegHSDH]='$LegHSDH', [PERSONAL].[LegHSRo]='$LegHSRo', [PERSONAL].[LegHoAl]='$LegHoAl', [PERSONAL].[LegHoLi]='$LegHoLi', [PERSONAL].[LegGrHa]='$LegGrHa', [PERSONAL].[LegRegCH]='$LegRegCH', [PERSONAL].[LegValHora]='$LegValHora', [PERSONAL].[LegConv]='$LegConv', [PERSONAL].[LegNo24]='$LegNo24', [PERSONAL].[LegTareProd]='$LegTareProd', [PERSONAL].[LegPrCosteo]='$LegPrCosteo', [PERSONAL].[LegHLPlani]='$LegHLPlani', [PERSONAL].[FechaHora]='$FechaHora' WHERE LegNume=$LegNume";
+    $sql = "UPDATE PERSONAL SET [PERSONAL].[LegApNo]='$LegApNo', [PERSONAL].[LegEsta]='$LegEsta', [PERSONAL].[LegEmpr]='$LegEmpr', [PERSONAL].[LegPlan]='$LegPlan', [PERSONAL].[LegSucu]='$LegSucu', [PERSONAL].[LegGrup]='$LegGrup', [PERSONAL].[LegSect]='$LegSect', [PERSONAL].[LegSec2]='$LegSec2', [PERSONAL].[LegTDoc]='$LegTDoc', [PERSONAL].[LegDocu]='$LegDocu', [PERSONAL].[LegCUIT]='$LegCUIT', [PERSONAL].[LegDomi]='$LegDomi', [PERSONAL].[LegDoNu]='$LegDoNu', [PERSONAL].[LegDoPi]='$LegDoPi', [PERSONAL].[LegDoDP]='$LegDoDP', [PERSONAL].[LegDoOb]='$LegDoOb', [PERSONAL].[LegCOPO]='$LegCOPO', [PERSONAL].[LegProv]='$LegProv', [PERSONAL].[LegLoca]='$LegLoca', [PERSONAL].[LegTel1]='$LegTel1', [PERSONAL].[LegTeO1]='$LegTeO1', [PERSONAL].[LegTel2]='$LegTel2', [PERSONAL].[LegTeO2]='$LegTeO2', [PERSONAL].[LegTel3]='$LegTel3', [PERSONAL].[LegMail]='$LegMail', [PERSONAL].[LegNaci]='$LegNaci', [PERSONAL].[LegEsCi]='$LegEsCi', [PERSONAL].[LegSexo]='$LegSexo', [PERSONAL].[LegFeNa]='$LegFeNa', [PERSONAL].[LegTipo]='$LegTipo', [PERSONAL].[LegFeIn]='$LegFeIn', [PERSONAL].[LegFeEg]='$LegFeEg', [PERSONAL].[LegPrCo]='$LegPrCo', [PERSONAL].[LegPrSe]='$LegPrSe', [PERSONAL].[LegPrGr]='$LegPrGr', [PERSONAL].[LegPrPl]='$LegPrPl', [PERSONAL].[LegPrRe]='$LegPrRe', [PERSONAL].[LegPrHo]='$LegPrHo', [PERSONAL].[LegToTa]='$LegToTa', [PERSONAL].[LegToIn]='$LegToIn', [PERSONAL].[LegToSa]='$LegToSa', [PERSONAL].[LegReTa]='$LegReTa', [PERSONAL].[LegReIn]='$LegReIn', [PERSONAL].[LegReSa]='$LegReSa', [PERSONAL].[LegIncTi]='$LegIncTi', [PERSONAL].[LegHLDe]='$LegHLDe', [PERSONAL].[LegHLDH]='$LegHLDH', [PERSONAL].[LegHLRo]='$LegHLRo', [PERSONAL].[LegHGDe]='$LegHGDe', [PERSONAL].[LegHGDH]='$LegHGDH', [PERSONAL].[LegHGRo]='$LegHGRo', [PERSONAL].[LegHSDe]='$LegHSDe', [PERSONAL].[LegHSDH]='$LegHSDH', [PERSONAL].[LegHSRo]='$LegHSRo', [PERSONAL].[LegHoAl]='$LegHoAl', [PERSONAL].[LegHoLi]='$LegHoLi', [PERSONAL].[LegGrHa]='$LegGrHa', [PERSONAL].[LegRegCH]='$LegRegCH', [PERSONAL].[LegValHora]='$LegValHora', [PERSONAL].[LegConv]='$LegConv', [PERSONAL].[LegNo24]='$LegNo24', [PERSONAL].[LegTareProd]='$LegTareProd', [PERSONAL].[LegPrCosteo]='$LegPrCosteo', [PERSONAL].[LegHLPlani]='$LegHLPlani', [PERSONAL].[FechaHora]='$FechaHora' $colLegProyeHoras WHERE LegNume=$LegNume";
 
     $stmt = sqlsrv_prepare($link, $sql, $params, $options);
     /** preparar la sentencia */

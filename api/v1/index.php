@@ -68,10 +68,19 @@ Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
 Flight::route('GET /parametros/liquid', [$ParaGene, 'liquid']);
 Flight::route('GET /horarios/', [$horarios, 'get_horarios']);
-// Flight::route('GET /horarios', function () {
-//     $horarios = new Classes\Horarios;
-//     $horarios->get_horarios();
-// });
+Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
+    $request = Flight::request();
+    $data = $request->data->getData();
+    $inicio = microtime(true);
+
+    $proyectar = $RRHHWebService->proyectar_horas(
+        $data['Legajos'],
+        $data['FechaDesde'],
+        $data['FechaHasta']
+    );
+
+    $response->respuesta($proyectar, 0, '', 200, $inicio, 0, ID_COMPANY);
+});
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
 Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
 Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);
@@ -96,6 +105,7 @@ Flight::route('POST /horarios/citacion', [$horarios, 'set_horario']);
 Flight::route('POST /horarios/legajo-citacion', [$horarios, 'set_horario']);
 Flight::route('POST /auditor', [$auditor, 'add']);
 Flight::route('GET /personal/legajos', [$Personal, 'legajos']);
+Flight::route('POST /personal/filtros', [$Personal, 'filtros_estructura']);
 // Flight::route('POST /conectar', [$connectSqlSrv, 'test_connect']);
 Flight::route('POST /conectar', function () {
     $connectSqlSrv = new Classes\ConnectSqlSrv;

@@ -425,6 +425,54 @@ function novedadesRol()
     $novedadesRol = ($novedadesRol && $novedadesRol != '-') ? explode(',', $novedadesRol) : [];
     return $novedadesRol;
 }
+function empresasRol()
+{
+    $e = $_SESSION['EmprRol'] ?? '';
+    $e = ($e && $e != '-') ? explode(',', $e) : [];
+    return $e;
+}
+function plantasRol()
+{
+    $p = $_SESSION['PlanRol'] ?? '';
+    $p = ($p && $p != '-') ? explode(',', $p) : [];
+    return $p;
+}
+function conveniosRol()
+{
+    $c = $_SESSION['ConvRol'] ?? '';
+    $c = ($c && $c != '-') ? explode(',', $c) : [];
+    return $c;
+}
+function sectoresRol()
+{
+    $s = $_SESSION['SectRol'] ?? '';
+    $s = ($s && $s != '-') ? explode(',', $s) : [];
+    return $s;
+}
+function seccionesRol()
+{
+    $s = $_SESSION['Sec2Rol'] ?? '';
+    $s = ($s && $s != '-') ? explode(',', $s) : [];
+    return $s;
+}
+function gruposRol()
+{
+    $g = $_SESSION['GrupRol'] ?? '';
+    $g = ($g && $g != '-') ? explode(',', $g) : [];
+    return $g;
+}
+function sucursalesRol()
+{
+    $s = $_SESSION['SucuRol'] ?? '';
+    $s = ($s && $s != '-') ? explode(',', $s) : [];
+    return $s;
+}
+function legajosRol()
+{
+    $l = $_SESSION['EstrUser'] ?? '';
+    $l = ($l && $l != '-') ? explode(',', $l) : [];
+    return $l;
+}
 /**
  * Combina dos arrays eliminando duplicados.
  *

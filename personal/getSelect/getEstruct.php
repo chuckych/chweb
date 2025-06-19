@@ -51,11 +51,11 @@ switch ($params['Tipo']) {
         $LegTipo = array('1');
         break;
     default:
-        $LegTipo = array();
+        $LegTipo = [];
         break;
 }
 $RegCH = $params['Regla'] ? $params['Regla'] : '';
-$Legajos = ($Per) ? ($Per) : array();
+$Legajos = ($Per) ? ($Per) : [];
 
 $dataApiPerson['DATA'] = $dataApiPerson['DATA'] ?? '';
 $dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
@@ -66,16 +66,16 @@ $dataParamPerson = array(
     "getDatos" => 0,
     "getEstruct" => 0,
     "Baja" => array("0"),
-    "Empr" => ($Empr),
-    "Plan" => ($Plan),
-    "Sect" => ($Sect),
-    "Sec2" => ($Sec2),
-    "Grup" => ($Grup),
-    "Sucu" => ($Sucu),
-    "Conv" => ($Conv),
-    "TareProd" => ($Tare),
-    "RegCH" => ($RegCH),
-    "Tipo" => ($LegTipo),
+    "Empr" => $Empr,
+    "Plan" => $Plan,
+    "Sect" => $Sect,
+    "Sec2" => $Sec2,
+    "Grup" => $Grup,
+    "Sucu" => $Sucu,
+    "Conv" => $Conv,
+    "TareProd" => $Tare,
+    "RegCH" => $RegCH,
+    "Tipo" => $LegTipo,
     "start" => 0,
     "length" => 500,
 );

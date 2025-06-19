@@ -8,8 +8,9 @@ E_ALL();
 //      exit;
 //  };
 $LegNume = test_input($_GET['_leg']);
+$colLegProyeHoras = (($_SESSION['DBDATA'] ?? 0) >= 7120250528) ? ', LegProyeHoras' : ''; /** Columna Proyectar Horas */
 $query = "SELECT TOP 1
-        [LegNume] ,[LegApNo] ,[LegEsta] ,[LegEmpr] , EmpRazon, [LegPlan] , PlaDesc, [LegSucu] , SucDesc, [LegGrup] , GruDesc, [LegSect] , SecDesc, [LegSec2] , Se2Desc, [LegTDoc] ,[LegDocu] ,[LegCUIT] ,[LegDomi] ,[LegDoNu] ,[LegDoPi] ,[LegDoDP] ,[LegDoOb] ,[LegCOPO] ,[LegProv] , ProDesc, [LegLoca] , LocDesc, [LegTel1] ,[LegTeO1] ,[LegTel2] ,[LegTeO2] ,[LegTel3] ,[LegMail] ,[LegNaci] , NacDesc, [LegEsCi] ,[LegSexo] ,[LegFeNa] ,[LegTipo] ,[LegFeIn] ,[LegFeEg] ,[LegPrCo] ,[LegPrSe] ,[LegPrGr] ,[LegPrPl] ,[LegPrRe] ,[LegPrHo] ,[LegToTa] ,[LegToIn] ,[LegToSa] ,[LegReTa] ,[LegReIn] ,[LegReSa] ,[LegIncTi] ,[LegDesc] ,[LegHLDe] ,[LegHLDH] ,[LegHLRo] ,[LegHGDe] ,[LegHGDH] ,[LegHGRo] ,[LegHSDe] ,[LegHSDH] ,[LegHSRo] ,[LegHoAl] ,[LegHoLi] ,[LegGrHa], GHaDesc, [LegArea] ,[LegAvisa] ,[LegChkHo] ,[LegAntes] ,[LegDespu] ,[LegTarde] ,[LegRegCH] , RCDesc, [LegRegCO] ,[LegCant] ,[LegValHora] ,[LegHabSali] ,[LegJornada] ,[LegForPago] ,[LegMoneda] ,[LegBanco] ,[LegBanSuc] ,[LegBanCTA] ,[LegBanCBU] ,[LegConv] , ConDesc, [LegCalif] ,[LegTare] ,[LegObs] ,[LegObsPlan] ,[LegZona] ,[LegRedu] ,[LegAFJP] ,[LegSind] ,[LegActi] ,[LegModa] ,[LegSitu] ,[LegCond] ,[LegSine] ,[LegTicket] ,[LegBasico] ,[LegImporte1] ,[LegImporte2] ,[LegImporte3] ,[LegImporte4] ,[LegImporte5] ,[LegImporte6] ,[LegTopeAde] ,[LegCapiLRT] ,[LegCalcGan] ,[LegNo24] ,[LegTZ] ,[LegTZ1] ,[LegTZ2] ,[LegTZ3] ,[LegBandHor] ,[LegTareProd], TareDesc, CierreFech, Se2Codi, [LegPrCosteo], [LegHLPlani]
+        [LegNume] ,[LegApNo] ,[LegEsta] ,[LegEmpr] , EmpRazon, [LegPlan] , PlaDesc, [LegSucu] , SucDesc, [LegGrup] , GruDesc, [LegSect] , SecDesc, [LegSec2] , Se2Desc, [LegTDoc] ,[LegDocu] ,[LegCUIT] ,[LegDomi] ,[LegDoNu] ,[LegDoPi] ,[LegDoDP] ,[LegDoOb] ,[LegCOPO] ,[LegProv] , ProDesc, [LegLoca] , LocDesc, [LegTel1] ,[LegTeO1] ,[LegTel2] ,[LegTeO2] ,[LegTel3] ,[LegMail] ,[LegNaci] , NacDesc, [LegEsCi] ,[LegSexo] ,[LegFeNa] ,[LegTipo] ,[LegFeIn] ,[LegFeEg] ,[LegPrCo] ,[LegPrSe] ,[LegPrGr] ,[LegPrPl] ,[LegPrRe] ,[LegPrHo] ,[LegToTa] ,[LegToIn] ,[LegToSa] ,[LegReTa] ,[LegReIn] ,[LegReSa] ,[LegIncTi] ,[LegDesc] ,[LegHLDe] ,[LegHLDH] ,[LegHLRo] ,[LegHGDe] ,[LegHGDH] ,[LegHGRo] ,[LegHSDe] ,[LegHSDH] ,[LegHSRo] ,[LegHoAl] ,[LegHoLi] ,[LegGrHa], GHaDesc, [LegArea] ,[LegAvisa] ,[LegChkHo] ,[LegAntes] ,[LegDespu] ,[LegTarde] ,[LegRegCH] , RCDesc, [LegRegCO] ,[LegCant] ,[LegValHora] ,[LegHabSali] ,[LegJornada] ,[LegForPago] ,[LegMoneda] ,[LegBanco] ,[LegBanSuc] ,[LegBanCTA] ,[LegBanCBU] ,[LegConv] , ConDesc, [LegCalif] ,[LegTare] ,[LegObs] ,[LegObsPlan] ,[LegZona] ,[LegRedu] ,[LegAFJP] ,[LegSind] ,[LegActi] ,[LegModa] ,[LegSitu] ,[LegCond] ,[LegSine] ,[LegTicket] ,[LegBasico] ,[LegImporte1] ,[LegImporte2] ,[LegImporte3] ,[LegImporte4] ,[LegImporte5] ,[LegImporte6] ,[LegTopeAde] ,[LegCapiLRT] ,[LegCalcGan] ,[LegNo24] ,[LegTZ] ,[LegTZ1] ,[LegTZ2] ,[LegTZ3] ,[LegBandHor] ,[LegTareProd], TareDesc, CierreFech, Se2Codi, [LegPrCosteo], [LegHLPlani] $colLegProyeHoras
         FROM PERSONAL
         LEFT JOIN NACIONES ON PERSONAL.LegNaci = NACIONES.NacCodi
         LEFT JOIN PROVINCI ON PERSONAL.LegProv = PROVINCI.ProCodi
@@ -26,7 +27,6 @@ $query = "SELECT TOP 1
         LEFT JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi
         LEFT JOIN GRUPCAPT ON PERSONAL.LegGrHa = GRUPCAPT.GHaCodi
         WHERE LegNume = $LegNume"; /** Query */
-// print_r($query);exit;
 $params = array();
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 $result = sqlsrv_query($link, $query, $params, $options);
@@ -83,6 +83,7 @@ $persLegHSDH = ($pers['LegHSDH'] == '1') ? 'checked' : ''; /** Asig por Sector D
 $persLegHSDe = ($pers['LegHSDe'] == '1') ? 'checked' : ''; /** Asig por Sector Desde        */
 $persLegHSRo = ($pers['LegHSRo'] == '1') ? 'checked' : ''; /** Asig por Sector Rotación     */
 $persLegPrCosteo = ($pers['LegPrCosteo'] == '1') ? 'checked' : ''; /** Calcular Horas Costeadas */
+$persLegProyeHoras = (($pers['LegProyeHoras'] ?? '') == '1') ? 'checked' : ''; /** Proyectar Horas */
 $persLegHLPlani = ($pers['LegHLPlani'] == '1') ? 'checked' : ''; /** Usar Planificación */
 $persRCDesc = ($pers['LegRegCH'] == '0') ? 'Sin Regla' : $pers['RCDesc'];
 $persGHaDesc = ($pers['LegGrHa'] == '0') ? 'Sin Grupo' : $pers['GHaDesc'];

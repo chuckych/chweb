@@ -1368,6 +1368,55 @@ Flight::route('GET /params', function () {
     $params = get_params($queryColumn) ?? [];
     Flight::json($params);
 });
+Flight::route('POST /personal/filtros', function () {
+
+    $request = Flight::request();
+    $data = $request->data ?? [];
+    $flag = $data['flag'] ?? 0;
+
+
+    $payload = [
+        'estructura' => $data['estructura'] ?? '',
+        'activo' => $data['activo'] ?? 1,
+        'tipo' => $data['tipo'] ?? '0',
+        'estado' => $data['estado'] ?? '0',
+        'descripcion' => $data['descripcion'] ?? '',
+        'nullCant' => $data['nullCant'] ?? 0,
+        'strict' => $data['strict'] ?? 0,
+        'proyectar' => $data['proyectar'] ?? 2,
+        'filtros' => [
+            'personal' => empty($data['personal'] ?? []) ? legajosRol() : ($data['personal'] ?? []),
+            'empresas' => empty($data['empresas'] ?? []) ? empresasRol() : ($data['empresas'] ?? []),
+            'plantas' => empty($data['plantas'] ?? []) ? plantasRol() : ($data['plantas'] ?? []),
+            'convenios' => empty($data['convenios'] ?? []) ? conveniosRol() : ($data['convenios'] ?? []),
+            'sectores' => empty($data['sectores'] ?? []) ? sectoresRol() : ($data['sectores'] ?? []),
+            'secciones' => empty($data['secciones'] ?? []) ? seccionesRol() : ($data['secciones'] ?? []),
+            'grupos' => empty($data['grupos'] ?? []) ? gruposRol() : ($data['grupos'] ?? []),
+            'sucursales' => empty($data['sucursales'] ?? []) ? sucursalesRol() : ($data['sucursales'] ?? []),
+        ]
+    ];
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/personal/filtros";
+    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($personal, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] : [];
+
+    Flight::json($result ?? []);
+});
+Flight::route('POST /proyectar', function () {
+
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/proyectar";
+    $proyectar = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($proyectar, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
+    $result['payload'] = $payload; // Agregar los legajos al resultado
+    sleep(2); // Simular un tiempo de espera para la proyección
+    Flight::json($result ?? []);
+});
+
 
 
 Flight::map('Forbidden', function ($mensaje) {

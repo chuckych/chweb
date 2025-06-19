@@ -74,6 +74,7 @@ switch ($Modulo) {
 		echo '<style>:root { --main-bg-modcolor : #2980B9; } </style>';
 		break;
 	case '12':
+	case '47':
 		/** Modulo Procesar. Color predeterminado */
 		echo '<style>:root { --main-bg-modcolor : #455a64; } </style>';
 		break;
