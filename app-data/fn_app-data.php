@@ -480,12 +480,12 @@ function legajosRol()
  * @param array $arr2 El segundo array.
  * @return array El array resultante de combinar los dos arrays sin duplicados.
  */
-function mergeArray($arr1, $arr2)
+function mergeArray($data, $session)
 {
-    if (!is_array($arr1)) {
-        $arr1 = [];
+    if (!is_array($data)) {
+        $data = [];
     }
-    return $arr2 ? array_unique(array_merge($arr1, $arr2)) : $arr1;
+    return $session ? array_unique(array_merge($data, $session)) : $data;
 }
 
 function dateCustomDay($day)

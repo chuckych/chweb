@@ -17,9 +17,13 @@ class Log
     }
     function write($text, $nameFile, $type = false)
     {
+        // obtener la extension de $nameFile
+        $textOriginal = $text;
+        $ext = pathinfo($nameFile, PATHINFO_EXTENSION);
         $path = $this->path;
         $date = $this->date;
         $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
+        $text = ($ext == 'sql') ? "-- " . $date . "\n" . $textOriginal . ';' . "\n" : $text;
         file_put_contents($path . $nameFile, $text, FILE_APPEND | LOCK_EX);
     }
     public function cache($text, $nameFile, $ext = '.json')

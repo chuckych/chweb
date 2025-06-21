@@ -223,19 +223,25 @@ class Personal
 
                 $sql = '';
                 // Función interna para armar el filtro correctamente como int
-                $whereIn = function ($valor, $campo) {
+                $whereIn = function ($valor, $campo, $not = false) {
                     if (strlen($valor) > 0 && strpos($valor, ',') !== false) {
-                        return " AND {$campo} IN ({$valor})";
+                        return " AND {$campo} " . ($not ? 'NOT ' : '') . "IN ({$valor})";
                     }
-                    return " AND {$campo} = {$valor}";
+                    return " AND {$campo} " . ($not ? '!' : '') . "= {$valor}";
                 };
 
                 foreach ($campos as $key => [$idx, $campo]) {
-                    if (($FiltroEstructura - 1) === $idx && !$Strict) {
-                        continue; // Si es el mismo índice, no se agrega filtro. Esto es para que al llamar a la función no se agregue el filtro de la estructura actual. y retorne los resultados completos de la estructura actual.
-                    }
                     $valor = isset($arr[$idx]) && $arr[$idx] === '-1' ? '0' : ($arr[$idx] ?? '');
-                    if ($valor !== '') {
+                    if (($FiltroEstructura - 1) === $idx) {
+                        $ifValor = $valor === '' ? false : true;
+                        if ($Strict) { // Si es estricto, no permite valores vacíos
+                            if ($ifValor) { // si no esta vacio
+                                $sql .= $whereIn($valor, $campo, false); // Agrega el filtro IN
+                            }
+                        } else if ($ifValor) { // Si no es estricto y el valor no está vacío
+                            $sql .= $whereIn($valor, $campo, false); // Agrega el filtro IN
+                        }
+                    } else if ($valor !== '') {
                         $sql .= $whereIn($valor, $campo);
                     }
                 }
@@ -266,7 +272,8 @@ class Personal
             $sql .= $fnFiltroProyectar(); // Filtro de proyección de horas LegProyeHoras
             $sql .= $dataE['sqlGroup'] ?? '';
 
-            $this->log->write($sql, date('Ymd') . '_sql_filtros.log');
+            // $this->log->write($sql, 'sql_filtros.sql');
+
             $stmt = $db->prepare($sql);
             $stmt->execute();
             $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);

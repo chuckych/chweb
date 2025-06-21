@@ -10,8 +10,14 @@
         <?= MODULOS['proyectar'] ?>
     </title>
     <style>
-        .select2-results__option[aria-selected=true] {
+        /* .select2-results__option[aria-selected=true] {
             display: block;
+        } */
+
+        .dataTables_paginate {
+            /* margin-bottom: 10px !important; */
+            margin-top: 0px !important;
+            /* border-radius: var(--main-radius-0); */
         }
     </style>
 </head>
@@ -28,9 +34,36 @@
         <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar'], ''); ?>
         <!-- Fin Encabezado -->
         <?php require 'filtros.html'; ?>
-        <table id="tabla" class="table text-nowrap">
+        <div class="form-row mb-3">
+            <div class="col-12">
+                <a href="javascript:void(0)" id="btnHoras" class="float-right btn btn-link font08 mt-1">
+                    Actualizar Tablas
+                </a>
+            </div>
+            <div class="col-12 col-lg-5">
+                <table id="tabla" class="table text-nowrap fadeIn">
 
-        </table>
+                </table>
+            </div>
+            <div class="col-12 col-lg-7 mt-3 mt-sm-0">
+                <div class="" id="divTablaHoras">
+                    <table id="tabla_horas" class="table text-nowrap fadeIn">
+                        <thead></thead>
+                        <tfoot>
+                            <tr></tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <a href="javascript:void(0)" class="btn btn-link font08 float-right hint--top" id="btnExportar"
+                    aria-label="Exportar horas calculadas" style="display: none;">
+                    Exportar TXT
+                </a>
+                <a href="javascript:void(0)" class="btn btn-link font08 float-right hint--left" id="btnExportarPDF"
+                    aria-label="Exportar horas calculadas" style="display: none;">
+                    Exportar PDF
+                </a>
+            </div>
+        </div>
     </div>
     <!-- fin container -->
     <?php
@@ -49,6 +82,8 @@
     <script src="/<?= HOMEHOST ?>/js/select2-es.js"></script>
     <script
         src="/<?= HOMEHOST ?>/procesar/proyectar/js/select.js?<?= version_file("/procesar/proyectar/js/select.js") ?>"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script> -->
+    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/jspdf.umd.min.js"></script>
 </body>
 
 </html>

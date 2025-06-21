@@ -323,6 +323,7 @@ Flight::route('POST /horas/totales', function () {
     $payload['Grup'] = $payload['Grup'] ?? [];
     $payload['Sucu'] = $payload['Sucu'] ?? [];
     $payload['Lega'] = $payload['Lega'] ?? [];
+    $payload['LegTipo'] = $payload['LegTipo'] ?? [];
 
     $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
     $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
@@ -356,6 +357,7 @@ Flight::route('POST /horas/totales', function () {
         Flight::json($data);
         exit;
     }
+    // Flight::json($payload) . exit;
 
     $data = getHorasTotales($payload);
 
@@ -1374,6 +1376,45 @@ Flight::route('POST /personal/filtros', function () {
     $data = $request->data ?? [];
     $flag = $data['flag'] ?? 0;
 
+    $e = intval($data['estructura']) ?? '';
+    $dt = intval($data['datatable']) ?? '';
+
+    // Obtener los datos de los roles de la session 
+    $emprRol = empresasRol();
+    $planRol = plantasRol();
+    $convRol = conveniosRol();
+    $sectRol = sectoresRol();
+    $sec2Rol = seccionesRol();
+    $grupRol = gruposRol();
+    $sucuRol = sucursalesRol();
+    $persRol = legajosRol();
+
+    /**
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+     * | Obtener los datos de del request. y si $e ($data['estructura']),  | *
+     * | coincide con el tipo de filtro, se asigna un array vacío          | *
+     * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - *
+     **/
+    $dataEmpr = $e === 1 ? [] : $data['empresas'] ?? [];
+    $dataPlan = $e === 2 ? [] : $data['plantas'] ?? [];
+    $dataConv = $e === 3 ? [] : $data['convenios'] ?? [];
+    $dataSect = $e === 4 ? [] : $data['sectores'] ?? [];
+    $dataSecc = $e === 5 ? [] : $data['secciones'] ?? [];
+    $dataGrup = $e === 6 ? [] : $data['grupos'] ?? [];
+    $dataSucu = $e === 7 ? [] : $data['sucursales'] ?? [];
+    $dataPers = $e === 8 ? [] : $data['personal'] ?? [];
+    $dataPers = $dt !== 1 ? $dataPers : $data['personal'] ?? [];
+
+    // Merge de los datos de los roles con los datos del request
+    $empr = mergeArray($dataEmpr, $emprRol);
+    $plan = mergeArray($dataPlan, $planRol);
+    $conv = mergeArray($dataConv, $convRol);
+    $sect = mergeArray($dataSect, $sectRol);
+    $secc = mergeArray($dataSecc, $sec2Rol);
+    $grup = mergeArray($dataGrup, $grupRol);
+    $sucu = mergeArray($dataSucu, $sucuRol);
+    $pers = mergeArray($dataPers, $persRol);
+
 
     $payload = [
         'estructura' => $data['estructura'] ?? '',
@@ -1384,15 +1425,25 @@ Flight::route('POST /personal/filtros', function () {
         'nullCant' => $data['nullCant'] ?? 0,
         'strict' => $data['strict'] ?? 0,
         'proyectar' => $data['proyectar'] ?? 2,
+        // 'filtros' => [
+        //     'personal' => empty($data['personal'] ?? []) ? legajosRol() : ($data['personal'] ?? []),
+        //     'empresas' => empty($data['empresas'] ?? []) ? empresasRol() : ($data['empresas'] ?? []),
+        //     'plantas' => empty($data['plantas'] ?? []) ? plantasRol() : ($data['plantas'] ?? []),
+        //     'convenios' => empty($data['convenios'] ?? []) ? conveniosRol() : ($data['convenios'] ?? []),
+        //     'sectores' => empty($data['sectores'] ?? []) ? sectoresRol() : ($data['sectores'] ?? []),
+        //     'secciones' => empty($data['secciones'] ?? []) ? seccionesRol() : ($data['secciones'] ?? []),
+        //     'grupos' => empty($data['grupos'] ?? []) ? gruposRol() : ($data['grupos'] ?? []),
+        //     'sucursales' => empty($data['sucursales'] ?? []) ? sucursalesRol() : ($data['sucursales'] ?? []),
+        // ]
         'filtros' => [
-            'personal' => empty($data['personal'] ?? []) ? legajosRol() : ($data['personal'] ?? []),
-            'empresas' => empty($data['empresas'] ?? []) ? empresasRol() : ($data['empresas'] ?? []),
-            'plantas' => empty($data['plantas'] ?? []) ? plantasRol() : ($data['plantas'] ?? []),
-            'convenios' => empty($data['convenios'] ?? []) ? conveniosRol() : ($data['convenios'] ?? []),
-            'sectores' => empty($data['sectores'] ?? []) ? sectoresRol() : ($data['sectores'] ?? []),
-            'secciones' => empty($data['secciones'] ?? []) ? seccionesRol() : ($data['secciones'] ?? []),
-            'grupos' => empty($data['grupos'] ?? []) ? gruposRol() : ($data['grupos'] ?? []),
-            'sucursales' => empty($data['sucursales'] ?? []) ? sucursalesRol() : ($data['sucursales'] ?? []),
+            'empresas' => $empr,
+            'plantas' => $plan,
+            'convenios' => $conv,
+            'sectores' => $sect,
+            'secciones' => $secc,
+            'grupos' => $grup,
+            'sucursales' => $sucu,
+            'personal' => $pers,
         ]
     ];
 
