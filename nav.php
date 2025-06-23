@@ -37,9 +37,6 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto d-flex">
                 <?php
-                //$url   = host() . "/" . HOMEHOST . "/data/GetModRol.php?tk=" . token() . "&recidRol=" . $_SESSION["RECID_ROL"];
-                // $json  = file_get_contents(($url));
-                // $array = json_decode($json, TRUE);
                 $array = (array(mod_roles($_SESSION['RECID_ROL'])));
                 if (($array[0])):
                     if (!$array[0]['error']) {
@@ -331,6 +328,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         // &&($Modulo2 != 'Mis Horas')
                                         && ($Modulo2 != 'Horas Costeadas')
                                         && ($Modulo2 != 'Reporte Prysmian')
+                                        && ($Modulo2 != 'Proyectar Horas')
                                     ) { ?>
                                 <li class="nav-item mx-1"><a class="nav-link fontq fw4 text-dark"
                                         href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/">
