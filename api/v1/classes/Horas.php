@@ -1174,7 +1174,7 @@ class Horas
             $FechaDesde = date('Ymd', strtotime($datos['FechaDesde']));
             $FechaHasta = date('Ymd', strtotime($datos['FechaHasta']));
 
-            $sql = "DELETE FROM FICHAS1 WHERE FicLega IN ($LegajosStr) AND FicFech BETWEEN '$FechaDesde' AND '$FechaHasta'";
+            $sql = "DELETE FROM FICHAS1 WHERE FicLega IN ($LegajosStr) AND FicFech BETWEEN '$FechaDesde' AND '$FechaHasta' and FICHAS1.FicTurn = 1";
             $stmt = $conn->prepare($sql);
             $stmt->execute(); // Ejecuto la consulta
             // $this->log->write($sql, date('Ymd') . '_eliminar_proyeccion_' . ID_COMPANY . '.log');

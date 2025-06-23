@@ -1463,7 +1463,27 @@ Flight::route('POST /proyectar', function () {
     $proyectar = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($proyectar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
-    $result['payload'] = $payload; // Agregar los legajos al resultado
+    // $result['payload'] = $payload; // Agregar los legajos al resultado
+
+    if ($result) {
+        $FechaDesde = $payload['FechaDesde'] ?? '';
+        $FechaHasta = $payload['FechaHasta'] ?? '';
+        $Legajos = $payload['Legajos'] ?? [];
+
+        // fomatear las fechas a 'd/m/Y'
+        $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
+        $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
+
+        foreach ($Legajos as $legajo) {
+            $arrayAuditoria[] = [
+                'AudTipo' => 'A',
+                'AudDato' => "Proyectar Horas: Legajo: {$legajo} desde {$FechaDesde} hasta {$FechaHasta}",
+            ];
+        }
+
+        auditoria_multiple($arrayAuditoria, 47);
+    }
+
     sleep(5); // Simular un tiempo de espera para la proyección
     Flight::json($result ?? []);
 
@@ -1477,8 +1497,27 @@ Flight::route('DELETE /proyectar', function () {
     $proyectar = ch_api($endpoint, $payload, 'DELETE', '');
     $arrayData = json_decode($proyectar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
-    $result['payload'] = $payload; // Agregar los legajos al resultado
-    // sleep(2); // Simular un tiempo de espera para la proyección
+    // $result['payload'] = $payload; // Agregar los legajos al resultado
+
+    if ($result) {
+        $FechaDesde = $payload['FechaDesde'] ?? '';
+        $FechaHasta = $payload['FechaHasta'] ?? '';
+        $Legajos = $payload['Legajos'] ?? [];
+
+        // fomatear las fechas a 'd/m/Y'
+        $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
+        $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
+
+        foreach ($Legajos as $legajo) {
+            $arrayAuditoria[] = [
+                'AudTipo' => 'B',
+                'AudDato' => "Proyectar Horas: Legajo: {$legajo} desde {$FechaDesde} hasta {$FechaHasta}",
+            ];
+        }
+
+        auditoria_multiple($arrayAuditoria, 47);
+    }
+
     Flight::json($result ?? []);
 
 });

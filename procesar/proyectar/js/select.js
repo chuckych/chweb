@@ -31,7 +31,7 @@ $(function () {
             autoApply: true,
             minDate: fechaActual,
             alwaysShowCalendars: true,
-            linkedCalendars: false,
+            linkedCalendars: true,
             ranges: {
                 'Esta Semana': estaSemana,
                 'Proxima Semana': proximaSemana,
