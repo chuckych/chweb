@@ -81,6 +81,8 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
 
     $response->respuesta($proyectar, 0, '', 200, $inicio, 0, ID_COMPANY);
 });
+Flight::route('DELETE /proyectar', [$horas, 'eliminar_proyeccion']);
+
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
 Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
 Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);

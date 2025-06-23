@@ -1464,8 +1464,23 @@ Flight::route('POST /proyectar', function () {
     $arrayData = json_decode($proyectar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
     $result['payload'] = $payload; // Agregar los legajos al resultado
-    sleep(2); // Simular un tiempo de espera para la proyección
+    sleep(5); // Simular un tiempo de espera para la proyección
     Flight::json($result ?? []);
+
+});
+Flight::route('DELETE /proyectar', function () {
+
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/proyectar";
+    $proyectar = ch_api($endpoint, $payload, 'DELETE', '');
+    $arrayData = json_decode($proyectar, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
+    $result['payload'] = $payload; // Agregar los legajos al resultado
+    // sleep(2); // Simular un tiempo de espera para la proyección
+    Flight::json($result ?? []);
+
 });
 
 

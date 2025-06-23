@@ -71,6 +71,7 @@ class InputValidator
             'arrSmallintEmpty' => "El campo $field debe ser un arreglo de números y menor a 32767",
             'boolean' => "El campo $field debe ser un valor booleano",
             'date' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd",
+            'futuredate' => "El campo $field debe ser una fecha futura válida con formato yyyy-mm-dd",
             'dateEmpty' => "El campo $field debe ser una fecha válida con formato yyyy-mm-dd o vacío",
             'datetime' => "El campo $field debe ser una fecha y hora válida con formato yyyy-mm-dd hh:mm:ss",
             'decima12.2' => "El campo $field debe ser un número decimal con 2 decimales y menor a 12 dígitos",
@@ -150,6 +151,15 @@ class InputValidator
                     foreach ($e['errors'] as $error) { // Recorre los errores
                         throw new ValidationException("Error de Fecha $field: $error", 400); // Lanza una excepción con el error
                     } // Fin recorre errores
+                }
+                break;
+            case 'futuredate':
+                if (!DateTime::createFromFormat('Y-m-d', $value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                $fecha = date_create($value);
+                if (!$fecha || $fecha <= new DateTime()) {
+                    throw new ValidationException("El campo $field debe ser una fecha futura válida con formato yyyy-mm-dd", 400);
                 }
                 break;
             case 'dateEmpty':

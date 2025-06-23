@@ -334,6 +334,7 @@ $(function () {
                 setTimeout(() => {
                     loaderIn('#tabla', false);
                     $("#btnProcesar").prop('disabled', false);
+                    $("#btnEliminar").prop('disabled', false);
                 }, 0);
             }
         });
@@ -409,7 +410,7 @@ $(function () {
                 data: 'Lega', className: '', targets: '', title: 'LEGAJO',
                 "render": function (data, type, row, meta) {
                     return `
-                        <div class="d-flex text-truncate" style="min-width:70px; max-width:70px">
+                        <div class="d-flex text-truncate" style="min-width:75px; max-width:75px">
                             ${data}
                         </div>
                     `;
@@ -838,6 +839,55 @@ $(function () {
             // alert('Ocurrió un error al procesar los datos.');
         } finally {
             $(this).prop('disabled', false).text('Generar').removeClass('hint--info').attr('aria-label', 'Generar proyección de horas');
+        }
+    });
+    $("#btnEliminar").on("click", async function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        $.notifyClose();
+        notify('Aguarde por favor . . .', 'info', 5000, 'right');
+
+        // deshabilitar el botón para evitar múltiples clics
+        $(this).prop('disabled', true).text('Aguarde').addClass('hint--info').attr('aria-label', 'Eliminando proyección de Horas');
+
+        const selectedValues = $('#tabla').DataTable().rows({ selected: true }).data().map(row => row.Cod).toArray();
+        if (selectedValues.length === 0) {
+            alert('Debe seleccionar al menos un legajo para procesar.');
+            return;
+        }
+
+        // obtener la fecha de inicio y fin del rango seleccionado
+        const fechaInicio = $('#_dr').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        const fechaFin = $('#_dr').data('daterangepicker').endDate.format('YYYY-MM-DD');
+
+        const url = "/" + homehost + "/app-data/proyectar";
+
+        try {
+            const response = await axios.delete(url, {
+                data: {
+                    Legajos: selectedValues,
+                    FechaDesde: fechaInicio,
+                    FechaHasta: fechaFin
+                }
+            });
+            $.notifyClose();
+            if (response.data?.RESPONSE_CODE === '200 OK') {
+                const total = response.data?.TOTAL || 0;
+                if (total > 0) {
+                    notify('Proyección de horas eliminada correctamente<br>Se eliminaron ' + total + ' registros', 'success', 5000, 'right')
+                } else {
+                    notify('No hay registros eliminados', 'danger', 5000, 'right');
+                }
+                getHoras_();
+            } else {
+                alert('Error al eliminada');
+            }
+        } catch (error) {
+            console.error('Error en la solicitud:', error);
+            // alert('Ocurrió un error al procesar los datos.');
+        } finally {
+            $(this).prop('disabled', false).text('Eliminar').removeClass('hint--info').attr('aria-label', 'Eliminar proyección de horas');
         }
     });
 });

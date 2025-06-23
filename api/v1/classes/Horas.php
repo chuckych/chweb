@@ -1117,4 +1117,70 @@ class Horas
         $this->resp->respuesta($array, count($array), 'OK', 200, microtime(true), 0, 0);
         $stmt->closeCursor(); // Cierro el cursor
     }
+
+    public function inputs_delete_proyeccion()
+    {
+        $filtros = $this->getData;
+
+        if ($this->tools->jsonNoValido()) {
+            $errores = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+        }
+
+        try {
+
+            if (!is_array($filtros)) {
+                throw new \Exception("No se recibieron datos", 1);
+            }
+
+            // Asegúrate de actualizar $filtros con los cambios
+            // \file_put_contents('filtros_estructura.json', print_r(json_encode($filtros), true), FILE_APPEND);
+            $rulesFiltros = [ // Reglas de validación para los filtros
+                'FechaDesde' => ['required', 'futuredate'],
+                'FechaHasta' => ['required', 'futuredate'],
+                'Legajos' => ['required', 'arrInt'],
+            ];
+
+            if (is_array($filtros)) {
+                $validatorFiltros = new InputValidator($filtros, $rulesFiltros); // Instancia 
+                $validatorFiltros->validate(); // Valido los datos
+            }
+            // si fechahasta es menor a fechadesde, lanzo un error
+            if (strtotime($filtros['FechaDesde']) > strtotime($filtros['FechaHasta'])) {
+                throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 1);
+            }
+            return $filtros;
+        } catch (\Exception $e) {
+            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->log->write($e->getMessage(), date('Ymd') . '_inputs_filtros_estructura.log');
+        }
+    }
+    public function eliminar_proyeccion()
+    {
+
+        $inicio = microtime(true);
+        $datos = $this->inputs_delete_proyeccion();
+        $conn = $this->conect->conn();
+
+        $Legajos = $datos['Legajos'] ?? [];
+
+        //  chunk de legajos en lotes de 50
+        $chunksLegajos = array_chunk($Legajos, 50);
+        $totalEliminados = 0;
+
+        foreach ($chunksLegajos as $chunk) {
+
+            $LegajosStr = implode(',', $chunk);
+            $FechaDesde = date('Ymd', strtotime($datos['FechaDesde']));
+            $FechaHasta = date('Ymd', strtotime($datos['FechaHasta']));
+
+            $sql = "DELETE FROM FICHAS1 WHERE FicLega IN ($LegajosStr) AND FicFech BETWEEN '$FechaDesde' AND '$FechaHasta'";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(); // Ejecuto la consulta
+            // $this->log->write($sql, date('Ymd') . '_eliminar_proyeccion_' . ID_COMPANY . '.log');
+            $totalEliminados += $stmt->rowCount(); // Obtengo el número de filas afectadas
+        }
+
+        $this->resp->respuesta('', $totalEliminados, 'OK', 200, $inicio, 0, 0);
+    }
 }
