@@ -283,7 +283,7 @@ $(function () {
                     data.activo = 1;
                     data.estado = 0;
                     data.tipo = tipo;
-                    data.proyectar = 1;
+                    data.proyectar = 2;
                     data.empresas = $("#selectjs_empresa").val();
                     data.plantas = $("#selectjs_planta").val();
                     data.convenios = $("#selectjs_convenio").val();
