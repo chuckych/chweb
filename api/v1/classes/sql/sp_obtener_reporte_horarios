@@ -1,0 +1,855 @@
+CREATE PROCEDURE dbo.sp_ObtenerReporteHorarios @FechaInicio DATE,
+@FechaFin DATE,
+@TodosLosLegajos TINYINT = 1,
+-- 0 = Solo los especificados, 1 = Solo con horario, 2 = Todos (con y sin horario)
+@Legajos dbo.TipoTablaLegajos READONLY,
+@FiltrarPorEmpresa BIT = 0,
+@Empresas dbo.TipoTablaEmpresas READONLY,
+@FiltrarPorPlantas BIT = 0,
+@Plantas dbo.TipoTablaPlantas READONLY,
+@FiltrarPorConvenio BIT = 0,
+@Convenios dbo.TipoTablaConvenios READONLY,
+@FiltrarPorSector BIT = 0,
+@Sectores dbo.TipoTablaSectores READONLY,
+@FiltrarPorSeccion BIT = 0,
+@Secciones dbo.TipoTablaSecciones READONLY,
+@FiltrarPorGrupo BIT = 0,
+@Grupos dbo.TipoTablaGrupos READONLY,
+@FiltrarPorSucursal BIT = 0,
+@Sucursales dbo.TipoTablaSucursales READONLY,
+@FiltrarPorTarea BIT = 0,
+@Tareas dbo.TipoTablaTareas READONLY,
+@FiltrarPorRegCH BIT = 0,
+@RegCH dbo.TipoTablaRegCH READONLY,
+@FiltrarPorEstado BIT = 0,
+@Estados dbo.TipoTablaEstados READONLY,
+@FiltrarPorTipo BIT = 0,
+@Tipo dbo.TipoTablaTipos READONLY,
+@FiltrarPorHorario BIT = 0,
+@Horarios_Filtro dbo.TipoTablaHorarios READONLY,
+@FiltroFechaEgreso TINYINT = 0 AS BEGIN
+SET NOCOUNT ON;
+-- ================================================
+-- ⚠️  TIPOS DE TABLA REQUERIDOS
+--    Antes de crear el stored procedure, debes crear estos tipos de tabla
+--    si no existen en tu base de datos. Ejemplo:
+--
+--  CREATE TYPE dbo.TipoTablaLegajos AS TABLE (Legajo INT);
+--  CREATE TYPE dbo.TipoTablaEmpresas AS TABLE (Empresa INT);
+--  CREATE TYPE dbo.TipoTablaPlantas AS TABLE (Planta SMALLINT);
+--  CREATE TYPE dbo.TipoTablaConvenios AS TABLE (Convenio SMALLINT);
+--  CREATE TYPE dbo.TipoTablaSectores AS TABLE (Sector SMALLINT);
+--  CREATE TYPE dbo.TipoTablaSecciones AS TABLE (Seccion SMALLINT);
+--  CREATE TYPE dbo.TipoTablaGrupos AS TABLE (Grupo SMALLINT);
+--  CREATE TYPE dbo.TipoTablaSucursales AS TABLE (Sucursal SMALLINT);
+--  CREATE TYPE dbo.TipoTablaTareas AS TABLE (Tarea INT);
+--  CREATE TYPE dbo.TipoTablaRegCH AS TABLE (RegCH SMALLINT);
+--  CREATE TYPE dbo.TipoTablaEstados AS TABLE (Estado SMALLINT);
+--  CREATE TYPE dbo.TipoTablaTipos AS TABLE (Tipo SMALLINT);
+--  CREATE TYPE dbo.TipoTablaHorarios AS TABLE (Horario INT);
+-- ================================================
+-- ================================================
+-- 2️⃣  Generar lista de días del rango
+-- ================================================
+WITH Dias AS (
+    SELECT @FechaInicio AS Fecha
+    UNION ALL
+    SELECT DATEADD(DAY, 1, Fecha)
+    FROM Dias
+    WHERE Fecha < @FechaFin
+),
+-- ================================================
+-- 3️⃣  Lista de legajos
+-- ================================================
+Legajos AS (
+    -- 0 = Solo los especificados
+    -- 1 = Solo los que tienen algún horario
+    -- 2 = Todos los legajos de PERSONAL (con y sin horario)
+    SELECT Legajo
+    FROM (
+            SELECT DISTINCT CitLega AS Legajo
+            FROM CITACION
+            WHERE CitLega > 0
+            UNION
+            SELECT DISTINCT Ho1Lega
+            FROM HORALE1
+            WHERE Ho1Lega > 0
+            UNION
+            SELECT DISTINCT Ho2Lega
+            FROM HORALE2
+            WHERE Ho2Lega > 0
+            UNION
+            SELECT DISTINCT RoLLega
+            FROM ROTALEG
+            WHERE RoLLega > 0
+        ) L
+    WHERE @TodosLosLegajos = 1
+    UNION ALL
+    SELECT Legajo
+    FROM @Legajos
+    WHERE @TodosLosLegajos = 0
+        AND Legajo > 0
+    UNION ALL
+    SELECT P.LegNume AS Legajo
+    FROM PERSONAL P
+    WHERE @TodosLosLegajos = 2
+        AND P.LegNume > 0
+),
+-- ================================================
+-- 4️⃣  Combinación base Legajo + Fecha
+-- ================================================
+Base AS (
+    SELECT L.Legajo,
+        D.Fecha
+    FROM Legajos L
+        CROSS JOIN Dias D
+    WHERE (@TodosLosLegajos IN (1, 2))
+        OR (
+            @TodosLosLegajos = 0
+            AND L.Legajo IN (
+                SELECT Legajo
+                FROM @Legajos
+            )
+        )
+),
+-- ================================================
+-- 5️⃣  CITACION (Prioridad 1)
+-- ================================================
+Prioridad_Citacion AS (
+    SELECT B.Legajo,
+        B.Fecha,
+        C.CitEntra AS Entrada,
+        C.CitSale AS Salida,
+        C.CitDesc,
+        ISNULL(H2.Ho2Hora, ISNULL(R1.RotHora, H1.Ho1Hora)) AS CodigoHorario,
+        ISNULL(
+            H2Desc.HorDesc,
+            ISNULL(R1Desc.HorDesc, H1Desc.HorDesc)
+        ) AS DescripcionHorario,
+        1 AS Prioridad,
+        FORMAT(C.CitFech, 'dd/MM/yyyy') AS Referencia
+    FROM Base B
+        JOIN CITACION C ON C.CitLega = B.Legajo
+        AND CAST(C.CitFech AS DATE) = B.Fecha
+        OUTER APPLY (
+            SELECT TOP 1 H2.Ho2Hora
+            FROM HORALE2 H2
+            WHERE H2.Ho2Lega = B.Legajo
+                AND B.Fecha BETWEEN CAST(H2.Ho2Fec1 AS DATE)
+                AND ISNULL(
+                    CAST(H2.Ho2Fec2 AS DATE),
+                    CAST(H2.Ho2Fec1 AS DATE)
+                )
+        ) H2
+        OUTER APPLY (
+            SELECT TOP 1 H.HorDesc
+            FROM HORALE2 H2X
+                LEFT JOIN HORARIOS H ON H.HorCodi = H2X.Ho2Hora
+            WHERE H2X.Ho2Lega = B.Legajo
+                AND B.Fecha BETWEEN CAST(H2X.Ho2Fec1 AS DATE)
+                AND ISNULL(
+                    CAST(H2X.Ho2Fec2 AS DATE),
+                    CAST(H2X.Ho2Fec1 AS DATE)
+                )
+        ) H2Desc
+        OUTER APPLY (
+            SELECT TOP 1 R1.RotHora
+            FROM ROTALEG RL
+                JOIN ROTACIO1 R1 ON R1.RotCodi = RL.RoLRota
+            WHERE RL.RoLLega = B.Legajo
+                AND B.Fecha >= CAST(RL.RoLFech AS DATE)
+                AND B.Fecha <= ISNULL(CAST(RL.RoLVenc AS DATE), B.Fecha)
+        ) R1
+        OUTER APPLY (
+            SELECT TOP 1 H.HorDesc
+            FROM ROTALEG RLX
+                JOIN ROTACIO1 R1X ON R1X.RotCodi = RLX.RoLRota
+                LEFT JOIN HORARIOS H ON H.HorCodi = R1X.RotHora
+            WHERE RLX.RoLLega = B.Legajo
+                AND B.Fecha >= CAST(RLX.RoLFech AS DATE)
+                AND B.Fecha <= ISNULL(CAST(RLX.RoLVenc AS DATE), B.Fecha)
+        ) R1Desc
+        OUTER APPLY (
+            SELECT TOP 1 H1.Ho1Hora
+            FROM HORALE1 H1
+            WHERE H1.Ho1Lega = B.Legajo
+                AND B.Fecha >= CAST(H1.Ho1Fech AS DATE)
+            ORDER BY H1.Ho1Fech DESC
+        ) H1
+        OUTER APPLY (
+            SELECT TOP 1 H.HorDesc
+            FROM HORALE1 H1X
+                LEFT JOIN HORARIOS H ON H.HorCodi = H1X.Ho1Hora
+            WHERE H1X.Ho1Lega = B.Legajo
+                AND B.Fecha >= CAST(H1X.Ho1Fech AS DATE)
+            ORDER BY H1X.Ho1Fech DESC
+        ) H1Desc
+),
+-- ================================================
+-- 6️⃣  HORALE2 (Prioridad 2)
+-- ================================================
+Prioridad_Horale2 AS (
+    SELECT B.Legajo,
+        B.Fecha,
+        NULL AS Entrada,
+        NULL AS Salida,
+        NULL AS CitDesc,
+        H2.Ho2Hora AS CodigoHorario,
+        H.HorDesc AS DescripcionHorario,
+        2 AS Prioridad,
+        FORMAT(H2.Ho2Fec1, 'dd/MM/yyyy') + ' - ' + FORMAT(H2.Ho2Fec2, 'dd/MM/yyyy') AS Referencia
+    FROM Base B
+        JOIN HORALE2 H2 ON H2.Ho2Lega = B.Legajo
+        AND B.Fecha BETWEEN CAST(H2.Ho2Fec1 AS DATE)
+        AND ISNULL(
+            CAST(H2.Ho2Fec2 AS DATE),
+            CAST(H2.Ho2Fec1 AS DATE)
+        )
+        LEFT JOIN HORARIOS H ON H.HorCodi = H2.Ho2Hora
+),
+-- ================================================
+-- 7️⃣  ROTALEG + ROTACIO1 (Prioridad 3)
+-- ================================================
+Prioridad_Rotacion AS (
+    SELECT B.Legajo,
+        B.Fecha,
+        NULL AS Entrada,
+        NULL AS Salida,
+        NULL AS CitDesc,
+        R1.RotHora AS CodigoHorario,
+        H.HorDesc AS DescripcionHorario,
+        3 AS Prioridad,
+        CASE
+            WHEN RL.RoLVenc = '2099-12-31 00:00:00.000' THEN FORMAT(RL.RoLFech, 'dd/MM/yyyy')
+            ELSE FORMAT(RL.RoLFech, 'dd/MM/yyyy') + ' - ' + FORMAT(RL.RoLVenc, 'dd/MM/yyyy')
+        END AS Referencia
+    FROM Base B
+        JOIN ROTALEG RL ON RL.RoLLega = B.Legajo
+        AND B.Fecha >= CAST(RL.RoLFech AS DATE)
+        AND B.Fecha <= ISNULL(CAST(RL.RoLVenc AS DATE), B.Fecha)
+        OUTER APPLY (
+            SELECT TOP 1 R1.*
+            FROM (
+                    SELECT R1.RotCodi,
+                        R1.RotItem,
+                        R1.RotHora,
+                        R1.RotDias,
+                        SUM(R2.RotDias) AS DiasAcumulados
+                    FROM ROTACIO1 R1
+                        LEFT JOIN ROTACIO1 R2 ON R2.RotCodi = R1.RotCodi
+                        AND R2.RotItem < R1.RotItem
+                    WHERE R1.RotCodi = RL.RoLRota
+                    GROUP BY R1.RotCodi,
+                        R1.RotItem,
+                        R1.RotHora,
+                        R1.RotDias
+                ) R1
+            WHERE (
+                    (
+                        (
+                            DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) % (
+                                SELECT SUM(RotDias)
+                                FROM ROTACIO1
+                                WHERE RotCodi = RL.RoLRota
+                            )
+                        )
+                    ) >= ISNULL(R1.DiasAcumulados, 0)
+                )
+                AND (
+                    (
+                        (
+                            DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) % (
+                                SELECT SUM(RotDias)
+                                FROM ROTACIO1
+                                WHERE RotCodi = RL.RoLRota
+                            )
+                        )
+                    ) < (ISNULL(R1.DiasAcumulados, 0) + R1.RotDias)
+                )
+            ORDER BY R1.RotItem
+        ) R1
+        LEFT JOIN HORARIOS H ON H.HorCodi = R1.RotHora
+),
+-- ================================================
+-- 8️⃣  HORALE1 (Prioridad 4)
+-- ================================================
+Prioridad_Horale1 AS (
+    SELECT B.Legajo,
+        B.Fecha,
+        NULL AS Entrada,
+        NULL AS Salida,
+        NULL AS CitDesc,
+        H1.Ho1Hora AS CodigoHorario,
+        H.HorDesc AS DescripcionHorario,
+        4 AS Prioridad,
+        FORMAT(H1.Ho1Fech, 'dd/MM/yyyy') AS Referencia
+    FROM Base B
+        OUTER APPLY (
+            SELECT TOP 1 H1.*
+            FROM HORALE1 H1
+            WHERE H1.Ho1Lega = B.Legajo
+                AND B.Fecha >= CAST(H1.Ho1Fech AS DATE)
+            ORDER BY H1.Ho1Fech DESC
+        ) H1
+        LEFT JOIN HORARIOS H ON H.HorCodi = H1.Ho1Hora
+    WHERE H1.Ho1Lega IS NOT NULL
+),
+-- ================================================
+-- 9️⃣  Unir todo con prioridad
+-- ================================================
+Combinado AS (
+    SELECT *
+    FROM Prioridad_Citacion
+    UNION ALL
+    SELECT *
+    FROM Prioridad_Horale2
+    UNION ALL
+    SELECT *
+    FROM Prioridad_Rotacion
+    UNION ALL
+    SELECT *
+    FROM Prioridad_Horale1
+),
+Marcado AS (
+    SELECT *,
+        ROW_NUMBER() OVER (
+            PARTITION BY Legajo,
+            Fecha
+            ORDER BY Prioridad
+        ) AS rn
+    FROM Combinado
+) -- ================================================
+-- 🔟  Resultado final con FRANCO si aplica
+-- ================================================
+SELECT COALESCE(M.Legajo, B.Legajo) AS Legajo,
+    P.LegApNo AS Nombre,
+    COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha) AS Fecha,
+    -- Columna Día con el nombre del día de la semana
+    CASE
+        DATEPART(
+            WEEKDAY,
+            COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+        )
+        WHEN 1 THEN 'Domingo'
+        WHEN 2 THEN 'Lunes'
+        WHEN 3 THEN 'Martes'
+        WHEN 4 THEN 'Miércoles'
+        WHEN 5 THEN 'Jueves'
+        WHEN 6 THEN 'Viernes'
+        WHEN 7 THEN 'Sábado'
+    END AS Dia,
+    ISNULL(
+        M.Entrada,
+        CASE
+            DATEPART(
+                WEEKDAY,
+                COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+            )
+            WHEN 1 THEN H.HorDoDe
+            WHEN 2 THEN H.HorLuDe
+            WHEN 3 THEN H.HorMaDe
+            WHEN 4 THEN H.HorMiDe
+            WHEN 5 THEN H.HorJuDe
+            WHEN 6 THEN H.HorViDe
+            WHEN 7 THEN H.HorSaDe
+        END
+    ) AS Entrada,
+    ISNULL(
+        M.Salida,
+        CASE
+            DATEPART(
+                WEEKDAY,
+                COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+            )
+            WHEN 1 THEN H.HorDoHa
+            WHEN 2 THEN H.HorLuHa
+            WHEN 3 THEN H.HorMaHa
+            WHEN 4 THEN H.HorMiHa
+            WHEN 5 THEN H.HorJuHa
+            WHEN 6 THEN H.HorViHa
+            WHEN 7 THEN H.HorSaHa
+        END
+    ) AS Salida,
+    ISNULL(
+        CASE
+            WHEN M.Prioridad = 1 THEN M.CitDesc
+            ELSE CASE
+                DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                WHEN 1 THEN H.HorDoRe
+                WHEN 2 THEN H.HorLuRe
+                WHEN 3 THEN H.HorMaRe
+                WHEN 4 THEN H.HorMiRe
+                WHEN 5 THEN H.HorJuRe
+                WHEN 6 THEN H.HorViRe
+                WHEN 7 THEN H.HorSaRe
+            END
+        END,
+        CASE
+            WHEN (
+                CF.CFFech IS NOT NULL
+                OR F.FerTras IS NOT NULL
+            )
+            AND M.Prioridad <> 1 THEN H.HorFeRe
+            ELSE 0
+        END
+    ) AS Descanso,
+    CASE
+        WHEN M.Prioridad = 1 THEN 'CITACION'
+        WHEN M.CodigoHorario IS NULL THEN 'FRANCO'
+        WHEN CF.CFFech IS NOT NULL THEN 'FRANCO'
+        WHEN F.FerTras IS NOT NULL THEN 'FRANCO'
+        WHEN (
+            CASE
+                DATEPART(
+                    WEEKDAY,
+                    COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+                )
+                WHEN 1 THEN H.HorDomi
+                WHEN 2 THEN H.HorLune
+                WHEN 3 THEN H.HorMart
+                WHEN 4 THEN H.HorMier
+                WHEN 5 THEN H.HorJuev
+                WHEN 6 THEN H.HorVier
+                WHEN 7 THEN H.HorSaba
+            END
+        ) = 0 THEN 'FRANCO'
+        ELSE ISNULL(
+            M.Entrada,
+            CASE
+                DATEPART(
+                    WEEKDAY,
+                    COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+                )
+                WHEN 1 THEN H.HorDoDe
+                WHEN 2 THEN H.HorLuDe
+                WHEN 3 THEN H.HorMaDe
+                WHEN 4 THEN H.HorMiDe
+                WHEN 5 THEN H.HorJuDe
+                WHEN 6 THEN H.HorViDe
+                WHEN 7 THEN H.HorSaDe
+            END
+        ) + ' a ' + ISNULL(
+            M.Salida,
+            CASE
+                DATEPART(
+                    WEEKDAY,
+                    COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+                )
+                WHEN 1 THEN H.HorDoHa
+                WHEN 2 THEN H.HorLuHa
+                WHEN 3 THEN H.HorMaHa
+                WHEN 4 THEN H.HorMiHa
+                WHEN 5 THEN H.HorJuHa
+                WHEN 6 THEN H.HorViHa
+                WHEN 7 THEN H.HorSaHa
+            END
+        )
+    END AS Horario,
+    ISNULL(M.CodigoHorario, 0) AS CodigoHorario,
+    H.HorID,
+    CASE
+        WHEN M.Prioridad = 1 THEN ISNULL(M.DescripcionHorario, H.HorDesc)
+        ELSE ISNULL(M.DescripcionHorario, H.HorDesc)
+    END AS DescripcionHorario,
+    CASE
+        M.Prioridad
+        WHEN 1 THEN 'Citacion'
+        WHEN 2 THEN 'Horario Desde Hasta'
+        WHEN 3 THEN 'Rotación'
+        WHEN 4 THEN 'Horario Desde'
+    END AS Asignacion,
+    CASE
+        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+        WHEN 1 THEN H.HorDoHs
+        WHEN 2 THEN H.HorLuHs
+        WHEN 3 THEN H.HorMaHs
+        WHEN 4 THEN H.HorMiHs
+        WHEN 5 THEN H.HorJuHs
+        WHEN 6 THEN H.HorViHs
+        WHEN 7 THEN H.HorSaHs
+    END AS HsDelDia,
+    CASE
+        WHEN CF.CFFech IS NOT NULL THEN '00:00'
+        WHEN F.FerTras IS NOT NULL THEN '00:00'
+        WHEN (
+            CASE
+                DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                WHEN 1 THEN H.HorDomi
+                WHEN 2 THEN H.HorLune
+                WHEN 3 THEN H.HorMart
+                WHEN 4 THEN H.HorMier
+                WHEN 5 THEN H.HorJuev
+                WHEN 6 THEN H.HorVier
+                WHEN 7 THEN H.HorSaba
+            END
+        ) = 0 THEN '00:00'
+        ELSE CASE
+            WHEN dbo.fn_STRMinutos(
+                ISNULL(
+                    M.Salida,
+                    CASE
+                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                        WHEN 1 THEN H.HorDoHa
+                        WHEN 2 THEN H.HorLuHa
+                        WHEN 3 THEN H.HorMaHa
+                        WHEN 4 THEN H.HorMiHa
+                        WHEN 5 THEN H.HorJuHa
+                        WHEN 6 THEN H.HorViHa
+                        WHEN 7 THEN H.HorSaHa
+                    END
+                )
+            ) < dbo.fn_STRMinutos(
+                ISNULL(
+                    M.Entrada,
+                    CASE
+                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                        WHEN 1 THEN H.HorDoDe
+                        WHEN 2 THEN H.HorLuDe
+                        WHEN 3 THEN H.HorMaDe
+                        WHEN 4 THEN H.HorMiDe
+                        WHEN 5 THEN H.HorJuDe
+                        WHEN 6 THEN H.HorViDe
+                        WHEN 7 THEN H.HorSaDe
+                    END
+                )
+            ) THEN RIGHT(
+                '0' + CAST(
+                    (
+                        (
+                            1440 - dbo.fn_STRMinutos(
+                                ISNULL(
+                                    M.Entrada,
+                                    CASE
+                                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                        WHEN 1 THEN H.HorDoDe
+                                        WHEN 2 THEN H.HorLuDe
+                                        WHEN 3 THEN H.HorMaDe
+                                        WHEN 4 THEN H.HorMiDe
+                                        WHEN 5 THEN H.HorJuDe
+                                        WHEN 6 THEN H.HorViDe
+                                        WHEN 7 THEN H.HorSaDe
+                                    END
+                                )
+                            )
+                        ) + dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Salida,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoHa
+                                    WHEN 2 THEN H.HorLuHa
+                                    WHEN 3 THEN H.HorMaHa
+                                    WHEN 4 THEN H.HorMiHa
+                                    WHEN 5 THEN H.HorJuHa
+                                    WHEN 6 THEN H.HorViHa
+                                    WHEN 7 THEN H.HorSaHa
+                                END
+                            )
+                        )
+                    ) / 60 AS VARCHAR(2)
+                ),
+                2
+            ) + ':' + RIGHT(
+                '0' + CAST(
+                    (
+                        (
+                            1440 - dbo.fn_STRMinutos(
+                                ISNULL(
+                                    M.Entrada,
+                                    CASE
+                                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                        WHEN 1 THEN H.HorDoDe
+                                        WHEN 2 THEN H.HorLuDe
+                                        WHEN 3 THEN H.HorMaDe
+                                        WHEN 4 THEN H.HorMiDe
+                                        WHEN 5 THEN H.HorJuDe
+                                        WHEN 6 THEN H.HorViDe
+                                        WHEN 7 THEN H.HorSaDe
+                                    END
+                                )
+                            )
+                        ) + dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Salida,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoHa
+                                    WHEN 2 THEN H.HorLuHa
+                                    WHEN 3 THEN H.HorMaHa
+                                    WHEN 4 THEN H.HorMiHa
+                                    WHEN 5 THEN H.HorJuHa
+                                    WHEN 6 THEN H.HorViHa
+                                    WHEN 7 THEN H.HorSaHa
+                                END
+                            )
+                        )
+                    ) % 60 AS VARCHAR(2)
+                ),
+                2
+            )
+            ELSE RIGHT(
+                '0' + CAST(
+                    (
+                        dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Salida,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoHa
+                                    WHEN 2 THEN H.HorLuHa
+                                    WHEN 3 THEN H.HorMaHa
+                                    WHEN 4 THEN H.HorMiHa
+                                    WHEN 5 THEN H.HorJuHa
+                                    WHEN 6 THEN H.HorViHa
+                                    WHEN 7 THEN H.HorSaHa
+                                END
+                            )
+                        ) - dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Entrada,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoDe
+                                    WHEN 2 THEN H.HorLuDe
+                                    WHEN 3 THEN H.HorMaDe
+                                    WHEN 4 THEN H.HorMiDe
+                                    WHEN 5 THEN H.HorJuDe
+                                    WHEN 6 THEN H.HorViDe
+                                    WHEN 7 THEN H.HorSaDe
+                                END
+                            )
+                        )
+                    ) / 60 AS VARCHAR(2)
+                ),
+                2
+            ) + ':' + RIGHT(
+                '0' + CAST(
+                    (
+                        dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Salida,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoHa
+                                    WHEN 2 THEN H.HorLuHa
+                                    WHEN 3 THEN H.HorMaHa
+                                    WHEN 4 THEN H.HorMiHa
+                                    WHEN 5 THEN H.HorJuHa
+                                    WHEN 6 THEN H.HorViHa
+                                    WHEN 7 THEN H.HorSaHa
+                                END
+                            )
+                        ) - dbo.fn_STRMinutos(
+                            ISNULL(
+                                M.Entrada,
+                                CASE
+                                    DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                                    WHEN 1 THEN H.HorDoDe
+                                    WHEN 2 THEN H.HorLuDe
+                                    WHEN 3 THEN H.HorMaDe
+                                    WHEN 4 THEN H.HorMiDe
+                                    WHEN 5 THEN H.HorJuDe
+                                    WHEN 6 THEN H.HorViDe
+                                    WHEN 7 THEN H.HorSaDe
+                                END
+                            )
+                        )
+                    ) % 60 AS VARCHAR(2)
+                ),
+                2
+            )
+        END
+    END AS HsATrab,
+    CASE
+        WHEN CF.CFFech IS NOT NULL THEN 0
+        WHEN F.FerTras IS NOT NULL THEN 0
+        WHEN (
+            CASE
+                DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                WHEN 1 THEN H.HorDomi
+                WHEN 2 THEN H.HorLune
+                WHEN 3 THEN H.HorMart
+                WHEN 4 THEN H.HorMier
+                WHEN 5 THEN H.HorJuev
+                WHEN 6 THEN H.HorVier
+                WHEN 7 THEN H.HorSaba
+            END
+        ) = 0 THEN 0
+        ELSE CASE
+            WHEN dbo.fn_STRMinutos(
+                ISNULL(
+                    M.Salida,
+                    CASE
+                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                        WHEN 1 THEN H.HorDoHa
+                        WHEN 2 THEN H.HorLuHa
+                        WHEN 3 THEN H.HorMaHa
+                        WHEN 4 THEN H.HorMiHa
+                        WHEN 5 THEN H.HorJuHa
+                        WHEN 6 THEN H.HorViHa
+                        WHEN 7 THEN H.HorSaHa
+                    END
+                )
+            ) < dbo.fn_STRMinutos(
+                ISNULL(
+                    M.Entrada,
+                    CASE
+                        DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                        WHEN 1 THEN H.HorDoDe
+                        WHEN 2 THEN H.HorLuDe
+                        WHEN 3 THEN H.HorMaDe
+                        WHEN 4 THEN H.HorMiDe
+                        WHEN 5 THEN H.HorJuDe
+                        WHEN 6 THEN H.HorViDe
+                        WHEN 7 THEN H.HorSaDe
+                    END
+                )
+            ) THEN 1
+            ELSE 0
+        END
+    END AS Nocturno,
+    H.HorColor,
+    CASE
+        WHEN CF.CFFech IS NOT NULL THEN 0
+        WHEN F.FerTras IS NOT NULL THEN 0
+        WHEN (
+            CASE
+                DATEPART(WEEKDAY, COALESCE(M.Fecha, B.Fecha))
+                WHEN 1 THEN H.HorDomi
+                WHEN 2 THEN H.HorLune
+                WHEN 3 THEN H.HorMart
+                WHEN 4 THEN H.HorMier
+                WHEN 5 THEN H.HorJuev
+                WHEN 6 THEN H.HorVier
+                WHEN 7 THEN H.HorSaba
+            END
+        ) = 0 THEN 0
+        ELSE 1
+    END AS Laboral,
+    CASE
+        WHEN CF.CFFech IS NOT NULL THEN 1
+        WHEN F.FerTras IS NOT NULL THEN 1
+        ELSE 0
+    END AS Feriado,
+    CASE
+        WHEN CF.CFFech IS NOT NULL THEN CF.CFDesc
+        WHEN F.FerTras IS NOT NULL THEN F.FerDesc
+        ELSE NULL
+    END AS FeriadoStr,
+    COALESCE(M.Prioridad, 99) AS Prioridad,
+    -- Columna Referencia según la prioridad
+    ISNULL(M.Referencia, '') AS Referencia
+FROM Base B
+    LEFT JOIN Marcado M ON M.Legajo = B.Legajo
+    AND M.Fecha = B.Fecha
+    AND M.rn = 1
+    LEFT JOIN HORARIOS H ON H.HorCodi = M.CodigoHorario
+    INNER JOIN PERSONAL P ON P.LegNume = COALESCE(M.Legajo, B.Legajo)
+    LEFT JOIN CONVFERI CF ON CF.CFConv = P.LegConv
+    AND CAST(CF.CFFech AS DATE) = COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+    LEFT JOIN FERIADOS F ON CAST(F.FerTras AS DATE) = COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha)
+WHERE (
+        M.Legajo IS NOT NULL
+        OR (
+            M.Legajo IS NULL
+            AND M.Fecha IS NULL
+        )
+    )
+    AND (
+        @FiltrarPorEmpresa = 0
+        OR P.LegEmpr IN (
+            SELECT Empresa
+            FROM @Empresas
+        )
+    )
+    AND (
+        @FiltrarPorPlantas = 0
+        OR P.LegPlan IN (
+            SELECT Planta
+            FROM @Plantas
+        )
+    )
+    AND (
+        @FiltrarPorConvenio = 0
+        OR P.LegConv IN (
+            SELECT Convenio
+            FROM @Convenios
+        )
+    )
+    AND (
+        @FiltrarPorSector = 0
+        OR P.LegSect IN (
+            SELECT Sector
+            FROM @Sectores
+        )
+    )
+    AND (
+        @FiltrarPorSeccion = 0
+        OR CONCAT(P.LegSect, P.LegSec2) IN (
+            SELECT Seccion
+            FROM @Secciones
+        )
+    )
+    AND (
+        @FiltrarPorGrupo = 0
+        OR P.LegGrup IN (
+            SELECT Grupo
+            FROM @Grupos
+        )
+    )
+    AND (
+        @FiltrarPorSucursal = 0
+        OR P.LegSucu IN (
+            SELECT Sucursal
+            FROM @Sucursales
+        )
+    )
+    AND (
+        @FiltrarPorTarea = 0
+        OR P.LegTareProd IN (
+            SELECT Tarea
+            FROM @Tareas
+        )
+    )
+    AND (
+        @FiltrarPorRegCH = 0
+        OR P.LegRegCH IN (
+            SELECT RegCH
+            FROM @RegCH
+        )
+    )
+    AND (
+        @FiltrarPorEstado = 0
+        OR P.LegEsta IN (
+            SELECT Estado
+            FROM @Estados
+        )
+    )
+    AND (
+        @FiltrarPorTipo = 0
+        OR P.LegTipo IN (
+            SELECT Tipo
+            FROM @Tipo
+        )
+    )
+    AND (
+        @FiltrarPorHorario = 0
+        OR H.HorCodi IN (
+            SELECT Horario
+            FROM @Horarios_Filtro
+        )
+    )
+    AND (
+        @FiltroFechaEgreso = 0
+        OR (
+            @FiltroFechaEgreso = 1
+            AND P.LegFeEg = '1753-01-01 00:00:00.000'
+        )
+        OR (
+            @FiltroFechaEgreso = 2
+            AND P.LegFeEg != '1753-01-01 00:00:00.000'
+        )
+    )
+ORDER BY COALESCE(M.Legajo, B.Legajo),
+    COALESCE(COALESCE(M.Fecha, B.Fecha), B.Fecha) OPTION (MAXRECURSION 1000);
+END;

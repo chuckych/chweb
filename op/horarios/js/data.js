@@ -721,6 +721,8 @@ $(function () {
             array[Legajo] = response.data;
             // Guardar el array actualizado en el almacenamiento local
             ls.set(LS_HORARIOS_ASIGN_CACHE, array);
+            $('#divGrillaHorario2').show();
+            getHorarios();
             return;
         });
     }
@@ -1940,4 +1942,302 @@ $(function () {
     }).catch(function (error) {
         console.error(error);
     });
+
+
+    const dateRange = async () => {
+
+        const fechaActual = new Date(new Date().setDate(new Date().getDate() + 1));
+        const fechaActual7 = new Date(new Date().setDate(new Date().getDate() + 7));
+
+        const proximaSemana = [
+            moment().add(1, "week").startOf("week").add(1, "days"),
+            moment().add(1, "week").startOf("week").add(7, "days"),
+        ];
+        const estaSemana = [
+            moment().startOf("week").add(1, "days"),
+            moment().startOf("week").add(7, "days"),
+        ];
+        const sigSieteDias = [moment().add(1, "days"), moment().add(7, "days")];
+        const sigQuinceDias = [moment().add(1, "days"), moment().add(15, "days")];
+        const sigTreintaDias = [moment().add(1, "days"), moment().add(30, "days")];
+        const esteMes = [moment().startOf("month"), moment().endOf("month")];
+        const sigMes = [moment().add(1, 'month').startOf('month'), moment().add(1, 'month').endOf('month')];
+
+        $('#_dr').daterangepicker({
+            singleDatePicker: false,
+            showDropdowns: true,
+            // minYear: new Date().getFullYear(),
+            autoUpdateInput: true,
+            opens: "left",
+            drops: "down",
+            startDate: fechaActual,
+            endDate: fechaActual7,
+            autoApply: true,
+            // minDate: fechaActual,
+            alwaysShowCalendars: true,
+            linkedCalendars: true,
+            ranges: {
+                'Esta Semana': estaSemana,
+                'Proxima Semana': proximaSemana,
+                'Proximos 7 días': sigSieteDias,
+                'Proximos 15 días': sigQuinceDias,
+                'Proximos 30 días': sigTreintaDias,
+                'Este mes': esteMes,
+                'Proximo Mes': sigMes
+            },
+            locale: {
+                format: "DD/MM/YYYY",
+                separator: " al ",
+                applyLabel: "Aplicar",
+                cancelLabel: "Cancelar",
+                fromLabel: "Desde",
+                toLabel: "Para",
+                customRangeLabel: "Personalizado",
+                weekLabel: "Sem",
+                daysOfWeek: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+                monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                alwaysShowCalendars: true,
+                "firstDay": 1
+            },
+        })
+    }
+    dateRange().then(() => {
+        $('#_dr').on('apply.daterangepicker', function (ev, picker) {
+            getHorarios();
+        });
+    });
+
+    const getHorarios = async () => {
+        const url = "/" + homehost + "/app-data/asignados";
+
+        if ($.fn.DataTable.isDataTable('#tabla')) {
+            loaderIn('.tableHorarios', true);
+            $('#tabla').DataTable().ajax.reload(); // Recargar la tabla con los datos actuales
+            return false;
+        }
+
+        const tabla = $('#tabla').DataTable({
+            lengthMenu: [[7, 14, 21, 28, 31], [7, 14, 21, 28, 31]],
+            bProcessing: false,
+            serverSide: false,
+            deferRender: true,
+            searchDelay: 100,
+            dom: `
+            <'row'
+                    <'col-12'
+                        <'table-responsive tableHorarios't>
+                    >
+                    <'col-12'
+                        <'d-flex w-100 align-items-center justify-content-between mt-1'lp>
+                    >
+                        <'col-12'<'d-inline-flex w-100 justify-content-between'i>
+                    >
+                >
+            `,
+            ajax: {
+                url: url,
+                type: "POST",
+                dataSrc: function (json) {
+                    // Convierte el objeto DATA en un array plano
+                    return Object.values(json.DATA).flat();
+                },
+                "data": function (data) {
+                    const fechaInicio = $('#_dr').data('daterangepicker').startDate.format('YYYY-MM-DD');
+                    const fechaFin = $('#_dr').data('daterangepicker').endDate.format('YYYY-MM-DD');
+                    const legajoSelected = ls.get(LS_LEGAJO)?.pers_legajo ?? '';
+                    data.FechaDesde = fechaInicio;
+                    data.FechaHasta = fechaFin;
+                    data.Legajos = [legajoSelected];
+                    data.SinHorarios = 1;
+                    data.Egreso = 1;
+                    data.AgruparPor = 'Legajo';
+                },
+                error: function () {
+                    $("#tabla_processing").css("display", "none");
+                },
+            },
+            columns: [
+                {
+                    data: 'Legajo', className: 'py-2', targets: '', title: 'LEGAJO',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        return `<div class="d-flex flex-column">
+                                    <div>${row.Nombre}</div>
+                                    <div class="text-muted font07">${data}</div>
+                                </div>`;
+                    },
+                },
+                // {
+                //     data: 'Nombre', className: '', targets: '', title: 'APELLIDO Y NOMBRE',
+                //     "render": function (data, type, row, meta) {
+                //         if (type !== 'display') return '';
+                //         return data;
+                //     },
+                // },
+                {
+                    data: 'Fecha', className: '', targets: '', title: 'FECHA',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        return `<div class="d-flex flex-column">
+                            <div>${moment(data).format('DD/MM/YYYY')}</div>
+                            <div class="text-mutted font08">${row.Dia}</div>
+                            </div>`;
+                    },
+                },
+                {
+                    data: 'Horario', className: '', targets: '', title: 'HORARIO',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        const Feriado = row?.Feriado;
+                        const Prioridad = row?.Prioridad;
+                        let dataCol = data || 'Sin horario asignado';
+                        if (Prioridad == "1") {
+                            dataCol = `<span class="hint--top" aria-label="${row.Horario}">${row.Entrada} a ${row.Salida}</span>`;
+                        }
+                        if (data == "FRANCO") {
+                            const franco = data.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+                            dataCol = `<span class="text-capitalize">${franco}</span>`;
+                        }
+                        if (Feriado == "1") {
+                            dataCol = `<span class="hint--top" aria-label="${row.FeriadoStr}">Feriado</span>`;
+                        }
+                        return `<div>${dataCol}</div>`;
+                    },
+                },
+                // {
+                //     data: 'Descanso', className: 'text-center', targets: '', title: 'DESCANSO',
+                //     "render": function (data, type, row, meta) {
+                //         if (type !== 'display') return '';
+                //         return data != 0 ? data : '00:00';
+                //     },
+                // },
+                // {
+                //     data: 'HsATrab', className: ' text-center', targets: '', title: 'HS a TR',
+                //     "render": function (data, type, row, meta) {
+                //         if (type !== 'display') return '';
+                //         return data ? data : '00:00';
+                //     },
+                // },
+                {
+                    data: 'HsDelDia', className: ' text-center', targets: '', title: 'HS DIA',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        return data ? data : '00:00';
+                    },
+                },
+                {
+                    data: 'CodigoHorario', className: 'text-center pr-0', targets: '', title: 'COD',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        const cod = `(${data ? data : '0'})`
+                        return cod;
+                    },
+                },
+                {
+                    data: 'DescripcionHorario', className: '', targets: '', title: 'DESCRIPCIÓN',
+                    render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        const prioridad = row?.Prioridad;
+                        const referencia = row?.Referencia || '';
+                        const asignacion = row?.Asignacion || '';
+                        let referenciaText = `${asignacion} ${referencia}`.trim();
+
+                        switch (prioridad) {
+                            case "1":
+                                referenciaText = `Citación fecha ${referencia}`;
+                                break;
+                            case "2": {
+                                const [desde = '', hasta = ''] = referencia.split(' - ');
+                                referenciaText = `Horario desde ${desde} hasta ${hasta}`;
+                                break;
+                            }
+                            case "3": {
+                                const referenciaSplit = referencia.split(' - ');
+                                if (referenciaSplit.length > 1) {
+                                    referenciaText = `Rotación desde ${referenciaSplit[0]} hasta ${referenciaSplit[1]}`;
+                                } else {
+                                    referenciaText = `Rotación desde ${referencia}`;
+                                }
+                                break;
+                            }
+                            case "4":
+                                referenciaText = `Horario desde ${referencia}`;
+                                break;
+                        }
+
+                        return `<div class="d-flex flex-column">
+                            <div>${data ? data : 'Sin horario asignado'}</div>
+                            <div class="text-mutted font08">${referenciaText}</div>
+                            </div>`;
+                    },
+                },
+                {
+                    data: 'HorID', className: 'w-100 text-right pr-0', targets: '', title: '<div class="text-center float-right" style="width:40px">ID</div>',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        const HorID = `${data ? data : ''}`
+                        const colorInt = row?.HorColor;
+                        const textColor = getTextColor(colorInt);
+                        const bgColor = `rgb(${intToRgb(colorInt).join(', ')})`;
+                        return `<div class="text-center float-right" style="height:20px;color:${textColor}; background-color:${bgColor}; border-radius: 5px; padding: 2px 5px; font-size: 12px; width:40px">${HorID}</div>`;
+                    },
+                },
+                // {
+                //     data: 'Asignacion', className: '', targets: '', title: 'ASIGNACIÓN',
+                //     "render": function (data, type, row, meta) {
+                //         if (type !== 'display') return '';
+                //         return data ? data : 'Sin asignación';
+                //     },
+                // },
+                {
+                    data: '', className: ' w-100', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        return '';
+                    },
+                },
+            ],
+            paging: true,
+            info: true,
+            searching: true,
+            ordering: false,
+            language: {
+                "bProcessing": "Actualizando . . .",
+                "sLengthMenu": "_MENU_",
+                "sZeroRecords": "",
+                "sEmptyTable": "",
+                "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
+                "sInfoEmpty": "No se encontraron resultados",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ Registros)",
+                "sInfoPostFix": "",
+                "sSearch": "",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+                "oPaginate": {
+                    "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+                    "sLast": "<i class='bi bi-chevron-double-right'></i>",
+                    "sNext": "<i class='bi bi-chevron-right'></i>",
+                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
+                },
+                "oAria": {
+                    "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+                }
+            },
+            // Eventos de la tabla
+            initComplete: function (e, settings, json) {
+                $('#tabla').show();
+            },
+            preDrawCallback: function () {
+                loaderIn('.tableHorarios', true);
+            },
+            // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
+            drawCallback: function (e, settings, json) {
+                setTimeout(() => {
+                    loaderIn('.tableHorarios', false);
+                }, 0);
+            }
+        });
+    }
+
 });

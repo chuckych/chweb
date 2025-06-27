@@ -253,6 +253,34 @@
             <div class="col-12">
                 <div class="p-2" id="divGrillaHorario"></div>
             </div>
+            <div class="border p-1 w-100 rounded mb-3 shadow-sm bg-ddd" id="divGrillaHorario2" style="display:none;">
+                <div class="col-12 mb-3 d-flex justify-content-between w-100 py-3">
+                    <div class="w-100 d-flex align-items-center">Horarios asignados</div>
+                    <div class="input-group d-inline-flex justify-content-end align-items-center">
+                        <div class="hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                            aria-label="Seleccionar fechas">
+                            <div class="d-inline-flex radius border w-100">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text border-0 bg-white" id="Refresh">
+                                        <svg class="bi mr-1" width="18" height="18" fill="currentColor">
+                                            <use xlink:href="../../img/bootstrap-icons.svg#calendar-range"></use>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div>
+                                    <input id="_dr" name="_dr" type="text"
+                                        class="form-control text-center border-0 h40 w250" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <table id="tabla" class="table text-nowrap fadeInDown w-100 bg-white p-2 rounded border"
+                        style="display:none;">
+                    </table>
+                </div>
+            </div>
         </div>
         <div id="divModal"></div>
         <div id="modal_horale1"></div>

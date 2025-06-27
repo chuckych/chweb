@@ -1,4 +1,19 @@
-<section id="Filtros" class="border radius p-2 px-3 mt-4 shadow-sm ">
+<div class="row pb-2">
+    <div class="col-12">
+        <a id="mostrarFiltros"
+            class="font08 btn btn-outline-custom border-0 btn-sm d-print-none mt-2 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+            data-toggle="collapse" href="#Filtros" role="button" aria-expanded="false" aria-controls="Filtros"
+            aria-label="Mostrar Filtros">
+            Filtros
+        </a>
+        <span id="trash_allIn" title="Limpiar Filtros"
+            class="font08 pointer align-middle pb-0 float-right mt-2 p-2 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+            aria-label="Limpiar Filtros">
+            Limpiar Filtros
+        </span>
+    </div>
+</div>
+<section id="Filtros" class="p-2 px-3 collapse" hidden>
     <div class="row mt-2">
         <div class="col-12">
             <div class="d-flex align-items-center">
@@ -69,18 +84,17 @@
             </select>
         </div>
     </div>
-    <div class="row pb-2">
-        <div class="col-12">
-            <span id="trash_allIn" title="Limpiar Filtros"
-                class="font08 pointer align-middle pb-0 float-right mt-2 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
-                aria-label="Limpiar Filtros">
-                Limpiar Filtros
-            </span>
+</section>
+
+<div class="border radius pb-3 shadow-sm p-2 px-3 mb-3">
+    <div class="row">
+        <div class="col-12 col-sm-6 mb-3 d-flex justify-content-start">
+            <table id="tablaPersonal" class="table table-borderless text-nowrap w-auto table-sm fadeInDown"
+                style="display:none;">
+            </table>
         </div>
-    </div>
-    <div class="form-row my-2">
-        <div class="col-12 col-lg-8">
-            <div class="input-group d-inline-flex justify-content-end">
+        <div class="col-12 col-sm-6 mb-3 d-flex justify-content-end">
+            <div class="input-group d-inline-flex justify-content-end mt-sm-3">
                 <div class="hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                     aria-label="Seleccionar fechas">
                     <div class="d-inline-flex radius border w-100">
@@ -98,23 +112,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-4">
-            <div class="d-inline-flex justify-content-end w-100 mt-3 mt-lg-0" style="gap: 0.5rem;">
-                <button class="hint--top btn btn-outline-custom border btn-sm text-white h40 px-5 w-100"
-                    id="btnEliminar" disabled aria-label="Eliminar proyección de horas">
-                    Eliminar
-                </button>
-                <button class="hint--top btn btn-custom btn-sm text-white h40 px-5 w-100" id="btnProcesar" disabled
-                    aria-label="Generar proyección de horas">
-                    Generar
-                </button>
-            </div>
+        <div class="col-12">
+            <table id="tabla" class="table text-nowrap fadeInDown w-100" style="display:none;">
+            </table>
         </div>
-        <!-- <div class="col-12 mt-3">
-            <button class="hint--top btn btn-outline-custom border btn-sm text-white h40 px-5 w-100" id="btnHorarios"
-                aria-label="Obtener horarios">
-                Horarios
-            </button>
-        </div> -->
     </div>
-</section>
+</div>
+<div class="border radius pb-3 shadow-sm p-2 px-3 mb-3" style="display:none;">
+    <div id="divtablaSemanal">
+    </div>
+</div>

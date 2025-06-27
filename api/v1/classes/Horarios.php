@@ -1604,4 +1604,529 @@ class Horarios
         }
         return true;
     }
+    private function validar_obtener_horarios()
+    {
+        $datos = $this->getData;
+
+        $rules = [ // Reglas de validación
+            "FechaDesde" => ['required', 'date'],
+            "FechaHasta" => ['required', 'date'],
+            "SinHorarios" => ['allowed01'],
+            "Legajos" => ['arrInt'],
+            "Empresas" => ['arrSmallint'],
+            "Plantas" => ['arrSmallint'],
+            "Convenios" => ['arrSmallint'],
+            "Sectores" => ['arrSmallint'],
+            "Secciones" => ['arrSmallint'],
+            "Grupos" => ['arrSmallint'],
+            "Sucursales" => ['arrSmallint'],
+            "Tareas" => ['arrSmallint'],
+            "Horarios" => ['arrSmallint'],
+            "Egreso" => ['allowed012'],
+            "Estado" => ['arrAllowed01'],
+            "Tipo" => ['allowed01'],
+            "ReglaCH" => ['arrSmallint'],
+            'AgruparPor' => ['varchar20']
+        ];
+
+        $customValueKey = [
+            'FechaDesde' => '',
+            'FechaHasta' => '',
+            'SinHorarios' => 1,
+            'Legajos' => [],
+            'Empresas' => [],
+            'Plantas' => [],
+            'Convenios' => [],
+            'Sectores' => [],
+            'Secciones' => [],
+            'Grupos' => [],
+            'Sucursales' => [],
+            'Tareas' => [],
+            'Horarios' => [],
+            'Egreso' => 1,
+            'Estado' => [0, 1],
+            'Tipo' => [],
+            'ReglaCH' => [],
+            'AgruparPor' => 'Legajo', // Agrupar por Legajo
+        ];
+
+        return $this->tools->validar_datos($datos, $rules, $customValueKey, 'validar_obtener_horarios');
+
+    }
+    public function obtener_horarios()
+    {
+        $datos = $this->validar_obtener_horarios();
+        $conn = $this->conect->check_connection();
+        $inicio = microtime(true);
+
+        if (!$this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
+            $this->create_sp_horarios($conn);
+        }
+        // ========================
+        // 1. Definir los parámetros de entrada para el Stored Procedure
+        // ========================
+
+        $fechaInicio = $datos['FechaDesde'];
+        $fechaFin = $datos['FechaHasta'];
+
+        $agruparPor = $datos['AgruparPor']; // Agrupar por Legajo por defecto
+
+        // -- ================================================
+        // -- FILTRO POR LEGAJOS (Legajos)
+        // -- 0 = No filtrar por legajos
+        // -- 1 = Filtrar por legajos solo con horarios
+        // -- 2 = Filtrar por todos los legajos (con o sin horarios)
+
+        // Datos para el parámetro de tipo tabla @Legajos (TipoTablaLegajos)
+        $legajosData = $datos['Legajos'] ?? [];
+
+        $todosLosLegajos = $legajosData ? 0 : $datos['SinHorarios']; // Si se envían legajos específicos, no se consultan todos los legajos
+
+        /**
+         * Función para construir dinámicamente los datos de filtro
+         * @param string $key Clave del dato a obtener (ej: 'Empresas')
+         * @return array [datos, filtro]
+         * equivale a:
+         * $empresasData = $datos['Empresas'] ?? [];
+         * $filtrarPorEmpresa = !empty($empresasData) ? 1 : 0; // Si hay empresas, se filtra por ellas
+         */
+        $datosData = function ($key) use ($datos) {
+            $data = $datos[$key] ?? [];
+            $filtro = !empty($data) ? 1 : 0; // Si hay datos, se filtra por ellos
+            return [$data, $filtro];
+        };
+
+        list($empresasData, $filtrarPorEmpresa) = $datosData('Empresas');
+        list($plantasData, $filtrarPorPlantas) = $datosData('Plantas');
+        list($conveniosData, $filtrarPorConvenio) = $datosData('Convenios');
+        list($sectoresData, $filtrarPorSector) = $datosData('Sectores');
+        list($seccionesData, $filtrarPorSeccion) = $datosData('Secciones');
+        list($gruposData, $filtrarPorGrupo) = $datosData('Grupos');
+        list($sucursalesData, $filtrarPorSucursal) = $datosData('Sucursales');
+        list($tareasData, $filtrarPorTarea) = $datosData('Tareas');
+        list($regCHData, $filtrarPorRegCH) = $datosData('ReglaCH');
+        list($estadosData, $filtrarPorEstado) = $datosData('Estado');
+        list($tipoData, $filtrarPorTipo) = $datosData('Tipo');
+        list($horariosData, $filtrarPorHorario) = $datosData('Horarios');
+
+        // -- ================================================
+        // -- FILTRO POR FECHA DE EGRESO (LegFeEg)
+        // -- ================================================
+        // -- 0 = No filtrar por fecha de egreso
+        // -- 1 = Solo empleados SIN fecha de egreso (LegFeEg = '1753-01-01 00:00:00.000')
+        // -- 2 = Solo empleados CON fecha de egreso (LegFeEg != '1753-01-01 00:00:00.000')
+
+        $filtroFechaEgreso = $datos['Egreso'] ?? 1; // Valor por defecto es 0 (no filtrar por fecha de egreso)
+
+        // ========================
+        // 2. Preparar y ejecutar el Stored Procedure
+        // ========================
+
+        /**
+         * Función para construir dinámicamente los INSERT y binds para parámetros tipo tabla
+         * @param string $paramName Nombre del parámetro (ej: Legajo)
+         * @param string $sqlVar Nombre de la variable SQL (ej: @LegajosParam)
+         * @param array $data Array de datos (ej: [1,2,3])
+         * @param string $placeholderPrefix Prefijo para el placeholder (ej: legajo)
+         * @return array [sqlInsert, bindArray]
+         */
+        $dinamicInsert = function ($paramName, $sqlVar, $data, $placeholderPrefix) {
+            $sql = '';
+            $bind = [];
+            $i = 1;
+            foreach ($data as $item) {
+                $sql .= "INSERT INTO {$sqlVar} ({$paramName}) VALUES (:{$placeholderPrefix}{$i});\n";
+                $bind[":{$placeholderPrefix}{$i}"] = $item;
+                $i++;
+            }
+            return [$sql, $bind];
+        };
+
+        // Uso de la función para cada tipo de tabla
+        list($insertLegajosSql, $bindLegajos) = $dinamicInsert('Legajo', '@LegajosParam', $legajosData, 'legajo');
+        list($insertEmpresasSql, $bindEmpresas) = $dinamicInsert('Empresa', '@EmpresasParam', $empresasData, 'empresa');
+        list($insertPlantasSql, $bindPlantas) = $dinamicInsert('Planta', '@PlantasParam', $plantasData, 'planta');
+        list($insertConveniosSql, $bindConvenios) = $dinamicInsert('Convenio', '@ConveniosParam', $conveniosData, 'convenio');
+        list($insertSectoresSql, $bindSectores) = $dinamicInsert('Sector', '@SectoresParam', $sectoresData, 'sector');
+        list($insertSeccionesSql, $bindSecciones) = $dinamicInsert('Seccion', '@SeccionesParam', $seccionesData, 'seccion');
+        list($insertGruposSql, $bindGrupos) = $dinamicInsert('Grupo', '@GruposParam', $gruposData, 'grupo');
+        list($insertSucursalesSql, $bindSucursales) = $dinamicInsert('Sucursal', '@SucursalesParam', $sucursalesData, 'sucursal');
+        list($insertTareasSql, $bindTareas) = $dinamicInsert('Tarea', '@TareasParam', $tareasData, 'tarea');
+        list($insertRegCHSql, $bindRegCH) = $dinamicInsert('RegCH', '@RegCHParam', $regCHData, 'regCH');
+        list($insertEstadosSql, $bindEstados) = $dinamicInsert('Estado', '@EstadosParam', $estadosData, 'estado');
+        list($insertTipoSql, $bindTipo) = $dinamicInsert('Tipo', '@TiposParam', $tipoData, 'tipo');
+        list($insertHorariosSql, $bindHorarios) = $dinamicInsert('Horario', '@HorariosFiltroParam', $horariosData, 'horario');
+
+        $sqlBase = "
+        DECLARE @LegajosParam AS dbo.TipoTablaLegajos;
+        -- INSERT_LEGAJOS_PLACEHOLDER
+
+        DECLARE @EmpresasParam AS dbo.TipoTablaEmpresas;
+        -- INSERT_EMPRESAS_PLACEHOLDER
+
+        DECLARE @PlantasParam AS dbo.TipoTablaPlantas;
+        -- INSERT_PLANTAS_PLACEHOLDER
+
+        DECLARE @ConveniosParam AS dbo.TipoTablaConvenios;
+        -- INSERT_CONVENIOS_PLACEHOLDER
+
+        DECLARE @SectoresParam AS dbo.TipoTablaSectores;
+        -- INSERT_SECTORES_PLACEHOLDER
+
+        DECLARE @SeccionesParam AS dbo.TipoTablaSecciones;
+        -- INSERT_SECCIONES_PLACEHOLDER
+
+        DECLARE @GruposParam AS dbo.TipoTablaGrupos;
+        -- INSERT_GRUPOS_PLACEHOLDER
+
+        DECLARE @SucursalesParam AS dbo.TipoTablaSucursales;
+        -- INSERT_SUCURSALES_PLACEHOLDER
+
+        DECLARE @HorariosFiltroParam AS dbo.TipoTablaHorarios;
+        -- INSERT_HORARIOS_PLACEHOLDER
+
+        DECLARE @TareasParam AS dbo.TipoTablaTareas;
+        -- INSERT_TAREAS_PLACEHOLDER
+
+        DECLARE @RegCHParam AS dbo.TipoTablaRegCH;
+        -- INSERT_REGCH_PLACEHOLDER
+
+        DECLARE @EstadosParam AS dbo.TipoTablaEstados;
+        -- INSERT_ESTADOS_PLACEHOLDER
+
+        DECLARE @TiposParam AS dbo.TipoTablaTipos;
+        -- INSERT_TIPO_PLACEHOLDER
+
+        EXEC dbo.sp_ObtenerReporteHorarios
+            @FechaInicio = :fechaInicio,
+            @FechaFin = :fechaFin,
+            @TodosLosLegajos = :todosLosLegajos,
+            @Legajos = @LegajosParam,
+            @FiltrarPorEmpresa = :filtrarPorEmpresa,
+            @Empresas = @EmpresasParam,
+            @FiltrarPorPlantas = :filtrarPorPlantas,
+            @Plantas = @PlantasParam,
+            @FiltrarPorConvenio = :filtrarPorConvenio,
+            @Convenios = @ConveniosParam,
+            @FiltrarPorSector = :filtrarPorSector,
+            @Sectores = @SectoresParam,
+            @FiltrarPorSeccion = :FiltrarPorSeccion,
+            @Secciones = @SeccionesParam,
+            @FiltrarPorGrupo = :filtrarPorGrupo,
+            @Grupos = @GruposParam,
+            @FiltrarPorSucursal = :filtrarPorSucursal,
+            @Sucursales = @SucursalesParam,
+            @FiltrarPorTarea = :FiltrarPorTarea,
+            @Tareas = @TareasParam,
+            @FiltrarPorRegCH = :filtrarPorRegCH,
+            @RegCH = @RegCHParam,
+            @FiltrarPorEstado = :filtrarPorEstado,
+            @Estados = @EstadosParam,
+            @FiltrarPorTipo = :filtrarPorTipo,
+            @Tipo = @TiposParam,
+            @FiltrarPorHorario = :filtrarPorHorario,
+            @Horarios_Filtro = @HorariosFiltroParam,
+            @FiltroFechaEgreso = :filtroFechaEgreso;
+        ";
+
+        $sql = str_replace(
+            [
+                '-- INSERT_LEGAJOS_PLACEHOLDER',
+                '-- INSERT_EMPRESAS_PLACEHOLDER',
+                '-- INSERT_PLANTAS_PLACEHOLDER',
+                '-- INSERT_CONVENIOS_PLACEHOLDER',
+                '-- INSERT_SECTORES_PLACEHOLDER',
+                '-- INSERT_SECCIONES_PLACEHOLDER',
+                '-- INSERT_GRUPOS_PLACEHOLDER',
+                '-- INSERT_SUCURSALES_PLACEHOLDER',
+                '-- INSERT_HORARIOS_PLACEHOLDER',
+                '-- INSERT_TAREAS_PLACEHOLDER',
+                '-- INSERT_REGCH_PLACEHOLDER',
+                '-- INSERT_ESTADOS_PLACEHOLDER',
+                '-- INSERT_TIPO_PLACEHOLDER'
+            ],
+            [
+                $insertLegajosSql,
+                $insertEmpresasSql,
+                $insertPlantasSql,
+                $insertConveniosSql,
+                $insertSectoresSql,
+                $insertSeccionesSql,
+                $insertGruposSql,
+                $insertSucursalesSql,
+                $insertHorariosSql,
+                $insertTareasSql,
+                $insertRegCHSql,
+                $insertEstadosSql,
+                $insertTipoSql
+            ],
+            $sqlBase
+        );
+
+        $stmt = $conn->prepare($sql);
+
+        // Bindear los parámetros escalares
+        $stmt->bindParam(':fechaInicio', $fechaInicio);
+        $stmt->bindParam(':fechaFin', $fechaFin);
+        $stmt->bindParam(':todosLosLegajos', $todosLosLegajos, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorEmpresa', $filtrarPorEmpresa, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorPlantas', $filtrarPorPlantas, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorConvenio', $filtrarPorConvenio, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorSector', $filtrarPorSector, \PDO::PARAM_INT);
+        $stmt->bindParam(':FiltrarPorSeccion', $filtrarPorSeccion, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorGrupo', $filtrarPorGrupo, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorSucursal', $filtrarPorSucursal, \PDO::PARAM_INT);
+        $stmt->bindParam(':FiltrarPorTarea', $filtrarPorTarea, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorRegCH', $filtrarPorRegCH, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorEstado', $filtrarPorEstado, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorTipo', $filtrarPorTipo, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtrarPorHorario', $filtrarPorHorario, \PDO::PARAM_INT);
+        $stmt->bindParam(':filtroFechaEgreso', $filtroFechaEgreso, \PDO::PARAM_INT);
+
+        // Bindear los parámetros para las inserciones de los tipos de tabla
+        $allBinds = [
+            $bindLegajos,
+            $bindEmpresas,
+            $bindHorarios,
+            $bindPlantas,
+            $bindConvenios,
+            $bindSectores,
+            $bindSecciones,
+            $bindGrupos,
+            $bindSucursales,
+            $bindTareas,
+            $bindRegCH,
+            $bindEstados,
+            $bindTipo,
+        ];
+
+        foreach ($allBinds as $bindArray) {
+            foreach ($bindArray as $placeholder => $value) {
+                $stmt->bindValue($placeholder, $value, \PDO::PARAM_INT);
+            }
+        }
+        // Ejecutar la consulta
+        $stmt->execute();
+
+        // =====================================================================
+        // 3. Procesar los resultados
+        // =====================================================================
+
+        do {
+
+            if ($stmt->columnCount() > 0) {
+
+                $currentResultSet = []; // Array para almacenar las filas de este conjunto de resultados
+
+                while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+                    $currentResultSet[] = $row; // Agrega cada fila al array del conjunto de resultados actual
+                }
+
+                $currentResultSet = array_reduce($currentResultSet, function ($carry, $item) use ($agruparPor) {
+                    $carry[$item[$agruparPor]][] = $item;
+                    return $carry;
+                }, []);
+
+                // foreach ($currentResultSet as $groupKey => $group) {
+                //     foreach ($group as $i => $item) {
+                //         $currentResultSet[$groupKey][$i]['ColorText'] = $this->getTextColor($item['HorColor']);
+                //         $currentResultSet[$groupKey][$i]['ColorBG'] = sprintf('rgb(%d, %d, %d)', ...$this->intToRgb($item['HorColor']));
+                //     }
+                // }
+            }
+            // Si no tiene columnas, simplemente avanzamos al siguiente sin agregar nada al JSON
+        } while ($stmt->nextRowset()); // Avanza al siguiente conjunto de resultados si existe
+
+        // =====================================================================
+        // 4. Salida como JSON
+        // =====================================================================
+        $this->resp->respuesta($currentResultSet, count($currentResultSet), 'OK', 200, $inicio, 0, 0);
+
+    }
+    private function create_type_tables_sp_horarios()
+    {
+        function check_type_exists($conn, $typeName)
+        {
+            $sql = "SELECT COUNT(*) FROM sys.types WHERE name = :typeName AND is_table_type = 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':typeName', $typeName, \PDO::PARAM_STR);
+            $stmt->execute();
+            return $stmt->fetchColumn() > 0;
+        }
+        function create_type($conn, $typeName)
+        {
+            $sql = "CREATE TYPE dbo.{$typeName} AS TABLE (";
+            switch ($typeName) {
+                case 'TipoTablaLegajos':
+                    $sql .= "Legajo INT)";
+                    break;
+                case 'TipoTablaEmpresas':
+                    $sql .= "Empresa INT)";
+                    break;
+                case 'TipoTablaPlantas':
+                    $sql .= "Planta SMALLINT)";
+                    break;
+                case 'TipoTablaConvenios':
+                    $sql .= "Convenio SMALLINT)";
+                    break;
+                case 'TipoTablaSectores':
+                    $sql .= "Sector SMALLINT)";
+                    break;
+                case 'TipoTablaSecciones':
+                    $sql .= "Seccion SMALLINT)";
+                    break;
+                case 'TipoTablaGrupos':
+                    $sql .= "Grupo SMALLINT)";
+                    break;
+                case 'TipoTablaSucursales':
+                    $sql .= "Sucursal SMALLINT)";
+                    break;
+                case 'TipoTablaTareas':
+                    $sql .= "Tarea INT)";
+                    break;
+                case 'TipoTablaRegCH':
+                    $sql .= "RegCH SMALLINT)";
+                    break;
+                case 'TipoTablaEstados':
+                    $sql .= "Estado SMALLINT)";
+                    break;
+                case 'TipoTablaTipos':
+                    $sql .= "Tipo SMALLINT)";
+                    break;
+                case 'TipoTablaHorarios':
+                    $sql .= "Horario INT)";
+                    break;
+            }
+            $stmt = $conn->prepare($sql);
+            return $stmt->execute();
+        }
+
+        // -- Crear tipos de tabla
+        // CREATE TYPE dbo.TipoTablaLegajos AS TABLE (Legajo INT);
+        // CREATE TYPE dbo.TipoTablaEmpresas AS TABLE (Empresa INT);
+        // CREATE TYPE dbo.TipoTablaPlantas AS TABLE (Planta SMALLINT);
+        // CREATE TYPE dbo.TipoTablaConvenios AS TABLE (Convenio SMALLINT);
+        // CREATE TYPE dbo.TipoTablaSectores AS TABLE (Sector SMALLINT);
+        // CREATE TYPE dbo.TipoTablaSecciones AS TABLE (Seccion SMALLINT);
+        // CREATE TYPE dbo.TipoTablaGrupos AS TABLE (Grupo SMALLINT);
+        // CREATE TYPE dbo.TipoTablaSucursales AS TABLE (Sucursal SMALLINT);
+        // CREATE TYPE dbo.TipoTablaTareas AS TABLE (Tarea INT);
+        // CREATE TYPE dbo.TipoTablaRegCH AS TABLE (RegCH SMALLINT);
+        // CREATE TYPE dbo.TipoTablaEstados AS TABLE (Estado SMALLINT);
+        // CREATE TYPE dbo.TipoTablaTipos AS TABLE (Tipo SMALLINT);
+        // CREATE TYPE dbo.TipoTablaHorarios AS TABLE (Horario INT);
+
+        // primero debemos chequear si existen los tipos de tabla y si no existen crearlos
+        $conn = $this->conect->check_connection();
+
+        $types = [
+            'TipoTablaLegajos',
+            'TipoTablaEmpresas',
+            'TipoTablaPlantas',
+            'TipoTablaConvenios',
+            'TipoTablaSectores',
+            'TipoTablaSecciones',
+            'TipoTablaGrupos',
+            'TipoTablaSucursales',
+            'TipoTablaTareas',
+            'TipoTablaRegCH',
+            'TipoTablaEstados',
+            'TipoTablaTipos',
+            'TipoTablaHorarios',
+        ];
+
+        foreach ($types as $type) {
+            if (!check_type_exists($conn, $type)) {
+                $this->log->write("Tipo de tabla $type creado correctamente", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+                create_type($conn, $type);
+            }
+        }
+    }
+    private function check_sp_exists($conn, $spName)
+    {
+        $sql = "SELECT COUNT(*) FROM sys.procedures WHERE name = :spName";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':spName', $spName, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+    public function create_sp_horarios($conn = null)
+    {
+        $conn = $this->conect->check_connection();
+
+        // Verificamos si el Stored Procedure ya existe
+        if ($this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
+            return true; // Si ya existe, no hacemos nada más
+        }
+
+        // Primero, creamos los tipos de tabla necesarios para el Stored Procedure
+        // Esto es necesario para que el Stored Procedure funcione correctamente
+        $this->create_type_tables_sp_horarios();
+
+        // Luego, creamos el Stored Procedure
+        $sql = file_get_contents(__DIR__ . '/sql/sp_obtener_reporte_horarios');
+
+        $stmt = $conn->prepare($sql);
+        if ($stmt->execute()) {
+            $this->log->write("Stored Procedure sp_ObtenerReporteHorarios creado correctamente", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+            return true;
+        } else {
+            $this->log->write("Error al crear el Stored Procedure: " . implode(", ", $stmt->errorInfo()), date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+            throw new \Exception("Error al crear el Stored Procedure: " . implode(", ", $stmt->errorInfo()), 500);
+        }
+    }
+    public function drop_sp_horarios()
+    {
+        // DROP PROCEDURE IF EXISTS "dbo"."sp_ObtenerReporteHorarios";
+
+        // -- Eliminar tipos si existen
+        // DROP TYPE IF EXISTS dbo.TipoTablaLegajos;
+        // DROP TYPE IF EXISTS dbo.TipoTablaEmpresas;
+        // DROP TYPE IF EXISTS dbo.TipoTablaPlantas;
+        // DROP TYPE IF EXISTS dbo.TipoTablaConvenios;
+        // DROP TYPE IF EXISTS dbo.TipoTablaSectores;
+        // DROP TYPE IF EXISTS dbo.TipoTablaSecciones;
+        // DROP TYPE IF EXISTS dbo.TipoTablaGrupos;
+        // DROP TYPE IF EXISTS dbo.TipoTablaSucursales;
+        // DROP TYPE IF EXISTS dbo.TipoTablaTareas;
+        // DROP TYPE IF EXISTS dbo.TipoTablaRegCH;
+        // DROP TYPE IF EXISTS dbo.TipoTablaEstados;
+        // DROP TYPE IF EXISTS dbo.TipoTablaTipos;
+        // DROP TYPE IF EXISTS dbo.TipoTablaHorarios;
+
+        $conn = $this->conect->check_connection();
+
+        // Primero, eliminamos el Stored Procedure si existe
+        $sql = "DROP PROCEDURE IF EXISTS dbo.sp_ObtenerReporteHorarios";
+        $stmt = $conn->prepare($sql);
+        if (!$stmt->execute()) {
+            throw new \Exception("Error al eliminar el Stored Procedure: " . implode(", ", $stmt->errorInfo()), 500);
+        }
+
+        // Luego, eliminamos los tipos de tabla si existen
+        $types = [
+            'TipoTablaLegajos',
+            'TipoTablaEmpresas',
+            'TipoTablaPlantas',
+            'TipoTablaConvenios',
+            'TipoTablaSectores',
+            'TipoTablaSecciones',
+            'TipoTablaGrupos',
+            'TipoTablaSucursales',
+            'TipoTablaTareas',
+            'TipoTablaRegCH',
+            'TipoTablaEstados',
+            'TipoTablaTipos',
+            'TipoTablaHorarios',
+        ];
+
+        foreach ($types as $type) {
+            $sql = "DROP TYPE IF EXISTS dbo.{$type}";
+            $stmt = $conn->prepare($sql);
+            if (!$stmt->execute()) {
+                throw new \Exception("Error al eliminar el tipo de tabla {$type}: " . implode(", ", $stmt->errorInfo()), 500);
+            }
+        }
+    }
+
 }

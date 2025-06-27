@@ -92,6 +92,9 @@ Flight::route('GET /horarios/asign/legajo/(@Legajo)', [$horarios, 'get_asign_leg
 Flight::route('POST /horarios/rotacion', [$horarios, 'set_rotacion']);
 Flight::route('POST /horarios/legajo-rotacion', [$horarios, 'set_rotacion']);
 Flight::route('POST /horarios/desde', [$horarios, 'set_horario']);
+Flight::route('POST /horarios/asignados', [$horarios, 'obtener_horarios']); // para horarios asignados
+// Flight::route('POST /horarios/sp', [$horarios, 'create_sp_horarios']); // para horarios asignados
+// Flight::route('DELETE /horarios/sp', [$horarios, 'drop_sp_horarios']); // para horarios asignados
 Flight::route('DELETE /horarios/desde', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/legajo-desde', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/desde-hasta', [$horarios, 'delete_horario']);

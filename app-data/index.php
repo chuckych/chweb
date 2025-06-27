@@ -1425,16 +1425,6 @@ Flight::route('POST /personal/filtros', function () {
         'nullCant' => $data['nullCant'] ?? 0,
         'strict' => $data['strict'] ?? 0,
         'proyectar' => $data['proyectar'] ?? 2,
-        // 'filtros' => [
-        //     'personal' => empty($data['personal'] ?? []) ? legajosRol() : ($data['personal'] ?? []),
-        //     'empresas' => empty($data['empresas'] ?? []) ? empresasRol() : ($data['empresas'] ?? []),
-        //     'plantas' => empty($data['plantas'] ?? []) ? plantasRol() : ($data['plantas'] ?? []),
-        //     'convenios' => empty($data['convenios'] ?? []) ? conveniosRol() : ($data['convenios'] ?? []),
-        //     'sectores' => empty($data['sectores'] ?? []) ? sectoresRol() : ($data['sectores'] ?? []),
-        //     'secciones' => empty($data['secciones'] ?? []) ? seccionesRol() : ($data['secciones'] ?? []),
-        //     'grupos' => empty($data['grupos'] ?? []) ? gruposRol() : ($data['grupos'] ?? []),
-        //     'sucursales' => empty($data['sucursales'] ?? []) ? sucursalesRol() : ($data['sucursales'] ?? []),
-        // ]
         'filtros' => [
             'empresas' => $empr,
             'plantas' => $plan,
@@ -1520,6 +1510,18 @@ Flight::route('DELETE /proyectar', function () {
 
     Flight::json($result ?? []);
 
+});
+
+Flight::route('POST /asignados', function () {
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asignados";
+    $horarios = ch_api($endpoint, $payload, 'POST', '');
+    $horarios = json_decode($horarios, true);
+
+    $result = $horarios;
+
+    Flight::json($result ?? []);
 });
 
 

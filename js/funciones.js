@@ -1107,3 +1107,34 @@ function slugify(string) {
 
     return string;
 }
+// Formatea una fecha YYYY-MM-DD a DD/MM/YYYY
+function formatFechaYMDaDMY(fechaStr) {
+    if (!fechaStr) return '';
+    const [year, month, day] = fechaStr.split('-');
+    return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+}
+
+
+function intToRgb(colorInt) {
+    // Asegurarse de tratarlo como un entero sin signo de 32 bits
+    const unsignedInt = colorInt >>> 0;
+
+    // Aplicar la máscara para obtener solo los 24 bits relevantes (RGB)
+    const hexColor = (unsignedInt & 0xFFFFFF).toString(16).padStart(6, '0');
+
+    const red = parseInt(hexColor.substring(0, 2), 16);
+    const green = parseInt(hexColor.substring(2, 4), 16);
+    const blue = parseInt(hexColor.substring(4, 6), 16);
+
+    return [red, green, blue];
+}
+
+function getBrightness(r, g, b) {
+    return (r * 299 + g * 587 + b * 114) / 1000;
+}
+
+function getTextColor(backgroundColor) {
+    const [r, g, b] = intToRgb(backgroundColor);
+    const brightness = getBrightness(r, g, b);
+    return brightness > 128 ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
+}

@@ -1958,3 +1958,7 @@
  button:focus {
      outline: 0px auto -webkit-focus-ring-color !important;
  }
+
+ .gap5 {
+     gap: 5px !important;
+ }
