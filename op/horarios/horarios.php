@@ -255,7 +255,10 @@
             </div>
             <div class="border p-1 w-100 rounded mb-3 shadow-sm bg-ddd" id="divGrillaHorario2" style="display:none;">
                 <div class="col-12 mb-3 d-flex justify-content-between w-100 py-3">
-                    <div class="w-100 d-flex align-items-center">Horarios asignados</div>
+                    <div class="w-100 d-flex flex-column align-items-start justify-content-center">
+                        <span>Horarios asignados</span>
+                        <span class="font08" id="nameLegajo"></span>
+                    </div>
                     <div class="input-group d-inline-flex justify-content-end align-items-center">
                         <div class="hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
                             aria-label="Seleccionar fechas">

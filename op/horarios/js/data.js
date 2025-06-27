@@ -709,6 +709,7 @@ $(function () {
 
         if (dataCache[Legajo]) {
             ls.set(LS_HORARIOS_ASIGN, dataCache[Legajo]);
+            getHorarios();
             // return dataCache[Legajo];
             return;
         }
@@ -1946,8 +1947,25 @@ $(function () {
 
     const dateRange = async () => {
 
+        function getStartOfWeek(date = new Date()) {
+            const day = date.getDay(); // 0 (domingo) a 6 (sábado)
+            const diff = date.getDate() - day; // resta días para llegar al domingo
+            return new Date(date.setDate(diff));
+        }
+
+        const startOfWeek = getStartOfWeek();
+
+        // Agregamos 1 día al inicio de la semana (lunes)
+        const dia1 = new Date(startOfWeek);
+        dia1.setDate(startOfWeek.getDate() + 1);
+
+        // Agregamos 7 días al inicio de la semana (domingo siguiente o fin de semana actual)
+        const dia7 = new Date(startOfWeek);
+        dia7.setDate(startOfWeek.getDate() + 7);
+
         const fechaActual = new Date(new Date().setDate(new Date().getDate() + 1));
         const fechaActual7 = new Date(new Date().setDate(new Date().getDate() + 7));
+        console.log(moment().startOf("week").add(1, "days"));
 
         const proximaSemana = [
             moment().add(1, "week").startOf("week").add(1, "days"),
@@ -1970,8 +1988,8 @@ $(function () {
             autoUpdateInput: true,
             opens: "left",
             drops: "down",
-            startDate: fechaActual,
-            endDate: fechaActual7,
+            startDate: dia1,
+            endDate: dia7,
             autoApply: true,
             // minDate: fechaActual,
             alwaysShowCalendars: true,
@@ -2045,6 +2063,7 @@ $(function () {
                     const fechaInicio = $('#_dr').data('daterangepicker').startDate.format('YYYY-MM-DD');
                     const fechaFin = $('#_dr').data('daterangepicker').endDate.format('YYYY-MM-DD');
                     const legajoSelected = ls.get(LS_LEGAJO)?.pers_legajo ?? '';
+                    const legajoNameSelected = ls.get(LS_LEGAJO)?.pers_nombre ?? '';
                     data.FechaDesde = fechaInicio;
                     data.FechaHasta = fechaFin;
                     data.Legajos = [legajoSelected];
@@ -2058,30 +2077,17 @@ $(function () {
             },
             columns: [
                 {
-                    data: 'Legajo', className: 'py-2', targets: '', title: 'LEGAJO',
-                    "render": function (data, type, row, meta) {
-                        if (type !== 'display') return '';
-                        return `<div class="d-flex flex-column">
-                                    <div>${row.Nombre}</div>
-                                    <div class="text-muted font07">${data}</div>
-                                </div>`;
-                    },
-                },
-                // {
-                //     data: 'Nombre', className: '', targets: '', title: 'APELLIDO Y NOMBRE',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data;
-                //     },
-                // },
-                {
                     data: 'Fecha', className: '', targets: '', title: 'FECHA',
                     "render": function (data, type, row, meta) {
                         if (type !== 'display') return '';
-                        return `<div class="d-flex flex-column">
-                            <div>${moment(data).format('DD/MM/YYYY')}</div>
-                            <div class="text-mutted font08">${row.Dia}</div>
-                            </div>`;
+                        return `<div>${moment(data).format('DD/MM/YYYY')}</div>`;
+                    },
+                },
+                {
+                    data: 'Dia', className: '', targets: '', title: 'FECHA',
+                    "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
+                        return data;
                     },
                 },
                 {
@@ -2104,27 +2110,6 @@ $(function () {
                         return `<div>${dataCol}</div>`;
                     },
                 },
-                // {
-                //     data: 'Descanso', className: 'text-center', targets: '', title: 'DESCANSO',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data != 0 ? data : '00:00';
-                //     },
-                // },
-                // {
-                //     data: 'HsATrab', className: ' text-center', targets: '', title: 'HS a TR',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data ? data : '00:00';
-                //     },
-                // },
-                {
-                    data: 'HsDelDia', className: ' text-center', targets: '', title: 'HS DIA',
-                    "render": function (data, type, row, meta) {
-                        if (type !== 'display') return '';
-                        return data ? data : '00:00';
-                    },
-                },
                 {
                     data: 'CodigoHorario', className: 'text-center pr-0', targets: '', title: 'COD',
                     "render": function (data, type, row, meta) {
@@ -2137,9 +2122,16 @@ $(function () {
                     data: 'DescripcionHorario', className: '', targets: '', title: 'DESCRIPCIÓN',
                     render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
+                        return `<div>${data ? data : 'Sin horario asignado'}</div>`;
+                    },
+                },
+                {
+                    data: 'Asignacion', className: '', targets: '', title: 'ASIGNACIÓN',
+                    render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         const prioridad = row?.Prioridad;
                         const referencia = row?.Referencia || '';
-                        const asignacion = row?.Asignacion || '';
+                        const asignacion = data || '';
                         let referenciaText = `${asignacion} ${referencia}`.trim();
 
                         switch (prioridad) {
@@ -2165,10 +2157,7 @@ $(function () {
                                 break;
                         }
 
-                        return `<div class="d-flex flex-column">
-                            <div>${data ? data : 'Sin horario asignado'}</div>
-                            <div class="text-mutted font08">${referenciaText}</div>
-                            </div>`;
+                        return `<div class="">${referenciaText}</div>`;
                     },
                 },
                 {
@@ -2182,13 +2171,6 @@ $(function () {
                         return `<div class="text-center float-right" style="height:20px;color:${textColor}; background-color:${bgColor}; border-radius: 5px; padding: 2px 5px; font-size: 12px; width:40px">${HorID}</div>`;
                     },
                 },
-                // {
-                //     data: 'Asignacion', className: '', targets: '', title: 'ASIGNACIÓN',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data ? data : 'Sin asignación';
-                //     },
-                // },
                 {
                     data: '', className: ' w-100', targets: '', title: '',
                     "render": function (data, type, row, meta) {
@@ -2229,6 +2211,11 @@ $(function () {
                 $('#tabla').show();
             },
             preDrawCallback: function () {
+                const legajoSelected = ls.get(LS_LEGAJO)?.pers_legajo ?? '';
+                const legajoNameSelected = ls.get(LS_LEGAJO)?.pers_nombre ?? '';
+                console.log('Legajo seleccionado:', legajoSelected, legajoNameSelected);
+
+                $('#nameLegajo').html(`(${legajoSelected}) ${legajoNameSelected}`);
                 loaderIn('.tableHorarios', true);
             },
             // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
