@@ -139,7 +139,7 @@ class ParaGene
     /**
      * Recupera datos de la tabla DBData.
      */
-    public function dbData()
+    public function dbData($return = false)
     {
         $inicio = microtime(true);
         try {
@@ -150,6 +150,9 @@ class ParaGene
             $BDVersion = explode("_", $BDVersion);
             $Data['SystemVer'] = intval($BDVersion[1]) ?? 0;
             $Data['FechaHora'] = $this->tools->formatDateTime($Data['FechaHora']);
+            if ($return) {
+                return $Data;
+            }
             $this->resp->respuesta($Data, 0, 'OK', 200, $inicio, 0, 0);
         } catch (\Throwable $th) {
             $this->log->write($th->getMessage(), 'error');

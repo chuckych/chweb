@@ -42,11 +42,23 @@ $Personal = new Classes\Personal;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
-// use flight\Engine;
-
-// $api  = new Engine();
-
 $log->delete('log', 2); // Elimina los logs de hace 1 día o más
+
+Flight::route('GET /system/data', function () use ($envData, $response, $ParaGene) {
+    $inicio = microtime(true);
+
+    $dbData = $ParaGene->dbData(true);
+
+    $data = [
+        'cuenta' => $envData['nameCompany'] ?? '',
+        'dbname' => $envData['DBName'] ?? '',
+        'dbver' => $dbData['BDVersion'] ?? '',
+        'chver' => $dbData['SystemVer'] ?? '',
+        'token' => $envData['Token'] ?? '',
+    ];
+    $response->respuesta($data, 0, '', 200, $inicio, 0, ID_COMPANY);
+});
+
 
 Flight::route('PUT /novedades', [$novedades, 'update']);
 Flight::route('DELETE /novedades', [$novedades, 'delete']);
