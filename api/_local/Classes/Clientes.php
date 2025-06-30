@@ -45,6 +45,7 @@ class Clientes
                 if (intval($value['id'])) {
                     $clientes[$key]['count_usuarios'] = $count_usuarios[$value['id']] ?? 0;
                     $clientes[$key]['count_roles'] = $count_roles[$value['id']] ?? 0;
+                    $clientes[$key]['token_api'] = sha1($value['recid']);
                 }
             }
             // cambiar la key clientes.valores por host

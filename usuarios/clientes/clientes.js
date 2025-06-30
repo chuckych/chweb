@@ -155,6 +155,9 @@ document.addEventListener('DOMContentLoaded', function () {
         ls.set(LS_ID_CLIENTE, data.id ?? '');
         if (!data) return;
 
+        console.log(data);
+
+
         const submitAdd = document.getElementById('submitAdd');
         const submitEdit = document.getElementById('submitEdit');
         submitEdit.style.display = 'block';
@@ -179,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#pass').val(data.pass)
         $('#hostCHWeb').val(data.hostLocal)
         $('#AppCode').val(data.recid)
+        $('#token_api').text(data.token_api ?? '');
 
         if ((data.auth == '1')) {
             $('#auth').prop('checked', true)

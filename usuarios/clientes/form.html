@@ -44,44 +44,48 @@
                             <div class="tab-pane show active" id="Cuenta" role="tabpanel" aria-labelledby="Cuenta-tab">
                                 <div class="form-row">
                                     <div class="col-12 col-sm-7">
-                                        <p class="fontq mb-1">Nombre de la Cuenta: </p>
+                                        <p class="font08 mb-1">Nombre de la Cuenta: </p>
                                         <input type="text" title="campo obligatorio" name="nombre" id="nombre"
                                             placeholder="Nombre de Cuenta (*)" class="h40 form-control my-2">
                                     </div>
                                     <div class="col-12 col-sm-5">
-                                        <p class="fontq mb-1">Identificador: </p>
+                                        <p class="font08 mb-1">Identificador: </p>
                                         <input
                                             title="El identificador puede quedar en blanco. El mismo se genera automáticamente"
                                             type="text" maxlength="3" name="ident" id="ident"
                                             placeholder="Identificador de Cuenta" class="my-2 h40 form-control">
                                     </div>
                                     <div class="col-12">
-                                        <p class="fontq mb-1">Host:</p>
+                                        <p class="font08 mb-1">Host:</p>
                                         <input type="text" title="Host CHWEB" name="hostCHWeb" id="hostCHWeb"
                                             placeholder="Ej: http://192.168.1.220:8050 o http://hostname:8050"
                                             class="h40 form-control mr-sm-2">
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <p class="font08 mb-1">Token API:</p>
+                                        <span id="token_api" class="font09"></span>
                                     </div>
                                 </div>
                             </div>
                             <div class="tab-pane" id="ConexionSQL" role="tabpanel" aria-labelledby="ConexionSQL-tab">
                                 <div class="form-row">
                                     <div class="col-12 col-sm-6">
-                                        <p class="fontq mb-1">Host: </p>
+                                        <p class="font08 mb-1">Host: </p>
                                         <input type="text" name="host" id="host" placeholder="Host"
                                             class="h40 form-control my-2">
                                     </div>
                                     <div class="col-12 col-sm-6">
-                                        <p class="fontq mb-1">Base de Datos: </p>
+                                        <p class="font08 mb-1">Base de Datos: </p>
                                         <input type="text" name="db" id="db" placeholder="Base de Datos"
                                             class="h40 form-control my-2">
                                     </div>
                                     <div class="col-6 col-sm-6 mt-sm-2">
-                                        <p class="fontq mb-1">Usuario: </p>
+                                        <p class="font08 mb-1">Usuario: </p>
                                         <input type="text" name="user" id="user" placeholder="Usuario"
                                             class="h40 form-control my-2">
                                     </div>
                                     <div class="col-6 col-sm-6 mt-sm-2">
-                                        <p class="fontq mb-1">Password: </p>
+                                        <p class="font08 mb-1">Password: </p>
                                         <input type="text" name="pass" id="pass" placeholder="Password"
                                             class="h40 form-control my-2">
                                         <input type="hidden" name="recid" id="recid" placeholder="recid" class="">
@@ -96,7 +100,7 @@
                                         </div>
                                     </div>
                                     <div class="col-12">
-                                        <p class="fontq mb-1">Path WebService CH:</p>
+                                        <p class="font08 mb-1">Path WebService CH:</p>
                                         <input type="text" title="WebService" name="WebService" id="WebService"
                                             placeholder="Ejemplo: http://192.168.1.202:6400"
                                             class="h40 form-control my-2">
@@ -108,13 +112,13 @@
                                     <div class="col-12">
                                         <div class="row">
                                             <div class="col-12 col-sm-6 mt-2">
-                                                <p class="fontq mb-1">Path API Mobile Frontend:</p>
+                                                <p class="font08 mb-1">Path API Mobile Frontend:</p>
                                                 <input type="text" title="Api Mobile HRP" name="ApiMobileHRP"
                                                     id="ApiMobileHRP" placeholder="Ejemplo: http://192.168.1.220:8050"
                                                     class="h40 form-control mr-sm-2">
                                             </div>
                                             <div class="col-12 col-sm-6 mt-2">
-                                                <p class="fontq mb-1">Path API Mobile App:</p>
+                                                <p class="font08 mb-1">Path API Mobile App:</p>
                                                 <input type="text" title="Path API Mobile App:" name="ApiMobileHRPApp"
                                                     id="ApiMobileHRPApp"
                                                     placeholder="Ejemplo: http://207.191.165.3:7500"
@@ -128,10 +132,10 @@
                                     </div>
                                     <div class="col-6 col-sm-4">
                                         <div class="btn-group btn-group-toggle border p-1 w-100" data-toggle="buttons">
-                                            <label class="btn btn-outline-secondary fontq border-0" id="labelActivo">
+                                            <label class="btn btn-outline-secondary font08 border-0" id="labelActivo">
                                                 <input value="0" type="radio" name="localCH" id="localCHSI"> Si
                                             </label>
-                                            <label class="btn btn-outline-secondary fontq border-0 ml-1"
+                                            <label class="btn btn-outline-secondary font08 border-0 ml-1"
                                                 id="labelInactivo">
                                                 <input type="radio" value="1" name="localCH" id="localCHNO"> No
                                             </label>
@@ -140,7 +144,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12 col-sm-6 mt-3">
-                                        <p class="fontq mb-1">App Code:</p>
+                                        <p class="font08 mb-1">App Code:</p>
                                         <input type="text" title="App Code" name="AppCode" id="AppCode"
                                             placeholder="App Code: 8 dígitos" maxlength="8"
                                             class="h40 form-control mr-sm-2">
@@ -150,7 +154,7 @@
                             <div class="tab-pane" id="XmartClock" role="tabpanel" aria-labelledby="XmartClock-tab">
                                 <div class="row">
                                     <div class="col-12">
-                                        <p class="fontq mb-1">Token Mobile XClock:</p>
+                                        <p class="font08 mb-1">Token Mobile XClock:</p>
                                         <input type="text" title="" name="tkmobile" id="tkmobile"
                                             placeholder="Token Mobile" class="h40 form-control mr-sm-2">
                                     </div>
@@ -160,12 +164,12 @@
                     </div>
                 </div>
                 <div class="modal-footer bg-light">
-                    <button type="button" id="cancelarAlta" class="btn fontq border btn-outline-custom btn-mobile"
+                    <button type="button" id="cancelarAlta" class="btn font08 border btn-outline-custom btn-mobile"
                         data-dismiss="modal">Cancelar</button>
                     <button style="display: none;" type="button" id="submitAdd"
-                        class="btn fontq btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Agregar</button>
+                        class="btn font08 btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Agregar</button>
                     <button style="display: none;" type="button" id="submitEdit"
-                        class="btn fontq btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Aplicar</button>
+                        class="btn font08 btn-custom btn-mobile mt-2 mt-sm-0 mb-3 mb-sm-0 mr-0 mr-sm-1">Aplicar</button>
                 </div>
             </div>
         </div>
