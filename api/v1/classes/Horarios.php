@@ -1662,6 +1662,9 @@ class Horarios
         if (!$this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
             $this->create_sp_horarios($conn);
         }
+
+        $this->check_version_file_sql_sp();
+
         // ========================
         // 1. Definir los parámetros de entrada para el Stored Procedure
         // ========================
@@ -1945,6 +1948,10 @@ class Horarios
     }
     private function create_type_tables_sp_horarios()
     {
+        $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
+        $log = function ($text) use ($logFile) {
+            $this->log->write($text, $logFile);
+        };
         function check_type_exists($conn, $typeName)
         {
             $sql = "SELECT COUNT(*) FROM sys.types WHERE name = :typeName AND is_table_type = 1";
@@ -1953,7 +1960,7 @@ class Horarios
             $stmt->execute();
             return $stmt->fetchColumn() > 0;
         }
-        function create_type($conn, $typeName)
+        function create_type($conn, $typeName, $log)
         {
             $sql = "CREATE TYPE dbo.{$typeName} AS TABLE (";
             switch ($typeName) {
@@ -1998,9 +2005,14 @@ class Horarios
                     break;
             }
             $stmt = $conn->prepare($sql);
-            return $stmt->execute();
+            $result = $stmt->execute();
+            if ($result) {
+                $log("Tipo de tabla $typeName creado correctamente");
+            } else {
+                $log("Error al crear tipo de tabla $typeName");
+            }
+            return $result;
         }
-
         // -- Crear tipos de tabla
         // CREATE TYPE dbo.TipoTablaLegajos AS TABLE (Legajo INT);
         // CREATE TYPE dbo.TipoTablaEmpresas AS TABLE (Empresa INT);
@@ -2037,8 +2049,9 @@ class Horarios
 
         foreach ($types as $type) {
             if (!check_type_exists($conn, $type)) {
-                $this->log->write("Tipo de tabla $type creado correctamente", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
-                create_type($conn, $type);
+                $log("Tipo de tabla $type no existe, creando...", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+                // $this->log->write("Tipo de tabla $type creado correctamente", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+                create_type($conn, $type, $log);
             }
         }
     }
@@ -2053,6 +2066,11 @@ class Horarios
     public function create_sp_horarios($conn = null)
     {
         $conn = $this->conect->check_connection();
+
+        $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
+        $log = function ($text) use ($logFile) {
+            $this->log->write($text, $logFile);
+        };
 
         // Verificamos si el Stored Procedure ya existe
         if ($this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
@@ -2094,6 +2112,12 @@ class Horarios
         // DROP TYPE IF EXISTS dbo.TipoTablaTipos;
         // DROP TYPE IF EXISTS dbo.TipoTablaHorarios;
 
+        $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
+        $log = function ($text) use ($logFile) {
+            $this->log->write($text, $logFile);
+        };
+
+
         $conn = $this->conect->check_connection();
 
         // Primero, eliminamos el Stored Procedure si existe
@@ -2102,6 +2126,7 @@ class Horarios
         if (!$stmt->execute()) {
             throw new \Exception("Error al eliminar el Stored Procedure: " . implode(", ", $stmt->errorInfo()), 500);
         }
+        $log("Stored Procedure eliminado correctamente");
 
         // Luego, eliminamos los tipos de tabla si existen
         $types = [
@@ -2126,7 +2151,49 @@ class Horarios
             if (!$stmt->execute()) {
                 throw new \Exception("Error al eliminar el tipo de tabla {$type}: " . implode(", ", $stmt->errorInfo()), 500);
             }
+            $log("Tipo de tabla {$type} eliminado correctamente");
         }
     }
+    private function check_version_file_sql_sp()
+    {
+        $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
+        $sqlFilePath = __DIR__ . '/sql/sp_obtener_reporte_horarios';
+        $timestampFilePath = __DIR__ . '/sql/sp_obtener_reporte_horarios_timestamp.log';
 
+        $log = function ($text) use ($logFile) {
+            $this->log->write($text, $logFile);
+        };
+
+        try {
+            // Validar que el archivo SQL exista
+            if (!file_exists($sqlFilePath)) {
+                $log("Archivo SQL no encontrado: " . $sqlFilePath);
+                return;
+            }
+
+            // Obtener timestamp del archivo SQL
+            $timestampSQL = filemtime($sqlFilePath);
+
+            // Leer timestamp guardado o usar 0 si no existe
+            $timestampStored = file_exists($timestampFilePath)
+                ? (int) file_get_contents($timestampFilePath)
+                : 0;
+
+            // Comparar timestamps
+            if ((int) $timestampSQL !== $timestampStored) {
+                $log("Stored Procedure desactualizado. Eliminando y recreando...");
+
+                $this->drop_sp_horarios();
+                $this->create_sp_horarios();
+
+                file_put_contents($timestampFilePath, $timestampSQL);
+
+                $log("Stored Procedure actualizado correctamente.");
+            } else {
+                // $log("Stored Procedure ya está actualizado.");
+            }
+        } catch (\Exception $e) {
+            $log("Error al verificar/actualizar Stored Procedure: " . $e->getMessage());
+        }
+    }
 }

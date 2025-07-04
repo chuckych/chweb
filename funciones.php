@@ -1573,10 +1573,10 @@ function fecha_min_max2($tabla, $ColFech)
     sqlsrv_close($link);
     return $array;
 }
-function nov_cta_cte()
+function nov_cta_cte_old()
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $query = "SELECT DISTINCT CTANOVE.CTA2Nove, NOVEDAD.NovDesc, CTANOVE.CTA2Peri FROM CTANOVE JOIN NOVEDAD ON CTANOVE.CTA2Nove = NOVEDAD.NovCodi ORDER BY CTANOVE.CTA2Peri DESC";
     $rs = sqlsrv_query($link, $query, $params, $options);
@@ -1603,6 +1603,30 @@ function nov_cta_cte()
     sqlsrv_close($link);
     return ($array);
     // exit;
+}
+function nov_cta_cte()
+{
+    $query = "SELECT DISTINCT CTANOVE.CTA2Nove, NOVEDAD.NovDesc, CTANOVE.CTA2Peri FROM CTANOVE JOIN NOVEDAD ON CTANOVE.CTA2Nove = NOVEDAD.NovCodi ORDER BY CTANOVE.CTA2Peri DESC";
+    $rs = arrMSQuery($query);
+    if ($rs) {
+        foreach ($rs as $fila) {
+            $CTA2Nove = $fila['CTA2Nove'] ?? false;
+            $NovDesc = $fila['NovDesc'] ?? false;
+            $CTA2Peri = $fila['CTA2Peri'] ?? false;
+            $array[] = [
+                'cod' => $CTA2Nove,
+                'desc' => $NovDesc,
+                'peri' => $CTA2Peri
+            ];
+        }
+    } else {
+        $array[] = [
+            'cod' => false,
+            'desc' => false,
+            'peri' => false
+        ];
+    }
+    return $array;
 }
 function super_unique($array, $key)
 {

@@ -39,6 +39,7 @@ $RRHHWebService = new Classes\RRHHWebService;
 $connectSqlSrv = new Classes\ConnectSqlSrv;
 $ParaGene = new Classes\ParaGene;
 $Personal = new Classes\Personal;
+$Fichadas = new Classes\Fichadas;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -123,6 +124,7 @@ Flight::route('POST /horarios/legajo-citacion', [$horarios, 'set_horario']);
 Flight::route('POST /auditor', [$auditor, 'add']);
 Flight::route('GET /personal/legajos', [$Personal, 'legajos']);
 Flight::route('POST /personal/filtros', [$Personal, 'filtros_estructura']);
+Flight::route('POST /fichadas', [$Fichadas, 'create']);
 // Flight::route('POST /conectar', [$connectSqlSrv, 'test_connect']);
 Flight::route('POST /conectar', function () {
     $connectSqlSrv = new Classes\ConnectSqlSrv;

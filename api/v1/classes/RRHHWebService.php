@@ -90,6 +90,9 @@ class RRHHWebService
                 $ch = curl_init();
 
                 foreach ($LegajosSegment as $Legajos) { // Recorre los bloques de legajos
+                    $countLegajos = count($Legajos); // Cuenta la cantidad de legajos en el bloque
+                    $Legajo = ($countLegajos === 1) ? $Legajos[0] : '';
+
                     $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
 
                     foreach ($dateSegments as $segment) { // Recorre los segmentos
@@ -105,6 +108,9 @@ class RRHHWebService
                         }
 
                         $post_data = "{Usuario=Supervisor, Legajos=[{$Legajos}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+                        if ($countLegajos === 1) {
+                            $post_data = "{Usuario=Supervisor, Legajos=[, LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+                        }
 
                         curl_setopt($ch, CURLOPT_URL, $ruta);
                         curl_setopt($ch, CURLOPT_POST, TRUE);

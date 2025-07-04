@@ -1,9 +1,10 @@
 <?php
 $Periodo = peri_min_max();
 $nove = nov_cta_cte();
-$Periodo = (isset($_GET['peri'])) ? $_GET['peri'] : $Periodo['max'];
-$noves = (super_unique($nove, 'cod'));
-$Novedad = (isset($_GET['nove'])) ? $_GET['nove'] : $noves[0]['cod'];
+$getPeri = $_GET['peri'] ?? '';
+$Periodo = $getPeri ? $getPeri : $Periodo['max'];
+$noves = super_unique($nove, 'cod');
+$Novedad = isset($_GET['nove']) ? $_GET['nove'] : $noves[0]['cod'];
 $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
 
 ?>
@@ -50,89 +51,84 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
                 </div>
             </div>
         </div>
-        <?php if ($nove[0]['peri']) { ?>
-            <div class="row radius py-2">
-                <?php
-                $FechaMinMax = (fecha_min_max('FICHAS3', 'FICHAS3.FicFech'));
-                $FirstDate = $FechaMinMax['min'];
-                /** FirstDate */
-                $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
-                /** FirstYear */
-                $maxDate = $FechaMinMax['max'];
-                /** maxDate */
-                $maxYear = date('Y');
-                /** maxYear */
-                // if (!isset($_GET['_dr']) or (empty($_GET['_dr']))) {
-                $FechaIni = date("Y-m-d", strtotime(hoy() . "- 1 month"));
-                $FechaFin = $FechaMinMax['max'];
-                if ($FechaIni > $FechaFin) {
-                    $FechaIni = $FechaMinMax['min'];
-                }
-                // } else {
-                //     $DateRange = explode(' al ', $_GET['_dr']);
-                //     $FechaIni  = test_input(dr_fecha($DateRange[0]));
-                //     $FechaFin  = test_input(dr_fecha($DateRange[1]));
-                // }
-                ?>
-                <div class="col-12 col-sm-6">
-                    <a title="Cta Cte Novedades" href="../"
-                        class="btn btn-outline-custom border-0 btn-sm fontq">Novedades</a>
-                </div>
-                <div class="col-12 col-sm-6 d-flex justify-content-end">
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="todo" name="cta" class="custom-control-input" value="3">
-                        <label class="custom-control-label" for="todo" style="padding-top: 3px;">Todo</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="debe" name="cta" class="custom-control-input" value="1">
-                        <label class="custom-control-label" for="debe" style="padding-top: 3px;">Debe</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="haber" name="cta" class="custom-control-input" value="2">
-                        <label class="custom-control-label" for="haber" style="padding-top: 3px;">Haber</label>
-                    </div>
-                    <input type="hidden" id="cta">
-                </div>
+        <?php // if ($nove[0]['peri']) { ?>
+        <div class="row radius py-2">
+            <?php
+            $FechaMinMax = fecha_min_max('FICHAS3', 'FICHAS3.FicFech');
+            $FirstDate = $FechaMinMax['min'];
+            /** FirstDate */
+            $FirstYear = Fech_Format_Var($FechaMinMax['min'], 'Y');
+            /** FirstYear */
+            $maxDate = $FechaMinMax['max'];
+            /** maxDate */
+            $maxYear = date('Y');
+            /** maxYear */
+            // if (!isset($_GET['_dr']) or (empty($_GET['_dr']))) {
+            $FechaIni = date("Y-m-d", strtotime(hoy() . "- 1 month"));
+            $FechaFin = $FechaMinMax['max'];
+            if ($FechaIni > $FechaFin) {
+                $FechaIni = $FechaMinMax['min'];
+            }
+            ?>
+            <div class="col-12 col-sm-6">
+                <a title="Cta Cte Novedades" href="../"
+                    class="btn btn-outline-custom border-0 btn-sm fontq">Novedades</a>
             </div>
-            <div class="row bg-white">
-                <div class="col-12 animate__animated animate__fadeIn pb-3 table-responsive">
-                    <table class="table table-hover text-wrap w-100" id="table-cte_hor">
-                        <thead class="text-uppercase">
-                            <th class="text-center"></th>
-                            <th class="">LEG.</th>
-                            <th class="">NOMBRE</th>
-                            <th class="text-center" title="">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>RESULTADO DE CTA CTE</b>">CTA CTE</span>
-                            </th>
-                            <th class="text-center">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>HORAS HECHAS</b>">HECHAS</span>
-                            </th>
-                            <th class="text-center">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>JORNADA REDUCIDA<br> RESTA EN CTA CTE</b>">JOR R. -</span>
-                            </th>
-                            <th class="text-center">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>JORNADA REDUCIDA<br> SUMA EN CTA CTE</b>">JOR R. +</span>
-                            </th>
-                            <th class="text-center">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>FRANCOS<br/>RESTA EN CTA CTE</b>">FRANCOS -</span>
-                            </th>
-                            <th class="text-center">
-                                <span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    title="<b>FRANCOS<br/>SUMA EN CTA CTE</b>">FRANCOS +</span>
-                            </th>
-                            <!-- <th class="text-center" title="">SUMA</th> -->
-                        </thead>
-                    </table>
+            <div class="col-12 col-sm-6 d-flex justify-content-end">
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="todo" name="cta" class="custom-control-input" value="3">
+                    <label class="custom-control-label" for="todo" style="padding-top: 3px;">Todo</label>
                 </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="debe" name="cta" class="custom-control-input" value="1">
+                    <label class="custom-control-label" for="debe" style="padding-top: 3px;">Debe</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="haber" name="cta" class="custom-control-input" value="2">
+                    <label class="custom-control-label" for="haber" style="padding-top: 3px;">Haber</label>
+                </div>
+                <input type="hidden" id="cta">
             </div>
-        <?php } else {
-            echo '<div class="w-100 text-white p-3 fw4 mt-3 radius opa7 bg-custom">No hay Información en cuenta corriente.</div>';
-        }
+        </div>
+        <div class="row bg-white">
+            <div class="col-12 animate__animated animate__fadeIn pb-3 table-responsive">
+                <table class="table table-hover text-wrap w-100" id="table-cte_hor">
+                    <thead class="text-uppercase">
+                        <th class="text-center"></th>
+                        <th class="">LEG.</th>
+                        <th class="">NOMBRE</th>
+                        <th class="text-center" title="">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>RESULTADO DE CTA CTE</b>">CTA CTE</span>
+                        </th>
+                        <th class="text-center">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>HORAS HECHAS</b>">HECHAS</span>
+                        </th>
+                        <th class="text-center">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>JORNADA REDUCIDA<br> RESTA EN CTA CTE</b>">JOR R. -</span>
+                        </th>
+                        <th class="text-center">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>JORNADA REDUCIDA<br> SUMA EN CTA CTE</b>">JOR R. +</span>
+                        </th>
+                        <th class="text-center">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>FRANCOS<br/>RESTA EN CTA CTE</b>">FRANCOS -</span>
+                        </th>
+                        <th class="text-center">
+                            <span data-toggle="tooltip" data-placement="top" data-html="true"
+                                title="<b>FRANCOS<br/>SUMA EN CTA CTE</b>">FRANCOS +</span>
+                        </th>
+                        <!-- <th class="text-center" title="">SUMA</th> -->
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <?php //} else {
+        // echo '<div class="w-100 text-white p-3 fw4 mt-3 radius opa7 bg-custom">No hay Información en cuenta corriente.</div>';
+        //}
         ?>
     </div>
     <?php
