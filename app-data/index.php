@@ -666,8 +666,36 @@ Flight::route('/horarios/asign/@legajo', function ($legajo) {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asign/legajo/$legajo";
     $data = ch_api($endpoint, '', 'GET', '');
     $asign = json_decode($data, true);
-    // sleep(1);
     $asign = (($asign['RESPONSE_CODE'] ?? '') == '200 OK') ? $asign['DATA'] ?? [] : [];
+    if ($asign['desde-hasta']) {
+        foreach ($asign['desde-hasta'] as $key => $value) {
+            $F1 = date('Ymd', strtotime($value['Ho2Fec1']));
+            $F2 = date('Ymd', strtotime($value['Ho2Fec2']));
+            $F3 = date('Ymd', strtotime($value['FechaHora']));
+            $uniqueKey = $F1 . $F2 . $value['Ho2Hora'] . $value['Ho2Lega'] . $F3;
+            $asign['desde-hasta'][$key]['UniqueKey'] = $uniqueKey;
+            // $asign['desde-hasta-unique'][] = $uniqueKey;
+        }
+    }
+    if ($asign['rotacion']) {
+        foreach ($asign['rotacion'] as $key => $value) {
+            $F1 = date('Ymd', strtotime($value['RoLFech']));
+            $F2 = date('Ymd', strtotime($value['RoLVenc']));
+            $F3 = date('Ymd', strtotime($value['FechaHora']));
+            $uniqueKey = $F1 . $F2 . $value['RoLRota'] . $value['RoLLega'] . $F3;
+            $asign['rotacion'][$key]['UniqueKey'] = $uniqueKey;
+            $asign['rotacion-unique'][] = $uniqueKey;
+        }
+    }
+    if ($asign['desde']) {
+        foreach ($asign['desde'] as $key => $value) {
+            $F1 = date('Ymd', strtotime($value['Ho1Fech']));
+            $F3 = date('Ymd', strtotime($value['FechaHora']));
+            $uniqueKey = $F1 . $value['Ho1Hora'] . $value['Ho1Lega'] . $F3;
+            $asign['desde'][$key]['UniqueKey'] = $uniqueKey;
+            // $asign['desde-unique'][] = $uniqueKey;
+        }
+    }
     Flight::json($asign ?? []);
 });
 Flight::route('/rotacion', function () {

@@ -252,32 +252,30 @@ Prioridad_Rotacion AS (
             WHERE (
                     (
                         (
-                            (
-                                DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) + (RL.RoLDias - 1)
-                            ) % (
-                                SELECT SUM(RotDias)
-                                FROM ROTACIO1
-                                WHERE RotCodi = RL.RoLRota
-                            )
+                            DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) + (RL.RoLDias - 1)
+                        ) % (
+                            SELECT SUM(RotDias)
+                            FROM ROTACIO1
+                            WHERE RotCodi = RL.RoLRota
                         )
                     ) >= ISNULL(R1.DiasAcumulados, 0)
                 )
                 AND (
                     (
                         (
-                            (
-                                DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) + (RL.RoLDias - 1)
-                            ) % (
-                                SELECT SUM(RotDias)
-                                FROM ROTACIO1
-                                WHERE RotCodi = RL.RoLRota
-                            )
+                            DATEDIFF(DAY, CAST(RL.RoLFech AS DATE), B.Fecha) + (RL.RoLDias - 1)
+                        ) % (
+                            SELECT SUM(RotDias)
+                            FROM ROTACIO1
+                            WHERE RotCodi = RL.RoLRota
                         )
                     ) < (ISNULL(R1.DiasAcumulados, 0) + R1.RotDias)
                 )
             ORDER BY R1.RotItem
         ) R1
         LEFT JOIN HORARIOS H ON H.HorCodi = R1.RotHora
+    WHERE RL.RoLLega IS NOT NULL
+        AND R1.RotHora IS NOT NULL
 ),
 -- ================================================
 -- 8️⃣  HORALE1 (Prioridad 4)

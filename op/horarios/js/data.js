@@ -404,11 +404,22 @@ $(function () {
     }
     dt_tablePersonal();
 
+    const getAcciones = () => {
+        const horarios = ls.get(LS_HORARIOS) ?? [];
+        const acciones = horarios.acciones ?? [];
+        return acciones;
+    }
+    const PERMISOS = getAcciones();
+
     const dt_getHorale1 = async (selector, data) => {
         tableData = data; // Store the data in the outer scope
         if ($.fn.DataTable.isDataTable(selector)) {
             await $(selector).DataTable().clear().destroy();
         }
+
+        const horariosColumn = ls.get(LS_HORARIOS)?.horariosColumn ?? {};
+        const horariosCache = {};
+        const htmlCache = {};
 
         const table = $(selector).DataTable({
             "data": tableData,
@@ -416,21 +427,29 @@ $(function () {
             createdRow: function (row, data, dataIndex) {
                 $(row).attr('data-index', dataIndex);
             },
+            pageLength: 10,
             columns: [
                 {
                     data: 'Ho1Hora', className: 'align-middle', targets: 'Ho1Hora', title: '',
-                    "render": function (data, type, row, meta) {
-                        const dataHorario = getHorariosColumn(data);
+                    render: function (data, type, row, meta) {
                         if (type === 'display') {
-                            return grillaHorarios2(dataHorario, `${row.Ho1FechStr}`);
+                            const cacheKey = row.UniqueKey;
+                            if (!horariosCache[cacheKey]) {
+                                horariosCache[cacheKey] = horariosColumn[row.Ho1Hora];
+                            }
+                            const dataHorario = horariosCache[cacheKey];
+                            if (!htmlCache[cacheKey]) {
+                                htmlCache[cacheKey] = grillaHorarios2(dataHorario, row.Ho1FechStr);
+                            }
+                            return htmlCache[cacheKey];
                         }
-                        return data + row.Ho1HoraStr + dataHorario.ID + row.Ho1FechStr;
+                        return data;
                     },
                 },
             ],
             deferRender: true,
-            paging: false,
-            searching: true,
+            paging: true,
+            searching: false,
             info: false,
             ordering: false,
             select: true,
@@ -459,41 +478,50 @@ $(function () {
         $(selector + " thead").remove()
         const total = data.length ?? 0;
         let titleTabla = '';
-        if (total > 0) {
-            titleTabla = '<div>Horarios Desde: <span class="ls1">(' + (total) + ')</span></div>';
-        } else {
-            titleTabla = '<div class="fw4">Sin Horario Desde asignado.</div>';
-        }
-        qs('#titleDesde').innerHTML = titleTabla
-        dt_custom_search('.searchDesde', table);
+        const title1 = '<div>Horarios Desde: <span class="ls1">(' + (total) + ')</span></div>';
+        const title2 = '<div class="fw4">Sin Horario Desde asignado.</div>';
+        titleTabla = (total > 0) ? title1 : title2;
+        $('#titleDesde').html(titleTabla);
+        // dt_custom_search('.searchDesde', table);
     }
     const dt_getHorale2 = async (selector, data) => { // Tabla de Horarios desde hasta
         tableData2 = data;
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
-
+        const horariosColumn = ls.get(LS_HORARIOS)?.horariosColumn ?? {};
+        const horariosCache = {};
+        let htmlCache = {};
         const table = $(selector).DataTable({
             "data": tableData2,
             dom: dom_table(),
             createdRow: function (row, data, dataIndex) {
                 $(row).attr('data-index', dataIndex);
+                // console.log(dataIndex);
             },
+            pageLength: 10,
             columns: [
                 {
                     data: 'Ho2Hora', className: 'align-middle', targets: 'Ho2Hora', title: '',
-                    "render": function (data, type, row, meta) {
-                        const dataHorario = getHorariosColumn(data);
+                    render: function (data, type, row, meta) {
                         if (type === 'display') {
-                            return grillaHorarios2(dataHorario, `${row.Ho2Fec1Str} al ${row.Ho2Fec2Str}`);
+                            const cacheKey = row.UniqueKey;
+                            if (!horariosCache[cacheKey]) {
+                                horariosCache[cacheKey] = horariosColumn[row.Ho2Hora];
+                            }
+                            const dataHorario = horariosCache[cacheKey];
+                            if (!htmlCache[cacheKey]) {
+                                htmlCache[cacheKey] = grillaHorarios2(dataHorario, `${row.Ho2Fec1Str} al ${row.Ho2Fec2Str}`);
+                            }
+                            return htmlCache[cacheKey];
                         }
-                        return data + row.Ho2HoraStr + dataHorario.ID + row.Ho2FechStr;
+                        return data;
                     },
                 },
             ],
             deferRender: true,
-            paging: false,
-            searching: true,
+            paging: true,
+            searching: false,
             info: false,
             ordering: false,
             responsive: false,
@@ -520,18 +548,17 @@ $(function () {
         });
 
         $(selector + " thead").remove()
+        $(selector + " tfoot").remove()
         const total = data.length ?? 0;
         let titleTabla = '';
-        if (total > 0) {
-            titleTabla = '<div>Horarios Desde Hasta: <span class="ls1">(' + (total) + ')</span></div>';
-        } else {
-            titleTabla = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
-        }
+        const title1 = '<div>Horarios Desde Hasta: <span class="ls1">(' + (total) + ')</span></div>';
+        const title2 = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
+        titleTabla = (total > 0) ? title1 : title2;
         $('#titleDesdeHasta').html(titleTabla)
-        dt_custom_search('.searchDesdeHasta', table)
+        // dt_custom_search('.searchDesdeHasta', table)
     }
     const dt_getCitacion = async (selector, data) => { // Tabla de Citaciones
-        const PERMISOS = getAcciones();
+        // const PERMISOS = getAcciones();
         tableData4 = data; // almacena los datos en el ámbito exterior
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
@@ -542,16 +569,19 @@ $(function () {
             createdRow: function (row, data, dataIndex) {
                 $(row).attr('data-index', dataIndex);
             },
+            pageLength: 10,
             columns: [
                 {
                     data: 'CitFechStr', className: '', targets: 'CitFechStr', title: 'Fecha',
                     "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         return '<span title="Fecha Citación">' + data + '</span>'
                     },
                 },
                 {
                     className: 'text-nowrap', targets: 'CitEntra', title: 'Citación',
                     "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         let datacol = '<span title="Horario de Citación">' + row['CitEntra'] + ' a ' + row['CitSale'] + '</span>'
                         return datacol;
                     },
@@ -559,6 +589,7 @@ $(function () {
                 {
                     className: '', targets: 'CitDesc', title: 'Descanso',
                     "render": function (data, type, row, meta) {
+                        if (type !== 'display') return row['CitDesc'] ?? '';
                         const descanso = row['CitDesc'] ?? '';
                         const hintClass = clasesHintInfoR.join(' ');
                         const strDescanso = (descanso != '00:00') ? `<span class="${hintClass}" aria-label="Descanso de Citación">(${descanso})</span>` : '';
@@ -574,6 +605,7 @@ $(function () {
                 {
                     data: '', className: 'w-100 text-right', targets: '', title: '',
                     "render": function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         return `
                             ${accionesBtnHorarios(PERMISOS['mCit'], PERMISOS['bCit'])}
                         `;
@@ -583,8 +615,8 @@ $(function () {
             deferRender: true,
             bProcessing: false,
             serverSide: false,
-            paging: false,
-            searching: true,
+            paging: true,
+            searching: false,
             info: false,
             ordering: false,
             responsive: false,
@@ -613,21 +645,23 @@ $(function () {
 
         // $(selector + " thead").remove()
         const total = data.length ?? 0;
+        $(selector + " thead").remove()
+
         let titleTabla = '';
-        if (total > 0) {
-            titleTabla = '<div>Citaciones: <span class="ls1">(' + (total) + ')</span></div>';
-        } else {
-            $(selector + " thead").remove()
-            titleTabla = '<div class="fw4">Sin Citaciones.</div>';
-        }
+        const title1 = '<div>Citaciones: <span class="ls1">(' + (total) + ')</span></div>';
+        const title2 = '<div class="fw4">Sin Citaciones.</div>';
+        titleTabla = (total > 0) ? title1 : title2;
         $('#titleCitaciones').html(titleTabla)
-        dt_custom_search('.searchCitaciones', table)
+        // dt_custom_search('.searchCitaciones', table)
     }
     const dt_getRotacion = async (selector, data) => {
         tableData3 = data; // almacena los datos en el ámbito exterior
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
+        const rotacionColumn = ls.get(LS_HORARIOS)?.rotacionColumn ?? {};
+        const rotacionCache = {};
+        let htmlCache = {};
         const table = $(selector).DataTable({
             initComplete: function (settings) {
                 $(selector + " thead").remove()
@@ -637,24 +671,33 @@ $(function () {
             createdRow: function (row, data, dataIndex) {
                 $(row).attr('data-index', dataIndex);
             },
+            pageLength: 10,
             columns: [
                 {
                     data: 'RoLRota', className: 'align-middle', targets: 'Ho2Hora', title: '',
-                    "render": function (data, type, row, meta) {
-                        const dataRotacion = getRotacionColumn(data);
-                        const vence = (row.RolVencStr != '31/12/2099') ? ` al ${row.RolVencStr}` : ''
-                        const desde = (row.RolVencStr != '31/12/2099') ? `Desde: ` : 'Del: '
+                    render: function (data, type, row, meta) {
                         if (type === 'display') {
-                            return grillaRotaciones2(dataRotacion, `${desde}${row.RolFechStr}${vence}`);
+                            const cacheKey = row.UniqueKey;
+                            if (!rotacionCache[cacheKey]) {
+                                rotacionCache[cacheKey] = rotacionColumn[row.RoLRota];
+                            }
+                            const dataRotacion = rotacionCache[cacheKey];
+
+                            if (!htmlCache[cacheKey]) {
+                                const vence = (row.RolVencStr != '31/12/2099') ? ` al ${row.RolVencStr}` : ''
+                                const desde = (row.RolVencStr != '31/12/2099') ? `Desde: ` : 'Del: '
+                                htmlCache[cacheKey] = grillaRotaciones2(dataRotacion, `${desde}${row.RolFechStr}${vence}`);
+                            }
+                            return htmlCache[cacheKey];
                         }
-                        return data + row.RoLRota + dataRotacion.ID + row.RolFechStr + row.RolRotaStr;
+                        return data;
                     },
                 },
 
             ],
             deferRender: true,
-            paging: false,
-            searching: true,
+            paging: true,
+            searching: false,
             info: false,
             ordering: false,
             responsive: false,
@@ -684,17 +727,19 @@ $(function () {
 
         $(selector + " thead").remove()
         const total = data.length ?? 0;
+
         let titleTabla = '';
-        if (total > 0) {
-            titleTabla = '<div>Rotaciones: <span class="ls1">(' + (total) + ')</span></div>';
-        } else {
-            titleTabla = '<div class="fw4">Sin Rotación asignada.</div>';
-        }
+        const title1 = '<div>Rotaciones: <span class="ls1">(' + (total) + ')</span></div>';
+        const title2 = '<div class="fw4">Sin Rotación asignada.</div>';
+        titleTabla = (total > 0) ? title1 : title2;
         $('#titleRotaciones').html(titleTabla)
-        dt_custom_search('.searchRotaciones', table)
+        // dt_custom_search('.searchRotaciones', table)
     }
     const dom_table = () => {
-        return `<'table-responsive table-hover pointer fadeIn't>`
+        return `
+            <'table-responsive table-hover pointer fadeIn't>
+            <'d-flex justify-content-center align-items-center p-0 m-0'p>
+            `
     }
     const get_horarios = async () => {
         axios.get('../../app-data/horarios').then(async (response) => {
@@ -1026,32 +1071,18 @@ $(function () {
         `
         return grillaSemanaHtml
     }
-    const getAcciones = () => {
-        const horarios = ls.get(LS_HORARIOS) ?? [];
-        const acciones = horarios.acciones ?? [];
-        return acciones;
-    }
     const grillaHorarios2 = (row, fecha) => {
-        const PERMISOS = getAcciones();
 
         const Desc = row.Desc
         const Cod = row.Codi
         const ID = row.ID
         const colorRgb = row.Color;
         const colorText = row.ColorText;
-        const checkIcon = `<i class="bi bi-check-circle-fill text-success"></i>`;
-        const dashIcon = `<i class="bi bi-dash-circle text-secondary"></i>`;
-        const styleColor = `style="width: 53px; background-color: ${colorRgb}; color: ${colorText}; font-size: 10px;"`
+        const styleColor = `style="width: 40px; background-color: ${colorRgb}; color: ${colorText}; font-size: 10px; height: 25px; padding: 2px 5px; font-size: 12px;"`
 
         const iconCheck = (day) => {
-            const spanIcon = row[day].LaboralID ? checkIcon : dashIcon
-            const descanso = row[day].Descanso == '00:00' ? '' : ` <span class="font06">(D)</span>`
             const spanHoras = row[day].Horas ? `<span>${row[day].Horas}</span>` : ''
-            return `
-            <div class="d-flex flex-column justify-content-center align-items-center">
-                <span>${spanHoras}</span>
-            </div>
-            `
+            return spanHoras;
         }
         const hintDay = (day) => {
             const Descanso = day.Descanso == '00:00' ? '' : `(${day.Descanso})`
@@ -1061,7 +1092,6 @@ $(function () {
             return (parseInt(f[day].LaboralID)) ? 'bg-ddd radius hint--top hint--info hint--no-shadow' : 'bg-white'
         }
         const grillaSemanaHtml = `
-        <div class="">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="text-dark">${fecha}<br>(${Cod}) ${Desc}</div>
                 <div class="d-inline-flex align-items-center" style="gap: 5px;">
@@ -1071,39 +1101,38 @@ $(function () {
             </div>
             <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
                 <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
-                    <span>Lun</span>
-                    <span>${iconCheck('Lunes')}</span>
+                    Lun
+                    ${iconCheck('Lunes')}
                 </div>
                 <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
-                    <span>Mar</span>
-                    <span>${iconCheck('Martes')}</span>
+                    Mar
+                    ${iconCheck('Martes')}
                 </div>
                 <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
-                    <span>Mie</span>
-                    <span>${iconCheck('Miércoles')}</span>
+                    Mie
+                    ${iconCheck('Miércoles')}
                 </div>
                 <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
-                    <span>Jue</span>
-                    <span>${iconCheck('Jueves')}</span>
+                    Jue
+                    ${iconCheck('Jueves')}
                 </div>
                 <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
-                    <span>Vie</span>
-                    <span>${iconCheck('Viernes')}</span>
+                    Vie
+                    ${iconCheck('Viernes')}
                 </div>
                 <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
-                    <span>Sab</span>
-                    <span>${iconCheck('Sábado')}</span>
+                    Sab
+                    ${iconCheck('Sábado')}
                 </div>
                 <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
-                    <span>Dom</span>
-                    <span>${iconCheck('Domingo')}</span>
+                    Dom
+                    ${iconCheck('Domingo')}
                 </div>
                 <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
-                    <span>Fer</span>
-                    <span>${iconCheck('Feriado')}</span>
+                    Fer
+                    ${iconCheck('Feriado')}
                 </div>
             </div>
-        </div>
         `
         return grillaSemanaHtml
     }
@@ -1158,8 +1187,8 @@ $(function () {
         `
         return grillaSemanaHtml
     }
+    // const PERMISOS = getAcciones();
     const grillaRotaciones2 = (row, fecha) => {
-        const PERMISOS = getAcciones();
         const RotDesc = row.RotDesc
         const RotCodi = row.RotCodi
         const RotData = row.RotData
@@ -1359,9 +1388,9 @@ $(function () {
         const textMarcados = cantidadMarcados > 0 ? `<br> <span class="font08 text-primary fw5">Legajos Marcados : (${cantidadMarcados})</span>` : textNoMarcados;
         return textMarcados;
     }
+    // const PERMISOS = getAcciones();
     const getModal = async (data) => {
         CheckSesion();
-        const PERMISOS = getAcciones();
 
         const textMarcados = textMarcadosModal();
 
@@ -1965,7 +1994,6 @@ $(function () {
 
         const fechaActual = new Date(new Date().setDate(new Date().getDate() + 1));
         const fechaActual7 = new Date(new Date().setDate(new Date().getDate() + 7));
-        console.log(moment().startOf("week").add(1, "days"));
 
         const proximaSemana = [
             moment().add(1, "week").startOf("week").add(1, "days"),

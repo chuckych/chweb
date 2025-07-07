@@ -1659,11 +1659,12 @@ class Horarios
         $conn = $this->conect->check_connection();
         $inicio = microtime(true);
 
+        $this->check_version_file_sql_sp();
+
         if (!$this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
             $this->create_sp_horarios($conn);
         }
 
-        $this->check_version_file_sql_sp();
 
         // ========================
         // 1. Definir los parámetros de entrada para el Stored Procedure
@@ -2158,7 +2159,7 @@ class Horarios
     {
         $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
         $sqlFilePath = __DIR__ . '/sql/sp_obtener_reporte_horarios';
-        $timestampFilePath = __DIR__ . '/sql/sp_obtener_reporte_horarios_timestamp.log';
+        $timestampFilePath = __DIR__ . '/sql/sp_obtener_reporte_horarios_timestamp_' . ID_COMPANY . '.log';
 
         $log = function ($text) use ($logFile) {
             $this->log->write($text, $logFile);

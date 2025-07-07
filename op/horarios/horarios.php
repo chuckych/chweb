@@ -78,6 +78,15 @@
             color: var(--main-bg-modcolor) !important;
             opacity: 0.8;
         }
+
+        .dataTables_paginate {
+            margin-top: 0px !important;
+        }
+
+        #tablePersonal_paginate,
+        #tabla_paginate {
+            margin-top: 20px !important;
+        }
     </style>
 </head>
 
