@@ -604,16 +604,87 @@ Flight::route('/fechas/fichas', function () {
 });
 Flight::route('POST /get_personal_horarios', function () {
     require __DIR__ . '/../op/horarios/getPersonal.php';
-    $horarioLegajos = get_horario_actual($arrLegajos) ?? [];
-    // $dataPersonal = ($json_data['data']) ?? [];
+
+
+    // $horarioLegajos = get_horario_actual($arrLegajos) ?? []; // esto llama al webservice de horarios. lo reemplazamos por el Flight::asignados($payload);
+    // print_r($data) . exit;
+    $fechaHoy = date('Y-m-d');
+    $payload = [
+        "FechaDesde" => $fechaHoy,
+        "FechaHasta" => $fechaHoy,
+        "Legajos" => $arrLegajos ?? [],
+    ];
+
+    $response = Flight::asignados($payload);
+    $DATA = $response['DATA'] ?? [];
+    // $totalData = count($DATA);
+
+    $dataHorarios = [];
+    foreach ($DATA as $legajoData) {
+        $dataHorarios = array_merge($dataHorarios, $legajoData);
+    }
+    // Mapear datos en una sola pasada
+    $horarioLegajos = array_map(function ($horario) {
+        $sinHorario = $horario['CodigoHorario'] == '0';
+
+        $TipoAsignStr = $sinHorario
+            ? 'Sin horario Asignado (Franco)'
+            : $horario['Asignacion'] . ' por Legajo (' . $horario['Horario'] . ') ' . $horario['DescripcionHorario'];
+
+        return [
+            'Codigo' => $horario['CodigoHorario'],
+            'Descanso' => $horario['Descanso'],
+            'Desde' => $horario['Entrada'],
+            'Hasta' => $horario['Salida'],
+            'Dia' => $horario['Dia'],
+            'Fecha' => $horario['Fecha'],
+            'Feriado' => $horario['Feriado'] == '1' ? 'Sí' : 'No',
+            'Horario' => $horario['DescripcionHorario'],
+            'HorarioID' => $horario['HorID'],
+            'Laboral' => $horario['Laboral'] == '1' ? 'Sí' : 'No',
+            'Legajo' => $horario['Legajo'],
+            'TipoAsign' => $sinHorario ? 'Sin horario Asignado (Franco)' : $horario['Asignacion'],
+            'TipoAsignStr' => $TipoAsignStr,
+        ];
+    }, $dataHorarios);
+
+    // Alternativa más eficiente usando generador (para datasets grandes)
+    function procesarHorarios($DATA)
+    {
+        foreach ($DATA as $legajoData) {
+            foreach ($legajoData as $horario) {
+                $sinHorario = $horario['CodigoHorario'] == '0';
+
+                yield [
+                    'Codigo' => $horario['CodigoHorario'],
+                    'Descanso' => $horario['Descanso'],
+                    'Desde' => $horario['Entrada'],
+                    'Hasta' => $horario['Salida'],
+                    'Dia' => $horario['Dia'],
+                    'Fecha' => $horario['Fecha'],
+                    'Feriado' => $horario['Feriado'] == '1' ? 'Sí' : 'No',
+                    'Horario' => $horario['DescripcionHorario'],
+                    'HorarioID' => $horario['HorID'],
+                    'Laboral' => $horario['Laboral'] == '1' ? 'Sí' : 'No',
+                    'Legajo' => $horario['Legajo'],
+                    'TipoAsign' => $sinHorario ? 'Sin horario Asignado (Franco)' : $horario['Asignacion'],
+                    'TipoAsignStr' => $sinHorario
+                        ? 'Sin horario Asignado (Franco)'
+                        : $horario['Asignacion'] . ' por Legajo (' . $horario['Horario'] . ') ' . $horario['DescripcionHorario'],
+                ];
+            }
+        }
+    }
+
+    // Para usar el generador:
+    // $horarioLegajos = iterator_to_array(procesarHorarios($DATA));
     if ($horarioLegajos) {
-        foreach ($data as $key => $value) {
-            // encontrar el legajo en el array de horarios y agregarlo al array de personal
-            $horario = array_filter($horarioLegajos, function ($element) use ($value) {
-                return $element['Legajo'] == $value['pers_legajo'];
-            });
-            $horario = array_values($horario);
-            $data[$key]['pers_horario'] = $horario[0] ?? [];
+        // Crear índice hash por legajo
+        $horariosPorLegajo = array_column($horarioLegajos, null, 'Legajo');
+
+        // Asignar horario a cada empleado
+        foreach ($data as $key => $empleado) {
+            $data[$key]['pers_horario'] = $horariosPorLegajo[$empleado['pers_legajo']] ?? [];
         }
     }
 
@@ -1539,7 +1610,6 @@ Flight::route('DELETE /proyectar', function () {
     Flight::json($result ?? []);
 
 });
-
 Flight::route('POST /asignados', function () {
     $request = Flight::request();
     $payload = $request->data ?? [];
@@ -1551,9 +1621,6 @@ Flight::route('POST /asignados', function () {
 
     Flight::json($result ?? []);
 });
-
-
-
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
     exit;

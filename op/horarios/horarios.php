@@ -37,7 +37,7 @@
             padding: 5px;
             padding-left: 16px;
             padding-right: 16px;
-            border: 1px solid #ddd;
+            border: 0px solid #ddd;
         }
 
         .dayGrilla2 {
@@ -224,13 +224,15 @@
                                 <div class="d-inline-flex justify-content-between w-100"
                                     style="border-bottom: 1px solid #ddd;">
                                     <div class="px-2 font08 py-1 d-inline-flex w-100 justify-content-between align-items-center"
-                                        id="titleRotaciones">Rotaciones</div>
+                                        id="titleRotaciones">
+                                        Rotaciones
+                                    </div>
                                     <div class="position-relative p-1">
                                         <input type="text" class="d-none searchRotaciones h25">
                                     </div>
                                 </div>
                                 <div class="overflow-auto w-100" style="max-height:250px">
-                                    <table class="table text-nowrap w-100" id="table-rota"></table>
+                                    <table class="table text-nowrap d-flex w-100" id="table-rota"></table>
                                 </div>
                             </div>
                             <div class="toast RotaDeta border-0" role="alert" aria-live="polite" data-autohide="false"

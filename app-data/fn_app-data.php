@@ -418,6 +418,12 @@ Flight::map('personal', function ($payload) {
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData['DATA'] : [];
     return $result;
 });
+Flight::map('asignados', function ($payload) {
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asignados";
+    $horarios = ch_api($endpoint, $payload, 'POST', '');
+    $horarios = json_decode($horarios, true);
+    return $horarios ?? [];
+});
 
 function novedadesRol()
 {

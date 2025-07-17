@@ -391,10 +391,7 @@ $(function () {
             <span class="font09">(${data.pers_legajo}) ${data.pers_nombre}</span>
             `
             const asign = ls.get(LS_HORARIOS_ASIGN) ?? [];
-            let tableData = [];
-            let tableData2 = [];
-            let tableData3 = [];
-            let tableData4 = [];
+
             dt_getHorale1('#Horale1', asign['desde'] ?? [])
             dt_getHorale2('#Horale2', asign['desde-hasta'] ?? [])
             dt_getRotacion('#table-rota', asign['rotacion'] ?? [])
@@ -412,7 +409,8 @@ $(function () {
     const PERMISOS = getAcciones();
 
     const dt_getHorale1 = async (selector, data) => {
-        tableData = data; // Store the data in the outer scope
+        const tableData = data ?? [];
+
         if ($.fn.DataTable.isDataTable(selector)) {
             await $(selector).DataTable().clear().destroy();
         }
@@ -430,7 +428,7 @@ $(function () {
             pageLength: 10,
             columns: [
                 {
-                    data: 'Ho1Hora', className: 'align-middle', targets: 'Ho1Hora', title: '',
+                    data: 'Ho1Hora', className: 'align-middle w-100', targets: 'Ho1Hora', title: '',
                     render: function (data, type, row, meta) {
                         if (type === 'display') {
                             const cacheKey = row.UniqueKey;
@@ -482,10 +480,13 @@ $(function () {
         const title2 = '<div class="fw4">Sin Horario Desde asignado.</div>';
         titleTabla = (total > 0) ? title1 : title2;
         $('#titleDesde').html(titleTabla);
+
+        ocultarPaginador(selector, tableData.length);
+
         // dt_custom_search('.searchDesde', table);
     }
     const dt_getHorale2 = async (selector, data) => { // Tabla de Horarios desde hasta
-        tableData2 = data;
+        const tableData2 = data ?? [];
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
@@ -502,7 +503,7 @@ $(function () {
             pageLength: 10,
             columns: [
                 {
-                    data: 'Ho2Hora', className: 'align-middle', targets: 'Ho2Hora', title: '',
+                    data: 'Ho2Hora', className: 'align-middle w-100', targets: 'Ho2Hora', title: '',
                     render: function (data, type, row, meta) {
                         if (type === 'display') {
                             const cacheKey = row.UniqueKey;
@@ -555,11 +556,13 @@ $(function () {
         const title2 = '<div class="fw4">Sin Horario Desde Hasta asignado.</div>';
         titleTabla = (total > 0) ? title1 : title2;
         $('#titleDesdeHasta').html(titleTabla)
+
+        ocultarPaginador(selector, tableData2.length);
         // dt_custom_search('.searchDesdeHasta', table)
     }
     const dt_getCitacion = async (selector, data) => { // Tabla de Citaciones
         // const PERMISOS = getAcciones();
-        tableData4 = data; // almacena los datos en el ámbito exterior
+        const tableData4 = data ?? []; // almacena los datos en el ámbito exterior
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
@@ -652,10 +655,12 @@ $(function () {
         const title2 = '<div class="fw4">Sin Citaciones.</div>';
         titleTabla = (total > 0) ? title1 : title2;
         $('#titleCitaciones').html(titleTabla)
+
+        ocultarPaginador(selector, tableData4.length);
         // dt_custom_search('.searchCitaciones', table)
     }
     const dt_getRotacion = async (selector, data) => {
-        tableData3 = data; // almacena los datos en el ámbito exterior
+        const tableData3 = data ?? []; // almacena los datos en el ámbito exterior
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
@@ -674,7 +679,7 @@ $(function () {
             pageLength: 10,
             columns: [
                 {
-                    data: 'RoLRota', className: 'align-middle', targets: 'Ho2Hora', title: '',
+                    data: 'RoLRota', className: 'align-middle w-100', targets: 'Ho2Hora', title: '',
                     render: function (data, type, row, meta) {
                         if (type === 'display') {
                             const cacheKey = row.UniqueKey;
@@ -718,7 +723,6 @@ $(function () {
             const tr = event.target.closest('tr');
             const index = tr.getAttribute('data-index');
             const dataRow = tableData3[index];
-            console.log('dataRow', dataRow);
 
             if (!dataRow) return;
             ls.set(LS_ACTION, mapElementName[elementName]);
@@ -733,6 +737,7 @@ $(function () {
         const title2 = '<div class="fw4">Sin Rotación asignada.</div>';
         titleTabla = (total > 0) ? title1 : title2;
         $('#titleRotaciones').html(titleTabla)
+        ocultarPaginador(selector, tableData3.length);
         // dt_custom_search('.searchRotaciones', table)
     }
     const dom_table = () => {
@@ -1030,7 +1035,7 @@ $(function () {
                     <div ${styleColor} class="h10 px-3 radius ml-2"></div>
                 </div>
             </div>
-            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
+            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white border" style="gap: 2px;">
                 <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
                     <span>Lun</span>
                     <span>${iconCheck('Lunes')}</span>
@@ -1073,11 +1078,11 @@ $(function () {
     }
     const grillaHorarios2 = (row, fecha) => {
 
-        const Desc = row.Desc
-        const Cod = row.Codi
-        const ID = row.ID
-        const colorRgb = row.Color;
-        const colorText = row.ColorText;
+        const Desc = row?.Desc ?? '';
+        const Cod = row?.Codi ?? '';
+        const ID = row?.ID ?? '';
+        const colorRgb = row?.Color ?? '';
+        const colorText = row?.ColorText ?? '';
         const styleColor = `style="width: 40px; background-color: ${colorRgb}; color: ${colorText}; font-size: 10px; height: 25px; padding: 2px 5px; font-size: 12px;"`
 
         const iconCheck = (day) => {
@@ -1099,7 +1104,7 @@ $(function () {
                     <div ${styleColor} class=" p-1 radius ml-2 text-center">${ID ?? '-'}</div>
                 </div>
             </div>
-            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white">
+            <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white border" style="gap: 2px;">
                 <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
                     Lun
                     ${iconCheck('Lunes')}
@@ -1189,15 +1194,15 @@ $(function () {
     }
     // const PERMISOS = getAcciones();
     const grillaRotaciones2 = (row, fecha) => {
-        const RotDesc = row.RotDesc
-        const RotCodi = row.RotCodi
-        const RotData = row.RotData
-        const RotDias = row.RotDias
+        const RotDesc = row?.RotDesc ?? '';
+        const RotCodi = row?.RotCodi ?? '';
+        const RotData = row?.RotData ?? [];
+        const RotDias = row?.RotDias ?? '';
 
         let html = '';
         RotData.forEach(item => {
 
-            let infoHorario = getHorariosColumn(item.RotHora);
+            const infoHorario = getHorariosColumn(item.RotHora);
             const ID = infoHorario.ID
             const colorRgb = infoHorario.Color;
             const colorText = infoHorario.ColorText;
@@ -1206,7 +1211,7 @@ $(function () {
 
             html += `
             <div class="radius p-1 bg-white d-inline-flex hint--top hint--info hint--no-shadow" aria-label="${item.RotDias} Días - ${item.RotHoraStr}">
-                <div class="select d-flex flex-column p-2 font07 text-center border radius bg-light">
+                <div class="select d-flex flex-column p-2 font07 text-center radius bg-ddd">
                     <div class="d-inline-flex justify-content-center align-items-center" style="gap: 5px;">
                         <div>${item.RotDias}D</div>
                         <div ${styleColor}>${textoHorario}</div>
@@ -1216,15 +1221,18 @@ $(function () {
             `
         });
         const grillaSemanaHtml = `
-        <div class="radius p-1">
+        <div class="radius p-1 d-flex flex-column w-100">
             <div class="select d-flex justify-content-between p-1 font08">
-                <div>${fecha}<br>(${RotCodi}) ${RotDesc}</div>
-                 <div class="d-inline-flex align-items-center">
+                <div>
+                    ${fecha}<br>
+                    (${RotCodi}) ${RotDesc}
+                </div>
+                <div class="d-inline-flex align-items-center">
                     ${accionesBtnHorarios(PERMISOS['mTur'], PERMISOS['bTur'])}
                     <div class="font08 ml-2">${RotDias} Días</div>
-                 </div>
+                </div>
             </div>
-            ${html}
+            <div class="border">${html}</div>
         </div>
         `
         return grillaSemanaHtml
@@ -2241,8 +2249,6 @@ $(function () {
             preDrawCallback: function () {
                 const legajoSelected = ls.get(LS_LEGAJO)?.pers_legajo ?? '';
                 const legajoNameSelected = ls.get(LS_LEGAJO)?.pers_nombre ?? '';
-                console.log('Legajo seleccionado:', legajoSelected, legajoNameSelected);
-
                 $('#nameLegajo').html(`(${legajoSelected}) ${legajoNameSelected}`);
                 loaderIn('.tableHorarios', true);
             },
@@ -2254,5 +2260,10 @@ $(function () {
             }
         });
     }
-
+    const ocultarPaginador = (selector, lengthData) => {
+        const paginator = qs(selector + '_paginate') ?? {};
+        const table = qs(selector) ?? {};
+        paginator && (paginator.hidden = lengthData ? false : true);
+        table && (table.style.display = lengthData ? 'block' : 'none');
+    }
 });

@@ -103,7 +103,7 @@ function secure_auth_ch()
         }
         checkDBLocal();
     }
-    session_regenerate_id(); // Regenera la sesión
+    // session_regenerate_id(); // Regenera la sesión
     E_ALL(); // Funciones de error
 }
 function secure_auth_ch_json()
@@ -142,7 +142,7 @@ function secure_auth_ch_json()
             $_SESSION["ultimoAcceso"] = $ahora;
         }
     }
-    session_regenerate_id();
+    // session_regenerate_id();
     E_ALL();
 }
 function secure_auth_ch2()
@@ -180,7 +180,7 @@ function secure_auth_ch2()
         }
         checkDBLocal();
     }
-    session_regenerate_id();
+    // session_regenerate_id();
     E_ALL();
 }
 /** ultimaacc */
