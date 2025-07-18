@@ -1203,9 +1203,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
     try {
         $cliente = $_SESSION['ID_CLIENTE'] ?? ''; // Obtener el ID del cliente
 
-        $validRequestTypes = ['view', 'xls']; // Tipos de reporte válidos
-
-        if (!in_array($tipo, $validRequestTypes)) {
+        if (!in_array($tipo, ['view', 'xls'])) { // Validar el tipo de reporte
             throw new Exception('Tipo de reporte no válido', 400);
         }
 
@@ -1374,10 +1372,10 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                         $legajosColumn[$key]['Varias'] = $calculoVarias >= 0 ? $calculoVarias : 0;
                     }
 
-                    // recorrer legajosColumn y todos los valores que sean del tipo integer aplicarle al funcion minutos_a_horas
+                    // recorrer legajosColumn y todos los valores que sean del tipo integer aplicarle al funcion minutos_a_horas_decimal
                     array_walk_recursive($legajosColumn, function (&$item, $key) {
                         if (is_int($item)) {
-                            $item = minutos_a_horas($item);
+                            $item = minutos_a_horas_decimal($item);
                         }
                     });
 
@@ -1422,8 +1420,8 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
 
                     if ($tipo == 'xls') {
                         $Datos['Data'] = $legajosColumn;
-                        $colsExcel = colsExcel();
                         require __DIR__ . '/fn_spreadsheet.php';
+                        $colsExcel = colsExcel();
                         include __DIR__ . '/../informes/custom/prysmian/xls2.php';
                     }
 

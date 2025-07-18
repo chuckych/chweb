@@ -30,7 +30,7 @@ $columnasExcel = [
         'ancho' => 15,
         'key' => 'FicSectStr',
         'align' => 'HORIZONTAL_LEFT',
-        'format' => '0',
+        'format' => 'General',
         'type' => 'string',
     ],
     "Legajo" => [
@@ -44,7 +44,7 @@ $columnasExcel = [
         'ancho' => 40,
         'key' => 'FicApNo',
         'align' => 'HORIZONTAL_LEFT',
-        'format' => '0',
+        'format' => 'General',
         'type' => 'string',
     ]
 ];

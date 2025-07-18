@@ -685,7 +685,7 @@ function colsExcel(): array
             'ancho' => 15,
             'key' => $value['THoDesc2'],
             'align' => 'HORIZONTAL_CENTER',
-            'format' => '0',
+            'format' => '0.00',
             'type' => 'string',
         ];
     }
@@ -703,6 +703,13 @@ function minutos_a_horas($min)
     $horas = floor($min / 60);
     $minutos = $min % 60;
     return sprintf('%02d:%02d', $horas, $minutos);
+}
+function minutos_a_horas_decimal($min)
+{
+    if (!is_int($min) || $min < 0) {
+        return false;
+    }
+    return $min / 60;
 }
 function horas_custom($legajosColumn, $payload, $claveCustom)
 {
