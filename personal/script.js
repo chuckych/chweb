@@ -36,14 +36,14 @@ $(function () {
             select2Simple('#table-personal_length select', '', false, false)
         },
         "drawCallback": function (settings) {
-            $("td").tooltip({container:'table'});
+            $("td").tooltip({ container: 'table' });
             $('[data-toggle="tooltip"]').tooltip();
             if ($("#_eg").is(":checked")) {
                 $('td').addClass('text-danger')
             } else {
                 $('td').removeClass('text-danger')
             }
-        
+
         },
         bProcessing: true,
         serverSide: true,
@@ -79,57 +79,57 @@ $(function () {
             }
         },
         columns: [
-        {
-            "class": "",
-            "data": 'editar'
-        },
-        {
-            className: '', targets: '', title: 'LEGAJO',
-            "render": function (data, type, row, meta) {
-                return '<span class="text-secondary fontq">'+row.pers_legajo+'</span>' + '<br />' + row.pers_nombre;
+            {
+                "class": "",
+                "data": 'editar'
             },
-        },
-        // {
-        //     "class": "",
-        //     "data": 'pers_legajo'
-        // },
-        // {
-        //     "class": "",
-        //     "data": 'pers_nombre'
-        // },
-        {
-            "class": "text-center ",
-            "data": 'pers_tipo'
-        },
-        // {
-        //     "class": "",
-        //     "data": 'pers_estado'
-        // },
-        {
-            "class": "",
-            "data": 'pers_empresa'
-        },
-        // {
-        //     "class": "",
-        //     "data": 'pers_planta'
-        // },
-        
-        {
-            "class": "",
-            "data": 'pers_sector'
-        },
-        // {
-        //     "class": "",
-        //     "data": 'pers_seccion'
-        // },
-        {
-            "class": "",
-            "data": 'pers_grupo'
-        },
-        {
-            "class": "w-100",
-            "data": 'pers_convenio'
-        },
+            {
+                className: '', targets: '', title: 'LEGAJO',
+                "render": function (data, type, row, meta) {
+                    return '<span class="text-secondary fontq">' + row.pers_legajo + '</span>' + '<br />' + row.pers_nombre;
+                },
+            },
+            // {
+            //     "class": "",
+            //     "data": 'pers_legajo'
+            // },
+            // {
+            //     "class": "",
+            //     "data": 'pers_nombre'
+            // },
+            {
+                "class": "text-center ",
+                "data": 'pers_tipo'
+            },
+            // {
+            //     "class": "",
+            //     "data": 'pers_estado'
+            // },
+            {
+                "class": "",
+                "data": 'pers_empresa'
+            },
+            // {
+            //     "class": "",
+            //     "data": 'pers_planta'
+            // },
+
+            {
+                "class": "",
+                "data": 'pers_sector'
+            },
+            // {
+            //     "class": "",
+            //     "data": 'pers_seccion'
+            // },
+            {
+                "class": "",
+                "data": 'pers_grupo'
+            },
+            {
+                "class": "w-100",
+                "data": 'pers_convenio'
+            },
             // {
             //     "class": "",
             //     "data": 'pers_sucur'
@@ -144,7 +144,7 @@ $(function () {
         ordering: 0,
         responsive: 0,
         language: {
-            "url": "/" + _homehost + "/js/DataTableSpanishShort2.json?"+vjs()
+            "url": "/" + _homehost + "/js/DataTableSpanishShort2.json?" + vjs()
         }
     });
 });

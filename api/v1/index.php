@@ -60,7 +60,6 @@ Flight::route('GET /system/data', function () use ($envData, $response, $ParaGen
     $response->respuesta($data, 0, '', 200, $inicio, 0, ID_COMPANY);
 });
 
-
 Flight::route('PUT /novedades', [$novedades, 'update']);
 Flight::route('DELETE /novedades', [$novedades, 'delete']);
 Flight::route('POST /novedades', [$novedades, 'add']);

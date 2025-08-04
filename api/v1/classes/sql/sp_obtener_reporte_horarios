@@ -29,6 +29,8 @@ CREATE PROCEDURE dbo.sp_ObtenerReporteHorarios @FechaInicio DATE,
 @Horarios_Filtro dbo.TipoTablaHorarios READONLY,
 @FiltroFechaEgreso TINYINT = 0 AS BEGIN
 SET NOCOUNT ON;
+SET DATEFIRST 7;
+-- Establece el primer día de la semana como domingo
 -- ================================================
 -- ⚠️  TIPOS DE TABLA REQUERIDOS -- 
 --    Antes de crear el stored procedure, debes crear estos tipos de tabla

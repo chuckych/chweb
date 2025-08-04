@@ -73,11 +73,11 @@
     require __DIR__ . '/modalNuevoLeg.php';
     ?>
     <script src="altaLeg-min.js?v=<?= version_file("/personal/altaLeg-min.js") ?>"></script>
-    <script src="script-min.js?v=<?= version_file("/personal/script-min.js") ?>"></script>
+    <script src="script.js?v=<?= version_file("/personal/script.js") ?>"></script>
     <script src="perExcel-min.js?v=<?= version_file("/personal/perExcel-min.js") ?>"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="getSelect/select-min.js?v=<?= version_file("/personal/getSelect/select-min.js") ?>"></script>
+    <script src="getSelect/select.js?v=<?= version_file("/personal/getSelect/select.js") ?>"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 
     <script>

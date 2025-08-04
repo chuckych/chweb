@@ -1258,7 +1258,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     }
 
                     $payload['length'] = 100000;
-                    $payload['LegTipo'] = [];
+                    // $payload['LegTipo'] = [];
 
                     array_walk($legajos, function (&$value) use ($sectores) {
                         // Asigna a 'FicSectStr' el valor correspondiente del array $sectores
@@ -1275,6 +1275,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     $keysHoras = array_keys($colsExcel);
                     $legajosColumn = array_column($legajos, null, 'FicLega');
                     $defaultValues = array_fill_keys($keysHoras, 0); // añadir keyHoras a legajosColumn con el valor 0
+
                     array_walk($legajosColumn, function (&$item) use ($defaultValues) { // Iterar sobre legajosColumn
                         $item += $defaultValues; // Añadir valores por defecto
                     });
@@ -1287,6 +1288,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     $payload['Dias'] = [2, 3, 4, 5, 6, 7];
                     $payload['Hora'] = [90];
                     $payload['HoraMin'] = "00:01";
+
                     $ideales = v1_api('/horas/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
                     $idealesData = $ideales['data'] ?? []; // Obtener datos de horas totales por legajo
                     $idealesColumn = array_column($idealesData, null, 'Lega');
@@ -1343,7 +1345,6 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     $tipoHora = v1_api('/horas/data', 'GET', []) ?? []; // Obtener legajos
 
                     $horasParams = horasCustom($params);
-
                     array_push($horasParams, ...$tipoHora);
                     $detalleTipoHoras = array_column($horasParams, null, 'THoCodi');
 

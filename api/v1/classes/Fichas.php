@@ -75,6 +75,7 @@ class Fichas
         $datos = $this->validar_request_legajos(); // Valida los datos recibidos
 
         $Lega = $datos['Lega'] ?? [];
+        $LegTipo = $datos['LegTipo'] ?? [];
         $FechIni = date('Ymd', strtotime($datos['FechIni'])); // Fecha de inicio
         $FechFin = date('Ymd', strtotime($datos['FechFin'])); // Fecha de fin
 
@@ -82,6 +83,7 @@ class Fichas
             $this->resp->respuesta([], 0, 'La fecha de Inicio no puede ser mayor a la fecha de Fin', 400, $inicio, 0, 0);
             exit;
         }
+
         $conn = $this->conect->conn();
         $cols = [
             'FICHAS.FicLega',
@@ -101,6 +103,10 @@ class Fichas
         if ($Lega) {
             $legajos = implode(',', array_map('intval', $Lega));
             $sql .= " AND FICHAS.FicLega IN ($legajos)"; // Si hay legajos, los agrego a la consulta
+        }
+        if ($LegTipo) {
+            $legTipos = implode(',', array_map('intval', $LegTipo));
+            $sql .= " AND PERSONAL.LegTipo IN ($legTipos)"; // Si hay tipos de legajos, los agrego a la consulta
         }
         $sql .= " AND FICHAS.FicFech BETWEEN :FechIni AND :FechFin";
         $sql .= " GROUP BY " . implode(',', $cols) . " ORDER BY FICHAS.FicLega";
@@ -140,12 +146,14 @@ class Fichas
 
         $FechIni = $datos['FechIni'] ?? '';
         $FechFin = $datos['FechFin'] ?? '';
+        $LegTipo = $datos['LegTipo'] ?? [];
         $Lega = $datos['Lega'] ?? [];
 
         $datosRecibidos = [ // Valores por defecto
             'Lega' => !is_array($Lega) ? [] : $Lega,
             'FechIni' => empty($FechIni) ? '' : $FechIni,
             'FechFin' => empty($FechFin) ? '' : $FechFin,
+            'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
         ];
 
         try {
@@ -158,6 +166,7 @@ class Fichas
                 'FechIni' => ['required', 'date'],
                 'FechFin' => ['required', 'date'],
                 'Lega' => ['arrInt'],
+                'LegTipo' => ['arrAllowed01Opt'],
             ];
 
             $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules

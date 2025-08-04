@@ -64,6 +64,7 @@ class InputValidator
             'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
             'allowed1a7' => "El campo $field debe tener un valor permitido. [1, 2, 3, 4, 5, 6, 7]",
             'arrAllowed01' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
+            'arrAllowed01Opt' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
             'arrAllowed1a7' => "El campo $field debe ser un arreglo con valores permitidos. [1, 2, 3, 4, 5, 6, 7]",
             'arrInt' => "El campo $field debe ser un arreglo de números enteros",
@@ -277,6 +278,14 @@ class InputValidator
                 if (!is_array($value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
+                foreach ($value as $val) {
+                    if (!in_array($val, ['0', '1'])) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                    }
+                }
+                break;
+            case 'arrAllowed01Opt':
+                $value = $value ?? [];
                 foreach ($value as $val) {
                     if (!in_array($val, ['0', '1'])) {
                         throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
