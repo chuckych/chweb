@@ -1665,7 +1665,6 @@ class Horarios
             $this->create_sp_horarios($conn);
         }
 
-
         // ========================
         // 1. Definir los parámetros de entrada para el Stored Procedure
         // ========================

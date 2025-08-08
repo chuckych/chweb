@@ -188,8 +188,9 @@ try {
     $wc .= ($dp['Desc']) ? " AND CONCAT('', $Desc, $Codi) LIKE '%$dp[Desc]%'" : '';
     $wc .= ($dp['Estruct'] == 'Lega') ? " AND PERSONAL.LegFeEg = '1753-01-01 00:00:00.000'" : '';
 
-    $query = "SELECT * $SecDesc $TipoNovedad FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
+    $colNov = $Nov ? ', ' . implode(', ', ['NOVEDAD.NovCol1', 'NOVEDAD.NovCol2', 'NOVEDAD.NovCol3', 'NOVEDAD.NovCol4']) : '';
 
+    $query = "SELECT * $SecDesc $TipoNovedad $colNov FROM $tabla $JoinSe2 $JoinTHora $JoinNovC WHERE $Codi > 0";
     $queryCount = "SELECT count(1) as 'count' FROM $tabla WHERE $Codi > 0";
 
     if ($dp['Estruct'] == 'Con') {
@@ -234,6 +235,10 @@ try {
             case $Nov:
                 $item["Tipo"] = $v['NovTipo'];
                 $item["TipoDesc"] = $v['NovTipoDesc'];
+                $item["CodMens1"] = $v['NovCol1'];
+                $item["CodMens2"] = $v['NovCol2'];
+                $item["CodJor1"] = $v['NovCol3'];
+                $item["CodJor2"] = $v['NovCol4'];
                 break;
         }
 

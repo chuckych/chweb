@@ -1,6 +1,44 @@
 <?php
+
+// Utilidad: convierte "HH:MM" (o "H:MM") a minutos.
+function to_minutes($hhmm): int
+{
+    if ($hhmm === null || $hhmm === '')
+        return 0;
+    if (is_int($hhmm))
+        return $hhmm; // ya son minutos
+    $s = trim((string) $hhmm);
+    if ($s === '')
+        return 0;
+    if (is_numeric($s) && strpos($s, ':') === false)
+        return (int) $s; // número en minutos
+    [$h, $m] = array_pad(explode(':', $s), 2, '0');
+    return ((int) $h) * 60 + (int) $m;
+}
+function debugLog($message, $nameLog = 'debug')
+{
+    static $logFiles = [];
+    $date = date('Y-m-d');
+    $dateTime = date('Y-m-d H:i:s');
+    $logFile = __DIR__ . '/logs/' . $date . '_' . $nameLog . '.log';
+
+    // Usa un handle abierto por sesión para mejorar rendimiento
+    if (!isset($logFiles[$logFile])) {
+        $handle = @fopen($logFile, 'a');
+        if ($handle === false) {
+            // Si falla, no detiene la app
+            return;
+        }
+        $logFiles[$logFile] = $handle;
+    } else {
+        $handle = $logFiles[$logFile];
+    }
+
+    fwrite($handle, $dateTime . " - " . $message . PHP_EOL);
+}
 function clean_files($path, $days, $ext)
 {
+    $inicio = microtime(true);
     $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
     foreach ($files as $file) { // recorremos todos los ficheros.
         $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
@@ -8,6 +46,8 @@ function clean_files($path, $days, $ext)
         $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
         ($dateDiff >= $days) ? unlink($file) : ''; //elimino el fichero
     }
+    $fin = microtime(true);
+    debugLog("clean_files {$path}: " . round($fin - $inicio, 2) . " segundos");
 }
 /**
  * Realiza una llamada a la API CH.
@@ -247,6 +287,7 @@ function fic_nove_horas($payload)
 function v1_api($endpoint, $method, $payload)
 {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1" . $endpoint;
+    // file_put_contents('log.txt', "Requesting API: $endpoint\nPayload: " . json_encode($payload) . "\n", FILE_APPEND);
     $data = ch_api($endpoint, $payload, $method, '');
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
@@ -255,17 +296,64 @@ function v1_api($endpoint, $method, $payload)
     }
     return $DATA;
 }
+function cacheData($nameFile, $payload, $nameCache = '', $endpoint, $method = 'POST')
+{
+    $inicio = microtime(true);
+    $filePath = __DIR__ . "/json/{$nameFile}.json";
+    $r = [];
 
+    if (is_file($filePath)) {
+        $json = @file_get_contents($filePath);
+        if ($json !== false) {
+            $r = json_decode($json, true) ?? [];
+            $fin = microtime(true);
+            debugLog("Cache hit {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
+        }
+    } else {
+        $api = v1_api($endpoint, $method, $payload) ?? [];
+        if (@file_put_contents($filePath, json_encode($api, JSON_PRETTY_PRINT)) === false) {
+            debugLog("Error al guardar cache en {$filePath} - {$nameCache}");
+        }
+        $r = $api;
+        $fin = microtime(true);
+        debugLog("Cache miss {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
+    }
+    return $r;
+}
+;
 function get_estructura($query)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct";
-    $data = ch_api($endpoint, [], 'GET', $query);
-    $arrayData = json_decode($data, true);
-    $DATA = $arrayData['DATA'] ?? [];
-    if (empty($DATA)) {
-        return [];
-    }
-    return $DATA;
+    $hashPayload = md5(json_encode($query));
+
+
+    $get = function () use ($hashPayload, $query) {
+        $inicio = microtime(true);
+        $filePath = __DIR__ . "/json/estructura-{$hashPayload}.json";
+        $r = [];
+
+        if (is_file($filePath)) {
+            $json = @file_get_contents($filePath);
+            if ($json !== false) {
+                $r = json_decode($json, true) ?? [];
+                $fin = microtime(true);
+                debugLog("Cache hit estructura - Tiempo: " . round($fin - $inicio, 2));
+            }
+        } else {
+            $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct";
+            $data = ch_api($endpoint, [], 'GET', $query);
+            $arrayData = json_decode($data, true);
+            $DATA = $arrayData['DATA'] ?? [];
+            if (@file_put_contents($filePath, json_encode($DATA, JSON_PRETTY_PRINT)) === false) {
+                debugLog("Error al guardar cache en $filePath");
+            }
+            $fin = microtime(true);
+            debugLog("Cache miss estructura - Tiempo: " . round($fin - $inicio, 2));
+            $r = $DATA;
+        }
+        return $r;
+    };
+
+    return $get();
 }
 function getHorasTotales($payload)
 {
@@ -499,12 +587,16 @@ function dateCustomDay($day)
     return date('Y-m-d', strtotime(date('Y-m-') . $day));
 }
 ;
-function procesar_por_intervalos($data, $payload)
+function procesar_por_intervalos($data, $payload, $flag)
 {
     $intervals = [];
     $currentIntervals = [];
     $payloadData = $payload['data'] ?? []; // Datos del payload
     $LegTipo = $payload['LegTipo'][0] ?? 0; // Tipo de legajo
+    $codLiquidacion = $LegTipo == 1 ? 'CodJor1' : 'CodMens1';
+
+    $abmNovedades = get_estructura(['length' => 1000, 'Estruct' => 'Nov', 'flag' => $flag]);
+    $abmNovedades = array_column($abmNovedades, $codLiquidacion, 'Codi') ?? []; // Convertir a clave-valor para fácil acceso
 
     $Jor1Desde = $payloadData['Jor1Desde'] ?? 1; // Día de inicio de la quincena 1
     $Jor1Hasta = $payloadData['Jor1Hasta'] ?? 15; // Día de fin de la quincena 1
@@ -542,7 +634,7 @@ function procesar_por_intervalos($data, $payload)
                         'Employee' => $lega,
                         'EmployeeStr' => $record['ApNo'],
                         'Digit' => '',
-                        'Cod Inasistencia' => $codigo,
+                        'Cod Inasistencia' => $abmNovedades[$codigo] ?? $codigo,
                         'Novedad' => $novedad['Codi'],
                         'NovedadStr' => $novedad['Desc'],
                         'Fecha inicio' => $fecha,
@@ -567,7 +659,7 @@ function procesar_por_intervalos($data, $payload)
                             'Employee' => $lega,
                             'EmployeeStr' => $record['ApNo'],
                             'Digit' => '',
-                            'Cod Inasistencia' => $codigo,
+                            'Cod Inasistencia' => $abmNovedades[$codigo] ?? $codigo,
                             'Novedad' => $novedad['Codi'],
                             'NovedadStr' => $novedad['Desc'],
                             'Fecha inicio' => $fecha,

@@ -33,6 +33,7 @@ pruebaApiML.php
 *.md
 *.txt
 *.xlsx
+*.7z
 *.xls
 *.csv
 *.sql
