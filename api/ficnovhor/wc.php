@@ -186,6 +186,28 @@ $arrDPONovedad = array(
 $dp['Hora'] = $dp['Hora'] ?? [];
 $dp['Hora'] = vp($dp['Hora'], 'Hora', 'intArray', 5);
 
+$Dias = $dp['Dias'] ?? [];
+// si $Dias no esta vacio. Chequear que sea un arreglo de numeros y que solo se permita del 1 al 7
+
+if (!empty($Dias)) {
+    // Validar, filtrar únicos y ordenar en una sola operación
+    $validos = array_unique(array_filter(
+        array_map('intval', $Dias),
+        static fn($v) => $v >= 1 && $v <= 7
+    ));
+
+    // Verificar si hubo valores inválidos
+    if (count($validos) !== count(array_unique($Dias))) {
+        http_response_code(400);
+        response([], 0, 'Días debe ser un arreglo de números del 1 al 7', 400, $time_start, 0, $idCompany);
+        return; // Añadir return para evitar ejecución posterior
+    }
+
+    // Ordenar y convertir a CSV
+    sort($validos, SORT_NUMERIC);
+    $Dias = implode(',', $validos);
+}
+
 $arrDPHOras = array(
     'Hora' => $dp['Hora'],
     // Hora {int}

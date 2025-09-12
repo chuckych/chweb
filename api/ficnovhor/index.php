@@ -60,6 +60,9 @@ $qFic = "$queryDateFirst;";
 $qFic .= "SELECT $distinct FICHAS.FicFech AS 'Fecha', $colDiaDeLaSemana, $colFechaFormat, PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, $colHorarioStr, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta, $colEstruct $colCierre FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 $joinCierres
 WHERE FICHAS.FicLega > 0 $wcFicFech";
+if ($Dias) {
+    $qFic .= " AND DATEPART(WEEKDAY, FICHAS.FicFech) IN($Dias)";
+}
 $qFic .= $HoraMinMax;
 
 
