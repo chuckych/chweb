@@ -1431,7 +1431,6 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                         'length' => 10000
                     ]) ?? [];
 
-
                     $dataficNoveHora = [];
                     // Agrupar los registros por legajo
                     foreach ($ficNoveHora as $registro) {
@@ -1553,12 +1552,44 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
                     $params = $valoresCustom;
                     $valoresCustom = array_column($valoresCustom, null, 'descripcion');
 
+
+
                     foreach ($clavesCustom as $key => $clave) {
-                        $codNove = explode(',', $valoresCustom[$key]['valores'] ?? '') ?? []; // Obtener los códigos de novedad de 'valoresCustom' según $key y convertirlos en un array
+                        // $codNove = explode(',', $valoresCustom[$key]['valores'] ?? '') ?? []; // Obtener los códigos de novedad de 'valoresCustom' según $key y convertirlos en un array
+
+                        $valores = $valoresCustom[$key]['valores'] ?? '';
+
+                        // Limpiar y filtrar códigos
+                        $codNove = array_filter(
+                            array_map('trim', explode(',', $valores)),
+                            function ($item) {
+                                return $item !== '' && $item !== null;
+                            }
+                        );
+
+                        // Re-indexar para tener índices consecutivos
+                        $codNove = array_values($codNove);
+
                         $payload['Nove'] = $codNove;
-                        $legajosColumn = horas_custom($legajosColumn, $payload, $key);
-                        unset($payload['Nove']);
+                        if (count($codNove) > 0) {
+
+                            $payload['Nove'] = $codNove;
+
+                            $legajosColumn = horas_custom(
+                                $legajosColumn,
+                                $payload,
+                                $key
+                            );
+
+                            unset($payload['Nove']);
+                        }
+                        // $legajosColumn = horas_custom($legajosColumn, $payload, $key);
+                        // unset($payload['Nove']);
                     }
+
+                    // Flight::json($legajosColumn);
+                    // exit;
+
 
                     $tipoHora = cacheData(
                         "tipo-horas-{$flag}",

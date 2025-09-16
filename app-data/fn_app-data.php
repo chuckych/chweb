@@ -803,24 +803,82 @@ function minutos_a_horas_decimal($min)
     }
     return $min / 60;
 }
+function horas_custom_old($legajosColumn, $payload, $claveCustom)
+{
+    try {
+        $lc = $legajosColumn;
+        logger($payload);
+        $tot = v1_api('/novedades/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
+        // logger($tot);
+        $totData = $tot['data'] ?? []; // Obtener datos de horas totales por legajo
+        $totColumn = array_column($totData ?? [], null, 'Lega');
+        // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
+        array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
+            if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
+                foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
+                    $clave = $lc[$Lega] ?? ''; // Obtener el valor de $claveCustom
+                    // $clave = $lc[$Lega][$claveCustom] ?? ''; // Obtener el valor de $claveCustom
+                    $totResult = $total['EnMinutos'] ?? 0; // Obtener 'EnMinutos'
+                    if ($clave) { // Si $clave no está vacío
+
+                        $clave += $totResult; // Asignar 'EnHoras' a $claveCustom
+                    }
+                }
+                // $lc[$Lega][$claveCustom] = minutos_a_horas($lc[$Lega][$claveCustom]);
+            }
+        });
+        return $lc;
+    } catch (\Throwable $th) {
+        logger("Error: " . $th->getMessage());
+    }
+
+}
 function horas_custom($legajosColumn, $payload, $claveCustom)
 {
-    $lc = $legajosColumn;
-    $tot = v1_api('/novedades/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
-    $totData = $tot['data'] ?? []; // Obtener datos de horas totales por legajo
-    $totColumn = array_column($totData ?? [], null, 'Lega');
-    // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
-    array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
-        if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
-            foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
-                $clave = $lc[$Lega][$claveCustom] ?? ''; // Obtener el valor de $claveCustom
-                $totResult = $total['EnMinutos'] ?? 0; // Obtener 'EnMinutos'
-                if ($clave) { // Si $clave no está vacío
-                    $clave += $totResult; // Asignar 'EnHoras' a $claveCustom
+    try {
+        $lc = $legajosColumn;
+        // logger($payload);
+        $tot = v1_api('/novedades/totales', 'POST', $payload) ?? [];
+        $totData = $tot['data'] ?? [];
+        $totColumn = array_column($totData ?? [], null, 'Lega');
+
+        array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
+            if (!empty($value['Totales']) && is_array($value['Totales'])) {
+                $totalMinutos = 0;
+
+                foreach ($value['Totales'] as $total) {
+                    $minutos = $total['EnMinutos'] ?? 0;
+                    if (is_numeric($minutos)) {
+                        $totalMinutos += (int) $minutos;
+                    }
                 }
+
+                // Asegurar que existe la estructura del legajo
+                if (!isset($lc[$Lega])) {
+                    $lc[$Lega] = [];
+                }
+
+                // Inicializar o sumar
+                if (!isset($lc[$Lega][$claveCustom])) {
+                    $lc[$Lega][$claveCustom] = $totalMinutos;
+                } else {
+                    $lc[$Lega][$claveCustom] += $totalMinutos;
+                }
+
+                // Convertir a horas
+                // $lc[$Lega][$claveCustom] = minutos_a_horas($lc[$Lega][$claveCustom]);
             }
-            // $lc[$Lega][$claveCustom] = minutos_a_horas($lc[$Lega][$claveCustom]);
-        }
-    });
-    return $lc;
+        });
+
+        return $lc;
+    } catch (\Throwable $th) {
+        logger("Error en horas_custom: " . $th->getMessage());
+        logger("Legajo actual: " . ($Lega ?? 'undefined'));
+        logger("ClaveCustom: " . $claveCustom);
+        return $legajosColumn;
+    }
+}
+function logger($value)
+{
+    file_put_contents(__DIR__ . '/logger.txt', json_encode($value, JSON_PRETTY_PRINT), FILE_APPEND);
 }
