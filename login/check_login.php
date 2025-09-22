@@ -42,7 +42,7 @@ if ($guarda == "on") {
 		'samesite' => $sameSite // Establece el valor de SameSite
 	]);
 }
-if (!$_POST['user'] || !$_POST['clave']) {
+if (!($_POST['user'] ?? '') || !($_POST['clave'] ?? '')) {
 	header('Location:/' . HOMEHOST . '/login/?error');
 	exit;
 }
@@ -295,7 +295,7 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 	login_logs('1');
 
-	if ($_POST['lasturl']) {
+	if ($_POST['lasturl'] ?? '') {
 		header('Location:' . urldecode($_POST['lasturl']));
 		// } else if (count_pdoQuery("SELECT mod_roles.modulo AS modsrol FROM mod_roles WHERE mod_roles.recid_rol ='$row[recid_rol]' AND mod_roles.modulo = '8'")) {
 		// 	header('Location:/' . HOMEHOST . '/dashboard/');

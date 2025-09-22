@@ -222,8 +222,6 @@ function value_formula(string $valor, array $columnasExcel, int $fila): string
     foreach ($result as $key => $value) {
         $processedValor = str_replace("@{$key}", $value, $processedValor);
     }
-    // error_log($processedValor . PHP_EOL, 3, 'value_to_cell.log');
-
     return $processedValor;
 }
 function add_letter_column_to_array($array)
@@ -248,4 +246,181 @@ function slugify($string)
     $string = trim($string, '-');
 
     return $string;
+}
+/**
+ * Aplica subtotal a una columna específica
+ * @param object $spreadsheet Objeto de la hoja de cálculo
+ * @param array $columnasExcel Array de columnas
+ * @param string $encabezado Nombre del encabezado de la columna
+ * @param int $numeroDeFila Número de la fila donde aplicar el subtotal
+ * @param array $opciones Opciones adicionales para el subtotal
+ */
+function aplicarSubtotal($spreadsheet, $columnasExcel, $encabezado, $numeroDeFila, $opciones = [])
+{
+    // Verificar si la columna existe
+    if (!isset($columnasExcel[$encabezado])) {
+        return false;
+    }
+
+    // Opciones por defecto
+    $defaultOpciones = [
+        'formato' => null, // '[h]:mm', '0.00', etc.
+        'negrita' => true,
+        'filaInicio' => 2, // Fila donde inician los datos
+        'funcionSubtotal' => 9 // 9 = SUM, 1 = AVERAGE, etc.
+    ];
+
+    $opciones = array_merge($defaultOpciones, $opciones);
+
+    $columna = $columnasExcel[$encabezado]['col'];
+    $celdaInicio = "{$columna}{$opciones['filaInicio']}";
+    $celdaFin = "{$columna}" . ($numeroDeFila - 1);
+    $celdaSubTotal = "{$columna}{$numeroDeFila}";
+
+    // Aplicar la fórmula de subtotal
+    $spreadsheet->setCellValue($celdaSubTotal, "=SUBTOTAL({$opciones['funcionSubtotal']},{$celdaInicio}:{$celdaFin})");
+
+    // Aplicar formato si se especifica
+    if ($opciones['formato']) {
+        $spreadsheet->getStyle($celdaSubTotal)->getNumberFormat()->setFormatCode($opciones['formato']);
+    }
+
+    // Aplicar negrita si está activada
+    if ($opciones['negrita']) {
+        $spreadsheet->getStyle($celdaSubTotal)->getFont()->setBold(true);
+    }
+
+    return true;
+}
+/**
+ * Aplica colores a las celdas según el contenido del valor
+ * @param object $spreadsheet Objeto de la hoja de cálculo
+ * @param string $cellAddress Dirección de la celda (ej: "A1")
+ * @param mixed $valor Valor de la celda
+ * @param array $allowedKeys Claves permitidas para aplicar colores
+ * @param string $currentKey Clave actual que se está procesando
+ */
+function aplicarColorCelda($spreadsheet, $cellAddress, $valor, $allowedKeys = ['Ingreso', 'Egreso'], $currentKey = '')
+{
+
+    // Verificar si la clave actual está en las permitidas
+    if (!in_array($currentKey, $allowedKeys) || !is_string($valor)) {
+        return;
+    }
+
+    $color = null;
+
+    // Determinar el color según el contenido
+    if (strpos($valor, 'MM') !== false || strpos($valor, 'NM') !== false) {
+        $color = \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_RED;
+    } elseif (strpos($valor, 'M') !== false) {
+        $color = \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE;
+    } elseif (strpos($valor, 'N') !== false) {
+        $color = \PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLACK;
+    }
+
+    // eliminar el needle del valor
+    // $valor = str_replace(['(MM)', '(NM)', '(M)', '(N)'], '', $valor);
+    // $spreadsheet->setCellValue($cellAddress, trim($valor));
+
+    // Aplicar el color si se encontró una coincidencia
+    if ($color) {
+        $spreadsheet->getStyle($cellAddress)->getFont()->getColor()->setARGB($color);
+    }
+}
+
+
+/**
+ * Aplica borde a un grupo de filas
+ * @param object $spreadsheet Objeto de la hoja de cálculo
+ * @param array $columnasExcel Array de columnas
+ * @param int $filaInicio Fila de inicio del grupo
+ * @param int $filaFin Fila de fin del grupo
+ */
+function aplicarBordeGrupo($spreadsheet, $columnasExcel, $filaInicio, $filaFin)
+{
+    if ($filaInicio > $filaFin) {
+        return;
+    }
+
+    // Obtener primera y última columna
+    $primeraColumna = reset($columnasExcel)['col'];
+    $ultimaColumna = end($columnasExcel)['col'];
+
+    // Definir el rango
+    $rango = "{$primeraColumna}{$filaInicio}:{$ultimaColumna}{$filaFin}";
+
+    // Aplicar borde inferior grueso al último registro del grupo
+    $rangoUltimaFila = "{$primeraColumna}{$filaFin}:{$ultimaColumna}{$filaFin}";
+
+    $spreadsheet->getStyle($rangoUltimaFila)->getBorders()->getBottom()->setBorderStyle(
+        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK
+    );
+
+    // Opcional: También puedes aplicar un borde lateral al grupo completo
+    $spreadsheet->getStyle($rango)->getBorders()->getOutline()->setBorderStyle(
+        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+    );
+}
+/**
+ * Aplica subtotales por legajo en una fila específica
+ * @param object $spreadsheet Objeto de la hoja de cálculo
+ * @param array $columnasExcel Array de columnas
+ * @param int $filaInicio Fila de inicio del grupo
+ * @param int $filaFin Fila de fin del grupo
+ * @param int $filaSubtotal Fila donde insertar el subtotal
+ * @param array $datosGrupo Datos del grupo actual para obtener Legajo y Apellido y Nombre
+ */
+function aplicarSubtotalPorLegajo($spreadsheet, $columnasExcel, $filaInicio, $filaFin, $filaSubtotal, $datosGrupo = [])
+{
+    foreach ($columnasExcel as $key => $e) {
+        if ($e['type'] == 'number') {
+            $letra = $e['col'];
+            $formula = "=SUBTOTAL(9,{$letra}{$filaInicio}:{$letra}{$filaFin})";
+            $spreadsheet->setCellValue("{$letra}{$filaSubtotal}", $formula);
+
+            // Aplicar formato
+            $spreadsheet->getStyle("{$letra}{$filaSubtotal}")
+                ->getNumberFormat()
+                ->setFormatCode('0.00');
+
+            // Aplicar negrita
+            $spreadsheet->getStyle("{$letra}{$filaSubtotal}")
+                ->getFont()
+                ->setBold(true);
+        } elseif ($e['key'] == 'Legajo') {
+            // Mantener el valor del legajo para el autofiltro
+            $letra = $e['col'];
+            $valorLegajo = $datosGrupo['Legajo'] ?? '';
+            $spreadsheet->setCellValue("{$letra}{$filaSubtotal}", $valorLegajo);
+            $spreadsheet->getStyle("{$letra}{$filaSubtotal}")
+                ->getFont()
+                ->setBold(true);
+        } elseif ($e['key'] == 'Apellido y Nombre') {
+            // Mantener el valor del apellido y nombre para el autofiltro
+            $letra = $e['col'];
+            $valorNombre = $datosGrupo['Apellido y Nombre'] ?? '';
+            $spreadsheet->setCellValue("{$letra}{$filaSubtotal}", $valorNombre);
+            $spreadsheet->getStyle("{$letra}{$filaSubtotal}")
+                ->getFont()
+                ->setBold(true);
+        } elseif ($e['key'] == 'Sector') {
+            // Mantener el valor del apellido y nombre para el autofiltro
+            $letra = $e['col'];
+            $valorNombre = $datosGrupo['Sector'] ?? '';
+            $spreadsheet->setCellValue("{$letra}{$filaSubtotal}", $valorNombre);
+            $spreadsheet->getStyle("{$letra}{$filaSubtotal}")
+                ->getFont()
+                ->setBold(true);
+        }
+    }
+
+    // Aplicar borde superior a la fila de subtotal
+    $primeraColumna = reset($columnasExcel)['col'];
+    $ultimaColumna = end($columnasExcel)['col'];
+    $rangoSubtotal = "{$primeraColumna}{$filaSubtotal}:{$ultimaColumna}{$filaSubtotal}";
+
+    $spreadsheet->getStyle($rangoSubtotal)->getBorders()->getTop()->setBorderStyle(
+        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+    );
 }

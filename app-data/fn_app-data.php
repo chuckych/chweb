@@ -882,3 +882,7 @@ function logger($value)
 {
     file_put_contents(__DIR__ . '/logger.txt', json_encode($value, JSON_PRETTY_PRINT), FILE_APPEND);
 }
+function totalEjecution($start)
+{
+    return round(microtime(true) - $start, 2);
+}

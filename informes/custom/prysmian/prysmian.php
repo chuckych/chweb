@@ -80,11 +80,10 @@
                         <div class="d-flex flex-column">
                             <label for="reporte" class="mr-2 w120">Reporte</label>
                             <div class="d-inline-flex align-items-end" style="gap:10px;">
-                                <select class="selectjs_reporte form-control w200" id="reporte">
+                                <select class="selectjs_reporte form-control w250" id="reporte">
                                     <option value="1">Inasistencias</option>
                                     <option value="2">Reporte de Actividad</option>
-                                    <!-- <option disabled value="3">Conceptos a Liquidar - Jornales</option> -->
-                                    <!-- <option disabled value="4">Conceptos a Liquidar - Mensuales</option> -->
+                                    <option value="3">Reporte de Liquidación</option>
                                 </select>
                                 <button hidden
                                     class="btn btn-sm btn-outline-secondary p-2 border px-3 hint--top hint--rounded hint--default hint--no-shadow"
@@ -97,8 +96,32 @@
                         <div class="d-inline-flex" style="gap:5px;">
                             <button type="button" class="btn bg-outline-secondary border btn-sm font08"
                                 id="view">Mostrar</button>
-                            <button type="button" class="btn bg-custom btn-sm text-white font08"
-                                id="xls">Exportar</button>
+                            <button type="button" class="hint--top btn bg-custom btn-sm text-white font08" id="xls"
+                                aria-label="Expotar a Excel">
+                                Exportar
+                            </button>
+                            <button type="button" class="hint--top btn bg-custom btn-sm text-white font08" id="pdf"
+                                aria-label="Expotar a PDF" hidden>
+                                PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row mt-3" id="row_filtros_3" hidden>
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between" style="gap:10px;">
+                            <!-- Personal -->
+                            <div class="w-100">
+                                <label for="selectjs_personal" class="mb-1">Personal</label>
+                                <select class="form-control" id="selectjs_personal" name="selectjs_personal">
+                                </select>
+                            </div>
+                            <!-- Sector -->
+                            <div class="w-100">
+                                <label for="selectjs_sector" class="mb-1">Sectores</label>
+                                <select class="form-control" id="selectjs_sector" name="selectjs_sector">
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -190,6 +213,7 @@
     <script src="../../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../../js/moment.min.js"></script>
     <script src="../../../js/select2.min.js"></script>
+    <script src="../../../js/select2-es.js"></script>
     <script src="../../../js/Sortable.min.js"></script>
 
     <script src="js/main.js?<?= version_file("/informes/custom/prysmian/js/main.js") ?>"></script>

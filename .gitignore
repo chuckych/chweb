@@ -46,6 +46,7 @@ app-data/json/*.json
 *--old.js
 *--old.css
 *--old.html
+*--old.json
 *.env
 composer.phar
 ### VisualStudioCode ###
