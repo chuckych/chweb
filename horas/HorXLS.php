@@ -129,24 +129,18 @@ $spreadsheet->getColumnDimension('J')->setWidth(10);
 $spreadsheet->getColumnDimension('K')->setWidth(25);
 $spreadsheet->getColumnDimension('L')->setWidth(30);
 
-
-// $Letras = range("F","G");
-// foreach ($Letras as $col) {
-//     $spreadsheet->getColumnDimension($col)->setWidth(12);
-// }
-
 /** establecer el nivel de zoom de la hoja */
 $spreadsheet->getSheetView()->setZoomScale(100);
 /** Color de pestaña de hoja */
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
 
 // $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-$Letras = array('A', 'B', 'C', 'D', 'E', 'G', 'J', 'L');
+$Letras = ['A', 'B', 'C', 'D', 'E', 'G', 'K', 'L'];
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
 }
 
-$Letras = array('F', 'H', 'I', 'K');
+$Letras = ['F', 'H', 'I', 'J'];
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
     $spreadsheet->getStyle($col . '1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
@@ -163,7 +157,7 @@ $spreadsheet->getStyle('I')
     ->getNumberFormat()
     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
 
-$Letras = array('A', 'F', 'K');
+$Letras = ['A', 'F', 'K'];
 foreach ($Letras as $col) {
     $spreadsheet->getStyle($col)
         ->getNumberFormat()
