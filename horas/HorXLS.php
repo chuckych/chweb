@@ -245,9 +245,9 @@ while ($row = sqlsrv_fetch_array($result)) {
     $spreadsheet->setCellValue('G' . $numeroDeFila, $HoraDesc);
     $spreadsheet->setCellValue('H' . $numeroDeFila, $FicHsAu);
     $spreadsheet->setCellValue('I' . $numeroDeFila, $FicHsAu2);
-    $spreadsheet->setCellValue('K' . $numeroDeFila, $Motivo);
-    $spreadsheet->setCellValue('L' . $numeroDeFila, $DescMotivo);
-    $spreadsheet->setCellValue('J' . $numeroDeFila, $Observ);
+    $spreadsheet->setCellValue('J' . $numeroDeFila, $Motivo);
+    $spreadsheet->setCellValue('K' . $numeroDeFila, $DescMotivo);
+    $spreadsheet->setCellValue('L' . $numeroDeFila, $Observ);
 
     $numeroDeFila++;
 }
