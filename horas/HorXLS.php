@@ -55,9 +55,9 @@ $encabezado = [
     "Descripción",
     "Hechas",
     "Pagas",
-    "Observaciones",
     "Cod Motivo",
     "Motivo",
+    "Observaciones",
 ];
 
 $styleArray = [
@@ -111,22 +111,23 @@ $spreadsheet->getStyle('A1:L1')->getAlignment()->setVertical(\PhpOffice\PhpSprea
 // foreach (range('A:E', $spreadsheet->getHighestDataColumn()) as $col) {
 //     $spreadsheet->getColumnDimension($col)->setAutoSize(true);
 // }
-$spreadsheet->getColumnDimension('A')->setWidth(10);
-$spreadsheet->getColumnDimension('B')->setWidth(27);
-$spreadsheet->getColumnDimension('C')->setWidth(12);
-$spreadsheet->getColumnDimension('D')->setWidth(13);
-$spreadsheet->getColumnDimension('E')->setWidth(13);
+$spreadsheet->getColumnDimension('A')->setWidth(12);
+$spreadsheet->getColumnDimension('B')->setWidth(30);
+$spreadsheet->getColumnDimension('C')->setWidth(15);
+$spreadsheet->getColumnDimension('D')->setWidth(15);
+$spreadsheet->getColumnDimension('E')->setWidth(12);
 
 /** La altura de una fila. Fila 1 de encabezados */
-$spreadsheet->getRowDimension('1')->setRowHeight(25);
+$spreadsheet->getRowDimension('1')->setRowHeight(40);
+$spreadsheet->getStyle('A1:L1')->getAlignment()->setWrapText(true);
 // $Letras = range("H","U");
 // foreach ($Letras as $col) {
 // }
 $spreadsheet->getColumnDimension('F')->setWidth(8);
-$spreadsheet->getColumnDimension('G')->setWidth(22);
-$spreadsheet->getColumnDimension('J')->setWidth(22);
-$spreadsheet->getColumnDimension('K')->setWidth(8);
-$spreadsheet->getColumnDimension('L')->setWidth(22);
+$spreadsheet->getColumnDimension('G')->setWidth(25);
+$spreadsheet->getColumnDimension('J')->setWidth(10);
+$spreadsheet->getColumnDimension('K')->setWidth(25);
+$spreadsheet->getColumnDimension('L')->setWidth(30);
 
 
 // $Letras = range("F","G");
@@ -235,21 +236,39 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Fecha = FormatoFechaToExcel($Fecha);
 
     # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $Nombre);
-    $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Fecha);
-    $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Horario);
-    $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Dia);
-    $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $Hora);
-    $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $HoraDesc);
-    $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $FicHsAu);
-    $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $FicHsAu2);
-    $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $Observ);
-    $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $Motivo);
-    $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $DescMotivo);
+    $spreadsheet->setCellValue('A' . $numeroDeFila, $Legajo);
+    $spreadsheet->setCellValue('B' . $numeroDeFila, $Nombre);
+    $spreadsheet->setCellValue('C' . $numeroDeFila, $Fecha);
+    $spreadsheet->setCellValue('D' . $numeroDeFila, $Horario);
+    $spreadsheet->setCellValue('E' . $numeroDeFila, $Dia);
+    $spreadsheet->setCellValue('F' . $numeroDeFila, $Hora);
+    $spreadsheet->setCellValue('G' . $numeroDeFila, $HoraDesc);
+    $spreadsheet->setCellValue('H' . $numeroDeFila, $FicHsAu);
+    $spreadsheet->setCellValue('I' . $numeroDeFila, $FicHsAu2);
+    $spreadsheet->setCellValue('K' . $numeroDeFila, $Motivo);
+    $spreadsheet->setCellValue('L' . $numeroDeFila, $DescMotivo);
+    $spreadsheet->setCellValue('J' . $numeroDeFila, $Observ);
 
     $numeroDeFila++;
 }
+
+foreach (['H', 'I'] as $col) {
+    $ref = "{$col}{$numeroDeFila}";
+    $spreadsheet->setCellValue($ref, '=SUBTOTAL(9,' . $col . '2:' . $col . ($numeroDeFila - 1) . ')');
+    $spreadsheet->getStyle($ref)->getNumberFormat()->setFormatCode("[h]:mm");
+    $spreadsheet->getStyle($ref)->getFont()->setBold(true);
+}
+
+// añadir indentacion a todas las filas y celdas
+foreach ($spreadsheet->getRowIterator() as $row) {
+    $rowIndex = $row->getRowIndex();
+    $spreadsheet->getStyle("A{$rowIndex}:L{$rowIndex}")->getAlignment()->setIndent(1);
+    // añadir altura de 25 a todas las filas
+    if ($rowIndex > 1) {
+        $spreadsheet->getRowDimension($rowIndex)->setRowHeight(25);
+    }
+}
+
 sqlsrv_free_stmt($result);
 sqlsrv_close($link);
 # Crear un "escritor"

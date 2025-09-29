@@ -230,13 +230,13 @@ const getHoras = () => {
                 },
             },
             {
-                data: 'Observ', className: '', targets: '', title: 'Observ.',
+                data: 'DescMotivo', className: '', targets: '', title: 'Motivo',
                 "render": function (data, type, row, meta) {
                     return data;
                 },
             },
             {
-                data: 'DescMotivo', className: '', targets: '', title: 'Motivo',
+                data: 'Observ', className: '', targets: '', title: 'Observ.',
                 "render": function (data, type, row, meta) {
                     return data;
                 },
