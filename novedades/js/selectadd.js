@@ -1,6 +1,7 @@
 /** Select */
 $(document).ready(function () {
-    HoraMask('.HoraMask')
+    HoraMask('.HoraMask');
+    const homehost = $("#_homehost").val();
 
     $(document).on('click', '#addNov', function (e) {
         CheckSesion()
@@ -730,116 +731,123 @@ $(document).ready(function () {
             }
         });
     }
+
+
+    const ws_novedades = async (payload) => {
+
+        const url = "/" + homehost + "/app-data/ws_novedades";
+
+        try {
+            ActiveBTN(true, "#submit", 'Ingresando', 'Ingresar')
+
+            const response = await axios.post(url, payload);
+            // console.log(response);
+            $.notifyClose();
+
+            if (response.data?.RESPONSE_CODE !== '200 OK') {
+                console.log(response.data);
+                throw new Error(response.data?.MESSAGE);
+            }
+            if (response.data?.DATA !== true) {
+                console.log(response.data);
+                throw new Error(response.data?.MESSAGE);
+            }
+
+            cleanAll();
+            ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
+            // GetPers.ajax.reload();
+            ActualizaTablas();
+            notify('Novedades ingresadas correctamente', 'success', 5000, 'right');
+
+        } catch (error) {
+            // console.error('Error en la solicitud:', error);
+            notify('Error en la solicitud: ' + error.message, 'danger', 5000, 'right');
+            ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
+        }
+    }
+
     $(".alta_novedad").bind("submit", function (e) {
         e.preventDefault();
-        CheckSesion()
-        var now = $.now()
-        function myTimer() {
-            GetLog("../novedades/logs/Ingreso_" + now + ".log");
-        }
-        // var myVar = setInterval(myTimer, 500);
-        function myStopFunction() {
-            clearInterval(myVar);
-        }
+        CheckSesion();
 
-        let checkLega = new Array();
-        $(".checkLega:checked").each(function () {
-            checkLega.push($(this).val());
-        });
-        let loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
-        $.ajax({
-            type: $(this).attr("method"),
-            url: $(this).attr("action"),
-            data: $(this).serialize()
-                + "&alta_novedad=" + true
-                + "&now=" + now + "&legajos=" + (checkLega),
-            // async : false,
-            beforeSend: function (data) {
-                // console.log(data);
-                $.notifyClose();
-                notify('Aguarde <span class = "dotting mr-1"> </span> ' + loading, 'dark', 60000, 'right')
-                ActiveBTN(true, "#submit", 'Ingresando', 'Ingresar')
-                // $("#respuetatext").html("Inicio de Ingreso Novedades");
-                // $("#respuesta").addClass("alert-info");
-                // $("#respuesta").removeClass("d-none");
-                // fadeInOnly("#respuesta")
-                // $("#respuesta").removeClass("alert-success");
-                // $("#respuesta").removeClass("alert-danger");
-                // setTimeout(() => {
-                //     myTimer()
-                // }, 2000);
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    $.notifyClose();
-                    notify(data.Mensaje, 'success', 2000, 'right')
+        const map_items_names = {
+            'aFicObse': 'Observacion',
+            'aFicNove': 'Novedad',
+            'aCaus': 'Causa',
+            'aFicHoras': 'Horas',
+            'legajo[]': 'Legajos',
+            'aLaboral': 'Laboral',
+            'aFicCate': 'Justifica',
+            'aEmp': 'Empresa',
+            'aPlan': 'Planta',
+            'aSect': 'Sector',
+            'aSec2': 'Seccion',
+            'aGrup': 'Grupo',
+            'aSucur': 'Sucursal'
+        };
 
-                    if (data.ErrorTotal > 0) {
-                        notify('<div class=""><span class="fonth">No se pudo ingresar la novedad en los siguientes registros.</span><div class="overflow-auto pr-3 table-responsive" style="max-height:300px"><table id="presentes" class="w-100 mt-2"><thead><tr><td><span class="fontq fw5">Fecha</span></td><td><span class="fontq fw5">Legajo</span></td><td><span class="fontq fw5">Nombre</span></td><td><tr></thead><tbody></tbody></table></div></div>', 'warning', 0, 'right')
-                        setTimeout(() => {
-                            $.each(data.Errores, function (key, value) {
-                                $("#presentes tbody").append(`<tr class="animate__animated animate__fadeIn"><td class="p-0 m-0"><span class="fontq ls1">` + value.Fecha + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Legajo + `</span></td><td class="p-0 m-0"><span class="fontq">` + value.Nombre + `</span></td></tr>`)
-                            })
-                        }, 500);
-                    }
+        // Inicializar payload con todas las claves mapeadas vacías
+        const payload = Object.values(map_items_names).reduce((obj, mappedName) => {
+            obj[mappedName] = mappedName === 'Legajos' ? [] : "";
+            return obj;
+        }, {});
 
-                    // myStopFunction()
-                    cleanAll()
-                    // $("#respuetatext").html("Fin de Ingreso de Novedades");
-                    ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-                    // $("#respuesta").removeClass("alert-info");
-                    // $("#respuesta").removeClass("alert-danger");
-                    // $("#respuesta").addClass("alert-success");
-                    // fadeInOnly("#respuesta")
-                    // setTimeout(() => {
-                    //     $("#respuetatext").html("");
-                    //     $("#respuesta").addClass("d-none");
-                    // }, 2000);
-                    GetPers.ajax.reload();
-                    ActualizaTablas()
-                } else {
-                    $.notifyClose();
-                    notify(data.Mensaje, 'danger', 0, 'right')
-                    // $("#respuetatext").html("");
-                    // myStopFunction()
-                    // $("#respuetatext").removeClass("animate__animated animate__fadeIn");
-                    ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-                    // $("#respuesta").removeClass("alert-success");
-                    // $("#respuesta").removeClass("alert-info");
-                    // $("#respuesta").removeClass("alert-danger");
-
-
+        // Procesar los datos del formulario
+        $(this).serializeArray().forEach(item => {
+            // Procesamiento especial para el rango de fechas
+            if (item.name === '_draddNov') {
+                const fechas = item.value.split(' al ');
+                if (fechas.length === 2) {
+                    // Convertir DD/MM/YYYY a YYYY-MM-DD
+                    const convertirFecha = (fecha) => {
+                        const partes = fecha.trim().split('/');
+                        return `${partes[2]}-${partes[1]}-${partes[0]}`;
+                    };
+                    payload.FechaDesde = convertirFecha(fechas[0]);
+                    payload.FechaHasta = convertirFecha(fechas[1]);
                 }
-            },
-            error: function (jqXHR, textStatus) {
-                // console.log(jqXHR.responseText);
-                $.notifyClose();
-                // myStopFunction()
-                if (jqXHR.status === 0) {
-                    var error = ('No hay Conexión');
-                } else if (jqXHR.status == 404) {
-                    var error = ('No se encontró la página solicitada [404]');
-                } else if (jqXHR.status == 500) {
-                    var error = ('Error de servidor interno [500].');
-                } else if (textStatus === 'parsererror') {
-                    var error = ('Error de análisis JSON solicitado.');
-                } else if (textStatus === 'timeout') {
-                    var error = ('Error de tiempo de espera.');
-                } else if (textStatus === 'abort') {
-                    var error = ('Solicitud cancelada.');
-                } else {
-                    var error = ('Error no detectado: ' + jqXHR.responseText);
-                }
-                notify(error, 'danger', 5000, 'right')
-                notify('<div class="fw5 fonth">Error</div>' + jqXHR.responseText, 'danger', 0, 'right')
-                // $("#respuetatext").html("");
-                // $("#respuetatext").removeClass("animate__animated animate__fadeIn");
-                ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar')
-                // $("#respuesta").removeClass("alert-success");
-                // $("#respuesta").removeClass("alert-info");
-                // $("#respuesta").removeClass("alert-danger");
+                return;
             }
+
+            // Procesamiento especial para legajos (array)
+            if (item.name === 'legajo[]') {
+                payload.Legajos.push(item.value);
+                return;
+            }
+
+            // Conversión de checkboxes a valores binarios
+            if (item.name === 'aFicCate' || item.name === 'aLaboral') {
+                const keyName = map_items_names[item.name];
+                payload[keyName] = item.value === 'on' ? 1 : 0;
+                return;
+            }
+
+            // Mapeo normal de campos
+            const keyName = map_items_names[item.name] || item.name;
+            payload[keyName] = item.value;
         });
+
+        if (payload.Novedad == "") {
+            notify('Debe seleccionar una novedad', 'warning', 3000, 'right')
+            return;
+        }
+        if (payload.FechaDesde == "") {
+            notify('Debe seleccionar una fecha de inicio', 'warning', 3000, 'right')
+            return;
+        }
+        if (payload.FechaHasta == "") {
+            notify('Debe seleccionar una fecha de fin', 'warning', 3000, 'right')
+            return;
+        }
+
+        // Asegurar que checkboxes no marcados tengan valor 0
+        if (!payload.Justifica) payload.Justifica = 0;
+        if (!payload.Laboral) payload.Laboral = 0;
+
+        if (payload.TipoIngreso == "2" || payload.TipoIngreso == "1") {
+            ws_novedades(payload);
+            return;
+        }
         e.stopImmediatePropagation();
     });
 
@@ -929,7 +937,6 @@ $(document).ready(function () {
         fadeInOnly('#divTablas');
         $('#Encabezado').html('Novedades')
     });
-
 
 });
 

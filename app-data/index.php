@@ -1422,6 +1422,55 @@ Flight::route('POST /asignados', function () {
 
     Flight::json($result ?? []);
 });
+Flight::route('POST /ws_novedades', function () {
+
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+
+    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/ws_novedades";
+    $ingresar = ch_api($endpoint, $payload, 'POST', '');
+    $arrayData = json_decode($ingresar, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
+    // $result['payload'] = $payload; // Agregar los legajos al resultado
+
+    if ($result) {
+        $FechaDesde = $payload['FechaDesde'] ?? '';
+        $FechaHasta = $payload['FechaHasta'] ?? '';
+        $Legajos = $payload['Legajos'] ?? [];
+
+        // fomatear las fechas a 'd/m/Y'
+        $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
+        $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
+
+        if ($Legajos) {
+            foreach ($Legajos as $legajo) {
+                $arrayAuditoria[] = [
+                    'AudTipo' => 'A',
+                    'AudDato' => "Ingreso de novedades: Legajo: {$legajo} desde {$FechaDesde} hasta {$FechaHasta}",
+                ];
+            }
+        } else {
+            // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, fechaDesde y FechaHasta
+            $datos = [];
+            foreach ($payload as $key => $value) {
+                if ($value === null || $value === '')
+                    continue;
+                if (in_array($key, ['Novedad', 'Empresa', 'Planta', 'Convenio', 'Sector', 'Seccion', 'Grupo', 'Sucursal'])) {
+                    $datos[] = "{$key}: {$value}";
+                }
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'A',
+                'AudDato' => "Ingreso de novedades: " . implode(", ", $datos).' desde '.$FechaDesde.' hasta '.$FechaHasta,
+            ];
+        }
+
+        auditoria_multiple($arrayAuditoria, 2);
+    }
+
+    Flight::json($arrayData ?? []);
+
+});
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
     exit;

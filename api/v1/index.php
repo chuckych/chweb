@@ -95,6 +95,47 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
 });
 Flight::route('DELETE /proyectar', [$horas, 'eliminar_proyeccion']);
 
+Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService) {
+    $request = Flight::request();
+    $data = $request->data->getData();
+    $inicio = microtime(true);
+    $Empresa = $data['Empresa'] ?? '0';
+    $Planta = $data['Planta'] ?? '0';
+    $Sector = $data['Sector'] ?? '0';
+    $Seccion = $data['Seccion'] ?? '0';
+    $Grupo = $data['Grupo'] ?? '0';
+    $Sucursal = $data['Sucursal'] ?? '0';
+    $Causa = $data['Causa'] ?? '0';
+    $Justifica = $data['Justifica'] ?? '0';
+    $Observacion = $data['Observacion'] ?? '';
+    $Laboral = $data['Laboral'] ?? '0';
+    $Horas = $data['Horas'] ?? '00:00';
+    $Novedad = $data['Novedad'] ?? '0';
+
+    $Params = [
+        $data['Legajos'] ?? [],
+        $data['FechaDesde'],
+        $data['FechaHasta'],
+        $Novedad,
+        $Horas == "" ? '00:00' : $Horas,
+        $Laboral == "" ? '0' : 1,
+        $Justifica == "" ? '0' : 1,
+        $Observacion == "" ? '' : $Observacion,
+        $Causa == "" ? '0' : $Causa,
+        $Empresa == "" ? '0' : $Empresa,
+        $Planta == "" ? '0' : $Planta,
+        $Sector == "" ? '0' : $Sector,
+        $Seccion == "" ? '0' : $Seccion,
+        $Grupo == "" ? '0' : $Grupo,
+        $Sucursal == "" ? '0' : $Sucursal
+    ];
+    // Flight::json($Params);
+    // exit;
+    $ingreso = $RRHHWebService->ingresar_novedades(...$Params);
+
+    $response->respuesta($ingreso, 0, '', 200, $inicio, 0, ID_COMPANY);
+});
+
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
 Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
 Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);

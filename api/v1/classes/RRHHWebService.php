@@ -109,7 +109,7 @@ class RRHHWebService
 
                         $post_data = "{Usuario=Supervisor, Legajos=[{$Legajos}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
                         if ($countLegajos === 1) {
-                            $post_data = "{Usuario=Supervisor, Legajos=[, LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+                            $post_data = "{Usuario=Supervisor, Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
                         }
 
                         curl_setopt($ch, CURLOPT_URL, $ruta);
@@ -322,6 +322,204 @@ class RRHHWebService
         } catch (\Exception $e) {
             $this->log->write($e->getMessage(), date('Ymd') . '_proyectar_' . ID_COMPANY . '.log');
             return false;
+        }
+    }
+    /** 
+     * Ingresa Novedades a partir de un arreglo de legajos
+     * @param array $Legajos Arreglo de legajos
+     * @param string $FechaDesde Fecha desde
+     * @param string $FechaHasta Fecha hasta
+     * @return string Respuesta del WebService
+     * @example $Legajos = [1,2,3,4,5,6,7,8,9,10];
+     * @example $FechaDesde = '2023-08-23';
+     * @example $FechaHasta = '2023-08-26';
+     */
+    function ingresar_novedades($Legajos = [], $FechaDesde, $FechaHasta, $CodNovedad, $HorasNovedad = '00:00', $Laboral = '0', $Justifica = '0', $Observacion = '', $Causa = '0', $Empresa = '0', $Planta = '0', $Sector = '0', $Seccion = '0', $Grupo = '0', $Sucursal = '0')
+    {
+        try {
+            // Validaciones
+            $this->validarConexionWebService();
+            $this->validarParametrosNovedades($Legajos, $FechaDesde, $FechaHasta, $CodNovedad, $HorasNovedad);
+
+            $ruta = $this->baseUrl() . '/Novedades';
+            $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta);
+            
+            if (!$dateSegments) {
+                return false;
+            }
+
+            $LegajosSegment = empty($Legajos) ? [[]] : array_chunk($Legajos, 50);
+            
+            $parametrosBase = compact('CodNovedad', 'HorasNovedad', 'Laboral', 'Justifica', 'Observacion', 'Causa', 'Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal');
+            
+            $this->procesarNovedadesPorSegmentos($ruta, $LegajosSegment, $dateSegments, $parametrosBase);
+
+            return true;
+        } catch (\Exception $e) {
+            $this->log->write($e->getMessage(), date('Ymd') . '_ingresar_novedades' . ID_COMPANY . '.log');
+            throw new \Exception($e->getMessage(), 400);
+        }
+    }
+
+    /**
+     * Valida la conexión con el WebService
+     */
+    private function validarConexionWebService()
+    {
+        if (!$this->ping()) {
+            throw new \Exception('Error al conectar con el WebService', 1);
+        }
+    }
+
+    /**
+     * Valida los parámetros de novedades
+     */
+    private function validarParametrosNovedades($Legajos, $FechaDesde, $FechaHasta, $CodNovedad, $HorasNovedad)
+    {
+        if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) {
+            throw new \Exception('Parametros no validos', 1);
+        }
+
+        if (!\DateTime::createFromFormat('Y-m-d', $FechaDesde)) {
+            throw new \Exception('Fecha desde no es valida', 1);
+        }
+
+        if (!\DateTime::createFromFormat('Y-m-d', $FechaHasta)) {
+            throw new \Exception('Fecha hasta no es valida', 1);
+        }
+
+        if (strtotime($FechaDesde) > strtotime($FechaHasta)) {
+            throw new \Exception('Fecha desde no puede ser mayor a fecha hasta', 1);
+        }
+
+        if (!preg_match('/^\d{2}:\d{2}$/', $HorasNovedad)) {
+            throw new \Exception('Horas Novedad no tiene formato HH:MM', 1);
+        }
+
+        if (empty($CodNovedad) || !is_numeric($CodNovedad)) {
+            throw new \Exception('Codigo de Novedad no puede estar vacio y debe ser numerico', 1);
+        }
+    }
+
+    /**
+     * Procesa novedades por segmentos de fechas y legajos
+     */
+    private function procesarNovedadesPorSegmentos($ruta, $LegajosSegment, $dateSegments, $parametrosBase)
+    {
+        $ch = curl_init();
+
+        foreach ($LegajosSegment as $Legajos) {
+            $esSegmentoVacio = empty($Legajos);
+            
+            if (!$esSegmentoVacio) {
+                $countLegajos = count($Legajos);
+                $Legajo = ($countLegajos === 1) ? $Legajos[0] : '';
+                $Legajos = implode(';', $Legajos);
+            }
+
+            foreach ($dateSegments as $segment) {
+                $FechaDesde = date('d/m/Y', strtotime($segment['FechaMin']));
+                $FechaHasta = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                // Construir parámetros
+                $params = $this->construirParametrosNovedad(
+                    $parametrosBase,
+                    $FechaDesde,
+                    $FechaHasta,
+                    $esSegmentoVacio ? null : ($countLegajos === 1 ? $Legajo : $Legajos),
+                    $esSegmentoVacio
+                );
+
+                $post_data = $this->convertirParametrosAString($params);
+
+                // Ejecutar request
+                $this->ejecutarRequestNovedad($ch, $ruta, $post_data);
+
+                // Log
+                $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
+                $legajosInfo = $esSegmentoVacio ? 'Todos los legajos' : "[$Legajos]";
+                $text = "Legajos procesados {$legajosInfo} - {$FechaDesde} a {$FechaHasta} {$days} días";
+                $this->log->write($text, date('Ymd') . '_ingresar_novedades_' . ID_COMPANY . '.log');
+                $this->log->write($post_data, date('Ymd') . '_ingresar_novedades_post_data_' . ID_COMPANY . '.log');
+            }
+        }
+
+        curl_close($ch);
+    }
+
+    /**
+     * Construye los parámetros para el request de novedad
+     */
+    private function construirParametrosNovedad($parametrosBase, $FechaDesde, $FechaHasta, $legajos, $esTodosLosLegajos = false)
+    {
+        $params = [
+            'Usuario' => 'Supervisor',
+            'Novedad' => $parametrosBase['CodNovedad'],
+            'Horas' => $parametrosBase['HorasNovedad'],
+            'Laboral' => $parametrosBase['Laboral'],
+            'Justifica' => $parametrosBase['Justifica'],
+            'FechaDesde' => $FechaDesde,
+            'FechaHasta' => $FechaHasta,
+            'Observacion' => $parametrosBase['Observacion'],
+            'Causa' => $parametrosBase['Causa'],
+            'Empresa' => $parametrosBase['Empresa'],
+            'Planta' => $parametrosBase['Planta'],
+            'Sector' => $parametrosBase['Sector'],
+            'Seccion' => $parametrosBase['Seccion'],
+            'Grupo' => $parametrosBase['Grupo'],
+            'Sucursal' => $parametrosBase['Sucursal']
+        ];
+
+        // Configurar legajos según el caso
+        if ($esTodosLosLegajos) {
+            $params['Legajos'] = '[]';
+            $params['LegajoDesde'] = 1;
+            $params['LegajoHasta'] = 99999999;
+        } elseif (is_string($legajos) && strpos($legajos, ';') === false) {
+            // Un solo legajo
+            $params['Legajos'] = '[]';
+            $params['LegajoDesde'] = $legajos;
+            $params['LegajoHasta'] = $legajos;
+        } else {
+            // Múltiples legajos
+            $params['Legajos'] = "[{$legajos}]";
+        }
+
+        return $params;
+    }
+
+    /**
+     * Convierte array de parámetros a string formato WebService
+     */
+    private function convertirParametrosAString($params)
+    {
+        return '{' . implode(', ', array_map(
+            fn($k, $v) => "$k='$v'",
+            array_keys($params),
+            array_values($params)
+        )) . '}';
+    }
+
+    /**
+     * Ejecuta el request cURL a la API de novedades
+     */
+    private function ejecutarRequestNovedad($ch, $ruta, $post_data)
+    {
+        curl_setopt($ch, CURLOPT_URL, $ruta);
+        curl_setopt($ch, CURLOPT_POST, TRUE);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $respuesta = curl_exec($ch);
+        $curl_errno = curl_errno($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($curl_errno > 0) {
+            throw new \Exception("{$curl_errno} : Error al ingresar novedades.", $httpCode);
+        }
+
+        if ($httpCode == 404) {
+            throw new \Exception("{$respuesta} : Error al ingresar novedades.", $httpCode);
         }
     }
 }
