@@ -15,6 +15,10 @@ class ADAuthenticator
         $this->port = $port;
         $this->baseDn = $baseDn;
         $this->domain = $domain;
+        
+        if (!extension_loaded('ldap')) {
+            throw new \Exception("La extensión LDAP de PHP no está instalada o habilitada.");
+        }
     }
 
     /**
@@ -370,5 +374,11 @@ class ADAuthenticator
         ldap_unbind($ldapConn);
 
         return $users;
+    }
+    private function verificar_extension_ldap(): void
+    {
+        if (!extension_loaded('ldap')) {
+            throw new \Exception("La extensión LDAP de PHP no está instalada o habilitada.");
+        }
     }
 }
