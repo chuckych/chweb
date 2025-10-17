@@ -1492,7 +1492,6 @@ Flight::map('error', function ($ex) {
         $code_protected = 500; // Código por defecto para errores del servidor
     }
 
-
     switch ($code_protected) {
         case 404:
             Flight::notFound();

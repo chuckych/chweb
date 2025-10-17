@@ -973,3 +973,15 @@ if ($verDB < 20250619) {
     }
 }
 
+if ($verDB < 20251016) {
+
+    $verDB = 20251016; // nueva version de la DB. modificar tambien en la funcion verDBLocal() del archivo de funciones.php
+
+    // añadir a la tabla usarios la columnas user_ad del tipo ENUM('0','1') NOT NULL DEFAULT '0'
+    $sql = "ALTER TABLE `usuarios` ADD COLUMN `user_ad` ENUM('0','1') NOT NULL DEFAULT '0' AFTER `legajo`;";
+    pdoQuery($sql);
+    fileLog("ALTER TABLE `usuarios` ADD COLUMN `user_ad`", $pathLog); // escribir en el Log
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
+}
+

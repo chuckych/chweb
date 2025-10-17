@@ -22,11 +22,11 @@ function notif_ok_var($get, $texto)
     <title>Cambiar Contrase&ntilde;a</title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <div class="container shadow pb-2">
         <?php
         define('ID_MODULO', 99);
-        $countModRol = (count($_SESSION['MODS_ROL']));
+        $countModRol = (count(($_SESSION['MODS_ROL'] ?? [])));
         if ($countModRol != '1') {
             echo '<div class="">';
         } else {
@@ -44,14 +44,14 @@ function notif_ok_var($get, $texto)
             <div class="col-12 col-sm-10 col-md-6 col-xl-5">
                 <?= notif_ok_var('true', 'Contrase&ntilde;a modificada') ?>
                 <div class="p-3">
-                    <h4 class="card-title text-secondary"><?= $_SESSION["NOMBRE_SESION"] ?></h4>
+                    <h4 class="card-title text-secondary"><?= $_SESSION["NOMBRE_SESION"] ?? '' ?></h4>
                     <p class="text-secondary p-0 d-flex align-items-center">
                         <?= $icon_building ?>
-                        <span class="fw5 ml-1">&nbsp;<?= $_SESSION["CLIENTE"] ?></span>
+                        <span class="fw5 ml-1">&nbsp;<?= $_SESSION["CLIENTE"] ?? '' ?></span>
                     </p>
                     <p class="text-secondary p-0 d-flex align-items-center">
                         <?= $icon_person ?>
-                        <span class="fw5 ml-1">&nbsp;<?= $_SESSION["user"] ?></span>
+                        <span class="fw5 ml-1">&nbsp;<?= $_SESSION["user"] ?? '' ?></span>
                     </p>
                     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST" name="perfil"
                         onsubmit="return validar_form()" class="<?= $ocultar ?>">
@@ -73,7 +73,7 @@ function notif_ok_var($get, $texto)
                                 class="d-none d-sm-block form-control w40 border-0 ml-2 h50 bg-white text-dark fw5"
                                 readonly name="escritos">
                             <input type="hidden" class="" name="recid" id="" placeholder=""
-                                value="<?= $_SESSION["RECID_USER"] ?>">
+                                value="<?= $_SESSION["RECID_USER"] ?? '' ?>">
                         </div>
                         <div class="text-danger mt-2 fontq fw5"><?= $error_clave ?></div>
                         <div class="alert alert-info mt-3 radius" style="max-width:350px;" role="alert">

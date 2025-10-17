@@ -1,7 +1,343 @@
 $(document).ready(function () {
 
-    $('.requerido').addClass('fontp ml-1 ls1')
-    $('.requerido').html('(*)')
+    $('.requerido').addClass('fontp ml-1 ls1');
+    $('.requerido').html('(*)');
+
+    const get_cliente = async () => {
+        const recid_c = $('#recid_c').val() ?? '';
+        if (!recid_c) return;
+        await axios.get(`../app-data/_local/clientes/?recid=${recid_c}`).then(res => {
+            if (res.data) {
+                const cuenta = res.data?.[0] ?? '';
+                if (!cuenta) return;
+
+                const activeAD = cuenta?.activeAD ?? 0;
+                const divImprAD = document.getElementById('div_import_ad') ?? null;
+                if (!divImprAD) return;
+
+                divImprAD.style.display = (activeAD == 1) ? 'block' : 'none';
+
+                const serverAD = cuenta?.serverAD ?? '';
+                const puertoAD = cuenta?.puertoAD ?? '';
+                const serviceUserAD = cuenta?.serviceUserAD ?? '';
+                const servicePassAD = cuenta?.servicePassAD ?? '';
+                const baseDNAD = cuenta?.baseDNAD ?? '';
+                const domainAD = cuenta?.domainAD ?? '';
+
+                const object = {
+                    serverAD,
+                    puertoAD,
+                    baseDNAD,
+                    domainAD,
+                    serviceUserAD,
+                    servicePassAD
+                };
+
+                obtener_usuarios('#btnImportarAD', object);
+            }
+        });
+    }
+    const get_usuarios = async () => {
+        try {
+            const res = await axios.get(`../app-data/_local/usuarios`);
+            if (res.data) {
+                const data = res.data?.DATA ?? [];
+                // Convertir el array en un objeto indexado por username para búsqueda rápida
+                const usersByUsername = {};
+                data.forEach(user => {
+                    usersByUsername[user.usuario] = user;
+                });
+                return usersByUsername;
+            }
+            return {};
+        } catch (error) {
+            console.error('Error al obtener usuarios:', error);
+            return {};
+        }
+    }
+    const selectRolAD = (selector) => {
+        const opt2 = {
+            MinLength: "0",
+            SelClose: false,
+            MaxInpLength: "10",
+            delay: "250",
+            allowClear: false
+        };
+        $(selector).select2({
+            multiple: false,
+            allowClear: opt2["allowClear"],
+            language: "es",
+            dropdownParent: $('#modalUserAD'),
+            placeholder: "Rol",
+            minimumInputLength: opt2["MinLength"],
+            minimumResultsForSearch: 5,
+            maximumInputLength: opt2["MaxInpLength"],
+            selectOnClose: opt2["SelClose"],
+            language: {
+                noResults: function () {
+                    return 'No hay resultados..'
+                },
+                inputTooLong: function (args) {
+                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
+                    if (overChars != 1) {
+                        message += 'es'
+                    }
+                    return message
+                },
+                searching: function () {
+                    return 'Buscando..'
+                },
+                errorLoading: function () {
+                    return 'Sin datos..'
+                },
+                inputTooShort: function () {
+                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
+                },
+                maximumSelected: function () {
+                    return 'Puede seleccionar solo una opción'
+                }
+            },
+            ajax: {
+                url: "getRol.php",
+                dataType: "json",
+                type: "POST",
+                delay: opt2["delay"],
+                data: function (params) {
+                    return {
+                        q: params.term,
+                        recid_c: $("#recid_c").val(),
+                    }
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    }
+                },
+            }
+        });
+    }
+    const alta_usuario_ad = async (object, rowElement) => {
+        $.notifyClose();
+        notifyWait('Agregando usuario...');
+
+        if (!object.rol) {
+            $.notifyClose();
+            notify('Debe seleccionar un rol para el usuario', 'danger', 5000, 'right');
+            return;
+        }
+        axios.post('../app-data/_local/usuarios', {
+            recid_c: object.recid_c,
+            nombre: object.nombre,
+            usuario: object.usuario,
+            rol: object.rol,
+            clave: object.clave,
+            legajo: object.legajo,
+            user_ad: '1'
+        }).then(res => {
+
+            const RESPONSE_CODE = res.data?.RESPONSE_CODE ?? '';
+            const MESSAGE = res.data?.MESSAGE ?? '';
+            $.notifyClose();
+
+            if (RESPONSE_CODE !== '200 OK') {
+                notify(MESSAGE, 'danger', 5000, 'right');
+                return;
+            }
+
+            notify(MESSAGE, 'success', 2000, 'right');
+            $('#GetUsuarios').DataTable().ajax.reload();
+
+            // Actualizar la fila en el DataTable de AD sin recargar toda la tabla
+            if (rowElement) {
+                const table = $('#tableUserAD').DataTable();
+                const row = table.row(rowElement);
+                const rowData = row.data();
+
+                // Actualizar el dato user_exist a true
+                rowData.user_exist = true;
+
+                // Invalidar y redibujar solo esta fila
+                row.data(rowData).draw(false);
+            }
+        });
+    }
+    const obtener_usuarios = async (selector, object) => {
+        $(selector).off('click').on('click', async function (e) {
+            e.preventDefault();
+            notifyWait('Probando conexión AD...');
+
+            if (!object.serverAD || !object.puertoAD) {
+                $.notifyClose();
+                notify('Faltan datos de configuración del servicio AD en el cliente', 'danger', 5000, 'right');
+                return;
+            }
+            if (!object.serviceUserAD || !object.servicePassAD) {
+                $.notifyClose();
+                notify('Faltan datos de usuario/contraseña del servicio AD en el cliente', 'danger', 5000, 'right');
+                return;
+            }
+
+            axios.post('../app-data/_local/test_ad', {
+                'serverAD': object.serverAD,
+                'puertoAD': object.puertoAD,
+                'serviceUserAD': object.serviceUserAD,
+                'servicePassAD': object.servicePassAD,
+                'baseDNAD': object.baseDNAD,
+                'domainAD': object.domainAD
+            }).then(res => {
+                $.notifyClose();
+                const message = res.data.MESSAGE ?? '';
+                if ((res.data.RESPONSE_CODE ?? '') == '200 OK') {
+
+                    const info = res.data?.DATA?.server_info ?? [];
+                    const defaultnamingcontext = info?.defaultnamingcontext ?? null;
+                    const dns_hostname = info?.dns_hostname ?? null;
+                    const usuarios = info?.usuarios ?? [];
+
+                    if (usuarios.length == 0) {
+                        notify('Conexión exitosa al AD (' + dns_hostname + '). No se encontraron usuarios.', 'warning', 7000, 'right');
+                        return;
+                    }
+
+                    // Obtener usuarios existentes y agregar propiedad user_exist
+                    get_usuarios().then((data_users) => {
+
+                        // Agregar propiedad user_exist a cada usuario
+                        const usersWithExistFlag = usuarios.map(element => {
+                            const userExists = data_users[element.username] ? true : false;
+                            return {
+                                ...element,
+                                user_exist: userExists
+                            };
+                        });
+
+
+                        // Crear el modal y DataTable con todos los usuarios
+                        $('#modalUserAD .modal-body').html('');
+
+                        const html = `<div class="table-responsive border p-2"><table class="table table-hover text-nowrap w-100 " id="tableUserAD" style="margin-top: 0px !important;"></table></div>`;
+
+                        $('#modalUserAD .modal-body').html(html);
+
+                        $('#tableUserAD').DataTable({
+                            dom: `
+                                <'row'
+                                    <'col-12 d-inline-flex justify-content-between align-items-center'lf>
+                                >
+                                <'row' <'col-12'<'select-rol py-2'>>>
+                                <'row' <'col-12'<'border table-responsive't>>>
+                                <'row'
+                                    <'col-12 d-inline-flex justify-content-between align-items-center mt-2'ip>
+                                >
+                                `,
+                            "data": usersWithExistFlag,
+                            initComplete: function (settings, json) {
+                                // remover thead
+                                $('#tableUserAD thead').remove();
+                                const selectRol = document.querySelector('.select-rol') ?? null;
+                                if (!selectRol) return;
+                                const div = document.createElement('div');
+                                div.className = 'w-100';
+                                div.innerHTML = `<label>Seleccionar un Rol</label>
+                                    <select class="form-select form-select-sm selected-rol" style="width: 100%;">
+                                    </select>
+                               `;
+                                selectRol.appendChild(div);
+                                const select = div.querySelector('select');
+                                if (!select) return;
+
+                                selectRolAD(select);
+
+                            },
+                            drawCallback: function (settings) {
+                            },
+                            columns: [
+                                {
+                                    className: 'w-100 align-middle', targets: '', title: '',
+                                    render: function (data, type, row, meta) {
+                                        const user_exist = row.user_exist ?? false;
+                                        const btnAdd = `<div class="float-right hint hint--left" aria-label="Agregar usuario"><button class="btn btn-sm btn-outline-custom border btn_add_user_ad"><i class="bi bi-plus"></i></button></div>`;
+                                        const btnExist = `<div class="float-right hint hint--left hint--success" aria-label="Usuario existente"><i class="bi bi-check-all p-2"></i></div>`;
+
+                                        return `
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <strong>${row.username}</strong>
+                                                    <br>${row.nombre}
+                                                </div>
+                                                ${!user_exist ? btnAdd : btnExist}
+                                            </div>
+                                            `
+                                    }, visible: true, orderable: false
+                                },
+                            ],
+                            order: [[0, 'desc']],
+                            lengthMenu: [[5, 10, 25], [5, 10, 25]], //mostrar cantidad de registros
+                            deferRender: true,
+                            paging: true,
+                            searching: true,
+                            info: true,
+                            ordering: true,
+                            language:
+                            {
+                                "sProcessing": "Actualizando . . .",
+                                "sLengthMenu": "_MENU_",
+                                "sZeroRecords": "",
+                                "sEmptyTable": "",
+                                "sInfo": "_START_ a _END_ de _TOTAL_ usuarios",
+                                "sInfoEmpty": "No se encontraron resultados",
+                                "sInfoFiltered": "(filtrado de un total de _MAX_ usuarios)",
+                                "sInfoPostFix": "",
+                                "sSearch": "",
+                                "sUrl": "",
+                                "sInfoThousands": ",",
+                                "oPaginate": {
+                                    "sFirst": "<i class='bi bi-chevron-left'></i>",
+                                    "sLast": "<i class='bi bi-chevron-right'></i>",
+                                    "sNext": "<i class='bi bi-chevron-right'></i>",
+                                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
+                                },
+                                "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+                            },
+                        });
+
+                        $('#modalUserAD').modal('show');
+
+                        const btnAddUserAD = document.querySelector('#modalUserAD .modal-body') ?? null;
+                        if (!btnAddUserAD) return;
+                        btnAddUserAD.addEventListener('click', function (e) {
+                            e.preventDefault();
+                            e.stopImmediatePropagation();
+                            const target = e.target;
+                            if (target && target.closest('.btn_add_user_ad')) {
+                                const btn = target.closest('.btn_add_user_ad');
+                                const tr = btn.closest('tr');
+                                const table = $('#tableUserAD').DataTable();
+                                const data = table.row(tr).data();
+                                if (!data) return;
+
+                                alta_usuario_ad({
+                                    recid_c: $('#recid_c').val() ?? '',
+                                    nombre: data.nombre,
+                                    usuario: data.username,
+                                    rol: $('.selected-rol').val() ?? '',
+                                    clave: '',
+                                    legajo: '0',
+                                    user_ad: '1'
+                                }, tr); // Pasar el elemento tr para actualizar la fila
+                                return;
+                            }
+                        });
+                    }); // Cierre del .then(get_usuarios)
+                } // Cierre del if RESPONSE_CODE == 200 OK
+            }).catch(err => {
+                $.notifyClose();
+                notify(err.message, 'danger', 5000, 'right')
+            });
+            e.stopImmediatePropagation();
+        });
+    }
+    get_cliente();
 
     function ClassTBody() {
         $('.open-modal').removeClass('btn-outline-custom')
@@ -9,9 +345,8 @@ $(document).ready(function () {
         $('.botones').hide()
     }
     // $.fn.DataTable.ext.pager.numbers_length = 5;
-    var table = $('#GetUsuarios').DataTable({
+    const table = $('#GetUsuarios').DataTable({
         initComplete: function (settings, json) {
-
         },
         drawCallback: function (settings) {
 
@@ -85,7 +420,7 @@ $(document).ready(function () {
         searchDelay: 1500,
         dom: `<'row'<'col-sm-3 d-none d-sm-block'l><'col-sm-9 col-12 d-inline-flex w-100 justify-content-end'f>>` +
             `<'row'<'col-12 table-responsive invisible'tr>>` +
-            `<'row'<'col-sm-5 d-none d-sm-block'i><'col-sm-7 col-12 d-none d-sm-block'p>>`+
+            `<'row'<'col-sm-5 d-none d-sm-block'i><'col-sm-7 col-12 d-none d-sm-block'p>>` +
             `<'row d-sm-none d-block'<'d-flex justify-content-center fixed-bottom col-12 bg-white'p>>`,
         ajax: {
             url: "GetUsuarios.php",
@@ -203,7 +538,7 @@ $(document).ready(function () {
         } else {
             $('.botones').addClass('float-right')
         }
-        
+
     });
     if ($('#_rol').val() != '') {
         $('#GetUsuarios').DataTable().search($('#_rol').val()).draw();
@@ -234,13 +569,20 @@ $(document).ready(function () {
         let data_fecha_alta = $(this).attr('data_fecha_alta');
         let data_fecha_mod = $(this).attr('data_fecha_mod');
         let data_cliente = $(this).attr('data_cliente');
-        
+        let data_user_ad = $(this).attr('data_user_ad');
+
         $('#data_nombre').html(data_nombre);
         $('#e_nombre').val(data_nombre);
         $('#e_usuario').val(data_usuario);
         $('#e_legajo').val(data_legajo);
         $('#e_uid').val(data_uid);
         $('#e_tarjeta').val(data_tarjeta);
+
+        if (data_user_ad == '1') {
+            $('#e_usuario').prop('disabled', true);
+        } else {
+            $('#e_usuario').prop('disabled', false);
+        }
 
         var opt2 = {
             MinLength: "0",
@@ -311,10 +653,14 @@ $(document).ready(function () {
         $("#FormEdit").bind("submit", function (e) {
             CheckSesion()
             e.preventDefault();
+            let dataForm = $(this).serialize();
+            dataForm += '&e_usuario=' + $('#e_usuario').val();
+            console.log(dataForm);
+
             $.ajax({
                 type: $(this).attr("method"),
                 url: $(this).attr("action"),
-                data: $(this).serialize(),
+                data: dataForm,
                 // async : false,
                 beforeSend: function (data) {
                     ActiveBTN(true, '#submitEdit', 'Guardando', 'Guardar')
@@ -474,7 +820,7 @@ $(document).ready(function () {
             });
             $('#modalListas .modal-body').html(data);
             $('#modalListas').modal('show');
-            
+
         });
         e.stopImmediatePropagation();
     });

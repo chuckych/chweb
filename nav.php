@@ -5,7 +5,6 @@
 <input type="hidden" hidden id="_host" value="<?= host() ?>">
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <input type="hidden" id="_sesion" value="0">
-<!-- <input type="" id="" value="<?= $_SESSION['ConvRol'] ?>"> -->
 <?php
 $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 // ExisteModRol(0)
@@ -37,7 +36,9 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto d-flex">
                 <?php
-                $array = (array(mod_roles($_SESSION['RECID_ROL'])));
+                $array = [
+                    mod_roles($_SESSION['RECID_ROL'] ?? '')
+                ];
                 if (($array[0])):
                     if (!$array[0]['error']) {
                         $rowcount = (count($array[0]['mod_roles']));
@@ -343,22 +344,24 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                 endif; ?>
             </ul>
             <div id="contenedoruser">
+                <?php if(($_SESSION['USER_AD'] ?? '') === '0'): ?> 
                 <a href="/<?= HOMEHOST ?>/usuarios/perfil/index.php" class="btn btn-sm border-0 btn-light px-3 py-2">
                     <p class="m-0">
-                        <?= imgIcon('perfil', 'Mi Perfil', '') ?>
+                        <?= imgIcon('perfil', 'Mi Perfil', '') ?> 
                     </p>
                 </a>
+                <?php endif; ?> 
                 <div class="bg-white mt-2 shadow p-0 animate__animated animate__fadeIn radius" id="showuser"
                     style="z-index:9999">
                     <div class="p-3">
                         <p class="m-0 h6">
-                            <?= $_SESSION['NOMBRE_SESION'] ?>
+                            <?= $_SESSION['NOMBRE_SESION'] ?? '' ?>
                         </p>
                         <p class="m-0 pt-1 fontq">Usuario:<span class="ml-1 fw4">
-                                <?= $_SESSION['user'] ?>
+                                <?= $_SESSION['user'] ?? '' ?>
                             </span></p>
                         <p class="m-0 pt-1 fontq">Empresa:<span class="ml-1 fw4">
-                                <?= $_SESSION['CLIENTE'] ?>
+                                <?= $_SESSION['CLIENTE'] ?? '' ?>
                             </span></p>
                     </div>
                 </div>

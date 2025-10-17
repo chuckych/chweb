@@ -4,6 +4,7 @@ namespace Classes;
 
 use Classes\InputValidator;
 use Classes\Tools;
+use Classes\ADAuthenticator;
 
 use Flight;
 
@@ -14,7 +15,8 @@ class Clientes
     private $getData;
     private $request;
     private $tools;
-
+    private $AD;
+    private $getQuery;
 
     public function __construct()
     {
@@ -24,15 +26,39 @@ class Clientes
         $this->getData = $this->request->data->getData();
         $this->tools = new Tools;
     }
-    public function get_clientes()
+    public function get_clientes(): void
     {
         try {
+            // error_log(print_r($this->request->query->getData(), true));
+            $queryParams = $this->request->query->getData() ?? [];
             $conn = $this->conect->conn();
             $inicio = microtime(true); // Inicio del script
 
-            $sql = "SELECT * FROM clientes";
-            $sql .= " LEFT JOIN params ON clientes.id = params.cliente AND params.modulo = 1 AND params.descripcion = 'host'";
+            $sql = "SELECT clientes.*";
+            $colsParams = ['host', 'puertoAD', 'activeAD', 'serverAD', 'domainAD', 'baseDNAD', 'serviceUserAD', 'servicePassAD'];
+            foreach ($colsParams as $valor) {
+                $alias = $valor === 'host' ? 'hostLocal' : $valor;
+                $sql .= ", {$valor}.valores AS {$alias} ";
+            }
+            $sql .= " FROM clientes";
+            foreach ($colsParams as $alias) {
+                $sql .= " LEFT JOIN params AS {$alias} ON clientes.id = {$alias}.cliente  AND {$alias}.modulo = 1 AND {$alias}.descripcion = '{$alias}'";
+            }
+            $sql .= " WHERE clientes.id > 0";
+            // Agrego el filtro por recid si existe en los query params
+            $sql .= ($queryParams['recid'] ?? '') ? " AND clientes.recid = :recid" : '';
+            $sql .= ($queryParams['id'] ?? '') ? " AND clientes.id = :id" : '';
+
             $stmt = $conn->prepare($sql);
+
+            if ($queryParams['recid'] ?? '') {
+                $stmt->bindParam(':recid', $queryParams['recid'], \PDO::PARAM_STR);
+            }
+
+            if ($queryParams['id'] ?? '') {
+                $stmt->bindParam(':id', $queryParams['id'], \PDO::PARAM_INT);
+            }
+
             $stmt->execute();
             $clientes = $stmt->fetchAll(\PDO::FETCH_ASSOC);
             $count_usuarios = $this->count_usuarios_clientes($conn);
@@ -49,13 +75,13 @@ class Clientes
                 }
             }
             // cambiar la key clientes.valores por host
-            foreach ($clientes as $key => $value) {
-                $clientes[$key]['hostLocal'] = $value['valores'];
-                unset($clientes[$key]['valores']);
-                unset($clientes[$key]['modulo']);
-                unset($clientes[$key]['descripcion']);
-                unset($clientes[$key]['cliente']);
-            }
+            // foreach ($clientes as $key => $value) {
+            //     $clientes[$key]['hostLocal'] = $value['host'];
+            //     // unset($clientes[$key]['valores']);
+            //     // unset($clientes[$key]['modulo']);
+            //     // unset($clientes[$key]['descripcion']);
+            //     // unset($clientes[$key]['cliente']);
+            // }
 
             $this->response->respuesta($clientes, $count, 'OK', 200, 0, $count, $inicio);
         } catch (\PDOException $e) {
@@ -112,6 +138,13 @@ class Clientes
                 'ApiMobile' => ['varchar100'],
                 'ApiMobileApp' => ['varchar100'],
                 'LocalCH' => ['allowed01'],
+                'activeAD' => ['allowed01'],
+                'serverAD' => ['varchar100'],
+                'puertoAD' => ['numeric'],
+                'domainAD' => ['varchar100'],
+                'baseDNAD' => ['varchar100'],
+                'serviceUserAD' => ['varchar100'],
+                'servicePassAD' => ['varchar100'],
             ];
             $customValueKey = [ // Valores por defecto
                 'Nombre' => '',
@@ -127,6 +160,13 @@ class Clientes
                 'ApiMobile' => '',
                 'ApiMobileApp' => '',
                 "LocalCH" => '0',
+                'activeAD' => '0',
+                'serverAD' => '',
+                'puertoAD' => '',
+                'domainAD' => '',
+                'baseDNAD' => '',
+                'serviceUserAD' => '',
+                'servicePassAD' => '',
             ];
             $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
             $dato = $datos;
@@ -142,7 +182,7 @@ class Clientes
         } catch (\Exception $e) {
             $code = $e->getCode();
             $nameInstance = get_class($e);
-            file_put_contents(PATH_LOG . '/validar_alta_cuenta.log', $e->getMessage());
+            // file_put_contents(PATH_LOG . '/validar_alta_cuenta.log', $e->getMessage());
             throw new $nameInstance($e->getMessage(), $code);
         }
     }
@@ -367,7 +407,6 @@ class Clientes
         fclose($handle);
         return $success;
     }
-
     public function edita_cliente($IDCliente)
     {
         $datos = $this->validar_alta_cuenta();
@@ -385,6 +424,13 @@ class Clientes
         if ($this->update_cliente($datos, $conn, $IDCliente)) {
             $this->response->respuesta([], 1, 'OK', 200, $inicio, 1, 0);
         }
+        $this->update_or_create_params_ad('activeAD', $datos['activeAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('serverAD', $datos['serverAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('puertoAD', $datos['puertoAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('domainAD', $datos['domainAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('baseDNAD', $datos['baseDNAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('serviceUserAD', $datos['serviceUserAD'], $conn, $IDCliente);
+        $this->update_or_create_params_ad('servicePassAD', $datos['servicePassAD'], $conn, $IDCliente);
     }
     private function update_cliente($datos, $conn, $IDCliente)
     {
@@ -415,6 +461,234 @@ class Clientes
             return true;
         } catch (\PDOException $th) {
             throw new \PDOException($th->getMessage(), $th->getCode());
+        }
+    }
+    private function update_or_create_params_ad($descripcion, $valores, $conn, $IDCliente)
+    {
+        $sqlI = "INSERT INTO `params` (`descripcion`, `modulo`, `cliente`, `valores`) VALUES (:descripcion, 1, :id, :valores)";
+        $sqlU = "UPDATE `params` SET `valores` = :valores WHERE `descripcion` = :descripcion and `modulo` = 1 and `cliente` = :id";
+        $sql = $this->si_existe_params_descripcion($IDCliente, $descripcion, $conn) ? $sqlU : $sqlI;
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':valores', $valores, \PDO::PARAM_STR);
+        $stmt->bindParam(':descripcion', $descripcion, \PDO::PARAM_STR);
+        $stmt->bindParam(':id', $IDCliente, \PDO::PARAM_INT);
+        $stmt->execute();
+        $affectedRows = $stmt->rowCount();
+        $stmt = null;
+        return $affectedRows > 0 ? true : false;
+    }
+    private function si_existe_params_descripcion($id, $descripcion, $conn)
+    {
+        $sql = "SELECT * FROM `params` where `descripcion` = :descripcion and `modulo` = 1 and `cliente` = :id";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':descripcion', $descripcion, \PDO::PARAM_STR);
+        $stmt->bindParam(':id', $id, \PDO::PARAM_INT);
+        $stmt->execute();
+        $count = $stmt->rowCount() ?? 0;
+        $stmt = null;
+        return ($count > 0) ? true : false;
+    }
+    private function validar_campos_test_ad()
+    {
+        $datos = $this->getData;
+        $datosModificados = [];
+        try {
+
+            if ($this->tools->jsonNoValido()) {
+                $error = 'Json no valido: ' . $this->tools->jsonNoValido();
+                throw new \Exception($error, 400);
+            }
+
+            if (!is_array($datos)) {
+                throw new \Exception("No se recibieron datos", 204);
+            }
+
+            $rules = [ // Reglas de validación
+                'serverAD' => ['varchar200', 'required'],
+                'puertoAD' => ['numeric', 'required'],
+                'domainAD' => ['varchar200'],
+                'baseDNAD' => ['varchar200'],
+                'serviceUserAD' => ['varchar200'],
+                'servicePassAD' => ['varchar200'],
+            ];
+            $customValueKey = [ // Valores por defecto
+                'serverAD' => '',
+                'puertoAD' => '',
+                'domainAD' => '',
+                'baseDNAD' => '',
+                'serviceUserAD' => '',
+                'servicePassAD' => '',
+            ];
+            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+            $dato = $datos;
+            foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
+                    $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                }
+            }
+            $datosModificados = $dato; // Guardo los datos modificados en un array
+            $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+            $validator->validate(); // Valido los datos
+            return $datosModificados;
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            $nameInstance = get_class($e);
+            // file_put_contents(PATH_LOG . '/validar_alta_cuenta.log', $e->getMessage());
+            throw new $nameInstance($e->getMessage(), $code);
+        }
+    }
+    public function test_ad_connection()
+    {
+        $inicio = microtime(true);
+        try {
+            $datos = $this->validar_campos_test_ad();
+
+            $test = new ADAuthenticator(
+                $datos['serverAD'] ?? '',
+                $datos['baseDNAD'] ?? '',
+                $datos['domainAD'] ?? '',
+                $datos['puertoAD'] ?? ''
+            );
+
+            $adminUser = $datos['serviceUserAD'] ?? '';
+            $adminPass = $datos['servicePassAD'] ?? '';
+
+            $result = $test->testConnection(
+                $adminUser,
+                $adminPass
+            );
+
+            if ($result && isset($result['success']) && $result['success']) {
+                $this->response->respuesta($result, 1, $result['message'] ?? 'OK', 200, $inicio, 1, 0);
+            } else {
+                $mensaje = $result['message'] ?? 'Error en la conexión';
+                throw new \Exception($mensaje, 400);
+            }
+        } catch (\Exception $e) {
+            $this->response->respuesta([], 0, $e->getMessage(), $e->getCode() ?: 400, $inicio, 0, 0);
+        }
+    }
+    public function login_ad()
+    {
+        $inicio = microtime(true);
+        try {
+            $conn = $this->conect->conn();
+            $datos = $this->validar_campos_login_ad();
+            // error_log(print_r($datos, true));
+
+            $datosCliente = $this->get_cliente_ad($datos['id_cliente'] ?? '', $conn);
+
+            $AD = new ADAuthenticator(
+                $datosCliente['serverAD'] ?? '',
+                $datosCliente['baseDNAD'] ?? '',
+                $datosCliente['domainAD'] ?? '',
+                $datosCliente['puertoAD'] ?? ''
+            );
+
+            $adminUser = $datos['serviceUserAD'] ?? '';
+            $adminPass = $datos['servicePassAD'] ?? '';
+
+            // error_log(print_r($adminUser, true));
+            // error_log(print_r($adminPass, true));
+            
+            // error_log(print_r([
+            //     $datosCliente['serverAD'] ?? '',
+            //     $datosCliente['baseDNAD'] ?? '',
+            //     $datosCliente['domainAD'] ?? '',
+            //     $datosCliente['puertoAD'] ?? ''
+            // ], true));
+
+            $result = $AD->testConnection(
+                "$adminUser@" . ($datosCliente['domainAD'] ?? ''),
+                $adminPass,
+                false
+            );
+
+            if ($result && isset($result['success']) && $result['success']) {
+                $this->response->respuesta($result, 1, $result['message'] ?? 'OK', 200, $inicio, 1, 0);
+            } else {
+                $mensaje = $result['message'] ?? 'Error en la conexión';
+                throw new \Exception($mensaje, 400);
+            }
+        } catch (\Exception $e) {
+            $this->response->respuesta([], 0, $e->getMessage(), $e->getCode() ?: 400, $inicio, 0, 0);
+        }
+    }
+    private function validar_campos_login_ad()
+    {
+        $datos = $this->getData;
+        $datosModificados = [];
+        try {
+
+            if ($this->tools->jsonNoValido()) {
+                $error = 'Json no valido: ' . $this->tools->jsonNoValido();
+                throw new \Exception($error, 400);
+            }
+
+            if (!is_array($datos)) {
+                throw new \Exception("No se recibieron datos", 204);
+            }
+
+            $rules = [ // Reglas de validación
+                'id_cliente' => ['required', 'numeric'],
+                'serviceUserAD' => ['required', 'varchar100'],
+                'servicePassAD' => ['required', 'varchar100'],
+            ];
+            $customValueKey = [ // Valores por defecto
+                'id_cliente' => '',
+                'serviceUserAD' => '',
+                'servicePassAD' => '',
+            ];
+            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+            $dato = $datos;
+            foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
+                    $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                }
+            }
+            $datosModificados = $dato; // Guardo los datos modificados en un array
+            $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+            $validator->validate(); // Valido los datos
+            return $datosModificados;
+        } catch (\Exception $e) {
+            $code = $e->getCode();
+            $nameInstance = get_class($e);
+            // file_put_contents(PATH_LOG . '/validar_alta_cuenta.log', $e->getMessage());
+            throw new $nameInstance($e->getMessage(), $code);
+        }
+    }
+    private function get_cliente_ad($id_cliente = null, $conn)
+    {
+        try {
+
+            if (!$id_cliente) {
+                throw new \Exception("No se recibió el id del cliente", 400);
+            }
+
+            $conn = $this->conect->conn();
+            $inicio = microtime(true); // Inicio del script
+
+            $sql = "SELECT clientes.*";
+            $colsParams = ['host', 'puertoAD', 'activeAD', 'serverAD', 'domainAD', 'baseDNAD', 'serviceUserAD', 'servicePassAD'];
+            foreach ($colsParams as $valor) {
+                $alias = $valor === 'host' ? 'hostLocal' : $valor;
+                $sql .= ", {$valor}.valores AS {$alias} ";
+            }
+            $sql .= " FROM clientes";
+            foreach ($colsParams as $alias) {
+                $sql .= " LEFT JOIN params AS {$alias} ON clientes.id = {$alias}.cliente  AND {$alias}.modulo = 1 AND {$alias}.descripcion = '{$alias}'";
+            }
+            $sql .= " WHERE clientes.id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $id_cliente, \PDO::PARAM_INT);
+            $stmt->execute();
+            $cliente = $stmt->fetchAll(\PDO::FETCH_ASSOC)[0] ?? [];
+            $stmt = null;
+            $conn = null;
+            return $cliente;
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage(), $th->getCode());
         }
     }
 }

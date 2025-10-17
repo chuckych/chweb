@@ -34,6 +34,11 @@
                                 <a class="nav-link text-secondary" id="Mobile-tab" data-toggle="tab" href="#Mobile"
                                     role="tab" aria-controls="Mobile" aria-selected="false">Mobile</a>
                             </li>
+                            <li class="nav-item text-secondary hint--top" aria-label="Configurar Active Directory"
+                                role="presentation">
+                                <a class="nav-link text-secondary" id="AD-tab" data-toggle="tab" href="#AD" role="tab"
+                                    aria-controls="AD" aria-selected="false">AD</a>
+                            </li>
                             <li class="nav-item text-secondary d-none" role="presentation">
                                 <a class="nav-link text-secondary" id="XmartClock-tab" data-toggle="tab"
                                     href="#XmartClock" role="tab" aria-controls="XmartClock"
@@ -61,9 +66,16 @@
                                             placeholder="Ej: http://192.168.1.220:8050 o http://hostname:8050"
                                             class="h40 form-control mr-sm-2">
                                     </div>
-                                    <div class="col-12 mt-3">
+                                    <div class="col-12 mt-3 d-flex flex-column">
                                         <p class="font08 mb-1">Token API:</p>
-                                        <span id="token_api" class="font09"></span>
+                                        <div class="position-relative">
+                                            <span id="token_api" class="font09 p-2 border d-block w-100"></span>
+                                            <span aria-label="Copiar Token"
+                                                class="hint hint--top position-absolute pointer" id="copy_token"
+                                                style="top: 50%; right: 10px; transform: translateY(-50%);">
+                                                <span class="bi bi-clipboard"></span>
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -148,6 +160,101 @@
                                         <input type="text" title="App Code" name="AppCode" id="AppCode"
                                             placeholder="App Code: 8 dígitos" maxlength="8"
                                             class="h40 form-control mr-sm-2">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Active Directory -->
+                            <div class="tab-pane" id="AD" role="tabpanel" aria-labelledby="AD-tab">
+                                <div class="row">
+                                    <!-- Estado Active Directory -->
+                                    <div class="col-12 col-sm-6 d-flex flex-column mb-3">
+                                        <label>Estado Active Directory:</label>
+                                        <div class="btn-group btn-group-toggle border p-1" data-toggle="buttons">
+                                            <label class="btn btn-outline-success font08 border-0">
+                                                <input value="1" type="radio" name="activeAD" id="activeADSI"> Activo
+                                            </label>
+                                            <label class="btn btn-outline-danger font08 border-0 ml-1">
+                                                <input type="radio" value="0" name="activeAD" id="activeADNO"> Inactivo
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-sm-6"></div>
+                                    <!-- Server AD -->
+                                    <div class="col-12 col-sm-6 w-100 d-flex flex-column">
+                                        <label>Server
+                                            <input type="text" title="Server AD" name="serverAD" id="serverAD"
+                                                placeholder="ej: ADSERVER o 192.168.1.1" class="h40 form-control mt-1">
+                                            <span class="form-text text-muted">
+                                                Hostname o IP del AD
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- Puerto -->
+                                    <div class="col-12 col-sm-6 w-100 d-flex flex-column">
+                                        <label>Puerto
+                                            <input type="text" title="Puerto AD" name="puertoAD" id="puertoAD"
+                                                placeholder="ej: 389 o 636 (SSL)" class="h40 form-control mt-1">
+                                            <span class="form-text text-muted">
+                                                Puerto (389 o 636 si es SSL)
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- Base DN -->
+                                    <div class="col-12 w-100 d-flex flex-column">
+                                        <label>Base DN
+                                            <input type="text" title="Base DN" name="baseDNAD" id="baseDNAD"
+                                                placeholder="ej: DC=midominio,DC=local" class="h40 form-control mt-1">
+                                            <span class="form-text text-muted">
+                                                Base DN de Active Directory
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- Domain -->
+                                    <div class="col-12 w-100 d-flex flex-column">
+                                        <label>Domain
+                                            <input type="text" title="Domain" name="domainAD" id="domainAD"
+                                                placeholder="ej: MIDOMINIO o midominio.local"
+                                                class="h40 form-control mt-1">
+                                            <span class="form-text text-muted w-100">
+                                                Dominio de Active Directory
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- Probar conexión -->
+                                    <div class="col-12 mb-3 d-flex justify-content-end">
+                                        <button type="button" id="testADConnection"
+                                            class="btn btn-outline-custom font08">
+                                            Test de Conexión AD
+                                        </button>
+                                    </div>
+                                    <!-- service_user -->
+                                    <div class="col-12 w-100 d-flex flex-column">
+                                        <label>Usuario de Servicio
+                                            <input type="text" title="Usuario de servicio" name="serviceUserAD"
+                                                id="serviceUserAD" placeholder="ej: administrator@pruebadominio.local"
+                                                class="h40 form-control mt-1" autocomplete="username">
+                                            <span class="form-text text-muted w-100">
+                                                Usuario de servicio para Active Directory
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- service_pass -->
+                                    <div class="col-12 w-100 d-flex flex-column">
+                                        <label>Contraseña
+                                            <input type="password" title="Contraseña de servicio" name="servicePassAD"
+                                                id="servicePassAD" placeholder="ej: Contraseña del usuario de servicio"
+                                                class="h40 form-control mt-1" autocomplete="current-password">
+                                            <span class="form-text text-muted w-100">
+                                                Contraseña de servicio para Active Directory
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <!-- Probar conexión de usuario-->
+                                    <div class="col-12 mb-3 d-flex justify-content-end">
+                                        <button type="button" id="testUserADConnection"
+                                            class="btn btn-outline-custom font08">
+                                            Test Usuario AD
+                                        </button>
                                     </div>
                                 </div>
                             </div>

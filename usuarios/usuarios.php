@@ -22,10 +22,10 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
         <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
         <div class="row mt-3">
             <div class="col-12 col-sm-6">
-                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border"
-                    id="btnImportar">
-                    <span class="mr-1 d-none d-sm-inline fw5">IMPORTAR PERSONAL</span>
-                    <span class="mr-1 d-inline d-sm-none">IMPORTAR</span>
+                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border hint hint--right"
+                    id="btnImportar" aria-label="Importar usuarios desde Control Horario">
+                    <span class="mr-1 d-none d-sm-inline fw5">IMPORTAR PERSONAL CH</span>
+                    <span class="mr-1 d-inline d-sm-none">IMPORTAR DE CH</span>
                     <i class="bi-download font1"></i>
                 </a>
             </div>
@@ -36,6 +36,12 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
                 <?php } ?>
                 <a href="roles/?_c=<?= $_GET['_c'] ?>" class="mr-1 btn fontq float-right m-0 opa7 btn-custom"><i
                         class="bi bi-sliders mr-2"></i>Roles</a>
+            </div>
+            <div class="col-12 mt-1" id="div_import_ad" style="display:none;">
+                <a href="javascript:void(0);" class="fw4 btn fontq btn-outline-custom border hint hint--right"
+                    id="btnImportarAD" aria-label="Importar usuarios desde Active Directory">
+                    <span class="mr-1 fw5">IMPORTAR USUARIOS AD</span>
+                </a>
             </div>
         </div>
         <div class="mt-2">
@@ -89,29 +95,18 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
         </div>
         <?php require "modalAddUser.html"; ?>
         <?php require "modalEditUser.html"; ?>
+        <?php require "modalUserAD.html"; ?>
     </div>
     <!-- fin container -->
     <?php
     require __DIR__ . "/../js/jquery.php";
     require __DIR__ . "/../js/DataTable.php";
     ?>
-    <script>
-        // fetch('clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.status == "Error") {
-        //             setTimeout(() => {
-        //                 notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 5000, 'right')
-        //             }, 1000);
-        //             $('#btnImportar').hide()
-        //         }
-        //     });
-    </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
-    <script src="usuarios-min.js?v=<?= vjs() ?>"></script>
+    <script src="usuarios.js?<?= version_file("/usuarios/usuarios.js") ?>"></script>
 </body>
 
 </html>

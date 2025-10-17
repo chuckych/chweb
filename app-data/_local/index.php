@@ -2,52 +2,67 @@
 require __DIR__ . '/../../config/session_start.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/../../config/index.php';
-
-ultimoacc();
-secure_auth_ch_json();
 header("Content-Type: application/json");
+ultimoacc();
+$noValidate = false;
+$request = Flight::request();
+$noValidateSession = ['login_ad'];
+$requestedEndpoint = explode('/', trim($request->url, '/')) ?? [];
+$requestedEndpoint = $requestedEndpoint[0] ?? '';
 
-if (!$_SESSION) {
+if (in_array($requestedEndpoint, $noValidateSession)) {
+    $noValidate = true;
+    $requestData = $request->data->getData() ?? [];
+    $_SESSION['RECID_CLIENTE'] = $requestData['recid_cliente'] ?? '';
+}
+
+
+if (!$_SESSION && !$noValidate) {
+    secure_auth_ch_json();
     Flight::json(["error" => "Sesión finalizada."]);
     exit;
 }
+
 // sleep(1);
-$token = sha1($_SESSION['RECID_CLIENTE']);
+$token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
 
 define('HOSTCHWEB', gethostCHWeb());
 define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
 
+// error_log(print_r(HOSTCHWEB, true));
+// error_log(print_r(URLAPI, true));
+
 borrarLogs('json', 1, 'json');
 borrarLogs('archivos', 1, 'xls');
-
 
 function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
 {
     timeZone();
     timeZone_lang();
 
+    
     $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
     $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
     $payload = $argumento[1] ?? []; // Obtengo el payload
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
     $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
     $method = strtoupper($method); // Convierto el método a mayúsculas
-
+    
     try {
-
+        
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
-
+        
         $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
-
+        
         $ch = curl_init(); // Inicializo curl
 
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Seteo el seguimiento de la ubicación
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host (0 = no verificar, 2 = verificar)
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -66,7 +81,8 @@ function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
         }
 
         $token = sha1($_SESSION['RECID_CLIENTE']);
-        $AGENT = $_SERVER['HTTP_USER_AGENT'];
+        $AGENT = $_SERVER['HTTP_USER_AGENT'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3';
+
         $headers = [
             "Accept: */*",
             'Content-Type: application/json',
@@ -108,10 +124,47 @@ Flight::map('request_get', function ($endpoint) {
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] : [];
     return $result;
 });
+Flight::map('request_test_ad', function ($endpoint) {
+    if (!$endpoint) {
+        throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
+    }
+    $url = URLAPI . "/api/_local/{$endpoint}";
+    $data = Flight::request()->data->getData();    
+    $request = local_api($url, $data, 'POST', '');
+    $arrayData = json_decode($request, true);
+    return $arrayData;
+});
 
 Flight::route('GET /clientes', function () {
-    $clientes = Flight::request_get('clientes');
+    $queryParams = Flight::request()->query->getData() ?? [];
+    $endpoint = $queryParams ? 'clientes?' . http_build_query($queryParams) : 'clientes';
+    $clientes = Flight::request_get($endpoint);
     Flight::json($clientes);
+});
+Flight::route('POST /test_ad', function () {
+    $clientes = Flight::request_test_ad('test_ad');
+    Flight::json($clientes);
+});
+Flight::route('POST /login_ad', function () {
+    $url = URLAPI . "/api/_local/login_ad";
+    $data = Flight::request()->data->getData();
+    $request = local_api($url, $data, 'POST', '');
+    $arrayData = json_decode($request, true);
+    Flight::json($arrayData);
+});
+Flight::route('POST /usuarios', function () {
+    $url = URLAPI . "/api/_local/usuarios";
+    $data = Flight::request()->data->getData();
+    $request = local_api($url, $data, 'POST', '');
+    $arrayData = json_decode($request, true);
+    Flight::json($arrayData);
+});
+Flight::route('GET /usuarios', function () {
+    $url = URLAPI . "/api/_local/usuarios";
+    // $data = Flight::request()->data->getData();
+    $request = local_api($url, [], 'GET', '');
+    $arrayData = json_decode($request, true);
+    Flight::json($arrayData);
 });
 Flight::route('PUT /clientes/@id', function ($id) {
     $data = Flight::request()->data->getData();
@@ -127,8 +180,6 @@ Flight::route('POST /clientes', function () {
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
-
-
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
     exit;
@@ -141,7 +192,6 @@ Flight::map('notFound', function () {
     exit;
 });
 Flight::set('flight.log_errors', true);
-
 Flight::map('error', function ($ex) {
     $code_protected = $ex->getCode() ?? 400;
 

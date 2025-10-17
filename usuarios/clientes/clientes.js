@@ -155,9 +155,6 @@ document.addEventListener('DOMContentLoaded', function () {
         ls.set(LS_ID_CLIENTE, data.id ?? '');
         if (!data) return;
 
-        console.log(data);
-
-
         const submitAdd = document.getElementById('submitAdd');
         const submitEdit = document.getElementById('submitEdit');
         submitEdit.style.display = 'block';
@@ -183,6 +180,36 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#hostCHWeb').val(data.hostLocal)
         $('#AppCode').val(data.recid)
         $('#token_api').text(data.token_api ?? '');
+        $('#serverAD').val(data.serverAD ?? '');
+        $('#puertoAD').val(data.puertoAD ?? '');
+        $('#domainAD').val(data.domainAD ?? '');
+        $('#baseDNAD').val(data.baseDNAD ?? '');
+        $('#serviceUserAD').val(data.serviceUserAD ?? '');
+        $('#servicePassAD').val(data.servicePassAD ?? '');
+
+        // Marcar estado de Active Directory
+        const activeAD = data.activeAD ?? '0';
+        if (activeAD === '1') {
+            $('#activeADSI').prop('checked', true);
+            $('#activeADNO').prop('checked', false);
+            $('#activeADSI').parent().addClass('active');
+            $('#activeADNO').parent().removeClass('active');
+        } else {
+            $('#activeADSI').prop('checked', false);
+            $('#activeADNO').prop('checked', true);
+            $('#activeADSI').parent().removeClass('active');
+            $('#activeADNO').parent().addClass('active');
+        }
+
+        $('#copy_token').off('click').on('click', function () {
+            const token = $('#token_api').text();
+            if (!token) return;
+            navigator.clipboard.writeText(token).then(() => {
+                notify('Token copiado al portapapeles', 'success', 5000, 'right');
+            }).catch(err => {
+                notify('Error al copiar el token', 'danger', 5000, 'right');
+            });
+        });
 
         if ((data.auth == '1')) {
             $('#auth').prop('checked', true)
@@ -200,9 +227,13 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#localCHNO').prop('checked', false)
             $('#localCHSI').prop('checked', true)
         }
-        $('#WebService').val(data.WebService)
-        $('#ApiMobileHRP').val(data.ApiMobileHRP)
-        $('#ApiMobileHRPApp').val(data.UrlAppMobile)
+        $('#WebService').val(data.WebService);
+        $('#ApiMobileHRP').val(data.ApiMobileHRP);
+        $('#ApiMobileHRPApp').val(data.UrlAppMobile);
+        // on change activeAD trigger change
+        $('#activeAD').off('change').on('change', function () {
+            $(this).trigger('change');
+        });
     }
     const test_conect = async (data) => {
         notifyWait('Aguarde...')
@@ -255,6 +286,13 @@ document.addEventListener('DOMContentLoaded', function () {
             'ApiMobileApp': $('#ApiMobileHRPApp').val(),
             'AppCode': $('#AppCode').val(),
             'LocalCH': $('#localCHSI').is(':checked') ? '0' : '1',
+            'activeAD': $('input[name="activeAD"]:checked').val() ?? '0',
+            'serverAD': $('#serverAD').val(),
+            'puertoAD': $('#puertoAD').val(),
+            'domainAD': $('#domainAD').val(),
+            'baseDNAD': $('#baseDNAD').val(),
+            'serviceUserAD': $('#serviceUserAD').val(),
+            'servicePassAD': $('#servicePassAD').val(),
         }).then(res => {
             $.notifyClose();
             if ((res.data.MESSAGE ?? '') == 'OK') {
@@ -336,4 +374,69 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#nombreCuenta').html('Nueva Cuenta')
         $('#submitFormCuenta').val('AltaCuenta')
     })
+    const test_ad_connection = (selector, withUser = false) => {
+        $(selector).off('click').on('click', function (e) {
+            e.preventDefault();
+            notifyWait('Probando conexión AD...');
+
+            if (withUser) {
+                // validar que los campos serviceUserAD y servicePassAD no estén vacíos
+                if (!$('#serviceUserAD').val() || !$('#servicePassAD').val()) {
+                    $.notifyClose();
+                    notify('Debe ingresar el usuario y la contraseña del servicio AD', 'danger', 5000, 'right');
+                    return;
+                }
+            }
+
+            axios.post('../../app-data/_local/test_ad', {
+                'serverAD': $('#serverAD').val(),
+                'baseDNAD': $('#baseDNAD').val(),
+                'domainAD': $('#domainAD').val(),
+                'puertoAD': $('#puertoAD').val(),
+                'serviceUserAD': withUser ? $('#serviceUserAD').val() : '',
+                'servicePassAD': withUser ? $('#servicePassAD').val() : ''
+            }).then(res => {
+                $.notifyClose();
+                const message = res.data?.MESSAGE ?? 'Error desconocido';
+                if ((res.data?.RESPONSE_CODE ?? '') == '200 OK') {
+                    if (withUser) {
+                        const info = res.data?.DATA?.server_info ?? [];
+                        const defaultnamingcontext = info?.defaultnamingcontext ?? null;
+                        const dns_hostname = info?.dns_hostname ?? null;
+                        const usuarios = info?.usuarios ?? [];
+
+                        let html = `
+                            <div class="d-flex flex-column">
+                            <div>Conexión exitosa con credenciales</div>
+                        `;
+                        html += defaultnamingcontext ? `<div class="">Base DN: ${defaultnamingcontext}</div>` : '';
+                        html += dns_hostname ? `<div class="">Domain: ${dns_hostname}</div>` : '';
+                        html += `</div>`;
+                        html += `<div class="mt-2 font08">Usuarios de AD: (${usuarios.length ?? 0})</div>`;
+                        if (usuarios.length > 0) {
+                            html += `<ul class="my-2" style="max-height: 200px; overflow-y: auto;">`;
+                            usuarios.forEach(u => {
+                                const email = u['email'] ?? '';
+                                html += `<li class="font08">${u['username'] ?? ''} <br> <span class="font07">Nombre: ${u['nombre'] ?? ''} ${email ? ` <br>Email: ${email}` : ''}</span></li>`;
+                            });
+                            html += `</ul>`;
+                        } else {
+                            html += `<div>No se encontraron usuarios.</div>`;
+                        }
+                        notify(html, 'success', 0, 'right')
+                        return;
+                    }
+                    notify(message, 'success', 5000, 'right')
+                } else {
+                    throw new Error(message)
+                }
+            }).catch(err => {
+                $.notifyClose();
+                notify(err.message, 'danger', 5000, 'right')
+            });
+            e.stopImmediatePropagation();
+        });
+    }
+    test_ad_connection('#testADConnection');
+    test_ad_connection('#testUserADConnection', true);
 });

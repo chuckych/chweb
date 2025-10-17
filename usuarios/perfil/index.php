@@ -17,4 +17,8 @@ if (BrowserIE()) {
     $icon_building = '<svg class="bi mr-1" width="18" height="18" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#building" /></svg>';
     $icon_key = '<svg class="bi mr-1" width="18" height="18" fill="currentColor"><use xlink:href="../../img/bootstrap-icons.svg#key" /></svg>';
 }
-require pagina('perfil.php');
+if (($_SESSION['USER_AD'] ?? '') === '1') { // si es usuario de AD lo enviamos al inicio
+    require pagina(__DIR__ . '/../../inicio/inicio.php');
+} else {
+    require pagina('perfil.php');
+}

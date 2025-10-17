@@ -29,7 +29,7 @@
                 </table>
             </div>
         </div>
-        <?php require 'form.html'; ?>
+        <?php require __DIR__ . '/form.html'; ?>
         <!-- fin container -->
         <?php
         /** INCLUIMOS LIBRERÍAS JQUERY */

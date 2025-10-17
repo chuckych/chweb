@@ -1,7 +1,7 @@
 <?php
 // obtener el dominio con $Server
 // try {
-
+$authenticated = false;
 $Server = $_SERVER['SERVER_NAME'] ?? '';
 
 // Configuración de la cookie
@@ -55,7 +55,7 @@ $passLogin = filter_input(INPUT_POST, 'clave', FILTER_DEFAULT);
 require_once __DIR__ . '/../config/conect_pdo.php'; //Conexión a la base de datos
 
 try {
-	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user' FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
+	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user', usuarios.user_ad FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
 	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parámetro :user con el valor de $userLogin
 	$stmt->execute(); // ejecuta la consulta
@@ -67,8 +67,14 @@ try {
 	fileLog($th->getMessage(), $pathLog); // escribir en el log de errores el error
 	exit; // termina la ejecución
 }
-/** Si es correcto */
-if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($passLogin, $hash)
+
+// Si el usuario no es de AD, se procede con la autenticación normal
+$authenticated = (($row['user_ad'] ?? '') === '1') ?
+	auth_ad($passLogin, $row) :
+	password_verify($passLogin, $row['clave']);
+
+// Si la autenticación es correcta (true)
+if ($authenticated) {
 
 	$checkHost = count_pdoQuery("SELECT 1 FROM params WHERE modulo = 1 AND descripcion = 'host' AND cliente = $row[id_cliente] LIMIT 1");
 
@@ -151,6 +157,7 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 
 	$_SESSION["MODS_ROL"] = $data_mod; // Guardo en la session los módulos asociados al rol
 	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
+	$_SESSION["USER_AD"] = $row['user_ad']; // Guardo en la session los permisos del rol
 
 	$arrModProy = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo`=`modulos`.`id` WHERE `mod_roles`.`recid_rol`='$row[recid_rol]' and `modulos` .`idtipo`=6");
 
@@ -209,8 +216,6 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 		$recidRol = (isset($e)) ? "WHERE $tabla.recid_rol = '$recid_rol'" : "";
 		$query = "SELECT DISTINCT $tabla.$ColEstr AS id, $tabla.recid_rol AS recid_rol $concat FROM $tabla $recidRol";
 		$result = mysqli_query($link, $query);
-		// print_r($query);
-		// exit;
 
 		if (mysqli_num_rows($result) > 0) {
 			while ($row = mysqli_fetch_assoc($result)) {
@@ -265,6 +270,7 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 		$_SESSION['SucuRol'] = estructUsuario(intval($row['id']), 7);
 	}
 
+
 	$_SESSION["CONEXION_MS"] = array('host' => $row["host"], 'db' => $row["db"], 'user' => $row["user"], 'pass' => $row["pass"], 'auth' => $row['auth']);
 	$_SESSION["secure_auth_ch"] = true;
 	$_SESSION["user"] = strtolower($row['usuario']);
@@ -292,6 +298,7 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 	$_SESSION['CONECT_MSSQL'] = false;
 	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
 	$_SESSION['MODULOS'] = $modRol;
+
 	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
 	login_logs('1');
 
@@ -312,6 +319,7 @@ if ($row && (password_verify($passLogin, $row['clave']))) { // password_verify($
 		header('Location:/' . HOMEHOST . '/inicio/');
 	}
 	access_log('Login correcto');
+
 
 } else {
 	login_logs('2');

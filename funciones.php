@@ -34,9 +34,9 @@ function version($html = false)
         return '';
     }
 }
-function verDBLocal()
+function verDBLocal(): int
 {
-    return 20250619; // Version de la base de datos local
+    return 20251016; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -349,7 +349,7 @@ function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
 function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
 {
 
-    $countModRol = (count($_SESSION['MODS_ROL']));
+    $countModRol = (count($_SESSION['MODS_ROL'] ?? []));
     $userLogout = $version = $icon_clock_history = $icon_person_circle = '';
 
     if (BrowserIE()) {
@@ -384,7 +384,7 @@ function encabezado_mod2($bgc, $colortexto, $svg, $titulo, $width, $class)
     }
     if ($countModRol != '1') {
         // $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . '">' . version() . '</span>';
-        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . $_SESSION['VER_DB_CH'] . ' - Version DB Local: ' . $_SESSION['VER_DB_LOCAL'] . '"">' . version() . '</span>';
+        $version = '<span class="float-right fontpp" style="color:#efefef;margin-top:-10px; padding-right:10px" title="Version DB CH: ' . ($_SESSION['VER_DB_CH'] ?? '') . ' - Version DB Local: ' . ($_SESSION['VER_DB_LOCAL'] ?? '') . '"">' . version() . '</span>';
     }
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     if ($_SERVER['SCRIPT_NAME'] == '/' . HOMEHOST . '/mishoras/index.php') {
@@ -471,7 +471,7 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
     </div>';
 }
 /** Función HOST */
-function host()
+function host(): string
 {
     if (array_key_exists('HTTPS', $_SERVER) && $_SERVER["HTTPS"] == "on") {
         $http = 'https://' . $_SERVER['HTTP_HOST'];
@@ -3220,7 +3220,7 @@ function getDataIni($url) // obtiene el json de la url
 }
 function gethostCHWeb()
 {
-    $token = sha1($_SESSION['RECID_CLIENTE']);
+    $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
     if (!file_exists(__DIR__ . '/mobileApikey.php')) {
         return false;
     }
@@ -3827,4 +3827,54 @@ function OS()
         return 'mac';
     }
     return 'unknown';
+}
+function auth_ad($passLogin, $row)
+{
+	$_SESSION['RECID_CLIENTE'] = $row['recid_cliente'] ?? '';
+	$url = host() . '/' . HOMEHOST . '/app-data/_local/login_ad';
+
+	$data = [
+		'id_cliente' => $row['id_cliente'] ?? '',
+		'recid_cliente' => $row['recid_cliente'] ?? '',
+		'serviceUserAD' => $row['usuario'] ?? '',
+		'servicePassAD' => $passLogin
+	];
+
+	$options = [
+		'http' => [
+			'header' => "Content-Type: application/json\r\n",
+			'method' => 'POST',
+			'content' => json_encode($data),
+			'timeout' => 10, // segundos
+			'ignore_errors' => true // Para poder leer respuestas de error
+		],
+		'ssl' => [
+			'verify_peer' => false, // Solo para desarrollo local
+			'verify_peer_name' => false
+		]
+	];
+
+	$context = stream_context_create($options);
+	$response = @file_get_contents($url, false, $context);
+
+	if ($response === false) {
+		// Error en la petición
+		$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorAD.log';
+		fileLog("Error al conectar con AD: " . error_get_last()['message'], $pathLog);
+	} else {
+		$responseData = json_decode($response, true);
+		// Verificar si la autenticación AD fue exitosa
+		if (isset($responseData['RESPONSE_CODE']) && $responseData['RESPONSE_CODE'] === '200 OK') {
+			return true;
+		} else {
+			// // Autenticación AD falló
+			// $authenticated = false;
+			// $mensaje = $responseData['MESSAGE'] ?? 'Error de autenticación AD';
+			// login_logs('2');
+			// header('Location:/' . HOMEHOST . '/login/?error=ad');
+			// access_log('Login AD incorrecto: ' . $mensaje);
+			// exit;
+            return false;
+		}
+	}
 }

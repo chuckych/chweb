@@ -42,10 +42,8 @@ $response = new Classes\Response;
 $api->map('notFound', [$response, 'notFound']);
 $api->map('Forbidden', function ($mensaje) use ($response) {
     $inicio = microtime(true);
-    $response->respuesta('', 0, $mensaje, 403, $inicio, 0, 0);
-    exit;
+    return $response->respuesta('', 0, $mensaje, 403, $inicio, 0, 0);
 });
-
 $api->map('error', function ($ex) use ($api, $response) {
 
     $code_protected = $ex->getCode() ?? 400;
@@ -96,6 +94,7 @@ $api->map('error', function ($ex) use ($api, $response) {
 });
 
 $iniData = getIni(PATH_APIKEY) ?? []; // Obtiene los datos del archivo de configuración de la api
+// error_log(print_r($iniData, true));
 
 if (isset($iniData[0]['Token'])) { // Si el token está definido
     $iniData = array_column($iniData, null, 'Token'); // indexa el array por el token
@@ -105,13 +104,19 @@ if (isset($iniData[0]['Token'])) { // Si el token está definido
 }
 
 $clientes = new Classes\Clientes; // Instancia de la clase Clientes
+$usuarios = new Classes\Usuarios; // Instancia de la clase Usuarios
 $params = new Classes\Params; // Instancia de la clase Params
 
 $api->route('GET /clientes', [$clientes, 'get_clientes']); // Obtiene los clientes
 $api->route('POST /clientes', [$clientes, 'alta_cliente']); // Obtiene los clientes
+$api->route('POST /test_ad', [$clientes, 'test_ad_connection']); // Test conexión AD
+$api->route('POST /login_ad', [$clientes, 'login_ad']); // login_ad 
 $api->route('PUT /clientes/@IDCliente', [$clientes, 'edita_cliente']); // Obtiene los clientes
 $api->route('GET /params', [$params, 'get']); // Obtiene los params
 $api->route('POST /params', [$params, 'alta_multiple']); // alta de params
+$api->route('GET /usuarios', [$usuarios, 'get_usuarios']); // get_usuarios
+$api->route('POST /usuarios', [$usuarios, 'alta_usuario']); // alta de usuario
 $api->route('DELETE /params', [$params, 'delete']); // Eliminar params
 
 $api->start();
+// Flight::start();

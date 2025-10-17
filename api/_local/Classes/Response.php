@@ -49,29 +49,29 @@ class Response
     function respuesta($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
     {
         // $log = new Log; // Log Api
-        $code   = intval($code); // code response
-        $start  = ($code != 400) ? $this->start() : 0; // start response
+        $code = intval($code); // code response
+        $start = ($code != 400) ? $this->start() : 0; // start response
         $length = ($code != 400) ? $this->length() : 0; // length response
 
-        $time_end     = microtime(true);
+        $time_end = microtime(true);
         $tiempoScript = number_format($time_end - $time_start, 4);
 
         $array = [
             'RESPONSE_CODE' => $code . ' ' . $this->getStatusMessage($code),
-            'START'         => intval($start),
-            'LENGTH'        => intval($length),
-            'TOTAL'         => intval($total),
-            'COUNT'         => intval($count),
-            'MESSAGE'       => $msg,
-            'TIME'          => floatval($tiempoScript),
-            'DATA'          => $data ?? [],
+            'START' => intval($start),
+            'LENGTH' => intval($length),
+            'TOTAL' => intval($total),
+            'COUNT' => intval($count),
+            'MESSAGE' => $msg,
+            'TIME' => floatval($tiempoScript),
+            'DATA' => $data ?? [],
         ];
         $this->json($array, $code); // response json
 
         $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
 
         $ipAdress = $this->request->ip ?? '';
-        $agent    = $this->request->user_agent ?? '';
+        $agent = $this->request->user_agent ?? '';
 
         // if ($agent) {
         //     $parser = new UserAgentParser();
@@ -178,7 +178,8 @@ class Response
     }
     function notFound()
     {
-        $text = 'Not Found /v1' . $this->request->url . '. Method: ' . $this->request->method;
+        $text = 'Not Found ' . $this->request->url . '. Method: ' . $this->request->method;
+        http_response_code(404);
         $this->respuesta([], 0, $text, 404, 0, 0, 0);
     }
 }

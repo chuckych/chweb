@@ -16,7 +16,7 @@ $where_condition = $sqlTot = $sqlRec = "";
 FusNuloPOST('recid_c', '');
 $recid_c = test_input($_POST['recid_c']);
 
-$sql_query = "SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access', uident.ident as 'tarjeta' FROM usuarios 
+$sql_query = "SELECT usuarios.id AS 'uid', usuarios.recid AS 'recid', usuarios.nombre AS 'nombre', usuarios.usuario AS 'usuario', usuarios.legajo AS 'legajo', usuarios.rol AS 'rol', roles.nombre AS 'rol_n', usuarios.estado AS 'estado', clientes.nombre as 'cliente', clientes.id as 'id_cliente', clientes.recid as 'recid_cliente', usuarios.fecha_alta AS 'fecha_alta', usuarios.fecha AS 'fecha_mod', (SELECT MAX(login_logs.fechahora) FROM login_logs WHERE login_logs.uid=usuarios.id) AS 'last_access', uident.ident as 'tarjeta', usuarios.user_ad FROM usuarios 
 LEFT JOIN roles ON usuarios.rol=roles.id 
 INNER JOIN clientes ON usuarios.cliente=clientes.id
 LEFT JOIN uident ON  usuarios.id = uident.usuario
@@ -71,6 +71,7 @@ if ($totalRecords > 0) {
         $estado_n = ($estado) ? 'Inactivo' : 'Activo';
         $fecha_alta = $row['fecha_alta'];
         $fecha_mod = $row['fecha_mod'];
+        $user_ad = $row['user_ad'] == '1' ? ' (<span class="hint hint--top" aria-label="Usuario Active Directory">AD</span>)' : '';
         $last_access = !empty($row['last_access']) ? FechaFormatH($row['last_access']) : '-';
 
         $IconEstado = ($estado) ? $IconAlta : $IconBaja;
@@ -78,8 +79,10 @@ if ($totalRecords > 0) {
         $TitleEstado2 = ($estado) ? 'alta' : 'baja';
         $ColorEstado = ($estado) ? 'text-danger' : 'text-secondary';
 
-        $ButtonEditar = '<button type="button" data_tarjeta="' . $tarjeta . '" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data_usuario="' . $usuario . '" data_rol_n="' . $rol_n . '" data_rol="' . $rol . '" data_legajo="' . $legajo . '" data_estado_n="' . $estado_n . '" data_estado="' . $estado . '" data_fecha_alta="' . $fecha_alta . '" data_fecha_mod="' . $fecha_mod . '" data_cliente="' . $cliente . '" data-titlel="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
-        $ButtonClave = '<button type="button" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data_usuario="' . $usuario . '" data-titlel="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_' . $uid . '">' . $IconClave . '</button>';
+        $ButtonEditar = '<button type="button" data_tarjeta="' . $tarjeta . '" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data_usuario="' . $usuario . '" data_rol_n="' . $rol_n . '" data_rol="' . $rol . '" data_legajo="' . $legajo . '" data_estado_n="' . $estado_n . '" data_estado="' . $estado . '" data_fecha_alta="' . $fecha_alta . '" data_fecha_mod="' . $fecha_mod . '" data_cliente="' . $cliente . '" data_user_ad="' . $row['user_ad'] . '" data-titlel="Editar ' . $nombre . '" class="editar ' . $classButton . '" data-toggle="modal">' . $IconEditar . '</button>';
+        $btnWindowsIcon = '<button type="button" aria-label="Usuario Active Directory" class="hint hint--top ' . $classButton . '"><i class="bi bi-windows mr-1" style="color:#0078D6;"></i></button>';
+        $ButtonClave = $row['user_ad'] == '0' ? '<button type="button" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data_usuario="' . $usuario . '" data-titlel="Restablecer Contraseña ' . $nombre . '" class="' . $classButton . ' resetKey" id="reset_' . $uid . '">' . $IconClave . '</button>' : $btnWindowsIcon;
+
         $ButtonBaja = '<button type="button" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data_estado="' . $estado . '" data-titlel="' . $TitleEstado . ': ' . $nombre . '" data_title="' . $TitleEstado2 . '" class="' . $classButton . ' estado" id="estado_' . $uid . '">' . $IconEstado . '</button>';
         $ButtonTrash = '<button type="button" data_uid="' . $uid . '" data_nombre="' . $nombre . '" data-titlel="Eliminar ' . $nombre . '" class="' . $classButton . ' delete" id="delete_' . $uid . '">' . $IconTrash . '</button>';
         $listas = '<button type="button" data-uid="' . $uid . '" data-c="' . $recid_cliente . '" data_nombre="' . $nombre . '" data_usuario="' . $usuario . '" data_rol_n="' . $rol_n . '" data-titlel="Estructura del usuario ' . $nombre . '" class="' . $classButton . ' ListaUsuario"><span class="contentd"><i class="bi bi-list"></i></span></button>';
@@ -87,7 +90,8 @@ if ($totalRecords > 0) {
             'uid' => '<span class="contentd ' . $ColorEstado . '">' . $uid . '</span>',
             'recid' => '<span class="contentd ' . $ColorEstado . '">' . $recid . '</span>',
             'nombre' => '<div class="contentd text-nowrap pt-2 text-secondary"' . $ColorEstado . '"><b class="contentd ' . $ColorEstado . ' "><span>' . $nombre . '</span></b><span class="mx-2"></span><span class="botones">' . $listas . $ButtonEditar . $ButtonClave . $ButtonBaja . $ButtonTrash . '</span></div>',
-            'usuario' => '<span class="contentd ' . $ColorEstado . '">' . $IconPerson . $usuario . '</span>',
+            'usuario' => '<span class="contentd ' . $ColorEstado . '">' . $IconPerson . $usuario . $user_ad . '</span>',
+            'user_ad' => '<span class="contentd ' . $ColorEstado . '">' . $user_ad . '</span>',
             'legajo' => '<span class="contentd ls1 ' . $ColorEstado . '">' . $legajo . '</span>',
             'rol_n' => '<span class="contentd ' . $ColorEstado . '">' . $rol_n . '</span>',
             'estado' => '<span class="contentd ' . $ColorEstado . '">' . $estado . '</span>',
