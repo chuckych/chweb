@@ -132,7 +132,7 @@ class Clientes
                 'LocalCH' => ['allowed01'],
                 'activeAD' => ['allowed01'],
                 'serverAD' => ['varchar100'],
-                'puertoAD' => ['numeric'],
+                'puertoAD' => ['intempty'],
                 'domainAD' => ['varchar100'],
                 'baseDNAD' => ['varchar100'],
                 'serviceUserAD' => ['varchar100'],

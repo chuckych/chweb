@@ -473,12 +473,35 @@ function encabezado_mod3($bgc, $colortexto, $svg, $titulo, $style, $class)
 /** Función HOST */
 function host(): string
 {
-    if (array_key_exists('HTTPS', $_SERVER) && $_SERVER["HTTPS"] == "on") {
-        $http = 'https://' . $_SERVER['HTTP_HOST'];
-    } else {
-        $http = 'http://' . $_SERVER['HTTP_HOST'];
+    // Headers a verificar para detectar HTTPS (en orden de prioridad)
+    $httpsHeaders = [
+        'HTTP_X_FORWARDED_PROTO' => 'https',  // Estándar de facto
+        'HTTP_X_FORWARDED_SCHEME' => 'https', // Alternativa común
+        'HTTP_X_FORWARDED_SSL' => 'on',       // Usado por algunos proxies
+        'HTTPS' => ['on', '1']                // Nativo (sin proxy)
+    ];
+    
+    $isHttps = false;
+    
+    foreach ($httpsHeaders as $header => $expectedValues) {
+        if (!isset($_SERVER[$header])) {
+            continue;
+        }
+        
+        $serverValue = $_SERVER[$header];
+        $expectedValues = is_array($expectedValues) ? $expectedValues : [$expectedValues];
+        
+        // Verificar si el valor del servidor coincide con alguno de los valores esperados
+        if (in_array($serverValue, $expectedValues, true) || 
+            ($header === 'HTTPS' && $serverValue !== 'off')) {
+            $isHttps = true;
+            break;
+        }
     }
-    return $http;
+    
+    $protocol = $isHttps ? 'https://' : 'http://';
+    
+    return $protocol . $_SERVER['HTTP_HOST'];
 }
 function valida_campo($name)
 {
@@ -2842,7 +2865,7 @@ function borrarLogs($path, $days, $ext)
     // si el directorio $path no existe throw error
     if (!is_dir($path)) {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorBorrarLogs.log'; // ruta del archivo de Log de errores
-        fileLog('El directorio ' . $path . ' no existe', $pathLog); // escribir en el log de errores el error
+        // fileLog('El directorio ' . $path . ' no existe', $pathLog); // escribir en el log de errores el error
         return false;
     }
     $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
@@ -3868,13 +3891,6 @@ function auth_ad($passLogin, $row)
 		if (isset($responseData['RESPONSE_CODE']) && $responseData['RESPONSE_CODE'] === '200 OK') {
 			return true;
 		} else {
-			// // Autenticación AD falló
-			// $authenticated = false;
-			// $mensaje = $responseData['MESSAGE'] ?? 'Error de autenticación AD';
-			// login_logs('2');
-			// header('Location:/' . HOMEHOST . '/login/?error=ad');
-			// access_log('Login AD incorrecto: ' . $mensaje);
-			// exit;
             return false;
 		}
 	}

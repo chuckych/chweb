@@ -1141,6 +1141,11 @@ function getTextColor(backgroundColor) {
 const test_conect = async (data, options = {}) => {
     notifyWait('Aguarde... conectando con control horario...')
     try {
+
+        if(!data.host || !data.db || !data.user, !data.pass){
+            throw new Error('Faltan datos de conexión');
+        }
+
         const res = await axios.post(`/${_homehost}/app-data/test_connect`, {
             'DBHost': data.host,
             'DBName': data.db,
@@ -1179,9 +1184,7 @@ const test_conect = async (data, options = {}) => {
 
 const get_cuenta = async (recid_c) => {
     if (!recid_c) return null;
-    try {
-        console.log(_homehost);
-        
+    try {        
         const res = await axios.get(`/${_homehost}/app-data/_local/clientes/?recid=${recid_c}`);
         if (res.data) {
             const cuenta = res.data?.[0] ?? '';
