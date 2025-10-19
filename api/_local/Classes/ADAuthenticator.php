@@ -17,7 +17,7 @@ class ADAuthenticator
         $this->domain = $domain;
         
         if (!extension_loaded('ldap')) {
-            throw new \Exception("La extensión LDAP de PHP no está instalada o habilitada.");
+            throw new \Exception("La extensión LDAP no está instalada o habilitada.");
         }
     }
 

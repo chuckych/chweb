@@ -65,15 +65,15 @@ while ($row = mysqli_fetch_assoc($queryRecords)) {
     $cliente = $row['cliente'];
     $ip = $row['ip'];
     $agent = $row['agent'];
-    switch ($estado) {
-        case 'correcto':
-            $estado = '<span class="text-success">' . ucfirst($estado) . '</span>';
-            break;
+    // switch ($estado) {
+    //     case 'correcto':
+    //         $estado = '<span class="text-success">' . ucfirst($estado) . '</span>';
+    //         break;
 
-        default:
-            $estado = '<span class="text-danger">' . ucfirst($estado) . '</span>';
-            break;
-    }
+    //     default:
+    //         $estado = '<span class="text-danger">' . ucfirst($estado) . '</span>';
+    //         break;
+    // }
 
     $data[] = array(
         'id' => $id,

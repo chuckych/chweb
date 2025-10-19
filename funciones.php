@@ -3096,20 +3096,20 @@ function login_logs($estado, $usuario = '')
         $data = [
             // array asociativo con los parametros a pasar a la consulta preparada (:usuario, :uid, :estado, :rol, :cliente, :ip, :agent, :fechahora)
             'usuario' => $usuario,
-            'uid' => $_SESSION["UID"] ?? '',
+            'uid' => !empty($_SESSION["UID"]) ? $_SESSION["UID"] : 0,
             'estado' => $estado,
-            'rol' => $_SESSION["ID_ROL"] ?? '',
-            'cliente' => $_SESSION["ID_CLIENTE"] ?? '',
+            'rol' => !empty($_SESSION["ID_ROL"]) ? $_SESSION["ID_ROL"] : 0,
+            'cliente' => !empty($_SESSION["ID_CLIENTE"]) ? $_SESSION["ID_CLIENTE"] : 0,
             'ip' => ($_SERVER['REMOTE_ADDR'] == '::1') ? ip2long('127.0.0.1') : ip2long($_SERVER['REMOTE_ADDR']),
             'agent' => $_SERVER['HTTP_USER_AGENT'],
             'fechahora' => fechaHora2()
         ];
 
         $stmt->bindParam(':usuario', $data['usuario']);
-        $stmt->bindParam(':uid', $data['uid']);
-        $stmt->bindParam(':estado', $data['estado']); // 1: Login correcto; 2: Login incorrecto
-        $stmt->bindParam(':rol', $data['rol']);
-        $stmt->bindParam(':cliente', $data['cliente']);
+        $stmt->bindParam(':uid', $data['uid'], PDO::PARAM_INT);
+        $stmt->bindParam(':estado', $data['estado'], PDO::PARAM_INT); // 1: Login correcto; 2: Login incorrecto
+        $stmt->bindParam(':rol', $data['rol'], PDO::PARAM_INT);
+        $stmt->bindParam(':cliente', $data['cliente'], PDO::PARAM_INT);
         $stmt->bindParam(':ip', $data['ip']);
         $stmt->bindParam(':agent', $data['agent']);
         $stmt->bindParam(':fechahora', $data['fechahora']);
@@ -3126,6 +3126,7 @@ function login_logs($estado, $usuario = '')
     } catch (\Throwable $th) { // si hay error
         $connpdo->rollBack(); // revierte la transaccion
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorLogSesion.log'; // ruta del archivo de Log
+        error_log($th->getMessage()); // escribir en el log de errores
         fileLog($th->getMessage(), $pathLog); // escribir en el log de errores
     }
     $connpdo = null; // cierra la conexion

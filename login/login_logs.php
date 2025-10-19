@@ -19,21 +19,8 @@ secure_auth_ch();
         <!-- Fin Encabezado -->
         <div class="row bg-white mt-2 py-3 radius">
             <div class="col-12 table-responsive">
-                <table id="login_logs" class="table table-hover text-nowrap" cellspacing="0">
-                    <thead class="text-uppercase">
-                        <tr>
-                            <th>Usuario</th>
-                            <th>Nombre</th>
-                            <th>Fecha Hora</th>
-                            <th>Estado</th>
-                            <th>Cuenta</th>
-                            <th>Rol</th>
-                            <th>IP</th>
-                            <th>Agent</th>
-                        </tr>
-                    </thead>
+                <table id="login_logs" class="table text-nowrap p-2">
                 </table>
-
             </div>
         </div>
     </div>
@@ -56,48 +43,110 @@ secure_auth_ch();
                     $("#login_logs_processing").css("display", "none");
                 }
             },
+            dom: `
+                <'row'
+                    <'col-12 d-inline-flex justify-content-between align-items-center'lf>
+                >
+                <'row' <'col-12'<'border table-responsive't>>>
+                <'row'
+                    <'col-12 d-inline-flex justify-content-between align-items-center mt-2'ip>
+                >
+            `,
             columns: [
                 {
-                    "class": "",
-                    "data": "usuario"
+                    data: 'usuario', className: '', targets: '', title: 'USUARIO',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        const nombre = row.nombre;
+                        return `
+                            <div>
+                                ${data}<br/>
+                                <span class="text-muted">${nombre}</span>
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "",
-                    "data": "nombre"
+                    data: 'fechahora', className: '', targets: '', title: 'FECHA HORA',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        const fechaHora = data.split(' ');
+                        return `
+                            <div>
+                                ${fechaHora[0]}<br/>
+                                ${fechaHora[1]}
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "ls1",
-                    "data": "fechahora"
+                    data: 'estado', className: '', targets: '', title: 'ESTADO',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        // si estado es correcto poner en verde sino en rojo
+                        if (data === 'correcto') {
+                            data = `<span class="text-success font-weight-bold">${data}</span>`;
+                        } else {
+                            data = `<span class="text-danger font-weight-bold">${data}</span>`;
+                        }
+                        return `
+                            <div>
+                                ${data}
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "fw4",
-                    "data": "estado"
+                    data: 'cliente', className: '', targets: '', title: 'CUENTA',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        return `
+                            <div>
+                                ${data}
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "",
-                    "data": "cliente"
+                    data: 'rol', className: '', targets: '', title: 'ROL',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        return `
+                            <div>
+                                ${data}
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "",
-                    "data": "rol"
+                    data: 'ip', className: '', targets: '', title: 'IP',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        return `
+                            <div>
+                                ${data}
+                            </div>
+                            `
+                    }, visible: true
                 },
                 {
-                    "class": "",
-                    "data": "ip"
+                    data: 'agent', className: 'w-100', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        if (!type === 'display') return '';
+                        return `
+                            <div title="${data}" class="text-truncate" style="max-width: 350px;">
+                                ${data}
+                            </div>
+                            `
+                    }, visible: true
                 },
-                {
-                    "class": "",
-                    "data": "agent"
-                }
             ],
-            scrollY: '50vh',
-            scrollX: true,
+            // scrollY: '50vh',
+            // scrollX: true,
             paging: 1,
             searching: 1,
-            scrollCollapse: true,
             info: 1,
             ordering: 0,
-            responsive: 0,
             language: {
                 "url": "/<?= HOMEHOST ?>/js/DataTableSpanish.json"
             }

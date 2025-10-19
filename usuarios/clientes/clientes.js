@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         data: '', className: 'w-100 text-right', targets: '', title: 'Acciones',
                         "render": function (data, type, row, meta) {
+                            if(!type === 'display') return '';
                             // usuarios/?_c=' . $recid . '&alta"
                             const btn = (bi, count, title, classWidth, href) => {
                                 return `
