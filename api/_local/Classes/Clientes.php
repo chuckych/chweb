@@ -74,14 +74,6 @@ class Clientes
                     $clientes[$key]['token_api'] = sha1($value['recid']);
                 }
             }
-            // cambiar la key clientes.valores por host
-            // foreach ($clientes as $key => $value) {
-            //     $clientes[$key]['hostLocal'] = $value['host'];
-            //     // unset($clientes[$key]['valores']);
-            //     // unset($clientes[$key]['modulo']);
-            //     // unset($clientes[$key]['descripcion']);
-            //     // unset($clientes[$key]['cliente']);
-            // }
 
             $this->response->respuesta($clientes, $count, 'OK', 200, 0, $count, $inicio);
         } catch (\PDOException $e) {
@@ -91,7 +83,7 @@ class Clientes
     }
     private function count_usuarios_clientes($conn)
     {
-        $sql = "SELECT COUNT(*) as 'count', cliente FROM usuarios group by cliente";
+        $sql = "SELECT COUNT(*) as 'count', cliente FROM usuarios WHERE id > 1 group by cliente";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -101,7 +93,7 @@ class Clientes
     }
     private function count_usuarios_rol($conn)
     {
-        $sql = "SELECT COUNT(*) as 'count', cliente FROM roles group by cliente";
+        $sql = "SELECT COUNT(*) as 'count', cliente FROM roles WHERE id > 1 group by cliente";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $usuarios = $stmt->fetchAll(\PDO::FETCH_ASSOC);

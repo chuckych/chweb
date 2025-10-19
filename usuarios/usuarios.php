@@ -11,7 +11,7 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
     <title>Usuarios</title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
         <?php require __DIR__ . '/../nav.php'; ?>
@@ -20,10 +20,15 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
         ?>
         <input type="hidden" id="recid_c" value="<?= $_GET['_c'] ?>">
         <input type="hidden" id="_rol" value="<?= $_GET['_rol'] ?>">
+        <div class="row my-3">
+            <div class="col-12" id="contenedorTestSQL" style="display:none">
+            </div>
+        </div>
         <div class="row mt-3">
             <div class="col-12 col-sm-6">
-                <a href="personal/?_c=<?= $_GET['_c'] ?>" class="fw4 btn fontq btn-outline-custom border hint hint--right"
-                    id="btnImportar" aria-label="Importar usuarios desde Control Horario">
+                <a href="personal/?_c=<?= $_GET['_c'] ?>"
+                    class="btn font08 btn-outline-custom border hint hint--right fadeIn" id="btnImportar"
+                    aria-label="Importar usuarios desde Control Horario" style="display:none">
                     <span class="mr-1 d-none d-sm-inline fw5">IMPORTAR PERSONAL CH</span>
                     <span class="mr-1 d-inline d-sm-none">IMPORTAR DE CH</span>
                     <i class="bi-download font1"></i>
@@ -38,7 +43,7 @@ $_GET['_rol'] = $_GET['_rol'] ?? '';
                         class="bi bi-sliders mr-2"></i>Roles</a>
             </div>
             <div class="col-12 mt-1" id="div_import_ad" style="display:none;">
-                <a href="javascript:void(0);" class="fw4 btn fontq btn-outline-custom border hint hint--right"
+                <a href="javascript:void(0);" class="btn font08 btn-outline-custom border hint hint--right"
                     id="btnImportarAD" aria-label="Importar usuarios desde Active Directory">
                     <span class="mr-1 fw5">IMPORTAR USUARIOS AD</span>
                 </a>

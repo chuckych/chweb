@@ -61,7 +61,7 @@ function Total($tabla, $Col)
     while ($r = sqlsrv_fetch_array($rs)):
         $t = $r['total'];
     endwhile;
-    sqlsrv_free_stmt($rs);
+    sqlsrv_free_stmt($rs);  
     return $t;
 }
 $EMPRESAS = Total('EMPRESAS', 'EmpCodi');

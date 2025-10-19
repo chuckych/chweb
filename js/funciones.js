@@ -1138,3 +1138,78 @@ function getTextColor(backgroundColor) {
     const brightness = getBrightness(r, g, b);
     return brightness > 128 ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
 }
+const test_conect = async (data, options = {}) => {
+    notifyWait('Aguarde... conectando con control horario...')
+    try {
+        const res = await axios.post(`/${_homehost}/app-data/test_connect`, {
+            'DBHost': data.host,
+            'DBName': data.db,
+            'DBUser': data.user,
+            'DBPass': data.pass
+        });
+
+        if (res.data.RESPONSE_CODE == '200 OK') {
+            $.notifyClose();
+
+            if (options?.returnBool) {
+                return true;
+            }
+            // si option.dontNotify es true, no mostrar notificación
+            if (options?.dontNotify) return true;
+            const data = res.data.DATA;
+            const html = `
+                    <div class="fw5">Conexión exitosa</div>
+                    <div class="">${data.VersionStr ?? ''}</div>
+                    <div class="py-2"></div>
+                    <div class="">Database: ${data.SQLServerName.CurrentDatabase ?? ''}</div>
+                    <div class="">Server Name: ${data.SQLServerName.SQLServerName ?? ''}</div>
+                    <div class="">Server Version: ${data.SQLServerName.SQLServerVersion ?? ''}</div>
+                `;
+            notify(html, 'success', 5000, 'right')
+            return true;
+        } else {
+            throw new Error(res.data.MESSAGE)
+        }
+    } catch (err) {
+        $.notifyClose();
+        notify(err.message, 'danger', 5000, 'right')
+        return false;
+    }
+}
+
+const get_cuenta = async (recid_c) => {
+    if (!recid_c) return null;
+    try {
+        console.log(_homehost);
+        
+        const res = await axios.get(`/${_homehost}/app-data/_local/clientes/?recid=${recid_c}`);
+        if (res.data) {
+            const cuenta = res.data?.[0] ?? '';
+            if (!cuenta) return null;
+            return cuenta;
+        }
+        return null;
+    } catch (err) {
+        console.error('Error al obtener cuenta:', err);
+        return null;
+    }
+}
+const test_connect_recid_c = async (recid_c) => {
+    if (!recid_c) return false;
+    
+    const cuenta = await get_cuenta(recid_c);
+    
+    if (!cuenta) {
+        console.log('No se encontró la cuenta');
+        return false;
+    }
+    
+    const resultado = await test_conect({
+        host: cuenta.host,
+        db: cuenta.db,
+        user: cuenta.user,
+        pass: cuenta.pass
+    }, { returnBool: true, dontNotify: true });
+    
+    return resultado;
+}

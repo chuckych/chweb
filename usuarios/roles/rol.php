@@ -27,7 +27,7 @@ $Cliente = ExisteCliente($_GET['_c']);
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow">
         <?php require __DIR__ . '/../../nav.php'; ?>
@@ -49,7 +49,9 @@ $Cliente = ExisteCliente($_GET['_c']);
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-12" id="contenedorTestSQL" style="display:none">
+            </div>
+            <div class="col-12" id="contenedorTablaRoles" style="display:none">
                 <?php $classSKF = ($_SESSION["RECID_CLIENTE"] <> 'kxo7w2q-') ? 'w-auto text-nowrap' : 'w-100 text-wrap'; ?>
                 <table class="table border p-2 <?= $classSKF ?>" id="GetRoles">
                     <thead class="text-uppercase">
@@ -114,20 +116,11 @@ $Cliente = ExisteCliente($_GET['_c']);
     require __DIR__ . '/../../js/jquery.php';
     require __DIR__ . "/../../js/DataTable.php";
     ?>
-    <script>
-        // fetch('../clientes/testConnect.php?_c=<?= $_GET['_c'] ?>')
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (data.status == "Error") {
-        //             notify('No hay conexión con Control Horario<br>Para la cuenta <strong><?= $Cliente ?></strong>', 'warning', 0, 'right')
-        //         }
-        //     });
-    </script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootbox.min.js"></script>
-    <script src="/<?= HOMEHOST ?>/usuarios/roles/modal-min.js?v=<?= vjs() ?>"></script>
-    <script src="/<?= HOMEHOST ?>/usuarios/roles/datarol-min.js?v=<?= vjs() ?>"></script>
+    <script src="datarol.js?<?= version_file("/usuarios/roles/datarol.js") ?>"></script>
+    <script src="modal-min.js?<?= version_file("/usuarios/roles/modal-min.js") ?>"></script>
 </body>
 
 </html>

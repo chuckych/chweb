@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         data: '', className: 'w-100 text-right', targets: '', title: 'Acciones',
                         "render": function (data, type, row, meta) {
-                            if(!type === 'display') return '';
+                            if (!type === 'display') return '';
                             // usuarios/?_c=' . $recid . '&alta"
                             const btn = (bi, count, title, classWidth, href) => {
                                 return `
@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             put_cliente()
             e.stopImmediatePropagation();
         });
-
+        $('#divTokenAPI').show();
         $('#modalFormCuenta').modal('show')
         $('#modalFormCuenta input').attr('autocomplete', 'on')
         $('#submitFormCuenta').val('EditCuenta')
@@ -235,36 +235,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#activeAD').off('change').on('change', function () {
             $(this).trigger('change');
         });
-    }
-    const test_conect = async (data) => {
-        notifyWait('Aguarde...')
-        axios.post('../../app-data/test_connect', {
-            'DBHost': data.host,
-            'DBName': data.db,
-            'DBUser': data.user,
-            'DBPass': data.pass
-        }).then(res => {
-
-            if (res.data.RESPONSE_CODE == '200 OK') {
-                $.notifyClose();
-                const data = res.data.DATA;
-                const html = `
-                    <div class="fw5">Conexión exitosa</div>
-                    <div class="">${data.VersionStr ?? ''}</div>
-                    <div class="py-2"></div>
-                    <div class="">Database: ${data.SQLServerName.CurrentDatabase ?? ''}</div>
-                    <div class="">Server Name: ${data.SQLServerName.SQLServerName ?? ''}</div>
-                    <div class="">Server Version: ${data.SQLServerName.SQLServerVersion ?? ''}</div>
-                `
-                notify(html, 'success', 5000, 'right')
-            } else {
-                throw new Error(res.data.MESSAGE)
-            }
-
-        }).catch(err => {
-            $.notifyClose();
-            notify(err.message, 'danger', 5000, 'right')
-        })
     }
     const put_cliente = () => {
 
@@ -357,6 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const add_cuenta = () => {
         const addCuenta = document?.querySelector(`.addCuenta`);
         addCuenta?.addEventListener('click', (e) => {
+            $('#divTokenAPI').hide();
             $('#modalFormCuenta').modal('show');
             $('#modalFormCuenta input').attr('autocomplete', 'on');
             $(`#labelInactivo`).button('toggle')

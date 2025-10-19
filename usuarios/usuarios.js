@@ -3,6 +3,18 @@ $(document).ready(function () {
     $('.requerido').addClass('fontp ml-1 ls1');
     $('.requerido').html('(*)');
 
+    const test = test_connect_recid_c($('#recid_c').val() || null);
+    // test es una promesa que resuelve a true o false
+    test.then((connected) => {
+        if (!connected) {
+            $('#contenedorTestSQL').show();
+            $('#contenedorTestSQL').html('<div class="mt-2 fadeIn alert alert-danger font09">No se pudo conectar con la base de datos MSSSQL de la cuenta. Verifique la configuración de la misma.</div>')
+            return;
+        } else {
+            $('#btnImportar').show();
+        }
+    });
+
     const get_cliente = async () => {
         const recid_c = $('#recid_c').val() ?? '';
         if (!recid_c) return;
@@ -346,8 +358,6 @@ $(document).ready(function () {
     }
     // $.fn.DataTable.ext.pager.numbers_length = 5;
     const table = $('#GetUsuarios').DataTable({
-        initComplete: function (settings, json) {
-        },
         drawCallback: function (settings) {
 
             // $(".page-link").addClass('border border-0');
@@ -532,7 +542,7 @@ $(document).ready(function () {
     });
     table.on('init.dt', function () {
         $('.form-control-sm').attr('placeholder', 'Buscar nombre o rol')
-        $('#GetUsuarios_filter').prepend('<button data-titlel="Alta de Usuario" class="px-2 btn btn-outline-custom add fontq border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>')
+        $('#GetUsuarios_filter').prepend('<button aria-label="Crear Usuario" class="hint hint--left px-2 btn btn-outline-custom add font08 border"><svg class="" width="20" height="20" fill="currentColor"><use xlink:href="../img/bootstrap-icons.svg#person-plus-fill"/></svg></button>');
         if ($(window).width() < 769) {
             $('.botones').removeClass('float-right')
         } else {

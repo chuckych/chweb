@@ -10,9 +10,27 @@ $(function () {
         $('.contentd').addClass('text-light bg-light border-0')
         $('.botones').hide()
     }
+
+    const test = test_connect_recid_c($('#recid_cRol').val() || null);
+    // test es una promesa que resuelve a true o false
+    test.then((connected) => {
+        if (!connected) {
+            $('#contenedorTestSQL').show();
+            $('#contenedorTestSQL').html('<div class="mt-2 fadeIn alert alert-danger font09">No se pudo conectar con la base de datos MSSSQL de la cuenta. Verifique la configuración de la misma.</div>')
+            return;
+        }
+    });
     // $.fn.DataTable.ext.pager.numbers_length = 5;
-    let table = $('#GetRoles').DataTable({
+    const table = $('#GetRoles').DataTable({
         initComplete: function (settings, json) {
+            console.log(json);
+
+            // // si json.status == 'Error' mostrar mensaje de error
+            // if (json?.status && json?.status == 'Error') {
+            //     $('#GetRoles_wrapper').html('<div class="mt-2 animate__animated animate__fadeInDown alert alert-danger alert-dismissible fade show fontq" role="alert"><strong>' + json.Mensaje + '</strong><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+            //     return;
+            // }
+            
             $('.form-control-sm').attr('placeholder', 'Buscar Rol')
             $('.LabelSearchDT').html('')
             $('#GetRoles_filter').prepend('<button title="Nuevo Rol" class="px-2 btn btn-custom addRol fontq border" id="AltaRol"><span class="bi bi-plus-lg mr-2">Nuevo rol</span></button>')
@@ -362,6 +380,7 @@ $(function () {
         });
     });
     table.on('init.dt', function (e, settings) {
+        $('#contenedorTablaRoles').show();
         $('.addRol').on('click', function (e) {
             // $(document).on('click', '.addRol', function (e) {
             CheckSesion()
