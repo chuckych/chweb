@@ -165,6 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
             put_cliente()
             e.stopImmediatePropagation();
         });
+        $('#tab-ad').show();
         $('#divTokenAPI').show();
         $('#modalFormCuenta').modal('show')
         $('#modalFormCuenta input').attr('autocomplete', 'on')
@@ -328,6 +329,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const addCuenta = document?.querySelector(`.addCuenta`);
         addCuenta?.addEventListener('click', (e) => {
             $('#divTokenAPI').hide();
+            $('#tab-ad').hide();
+            $('#myTab a:first').tab('show'); // seleccionar el primer tab
             $('#modalFormCuenta').modal('show');
             $('#modalFormCuenta input').attr('autocomplete', 'on');
             $(`#labelInactivo`).button('toggle')

@@ -5,6 +5,9 @@ namespace Classes;
 use Classes\InputValidator;
 use Classes\Tools;
 use Classes\ADAuthenticator;
+use Classes\Auditor;
+use Classes\Log;
+
 
 use Flight;
 
@@ -17,14 +20,20 @@ class Clientes
     private $tools;
     private $AD;
     private $getQuery;
+    private $auditor;
+    private $log;
+    private $cacheClienteInsertado;
+
 
     public function __construct()
     {
         $this->conect = new ConnectDB;
         $this->response = new Response;
+        $this->auditor = new Auditor();
         $this->request = Flight::request();
         $this->getData = $this->request->data->getData();
         $this->tools = new Tools;
+        $this->log = new Log();
     }
     public function get_clientes(): void
     {
@@ -199,6 +208,7 @@ class Clientes
         $ApiMobile = $datos['ApiMobile']; // Api Mobile de la cuenta. Eje: https://cloudhr.ar Esto es donde se aloja la API de mobile. Si la cuenta usa la app de mobile siempre va https://cloudhr.ar.
         $ApiMobileApp = $datos['ApiMobileApp']; // Api Mobile App de la cuenta. Eje: http://awsapi.chweb.ar:7575 Esto es donde se aloja la API de mobile de la app en aws. Si la cuenta usa la app de mobile siempre va http://awsapi.chweb.ar:7575.
         $Recid = (!$datos['AppCode']) ? $this->tools->recid() : $datos['AppCode']; // Recid de la cuenta
+
         if ($this->si_existe_nombre_cliente($Nombre, $conn)) {
             throw new \ValueError("Ya existe una cuenta con el nombre: {$Nombre}", 400);
         }
@@ -217,8 +227,27 @@ class Clientes
         $datos['Recid'] = $Recid;
         $datos['Ident'] = $Ident;
 
-        if ($this->insert_cliente($datos, $conn)) {
-            $this->response->respuesta([], 1, 'OK', 200, $inicio, 1, 0);
+        $insertar = $this->insert_cliente($datos, $conn);
+
+        if ($insertar) {
+            $cuenta = $this->cacheClienteInsertado;
+
+            // ====== Auditar ==============================
+            $this->auditor->set(
+                [
+                    [
+                        'AudTipo' => 'A',
+                        'AudDato' => "Cuenta: ({$cuenta['id']}) {$cuenta['nombre']}",
+                    ]
+                ],
+                '1',
+                $datos['session'] ?? [],
+                $conn
+            );
+            // ====== Fin Auditar ===========================
+
+
+            $this->response->respuesta($cuenta, 1, 'OK', 200, $inicio, 1, 0);
         }
     }
     private function si_existe_ident($ident, $conn)
@@ -303,6 +332,9 @@ class Clientes
                 $id = $get_cliente_recid['id'];
                 $Host = $data['Host'];
                 $set_params_host = $this->set_params_host($Host, $id, $conn);
+                
+                // Almacenar en caché para usar en alta_cliente
+                $this->cacheClienteInsertado = $get_cliente_recid;
             }
 
             return $set_params_host;
@@ -414,15 +446,31 @@ class Clientes
         }
 
         if ($this->update_cliente($datos, $conn, $IDCliente)) {
-            $this->response->respuesta([], 1, 'OK', 200, $inicio, 1, 0);
+
+            $this->update_or_create_params_ad('activeAD', $datos['activeAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('serverAD', $datos['serverAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('puertoAD', $datos['puertoAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('domainAD', $datos['domainAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('baseDNAD', $datos['baseDNAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('serviceUserAD', $datos['serviceUserAD'], $conn, $IDCliente);
+            $this->update_or_create_params_ad('servicePassAD', $datos['servicePassAD'], $conn, $IDCliente);
+
+            // ====== Auditar ==============================
+            $this->auditor->set(
+                [
+                    [
+                        'AudTipo' => 'M',
+                        'AudDato' => "Cuenta: ({$IDCliente}) {$Nombre}",
+                    ]
+                ],
+                '1',
+                $datos['session'] ?? [],
+                $conn
+            );
+            // ====== Fin Auditar ===========================
+
+            $this->response->respuesta($datos, 1, 'OK', 200, $inicio, 1, 0);
         }
-        $this->update_or_create_params_ad('activeAD', $datos['activeAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('serverAD', $datos['serverAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('puertoAD', $datos['puertoAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('domainAD', $datos['domainAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('baseDNAD', $datos['baseDNAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('serviceUserAD', $datos['serviceUserAD'], $conn, $IDCliente);
-        $this->update_or_create_params_ad('servicePassAD', $datos['servicePassAD'], $conn, $IDCliente);
     }
     private function update_cliente($datos, $conn, $IDCliente)
     {
@@ -452,6 +500,7 @@ class Clientes
 
             return true;
         } catch (\PDOException $th) {
+            $this->log->write($th->getMessage(), '_update_cliente.log');
             throw new \PDOException($th->getMessage(), $th->getCode());
         }
     }
@@ -583,7 +632,7 @@ class Clientes
 
             // error_log(print_r($adminUser, true));
             // error_log(print_r($adminPass, true));
-            
+
             // error_log(print_r([
             //     $datosCliente['serverAD'] ?? '',
             //     $datosCliente['baseDNAD'] ?? '',

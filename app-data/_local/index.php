@@ -29,6 +29,22 @@ $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
 define('HOSTCHWEB', gethostCHWeb());
 define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
 
+function dataSession()
+{
+    return [
+        'session' => [
+            'id' => $_SESSION['ID_SESION'] ?? '',
+            'recid_c' => $_SESSION['RECID_CLIENTE'] ?? '',
+            'usuario' => $_SESSION["user"] ?? 'Sin usuario',
+            'usuario_nombre' => $_SESSION['NOMBRE_SESION'] ?? 'Sin nombre',
+            'cliente_id' => $_SESSION['ID_CLIENTE'] ?? '',
+        ]
+    ];
+}
+
+$requestData = Flight::request()->data->getData() ?? [];
+$requestData = array_merge($requestData, dataSession());
+
 // error_log(print_r(HOSTCHWEB, true));
 // error_log(print_r(URLAPI, true));
 
@@ -40,22 +56,22 @@ function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
     timeZone();
     timeZone_lang();
 
-    
+
     $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
     $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
     $payload = $argumento[1] ?? []; // Obtengo el payload
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
     $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
     $method = strtoupper($method); // Convierto el método a mayúsculas
-    
+
     try {
-        
+
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
-        
+
         $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
-        
+
         $ch = curl_init(); // Inicializo curl
 
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
@@ -129,7 +145,7 @@ Flight::map('request_test_ad', function ($endpoint) {
         throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
     }
     $url = URLAPI . "/api/_local/{$endpoint}";
-    $data = Flight::request()->data->getData();    
+    $data = Flight::request()->data->getData();
     $request = local_api($url, $data, 'POST', '');
     $arrayData = json_decode($request, true);
     return $arrayData;
@@ -152,10 +168,9 @@ Flight::route('POST /login_ad', function () {
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
-Flight::route('POST /usuarios', function () {
+Flight::route('POST /usuarios', function () use ($requestData) {
     $url = URLAPI . "/api/_local/usuarios";
-    $data = Flight::request()->data->getData();
-    $request = local_api($url, $data, 'POST', '');
+    $request = local_api($url, $requestData, 'POST', '');
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
@@ -166,17 +181,15 @@ Flight::route('GET /usuarios', function () {
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
-Flight::route('PUT /clientes/@id', function ($id) {
-    $data = Flight::request()->data->getData();
+Flight::route('PUT /clientes/@id', function ($id) use ($requestData) {
     $url = URLAPI . "/api/_local/clientes/{$id}";
-    $request = local_api($url, $data, 'PUT', '');
+    $request = local_api($url, $requestData, 'PUT', '');
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
-Flight::route('POST /clientes', function () {
-    $data = Flight::request()->data->getData();
+Flight::route('POST /clientes', function () use ($requestData) {
     $url = URLAPI . "/api/_local/clientes/";
-    $request = local_api($url, $data, 'POST', '');
+    $request = local_api($url, $requestData, 'POST', '');
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });

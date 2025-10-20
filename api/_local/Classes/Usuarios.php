@@ -4,6 +4,7 @@ namespace Classes;
 
 use Classes\InputValidator;
 use Classes\Tools;
+use Classes\Auditor;
 
 use Flight;
 
@@ -14,11 +15,13 @@ class Usuarios
     private $getData;
     private $request;
     private $tools;
+    private $auditor;
 
     public function __construct()
     {
         $this->conect = new ConnectDB;
         $this->response = new Response;
+        $this->auditor = new Auditor();
         $this->request = Flight::request();
         $this->getData = $this->request->data->getData();
         $this->tools = new Tools;
@@ -75,8 +78,8 @@ class Usuarios
 
             $strClave = !empty($clave) ? $clave : $usuario;
             $clave = password_hash($strClave, PASSWORD_DEFAULT);
-            
-            if($user_ad === '1') {
+
+            if ($user_ad === '1') {
                 $clave = password_hash($recid_user, PASSWORD_DEFAULT); // Si es usuario AD se establece una clave por defecto aleatoria
             }
 
@@ -99,7 +102,23 @@ class Usuarios
             }
 
             $dataUsuario = $this->obtener_datos_usuario($recid_user, $conn);
-            unset($dataUsuario['clave']);
+            // unset($dataUsuario['clave']);
+
+            // ====== Auditar ==============================
+            $userAd = ($dataUsuario['user_ad'] === '1') ? '. (AD)' : '';
+            $auditoriaArray[] = [
+                'AudTipo' => 'A',
+                'AudDato' => "Usuario ({$dataUsuario['id']}) {$dataUsuario['usuario']}. Nombre: {$dataUsuario['nombre']}. Legajo ({$dataUsuario['legajo']}). Rol ({$dataUsuario['rol']}) {$dataUsuario['rol_nombre']}{$userAd}"
+            ];
+
+            $this->auditor->set(
+                $auditoriaArray,
+                '1',
+                $datos['session'] ?? [],
+                $conn
+            );
+            // ====== Fin Auditar ===========================
+
             $this->response->respuesta($dataUsuario, 1, "Usuario agregado correctamente", 200, $inicio, 1, 1);
 
         } catch (\Exception $th) {
@@ -216,7 +235,24 @@ class Usuarios
             if (!$recid_u) {
                 throw new \Exception("No se recibieron datos: recid_u", 204);
             }
-            $query = "SELECT * FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid=:recid_u LIMIT 1;";
+            $cols = [
+                'usuarios.id as id',
+                'usuarios.nombre as nombre',
+                'usuarios.usuario as usuario',
+                'usuarios.recid as recid',
+                'usuarios.rol as rol',
+                'roles.nombre as rol_nombre',
+                'usuarios.estado as estado',
+                'usuarios.principal as principal',
+                'usuarios.cliente as cliente',
+                'usuarios.legajo as legajo',
+                'usuarios.user_ad as user_ad',
+                'usuarios.fecha_alta as fecha_alta',
+                'usuarios.fecha as fecha',
+            ];
+
+            $query = "SELECT " . implode(", ", $cols) . " FROM usuarios INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.recid=:recid_u LIMIT 1;";
+
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':recid_u', $recid_u, \PDO::PARAM_STR);
             $stmt->execute();
