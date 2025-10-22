@@ -40,6 +40,7 @@ $connectSqlSrv = new Classes\ConnectSqlSrv;
 $ParaGene = new Classes\ParaGene;
 $Personal = new Classes\Personal;
 $Fichadas = new Classes\Fichadas;
+$Acceso = new Classes\Acceso;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -170,6 +171,10 @@ Flight::route('POST /conectar', function () {
     $connectSqlSrv = new Classes\ConnectSqlSrv;
     return $connectSqlSrv->test_connect();
 });
+Flight::route('GET /acceso/relohabi', [$Acceso, 'relojes_habilitados']);
+Flight::route('GET /acceso/perrelo', [$Acceso, 'personal_relojes']);
+Flight::route('GET /acceso/identifica', [$Acceso, 'identifica']);
+
 Flight::map('notFound', [$response, 'notFound']);
 Flight::set('flight.log_errors', true);
 

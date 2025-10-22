@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="altaconvenio" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fadeIn" id="altaconvenio" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content" style="width: 850px;">
             <div class="modal-header border-bottom-0">

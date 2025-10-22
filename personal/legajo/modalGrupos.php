@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="altaGrupo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fadeIn" id="altaGrupo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content w300 mx-auto">
             <div class="modal-header border-bottom-0">

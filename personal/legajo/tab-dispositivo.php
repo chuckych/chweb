@@ -16,18 +16,8 @@
                     <label for="" class="mx-2 fw4 p-2 text-white">Dispositivos habilitados:</label>
                 </div>
                 <input type="hidden" value="<?= $pers['LegGrHa'] ?>" id="LegGrHa" name="LegGrHa">
-                <div class="px-2 table-responsive">
+                <div class="p-2">
                     <table class="table w-auto text-nowrap" id="GrupoCapt">
-                        <thead class="border-top-0">
-                            <tr>
-                                <!-- <th class="">Grupo</th> -->
-                                <!-- <th class="">Reloj</th> -->
-                                <th class="">Serie</th>
-                                <th class="">Dispositivo</th>
-                                <th class="">Marca</th>
-                                <th class="w-100"></th>
-                            </tr>
-                        </thead>
                     </table>
                 </div>
             </div>
@@ -45,17 +35,6 @@
                 </div>
                 <div class="px-2 table-responsive">
                     <table class="table w-auto text-nowrap" id="TablePerRelo">
-                        <thead class="border-top-0">
-                            <tr>
-                                <th class="">Serie</th>
-                                <th class="">Dispositivo</th>
-                                <th class="">Marca</th>
-                                <th class="">Desde</th>
-                                <th class="">Vencimiento</th>
-                                <th class="text-center"></th>
-                                <th class="w-100"></th>
-                            </tr>
-                        </thead>
                     </table>
                 </div>
             </div>

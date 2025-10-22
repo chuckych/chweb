@@ -2723,8 +2723,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         echo json_encode($data);
         exit;
     }
-    ;
-
 
     $params = array();
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);

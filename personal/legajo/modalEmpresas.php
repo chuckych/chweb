@@ -1,6 +1,6 @@
 <form action="alta_opciones.php" method="post" class="form-empresas">
     <!-- Modal Alta Empresa-->
-    <div class="modal fade" id="altaEmpresa" data-backdrop="static" data-keyboard="true" role="dialog" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal fadeIn" id="altaEmpresa" data-backdrop="static" data-keyboard="true" role="dialog" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content mx-auto">
                 <div class="modal-header border-bottom-0">

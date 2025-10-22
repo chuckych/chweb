@@ -1149,7 +1149,8 @@ $(document).ready(function () {
             success: function (data) {
                 $.notifyClose();
                 if (data.status == "ok") {
-                    tableIdentifica();
+                    ls.remove('#Identifica-table');
+                    tableIdentifica('#Identifica-table');
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_identifica").html("Se agregó correctamente.!");
                     $(".mensaje_identifica").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1160,7 +1161,8 @@ $(document).ready(function () {
                     notify('Datos guardados correctamente<br>' + data.dato, 'success', 3000, 'right')
 
                 } else if (data.status == "existe") {
-                    tableIdentifica();
+                    ls.remove('#Identifica-table');
+                    tableIdentifica('#Identifica-table');
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_identifica").html("¡Ya existe!");
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1168,7 +1170,7 @@ $(document).ready(function () {
                     $("#btnidentifica").prop('disabled', false);
                     notify(data.dato, 'info', 3000, 'right')
                 } else {
-                    tableIdentifica();
+                    tableIdentifica('#Identifica-table');
                     $("#alerta_identifica").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_identifica").html("¡Error!");
                     $(".mensaje_identifica").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1197,9 +1199,10 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok_delete") {
-                    tableIdentifica();
+                    ls.remove('#Identifica-table');
+                    tableIdentifica('#Identifica-table');
                 } else {
-                    tableIdentifica();
+                    tableIdentifica('#Identifica-table');
                 }
             }
         });
@@ -1228,40 +1231,13 @@ $(document).ready(function () {
             success: function (data) {
                 if (data.status == "ok") {
                     $('#LegGrHa').prop('value', data.LegGrHa);
-                    $('#GrupoCapt').DataTable().clear().draw().destroy();
-                    $('#GrupoCapt').DataTable({
-                        // deferRender: true,
-                        "ajax": {
-                            url: "../../data/GetReloHabi.php",
-                            type: "GET",
-                            'data': {
-                                q2: data.LegGrHa,
-                            },
-                        },
-                        columns: [
-                            // { "class": "align-middle ls1", "data": "Grupo" }, 
-                            // { "class": "align-middle ls1", "data": "Reloj" }, 
-                            { "class": "align-middle ls1", "data": "Serie" },
-                            { "class": "align-middle", "data": "Descrip" },
-                            { "class": "align-middle", "data": "Marca" },
-                            { "class": "align-middle w-100", "data": "null" }
-                        ],
-                        paging: false,
-                        // scrollY: '40vh',
-                        scrollX: false,
-                        scrollCollapse: false,
-                        searching: false,
-                        info: false,
-                        ordering: false,
-                        language: {
-                            "url": "../../js/DataTableSpanish.json"
-                        },
-                    });
+                    ls.remove('#GrupoCapt');
+                    tableGrupoCapt('#GrupoCapt');
                     $("#btngrupocapt").html('Aceptar');
                     $("#btngrupocapt").prop('disabled', false);
 
                 } else {
-                    tableGrupoCapt();
+                    tableGrupoCapt('#GrupoCapt');
                     $("#btngrupocapt").html('Aceptar');
                     $("#btngrupocapt").prop('disabled', false);
                 }
@@ -1291,7 +1267,8 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok") {
-                    tablePerRelo();
+                    ls.remove('#TablePerRelo');
+                    tablePerRelo('#TablePerRelo');
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-success");
                     $(".respuesta_PerRelo").html("Se agregó correctamente.!");
                     $(".mensaje_PerRelo").html(`<br />Registro: ${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1301,7 +1278,8 @@ $(document).ready(function () {
                     $('#altaPerRelo').modal('hide');
 
                 } else if (data.status == "existe") {
-                    tablePerRelo();
+                    ls.remove('#TablePerRelo');
+                    tablePerRelo('#TablePerRelo');
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-warning");
                     $(".respuesta_PerRelo").html("¡Ya existe!");
                     $(".mensaje_PerRelo").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1309,7 +1287,7 @@ $(document).ready(function () {
                     $("#btnPerRelo").prop('disabled', false);
                     // $('#ConvVaca').DataTable().ajax.reload();
                 } else {
-                    tablePerRelo();
+                    tablePerRelo('#TablePerRelo');
                     $("#alerta_PerRelo").removeClass("d-none").removeClass("alert-danger").removeClass("alert-info").removeClass("alert-warning").removeClass("alert-success").addClass("alert-danger");
                     $(".respuesta_PerRelo").html("¡Error!");
                     $(".mensaje_PerRelo").html(`<br />${data.dato}<a href='#' data-dismiss='modal' class='float-right alert-link fw5 mt-2'>Cerrar</a>`);
@@ -1339,9 +1317,10 @@ $(document).ready(function () {
 
             success: function (data) {
                 if (data.status == "ok_delete") {
-                    tablePerRelo();
+                    ls.remove('#TablePerRelo');
+                    tablePerRelo('#TablePerRelo');
                 } else {
-                    tablePerRelo();
+                    tablePerRelo('#TablePerRelo');
                 }
             }
         });

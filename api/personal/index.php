@@ -459,10 +459,22 @@ foreach ($stmt as $key => $v) {
             }
         }
         if (($stmtReloHabi)) {
+
+            $mapMarca = [
+                '0' => 'ASCII',
+                '1' => 'Macronet',
+                '10' => 'Hand Reader',
+                '21' => 'SB CAuto',
+                '30' => 'ZKTeco',
+                '41' => 'Suprema',
+                '50' => 'HikVision'
+            ];
+
             $arrReloHabi = filtrarObjetoArr($stmtReloHabi, 'RelGrup', $v['LegGrHa']);
             foreach ($arrReloHabi as $key => $n) {
                 $dataReloHabi[] = array(
                     'ReMa' => intval($n['RelReMa']),
+                    'ReMaStr' => $mapMarca[intval($n['RelReMa'])] ?? $n['RelReMa'],
                     'Relo' => intval($n['RelRelo']),
                     'DeRe' => trim($n['RelDeRe']),
                     'Seri' => trim($n['RelSeri'])

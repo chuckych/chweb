@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="altahistorial" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog"
+<div class="modal fadeIn" id="altahistorial" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content w300 mx-auto">

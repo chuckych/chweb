@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="altaPerRelo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog"
+<div class="modal fadeIn" id="altaPerRelo" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog"
     aria-labelledby="staticBackdropLabelPerRelo" aria-hidden="true">
     <div class="modal-dialog w350">
         <div class="modal-content">

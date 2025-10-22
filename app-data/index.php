@@ -1200,7 +1200,6 @@ Flight::route('GET /nove-horas/data', function () {
         'horasRestantes' => $horasRestantes ?? [],
     ]);
 });
-
 Flight::route('POST /prysmian/@tipo', function ($tipo) {
 
     try {
@@ -1251,7 +1250,6 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
     }
 
 });
-
 Flight::route('POST /params', function () {
 
     $request = Flight::request();
@@ -1461,7 +1459,7 @@ Flight::route('POST /ws_novedades', function () {
             }
             $arrayAuditoria[] = [
                 'AudTipo' => 'A',
-                'AudDato' => "Ingreso de novedades: " . implode(", ", $datos).' desde '.$FechaDesde.' hasta '.$FechaHasta,
+                'AudDato' => "Ingreso de novedades: " . implode(", ", $datos) . ' desde ' . $FechaDesde . ' hasta ' . $FechaHasta,
             ];
         }
 
@@ -1471,6 +1469,19 @@ Flight::route('POST /ws_novedades', function () {
     Flight::json($arrayData ?? []);
 
 });
+
+foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
+    Flight::route("GET /{$ruta}", function () use ($ruta) {
+        $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/acceso/{$ruta}";
+        $queryParams = Flight::request()->query->getData() ?? [];
+        $data = ch_api($endpoint, '', 'GET', $queryParams);
+        $arrayData = json_decode($data, true);
+        $arrayData = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] ?? [] : [];
+        Flight::json($arrayData ?? []);
+    });
+}
+
+
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
     exit;

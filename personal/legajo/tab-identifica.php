@@ -11,21 +11,6 @@
                 <div class="mt-2 p-2">
                     <div class="table-responsive">
                         <table class="table w-100 text-nowrap" id="Identifica-table">
-                            <thead class="border-top-0">
-                                <tr>
-                                    <th class="">ID</th>
-                                    <th class="text-center">Fichada</th>
-                                    <th class="">Tarjeta</th>
-                                    <th class="">Vencimiento</th>
-                                    <th class="">ZKTeco</th>
-                                    <th class="">Suprema</th>
-                                    <th class="">HIKVision</th>
-                                    <th class="">Macronet</th>
-                                    <th class="">S. Bayres</th>
-                                    <th class=""></th>
-                                    <th class="w-100"></th>
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>

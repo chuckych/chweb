@@ -1,4 +1,35 @@
 // selectJS('selectjs_naciones', `/${HOMEHOST}/data/getNaciones.php`);
+const FLAG = Date.now();
+
+const langTable = {
+    "sProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "No se encontraron resultados",
+    "sEmptyTable": "No se encontraron resultados",
+    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sSearch": "<span class='LabelSearchDT'>Buscar:</span>",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<<",
+        "sLast": ">>",
+        "sNext": "»",
+        "sPrevious": "«"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};
+
+// clean ls tableGrupoCapt 
+ls.remove('#GrupoCapt');
+ls.remove('#TablePerRelo');
+ls.remove('#Identifica-table');
 
 $('#liquid-tab').on('show.bs.tab', function (e) {
     tablePerInEg();
@@ -10,7 +41,7 @@ $('#horarios-tab').on('show.bs.tab', function (e) {
 });
 
 $('#identifica-tab').on('show.bs.tab', function (e) {
-    tableIdentifica();
+    tableIdentifica('#Identifica-table');
 });
 
 $('#control-tab').on('show.bs.tab', function (e) {
@@ -22,8 +53,8 @@ $('#dispositivo-tab').on('show.bs.tab', function (e) {
     $('#altaPerRelo').on('show.bs.modal', function (e) {
         selectJS('.selectjs_Relojes', `/${HOMEHOST}/data/getRelojes.php`);
     })
-    tableGrupoCapt();
-    tablePerRelo();
+    tableGrupoCapt('#GrupoCapt');
+    tablePerRelo('#TablePerRelo');
 });
 
 const tablePerInEg = () => {
@@ -220,162 +251,282 @@ const tablePerHoAlt = () => {
         },
     });
 }
-const tableIdentifica = () => {
-    if ($.fn.DataTable.isDataTable('#Identifica-table')) {
-        $('#Identifica-table').DataTable().ajax.reload();
-        return;
-    }
-    $('#Identifica-table').DataTable({
-        "ajax": {
-            url: "../../data/getidentifica.php",
-            type: "GET",
-            'data': {
-                q2: NUMERO_LEGAJO
-            },
-        },
-        columns: [{
-            "class": "align-middle ls1",
-            "data": "IDCodigo"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDFichada"
-        },
-        {
-            "class": "align-middle ls1",
-            "data": "IDTarjeta"
-        },
-        {
-            "class": "align-middle",
-            "data": "IDVence"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDCap04"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDCap05"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDCap06"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDCap01"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "IDCap03"
-        },
-        {
-            "class": "align-middle text-center",
-            "data": "eliminar"
-        },
-        {
-            "class": "align-middle w-100",
-            "data": "null"
+const tableIdentifica = async (selectorTable) => {
+
+    $(`${selectorTable}`).addClass('loader-in');
+
+    let data = [];
+
+    const iconCheck = (value) => {
+        if (value === '1') {
+            return '<i class="bi bi-check text-success font1"></i>';
         }
-        ],
-        deferRender: true,
-        paging: false,
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: {
-            "url": "../../js/DataTableSpanish.json"
-        },
-    });
-}
-const tableGrupoCapt = () => {
-
-    const LegGrHa = $('#LegGrHa').val();
-
-    if ($.fn.DataTable.isDataTable('#GrupoCapt')) {
-        $('#GrupoCapt').DataTable().ajax.reload();
-        return;
+        return '<i class="bi bi-dash text-danger font1"></i>';
     }
 
-    $('#GrupoCapt').DataTable({
-        "ajax": {
-            url: "../../data/GetReloHabi.php",
-            type: "GET",
-            'data': {
-                q2: LegGrHa,
-            },
-        },
-        columns: [{
-            "class": "align-middle ls1",
-            "data": "Serie"
-        }, {
-            "class": "align-middle",
-            "data": "Descrip"
-        }, {
-            "class": "align-middle",
-            "data": "Marca"
-        }, {
-            "class": "align-middle w-100",
-            "data": "null"
-        }],
-        paging: false,
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: {
-            "url": "../../js/DataTableSpanish.json"
-        },
-    });
-}
-const tablePerRelo = () => {
-    if ($.fn.DataTable.isDataTable('#TablePerRelo')) {
-        $('#TablePerRelo').DataTable().ajax.reload();
-        return;
+    try {
+        const cacheData = ls.get(selectorTable);
+        if (cacheData && cacheData.timestamp === FLAG) {
+            data = cacheData.data;
+        } else {
+            const res = await axios.get('../../app-data/identifica', {
+                params: {
+                    legajo: [NUMERO_LEGAJO],
+                },
+            });
+            // console.log('fetching new data');
+            data = res.data;
+            ls.set(selectorTable, { timestamp: FLAG, data: data });
+        }
+
+        if (!data) return;
+
+        if ($.fn.DataTable.isDataTable(selectorTable)) {
+            $(selectorTable).DataTable().clear().destroy();
+        }
+
+        $(selectorTable).DataTable({
+            dom: `
+                <'row' <'col-12'<'table-responsive't>>>
+                `,
+            data: data,
+            columns: [
+                {
+                    data: 'IDCodigo', className: '', targets: '', title: 'ID',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'IDFichada', className: 'text-center', targets: '', title: 'Fichada',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDTarjeta', className: 'text-center', targets: '', title: 'Tarjeta',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDVenceStr', className: 'text-center', targets: '', title: 'Vencimiento',
+                    "render": function (data, type, row, meta) {
+                        return data === '01-01-1753' ? '<i class="bi bi-dash text-danger font1"></i>' : data;
+                    }, visible: true
+                },
+                {
+                    data: 'IDCap04', className: 'text-center', targets: '', title: 'ZKTeco',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDCap05', className: 'text-center', targets: '', title: 'Suprema',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDCap06', className: 'text-center', targets: '', title: 'HikVision',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDCap01', className: 'text-center', targets: '', title: 'Macronet',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: 'IDCap03', className: 'text-center', targets: '', title: 'S. Bayres',
+                    "render": function (data, type, row, meta) {
+                        return iconCheck(data);
+                    }, visible: true
+                },
+                {
+                    data: '', className: 'w-100 text-right', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        return `<div class="item">
+                        <a class="btn btn-light btn-sm delete_identifica" data="${row.IDCodigo}" data2="${row.IDLegajo}" data3="true">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                        </div>`
+                    }, visible: true
+                }
+            ],
+            deferRender: true,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: langTable,
+        });
+
+        $(`${selectorTable}`).removeClass('loader-in');
+
+    } catch (error) {
+        const msg = error.response?.data?.message || 'Error al cargar los datos';        
+        notify(msg, 'danger', 2000, 'right');
     }
-    $('#TablePerRelo').DataTable({
-        "ajax": {
-            url: "../../data/GetPerRelo.php",
-            type: "GET",
-            'data': {
-                q2: NUMERO_LEGAJO,
-            },
-        },
-        columns: [{
-            "class": "align-middle ls1",
-            "data": "Serie"
-        }, {
-            "class": "align-middle ls1",
-            "data": "Descrip"
-        }, {
-            "class": "align-middle",
-            "data": "Marca"
-        }, {
-            "class": "align-middle ls1",
-            "data": "Desde"
-        }, {
-            "class": "align-middle ls1 fw4",
-            "data": "Vence"
-        }, {
-            "class": "align-middle text-center",
-            "data": "eliminar"
-        }, {
-            "class": "align-middle w-100",
-            "data": "null"
-        }],
-        paging: false,
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: {
-            "url": "../../js/DataTableSpanish.json"
-        },
-    });
+}
+const tableGrupoCapt = async (selectorTable) => {
+
+    $(`${selectorTable}`).addClass('loader-in');
+
+    let data = [];
+
+    try {
+        const cacheData = ls.get(selectorTable);
+        if (cacheData && cacheData.timestamp === FLAG) {
+            data = cacheData.data ?? [];
+        } else {
+            const LegGrHa = $('#LegGrHa').val();            
+            const res = await axios.get('../../app-data/relohabi', {
+                params: {
+                    relgrup: [LegGrHa],
+                },
+            });
+            // console.log('fetching new data');
+            data = res.data;
+            ls.set(selectorTable, { timestamp: FLAG, data: data });
+        }
+
+        if (!data) return;
+
+        if ($.fn.DataTable.isDataTable(selectorTable)) {
+            $(selectorTable).DataTable().clear().destroy();
+        }
+
+        $(selectorTable).DataTable({
+            dom: `
+                <'row' <'col-12'<'table-responsive't>>>
+                `,
+            data: data,
+            columns: [
+                {
+                    data: 'RelSeri', className: '', targets: '', title: 'Serie',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelDeRe', className: '', targets: '', title: 'Dispositivo',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelReMaStr', className: 'w-100', targets: '', title: 'Marca',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                }
+            ],
+            deferRender: true,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: langTable,
+        });
+
+        $(`${selectorTable}`).removeClass('loader-in');
+
+    } catch (error) {
+        const msg = error.response?.data?.message || 'Error al cargar los datos';
+        notify(msg, 'danger', 2000, 'right');
+    }
+}
+const tablePerRelo = async (selectorTable) => {
+
+    $(`${selectorTable}`).addClass('loader-in');
+
+    let data = [];
+
+    try {
+        const cacheData = ls.get(selectorTable);
+        if (cacheData && cacheData.timestamp === FLAG) {
+            data = cacheData.data;
+        } else {
+            const res = await axios.get('../../app-data/perrelo', {
+                params: {
+                    legajo: [NUMERO_LEGAJO],
+                },
+            });
+            // console.log('fetching new data');
+            data = res.data;
+            ls.set(selectorTable, { timestamp: FLAG, data: data });
+        }
+
+        if (!data) return;
+
+        if ($.fn.DataTable.isDataTable(selectorTable)) {
+            $(selectorTable).DataTable().clear().destroy();
+        }
+
+        $(selectorTable).DataTable({
+            dom: `
+                <'row' <'col-12'<'table-responsive't>>>
+                `,
+            data: data,
+            columns: [
+                {
+                    data: 'RelSeri', className: '', targets: '', title: 'Serie',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelDeRe', className: '', targets: '', title: 'Dispositivo',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelReMaStr', className: '', targets: '', title: 'Marca',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelFechStr', className: '', targets: '', title: 'Desde',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: 'RelFech2Str', className: 'w-100', targets: '', title: 'Vence',
+                    "render": function (data, type, row, meta) {
+                        return data
+                    }, visible: true
+                },
+                {
+                    data: '', className: '', targets: '', title: '',
+                    "render": function (data, type, row, meta) {
+                        return `<div class="item">
+                        <a class="btn btn-light btn-sm delete_perrelo" data="${row.RelRelo}" data2="${row.RelReMa}" data3="${row.RelLega}" data4="true">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                        </div>`
+                    }, visible: true
+                }
+            ],
+            deferRender: true,
+            paging: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: langTable,
+        });
+
+        $(`${selectorTable}`).removeClass('loader-in');
+
+    } catch (error) {
+        const msg = error.response?.data?.message || 'Error al cargar los datos';        
+        notify(msg, 'danger', 2000, 'right');
+    }
 }
 const selectJS = (selector, urlData) => {
     // si select2 esta inicializado, return
