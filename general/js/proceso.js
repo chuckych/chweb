@@ -590,6 +590,18 @@ $(".Filtros").on("click", function () {
  * @returns {string} HTML formateado
  */
 const construirHtmlHorario = (infoHorarios) => {
+    
+    if (!infoHorarios?.CodigoHorario || infoHorarios.CodigoHorario === '0') {
+        return `
+            <div class="position-relative d-inline-block">
+                <span class="fadeIn hint hint--left" aria-label="Sin horario asignado">
+                    <i class="bi bi-info-circle"></i>
+                </span>
+                <span>Horario: ${infoHorarios?.Horario || 'No asignado'}</span>
+            </div>
+        `;
+    }
+
     const laboral = infoHorarios.Laboral === '1' ? ' (Laboral)' : ' (No Laboral)';
     const feriado = infoHorarios.Feriado === '1' ? ` (Feriado) ${infoHorarios.FeriadoStr}` : '';
     const laboralDisplay = feriado || laboral;
@@ -659,7 +671,7 @@ const get_horario_legajo_fecha = async (legajo, fecha, horarioFallback) => {
         }
 
         const infoHorarios = DATA[legajo]?.[0];
-        
+
         if (!infoHorarios) {
             mostrarHorarioFallback(`No se encontraron datos de horario para el legajo ${legajo}`);
             return;
