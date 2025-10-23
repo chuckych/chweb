@@ -1,4 +1,4 @@
-<div id="modalGeneral" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" tabindex="-1" style="padding-right:0px">
+<div id="modalGeneral" class="modal fadeIn" role="dialog" data-backdrop="static" data-keyboard="false" tabindex="-1" style="padding-right:0px">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document" id="TopN">
         <div class="modal-content">
             <div class="modal-header border-bottom-0 d-flex justify-content-between" style="color: #333333;">

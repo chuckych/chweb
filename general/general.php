@@ -214,7 +214,7 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="js/data.js?<?= version_file("/general/js/data.js") ?>"></script>
-    <script src="js/proceso-min.js?<?= version_file("/general/js/proceso-min.js") ?>"></script>
+    <script src="js/proceso.js?<?= version_file("/general/js/proceso.js") ?>"></script>
     <script src="js/select-min.js?<?= version_file("/general/js/select-min.js") ?>"></script>
     <script src="js/trash-select-min.js?<?= version_file("/general/js/trash-select-min.js") ?>"></script>
     <script src="js/export-min.js?<?= version_file("/general/js/export-min.js") ?>"></script>

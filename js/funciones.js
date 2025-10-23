@@ -1142,7 +1142,7 @@ const test_conect = async (data, options = {}) => {
     notifyWait('Aguarde... conectando con control horario...')
     try {
 
-        if(!data.host || !data.db || !data.user, !data.pass){
+        if (!data.host || !data.db || !data.user, !data.pass) {
             throw new Error('Faltan datos de conexión');
         }
 
@@ -1184,7 +1184,7 @@ const test_conect = async (data, options = {}) => {
 
 const get_cuenta = async (recid_c) => {
     if (!recid_c) return null;
-    try {        
+    try {
         const res = await axios.get(`/${_homehost}/app-data/_local/clientes/?recid=${recid_c}`);
         if (res.data) {
             const cuenta = res.data?.[0] ?? '';
@@ -1199,20 +1199,38 @@ const get_cuenta = async (recid_c) => {
 }
 const test_connect_recid_c = async (recid_c) => {
     if (!recid_c) return false;
-    
+
     const cuenta = await get_cuenta(recid_c);
-    
+
     if (!cuenta) {
         console.log('No se encontró la cuenta');
         return false;
     }
-    
+
     const resultado = await test_conect({
         host: cuenta.host,
         db: cuenta.db,
         user: cuenta.user,
         pass: cuenta.pass
     }, { returnBool: true, dontNotify: true });
-    
+
     return resultado;
 }
+/**
+ * Obtiene horarios asignados para uno o más legajos en un rango de fechas
+ * @param {Array<number>} legajos - Array de números de legajo
+ * @param {string} fechaDesde - Fecha desde en formato YYYY-MM-DD
+ * @param {string} fechaHasta - Fecha hasta en formato YYYY-MM-DD
+ * @param {Object} options - Opciones adicionales (SinHorarios, Egreso, etc.)
+ * @returns {Promise} Promesa con los datos de horarios asignados
+ */
+const obtenerHorariosAsignados = (legajos, fechaDesde, fechaHasta, options = {}) => {
+    return axios.post('../app-data/asignados', {
+        Legajos: legajos,
+        FechaDesde: fechaDesde,
+        FechaHasta: fechaHasta,
+        SinHorarios: options.SinHorarios ?? 1,
+        Egreso: options.Egreso ?? 1,
+        ...options
+    });
+};

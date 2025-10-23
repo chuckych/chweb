@@ -143,36 +143,26 @@ class InputValidator
                 }
                 break;
             case 'date':
-                if (!DateTime::createFromFormat('Y-m-d', $value)) {
+                $fecha = $this->validateDateFormat($value);
+                if (!$fecha) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                }
-                $fecha = date_create($value); // Valida la fecha
-                if (!$fecha) { // Si la fecha no es válida
-                    $e = date_get_last_errors(); // Obtiene los errores de la fecha
-                    foreach ($e['errors'] as $error) { // Recorre los errores
-                        throw new ValidationException("Error de Fecha $field: $error", 400); // Lanza una excepción con el error
-                    } // Fin recorre errores
                 }
                 break;
             case 'futuredate':
-                if (!DateTime::createFromFormat('Y-m-d', $value)) {
+                $fecha = $this->validateDateFormat($value);
+                if (!$fecha) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
-                $fecha = date_create($value);
-                if (!$fecha || $fecha <= new DateTime()) {
-                    throw new ValidationException("El campo $field debe ser una fecha futura válida con formato yyyy-mm-dd", 400);
+                if ($fecha <= new DateTime()) {
+                    throw new ValidationException("El campo $field debe ser una fecha futura válida con formato yyyy-mm-dd o yyyymmdd", 400);
                 }
                 break;
             case 'dateEmpty':
-                if ($value && !DateTime::createFromFormat('Y-m-d', $value)) {
-                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
-                }
-                $fecha = date_create($value); // Valida la fecha
-                if (!$fecha) { // Si la fecha no es válida
-                    $e = date_get_last_errors(); // Obtiene los errores de la fecha
-                    foreach ($e['errors'] as $error) { // Recorre los errores
-                        throw new ValidationException("Error de Fecha $field: $error", 400); // Lanza una excepción con el error
-                    } // Fin recorre errores
+                if ($value) {
+                    $fecha = $this->validateDateFormat($value);
+                    if (!$fecha) {
+                        throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                    }
                 }
                 break;
             case 'time':
@@ -362,5 +352,23 @@ class InputValidator
                 }
                 break;
         }
+    }
+
+    /**
+     * Valida una fecha aceptando múltiples formatos
+     * @param string $value Valor a validar
+     * @param array $formats Array de formatos a intentar (default: ['Y-m-d', 'Ymd'])
+     * @return DateTime|false Retorna objeto DateTime si es válido, false si no
+     */
+    private function validateDateFormat($value, $formats = ['Y-m-d', 'Ymd'])
+    {
+        foreach ($formats as $format) {
+            $date = DateTime::createFromFormat($format, $value);
+            // Verificar que la fecha sea válida y que el formato coincida exactamente
+            if ($date && $date->format($format) === $value) {
+                return $date;
+            }
+        }
+        return false;
     }
 }

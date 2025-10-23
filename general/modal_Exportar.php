@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="Exportar" tabindex="1" aria-labelledby="ExportarLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true" tabindex="-1">
+<div class="modal fadeIn" id="Exportar" tabindex="1" aria-labelledby="ExportarLabel" aria-hidden="true" data-backdrop="static" data-keyboard="true" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-body">

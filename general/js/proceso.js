@@ -1,3 +1,5 @@
+const LS_HORARIO_CACHE = 'horarios_asignados';
+ls.remove(LS_HORARIO_CACHE);
 var loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 var maskBehavior = function (val) {
     val = val.split(":");
@@ -581,27 +583,100 @@ $(document).on("click", ".procReg", function (e) {
 $(".Filtros").on("click", function () {
     CheckSesion()
 });
-function getHorarioActual(legajo, fecha, HorFichas) {
-    $.ajax({
-        dataType: "json",
-        type: "POST",
-        url: "../op/horarios/getHorario.php",
-        'data': {
-            Legajo: legajo,
-            Fecha: fecha
-        },
-        success: function (data) {
-            if (data.status == "ok") {
-                $('#FicHorario').html('<span class="animate__animated animate__fadeIn">' + data.Mensaje + '</span>')
-            } else {
-                $('#FicHorario').html('<span class="">Horario: ' + HorFichas + '</span>')
-            }
-        },
-        error: function (data) {
-            $('#FicHorario').html('<span class="">Horario: ' + HorFichas + '</span>')
+
+/**
+ * Construye el HTML para mostrar información del horario
+ * @param {Object} infoHorarios - Datos del horario
+ * @returns {string} HTML formateado
+ */
+const construirHtmlHorario = (infoHorarios) => {
+    const laboral = infoHorarios.Laboral === '1' ? ' (Laboral)' : ' (No Laboral)';
+    const feriado = infoHorarios.Feriado === '1' ? ` (Feriado) ${infoHorarios.FeriadoStr}` : '';
+    const laboralDisplay = feriado || laboral;
+    const fechaFormateada = formatFechaYMDaDMY(infoHorarios.Referencia);
+
+    return `
+        <div class="position-relative d-inline-block">
+            <span class="fadeIn hint hint--left" aria-label="(${infoHorarios.HorID}) ${infoHorarios.DescripcionHorario}. | ${infoHorarios.Asignacion} ${fechaFormateada}">
+                <i class="bi bi-info-circle"></i>
+            </span>
+            <span>Horario: ${infoHorarios.Horario} ${laboralDisplay}</span>
+        </div>
+    `;
+};
+
+/**
+ * Obtiene y muestra el horario de un legajo para una fecha específica con caché
+ * @param {number} legajo - Número de legajo
+ * @param {string} fecha - Fecha en formato YYYY-MM-DD
+ * @param {string} horarioFallback - Horario a mostrar si hay error
+ */
+const get_horario_legajo_fecha = async (legajo, fecha, horarioFallback) => {
+    const cacheKey = `${legajo}_${fecha}`;
+
+    // Función auxiliar para mostrar horario fallback
+    const mostrarHorarioFallback = (mensaje) => {
+        notify(mensaje, 'warning', 5000, 'right');
+        $('#FicHorario').html(`<span class="">Horario: ${horarioFallback}</span>`);
+    };
+
+    // Validar parámetros requeridos
+    if (!legajo || !fecha) {
+        mostrarHorarioFallback('Legajo o fecha no proporcionados');
+        return;
+    }
+
+    // Verificar caché
+    const cachedData = ls.get(LS_HORARIO_CACHE) || {};
+    if (cachedData[cacheKey]) {
+        // console.log('cache-hint-horario-' + cacheKey);
+        $('#FicHorario').html(construirHtmlHorario(cachedData[cacheKey]));
+        return;
+    }
+
+    // Obtener datos desde el servidor si no están en caché
+    try {
+        const response = await obtenerHorariosAsignados([legajo], fecha, fecha);
+
+        // Validar respuesta
+        if (response?.status !== 200) {
+            mostrarHorarioFallback('Error al obtener horario asignado');
+            return;
         }
-    })
-}
+
+        const { RESPONSE_CODE, MESSAGE, DATA } = response.data;
+
+        // Validar código de respuesta
+        if (RESPONSE_CODE !== "200 OK") {
+            mostrarHorarioFallback(MESSAGE || 'Error en la respuesta del servidor');
+            return;
+        }
+
+        // Validar datos
+        if (!DATA || Object.keys(DATA).length === 0) {
+            mostrarHorarioFallback('No se encontraron datos de horario');
+            return;
+        }
+
+        const infoHorarios = DATA[legajo]?.[0];
+        
+        if (!infoHorarios) {
+            mostrarHorarioFallback(`No se encontraron datos de horario para el legajo ${legajo}`);
+            return;
+        }
+
+        // Guardar en caché
+        cachedData[cacheKey] = infoHorarios;
+        ls.set(LS_HORARIO_CACHE, cachedData);
+
+        // Mostrar horario
+        $('#FicHorario').html(construirHtmlHorario(infoHorarios));
+
+    } catch (error) {
+        console.error('Error al obtener horario:', error);
+        mostrarHorarioFallback('Error al consultar el horario');
+    }
+};
 /** ABRIR MODAL */
 $(document).on("click", ".open-modal", function (e) {
     e.preventDefault();
@@ -798,7 +873,7 @@ $(document).on("click", ".open-modal", function (e) {
                 Datos: $('#data').val()
             },
             success: function (respuesta) {
-                getHorarioActual(NumLega[0], NumLega[1], respuesta.FicHorario) // div de horario #FicHorario
+                get_horario_legajo_fecha(NumLega[0], NumLega[1], respuesta.FicHorario) // div de horario #FicHorario
                 // const FicHsTr1 = respuesta.FicHsTr;
                 $("#FicHsTr").html(respuesta.FicHsTr + 'Hs.');
                 if (respuesta.FicDiaL == 1) {
