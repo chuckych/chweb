@@ -94,7 +94,7 @@ function secure_auth_ch()
             /** Si pasaron 60 minutos o más */
             session_destroy(); // Destruye la sesión
             /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
+            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'] ?? '')); // Redirecciona a login
             /** envío al usuario a la pag. de autenticación */
             exit(); // Fin del script
             /** sino, actualizo la fecha de la sesión */

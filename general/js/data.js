@@ -249,9 +249,7 @@ let GetPersonal = $('#GetPersonal').DataTable({
     responsive: false,
     info: true,
     ordering: false,
-    language: {
-        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-    },
+    language: DT_SPANISH_SHORT2,
 });
 
 let buttonCommon = {
@@ -375,9 +373,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
             info: true,
             searching: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanishShort2.json" + "?" + vjs(),
-            },
+            language: DT_SPANISH_SHORT2,
         });
         $('#GetGeneral').DataTable().on('draw.dt', function () {
 
@@ -459,9 +455,7 @@ $('#GetFechas').DataTable({
     responsive: false,
     info: true,
     ordering: false,
-    language: {
-        "url": "../js/DataTableSpanishShort2.json" + "?" + vjs()
-    },
+    language: DT_SPANISH_SHORT2,
 });
 $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
     ($('#Visualizar').is(':checked')) ? textResult(settings.json.recordsTotal, '.modal-footer .result', 'día') : '';
@@ -558,9 +552,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
             info: true,
             searching: true,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanishShort2.json" + "?" + vjs()
-            },
+            language: DT_SPANISH_SHORT2
         });
         $('#GetGeneralFecha').DataTable().on('draw.dt', function (e, settings) {
 

@@ -1234,3 +1234,51 @@ const obtenerHorariosAsignados = (legajos, fechaDesde, fechaHasta, options = {})
         ...options
     });
 };
+const DT_SPANISH = {
+    "sProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "No se encontraron resultados",
+    "sEmptyTable": "No se encontraron resultados",
+    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sSearch": "<span class='LabelSearchDT'>Buscar:</span>",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<<",
+        "sLast": ">>",
+        "sNext": "»",
+        "sPrevious": "«"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};
+const DT_SPANISH_SHORT2 = {
+    "bProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "",
+    "sEmptyTable": "",
+    "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
+    "sInfoEmpty": "No se encontraron resultados",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sSearch": "",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+        "sLast": "<i class='bi bi-chevron-double-right'></i>",
+        "sNext": "<i class='bi bi-chevron-right'></i>",
+        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};

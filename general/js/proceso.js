@@ -89,7 +89,7 @@ function ClearFormCitacion() {
     $("#CitEntra").val();
     $("#CitSale").val();
     $("#CitDesc").val('00:00');
-    $("#rowCitacion").removeClass('animate__animated animate__fadeIn')
+    $("#rowCitacion").removeClass('fadeIn')
     $(".submit_btn_Citación").prop("disabled", false);
     $('#modalGeneral').modal('hide')
 };
@@ -234,9 +234,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
         /** Tabla de Total general Novedades */
         $('#table-Total_Novedades').DataTable({
@@ -276,9 +274,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
         /** Tabla de Total general NovTipo */
         $('#table-TotalNovTipo').DataTable({
@@ -312,9 +308,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
     });
     /** Destruir las tablas del MODAL de totales al cerrar el MODAL Total general*/
@@ -362,9 +356,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
         /** Total por día Novedades*/
         $('#table-Total_Nov_Dia').DataTable({
@@ -403,9 +395,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
         /** Total por día NovTipo*/
         $('#table-Total_Nov_Tipo_Dia').DataTable({
@@ -441,9 +431,7 @@ $(document).ready(function () {
             scrollCollapse: false,
             info: false,
             ordering: false,
-            language: {
-                "url": "../js/DataTableSpanish.json"
-            },
+            language: DT_SPANISH
         });
     });
     /** Destruir las tablas del MODAL de totales por dia al cerrar el MODAL Total dia*/
@@ -458,7 +446,7 @@ $(document).on("click", "#AddFic", function (e) {
     CheckSesion()
     ClearFormFic()
     $(".Form_Fichadas").removeClass('d-none')
-    $(".Form_Fichadas").addClass('animate__animated animate__fadeIn')
+    $(".Form_Fichadas").addClass('fadeIn')
     $(".submit_btn").prop("disabled", false);
     fadeInOnly('#RegHora');
     $("#RegHora").select();
@@ -470,7 +458,7 @@ $(document).on("click", "#AddNov", function (e) {
     CheckSesion()
     ClearFormNov()
     $(".Form_Novedad").removeClass('d-none')
-    $(".Form_Novedad").addClass('animate__animated animate__fadeIn')
+    $(".Form_Novedad").addClass('fadeIn')
     $("#alta_novedad").val("true")
     $("#FicCate").prop('disabled', false);
     $(".submit_btn_mod").html('Agregar');
@@ -486,7 +474,7 @@ $(document).on("click", "#AddHora", function (e) {
     ClearFormHora()
     $("#modHora").val("0").trigger('change');
     $(".Form_Horas").removeClass('d-none')
-    $(".Form_Horas").addClass('animate__animated animate__fadeIn')
+    $(".Form_Horas").addClass('fadeIn')
     $("#alta_horas").val("true").trigger('change');
     $(".submit_btn_HorMod").html('Agregar');
     $("#cancelar_btn_hor").html('Cancelar');
@@ -500,7 +488,7 @@ $(document).on("click", "#AddONov", function (e) {
     CheckSesion()
     ClearFormONov()
     $(".Form_OtraNovedad").removeClass('d-none')
-    $(".Form_OtraNovedad").addClass('animate__animated animate__fadeIn')
+    $(".Form_OtraNovedad").addClass('fadeIn')
     $(".submit_btn_OtrasNov").html('Agregar');
     $(".submit_btn_OtrasNov").prop("disabled", false);
     $(".selectjs_OtrasNovedades").select2('open');
@@ -590,7 +578,7 @@ $(".Filtros").on("click", function () {
  * @returns {string} HTML formateado
  */
 const construirHtmlHorario = (infoHorarios) => {
-    
+
     if (!infoHorarios?.CodigoHorario || infoHorarios.CodigoHorario === '0') {
         return `
             <div class="position-relative d-inline-block">
@@ -992,9 +980,7 @@ $(document).on("click", ".open-modal", function (e) {
         searching: false,
         info: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanish.json"
-        },
+        language: DT_SPANISH,
     });
     $('#GetNovedades').DataTable({
         "drawCallback": function (settings) {
@@ -1032,9 +1018,7 @@ $(document).on("click", ".open-modal", function (e) {
         searching: false,
         info: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanish.json"
-        },
+        language: DT_SPANISH,
     });
     $('#GetHoras').DataTable({
         bProcessing: true,
@@ -1067,9 +1051,7 @@ $(document).on("click", ".open-modal", function (e) {
         searching: false,
         info: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanish.json"
-        },
+        language: DT_SPANISH,
     });
     // on draw gethoras
     $('#GetHoras').on('draw.dt', function (e, settings) { // on table init
@@ -1185,9 +1167,7 @@ $(document).on("click", ".open-modal", function (e) {
         searching: false,
         info: false,
         ordering: false,
-        language: {
-            "url": "../js/DataTableSpanish.json"
-        },
+        language: DT_SPANISH
     });
     var optSelect2 = {
         MinLength: 0,
@@ -1519,12 +1499,14 @@ $(document).on("click", ".open-modal", function (e) {
         $(".submit_btn_mod").prop("disabled", false);
         $(".respuesta_novedad").html('');
     }
-    function RefreshDataTables() {
+    function RefreshDataTables(refreshFicha = true) {
         DisabledClean();
-        $('#GetFichadas').DataTable().ajax.reload(null, false);
-        $('#GetNovedades').DataTable().ajax.reload(null, false);
-        $('#GetHoras').DataTable().ajax.reload(null, false);
-        $('#GetOtrasNov').DataTable().ajax.reload(null, false);
+        if (refreshFicha !== null && refreshFicha === true) {
+            $('#GetFichadas').DataTable().ajax.reload(null, false);
+            $('#GetNovedades').DataTable().ajax.reload(null, false);
+            $('#GetHoras').DataTable().ajax.reload(null, false);
+            $('#GetOtrasNov').DataTable().ajax.reload(null, false);
+        }
         ActualizaTablas();
         GetCierre();
         refrescaFichas();
@@ -1576,7 +1558,7 @@ $(document).on("click", ".open-modal", function (e) {
         CheckSesion()
         OcultaNavTab()
         $(".Form_Fichadas_Mod").removeClass('d-none')
-        $(".Form_Fichadas_Mod").addClass('animate__animated animate__fadeIn')
+        $(".Form_Fichadas_Mod").addClass('fadeIn')
         let Hora = $(this).attr('data2');
         let Fecha = $(this).attr('data3');
         let Datos = $(this).attr('data');
@@ -1745,7 +1727,7 @@ $(document).on("click", ".open-modal", function (e) {
             OcultaNavTab()
             $(".submit_btn_mod").prop("disabled", false);
             $(".Form_Novedad").removeClass('d-none')
-            $(".Form_Novedad").addClass('animate__animated animate__fadeIn')
+            $(".Form_Novedad").addClass('fadeIn')
             $(".submit_btn_mod").html('Modificar');
             $('#FicHoras').select();
 
@@ -1892,7 +1874,7 @@ $(document).on("click", ".open-modal", function (e) {
         e.preventDefault();
         $("#xsTHor").html('Modificar Horas')
         $(".Form_Horas").removeClass('d-none')
-        $(".Form_Horas").addClass('animate__animated animate__fadeIn')
+        $(".Form_Horas").addClass('fadeIn')
         $(".submit_btn_HorMod").html('Modificar');
         $("#alta_horas").val("mod").trigger('change');
         $("#modHora").val("1").trigger('change');
@@ -2043,7 +2025,7 @@ $(document).on("click", ".open-modal", function (e) {
         $("#xsTOnov").html('Modificar Novedad')
         $(".submit_btn_OtrasNov").prop("disabled", false);
         $(".Form_OtraNovedad").removeClass('d-none')
-        $(".Form_OtraNovedad").addClass('animate__animated animate__fadeIn')
+        $(".Form_OtraNovedad").addClass('fadeIn')
         $(".submit_btn_OtrasNov").html('Modificar');
         $("#alta_OtrasNov").val("mod").trigger('change');
         // var DatosONov = $(this).attr('data'); //** FicOnov, FicFech, FicLega */
@@ -2134,14 +2116,14 @@ $(document).on("click", ".open-modal", function (e) {
             success: function (data) {
                 if (data.status == "ok") {
                     DisabledClean();
+                    /** refresh datatable */
+                    RefreshDataTables(null);
                     /** vaciamos el form */
                     ClearFormCitacion()
-                    /** refresh datatable */
-                    RefreshDataTables();
                     /** Notificación */
-                    var Textsuccess = (data.tipo == 'mod') ? 'Citación Modificada.' : 'Citación Creada.';
+                    const textSuccess = (data.tipo == 'mod') ? 'Citación Modificada.' : 'Citación Creada.';
                     $.notifyClose();
-                    notify(Textsuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
+                    notify(textSuccess + '<br>' + data.Mensaje, 'success', 5000, 'right')
                 } else {
                     DisabledClean();
                     $(".submit_btn_Citación").prop("disabled", false);
@@ -2160,7 +2142,7 @@ $(document).on("click", ".open-modal", function (e) {
             GetCitacion()
             e.preventDefault();
             $("#rowCitacion").removeClass('d-none')
-            $("#rowCitacion").addClass('animate__animated animate__fadeIn')
+            $("#rowCitacion").addClass('fadeIn')
             $("#alta_Citación").val("true").trigger('change');
             e.stopImmediatePropagation()
             $('#CitEntra').focus();
@@ -2232,7 +2214,7 @@ $(document).on("click", ".open-modal", function (e) {
         if (Cita) {
             GetCitacion()
             $("#rowCitacion").removeClass('d-none')
-            $("#rowCitacion").addClass('animate__animated animate__fadeIn')
+            $("#rowCitacion").addClass('fadeIn')
             $("#alta_Citación").val("true").trigger('change');
             $('#Navs').addClass('d-none')
             Modal_XL_LG('#TopN')

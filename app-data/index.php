@@ -1469,7 +1469,6 @@ Flight::route('POST /ws_novedades', function () {
     Flight::json($arrayData ?? []);
 
 });
-
 foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
     Flight::route("GET /{$ruta}", function () use ($ruta) {
         $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/acceso/{$ruta}";
@@ -1480,8 +1479,6 @@ foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
         Flight::json($arrayData ?? []);
     });
 }
-
-
 Flight::map('Forbidden', function ($mensaje) {
     Flight::json(['status' => 'error', 'message' => $mensaje], 403);
     exit;
@@ -1494,7 +1491,6 @@ Flight::map('notFound', function () {
     exit;
 });
 Flight::set('flight.log_errors', true);
-
 Flight::map('error', function ($ex) {
     $code_protected = $ex->getCode() ?? 400;
 

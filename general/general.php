@@ -69,7 +69,7 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
@@ -137,7 +137,7 @@
         <input type="hidden" value="<?= $FechaFin ?>" id="FechaFin">
         <div class="row bg-white pb-sm-3 invisible" id="pagLega">
             <div class="table-responsive">
-                <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
+                <div class="col-12 d-flex justify-content-sm-end align-items-center fadeIn">
                     <input type="text" data-mask="000000000" reverse="true" id="Per2"
                         class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
                     <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
@@ -148,7 +148,7 @@
         </div>
         <div class="row bg-white pb-sm-3" id="pagFech">
             <div class="table-responsive">
-                <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
+                <div class="col-12 d-flex justify-content-sm-end fadeIn">
                     <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
 
                     </table>
@@ -156,7 +156,7 @@
             </div>
         </div>
         <div class="row bg-white radius mt-sm-n5">
-            <div class="col-12 animate__animated animate__fadeIn">
+            <div class="col-12 fadeIn">
                 <div class="table-responsive invisible" id="GetGeneralTable">
                     <table class="table table-hover text-nowrap w-100" id="GetGeneral">
                         <thead class="">
@@ -175,7 +175,7 @@
                     </table>
                 </div>
             </div>
-            <div class="col-12 animate__animated animate__fadeIn">
+            <div class="col-12 fadeIn">
                 <div class="table-responsive invisible" id="GetGeneralFechaTable">
                     <table class="table text-nowrap w-100" id="GetGeneralFecha">
                         <thead>

@@ -109,7 +109,7 @@
                                     <div class="col-12 py-2 py-sm-3">
                                         <span class="d-block d-lg-none fontq mb-1" id="xsTFic">Fichadas</span>
                                         <form action="insert.php" method="POST" class="Form_Fichadas d-none">
-                                            <div class="form-inline mb-2"><label for="RegFech" class="mr-2 w80">Fecha:</label>
+                                            <div class="form-inline mb-2"><label for="RegFech_Fichada" class="mr-2 w80">Fecha:</label>
                                                 <input type="text" readonly name="RegFech" class="h40 form-control RegFech w120 ls1" id="RegFech_Fichada">
                                             </div>
                                             <div class="form-inline mb-2"><input type="hidden" name="alta_fichada" class="" value="true"><input type="hidden" name="datos_fichada" class="datos_fichada" value=""><label for="RegHora" class="mr-2 w80">Hora:</label>

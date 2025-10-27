@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-12 mt-2 form-inline d-none">
                                 <label class="mr-2" for="_password">Contrase&ntilde;a de apertura: </label>
-                                <input type="text" class="form-control w200" maxlength="10" name="_password">
+                                <input type="text" class="form-control w200" maxlength="10" id="_password" name="_password">
                             </div>
                             <div class="col-12 pt-1 form-inline">
                                 <label for="_watermark"><span class="d-none d-sm-block w100">Marca de agua: </span></label>

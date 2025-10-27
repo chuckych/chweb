@@ -64,8 +64,8 @@ if ($totalRecords > 0) {
         $FicFechStr = $row['FicFech']->format('Ymd');
 
         $data[] = array(
-            'FicFech' => '<span class="animate__animated animate__fadeIn">' . $FicFech . '</span><input type="hidden" class="" id="_f" value=' . $FicFechStr . '>',
-            'Dia' => '<span class="animate__animated animate__fadeIn">' . $Dia . '</span>',
+            'FicFech' => '<span class="fadeIn">' . $FicFech . '</span><input type="hidden" class="" id="_f" value=' . $FicFechStr . '>',
+            'Dia' => '<span class="fadeIn">' . $Dia . '</span>',
             'null' => '',
         );
     }

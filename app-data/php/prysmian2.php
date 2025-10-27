@@ -316,9 +316,7 @@ try {
     $valoresCustom = get_params(['cliente' => $cliente, 'descripcion' => '', 'modulo' => 46]) ?? [];
     $params = $valoresCustom;
     $valoresCustom = array_column($valoresCustom, null, 'descripcion');
-
-
-
+    
     foreach ($clavesCustom as $key => $clave) {
         // $codNove = explode(',', $valoresCustom[$key]['valores'] ?? '') ?? []; // Obtener los códigos de novedad de 'valoresCustom' según $key y convertirlos en un array
 
