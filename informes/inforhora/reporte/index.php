@@ -25,12 +25,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $_nombre = FusNuloPOST('_nombre', "InforHora"); /**  Nombre del archivo*/
     $_titulo = FusNuloPOST('_titulo', ""); /**  titulo del reporte*/
     $_SaltoPag = FusNuloPOST('_SaltoPag', "0"); /** salto de pagina por legajo */
-    $_TotHoras = FusNuloPOST('_TotHoras', "0"); /** Mostrar Total de Horas por legajos */
+    $_TotHoras = 1;
     $_TotNove = FusNuloPOST('_TotNove', "0"); /** Mostrar Total de Novedades por legajos */
     $_VerHoras = FusNuloPOST('_VerHoras', "0"); /** Mostrar Horas */
     $_VerNove = FusNuloPOST('_VerNove', "0"); /** Mostrar Novedades */
     $_VerFic = FusNuloPOST('_VerFic', "0"); /** Mostrar Fichadas */
     $_Por = FusNuloPOST("_Por", 'Leg'); /** Agrupar por: Fech,Lega, ApNo */
+    $_agrupar_thcolu = $_POST['agrupar_thcolu'] ?? '0';
+    $_agrupar_thcolu = ($_agrupar_thcolu == '1') ? true : false;
 
     $_titulo = $_titulo == '' ? 'INFORME DE HORAS' : $_titulo;
     $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
@@ -62,12 +64,37 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     }
     try {
 
+        // ============ LOGGING DE PERFORMANCE ============
+        $perf_log = [];
+        $perf_start = microtime(true);
+        
+        function perf_log($label, $start = null) {
+            global $perf_log, $perf_start;
+            $now = microtime(true);
+            if ($start) {
+                $perf_log[] = sprintf("%s: %.2f ms", $label, ($now - $start) * 1000);
+            } else {
+                $perf_log[] = sprintf("[%.2f ms] %s", ($now - $perf_start) * 1000, $label);
+            }
+            return $now;
+        }
+        
+        perf_log("INICIO index.php");
+        
+        $t1 = microtime(true);
         BorrarArchivosPDF('archivos/*.pdf'); /** Borra los archivos anteriores a la fecha actual */
+        perf_log("BorrarArchivosPDF", $t1);
+        
         ini_set("pcre.backtrack_limit", "5000000");
 
+        $t2 = microtime(true);
         ob_start();
         require_once 'InforHora.php';
         $buffer = ob_get_clean();
+        perf_log("require InforHora.php + ob_get_clean", $t2);
+        perf_log("Tamaño del buffer HTML: " . strlen($buffer) . " bytes");
+        
+        $t3 = microtime(true);
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'c',
             'format' => $_format,
@@ -78,8 +105,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             'margin_bottom' => 12,
             'margin_header' => 5,
             'margin_footer' => 5,
-            'orientation' => $_orientation
+            'orientation' => $_orientation,
+            // OPTIMIZACIONES DE PERFORMANCE
+            'autoScriptToLang' => false,
+            'autoLangToFont' => false
         ]);
+        perf_log("new Mpdf() - Inicialización", $t3);
+        
+        $t4 = microtime(true);
         $mpdf->SetDisplayMode('fullpage');
         $mpdf->shrink_tables_to_fit = 1;
         $mpdf->SetAuthor('Control Horario WEB - ' . $_SESSION['NOMBRE_SESION']);
@@ -87,8 +120,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf->SetSubject($_titulo);
         $mpdf->SetCreator('Control Horario WEB');
         $mpdf->SetCompression(true);
+        
+        // OPTIMIZACIONES DE PERFORMANCE
         $mpdf->simpleTables = true;
         $mpdf->useSubstitutions = false;
+        $mpdf->packTableData = true;
+        $mpdf->keep_table_proportions = false;
 
         $_watermark = FusNuloPOST("_watermark", ''); /** Marca de Agua */
         if (($_watermark)) {
@@ -119,21 +156,48 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
                     <td width="33%" style="text-align: right;">' . strtoupper($_titulo) . '</td>
                 </tr>
             </table>');
+        perf_log("Configuración de mPDF (headers, footers, etc)", $t4);
 
         $mpdf->list_indent_first_level = 1; // 1 or 0 - whether to indent the first level of a list
 
         // Load a stylesheet
+        $t5 = microtime(true);
         $stylesheet = file_get_contents('../../../css/stylepdf/mpdfstyletables.css');
-
         $mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
+        perf_log("WriteHTML CSS", $t5);
 
+        $t6 = microtime(true);
         $chunks = explode("chunk", $buffer);
+        perf_log("Chunks totales: " . count($chunks));
+        
+        $t7 = microtime(true);
         foreach ($chunks as $key => $val) {
             $mpdf->WriteHTML($val, 2);
         }
+        perf_log("WriteHTML - Renderizado de todos los chunks", $t7);
+        
         ob_end_clean();
 
+        $t8 = microtime(true);
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
+        perf_log("Output PDF a archivo", $t8);
+        
+        perf_log("TOTAL index.php", $perf_start);
+        
+        // Guardar log de performance
+        $log_content = "\n========================================\n";
+        $log_content .= "LOG DE PERFORMANCE index.php - " . date('Y-m-d H:i:s') . "\n";
+        $log_content .= "========================================\n";
+        $log_content .= "Archivo: $NombreArchivo2\n";
+        $log_content .= "Páginas estimadas: " . count($chunks) . "\n";
+        $log_content .= "Formato: $_format | Orientación: $_orientation\n";
+        $log_content .= "========================================\n";
+        $log_content .= implode("\n", $perf_log) . "\n";
+        $log_content .= "========================================\n";
+        $log_content .= "TIEMPO TOTAL: " . sprintf("%.2f", (microtime(true) - $perf_start) * 1000) . " ms\n";
+        $log_content .= "========================================\n\n";
+        
+        file_put_contents(__DIR__ . '/performance_log.txt', $log_content, FILE_APPEND);
 
         $data = array('status' => 'ok', 'dato' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
         echo json_encode($data);
