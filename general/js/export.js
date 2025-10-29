@@ -256,6 +256,7 @@ $(document).ready(function () {
         CheckSesion();
 
         let sendData = new FormData()
+        const agrupar_thcolu = $("#agrupar_thcolu").is(":checked") ? 1 : 0;
         sendData.append('_l', $("#_l").val())
         sendData.append('Filtros', _Filtros())
         sendData.append('Per', ($("#Per").val() != null) ? $("#Per").val() : '')
@@ -283,7 +284,8 @@ $(document).ready(function () {
         sendData.append('_nombre', $("#_nombre").val())
         sendData.append('_titulo', $("#_titulo").val())
         sendData.append('_watermark', $("#_watermark").val())
-        sendData.append('_format', $("#_format").val())
+        sendData.append('_format', $("#_format").val()),
+        sendData.append('_agrupar_thcolu', agrupar_thcolu)
 
         ActiveBTN(true, "#btnExportar", 'Generando.!', btnPDF)
         $('#IFrame').addClass('d-none');

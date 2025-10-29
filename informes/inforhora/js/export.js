@@ -6,8 +6,8 @@ var NotifOffsetX   = 0;
 var NotifOffsetY   = 0;
 var NotifZindex    = 9999;
 var NotifMouseOver = 'pause'
-var NotifEnter     = 'animate__animated animate__fadeInDown';
-var NotifExit      = 'animate__animated animate__fadeOutUp';
+var NotifEnter     = 'fadeIn';
+var NotifExit      = 'fadeIn';
 var NotifAlign     = 'center';
 var btnPDF = 'Generar PDF'
 
@@ -62,22 +62,23 @@ $("#btnExportar").html(btnPDF);
 
     $("#FormExportar").bind("submit", function (e) {
         e.preventDefault();
+        const agrupar_thcolu = $("#agrupar_thcolu").is(":checked") ? 1 : 0;
         $.ajax({
             type: $(this).attr("method"),
             url: $(this).attr("action"),
             data: $(this).serialize() +
-                "&_l= " + $("#_l").val() +
-                "&Per= " + $("#Per").val() +
-                "&Tipo= " + $("#Tipo").val() +
-                "&Emp= " + $("#Emp").val() +
-                "&Plan= " + $("#Plan").val() +
-                "&Sect= " + $("#Sect").val() +
-                "&Sec2= " + $("#Sec2").val() +
-                "&Grup= " + $("#Grup").val() +
-                "&Sucur= " + $("#Sucur").val() +
-                "&FicNove= " + $("#FicNove").val() +
-                "&_dr= " + $("#_dr").val() +
-                "&_agrupar= " + $("#_agrupar").val(),
+                "&_l=" + ($("#_l").val() ?? '') +
+                "&Per=" + ($("#Per").val() ?? '') +
+                "&Tipo=" + ($("#Tipo").val() ?? '') +
+                "&Emp=" + ($("#Emp").val() ?? '') +
+                "&Plan=" + ($("#Plan").val() ?? '') +
+                "&Sect=" + ($("#Sect").val() ?? '') +
+                "&Sec2=" + ($("#Sec2").val() ?? '') +
+                "&Grup=" + ($("#Grup").val() ?? '') +
+                "&Sucur=" + ($("#Sucur").val() ?? '') +
+                "&_dr=" + ($("#_dr").val() ?? '') +
+                "&_agrupar=" + ($("#_agrupar").val() ?? '') +
+                "&agrupar_thcolu=" + agrupar_thcolu,
                  dataType: "json",
             beforeSend: function (data) {
                 $("#btnExportar").html("Generando.!");

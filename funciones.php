@@ -480,27 +480,27 @@ function host(): string
         'HTTP_X_FORWARDED_SSL' => 'on',       // Usado por algunos proxies
         'HTTPS' => ['on', '1']                // Nativo (sin proxy)
     ];
-    
+
     $isHttps = false;
-    
+
     foreach ($httpsHeaders as $header => $expectedValues) {
         if (!isset($_SERVER[$header])) {
             continue;
         }
-        
+
         $serverValue = $_SERVER[$header];
         $expectedValues = is_array($expectedValues) ? $expectedValues : [$expectedValues];
-        
+
         // Verificar si el valor del servidor coincide con alguno de los valores esperados
-        if (in_array($serverValue, $expectedValues, true) || 
+        if (in_array($serverValue, $expectedValues, true) ||
             ($header === 'HTTPS' && $serverValue !== 'off')) {
             $isHttps = true;
             break;
         }
     }
-    
+
     $protocol = $isHttps ? 'https://' : 'http://';
-    
+
     return $protocol . $_SERVER['HTTP_HOST'];
 }
 function valida_campo($name)
@@ -2018,36 +2018,43 @@ function PerCierre($FechaStr, $Legajo)
 }
 function PerCierreFech($FechaStr, $Legajo)
 {
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    require __DIR__ . '/config/conect_mssql.php';
-    $query = "SELECT TOP 1 CierreFech FROM PERCIERRE WHERE PERCIERRE.CierreLega = '$Legajo'";
-    $stmt = sqlsrv_query($link, $query, $params, $options);
-    // print_r($query); exit;
-    while ($row = sqlsrv_fetch_array($stmt)) {
-        $perCierre = $row['CierreFech']->format('Ymd');
-    }
-    $perCierre = !empty($perCierre) ? $perCierre : '17530101';
-    sqlsrv_free_stmt($stmt);
+    try {
 
-    if ($FechaStr <= $perCierre) {
-        return $perCierre;
-    } else {
-        $query = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
-        // print_r($query); exit;
+        $params = [];
+        $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+        require __DIR__ . '/config/conect_mssql.php';
+        $query = "SELECT TOP 1 CierreFech FROM PERCIERRE WHERE PERCIERRE.CierreLega = '$Legajo'";
         $stmt = sqlsrv_query($link, $query, $params, $options);
         while ($row = sqlsrv_fetch_array($stmt)) {
-            $ParCierr = $row['ParCierr']->format('Ymd');
+            $perCierre = $row['CierreFech']->format('Ymd');
         }
-        $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
+
+        $perCierre = !empty($perCierre) ? $perCierre : '17530101';
         sqlsrv_free_stmt($stmt);
-        if ($FechaStr <= $ParCierr) {
-            sqlsrv_close($link);
-            return $ParCierr;
+
+        if ($FechaStr <= $perCierre) {
+            return $perCierre;
         } else {
-            sqlsrv_close($link);
-            return false;
+            $query = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
+            $stmt = sqlsrv_query($link, $query, $params, $options);
+            while ($row = sqlsrv_fetch_array($stmt)) {
+                $ParCierr = $row['ParCierr']->format('Ymd');
+            }
+            $ParCierr = !empty($ParCierr) ? $ParCierr : '17530101';
+            sqlsrv_free_stmt($stmt);
+            if ($FechaStr <= $ParCierr) {
+                sqlsrv_close($link);
+                return $ParCierr;
+            } else {
+                sqlsrv_close($link);
+                // error_log(print_r($ParCierr, true));
+                return $ParCierr;
+                // return false;
+            }
         }
+
+    } catch (\Throwable $th) {
+        error_log($th->getMessage());
     }
     // sqlsrv_close($link);
 }
@@ -3854,44 +3861,44 @@ function OS()
 }
 function auth_ad($passLogin, $row)
 {
-	$_SESSION['RECID_CLIENTE'] = $row['recid_cliente'] ?? '';
-	$url = host() . '/' . HOMEHOST . '/app-data/_local/login_ad';
+    $_SESSION['RECID_CLIENTE'] = $row['recid_cliente'] ?? '';
+    $url = host() . '/' . HOMEHOST . '/app-data/_local/login_ad';
 
-	$data = [
-		'id_cliente' => $row['id_cliente'] ?? '',
-		'recid_cliente' => $row['recid_cliente'] ?? '',
-		'serviceUserAD' => $row['usuario'] ?? '',
-		'servicePassAD' => $passLogin
-	];
+    $data = [
+        'id_cliente' => $row['id_cliente'] ?? '',
+        'recid_cliente' => $row['recid_cliente'] ?? '',
+        'serviceUserAD' => $row['usuario'] ?? '',
+        'servicePassAD' => $passLogin
+    ];
 
-	$options = [
-		'http' => [
-			'header' => "Content-Type: application/json\r\n",
-			'method' => 'POST',
-			'content' => json_encode($data),
-			'timeout' => 10, // segundos
-			'ignore_errors' => true // Para poder leer respuestas de error
-		],
-		'ssl' => [
-			'verify_peer' => false, // Solo para desarrollo local
-			'verify_peer_name' => false
-		]
-	];
+    $options = [
+        'http' => [
+            'header' => "Content-Type: application/json\r\n",
+            'method' => 'POST',
+            'content' => json_encode($data),
+            'timeout' => 10, // segundos
+            'ignore_errors' => true // Para poder leer respuestas de error
+        ],
+        'ssl' => [
+            'verify_peer' => false, // Solo para desarrollo local
+            'verify_peer_name' => false
+        ]
+    ];
 
-	$context = stream_context_create($options);
-	$response = @file_get_contents($url, false, $context);
+    $context = stream_context_create($options);
+    $response = @file_get_contents($url, false, $context);
 
-	if ($response === false) {
-		// Error en la petición
-		$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorAD.log';
-		fileLog("Error al conectar con AD: " . error_get_last()['message'], $pathLog);
-	} else {
-		$responseData = json_decode($response, true);
-		// Verificar si la autenticación AD fue exitosa
-		if (isset($responseData['RESPONSE_CODE']) && $responseData['RESPONSE_CODE'] === '200 OK') {
-			return true;
-		} else {
+    if ($response === false) {
+        // Error en la petición
+        $pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorAD.log';
+        fileLog("Error al conectar con AD: " . error_get_last()['message'], $pathLog);
+    } else {
+        $responseData = json_decode($response, true);
+        // Verificar si la autenticación AD fue exitosa
+        if (isset($responseData['RESPONSE_CODE']) && $responseData['RESPONSE_CODE'] === '200 OK') {
+            return true;
+        } else {
             return false;
-		}
-	}
+        }
+    }
 }

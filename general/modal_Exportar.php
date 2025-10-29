@@ -97,10 +97,16 @@
                     </div>
                     <div class="row">
                         <div class="pt-2 col-12">
-                            <div class="custom-control custom-switch custom-control-inline ml-1">
+                            <div class="custom-control custom-switch custom-control-inline ml-1 hint hint--top" aria-label="Salto de p&aacute;gina por legajo.">
                                 <input type="checkbox" class="custom-control-input" id="SaltoPag">
-                                <label class="custom-control-label w180" for="SaltoPag" style="padding-top: 3px;"><span class="text-dark">Salto de p&aacute;gina</span></label>
+                                <label class="custom-control-label" for="SaltoPag" style="padding-top: 3px;"><span class="text-dark">Salto de p&aacute;gina</span></label>
                                 <input type="hidden" name="_SaltoPag" id="datoSaltoPag">
+                            </div>
+                            <div class="custom-control custom-switch custom-control-inline ml-1 hint hint--top" aria-label="Agrupa las columnas que se repiten en el reporte.">
+                                <input type="checkbox" checked class="custom-control-input" id="agrupar_thcolu">
+                                <label class="custom-control-label" for="agrupar_thcolu" style="padding-top: 3px;">
+                                    <span class="text-dark">Agrupar columnas</span>
+                                </label>
                             </div>
                         </div>
                     </div>

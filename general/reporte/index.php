@@ -14,38 +14,41 @@ E_ALL();
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
     $start_time = microtime(true);
 
-    $_format = FusNuloPOST('_format', 'A4');
     /** Tipo de Hoja */
-    $_orientation = FusNuloPOST('_orientation', 'L');
+    $_format = FusNuloPOST('_format', 'A4');
     /** L: Horizontal; P: Vertical */
-    $_destino = FusNuloPOST('_destino', 'F');
+    $_orientation = FusNuloPOST('_orientation', 'L');
     /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
-    $_password = FusNuloPOST('_password', '');
+    $_destino = FusNuloPOST('_destino', 'F');
     /** Password de apertura del archivo */
-    $_print = FusNuloPOST('_print', '');
+    $_password = FusNuloPOST('_password', '');
     /**  Bloquea la impresión del archivo */
-    $_modify = FusNuloPOST('_modify', '');
+    $_print = FusNuloPOST('_print', '');
     /**  Bloquea la modificación archivo */
-    $_copy = FusNuloPOST('_copy', '');
+    $_modify = FusNuloPOST('_modify', '');
     /**  Bloquea la copiar datos del archivo */
-    $_annotforms = FusNuloPOST('_annotforms', '');
+    $_copy = FusNuloPOST('_copy', '');
     /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
-    $_nombre = FusNuloPOST('_nombre', "FicNoveHoras");
+    $_annotforms = FusNuloPOST('_annotforms', '');
     /**  Nombre del archivo*/
-    $_titulo = FusNuloPOST('_titulo', "");
+    $_nombre = FusNuloPOST('_nombre', "FicNoveHoras");
     /**  titulo del reporte*/
-    $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
+    $_titulo = FusNuloPOST('_titulo', "");
     /** salto de pagina por legajo */
-    $_TotHoras = FusNuloPOST('_TotHoras', "0");
+    $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
     /** Mostrar Total de Horas por legajos */
-    $_TotNove = FusNuloPOST('_TotNove', "0");
+    $_TotHoras = FusNuloPOST('_TotHoras', "0");
     /** Mostrar Total de Novedades por legajos */
-    $_VerHoras = FusNuloPOST('_VerHoras', "0");
+    $_TotNove = FusNuloPOST('_TotNove', "0");
     /** Mostrar Horas */
-    $_VerNove = FusNuloPOST('_VerNove', "0");
+    $_VerHoras = FusNuloPOST('_VerHoras', "0");
     /** Mostrar Novedades */
-    $_VerFic = FusNuloPOST('_VerFic', "0");
+    $_VerNove = FusNuloPOST('_VerNove', "0");
     /** Mostrar Fichadas */
+    $_VerFic = FusNuloPOST('_VerFic', "0");
+    /** Agrupar las columnas que se repiten en el reporte */
+    $_agrupar_thcolu = $_POST['_agrupar_thcolu'] ?? '0';
+    $_agrupar_thcolu = ($_agrupar_thcolu == '1') ? true : false;
 
     $_titulo = $_titulo == '' ? 'REPORTE CONTROL HORARIO' : $_titulo;
     $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
