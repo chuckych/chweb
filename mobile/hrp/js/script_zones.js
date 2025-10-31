@@ -1,16 +1,17 @@
 
-const LS_MODAL_ZONE = homehost + '_mobile_modal_zone';
+// const LS_MODAL_ZONE = homehost + '_mobile_modal_zone';
+// const LS_MODALES = homehost + '_mobile_modales';
 
-ls.remove(LS_MODAL_ZONE);
+// ls.remove(LS_MODAL_ZONE);
 
 
-if (!ls.get(LS_MODAL_ZONE)) {
-    axios.get('modalZone.php').then((response) => {
-        ls.set(LS_MODAL_ZONE, response.data);
-    }).catch(() => {
-        ls.remove(LS_MODAL_ZONE);
-    });
-}
+// if (!ls.get(LS_MODAL_ZONE)) {
+//     axios.get('modalZone.php').then((response) => {
+//         ls.set(LS_MODAL_ZONE, response.data);
+//     }).catch(() => {
+//         ls.remove(LS_MODAL_ZONE);
+//     });
+// }
 
 const loadingTableZones = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
@@ -188,7 +189,7 @@ tableZones.on('xhr', function (e, settings, json) {
 $(document).on("click", ".addZone", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODAL_ZONE);
+    let modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -357,7 +358,7 @@ let select2Radio = (selector) => {
 }
 $(document).on("click", "#addZone", function (e) {
 
-    let modalZone = ls.get(LS_MODAL_ZONE);
+    let modalZone = ls.get(LS_MODALES);
 
     if (!modalZone) {
         return;
@@ -453,7 +454,7 @@ $(document).on("click", ".updZone", function (e) {
     // get data datatable row
     let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODAL_ZONE);
+    let modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -566,7 +567,7 @@ $(document).on("click", ".updZone", function (e) {
 $(document).on("click", ".delZone", function (e) {
     let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODAL_ZONE);
+    let modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -878,7 +879,7 @@ $(document).on("click", ".createZoneOut", function (e) {
     e.preventDefault();
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODAL_ZONE);
+    let modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;

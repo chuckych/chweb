@@ -5,7 +5,7 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 header("Content-Type: application/json");
-$data = array();
+$data = [];
 /** Para dateRangePicker */
 // $arrayFech = (fecha_min_max_mysql('reg_', 'fechaHora'));
 // $query = "SELECT MIN(fechaHora) AS 'min', MAX(fechaHora) AS 'max' FROM reg_ WHERE id_company = '$_SESSION[ID_CLIENTE]'";
@@ -26,14 +26,14 @@ $maxFormat = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd/m/
 $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
 $aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
 
-$data = array(
+$data = [
     'aniomax' => $aniomax,
     'aniomin' => $aniomin,
     'max' => $max,
     'maxFormat' => $maxFormat,
     'min' => $min,
     'minFormat' => $minFormat,
-);
+];
 
 echo json_encode($data);
 exit;

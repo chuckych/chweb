@@ -2,17 +2,17 @@ $(function () {
     'use strict';
 
     const homehost = $("#_homehost").val();
-    const LS_MODAL = homehost + '_mobile_modal';
+    const LS_MODALES = homehost + '_mobile_modales';
     const LS_DIR_NAME = homehost + '_position_dir_name_';
 
-    ls.remove(LS_MODAL);
+    ls.remove(LS_MODALES);
 
-    if (!ls.get(LS_MODAL)) {
+    if (!ls.get(LS_MODALES)) {
 
-        axios.get('modal.php').then((response) => {
-            ls.set(LS_MODAL, response.data);
+        axios.get('modales.php').then((response) => {
+            ls.set(LS_MODALES, response.data);
         }).catch(() => {
-            ls.remove(LS_MODAL);
+            ls.remove(LS_MODALES);
         });
 
     }
@@ -943,7 +943,7 @@ $(function () {
 
         let modalRegistro = document.getElementById('modalRegistro'); // div donde se carga el modal
 
-        let getModal = ls.get(LS_MODAL); // obtener modal de localStorage
+        let getModal = ls.get(LS_MODALES); // obtener modal de localStorage
 
         if (!getModal) {
             return; // si no hay modal, salir

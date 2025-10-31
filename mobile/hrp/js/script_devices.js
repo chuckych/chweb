@@ -1,27 +1,4 @@
 // $(document).ready(function () {
-const LS_MODAL_DEVICE = homehost + '_mobile_modal_device';
-const LS_MODAL_SETTING = homehost + '_mobile_modal_setting';
-const LS_MODAL_DEVICE_DATA = homehost + '_mobile_modal_device_data';
-
-ls.remove(LS_MODAL_DEVICE);
-ls.remove(LS_MODAL_SETTING);
-ls.remove(LS_MODAL_DEVICE_DATA);
-
-if (!ls.get(LS_MODAL_DEVICE)) {
-    axios.get('modalDevice.php').then((response) => {
-        ls.set(LS_MODAL_DEVICE, response.data);
-    }).catch(() => {
-        ls.remove(LS_MODAL_DEVICE);
-    });
-}
-
-if (!ls.get(LS_MODAL_SETTING)) {
-    axios.get('modalSetting.php').then((response) => {
-        ls.set(LS_MODAL_SETTING, response.data);
-    }).catch(() => {
-        ls.remove(LS_MODAL_SETTING);
-    });
-}
 
 const loadingTableDevices = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
@@ -232,7 +209,7 @@ tableDevices.on('xhr.dt', function (e, settings, json) {
 $(document).on("click", ".addDevice", function (e) {
     let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
 
-    let modalDevice = ls.get(LS_MODAL_DEVICE);
+    let modalDevice = ls.get(LS_MODALES);
 
     if (!modalDevice) {
         return;
@@ -306,7 +283,7 @@ $(document).on("click", ".addDevice", function (e) {
 const setDevice = (data) => {
 
 
-    let modalSettings = ls.get(LS_MODAL_SETTING);
+    let modalSettings = ls.get(LS_MODALES);
 
     if (!modalSettings) {
         return;
@@ -366,7 +343,7 @@ const setDevice = (data) => {
 }
 const updDevice = (data) => {
 
-    let modalDevice = ls.get(LS_MODAL_DEVICE);
+    let modalDevice = ls.get(LS_MODALES);
 
     if (!modalDevice) {
         return;
@@ -455,7 +432,7 @@ $(document).on("click", ".updDeviceTable", function (e) {
 
 $(document).on("click", ".delDevice", function (e) {
     let data = tableDevices.row($(this).parents('tr')).data();
-    let modalDevice = ls.get(LS_MODAL_DEVICE);
+    let modalDevice = ls.get(LS_MODALES);
 
     if (!modalDevice) {
         return;
@@ -537,7 +514,7 @@ $(document).on("click", ".delDevice", function (e) {
 
 });
 $(document).on("click", "#addDevice", function (e) {
-    let modalDevice = ls.get(LS_MODAL_DEVICE);
+    let modalDevice = ls.get(LS_MODALES);
 
     if (!modalDevice) {
         return;

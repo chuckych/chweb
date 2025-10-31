@@ -6,9 +6,8 @@ ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
 E_ALL();
-$_POST['recid'] = $_POST['recid'] ?? '';
-$recid = $_POST['recid'];
-$data = array();
+$recid = $_POST['recid'] ?? '';
+$data = [];
 
 $data = getDataIni('../../mobileApikey.php');
 
@@ -24,13 +23,11 @@ $_SESSION["APIMOBILEHRP"] = $data['apiMobileHRP'];
 $_SESSION["CLIENTE"] = $data['nameCompany'];
 
 do {
-    $data = array(
+    $data = [
         'status' => 'ok',
         'api' => $data['apiMobileHRP'],
-        // 'idCompany'    => $_SESSION['ID_CLIENTE'],
-        // 'recidCompany' => $_SESSION['RECID_CLIENTE'],
         'cliente' => $_SESSION['CLIENTE'],
-    );
+    ];
 } while ($_SESSION['ID_CLIENTE'] != $recid);
 
 echo json_encode($data);

@@ -1,26 +1,28 @@
 // $(document).ready(function () {
 
 const homehost = $("#_homehost").val();
-const LS_MODAL_USER = homehost + '_mobile_modal_user';
-const LS_MODAL_TRAIN = homehost + '_mobile_modal_train';
+// const LS_MODAL_USER = homehost + '_mobile_modal_user';
+// const LS_MODAL_TRAIN = homehost + '_mobile_modal_train';
+const LS_MODALES = homehost + '_mobile_modales';
 
-ls.remove(LS_MODAL_USER);
-ls.remove(LS_MODAL_TRAIN);
 
-if (!ls.get(LS_MODAL_USER)) {
-    axios.get('modalUser.php').then((response) => {
-        ls.set(LS_MODAL_USER, response.data);
-    }).catch(() => {
-        ls.remove(LS_MODAL_USER);
-    });
-}
-if (!ls.get(LS_MODAL_TRAIN)) {
-    axios.get('modalTrain.php').then((response) => {
-        ls.set(LS_MODAL_TRAIN, response.data);
-    }).catch(() => {
-        ls.remove(LS_MODAL_TRAIN);
-    });
-}
+// ls.remove(LS_MODAL_USER);
+// ls.remove(LS_MODAL_TRAIN);
+
+// if (!ls.get(LS_MODAL_USER)) {
+//     axios.get('modalUser.php').then((response) => {
+//         ls.set(LS_MODAL_USER, response.data);
+//     }).catch(() => {
+//         ls.remove(LS_MODAL_USER);
+//     });
+// }
+// if (!ls.get(LS_MODAL_TRAIN)) {
+//     axios.get('modalTrain.php').then((response) => {
+//         ls.set(LS_MODAL_TRAIN, response.data);
+//     }).catch(() => {
+//         ls.remove(LS_MODAL_TRAIN);
+//     });
+// }
 
 
 const loadingTableUser = (selectorTable) => {
@@ -271,7 +273,7 @@ $(document).on("click", ".sendSettings", function (e) {
 });
 $(document).on("click", "#addUser", function (e) {
 
-    let modalUser = ls.get(LS_MODAL_USER);
+    let modalUser = ls.get(LS_MODALES);
 
     if (!modalUser) {
         return;
@@ -383,7 +385,7 @@ $(document).on("click", "#addUser", function (e) {
 $(document).on("click", ".updateUser", function (e) {
     e.preventDefault();
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
-    let modalUser = ls.get(LS_MODAL_USER);
+    let modalUser = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -540,7 +542,7 @@ $(document).on("click", ".cleanDate", function (e) {
 $(document).on("click", ".deleteUser", function (e) {
     let data = $('#tableUsuarios').DataTable().row($(this).parents('tr')).data();
 
-    let modalUser = ls.get(LS_MODAL_USER);
+    let modalUser = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -687,7 +689,7 @@ $(document).on("click", ".sendMensaje", function (e) {
 });
 $(document).on("click", ".trainUser", function (e) {
 
-    let modalTrain = ls.get(LS_MODAL_TRAIN);
+    let modalTrain = ls.get(LS_MODALES);
 
     if (!modalTrain) {
         return;
