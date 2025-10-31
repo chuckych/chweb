@@ -3,6 +3,10 @@ const LS_MODAL_DEVICE = homehost + '_mobile_modal_device';
 const LS_MODAL_SETTING = homehost + '_mobile_modal_setting';
 const LS_MODAL_DEVICE_DATA = homehost + '_mobile_modal_device_data';
 
+ls.remove(LS_MODAL_DEVICE);
+ls.remove(LS_MODAL_SETTING);
+ls.remove(LS_MODAL_DEVICE_DATA);
+
 if (!ls.get(LS_MODAL_DEVICE)) {
     axios.get('modalDevice.php').then((response) => {
         ls.set(LS_MODAL_DEVICE, response.data);
@@ -98,9 +102,7 @@ if ($(window).width() < 540) {
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
     });
 } else {
     tableDevices = $('#tableDevices').DataTable({
@@ -205,9 +207,7 @@ if ($(window).width() < 540) {
         // scrollY: '360px',
         // scrollCollapse: true,
         // scrollX: true,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
     });
 }
 

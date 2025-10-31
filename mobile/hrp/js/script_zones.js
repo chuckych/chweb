@@ -1,6 +1,9 @@
 
 const LS_MODAL_ZONE = homehost + '_mobile_modal_zone';
 
+ls.remove(LS_MODAL_ZONE);
+
+
 if (!ls.get(LS_MODAL_ZONE)) {
     axios.get('modalZone.php').then((response) => {
         ls.set(LS_MODAL_ZONE, response.data);
@@ -67,9 +70,7 @@ if ($(window).width() < 540) {
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2,
     });
 } else {
     tableZones = $('#tableZones').DataTable({
@@ -160,9 +161,7 @@ if ($(window).width() < 540) {
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
     });
 }
 
@@ -737,9 +736,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
         ordering: false,
         // scrollY: '52vh',
         // scrollCollapse: true,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
 
     });
     tableNearZones.on('draw.dt', function (e, settings) {

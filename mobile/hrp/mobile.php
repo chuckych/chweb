@@ -5,10 +5,9 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
     <link rel="stylesheet" href="css/styleMobile.css?=<?= version_file("/mobile/hrp/css/styleMobile.css") ?>">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
-        integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css'
-        rel='stylesheet' />
+    <link rel="stylesheet" href="css/leaflet.css?=<?= version_file("/mobile/hrp/css/leaflet.css") ?>">
+    <link rel="stylesheet"
+        href="css/leaflet.fullscreen.css?=<?= version_file("/mobile/hrp/css/leaflet.fullscreen.css") ?>">
     <title>Mobile HR</title>
 </head>
 
@@ -26,13 +25,17 @@
         $FirstYear = '2019';
         $maxDate = date('Y-m-d');
         $maxYear = date('Y');
-        /** Para dateRangePicker */
+        /** === Para dateRangePicker === */
+        $start = microtime(true);
         $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
         $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = getRemoteFile($url, $timeout = 10);
         // print_r($url);
         $api = json_decode($api, true);
+        $end = microtime(true);
+        $timeTotal = round($end - $start, 2);
         $arrayFech = $api['RESPONSE_DATA'] ?? '';
+
         $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
@@ -126,7 +129,7 @@
                     </table>
                 </div>
                 <?php
-                if (modulo_cuentas()):
+                if (modulo_cuentas()) {
                     ?>
                     <div class="col-12 m-0 mt-2">
                         <form action="changeCompanyApi.php" method="POST" id="RefreshToken">
@@ -135,12 +138,23 @@
                         </form>
                     </div>
                     <?php
-                endif;
+                } else {
+                    echo '<input type="hidden" class="selectjs_cuentaToken" value="' . $_SESSION['ID_CLIENTE'] . '">';
+                }
                 ?>
                 <div class="col-12 mt-3">
                     <div id="mapid" class="bg-white"></div>
                     <hr>
-                    <div id="dataT" class="mt-2"></div>
+                    <p>
+                        <a class="btn btn-sm btn-custom" data-toggle="collapse" href="#collapseTokenView" role="button"
+                            aria-expanded="false" aria-controls="collapseTokenView">
+                            Ver Tokens
+                        </a>
+                    </p>
+                    <div class="collapse" id="collapseTokenView">
+                        <div id="dataT" class="mt-2">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="invisible mt-2" id="RowTableUsers">
@@ -202,9 +216,9 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "/../../js/DataTable.php";
     ?>
-    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
-        integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    <script src="js/leaflet.js?v=<?= version_file("/mobile/hrp/js/leaflet.js") ?>"></script>
+    <script
+        src="js/Leaflet.fullscreen.min.js?v=<?= version_file("/mobile/hrp/js/Leaflet.fullscreen.min.js") ?>"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
@@ -258,6 +272,7 @@
             });
 
             $("#RefreshToken").on("submit", function (e) {
+                // ls.remove(LS_TOKEN_MOBILE);
                 e.preventDefault();
                 ClearFilterMobile();
                 $("#collapseFilterChecks").collapse('hide');
@@ -271,14 +286,14 @@
                     success: function (data) {
                         if (data.status == "ok") {
                             sessionStorage.setItem($('#_homehost').val() + '_api_mobile', (data.api));
-                            minmaxDate()
-                            getToken()
+                            minmaxDate();
+                            getToken();
                         }
                     },
                     error: function () { }
                 });
             });
-            Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken")
+            Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken");
         </script>
         <?php
     endif;

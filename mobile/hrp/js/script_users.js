@@ -3,6 +3,10 @@
 const homehost = $("#_homehost").val();
 const LS_MODAL_USER = homehost + '_mobile_modal_user';
 const LS_MODAL_TRAIN = homehost + '_mobile_modal_train';
+
+ls.remove(LS_MODAL_USER);
+ls.remove(LS_MODAL_TRAIN);
+
 if (!ls.get(LS_MODAL_USER)) {
     axios.get('modalUser.php').then((response) => {
         ls.set(LS_MODAL_USER, response.data);
@@ -93,9 +97,7 @@ if ($(window).width() < 540) {
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
 
     });
 } else {
@@ -158,30 +160,39 @@ if ($(window).width() < 540) {
             {
                 className: 'align-middle w-100', targets: '', title: '',
                 "render": function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    const colorTrained = (row.trained == true) ? 'success' : 'primary'
+                    const textTrained = (row.trained == true) ? 'Enrolado' : 'No enrolado'
 
-                    let colorTrained = (row.trained == true) ? 'success' : 'primary'
-                    let textTrained = (row.trained == true) ? 'Enrolado' : 'No enrolado'
-
-                    let activar = `<span data-titlel="Sin Reg ID" class=" btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+                    const activar = `<span data-titlel="Sin Reg ID" class=" btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
                     let mensaje = `<span data-titlel="Sin Reg ID" class=" btn btn-outline-custom border-0 bi bi-chat-text disabled "></span></span>`;
                     let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-trash disabled"></span>`;
                     let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-person-bounding-box disabled"></span>`;
 
-                    if (row.userRegId.length > '100') {
+                    const userRegId = row.userRegId ?? '';
+                    const userRegIdLength = userRegId.length || 0;
+                    const userChecks = row.userChecks || 0;
+                    const userID = row.userID || 0;
+                    const userName = row.userName || '';
+                    // console.log(userRegIdLength);
+                    // contar los caracteres de userRegId
+                    if (userRegIdLength > 100) {
                         activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class=" btn btn-outline-custom border-0 sendSettings"><i class="bi bi-phone"></i></span>`
                     }
-                    if (row.userRegId.length > '100') {
-                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class=" btn btn-outline-custom border-0 bi bi-chat-text sendMensaje"></span>`
+                    if (userRegIdLength > 100) {
+                        mensaje = `<span data-nombre="${userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class=" btn btn-outline-custom border-0 bi bi-chat-text sendMensaje"></span>`
                     }
-                    if (row.userChecks < 1) {
-                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-custom border-0 bi bi-trash deleteUser"></span>`;
+                    if (userChecks < 1) {
+                        del = `<span data-titlel="Eliminar" data-iduser="${userID}" data-nombre="${userName}" class=" btn btn-outline-custom border-0 bi bi-trash deleteUser"></span>`;
                     }
-                    if (row.userChecks > 0) {
-                        train = `<span data-titlel="${textTrained}" data-iduser="${row.userID}" data-nombre="${row.userName}" class=" btn btn-outline-${colorTrained} border-0 bi bi-person-bounding-box trainUser"></span>`;
+                    if (userChecks > 0) {
+                        train = `<span data-titlel="${textTrained}" data-iduser="${userID}" data-nombre="${userName}" class=" btn btn-outline-${colorTrained} border-0 bi bi-person-bounding-box trainUser"></span>`;
                     }
-                    let datacol = `
+                    const datacol = `
                         <div class="float-right border p-1">
-                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border-0 bi bi-pen updateUser"></span>
+                            <span data-titlel="Editar" data-iduser="${userID}" data-nombre="${userName}" class="btn btn-outline-custom border-0 bi bi-pen updateUser"></span>
                             ${train}
                             ${del}
                         </div>
@@ -205,9 +216,7 @@ if ($(window).width() < 540) {
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
-        language: {
-            "url": "../../js/DataTableSpanishShort2.json?v=" + vjs(),
-        },
+        language: DT_SPANISH_SHORT2
 
     });
 }

@@ -1,6 +1,9 @@
 const loading = `<div class="spinner-border fontppp" role="status" style="width: 15px; height:15px" ></div>`
 const host = $('#_host').val()
 
+const LS_TOKEN_MOBILE = $("#_homehost").val() + '_tokens_mobile';
+ls.remove(LS_TOKEN_MOBILE);
+
 const redMarker = L.icon({
     iconUrl: 'css/marker-icon-2x-red.png',
     iconSize: [25, 41],
@@ -160,7 +163,7 @@ const minmaxDate = () => {
     });
 }
 const setStorageDate = (date) => {
-    let lastDate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
+    const lastDate = parseInt(sessionStorage.getItem($('#_homehost').val() + '_createdDate: '));
     if (lastDate < parseInt(date)) { // si la fecha del json es mayor a la del localstorage
         sessionStorage.setItem($('#_homehost').val() + '_createdDate: ', (date)); // actualizar la fecha del localstorage
         minmaxDate(); // actualizar las tablas
@@ -182,12 +185,10 @@ function fetchCreatedDate(url) {
         fetch(url, {
             method: 'get',
             mode: 'no-cors'
-        }).then(response => response.json())
-            .then(data => {
-                resolve(data);
-                setStorageDate(data)
-            })
-            .catch(err => console.log(err));
+        }).then(response => response.json()).then(data => {
+            resolve(data);
+            setStorageDate(data)
+        }).catch(err => console.log(err));
     });
 }
 const getMap = async (lat, lng, zoom, zona, radio, latZona, lngZona, mtsZona, user, dateTime, zoneID) => {
@@ -942,44 +943,13 @@ const getToken = () => {
         url: 'crud.php',
         data: formData,
     }).then(function (response) {
-        let data = response.data
-
-        // {
-        //     "data": [
-        //         {
-        //             "companyId": 1,
-        //             "dateDelete": null,
-        //             "expirationDate": "2024-04-21",
-        //             "id": 1,
-        //             "token": "HRC20230321",
-        //             "updatedDate": 1680106443640,
-        //             "config": {
-        //                 "alwaysSavePosition": false,
-        //                 "notificationId": 195,
-        //                 "apiKey": "7BB3A26C25687BCD56A9BAF353A78",
-        //                 "locationIp": "http:\/\/190.7.56.83",
-        //                 "serverIp": "http:\/\/207.191.165.3:7575",
-        //                 "companyCode": "1",
-        //                 "recid": "aNGL89kv",
-        //                 "employeId": "",
-        //                 "updateInterval": 90,
-        //                 "fastestInterval": 60,
-        //                 "eventType": 0,
-        //                 "cancellationReasons": [],
-        //                 "operations": [],
-        //                 "tmef": 10,
-        //                 "rememberEmployeId": true
-        //             }
-        //         },
-        //     ],
-        //     "status": "ok"
-        // }
-        let d = document.getElementById('dataT')
+        const data = response.data
+        const d = document.getElementById('dataT')
         // create element table
         let tableData = ''
         let t = ''
 
-        t += `<table class="table table-responsive p-2 border radius bg-white animate__animated animate__fadeIn" id="tableToken">`
+        t += `<table class="table table-responsive p-2 border radius bg-white fadeIn" id="tableToken">`
         t += `<thead>`
         t += `<tr>`
         t += `<th data-titler="Token de activación de App Mobile">Token</th>`
@@ -1013,7 +983,7 @@ const getToken = () => {
         tableData += `<a href="https://play.google.com/store/apps/details?id=com.dysi.hrprocessmobile" class="btn btn-sm btn-custom" target="_blank" ><i class="bi bi-google-play mr-2"></i>HRProcess Mobile</a>`
         tableData += `</td>`
         tableData += `</tr>`
-        let table = document.querySelector('#tableToken tbody')
+        const table = document.querySelector('#tableToken tbody')
         table.innerHTML = tableData
 
 
@@ -1021,4 +991,9 @@ const getToken = () => {
         console.log(error);
     });
 }
-getToken()
+$('#collapseTokenView').on('show.bs.collapse', function () {
+    if (!ls.get(LS_TOKEN_MOBILE)) {
+        getToken();
+        ls.set(LS_TOKEN_MOBILE, true);
+    }
+})

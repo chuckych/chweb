@@ -5,9 +5,9 @@ header("Content-Type: application/json");
 ultimoacc();
 secure_auth_ch_json();
 E_ALL();
-$respuesta = array();
-$arrayData = array();
-$arraySelect = array();
+$respuesta = [];
+$arrayData = [];
+$arraySelect = [];
 $error = $start_date = $end_date = '';
 $_SESSION["APIMOBILEHRP"] = $_SESSION["APIMOBILEHRP"] ?? '';
 function dr_f($ddmmyyyy)
@@ -38,7 +38,7 @@ $params['identified'] = $params['identified'] ?? '';
 FusNuloPOST('SoloFic', '');
 FusNuloPOST('typeDownload', '');
 
-$arrayUsers[] = array();
+$arrayUsers[] = [];
 $idCompany = $_SESSION['ID_CLIENTE'];
 
 if ($params['users'] && $params['type'] != 'selectUsers') {

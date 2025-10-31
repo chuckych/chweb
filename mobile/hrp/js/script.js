@@ -5,6 +5,8 @@ $(function () {
     const LS_MODAL = homehost + '_mobile_modal';
     const LS_DIR_NAME = homehost + '_position_dir_name_';
 
+    ls.remove(LS_MODAL);
+
     if (!ls.get(LS_MODAL)) {
 
         axios.get('modal.php').then((response) => {
@@ -23,22 +25,16 @@ $(function () {
     sessionStorage.setItem('tab_32', 'visible');
 
     document.addEventListener("visibilitychange", function () {
-        let state = document.visibilityState;
+        const state = document.visibilityState;
         sessionStorage.setItem('tab_32', state);
         if (state == 'visible') {
-            fetchCreatedDate('api/createdDate.php');
+            fetchCreatedDate('api/createdDate.php?c=' + $('.selectjs_cuentaToken').val());
         }
     });
+
     $(window).on('load', function () {
         $('.loading').hide()
     });
-
-    // setInterval(() => {
-    //     if (sessionStorage.getItem('tab_32') == 'visible') { // Si la pestaña del navegador esta activa consultamos si hay datos nuevos
-    //         let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-    //         fetchCreatedDate('api/createdDate.php')
-    //     }
-    // }, 5000); // cada 5 segundos
 
     $.fn.DataTable.ext.pager.numbers_length = 5;
     // $('#btnFiltrar').removeClass('d-sm-block');
@@ -64,7 +60,7 @@ $(function () {
                 },
             },
             createdRow: function (row, data, dataIndex) {
-                $(row).addClass('animate__animated animate__fadeIn');
+                $(row).addClass('fadeIn');
             },
             columns: [
                 /** Columna Foto */
@@ -201,9 +197,7 @@ $(function () {
             scrollCollapse: true,
             scrollX: true,
             fixedHeader: false,
-            language: {
-                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
-            },
+            language: DT_SPANISH_SHORT2,
         });
     } else {
         $('#table-mobile').DataTable({
@@ -229,7 +223,7 @@ $(function () {
                 },
             },
             createdRow: function (row, data, dataIndex) {
-                $(row).addClass('animate__animated animate__fadeIn');
+                $(row).addClass('fadeIn');
             },
             columns: [
                 /** Columna Foto */
@@ -516,9 +510,7 @@ $(function () {
             scrollCollapse: true,
             scrollX: true,
             fixedHeader: false,
-            language: {
-                "url": "../../js/DataTableSpanishShort2.json?v=" + vjs()
-            },
+            language: DT_SPANISH_SHORT2,
         });
     }
     // max-h-500 overflow-auto
@@ -885,8 +877,8 @@ $(function () {
     //     loadingTable('#table-mobile')
     // });
     $('#table-mobile').DataTable().on('xhr.dt', function (e, settings, json) {
-        let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
-        fetchCreatedDate('api/createdDate.php')
+        // let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
+        fetchCreatedDate('api/createdDate.php?c=' + $('.selectjs_cuentaToken').val());
         $('#table-mobile').DataTable().off('xhr.dt');
     });
 
@@ -1098,7 +1090,7 @@ $(function () {
                     positionData.innerHTML = '';
                 }
                 obtenerPost(data.regLat, data.regLng).then((response) => {
-                    $('.modal-body').append(`<span class="animate__animated animate__fadeIn" id="positionData">
+                    $('.modal-body').append(`<span class="fadeIn" id="positionData">
                         <div class="font07 pb-1"><i class="bi bi-signpost mr-1"></i>Dirección aproximada:</div>
                         <div class="font08 alert alert-success"><span>${response}</span></div>
                     </span>`);

@@ -1143,9 +1143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE'];
 
-        $params = array(
+        $params = [
             'key' => $_SESSION["RECID_CLIENTE"],
-        );
+        ];
 
         $urlParams = http_build_query($params);
         $api = "api/v1/token/?" . $urlParams;
@@ -1158,9 +1158,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (($api['MESSAGE'] ?? '') == 'OK') {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA']['payload'];
+
+            // error_log(print_r($arrayData, true));
+
             foreach ($arrayData as $key => $value) {
+
                 $config = json_decode($value['config'], true);
-                $data[] = array(
+
+                $data[] = [
                     "companyId" => $value['companyId'],
                     "dateDelete" => $value['dateDelete'],
                     "expirationDate" => FechaFormatVar($value['expirationDate'], 'd/m/Y'),
@@ -1169,33 +1174,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     "updatedDate" => $value['updatedDate'],
                     "rememberEmployeId" => $config['rememberEmployeId'],
                     "tmef" => $config['tmef'],
-                );
+                ];
             }
 
         } else {
             $status = 'error';
             $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "data" => $data ?? $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
 
     } else {
-        $json_data = array(
+        $json_data = [
             "Mensaje" => 'Invalid Request Type',
             'status' => 'Error',
-        );
+        ];
         echo json_encode($json_data);
         exit;
     }
 } else {
-    $json_data = array(
+    $json_data = [
         "Mensaje" => 'Invalid Request Method',
         'status' => 'Error',
-    );
+    ];
     echo json_encode($json_data);
     exit;
 }

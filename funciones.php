@@ -3385,6 +3385,7 @@ function confidenceFaceStr($confidence, $id_api, $threshold)
 }
 function access_log($Modulo)
 {
+    return '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         timeZone();
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log
@@ -3411,11 +3412,12 @@ function access_log($Modulo)
         $text = "$t - u: \"$_SESSION[NOMBRE_SESION]\" c: \"$_SESSION[CLIENTE]\" ip: \"$_SERVER[REMOTE_ADDR]\"  m: \"$Modulo\" a: \"$_SESSION[secure_auth_ch]\" state: \"$state\"\n";
         fwrite($log, $text);
         fclose($log);
-        // exit;
+        exit;
     }
 }
 function access_log_proy($Modulo)
 {
+    return '';
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         timeZone();
         $pathLog = __DIR__ . '/logs/access/' . date('Ymd') . '_access_log.log'; // ruta del archivo de log

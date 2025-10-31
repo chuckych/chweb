@@ -780,19 +780,19 @@ function cancelFullScreen() {
     }
 }
 
-let formDataVisibilityChange = new FormData();
-formDataVisibilityChange.append('state', '1');
-navigator.sendBeacon('', formDataVisibilityChange)
+// let formDataVisibilityChange = new FormData();
+// formDataVisibilityChange.append('state', '1');
+// navigator.sendBeacon('', formDataVisibilityChange)
 
-document.addEventListener('visibilitychange', function logData() {
-    let formData = new FormData();
-    if (document.visibilityState === 'visible') {
-        formData.append('state', '1');
-    } else {
-        formData.append('state', '2');
-    }
-    navigator.sendBeacon('', formData);
-});
+// document.addEventListener('visibilitychange', function logData() {
+//     let formData = new FormData();
+//     if (document.visibilityState === 'visible') {
+//         formData.append('state', '1');
+//     } else {
+//         formData.append('state', '2');
+//     }
+//     navigator.sendBeacon('', formData);
+// });
 // console.log($('#_host').val()+'/'+$('#_homehost').val());
 
 const getFicNovHor = (selector, date1, date2, lega) => {

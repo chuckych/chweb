@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal animate__animated animate__fadeIn" id="pic" data-keyboard="true" tabindex="-1"
+<div class="modal fadeIn" id="pic" data-keyboard="true" tabindex="-1"
     aria-labelledby="picLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable" style="min-height: 550px;">
         <div class="modal-content">
