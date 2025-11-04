@@ -86,21 +86,21 @@
         src="/<?= HOMEHOST ?>/informes/horasign/js/toExport.js?<?= version_file("/informes/horasign/js/toExport.js") ?>"></script>
 </body>
 <script>
-    // document.addEventListener('DOMContentLoaded', (e) => {
-    axios({
-        method: 'get',
-        url: '/' + getSelectorVal('#_homehost') + '/status_ws.php?status=ws',
-        responseType: 'stream'
-    })
-        .then(function (response) {
-            if (response.data) {
-                $.notifyClose();
-                notify(response.data.Mensaje, 'info', 2000, 'right')
+    const status_ws = function () {
+        axios.get("/" + $("#_homehost").val() + '/status_ws.php', {
+            params: {
+                status: 'ws',
+            }
+        }).then(function (response) {
+            $.notifyClose();
+            const status_ws = response?.data?.status ?? '';
+            const mensaje_ws = response?.data?.Mensaje ?? '';
+            if (status_ws === 'Error') {
+                notify(mensaje_ws, 'info', 2000, 'right')
             }
         });
-    // getHTML('modal_Filtros.php', '#modales')
-    // return
-    // });
+    };
+    status_ws();
 </script>
 
 </html>

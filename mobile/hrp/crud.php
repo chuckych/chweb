@@ -8,7 +8,9 @@ header("Content-Type: application/json");
 E_ALL();
 
 $_POST['tipo'] = $_POST['tipo'] ?? '';
-
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
 $id_company = $_SESSION["ID_CLIENTE"];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['tipo'] == 'transferir') {

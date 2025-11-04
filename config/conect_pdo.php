@@ -2,52 +2,66 @@
 // require __DIR__ . '/function.php';
 require __DIR__ . '/../vendor/autoload.php';
 
-$routeEnv = in_array(getOS(), ['linux', 'mac'], true) ? '/' : getConfigPath();
-// $routeEnv = getConfigPath();
+// Evitar reconexión si ya existe la conexión
+if (!isset($connpdo) || !($connpdo instanceof PDO)) {
+	try {
+		$routeEnv = in_array(getOS(), ['linux', 'mac'], true) ? '/' : getConfigPath();
+		$dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
+		$dotenv->safeLoad();
 
-// if (!is_dir($routeEnv)) {
-// 	if (file_exists(__DIR__ . '/dataconnmysql.php')) {
-// 		require __DIR__ . '/dataconnmysql.php';
-// 	} else {
-// 		$host = "localhost";
-// 		$user = "root";
-// 		$pw = "";
-// 		$db = "chweb";
-// 	}
-// 	mkdir($routeEnv);
-// 	if (!file_exists($routeEnv . '.env')) {
-// 		$environment = "DB_CHWEB_HOST=$host\nDB_CHWEB_USER=$user\nDB_CHWEB_PASSWORD=$pw\nDB_CHWEB_NAME=$db\n";
-// 		file_put_contents($routeEnv . '.env', $environment);
-// 		$dataconnmysql = __DIR__ . '/dataconnmysql.php';
-// 		if (!file_exists($dataconnmysql)) {
-// 			return false;
-// 		}
-// 		if (!unlink(__DIR__ . '/dataconnmysql.php')) {
-// 			// echo ("Error deleting");
-// 		} else {
-// 			// echo ("Deleted");
-// 		}
-// 	}
-// }
+		// Validar que las variables de entorno existan
+		$host = $_ENV['DB_CHWEB_HOST'] ?? '';
+		$user = $_ENV['DB_CHWEB_USER'] ?? '';
+		$pw = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
+		$db = $_ENV['DB_CHWEB_NAME'] ?? '';
 
-$dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
-$dotenv->safeLoad();
+		// Validar que ningún parámetro esté vacío
+		if (empty($host) || empty($user) || empty($db)) {
+			$msj = 'Error: Faltan parámetros de conexión en las variables de entorno';
+			$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorConexionPDO.log';
+			error_log($msj);
+			fileLog($msj, $pathLog);
+			throw new PDOException($msj);
+		}
 
-$host = $_ENV['DB_CHWEB_HOST'] ?? '';
-$user = $_ENV['DB_CHWEB_USER'] ?? '';
-$pw = $_ENV['DB_CHWEB_PASSWORD'] ?? '';
-$db = $_ENV['DB_CHWEB_NAME'] ?? '';
+		$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 
-$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
+		// Opciones PDO mejoradas
+		$options = [
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Lanzar excepciones en errores
+			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Fetch asociativo por defecto
+			// PDO::ATTR_EMULATE_PREPARES => false, // Usar prepared statements reales
+			PDO::ATTR_PERSISTENT => false, // Desactivar conexiones persistentes por defecto
+			PDO::ATTR_TIMEOUT => 5, // Timeout de conexión de 5 segundos
+			PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci", // Soporte completo UTF-8
+		];
 
-try {
-	$options = [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION];
-	$connpdo = new PDO($dsn, $user, $pw, $options);
-} catch (PDOException $e) {
-	$msj = trim($e->getMessage());
-	$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorConexionPDO.log';
-	error_log($msj);
-	fileLog($msj, $pathLog); // escribir en el log de errores
-	// header("location:/" . HOMEHOST . "/login/error.php?e=noHayConexion"); // Redirection a login
-	exit;
+		$connpdo = new PDO($dsn, $user, $pw, $options);
+		
+	} catch (PDOException $e) {
+		$msj = trim($e->getMessage());
+		$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorConexionPDO.log';
+		
+		// Log más detallado (sin exponer contraseña)
+		$errorDetail = sprintf(
+			"[%s] Error de conexión PDO: %s | Host: %s | DB: %s | User: %s",
+			date('Y-m-d H:i:s'),
+			$msj,
+			$host ?? 'N/A',
+			$db ?? 'N/A',
+			$user ?? 'N/A'
+		);
+		
+		error_log($errorDetail);
+		fileLog($errorDetail, $pathLog);
+		
+		// Terminar la ejecución
+		exit;
+	} catch (Exception $e) {
+		$msj = 'Error inesperado al establecer conexión: ' . trim($e->getMessage());
+		$pathLog = __DIR__ . '/../logs/' . date('Ymd') . '_errorConexionPDO.log';
+		error_log($msj);
+		fileLog($msj, $pathLog);
+		exit;
+	}
 }

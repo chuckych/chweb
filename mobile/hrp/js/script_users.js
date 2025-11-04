@@ -1,38 +1,10 @@
 // $(document).ready(function () {
 
 const homehost = $("#_homehost").val();
-// const LS_MODAL_USER = homehost + '_mobile_modal_user';
-// const LS_MODAL_TRAIN = homehost + '_mobile_modal_train';
 const LS_MODALES = homehost + '_mobile_modales';
-
-
-// ls.remove(LS_MODAL_USER);
-// ls.remove(LS_MODAL_TRAIN);
-
-// if (!ls.get(LS_MODAL_USER)) {
-//     axios.get('modalUser.php').then((response) => {
-//         ls.set(LS_MODAL_USER, response.data);
-//     }).catch(() => {
-//         ls.remove(LS_MODAL_USER);
-//     });
-// }
-// if (!ls.get(LS_MODAL_TRAIN)) {
-//     axios.get('modalTrain.php').then((response) => {
-//         ls.set(LS_MODAL_TRAIN, response.data);
-//     }).catch(() => {
-//         ls.remove(LS_MODAL_TRAIN);
-//     });
-// }
-
 
 const loadingTableUser = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
-
-    // $(selectorTable + ' td div').addClass('bg-light text-light border-0')
-    // $(selectorTable + ' td div').css('height', '31px')
-    // $(selectorTable + ' td img').addClass('invisible')
-    // $(selectorTable + ' td i').addClass('invisible')
-    // $(selectorTable + ' td span').addClass('invisible')
 }
 if ($(window).width() < 540) {
     tableUsuarios = $('#tableUsuarios').DataTable({

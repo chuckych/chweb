@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-    <link href="estilos.css" rel="stylesheet" type="text/css" />
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../../llamadas.php"; ?>
     <title><?= MODULOS['prysmian'] ?></title>

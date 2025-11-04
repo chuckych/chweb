@@ -138,23 +138,23 @@ const minmaxDate = () => {
         method: 'post',
         url: 'minmaxdate.php'
     }).then(function (response) {
-        let data = response.data
-        let t = data
+        const data = response.data
+        const t = data
         // console.log(t);
-        let min = t.min
-        let minFormat = t.minFormat
-        let max = t.max
-        let maxFormat = t.maxFormat
-        let dr = maxFormat + ' al ' + maxFormat
+        // let min = t.min
+        const minFormat = t.minFormat
+        // let max = t.max
+        const maxFormat = t.maxFormat
+        const dr = maxFormat + ' al ' + maxFormat
         $('#min').val(minFormat)
         $('#max').val(maxFormat)
         $('#_drMob2').val(dr).trigger('change')
         $('#_drMob').val(dr).trigger('change')
     }).then(() => {
-        actualizarRegistros('#table-mobile')
-        actualizarRegistros('#tableUsuarios')
-        actualizarRegistros('#tableDevices')
-        actualizarRegistros('#tableZones')
+        actualizarRegistros('#table-mobile');
+        // actualizarRegistros('#tableUsuarios');
+        // actualizarRegistros('#tableDevices');
+        // actualizarRegistros('#tableZones');
         dateRange()
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
@@ -472,236 +472,6 @@ function clean() {
     $('#mapzone').hide();
     $("#map_size").val('5')
     $('.modal-body #noGPS').html('')
-}
-function actualizar(noti = true) {
-
-    if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
-    };
-
-    axios({
-        method: 'post',
-        url: 'actualizar.php'
-    }).then(function (response) {
-        let data = response.data.Response
-        let date = new Date()
-        if (data.status == "ok") {
-            // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_1: ' + date, JSON.stringify(data));
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                minmaxDate()
-                if (data.totalSession > 0) {
-                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
-                } else {
-                    notify('No hay registros nuevos', 'info', 2000, 'right')
-                }
-            } else {
-                minmaxDate()
-            }
-        } else {
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
-            }
-        }
-
-    }).catch(function (error) {
-        console.log('ERROR actualizar\n' + error);
-    }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel", "Descargar registros");
-        setTimeout(() => {
-            $.notifyClose();
-        }, 2000);
-    });
-}
-function actualizar2(noti = true) {
-
-    if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
-    };
-
-    axios({
-        method: 'post',
-        url: 'actualizar-2.php'
-    }).then(function (response) {
-        let data = response.data.Response
-        let date = new Date()
-        if (data.status == "ok") {
-            // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_2: ' + date, JSON.stringify(data));
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                minmaxDate()
-                if (data.totalSession > 0) {
-                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
-                } else {
-                    notify('No hay registros nuevos', 'info', 2000, 'right')
-                }
-            } else {
-                minmaxDate()
-            }
-        } else {
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
-            }
-        }
-
-    }).catch(function (error) {
-        console.log('ERROR actualizar\n' + error);
-    }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel", "Descargar registros");
-        setTimeout(() => {
-            $.notifyClose();
-        }, 2000);
-    });
-}
-function actualizar3(noti = true) {
-
-    if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
-    };
-
-    axios({
-        method: 'post',
-        url: 'actualizar-3.php'
-    }).then(function (response) {
-        let data = response.data.Response
-        let date = new Date()
-        if (data.status == "ok") {
-            // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_3: ' + date, JSON.stringify(data));
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                minmaxDate()
-                if (data.totalSession > 0) {
-                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
-                } else {
-                    notify('No hay registros nuevos', 'info', 2000, 'right')
-                }
-            } else {
-                minmaxDate()
-            }
-        } else {
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
-            }
-        }
-
-    }).catch(function (error) {
-        console.log('ERROR actualizar\n' + error);
-    }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel", "Descargar registros");
-        setTimeout(() => {
-            $.notifyClose();
-        }, 2000);
-    });
-}
-function actualizar4(noti = true) {
-
-    if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
-    };
-
-    axios({
-        method: 'post',
-        url: 'actualizar-4.php'
-    }).then(function (response) {
-        let data = response.data.Response
-        let date = new Date()
-        if (data.status == "ok") {
-            // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_4: ' + date, JSON.stringify(data));
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                minmaxDate()
-                if (data.totalSession > 0) {
-                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
-                } else {
-                    notify('No hay registros nuevos', 'info', 2000, 'right')
-                }
-            } else {
-                minmaxDate()
-            }
-        } else {
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
-            }
-        }
-
-    }).catch(function (error) {
-        console.log('ERROR actualizar\n' + error);
-    }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel", "Descargar registros");
-        setTimeout(() => {
-            $.notifyClose();
-        }, 2000);
-    });
-}
-function actualizar_aws(noti = true) {
-
-    if (noti) {
-        ActiveBTN(true, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-        notify('Actualizando registros <span class = "dotting mr-1"> </span> ' + loading, 'dark', 0, 'right')
-    };
-
-    axios({
-        method: 'post',
-        url: 'actualizar_aws.php'
-    }).then(function (response) {
-        let data = response.data.Response
-        let date = new Date()
-        if (data.status == "ok") {
-            // set session storage
-            sessionStorage.setItem($('#_homehost').val() + '_LastTranferMobile_AWS: ' + date, JSON.stringify(data));
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                minmaxDate()
-                if (data.totalSession > 0) {
-                    notify(`<span class="">Se actualizaron registros<br/>Total: <span class="font-weight-bold">${data.totalSession}</span></span>`, 'success', 20000, 'right')
-                } else {
-                    notify('No hay registros nuevos', 'info', 2000, 'right')
-                }
-            } else {
-                minmaxDate()
-            }
-        } else {
-            if (noti) {
-                $.notifyClose();
-                ActiveBTN(false, ".actualizar", loading, '<i class="bi bi-cloud-download-fill"></i>')
-                notify(data.Mensaje, 'info', 2000, 'right')
-            }
-        }
-
-    }).catch(function (error) {
-        console.log('ERROR actualizar\n' + error);
-    }).then(function () {
-        ActiveBTN(false, ".actualizar", 'Actualizando..' + loading, '<i class="bi bi-cloud-download-fill"></i>')
-        $(".actualizar").attr("data-titlel", "Descargar registros");
-        setTimeout(() => {
-            $.notifyClose();
-        }, 2000);
-    });
 }
 const dateRange = () => {
     $('#_drMob').daterangepicker({

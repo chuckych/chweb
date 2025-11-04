@@ -66,9 +66,9 @@ function ch_api()
 
     $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
     $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
-    $payload = $argumento[1] ?? array(); // Obtengo el payload
+    $payload = $argumento[1] ?? []; // Obtengo el payload
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
-    $queryParams = $argumento[3] ?? array(); // Obtengo los parámetro de la query
+    $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
     $method = strtoupper($method); // Convierto el método a mayúsculas
     try {
 
@@ -81,7 +81,9 @@ function ch_api()
 
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout total de ejecución: 10 segundos
+        curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Permitir seguir redirecciones
@@ -110,6 +112,10 @@ function ch_api()
             "Token: {$token}",
             "User-Agent: {$AGENT}",
         ];
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
         $file_contents = curl_exec($ch); // Ejecuto curl
@@ -840,8 +846,9 @@ function horas_custom($legajosColumn, $payload, $claveCustom)
         // logger($payload);
         $tot = v1_api('/novedades/totales', 'POST', $payload) ?? [];
         $totData = $tot['data'] ?? [];
+        // error_log(print_r($payload, true));
         $totColumn = array_column($totData ?? [], null, 'Lega');
-
+        error_log(print_r($payload, true));
         array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
             if (!empty($value['Totales']) && is_array($value['Totales'])) {
                 $totalMinutos = 0;

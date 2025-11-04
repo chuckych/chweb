@@ -1,4 +1,11 @@
 <?php
+function debug_to_json($data)
+{
+    Flight::json([
+        'debug' => $data
+    ]);
+    exit;
+}
 try {
     unset($payload['data']);
 
@@ -170,17 +177,6 @@ try {
         '/horarios/asignados'
     );
 
-    // Flight::json([
-    //     // 'dataficNoveHora' => count($dataficNoveHora) ?? [],
-    //     // 'idealesHorasDiaSabado' => ($idealesHorasDiaSabado) ?? [],
-    //     'datosHorasDia' => (
-    //         $datosHorasDia
-    //         // 'Legajo',
-    //         // 'HsDelDia'
-    //     ) ?? [],
-    // ]);
-    // exit;
-
     $idealesHorasDia = $sumarMinutosPorClave($datosHorasDia);
     $idealesHorasDiaSabado = $sumarMinutosPorClaveSabado($datosHorasDia);
 
@@ -191,7 +187,7 @@ try {
         'getHor' => 1,
         'Hora' => [23, 90],
         'HoraEx' => 1,
-        // 'Lega' => [23],
+        // 'Lega' => [269],
         'Dias' => [7],
         'length' => 10000
     ]) ?? [];
@@ -207,16 +203,9 @@ try {
     }
     ksort($dataficNoveHora);
 
-    // dataficNoveHora es un array asociativo donde la clave el valor del legajo
-    // idealesHorasDiaSabado es un array asociativo donde la clave el valor del legajo
-
-    // filtrar idealesHorasDiaSabado y obtener solo los registros que existan en el array dataficNoveHora según su key principal.
-
-    // $idealesHorasDiaSabadoFiltrado = array_intersect_key($idealesHorasDiaSabado, $dataficNoveHora);
     $idealesHorasDiaSabadoFiltrado = array_filter($idealesHorasDiaSabado, function ($key) use ($dataficNoveHora) {
         return array_key_exists($key, $dataficNoveHora);
     }, ARRAY_FILTER_USE_KEY);
-
 
     $fechasDisponibles = [];
     foreach ($dataficNoveHora as $legajo => $registros) {
@@ -237,35 +226,55 @@ try {
         }
     }
 
-
-    // Flight::json([
-    //     // 'idealesHorasDia' => ($idealesHorasDia) ?? [],
-    //     // 'dataficNoveHora' => $dataficNoveHora ?? [],
-    //     // // 'idealesHorasDiaSabado' => $idealesHorasDiaSabado ?? [],
-    //     // 'idealesHorasDiaSabadoFiltrado' => (
-    //     //     $idealesHorasDiaSabadoFiltrado
-    //     // ) ?? [],
-    //     'idealesHorasDiaSabadoFinal' => (
-    //         $idealesHorasDiaSabadoFinal
-    //     ) ?? [],
-    //     'idealesHorasDiaSabadoFinalSuma' => $sumarMinutosPorClave2($idealesHorasDiaSabadoFinal)
-    // ]); 
-    // exit;
-
-    // Flight::json($idealesHorasDiaSabadoFinal);
-    // exit;
-
     $idealesSabado = $sumarMinutosPorClave2($idealesHorasDiaSabadoFinal);
-
-    // $resultado = array_filter($resultado, fn($v) => $v > 5280);
-
-    // $ideales = v1_api('/horas/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
-    // $idealesData = $ideales['data'] ?? []; // Obtener datos de horas totales por legajo
-    // $idealesColumn = array_column($idealesData, null, 'Lega');
 
     foreach (['Dias', 'Hora', 'HoraMin'] as $value) {
         unset($payload[$value]);
     }
+
+    function sumarHoras23a90(&$array)
+    {
+        foreach ($array as &$empleado) {
+            if (!empty($empleado['Totales'])) {
+                $minutosHoras23 = 0;
+                $encontrado90 = false;
+
+                foreach ($empleado['Totales'] as &$registro) {
+                    if ($registro['HoraCodi'] == 23) {
+                        $minutosHoras23 = $registro['EnMinutos2'];
+                    }
+                    if ($registro['HoraCodi'] == 90) {
+                        $registro['EnMinutos2'] += $minutosHoras23;
+                        $encontrado90 = true;
+                    }
+                }
+
+                if (!$encontrado90 && $minutosHoras23 > 0) {
+                    // Si no existe HoraCodi 90 pero sí existe 23, crear el registro 90
+                    $empleado['Totales'][] = [
+                        'HoraCodi' => 90,
+                        'THoDesc' => 'HORAS NORMALES',
+                        'THoDesc2' => 'NORMAL',
+                        'Cantidad' => 0,
+                        'EnHoras' => '00:00',
+                        'EnHoras1' => '00:00',
+                        'EnHoras2' => '00:00',
+                        'EnMinutos' => 0,
+                        'EnMinutos1' => 0,
+                        'EnMinutos2' => $minutosHoras23,
+                        'EnHorasDecimal' => 0,
+                        'EnHorasDecimal1' => 0,
+                        'EnHorasDecimal2' => $minutosHoras23 / 60
+                    ];
+                }
+            }
+        }
+        unset($empleado, $registro);
+    }
+
+    /* === */
+    sumarHoras23a90($horasColumn);
+    /* === */
 
     // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
     array_walk($horasColumn, function ($value, $Lega) use (&$legajosColumn) {
@@ -282,19 +291,6 @@ try {
             $legajosColumn[$Lega]['HsTr'] = $hsTr['HsTrEnMinutos']; // Asignar 'HsTr' a 'HsTrEnHoras'
         }
     });
-
-    // array_walk($idealesColumn, function ($value, $Lega) use (&$legajosColumn, $idealesHorasDia) {
-    //     if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
-    //         foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
-    //             if (isset($total['THoDesc2'], $total['EnMinutos2'])) { // Si existen 'THoDesc2' y 'EnHoras2'
-    //                 $legajosColumn[$Lega]['Ideales'] = $total['EnMinutos2']; // Asignar 'EnHoras2' a 'THoDesc2'
-    //             }
-    //         }
-    //     }
-    // });
-
-    // Flight::json($legajosColumn);
-    // exit;
 
     // añadir el valor de minutos de idealesHorasDia de cada legajo a legajosColumn
     array_walk($idealesHorasDia, function ($value, $Lega) use (&$legajosColumn) {
@@ -318,9 +314,9 @@ try {
     $valoresCustom = array_column($valoresCustom, null, 'descripcion');
     
     foreach ($clavesCustom as $key => $clave) {
-        // $codNove = explode(',', $valoresCustom[$key]['valores'] ?? '') ?? []; // Obtener los códigos de novedad de 'valoresCustom' según $key y convertirlos en un array
-
+        
         $valores = $valoresCustom[$key]['valores'] ?? '';
+        // error_log(print_r($valores, true));
 
         // Limpiar y filtrar códigos
         $codNove = array_filter(
@@ -332,8 +328,9 @@ try {
 
         // Re-indexar para tener índices consecutivos
         $codNove = array_values($codNove);
-
+        
         $payload['Nove'] = $codNove;
+
         if (count($codNove) > 0) {
 
             $payload['Nove'] = $codNove;
@@ -346,13 +343,7 @@ try {
 
             unset($payload['Nove']);
         }
-        // $legajosColumn = horas_custom($legajosColumn, $payload, $key);
-        // unset($payload['Nove']);
     }
-
-    // Flight::json($legajosColumn);
-    // exit;
-
 
     $tipoHora = cacheData(
         "tipo-horas-{$flag}",
@@ -362,8 +353,6 @@ try {
         'GET'
     );
 
-    // $tipoHora = v1_api('/horas/data', 'GET', []) ?? []; // Obtener legajos
-
     $horasParams = horasCustom($params);
     array_push($horasParams, ...$tipoHora);
     $detalleTipoHoras = array_column($horasParams, null, 'THoCodi');
@@ -372,12 +361,9 @@ try {
     $strMerienda = $tipoHora['50']['THoDesc2'] ?? 'MERIENDA'; // Obtener la descripcion 2 de 'HORAS MERIENDA'
     $strMerienda2 = $tipoHora['51']['THoDesc2'] ?? 'MER2'; // Obtener la descripcion 2 de 'MER2'
     $strNormales = $tipoHora['90']['THoDesc2'] ?? 'NORMAL'; // Obtener la descripcion 2 de 'HORAS NORMALES'
-
     foreach ($legajosColumn as $key => $value) {
         $horasATrabajar = $value['HsATr'] ?? 0;
         $horasIdeales = $value['Ideales'] ?? 0;
-        // sumar las idealesSabado a Ideales comparando por la $key
-        // $horasIdeales = $horasIdeales + ($idealesSabado[$key] ?? 0);
         $horasMerienda = $value[$strMerienda] ?? 0;
         $horasMerienda2 = $value[$strMerienda2] ?? 0;
         $horasNormales = $value[$strNormales] ?? 0;
@@ -390,7 +376,6 @@ try {
         $legajosColumn[$key]['IdealesSabado'] = $idealesSab;
         $Ideales = $horasIdeales - $meriendaTotal + $idealesSab;
         $legajosColumn[$key]['Ideales'] = $Ideales;
-
 
         $varias = array_sum([$Ideales, $meriendaTotal]);
 
@@ -408,9 +393,6 @@ try {
         $calculoVarias = $varias - $variasARestar;
         $legajosColumn[$key]['Varias'] = $calculoVarias >= 0 ? $calculoVarias : 0;
     }
-
-    // Flight::json([$idealesSabado, $legajosColumn]);
-    // exit;
 
     // recorrer legajosColumn y todos los valores que sean del tipo integer aplicarle al funcion minutos_a_horas_decimal
     array_walk_recursive($legajosColumn, function (&$item, $key) {

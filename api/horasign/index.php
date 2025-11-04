@@ -15,26 +15,44 @@ $stmtHorarios = $dbApiQuery("SELECT HorCodi, HorDesc, HorID FROM HORARIOS") ?? '
 
 function pingWebService($textError, $webService) // Función para validar que el Webservice de Control Horario esta disponible
 {
+    // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+    
     $url = rutaWebService($webService, "Ping?");
+    
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
+    
+    // TIMEOUTS CRÍTICOS - Evitar esperas largas
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total de ejecución: 3 segundos
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+    
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+    
     $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
+    
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         writeLog($text, __DIR__ . "../../logs/" . date('Ymd') . "_errorWebService.log", '');
+        curl_close($ch); // Cerrar curl antes de salir
         http_response_code(400);
-        (response(array(), 0, "Error Interno. WS", 400, 0, 0, 0));
+        (response([], 0, "Error Interno. WS", 400, 0, 0, 0));
         exit;
     }
+    
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
-    return ($http_code == 201) ? true : (response(array(), 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
+    
+    return ($http_code == 201) ? true : (response([], 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
 }
 pingWebService('Error Interno WS', $dataC['WebServiceCH'] . '/RRHHWebService');
 
@@ -51,14 +69,47 @@ function respuestaWebService($respuesta)
 }
 function EstadoProceso($url)
 {
+    // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+    
+    $maxRetries = 30; // Máximo 30 intentos (30 segundos aprox)
+    $retryCount = 0;
+    
     do {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        
+        // TIMEOUTS CRÍTICOS
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total: 3 segundos
+        
         $respuesta = curl_exec($ch);
+        $curl_errno = curl_errno($ch);
+        
         curl_close($ch);
+        
+        // Si hay error de curl, retornar error
+        if ($curl_errno > 0) {
+            return 'Error';
+        }
+        
+        $retryCount++;
+        
+        // Si excede el máximo de reintentos, retornar timeout
+        if ($retryCount >= $maxRetries) {
+            return 'Timeout';
+        }
+        
+        // Esperar 1 segundo entre intentos
+        if (respuestaWebService($respuesta) == 'Pendiente') {
+            sleep(1);
+        }
+        
     } while (respuestaWebService($respuesta) == 'Pendiente');
+    
     return respuestaWebService($respuesta);
 }
 

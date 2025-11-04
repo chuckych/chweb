@@ -218,16 +218,6 @@
     <script src="js/select-min.js?<?= version_file("/general/js/select-min.js") ?>"></script>
     <script src="js/trash-select-min.js?<?= version_file("/general/js/trash-select-min.js") ?>"></script>
     <script src="js/export.js?<?= version_file("/general/js/export.js") ?>"></script>
-    <script>
-        $(document).ready(function () {
-            $.get('/<?= HOMEHOST ?>/status_ws.php', {
-                status: 'ws',
-            }).done(function (data) {
-                $.notifyClose();
-                notify(data.Mensaje, 'info', 2000, 'right')
-            });
-        });
-    </script>
 </body>
 
 </html>

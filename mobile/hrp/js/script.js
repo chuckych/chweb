@@ -1138,13 +1138,7 @@ $(function () {
             // launchFullScreen(document.documentElement)
         }
     });
-    $(document).on("click", ".actualizar", function (e) {
-        $(this).attr("data-titlel", "Descargando...")
-        actualizar()
-        actualizar2()
-        actualizar3()
-    });
-
+    
     $(document).on("click", "#Encabezado", function (e) {
         CheckSesion()
         loadingTable('#table-mobile');

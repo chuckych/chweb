@@ -1,4 +1,19 @@
 // $(".Filtros").prop('disabled', true);
+const status_ws = function () {
+    axios.get("/" + $("#_homehost").val() + '/status_ws.php', {
+        params: {
+            status: 'ws',
+        }
+    }).then(function (response) {
+        $.notifyClose();
+        const status_ws = response?.data?.status ?? '';
+        const mensaje_ws = response?.data?.Mensaje ?? '';
+        if(status_ws === 'Error') {
+            notify(mensaje_ws, 'info', 2000, 'right')
+        }
+    });
+};
+status_ws();
 function ActualizaTablas() {
     $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {

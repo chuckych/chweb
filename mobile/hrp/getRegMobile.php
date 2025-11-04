@@ -15,6 +15,9 @@ function dr_f($ddmmyyyy)
     $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
     return $fecha;
 }
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
 
 $DateRange = explode(' al ', $_POST['_drMob2']);
 $FechaIni = test_input(dr_f($DateRange[0]));
@@ -64,7 +67,7 @@ if ($params['type'] == 'selectDevice') {
     $groupBy = 'device';
 }
 
-$paramsApi = array(
+$paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE"],
     'start' => urlencode($params['start']),
     'length' => urlencode($params['length']),
@@ -79,7 +82,7 @@ $paramsApi = array(
     'userIDName' => urlencode($params['search']['value'] ?? $params['qUser']),
     'zoneIDName' => urlencode($params['qZone']),
     'deviceIDName' => urlencode($params['qDevice'])
-);
+];
 
 // echo Flight::json($paramsApi).exit;
 

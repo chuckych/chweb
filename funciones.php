@@ -2083,47 +2083,90 @@ function EstadoProceso($url)
 }
 function pingWebService($textError) // Función para validar que el Webservice de Control Horario esta disponible
 {
+    // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
     $url = rutaWebService("Ping?");
+
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // The number of seconds to wait while trying to connect
+
+    // TIMEOUTS CRÍTICOS - Evitar esperas largas
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1); // Timeout total de ejecución: 1 segundo
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+
+    // No verificar SSL en desarrollo (comentar en producción si usas HTTPS válido)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
     $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
+
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        curl_close($ch); // Cerrar curl antes de salir
         PrintRespuestaJson('Error', $textError);
         exit; // salimos del script
     }
+
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
+
     return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
 // Función para validar que el Webservice de Control Horario esta disponible
 function pingWS()
 {
+    // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
     $url = rutaWebService("Ping?");
+
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // The number of seconds to wait while trying to connect
+
+    // TIMEOUTS CRÍTICOS - Evitar esperas largas
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total de ejecución: 3 segundos
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+
+    // No verificar SSL en desarrollo (comentar en producción si usas HTTPS válido)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
     $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
+
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
     }
+
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    //return curl_getinfo($ch, CURLINFO_HTTP_CODE); // retornar el codigo de respuesta
     curl_close($ch); // close curl handle
+
     return ($http_code == 201) ? true : false; // escribir en el log
 }
 function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
@@ -2472,16 +2515,23 @@ function PrintError($TituloError, $Mensaje)
 }
 function PrintRespuestaJson($status, $Mensaje)
 {
-    $data = array('status' => $status, 'Mensaje' => $Mensaje);
+    $data = [
+        'status' => $status,
+        'Mensaje' => $Mensaje
+    ];
     echo json_encode($data);
-    /** Imprimo json con resultado */
 }
 function getRemoteFile($url, $timeout = 10)
 {
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout total de ejecución: 10 segundos
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);

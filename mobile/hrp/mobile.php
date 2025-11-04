@@ -35,7 +35,7 @@
         $end = microtime(true);
         $timeTotal = round($end - $start, 2);
         $arrayFech = $api['RESPONSE_DATA'] ?? '';
-
+        // error_log("Tiempo de respuesta de minmaxdate.php: " . $timeTotal . " segundos.");
         $min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
         $max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
         $aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
