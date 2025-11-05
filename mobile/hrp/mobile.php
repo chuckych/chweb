@@ -5,17 +5,17 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
     <?php
-        $stylesheets = [
-            "/styleMobile.css",
-            "/leaflet.css",
-            "/leaflet.fullscreen.css",
-        ];
-        echo PHP_EOL;
-        echo '<!-- Estilos Mobile HRP -->' . PHP_EOL;
-        foreach ($stylesheets as $key => $value) {
-            echo '<link rel="stylesheet" href="css' . $value . '?=' . version_file("/mobile/hrp/css" . $value) . '">' . PHP_EOL;
-        }
-        echo '<title>Mobile HRP</title>';
+    $stylesheets = [
+        "/styleMobile.css",
+        "/leaflet.css",
+        "/leaflet.fullscreen.css",
+    ];
+    echo PHP_EOL;
+    echo '<!-- Estilos Mobile HRP -->' . PHP_EOL;
+    foreach ($stylesheets as $key => $value) {
+        echo '<link rel="stylesheet" href="css' . $value . '?=' . version_file("/mobile/hrp/css" . $value) . '">' . PHP_EOL;
+    }
+    echo '<title>Mobile HRP</title>';
     ?>
 </head>
 
@@ -200,6 +200,10 @@
                         </table>
                     </div>
                     <div class="col-12 col-lg-4"></div>
+                    <div class="col-12 mt-3">
+                        <div id="mapid-zones" class="bg-white"></div>
+                        <hr>
+                    </div>
                 </div>
             </div>
             <div class="row">

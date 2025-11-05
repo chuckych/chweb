@@ -549,75 +549,54 @@ const formatDateTime = (date) => {
 }
 
 function loadMap(data, customId) {
-
-    // console.log(data.length);
-    $('#mapid').html('');
-
-    if ((data.length == 0)) {
-        $('#mapid').hide();
-        return false
+    const $mapContainer = $('#mapid');
+    
+    // Validación temprana
+    if (!data || data.length === 0) {
+        $mapContainer.hide();
+        return false;
     }
-    // Crea el mapa
-    $('#mapid').show();
-    $('#mapid').html('<div style="width:100%; height:550px;" id="' + customId + '"></div>');
+    
+    // Agregar clase loader al iniciar
+    $mapContainer.addClass('loader-in');
+    
+    // Una sola manipulación del DOM
+    $mapContainer.show().html(`<div style="width:100%; height:550px;" id="${customId}"></div>`);
 
-    let ubicacionesParaMapa = [];
+    // Extraer zonas únicas
     const uniqueZones = new Map();
-
-    for (const item of data) {
-        if (!uniqueZones.has(item.zoneID)) {
-            if (item.zoneID > 0) {
-                let a = {
-                    "zoneID": item.zoneID,
-                    "zoneName": item.zoneName,
-                    "zoneLat": parseFloat(item.zoneLat),
-                    "zoneLng": parseFloat(item.zoneLng),
-                    "zoneRadio": parseInt(item.zoneRadio),
-                }
-                uniqueZones.set(item.zoneID, a);
-            }
+    data.forEach(item => {
+        if (item.zoneID > 0 && !uniqueZones.has(item.zoneID)) {
+            uniqueZones.set(item.zoneID, {
+                zoneID: item.zoneID,
+                zoneName: item.zoneName,
+                zoneLat: parseFloat(item.zoneLat),
+                zoneLng: parseFloat(item.zoneLng),
+                zoneRadio: parseInt(item.zoneRadio)
+            });
         }
-    }
-
-
-    const uniqueZonesArray = Array.from(uniqueZones.values())
-    const apiMobile = document.getElementById('apiMobile');
-    let path = apiMobile.value + '/chweb/mobile/hrp/'
-    if (apiMobile.value == 'http://localhost:8050') {
-        path = ''
-    }
-
-    data.forEach((pos) => {
-        ubicacionesParaMapa.push(
-            {
-                lat: pos.regLat,
-                lon: pos.regLng,
-                zoneID: pos.zoneID,
-                user: pos.userName,
-                datetime: pos.regDate + ' ' + pos.regHora,
-                distancia: (pos.zoneDistance > 0) ? 'Distancia: ' + pos.zoneDistance + ' m.' : '',
-                zona: (pos.zoneName != null) ? '<span class="text-success">' + pos.zoneName + '</b>' : '<span class="text-danger"><span>Fuera de zona</b></span>',
-                img: path + pos.imageData['img'],
-                zoneLat: pos.zoneLat,
-                zoneLng: pos.zoneLng,
-                regLat: pos.regLat,
-                regLng: pos.regLng
-            }
-        );
     });
 
-    let primerElemento = ubicacionesParaMapa[0]
-    let latitud = primerElemento.lat
-    let longitud = primerElemento.lon
+    const uniqueZonesArray = Array.from(uniqueZones.values());
+    
+    // Obtener primer elemento para centrar el mapa
+    const primerElemento = data[0];
+    
+    // Determinar path una sola vez con validación
+    const apiMobile = document.getElementById('apiMobile');
+    const path = apiMobile?.value === 'http://localhost:8050' 
+        ? '' 
+        : `${apiMobile?.value || ''}/chweb/mobile/hrp/`;
 
-    let myMap = L.map(customId).setView([latitud, longitud], 16);
-    // Agrega el layer de OpenStreetMap
+    // Inicializar mapa de forma simple como loadMap_old
+    const myMap = L.map(customId).setView([primerElemento.regLat, primerElemento.regLng], 12);
+    
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: `Zonas encontradas: ${uniqueZonesArray.length}`,
         maxZoom: 20
     }).addTo(myMap);
 
-
+    // Opciones de estilos - SIN Canvas renderer para evitar lentitud
     const circleOptions = {
         color: 'green',
         fillColor: 'green',
@@ -628,18 +607,7 @@ function loadMap(data, customId) {
         color: 'black',
         fillColor: 'black',
         fillOpacity: 1,
-    };
-    const circleOptions3 = {
-        color: 'white',
-        fillColor: 'green',
-        fillOpacity: 0.9,
-        radius: 7
-    };
-    const circleOptions4 = {
-        color: 'white',
-        fillColor: 'red',
-        fillOpacity: 0.9,
-        radius: 7
+        radius: 1
     };
 
     myMap.addControl(new L.Control.Fullscreen({
@@ -649,54 +617,286 @@ function loadMap(data, customId) {
         }
     }));
 
-    let start = 0
-    let end = 0
-    let markersLayer = ''
-    // });    
-    for (let i = 0; i < ubicacionesParaMapa.length; i++) {
-        let pos = ubicacionesParaMapa[i];
-        if (pos.zoneID > 0) {
-            start = L.latLng([pos.regLat, pos.regLng])
-            end = L.latLng([pos.zoneLat, pos.zoneLng])
-            markersLayer = L.marker([pos.lat, pos.lon], { icon: greenMarker }).addTo(myMap);
-            // circle3 = L.circleMarker([pos.lat,pos.lon],{...circleOptions3}).addTo(myMap);
-            let line = L.polyline([start, end], { color: 'green', weight: 1 }).addTo(myMap);
-        } else {
-            markersLayer = L.marker([pos.lat, pos.lon], { icon: redMarker }).addTo(myMap);
-            // circle3 = L.circleMarker([pos.lat,pos.lon],{...circleOptions4}).addTo(myMap);
-        }
+    // Crear grupos separados para mejor control
+    // NO los agregamos directamente al mapa, el control de capas lo hará
+    const markersEnZonaGroup = L.layerGroup();
+    const markersFueraZonaGroup = L.layerGroup();
+    const linesGroup = L.layerGroup();
+    const zonesGroup = L.layerGroup();
 
-        let infoMarker = `
-        <div class='d-inline-flex'>
-            <img src='${pos.img}' style='width:40px; height:40px'></img>
-            <div class='d-flex flex-column ml-2'>
-                <span>${pos.user}</span> </span>${pos.datetime}</span>
+    // Contadores
+    let countEnZona = 0;
+    let countFueraZona = 0;
+
+    // Agregar marcadores y líneas
+    data.forEach(pos => {
+        const marker = L.marker([pos.regLat, pos.regLng], {
+            icon: pos.zoneID > 0 ? greenMarker : redMarker
+        });
+        
+        // Tooltip directo como en loadMap_old - más rápido que lazy loading
+        const imgSrc = pos.r2FileName || (pos.imageData?.img ? path + pos.imageData.img : '');
+        const zonaClass = pos.zoneName ? 'text-success' : 'text-danger';
+        const zonaText = pos.zoneName || 'Fuera de zona';
+        const distanciaText = pos.zoneDistance > 0 ? `Distancia: ${pos.zoneDistance} m.` : '';
+        
+        const infoMarker = `
+            <div class='d-inline-flex'>
+                ${imgSrc ? `<img src='${imgSrc}' style='width:40px; height:40px' alt='${pos.userName}'>` : ''}
+                <div class='d-flex flex-column ml-2'>
+                    <span>${pos.userName}</span>
+                    <span>${pos.regDate} ${pos.regHora}</span>
+                </div>
             </div>
-        </div>
-        <div class='d-flex flex-column'>
-            <span>Zona: ${pos.zona}</span> </span>${pos.distancia}</span>
-        </div>
-        `
+            <div class='d-flex flex-column'>
+                <span>Zona: <span class='${zonaClass}'>${zonaText}</span></span>
+                ${distanciaText ? `<span>${distanciaText}</span>` : ''}
+            </div>
+        `;
+        
+        marker.bindTooltip(infoMarker);
+        
+        // Separar marcadores según estén en zona o fuera de zona
+        if (pos.zoneID > 0) {
+            markersEnZonaGroup.addLayer(marker);
+            countEnZona++;
+            
+            // Si está en zona, agregar línea SIN renderer canvas
+            if (pos.zoneLat && pos.zoneLng) {
+                const line = L.polyline(
+                    [[pos.regLat, pos.regLng], [pos.zoneLat, pos.zoneLng]], 
+                    { 
+                        color: 'green', 
+                        weight: 1,
+                        interactive: false
+                    }
+                );
+                linesGroup.addLayer(line);
+            }
+        } else {
+            markersFueraZonaGroup.addLayer(marker);
+            countFueraZona++;
+        }
+    });
 
-        markersLayer.bindTooltip(infoMarker)
-
-    }
-    for (let i = 0; i < uniqueZonesArray.length; i++) {
-        let zone = uniqueZonesArray[i];
-        circle = L.circle([zone.zoneLat, zone.zoneLng], {
+    // Agregar zonas únicas - SIN Canvas renderer
+    uniqueZonesArray.forEach(zone => {
+        const circle = L.circle([zone.zoneLat, zone.zoneLng], {
             ...circleOptions,
             radius: zone.zoneRadio
-        }).addTo(myMap);
-        circle2 = L.circle([zone.zoneLat, zone.zoneLng], {
-            ...circleOptions2,
-            radius: 1
-        }).addTo(myMap);
-        circle.bindTooltip("Zona: <b>" + zone.zoneName + "</b><br>Radio: " + zone.zoneRadio)
-    }
+        });
+        circle.bindTooltip(`Zona: <b>${zone.zoneName}</b><br>Radio: ${zone.zoneRadio}`);
+        
+        const centerCircle = L.circle([zone.zoneLat, zone.zoneLng], circleOptions2);
+        
+        zonesGroup.addLayer(circle);
+        zonesGroup.addLayer(centerCircle);
+    });
 
-    // $('#mapid').append(`<div class="mt-3 float-right badge badge-secondary"><span class="font07">ZONAS: ${uniqueZonesArray.length}</span></div>`)
+    // Control de capas con checkboxes y contadores
+    const overlays = {};
+    overlays[`En Zona (${countEnZona})`] = markersEnZonaGroup;
+    overlays[`Fuera de Zona (${countFueraZona})`] = markersFueraZonaGroup;
+    overlays["Líneas"] = linesGroup;
+    overlays[`Zonas (${uniqueZonesArray.length})`] = zonesGroup;
+    
+    const layerControl = L.control.layers(null, overlays, { collapsed: false }).addTo(myMap);
 
+    // Agregar todos los grupos al mapa por defecto (todos los checkboxes marcados)
+    myMap.addLayer(markersEnZonaGroup);
+    myMap.addLayer(markersFueraZonaGroup);
+    myMap.addLayer(linesGroup);
+    myMap.addLayer(zonesGroup);
+
+    // Vincular líneas con marcadores "En Zona"
+    myMap.on('overlayadd', function(e) {
+        // Si se activa "En Zona", mostrar las líneas automáticamente
+        if (e.name === `En Zona (${countEnZona})`) {
+            if (!myMap.hasLayer(linesGroup)) {
+                myMap.addLayer(linesGroup);
+                // Actualizar el checkbox de líneas
+                setTimeout(() => {
+                    const inputs = document.querySelectorAll('.leaflet-control-layers-overlays input');
+                    inputs.forEach(input => {
+                        const label = input.parentElement;
+                        if (label.textContent.includes('Líneas')) {
+                            input.checked = true;
+                        }
+                    });
+                }, 10);
+            }
+        }
+    });
+
+    myMap.on('overlayremove', function(e) {
+        // Si se desactiva "En Zona", ocultar automáticamente las líneas
+        if (e.name === `En Zona (${countEnZona})`) {
+            if (myMap.hasLayer(linesGroup)) {
+                // Remover el grupo de líneas del mapa
+                myMap.removeLayer(linesGroup);
+                
+                // Actualizar el checkbox de líneas
+                const inputs = document.querySelectorAll('.leaflet-control-layers-overlays input');
+                inputs.forEach(input => {
+                    const label = input.parentElement;
+                    if (label.textContent.includes('Líneas')) {
+                        input.checked = false;
+                    }
+                });
+            }
+        }
+    });
+
+    // Aplicar estilo transparente al control de capas
+    setTimeout(() => {
+        const layerControlDiv = document.querySelector('.leaflet-control-layers');
+        if (layerControlDiv) {
+            layerControlDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            layerControlDiv.style.backdropFilter = 'blur(5px)';
+            layerControlDiv.style.borderRadius = '6px';
+            layerControlDiv.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+            layerControlDiv.style.border = '1px solid rgba(0, 0, 0, 0.1)';
+        }
+        
+        // Remover loader cuando termine de renderizar
+        $mapContainer.removeClass('loader-in');
+    }, 100);
+    
+    return myMap; // Retornar el mapa para posible uso externo
 }
+
+function loadMapZones(data, customId) {
+    const $mapContainer = $('#mapid-zones');
+    
+    // Validación temprana
+    if (!data || data.length === 0) {
+        $mapContainer.hide();
+        return false;
+    }
+    
+    // Una sola manipulación del DOM
+    $mapContainer.show().html(`<div style="width:100%; height:550px;" id="${customId}"></div>`);
+
+    // Centrar en la primera zona del array
+    const firstZone = data[0];
+    const centerLat = parseFloat(firstZone.zoneLat);
+    const centerLng = parseFloat(firstZone.zoneLng);
+
+    // Inicializar mapa
+    const myMap = L.map(customId).setView([centerLat, centerLng], 12);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: `Total de zonas: ${data.length}`,
+        maxZoom: 20
+    }).addTo(myMap);
+
+    // Opciones de estilos - SIN Canvas renderer como en loadMap
+    const circleOptions = {
+        color: 'blue',
+        fillColor: 'blue',
+        fillOpacity: 0.1,
+        weight: 2
+    };
+    const centerCircleOptions = {
+        color: 'darkblue',
+        fillColor: 'darkblue',
+        fillOpacity: 1,
+        radius: 2
+    };
+
+    myMap.addControl(new L.Control.Fullscreen({
+        title: {
+            'false': 'Expandir mapa',
+            'true': 'Contraer mapa'
+        }
+    }));
+
+    // Crear grupos separados para mejor control
+    const markersGroup = L.layerGroup();
+    const zonesGroup = L.layerGroup();
+
+    // Marcador azul para zonas
+    const blueMarker = L.icon({
+        iconUrl: 'css/marker-icon-2x-blue.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        tooltipAnchor: [16, -28],
+        shadowSize: [41, 41],
+        shadowAnchor: [12, 41]
+    });
+
+    // Agregar marcadores y círculos de zonas
+    data.forEach(zone => {
+        const lat = parseFloat(zone.zoneLat);
+        const lng = parseFloat(zone.zoneLng);
+        const radio = parseInt(zone.zoneRadio);
+
+        // Crear marcador en el centro de la zona
+        const marker = L.marker([lat, lng], { icon: blueMarker });
+        
+        // Tooltip con información de la zona
+        const infoMarker = `
+            <div class='d-flex flex-column'>
+                <span><b>${zone.zoneName}</b></span>
+                <span>Radio: ${zone.zoneRadio} m</span>
+                <span>Registros: ${zone.totalZones}</span>
+                <span>Evento: ${zone.zoneEvent}</span>
+            </div>
+        `;
+        
+        marker.bindTooltip(infoMarker);
+        markersGroup.addLayer(marker);
+
+        // Crear círculo de la zona SIN Canvas renderer
+        const circle = L.circle([lat, lng], {
+            ...circleOptions,
+            radius: radio
+        });
+        
+        const tooltipZone = `
+            <b>${zone.zoneName}</b><br>
+            Radio: ${zone.zoneRadio} m<br>
+            Registros: ${zone.totalZones}
+        `;
+        circle.bindTooltip(tooltipZone);
+
+        // Crear punto central SIN Canvas renderer
+        const centerCircle = L.circle([lat, lng], centerCircleOptions);
+        
+        zonesGroup.addLayer(circle);
+        zonesGroup.addLayer(centerCircle);
+    });
+
+    // Control de capas con checkboxes (sin contador redundante en Zonas)
+    const overlays = {};
+    overlays[`Marcadores (${data.length})`] = markersGroup;
+    overlays["Zonas"] = zonesGroup;
+    
+    L.control.layers(null, overlays, { collapsed: false }).addTo(myMap);
+
+    // Agregar todos los grupos al mapa por defecto
+    myMap.addLayer(markersGroup);
+    myMap.addLayer(zonesGroup);
+
+    // Aplicar estilo transparente al control de capas
+    setTimeout(() => {
+        const layerControlDiv = document.querySelector('.leaflet-control-layers');
+        if (layerControlDiv) {
+            layerControlDiv.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+            layerControlDiv.style.backdropFilter = 'blur(5px)';
+            layerControlDiv.style.borderRadius = '6px';
+            layerControlDiv.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
+            layerControlDiv.style.border = '1px solid rgba(0, 0, 0, 0.1)';
+        }
+        
+        // Remover loader cuando termine de renderizar
+        $mapContainer.removeClass('loader-in');
+    }, 100);
+    
+    return myMap; // Retornar el mapa para posible uso externo
+}
+
 const getToken = () => {
     let formData = new FormData();
     formData.append('tipo', 'getTokenMobile');

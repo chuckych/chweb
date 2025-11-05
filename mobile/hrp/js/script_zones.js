@@ -54,7 +54,7 @@ const dtZones = () => {
                         return columnZones540(row);
                     }
                     return `<div class="d-flex flex-column">
-                        <div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div><span class="text-secondary fontp">Evento: ${row.zoneEvent}</span>
+                        <div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div><span class="text-secondary font08 ss">Evento: ${row.zoneEvent}</span>
                     </div>`;
                 },
             },
@@ -66,7 +66,7 @@ const dtZones = () => {
                         return '';
                     }
                     if ($(window).width() < 540) return false;
-                    return `<div class="w40 ls1">${row.zoneRadio}</div>`
+                    return `<div class="w40">${row.zoneRadio}</div>`
                 }, visible: visible540(),
             },
             /** Columna cant TotalZones */
@@ -77,7 +77,7 @@ const dtZones = () => {
                         return '';
                     }
                     if ($(window).width() < 540) return false;
-                    return `<div class="ls1 w70">${row.totalZones}</div>`
+                    return `<div class="w70">${row.totalZones}</div>`
                 }, visible: visible540(),
             },
             /** Columna Lat / Lng */
@@ -88,7 +88,7 @@ const dtZones = () => {
                         return '';
                     }
                     if ($(window).width() < 540) return false;
-                    return `<div data-titlet="" class="ls1 w90 fontp text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
+                    return `<div data-titlet="" class="w90 font08 ss text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
                 }, visible: visible540(),
             },
             /** Columna Acciones */
@@ -121,7 +121,7 @@ const dtZones = () => {
         searching: true,
         info: true,
         ordering: false,
-        scrollY: visible540() ? '100%' : '370px',
+        scrollY: visible540() ? '450px' : '370px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
@@ -137,12 +137,18 @@ const dtZones = () => {
         $('#tableZones_filter .form-control-sm').attr('placeholder', 'Buscar Zonas');
         $('#RowTableZones').removeClass('invisible');
         $('#tableZones').removeClass('loader-in');
+        $('#mapid-zones').addClass('loader-in');
+        loadMapZones(settings.json.data, 'map_id_zones' + settings.json.draw);
     });
     tableZones.on('page.dt', function (e, settings) {
+        $('#mapid-zones').addClass('loader-in');
         loadingTableZones('#tableZones');
     });
     tableZones.on('xhr', function (e, settings, json) {
         tableZones.off('xhr');
+    });
+    $('#tableZones_length select').on('change', function () {
+        $('#mapid-zones').addClass('loader-in');
     });
 }
 const mapZone = (latitud, longitud, zoom = 4) => {
@@ -481,7 +487,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
                     let syncZone = '';
                     let className = '';
                     if (createZone) {
-                        syncZone = ((row.distance) <= (row.zoneRadio)) ? `<br><button title="Vincular a ${row.zoneName}" type="button" class="syncZone fontp p-0 mt-1 btn btn-sm btn-link"><span class="text-success">Vincular a Zona</span></button>` : '';
+                        syncZone = ((row.distance) <= (row.zoneRadio)) ? `<br><button title="Vincular a ${row.zoneName}" type="button" class="syncZone font08 ss p-0 mt-1 btn btn-sm btn-link"><span class="text-success">Vincular a Zona</span></button>` : '';
                         className = ((row.distance) <= (row.zoneRadio)) ? 'font-weight-bold' : '';
                     }
                     syncZone = '';
@@ -541,21 +547,21 @@ const mapZoneNear = (latitud, longitud, zoom = 10, createZoneOut = false) => {
 
     $("input[name=lat]").val(latitud);
     $("input[name=lng]").val(longitud);
-    
+
     // No necesita await - LatLng es síncrono
     const center = new google.maps.LatLng(latitud, longitud);
     const image = '../../img/iconMarker.svg';
-    
+
     if (createZoneOut === false) {
         getNearZonesTable(center.lat(), center.lng());
     }
-    
+
     $('#RowTableNearZones').addClass('invisible');
-    
+
     // Remover eventos previos para evitar duplicados
     $("#geocomplete").off("geocode:result geocode:dragged");
     $("#formZone #reset").off("click");
-    
+
     // Inicializar geocomplete
     $("#geocomplete").geocomplete({
         map: ".map_canvas",
@@ -595,18 +601,18 @@ const mapZoneNear = (latitud, longitud, zoom = 10, createZoneOut = false) => {
 
     // Obtener el mapa y configurarlo
     const map = $("#geocomplete").geocomplete("map");
-    
+
     // Calcular timeout dinámico según el zoom (mayor zoom = más tiempo)
     // Zoom 8 o menos: 150ms, Zoom 12: 350ms, Zoom 15+: 500ms
     const dynamicTimeout = zoom <= 8 ? 150 : (zoom <= 12 ? 350 : 500);
-    
+
     setTimeout(() => {
         google.maps.event.trigger(map, 'resize');
-        
+
         // Establecer centro y zoom después del resize
         map.setCenter(center);
         map.setZoom(zoom);
-        
+
         // Segundo resize después de aplicar zoom para asegurar renderizado completo
         setTimeout(() => {
             google.maps.event.trigger(map, 'resize');
@@ -629,11 +635,11 @@ const mapZoneNear = (latitud, longitud, zoom = 10, createZoneOut = false) => {
     $("#geocomplete").on("geocode:dragged", function (event, latLng) {
         $("input[name=lat]").val(latLng.lat());
         $("input[name=lng]").val(latLng.lng());
-        
+
         if ($('#geocomplete').val() !== '') {
             $("#formZone #reset").show();
         }
-        
+
         $('#RowTableNearZones').addClass('invisible');
         getNearZonesTable(latLng.lat(), latLng.lng());
         focusEndText('#formZone #formZoneNombre');
