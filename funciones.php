@@ -221,7 +221,7 @@ function API_KEY_MAPS()
 {
     return 'AIzaSyCFs9lj9k7WZAyuwzDJwOiSiragUA9Xwg0';
 }
-$params = array();
+$params = [];
 if (!defined('SQLSRV_CURSOR_KEYSET')) {
     define('SQLSRV_CURSOR_KEYSET', 2); // El valor correcto puede variar según tu aplicación
 }
@@ -1559,7 +1559,7 @@ function auditoria_multiple($array, $AudMod)
 function fecha_min_max($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $param = array();
+    $param = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $query = "SELECT MIN($ColFech) AS 'min', MAX($ColFech) AS 'max' FROM $tabla  WHERE $ColFech !='17530101' AND $ColFech < GETDATE()";
     // print_r($query);
@@ -1580,7 +1580,7 @@ function fecha_min_max($tabla, $ColFech)
 function fecha_min_max2($tabla, $ColFech)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $param = array();
+    $param = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $query = "SELECT MIN($ColFech) AS 'min', MAX($ColFech) AS 'max' FROM $tabla  WHERE $ColFech !='17530101'";
     // print_r($query);
@@ -1675,7 +1675,7 @@ function ValString($val)
 }
 function DeleteRegistro($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -1753,7 +1753,7 @@ function InsertRegistroMySql($query)
 function simpleQueryDataMS($query)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt = sqlsrv_query($link, $query, $params, $options);
     if ($stmt) {
@@ -1775,8 +1775,8 @@ function simpleQueryDataMS($query)
 function arrayQueryDataMS($query)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $data = array();
-    $params = array();
+    $data = [];
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $stmt = sqlsrv_query($link, $query, $params, $options);
     if ($stmt) {
@@ -1877,7 +1877,7 @@ function dataListaEstruct($lista, $uid)
 }
 function InsertRegistro($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     // print_r($query);
@@ -1900,7 +1900,7 @@ function InsertRegistro($query)
 }
 function InsertRegistroMS($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     // print_r($query);
@@ -1930,7 +1930,7 @@ function InsertRegistroMS($query)
 }
 function UpdateRegistro($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -1955,7 +1955,7 @@ function UpdateRegistro($query)
 }
 function CountRegistrosMayorCero($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -1987,7 +1987,7 @@ function CountRegistrosMayorCero($query)
 /** Fin Query MS-SQL */
 function PerCierre($FechaStr, $Legajo)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $query = "SELECT TOP 1 CierreFech FROM PERCIERRE WHERE PERCIERRE.CierreLega = '$Legajo'";
@@ -2654,7 +2654,7 @@ function mod_roles($recid_rol)
 {
     $query = "SELECT mod_roles.id AS 'id', mod_roles.recid_rol AS 'recid_rol', modulos.nombre AS 'nombre', modulos.id AS 'id_mod', modulos.idtipo AS 'idtipo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo=modulos.id WHERE mod_roles.id>'0' AND modulos.estado='0' AND mod_roles.recid_rol='$recid_rol' ORDER BY modulos.orden";
     $result = array_pdoQuery($query);
-    $data = array();
+    $data = [];
 
     if (($result)) {
         foreach ($result as $key => $row) {
@@ -2742,7 +2742,7 @@ function utf8str($cadena)
 function horarioCH($HorCodi)
 {
     require __DIR__ . '/config/conect_mssql.php';
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     $query = "SELECT HorCodi, HorDesc FROM HORARIOS WHERE HorCodi = $HorCodi";
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -2829,7 +2829,7 @@ function totalDiasFechas($fecha_inicial, $fecha_final)
 function fechaIniFinDias($fecha_inicial, $fecha_final, $dias)
 {
     $TotalDias = totalDiasFechas($fecha_inicial, $fecha_final);
-    $arrayTotalMeses[] = array();
+    $arrayTotalMeses[] = [];
     for ($i = 0; $i < intval($TotalDias / $dias); $i++) {
         $arrayTotalMeses[] = array($i);
     }
@@ -3119,7 +3119,7 @@ function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objet
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para filtrar un objeto 
 {
-    $a = array();
+    $a = [];
     if ($array && $key && $key2 && $valor && $valor2) {
         foreach ($array as $v) {
             if ($v[$key] === $valor && $v[$key2] === $valor2) {
@@ -3214,7 +3214,7 @@ function login_logs($estado, $usuario = '')
 }
 function escape_sql_wild($s)
 {
-    $result = array();
+    $result = [];
     foreach (str_split($s) as $ch) {
         if ($ch == "\\" || $ch == "%" || $ch == "_") {
             $result[] = "\\";
@@ -3561,7 +3561,7 @@ function diffStartEnd($start, $end)
     );
     return $t;
 }
-function implode_keys_values($key, $separator, $array = array())
+function implode_keys_values($key, $separator, $array = [])
 {
     if (!$array):
         return $array;
@@ -3573,7 +3573,7 @@ function implode_keys_values($key, $separator, $array = array())
 }
 function simple_MSQuery($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
@@ -3601,7 +3601,7 @@ function simple_MSQuery($query)
 }
 function MSQuery($query)
 {
-    $params = array();
+    $params = [];
     $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);

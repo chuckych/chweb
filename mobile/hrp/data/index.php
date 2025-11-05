@@ -8,16 +8,12 @@ secure_auth_ch_json();
 header("Content-Type: application/json");
 
 if (!$_SESSION) {
-    Flight::json(array("error" => "Sesión finalizada."));
+    Flight::json(["error" => "Sesión finalizada."]);
     exit;
 }
-// sleep(1);
 
-$token = sha1($_SESSION['RECID_CLIENTE']);
-$idCliente = $_SESSION['ID_CLIENTE'] ?? '';
-
-
-// borrarLogs('json', 1, 'json');
+$token = sha1($_SESSION['RECID_CLIENTE_MOBILE']);
+$idCliente = $_SESSION['ID_CLIENTE_MOBILE'] ?? '';
 
 /**
  * Realiza una llamada a API.
@@ -36,18 +32,21 @@ function call_api()
 
     $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
     $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
-    $payload = $argumento[1] ?? array(); // Obtengo el payload
+    $payload = $argumento[1] ?? []; // Obtengo el payload
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
-    $queryParams = $argumento[3] ?? array(); // Obtengo los parámetro de la query
+    $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
     $method = strtoupper($method); // Convierto el método a mayúsculas
 
     try {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
 
         if (!$endpoint) {
             throw new Exception('call_api: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
 
-        $endpoint = ($queryParams) ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
+        $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
 
         // print_r($queryParams) . exit;
 
@@ -117,6 +116,9 @@ function call_api()
 
 function get_data($url)
 {
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
     $ch = curl_init();
 
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -148,9 +150,9 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
             throw new Exception('No se han recibido los datos necesarios');
         }
 
-        $position_data = array();
+        $position_data = [];
 
-        $idCliente = str_pad($_SESSION['ID_CLIENTE'], 2, '0', STR_PAD_LEFT) ?? '';
+        $idCliente = str_pad($_SESSION['ID_CLIENTE_MOBILE'], 2, '0', STR_PAD_LEFT) ?? '';
 
         $pathFile = __DIR__ . '/archivos/position_data_' . $idCliente . '.json';
 
@@ -221,9 +223,9 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
 
 Flight::route('GET /devices', function () { // Ruta para obtener los dispositivos de la empresa (cache)
 
-    $id = $_SESSION['ID_CLIENTE'] ?? ''; // ID de la empresa
-    $recid = $_SESSION['RECID_CLIENTE'] ?? ''; // ID de la empresa
-    $baseDevices = $_SESSION["APIMOBILEHRP"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
+    $id = $_SESSION['ID_CLIENTE_MOBILE'] ?? ''; // ID de la empresa
+    $recid = $_SESSION['RECID_CLIENTE_MOBILE'] ?? ''; // ID de la empresa
+    $baseDevices = $_SESSION["APIMOBILEHRP_MOBILE"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
     $endpointSetCache = "$baseDevices/cache.php?key=$recid"; // Endpoint para actualizar la cache
     $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
     $output = get_data($endpointGetCache); // Obtener la cache

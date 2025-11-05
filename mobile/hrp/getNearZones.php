@@ -6,8 +6,8 @@ ultimoacc();
 secure_auth_ch_json();
 E_ALL();
 
-$respuesta = array();
-$arrayData = array();
+$respuesta = [];
+$arrayData = [];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
@@ -18,10 +18,10 @@ $params['start'] = $params['start'] ?? '';
 $params['length'] = $params['length'] ?? '';
 $params['key'] = $params['key'] ?? '';
 
-$idCompany = $_SESSION['ID_CLIENTE'];
+$idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
 $paramsApi = array(
-    'key' => $_SESSION["RECID_CLIENTE"],
+    'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => ($params['start']),
     'length' => ($params['length']),
     'zoneLat' => ($params['zoneLat']),
@@ -32,7 +32,7 @@ foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
 }
 $api = "api/v1/zones/near/$parametros";
-$url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+$url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 

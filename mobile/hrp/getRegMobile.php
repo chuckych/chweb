@@ -9,7 +9,7 @@ $respuesta = [];
 $arrayData = [];
 $arraySelect = [];
 $error = $start_date = $end_date = '';
-$_SESSION["APIMOBILEHRP"] = $_SESSION["APIMOBILEHRP"] ?? '';
+$_SESSION["APIMOBILEHRP_MOBILE"] = $_SESSION["APIMOBILEHRP_MOBILE"] ?? '';
 function dr_f($ddmmyyyy)
 {
     $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
@@ -42,7 +42,7 @@ FusNuloPOST('SoloFic', '');
 FusNuloPOST('typeDownload', '');
 
 $arrayUsers[] = [];
-$idCompany = $_SESSION['ID_CLIENTE'];
+$idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
 if ($params['users'] && $params['type'] != 'selectUsers') {
     $users = implode(',', $params['users']);
@@ -68,7 +68,7 @@ if ($params['type'] == 'selectDevice') {
 }
 
 $paramsApi = [
-    'key' => $_SESSION["RECID_CLIENTE"],
+    'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => urlencode($params['start']),
     'length' => urlencode($params['length']),
     'checks' => urlencode($_POST['SoloFic']),
@@ -91,7 +91,7 @@ foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
 }
 $api = "api/v1/checks/$parametros";
-$url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+$url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
 

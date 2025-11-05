@@ -4,11 +4,19 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <link rel="stylesheet" href="css/styleMobile.css?=<?= version_file("/mobile/hrp/css/styleMobile.css") ?>">
-    <link rel="stylesheet" href="css/leaflet.css?=<?= version_file("/mobile/hrp/css/leaflet.css") ?>">
-    <link rel="stylesheet"
-        href="css/leaflet.fullscreen.css?=<?= version_file("/mobile/hrp/css/leaflet.fullscreen.css") ?>">
-    <title>Mobile HRP</title>
+    <?php
+        $stylesheets = [
+            "/styleMobile.css",
+            "/leaflet.css",
+            "/leaflet.fullscreen.css",
+        ];
+        echo PHP_EOL;
+        echo '<!-- Estilos Mobile HRP -->' . PHP_EOL;
+        foreach ($stylesheets as $key => $value) {
+            echo '<link rel="stylesheet" href="css' . $value . '?=' . version_file("/mobile/hrp/css" . $value) . '">' . PHP_EOL;
+        }
+        echo '<title>Mobile HRP</title>';
+    ?>
 </head>
 
 <body class="fadeIn">
@@ -27,8 +35,8 @@
         $maxYear = date('Y');
         /** === Para dateRangePicker === */
         $start = microtime(true);
-        $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE]";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE_MOBILE]";
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = getRemoteFile($url, $timeout = 10);
         // print_r($url);
         $api = json_decode($api, true);
@@ -47,14 +55,14 @@
         ?>
         <input type="hidden" id="_drMob2">
         <input type="hidden" id="actMobile" value="<?= $_GET['act'] ?? 0 ?>">
-        <!-- <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP"] ?? 0 ?>"> -->
+        <!-- <input type="hidden" id="apiMobile" value="<?= $_SESSION["APIMOBILEHRP_MOBILE"] ?? 0 ?>"> -->
         <?php
         if ($_SERVER['SERVER_NAME'] == 'localhost') { // Si es localhost
-            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
+            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP_MOBILE"] . '">';
         } else if ($_SERVER['SERVER_NAME'] == '192.168.1.220') { // Si es localhost
-            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
+            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP_MOBILE"] . '">';
         } else {
-            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP"] . '">';
+            echo '<input type="hidden" id="apiMobile" value="' . $_SESSION["APIMOBILEHRP_MOBILE"] . '">';
         }
         ?>
         <?php require __DIR__ . '/menuBtn.html' ?>
@@ -139,7 +147,7 @@
                     </div>
                     <?php
                 } else {
-                    echo '<input type="hidden" class="selectjs_cuentaToken" value="' . $_SESSION['ID_CLIENTE'] . '">';
+                    echo '<input type="hidden" class="selectjs_cuentaToken" value="' . $_SESSION['ID_CLIENTE_MOBILE'] . '">';
                 }
                 ?>
                 <div class="col-12 mt-3">
@@ -233,7 +241,7 @@
     <script src="js/script_zones.js?v=<?= version_file("/mobile/hrp/js/script_zones.js") ?>"></script>
     <script src="js/script_mapa.js?v=<?= version_file("/mobile/hrp/js/script_mapa.js") ?>"></script>
     <script>
-        sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
+        sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP_MOBILE"] ?>'));
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&libraries=places&callback=initMap"
         defer></script>
@@ -292,7 +300,7 @@
                     error: function () { }
                 });
             });
-            Select2Value('<?= $_SESSION['ID_CLIENTE'] ?>', '<?= $_SESSION['CLIENTE'] ?>', ".selectjs_cuentaToken");
+            Select2Value('<?= $_SESSION['ID_CLIENTE_MOBILE'] ?>', '<?= $_SESSION['CLIENTE_MOBILE'] ?>', ".selectjs_cuentaToken");
         </script>
         <?php
     endif;

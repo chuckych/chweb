@@ -17,10 +17,10 @@ foreach ($data as $key => $value) {
     }
 }
 
-$_SESSION['ID_CLIENTE'] = $data['idCompany'];
-$_SESSION['RECID_CLIENTE'] = $data['recidCompany'];
-$_SESSION["APIMOBILEHRP"] = $data['apiMobileHRP'];
-$_SESSION["CLIENTE"] = $data['nameCompany'];
+$_SESSION['ID_CLIENTE_MOBILE'] = $data['idCompany'];
+$_SESSION['RECID_CLIENTE_MOBILE'] = $data['recidCompany'];
+$_SESSION["APIMOBILEHRP_MOBILE"] = $data['apiMobileHRP'];
+$_SESSION["CLIENTE_MOBILE"] = $data['nameCompany'];
 
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();
@@ -30,9 +30,9 @@ do {
     $data = [
         'status' => 'ok',
         'api' => $data['apiMobileHRP'],
-        'cliente' => $_SESSION['CLIENTE'],
+        'cliente' => $_SESSION['ID_CLIENTE_MOBILE'],
     ];
-} while ($_SESSION['ID_CLIENTE'] != $recid);
+} while ($_SESSION['ID_CLIENTE_MOBILE'] != $recid);
 
 echo json_encode($data);
 exit;

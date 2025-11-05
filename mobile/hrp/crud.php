@@ -11,7 +11,7 @@ $_POST['tipo'] = $_POST['tipo'] ?? '';
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();
 }
-$id_company = $_SESSION["ID_CLIENTE"];
+$id_company = $_SESSION["ID_CLIENTE_MOBILE"];
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['tipo'] == 'transferir') {
         $_POST['legFech'] = $_POST['legFech'] ?? '';
@@ -79,10 +79,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
             'deviceEvent' => ($formDeviceEvento),
             'devicePhoneID' => ($formDevicePhoneID)
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/devices/add/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -134,16 +134,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
             'deviceEvent' => ($formDeviceEvento),
             'devicePhoneID' => ($formDevicePhoneID)
         );
         $api = "api/v1/devices/upd/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -182,16 +182,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
             'deviceEvent' => ($formDeviceEvento),
             'devicePhoneID' => ($formDevicePhoneID)
         );
         $api = "api/v1/devices/del/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -253,10 +253,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $FechaFin = '';
         }
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
             'userRegid' => ($formUserRegid),
@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/add/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -314,15 +314,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $payload = [
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'usuarios' => $data,
         ];
 
         $api = "api/v1/users/adds/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         // $url = "https://chweb.local" . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 
         // Aquí estamos  enviando los datos a la api
@@ -370,10 +370,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $FechaFin = '';
         }
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
             'userRegid' => ($formUserRegid),
@@ -386,7 +386,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/upd/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -425,10 +425,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
             'userRegid' => ($formUserRegid)
@@ -436,7 +436,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/del/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -480,13 +480,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ;
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'phoneRegId' => urlencode($modalMsgRegID),
             'message' => urlencode($modalMsgMensaje),
         );
 
         $api = "api/v1/msg/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -533,14 +533,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ;
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userID' => $userID,
             'phoneRegId' => $phoneRegId,
         );
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/set/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -597,7 +597,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'rememberUser' => $rememberUser,
             'TMEF' => $deviceTMEF,
             'userID' => $deviceUser,
@@ -609,7 +609,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // echo Flight::json($paramsApi) . exit;
 
         $api = "api/v1/setDevice/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
         $api = json_decode($api, true);
 
@@ -670,10 +670,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat' => ($lat),
@@ -682,7 +682,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
 
         $api = "api/v1/zones/add/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -745,13 +745,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         // PrintRespuestaJson('error', 'procesarZonas.php?company='.$idCompany);
         // exit;
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat' => ($lat),
@@ -760,7 +760,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
 
         $api = "api/v1/zones/add/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -778,13 +778,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $regUID = test_input($post['regUID']);
 
             $paramsApi = array(
-                'key' => $_SESSION["RECID_CLIENTE"],
+                'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'zoneLat' => ($regLat),
                 'zoneLng' => ($regLng),
                 'regUID' => ($regUID)
             );
 
-            // $u = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/procesarZonas.php?company=".$idCompany;
+            // $u = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/procesarZonas.php?company=".$idCompany;
             // $g = json_decode(file_get_contents("$u"));
             // procear url de la api
 
@@ -793,7 +793,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // exit;
 
             $api = "api/v1/zones/process/";
-            $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
             $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
             $api = json_decode($api, true);
@@ -863,10 +863,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat' => ($lat),
@@ -876,7 +876,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
 
         $api = "api/v1/zones/upd/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -914,15 +914,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'idZone' => ($idZone)
         );
 
         $api = "api/v1/zones/del/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -973,14 +973,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ;
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneLat' => ($lat),
             'zoneLng' => ($lng),
             'regUID' => ($reguid)
         );
 
         $api = "api/v1/zones/process/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -1014,14 +1014,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $paramsApi = array(
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'idApi' => ($id_api),
         );
         $api = "api/v1/enroll/process/";
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
@@ -1071,19 +1071,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // print_r($post) . exit;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         if ($type == 'enroll') {
 
             $params = array(
-                'key' => $_SESSION["RECID_CLIENTE"],
+                'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'userID' => $userID,
                 // "idPunchEvent" => implode(',', $post['idPunchEvent']),
                 "idPunchEvent" => $selected,
             );
 
             $api = "api/v1/enroll/enroll/"; //enroll 
-            $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
             // $url   = "http://DESKTOP-8FK3BRD/" . HOMEHOST . "/mobile/hrp/" . $api;
             $api = sendApiData($url, $params, 'POST');
             $api = json_decode($api, true);
@@ -1094,7 +1094,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
-                checkenroll($_SESSION["RECID_CLIENTE"], $userID, $_SESSION["APIMOBILEHRP"], 4);
+                checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
                 $arrayData = $api['MESSAGE'];
@@ -1109,14 +1109,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($type == 'update') {
 
             $params = array(
-                'key' => $_SESSION["RECID_CLIENTE"],
+                'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'userID' => $userID,
                 // "idPunchEvent" => implode(',', $post['idPunchEvent']),
                 "idPunchEvent" => $selected,
             );
 
             $api = "api/v1/enroll/update/";
-            $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+            $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
             $api = sendApiData($url, $params, 'POST');
             $api = json_decode($api, true);
 
@@ -1126,7 +1126,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
-                checkenroll($_SESSION["RECID_CLIENTE"], $userID, $_SESSION["APIMOBILEHRP"], 4);
+                checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
                 $arrayData = $api['MESSAGE'];
@@ -1143,15 +1143,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $post = $_POST;
 
-        $idCompany = $_SESSION['ID_CLIENTE'];
+        $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
         $params = [
-            'key' => $_SESSION["RECID_CLIENTE"],
+            'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
         ];
 
         $urlParams = http_build_query($params);
         $api = "api/v1/token/?" . $urlParams;
-        $url = $_SESSION["APIMOBILEHRP"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
+        $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = getRemoteFile($url, $timeout = 10);
         $api = json_decode($api, true);
 
