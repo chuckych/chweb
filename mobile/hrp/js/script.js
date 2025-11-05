@@ -1131,7 +1131,7 @@ $(function () {
     });
     
     $(document).on("click", "#Encabezado", function (e) {
-        CheckSesion()
+        // CheckSesion();
         loadingTable('#table-mobile');
         loadingTableUser('#tableUsuarios');
         loadingTableDevices('#tableDevices');
@@ -1140,7 +1140,7 @@ $(function () {
         // actualizar(false);
     });
     $(document).on("click", ".showUsers", function (e) {
-        CheckSesion();
+        // CheckSesion()
         enableBtnMenu();
         $(this).prop('readonly', true);
         focusBtn(this);
@@ -1153,7 +1153,7 @@ $(function () {
         $('#RowTableUsers').show();
     });
     $(document).on("click", ".showDevices", function (e) {
-        CheckSesion();
+        // CheckSesion()
         enableBtnMenu();
         $(this).prop('readonly', true)
         focusBtn(this);
@@ -1165,7 +1165,7 @@ $(function () {
         $('#RowTableDevices').show();
     });
     $(document).on("click", ".showZones", function (e) {
-        CheckSesion();
+        // CheckSesion()
         enableBtnMenu();
         $(this).prop('readonly', true);
         focusBtn(this);
@@ -1177,7 +1177,7 @@ $(function () {
         dtZones();
     });
     $(document).on("click", ".showChecks", function (e) {
-        CheckSesion();
+        // CheckSesion()
         enableBtnMenu();
         $(this).addClass('btn-custom');
         $(this).prop('readonly', true);
@@ -1190,7 +1190,7 @@ $(function () {
         $('#table-mobile').DataTable().columns.adjust().draw();
     });
     $(document).on("click", ".sendCH", function (e) {
-        CheckSesion();
+        // CheckSesion()
         e.preventDefault();
         var legFech = $(this).attr('data-legFech');
         let dataRecid = $(this).attr('data-recid');

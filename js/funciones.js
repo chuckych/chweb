@@ -657,14 +657,14 @@ function CheckSesion(e = null) {
         e.stopImmediatePropagation();
     }
 
-    let _homehost = document.getElementById('_homehost')
+    const _homehost = document.getElementById('_homehost');
 
     if (_homehost == null) { return false }
     if (_homehost.value == '') { return false }
 
-    let _referer = document.getElementById('_referer')
-    let _url = "/" + _homehost.value + "/sesion.php"
-    let _sesion = document.getElementById('_sesion')
+    const _referer = document.getElementById('_referer')
+    const _url = "/" + _homehost.value + "/sesion.php"
+    const _sesion = document.getElementById('_sesion')
 
     axios.get(_url).then(function (response) {
         if (response.status != 200) { return false }

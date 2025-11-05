@@ -565,7 +565,7 @@ function loadMap(data, customId) {
     $('#mapid').html('<div style="width:100%; height:550px;" id="' + customId + '"></div>');
 
     let ubicacionesParaMapa = [];
-    let uniqueZones = new Map();
+    const uniqueZones = new Map();
 
     for (const item of data) {
         if (!uniqueZones.has(item.zoneID)) {
@@ -583,9 +583,9 @@ function loadMap(data, customId) {
     }
 
 
-    let uniqueZonesArray = Array.from(uniqueZones.values())
-    let apiMobile = document.getElementById('apiMobile');
-    let path = apiMobile.value + '/chweb/mobile/hrp/'
+    const uniqueZonesArray = Array.from(uniqueZones.values())
+    const apiMobile = document.getElementById('apiMobile');
+    const path = apiMobile.value + '/chweb/mobile/hrp/'
     if (apiMobile.value == 'http://localhost:8050') {
         path = ''
     }
@@ -621,24 +621,24 @@ function loadMap(data, customId) {
     }).addTo(myMap);
 
 
-    let circleOptions = {
+    const circleOptions = {
         color: 'green',
         fillColor: 'green',
         fillOpacity: 0.1,
         weight: 1
     };
-    let circleOptions2 = {
+    const circleOptions2 = {
         color: 'black',
         fillColor: 'black',
         fillOpacity: 1,
     };
-    let circleOptions3 = {
+    const circleOptions3 = {
         color: 'white',
         fillColor: 'green',
         fillOpacity: 0.9,
         radius: 7
     };
-    let circleOptions4 = {
+    const circleOptions4 = {
         color: 'white',
         fillColor: 'red',
         fillOpacity: 0.9,
@@ -652,11 +652,6 @@ function loadMap(data, customId) {
         }
     }));
 
-    // let markersLayer = L.layerGroup().addTo(myMap);
-    // markersLayer.clearLayers();
-
-    // let iconZone = L.icon({
-    //     iconUrl: '',
     let start = 0
     let end = 0
     let markersLayer = ''

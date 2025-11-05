@@ -227,7 +227,7 @@ const dtDevices = () => {
                 data: $(this).serialize() + '&tipo=' + $('#formDevice #formDeviceTipo').val(),
                 // dataType: "json",
                 beforeSend: function (data) {
-                    CheckSesion()
+                    // CheckSesion();
                     $.notifyClose();
                     notify('Aguarde..', 'info', 0, 'right')
                     ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
@@ -290,7 +290,7 @@ const dtDevices = () => {
                 data: $(this).serialize() + '&tipo=' + valueTipo,
                 // dataType: "json",
                 beforeSend: function (data) {
-                    CheckSesion()
+                    // CheckSesion();
                     $.notifyClose();
                     notify('Aguarde..', 'info', 0, 'right')
                     ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
@@ -352,7 +352,7 @@ const setDevice = (data) => {
                 deviceInitialize: $('input[name=deviceInitialize]').is(':checked') ? 1 : 0
             },
             beforeSend: function (data) {
-                CheckSesion();
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right');
                 ActiveBTN(true, "#submitSetting", 'Aguarde ' + loading, 'Aceptar');
@@ -416,7 +416,7 @@ const updDevice = (data) => {
             data: $(this).serialize() + '&tipo=' + valueTipo,
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion()
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right')
                 ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')

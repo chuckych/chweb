@@ -202,7 +202,7 @@ $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
     // data datatable
     let data = tableUsuarios.row($(this).parents('tr')).data();
-    CheckSesion()
+    // CheckSesion();
     $.ajax({
         type: 'post',
         url: 'crud.php',
@@ -310,7 +310,7 @@ $(document).on("click", "#addUser", function (e) {
             data: $(this).serialize(),
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion()
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right')
                 ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
@@ -464,7 +464,7 @@ $(document).on("click", ".updateUser", function (e) {
             data: $(this).serialize(),
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion()
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right')
                 ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
@@ -553,7 +553,7 @@ $(document).on("click", ".deleteUser", function (e) {
             data: $(this).serialize(),
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion()
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right')
                 ActiveBTN(true, "#submitDevice", 'Aguarde ' + loading, 'Aceptar')
@@ -619,7 +619,7 @@ $(document).on("click", ".sendMensaje", function (e) {
                 data: $(this).serialize() + '&userID=' + data.userID,
                 // dataType: "json",
                 beforeSend: function (data) {
-                    CheckSesion()
+                    // CheckSesion();
                     $.notifyClose();
                     notify('Aguarde..', 'info', 0, 'right')
                     ActiveBTN(true, "#submitMsg", 'Aguarde ' + loading, 'Aceptar')
@@ -824,7 +824,7 @@ $(document).on("click", ".trainUser", function (e) {
             url: 'crud.php',
             data: $(this).serialize() + '&tipo=formTrain',
             beforeSend: function (data) {
-                CheckSesion()
+                // CheckSesion();
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right')
                 ActiveBTN(true, "#submitTrain", 'Aguarde ' + loading, 'Aceptar')

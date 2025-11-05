@@ -266,7 +266,7 @@ $(document).on("click", "#addZone", function (e) {
             data: $(this).serialize() + '&tipo=' + valueTipo,
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion();
+                // CheckSesion()
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right');
                 ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
@@ -420,7 +420,7 @@ $(document).on("click", ".delZone", function (e) {
             url: 'crud.php',
             data: $(this).serialize() + '&tipo=' + valueTipo + '&idZone=' + idZone,
             beforeSend: function (data) {
-                CheckSesion();
+                // CheckSesion()
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right');
                 ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
@@ -653,7 +653,7 @@ const processRegZone = (lat, lng, reguid) => {
         url: 'crud.php',
         data: 'tipo=proccesZone' + '&lat=' + lat + '&lng=' + lng + '&reguid=' + reguid,
         beforeSend: function (data) {
-            CheckSesion();
+            // CheckSesion();
             $.notifyClose();
             notify('Aguarde..', 'info', 0, 'right');
             ActiveBTN(true, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona');
@@ -741,7 +741,7 @@ $(document).on("click", ".createZoneOut", function (e) {
             url: 'crud.php',
             data: $(this).serialize() + '&tipo=' + valueTipo + '&idZone=' + idZone,
             beforeSend: function (data) {
-                CheckSesion();
+                // CheckSesion()
                 $.notifyClose();
                 notify('Aguarde..', 'info', 0, 'right');
                 ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
