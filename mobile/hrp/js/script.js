@@ -8,20 +8,18 @@ $(function () {
     ls.remove(LS_MODALES);
 
     if (!ls.get(LS_MODALES)) {
-
         axios.get('modales.php').then((response) => {
             ls.set(LS_MODALES, response.data);
         }).catch(() => {
             ls.remove(LS_MODALES);
         });
-
     }
-
 
     $('#Encabezado').addClass('pointer')
     $('#RowTableUsers').hide();
     $('#RowTableDevices').hide();
     $('#RowTableZones').hide();
+    
     sessionStorage.setItem('tab_32', 'visible');
 
     document.addEventListener("visibilitychange", function () {
@@ -37,7 +35,6 @@ $(function () {
     });
 
     $.fn.DataTable.ext.pager.numbers_length = 5;
-    // $('#btnFiltrar').removeClass('d-sm-block');
     let drmob2 = $('#max').val() + ' al ' + $('#max').val()
     $('#_drMob2').val(drmob2)
     if ($(window).width() < 540) {
@@ -66,7 +63,7 @@ $(function () {
                 /** Columna Foto */
                 {
                     className: 'text-center', targets: 'imageData', title: '<div class="w70">Fichadas</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
 
                         let color = '';
                         if (row.confidenceFaceStr == 'Identificado') {
@@ -150,7 +147,7 @@ $(function () {
                     className: 'text-left w-100', targets: '', title: `
                 <div class="w-100"></div>
                 `,
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
 
                         let btnAdd = ''
                         let nameZone = (row.zoneName == null) ? 'Fuera de Zona' : row.zoneName;
@@ -229,7 +226,7 @@ $(function () {
                 /** Columna Foto */
                 {
                     className: 'text-center', targets: 'imageData', title: '<div class="w50">Foto</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let color = '';
                         if (row.confidenceFaceStr == 'Identificado') {
                             color = 'success'
@@ -307,7 +304,7 @@ $(function () {
                     className: 'text-left', targets: '', title: `
                 <div class="w150">Usuario</div>
                 `,
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                         let datacol = `
                         <div class="smtdcol">
@@ -323,7 +320,7 @@ $(function () {
                     className: '', targets: '', title: `
                 <div class="w70">Fecha</div>
                 `,
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let datacol = `
                         <div class="w70">
                             <span class="">${row.regDate}</span><br>
@@ -336,7 +333,7 @@ $(function () {
                 /** Columna HORA */
                 {
                     className: '', targets: '', title: '<div class="w40">Hora</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
                         return datacol;
                     },
@@ -344,7 +341,7 @@ $(function () {
                 /** Columna FACE */
                 {
                     className: 'text-center', targets: '', title: '<div class="w40">Rostro</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let confidenceFaceStr = '';
                         let datacol = '';
                         let processRegFace = 'processRegFace pointer';
@@ -378,7 +375,7 @@ $(function () {
                 /** Columna Zona */
                 {
                     className: '', targets: '', title: '<div class="w120">Zona</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let btnAdd = ''
                         let zoneName = (row.zoneID > 0) ? '<div class="text-success">' + row.zoneName + '</div>' : '<div class="text-danger">Fuera de Zona</div>'
                         let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
@@ -401,7 +398,7 @@ $(function () {
                 /** Columna Mapa */
                 {
                     className: '', targets: '', title: '<div class="w40">Mapa</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
                         let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
                         let datacol = `<div class="w40">${iconMapa}</div>`
@@ -411,7 +408,7 @@ $(function () {
                 /** Columna Tipo */
                 {
                     className: '', targets: '', title: '<div class="w70">Tipo</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
                         let evento = '';
                         switch (row.operationType) {
@@ -441,7 +438,7 @@ $(function () {
                 /** Columna Dispositivo */
                 {
                     className: '', targets: '', title: '<div class="w140" >Dispositivo</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
 
                         let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary font07 btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
 
@@ -458,30 +455,15 @@ $(function () {
                 /** Columna version APP */
                 {
                     className: '', targets: '', title: '',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let datacol = `<div class="font07 text-secondary">${row.appVersion}</div>`
                         return datacol;
                     },
                 },
-                /** Columna id_api */
-                // {
-                //     className: '', targets: '', title: '',
-                //     "render": function (data, type, row, meta) {
-                //         let datacol = `<div class="w40">${row.id_api}</div>`
-                //         if ((host == 'https://localhost')) {
-                //             return datacol;
-                //         } else if ((host == 'http://localhost')) {
-                //             return datacol;
-                //         } else {
-                //             return '';
-                //         }
-                //     }
-
-                // },
                 /** Columna Flag */
                 {
                     className: 'w-100 text-right', targets: '', title: '',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         let locked = '';
                         switch (row.locked) {
                             case '1':
@@ -513,7 +495,6 @@ $(function () {
             language: DT_SPANISH_SHORT2,
         });
     }
-    // max-h-500 overflow-auto
 
     $('#table-mobile').DataTable().on('init.dt', function (e, settings, json) {
         $('.dr').append(`
@@ -534,7 +515,7 @@ $(function () {
             </div>
         </div>
     `);
-        dateRange()
+        dateRange();
         $('.SoloFic').html(`<div class="custom-control custom-switch custom-control-inline d-flex justify-content-end">
         <input type="checkbox" class="custom-control-input" id="SoloFic" name="SoloFic" value="0">
         <label class="custom-control-label" for="SoloFic" style="padding-top: 3px;">
@@ -554,13 +535,11 @@ $(function () {
             type="button">
             <svg  xmlns="http://www.w3.org/2000/svg"  width="16"  height="16"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-arrows-up-down"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M7 3l0 18" /><path d="M10 6l-3 -3l-3 3" /><path d="M20 18l-3 3l-3 -3" /><path d="M17 21l0 -18" /></svg>
             </button>
-        </span>`)
-        $('#table-mobile_filter input').removeClass('form-control-sm')
+        </span>`);
+        $('#table-mobile_filter input').removeClass('form-control-sm');
         $('#table-mobile_filter input').attr("style", "height: 40px !important");
-        select2Simple('#table-mobile_length select', '', false, false)
-        $('.SoloFic').hide()
-        // click event
-
+        select2Simple('#table-mobile_length select', '', false, false);
+        $('.SoloFic').hide();
         $('input[name=FilterIdentified]').on('change', function (e) {
             e.preventDefault();
             e.stopImmediatePropagation();
@@ -572,7 +551,6 @@ $(function () {
             e.stopImmediatePropagation();
             ClearFilterMobile()
             $('#table-mobile').DataTable().search('').draw();
-            // actualizarRegistros('#table-mobile', true)
         });
         let counterShown = 0;
         $('#collapseFilterChecks').on('shown.bs.collapse', function () {
@@ -797,7 +775,7 @@ $(function () {
             }, 100);
         })
         $('.navbar').removeClass('loader-in');
-        let refreshReg = document.getElementById('refreshReg');
+        const refreshReg = document.getElementById('refreshReg');
         refreshReg.addEventListener('click', function (e) {
             e.preventDefault();
             refreshReg.disabled = true;
@@ -806,12 +784,13 @@ $(function () {
     });
     $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
         $('#table-mobile').removeClass('loader-in');
-        let refreshReg = document.getElementById('refreshReg');
+        const refreshReg = document.getElementById('refreshReg');
         if (refreshReg) {
             refreshReg.disabled = false;
         }
+        loadMap(settings.json.data, 'map_id_' + settings.json.draw);
+        return true        
     });
-
 
     $(document).on('click', '#downloadTxt', function (e) {
         e.preventDefault();
@@ -866,18 +845,12 @@ $(function () {
             ActiveBTN(false, '#downloadXls', 'Descargando ' + loading, 'Exportar .xls')
         });
     });
-    $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
-        loadMap(settings.json.data, 'map_id_' + settings.json.draw);
-        return true
-    });
+
     $('#table-mobile').DataTable().on('page.dt', function (e, settings, json) {
         loadingTable('#table-mobile')
     });
-    // $('#table-mobile').DataTable().on('search.dt', function () {
-    //     loadingTable('#table-mobile')
-    // });
+
     $('#table-mobile').DataTable().on('xhr.dt', function (e, settings, json) {
-        // let apiMobile = sessionStorage.getItem($('#_homehost').val() + '_api_mobile');
         fetchCreatedDate('api/createdDate.php?c=' + $('.selectjs_cuentaToken').val());
         $('#table-mobile').DataTable().off('xhr.dt');
     });
@@ -892,20 +865,7 @@ $(function () {
         $('#table-mobile').DataTable().search($(this).text()).draw();
         classEfect('#table-mobile_filter input', 'border-custom')
     });
-    // $(document).on('click', '.searchZone', function (e) {
-    //     e.preventDefault();
-    //     let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
-    //     let zoneID = data.zoneID
-    //     let zoneName = data.zoneName
-    //     $('.FilterZones').val(null).trigger('change')
-    //     select2Val(zoneID, zoneName, ".FilterZones")
-    //     $("#collapseFilterChecks").collapse('show')
 
-    //     setTimeout(() => {
-    //         actualizarRegistros('#table-mobile')
-    //     }, 500);
-
-    // });
     $(document).on('change', '#SoloFic', function (e) {
         e.preventDefault()
         loadingTable('#table-mobile')
@@ -921,18 +881,6 @@ $(function () {
             }
         }
     });
-
-    let idTableBody = '#table-mobile tbody';
-
-    // $(document).on("click", idTableBody, function (e) {
-    //     if (e.target.closest('tr').tagName) {
-    //         let data = $('#table-mobile').DataTable().row(e.target.closest('tr')).data();
-    //         if (data) {
-    //             obtenerPost(data.regLat, data.regLng);
-    //         }
-    //     }
-    // })
-
 
     $(document).on("click", ".pic", async function (e) {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data(); // obtener datos de la fila seleccionada
@@ -1107,40 +1055,17 @@ $(function () {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
         processRegFace(data.id_api)
     });
-
-    $('#expandContainer').on('click', function (e) {
-        e.preventDefault()
-        if ($('#container').hasClass('container-fluid')) {
-            $(this).html('<i class="bi bi-arrows-angle-expand"></i>')
-            $(this).attr('data-titlet', 'Expandir')
-            $('#container').removeClass('container-fluid')
-            $('#container').addClass('container')
-            $('#navBarPrimary').show()
-            // cancelFullScreen()
-
-        } else {
-            $(this).html('<i class="bi bi-arrows-angle-contract"></i>')
-            $(this).attr('data-titlet', 'Contraer')
-            $('#container').addClass('container-fluid')
-            $('#container').removeClass('container')
-            $('#navBarPrimary').hide()
-            // $('#table-mobile').DataTable().columns.adjust().draw();
-            actualizarRegistros('#table-mobile', true)
-            // launchFullScreen(document.documentElement)
+    $(document).on("click", "#Encabezado", function (e) { 
+        const mapDocumentTitle = {
+            'Dispositivos Mobile': dtDevices,
+            'Usuarios Mobile': dtUsers,
+            'Zonas Mobile': dtZones,
+            'Mobile HRP': minmaxDate,
         }
-    });
-    
-    $(document).on("click", "#Encabezado", function (e) {
-        // CheckSesion();
-        loadingTable('#table-mobile');
-        loadingTableUser('#tableUsuarios');
-        loadingTableDevices('#tableDevices');
-        loadingTableZones('#tableZones');
-        minmaxDate()
-        // actualizar(false);
+        mapDocumentTitle[document.title]?.();
     });
     $(document).on("click", ".showUsers", function (e) {
-        // CheckSesion()
+        // CheckSesion();
         enableBtnMenu();
         $(this).prop('readonly', true);
         focusBtn(this);
@@ -1148,7 +1073,6 @@ $(function () {
         $('#Encabezado').html("Usuarios Mobile");
         focusRowTables();
         $('#RowTableUsers').addClass('invisible');
-        // actualizarRegistros('#tableUsuarios', true);
         dtUsers();
         $('#RowTableUsers').show();
     });

@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/leaflet.css?=<?= version_file("/mobile/hrp/css/leaflet.css") ?>">
     <link rel="stylesheet"
         href="css/leaflet.fullscreen.css?=<?= version_file("/mobile/hrp/css/leaflet.fullscreen.css") ?>">
-    <title>Mobile HR</title>
+    <title>Mobile HRP</title>
 </head>
 
 <body class="fadeIn">

@@ -152,10 +152,7 @@ const minmaxDate = () => {
         $('#_drMob').val(dr).trigger('change')
     }).then(() => {
         actualizarRegistros('#table-mobile');
-        // actualizarRegistros('#tableUsuarios');
-        // actualizarRegistros('#tableDevices');
-        // actualizarRegistros('#tableZones');
-        dateRange()
+        dateRange();
     }).catch(function (error) {
         alert('ERROR minmaxDate\n' + error);
     }).then(function () {
