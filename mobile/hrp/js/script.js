@@ -15,11 +15,37 @@ $(function () {
         });
     }
 
+    const hintClass = (color) => `hint--right hint--rounded hint--no-arrow hint--${color} hint--no-shadow`;
+    const MAP_EVENTO = {
+        '-1': 'Fichada',
+        '1': 'Ronda',
+        '3': 'Evento'
+    };
+    const MAP_FOTO_COLOR = {
+        'Identificado': 'success',
+        'No Identificado': 'danger',
+        'No Enrolado': 'warning',
+        'Foto Inválida': 'info',
+        'No Disponible': 'primary',
+        'Entrenamiento Inválido': 'warning'
+    };
+    const iconFaceStr = (faceStr) => {
+        const map = {
+            'Identificado': `<span class="${hintClass('success')}" aria-label="${faceStr}" ><span class="font1 text-success bi bi-person-bounding-box"></span></span>`,
+            'No Identificado': `<span class="${hintClass('error')}" aria-label="${faceStr}" ><span class="font1 text-danger bi bi-person-bounding-box"></span></span>`,
+            'No Enrolado': `<span class="${hintClass('warning')}" aria-label="${faceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`,
+            'Foto Inválida': `<span class="${hintClass('info')}" aria-label="${faceStr}" ><span class="font1 text-info bi bi-person-bounding-box"></span></span>`,
+            'No Disponible': `<span class="${hintClass('primary')}" aria-label="${faceStr}" ><span class="font1 text-primary bi bi-person-bounding-box"></span></span>`,
+            'Entrenamiento Inválido': `<span class="${hintClass('warning')}" aria-label="${faceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`
+        };
+        return map[faceStr] || '';
+    }
+
     $('#Encabezado').addClass('pointer')
     $('#RowTableUsers').hide();
     $('#RowTableDevices').hide();
     $('#RowTableZones').hide();
-    
+
     sessionStorage.setItem('tab_32', 'visible');
 
     document.addEventListener("visibilitychange", function () {
@@ -65,44 +91,8 @@ $(function () {
                     className: 'text-center', targets: 'imageData', title: '<div class="w70">Fichadas</div>',
                     render: function (data, type, row, meta) {
 
-                        let color = '';
-                        if (row.confidenceFaceStr == 'Identificado') {
-                            color = 'success'
-                        } else if (row.confidenceFaceStr == 'No Identificado') {
-                            color = 'danger'
-                        } else if (row.confidenceFaceStr == 'No Enrolado') {
-                            color = 'warning'
-                        } else if (row.confidenceFaceStr == 'Foto Inválida') {
-                            color = 'info'
-                        } else if (row.confidenceFaceStr == 'No Disponible') {
-                            color = 'primary'
-                        } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
-                            color = 'warning'
-                        }
-
-                        let operation = (row.operation == 0) ? '' : ': ' + row.operation;
-                        let evento = '';
-                        switch (row.operationType) {
-                            case '-1':
-                                evento = 'Fichada';
-                                break;
-                            case '1':
-                                evento = 'Ronda';
-                                break;
-                            case '3':
-                                evento = 'Evento';
-                                break;
-                            default:
-                                evento = 'Desconocido';
-                                break;
-                        }
-                        if (row.operationType == '0' && row.eventType == '2') {
-                            evento = 'Fichada';
-                        }
-                        evento = evento + operation;
-
+                        const color = MAP_FOTO_COLOR[row.confidenceFaceStr] || '';
                         let foto = '';
-
                         if (row.r2FileName && row.attPhoto != 1) {
                             /** si tenemos imagen en R2 */
                             foto = `<img loading="lazy" src="${row.r2FileName}" class="w60 h60 img-fluid"></img>`;
@@ -112,7 +102,6 @@ $(function () {
                         }
 
                         if (row.imageData.img) {
-                            // url_foto = `fotos/${row.userCompany}/${row.imageData.img}`;
                             let path = '';
                             let url_foto = `${row.imageData.img}`;
                             let apiMobile = document.getElementById('apiMobile').value;
@@ -124,13 +113,10 @@ $(function () {
                             foto = `<img loading="lazy" src="${path}${url_foto}" class="w60 h60 img-fluid"></img>`;
                         } else {
                             url_foto = ``;
-                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                             foto = ``;
-                            // foto = `<img loading="lazy" src="${row.imageData.img}" class="w40 h40 radius img-fluid"></img>`;
                         }
 
                         if (row.attPhoto == 1) {
-                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                             foto = ``;
 
                         }
@@ -138,8 +124,7 @@ $(function () {
                             foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w40 h40 img-fluid" />`
                         }
 
-                        let datacol = `<div class="pic w70 h70 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
-                        return datacol;
+                        return `<div class="pic w70 h70 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
                     },
                 },
                 /** Columna Usuario */
@@ -159,8 +144,8 @@ $(function () {
 
                         btnAdd = `<span class="ml-2">
                         <span title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                        <span title="Procesar Zona" class="text-secondary font07 btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
-                    </span>`;
+                        <span title="Procesar Zona" aria-label="Procesar Zona" class="hint hint--right text-secondary font07 btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                        </span>`;
                         if (row.regLat == 0) {
                             btnAdd = `<span class="text-danger p-0 m-0">Sin datos GPS</span>`;
                         }
@@ -180,7 +165,7 @@ $(function () {
                     },
                 },
             ],
-            lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
+            lengthMenu: lengthMenuUsers(),
             bProcessing: false,
             serverSide: true,
             deferRender: true,
@@ -189,7 +174,6 @@ $(function () {
             searching: true,
             info: true,
             ordering: false,
-            // scrollY: '43vh',
             scrollY: '415px',
             scrollCollapse: true,
             scrollX: true,
@@ -227,41 +211,8 @@ $(function () {
                 {
                     className: 'text-center', targets: 'imageData', title: '<div class="w50">Foto</div>',
                     render: function (data, type, row, meta) {
-                        let color = '';
-                        if (row.confidenceFaceStr == 'Identificado') {
-                            color = 'success'
-                        } else if (row.confidenceFaceStr == 'No Identificado') {
-                            color = 'danger'
-                        } else if (row.confidenceFaceStr == 'No Enrolado') {
-                            color = 'warning'
-                        } else if (row.confidenceFaceStr == 'Foto Inválida') {
-                            color = 'info'
-                        } else if (row.confidenceFaceStr == 'No Disponible') {
-                            color = 'primary'
-                        } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
-                            color = 'warning'
-                        }
-
-                        let operation = (row.operation == 0) ? '' : ': ' + row.operation;
-                        let evento = '';
-                        switch (row.operationType) {
-                            case '-1':
-                                evento = 'Fichada';
-                                break;
-                            case '1':
-                                evento = 'Ronda';
-                                break;
-                            case '3':
-                                evento = 'Evento';
-                                break;
-                            default:
-                                evento = 'Desconocido';
-                                break;
-                        }
-                        if (row.operationType == '0' && row.eventType == '2') {
-                            evento = 'Fichada';
-                        }
-                        evento = evento + operation;
+                        if (type !== 'display') return '';
+                        const color = MAP_FOTO_COLOR[row.confidenceFaceStr] || '';
 
                         let foto = '';
 
@@ -272,6 +223,7 @@ $(function () {
                             return `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
 
                         }
+
                         if (row.imageData.img) {
                             let path = '';
                             let url_foto = `${row.imageData.img}`;
@@ -284,27 +236,23 @@ $(function () {
                             foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid flipInX">`;
                         } else {
                             url_foto = ``;
-                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                             foto = ``;
 
                         }
                         if (row.attPhoto == 1) {
-                            // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
                             foto = ``;
                         }
                         if (row.basePhoto) {
                             foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid flipInX" />`
                         }
-                        let datacol = `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
-                        return datacol;
+                        return `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
                     },
                 },
                 /** Columna Usuario */
                 {
-                    className: 'text-left', targets: '', title: `
-                <div class="w150">Usuario</div>
-                `,
+                    className: 'text-left', targets: '', title: `<div class="w150">Usuario</div>`,
                     render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         let nameuser = (row['userName']) ? row['userName'] : '<span class="text-danger font-weight-bold">Usuario inválido</span>';
                         let datacol = `
                         <div class="smtdcol">
@@ -317,114 +265,83 @@ $(function () {
                 },
                 /** Columna Fecha DIA */
                 {
-                    className: '', targets: '', title: `
-                <div class="w70">Fecha</div>
-                `,
+                    className: '', targets: '', title: `<div class="w70">Fecha</div>`,
                     render: function (data, type, row, meta) {
-                        let datacol = `
+                        if (type !== 'display') return '';
+                        return `
                         <div class="w70">
                             <span class="">${row.regDate}</span><br>
                             <span class="text-secondary font07">${row.regDay}</span>
                         </div>
                         `
-                        return datacol;
                     },
                 },
                 /** Columna HORA */
                 {
                     className: '', targets: '', title: '<div class="w40">Hora</div>',
                     render: function (data, type, row, meta) {
-                        let datacol = `<div class="font-weight-bold ls1">${row.regTime}</div>`
-                        return datacol;
+                        if (type !== 'display') return '';
+                        return `<div class="font-weight-bold ls1">${row.regTime}</div>`;
                     },
                 },
                 /** Columna FACE */
                 {
                     className: 'text-center', targets: '', title: '<div class="w40">Rostro</div>',
                     render: function (data, type, row, meta) {
-                        let confidenceFaceStr = '';
-                        let datacol = '';
-                        let processRegFace = 'processRegFace pointer';
-                        let hintClass = (color) => `hint--right hint--rounded hint--no-arrow hint--${color} hint--no-shadow`;
-
-                        if (row.confidenceFaceStr == 'Identificado') {
-                            confidenceFaceStr = `<span class="${hintClass('success')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-success bi bi-person-bounding-box"></span></span>`
-                        } else if (row.confidenceFaceStr == 'No Identificado') {
-                            confidenceFaceStr = `<span class="${hintClass('error')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-danger bi bi-person-bounding-box"></span></span>`
-                        } else if (row.confidenceFaceStr == 'No Enrolado') {
-
-                            confidenceFaceStr = `<span class="${hintClass('warning')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`
-
-                        } else if (row.confidenceFaceStr == 'Foto Inválida') {
-                            confidenceFaceStr = `<span class="${hintClass('info')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-info bi bi-person-bounding-box"></span></span>`
-                        } else if (row.confidenceFaceStr == 'No Disponible') {
-
-                            confidenceFaceStr = `<span class="${hintClass('primary')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-primary bi bi-person-bounding-box"></span></span>`
-
-                            datacol = `<div class="w40">${confidenceFaceStr}</div>`
-                            return datacol;
-                        } else if (row.confidenceFaceStr == 'Entrenamiento Inválido') {
-                            confidenceFaceStr = `<span class="${hintClass('warning')}" aria-label="${row.confidenceFaceStr}" ><span class="font1 text-warning bi bi-person-bounding-box"></span></span>`
-                            datacol = `<div class="w40">${confidenceFaceStr}</div>`
-                            return datacol;
-                        }
-                        datacol = `<div class="w40 ${processRegFace}">${confidenceFaceStr}</div>`
-                        return datacol;
+                        if (type !== 'display') return '';
+                        const faceStr = row.confidenceFaceStr || 'No Disponible';
+                        const processRegFace = (faceStr == 'No Disponible' || faceStr == 'Entrenamiento Inválido') ? '' : 'processRegFace pointer';
+                        return `<div class="w40 ${processRegFace}">${iconFaceStr(faceStr) || ''}</div>`;
                     },
                 },
                 /** Columna Zona */
                 {
                     className: '', targets: '', title: '<div class="w120">Zona</div>',
                     render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         let btnAdd = ''
                         let zoneName = (row.zoneID > 0) ? '<div class="text-success">' + row.zoneName + '</div>' : '<div class="text-danger">Fuera de Zona</div>'
                         let zoneName2 = (row.zoneID > 0) ? row.zoneName : 'Fuera de Zona'
                         let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                         let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
 
-                        btnAdd = `<div style="padding-bottom: 3px;">
-                                    <span title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut mt-1"><i class="bi bi-plus px-2 p-1 border"></i></span>
-                                    <span title="Procesar Zona" class="text-secondary font07 btn p-0 m-0 btn-link proccessZone mt-1"><i class="bi bi-arrow-left-right ml-1 px-2 p-1 border"></i></span>
+                        btnAdd = `<div class="d-flex py-1" style="gap:5px">
+                                    <div title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut">
+                                        <i class="bi bi-plus-lg px-2 p-1 border"></i>
+                                    </div>
+                                    <div title="Procesar Zona">
+                                        <span class="text-secondary font07 btn p-0 m-0 btn-link proccessZone">
+                                            <i class="bi bi-arrow-left-right px-2 p-1 border"></i>
+                                        </span>
+                                    </div>
                                 </div>`;
+
                         if (row.regLat == 0) {
                             btnAdd = `<div class="text-secondary font07 p-0 m-0">Sin datos GPS</div>`;
                         }
-                        let device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 font08">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary font07">${Distance2}</div>`;
 
-                        let datacol = `<div title="${zoneName2}" class="w120 text-truncate">${device}</div>`
-                        return datacol;
+                        const device = (row.zoneID == 0) ? `<div class="text-danger"><label class="m-0 p-0 font08">${zoneName}</label>${btnAdd}</div>` : `<div class="">${zoneName}</div><div class="text-secondary font07">${Distance2}</div>`;
+
+                        return `<div title="${zoneName2}" class="w120 text-truncate">${device}</div>`;
                     },
                 },
                 /** Columna Mapa */
                 {
                     className: '', targets: '', title: '<div class="w40">Mapa</div>',
                     render: function (data, type, row, meta) {
-                        let linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
-                        let iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" data-titlet="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
-                        let datacol = `<div class="w40">${iconMapa}</div>`
-                        return datacol;
+                        if (type !== 'display') return '';
+                        const linkMapa = `https://www.google.com/maps/place/${row.regLat},${row.regLng}`;
+                        const iconMapa = (row.regLat != '0') ? `<a href="${linkMapa}" target="_blank" rel="noopener noreferrer" class="hint hint--left" aria-label="Ver Mapa"><i class="bi bi-pin-map-fill btn btn-sm btn-outline-info border-0 linkMapa"></i></a>` : `<i data-titler="Sin datos GPS" class="bi bi-x-lg btn btn-sm btn-outline-danger border-0 linkMapa"></i>`
+                        return `<div class="w40">${iconMapa}</div>`
                     },
                 },
                 /** Columna Tipo */
                 {
                     className: '', targets: '', title: '<div class="w70">Tipo</div>',
                     render: function (data, type, row, meta) {
-                        // let eventType = (row.eventType == '2') ? 'Fichada' : 'Evento';
+                        if (type !== 'display') return '';
                         let evento = '';
-                        switch (row.operationType) {
-                            case '-1':
-                                evento = 'Fichada';
-                                break;
-                            case '1':
-                                evento = 'Ronda';
-                                break;
-                            case '3':
-                                evento = 'Evento';
-                                break;
-                            default:
-                                evento = 'Desconocido';
-                                break;
-                        }
+                        evento = MAP_EVENTO[row.operationType] || 'Desconocido';
                         if (row.operationType == '0' && row.eventType == '2') {
                             evento = 'Fichada';
                         }
@@ -439,46 +356,44 @@ $(function () {
                 {
                     className: '', targets: '', title: '<div class="w140" >Dispositivo</div>',
                     render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
 
-                        let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary font07 btn p-0 m-0 btn-link addDevice">Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i></span>`;
+                        const deviceName = row.deviceName || '';
+                        const phoneID = row.phoneID || '';
 
-                        let colorDevice = (row.deviceName == row.phoneID) ? 'text-danger' : '';
-                        let iconEditDevice = (row.deviceName == row.phoneID) ? '<i class="bi bi-pencil-fill font07 ml-2 text-primary"></i>' : '';
+                        let btnAdd = `<span data-titlet="Agregar Dispositivo" class="text-secondary font07 btn p-0 m-0 btn-link addDevice">
+                            Agregar Dispositivo <i class="bi bi-plus ml-1 px-1 border-0 bg-ddd"></i>
+                        </span>`;
 
-                        let device = (!row.deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 font08">${row.phoneID}</label><br>${btnAdd}</div>` : `<div class="d-flex align-items-center updDeviceTable pointer ${colorDevice} hint--rounded hint--no-arrow hint--secondary hint--no-shadow"
-                        aria-label="Editar Dispositivo" >${row.deviceName} ${iconEditDevice}</div><div class="text-secondary font07">${row.phoneID}</div>`;
+                        const colorDevice = (deviceName == phoneID) ? 'text-danger' : '';
+                        const iconEditDevice = (deviceName == phoneID) ? '<i class="bi bi-pencil-fill font07 ml-2 text-primary"></i>' : '';
 
-                        let datacol = `<div class="smtdcol text-truncate" style="max-width:180px">${device}</div>`
-                        return datacol;
+                        const device = (!deviceName) ? `<div class="text-danger"><label class="m-0 p-0 w140 font08">${phoneID}</label><br>${btnAdd}</div>` : `<div class="d-flex align-items-center updDeviceTable pointer ${colorDevice} hint--rounded hint--no-arrow hint--secondary hint--no-shadow"
+                        aria-label="Editar Dispositivo" >${deviceName} ${iconEditDevice}</div><div class="text-secondary font07">${phoneID}</div>`;
+
+                        return `<div class="smtdcol text-truncate" style="max-width:180px">${device}</div>`
                     },
                 },
                 /** Columna version APP */
                 {
                     className: '', targets: '', title: '',
                     render: function (data, type, row, meta) {
-                        let datacol = `<div class="font07 text-secondary">${row.appVersion}</div>`
-                        return datacol;
+                        if (type !== 'display') return '';
+                        return `<div class="font07 text-secondary">${row.appVersion}</div>`;
                     },
                 },
                 /** Columna Flag */
                 {
                     className: 'w-100 text-right', targets: '', title: '',
                     render: function (data, type, row, meta) {
-                        let locked = '';
-                        switch (row.locked) {
-                            case '1':
-                                locked = '<span data-titlel="' + row.error + '" class="font1 pointer bi bi-clipboard-x-fill text-danger"></span>';
-                                break;
-                            default:
-                                locked = '<span class="font1 bi bi-clipboard-check-fill text-success"></span>';
-                                break;
-                        }
-                        let datacol = `<div class="">${locked}</div>`
-                        return datacol;
+                        if (type !== 'display') return '';
+                        const locked1 = '<span data-titlel="' + row.error + '" class="font1 pointer bi bi-clipboard-x-fill text-danger"></span>';
+                        const locked2 = '<span class="font1 bi bi-clipboard-check-fill text-success"></span>';
+                        return `<div class="">${row.locked == '1' ? locked1 : locked2}</div>`;
                     },
                 },
             ],
-            lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+            lengthMenu: lengthMenuUsers(),
             bProcessing: false,
             serverSide: true,
             deferRender: true,
@@ -487,7 +402,6 @@ $(function () {
             searching: true,
             info: true,
             ordering: false,
-            // scrollY: '43vh',
             scrollY: '425px',
             scrollCollapse: true,
             scrollX: true,
@@ -789,7 +703,7 @@ $(function () {
             refreshReg.disabled = false;
         }
         loadMap(settings.json.data, 'map_id_' + settings.json.draw);
-        return true        
+        return true
     });
 
     $(document).on('click', '#downloadTxt', function (e) {
@@ -1055,7 +969,7 @@ $(function () {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
         processRegFace(data.id_api)
     });
-    $(document).on("click", "#Encabezado", function (e) { 
+    $(document).on("click", "#Encabezado", function (e) {
         const mapDocumentTitle = {
             'Dispositivos Mobile': dtDevices,
             'Usuarios Mobile': dtUsers,

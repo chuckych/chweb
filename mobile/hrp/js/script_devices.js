@@ -180,10 +180,6 @@ const dtDevices = () => {
         const data = tableDevices.row($(this).parents('tr')).data();
         setDevice(data);
     });
-    $(document).on("click", ".updDeviceTable", function (e) {
-        const data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-        updDevice(data);
-    });
 
     $(document).on("click", ".delDevice", function (e) {
         const data = tableDevices.row($(this).parents('tr')).data();
@@ -317,8 +313,14 @@ const dtDevices = () => {
             $('#modales').html('');
         });
     });
-
 };
+
+$(document).on("click", ".updDeviceTable", function (e) {
+    console.log('updDeviceTable clicked');
+    
+    const data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+    updDevice(data);
+});
 
 const setDevice = (data) => {
 
