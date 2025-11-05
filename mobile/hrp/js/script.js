@@ -270,7 +270,7 @@ $(function () {
 
                         if (row.r2FileName && row.attPhoto != 1) {
                             /** si tenemos imagen en R2 */
-                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w45 h45 img-fluid animate__animated animate__flipInX"></img>`;
+                            foto = `<img loading="lazy" src="${row.r2FileName}" class="w45 h45 img-fluid flipInX"></img>`;
 
                             return `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`;
 
@@ -284,7 +284,7 @@ $(function () {
                             } else {
                                 path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                             }
-                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid animate__animated animate__flipInX">`;
+                            foto = `<img loading="lazy" src="${path}${url_foto}" class="w45 h45 img-fluid flipInX">`;
                         } else {
                             url_foto = ``;
                             // foto = `<i class="bi bi-card-image font1 text-secondary"></i>`;
@@ -296,7 +296,7 @@ $(function () {
                             foto = ``;
                         }
                         if (row.basePhoto) {
-                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid animate__animated animate__flipInX" />`
+                            foto = `<img src="data:image/jpeg;base64,${row.basePhoto}" alt="${row.userName}" class="w45 h45 img-fluid flipInX" />`
                         }
                         let datacol = `<div class="pic scale w50 h50 border border-${color} d-flex justify-content-center align-items-center pointer">${foto}</div>`
                         return datacol;
@@ -993,10 +993,6 @@ $(function () {
 
         picDevice = (!picDevice) ? `${data.phoneID}` : picDevice;
 
-        // if (data.basePhoto) {
-        //     picFoto = `<img src="data:image/jpg;base64,${data.basePhoto}" alt="${data.userName}" class="w40 h40 radius img-fluid" />`
-        // }
-
         $('#latitud').val(_lat)
         $('#longitud').val(_lng)
         $('#modalFoto').val(picFoto)
@@ -1076,9 +1072,7 @@ $(function () {
 
         let position = (parseFloat(_lat) + parseFloat(_lng))
         if (position != '0') {
-            // $('#mapzone').show()
             $('.modal-body #noGPS').html('')
-            // initMap()
             let lati = parseFloat($('#latitud').val())
             let long = parseFloat($('#longitud').val())
             let zone = ($('#zona').val())
@@ -1105,7 +1099,6 @@ $(function () {
     });
     $(document).on("hidden.bs.modal", "#pic", function (e) {
         modalRegistro.innerHTML = '';
-        // clean()
     })
     $(document).on("click", ".processRegFace", function (e) {
         // ActiveBTN(true, ".processRegFace", loading, '')
@@ -1114,9 +1107,7 @@ $(function () {
         let data = $('#table-mobile').DataTable().row($(this).parents("tr")).data();
         processRegFace(data.id_api)
     });
-    // $('#pic').on('hidden.bs.modal', function (e) {
-    //     clean()
-    // })
+
     $('#expandContainer').on('click', function (e) {
         e.preventDefault()
         if ($('#container').hasClass('container-fluid')) {
@@ -1149,59 +1140,60 @@ $(function () {
         // actualizar(false);
     });
     $(document).on("click", ".showUsers", function (e) {
-        CheckSesion()
-        enableBtnMenu()
-        $(this).prop('readonly', true)
+        CheckSesion();
+        enableBtnMenu();
+        $(this).prop('readonly', true);
         focusBtn(this);
-        document.title = "Usuarios Mobile"
+        document.title = "Usuarios Mobile";
         $('#Encabezado').html("Usuarios Mobile");
-        focusRowTables()
-        $('#RowTableUsers').addClass('invisible')
-        actualizarRegistros('#tableUsuarios', true)
+        focusRowTables();
+        $('#RowTableUsers').addClass('invisible');
+        // actualizarRegistros('#tableUsuarios', true);
+        dtUsers();
         $('#RowTableUsers').show();
     });
     $(document).on("click", ".showDevices", function (e) {
-        CheckSesion()
-        enableBtnMenu()
+        CheckSesion();
+        enableBtnMenu();
         $(this).prop('readonly', true)
         focusBtn(this);
         document.title = "Dispositivos Mobile"
         $('#Encabezado').html("Dispositivos Mobile");
-        focusRowTables()
-        $('#RowTableDevices').addClass('invisible')
-        actualizarRegistros('#tableDevices', true)
+        focusRowTables();
+        $('#RowTableDevices').addClass('invisible');
+        dtDevices();
         $('#RowTableDevices').show();
     });
     $(document).on("click", ".showZones", function (e) {
-        CheckSesion()
-        enableBtnMenu()
-        $(this).prop('readonly', true)
+        CheckSesion();
+        enableBtnMenu();
+        $(this).prop('readonly', true);
         focusBtn(this);
-        document.title = "Zonas Mobile"
+        document.title = "Zonas Mobile";
         $('#Encabezado').html("Zonas Mobile");
-        focusRowTables()
+        focusRowTables();
         $('#RowTableZones').show();
-        $('#RowTableZones').addClass('invisible')
-        actualizarRegistros('#tableZones', true)
+        $('#RowTableZones').addClass('invisible');
+        dtZones();
     });
     $(document).on("click", ".showChecks", function (e) {
-        CheckSesion()
-        enableBtnMenu()
+        CheckSesion();
+        enableBtnMenu();
         $(this).addClass('btn-custom');
-        $(this).prop('readonly', true)
+        $(this).prop('readonly', true);
         focusBtn(this);
-        document.title = "Mobile HRP"
-        $('#Encabezado').html("Mobile HRP")
-        focusRowTables()
+        document.title = "Mobile HRP";
+        $('#Encabezado').html("Mobile HRP");
+        focusRowTables();
         $('#RowTableMobile').show();
         loadingTable('#table-mobile');
         $('#table-mobile').DataTable().columns.adjust().draw();
     });
     $(document).on("click", ".sendCH", function (e) {
-        CheckSesion()
+        CheckSesion();
         e.preventDefault();
-        var legFech = $(this).attr('data-legFech')
-        let dataRecid = $(this).attr('data-recid')
+        var legFech = $(this).attr('data-legFech');
+        let dataRecid = $(this).attr('data-recid');
         $.ajax({
             type: 'POST',
             url: 'crud.php',

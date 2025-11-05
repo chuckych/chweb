@@ -6,137 +6,124 @@ const LS_MODALES = homehost + '_mobile_modales';
 const loadingTableUser = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
 }
-if ($(window).width() < 540) {
-    tableUsuarios = $('#tableUsuarios').DataTable({
-        "drawCallback": function (settings) {
+const domTableUsers = () => {
+    if ($(window).width() < 540) {
+        return `<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>
+        <'row '<'col-12 table-responsive't>>
+        <'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>`;
+    }
 
-        },
-        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-            "<'row '<'col-12 table-responsive't>>" +
-            "<'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+    return `<'row lengthFilterTable'
+                 <'col-12 d-flex align-items-end m-0 justify-content-between'lf>
+             >
+             <'row' 
+                 <'col-12 table-responsive't>
+             >
+             <'row d-none d-sm-block'
+                 <'col-12 d-flex align-items-center justify-content-between'ip>
+             >
+             <'row d-block d-sm-none'
+                 <'col-12 fixed-bottom h70 d-flex align-items-center justify-content-center'p>
+             >
+             <'row d-block d-sm-none'
+                 <'col-12 d-flex align-items-center justify-content-center'i>
+             >`;
+}
+
+const columnUser540 = (row) => {
+
+    let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
+    let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
+    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
+    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box disabled"></span>`;
+
+    if (row.userRegId.length > '100') {
+        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
+    }
+    if (row.userRegId.length > '100') {
+        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
+    }
+    if (row.userChecks < 1) {
+        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
+    }
+    if (row.userChecks > 0) {
+        train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box trainUser"></span>`;
+    }
+    const datacol = `
+        <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
+        <div class="text-secondary">ID: ${row.userID}</div>
+        <div class="d-flex justify-content-end mt-2">
+        <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border bi bi-pen updateUser"></span>
+        ${train}
+        ${del}
+        </div>
+    `;
+    return datacol;
+}
+
+const dtUsers = () => {
+
+    if ($.fn.DataTable.isDataTable('#tableUsuarios')) {
+        $('#tableUsuarios').DataTable().ajax.reload(null, false);
+        return false;
+    }
+
+    const tableUsuarios = $('#tableUsuarios').DataTable({
+        dom: domTableUsers(),
         ajax: {
             url: "getUsuariosMobile.php",
             type: "POST",
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
-        },
-        columns: [
-            /** Columna Usuario Mobile */
-            {
-                className: 'align-middle w-100', targets: '', title: '<div class="">Usuarios</div>',
-                "render": function (data, type, row, meta) {
-
-                    let activar = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom disabled border"><i class="bi bi-phone"></i></span>`;
-                    let mensaje = `<span data-titlel="Sin Reg ID" class="ml-1 btn btn-outline-custom border bi bi-chat-text disabled"></span></span>`;
-                    let del = `<span data-titlel="No se puede eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash disabled"></span>`;
-                    let train = `<span data-titlel="No se puede entrenar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box disabled"></span>`;
-
-                    if (row.userRegId.length > '100') {
-                        activar = `<span data-titlel="Configurar dispositivo. Envía Legajo y Empresa" class="ml-1 btn btn-outline-custom border sendSettings"><i class="bi bi-phone"></i></span>`
-                    }
-                    if (row.userRegId.length > '100') {
-                        mensaje = `<span data-nombre="${row.userName}" data-regid="${row.userRegId}"  data-titlel="Enviar Mensaje" class="ml-1 btn btn-outline-custom border bi bi-chat-text sendMensaje"></span>`
-                    }
-                    if (row.userChecks < 1) {
-                        del = `<span data-titlel="Eliminar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-trash deleteUser"></span>`;
-                    }
-                    if (row.userChecks > 0) {
-                        train = `<span data-titlel="Entrenar rostro" data-iduser="${row.userID}" data-nombre="${row.userName}" class="ml-1 btn btn-outline-custom border bi bi-person-bounding-box trainUser"></span>`;
-                    }
-                    let datacol = `
-                            <div class="font-weight-bold text-secondary text-uppercase">${row.userName}</div>
-                            <div class="text-secondary">ID: ${row.userID}</div>
-                            <div class="d-flex justify-content-end mt-2">
-                            <span data-titlel="Editar" data-iduser="${row.userID}" data-nombre="${row.userName}" class="btn btn-outline-custom border bi bi-pen updateUser"></span>
-                            ${train}
-                            ${del}
-                            </div>
-                            `
-                    return datacol;
-                },
-            },
-        ],
-        lengthMenu: [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 1000,
-        paging: true,
-        searching: true,
-        info: true,
-        ordering: false,
-        // scrollY: '52vh',
-        scrollY: '320px',
-        scrollCollapse: true,
-        scrollX: true,
-        fixedHeader: false,
-        language: DT_SPANISH_SHORT2
-
-    });
-} else {
-    tableUsuarios = $('#tableUsuarios').DataTable({
-        "drawCallback": function (settings) {
-
-        },
-        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-            "<'row '<'col-12 table-responsive't>>" +
-            "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>" +
-            "<'row d-block d-sm-none'<'col-12 fixed-bottom h70 d-flex align-items-center justify-content-center'p>>" +
-            "<'row d-block d-sm-none'<'col-12 d-flex align-items-center justify-content-center'i>>",
-        ajax: {
-            url: "getUsuariosMobile.php",
-            type: "POST",
-            "data": function (data) { },
-            error: function () { },
-        },
-        createdRow: function (row, data, dataIndex) {
-            $(row).addClass('align-middle');
+            $(row).addClass('fadeIn align-middle');
         },
         columns: [
             /** Columna ID */
             {
                 className: 'align-middle', targets: '', title: '<div class="w80">ID</div>',
-                "render": function (data, type, row, meta) {
-                    let bloqueado = '';
-                    if (row.bloqueado == true) {
-                        bloqueado = 'text-danger font-weight-bold';
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
                     }
-                    let datacol = `<div class="w80 ${bloqueado}">${row.userID}</div>`
-                    return datacol;
+                    if ($(window).width() < 540) {
+                        return columnUser540(row);
+                    }
+                    const bloq = 'text-danger font-weight-bold';
+                    return `<div class="w80 ${row.bloqueado == true ? bloq : ''}">${row.userID}</div>`;
                 },
             },
             /** Columna Nombre */
             {
                 className: 'align-middle', targets: '', title: `<div class="w200">Nombre</div>`,
-                "render": function (data, type, row, meta) {
-                    let bloqueado = '';
-                    if (row.bloqueado == true) {
-                        bloqueado = 'text-danger font-weight-bold';
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
                     }
-                    let datacol = `<div class="text-truncate w200 ${bloqueado}">${row.userName}</div>`
-                    return datacol;
-                },
+                    if ($(window).width() < 540) return false;
+                    const bloq = 'text-danger font-weight-bold';
+                    return `<div class="text-truncate w200 ${row.bloqueado == true ? bloq : ''}">${row.userName}</div>`;
+                }, visible: visible540(),
             },
             /** Columna cant Fichadas */
             {
                 className: 'align-middle text-center', targets: '', title: '<div class="w100">Registros</div>',
-                "render": function (data, type, row, meta) {
-                    let bloqueado = '';
-                    if (row.bloqueado == true) {
-                        bloqueado = 'text-danger font-weight-bold';
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
                     }
-                    let datacol = `<div class="w100 ls1 ${bloqueado}">${row.userChecks}</div>`
-                    return datacol;
-                },
+                    if ($(window).width() < 540) return false;
+                    const bloq = 'text-danger font-weight-bold';
+                    return `<div class="w100 ls1 ${row.bloqueado == true ? bloq : ''}">${row.userChecks}</div>`;
+                }, visible: visible540(),
             },
             /** Columna Acciones */
             {
                 className: 'align-middle w-100', targets: '', title: '',
-                "render": function (data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     if (type !== 'display') {
                         return '';
                     }
+                    if ($(window).width() < 540) return false;
                     const colorTrained = (row.trained == true) ? 'success' : 'primary'
                     const textTrained = (row.trained == true) ? 'Enrolado' : 'No enrolado'
 
@@ -172,11 +159,10 @@ if ($(window).width() < 540) {
                         </div>
                         `
                     return datacol;
-                },
+                }, visible: visible540(),
             },
-
         ],
-        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        lengthMenu: lengthMenuUsers(),
         bProcessing: false,
         serverSide: true,
         deferRender: true,
@@ -185,34 +171,33 @@ if ($(window).width() < 540) {
         searching: true,
         info: true,
         ordering: false,
-        // scrollY: '52vh',
-        scrollY: '360px',
+        scrollY: visible540() ? '100%' : '280px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
         language: DT_SPANISH_SHORT2
 
     });
+
+    tableUsuarios.on('draw.dt', function (e, settings) {
+        $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios');
+        $('#RowTableUsers').removeClass('invisible');
+        $('#tableUsuarios').removeClass('loader-in');
+    });
+    tableUsuarios.on('page.dt', function (e, settings) {
+        loadingTableUser('#tableUsuarios');
+    });
+    tableUsuarios.on('xhr.dt', function (e, settings, json) {
+        tableUsuarios.off('xhr.dt'); // Desactivar el evento para que no se llame múltiples veces
+    });
+    tableUsuarios.on('init.dt', function (e, settings, json) {
+        $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h40 opa8 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>');
+        $('#tableUsuarios_filter input').removeClass('form-control-sm');
+        $('#tableUsuarios_filter input').attr("style", "height: 40px !important");
+        select2Simple('#tableUsuarios_length select', '', false, false);
+    });
 }
 
-tableUsuarios.on('draw.dt', function (e, settings) {
-    // $('#modalUsuarios').modal('show')
-    $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios')
-    $('#RowTableUsers').removeClass('invisible')
-    $('#tableUsuarios').removeClass('loader-in');
-});
-tableUsuarios.on('page.dt', function (e, settings) {
-    loadingTableUser('#tableUsuarios')
-});
-tableUsuarios.on('xhr.dt', function (e, settings, json) {
-    tableUsuarios.off('xhr.dt');
-});
-tableUsuarios.on('init.dt', function (e, settings, json) {
-    $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h40 opa8 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>')
-    $('#tableUsuarios_filter input').removeClass('form-control-sm')
-    $('#tableUsuarios_filter input').attr("style", "height: 40px !important");
-    select2Simple('#tableUsuarios_length select', '', false, false)
-});
 $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
     // data datatable
@@ -703,7 +688,7 @@ $(document).on("click", ".trainUser", function (e) {
         `)
 
     $('#modalTrain').modal('show');
-    $('#modalTrain .modal-body').append(`<div class="aguarde d-flex justify-content-center p-3 animate__animated animate__fadeIn">Aguarde por favor..</div>`);
+    $('#modalTrain .modal-body').append(`<div class="aguarde d-flex justify-content-center p-3 fadeIn">Aguarde por favor..</div>`);
 
     $('#modalTrain #submitTrain').hide();
 
@@ -746,7 +731,7 @@ $(document).on("click", ".trainUser", function (e) {
                         path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                     }
                     divFoto = `<div class="col-4 col-sm-3 col-md-3 col-lg-2 pb-3 d-flex justify-content-center">`
-                    divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn" data-toggle="buttons">`
+                    divFoto += `<div class="btn-group-toggle fadeIn" data-toggle="buttons">`
                     divFoto += `<label for="${element.id_api}" class="disabled active shadow-sm btn btn-success border-0 p-1" style="width:80px;">`
                     divFoto += `<input type="checkbox" readonly value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:80px; height:80px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
                     divFoto += `</label>`
@@ -775,7 +760,7 @@ $(document).on("click", ".trainUser", function (e) {
                             path = document.getElementById('apiMobile').value + '/chweb/mobile/hrp/'
                         }
                         divFoto = `<div class="col-6 col-sm-4 col-md-4 col-lg-3 pb-2 d-flex justify-content-center">`
-                        divFoto += `<div class="btn-group-toggle animate__animated animate__fadeIn selected" data-toggle="buttons">`
+                        divFoto += `<div class="btn-group-toggle fadeIn selected" data-toggle="buttons">`
                         divFoto += `<label for="${element.id_api}" class="shadow-sm btn btn-outline-success border-0 p-2" style="width:140px;">`
                         divFoto += `<input type="checkbox" name="idPunchEvent[]" value="${element.id_api}"><img loading="lazy" id="${element.id_api}" src="${path}${url_foto}" style="width:140px; height:140px" class="radius img-fluid shadow" title="${element.imageData.humanSize}">`
                         divFoto += `</label>`
@@ -805,9 +790,9 @@ $(document).on("click", ".trainUser", function (e) {
 
                 if (selected.length >= maxTotalSelected(data2.length)) {
                     $('#modalTrain .totalSelected').html("(" + selected.length + ")" + " Máximo permitido: " + 10 + "");
-                    $('#modalTrain .totalSelected').addClass('animate__animated animate__flash')
+                    $('#modalTrain .totalSelected').addClass('flash')
                     setTimeout(() => {
-                        $('#modalTrain .totalSelected').removeClass('animate__animated animate__flash')
+                        $('#modalTrain .totalSelected').removeClass('flash')
                     }, 500);
                     $("#modalTrain .modal-body input:checkbox").prop('disabled', true)
                 } else {

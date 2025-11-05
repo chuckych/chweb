@@ -767,3 +767,13 @@ $('#collapseTokenView').on('show.bs.collapse', function () {
         ls.set(LS_TOKEN_MOBILE, true);
     }
 })
+const visible540 = () => {
+    if ($(window).width() < 540) return false;
+    return true;
+}
+const lengthMenuUsers = () => {
+    if ($(window).width() < 540) {
+        return [[3, 10, 25, 50, 100, 200], [3, 10, 25, 50, 100, 200]];
+    }
+    return [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]];
+}

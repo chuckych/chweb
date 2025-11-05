@@ -110,16 +110,17 @@ function secure_auth_ch_json()
 {
     timeZone();
     timeZone_lang();
-    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? '';
+    
+    $secure_auth_ch = $_SESSION["secure_auth_ch"] ?? '';
     if (
-        $_SESSION["secure_auth_ch"] !== true
+        $secure_auth_ch !== true
         || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
         // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
         // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
         // || ($_SESSION['DIA_ACTUAL'] !== hoy())
     ) {
-        $_SERVER['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'] ?? '';
-        $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($_SERVER['HTTP_REFERER']) . '">Iniciar sesi&oacute;n </a>';
+        $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
+        $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($HTTP_REFERER) . '">Iniciar sesi&oacute;n </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
     } else {
@@ -142,7 +143,7 @@ function secure_auth_ch_json()
             $_SESSION["ultimoAcceso"] = $ahora;
         }
     }
-    // session_regenerate_id();
+    // session_regenerate_id(); // Regenera la sesión para prevenir ataques de fijación de sesión
     E_ALL();
 }
 function secure_auth_ch2()
@@ -180,7 +181,7 @@ function secure_auth_ch2()
         }
         checkDBLocal();
     }
-    // session_regenerate_id();
+    // session_regenerate_id(); // Regenera la sesión para prevenir ataques de fijación de sesión
     E_ALL();
 }
 /** ultimaacc */

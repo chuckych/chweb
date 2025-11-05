@@ -1,10 +1,10 @@
 $('li').on('shown.bs.dropdown', function () {
     $(this).addClass('bg-light shadow-sm radius')
-    $(this).children(".dropdown-menu").addClass("animate__animated animate__fadeIn mt-1");
+    $(this).children(".dropdown-menu").addClass("fadeIn mt-1");
 })
 $('li').on('hidden.bs.dropdown', function () {
     $(this).removeClass('bg-light shadow-sm radius')
-    $(this).children(".dropdown-menu").removeClass("animate__animated animate__fadeIn mt-1");
+    $(this).children(".dropdown-menu").removeClass("fadeIn mt-1");
 })
 function formatDate(date) {
     let d = new Date(date),
@@ -73,24 +73,24 @@ function SumarMes(fecha, cant) {
 }
 function fadeInOnChange(selector, selector2) {
     $(selector).change(function (e) {
-        $(selector2).addClass('animate__animated animate__fadeIn')
+        $(selector2).addClass('fadeIn')
         setTimeout(function () {
-            $(selector2).removeClass('animate__animated animate__fadeIn')
+            $(selector2).removeClass('fadeIn')
         }, 100);
     });
 }
 function fadeInOnClick(selector, selector2) {
     $(selector).on("click", function (e) {
-        $(selector2).addClass('animate__animated animate__fadeIn')
+        $(selector2).addClass('fadeIn')
         setTimeout(function () {
-            $(selector2).removeClass('animate__animated animate__fadeIn')
+            $(selector2).removeClass('fadeIn')
         }, 100);
     });
 }
 function fadeInOnly(selector2) {
-    $(selector2).addClass('animate__animated animate__fadeIn')
+    $(selector2).addClass('fadeIn')
     setTimeout(function () {
-        $(selector2).removeClass('animate__animated animate__fadeIn')
+        $(selector2).removeClass('fadeIn')
     }, 1000);
 }
 function classHover(selector, efect) {
@@ -216,21 +216,21 @@ $(".trash").attr('data-icon', '');
 $(".edit").attr('data-icon', '');
 $('[data-toggle="tooltip"]').tooltip()
 
-function ShowLoading(e) {
-    var div = document.createElement('div');
-    var img = document.createElement('img');
-    div.innerHTML = '<style>.container{opacity:0.5 !important}</style><div id="ShowLoading" class="pl-2 animate__animated animate__fadeIn fixed-top border border-secondary mx-auto d-flex align-items-center text-white font-weight-bold text-center bg-custom" style="top:30%;width:220px;text-align:center;z-index:1050;height:50px;font-size:1.1em;border-radius:4px; opacity:0.5 !important"><small>&nbsp;&nbsp;&nbsp;&nbsp;Aguarde por favor... <div class="spinner-border spinner-border-sm text-white mx-auto" role="status" aria-hidden="true"></div></small></div>';
+function ShowLoading() {
+    const div = document.createElement('div');
+    const img = document.createElement('img');
+    div.innerHTML = '<style>.container{opacity:0.5 !important}</style><div id="ShowLoading" class="pl-2 fadeIn fixed-top border border-secondary mx-auto d-flex align-items-center text-white font-weight-bold text-center bg-custom" style="top:30%;width:220px;text-align:center;z-index:1050;height:50px;font-size:1.1em;border-radius:4px; opacity:0.5 !important"><small>&nbsp;&nbsp;&nbsp;&nbsp;Aguarde por favor... <div class="spinner-border spinner-border-sm text-white mx-auto" role="status" aria-hidden="true"></div></small></div>';
     div.style.cssText = '';
     div.appendChild(img);
-    document.body.
-        appendChild(div); return true;
+    document.body.appendChild(div); return true;
 }
+
 function cargando_table(e) {
-    let div = document.createElement('div');
+    const div = document.createElement('div');
     div.setAttribute("class", "_cargando");
     div.innerHTML = `
     <div><style>.table div{opacity:0.4}</style>
-    <div class="animate__animated animate__fadeIn fixed-top mx-auto d-flex align-items-center justify-content-center text-white text-center bg-custom" style="top:30%;width:220px;text-align:center;z-index:1050;height:50px">
+    <div class="fadeIn fixed-top mx-auto d-flex align-items-center justify-content-center text-white text-center bg-custom" style="top:30%;width:220px;text-align:center;z-index:1050;height:50px">
         <span class="fontq">Aguarde por favor... 
             <div class="spinner-border spinner-border-sm text-white" role="status" aria-hidden="true"></div>
         </span>
@@ -241,7 +241,7 @@ function goBack() {
     window.history.back();
 }
 $(window).on('load', function () {
-    $(".loader").fadeOut("slow");
+    $(".loader").fadeOut("fast");
 });
 
 let _homehost = $("#_homehost").val();
@@ -423,7 +423,7 @@ function vjs() {
 $('.requerido').html('(*)')
 
 function respuesta_form(selector, Mensaje, alert) {
-    let respuesta_form = $(selector).html('<div class="mt-3 animate__animated animate__fadeInDown alert alert-' + alert + ' alert-dismissible fontq p-3 fw5" role="alert">' + Mensaje + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
+    let respuesta_form = $(selector).html('<div class="mt-3 fadeInDown alert alert-' + alert + ' alert-dismissible fontq p-3 fw5" role="alert">' + Mensaje + '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>')
     setTimeout(function () {
         $('.alert-' + alert).removeClass('fadeInDown')
         $('.alert-' + alert).addClass('fadeOutUp')
@@ -453,8 +453,8 @@ function notify(Mensaje, type, delay, NotifAlign, from) {
             align: NotifAlign /** orientación de la notificación */
         },
         animate: {
-            enter: 'animate__animated animate__fadeInDown',
-            exit: 'animate__animated animate__fadeOut'
+            enter: 'fadeInDown',
+            exit: 'fadeOut'
         },
     });
 }
@@ -811,7 +811,7 @@ const getFicNovHor = (selector, date1, date2, lega) => {
 
             container.innerHTML += `
             <div class="p-2">
-                <table class="table w-100 animate__animated animate__fadeIn">
+                <table class="table w-100 fadeIn">
                     <thead>
                         <tr>
                             <th>Fecha</th>

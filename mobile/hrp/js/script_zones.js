@@ -1,33 +1,38 @@
 
-// const LS_MODAL_ZONE = homehost + '_mobile_modal_zone';
-// const LS_MODALES = homehost + '_mobile_modales';
-
-// ls.remove(LS_MODAL_ZONE);
-
-
-// if (!ls.get(LS_MODAL_ZONE)) {
-//     axios.get('modalZone.php').then((response) => {
-//         ls.set(LS_MODAL_ZONE, response.data);
-//     }).catch(() => {
-//         ls.remove(LS_MODAL_ZONE);
-//     });
-// }
-
 const loadingTableZones = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
-
-    // $(selectorTable + ' td div').addClass('bg-light text-light border-0')
-    // $(selectorTable + ' td p').addClass('bg-light text-light border-0')
-    // $(selectorTable + ' td img').addClass('invisible')
-    // $(selectorTable + ' td i').addClass('invisible')
-    // $(selectorTable + ' td span').addClass('invisible')
-    // $(selectorTable + ' td p').addClass('invisible')
 }
-if ($(window).width() < 540) {
-    tableZones = $('#tableZones').DataTable({
-        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-            "<'row '<'col-12 table-responsive't>>" +
-            "<'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>",
+
+const domTableZones = () => {
+    if ($(window).width() < 540) {
+        return `<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>><'row '<'col-12 table-responsive't>><'fixed-bottom'<''<'d-flex p-0 justify-content-center'p><'pb-2'i>>>`
+    }
+    return `<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>><'row '<'col-12 table-responsive't>><'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>`;
+}
+const columnZones540 = (row) => {
+    let del = `<span data-titlel="Eliminar" class="btn btn-outline-custom border bi bi-trash delZone"></span>`
+    if (row.totalZones > 1) {
+        del = `<span data-titlel="No se puede eliminar" class="btn btn-outline-custom border bi bi-trash disabled"></span>`
+    }
+    return `
+    <p class="text-uppercase font-weight-bold text-secondary my-0 py-0">${row.zoneName}</p>
+    <span class="text-secondary">Radio: ${row.zoneRadio} Mts.</span>
+    <div class="d-flex justify-content-end w-100">
+    <span data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom border bi bi-pen updZone"></span>
+    ${del}
+    </div>
+    `
+}
+
+const dtZones = () => {
+
+    if ($.fn.DataTable.isDataTable('#tableZones')) {
+        $('#tableZones').DataTable().ajax.reload(null, false);
+        return false;
+    }
+
+    const tableZones = $('#tableZones').DataTable({
+        dom: domTableZones(),
         ajax: {
             url: "getZonesMobile.php",
             type: "POST",
@@ -35,120 +40,79 @@ if ($(window).width() < 540) {
             error: function () { },
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
-        },
-        columns: [
-            /** Columna Nombre */
-            {
-                className: 'align-middle w-100', targets: '', title: `Zonas`,
-                "render": function (data, type, row, meta) {
-                    let del = `<span data-titlel="Eliminar" class="btn btn-outline-custom border bi bi-trash delZone"></span>`
-                    if (row.totalZones > 1) {
-                        del = `<span data-titlel="No se puede eliminar" class="btn btn-outline-custom border bi bi-trash disabled"></span>`
-                    }
-                    let datacol = `
-                            <p class="text-uppercase font-weight-bold text-secondary my-0 py-0">${row.zoneName}</p>
-                            <span class="text-secondary">Radio: ${row.zoneRadio} Mts.</span>
-                            <div class="d-flex justify-content-end w-100">
-                            <span data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom border bi bi-pen updZone"></span>
-                            ${del}
-                            </div>
-                        `
-                    return datacol;
-                },
-            }
-        ],
-        lengthMenu: [[3, 10, 23, 50, 100, 200], [3, 10, 25, 50, 100, 200]],
-        bProcessing: false,
-        serverSide: true,
-        deferRender: true,
-        searchDelay: 500,
-        paging: true,
-        searching: true,
-        info: true,
-        ordering: false,
-        scrollY: '320px',
-        scrollCollapse: true,
-        scrollX: true,
-        fixedHeader: false,
-        language: DT_SPANISH_SHORT2,
-    });
-} else {
-    tableZones = $('#tableZones').DataTable({
-        dom: "<'row lengthFilterTable'<'col-12 d-flex align-items-end m-0 justify-content-between'lf>>" +
-            "<'row '<'col-12 table-responsive't>>" +
-            "<'row d-none d-sm-block'<'col-12 d-flex align-items-center justify-content-between'ip>>",
-        ajax: {
-            url: "getZonesMobile.php",
-            type: "POST",
-            "data": function (data) { },
-            error: function () { },
-        },
-        createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
+            $(row).addClass('fadeIn align-middle');
         },
         columns: [
             /** Columna Nombre */
             {
                 className: '', targets: '', title: `<div class="w250 ">Zona</div>`,
-                "render": function (data, type, row, meta) {
-                    let datacol = `<div class="d-flex flex-column">
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    if ($(window).width() < 540) {
+                        return columnZones540(row);
+                    }
+                    return `<div class="d-flex flex-column">
                         <div title="${row.zoneName}" class="text-truncate w250">${row.zoneName}</div><span class="text-secondary fontp">Evento: ${row.zoneEvent}</span>
-                    </div>`
-                    return datacol;
+                    </div>`;
                 },
             },
             /** Columna Radio */
             {
                 className: 'text-center', targets: '', title: `<div class="w40">Radio</div>`,
-                "render": function (data, type, row, meta) {
-                    let datacol = `<div class="w40 ls1">${row.zoneRadio}</div>`
-                    return datacol;
-                },
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    if ($(window).width() < 540) return false;
+                    return `<div class="w40 ls1">${row.zoneRadio}</div>`
+                }, visible: visible540(),
             },
-            // /** Columna Longitud */
-            // {
-            //     className: 'align-middle', targets: '', title: `<div class="w90">Longitud</div>`,
-            //     "render": function (data, type, row, meta) {
-            //         let datacol = `<div data-titlet="" class="text-truncate ls1 w90">${row.zoneLng}</div>`
-            //         return datacol;
-            //     },
-            // },
             /** Columna cant TotalZones */
             {
                 className: 'text-center', targets: '', title: '<div class="w70">Registros</div>',
-                "render": function (data, type, row, meta) {
-                    let datacol = `<div class="ls1 w70">${row.totalZones}</div>`
-                    return datacol;
-                },
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    if ($(window).width() < 540) return false;
+                    return `<div class="ls1 w70">${row.totalZones}</div>`
+                }, visible: visible540(),
             },
             /** Columna Lat / Lng */
             {
                 className: 'align-middle', targets: '', title: `<div class="w90">Lat / Lng</div>`,
-                "render": function (data, type, row, meta) {
-                    let datacol = `<div data-titlet="" class="ls1 w90 fontp text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
-                    return datacol;
-                },
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    if ($(window).width() < 540) return false;
+                    return `<div data-titlet="" class="ls1 w90 fontp text-secondary">${row.zoneLat}<br>${row.zoneLng}</div>`
+                }, visible: visible540(),
             },
             /** Columna Acciones */
             {
                 className: 'w-100', targets: '', title: '',
-                "render": function (data, type, row, meta) {
+                render: function (data, type, row, meta) {
+                    if (type !== 'display') {
+                        return '';
+                    }
+                    if ($(window).width() < 540) return false;
                     let del = `<span><button data-titlel="Eliminar" class="btn btn-outline-custom border-0 bi bi-trash delZone"></button></span>`
                     if (row.totalZones > 1) {
                         del = `<span><button data-titlel="No se puede eliminar" class="btn btn-outline-custom border-0 bi bi-trash disabled"></button></span>`
                     }
-                    let datacol = `
+                    return `
                     <div class="float-right border p-1">
                         <span><button data-titlel="Editar Zona" class="mr-1 btn btn-outline-custom border-0 bi bi-pen updZone"></button></span>
                         ${del}
                     </div>
                     `
-                    return datacol;
-                },
+                }, visible: visible540(),
             },
         ],
-        lengthMenu: [[5, 10, 25, 50, 100, 200], [5, 10, 25, 50, 100, 200]],
+        lengthMenu: lengthMenuUsers(),
         bProcessing: false,
         serverSide: true,
         deferRender: true,
@@ -157,124 +121,31 @@ if ($(window).width() < 540) {
         searching: true,
         info: true,
         ordering: false,
-        // scrollY: '52vh',
-        scrollY: '370px',
+        scrollY: visible540() ? '100%' : '370px',
         scrollCollapse: true,
         scrollX: true,
         fixedHeader: false,
         language: DT_SPANISH_SHORT2
     });
+    tableZones.on('init.dt', function (e, settings) {
+        $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h40 opa8 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>');
+        $('#tableZones_filter input').removeClass('form-control-sm');
+        $('#tableZones_filter input').attr("style", "height: 40px !important");
+        select2Simple('#tableZones_length select', '', false, false);
+    });
+    tableZones.on('draw.dt', function (e, settings) {
+        $('#tableZones_filter .form-control-sm').attr('placeholder', 'Buscar Zonas');
+        $('#RowTableZones').removeClass('invisible');
+        $('#tableZones').removeClass('loader-in');
+    });
+    tableZones.on('page.dt', function (e, settings) {
+        loadingTableZones('#tableZones');
+    });
+    tableZones.on('xhr', function (e, settings, json) {
+        tableZones.off('xhr');
+    });
 }
-
-
-tableZones.on('init.dt', function (e, settings) {
-    $('#tableZones_filter').prepend('<button data-titlel="Nueva Zona" class="btn btn-sm btn-custom h40 opa8 px-3" id="addZone"><i class="bi bi-plus-lg"></i></button>')
-    $('#tableZones_filter input').removeClass('form-control-sm')
-    $('#tableZones_filter input').attr("style", "height: 40px !important");
-    select2Simple('#tableZones_length select', '', false, false)
-});
-tableZones.on('draw.dt', function (e, settings) {
-    // $('#modalUsuarios').modal('show')
-    $('#tableZones_filter .form-control-sm').attr('placeholder', 'Buscar Zonas')
-    $('#RowTableZones').removeClass('invisible')
-    $('#tableZones').removeClass('loader-in');
-
-});
-tableZones.on('page.dt', function (e, settings) {
-    loadingTableZones('#tableZones')
-});
-tableZones.on('xhr', function (e, settings, json) {
-    tableZones.off('xhr');
-});
-$(document).on("click", ".addZone", function (e) {
-    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-
-    let modalZone = ls.get(LS_MODALES);
-
-    if (!data) {
-        return;
-    }
-    if (!modalZone) {
-        return;
-    }
-    $('#modales').html(modalZone)
-    // axios({
-    // method: 'post',
-    // url: 'modalZone.html?v=' + $.now(),
-    // }).then(function (response) {
-    // $('#modales').html(response.data)
-    // }).then(function () {
-    $('#modalZone .modal-title').html('Nueva Zona')
-    $('#formZonePhoneID').val(data.phoneid)
-    $('#modalZone').modal('show');
-    $('#formZone .requerido').html('(*)')
-    $('#formZone .form-control').attr('autocomplete', 'off')
-    $('#formZone #formZoneEvento').mask('0000', { reverse: false });
-    $('#formZone #formZoneTipo').val('add_zone')
-
-    setTimeout(() => {
-        $('#formZone #formZoneNombre').focus();
-    }, 500);
-
-    // }).then(function () {
-
-    // }).catch(function (error) {
-    // alert(error)
-    // }).then(function () {
-    $("#formZone").bind("submit", function (e) {
-        e.preventDefault();
-        let tipoStatus = '';
-        switch ($('#formZone #formZoneTipo').val()) {
-            case 'del_zone':
-                tipoStatus = 'eliminado';
-                break;
-            case 'upd_zone':
-                tipoStatus = 'actualizado';
-                break;
-            case 'add_zone':
-                tipoStatus = 'Creado';
-                break;
-            default:
-                tipoStatus = '';
-                break;
-        }
-        $.ajax({
-            type: $(this).attr("method"),
-            url: 'crud.php',
-            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
-            // dataType: "json",
-            beforeSend: function (data) {
-                CheckSesion()
-                $.notifyClose();
-                notify('Aguarde..', 'info', 0, 'right')
-                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-            },
-            success: function (data) {
-                if (data.status == "ok") {
-                    $.notifyClose();
-                    let zoneName = data.Mensaje.zoneName
-                    notify('Dispositivo ' + zoneName + '<br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                    // $('#tableUsuarios').DataTable().ajax.reload();
-                    $('#table-mobile').DataTable().ajax.reload(null, false);
-                    $('#tableZones').DataTable().ajax.reload();
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                    $('#modalZone').modal('hide');
-                } else {
-                    $.notifyClose();
-                    notify(data.Mensaje, 'danger', 5000, 'right')
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
-                }
-            },
-            error: function () { }
-        });
-    });
-    $('#modalZone').on('hidden.bs.modal', function () {
-        $('#modales').html(' ');
-    });
-    // });
-
-});
-let mapZone = (latitud, longitud, zoom = 4) => {
+const mapZone = (latitud, longitud, zoom = 4) => {
     $("input[name=lat]").val(latitud);
     $("input[name=lng]").val(longitud);
     var center = new google.maps.LatLng(latitud, longitud);
@@ -344,7 +215,7 @@ let mapZone = (latitud, longitud, zoom = 4) => {
         $("#geocomplete").trigger("geocode");
     })
 }
-let select2Radio = (selector) => {
+const select2Radio = (selector) => {
     $(selector).select2({
         placeholder: "Radio en Metros",
         allowClear: false,
@@ -358,179 +229,130 @@ let select2Radio = (selector) => {
 }
 $(document).on("click", "#addZone", function (e) {
 
-    let modalZone = ls.get(LS_MODALES);
+    const modalZone = ls.get(LS_MODALES);
 
     if (!modalZone) {
         return;
     }
     $('#modales').html(modalZone)
 
-    // axios({
-    // method: 'post',
-    // url: 'modalZone.html?v=' + $.now(),
-    // }).then(function (response) {
-    // $('#modales').html(response.data)
-    // $('#RowTableZones').html(response.data)
-    // }).then(function () {
-    $('#modalZone .modal-title').html('Nueva Zona')
+    $('#modalZone .modal-title').html('Nueva Zona');
     $('#modalZone').modal('show');
-    $('#formZone .requerido').html('(*)')
-    $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-    $('#formZone #formZoneTipo').val('add_zone')
+    $('#formZone .requerido').html('(*)');
+    $('#formZone .form-control').attr('autocomplete', '_chweb_off');
+    $('#formZone #formZoneTipo').val('add_zone');
     select2Radio("#formZone #formZoneRadio");
     setTimeout(() => {
-        $('#formZone .form-control').attr('autocomplete', '_chweb_off')
+        $('#formZone .form-control').attr('autocomplete', '_chweb_off');
         $('#formZone #geocomplete').focus();
-        $('#formZone #geocomplete').removeAttr('readonly')
+        $('#formZone #geocomplete').removeAttr('readonly');
     }, 500);
 
-    // }).then(function () {
+    const defaulLat = -34.6037389;
+    const defaulLng = -58.3815704;
+    mapZoneNear(defaulLat, defaulLng, 8);
 
-    let defaulLat = -38.416097;
-    let defaulLng = -63.616671;
-    mapZoneNear(defaulLat, defaulLng);
-
-    // }).catch(function (error) {
-    // alert(error)
-    // }).then(function () {
     $("#formZone").bind("submit", function (e) {
         e.preventDefault();
-        let tipoStatus = '';
-        switch ($('#formZone #formZoneTipo').val()) {
-            case 'del_zone':
-                tipoStatus = 'eliminada';
-                break;
-            case 'upd_zone':
-                tipoStatus = 'actualizada';
-                break;
-            case 'add_zone':
-                tipoStatus = 'Creada';
-                break;
-            default:
-                tipoStatus = '';
-                break;
+        const mapTipoStatus = {
+            'del_device': 'eliminada',
+            'upd_device': 'actualizada',
+            'add_device': 'Creada'
         }
+        const valueTipo = $('#formZone #formZoneTipo').val() || '';
         $.ajax({
             type: $(this).attr("method"),
             url: 'crud.php',
-            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val(),
+            data: $(this).serialize() + '&tipo=' + valueTipo,
             // dataType: "json",
             beforeSend: function (data) {
-                CheckSesion()
+                CheckSesion();
                 $.notifyClose();
-                notify('Aguarde..', 'info', 0, 'right')
-                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                notify('Aguarde..', 'info', 0, 'right');
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
             },
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    let zoneName = data.Mensaje.zoneName
-                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    const zoneName = data.Mensaje.zoneName;
+                    notify('Zona <b>' + zoneName + '</b><br />' + (mapTipoStatus[valueTipo] ?? '') + ' ' + 'correctamente.', 'success', 5000, 'right');
                     $('#table-mobile').DataTable().ajax.reload(null, false);
                     $('#tableZones').DataTable().search(zoneName).draw();
-                    classEfect('#tableZones_filter input', 'border-custom')
+                    classEfect('#tableZones_filter input', 'border-custom');
                     $('#tableZones').DataTable().ajax.reload();
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                     $('#modalZone').modal('hide');
                 } else {
                     $.notifyClose();
-                    notify(data.Mensaje, 'danger', 5000, 'right')
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    notify(data.Mensaje, 'danger', 5000, 'right');
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                 }
             },
             error: function () { }
         });
     });
     $('#modalZone').on('hidden.bs.modal', function () {
-        $('#modales').html(' ');
+        $('#modales').html('');
     });
-    // });
-
 });
 $(document).on("click", ".updZone", function (e) {
-    // alert('Aca estamos')
-    // get data datatable row
-    let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
+    const data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODALES);
+    const modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
     }
+
     if (!modalZone) {
         return;
     }
-    $('#modales').html(modalZone)
 
-    // console.log(data);
-    let zoneLat = data.zoneLat;
-    let zoneLng = data.zoneLng;
-    let zoneRadio = data.zoneRadio;
-    let zoneName = data.zoneName;
-    let idZone = data.zoneID;
-    let zoneEvent = data.zoneEvent;
+    $('#modales').html(modalZone);
 
-    // return false;
-    // axios({
-    // method: 'post',
-    // url: 'modalZone.html?v=' + $.now(),
-    // }).then(function (response) {
-    // $('#modales').html(response.data)
-    // $('#RowTableZones').html(response.data)
-    // }).then(function () {
-    $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+    const zoneLat = data.zoneLat;
+    const zoneLng = data.zoneLng;
+    const zoneRadio = data.zoneRadio;
+    const zoneName = data.zoneName;
+    const idZone = data.zoneID;
+    const zoneEvent = data.zoneEvent;
+
+    $('#modalZone .modal-title').html('<div>Editar Zona</div><div class="fontq text-secondary">' + zoneName + '</div>');
     $('#formZone #divGeocomplete').hide();
     $('#modalZone').modal('show');
-    $('#formZone .requerido').html('(*)')
-    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-    $('#formZone #formZoneTipo').val('upd_zone')
-    $('#formZone #formZoneNombre').val(zoneName)
-    $('#formZone #formZoneLat').val(zoneLat)
-    $('#formZone #formZoneLng').val(zoneLng)
-    $('#formZone #formZoneRadio').val(zoneRadio)
-    $('#formZone #formZoneEvento').val(zoneEvent)
+    $('#formZone .requerido').html('(*)');
+    $('#formZone #formZoneTipo').val('upd_zone');
+    $('#formZone #formZoneNombre').val(zoneName);
+    $('#formZone #formZoneLat').val(zoneLat);
+    $('#formZone #formZoneLng').val(zoneLng);
+    $('#formZone #formZoneRadio').val(zoneRadio);
+    $('#formZone #formZoneEvento').val(zoneEvent);
 
     select2Radio("#formZone #formZoneRadio");
 
     setTimeout(() => {
-        $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-        focusEndText('#formZone #formZoneNombre')
-        $('#formZone #geocomplete').removeAttr('readonly')
+        $('#formZone .form-control').attr('autocomplete', '_chweb_off');
+        focusEndText('#formZone #formZoneNombre');
+        $('#formZone #geocomplete').removeAttr('readonly');
     }, 500);
 
-    // }).then(function () {
+    const defaulLat = zoneLat;
+    const defaulLng = zoneLng;
+    mapZoneNear(defaulLat, defaulLng, 8);
 
-    let defaulLat = zoneLat;
-    let defaulLng = zoneLng;
-    mapZoneNear(defaulLat, defaulLng, 16);
-
-    // }).catch(function (error) {
-    // alert(error)
-    // }).then(function () {
     $("#formZone").bind("submit", function (e) {
         e.preventDefault();
-        let tipoStatus = '';
-        switch ($('#formZone #formZoneTipo').val()) {
-            case 'del_zone':
-                tipoStatus = 'eliminada';
-                break;
-            case 'upd_zone':
-                tipoStatus = 'actualizada';
-                break;
-            case 'add_zone':
-                tipoStatus = 'Creada';
-                break;
-            default:
-                tipoStatus = '';
-                break;
+        const mapTipoStatus = {
+            'del_device': 'eliminada',
+            'upd_device': 'actualizada',
+            'add_device': 'Creada'
         }
+        const valueTipo = $('#formZone #formZoneTipo').val() || '';
+
         $.ajax({
             type: $(this).attr("method"),
             url: 'crud.php',
-            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-            // dataType: "json",
+            data: $(this).serialize() + '&tipo=' + valueTipo + '&idZone=' + idZone,
             beforeSend: function (data) {
                 CheckSesion()
                 $.notifyClose();
@@ -540,14 +362,13 @@ $(document).on("click", ".updZone", function (e) {
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    let zoneName = data.Mensaje.zoneName
-                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                    // $('#tableUsuarios').DataTable().ajax.reload();
-                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    const zoneName = data.Mensaje.zoneName;
+                    notify('Zona <b>' + zoneName + '</b><br />' + (mapTipoStatus[valueTipo] ?? '') + ' ' + 'correctamente.', 'success', 5000, 'right');
                     $('#tableZones').DataTable().search(zoneName).draw();
-                    classEfect('#tableZones_filter input', 'border-custom')
-                    $('#tableZones').DataTable().ajax.reload();
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    classEfect('#tableZones_filter input', 'border-custom');
+                    dtZones();
+                    $('#table-mobile').DataTable().ajax.reload(null, false);
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                     $('#modalZone').modal('hide');
                 } else {
                     $.notifyClose();
@@ -559,15 +380,13 @@ $(document).on("click", ".updZone", function (e) {
         });
     });
     $('#modalZone').on('hidden.bs.modal', function () {
-        $('#modales').html(' ');
+        $('#modales').html('');
     });
-    // });
-
 });
 $(document).on("click", ".delZone", function (e) {
-    let data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
+    const data = $('#tableZones').DataTable().row($(this).parents('tr')).data();
 
-    let modalZone = ls.get(LS_MODALES);
+    const modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -576,90 +395,56 @@ $(document).on("click", ".delZone", function (e) {
         return;
     }
     $('#modales').html(modalZone)
-    // console.log(data);
-    let zoneLat = data.zoneLat;
-    let zoneLng = data.zoneLng;
-    let zoneRadio = data.zoneRadio;
-    let zoneName = data.zoneName;
-    let idZone = data.zoneID;
-    // return false;
-    // axios({
-    // method: 'post',
-    // url: 'modalZone.html?v=' + $.now(),
-    // }).then(function (response) {
-    // $('#modales').html(response.data)
-    // $('#RowTableZones').html(response.data)
-    // }).then(function () {
+    const zoneLat = data.zoneLat;
+    const zoneLng = data.zoneLng;
+    const zoneRadio = data.zoneRadio;
+    const zoneName = data.zoneName;
+    const idZone = data.zoneID;
+
     $('#modalZone .modal-title').html('<div class="text-danger">¿Eliminar Zona?</div><div class="">' + zoneName + '</div>')
     $('#modalZone').modal('show');
-    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
     $('#formZone #formZoneTipo').val('del_zone').attr('disabled', 'disabled')
-    // $('#formZone #geocomplete').hide();
     $('#formZone .modal-dialog').removeClass('modal-lg');
     $('#formZone .modal-body').html('');
-    // $('#formZone #divForm').removeClass('col-lg-6');
-    // $('#formZone #divMapCanva').remove();
-    // $('#formZone #reset').remove();
-    // $('#formZone #formZoneNombre').val(zoneName).attr('disabled', 'disabled')
-    // $('#formZone #formZoneLat').val(zoneLat).attr('disabled', 'disabled')
-    // $('#formZone #formZoneLng').val(zoneLng).attr('disabled', 'disabled')
-    // $('#formZone #formZoneRadio').val(zoneRadio).attr('disabled', 'disabled')
 
-    // select2Radio("#formZone #formZoneRadio");
-
-    // }).then(function () {
-    // }).catch(function (error) {
-    // alert(error)
-    // }).then(function () {
     $("#formZone").bind("submit", function (e) {
         e.preventDefault();
-        let tipoStatus = '';
-        switch ($('#formZone #formZoneTipo').val()) {
-            case 'del_zone':
-                tipoStatus = 'eliminada';
-                break;
-            case 'upd_zone':
-                tipoStatus = 'actualizada';
-                break;
-            case 'add_zone':
-                tipoStatus = 'Creada';
-                break;
-            default:
-                tipoStatus = '';
-                break;
+        const mapTipoStatus = {
+            'del_device': 'eliminada',
+            'upd_device': 'actualizada',
+            'add_device': 'Creada'
         }
+        const valueTipo = $('#formZone #formZoneTipo').val() || '';
         $.ajax({
             type: $(this).attr("method"),
             url: 'crud.php',
-            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-            // dataType: "json",
+            data: $(this).serialize() + '&tipo=' + valueTipo + '&idZone=' + idZone,
             beforeSend: function (data) {
-                CheckSesion()
+                CheckSesion();
                 $.notifyClose();
-                notify('Aguarde..', 'info', 0, 'right')
-                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                notify('Aguarde..', 'info', 0, 'right');
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
             },
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    let zoneName = data.Mensaje.zoneName
-                    notify('Zona <b>' + zoneName + '</b><br />' + tipoStatus + ' ' + 'correctamente.', 'success', 5000, 'right')
-                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    const zoneName = data.Mensaje.zoneName
+                    notify('Zona <b>' + zoneName + '</b><br />' + (mapTipoStatus[valueTipo] ?? '') + ' ' + 'correctamente.', 'success', 5000, 'right');
                     $('#table-mobile').DataTable().ajax.reload(null, false);
                     $('#tableZones').DataTable().ajax.reload();
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                     $('#modalZone').modal('hide');
                 } else {
                     $.notifyClose();
-                    notify(data.Mensaje, 'danger', 5000, 'right')
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    notify(data.Mensaje, 'danger', 5000, 'right');
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                 }
             },
             error: function () { }
         });
     });
     $('#modalZone').on('hidden.bs.modal', function () {
-        $('#modales').html(' ');
+        $('#modales').html('');
     });
     // });
 
@@ -674,7 +459,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             </div>
         </div>
         `)
-    tableNearZones = $('#tableNearZones').DataTable({
+    const tableNearZones = $('#tableNearZones').DataTable({
         dom: `
             <'row '<'col-12'l>>
             <'row '<'col-12 tableResponsive't>>
@@ -686,13 +471,13 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             error: function () { },
         },
         createdRow: function (row, data, dataIndex) {
-            $(row).addClass('animate__animated animate__fadeIn align-middle');
+            $(row).addClass('fadeIn align-middle');
         },
         columns: [
             /** Columna Nombre */
             {
                 className: 'align-middle py-2 fontq w-100', targets: '', title: `Zonas en cercanía`,
-                "render": function (data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     let syncZone = '';
                     let className = '';
                     if (createZone) {
@@ -707,7 +492,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             /** Columna Distancia */
             {
                 className: 'align-middle py-2 fontq text-right', targets: '', title: 'Distancia',
-                "render": function (data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     let className = '';
                     if (createZone) {
                         className = ((row.distance) <= (row.zoneRadio)) ? 'font-weight-bold' : '';
@@ -720,7 +505,7 @@ function getNearZonesTable($lat, $lng, createZone = false) {
             /** Columna Radio */
             {
                 className: 'align-middle py-2 fontq text-right', targets: '', title: 'Radio',
-                "render": function (data, type, row, meta) {
+                render: function (data, type, row, meta) {
                     let datacol = `<div class="float-right fontq">${row.zoneRadio}</div>`
                     return datacol;
                 },
@@ -735,31 +520,43 @@ function getNearZonesTable($lat, $lng, createZone = false) {
         searching: true,
         info: true,
         ordering: false,
-        // scrollY: '52vh',
-        // scrollCollapse: true,
         language: DT_SPANISH_SHORT2
 
     });
     tableNearZones.on('draw.dt', function (e, settings) {
-        // console.log(settings);
         if (settings._iRecordsTotal > 0) {
             $('#RowTableNearZones').removeClass('invisible')
-            // $('#tableNearZones thead').remove();
         }
     });
     tableNearZones.on('xhr.dt', function (e, settings, json) {
         tableNearZones.off('xhr');
     });
 }
-let mapZoneNear = (latitud, longitud, zoom = 4, createZoneOut = false) => {
+const mapZoneNear = (latitud, longitud, zoom = 10, createZoneOut = false) => {
+    // Validación de Google Maps API
+    if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+        console.error('Google Maps API no está cargada');
+        return;
+    }
+
     $("input[name=lat]").val(latitud);
     $("input[name=lng]").val(longitud);
-    var center = new google.maps.LatLng(latitud, longitud);
-    const image = '../../img/iconMarker.svg'
-    if (createZoneOut == false) {
+    
+    // No necesita await - LatLng es síncrono
+    const center = new google.maps.LatLng(latitud, longitud);
+    const image = '../../img/iconMarker.svg';
+    
+    if (createZoneOut === false) {
         getNearZonesTable(center.lat(), center.lng());
     }
-    $('#RowTableNearZones').addClass('invisible')
+    
+    $('#RowTableNearZones').addClass('invisible');
+    
+    // Remover eventos previos para evitar duplicados
+    $("#geocomplete").off("geocode:result geocode:dragged");
+    $("#formZone #reset").off("click");
+    
+    // Inicializar geocomplete
     $("#geocomplete").geocomplete({
         map: ".map_canvas",
         details: "form",
@@ -793,93 +590,105 @@ let mapZoneNear = (latitud, longitud, zoom = 4, createZoneOut = false) => {
                     ]
                 }
             ]
-        },
-
+        }
     });
-    // on change result geocomplete
+
+    // Obtener el mapa y configurarlo
+    const map = $("#geocomplete").geocomplete("map");
+    
+    // Calcular timeout dinámico según el zoom (mayor zoom = más tiempo)
+    // Zoom 8 o menos: 150ms, Zoom 12: 350ms, Zoom 15+: 500ms
+    const dynamicTimeout = zoom <= 8 ? 150 : (zoom <= 12 ? 350 : 500);
+    
+    setTimeout(() => {
+        google.maps.event.trigger(map, 'resize');
+        
+        // Establecer centro y zoom después del resize
+        map.setCenter(center);
+        map.setZoom(zoom);
+        
+        // Segundo resize después de aplicar zoom para asegurar renderizado completo
+        setTimeout(() => {
+            google.maps.event.trigger(map, 'resize');
+            map.setCenter(center);
+        }, 100);
+    }, dynamicTimeout);
+
+    $("#formZone #reset").hide();
+
+    // Event listener para resultado de geocodificación
     $("#geocomplete").on("geocode:result", function (event, result) {
-        let lat = result.geometry.location.lat();
-        let lng = result.geometry.location.lng();
-        $('#RowTableNearZones').addClass('invisible')
+        const lat = result.geometry.location.lat();
+        const lng = result.geometry.location.lng();
+        $('#RowTableNearZones').addClass('invisible');
         getNearZonesTable(lat, lng);
         focusEndText('#formZone #formZoneNombre');
     });
 
-    var map = $("#geocomplete").geocomplete("map")
-    map.setZoom(zoom);
-
-    $("#formZone #reset").hide();
-
-    $("#geocomplete").bind("geocode:dragged", function (event, latLng) {
+    // Event listener para arrastre del marcador
+    $("#geocomplete").on("geocode:dragged", function (event, latLng) {
         $("input[name=lat]").val(latLng.lat());
         $("input[name=lng]").val(latLng.lng());
-        if ($('#geocomplete').val() != '') {
+        
+        if ($('#geocomplete').val() !== '') {
             $("#formZone #reset").show();
         }
-        $('#RowTableNearZones').addClass('invisible')
+        
+        $('#RowTableNearZones').addClass('invisible');
         getNearZonesTable(latLng.lat(), latLng.lng());
         focusEndText('#formZone #formZoneNombre');
     });
 
+    // Event listener para reset
     $("#formZone #reset").on("click", function () {
         $("#geocomplete").geocomplete("resetMarker");
         $("#geocomplete").geocomplete("map");
         $("#formZone #reset").hide();
         return false;
     });
-
-    // $("#find").on("click", function () {
-    //     $("input[name=lat]").val(center.lat());
-    //     $("input[name=lng]").val(center.lng());
-    //     $("#geocomplete").trigger("geocode");
-    // })
-}
-
-let processRegZone = (lat, lng, reguid) => {
+};
+const processRegZone = (lat, lng, reguid) => {
     $.ajax({
         type: 'POST',
         url: 'crud.php',
         data: 'tipo=proccesZone' + '&lat=' + lat + '&lng=' + lng + '&reguid=' + reguid,
-        // dataType: "json",
         beforeSend: function (data) {
-            CheckSesion()
+            CheckSesion();
             $.notifyClose();
-            notify('Aguarde..', 'info', 0, 'right')
-            ActiveBTN(true, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+            notify('Aguarde..', 'info', 0, 'right');
+            ActiveBTN(true, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona');
         },
         success: function (data) {
             if (data.status == "ok") {
                 $.notifyClose();
-                let zoneName = data.Mensaje.zoneName
-                let result = data.Mensaje.result
-                let zoneDistance = (parseFloat(data.Mensaje.zoneDistance) * 1000).toFixed(2)
+                const zoneName = data.Mensaje.zoneName;
+                const result = data.Mensaje.result;
+                const zoneDistance = (parseFloat(data.Mensaje.zoneDistance) * 1000).toFixed(2);
                 if (result) {
-                    notify('Registro Procesado correctamente.<br>Zona: <b>' + zoneName + '</b><br>Distancia: <b>' + zoneDistance + ' Mts</b>', 'success', 5000, 'right')
+                    notify('Registro Procesado correctamente.<br>Zona: <b>' + zoneName + '</b><br>Distancia: <b>' + zoneDistance + ' Mts</b>', 'success', 5000, 'right');
                     $('#table-mobile').DataTable().ajax.reload(null, false);
                 } else {
-                    notify('Zona no encontrada', 'info', 5000, 'right')
+                    notify('Zona no encontrada', 'info', 5000, 'right');
                 }
-                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona');
                 $('#modalZone').modal('hide');
             } else {
                 $.notifyClose();
                 if (data.Mensaje == "There are no areas available") {
-                    notify('No hay Zonas disponibles', 'danger', 5000, 'right')
+                    notify('No hay Zonas disponibles', 'danger', 5000, 'right');
                 } else {
-                    notify(data.Mensaje, 'danger', 5000, 'right')
+                    notify(data.Mensaje, 'danger', 5000, 'right');
                 }
-                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona')
+                ActiveBTN(false, ".syncZone", 'Aguarde ' + loading, 'Vincular a Zona');
             }
         },
         error: function () { }
     });
 }
-
 $(document).on("click", ".createZoneOut", function (e) {
     e.preventDefault();
-    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-
-    let modalZone = ls.get(LS_MODALES);
+    const data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+    const modalZone = ls.get(LS_MODALES);
 
     if (!data) {
         return;
@@ -887,113 +696,78 @@ $(document).on("click", ".createZoneOut", function (e) {
     if (!modalZone) {
         return;
     }
-    $('#modales').html(modalZone)
+    $('#modales').html(modalZone);
 
-    let zoneLat = data.regLat;
-    let zoneLng = data.regLng;
-    let zoneRadio = 100;
-    let zoneName = '';
-    let idZone = '';
-    let regUID = data.regUID;
+    const zoneLat = data.regLat;
+    const zoneLng = data.regLng;
+    const zoneRadio = 100;
+    const zoneName = '';
+    const idZone = '';
+    const regUID = data.regUID;
 
-    // return false;
-    // axios({
-    // method: 'post',
-    // url: 'modalZone.html?v=' + $.now(),
-    // }).then(function (response) {
-    // $('#modales').html(response.data)
-    // $('#RowTableZones').html(response.data)
-    // }).then(function () {
-    $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>')
+    $('#modalZone .modal-title').html('<div>Nueva Zona</div><div class="fontq text-secondary">' + zoneName + '</div>');
     $('#modalZone').modal('show');
-    $('#formZone .requerido').html('(*)')
+    $('#formZone .requerido').html('(*)');
     $('#formZone #divGeocomplete').hide();
-    // $('#formZone #formZoneRadio').mask('000000', { reverse: false });
-    $('#formZone #formZoneTipo').val('create_zone')
-    $('#formZone #formZoneNombre').val(zoneName)
-    $('#formZone #formZoneLat').val(zoneLat)
-    $('#formZone #formZoneLng').val(zoneLng)
-    $('#formZone #formZoneRadio').val(zoneRadio)
+    $('#formZone #formZoneTipo').val('create_zone');
+    $('#formZone #formZoneNombre').val(zoneName);
+    $('#formZone #formZoneLat').val(zoneLat);
+    $('#formZone #formZoneLng').val(zoneLng);
+    $('#formZone #formZoneRadio').val(zoneRadio);
     select2Radio("#formZone #formZoneRadio");
 
     setTimeout(() => {
-        $('#formZone .form-control').attr('autocomplete', '_chweb_off')
-        focusEndText('#formZone #formZoneNombre')
-        $('#formZone #geocomplete').removeAttr('readonly')
+        $('#formZone .form-control').attr('autocomplete', '_chweb_off');
+        focusEndText('#formZone #formZoneNombre');
+        $('#formZone #geocomplete').removeAttr('readonly');
     }, 500);
 
-    // }).then(function () {
     getNearZonesTable(zoneLat, zoneLng, 'createZoneOut');
-    let defaulLat = zoneLat;
-    let defaulLng = zoneLng;
-    mapZoneNear(defaulLat, defaulLng, 16, true);
-
+    const defaulLat = zoneLat;
+    const defaulLng = zoneLng;
+    mapZoneNear(defaulLat, defaulLng, 8, true);
 
     $('#formZone .modal-body').append(`
         <input type="hidden" name="regLat" value="${zoneLat}" id="vlat">
         <input type="hidden" name="regLng" value="${zoneLng}" id="vlng">
         <input type="hidden" name="regUID" value="${regUID}" id="vregUID">
-        `)
+    `);
 
-    // }).catch(function (error) {
-    // alert(error)
-    // }).then(function () {
     $("#formZone").bind("submit", function (e) {
         e.preventDefault();
-        let tipoStatus = '';
-        switch ($('#formZone #formZoneTipo').val()) {
-            case 'del_zone':
-                tipoStatus = 'eliminada';
-                break;
-            case 'upd_zone':
-                tipoStatus = 'actualizada';
-                break;
-            case 'add_zone':
-                tipoStatus = 'Creada';
-                break;
-            default:
-                tipoStatus = '';
-                break;
-        }
+        const valueTipo = $('#formZone #formZoneTipo').val() || '';
         $.ajax({
             type: $(this).attr("method"),
             url: 'crud.php',
-            data: $(this).serialize() + '&tipo=' + $('#formZone #formZoneTipo').val() + '&idZone=' + idZone,
-            // dataType: "json",
+            data: $(this).serialize() + '&tipo=' + valueTipo + '&idZone=' + idZone,
             beforeSend: function (data) {
-                CheckSesion()
+                CheckSesion();
                 $.notifyClose();
-                notify('Aguarde..', 'info', 0, 'right')
-                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                notify('Aguarde..', 'info', 0, 'right');
+                ActiveBTN(true, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
             },
             success: function (data) {
                 if (data.status == "ok") {
                     $.notifyClose();
-                    let zoneName = data.Mensaje.zoneName
-                    notify('Zona <b>' + zoneName + '</b>.<br />Creada correctamente.', 'success', 5000, 'right')
-                    // $('#tableUsuarios').DataTable().ajax.reload();
+                    const zoneName = data.Mensaje.zoneName;
+                    notify('Zona <b>' + zoneName + '</b>.<br />Creada correctamente.', 'success', 5000, 'right');
+                    dtZones();
                     $('#table-mobile').DataTable().ajax.reload(null, false);
-                    // $('#tableZones').DataTable().search(zoneName).draw();
-                    // classEfect('#tableZones_filter input', 'border-custom')
-                    $('#tableZones').DataTable().ajax.reload();
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                     $('#modalZone').modal('hide');
                 } else {
                     $.notifyClose();
-                    notify(data.Mensaje, 'danger', 5000, 'right')
-                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar')
+                    notify(data.Mensaje, 'danger', 5000, 'right');
+                    ActiveBTN(false, "#submitZone", 'Aguarde ' + loading, 'Aceptar');
                 }
             },
             error: function () { }
         });
     });
     $('#modalZone').on('hidden.bs.modal', function () {
-        $('#modales').html(' ');
+        $('#modales').html('');
     });
-    // });
-
 });
-
 $(document).on("click", ".syncZone", function (e) {
     e.preventDefault();
     processRegZone($('#vlat').val(), $('#vlng').val(), $('#vregUID').val(), 'syncZone');
@@ -1001,10 +775,10 @@ $(document).on("click", ".syncZone", function (e) {
 });
 $(document).on("click", ".proccessZone", function (e) {
     e.preventDefault();
-    let data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
-    let zoneLat = data.regLat;
-    let zoneLng = data.regLng;
-    let regUID = data.regUID;
+    const data = $('#table-mobile').DataTable().row($(this).parents('tr')).data();
+    const zoneLat = data.regLat;
+    const zoneLng = data.regLng;
+    const regUID = data.regUID;
     processRegZone(zoneLat, zoneLng, regUID, 'proccessZone');
 });
 

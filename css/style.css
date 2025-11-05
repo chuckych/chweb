@@ -1913,8 +1913,18 @@
      animation: fadeIn 0.5s ease-in-out;
  }
 
+ .fadeOut {
+     animation: fadeOut 0.5s ease-in-out;
+ }
+
  .fadeInUp {
      animation: fadeInUp 0.5s ease-in-out;
+ }
+ .flipInX {
+     animation: flipInX 0.7s ease-in-out;
+ }
+ .flash {
+     animation: flash 1s ease-in-out;
  }
 
  @keyframes fadeInDown {

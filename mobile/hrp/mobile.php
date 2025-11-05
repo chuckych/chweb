@@ -222,8 +222,6 @@
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/moment.min.js"></script>
     <script type="text/javascript" src="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
-    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&libraries=places&callback=initMap"
-        defer></script>
     <script src="/<?= HOMEHOST ?>/js/lib/geocomplete/jquery.geocomplete.js"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
@@ -237,6 +235,8 @@
     <script>
         sessionStorage.setItem($('#_homehost').val() + '_api_mobile', ('<?php echo $_SESSION["APIMOBILEHRP"] ?>'));
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?= API_KEY_MAPS() ?>&libraries=places&callback=initMap"
+        defer></script>
     <?php
     if (modulo_cuentas()):
         ?>
@@ -272,7 +272,6 @@
             });
 
             $("#RefreshToken").on("submit", function (e) {
-                // ls.remove(LS_TOKEN_MOBILE);
                 e.preventDefault();
                 ClearFilterMobile();
                 $("#collapseFilterChecks").collapse('hide');
