@@ -120,7 +120,7 @@
             </div>
         </div>
         <?php
-        require __DIR__ . "./modalConceptos.php";
+        require __DIR__ . "/modalConceptos.php";
         ?>
     </div>
     <!-- fin container -->

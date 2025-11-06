@@ -11,6 +11,101 @@ $_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
 if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
     echo '<div class="loader"></div>';
 }
+$dropdownMenu = fn($href, $modulo) => "<a class='dropdown-item font08 fontm px-3 sub_menu' href='" . $href . "'>" . $modulo . "</a>";
+
+$mapOperaciones = [
+    'General' => [
+        'url' => '/' . HOMEHOST . '/general/',
+        'title' => 'Control General',
+    ],
+    'Fichadas' => [
+        'url' => '/' . HOMEHOST . '/fichadas/',
+        'title' => 'Fichadas',
+    ],
+    'Mis Horas' => [
+        'url' => '/' . HOMEHOST . '/mishoras/',
+        'title' => 'Mis Horas',
+    ],
+    'Horas' => [
+        'url' => '/' . HOMEHOST . '/horas/',
+        'title' => 'Horas',
+    ],
+    'Fichar' => [
+        'url' => '/' . HOMEHOST . '/fichar/',
+        'title' => 'Ingreso de Fichadas',
+    ],
+    'Novedades' => [
+        'url' => '/' . HOMEHOST . '/novedades/',
+        'title' => 'Novedades',
+    ],
+    'Personal' => [
+        'url' => '/' . HOMEHOST . '/personal/',
+        'title' => 'Adm de Personal',
+    ],
+    'Procesar' => [
+        'url' => '/' . HOMEHOST . '/procesar/',
+        'title' => 'Procesar Datos',
+    ],
+    'Cierres' => [
+        'url' => '/' . HOMEHOST . '/cierres/',
+        'title' => 'Generar Cierres',
+    ],
+    'Liquidar' => [
+        'url' => '/' . HOMEHOST . '/liquidar/',
+        'title' => 'Generar Liquidación',
+    ],
+    'Dashboard' => [
+        'url' => '/' . HOMEHOST . '/dashboard/',
+        'title' => 'Dashboard',
+    ],
+    'Cta Cte' => [
+        'url' => '/' . HOMEHOST . '/ctacte/',
+        'title' => 'Cta Cte Novedades',
+    ],
+    'Cta Cte Horas' => [
+        'url' => '/' . HOMEHOST . '/ctacte/horas/',
+        'title' => 'Cta Cte Horas',
+    ],
+    'Otras Novedades' => [
+        'url' => '/' . HOMEHOST . '/otrasnov/',
+        'title' => 'Otras Novedades',
+    ],
+    'Horas Costeadas' => [
+        'url' => '/' . HOMEHOST . '/horascost/',
+        'title' => 'Horas Costeadas',
+    ],
+    'Horarios' => [
+        'url' => '/' . HOMEHOST . '/op/horarios/',
+        'title' => 'Adm de Horarios',
+    ],
+    'Auditoría' => [
+        'url' => '/' . HOMEHOST . '/control/aud/',
+        'title' => 'Auditoría',
+    ],
+    'Proyectar Horas' => [
+        'url' => '/' . HOMEHOST . '/procesar/proyectar/',
+        'title' => 'Proyectar Horas',
+    ],
+];
+
+$mapInformes = [
+    'Horarios Asignados' => '/' . HOMEHOST . '/informes/horasign/',
+    'Planilla Horaria' => '/' . HOMEHOST . '/informes/horplan/',
+    'Parte Diario' => '/' . HOMEHOST . '/informes/partedia/',
+    'Informe de Novedades' => '/' . HOMEHOST . '/informes/infornov/',
+    'Informe de Fichadas' => '/' . HOMEHOST . '/informes/inforfic/',
+    'Informe de Horas' => '/' . HOMEHOST . '/informes/inforhora/',
+    'Informe Presentismo' => '/' . HOMEHOST . '/informes/infornovc/',
+    'Informe FAR' => '/' . HOMEHOST . '/informes/inforfar/',
+    'Reporte de Totales' => '/' . HOMEHOST . '/informes/reporte/',
+    'Reporte Prysmian' => '/' . HOMEHOST . '/informes/custom/prysmian',
+];
+
+$mapConfiguracion = [
+    'Datos' => '/' . HOMEHOST . '/configuracion/datos/',
+    'Estructura' => '/' . HOMEHOST . '/configuracion/estruct/',
+];
+
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI'] ?? '') ?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?? '' ?>">
@@ -68,59 +163,16 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         ?>
                             <!--Operaciones-->
                             <li class="nav-item mx-1 dropdown" id="lidrop">
-                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownOperaciones"
-                                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Operaciones</a>
+                                <a class="nav-link font08 fontm menu dropdown-toggle" href="#"
+                                    id="navbarDropdownOperaciones" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">Operaciones</a>
                                 <div class="dropdown-menu radius" aria-labelledby="navbarDropdownOperaciones">
                                     <?php
-                                    foreach ($dataROL as $values) {
-                                        $Modulo = $values['modulo'];
-                                        $Modulo2 = $values['modulo'];
-                                        $Modulo2 = ($Modulo2 == 'Fichar') ? 'Ingreso de Fichadas' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Cierres') ? 'Generar Cierres' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Liquidar') ? 'Generar Liquidación' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Horarios') ? 'Adm de Horarios' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'General') ? 'Control General' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Cta Cte') ? 'Cta Cte Novedades' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Personal') ? 'Adm de Personal' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Procesar') ? 'Procesar Datos' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Proyectar Horas') ? 'Proyectar Horas' : $Modulo2;
-                                        switch ($Modulo2) {
-                                            case 'Control General':
-                                            case 'Mis Horas':
-                                            case 'Fichadas':
-                                            case 'Horas':
-                                            case 'Ingreso de Fichadas':
-                                            case 'Novedades':
-                                            case 'Adm de Personal':
-                                            case 'Procesar Datos':
-                                            case 'Generar Cierres':
-                                            case 'Generar Liquidación':
-                                            case 'Dashboard':
-                                            case 'Cta Cte Novedades':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/" . strtolower(str_replace(" ", "", $Modulo)) . "/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Horas Costeadas':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/horascost/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Cta Cte Horas':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/ctacte/horas/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Otras Novedades':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/otrasnov/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Adm de Horarios':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/op/horarios/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Auditoría':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/control/aud/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Proyectar Horas':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/procesar/proyectar/>" . $Modulo2 . "</a>";
-                                                break;
-                                            // case 'Proyectos':
-                                            //     echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/proy/>" . $Modulo2 . "</a>";
-                                            //     break;
-                                        }
+                                    foreach ($dataROL as $v) {
+                                        $modulo = $mapOperaciones[$v['modulo']] ?? null;
+                                        if (!$modulo || $v['modulo'] === '1')
+                                            continue;
+                                        echo $dropdownMenu($modulo['url'] ?? '#', $modulo['title'] . ' ' . ($v['orden'] ?? ''));
                                     }
                                     ?>
                                 </div>
@@ -132,48 +184,15 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         ?>
                             <!--Informes-->
                             <li class="nav-item mx-1 dropdown">
-                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownInformes"
+                                <a class="nav-link font08 fontm menu dropdown-toggle" href="#" id="navbarDropdownInformes"
                                     role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Informes</a>
                                 <div class="dropdown-menu radius" aria-labelledby="navbarDropdownInformes">
                                     <?php
                                     foreach ($dataROL as $values) {
-                                        $Modulo = $values['modulo'];
-                                        $Modulo2 = $values['modulo'];
-                                        $Modulo2 = ($Modulo2 == 'Fichar') ? 'Ingreso de Fichadas' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Cierres') ? 'Generar Cierres' : $Modulo2;
-                                        $Modulo2 = ($Modulo2 == 'Liquidar') ? 'Generar Liquidación' : $Modulo2;
-                                        switch ($Modulo2) {
-                                            case 'Horarios Asignados':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/horasign/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Planilla Horaria':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu d-none' href=/" . HOMEHOST . "/informes/horplan/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Parte Diario':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/partedia/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Informe de Novedades':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/infornov/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Informe de Fichadas':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforfic/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Informe de Horas':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforhora/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Informe Presentismo':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/infornovc/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Informe FAR':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/inforfar/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Reporte de Totales':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/reporte/>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Reporte Prysmian':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/informes/custom/prysmian>" . $Modulo2 . "</a>";
-                                                break;
-                                        }
+                                        $modulo = $mapInformes[$values['modulo']] ?? null;
+                                        if (!$modulo || $v['modulo'] === '1')
+                                            continue;
+                                        echo $dropdownMenu($modulo, $values['modulo']);
                                     }
                                     ?>
                                 </div>
@@ -184,22 +203,16 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         ?>
                             <!--Configuración-->
                             <li class="nav-item mx-1 dropdown">
-                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownConf"
+                                <a class="nav-link font08 fontm menu dropdown-toggle" href="#" id="navbarDropdownConf"
                                     role="button" data-toggle="dropdown" aria-haspopup="true"
                                     aria-expanded="false">Configuración</a>
                                 <div class="dropdown-menu radius" aria-labelledby="navbarDropdownConf">
                                     <?php
-                                    foreach ($dataROL as $values) {
-                                        $Modulo = $values['modulo'];
-                                        $Modulo2 = $values['modulo'];
-                                        switch ($Modulo2) {
-                                            case 'Datos':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/datos/'>" . $Modulo2 . "</a>";
-                                                break;
-                                            case 'Estructura':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href='/" . HOMEHOST . "/configuracion/estruct/'>" . $Modulo2 . "</a>";
-                                                break;
-                                        }
+                                    foreach ($dataROL as $v) {
+                                        $modulo = $mapConfiguracion[$v['modulo']] ?? null;
+                                        if (!$modulo)
+                                            continue;
+                                        echo $dropdownMenu($modulo, $v['modulo']);
                                     }
                                     ?>
                                 </div>
@@ -209,37 +222,12 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
 
 
                         <?php if (checkTipoMod($arrIdTipo, '4')): # 4 Mobile
+                                        $linkMobile = "/" . HOMEHOST . "/mobile/hrp/";
                                         ?>
                             <!--Mobile-->
                             <li class="nav-item mx-1 dropdown">
-                                <a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#" id="navbarDropdownMobile"
-                                    role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mobile</a>
-                                <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMobile">
-                                    <?php
-                                    foreach ($dataROL as $values) {
-                                        $Modulo = $values['modulo'];
-                                        $Modulo = ($Modulo == 'Mobile') ? 'Fichadas Mobile' : $Modulo;
-                                        // $Modulo = ($Modulo=='Zonas Mobile') ? 'Zonas': $Modulo;
-                                        switch ($Modulo) {
-                                            case 'Fichadas Mobile':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/>" . $Modulo . "</a>";
-                                                break;
-                                            case 'Zonas Mobile':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/zonas/>" . $Modulo . "</a>";
-                                                break;
-                                            case 'Usuarios Mobile':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/usuarios/>" . $Modulo . "</a>";
-                                                break;
-                                            case 'Mensajes Mobile':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/sms/>" . $Modulo . "</a>";
-                                                break;
-                                            case 'Mobile HRP':
-                                                echo "<a class='dropdown-item fontq px-3 sub_menu' href=/" . HOMEHOST . "/mobile/hrp/>" . $Modulo . "</a>";
-                                                break;
-                                        }
-                                    }
-                                    ?>
-                                </div>
+                                <a class="nav-link font08 fontm menu" href="<?= $linkMobile ?>" id="navbarDropdownMobile"
+                                    role="button">Mobile</a>
                             </li>
                         <?php endif# Fin 4 Mobile
                                     ?>
@@ -251,7 +239,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                 $Modulo2 = $values['modulo'];
                                 switch ($Modulo2) {
                                     case 'Inicio':
-                                        echo "<li class='nav-item mx-1'><a class='nav-link fontq fw4 text-dark'  href='/" . HOMEHOST . "/proy/'>Proyectos</a></li>";
+                                        echo "<li class='nav-item mx-1'><a class='nav-link font08 fontm menu'  href='/" . HOMEHOST . "/proy/'>Proyectos</a></li>";
                                         break;
                                 }
                             }
@@ -267,16 +255,16 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         if (checkTipoMod($arrIdTipo, '5')) {
                                             ?>
                                     <!--Mi Cuenta-->
-                                    <li class="nav-item mx-1 dropdown"><a class="nav-link fontq fw4 dropdown-toggle text-dark" href="#"
-                                            id="navbarDropdownMiCuenta" role="button" data-toggle="dropdown" aria-haspopup="true"
+                                    <li class="nav-item mx-1 dropdown"><a class="nav-link font08 fontm menu dropdown-toggle"
+                                            href="#" id="navbarDropdownMiCuenta" role="button" data-toggle="dropdown" aria-haspopup="true"
                                             aria-expanded="false">Mi Cuenta </a>
                                         <div class="dropdown-menu radius" aria-labelledby="navbarDropdownMiCuenta">
-                                            <a class="dropdown-item fontq px-3 sub_menu"
+                                            <a class="dropdown-item font08 fontm px-3 sub_menu"
                                                 href="/<?= HOMEHOST ?>/usuarios/roles/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Roles</a>
-                                            <a class="dropdown-item fontq px-3 sub_menu"
+                                            <a class="dropdown-item font08 fontm px-3 sub_menu"
                                                 href="/<?= HOMEHOST ?>/usuarios/?_c=<?= $_SESSION['RECID_CLIENTE'] ?>">Usuarios</a>
                                             <?php if (modulo_cuentas() == '1') { ?>
-                                                <a class="dropdown-item fontq px-3 sub_menu"
+                                                <a class="dropdown-item font08 fontm px-3 sub_menu"
                                                     href="/<?= HOMEHOST ?>/usuarios/clientes/">Cuentas</a>
                                             <?php } ?>
                                         </div>
@@ -331,7 +319,7 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                         && ($Modulo2 != 'Reporte Prysmian')
                                         && ($Modulo2 != 'Proyectar Horas')
                                     ) { ?>
-                                <li class="nav-item mx-1"><a class="nav-link fontq fw4 text-dark"
+                                <li class="nav-item mx-1"><a class="nav-link font08 fontm menu"
                                         href="/<?= HOMEHOST ?>/<?= strtolower(str_replace(' ', '', $Modulo)) ?>/">
                                         <?= $Modulo2 ?>
                                     </a></li>
@@ -339,51 +327,53 @@ if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
                                 }
                                 ;
                     } else {
-                        echo '<a class="nav-link fontq hob" href="#">No hay Módulos</a>';
+                        echo '<a class="nav-link font08 fontm hob" href="#">No hay Módulos</a>';
                     }
                 endif; ?>
             </ul>
-            <div id="contenedoruser">
-                <?php if(($_SESSION['USER_AD'] ?? '') === '0'): ?> 
-                <a href="/<?= HOMEHOST ?>/usuarios/perfil/index.php" class="btn btn-sm border-0 btn-light px-3 py-2">
-                    <p class="m-0">
-                        <?= imgIcon('perfil', 'Mi Perfil', '') ?> 
-                    </p>
-                </a>
-                <?php endif; ?> 
-                <div class="bg-white mt-2 shadow p-0 animate__animated animate__fadeIn radius" id="showuser"
-                    style="z-index:9999">
-                    <div class="p-3">
-                        <p class="m-0 h6">
-                            <?= $_SESSION['NOMBRE_SESION'] ?? '' ?>
-                        </p>
-                        <p class="m-0 pt-1 fontq">Usuario:<span class="ml-1 fw4">
-                                <?= $_SESSION['user'] ?? '' ?>
-                            </span></p>
-                        <p class="m-0 pt-1 fontq">Empresa:<span class="ml-1 fw4">
-                                <?= $_SESSION['CLIENTE'] ?? '' ?>
-                            </span></p>
+            <div id="contenedoruser" class="d-inline-flex" style="gap: 4px;">
+                <div class="hint hint--bottom hint--rounded hint--no-arrow hint--info hint--no-shadow" aria-label="<?= $_SESSION['NOMBRE_SESION'] ?? '' ?>">
+                    <?php if (($_SESSION['USER_AD'] ?? '') === '0'): ?>
+                        <a href="/<?= HOMEHOST ?>/usuarios/perfil/index.php"
+                            class="btn btn-sm px-2 py-1 border radius btn-outline-custom">
+                            <i class="bi bi-person-fill font1"></i>
+                        </a>
+                    <?php endif; ?>
+                    <div class="bg-white mt-2 shadow p-0 fadeIn radius" id="showuser" style="z-index:9999">
+                        <div class="p-3">
+                            <p class="m-0 h6">
+                                <?= $_SESSION['NOMBRE_SESION'] ?? '' ?>
+                            </p>
+                            <p class="m-0 pt-1 font08 fontm">Usuario:<span class="ml-1 fw4">
+                                    <?= $_SESSION['user'] ?? '' ?>
+                                </span></p>
+                            <p class="m-0 pt-1 font08 fontm">Empresa:<span class="ml-1 fw4">
+                                    <?= $_SESSION['CLIENTE'] ?? '' ?>
+                                </span></p>
+                        </div>
                     </div>
                 </div>
+                <div class="hint hint--right hint--rounded hint--no-arrow hint--info hint--no-shadow" aria-label="Salir">
+                    <a href="/<?= HOMEHOST ?>/logout.php" class="btn btn-sm px-2 py-1 border radius btn-outline-custom"
+                        data-toggle="modal" data-target="#salir">
+                        <i class="bi bi-arrow-right font1"></i>
+                    </a>
+                </div>
             </div>
-            <a href="/<?= HOMEHOST ?>/logout.php" title="Salir" class="btn btn-sm border-0 btn-light px-3 py-2"
-                data-toggle="modal" data-target="#salir">
-                <?= imgIcon('exit', 'Salir', '') ?>
-            </a>
         </div>
     </nav>
 </div>
 <!-- Salir -->
 <div id="salir" class="modal" tabindex="-1" role="dialog" aria-labelledby="salir-title" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered animate__animated animate__fadeIn" role="document">
+    <div class="modal-dialog modal-dialog-centered fadeIn" role="document">
         <div class="modal-content" style="z-index:9999;">
             <div class="modal-body text-center my-3 mx-auto">
                 <p class="lead">¿Desea Salir?</p>
                 <div class="form-inline">
                     <form action="/<?= HOMEHOST ?>/logout.php" class="mx-auto"><button
-                            class="border btn px-5 btn-round fontq" data-dismiss="modal"
+                            class="border btn px-5 btn-round font08 fontm" data-dismiss="modal"
                             type="button">NO</button><button type="submit"
-                            class="ml-2 btn btn-info px-5 btn-round fontq btn-custom">SI</button></form>
+                            class="ml-2 btn btn-info px-5 btn-round font08 fontm btn-custom">SI</button></form>
                 </div>
             </div>
         </div>

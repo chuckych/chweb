@@ -135,7 +135,7 @@ const focusRowTables = () => {
 }
 const minmaxDate = () => {
     axios({
-        method: 'post',
+        method: 'post', 
         url: 'minmaxdate.php'
     }).then(function (response) {
         const data = response.data
@@ -178,6 +178,7 @@ tryGetJson = async (resp) => {
     })
 }
 function fetchCreatedDate(url) {
+    CheckSesion();
     return new Promise((resolve) => {
         fetch(url, {
             method: 'get',

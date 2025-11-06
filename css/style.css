@@ -307,6 +307,12 @@
      font-size: .8rem !important
  }
 
+ @media all and (max-width:767px) {
+     .fontm {
+         font-size: 1rem !important;
+     }
+ }
+
  .font07 {
      font-size: .7rem !important
  }
@@ -338,6 +344,17 @@
  .text-tab {
      font-weight: 400 !important;
  }
+
+ .menu {
+     color: #333 !important;
+ }
+ /*
+ .menu:hover {
+     color: #fff !important;
+     background-color: var(--main-bg-modcolor) !important;
+     transition: .5s !important;
+     border-radius: var(--main-radius) !important;
+ } */
 
  .form-control {
      background-color: #fff;
@@ -1320,12 +1337,6 @@
      -webkit-transform: rotate(45deg) !important;
  }
 
- /* .dropdown-toggle::after {
-    margin-left: .455em;
-    vertical-align: middle;
-    color: #767575;
- } */
-
  .trash {
      margin-top: 5px;
      text-decoration: none !important;
@@ -1920,9 +1931,11 @@
  .fadeInUp {
      animation: fadeInUp 0.5s ease-in-out;
  }
+
  .flipInX {
      animation: flipInX 0.7s ease-in-out;
  }
+
  .flash {
      animation: flash 1s ease-in-out;
  }
