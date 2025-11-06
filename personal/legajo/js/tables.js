@@ -179,7 +179,7 @@ const tableOtrosConLeg = () => {
     $('#OtrosConLeg').DataTable({
         deferRender: true,
         "ajax": {
-            url: "../../data/getConLeg.php",
+            url: "../../data/GetConLeg.php",
             type: "GET",
             'data': {
                 q2: NUMERO_LEGAJO
