@@ -1439,11 +1439,11 @@ Flight::route('POST /asignados/exportar', function () {
         $Datos = Flight::asignados($payload);
 
         if ($payload['extension'] == 'pdf') {
-            require '../informes/horasign2/pdf.php';
+            require '../informes/horasign/pdf.php';
             return;
         }
 
-        require '../informes/horasign2/xls.php';
+        require '../informes/horasign/xls.php';
 
     } catch (\Throwable $th) {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);

@@ -62,9 +62,7 @@
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2-es.js"></script>
     <script
-        src="/<?= HOMEHOST ?>/informes/horasign2/js/horarios.js?<?= version_file("/informes/horasign2/js/horarios.js") ?>"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script type="text/javascript" src="/<?= HOMEHOST ?>/js/jspdf.umd.min.js"></script>
+        src="/<?= HOMEHOST ?>/informes/horasign/js/horarios.js?<?= version_file("/informes/horasign/js/horarios.js") ?>"></script>
 </body>
 
 </html>
