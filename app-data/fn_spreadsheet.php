@@ -236,8 +236,32 @@ function add_letter_column_to_array($array)
 }
 function slugify($string)
 {
-    // Reemplazar caracteres especiales con sus equivalentes ASCII
-    $string = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $string);
+    // Verificar si la extensión intl está disponible
+    if (function_exists('transliterator_transliterate')) {
+        // Reemplazar caracteres especiales con sus equivalentes ASCII usando transliterator
+        $string = transliterator_transliterate('Any-Latin; Latin-ASCII; Lower()', $string);
+    } else {
+        // Alternativa sin intl: reemplazar manualmente caracteres comunes
+        $string = mb_strtolower($string, 'UTF-8');
+        
+        // Mapa de caracteres especiales a ASCII
+        $caracteresEspeciales = [
+            'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a', 'ã' => 'a', 'å' => 'a',
+            'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+            'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o', 'õ' => 'o', 'ø' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+            'ñ' => 'n', 'ç' => 'c',
+            'Á' => 'A', 'À' => 'A', 'Ä' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Å' => 'A',
+            'É' => 'E', 'È' => 'E', 'Ë' => 'E', 'Ê' => 'E',
+            'Í' => 'I', 'Ì' => 'I', 'Ï' => 'I', 'Î' => 'I',
+            'Ó' => 'O', 'Ò' => 'O', 'Ö' => 'O', 'Ô' => 'O', 'Õ' => 'O', 'Ø' => 'O',
+            'Ú' => 'U', 'Ù' => 'U', 'Ü' => 'U', 'Û' => 'U',
+            'Ñ' => 'N', 'Ç' => 'C',
+        ];
+        
+        $string = strtr($string, $caracteresEspeciales);
+    }
 
     // Reemplazar todo lo que no sea una letra, número o guion por guiones
     $string = preg_replace('/[^a-z0-9]+/i', '-', $string);

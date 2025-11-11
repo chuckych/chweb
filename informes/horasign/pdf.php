@@ -113,11 +113,11 @@ try {
 
     ob_end_clean();
 
-    $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
+    $mpdf->Output(strtolower($NombreArchivo), \Mpdf\Output\Destination::FILE);
 
     $data = [
         'status' => 'ok',
-        'Mensaje' => 'Reporte Creado.' . $_nombre,
+        'Mensaje' => 'Reporte Creado. ',
         'archivo' => 'archivos/' . strtolower($NombreArchivo2),
         'destino' => $_destino,
         'data' => $data,
