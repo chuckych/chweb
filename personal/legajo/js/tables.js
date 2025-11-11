@@ -30,6 +30,7 @@ const langTable = {
 ls.remove('#GrupoCapt');
 ls.remove('#TablePerRelo');
 ls.remove('#Identifica-table');
+ls.remove('#OtrosConLeg');
 
 $('#liquid-tab').on('show.bs.tab', function (e) {
     tablePerInEg();
@@ -170,7 +171,8 @@ const tablePerPremio = () => {
         },
     });
 }
-const tableOtrosConLeg = () => {
+const tableOtrosConLeg = async () => {
+
     if ($.fn.DataTable.isDataTable('#OtrosConLeg')) {
         $('#OtrosConLeg').DataTable().ajax.reload();
         return;
@@ -367,7 +369,7 @@ const tableIdentifica = async (selectorTable) => {
         $(`${selectorTable}`).removeClass('loader-in');
 
     } catch (error) {
-        const msg = error.response?.data?.message || 'Error al cargar los datos';        
+        const msg = error.response?.data?.message || 'Error al cargar los datos';
         notify(msg, 'danger', 2000, 'right');
     }
 }
@@ -382,7 +384,7 @@ const tableGrupoCapt = async (selectorTable) => {
         if (cacheData && cacheData.timestamp === FLAG) {
             data = cacheData.data ?? [];
         } else {
-            const LegGrHa = $('#LegGrHa').val();            
+            const LegGrHa = $('#LegGrHa').val();
             const res = await axios.get('../../app-data/relohabi', {
                 params: {
                     relgrup: [LegGrHa],
@@ -524,7 +526,7 @@ const tablePerRelo = async (selectorTable) => {
         $(`${selectorTable}`).removeClass('loader-in');
 
     } catch (error) {
-        const msg = error.response?.data?.message || 'Error al cargar los datos';        
+        const msg = error.response?.data?.message || 'Error al cargar los datos';
         notify(msg, 'danger', 2000, 'right');
     }
 }

@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_ACTIVE) {
+    session_write_close();
+}
 ini_set('max_execution_time', 480); //480 seconds = 8 minutes
 require __DIR__ . '/v1/vendor/autoload.php';
 
@@ -12,12 +15,11 @@ header('Access-Control-Allow-Origin: *');
 $time_start = timeStart(); // Inicio
 $pathLog = __DIR__ . '/logs/'; // path de Logs Api
 cleanFile($pathLog, 1, '.log'); // Elimina logs de los últimos 7 días.
-$iniData = (getIni(__DIR__ . '/../mobileApikey.php'));
+$iniData = getIni(__DIR__ . '/../mobileApikey.php');
 header('WWW-Authenticate: Basic');
-$_SERVER['HTTP_TOKEN'] = $_SERVER['HTTP_TOKEN'] ?? '';
+$_SERVER['HTTP_TOKEN'] ??= ''; // Asegura que la variable esté definida
 $dataC = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
 
-// (response(Flight::request(), 0, 'test', 400, timeStart(), 0, 1)) . exit;
 $control = new requestControl();
 $apiData = new apiData($dataC);
 $db = new querydb($dataC);
@@ -31,33 +33,33 @@ $apiData = function ($key = '') use ($dataC) {
     }
     return $dataC;
 };
+
 $idCompany = $dataC['idCompany']; // Id de la cuenta {int}
-$_SERVER['PHP_AUTH_USER'] = $_SERVER['PHP_AUTH_USER'] ?? '';
-$_SERVER['PHP_AUTH_PW'] = $_SERVER['PHP_AUTH_PW'] ?? '';
+$_SERVER['PHP_AUTH_USER'] ??= '';
+$_SERVER['PHP_AUTH_PW'] ??= '';
 $validData = $wc = '';
 $ErrorVP = [];
 
 $request = Flight::request();
 $payload = $request->data;
 
-
 $dp = $request->data;
 $method = $request->method;
 
-$dp->start = $dp->start ?? '0';
+$dp->start ??= '0'; // Asegura que la variable esté definida 
 $start = intval(empty($dp->start) ? 0 : $dp->start);
 
-$dp->length = $dp->length ?? '10';
+$dp->length ??= '10'; // Asegura que la variable esté definida
 $length = intval(empty($dp->length) ? 10 : $dp->length);
 
-$passAuth = explode('/', $_SERVER['PHP_SELF']);
+$passAuth = explode('/', $_SERVER['PHP_SELF'] ??= '');
 /**
  * Valida el authenticate header
  */
 // if ($_SERVER['PHP_AUTH_USER'] != 'chweb' || $_SERVER['PHP_AUTH_PW'] != $passAuth[1]) {
 //     header('WWW-Authenticate: Basic realm="My Realm"');
 //     http_response_code(401);
-//     (response(array(), 0, 'Unauthorized User', 401, $time_start, 0, $idCompany));
+//     (response([], 0, 'Unauthorized User', 401, $time_start, 0, $idCompany));
 //     exit;
 // }
 /**
@@ -128,7 +130,7 @@ function tipoFic($regTipo)
 }
 function filtrarObjetoArr($array, $key, $valor) // Función para filtrar un objeto por un valor
 {
-    $a = array();
+    $a = [];
     if ($array && $key && $valor) {
         foreach ($array as $v) {
             if ($v[$key] === $valor) {
@@ -140,7 +142,7 @@ function filtrarObjetoArr($array, $key, $valor) // Función para filtrar un obje
 }
 function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Función para filtrar un objeto por dos valores
 {
-    $a = array();
+    $a = [];
     if ($array && $key && $key2 && $valor && $valor2) {
         foreach ($array as $v) {
             if ($v[$key] === $valor && $v[$key2] === $valor2) {
@@ -253,8 +255,8 @@ $length = length();
 function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
 {
     $code = intval($code);
-    $start = ($code != 400) ? start() : 0;
-    $length = ($code != 400) ? length() : 0;
+    $start = $code != 400 ? start() : 0;
+    $length = $code != 400 ? length() : 0;
 
     $time_end = microtime(true);
     $tiempoScript = number_format($time_end - $time_start, 4);
@@ -271,14 +273,7 @@ function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start 
         'DATA' => $data,
     ];
 
-    Response::json($array);
-
-    /** LOG API CONFIG */
-    // $textParams = array();
-    // foreach ($_REQUEST as $key => $value) {
-    //     $arrRequest[] = "$key=$value";
-    //     array_push($textParams, $arrRequest);
-    // }
+    echo json_encode($array, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
     $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
 
@@ -328,12 +323,12 @@ function cleanFile($path, $Dias, $ext) // borra los archivo a partir de una cant
 $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response([], 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . '/connectDBPDO.php';
     try {
-        $resultSet = array();
+        $resultSet = [];
         $stmt = $conn->query($query);
         while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
             $resultSet[] = $r;
@@ -346,19 +341,19 @@ $dbApiQuery = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response([], 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response([], 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . '/connectDBPDO.php';
     try {
-        $resultSet = array();
+        $resultSet = [];
         $stmt = $conn->query($query);
         if ($stmt) {
             $stmt = null;
@@ -374,14 +369,14 @@ $dbApiQuery2 = function ($query, $count = 0) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response([], 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
 $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
     if (!$query) {
         http_response_code(400);
-        (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+        (response([], 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
         exit;
     }
     require __DIR__ . '/connectDBPDO.php';
@@ -393,7 +388,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtFalse.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmt: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+            (response([], 0, $e, 400, timeStart(), 0, ''));
         }
 
         // execute the stored procedure
@@ -402,7 +397,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
             $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_stmtExecute.log'; // ruta del archivo de Log de errores
             $e = json_encode(sqlsrv_errors());
             writeLog(PHP_EOL . 'stmtExecute: ' . $e, $pathLog); // escribir en el log de errores el error
-            (response(array(), 0, $e, 400, timeStart(), 0, ''));
+            (response([], 0, $e, 400, timeStart(), 0, ''));
         }
 
         $stmt = null;
@@ -413,7 +408,7 @@ $dbApiQuery3 = function ($query, $procedure_params) use ($dataCompany) {
         writeLog(PHP_EOL . 'Message: ' . json_encode($e->getMessage(), JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
         writeLog(PHP_EOL . 'Query: ' . $query, $pathLog); // escribir en el log de errores el error
         http_response_code(400);
-        (response(array(), 0, $e->getMessage(), 400, timeStart(), 0, ''));
+        (response([], 0, $e->getMessage(), 400, timeStart(), 0, ''));
         exit;
     }
 };
@@ -463,16 +458,15 @@ function start()
     $request = Flight::request();
 
     $p = (strtolower($request->method) == 'post') ? $request->data : $request->query;
-    $p->start = $p->start ?? '0';
+    $p->start ??= '0';
     $start = empty(vp($p->start, 'Start', 'int', 11)) ? 0 : $p->start;
     return intval($start);
 }
 function length()
 {
     $request = Flight::request();
-    // print_r($request).exit;
     $p = (strtolower($request->method) == 'post') ? $request->data : $request->query;
-    $p->length = $p->length ?? '';
+    $p->length ??= '';
     $length = empty(vp($p->length, 'Length', 'int', 11)) ? 10 : $p->length;
     return intval($length);
 }
@@ -538,34 +532,34 @@ function fechFormat($dateTime, $format = 'Y-m-d')
  * @lenght {int} la cantidad maxima de caracteres
  * @validArr {array} array de valores admitidos
  */
-function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
+function vp($value, $key, $type = 'str', $length = 1, $validArr = [])
 {
     if ($value) {
         if ($type == 'int') {
             if ($value) {
                 if (!is_numeric($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' de ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' de ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 } else {
                     if (!filter_var($value, FILTER_VALIDATE_INT)) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         exit;
                     }
                 }
                 if (strlen($value) > $length) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 if (($value) < 0 || ($value) > 2147483648) {
                     http_response_code(400);
                     if (($value) > 2147483648) {
-                        (response(array(), 0, "Parámetro '$key' no puede ser mayor '2147483648'. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' no puede ser mayor '2147483648'. Valor '$value'", 400, timeStart(), 0, 0));
                         exit;
                     }
-                    (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' de ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
             }
@@ -575,27 +569,27 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
                 switch ($value) {
                     case (!is_numeric($value)):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (strlen($value) > $length):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (($value) < 0):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (($value) > 1):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     default:
@@ -604,28 +598,28 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
 
                 // if (!is_numeric($value)) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // } else {
                 //     if (!filter_var($value, FILTER_VALIDATE_INT)) {
                 //         http_response_code(400);
-                //         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
+                //         (response([], 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                 //         exit;
                 //     }
                 // }
                 // if (strlen($value) > $length) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
                 // if (($value) < 0) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
                 // if (($value) > 1) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
             }
@@ -634,31 +628,31 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach (array_unique($value) as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         } else {
                             if (!filter_var($v, FILTER_VALIDATE_INT)) {
                                 http_response_code(400);
-                                (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                                (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                                 exit;
                             }
                         }
                     }
                     if (($v) < 0) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (strlen($v) > $length) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
                         exit;
                     }
                 }
@@ -668,36 +662,36 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         } else {
                             if (!filter_var($v, FILTER_VALIDATE_INT)) {
                                 http_response_code(400);
-                                (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                                (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                                 exit;
                             }
                         }
                     }
                     if (($v) < 0) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (strlen($v) > $length) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (($v) > 8) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '8'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '8'", 400, timeStart(), 0, 0));
                         exit;
                     }
                 }
@@ -707,34 +701,34 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (!filter_var($v, FILTER_VALIDATE_INT)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if ($v === 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser mayor a '0'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser mayor a '0'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if ($v < 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' no debe ser menor a '0'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' no debe ser menor a '0'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (strlen($v) > $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -745,29 +739,29 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (($v) < 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (($v) > 1) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de '0' o '1'. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de '0' o '1'. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (strlen($v) > $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'.Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'.Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -778,14 +772,14 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if (strlen($v) > $length) {
                         if ($v) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -796,14 +790,14 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (strlen($v) <> $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' debe contener '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' debe contener '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -814,7 +808,7 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (strlen($value) > $length) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value", 400, timeStart(), 0, 0));
                     exit;
                 }
             }
@@ -822,7 +816,7 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'arrfecha') {
             if (!is_array($value)) {
                 http_response_code(400);
-                (response(array(), 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
+                (response([], 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
                 exit;
             }
             if ($value) {
@@ -835,37 +829,37 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if (strlen($v) < 3 && $v != '') {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la secciónxx.", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la secciónxx.", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if ($v) {
                         if (!strpos($v, '-')) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
                         $vArr = explode('-', $v);
                         if (count($vArr) > 2) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
                         $index0 = ($vArr[0]);
                         $index1 = ($vArr[1]);
                         if ($index0 == '0' || $index1 == '0') {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores no pueden ser 0 (ceros)", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores no pueden ser 0 (ceros)", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (!is_numeric($index0) || !is_numeric($index1)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores deben ser números enteros", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores deben ser números enteros", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -889,7 +883,7 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = array())
     }
     return $value;
 }
-function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
+function vpErr($value, $key, $type = 'str', $length = 1, $validArr = [])
 {
     $Error = [];
     if ($value) {
@@ -913,27 +907,27 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
                 switch ($value) {
                     case (!is_numeric($value)):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (!filter_var($value, FILTER_VALIDATE_INT)):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (strlen($value) > $length):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (($value) < 0):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     case (($value) > 1):
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                         // exit;
                         break;
                     default:
@@ -942,28 +936,28 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
 
                 // if (!is_numeric($value)) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser {int}. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // } else {
                 //     if (!filter_var($value, FILTER_VALIDATE_INT)) {
                 //         http_response_code(400);
-                //         (response(array(), 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
+                //         (response([], 0, "Parámetro '$key' debe ser {int}. Valor = '$value'", 400, timeStart(), 0, 0));
                 //         exit;
                 //     }
                 // }
                 // if (strlen($value) > $length) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser igual a '$length' caracter. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
                 // if (($value) < 0) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' debe ser mayor o igual a '1'. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
                 // if (($value) > 1) {
                 //     http_response_code(400);
-                //     (response(array(), 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
+                //     (response([], 0, "Parámetro '$key' no puede ser mayor '1'. Valor '$value'", 400, timeStart(), 0, 0));
                 //     exit;
                 // }
             }
@@ -972,31 +966,31 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach (array_unique($value) as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         } else {
                             if (!filter_var($v, FILTER_VALIDATE_INT)) {
                                 http_response_code(400);
-                                (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                                (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                                 exit;
                             }
                         }
                     }
                     if (($v) < 0) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (strlen($v) > $length) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
                         exit;
                     }
                 }
@@ -1006,36 +1000,36 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         } else {
                             if (!filter_var($v, FILTER_VALIDATE_INT)) {
                                 http_response_code(400);
-                                (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                                (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                                 exit;
                             }
                         }
                     }
                     if (($v) < 0) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (strlen($v) > $length) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$v'", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if (($v) > 8) {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' de ser menor o igual a '8'", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' de ser menor o igual a '8'", 400, timeStart(), 0, 0));
                         exit;
                     }
                 }
@@ -1045,34 +1039,34 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (!filter_var($v, FILTER_VALIDATE_INT)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if ($v === 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser mayor a '0'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser mayor a '0'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if ($v < 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' no debe ser menor a '0'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' no debe ser menor a '0'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (strlen($v) > $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -1083,29 +1077,29 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (($v) < 0) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser mayor o igual a '0'. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser mayor o igual a '0'. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (($v) > 1) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de '0' o '1'. Valor = '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de '0' o '1'. Valor = '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (strlen($v) > $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'.Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'.Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -1116,14 +1110,14 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if (strlen($v) > $length) {
                         if ($v) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' de ser menor o igual a '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -1134,14 +1128,14 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if ($v) {
                         if (strlen($v) <> $length) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' debe contener '$length'. Valor '$v'", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' debe contener '$length'. Valor '$v'", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -1152,7 +1146,7 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (strlen($value) > $length) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' de ser menor o igual a '$length' caracteres. Valor '$value", 400, timeStart(), 0, 0));
                     exit;
                 }
             }
@@ -1160,7 +1154,7 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
         if ($type == 'arrfecha') {
             if (!is_array($value)) {
                 http_response_code(400);
-                (response(array(), 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
+                (response([], 0, "Se espera un array del parametro \"$key\"", 400, timeStart(), 0, 0));
                 exit;
             }
             if ($value) {
@@ -1173,37 +1167,37 @@ function vpErr($value, $key, $type = 'str', $length = 1, $validArr = array())
             if ($value) {
                 if (!is_array($value)) {
                     http_response_code(400);
-                    (response(array(), 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
+                    (response([], 0, "Parámetro '$key' debe ser un {array}. Valor '$value'", 400, timeStart(), 0, 0));
                     exit;
                 }
                 foreach ($value as $v) {
                     if (strlen($v) < 3 && $v != '') {
                         http_response_code(400);
-                        (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la secciónxx.", 400, timeStart(), 0, 0));
+                        (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la secciónxx.", 400, timeStart(), 0, 0));
                         exit;
                     }
                     if ($v) {
                         if (!strpos($v, '-')) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
                         $vArr = explode('-', $v);
                         if (count($vArr) > 2) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección.", 400, timeStart(), 0, 0));
                             exit;
                         }
                         $index0 = ($vArr[0]);
                         $index1 = ($vArr[1]);
                         if ($index0 == '0' || $index1 == '0') {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores no pueden ser 0 (ceros)", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores no pueden ser 0 (ceros)", 400, timeStart(), 0, 0));
                             exit;
                         }
                         if (!is_numeric($index0) || !is_numeric($index1)) {
                             http_response_code(400);
-                            (response(array(), 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores deben ser números enteros", 400, timeStart(), 0, 0));
+                            (response([], 0, "Parámetro '$key' erroneo. Valor '$v'. Debe ser formato 1-1. Donde el primer elemento es el Sector y el segundo elemento es la sección y los valores deben ser números enteros", 400, timeStart(), 0, 0));
                             exit;
                         }
                     }
@@ -1326,10 +1320,14 @@ function LegHoAlStr($LegHoAl)
 function fecha($date, $format = 'Y-m-d')
 {
     try {
+        if (!$date || $date == '0000-00-00' || $date == '0000-00-00 00:00:00') {
+            throw new Exception('Fecha vacía o inválida');
+        }
         $date = new DateTime($date);
         $date = $date->format($format);
     } catch (exception $e) {
         file_put_contents(__DIR__ . "/logs/" . date('Ymd') . "_errFecha.log", date('Y-m-d H:i') . ' ' . $_SERVER['PHP_SELF'] . ' ' . $e->getMessage() . "\n", FILE_APPEND | LOCK_EX);
+        error_log($e->getMessage());
         return false;
     }
     return $date;
@@ -1349,25 +1347,43 @@ $authBasic = base64_encode('chweb:' . $dataC['homeHost']);
 $token = $_SERVER['HTTP_TOKEN'];
 
 $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) {
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+    curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Seguir redirecciones
+
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout total de ejecución: 10 segundos
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,
-        array(
+        [
             "Accept: */*",
             'Content-Type: application/json',
             'Authorization: Basic ' . $authBasic,
             // Basic Authentication
             "Token: $token",
-        )
+        ]
     );
     $file_contents = curl_exec($ch);
+
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
 
@@ -1378,6 +1394,7 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
     }
 
     curl_close($ch);
+
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -1465,7 +1482,7 @@ function validaFecha($fecha, $required = true)
 
         if (count($f) != 3) {
             http_response_code(400);
-            (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
+            (response([], 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
             exit;
         }
 
@@ -1477,7 +1494,7 @@ function validaFecha($fecha, $required = true)
         if ($err) {
             $err = trim($err);
             http_response_code(400);
-            (response(array(), 0, "$err", 400, timeStart(), 0, 0));
+            (response([], 0, "$err", 400, timeStart(), 0, 0));
             exit;
         }
         $f = "$y-$m-$d";
@@ -1485,7 +1502,7 @@ function validaFecha($fecha, $required = true)
             new DateTime($f);
         } catch (exception $e) {
             http_response_code(400);
-            (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
+            (response([], 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
             exit;
         }
     }
@@ -1496,7 +1513,7 @@ function returnFecha($fecha, $format = 'Y-m-d', $required = true)
     if ($required) {
         if (!$fecha) {
             http_response_code(400);
-            (response(array(), 0, "Fecha es requerido", 400, timeStart(), 0, 0));
+            (response([], 0, "Fecha es requerido", 400, timeStart(), 0, 0));
             exit;
         }
     }
@@ -1506,7 +1523,7 @@ function returnFecha($fecha, $format = 'Y-m-d', $required = true)
 
         if (count($f) != 3) {
             http_response_code(400);
-            (response(array(), 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
+            (response([], 0, "Formato de fecha incorrecto", 400, timeStart(), 0, 0));
             exit;
         }
 
@@ -1518,7 +1535,7 @@ function returnFecha($fecha, $format = 'Y-m-d', $required = true)
         if ($err) {
             $err = trim($err);
             http_response_code(400);
-            (response(array(), 0, "$err", 400, timeStart(), 0, 0));
+            (response([], 0, "$err", 400, timeStart(), 0, 0));
             exit;
         }
         $f = "$y-$m-$d";
@@ -1528,7 +1545,7 @@ function returnFecha($fecha, $format = 'Y-m-d', $required = true)
             return $formatted_date;
         } catch (exception $e) {
             http_response_code(400);
-            (response(array(), 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
+            (response([], 0, "Formato de fecha incorrecto: " . $e->getMessage() . "", 400, timeStart(), 0, 0));
             exit;
         }
     }
@@ -1554,7 +1571,7 @@ $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     }
 };
 
-function novedadTipo($value = array())
+function novedadTipo($value = [])
 {
     if (!$value)
         return 'Desconocido';

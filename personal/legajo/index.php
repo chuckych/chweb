@@ -61,76 +61,69 @@ define("INCUMPLIMIENTO", [
    'Recortado sin control de descanso' => '5',
    'Recortado con control de descanso' => '6'
 ]);
-
-$_GET["_leg"] = intval($_GET["_leg"]) ?? '';
-
-$_leg = ($_GET["_leg"]);
-
-if (empty($_leg)) {
-   echo "<h1>Legajo Inválido</h1>";
-   echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
-   exit;
-}
-
-$EstrUser = explode(',', $_SESSION['EstrUser']);
-$Empr = explode(',', $_SESSION['EmprRol']);
-$Plan = explode(',', $_SESSION['PlanRol']);
-$Conv = explode(',', $_SESSION['ConvRol']);
-$Sect = explode(',', $_SESSION['SectRol']);
-$Sec2 = explode(',', $_SESSION['Sec2Rol']);
-$Grup = explode(',', $_SESSION['GrupRol']);
-$Sucu = explode(',', $_SESSION['SucuRol']);
-
-$dataParametros = array(
-   'Nume' => ($EstrUser),
-   'ApNo' => "",
-   'Docu' => [],
-   'ApNoNume' => "",
-   'Empr' => ($Empr),
-   'Plan' => ($Plan),
-   'Sect' => ($Sect),
-   'Sec2' => ($Sec2),
-   'Conv' => ($Conv),
-   'Grup' => ($Grup),
-   'Sucu' => ($Sucu),
-   'TareProd' => [],
-   'RegCH' => [],
-   'Tipo' => [],
-   "Baja" => [],
-   "IntExt" => [],
-   "getDatos" => 0,
-   "getLiqui" => 0,
-   "getEstruct" => 0,
-   "getControl" => 0,
-   "getHorarios" => 0,
-   "getAcceso" => 0,
-   'start' => 0,
-   'length' => 5000
-);
-
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
-
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
-$dataApi = json_decode(requestApi($url, $token, "", $dataParametros, 10), true);
-$colLega = array();
-
-if ($dataApi['DATA']) {
-   $colLega = array_column($dataApi['DATA'], "Lega");
-}
-
 try {
-   $searchValue = $_leg;
-   $key = array_search($searchValue, $colLega);
 
-   if ($key === false) {
-      echo "El Legajo $searchValue No es valido";
-      echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
-      exit;
+   $_leg = $_GET["_leg"] ?? '';
+
+   if (empty($_leg) || !is_numeric($_leg)) {
+      throw new Exception("Legajo no válido");
    }
+
+   $EstrUser = explode(',', $_SESSION['EstrUser']);
+   $Empr = explode(',', $_SESSION['EmprRol']);
+   $Plan = explode(',', $_SESSION['PlanRol']);
+   $Conv = explode(',', $_SESSION['ConvRol']);
+   $Sect = explode(',', $_SESSION['SectRol']);
+   $Sec2 = explode(',', $_SESSION['Sec2Rol']);
+   $Grup = explode(',', $_SESSION['GrupRol']);
+   $Sucu = explode(',', $_SESSION['SucuRol']);
+
+   $dataParametros = [
+      'Nume' => $EstrUser,
+      'ApNo' => "",
+      'Docu' => [],
+      'ApNoNume' => "",
+      'Empr' => $Empr,
+      'Plan' => $Plan,
+      'Sect' => $Sect,
+      'Sec2' => $Sec2,
+      'Conv' => $Conv,
+      'Grup' => $Grup,
+      'Sucu' => $Sucu,
+      'TareProd' => [],
+      'RegCH' => [],
+      'Tipo' => [],
+      "Baja" => [],
+      "IntExt" => [],
+      "getDatos" => 0,
+      "getLiqui" => 0,
+      "getEstruct" => 0,
+      "getControl" => 0,
+      "getHorarios" => 0,
+      "getAcceso" => 0,
+      'start' => 0,
+      'length' => 5000
+   ];
+
+   $url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
+
+   $dataApi = json_decode(requestApi($url, $token, "", $dataParametros, 10), true) ?: [
+      'DATA' => [],
+      'MESSAGE' => '',
+   ];
+
+   $colLega = [];
+
+   if (($dataApi['DATA'] ?? [])) {
+      $colLega = array_column($dataApi['DATA'], "ApNo", "Lega");
+   }
+
+   $validLegajo = $colLega[$_leg] ? true : false;
+   if (!$validLegajo) {
+      throw new Exception("Legajo no válido");
+   }
+   require pagina('alta.php');
 } catch (Exception $e) {
    echo 'Error: ' . $e->getMessage();
    echo '<script>setTimeout(()=>{ window.location.href="../index.php";}, 1000);</script>';
-   exit;
 }
-require pagina('alta.php');

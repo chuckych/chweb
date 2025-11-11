@@ -172,34 +172,56 @@ class webServiceCH
 
         $ch = curl_init(); // Inicializar el objeto curl
         curl_setopt($ch, CURLOPT_URL, $this->apiData . '/Ping?'); // Establecer la URL
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, false); // Establecer que retorne el contenido del servidor
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // The number of seconds to wait while trying to connect
-        // Especificar cabeceras
-        $headers = array(
-            'Connection: keep-alive',
-            'Accept: */*',
-        );
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+        // TIMEOUTS CRÍTICOS - Evitar esperas largas
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2); // Timeout total de ejecución: 1 segundo
+        curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
+        curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+        curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+        curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+
+        // No verificar SSL en desarrollo (comentar en producción si usas HTTPS válido)
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
+        // // Especificar cabeceras
+        // $headers = [
+        //     'Connection: keep-alive',
+        //     'Accept: */*',
+        // ];
+
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         // Especificar método
-        curl_setopt($ch, CURLOPT_HTTPGET, true);
+        // curl_setopt($ch, CURLOPT_HTTPGET, true);
+
         $response = curl_exec($ch); // extract information from response
         $curl_errno = curl_errno($ch); // get error code
         $curl_error = curl_error($ch); // get error information
+
         if ($curl_errno > 0) { // si hay error
             $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
             writelog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         }
+
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
         curl_close($ch); // close curl handle
-        if ($http_code == '201') {
-            // writelog('Ping correcto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
-            http_response_code(204);
-            return true;
-        } else {
-            writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
-            http_response_code(408);
-            return false;
-        }
+        return ($http_code == 201) ? true : writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log').false;  // escribir en el log
+
+        // if ($http_code == '201') {
+        //     // writelog('Ping correcto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
+        //     http_response_code(204);
+        //     return true;
+        // } else {
+        //     writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
+        //     http_response_code(408);
+        //     return false;
+        // }
     }
 
     public function estado($processID)

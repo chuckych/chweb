@@ -536,9 +536,11 @@ class Personal
 
             $filtros = $datos['filtros'] ?? []; // Obtengo los filtros del array $datos
             // \file_put_contents('filtros_estructura.json', print_r(json_encode($datos['filtros']), true), FILE_APPEND);
-            foreach ($datos['filtros']['secciones'] as $key => $value) {
-                if ($value === '00' || $value == '0' || $value == '00') {
-                    $datos['filtros']['secciones'][$key] = "0";
+            if (($datos['filtros']['secciones'] ?? false) && is_array($datos['filtros']['secciones'])) {
+                foreach ($datos['filtros']['secciones'] as $key => $value) {
+                    if ($value === '00' || $value == '0' || $value == '00') {
+                        $datos['filtros']['secciones'][$key] = "0";
+                    }
                 }
             }
             // Asegúrate de actualizar $filtros con los cambios

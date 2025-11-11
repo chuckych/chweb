@@ -1282,3 +1282,56 @@ const DT_SPANISH_SHORT2 = {
         "sSortDescending": ":Activar para ordenar la columna de manera descendente"
     }
 };
+const DT_SPANISH_DIAS = {
+    "bProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "",
+    "sEmptyTable": "",
+    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ Días",
+    "sInfoEmpty": "No se encontraron resultados",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ Días)",
+    "sInfoPostFix": "",
+    "sSearch": "",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+        "sLast": "<i class='bi bi-chevron-double-right'></i>",
+        "sNext": "<i class='bi bi-chevron-right'></i>",
+        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};
+const DT_SPANISH_LEGAJOS = {
+    "bProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "",
+    "sEmptyTable": "",
+    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ legajos",
+    "sInfoEmpty": "No se encontraron legajos",
+    "sInfoFiltered": "(filtrado de un total de _MAX_ legajos)",
+    "sInfoPostFix": "",
+    "sSearch": "",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+        "sLast": "<i class='bi bi-chevron-double-right'></i>",
+        "sNext": "<i class='bi bi-chevron-right'></i>",
+        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};
+const dateFormatted = (date, format = 'DD/MM/YYYY') => {
+    const dateDate = moment(date, 'YYYY-MM-DD');
+    const dateFormatted = dateDate.isValid() ? dateDate.format(format) : date;
+    return dateFormatted;
+};

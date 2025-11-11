@@ -278,7 +278,7 @@ class Acceso
         // Ejecutar query
         $stmt->execute();
         $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        \error_log(print_r($data, true));
+        // \error_log(print_r($data, true));
 
         // Procesar resultados
         $data = $this->procesar_datos_identifica($data);

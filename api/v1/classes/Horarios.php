@@ -1611,7 +1611,7 @@ class Horarios
         $rules = [ // Reglas de validación
             "FechaDesde" => ['required', 'date'],
             "FechaHasta" => ['required', 'date'],
-            "SinHorarios" => ['allowed01'],
+            "SinHorarios" => ['allowed012'],
             "Legajos" => ['arrInt'],
             "Empresas" => ['arrSmallint'],
             "Plantas" => ['arrSmallint'],
@@ -1624,7 +1624,7 @@ class Horarios
             "Horarios" => ['arrSmallint'],
             "Egreso" => ['allowed012'],
             "Estado" => ['arrAllowed01'],
-            "Tipo" => ['allowed01'],
+            "Tipo" => ['arrAllowed01'],
             "ReglaCH" => ['arrSmallint'],
             'AgruparPor' => ['varchar20']
         ];
@@ -1924,7 +1924,7 @@ class Horarios
                 while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
                     $currentResultSet[] = $row; // Agrega cada fila al array del conjunto de resultados actual
                 }
-
+                // \error_log(\print_r($currentResultSet, true));
                 $currentResultSet = array_reduce($currentResultSet, function ($carry, $item) use ($agruparPor) {
                     $carry[$item[$agruparPor]][] = $item;
                     return $carry;

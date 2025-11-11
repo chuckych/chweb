@@ -5,6 +5,7 @@ ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 tz();
 tzLang();
 errorReport();
+
 $request = Flight::request();
 // Flight::json($dataC['WebServiceCH'].'/RRHHWebService', 200) . exit;
 $Horario = '';
@@ -19,27 +20,27 @@ function pingWebService($textError, $webService) // Función para validar que el
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_write_close();
     }
-    
+
     $url = rutaWebService($webService, "Ping?");
-    
+
     $ch = curl_init(); // Inicializar el objeto curl
     curl_setopt($ch, CURLOPT_URL, $url); // Establecer la URL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
-    
+
     // TIMEOUTS CRÍTICOS - Evitar esperas largas
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
     curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total de ejecución: 3 segundos
     curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
-    
+
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
     curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
     curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
     curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
-    
+
     $response = curl_exec($ch); // extract information from response
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
-    
+
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         writeLog($text, __DIR__ . "../../logs/" . date('Ymd') . "_errorWebService.log", '');
@@ -48,10 +49,10 @@ function pingWebService($textError, $webService) // Función para validar que el
         (response([], 0, "Error Interno. WS", 400, 0, 0, 0));
         exit;
     }
-    
+
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
     curl_close($ch); // close curl handle
-    
+
     return ($http_code == 201) ? true : (response([], 0, $textError, 400, 0, 0, 0)) . exit; // escribir en el log
 }
 pingWebService('Error Interno WS', $dataC['WebServiceCH'] . '/RRHHWebService');
@@ -65,7 +66,7 @@ function respuestaWebService($respuesta)
 {
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    return ($respuesta[0]);
+    return $respuesta[0];
 }
 function EstadoProceso($url)
 {
@@ -73,43 +74,43 @@ function EstadoProceso($url)
     if (session_status() === PHP_SESSION_ACTIVE) {
         session_write_close();
     }
-    
+
     $maxRetries = 30; // Máximo 30 intentos (30 segundos aprox)
     $retryCount = 0;
-    
+
     do {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        
+
         // TIMEOUTS CRÍTICOS
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
         curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total: 3 segundos
-        
+
         $respuesta = curl_exec($ch);
         $curl_errno = curl_errno($ch);
-        
+        // error_log(print_r($respuesta, true));
         curl_close($ch);
-        
+
         // Si hay error de curl, retornar error
         if ($curl_errno > 0) {
             return 'Error';
         }
-        
+
         $retryCount++;
-        
+
         // Si excede el máximo de reintentos, retornar timeout
         if ($retryCount >= $maxRetries) {
             return 'Timeout';
         }
-        
-        // Esperar 1 segundo entre intentos
-        if (respuestaWebService($respuesta) == 'Pendiente') {
-            sleep(1);
+
+        if ($respuesta === '{Pendiente}') {
+            // error_log("Respuesta Pendiente, reintentando... Intento: $retryCount");
+            usleep(300000); // Esperar 0.3 segundos
         }
-        
+
     } while (respuestaWebService($respuesta) == 'Pendiente');
-    
+
     return respuestaWebService($respuesta);
 }
 
@@ -121,13 +122,30 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
     $FechaHasta = fecha($FechaHasta, 'd/m/Y');
     $ruta = rutaWebService($webService, "Horarios");
     $post_data = "{Usuario=SUPERVISOR,Legajos=[$Legajos],TipoDePersonal=$TipoDePersonal,LegajoDesde=$LegajoDesde,LegajoHasta=$LegajoHasta,FechaDesde=$FechaDesde,FechaHasta=$FechaHasta,Empresa=$Empresa,Planta=$Planta,Sucursal=$Sucursal,Grupo=$Grupo,Sector=$Sector,Seccion=$Seccion}";
-    // print_r($post_data).exit;
+
     $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $ruta);
-    curl_setopt($ch, CURLOPT_POST, TRUE);
+
+    curl_setopt($ch, CURLOPT_URL, $ruta); // Establecer la URL
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total de ejecución: 1 segundo
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+    
+    // No verificar SSL en desarrollo (comentar en producción si usas HTTPS válido)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
     $respuesta = curl_exec($ch);
+
     $curl_errno = curl_errno($ch);
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
@@ -135,28 +153,30 @@ function getHorario($FechaDesde, $FechaHasta, $Legajos, $LegajoDesde, $LegajoHas
     if ($curl_errno > 0) {
         writeLog($text, __DIR__ . "/../logs/" . date('Ymd') . "_errorGetHorario.log", '');
         http_response_code(400);
-        (response($text, '0', 'Error', 400, $time_start, 0, ''));
+        error_log(print_r($text . " Cod: $curl_errno: $curl_error", true));
+        response($text, '0', 'Error', 400, $time_start, 0, '');
         exit;
     }
     curl_close($ch);
     if ($httpCode == 404) {
         writeLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        $data = array('status' => 'error', 'dato' => $respuesta);
+        $data = ['status' => 'error', 'dato' => $respuesta];
         http_response_code(400);
-        (response($respuesta, '0', 'Error', 400, $time_start, 0, ''));
-        // echo json_encode($data);
+        error_log(print_r($text . " Cod: $curl_errno: $curl_error", true));
+        response($respuesta, '0', 'Error', 400, $time_start, 0, '');
         exit;
     }
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    $processID = ($respuesta[1]);
+    $processID = $respuesta[1];
     $url = rutaWebService($webService, "Estado?ProcesoId=" . $processID);
+
     if ($httpCode == 201) {
-        return array('ProcesoId' => $processID, 'Estado' => EstadoProceso($url));
-        // exit;
-    } else {
-        fileLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        return ['ProcesoId' => $processID, 'Estado' => EstadoProceso($url)];
     }
+
+    fileLog($text, __DIR__ . '/../logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    error_log(print_r($text, true));
 }
 
 $wc = '';
@@ -203,9 +223,9 @@ $dp->Seccion = ($dp->Seccion) ?? [];
 $dp->Seccion = vp($dp->Seccion, 'Seccion', 'int', 4);
 
 $getHorario = getHorario(
-    ($dp->FechaDesde),
-    ($dp->FechaHasta),
-    ($dp->Legajos),
+    $dp->FechaDesde,
+    $dp->FechaHasta,
+    $dp->Legajos,
     $dp->LegajoDesde,
     $dp->LegajoHasta,
     $dp->TipoDePersonal,
@@ -217,15 +237,11 @@ $getHorario = getHorario(
     $dp->Seccion,
     $dataC['WebServiceCH'] . '/RRHHWebService',
 );
-// Flight::json($getHorario, 200) . exit;
-// $arrHorario = preg_split('/(\r|\n)/', $getHorario['Estado'], -1, 1);
-// print_r($getHorario['Estado']).exit;
-$data = array();
 
+$data = [];
 if ($getHorario && $getHorario['Estado'] != 'Terminado') {
     $arrHorario = preg_split('/(\r|\n)/', $getHorario['Estado'], -1, 1);
-    // $arrHorario = preg_split("/[\s]+/", $getHorario['Estado'], -1, 1);
-    // print_r($arrHorario) . exit;
+
     foreach ($arrHorario as $key => $value) {
         $explode = explode(',', $value);
         $legajo = $explode[0];
@@ -244,111 +260,69 @@ if ($getHorario && $getHorario['Estado'] != 'Terminado') {
             $filtroHorarios = filtrarObjetoArr($stmtHorarios, 'HorCodi', $codigo);
 
             foreach ($filtroHorarios as $key => $a) {
-                $horario = array(
+                $horario = [
                     'cod' => $a['HorCodi'],
                     'desc' => $a['HorDesc'],
                     'horID' => $a['HorID']
-                );
+                ];
             }
             $horario['desc'] = str_replace("  ", " ", $horario['desc']);
             $horariodesc = (intval($asignacion) == 0) ? '' : ' ' . $horario['desc'];
             $horariodesc = (intval($codigo) == 0) ? '' : ' ' . $horario['desc'];
         }
-        $horario['desc'] = $horario['desc'] ?? '';
-        $horario['cod'] = $horario['cod'] ?? '';
-        $horario['horID'] = $horario['horID'] ?? '';
 
-        switch (intval($asignacion)) {
-            case 0:
-                $tipo = 'Sin Horario Asignado';
-                break;
-            case 3:
-                $tipo = 'Desde Hasta por Legajo';
-                break;
-            case 9:
-                $tipo = 'Desde por Legajo';
-                break;
-            case 6:
-                $tipo = 'Rotación por Legajo';
-                break;
-            case 7:
-                $tipo = 'Rotación por Sector';
-                break;
-            case 8:
-                $tipo = 'Rotación por Grupo';
-                break;
-            case 1:
-                $tipo = 'Citación';
-                $horariodesc = '';
-                break;
-            case 10:
-                $tipo = 'Desde por Sector';
-                break;
-            case 11:
-                $tipo = 'Desde por Grupo';
-                break;
+        $mapAsignacion = [
+            0 => 'Sin Horario Asignado',
+            1 => 'Citación',
+            3 => 'Desde Hasta por Legajo',
+            6 => 'Rotación por Legajo',
+            7 => 'Rotación por Sector',
+            8 => 'Rotación por Grupo',
+            9 => 'Desde por Legajo',
+            10 => 'Desde por Sector',
+            11 => 'Desde por Grupo'
+        ];
 
-            default:
-                $tipo = '';
-                break;
-        }
-        switch (intval($laboral)) {
-            case 0:
-                $diaLaboral = 'No';
-                break;
-            case 1:
-                $diaLaboral = 'Sí';
-                break;
+        $mapLaboral = [
+            0 => 'No',
+            1 => 'Sí'
+        ];
 
-            default:
-                $diaLaboral = '';
-                break;
-        }
-        switch (intval($feriado)) {
-            case 0:
-                $diaFeriado = 'No';
-                break;
-            case 1:
-                $diaFeriado = 'Sí';
-                break;
+        $mapFeriado = [
+            0 => 'No',
+            1 => 'Sí'
+        ];
 
-            default:
-                $diaFeriado = '';
-                break;
-        }
+        $siEsferiado = $feriado === '1' ? true : false;
+        $siEsLaboral = $laboral === '1' ? true : false;
 
-        if (intval($laboral) == 1) {
-            $vsHorario = $desde . ' a ' . $hasta;
-        } else {
-            if (intval($feriado) == 0) {
-                $vsHorario = 'Franco';
-            } else {
-                $vsHorario = 'Feriado';
-            }
-        }
-        $Mensaje = (($getHorario['Estado'])) ? $tipo . ' (' . $vsHorario . ') ' . $horariodesc : 'Sin datos';
-        $Horario = (($horario['desc'])) ? $horario['desc'] : 'Sin datos';
-        $HorarioID = (($horario['horID'])) ? $horario['horID'] : '-';
+        $vsHorario = $siEsLaboral ? $desde . ' a ' . $hasta : ($siEsferiado ? 'Feriado' : 'Franco');
 
-        $data[] = array(
+        $tipo = $mapAsignacion[intval($asignacion)] ?? '';
+        $diaLaboral = $mapLaboral[intval($laboral)] ?? '';
+        $diaFeriado = $mapFeriado[intval($feriado)] ?? '';
+
+        $Mensaje = $getHorario['Estado'] ? $tipo . ' (' . $vsHorario . ') ' . $horariodesc : 'Sin datos';
+        $Horario = $horario['desc'] ?? 'Sin datos';
+        $HorarioID = $horario['horID'] ?? '-';
+
+        $data[] = [
             'Codigo' => intval($codigo),
             'Horario' => $Horario,
             'HorarioID' => $HorarioID,
             'Fecha' => $fecha,
             'Dia' => $dia,
-            'Feriado' => ($diaFeriado),
-            'Laboral' => ($diaLaboral),
+            'Feriado' => $diaFeriado,
+            'Laboral' => $diaLaboral,
             'Desde' => $desde,
             'Hasta' => $hasta,
             'Descanso' => $descanso,
             'Legajo' => intval($legajo),
-            'TipoAsign' => ($tipo),
+            'TipoAsign' => $tipo,
             'TipoAsignStr' => $Mensaje
-        );
+        ];
     }
 }
-
 $countData = count($data);
 http_response_code(200);
-(response($data, '0', 'OK', 200, $time_start, $countData, $idCompany));
-exit;
+response($data, '0', 'OK', 200, $time_start, $countData, $idCompany);

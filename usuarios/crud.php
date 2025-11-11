@@ -17,8 +17,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['submit'] == 'alta')) {
 
     $a_nombre = test_input($_POST["a_nombre"]);
     $a_usuario = test_input($_POST["a_usuario"]);
-    $a_legajo = test_input($_POST["a_legajo"]);
-    $a_tarjeta = test_input($_POST["a_tarjeta"]);
+    $a_legajo = test_input($_POST["a_legajo"] ?? '0');
+    $a_tarjeta = test_input($_POST["a_tarjeta"] ?? '');
     $a_rol = test_input($_POST["a_rol"]);
     $a_recid = test_input($_POST["a_recid"]);
 

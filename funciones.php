@@ -110,7 +110,7 @@ function secure_auth_ch_json()
 {
     timeZone();
     timeZone_lang();
-    
+
     $secure_auth_ch = $_SESSION["secure_auth_ch"] ?? '';
     if (
         $secure_auth_ch !== true
@@ -335,7 +335,7 @@ function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
     echo '
     <div class="row d-print-none text-' . $colortexto . ' ' . $bgc . ' radius-0">
     <div class="col-12 d-inline-flex h6 fw3 py-2 m-0">
-        <div class="d-flex align-items-center w-100">
+        <div class="d-inline-flex align-items-center w-100">
             <div>
                 ' . $svg . '
             </div>
@@ -2068,18 +2068,50 @@ function respuestaWebService($respuesta)
 {
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
-    return ($respuesta[0]);
+    return $respuesta[0];
 }
 function EstadoProceso($url)
 {
+    // CRÍTICO: Cerrar sesión para no bloquear otras peticiones
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
+    $maxRetries = 30; // Máximo 30 intentos (30 segundos aprox)
+    $retryCount = 0;
+
     do {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
+        // TIMEOUTS CRÍTICOS
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
+        curl_setopt($ch, CURLOPT_TIMEOUT, 3); // Timeout total: 3 segundos
+
         $respuesta = curl_exec($ch);
+        $curl_errno = curl_errno($ch);
+
         curl_close($ch);
+
+        // Si hay error de curl, retornar error
+        if ($curl_errno > 0) {
+            return 'Error';
+        }
+
+        $retryCount++;
+
+        // Si excede el máximo de reintentos, retornar timeout
+        if ($retryCount >= $maxRetries) {
+            return 'Timeout';
+        }
+
+        if ($respuesta === '{Pendiente}') {
+            usleep(300000); // Esperar 0.3 segundos
+        }
+
     } while (respuestaWebService($respuesta) == 'Pendiente');
+
     return respuestaWebService($respuesta);
 }
 function pingWebService($textError) // Función para validar que el Webservice de Control Horario esta disponible
@@ -2322,24 +2354,18 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        // $data = array('status' => 'error', 'Mensaje' => $respuesta);
         PrintRespuestaJson('error', $respuesta);
-        // echo json_encode($data);
         exit;
     }
     $processID = respuestaWebService($respuesta);
     $url = rutaWebService("Estado?ProcesoId=" . $processID);
-    // echo $processID.PHP_EOL; 
-    // echo EstadoProceso($url); exit;
 
     if ($httpCode == 201) {
-        // return EstadoProceso($url);
-        return array('ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url));
-        // exit;
-    } else {
-        fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        return ['ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url)];
     }
+
+    fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+    fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
 }
 
 function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesde, $FechaHasta, $Empresa, $Planta, $Sucursal, $Grupo, $Sector, $Seccion, $Laboral, $Novedad, $Justifica, $Observacion, $Horas, $Causa, $Categoria)
@@ -3710,27 +3736,47 @@ function calcLimitTar($start, $end)
 }
 function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
 {
+
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_write_close();
+    }
+
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_ENCODING, '');
+
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+
+    // TIMEOUTS CRÍTICOS - Evitar esperas largas
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout); // Timeout de conexión: 2 segundos
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1); // Timeout total de ejecución: 1 segundo
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
+
+    curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response
+    curl_setopt($ch, CURLOPT_FRESH_CONNECT, false); // Reutilizar conexiones existentes
+    curl_setopt($ch, CURLOPT_FORBID_REUSE, false); // Permitir reutilización de conexiones
+    curl_setopt($ch, CURLOPT_MAXREDIRS, 3); // Máximo 3 redirecciones
+
+    // No verificar SSL en desarrollo (comentar en producción si usas HTTPS válido)
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,
-        array(
+        [
             "Accept: */*",
             'Content-Type: application/json',
             "Token: $token",
-        )
+        ]
     );
 
     $file_contents = curl_exec($ch);
+    // error_log('CURL response: ' . $file_contents); // Log de la respuesta CURL para depuración
+
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
 

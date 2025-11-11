@@ -98,15 +98,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             'margin_footer' => 5,
             'orientation' => $_orientation
         ]);
-        $mpdf->SetDisplayMode('fullpage');
+        $mpdf->SetDisplayMode('fullpage'); // fullpage, fullwidth, real
         $mpdf->shrink_tables_to_fit = 0;
         $mpdf->SetAuthor('Control Horario WEB - ' . $_SESSION['NOMBRE_SESION']);
         $mpdf->SetTitle($title);
         $mpdf->SetSubject($_titulo);
         $mpdf->SetCreator('Control Horario WEB');
-        $mpdf->SetCompression(true);
-        $mpdf->simpleTables = true;
-        $mpdf->useSubstitutions = false;
+        $mpdf->SetCompression(true); // Habilitar compresión
+        $mpdf->simpleTables = true; // Mejora el manejo de tablas simples
+        $mpdf->useSubstitutions = false; // Evita que mpdf reemplace caracteres especiales
 
         $_watermark = FusNuloPOST("_watermark", '');
         /** Marca de Agua */

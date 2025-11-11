@@ -5,6 +5,7 @@
 $(function () {
     const homehost = $("#_homehost").val();
     const flag = new Date().getTime();
+    const DIR_APP_DATA = '../../app-data';
 
     const dateRange = async () => {
 
@@ -68,6 +69,21 @@ $(function () {
             getPersonal();
         });
     });
+
+    const asignacionStr = (prioridad, date) => {
+        const dateFormat = dateFormatted(date);
+        const splitDate = (date) => {
+            const [d1, d2] = date.split(' - ');
+            return [dateFormatted(d1), dateFormatted(d2)];
+        };
+        const map = {
+            "1": `Citación fecha ${dateFormat}`,
+            "2": `Horario desde ${splitDate(date)[0]} hasta ${splitDate(date)[1]}`,
+            "3": (date.split(' - ').length > 1) ? `Rotación desde ${splitDate(date)[0]} hasta ${splitDate(date)[1]}` : `Rotación desde ${dateFormat}`,
+            "4": `Horario desde ${dateFormat}`,
+        };
+        return map[prioridad] || '';
+    };
 
     const mapSinDescripcion = {
         'secciones': 'Sin sección',
@@ -235,15 +251,17 @@ $(function () {
     let recargaPorFiltro = false;
     const getPersonal = async () => {
         const url = "/" + homehost + "/app-data/personal/filtros";
+
         if ($.fn.DataTable.isDataTable('#tablaPersonal')) {
             loaderIn('#tablaPersonal', true);
             recargaPorFiltro = true;
             $('#tablaPersonal').DataTable().ajax.reload(); // Recargar la tablaPersonal con los datos actuales
             return false;
         }
+
         const renderMobile = `<'row'
                     <'col-12'
-                        <'table-responsive pt-4't>
+                        <'table-responsive't>
                         <'d-flex flex-column align-items-center justify-content-center'p>
                         <'d-flex flex-column align-items-center justify-content-center gap5'i>
                     >
@@ -303,46 +321,28 @@ $(function () {
                 /** Columna Legajo */
                 {
                     data: 'Cod', className: 'w80 px-3 border border-right-0 rounded-left bg-light', targets: 'Cod',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         return '<div>' + data + '</div>';
-                    },
+                    }, visible: true
                 },
                 /** Columna Nombre */
                 {
-                    data: 'Descripcion', className: 'text-center w300 pr-3 border rounded-right bg-light px-3', targets: 'Descripcion',
-                    "render": function (data, type, row, meta) {
-                        return `<div title="${data}" class="text-truncate" style="width:300px">${data}</div>`;
-                    },
+                    data: 'Descripcion', className: 'text-center w200 border rounded-right bg-light px-3', targets: 'Descripcion',
+                    render: function (data, type, row, meta) {
+                        return `
+                        <span title="${data}">
+                            <span class="text-truncate" style="width:200px">
+                                ${data}
+                            </span>
+                        </span>`;
+                    }, visible: true
                 }
             ],
             paging: true,
             responsive: false,
             info: true,
             ordering: false,
-            language: {
-                "sProcessing": "Actualizando . . .",
-                "sLengthMenu": "_MENU_",
-                "sZeroRecords": "",
-                "sEmptyTable": "",
-                "sInfo": "_START_ al _END_ de _TOTAL_ Legajos",
-                "sInfoEmpty": "No hay resultados",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-                "sInfoPostFix": "",
-                "sSearch": "",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "<div class='spinner-border text-light'></div>",
-                "oPaginate": {
-                    "sFirst": "<i class='bi bi-chevron-double-left'></i>",
-                    "sLast": "<i class='bi bi-chevron-double-right'></i>",
-                    "sNext": "<i class='bi bi-chevron-right'></i>",
-                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
-                },
-                "oAria": {
-                    "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ":Activar para ordenar la columna de manera descendente"
-                }
-            }
+            language: DT_SPANISH_LEGAJOS
             // preDrawCallback: function () {
             // loaderIn('#tablaPersonal', true);
             // },
@@ -358,7 +358,7 @@ $(function () {
             // getSemanal();
         });
         tablaPersonal.on('draw', function (e, settings, json) {
-            console.log(recargaPorFiltro);
+            // console.log(recargaPorFiltro);
 
             if (recargaPorFiltro) {
                 getHorarios();
@@ -384,15 +384,15 @@ $(function () {
             searchDelay: 100,
             dom: `
             <'row'
-                    <'col-12'
-                        <'table-responsive tableHorarios't>
-                    >
-                    <'col-12'
-                        <'d-flex w-100 align-items-center justify-content-between mt-1'lp>
-                    >
-                        <'col-12'<'d-inline-flex w-100 justify-content-between'i>
-                    >
+                <'col-12'
+                    <'infoLega'>
+                    <'table-responsive tableHorarios't>
                 >
+                <'col-12'
+                    <'d-flex w-100 align-items-center justify-content-between mt-2'lp>
+                >
+            >
+            <'text-right w-100 infoTabla'i>
             `,
             ajax: {
                 url: url,
@@ -428,119 +428,101 @@ $(function () {
             },
             columns: [
                 {
-                    data: 'Legajo', className: 'py-2', targets: '', title: 'LEGAJO',
-                    "render": function (data, type, row, meta) {
+                    data: 'Legajo', className: '', targets: '', title: 'LEGAJO',
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         return `<div class="w80">${data}</div>`;
                     },
                 },
-                // {
-                //     data: 'Nombre', className: '', targets: '', title: 'APELLIDO Y NOMBRE',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data;
-                //     },
-                // },
                 {
                     data: 'Fecha', className: '', targets: '', title: 'FECHA',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         return `<div class="d-flex flex-column">
-                            <div>${moment(data).format('DD/MM/YYYY')}</div>
-                            <div class="text-mutted font08">${row.Dia}</div>
+                            <div>${dateFormatted(data)}</div>
+                            <div class="text-secondary font08">${row.Dia}</div>
                             </div>`;
                     },
                 },
                 {
                     data: 'Horario', className: '', targets: '', title: 'HORARIO',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         const Feriado = row?.Feriado;
                         const Prioridad = row?.Prioridad;
                         let dataCol = data || 'Sin horario asignado';
+
+                        const franco = (valor) => {
+                            return valor.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+                        }
+                        const horarioStr = (valor, row, feriado) => {
+                            const feriadoStr = feriado == "1" ? `<span class="hint hint--top text-secondary font08" aria-label="${row.FeriadoStr}">(Fer)</span>` : '';
+                            const entrada = row.Entrada === '00:00' || !row.Entrada ? false : true;
+                            const salida = row.Salida === '00:00' || !row.Salida ? false : true;
+                            const desdeHasta = entrada && salida ? `${row.Entrada} a ${row.Salida}` : '';
+                            const map = {
+                                "1": `<div class="d-flex flex-column"><span>${desdeHasta} ${feriadoStr}</span><span class="text-secondary font08">Citación</span></div>`,
+                                "FRANCO": `<span class="text-capitalize">${franco(valor)} ${feriadoStr} </span><br><span class="text-secondary font08">${desdeHasta}</span>`,
+                                // "Feriado": `<span class="hint--top" aria-label="${row.FeriadoStr}">Feriado ${feriadoStr}</span>`,
+                                "Horario": `<span>${desdeHasta} ${feriadoStr}</span>`,
+                            };
+                            return map[valor] || '';
+                        };
+
                         if (Prioridad == "1") {
-                            dataCol = `<span class="hint--top" aria-label="${row.Horario}">${row.Entrada} a ${row.Salida}</span>`;
+                            return horarioStr('1', row, Feriado);
                         }
+                        // if (Feriado == "1") {
+                        //     return horarioStr('Feriado', row, Feriado);
+                        // }
                         if (data == "FRANCO") {
-                            const franco = data.toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-                            dataCol = `<span class="text-capitalize">${franco}</span>`;
+                            return horarioStr("FRANCO", row, Feriado);
                         }
-                        if (Feriado == "1") {
-                            dataCol = `<span class="hint--top" aria-label="${row.FeriadoStr}">Feriado</span>`;
-                        }
-                        return `<div>${dataCol}</div>`;
+                        return horarioStr("Horario", row, Feriado);
                     },
                 },
                 {
                     data: 'Descanso', className: 'text-center', targets: '', title: 'DESCANSO',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         return data != 0 ? data : '00:00';
                     },
                 },
                 {
-                    data: 'HsATrab', className: ' text-center', targets: '', title: 'HS a TR',
-                    "render": function (data, type, row, meta) {
+                    data: 'HsATrab', className: ' text-center', targets: '', title: '<span title="Horas a trabajar">HS a TR</span>',
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         return data ? data : '00:00';
                     },
                 },
                 {
-                    data: 'HsDelDia', className: ' text-center', targets: '', title: 'HS DIA',
-                    "render": function (data, type, row, meta) {
+                    data: 'HsDelDia', className: ' text-center', targets: '', title: '<span title="Horas del día">HS DÍA</span>',
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         return data ? data : '00:00';
                     },
                 },
                 {
                     data: 'CodigoHorario', className: 'text-center pr-0', targets: '', title: 'COD',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         const cod = `(${data ? data : '0'})`
                         return cod;
                     },
                 },
                 {
-                    data: 'DescripcionHorario', className: '', targets: '', title: 'DESCRIPCIÓN',
+                    data: 'DescripcionHorario', className: '', targets: '', title: 'DESCRIPCIÓN / ASIGNACIÓN',
                     render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         const prioridad = row?.Prioridad;
-                        const referencia = row?.Referencia || '';
-                        const asignacion = row?.Asignacion || '';
-                        let referenciaText = `${asignacion} ${referencia}`.trim();
-
-                        switch (prioridad) {
-                            case "1":
-                                referenciaText = `Citación fecha ${referencia}`;
-                                break;
-                            case "2": {
-                                const [desde = '', hasta = ''] = referencia.split(' - ');
-                                referenciaText = `Horario desde ${desde} hasta ${hasta}`;
-                                break;
-                            }
-                            case "3": {
-                                const referenciaSplit = referencia.split(' - ');
-                                if (referenciaSplit.length > 1) {
-                                    referenciaText = `Rotación desde ${referenciaSplit[0]} hasta ${referenciaSplit[1]}`;
-                                } else {
-                                    referenciaText = `Rotación desde ${referencia}`;
-                                }
-                                break;
-                            }
-                            case "4":
-                                referenciaText = `Horario desde ${referencia}`;
-                                break;
-                        }
-
-                        return `<div class="d-flex flex-column">
-                            <div>${data ? data : 'Sin horario asignado'}</div>
-                            <div class="text-mutted font08">${referenciaText}</div>
-                            </div>`;
+                        const referencia = row?.Referencia || ''; // Fecha o rango de fechas
+                        const referenciaStr = asignacionStr(prioridad, referencia);
+                        return `<div class="d-flex flex-column"><div>${data ? data : 'Sin horario asignado'}</div><div class="text-secondary font08">${referenciaStr}</div></div>`;
                     },
                 },
                 {
                     data: 'HorID', className: 'w-100 text-right pr-0', targets: '', title: '<div class="text-center float-right" style="width:40px">ID</div>',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
                         if (type !== 'display') return '';
                         const HorID = `${data ? data : ''}`
                         const colorInt = row?.HorColor;
@@ -549,16 +531,10 @@ $(function () {
                         return `<div class="text-center float-right" style="height:20px;color:${textColor}; background-color:${bgColor}; border-radius: 5px; padding: 2px 5px; font-size: 12px; width:40px">${HorID}</div>`;
                     },
                 },
-                // {
-                //     data: 'Asignacion', className: '', targets: '', title: 'ASIGNACIÓN',
-                //     "render": function (data, type, row, meta) {
-                //         if (type !== 'display') return '';
-                //         return data ? data : 'Sin asignación';
-                //     },
-                // },
                 {
                     data: '', className: ' w-100', targets: '', title: '',
-                    "render": function (data, type, row, meta) {
+                    render: function (data, type, row, meta) {
+                        if (type !== 'display') return '';
                         return '';
                     },
                 },
@@ -567,30 +543,7 @@ $(function () {
             info: true,
             searching: true,
             ordering: false,
-            language: {
-                "bProcessing": "Actualizando . . .",
-                "sLengthMenu": "_MENU_",
-                "sZeroRecords": "",
-                "sEmptyTable": "",
-                "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
-                "sInfoEmpty": "No se encontraron resultados",
-                "sInfoFiltered": "(filtrado de un total de _MAX_ Registros)",
-                "sInfoPostFix": "",
-                "sSearch": "",
-                "sUrl": "",
-                "sInfoThousands": ",",
-                "sLoadingRecords": "<div class='spinner-border text-light'></div>",
-                "oPaginate": {
-                    "sFirst": "<i class='bi bi-chevron-double-left'></i>",
-                    "sLast": "<i class='bi bi-chevron-double-right'></i>",
-                    "sNext": "<i class='bi bi-chevron-right'></i>",
-                    "sPrevious": "<i class='bi bi-chevron-left'></i>"
-                },
-                "oAria": {
-                    "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
-                    "sSortDescending": ":Activar para ordenar la columna de manera descendente"
-                }
-            },
+            language: DT_SPANISH_DIAS,
             // Eventos de la tabla
             initComplete: function (e, settings, json) {
                 $('#tabla').show();
@@ -598,12 +551,16 @@ $(function () {
             preDrawCallback: function () {
                 loaderIn('.tableHorarios', true);
             },
-            // al cambiar de pagina o cambiar el tamaño de la tabla mostrar en formato decimal o en horas
-            drawCallback: function (e, settings, json) {
-                setTimeout(() => {
-                    loaderIn('.tableHorarios', false);
-                }, 0);
-            }
+        });
+        tabla.on('draw', function (e, settings, json) {
+            setTimeout(() => {
+                loaderIn('.tableHorarios', false);
+            }, 0);
+            // const info = tabla.rows({ page: 'current' }).data().toArray()[0];
+            // const legajo = info ? info?.Legajo : '';
+            // const nombre = info ? info?.Nombre : '';
+            // const infoLega = `<div class="p-1 px-2 font09 bg-light border radius">Legajo: ${legajo} - ${nombre}</div>`;
+            // $('.infoLega').html(infoLega);
         });
     }
     getPersonal();
@@ -624,11 +581,11 @@ $(function () {
         select2Estruct("#selectjs_seccion", true, "Secciones", 5);
         select2Estruct("#selectjs_grupos", true, "Grupos", 6);
         select2Estruct("#selectjs_sucursal", true, "Sucursales", 7);
-        select2Estruct("#selectjs_personal", true, "Legajos", 8);
         $("#selectjs_seccion").prop("disabled", true);
 
     });
 
+    select2Estruct("#selectjs_personal", true, "Legajos", 8);
     // on hide collapse ·Filtros
     $('#Filtros').on('hidden.bs.collapse', function () {
         $('#mostrarFiltros').attr('aria-label', 'Mostrar Filtros');
@@ -665,7 +622,7 @@ $(function () {
         $('input[name="Tipo"]').trigger('change');
         LimpiarFiltros();
         getPersonal();
-        getSemanal();
+        // getSemanal();
     });
 
     $("#trash_allIn").on("click", async function (e) {
@@ -691,5 +648,103 @@ $(function () {
 
         getPersonal();
     });
+
+    const ExportarBtn = document.getElementById('ExportarBtn');
+    ExportarBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        $.notifyClose();
+        notify('Aguarde por favor...', 'dark', 0, 'right');
+        exportarHorarios();
+    });
+
+    const exportarHorarios = () => {
+        const valueTipo = $('input[name="Tipo"]:checked').val() || '0';
+        const url = "/" + homehost + "/app-data/asignados/exportar";
+        const FechaDesde = $('#_dr').data('daterangepicker').startDate.format('YYYY-MM-DD');
+        const FechaHasta = $('#_dr').data('daterangepicker').endDate.format('YYYY-MM-DD');
+        const Tipo = valueTipo == '2' ? [0, 1] : [valueTipo];
+        const Legajos = $("#selectjs_personal").val() || [];
+        const extension = $('input[name="extension"]:checked').val() || 'xls';
+        const Egreso = 1;
+        const AgruparPor = 'Legajo';
+        const SinHorarios = 2;
+        const Empresas = $("#selectjs_empresa").val();
+        const Plantas = $("#selectjs_planta").val();
+        const Convenios = $("#selectjs_convenio").val();
+        const Sectores = $("#selectjs_sector").val();
+        const Secciones = $("#selectjs_seccion").val();
+        const Grupos = $("#selectjs_grupos").val();
+        const Sucursales = $("#selectjs_sucursal").val();
+
+        const payload = {
+            FechaDesde,
+            FechaHasta,
+            Tipo,
+            Legajos,
+            Egreso,
+            AgruparPor,
+            SinHorarios,
+            Empresas,
+            Plantas,
+            Convenios,
+            Sectores,
+            Secciones,
+            Grupos,
+            Sucursales,
+            extension
+        };
+
+        $.ajax({
+            url,
+            method: "POST",
+            data: JSON.stringify(payload),
+            contentType: "application/json",
+            success: function (response) {
+                console.log(response.status);
+
+                if(response.status === 'error') {
+                    $.notifyClose();
+                    const mensajeError = response.mensaje || 'Ocurrió un error al generar el reporte.';
+                    notify(mensajeError, 'danger', 5000, 'right');
+                    return;
+                }
+
+                $.notifyClose();
+                const archivo = response.archivo ?? '';
+
+                if (!archivo) {
+                    throw new Error('No se pudo generar el archivo.');
+                }
+
+                const bannerDownload = `
+                    <div class="d-flex flex-column">
+                        <div class="font-weight-bold">Reporte generado.</div>
+                        <a href="${DIR_APP_DATA}/${archivo}" class="btn btn-custom px-2 btn-sm mt-2 font08 download" target="_blank" download>
+                        <div class="d-flex align-items-center w-100 justify-content-center" style="gap:5px">
+                            <span>Descargar</span> <i class="bi bi-file-earmark-arrow-down font1"></i>
+                        </div>
+                        </a>
+                    </div>
+                `;
+                notify(bannerDownload, 'warning', 0, 'right');
+
+                const download = document.querySelector('.download');
+
+                if (download) {
+                    download.addEventListener('click', (e) => {
+                        $.notifyClose();
+                    });
+                }
+
+            },
+            error: function (error) {
+                const mensajeError = error.responseJSON?.message || 'Ocurrió un error al generar el reporte.';
+                $.notifyClose();
+                notify(mensajeError, 'danger', 5000, 'right');
+
+            }
+        });
+    }
 });
 

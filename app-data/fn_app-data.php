@@ -82,7 +82,7 @@ function ch_api()
         curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2); // Timeout de conexión: 2 segundos
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // Timeout total de ejecución: 10 segundos
+        curl_setopt($ch, CURLOPT_TIMEOUT, 60); // Timeout total de ejecución: 60 segundos
         curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
@@ -570,6 +570,12 @@ function sucursalesRol()
 function legajosRol()
 {
     $l = $_SESSION['EstrUser'] ?? '';
+    $l = ($l && $l != '-') ? explode(',', $l) : [];
+    return $l;
+}
+function estructRol($key)
+{
+    $l = $_SESSION[$key] ?? '';
     $l = ($l && $l != '-') ? explode(',', $l) : [];
     return $l;
 }

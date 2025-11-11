@@ -1304,15 +1304,14 @@ Flight::route('POST /personal/filtros', function () {
     $dataPers = $dt !== 1 ? $dataPers : $data['personal'] ?? [];
 
     // Merge de los datos de los roles con los datos del request
-    $empr = mergeArray($dataEmpr, $emprRol);
-    $plan = mergeArray($dataPlan, $planRol);
-    $conv = mergeArray($dataConv, $convRol);
-    $sect = mergeArray($dataSect, $sectRol);
-    $secc = mergeArray($dataSecc, $sec2Rol);
-    $grup = mergeArray($dataGrup, $grupRol);
-    $sucu = mergeArray($dataSucu, $sucuRol);
-    $pers = mergeArray($dataPers, $persRol);
-
+    $empr = $dataEmpr ?: mergeArray($dataEmpr, $emprRol);
+    $plan = $dataPlan ?: mergeArray($dataPlan, $planRol);
+    $conv = $dataConv ?: mergeArray($dataConv, $convRol);
+    $sect = $dataSect ?: mergeArray($dataSect, $sectRol);
+    $secc = $dataSecc ?: mergeArray($dataSecc, $sec2Rol);
+    $grup = $dataGrup ?: mergeArray($dataGrup, $grupRol);
+    $sucu = $dataSucu ?: mergeArray($dataSucu, $sucuRol);
+    $pers = $dataPers ?: mergeArray($dataPers, $persRol);
 
     $payload = [
         'estructura' => $data['estructura'] ?? '',
@@ -1334,7 +1333,6 @@ Flight::route('POST /personal/filtros', function () {
             'personal' => $pers,
         ]
     ];
-
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/personal/filtros";
     $personal = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($personal, true);
@@ -1415,10 +1413,41 @@ Flight::route('POST /asignados', function () {
     $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asignados";
     $horarios = ch_api($endpoint, $payload, 'POST', '');
     $horarios = json_decode($horarios, true);
-
     $result = $horarios;
-
     Flight::json($result ?? []);
+});
+Flight::route('POST /asignados/exportar', function () {
+    try {
+        $request = Flight::request();
+        $payload = $request->data ?? [];
+        $validExtensions = ['xls', 'pdf'];
+        if (!in_array($payload['extension'] ?? '', $validExtensions)) {
+            throw new Exception('Tipo de exportación no válido', 400);
+        }
+        // if ($payload['extension'] == 'pdf') {
+        //     throw new Exception('La exportación a PDF no está disponible en este momento', 400);
+        // }
+
+        $payload['Empresas'] = $payload['Empresas'] ?: estructRol('EmprRol');
+        $payload['Plantas'] = $payload['Plantas'] ?: estructRol('PlanRol');
+        $payload['Convenios'] = $payload['Convenios'] ?: estructRol('ConvRol');
+        $payload['Sectores'] = $payload['Sectores'] ?: estructRol('SectRol');
+        $payload['Secciones'] = $payload['Secciones'] ?: estructRol('Sec2Rol');
+        $payload['Grupos'] = $payload['Grupos'] ?: estructRol('GrupRol');
+        $payload['Sucursales'] = $payload['Sucursales'] ?: estructRol('SucuRol');
+        $payload['Legajos'] = $payload['Legajos'] ?: legajosRol();
+        $Datos = Flight::asignados($payload);
+
+        if ($payload['extension'] == 'pdf') {
+            require '../informes/horasign2/pdf.php';
+            return;
+        }
+
+        require '../informes/horasign2/xls.php';
+
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
 });
 Flight::route('POST /ws_novedades', function () {
 

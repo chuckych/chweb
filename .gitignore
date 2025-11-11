@@ -10,6 +10,8 @@
 /vendor/tecnickcom/
 /informes/infornovc/reporte/*
 /informes/horasign-old/*
+/informes/horasign2
+/informes/horasign-ws
 /mpdf-examples
 /mobile/sms
 /docs
