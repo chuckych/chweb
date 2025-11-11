@@ -1436,13 +1436,23 @@ Flight::route('POST /asignados/exportar', function () {
         $payload['Grupos'] = $payload['Grupos'] ?: estructRol('GrupRol');
         $payload['Sucursales'] = $payload['Sucursales'] ?: estructRol('SucuRol');
         $payload['Legajos'] = $payload['Legajos'] ?: legajosRol();
-        $Datos = Flight::asignados($payload);
 
         if ($payload['extension'] == 'pdf') {
+            $FechaDesde = new DateTime($payload['FechaDesde'] ?? ''); // eje: 2025-11-11
+            $FechaHasta = new DateTime($payload['FechaHasta'] ?? ''); // eje: 2025-11-17
+            $diff = $FechaDesde->diff($FechaHasta);
+            $FechaDesde = $FechaDesde->format('d/m/Y');
+            $FechaHasta = $FechaHasta->format('d/m/Y');
+            $dias = $diff->days ??= 0;
+
+            if ($dias + 1 !== 7 && ($payload['PlanillaSemanal'] ?? 0) === 1) {
+                throw new Exception('Error: La planilla semanal requiere exactamente 7 días. Rango actual: ' . ($dias + 1) . ' días');
+            }
+            $Datos = Flight::asignados($payload);
             require '../informes/horasign/pdf.php';
             return;
         }
-
+        $Datos = Flight::asignados($payload);
         require '../informes/horasign/xls.php';
 
     } catch (\Throwable $th) {

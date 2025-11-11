@@ -23,6 +23,17 @@ table {
 	/* width: 100%; */
 }
 
+.tabla {
+	font-size: 8pt;
+	line-height: 1.25;
+	/* border-collapse: collapse; */
+}
+
+.tabla th,
+.tabla td {
+	border: 0.1pt solid #2c2c2c;
+}
+
 thead {
 	font-weight: normal;
 	vertical-align: middle;

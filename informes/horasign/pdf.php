@@ -9,10 +9,12 @@ if (session_status() === PHP_SESSION_ACTIVE) {
 $start_time = microtime(true);
 
 $_destino = 'F'; // I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña
-$_nombre = "Horarios Asignados";
 $_SaltoPag = "1";
+$_PlanillaSemanal = $payload['PlanillaSemanal'] ?? 0;
 
-$_titulo = 'Horarios Asignados';
+$_titulo = $_PlanillaSemanal === 0 ? 'Horarios Asignados' : 'Planilla Semanal Horarios';
+$_nombre = $_titulo;
+
 $_nombre = $_nombre ?: strtoupper($_titulo);
 
 $_path = $_SERVER['DOCUMENT_ROOT'] . '/' . HOMEHOST . '/app-data/archivos';
@@ -34,13 +36,6 @@ $FechaFin = $payload['FechaHasta'] ?? '';
 
 $data = $Datos['DATA'] ?? [];
 
-$FechaDesde = new DateTime($FechaIni); // eje: 2025-11-11
-$FechaHasta = new DateTime($FechaFin); // eje: 2025-11-17
-$diff = $FechaDesde->diff($FechaHasta);
-$FechaDesde = $FechaDesde->format('d/m/Y');
-$FechaHasta = $FechaHasta->format('d/m/Y');
-$dias = $diff->days ??= 0;
-
 // Habilitar reporte de errores para debugging
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
@@ -53,7 +48,14 @@ try {
     ini_set("pcre.backtrack_limit", "5000000");
 
     ob_start();
-    require_once 'reporte_pdf.php';
+
+    // Seleccionar el archivo de reporte según el tipo de planilla
+    if ($_PlanillaSemanal === 1) {
+        require_once 'reporte_pdf_planilla.php';
+    } else {
+        require_once 'reporte_pdf.php';
+    }
+
     $buffer = ob_get_clean();
     $mpdf = new \Mpdf\Mpdf([
         'mode' => 'utf-8',

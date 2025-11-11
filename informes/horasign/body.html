@@ -37,13 +37,21 @@
                     <span>.xls</span>
                 </label>
             </div>
+
             <div class="bg-light border radius p-1 ml-1 hint--right hint--rounded hint--no-arrow hint--default hint--no-shadow"
                 aria-label="Generar Exportación">
-                <button class="btn btn-sm btn-outline-success border-0 radius font08" type="button"
-                    id="ExportarBtn">
+                <button class="btn btn-sm btn-outline-success border-0 radius font08" type="button" id="ExportarBtn">
                     <span class="d-none d-sm-block"><i class="bi bi-arrow-right-short mr-1"></i>Exportar</span>
                     <span class="d-block d-sm-none"><i class="bi bi-arrow-right-short"></i></span>
                 </button>
+            </div>
+        </div>
+        <div class="col-12 mt-1 div-planilla fadeIn" style="display: none;">
+            <div class="custom-control custom-switch custom-control-inline w180 ml-1 mt-sm-0 mt-2">
+                <input type="checkbox" class="custom-control-input" id="planilla-semanal">
+                <label class="custom-control-label" for="planilla-semanal" style="padding-top: 3px;">
+                    <span id="planilla-semanal-label">Planilla Semanal</span>
+                </label>
             </div>
         </div>
     </div>

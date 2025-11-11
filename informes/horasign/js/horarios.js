@@ -676,6 +676,7 @@ $(function () {
         const Secciones = $("#selectjs_seccion").val();
         const Grupos = $("#selectjs_grupos").val();
         const Sucursales = $("#selectjs_sucursal").val();
+        const PlanillaSemanal = document.getElementById('planilla-semanal').checked ? 1 : 0;
 
         const payload = {
             FechaDesde,
@@ -692,7 +693,8 @@ $(function () {
             Secciones,
             Grupos,
             Sucursales,
-            extension
+            extension,
+            PlanillaSemanal
         };
 
         $.ajax({
@@ -701,9 +703,8 @@ $(function () {
             data: JSON.stringify(payload),
             contentType: "application/json",
             success: function (response) {
-                console.log(response.status);
 
-                if(response.status === 'error') {
+                if (response.status === 'error') {
                     $.notifyClose();
                     const mensajeError = response.mensaje || 'Ocurrió un error al generar el reporte.';
                     notify(mensajeError, 'danger', 5000, 'right');
@@ -746,5 +747,12 @@ $(function () {
             }
         });
     }
+
+    // detectar el cambio del type radio input[name="extension"] y si el value es pdf  quitar el hidden de .div-planilla
+    $('input[name="extension"]').on('change', function (e) {
+        const value = $(this).val();
+        const divPlanilla = document.querySelector('.div-planilla');
+        divPlanilla.style.display = (value === 'pdf') ? 'block' : 'none';
+    });
 });
 
