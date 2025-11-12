@@ -82,11 +82,11 @@ try {
     $mpdf->SetHTMLHeader('
             <table width="100%">
                 <tr>
-                    <td style="width: 65%;">
+                    <td style="width: 55%;">
                         <p class="left bold">' . strtoupper($_titulo) . '</p>
                     </td>
-                    <td style="width: 35%;" align="right">
-                        <p class="right">Desde: ' . $FechaDesde . ' hasta: ' . $FechaHasta . '</p>
+                    <td style="width: 45%;" align="right">
+                        <p class="right bold">Desde: ' . $FechaDesde . ' hasta: ' . $FechaHasta . '</p>
                     </td>
                 </tr>
             </table>
@@ -121,6 +121,8 @@ try {
         'archivo' => 'archivos/' . strtolower($NombreArchivo2),
         'destino' => $_destino,
         'data' => $data,
+        'payloadEstructura' => $payloadEstructura ?? [],
+        'estructuras' => $estructuras ?? [],
     ];
 
     echo json_encode($data);

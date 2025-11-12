@@ -292,15 +292,19 @@ function fic_nove_horas($payload)
 }
 function v1_api($endpoint, $method, $payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1" . $endpoint;
-    // file_put_contents('log.txt', "Requesting API: $endpoint\nPayload: " . json_encode($payload) . "\n", FILE_APPEND);
-    $data = ch_api($endpoint, $payload, $method, '');
-    $arrayData = json_decode($data, true);
-    $DATA = $arrayData['DATA'] ?? [];
-    if (empty($DATA)) {
-        return [];
+    try {
+        $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1" . $endpoint;
+        $data = ch_api($endpoint, $payload, $method, '');
+        $arrayData = json_decode($data, true);
+
+        $DATA = $arrayData['DATA'] ?? [];
+        if (empty($DATA)) {
+            return [];
+        }
+        return $DATA;
+    } catch (\Throwable $th) {
+        error_log("Error en v1_api: " . $th->getMessage());
     }
-    return $DATA;
 }
 function cacheData($nameFile, $payload, $nameCache = '', $endpoint, $method = 'POST')
 {

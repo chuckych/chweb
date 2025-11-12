@@ -1424,9 +1424,6 @@ Flight::route('POST /asignados/exportar', function () {
         if (!in_array($payload['extension'] ?? '', $validExtensions)) {
             throw new Exception('Tipo de exportación no válido', 400);
         }
-        // if ($payload['extension'] == 'pdf') {
-        //     throw new Exception('La exportación a PDF no está disponible en este momento', 400);
-        // }
 
         $payload['Empresas'] = $payload['Empresas'] ?: estructRol('EmprRol');
         $payload['Plantas'] = $payload['Plantas'] ?: estructRol('PlanRol');
@@ -1438,6 +1435,21 @@ Flight::route('POST /asignados/exportar', function () {
         $payload['Legajos'] = $payload['Legajos'] ?: legajosRol();
 
         if ($payload['extension'] == 'pdf') {
+
+            $strPayloadEstructura = fn($estructura) => implode(',', $payload[$estructura] ?? []);
+
+            $payloadEstructura = [
+                'Empr' => $strPayloadEstructura('Empresas'),
+                'Plan' => $strPayloadEstructura('Plantas'),
+                'Conv' => $strPayloadEstructura('Convenios'),
+                'Sect' => $strPayloadEstructura('Sectores'),
+                'Secc' => $strPayloadEstructura('Secciones'),
+                'Grup' => $strPayloadEstructura('Grupos'),
+                'Sucu' => $strPayloadEstructura('Sucursales'),
+            ];
+
+            $estructuras = v1_api('/estructuras', 'POST', $payloadEstructura) ?? [];
+
             $FechaDesde = new DateTime($payload['FechaDesde'] ?? ''); // eje: 2025-11-11
             $FechaHasta = new DateTime($payload['FechaHasta'] ?? ''); // eje: 2025-11-17
             $diff = $FechaDesde->diff($FechaHasta);

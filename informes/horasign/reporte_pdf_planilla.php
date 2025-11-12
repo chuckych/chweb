@@ -22,17 +22,6 @@ function obtenerDiaSemana($fecha)
 
 echo '<body backtop="5mm" backbottom="10mm">';
 
-// Validar que haya exactamente 7 días
-// if ($dias + 1 !== 7) {
-//     // echo '<p style="text-align: center; color: red; font-size: 12pt; margin-top: 50px;">
-//     //         Error: La planilla semanal requiere exactamente 7 días.<br>
-//     //         Rango actual: ' . ($dias + 1) . ' días
-//     //       </p>';
-//     // echo '</body>';
-//     throw new Exception('Error: La planilla semanal requiere exactamente 7 días. Rango actual: ' . ($dias + 1) . ' días');
-//     return;
-// }
-
 // Verificar que existan datos
 if (empty($data) || !is_array($data)) {
     echo '<p style="text-align: center; color: red; font-size: 12pt; margin-top: 50px;">No hay datos para mostrar</p>';
@@ -70,7 +59,7 @@ if (empty($data) || !is_array($data)) {
         $dia = $fechaInfo['dia'];
         echo '<th style="padding: 5px; text-align: center; width: 80px;" class="bold">' . $dia . '<br>' . $fechaFormateada . '</th>';
     }
-    
+
     // Columna de Total
     echo '<th style="padding: 5px; text-align: center; width: 40px;" class="bold">Total<br>Hs.</th>';
 
@@ -111,7 +100,7 @@ if (empty($data) || !is_array($data)) {
             $esFranco = strtoupper($horario) === 'FRANCO';
             $esFeriado = ($registro['Feriado'] ?? '0') === '1';
             $citacion = '';
-            
+
             // Calcular minutos de este día y sumar al total
             if (!empty($hsATrab) && $hsATrab !== '00:00') {
                 $partes = explode(':', trim($hsATrab));
@@ -167,12 +156,12 @@ if (empty($data) || !is_array($data)) {
 
             echo '</td>';
         }
-        
+
         // Calcular y mostrar el total de horas en formato HH:MM
         $horasTotal = intval($totalMinutosEmpleado / 60);
         $minutosTotal = intval($totalMinutosEmpleado % 60);
         $totalFormateado = sprintf('%02d:%02d', $horasTotal, $minutosTotal);
-        
+
         // Celda de total con fondo destacado
         echo '<td style="padding: 4px; text-align: center; font-weight: bold;">' . $totalFormateado . '</td>';
 
@@ -225,6 +214,83 @@ if (empty($data) || !is_array($data)) {
         echo '</table>';
         echo '<p style="padding: 5px; margin: 0; border-bottom: 0.1pt solid #000;"></p>';
         echo '</div>';
+    }
+
+    $mapCodigos = [
+        'EmpCodi' => 'Empresa',
+        'PlaCodi' => 'Planta',
+        'ConCodi' => 'Convenio',
+        'SecCodi' => 'Sector',
+        'GruCodi' => 'Grupo',
+        'SucCodi' => 'Sucursal',
+        'Se2Codi' => 'Sección',
+    ];
+
+    if (!empty($estructuras)) {
+        echo '<div style="margin-top: 15px; page-break-inside: avoid;">';
+        // echo '<p style="padding: 5px; margin: 0; border-bottom: 0.1pt solid #000;">Estructuras</p>';
+
+        // Iterar sobre cada tipo de estructura (Empresas, Sectores, Secciones)
+        foreach ($estructuras as $tipoEstructura => $items) {
+            if (empty($items) || !is_array($items)) {
+                continue;
+            }
+
+            echo '<table border="0" style="border-collapse: collapse; font-size: 8pt; margin-top: 2px;">';
+
+            // Encabezado dinámico basado en las claves del primer elemento
+            if (!empty($items[0])) {
+                echo '<thead>';
+                echo '<tr>';
+
+                foreach (array_keys($items[0]) as $columna) {
+                    // Formatear nombres de columnas
+                    $nombreColumna = $columna;
+                    if (strpos($columna, 'Codi') !== false) {
+                        $nombreColumna = $mapCodigos[$columna] ?? 'Código';
+                    } elseif (strpos($columna, 'Desc') !== false || strpos($columna, 'Razon') !== false) {
+                        $nombreColumna = '';
+                    }
+                    echo '<th class="bold" style="padding: 5px;">' . $nombreColumna . '</th>';
+                }
+
+                echo '</tr>';
+                echo '</thead>';
+            }
+
+            // Cuerpo de la tabla
+            echo '<tbody>';
+
+            foreach ($items as $item) {
+                echo '<tr>';
+
+                foreach ($item as $valor) {
+                    echo '<td style="padding: 4px;">' . $valor . '</td>';
+                }
+
+                echo '</tr>';
+            }
+
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>';
+        }
+
+        echo '</div>';
+    }
+    if (!empty($payload['Tipo'])) {
+
+        $tipos = $payload['Tipo'];
+        $countTipo = count($tipos);
+
+        echo '<div style="padding: 5px; font-size: 8pt; margin-top: 2px;" class="bold">Tipo de Personal</div>';
+
+        if ($countTipo === 1) {
+            $labelTipo = ($tipos[0] == 1) ? 'Jornales' : 'Mensuales';
+            echo '<div style="padding-left: 5px; font-size: 8pt;">' . $labelTipo . '</div>';
+        } elseif ($countTipo === 2) {
+            echo '<div style="padding-left: 5px; font-size: 8pt;">Jornales | Mensuales</div>';
+        }
     }
 }
 
