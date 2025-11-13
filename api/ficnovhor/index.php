@@ -94,15 +94,11 @@ if ($wcHoras) {
     $qFicCount .= $wcHoras;
 }
 $qFicCount .= ") AS FICHAS";
-// print_r($qFic) . exit;
-// print_r($dp['NovEx']) . exit;
-// print_r($qFicCount) . exit;
-
 
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
 $qFic .= " ORDER BY FICHAS.FicFech";
 $qFic .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
-// print_r($qFic) . exit;
+// error_log($qFic);
 $stmtFic = $dbApiQuery($qFic) ?? '';
 
 if (empty($stmtFic)) {
@@ -359,10 +355,64 @@ foreach ($stmtFic as $key => $v) {
         'ONove' => $dataONov,
         'Horas' => $dataHoras,
         'Estruct' => $estruct,
-        'Cierre' => $cierre,
+        'Cierre' => $cierre
     ];
 }
+
+if ($hayLimit) {
+    $limit = $dp['DiasLimite'];
+    $conteoLegajos = [];
+    foreach ($data as $item) {
+        $legajo = $item['Lega'];
+        if (!isset($conteoLegajos[$legajo])) {
+            $conteoLegajos[$legajo] = [
+                'count' => 0,
+                'ApNo' => $item['ApNo'],
+                'Fechas' => []
+            ];
+        }
+        $conteoLegajos[$legajo]['count']++;
+        // Agregar la fecha a la lista de fechas
+        if (!empty($item['FechF'])) {
+            $conteoLegajos[$legajo]['Fechas'][] = $item['FechF'];
+        }
+    }
+    unset($data);
+    // Filtrar legajos que aparecen más de X veces (según DiasLimite)
+    $resultado = [];
+    foreach ($conteoLegajos as $legajo => $info) {
+        if ($info['count'] >= intval($limit)) {
+            $data[] = [
+                'Lega' => $legajo,
+                'ApNo' => $info['ApNo'],
+                'Count' => $info['count'],
+                'Fechas' => $info['Fechas']
+            ];
+        }
+    }
+    $stmtFicCount = count($data);
+    http_response_code(200);
+    $arrayResponse = [
+        'RESPONSE_CODE' => 200,
+        'COUNT' => intval($stmtFicCount),
+        'MESSAGE' => 'OK',
+        'DATA' => $data,
+    ];
+    echo json_encode($arrayResponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+
 $countData = count($data);
 http_response_code(200);
-(response($data, $stmtFicCount, 'OK', 200, $time_start, $countData, $idCompany));
-exit;
+
+response(
+    $data,
+    $stmtFicCount,
+    'OK',
+    200,
+    $time_start,
+    $countData,
+    $idCompany
+);
+

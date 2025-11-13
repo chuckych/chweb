@@ -1571,11 +1571,35 @@ $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     }
 };
 
+/**
+ * Obtiene la descripción textual del tipo de novedad según su código
+ *
+ * Esta función convierte un código numérico de tipo de novedad en su 
+ * correspondiente descripción en texto. Los tipos de novedades incluyen
+ * ausencias, licencias, vacaciones, entre otros.
+ *
+ * @param array $value Array que contiene el código del tipo de novedad en su primera posición.
+ *                     Si está vacío o no se proporciona, retorna 'Desconocido'.
+ *
+ * @return string Descripción textual del tipo de novedad. Retorna 'Desconocido' 
+ *                si no se proporciona un valor válido.
+ *
+ * Tipos de novedad disponibles:
+ * - 0: LLegada Tarde
+ * - 1: Incumplimiento
+ * - 2: Salida Anticipada
+ * - 3: Ausencia
+ * - 4: Licencia
+ * - 5: Accidente
+ * - 6: Vacaciones
+ * - 7: Suspensión
+ * - 8: Art
+ */
 function novedadTipo($value = [])
 {
     if (!$value)
         return 'Desconocido';
-    $tipos = array(
+    $tipos = [
         '0' => 'LLegada Tarde',
         '1' => 'Incumplimiento',
         '2' => 'Salida Anticipada',
@@ -1585,7 +1609,7 @@ function novedadTipo($value = [])
         '6' => 'Vacaciones',
         '7' => 'Suspensión',
         '8' => 'Art'
-    );
+    ];
 
     return $tipos[$value[0]];
 }
@@ -1616,4 +1640,89 @@ function validarHora($hora)
         return true;
     }
     return false;
+}
+
+/**
+ * Convierte una fecha de diferentes formatos a formato Y-m-d (ISO 8601)
+ *
+ * Esta función detecta automáticamente el formato de entrada de una fecha
+ * y la convierte al formato estándar Y-m-d. Soporta múltiples formatos de entrada
+ * y realiza validación estricta para evitar conversiones incorrectas.
+ *
+ * Formatos soportados:
+ * - Y-m-d (2024-12-31) - Retorna la fecha sin modificar
+ * - d/m/Y (31/12/2024) - Convierte a Y-m-d
+ * - d-m-Y (31-12-2024) - Convierte a Y-m-d
+ *
+ * @param string $fecha La fecha a formatear en cualquiera de los formatos soportados
+ * 
+ * @return string|false Retorna la fecha en formato Y-m-d si la conversión es exitosa,
+ *                      o false si el formato no es reconocido o la fecha es inválida
+ *
+ * @example
+ * formatearFecha('31/12/2024'); // Retorna: '2024-12-31'
+ * formatearFecha('2024-12-31'); // Retorna: '2024-12-31'
+ * formatearFecha('31-12-2024'); // Retorna: '2024-12-31'
+ * formatearFecha('invalid');    // Retorna: false
+ */
+function formatearFecha($fecha)
+{
+    // Map de regex => formato DateTime
+    $formatos_map = [
+        // Formato: Y-m-d (Ej: 2024-12-31)
+        '/^\d{4}-\d{2}-\d{2}$/' => 'Y-m-d',
+        // Formato: d/m/Y (Ej: 31/12/2024)
+        '/^\d{2}\/\d{2}\/\d{4}$/' => 'd/m/Y',
+        // Formato: d-m-Y (Ej: 31-12-2024)
+        '/^\d{2}-\d{2}-\d{4}$/' => 'd-m-Y',
+    ];
+
+    foreach ($formatos_map as $regex => $formato) {
+        if (preg_match($regex, $fecha)) {
+            $date = DateTime::createFromFormat($formato, $fecha);
+
+            // Validación estricta para evitar conversiones incorrectas
+            if ($date && $date->format($formato) === $fecha) {
+                // Si ya está en formato Y-m-d, retornar directamente
+                return ($formato === 'Y-m-d') ? $fecha : $date->format('Y-m-d');
+            }
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Valida que el request contenga JSON válido
+ * 
+ * @param string|null $json El contenido JSON a validar
+ * @param bool $returnDecoded Si es true, retorna el JSON decodificado en lugar de bool
+ * @return bool|array|object Retorna true/false o el JSON decodificado según $returnDecoded
+ */
+function validarJsonRequest(?string $json = null, bool $returnDecoded = false)
+{
+    // Si no se pasa el JSON, intentar obtenerlo del request
+    if ($json === null) {
+        $json = file_get_contents('php://input');
+    }
+
+    // Verificar que no esté vacío
+    if (empty($json)) {
+        return $returnDecoded ? null : false;
+    }
+
+    // Decodificar el JSON
+    $data = json_decode($json, true);
+
+    // Verificar si hubo errores en la decodificación
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return $returnDecoded ? null : false;
+    }
+
+    // Verificar que el resultado sea un array u objeto (no null, string, etc.)
+    if (!is_array($data) && !is_object($data)) {
+        return $returnDecoded ? null : false;
+    }
+
+    return $returnDecoded ? $data : true;
 }
