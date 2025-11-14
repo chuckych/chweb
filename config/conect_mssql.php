@@ -32,11 +32,22 @@ if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion
 
 switch ($auth) { // 0 = SQL Server Authentication, 1 = Windows Authentication
 	case '1':
-		$connectionInfo = array("Database" => $db, "CharacterSet" => "utf-8"); // Windows Authentication
+		$connectionInfo = [
+			"Database" => $db,
+			"CharacterSet" => "utf-8",
+			"Encrypt" => false,  // o true con TrustServerCertificate
+			// "TrustServerCertificate" => true  // opcional, solo si Encrypt es true
+		]; // Windows Authentication
 		break;
 	case '0':
-		$connectionInfo = array("Database" => $db, "UID" => $user, "PWD" => $pass, "CharacterSet" => "utf-8"); // SQL Server Authentication
-		break;
+		$connectionInfo = [
+			"Database" => $db,
+			"UID" => $user,
+			"PWD" => $pass,
+			"CharacterSet" => "UTF-8",
+			"Encrypt" => false,  // o true con TrustServerCertificate
+			// "TrustServerCertificate" => true  // opcional, solo si Encrypt es true
+		];
 }
 
 /********************************************************************************* */

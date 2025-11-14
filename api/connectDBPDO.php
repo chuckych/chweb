@@ -19,7 +19,7 @@ if ((empty($db . $user . $pass . $serverName))) { // Si no hay datos de conexion
 
 try {
     $conn = new PDO(
-        "sqlsrv:server=$serverName;Database=$db",
+        "sqlsrv:server=$serverName;Database=$db;Encrypt=no",
         $user,
         $pass,
         [

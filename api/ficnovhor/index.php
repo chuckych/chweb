@@ -378,6 +378,7 @@ if ($hayLimit) {
         }
     }
     unset($data);
+    $data = [];
     // Filtrar legajos que aparecen más de X veces (según DiasLimite)
     $resultado = [];
     foreach ($conteoLegajos as $legajo => $info) {
