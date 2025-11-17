@@ -5,28 +5,63 @@ const iconHoraLe1 = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="
 const iconRota = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h12" /><path d="M20 14l2 2h-3" /><path d="M20 18l2 -2" /><path d="M19 16a3 3 0 1 0 2 5.236" /></svg>`;
 const iconCita = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v5" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h16" /><path d="M19 19m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /></svg>`;
 
+const homehost = $("#_homehost").val();
+const LS_REQUEST_PERSONAL = `${homehost}_request_personal`;
+const LS_HORARIOS = `${homehost}_horarios`;
+const LS_HORARIOS_ASIGN = `${homehost}_horarios_asign`;
+const LS_HORARIOS_ASIGN_CACHE = `${homehost}_horarios_asign_cache`;
+const LS_LEGAJO = `${homehost}_horarios_legajo`;
+const LS_ACTION = `${homehost}_action`;
+const LS_ACTION_SET = `${homehost}_action_set`;
+const LS_FORM_DATA = `${homehost}_form_data`;
+const LS_PERIODO = `${homehost}_periodo`;
+const timestamp = new Date().getTime();
+const LS_MODAL_ASIGN = `${homehost}_modal_asign`;
+const DT_TABLE_HORARIOS = `#tableHorarios`;
+const DT_TABLE_PERSONAL = `#tablePersonal`;
+const ID_MODAL = `#modalAsign`;
+const LS_VALUE_FECHA = `${homehost}_value_fecha`;
+const LS_MARCADOS = `${homehost}_marcados`;
+const LS_MARCADOS_PAGE = `${homehost}_marcados_page`;
+const LS_PAGE_PERSONAL = `${homehost}_page_personal`;
+
+const accionesMasivas = (horarios, citacion) => {
+    if (!horarios) {
+        qs('.l_horale1').hidden = true;
+        qs('.m_horale1').hidden = true;
+        qs('.m_rota').hidden = true;
+        qs('.l_rota').hidden = true;
+    }
+    if (!citacion) {
+        qs('.l_cita').hidden = true;
+        qs('.m_cita').hidden = true;
+    }
+    if (!horarios && !citacion) {
+        qs('#collapseMasivos').hidden = true;
+        qs('[aria-controls="collapseMasivos"]').hidden = true;
+    }
+}
+
+const get_horarios = async () => {
+    await axios.get('../../app-data/horarios').then(async (response) => {
+        ls.set(LS_HORARIOS, response.data);
+        accionesMasivas(response.data.acciones['aTur'], response.data.acciones['aCit']);
+    })
+}
+const getAcciones = () => {
+    const horarios = ls.get(LS_HORARIOS) ?? [];
+    const acciones = horarios.acciones ?? [];
+    return acciones;
+}
+
+// Inicializar PERMISOS después de cargar los horarios
+let PERMISOS = {};
+(async () => {
+    await get_horarios();
+    PERMISOS = getAcciones();
+})();
+
 $(function () {
-
-    const homehost = $("#_homehost").val();
-    const LS_REQUEST_PERSONAL = `${homehost}_request_personal`;
-    const LS_HORARIOS = `${homehost}_horarios`;
-    const LS_HORARIOS_ASIGN = `${homehost}_horarios_asign`;
-    const LS_HORARIOS_ASIGN_CACHE = `${homehost}_horarios_asign_cache`;
-    const LS_LEGAJO = `${homehost}_horarios_legajo`;
-    const LS_ACTION = `${homehost}_action`;
-    const LS_ACTION_SET = `${homehost}_action_set`;
-    const LS_FORM_DATA = `${homehost}_form_data`;
-    const LS_PERIODO = `${homehost}_periodo`;
-    const timestamp = new Date().getTime();
-    const LS_MODAL_ASIGN = `${homehost}_modal_asign`;
-    const DT_TABLE_HORARIOS = `#tableHorarios`;
-    const DT_TABLE_PERSONAL = `#tablePersonal`;
-    const ID_MODAL = `#modalAsign`;
-    const LS_VALUE_FECHA = `${homehost}_value_fecha`;
-    const LS_MARCADOS = `${homehost}_marcados`;
-    const LS_MARCADOS_PAGE = `${homehost}_marcados_page`;
-    const LS_PAGE_PERSONAL = `${homehost}_page_personal`;
-
     ls.set(LS_LEGAJO, '');
     ls.set(LS_PAGE_PERSONAL, 1);
     ls.set(LS_MARCADOS_PAGE, 0);
@@ -401,13 +436,6 @@ $(function () {
     }
     dt_tablePersonal();
 
-    const getAcciones = () => {
-        const horarios = ls.get(LS_HORARIOS) ?? [];
-        const acciones = horarios.acciones ?? [];
-        return acciones;
-    }
-    const PERMISOS = getAcciones();
-
     const dt_getHorale1 = async (selector, data) => {
         const tableData = data ?? [];
 
@@ -745,13 +773,6 @@ $(function () {
             <'table-responsive table-hover pointer fadeIn't>
             <'d-flex justify-content-center align-items-center p-0 m-0'p>
             `
-    }
-    const get_horarios = async () => {
-        axios.get('../../app-data/horarios').then(async (response) => {
-            await ls.set(LS_HORARIOS, response.data);
-            accionesMasivas(response.data.acciones['aTur'], response.data.acciones['aCit']);
-        })
-
     }
     const get_horarios_asign = async (Legajo) => {
         if (!Legajo) return;
@@ -1292,22 +1313,6 @@ $(function () {
         }
         return div;
     }
-    const accionesMasivas = (horarios, citacion) => {
-        if (!horarios) {
-            qs('.l_horale1').hidden = true;
-            qs('.m_horale1').hidden = true;
-            qs('.m_rota').hidden = true;
-            qs('.l_rota').hidden = true;
-        }
-        if (!citacion) {
-            qs('.l_cita').hidden = true;
-            qs('.m_cita').hidden = true;
-        }
-        if (!horarios && !citacion) {
-            qs('#collapseMasivos').hidden = true;
-            qs('[aria-controls="collapseMasivos"]').hidden = true;
-        }
-    }
     const remove_tr_selected = (selector) => {
         if (!selector) return;
         const tableBody = document.querySelector(selector);
@@ -1408,6 +1413,9 @@ $(function () {
         ls.remove(LS_ACTION_SET);
         const action = await ls.get(LS_ACTION);
         let dataLegajo = ls.get(LS_LEGAJO) || {};
+        
+        // Obtener PERMISOS actualizado
+        const PERMISOS = getAcciones();
 
         const mapAction = {
             'l_horale1': 'legajo-desde',
@@ -1508,6 +1516,7 @@ $(function () {
         singleDatePicker('#inputH1FDesde', 'right', 'down') // setear el datepicker
 
         $(`${ID_MODAL}`).modal('show'); // mostrar el modal
+        console.log(PERMISOS['Proc']);
 
         if (!PERMISOS['Proc']) { // si no tiene permisos para procesar ocultar el botón
             qs('.btn-procesar').hidden = true;
@@ -1771,7 +1780,7 @@ $(function () {
         }
 
     }
-    get_horarios();
+    // get_horarios();
     const autoCompletarInputsHora = (elements, ElementResult) => {
 
         if (!elements || !ElementResult) return;
@@ -1973,6 +1982,7 @@ $(function () {
             dt_tablePersonal();
         });
     }
+
     axios.get('modal_Filtros.html' + '?t=' + new Date().getTime()).then(function (response) {
         const divModal = document.getElementById('divModal');
         divModal.innerHTML = response.data;
