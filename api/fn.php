@@ -424,6 +424,7 @@ function writeLog($text, $path, $type = false)
     $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
     // error_log($text);
     file_put_contents($path, $text, FILE_APPEND | LOCK_EX);
+    // error_log(print_r($text, true));
 }
 /** 
  * @str {string} valor

@@ -922,7 +922,6 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
             "Proc" => $Procesar
         ];
     }
-
     if ($url === '/horarios/legajo-desde' || $url === '/horarios/legajo-desde-hasta' || $url === '/horarios/delete-legajo-desde' || $url === '/horarios/delete-legajo-desde-hasta' || $url === '/horarios/delete-legajo-citacion' || $url == '/horarios/edit-legajo-citacion' || $url == '/horarios/edit-legajo-rotacion' || $url == '/horarios/delete-legajo-rotacion') {
 
         if (!$LegNume) {

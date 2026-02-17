@@ -172,7 +172,7 @@ class webServiceCH
 
         $ch = curl_init(); // Inicializar el objeto curl
         curl_setopt($ch, CURLOPT_URL, $this->apiData . '/Ping?'); // Establecer la URL
-
+        // error_log("URL Ping: " . $this->apiData . '/Ping?');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Establecer que retorne el contenido del servidor
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
@@ -210,7 +210,6 @@ class webServiceCH
         }
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-        curl_close($ch); // close curl handle
         return ($http_code == 201) ? true : writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log').false;  // escribir en el log
 
         // if ($http_code == '201') {
@@ -239,7 +238,6 @@ class webServiceCH
             $respuesta = (curl_exec($ch));
             writelog("to: " . ($this->apiData . "Estado?" . $processID), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log'); // 
             writelog("do: " . ($respuesta), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log'); // 
-            curl_close($ch);
         } while (($respuesta) === '{Pendiente}');
         writelog("end: " . ($respuesta), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
         return 'Proceso terminado';
@@ -267,7 +265,6 @@ class webServiceCH
             }
 
             $processID = str_replace(array('{', '}'), '', $respuesta);
-            curl_close($ch);
             writelog("processID: $processID", __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
             if ($httpCode == 201) {
                 $respuesta = '';
@@ -286,8 +283,8 @@ class webServiceCH
 
         $endpoint = $arg[0] ?? '';
         $method = $arg[1] ?? '';
-        $data = $arg[2] ?? array();
-        $query = $arg[3] ?? array();
+        $data = $arg[2] ?? [];
+        $query = $arg[3] ?? [];
         $estado = $arg[4] ?? true;
         $ping = $arg[5] ?? true;
 
@@ -303,6 +300,9 @@ class webServiceCH
         if (!$p)
             return false;
 
+        // error_log(print_r($p, true));
+
+
         $ch = curl_init();
 
         switch (strtolower($method)) {
@@ -316,14 +316,18 @@ class webServiceCH
                 $end = $endpoint;
                 break;
         }
-        writelog($this->apiData . $end, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+        // writelog($this->apiData . $end, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         curl_setopt($ch, CURLOPT_URL, $this->apiData . $end);
         $method;
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $respuesta = curl_exec($ch);
+        // error_log(print_r($end, true));
+        // error_log(print_r($this->apiData . $end, true));
+        // error_log(print_r($respuesta, true));
         $curl_errno = curl_errno($ch);
         $curl_error = curl_error($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        // error_log(print_r($httpCode, true));
         $curl_getinfo = json_encode(curl_getinfo($ch));
         if ($curl_errno > 0) {
             $text = "Error al procesar $endpoint . $curl_error"; // set error message
@@ -335,8 +339,13 @@ class webServiceCH
             return curl_exec($ch);
         }
 
+        if($end === '/INTERPERSONAL' && $httpCode !== 201){
+            writelog("Respuesta INTERPERSONAL: $respuesta", __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
+            return "WS: $respuesta";
+        }
+
         $processID = str_replace(array('{', '}'), '', $respuesta);
-        curl_close($ch);
+
         // writelog("processID: $processID", __DIR__ . '/logs/' . date('Ymd') . '_request.log');
         if ($httpCode == 201) {
             $respuesta = '';

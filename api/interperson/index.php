@@ -6,7 +6,7 @@ tz();
 tzLang();
 errorReport();
 
-$control->check_get(array('proceso'), $request->base . $request->url);
+$control->check_get(['proceso'], $request->base . $request->url);
 $control->check_method("POST");
 $proceso = $control->check_param($_GET['proceso'], '1', 'proceso');
 $control->check_json();
@@ -16,13 +16,21 @@ $validar = new validaRequest();
 
 $countInsert = 0;
 $countUpdate = 0;
-$payload = json_decode($request->getBody(), true);
-$totalRecibido = count($payload) ?? 0;
-$payload = $checkArray->removeEmptySubarrays($payload);
 
-if (empty($payload)) {
+try {
+    $payload = json_decode($request->getBody(), true);
+    $totalRecibido = count($payload) ?? 0;
+    $payload = $checkArray->removeEmptySubarrays($payload);
+
+    if (empty($payload)) {
+        http_response_code(400);
+        (response('', 0, 'No hay Datos', 400, $time_start, 0, $idCompany));
+        exit;
+    }
+} catch (Exception $e) {
+    error_log("Error al procesar payload JSON: " . $e->getMessage());
     http_response_code(400);
-    (response('', 0, 'No hay Datos', 400, $time_start, 0, $idCompany));
+    (response('', 0, 'Error al procesar datos recibidos', 400, $time_start, 0, $idCompany));
     exit;
 }
 
@@ -35,8 +43,15 @@ $requestPayload = $validar->interperson($payload);
 $payload = $requestPayload['payload'];
 $errores = $requestPayload['errores'];
 
-// $stmt = $dbApiQuery("SELECT * FROM INTERPERSONAL");
-$stmt = $db->query("SELECT * FROM INTERPERSONAL");
+try {
+    // $stmt = $dbApiQuery("SELECT * FROM INTERPERSONAL");
+    $stmt = $db->query("SELECT * FROM INTERPERSONAL");
+} catch (Exception $e) {
+    error_log("Error al consultar tabla INTERPERSONAL: " . $e->getMessage());
+    http_response_code(500);
+    (response('', 0, 'Error al consultar base de datos', 500, $time_start, 0, $idCompany));
+    exit;
+}
 
 if (($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos buscamos duplicados y hacemos update de los mismos */
 
@@ -47,9 +62,31 @@ if (($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos busca
 
     if ($payload_duplicados) { // si encontramos duplicados
         $countUpdate = count($payload_duplicados); // contamos los duplicados
+        $payload_duplicados_formatted = []; // array temporal para evitar duplicados
         foreach ($payload_duplicados as $key => $v) { // ordenamos el array 
             extract($v);
-            $payload_duplicados[] = array(
+
+            // Formatear fechas correctamente, manejando el valor "0" o vacío
+            $fechaNacimiento = '1753-01-01';
+            $fechaIngreso = '1753-01-01';
+            $fechaEgreso = '1753-01-01';
+
+            if (!empty($LegFeNa) && $LegFeNa !== '0') {
+                $tempDate = fechFormat($LegFeNa, "Y-m-d");
+                $fechaNacimiento = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
+
+            if (!empty($LegFeIn) && $LegFeIn !== '0') {
+                $tempDate = fechFormat($LegFeIn, "Y-m-d");
+                $fechaIngreso = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
+
+            if (!empty($LegFeEg) && $LegFeEg !== '0') {
+                $tempDate = fechFormat($LegFeEg, "Y-m-d");
+                $fechaEgreso = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
+
+            $payload_duplicados_formatted[] = array(
                 "LegNume" => $LegNume ?? '',
                 "LegApNo" => $LegApNo ?? '',
                 "LegTDoc" => $LegTDoc ?? '',
@@ -69,10 +106,10 @@ if (($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos busca
                 "LegMail" => $LegMail ?? '',
                 "LegEsCi" => ($LegEsCi ?? '0') ? $LegEsCi : '0',
                 "LegSexo" => ($LegSexo ?? '0') ? $LegSexo : '0',
-                "LegFeNa" => ($LegFeNa ?? '0') ? fechFormat($LegFeNa, "Ymd") : '1753-01-01',
+                "LegFeNa" => $fechaNacimiento,
                 "LegTipo" => ($LegTipo ?? '0') ? $LegTipo : '0',
-                "LegFeIn" => ($LegFeIn ?? '0') ? fechFormat($LegFeIn, "Ymd") : '1753-01-01',
-                "LegFeEg" => ($LegFeEg ?? '0') ? fechFormat($LegFeEg, "Ymd") : '1753-01-01',
+                "LegFeIn" => $fechaIngreso,
+                "LegFeEg" => $fechaEgreso,
                 "NacCodi" => ($NacCodi ?? '0') ? $NacCodi : '0',
                 "NacDesc" => $NacDesc ?? '',
                 "ProCodi" => ($ProCodi ?? '0') ? $ProCodi : '0',
@@ -96,23 +133,31 @@ if (($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos busca
                 "FechaHora" => $FechaHora
             );
         }
-        $update = '';
-        foreach ($payload_duplicados as $record) {
-            $conditionValue = $record['LegNume'];
-            $update .= "UPDATE INTERPERSONAL SET ";
-            foreach ($record as $column => $value) {
-                if ($column !== 'LegNume') {
-                    $update .= "$column = '$value', ";
+        try {
+            $update = '';
+            foreach ($payload_duplicados_formatted as $record) {
+                $conditionValue = $record['LegNume'];
+                $update .= "UPDATE INTERPERSONAL SET ";
+                foreach ($record as $column => $value) {
+                    if ($column !== 'LegNume') {
+                        $update .= "$column = '$value', ";
+                    }
                 }
+                $update = rtrim($update, ", ");
+                $update .= " WHERE LegNume = '$conditionValue'; ";
             }
-            $update = rtrim($update, ", ");
-            $update .= " WHERE LegNume = '$conditionValue'; ";
+            // error_log("Query UPDATE: " . $update);
+            $db->save($update);
+        } catch (Exception $e) {
+            error_log("Error al actualizar registros duplicados: " . $e->getMessage());
+            http_response_code(500);
+            (response('', 0, 'Error al actualizar registros existentes', 500, $time_start, 0, $idCompany));
+            exit;
         }
-        $db->save($update);
     }
 }
 
-$cols = array(
+$cols = [
     "LegNume",
     "LegApNo",
     "LegTDoc",
@@ -157,97 +202,139 @@ $cols = array(
     "ConCodi",
     "ConDesc",
     "FechaHora",
-);
+];
 
 if ($payload) {
-    $db->save("UPDATE BDCONEXIONES set CnFecUpd = '20230101' WHERE CnCodi = '0'");
-    $countInsert = count($payload);
+    try {
+        $db->save("UPDATE BDCONEXIONES set CnFecUpd = '20230101' WHERE CnCodi = '0'");
+        $countInsert = count($payload);
 
-    foreach ($payload as $keys => $v) {
-        extract($v);
-        $dataPayload[] = array(
-            "LegNume" => $LegNume ?? '',
-            "LegApNo" => $LegApNo ?? '',
-            "LegTDoc" => $LegTDoc ?? '',
-            "LegDocu" => $LegDocu ?? '',
-            "LegCUIT" => $LegCUIT ?? '',
-            "LegDomi" => $LegDomi ?? '',
-            "LegDoNu" => $LegDoNu ?? '',
-            "LegDoPi" => $LegDoPi ?? '',
-            "LegDoDP" => $LegDoDP ?? '',
-            "LegDoOb" => $LegDoOb ?? '',
-            "LegCOPO" => $LegCOPO ?? '',
-            "LegTel1" => $LegTel1 ?? '',
-            "LegTeO1" => $LegTeO1 ?? '',
-            "LegTel2" => $LegTel2 ?? '',
-            "LegTeO2" => $LegTeO2 ?? '',
-            "LegTel3" => $LegTel3 ?? '',
-            "LegMail" => $LegMail ?? '',
-            "LegEsCi" => ($LegEsCi ?? '0') ? $LegEsCi : '0',
-            "LegSexo" => ($LegSexo ?? '0') ? $LegSexo : '0',
-            "LegFeNa" => ($LegFeNa ?? '0') ? fechFormat($LegFeNa, "Ymd") : '1753-01-01',
-            "LegTipo" => ($LegTipo ?? '0') ? $LegTipo : '0',
-            "LegFeIn" => ($LegFeIn ?? '0') ? fechFormat($LegFeIn, "Ymd") : '1753-01-01',
-            "LegFeEg" => ($LegFeEg ?? '0') ? fechFormat($LegFeEg, "Ymd") : '1753-01-01',
-            "NacCodi" => ($NacCodi ?? '0') ? $NacCodi : '0',
-            "NacDesc" => $NacDesc ?? '',
-            "ProCodi" => ($ProCodi ?? '0') ? $ProCodi : '0',
-            "ProDesc" => $ProDesc ?? '',
-            "LocCodi" => ($LocCodi ?? '0') ? $LocCodi : '0',
-            "LocDesc" => $LocDesc ?? '',
-            "EmpCodi" => ($EmpCodi ?? '0') ? $EmpCodi : '0',
-            "EmpRazon" => $EmpRazon ?? '',
-            "PlaCodi" => ($PlaCodi ?? '0') ? $PlaCodi : '0',
-            "PlaDesc" => $PlaDesc ?? '',
-            "SucCodi" => ($SucCodi ?? '0') ? $SucCodi : '0',
-            "SucDesc" => $SucDesc ?? '',
-            "SecCodi" => ($SecCodi ?? '0') ? $SecCodi : '0',
-            "SecDesc" => $SecDesc ?? '',
-            "Se2Codi" => ($Se2Codi ?? '0') ? $Se2Codi : '0',
-            "Se2Desc" => $Se2Desc ?? '',
-            "GruCodi" => ($GruCodi ?? '0') ? $GruCodi : '0',
-            "GruDesc" => $GruDesc ?? '',
-            "ConCodi" => ($ConCodi ?? '0') ? $ConCodi : '0',
-            "ConDesc" => $ConDesc ?? '',
-            "FechaHora" => $FechaHora
-        );
-    }
+        foreach ($payload as $keys => $v) {
+            extract($v); // extraemos el array para poder usar las variables con su nombre original y no como un array asociativo, esto nos facilita la insercion de los datos en la tabla interpersonal
 
-    $values = array();
-    foreach ($dataPayload as $item) {
-        $values[] = "('" . implode("', '", $item) . "')";
-    }
+            // Formatear fechas correctamente, manejando el valor "0" o vacío
+            $fechaNacimiento = '1753-01-01';
+            $fechaIngreso = '1753-01-01';
+            $fechaEgreso = '1753-01-01';
 
-    $values = implode(", ", $values);
+            if (!empty($LegFeNa) && $LegFeNa !== '0') {
+                $tempDate = fechFormat($LegFeNa, "Y-m-d");
+                $fechaNacimiento = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
 
-    // $params = (implode("','", $params));
-    $cols = (implode(',', $cols));
-    // print_r("INSERT INTO INTERPERSONAL($cols) VALUES $values");
-    // exit;
-    $stmt = $db->save("INSERT INTO INTERPERSONAL($cols) VALUES $values");
+            if (!empty($LegFeIn) && $LegFeIn !== '0') {
+                $tempDate = fechFormat($LegFeIn, "Y-m-d");
+                $fechaIngreso = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
 
-    if (empty($stmt)) {
-        http_response_code(400);
-        (response('', 0, 'Error', 400, $time_start, 0, $idCompany));
+            if (!empty($LegFeEg) && $LegFeEg !== '0') {
+                $tempDate = fechFormat($LegFeEg, "Y-m-d");
+                $fechaEgreso = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
+            }
+
+            $dataPayload[] = array(
+                "LegNume" => $LegNume ?? '',
+                "LegApNo" => $LegApNo ?? '',
+                "LegTDoc" => $LegTDoc ?? '',
+                "LegDocu" => $LegDocu ?? '',
+                "LegCUIT" => $LegCUIT ?? '',
+                "LegDomi" => $LegDomi ?? '',
+                "LegDoNu" => $LegDoNu ?? '',
+                "LegDoPi" => $LegDoPi ?? '',
+                "LegDoDP" => $LegDoDP ?? '',
+                "LegDoOb" => $LegDoOb ?? '',
+                "LegCOPO" => $LegCOPO ?? '',
+                "LegTel1" => $LegTel1 ?? '',
+                "LegTeO1" => $LegTeO1 ?? '',
+                "LegTel2" => $LegTel2 ?? '',
+                "LegTeO2" => $LegTeO2 ?? '',
+                "LegTel3" => $LegTel3 ?? '',
+                "LegMail" => $LegMail ?? '',
+                "LegEsCi" => ($LegEsCi ?? '0') ? $LegEsCi : '0',
+                "LegSexo" => ($LegSexo ?? '0') ? $LegSexo : '0',
+                "LegFeNa" => $fechaNacimiento,
+                "LegTipo" => ($LegTipo ?? '0') ? $LegTipo : '0',
+                "LegFeIn" => $fechaIngreso,
+                "LegFeEg" => $fechaEgreso,
+                "NacCodi" => ($NacCodi ?? '0') ? $NacCodi : '0',
+                "NacDesc" => $NacDesc ?? '',
+                "ProCodi" => ($ProCodi ?? '0') ? $ProCodi : '0',
+                "ProDesc" => $ProDesc ?? '',
+                "LocCodi" => ($LocCodi ?? '0') ? $LocCodi : '0',
+                "LocDesc" => $LocDesc ?? '',
+                "EmpCodi" => ($EmpCodi ?? '0') ? $EmpCodi : '0',
+                "EmpRazon" => $EmpRazon ?? '',
+                "PlaCodi" => ($PlaCodi ?? '0') ? $PlaCodi : '0',
+                "PlaDesc" => $PlaDesc ?? '',
+                "SucCodi" => ($SucCodi ?? '0') ? $SucCodi : '0',
+                "SucDesc" => $SucDesc ?? '',
+                "SecCodi" => ($SecCodi ?? '0') ? $SecCodi : '0',
+                "SecDesc" => $SecDesc ?? '',
+                "Se2Codi" => ($Se2Codi ?? '0') ? $Se2Codi : '0',
+                "Se2Desc" => $Se2Desc ?? '',
+                "GruCodi" => ($GruCodi ?? '0') ? $GruCodi : '0',
+                "GruDesc" => $GruDesc ?? '',
+                "ConCodi" => ($ConCodi ?? '0') ? $ConCodi : '0',
+                "ConDesc" => $ConDesc ?? '',
+                "FechaHora" => $FechaHora
+            );
+        }
+
+        $values = [];
+        foreach ($dataPayload as $item) {
+            $values[] = "('" . implode("', '", $item) . "')";
+        }
+
+        $values = implode(", ", $values);
+
+        // $params = (implode("','", $params));
+        $cols = (implode(',', $cols));
+        // print_r("INSERT INTO INTERPERSONAL($cols) VALUES $values");
+        // exit;
+        // error_log("Query INSERT: INSERT INTO INTERPERSONAL($cols) VALUES " . substr($values, 0, 500) . "...");
+        $stmt = $db->save("INSERT INTO INTERPERSONAL($cols) VALUES $values");
+
+        if (empty($stmt)) {
+            error_log("Error al insertar registros en INTERPERSONAL: stmt vacío");
+            http_response_code(400);
+            (response('', 0, 'Error al insertar registros', 400, $time_start, 0, $idCompany));
+            exit;
+        }
+    } catch (Exception $e) {
+        error_log("Error al insertar nuevos registros: " . $e->getMessage());
+        http_response_code(500);
+        (response('', 0, 'Error al insertar nuevos registros en base de datos', 500, $time_start, 0, $idCompany));
         exit;
     }
 }
 
-if ($proceso) { // si el parametro proceso viene en uno enviamos post a interpersonal y esperamos respuesta
-    $procesado = $ws->request("/INTERPERSONAL", "POST");
-} else {
-    $procesado = $ws->request("/INTERPERSONAL", "POST", '', '', false);
+try {
+    if ($proceso) { // si el parametro proceso viene en uno enviamos post a interpersonal y esperamos respuesta
+        $procesado = $ws->request("/INTERPERSONAL", "POST");
+    } else {
+        $procesado = $ws->request(
+            "/INTERPERSONAL",
+            "POST",
+            '',
+            '',
+            false
+        );
+    }
+} catch (Exception $e) {
+    error_log("Error al realizar request al web service INTERPERSONAL: " . $e->getMessage());
+    // No detenemos la ejecución aquí, solo registramos el error
+    $procesado = null;
 }
 
 $totalProcesados = $countInsert + $countUpdate;
-$data = array(
+$data = [
     // "total recibido" => $totalRecibido,
     "total procesado" => $totalProcesados,
     "total Insert" => $countInsert,
     "total Update" => $countUpdate,
     "proceso" => ($procesado == null) ? '' : $procesado,
     "errores" => $errores
-);
+];
 http_response_code(200);
 (response($data, $totalProcesados, 'OK', 200, $time_start, 0, $idCompany));
 exit;

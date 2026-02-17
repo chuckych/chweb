@@ -895,7 +895,6 @@ $(function () {
             modalTitleHor(data, action)
 
             submit.disabled = false
-
             submit.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopImmediatePropagation();
@@ -936,6 +935,10 @@ $(function () {
         const marcados = ls.get(LS_MARCADOS) ?? {};
         // convertir objeto en array
         const keysMarcado = Object.keys(marcados);
+
+        const action = ls.get(LS_ACTION);
+        const siRotacionPorLegajo = action === 'l_rota' && tipo === 'rotacion';
+        
         try {
             if (!data || !tipo) {
                 throw new Error('Error en los datos');
@@ -957,7 +960,7 @@ $(function () {
                 'Desc': data.Desc ?? '00:00',
                 'Entr': data.Entr ?? '00:00',
                 'Sale': data.Sale ?? '00:00',
-                'Marcados': keysMarcado,
+                'Marcados': siRotacionPorLegajo ? [LegNume] : keysMarcado,
             }).then(async (response) => {
                 $.notifyClose();
                 if (response.data.status == 'error') {
@@ -1349,7 +1352,8 @@ $(function () {
                 dobleDatePicker('#inputH1FDesde', 'right', 'down')
                 $('#inputH1FDesde').mask('00/00/0000 al 00/00/0000');
 
-                ls.set(LS_PERIODO, e.target.checked)
+                ls.set(LS_PERIODO, e.target.checked);
+
                 if (action == 'm_rota') {
                     ls.set(LS_ACTION_SET, 'rotacion')
                     modalTitle.innerHTML = 'Ingreso masivo de rotación por periodo ' + textMarcados
@@ -1413,7 +1417,7 @@ $(function () {
         ls.remove(LS_ACTION_SET);
         const action = await ls.get(LS_ACTION);
         let dataLegajo = ls.get(LS_LEGAJO) || {};
-        
+
         // Obtener PERMISOS actualizado
         const PERMISOS = getAcciones();
 
