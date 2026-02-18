@@ -193,7 +193,8 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
             }
         }
 
-        $url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lng";
+        // $url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=$lat&lon=$lng";
+        $url = "https://nominatim.chweb.ar/reverse?format=jsonv2&lat=$lat&lon=$lng";
 
         $data = call_api($url);
 
@@ -203,11 +204,15 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
 
         $data = json_decode($data);
         $display_name = ($data->display_name ?? '');
+        $place_id = $data->place_id ?? '';
+        $type = $data->type ?? '';
 
         $arrayDatos = [];
 
         $arrayDatos['name'] = $display_name;
         $arrayDatos['pos'] = $lat . ',' . $lng;
+        $arrayDatos['place_id'] = $place_id;
+        $arrayDatos['type'] = $type;
 
         $position_data[] = $arrayDatos;
 
