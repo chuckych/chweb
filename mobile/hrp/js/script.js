@@ -1077,8 +1077,9 @@ $(function () {
         if (lsDirNames) {
             let pos = lat + ',' + lng;
             let dirName = lsDirNames.find(x => x.pos === pos);
-            if (dirName) {
-                return dirName.name;
+            let name = dirName?.name != '' ? dirName.name : '';
+            if (dirName && name != '') {
+                return name;
             }
         }
 
