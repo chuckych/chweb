@@ -48,7 +48,7 @@ function call_api()
 
         $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
 
-        // print_r($queryParams) . exit;
+        // print_r($endpoint) . exit;
 
         $ch = curl_init(); // Inicializo curl
 
@@ -76,14 +76,12 @@ function call_api()
 
         $headers = array(
             "Accept: application/json, text/plain, */*",
-            "Accept-Encoding: gzip, deflate, br",
             "Accept-Language: es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3",
             "Cache-Control: no-cache",
             "Connection: keep-alive",
             "DNT: 1",
             "Pragma: no-cache",
-            "Referer: https://www.google.com/",
-            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3",
+            "Referer: https://nominatim.openstreetmap.org/",
             "Sec-Fetch-Dest: empty",
             "Sec-Fetch-Mode: cors",
             "Sec-Fetch-Site: cross-site",
@@ -92,8 +90,19 @@ function call_api()
         );
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
+        curl_setopt($ch, CURLOPT_USERAGENT, 'HRPMobileApp/1.0 (admin@hrprocess.com.ar)'); // User-Agent requerido por Nominatim
+        curl_setopt($ch, CURLOPT_ENCODING, ''); // Descomprime automáticamente gzip/deflate/br
 
         $file_contents = curl_exec($ch); // Ejecuto curl
+
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        $siNoEs200OK = $http_code !== 200 ? true : false; // Verifico si el código HTTP es 200
+
+        if ($siNoEs200OK) {
+            $respuesta = strip_tags($file_contents);
+            throw new Exception('call_api: ' . date('Y-m-d H:i:s') . " Error en la llamada a la API. Código HTTP: $http_code. Respuesta: $respuesta");
+        }
 
         $curl_errno = curl_errno($ch); // get error code
         $curl_error = curl_error($ch); // get error information
@@ -105,11 +114,10 @@ function call_api()
         if (!$file_contents) {
             throw new Exception('call_api: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
         }
-        curl_close($ch);
         $text = 'call_api: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
         return $file_contents;
     } catch (\Exception $e) {
-        curl_close($ch);
+        file_put_contents('error.log', print_r($e->getMessage(), true) . PHP_EOL, FILE_APPEND); // Log de la posición recibida
         return false;
     }
 }
@@ -144,8 +152,8 @@ function get_data($url)
 }
 
 Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
-
     try {
+
         if (!$lat || !$lng) {
             throw new Exception('No se han recibido los datos necesarios');
         }
@@ -165,12 +173,15 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
             fclose($file);
         }
         $position_data = file_get_contents($pathFile);
+
         if ($position_data) {
             // buscar en el archivo json si ya existe el registro. Si existe no lo agrega
             $position_data = json_decode($position_data, true);
+
             $pos = $lat . ',' . $lng;
+
             foreach ($position_data as $key => $value) {
-                if ($value['pos'] == $pos) {
+                if ($value['pos'] === $pos && $value['name'] !== '') {
                     Flight::json(
                         array(
                             "status" => "success",
@@ -189,7 +200,6 @@ Flight::route('GET /position_data/@lat/@lng', function ($lat, $lng) {
         if (!$data) {
             throw new Exception('No se han podido obtener los datos');
         }
-
 
         $data = json_decode($data);
         $display_name = ($data->display_name ?? '');
