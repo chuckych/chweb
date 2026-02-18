@@ -1074,6 +1074,7 @@ $(function () {
     const obtenerPost = async (lat, lng) => {
 
         let lsDirNames = ls.get(LS_DIR_NAME);
+        
         if (lsDirNames) {
             let pos = lat + ',' + lng;
             let dirName = lsDirNames.find(x => x.pos === pos);
