@@ -1572,6 +1572,14 @@ $checkMethod = function ($value) use ($time_start, $idCompany, $method) {
     }
 };
 
+$checkMethodMultiple = function ($values) use ($time_start, $idCompany, $method) {
+    if (!in_array($method, $values)) {
+        http_response_code(400);
+        (response([], 0, 'Invalid Request Method: ' . $method, 400, $time_start, 0, $idCompany));
+        exit;
+    }
+};
+
 /**
  * Obtiene la descripción textual del tipo de novedad según su código
  *

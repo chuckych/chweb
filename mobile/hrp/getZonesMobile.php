@@ -34,7 +34,7 @@ foreach ($paramsApi as $key => $value) {
 $api = "api/v1/zones/$parametros";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
-$api = json_decode($api, true);
+$api = parseApiResponse($api);
 
 $totalRecords = $api['TOTAL'] ?? 0;
 if ($api['COUNT'] ?? 0 > 0) {

@@ -131,7 +131,7 @@
                     <div class="pb-2"></div>
                 </div>
                 <div class="col-12" id="divTableMobile">
-                    <table class="table text-nowrap w-100 border-0 radius p-2 bg-white" id="table-mobile">
+                    <table class="table text-nowrap w-100 border radius p-3 bg-white" id="table-mobile">
                         <thead class="font08">
                         </thead>
                     </table>

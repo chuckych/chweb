@@ -42,7 +42,6 @@ $requestPayload = $validar->interperson($payload);
 
 $payload = $requestPayload['payload'];
 $errores = $requestPayload['errores'];
-
 try {
     // $stmt = $dbApiQuery("SELECT * FROM INTERPERSONAL");
     $stmt = $db->query("SELECT * FROM INTERPERSONAL");
@@ -53,11 +52,12 @@ try {
     exit;
 }
 
-if (($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos buscamos duplicados y hacemos update de los mismos */
+if (!empty($stmt)) { /** Si encontramos datos en la tabla INTERPERSONAL buscamos buscamos duplicados y hacemos update de los mismos */
 
     $compara = $checkArray->comparar($payload, $stmt, 'LegNume');
 
-    $payload = $compara['no_duplicados'];
+    $payload = $compara['no_duplicados']; // obtenemos los no duplicados para insertarlos luego
+
     $payload_duplicados = $compara['duplicados1'];
 
     if ($payload_duplicados) { // si encontramos duplicados
@@ -232,7 +232,7 @@ if ($payload) {
                 $fechaEgreso = ($tempDate && $tempDate !== '0') ? $tempDate : '1753-01-01';
             }
 
-            $dataPayload[] = array(
+            $dataPayload[] = [
                 "LegNume" => $LegNume ?? '',
                 "LegApNo" => $LegApNo ?? '',
                 "LegTDoc" => $LegTDoc ?? '',
@@ -277,7 +277,7 @@ if ($payload) {
                 "ConCodi" => ($ConCodi ?? '0') ? $ConCodi : '0',
                 "ConDesc" => $ConDesc ?? '',
                 "FechaHora" => $FechaHora
-            );
+            ];
         }
 
         $values = [];
@@ -287,11 +287,8 @@ if ($payload) {
 
         $values = implode(", ", $values);
 
-        // $params = (implode("','", $params));
         $cols = (implode(',', $cols));
-        // print_r("INSERT INTO INTERPERSONAL($cols) VALUES $values");
-        // exit;
-        // error_log("Query INSERT: INSERT INTO INTERPERSONAL($cols) VALUES " . substr($values, 0, 500) . "...");
+
         $stmt = $db->save("INSERT INTO INTERPERSONAL($cols) VALUES $values");
 
         if (empty($stmt)) {
@@ -309,30 +306,23 @@ if ($payload) {
 }
 
 try {
-    if ($proceso) { // si el parametro proceso viene en uno enviamos post a interpersonal y esperamos respuesta
-        $procesado = $ws->request("/INTERPERSONAL", "POST");
-    } else {
-        $procesado = $ws->request(
-            "/INTERPERSONAL",
-            "POST",
-            '',
-            '',
-            false
-        );
-    }
+
+    $procesado = $proceso ? $ws->request('/INTERPERSONAL', 'POST', '{}') : '';
+
 } catch (Exception $e) {
     error_log("Error al realizar request al web service INTERPERSONAL: " . $e->getMessage());
-    // No detenemos la ejecución aquí, solo registramos el error
     $procesado = null;
 }
 
 $totalProcesados = $countInsert + $countUpdate;
+$procesadoStr = ($procesado ?? '') === 'Proceso terminado' ? true : '';
 $data = [
     // "total recibido" => $totalRecibido,
     "total procesado" => $totalProcesados,
     "total Insert" => $countInsert,
     "total Update" => $countUpdate,
-    "proceso" => ($procesado == null) ? '' : $procesado,
+    "proceso" => $procesadoStr,
+    "proceso_msg" => ($procesado ?? '') === '' ? '' : $procesado,
     "errores" => $errores
 ];
 http_response_code(200);

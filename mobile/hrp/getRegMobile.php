@@ -9,7 +9,7 @@ $respuesta = [];
 $arrayData = [];
 $arraySelect = [];
 $error = $start_date = $end_date = '';
-$_SESSION["APIMOBILEHRP_MOBILE"] = $_SESSION["APIMOBILEHRP_MOBILE"] ?? '';
+$_SESSION["APIMOBILEHRP_MOBILE"] ??= '';
 function dr_f($ddmmyyyy)
 {
     $fecha = date("Ymd", strtotime((str_replace("/", "-", $ddmmyyyy))));
@@ -83,9 +83,6 @@ $paramsApi = [
     'zoneIDName' => urlencode($params['qZone']),
     'deviceIDName' => urlencode($params['qDevice'])
 ];
-
-// echo Flight::json($paramsApi).exit;
-
 $parametros = '';
 foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
@@ -93,10 +90,9 @@ foreach ($paramsApi as $key => $value) {
 $api = "api/v1/checks/$parametros";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
-$api = json_decode($api, true);
+$api = parseApiResponse($api);
 
-// echo Flight::json($parametros).exit;
-
+$error = $api['error'] ?? '';
 $totalRecords = $api['TOTAL'] ?? 0;
 $tm = (microtime(true));
 $routeFile = __DIR__ . '/archivos/export_' . $idCompany . '_' . $tm . '.txt';
@@ -268,8 +264,6 @@ if (($params['typeDownload'] ?? '') == 'downloadXls') {
     require __DIR__ . '/exportXls.php';
 }
 
-// print_r($api['COUNT'] ?? '') . exit;
-
 if (($api['COUNT'] ?? '') == 0) {
     if (($params['typeDownload'] ?? '') == 'downloadTxt') {
         $routeFile2 = '';
@@ -278,8 +272,6 @@ if (($api['COUNT'] ?? '') == 0) {
         $routeFile3 = '';
     }
 }
-
-
 
 switch ($params['typeDownload'] ?? '') {
     case 'downloadTxt':
@@ -294,16 +286,15 @@ switch ($params['typeDownload'] ?? '') {
 $endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
 $json_data = array(
-    "draw" => intval($params['draw']),
+    "draw" => intval($params['draw'] ?? 0),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $arrayData,
-    "e" => $error,
+    "error" => $error,
     "timeScript" => $timeScript,
 );
 // sleep(2);
 if ($params['type'] == 'selectUsers' || $params['type'] == 'selectZone' || $params['type'] == 'selectDevice') {
-    // echo json_encode(_group_by_keys($arraySelect, $keys = array('id', 'text')));
     echo json_encode($arraySelect);
     exit;
 }

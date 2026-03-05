@@ -2574,10 +2574,23 @@ function getRemoteFile($url, $timeout = 10)
     if ($file_contents) {
         return $file_contents;
     } else {
-        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
-        fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; 
+        fileLog('Error al obtener datos', $pathLog); 
+        return false;
     }
-    exit;
+}
+function parseApiResponse($response): array
+{
+    if (!$response || !is_string($response)) {
+        return ['error' => 'Error al conectar con el servidor'];
+    }
+
+    $decoded = json_decode($response, true);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return ['error' => 'Error al decodificar respuesta del servidor'];
+    }
+
+    return $decoded;
 }
 function implodeArrayByKey(array $array, $key, $separator = ',')
 {
@@ -2922,6 +2935,12 @@ function fileLog($text, $ruta_archivo, $type = false)
     $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
     fwrite($log, $text);
     fclose($log);
+    log_local($text);
+}
+function log_local($msg){
+    if ($_SERVER['HTTP_HOST'] == 'chweb.local') {
+        error_log($msg);
+    }
 }
 function fileLogJson($text, $ruta_archivo, $date = true)
 {

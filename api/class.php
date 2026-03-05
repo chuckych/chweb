@@ -210,7 +210,7 @@ class webServiceCH
         }
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-        return ($http_code == 201) ? true : writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log').false;  // escribir en el log
+        return ($http_code == 201) ? true : writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log') . false;  // escribir en el log
 
         // if ($http_code == '201') {
         //     // writelog('Ping correcto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
@@ -339,7 +339,7 @@ class webServiceCH
             return curl_exec($ch);
         }
 
-        if($end === '/INTERPERSONAL' && $httpCode !== 201){
+        if ($end === '/INTERPERSONAL' && $httpCode !== 201) {
             writelog("Respuesta INTERPERSONAL: $respuesta", __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
             return "WS: $respuesta";
         }
@@ -458,16 +458,6 @@ class validaRequest
                                 unset($array[$key]);
                             }
                             break;
-                        case 'LegTDoc':
-                            if (strlen($v) > 1) {
-                                $errores[] = "El valor de LegTDoc en el elemento $key solo admite los siguientes valores 0;1;2;3;4.";
-                                unset($array[$key]);
-                            }
-                            if (($v) > 4) {
-                                $errores[] = "El valor de LegTDoc en el elemento $key solo admite los siguientes valores 0;1;2;3;4.";
-                                unset($array[$key]);
-                            }
-                            break;
                         case 'LegDocu':
                             if ($v) {
                                 if (filter_var($v, FILTER_VALIDATE_INT, $optionsInt) === false) {
@@ -561,18 +551,16 @@ class validaRequest
                             }
                             break;
                         case 'LegEsCi':
-                            if (strlen($v) > 1) {
-                                $errores[] = "El valor de LegEsCi en el elemento $key solo admite los siguientes valores 0;1;2;3.";
-                                unset($array[$key]);
-                            }
-                            if (($v) > 3) {
-                                $errores[] = "El valor de LegEsCi en el elemento $key solo admite los siguientes valores 0;1;2;3.";
+                            $valoresPermitidos = ['0', '1', '2'];
+                            if (!in_array($v, $valoresPermitidos)) {
+                                $errores[] = "El valor de LegEsCi solo admite los siguientes valores 0;1;2;3";
                                 unset($array[$key]);
                             }
                             break;
                         case 'LegSexo':
-                            if (strlen($v) > 1) {
-                                $errores[] = "El valor de LegSexo en el elemento $key solo admite los siguientes valores 0;1.";
+                            $valoresPermitidos = ['0', '1'];
+                            if (!in_array($v, $valoresPermitidos)) {
+                                $errores[] = "El valor de LegSexo solo admite los siguientes valores 0;1";
                                 unset($array[$key]);
                             }
                             break;
@@ -584,8 +572,16 @@ class validaRequest
                             }
                             break;
                         case 'LegTipo':
-                            if (strlen($v) > 1) {
-                                $errores[] = "El valor de LegTipo en el elemento $key solo admite los siguientes valores 0;1.";
+                            $valoresPermitidos = ['0', '1'];
+                            if (!in_array($v, $valoresPermitidos)) {
+                                $errores[] = "El valor de LegTipo solo admite los siguientes valores 0;1.";
+                                unset($array[$key]);
+                            }
+                            break;
+                        case 'LegTDoc':
+                            $valoresPermitidos = ['0', '1', '2', '3', '4'];
+                            if (!in_array($v, $valoresPermitidos)) {
+                                $errores[] = "El valor de LegTDoc solo admite los siguientes valores 0;1;2;3;4.";
                                 unset($array[$key]);
                             }
                             break;
@@ -604,6 +600,10 @@ class validaRequest
                             }
                             break;
                         case 'NacCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de NacCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de NacCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -620,6 +620,10 @@ class validaRequest
                             }
                             break;
                         case 'ProCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de ProCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de ProCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -649,6 +653,10 @@ class validaRequest
                             }
                             break;
                         case 'EmpCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de EmpCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de EmpCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -665,6 +673,10 @@ class validaRequest
                             }
                             break;
                         case 'PlaCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de PlaCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de PlaCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -681,6 +693,10 @@ class validaRequest
                             }
                             break;
                         case 'SucCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de SucCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de SucCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -697,6 +713,10 @@ class validaRequest
                             }
                             break;
                         case 'SecCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de SecCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de SecCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -713,6 +733,10 @@ class validaRequest
                             }
                             break;
                         case 'Se2Codi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de Se2Codi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de Se2Codi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -729,6 +753,10 @@ class validaRequest
                             }
                             break;
                         case 'GruCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de GruCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de GruCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -745,6 +773,10 @@ class validaRequest
                             }
                             break;
                         case 'ConCodi':
+                            if(!is_numeric($v)) {
+                                $errores[] = "El valor de ConCodi en el elemento $key no es un número.";
+                                unset($array[$key]);
+                            }
                             if (strlen($v) > 5) {
                                 $errores[] = "El valor de ConCodi en el elemento $key supera los 5 caracteres.";
                                 unset($array[$key]);
@@ -797,13 +829,13 @@ class querydb
 
         if (!$query) {
             http_response_code(400);
-            (response(array(), 0, 'empty query', 400, microtime(true), 0, $dataCompany['idCompany']));
+            (response([], 0, 'empty query', 400, microtime(true), 0, $dataCompany['idCompany']));
             exit;
         }
 
         require __DIR__ . '/connectDBPDO.php';
         try {
-            $resultSet = array();
+            $resultSet = [];
             $stmt = $conn->query($query);
             while ($r = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $resultSet[] = $r;
@@ -837,12 +869,12 @@ class querydb
 
         if (!$query) {
             http_response_code(400);
-            (response(array(), 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
+            (response([], 0, 'empty query', 400, timeStart(), 0, $dataCompany['idCompany']));
             exit;
         }
         require __DIR__ . '/connectDBPDO.php';
         try {
-            $resultSet = array();
+            $resultSet = [];
             $stmt = $conn->query($query);
             if ($stmt) {
                 $stmt = null;

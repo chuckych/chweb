@@ -11,21 +11,21 @@ $arrayData = [];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
-$params['data_array'] = $params['data_array'] ?? '';
-$params['status'] = $params['status'] ?? '';
-$params['start'] = $params['start'] ?? '';
-$params['length'] = $params['length'] ?? '';
-$params['key'] = $params['key'] ?? '';
+$params['data_array'] ??= '';
+$params['status'] ??= '';
+$params['start'] ??= '';
+$params['length'] ??= '';
+$params['key'] ??= '';
 
 $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-$paramsApi = array(
+$paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => ($params['start']),
     'length' => ($params['length']),
     'status' => ($params['status']),
     'userIDName' => urlencode($params['search']['value'] ?? ''),
-);
+];
 $parametros = '';
 foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
@@ -33,7 +33,7 @@ foreach ($paramsApi as $key => $value) {
 $api = "api/v1/users/$parametros";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
-$api = json_decode($api, true);
+$api = parseApiResponse($api);
 
 $totalRecords = $api['TOTAL'] ?? 0;
 if ($api['COUNT'] ?? 0 > 0) {

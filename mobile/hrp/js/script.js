@@ -1,6 +1,6 @@
 $(function () {
     'use strict';
-
+    $.fn.dataTable.ext.errMode = 'none';
     const homehost = $("#_homehost").val();
     const LS_MODALES = homehost + '_mobile_modales';
     const LS_DIR_NAME = homehost + '_position_dir_name_';
@@ -192,7 +192,6 @@ $(function () {
             ajax: {
                 url: "getRegMobile.php",
                 type: "POST",
-                // data: filterData(1),
                 "data": function (data) {
                     data._drMob = $("#_drMob").val();
                     data._drMob2 = $("#_drMob2").val();
@@ -305,14 +304,14 @@ $(function () {
                         let Distance = (row.zoneID > 0) ? '. Distancia: ' + row.zoneDistance + ' mts' : ''
                         let Distance2 = (row.zoneID > 0) ? '' + row.zoneDistance + ' mts' : ''
 
-                        btnAdd = `<div class="d-flex py-1" style="gap:5px">
-                                    <div title="Crear Zona" class="text-secondary font07 btn p-0 m-0 btn-link createZoneOut">
-                                        <i class="bi bi-plus-lg px-2 p-1 border"></i>
-                                    </div>
-                                    <div title="Procesar Zona">
-                                        <span class="text-secondary font07 btn p-0 m-0 btn-link proccessZone">
-                                            <i class="bi bi-arrow-left-right px-2 p-1 border"></i>
-                                        </span>
+                        btnAdd = `<div class="d-flex">
+                                    <div class="d-inline-flex align-items-center" style="gap:5px">
+                                        <button title="Crear Zona" class="font07 btn btn-sm btn-outline-secondary border createZoneOut">
+                                            <i class="bi bi-plus-lg"></i>
+                                        </button>
+                                        <button title="Procesar Zona" class="font07 btn btn-sm btn-outline-secondary border proccessZone">
+                                            <i class="bi bi-arrow-left-right"></i>
+                                        </button>
                                     </div>
                                 </div>`;
 
@@ -696,7 +695,10 @@ $(function () {
             actualizarRegistros('#table-mobile')
         });
     });
-    $('#table-mobile').DataTable().on('draw.dt', function (e, settings, json) {
+    $('#table-mobile').DataTable().on('draw.dt', function (e, settings) {
+        if (settings.json?.error != '') {
+            $('.dataTables_empty').html(`<div class="p-1 text-secondary">No hay datos disponibles</div>`);
+        }
         $('#table-mobile').removeClass('loader-in');
         const refreshReg = document.getElementById('refreshReg');
         if (refreshReg) {
@@ -1078,7 +1080,7 @@ $(function () {
             let pos = lat + ',' + lng;
             let dirName = lsDirNames.find(x => x.pos === pos);
             if (dirName) {
-                if(dirName?.name && dirName.name != ''){
+                if (dirName?.name && dirName.name != '') {
                     return dirName.name;
                 }
             }

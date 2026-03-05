@@ -348,6 +348,7 @@
  .menu {
      color: #333 !important;
  }
+
  /*
  .menu:hover {
      color: #fff !important;
@@ -1979,7 +1980,7 @@
  }
 
  button:focus {
-     outline: 0px auto -webkit-focus-ring-color !important;
+     outline: none !important
  }
 
  .gap5 {

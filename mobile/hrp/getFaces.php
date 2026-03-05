@@ -48,11 +48,11 @@ $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api
 $url2 = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api2;
 
 $api = getRemoteFile($url, $timeout = 10);
-$api = json_decode($api, true);
+$api = parseApiResponse($api);
 
 
 $api2 = getRemoteFile($url2, $timeout = 10);
-$api2 = json_decode($api2, true);
+$api2 = parseApiResponse($api2);
 
 $totalRecords = $api['TOTAL'];
 $totalRecords2 = $api2['TOTAL'];
