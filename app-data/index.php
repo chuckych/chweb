@@ -1519,6 +1519,36 @@ Flight::route('POST /ws_novedades', function () {
     Flight::json($arrayData ?? []);
 
 });
+Flight::route('POST /personal/(@recid)', function ($recid = '') {
+    $empresasRol = empresasRol();
+    $plantasRol = plantasRol();
+    $conveniosRol = conveniosRol();
+    $sectoresRol = sectoresRol();
+    $seccionesRol = seccionesRol();
+    $gruposRol = gruposRol();
+    $sucursalesRol = sucursalesRol();
+    $payload = Flight::request()->data ?? [];
+    $payload['Empr'] = $payload['Empr'] ?: $empresasRol;
+    $payload['Plan'] = $payload['Plan'] ?: $plantasRol;
+    $payload['Conv'] = $payload['Conv'] ?: $conveniosRol;
+    $payload['Sect'] = $payload['Sect'] ?: $sectoresRol;
+    $payload['Sec2'] = $payload['Sec2'] ?: $seccionesRol;
+    $payload['Grup'] = $payload['Grup'] ?: $gruposRol;
+    $payload['Sucu'] = $payload['Sucu'] ?: $sucursalesRol;
+    $data = [];
+    $endpoint = URLAPI . "/api/personal/";
+    $personal = ch_api($endpoint, $payload, 'POST', '', $recid);
+    $arrayData = json_decode($personal, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData : [];
+    $data['recordsFiltered'] = $result['TOTAL'] ?? 0;
+    $data['recordsTotal'] = $result['COUNT'] ?? 0;
+    $data['data'] = $result['DATA'] ?? [];
+    $data['draw'] = intval($payload['draw']) ?? 0;
+    unset($result);
+    Flight::json($data ?? []);
+});
+
+
 foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
     Flight::route("GET /{$ruta}", function () use ($ruta) {
         $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/acceso/{$ruta}";

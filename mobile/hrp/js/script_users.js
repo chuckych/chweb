@@ -2,6 +2,17 @@
 
 const homehost = $("#_homehost").val();
 const LS_MODALES = homehost + '_mobile_modales';
+const LS_MARACADOS_CH = homehost + '_mobile_marcados_ch';
+const LS_RECID_CH = homehost + '_mobile_recid_ch';
+const LS_IMPORTADOS_CH_OK = homehost + '_mobile_importados_ch_ok';
+const LS_IMPORTADOS_CH_ERROR = homehost + '_mobile_importados_ch_error';
+const LS_IMPORTADOS_CH_NOVALIDO = homehost + '_mobile_importados_ch_novalido';
+
+ls.remove(LS_MARACADOS_CH);
+ls.remove(LS_IMPORTADOS_CH_ERROR);
+ls.remove(LS_IMPORTADOS_CH_OK);
+ls.remove(LS_IMPORTADOS_CH_NOVALIDO);
+ls.remove(LS_RECID_CH);
 
 const loadingTableUser = (selectorTable) => {
     $(selectorTable).addClass('loader-in');
@@ -183,6 +194,9 @@ const dtUsers = () => {
         $('#tableUsuarios_filter .form-control-sm').attr('placeholder', 'Buscar usuarios');
         $('#RowTableUsers').removeClass('invisible');
         $('#tableUsuarios').removeClass('loader-in');
+        const recidCompany = settings.json.recidCompany || '';
+        ls.set(LS_RECID_CH, recidCompany);
+
     });
     tableUsuarios.on('page.dt', function (e, settings) {
         loadingTableUser('#tableUsuarios');
@@ -191,12 +205,57 @@ const dtUsers = () => {
         tableUsuarios.off('xhr.dt'); // Desactivar el evento para que no se llame múltiples veces
     });
     tableUsuarios.on('init.dt', function (e, settings, json) {
+
+        const localCH = json?.localCH ?? false;
+        const importUserCH = document.getElementById('importUserCH');
+        if (!localCH && importUserCH) {
+            importUserCH.remove();
+        }
         $('#tableUsuarios_filter').prepend('<button data-titlel="Nuevo usuario" class="btn btn-sm btn-custom h40 opa8 px-3" id="addUser"><i class="bi bi-plus-lg"></i></button>');
         $('#tableUsuarios_filter input').removeClass('form-control-sm');
         $('#tableUsuarios_filter input').attr("style", "height: 40px !important");
         select2Simple('#tableUsuarios_length select', '', false, false);
     });
 }
+
+$(document).on('change', '#tablePersonalCH .checkUsuario', function (e) {
+    e.stopPropagation();
+    const lega = $(this).data('lega');
+    const apno = $(this).data('apno');
+    let marcados = ls.get(LS_MARACADOS_CH) || [];
+    if ($(this).is(':checked')) {
+        if (!marcados.some(m => m.Lega == lega)) {
+            marcados.push({ Lega: lega, ApNo: apno });
+        }
+    } else {
+        marcados = marcados.filter(m => m.Lega != lega);
+    }
+    ls.set(LS_MARACADOS_CH, marcados);
+    // Actualizar estado del checkbox global
+    const total = $('#tablePersonalCH .checkUsuario').length;
+    const totalChecked = $('#tablePersonalCH .checkUsuario:checked').length;
+    $('#checkAllUsuarios').prop('checked', total > 0 && total === totalChecked);
+    $('#contadorMarcados .nroMarcados').text(marcados.length);
+});
+
+$(document).on('change', '#checkAllUsuarios', function (e) {
+    const checked = $(this).is(':checked');
+    let marcados = ls.get(LS_MARACADOS_CH) || [];
+    $('#tablePersonalCH .checkUsuario').each(function () {
+        $(this).prop('checked', checked);
+        const lega = $(this).data('lega');
+        const apno = $(this).data('apno');
+        if (checked) {
+            if (!marcados.some(m => m.Lega == lega)) {
+                marcados.push({ Lega: lega, ApNo: apno });
+            }
+        } else {
+            marcados = marcados.filter(m => m.Lega != lega);
+        }
+    });
+    ls.set(LS_MARACADOS_CH, marcados);
+    $('#contadorMarcados .nroMarcados').text(marcados.length);
+});
 
 $(document).on("click", ".sendSettings", function (e) {
     e.preventDefault();
@@ -864,12 +923,196 @@ $(document).on("click", ".trainUser", function (e) {
     });
     // });
 });
+
+const importUserBtnCH = document.getElementById('importUserCH');
+const recid = document.getElementById('recid');
+const apiMobile = document.getElementById('apiMobile');
+// recid es un select de select2. obtener el valor seleccionado con select2
+const getRecidValue = () => {
+    return $(recid).val();
+};
+
+if (importUserBtnCH) {
+    importUserBtnCH.addEventListener('click', async function () {
+        // console.log(getRecidValue());
+        importUserBtnCH.disabled = true;
+        importUserBtnCH.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...';
+
+        try {
+            // const response = await axios.post('/' + homehost + '/app-data/personal', { length: 10000, Baja: [0], getEstruct: 1 });
+            // const personal = response.data;
+
+            $('#modales').html(`
+                <div class="modal fade" id="modalPersonalCH" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header border-0">
+                                <h5 class="modal-title">Importar personal</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                                    <span aria-hidden="true" class="bi bi-x"></span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div style="line-height:2" class="mb-1 p-2 d-inline-flex align-items-center">
+                                    <div class="custom-control custom-radio d-flex align-items-center">
+                                        <input type="radio" checked id="legajoRadio1" name="legaDniRadio" class="custom-control-input" value="legajo">
+                                        <label class="custom-control-label" for="legajoRadio1">Por Legajo</label>
+                                    </div>
+                                    <div class="custom-control custom-radio d-flex align-items-center ml-3">
+                                        <input type="radio" id="dniRadio2" name="legaDniRadio" class="custom-control-input" value="dni">
+                                        <label class="custom-control-label" for="dniRadio2">Por DNI</label>
+                                    </div>
+                                </div>
+                                <table id="tablePersonalCH" class="table text-nowrap w-100 border radius p-3 bg-white loader-in"></table>
+                            </div>
+                            <div class="modal-footer border-0">
+                                <button type="button" class="font09 btn btn-light border" data-dismiss="modal">Cerrar</button>
+                                <button type="button" class="font09 btn btn-custom" id="ImportCH">Importar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+
+            $('#modalPersonalCH').modal('show');
+            DT_SPANISH_SHORT2.sInfoFiltered = "";
+
+            let importMode = 'legajo';
+            const recid_ch = ls.get(LS_RECID_CH) || getRecidValue() || '';
+
+            const dtPersonalCH = $('#tablePersonalCH').DataTable({
+                // data: personal,
+                dom: domTableUsers(),
+                ajax: {
+                    url: '/' + homehost + '/app-data/personal/' + recid_ch,
+                    type: "POST",
+                    "data": function (data) {
+                        data.Baja = [0];
+                        data.getEstruct = 1;
+                        data.getDatos = 1;
+                        data.ApNoNume = $('#tablePersonalCH_filter input').val() || '';
+                    }
+                },
+                columns: [
+                    /** Columna Checkbox */
+                    {
+                        title: '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input" id="checkAllUsuarios"><label class="custom-control-label" for="checkAllUsuarios"></label></div>',
+                        orderable: false,
+                        className: 'align-middle text-center',
+                        render: function (data, type, row) {
+                            if (type !== 'display') return '';
+                            const keyValue = importMode === 'dni' ? row.Docu : row.Lega;
+                            if (!keyValue) return '';
+                            const apno = row.ApNo || '';
+                            if (!apno) return '';
+                            const marcados = ls.get(LS_MARACADOS_CH) || [];
+                            const checked = marcados.some(m => m.Lega == keyValue) ? 'checked' : '';
+                            const uid = 'chk_' + keyValue + row.Lega;
+                            return `<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input checkUsuario" id="${uid}" data-lega="${keyValue}" data-apno="${row.ApNo}" ${checked}><label class="custom-control-label" for="${uid}"></label></div>`;
+                        }
+                    },
+                    {
+                        data: null,
+                        title: '<div class="w100">Legajo</div>',
+                        className: 'align-middle',
+                        render: function (data, type, row) {
+                            const val = importMode === 'dni' ? row.Docu : row.Lega;
+                            if (type !== 'display') return val;
+                            return `<div class="w100">${val}</div>`;
+                        }
+                    },
+                    {
+                        data: 'ApNo',
+                        title: '<div class="w250">Nombre y Apellido</div>',
+                        className: 'align-middle',
+                        render: function (data, type, row) {
+                            if (type !== 'display') return data;
+                            return `<div class="text-truncate w250">${data}</div>`;
+                        }
+                    },
+                    {
+                        data: 'Estructura',
+                        title: '<div class="w250">Empresa</div>',
+                        className: 'align-middle w-100',
+                        render: function (data, type, row) {
+                            if (type !== 'display') return data.EmprStr;
+                            return `<div class="text-truncate w250" title="(${data.Empr}) ${data.EmprStr}">${data.EmprStr}</div>`;
+                        }
+                    },
+                ],
+                bProcessing: false,
+                serverSide: true,
+                deferRender: true,
+                paging: true,
+                searching: true,
+                info: true,
+                ordering: false,
+                lengthMenu: lengthMenuUsers(),
+                language: DT_SPANISH_SHORT2,
+                initComplete: function () {
+                    const marcados = ls.get(LS_MARACADOS_CH) || [];
+                    $('#tablePersonalCH_filter').prepend(`
+                        <span id="contadorMarcados" class="d-inline-flex align-items-center mr-2 px-2" style="font-size:0.85rem;height:40px; gap:4px;">
+                            <span>Marcados:</span>
+                            <span class="nroMarcados">${marcados.length}</span>
+                        </span>
+                    `);
+                    $('#tablePersonalCH_filter input').attr('placeholder', 'Legajo / Nombre');
+                    procesarImportarUserCH();
+                },
+            });
+            dtPersonalCH.on('page.dt', function () {
+                $('#tablePersonalCH').addClass('loader-in');
+            });
+
+            dtPersonalCH.on('draw.dt', function () {
+                $('#tablePersonalCH').removeClass('loader-in');
+                const marcados = ls.get(LS_MARACADOS_CH) || [];
+                $('#tablePersonalCH .checkUsuario').each(function () {
+                    const lega = $(this).data('lega');
+                    $(this).prop('checked', marcados.some(m => m.Lega == lega));
+                });
+                const total = $('#tablePersonalCH .checkUsuario').length;
+                const totalChecked = $('#tablePersonalCH .checkUsuario:checked').length;
+                $('#checkAllUsuarios').prop('checked', total > 0 && total === totalChecked);
+                $('#contadorMarcados .nroMarcados').text(marcados.length);
+            });
+
+            $('#modalPersonalCH').on('change', '[name="legaDniRadio"]', function () {
+                importMode = $(this).val();
+                ls.remove(LS_MARACADOS_CH);
+                $('#contadorMarcados .nroMarcados').text(0);
+                const headerText = importMode === 'dni' ? 'DNI' : 'Legajo';
+                dtPersonalCH.column(1).header().innerHTML = `<div class="w100">${headerText}</div>`;
+                $('#tablePersonalCH').addClass('loader-in');
+                dtPersonalCH.ajax.reload(null, false);
+            });
+
+        } catch (error) {
+            notify('Error al obtener el personal', 'danger', 5000, 'right');
+        } finally {
+            importUserBtnCH.disabled = false;
+            importUserBtnCH.innerHTML = 'Control Horario';
+        }
+
+        $('#modalPersonalCH').on('hidden.bs.modal', function () {
+            if ($.fn.DataTable.isDataTable('#tablePersonalCH')) {
+                $('#tablePersonalCH').DataTable().destroy();
+            }
+            $('#modales').html(' ');
+            ls.remove(LS_MARACADOS_CH);
+            ls.remove(LS_IMPORTADOS_CH_ERROR);
+            ls.remove(LS_IMPORTADOS_CH_OK);
+            ls.remove(LS_IMPORTADOS_CH_NOVALIDO);
+        });
+    });
+}
+
 const importUserBtn = document.getElementById('importUser');
 const modalImport = document.getElementById('modalImport');
 importUserBtn.addEventListener('click', async function () {
     importUserBtn.disabled = true;
     importUserBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Aguarde...';
-    // const importUserModal = new bootstrap.Modal(document.getElementById('importUserModal'));
     const importHtml = await axios.get('import.php');
     modalImport.innerHTML = await importHtml.data;
 
@@ -877,7 +1120,7 @@ importUserBtn.addEventListener('click', async function () {
     // on show
     procesarImportar();
     importUserBtn.disabled = false;
-    importUserBtn.innerHTML = 'Importar usuarios';
+    importUserBtn.innerHTML = 'Planilla .xls';
     // on hide
     $('#importUserModal').on('hidden.bs.modal', function () {
         modalImport.innerHTML = '';
@@ -1162,5 +1405,94 @@ const procesarImportar = async () => {
 
         return true;
     }
+}
+const procesarImportarUserCH = async () => {
+    const ImportCH = document.getElementById('ImportCH');
+    // ImportCH.disabled = true;
+    ImportCH.addEventListener('click', function () {
+        ls.remove(LS_IMPORTADOS_CH_ERROR);
+        ls.remove(LS_IMPORTADOS_CH_OK);
+        ls.remove(LS_IMPORTADOS_CH_NOVALIDO);
+        const marcados = ls.get(LS_MARACADOS_CH) || [];
+        if (marcados.length === 0) {
+            notify('No se han seleccionado usuarios para importar.', 'warning', 3000, 'right');
+            return;
+        }
+        marcados.forEach((user, index) => {
+            const delay = index * 200; // 200ms de retraso entre cada solicitud
+            setTimeout(() => {
+                addUserMobile(user, ImportCH);
+            }, delay);
+        });
+    });
+}
+const notifyResumenCH = () => {
+    const listaOk = (() => { const v = ls.get(LS_IMPORTADOS_CH_OK); return Array.isArray(v) ? v : []; })();
+    const listaErr = (() => { const v = ls.get(LS_IMPORTADOS_CH_ERROR); return Array.isArray(v) ? v : []; })();
+    const listaNoValido = (() => { const v = ls.get(LS_IMPORTADOS_CH_NOVALIDO); return Array.isArray(v) ? v : []; })();
+    let html = '';
+    if (listaOk.length > 0) {
+        html += `<div><strong>${listaOk.length} importado(s):</strong><br>${listaOk.map(e => `(${e.Lega}) ${e.ApNo}`).join('<br>')}</div>`;
+    }
+    if (listaErr.length > 0) {
+        if (html) html += '<hr class="my-1">';
+        html += `<div><strong>${listaErr.length} ya existe(n):</strong><br>${listaErr.map(e => `(${e.Lega}) ${e.ApNo}`).join('<br>')}</div>`;
+    }
+    if (listaNoValido.length > 0) {
+        if (html) html += '<hr class="my-1">';
+        html += `<div><strong>${listaNoValido.length} sin nombre válido:</strong><br>${listaNoValido.map(e => `(${e.Lega})`).join('<br>')}</div>`;
+    }
+    if (html) {
+        $.notifyClose();
+        notify(html, 'info', 6000, 'right');
+    }
+}
+const addUserMobile = async (data, ImportCH) => {
+    ImportCH.disabled = true;
+    const ApNo = data.ApNo || '';
+    const Lega = data.Lega || '';
+    if (ApNo == null || ApNo == undefined || ApNo.trim() === '') {
+        let noValido = ls.get(LS_IMPORTADOS_CH_NOVALIDO);
+        if (!Array.isArray(noValido)) noValido = [];
+        if (!noValido.some(e => e.Lega == Lega)) {
+            noValido.push({ Lega });
+            ls.set(LS_IMPORTADOS_CH_NOVALIDO, noValido);
+        }
+        notifyResumenCH();
+        return;
+    }
+    const url = '/' + homehost + '/mobile/hrp/crud.php';
+    const params = new URLSearchParams();
+    params.append('tipo', 'add_usuario');
+    params.append('formUserID', Lega);
+    params.append('formUserName', ApNo.trim());
+    params.append('formUserEstado', 0);
+    params.append('formUserArea', 1);
+    axios.post(url, params).then(function (response) {
+        const data = response.data;
+        if (data.status == "ok") {
+            let ok = ls.get(LS_IMPORTADOS_CH_OK);
+            if (!Array.isArray(ok)) ok = [];
+            ok.push({ Lega, ApNo });
+            ls.set(LS_IMPORTADOS_CH_OK, ok);
+            notifyResumenCH();
+        } else {
+            if (data.Mensaje == 'userID already exists') {
+                let errores = ls.get(LS_IMPORTADOS_CH_ERROR);
+                if (!Array.isArray(errores)) errores = [];
+                if (!errores.some(e => e.Lega == Lega)) {
+                    errores.push({ Lega, ApNo });
+                    ls.set(LS_IMPORTADOS_CH_ERROR, errores);
+                }
+                notifyResumenCH();
+                return;
+            }
+            notify(data.Mensaje, 'danger', 5000, 'right')
+        }
+    }).catch(function (error) {
+        console.log(error)
+    }).finally(function () {
+        ImportCH.disabled = false;
+    });
 }
 

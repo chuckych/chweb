@@ -167,10 +167,21 @@
             </div>
             <div class="invisible mt-2" id="RowTableUsers">
                 <div class="row">
-                    <div class="col-12 col-sm-8 mb-3 d-flex justify-content-end">
-                        <button class="btn btn-sm btn-outline-custom h40 px-3 w200" id="importUser">
-                            Importar Usuarios
-                        </button>
+                    <div class="col-12 col-sm-8 mb-3">
+                        <a class="btn btn-custom font08 mb-1" data-toggle="collapse" href="#collapseExample"
+                            role="button" aria-expanded="false" aria-controls="collapseExample">Importar usuarios</a>
+                        <div class="collapse mt-2" id="collapseExample">
+                            <div class="p-2 border-0 radius bg-white">
+                                <div class="d-flex flex-row align-items-end" style="gap: 8px">
+                                    <button class="btn btn-sm btn-outline-custom border h40 w150" id="importUserCH">
+                                        Control Horario
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-custom border h40 w150" id="importUser">
+                                        Planilla .xls
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-12 col-sm-8">
                         <table class="table text-nowrap w-100 border-0 radius p-2 bg-white" id="tableUsuarios">

@@ -19,7 +19,7 @@ $iniData = getIni(__DIR__ . '/../mobileApikey.php');
 header('WWW-Authenticate: Basic');
 $_SERVER['HTTP_TOKEN'] ??= ''; // Asegura que la variable esté definida
 $dataC = checkToken($_SERVER['HTTP_TOKEN'], $iniData); // valida el token
-
+// error_log('dataC: ' . json_encode($dataC, JSON_UNESCAPED_UNICODE));
 $control = new requestControl();
 $apiData = new apiData($dataC);
 $db = new querydb($dataC);
@@ -65,7 +65,7 @@ $passAuth = explode('/', $_SERVER['PHP_SELF'] ??= '');
 /**
  * Datos de la cuenta
  */
-$dataCompany = array(
+$dataCompany = [
     'host' => $dataC['DBHost'],
     'user' => $dataC['DBUser'],
     'pass' => $dataC['DBPass'],
@@ -74,7 +74,7 @@ $dataCompany = array(
     'idCompany' => $dataC['idCompany'],
     'nameCompany' => $dataC['nameCompany'],
     'hostCHWeb' => $dataC['hostCHWeb'],
-);
+];
 /**
  * Devuelve valores separados por @separator de un array
  * @var array {array} array de datos

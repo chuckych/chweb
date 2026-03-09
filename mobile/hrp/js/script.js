@@ -1105,5 +1105,6 @@ $(function () {
         ls.set(LS_DIR_NAME, array_dirNames);
 
         return response.data.data ?? '';
-    }
+    }       
+
 });

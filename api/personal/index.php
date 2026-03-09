@@ -63,7 +63,7 @@ $dp['Tipo'] = vp($dp['Tipo'], 'Tipo', 'intArray', 1);
 // $dp['Desc'] = $dp['Desc'] ?? '';
 // $dp['Desc'] = vp($dp['Desc'], 'Desc', 'str', 40);
 
-$arrDPPersonal = array(
+$arrDPPersonal = [
     'Nume' => $dp['Nume'], // Codigo de Horario {int} {array}
     'ApNo' => $dp['ApNo'], // Nombre y apellido {string}
     'Docu' => $dp['Docu'], // Documento {string}
@@ -79,16 +79,16 @@ $arrDPPersonal = array(
     'TareProd' => $dp['TareProd'], // Tareas de produccion {int} {array}
     'RegCH' => $dp['RegCH'], // Regla de control horario {int} {array}
     'Tipo' => $dp['Tipo'], // Tipo de personal {int} {array}
-);
-$arrDPPersonalBaja = array(
+];
+$arrDPPersonalBaja = [
     'Baja' => $dp['Baja'], // Codigo de Horario {int} {array}
-);
-$arrDPSTR = array(
+];
+$arrDPSTR = [
     // 'Desc'  => $dp['Desc'], // Descripcion de Horario {int} {array}
-);
+];
 
 foreach ($arrDPPersonal as $key => $per) {
-    $e = array();
+    $e = [];
     if (is_array($per)) {
         $v = '';
         $e = array_filter($per, function ($v) {
@@ -145,7 +145,7 @@ foreach ($arrDPPersonal as $key => $per) {
 // Flight::json($wc).exit;
 
 foreach ($arrDPPersonalBaja as $key => $baja) {
-    $e = array();
+    $e = [];
     if (is_array($baja)) {
         $v = '';
         $e = array_filter($baja, function ($v) {
@@ -282,20 +282,20 @@ $stmt = $dbApiQuery($query) ?? '';
 $_1753 = '1753-01-01 00:00:00.000';
 foreach ($stmt as $key => $v) {
 
-    $Datos = array();
-    $Liquidacion = array();
-    $Estructura = array();
-    $Control = array();
-    $Horarios = array();
-    $Acceso = array();
-    $arrPerHoAlt = array();
-    $arrIdentifica = array();
-    $dataPerHoAlt = array();
-    $dataIdentifica = array();
-    $dataReloHabi = array();
-    $arrReloHabi = array();
-    $dataPerRelo = array();
-    $arrPerRelo = array();
+    $Datos = [];
+    $Liquidacion = [];
+    $Estructura = [];
+    $Control = [];
+    $Horarios = [];
+    $Acceso = [];
+    $arrPerHoAlt = [];
+    $arrIdentifica = [];
+    $dataPerHoAlt = [];
+    $dataIdentifica = [];
+    $dataReloHabi = [];
+    $arrReloHabi = [];
+    $dataPerRelo = [];
+    $arrPerRelo = [];
 
     if ($dp['getDatos']) {
 
@@ -516,7 +516,8 @@ foreach ($stmt as $key => $v) {
         "Estructura" => $Estructura, // Estructura organizacional del Legajo
         "Control" => $Control, // Datos de Control
         "Horarios" => $Horarios, // Datos de Horarios
-        "Acceso" => $Acceso // Datos de Acceso. 
+        "Acceso" => $Acceso, // Datos de Acceso. 
+        "Docu" => $v['LegDocu'] ? intval($v['LegDocu']) : ''
     );
 }
 

@@ -110,7 +110,7 @@ if (!isset($_SESSION['csrf_token'])) {
     <!-- Modal para importar usuarios -->
     <div class="modal fadeInDown" id="importUserModal" tabindex="-1" aria-labelledby="importUserModalLabel"
         aria-hidden="true">
-        <div class="modal-dialog modal-xl">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content bg-light">
                 <div class="modal-header border-0">
                     <h5 class="modal-title" id="importUserModalLabel">Importar Usuarios</h5>

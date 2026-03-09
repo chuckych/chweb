@@ -69,6 +69,7 @@ function ch_api()
     $payload = $argumento[1] ?? []; // Obtengo el payload
     $method = $argumento[2] ?? 'GET'; // Obtengo el método
     $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
+    $recid = $argumento[4] ?? ''; // Obtengo el recid para el token
     $method = strtoupper($method); // Convierto el método a mayúsculas
     try {
 
@@ -104,7 +105,7 @@ function ch_api()
             $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
         }
 
-        $token = sha1($_SESSION['RECID_CLIENTE']);
+        $token = $recid ? sha1($recid) : sha1($_SESSION['RECID_CLIENTE']);
         $AGENT = $_SERVER['HTTP_USER_AGENT'];
         $headers = [
             "Accept: */*",

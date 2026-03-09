@@ -18,6 +18,19 @@ $params['length'] ??= '';
 $params['key'] ??= '';
 
 $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
+$iniKeys = [];
+
+foreach (getDataIni(__DIR__ . '/../../mobileApikey.php') as $entry) {
+    if ($entry['idCompany'] === $idCompany) {
+        $iniKeys = $entry;
+        break;
+    }
+}
+$urlAppMobile = $iniKeys['urlAppMobile'] ?? '';
+$recidCompany = $iniKeys['recidCompany'] ?? '';
+$localCH = $iniKeys['localCH'] ?? '';
+// $siControlaChLocal = !empty($urlAppMobile) && ($localCH === '1');
+$siControlaChLocal = !empty($urlAppMobile);
 
 $paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
@@ -87,7 +100,9 @@ $json_data = array(
     "draw" => intval($params['draw'] ?? ''),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
-    "data" => $arrayData
+    "data" => $arrayData,
+    'localCH' => $siControlaChLocal ?? false,
+    'recidCompany' => $recidCompany ?? '',
 );
 if ($params['data_array'] == 'select') {
     echo json_encode($arrayData);
