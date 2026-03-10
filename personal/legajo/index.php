@@ -102,7 +102,7 @@ try {
       "getHorarios" => 0,
       "getAcceso" => 0,
       'start' => 0,
-      'length' => 5000
+      'length' => 15000
    ];
 
    $url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
@@ -111,6 +111,7 @@ try {
       'DATA' => [],
       'MESSAGE' => '',
    ];
+   // error_log(print_r($dataApi, true));
 
    $colLega = [];
 
@@ -118,7 +119,7 @@ try {
       $colLega = array_column($dataApi['DATA'], "ApNo", "Lega");
    }
 
-   $validLegajo = $colLega[$_leg] ? true : false;
+   $validLegajo = isset($colLega[$_leg]) ? true : false;
    if (!$validLegajo) {
       throw new Exception("Legajo no válido");
    }

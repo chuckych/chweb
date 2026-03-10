@@ -199,7 +199,7 @@ foreach ($arrDPSTR as $key => $v) {
     }
 }
 
-$columnas[] = "LegNume,LegApNo,LegIntExt,PERSONAL.FechaHora";
+$columnas[] = "LegNume,LegApNo,LegIntExt,LegDocu,PERSONAL.FechaHora";
 
 $joinData = '';
 
@@ -208,7 +208,7 @@ if ($dp['getDatos']) {
     $joinData .= " INNER JOIN NACIONES ON PERSONAL.LegNaci = NACIONES.NacCodi";
     $joinData .= " INNER JOIN PROVINCI ON PERSONAL.LegProv = PROVINCI.ProCodi";
     $joinData .= " INNER JOIN LOCALIDA ON PERSONAL.LegLoca = LOCALIDA.LocCodi";
-    $columnas[] = "LegTDoc, dbo.fn_TipoDeDocumento(LegTDoc) as LegTDocStr,LegDocu,LegCUIT,LegDomi,LegDoNu,LegDoPi,LegDoDP,LegDoOb,LegCOPO,LegProv,LegLoca,LegTel1,LegTeO1,LegTel2,LegTeO2,LegNaci,LegEsCi, dbo.fn_EstadoCivil(LegEsCi) AS LegEsCiStr, LegSexo, dbo.fn_Sexo(LegSexo) as LegSexoStr,LegFeNa,NacDesc,ProDesc,LocDesc";
+    $columnas[] = "LegTDoc, dbo.fn_TipoDeDocumento(LegTDoc) as LegTDocStr,LegCUIT,LegDomi,LegDoNu,LegDoPi,LegDoDP,LegDoOb,LegCOPO,LegProv,LegLoca,LegTel1,LegTeO1,LegTel2,LegTeO2,LegNaci,LegEsCi, dbo.fn_EstadoCivil(LegEsCi) AS LegEsCiStr, LegSexo, dbo.fn_Sexo(LegSexo) as LegSexoStr,LegFeNa,NacDesc,ProDesc,LocDesc";
 }
 /** Estructura */
 if ($dp['getEstruct']) {
@@ -265,7 +265,6 @@ $columnas = implode(',', $columnas);
 
 $query = "SELECT $columnas FROM PERSONAL $joinData WHERE PERSONAL.LegNume > 0";
 $queryCount = "SELECT count(1) as 'count' FROM PERSONAL WHERE PERSONAL.LegNume > 0";
-
 
 if ($wc) {
     $query .= $wc;
@@ -505,20 +504,20 @@ foreach ($stmt as $key => $v) {
         );
     }
 
-    $data[] = array(
-        "Lega" => intval($v['LegNume']), // Número de Legajo
-        "ApNo" => trim(str_replace(' ', '', $v['LegApNo'])), // Apellido y Nombre
+    $data[] = [
+        "Lega" => intval($v['LegNume']),
+        "ApNo" => trim(str_replace(' ', '', $v['LegApNo'])),
         "IntExt" => $v['LegIntExt'], // Tipo de Legajo
         "IntExtString" => ($v['LegIntExt'] == '0') ? 'Interno' : 'Externo', // Tipo de Legajo
-        "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s'), // lasta update
+        "Docu" => $v['LegDocu'] ? intval($v['LegDocu']) : '',
+        "FechaHora" => fechFormat($v['FechaHora'], 'Y-m-d H:i:s'), // last update
         "Datos" => $Datos, // Datos del Legajos
         "Liquidacion" => $Liquidacion, // Datos de liquidacion
         "Estructura" => $Estructura, // Estructura organizacional del Legajo
         "Control" => $Control, // Datos de Control
         "Horarios" => $Horarios, // Datos de Horarios
         "Acceso" => $Acceso, // Datos de Acceso. 
-        "Docu" => $v['LegDocu'] ? intval($v['LegDocu']) : ''
-    );
+    ];
 }
 
 if (empty($stmt)) {
