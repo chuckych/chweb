@@ -35,10 +35,10 @@ $dataParametros = array(
 );
 $u = (explode('/', $_SERVER['PHP_SELF']));
 
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+$dataApi['DATA'] ??= '';
+$dataApi['MESSAGE'] ??= '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 

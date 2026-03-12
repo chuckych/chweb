@@ -105,7 +105,7 @@ try {
       'length' => 15000
    ];
 
-   $url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
+   $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/personal/";
 
    $dataApi = json_decode(requestApi($url, $token, "", $dataParametros, 10), true) ?: [
       'DATA' => [],

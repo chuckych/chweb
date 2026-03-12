@@ -8,7 +8,7 @@ secure_auth_ch_json();
 E_ALL();
 
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$pathApiCH = gethostCHWeb() . "/" . HOMEHOST . "/api";
+$pathApiCH = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api";
 
 // $_POST['dato']           = $_POST['dato'] ?? '';
 FusNuloPOST('dato', '');
@@ -313,7 +313,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             "EvSale" => ""
         ];
 
-        $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/estructuras/alta";
+        $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/estructuras/alta";
         $rs = curlAPI($endpoint, $payload, 'POST', $token);
         $result = json_decode($rs, true);
         $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';

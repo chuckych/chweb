@@ -69,7 +69,7 @@ $dataParametros = array(
     'onlyReg' => $params['onlyReg']
 );
 
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficdata/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficdata/";
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 

@@ -61,7 +61,7 @@ $dataParametros = [
     'onlyReg' => 1
 ];
 
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 

@@ -149,7 +149,7 @@ function ch_api()
  */
 function getNoveCausas($novedad)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
     $queryParams = array(
         "start" => 0,
@@ -169,7 +169,7 @@ function getNoveCausas($novedad)
 }
 function getParamLiquid()
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/parametros/liquid";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/parametros/liquid";
     $method = 'GET';
     $data = ch_api($endpoint, '', $method, []);
     $arrayData = json_decode($data, true);
@@ -177,7 +177,7 @@ function getParamLiquid()
 }
 function getFichasMinMax()
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
     $method = 'GET';
     $data = ch_api($endpoint, '', $method, []);
     $arrayData = json_decode($data, true);
@@ -195,7 +195,7 @@ function estructuras($estructuras)
     //     "Grup": "1,2",
     //     "Sucu": "1,6,3,4"
     // }
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/estructuras";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/estructuras";
 
     $data = ch_api($endpoint, $estructuras, 'POST', '');
 
@@ -271,7 +271,7 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         "start" => 0,
         "length" => $opt['length'] ?? 1
     ];
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
@@ -282,7 +282,7 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
 }
 function fic_nove_horas($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
@@ -294,7 +294,7 @@ function fic_nove_horas($payload)
 function v1_api($endpoint, $method, $payload)
 {
     try {
-        $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1" . $endpoint;
+        $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1" . $endpoint;
         $data = ch_api($endpoint, $payload, $method, '');
         $arrayData = json_decode($data, true);
 
@@ -350,7 +350,7 @@ function get_estructura($query)
                 debugLog("Cache hit estructura - Tiempo: " . round($fin - $inicio, 2));
             }
         } else {
-            $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct";
+            $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct";
             $data = ch_api($endpoint, [], 'GET', $query);
             $arrayData = json_decode($data, true);
             $DATA = $arrayData['DATA'] ?? [];
@@ -368,7 +368,7 @@ function get_estructura($query)
 }
 function getHorasTotales($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/totales/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     // print_r($payload) . exit;
@@ -380,7 +380,7 @@ function getHorasTotales($payload)
 }
 function getNovedadesTotales($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/totales/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     // print_r($payload) . exit;
@@ -392,7 +392,7 @@ function getNovedadesTotales($payload)
 }
 function getHorasTotalesDT($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/totales/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/totales/";
     // print_r($payload) . exit;
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
@@ -412,7 +412,7 @@ function getHorasTotalesDT($payload)
 }
 function getNovedadesTotalesDT($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/totales/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/totales/";
     // print_r($payload) . exit;
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
@@ -453,7 +453,7 @@ function getCierreFicha($legajo, $fecha)
  */
 function getNovedad($novedad)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/estruct/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
     $queryParams = array(
         "start" => 0,
@@ -469,7 +469,7 @@ function getNovedad($novedad)
 }
 function getPersonal($payload)
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/personal/";
     $personal = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($personal, true);
     if ($arrayData['RESPONSE_CODE'] == '200') {
@@ -500,7 +500,7 @@ function get_horario_actual($Legajos)
         "Grupo" => 0,
     ];
 
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/horasign/";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/horasign/";
     $data = ch_api($endpoint, $payload, 'POST', '');
     $arrayData = json_decode($data, true);
     $data = $arrayData['DATA'] ?? '';
@@ -518,7 +518,7 @@ Flight::map('personal', function ($payload) {
     return $result;
 });
 Flight::map('asignados', function ($payload) {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horarios/asignados";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/asignados";
     $horarios = ch_api($endpoint, $payload, 'POST', '');
     $horarios = json_decode($horarios, true);
     return $horarios ?? [];
@@ -709,7 +709,7 @@ function procesar_por_intervalos($data, $payload, $flag)
 
 function get_tipo_hora()
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/horas/data";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/data";
     $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
 
     $arrayData = json_decode($data, true);
@@ -717,7 +717,7 @@ function get_tipo_hora()
 }
 function get_novedades()
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/novedades/data";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/data";
     $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
 
     $arrayData = json_decode($data, true);
@@ -725,14 +725,14 @@ function get_novedades()
 }
 function get_params($queryParams = [])
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/_local/params";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
     $data = ch_api($endpoint, '', 'GET', $queryParams);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
 function add_params($payloadParams = [])
 {
-    $endpoint = gethostCHWeb() . "/" . HOMEHOST . "/api/_local/params";
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
     $data = ch_api($endpoint, $payloadParams, 'POST', '');
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];

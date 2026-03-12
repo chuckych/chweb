@@ -101,7 +101,7 @@ $dataParametros = [
     "getHor" => "1",
 ];
 
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true) ?: [
     'DATA' => '',
     'MESSAGE' => '',
@@ -110,7 +110,7 @@ $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10)
 
 /** Obtenemos los Tipos de Horas */
 $dataParamThColu = ["Codi" => [], "ID" => [], "Desc" => "", "Desc2" => "", "start" => 0, "length" => 500];
-$urlTHColu = gethostCHWeb() . "/" . HOMEHOST . "/api/tipohora/";
+$urlTHColu = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/tipohora/";
 $dataApiTHColu = json_decode(requestApi($urlTHColu, $token, $authBasic, $dataParamThColu, 10), true) ?: [
     'DATA' => '',
     'MESSAGE' => ''

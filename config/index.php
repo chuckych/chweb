@@ -46,3 +46,5 @@ $array_mod = [
        'proyectar' => 'Proyectar Horas' // Proyectar Horas ID 47
 ];
 define("MODULOS", $array_mod);
+// $_SESSION['HOST_CHWEB'] ??= gethostCHWeb();
+$_SESSION['HOST_CHWEB'] = $_SESSION['HOST_CHWEB'] ?: gethostCHWeb();

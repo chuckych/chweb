@@ -11,7 +11,7 @@ if (session_status() === PHP_SESSION_ACTIVE) {
 
 $data = [];
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$pathApiCH = gethostCHWeb() . "/" . HOMEHOST . "/api";
+$pathApiCH = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api";
 
 try {
 

@@ -25,8 +25,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
 
 $documento = new Spreadsheet();
 $documento
@@ -136,15 +135,13 @@ function HoraVal($hora)
 }
 
 $params = $_REQUEST;
-$data = array();
+$data = [];
 $authBasic = base64_encode('chweb:' . HOMEHOST);
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$params['start'] = $params['start'] ?? '0';
-$params['length'] = $params['length'] ?? '99999';
-$_POST['_dr'] = $_POST['_dr'] ?? '';
+$params['start'] ??= '0';
+$params['length'] ??= '99999';
+$_POST['_dr'] ??= '';
 (!$_POST['_dr']) ? exit : '';
-
-// print_r($_SESSION['EmprRol']).exit;
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
@@ -154,61 +151,60 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni = date('Ymd');
     $FechaFin = date('Ymd');
 }
-$params['Per'] = $params['Per'] ?? '';
-$params['Per2'] = $params['Per2'] ?? '';
-$params['Emp'] = $params['Emp'] ?? '';
-$params['Plan'] = $params['Plan'] ?? '';
-$params['Sect'] = $params['Sect'] ?? '';
-$params['Sec2'] = $params['Sec2'] ?? '';
-$params['Grup'] = $params['Grup'] ?? '';
-$params['Sucur'] = $params['Sucur'] ?? '';
-$params['_l'] = $params['_l'] ?? $data = array();
-$params['draw'] = $params['draw'] ?? '';
-$params['FicFalta'] = $params['FicFalta'] ?? '';
-$params['Tipo'] = ($params['Tipo']) ?? '';
-$params['onlyReg'] = ($params['onlyReg']) ?? '';
+$params['Per'] ??= '';
+$params['Per2'] ??= '';
+$params['Emp'] ??= '';
+$params['Plan'] ??= '';
+$params['Sect'] ??= '';
+$params['Sec2'] ??= '';
+$params['Grup'] ??= '';
+$params['Sucur'] ??= '';
+$params['_l'] ??= [];
+$params['draw'] ??= '';
+$params['FicFalta'] ??= '';
+$params['Tipo'] ??= '';
+$params['onlyReg'] ??= '';
 
-$Empr = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
-$Per = $params['Per'] ? ($params['Per']) : array();
-$Per2 = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
-$Plan = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
-$Sect = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
-$Grup = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
-$Sucu = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
-$Sec2 = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
-$FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
-$LegTipo = $params['Tipo'] ? $params['Tipo'] : array();
+$Empr = $params['Emp'] ?: ($_SESSION['EmprRol'] ? explode(',', $_SESSION['EmprRol']) : []);
+$Per = $params['Per'] ?: [];
+$Per2 = $params['Per2'] ? [$params['Per2']] : ($_SESSION['EstrUser'] ? explode(',', $_SESSION['EstrUser']) : []);
+$Plan = $params['Plan'] ?: ($_SESSION['PlanRol'] ? explode(',', $_SESSION['PlanRol']) : []);
+$Sect = $params['Sect'] ?: ($_SESSION['SectRol'] ? explode(',', $_SESSION['SectRol']) : []);
+$Grup = $params['Grup'] ?: ($_SESSION['GrupRol'] ? explode(',', $_SESSION['GrupRol']) : []);
+$Sucu = $params['Sucur'] ?: ($_SESSION['SucuRol'] ? explode(',', $_SESSION['SucuRol']) : []);
+$Sec2 = $params['Sec2'] ?: ($_SESSION['Sec2Rol'] ? explode(',', $_SESSION['Sec2Rol']) : []);
+$FicFalta = $params['FicFalta'] ? [intval($params['FicFalta'])] : [];
+$LegTipo = $params['Tipo'] ?: [];
 
-$Legajos = ($Per2) ? ($Per2) : $Per;
-$Legajos = ($Per) ? ($Per) : $Legajos;
+$Legajos = $Per ?: $Per2;
 
-$dataParametros = array(
+$dataParametros = [
     'Lega' => $Legajos,
     'Falta' => $FicFalta,
-    'Empr' => ($Empr),
-    'Plan' => ($Plan),
-    'Sect' => ($Sect),
-    'Grup' => ($Grup),
-    'Sucu' => ($Sucu),
-    'Sec2' => ($Sec2),
-    'LegTipo' => ($LegTipo),
+    'Empr' => $Empr,
+    'Plan' => $Plan,
+    'Sect' => $Sect,
+    'Grup' => $Grup,
+    'Sucu' => $Sucu,
+    'Sec2' => $Sec2,
+    'LegTipo' => $LegTipo,
     'FechIni' => FechaFormatVar($FechaIni, 'Y-m-d'),
     'FechFin' => FechaFormatVar($FechaFin, 'Y-m-d'),
     'start' => intval($params['start']),
     'length' => intval($params['length']),
     'getReg' => 1,
     'onlyReg' => $params['onlyReg']
-);
+];
 
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/ficnovhor/";
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 
-$dataApi['DATA'] = $dataApi['DATA'] ?? '';
-$dataApi['MESSAGE'] = $dataApi['MESSAGE'] ?? '';
+$dataApi['DATA'] ??= [];
+$dataApi['MESSAGE'] ??= '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 $numeroDeFila = 2;
 
-if ($dataApi['DATA']) {
+if ($dataApi['DATA'] ?? []) {
     foreach ($dataApi['DATA'] as $row) {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
         $col = '';
@@ -219,19 +215,19 @@ if ($dataApi['DATA']) {
         $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $ficHorario;
         $ficHorario = ($row['Feri'] == '1') ? 'Feriado' : $ficHorario;
 
-        $spreadsheet->setCellValue("A" . $numeroDeFila, $row['Lega']);
-        $spreadsheet->setCellValue("B" . $numeroDeFila, $pers_nombre);
-        $spreadsheet->setCellValue("C" . $numeroDeFila, FormatoFechaToExcel($row['Fech']));
-        $spreadsheet->setCellValue("D" . $numeroDeFila, $dia);
-        $spreadsheet->setCellValue("E" . $numeroDeFila, $ficHorario);
-        $spreadsheet->setCellValue("F" . $numeroDeFila, $row['FichC']);
+        $spreadsheet->setCellValue("A$numeroDeFila", $row['Lega']);
+        $spreadsheet->setCellValue("B$numeroDeFila", $pers_nombre);
+        $spreadsheet->setCellValue("C$numeroDeFila", FormatoFechaToExcel($row['Fech']));
+        $spreadsheet->setCellValue("D$numeroDeFila", $dia);
+        $spreadsheet->setCellValue("E$numeroDeFila", $ficHorario);
+        $spreadsheet->setCellValue("F$numeroDeFila", $row['FichC']);
 
         $col = 6;
         try {
             foreach ($row['Fich'] as $key => $fich) {
                 $col++;
                 $colString = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col);
-                $spreadsheet->setCellValue($colString . $numeroDeFila, $fich['Hora']);
+                $spreadsheet->setCellValue("$colString$numeroDeFila", $fich['Hora']);
             }
         } catch (\Throwable $th) {
             error_log($th->getMessage());
@@ -270,19 +266,24 @@ try {
     BorrarArchivosPDF('archivos/*.xls');
     /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_Fichadas_" . $MicroTime . ".xls";
+    $NombreArchivo = "Reporte_Fichadas_{$MicroTime}.xls";
 
     $writer = new Xls($documento);
     # Le pasamos la ruta de guardado
     $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-    $writer->save('archivos/' . $NombreArchivo);
+    $writer->save("archivos/{$NombreArchivo}");
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo);
+    $data = [
+        'status' => 'ok',
+        'archivo' => "archivos/{$NombreArchivo}"
+    ];
     echo json_encode($data);
     exit;
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = [
+        'status' => 'error'
+    ];
     echo json_encode($data);
     exit;
 }

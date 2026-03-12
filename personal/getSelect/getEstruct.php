@@ -23,49 +23,49 @@ require __DIR__ . '/../../filtros/filtros.php';
 require __DIR__ . '/../../config/conect_mssql.php';
 
 
-$params['Per'] = $params['Per'] ?? '';
-$params['Emp'] = $params['Emp'] ?? '';
-$params['Plan'] = $params['Plan'] ?? '';
-$params['Sect'] = $params['Sect'] ?? '';
-$params['Sec2'] = $params['Sec2'] ?? '';
-$params['Grup'] = $params['Grup'] ?? '';
-$params['Sucur'] = $params['Sucur'] ?? '';
-$params['Tipo'] = ($params['Tipo']) ?? '';
-$params['Regla'] = ($params['Regla']) ?? '';
+$params['Per'] ??= '';
+$params['Emp'] ??= '';
+$params['Plan'] ??= '';
+$params['Sect'] ??= '';
+$params['Sec2'] ??= '';
+$params['Grup'] ??= '';
+$params['Sucur'] ??= '';
+$params['Tipo'] ??= '';
+$params['Regla'] ??= '';
 
 $Empr = $params['Emp'] ? ($params['Emp']) : explode(',', $_SESSION['EmprRol']);
-$Per = $params['Per'] ? ($params['Per']) : array();
-$Per2 = $params['Per2'] ? array($params['Per2']) : explode(',', $_SESSION['EstrUser']);
-$Plan = $params['Plan'] ? $params['Plan'] : explode(',', $_SESSION['PlanRol']);
-$Sect = $params['Sect'] ? $params['Sect'] : explode(',', $_SESSION['SectRol']);
-$Grup = $params['Grup'] ? $params['Grup'] : explode(',', $_SESSION['GrupRol']);
-$Sucu = $params['Sucur'] ? $params['Sucur'] : explode(',', $_SESSION['SucuRol']);
-$Sec2 = $params['Sec2'] ? $params['Sec2'] : explode(',', $_SESSION['Sec2Rol']);
-$Conv = $params['Conv'] ? $params['Conv'] : explode(',', $_SESSION['ConvRol']);
-$Tare = $params['Tare'] ? $params['Tare'] : '';
+$Per = $params['Per'] ?: [];
+$Per2 = $params['Per2'] ? [$params['Per2']] : explode(',', $_SESSION['EstrUser']);
+$Plan = $params['Plan'] ?: explode(',', $_SESSION['PlanRol']);
+$Sect = $params['Sect'] ?: explode(',', $_SESSION['SectRol']);
+$Grup = $params['Grup'] ?: explode(',', $_SESSION['GrupRol']);
+$Sucu = $params['Sucur'] ?: explode(',', $_SESSION['SucuRol']);
+$Sec2 = $params['Sec2'] ?: explode(',', $_SESSION['Sec2Rol']);
+$Conv = $params['Conv'] ?: explode(',', $_SESSION['ConvRol']);
+$Tare = $params['Tare'] ?: '';
 switch ($params['Tipo']) {
     case '2':
-        $LegTipo = array('0');
+        $LegTipo = ['0'];
         break;
     case '1':
-        $LegTipo = array('1');
+        $LegTipo = ['1'];
         break;
     default:
         $LegTipo = [];
         break;
 }
-$RegCH = $params['Regla'] ? $params['Regla'] : '';
-$Legajos = ($Per) ? ($Per) : [];
+$RegCH = $params['Regla'] ?: '';
+$Legajos = $Per ?: [];
 
-$dataApiPerson['DATA'] = $dataApiPerson['DATA'] ?? '';
-$dataApiPerson['MESSAGE'] = $dataApiPerson['MESSAGE'] ?? '';
+$dataApiPerson['DATA'] ??= '';
+$dataApiPerson['MESSAGE'] ??= '';
 
-$dataParamPerson = array(
-    "Nume" => ($Legajos),
-    "ApNoNume" => ($q),
+$dataParamPerson = [
+    "Nume" => $Legajos,
+    "ApNoNume" => $q,
     "getDatos" => 0,
     "getEstruct" => 0,
-    "Baja" => array("0"),
+    "Baja" => ["0"],
     "Empr" => $Empr,
     "Plan" => $Plan,
     "Sect" => $Sect,
@@ -78,9 +78,9 @@ $dataParamPerson = array(
     "Tipo" => $LegTipo,
     "start" => 0,
     "length" => 500,
-);
-// Flight::json($dataParamPerson) . exit;
-$url = gethostCHWeb() . "/" . HOMEHOST . "/api/personal/";
+];
+
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/personal/";
 
 switch ($estruct) {
     case 'Empr':
@@ -149,7 +149,6 @@ switch ($estruct) {
         break;
 
     default:
-        # code...
         break;
 }
 
@@ -162,7 +161,7 @@ switch ($estruct) {
         $query = "SELECT $ColEstrucCod AS 'id' FROM $ColEstruc WHERE PERSONAL.LegNume > 0 $FilterEstruct $filtros GROUP BY $ColEstrucCod ORDER BY $ColEstrucCod";
         break;
     case 'Lega':
-        $query = "SELECT $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc' FROM PERSONAL WHERE $FicEstruct > 0 $FiltroQ $FilterEstruct $filtros GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
+        $query = "SELECT TOP 100 $FicEstruct AS 'id', $ColEstrucDesc AS 'Desc' FROM PERSONAL WHERE $FicEstruct > 0 $FiltroQ $FilterEstruct $filtros GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
 
         // $dataApiPerson = json_decode(requestApi($url, $token, $authBasic, $dataParamPerson, 10), true);
 
@@ -191,53 +190,49 @@ switch ($estruct) {
         WHERE PERSONAL.LegNume > 0 $FiltroQ $FilterEstruct $filtros GROUP BY $FicEstruct, $ColEstrucDesc ORDER BY $FicEstruct";
         break;
 }
-// Flight::json($query) . exit;
-// print_r($query); exit;
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $result = sqlsrv_query($link, $query, $params, $options);
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row = sqlsrv_fetch_array($result)):
-
         switch ($estruct) {
             case 'Tipo':
                 $id = $row['id'];
                 $id2 = ($row['id'] == 0) ? 2 : 1;
                 $text = ($id == '0') ? 'Mensuales' : 'Jornales';
-                $data[] = array(
+                $data[] = [
                     'id' => $id2,
                     'text' => $text,
                     'title' => $text,
-                );
+                ];
                 break;
             case 'Sec2':
                 $id = $row['id'];
                 $id2 = $row['id2'];
                 $text = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
-                $data[] = array(
+                $data[] = [
                     'id' => $id2,
-                    'text' => $id . ' - ' . $text,
-                    'title' => $id . ' - ' . $text,
-                );
+                    'text' => "$id - $text",
+                    'title' => "$id - $text",
+                ];
                 break;
             default:
                 $id = $row['id'];
                 $text = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
-                $data[] = array(
+                $data[] = [
                     'id' => $id,
-                    'text' => $id . ' - ' . $text,
-                    'title' => $id . ' - ' . $text,
-                    'data-title' => $id . ' - ' . $text,
-                );
+                    'text' => "$id - $text",
+                    'title' => "$id - $text",
+                    'data-title' => "$id - $text",
+                ];
                 break;
         }
-
     endwhile;
 }
 sqlsrv_free_stmt($result);

@@ -6,18 +6,18 @@ E_ALL();
 UnsetGet('q');
 UnsetGet('Emp');
 session_start();
-$data = array();
-// $_SESSION['RECID_CLIENTE'] = 'aNGL89kv';
-$token = sha1($_SESSION['RECID_CLIENTE']);
-$pathApiCH = gethostCHWeb() . "/" . HOMEHOST . "/api";
+$data = [];
 
-$q = $_GET['q'];
-$estruct = $_GET['Estruct'];
-$Emp = $_GET['Emp'];
+$token = sha1($_SESSION['RECID_CLIENTE']);
+$pathApiCH = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api";
+
+$q = $_GET['q'] ?? '';
+$estruct = $_GET['Estruct'] ?? '';
+$Emp = $_GET['Emp'] ?? '';
 
 $Emp = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : '';
-$empresas = array();
-$data = array();
+$empresas = [];
+$data = [];
 
 if ($Emp) {
     foreach ($Emp as $key => $value) {
@@ -26,16 +26,13 @@ if ($Emp) {
     $empresas = '&' . (implode('&', $empresas));
 }
 
-$emp = ($empresas) ? $empresas : '';
+$emp = $empresas ?: '';
 
-$payload = array();
+$payload = [];
 
-$sendApi['DATA'] = $sendApi['DATA'] ?? '';
-$sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
+$sendApi['DATA'] ??= '';
+$sendApi['MESSAGE'] ??= '';
 $url = "$pathApiCH/estruct/?Des=$q&Estruct=$estruct$emp";
-
-// print_r($empresas).exit;
-
 $sendApi = curlAPI($url, $payload, 'GET', $token);
 $sendApi = json_decode($sendApi, true);
 
@@ -43,10 +40,10 @@ $sendApi = json_decode($sendApi, true);
 if ($sendApi['MESSAGE'] == 'OK') {
     if ($sendApi['DATA']) {
         foreach ($sendApi['DATA'] as $key => $fila) {
-            $data[] = array(
+            $data[] = [
                 "id" => $fila['Codi'],
                 "text" => $fila['Desc'],
-            );
+            ];
         }
     }
 }
