@@ -59,17 +59,15 @@ $colFechaFormat = 'dbo.fn_DateSTR(FICHAS.FicFech) AS "FechaStr"';
 $qFic = "$queryDateFirst;";
 $qFic .= "SELECT $distinct FICHAS.FicFech AS 'Fecha', $colDiaDeLaSemana, $colFechaFormat, PERSONAL.LegApNo, PERSONAL.LegDocu, PERSONAL.LegCUIT, FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicHorD, $colHorarioStr, FICHAS.FicNovA, FICHAS.FicNovS, FICHAS.FicNovT, FICHAS.FicNovI, FICHAS.FicLega, FICHAS.FicFech, FICHAS.FicDiaL, FICHAS.FicDiaF, FICHAS.FicHsAT, FICHAS.FicHsTr, FICHAS.FicFalta, $colEstruct $colCierre FROM FICHAS
 INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 $joinCierres
-WHERE FICHAS.FicLega > 0 $wcFicFech";
+WHERE FICHAS.FicLega > 0 AND FICHAS.FicTurn = 1 $wcFicFech";
 if ($Dias) {
     $qFic .= " AND DATEPART(WEEKDAY, FICHAS.FicFech) IN($Dias)";
 }
 $qFic .= $HoraMinMax;
 
 
-$qFicCount = "SELECT count(1) as 'count' FROM (SELECT $distinct FICHAS.FicFech, FICHAS.FicLega FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
+$qFicCount = "SELECT count(1) as 'count' FROM (SELECT $distinct FICHAS.FicFech, FICHAS.FicLega FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 AND FICHAS.FicTurn = 1 $wcFicFech ";
 $qFicCount .= $HoraMinMax;
-// $qFicCount = "SELECT count(1) as 'count' FROM FICHAS INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume $joinFichas3 $joinFichas2 $joinFichas1 WHERE FICHAS.FicLega > 0 $wcFicFech ";
-// $qFicCount .= $HoraMinMax;
 
 if ($wc) {
     $qFic .= $wc;
@@ -127,20 +125,21 @@ if ($dp['getNov']) {
     $IlegNoV = implodeArrayByKey($IlegNoV, 'FicLega');
     $IlegNoV = $IlegNoV ? " AND FICHAS3.FicLega IN ($IlegNoV)" : "";
 
-    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta, FICHAS3.FicCate, NOVEDAD.NovCol1, NOVEDAD.NovCol2, NOVEDAD.NovCol3, NOVEDAD.NovCol4 FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 $wcFicFechNov $IlegNoV";
+    $qNov = "SELECT FICHAS3.FicFech AS 'Fecha', FICHAS3.FicLega, FICHAS3.FicHoras, FICHAS3.FicObse, NovCodi, NovDesc, NovCCodi, NovCDesc, FICHAS3.FicNoTi, FICHAS3.FicEsta, FICHAS3.FicCate, NOVEDAD.NovCol1, NOVEDAD.NovCol2, NOVEDAD.NovCol3, NOVEDAD.NovCol4 FROM FICHAS3 LEFT JOIN NOVEDAD ON FICHAS3.FicNove=NOVEDAD.NovCodi LEFT JOIN NOVECAUSA ON FICHAS3.FicNove=NOVECAUSA.NovCNove AND FICHAS3.FicCaus=NOVECAUSA.NovCCodi WHERE FICHAS3.FicLega > 0 AND FICHAS3.FicTurn = 1 $wcFicFechNov $IlegNoV";
     if ($dp['NovEx']) {
         if ($wcNov) {
             $qNov .= $wcNov;
         }
     }
     $qNov .= " ORDER BY FICHAS3.FicFech";
+    // error_log($qNov);
     $stmtNov = $dbApiQuery($qNov);
 }
 if ($dp['getONov']) {
     $IlegONov = implodeArrayByKey($IlegFic, 'FicLega');
     $IlegONov = $IlegONov ? " AND FICHAS2.FicLega IN ($IlegONov)" : "";
 
-    $qONov = "SELECT FICHAS2.FicFech AS 'Fecha', FICHAS2.FicLega, FicONov, FicValor, FicObsN, ONovDesc, ONovTipo, CASE ONovTipo WHEN 0 THEN 'Valor' ELSE 'Horas' END as 'Tipo' FROM FICHAS2 LEFT JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi WHERE FICHAS2.FicLega >0 $wcFicFechONov $IlegONov";
+    $qONov = "SELECT FICHAS2.FicFech AS 'Fecha', FICHAS2.FicLega, FicONov, FicValor, FicObsN, ONovDesc, ONovTipo, CASE ONovTipo WHEN 0 THEN 'Valor' ELSE 'Horas' END as 'Tipo' FROM FICHAS2 LEFT JOIN OTRASNOV ON FICHAS2.FicONov=OTRASNOV.ONovCodi WHERE FICHAS2.FicLega > 0 AND FICHAS2.FicTurn = 1 $wcFicFechONov $IlegONov";
     if ($dp['ONovEx']) {
         if ($wcONov) {
             $qONov .= $wcONov;
@@ -154,7 +153,7 @@ if ($dp['getHor']) {
     $IlegHor = implodeArrayByKey($IlegHor, 'FicLega');
     $IlegHor = $IlegHor ? " AND FICHAS1.FicLega IN ($IlegHor)" : "";
 
-    $qHor = "SELECT FICHAS1.FicFech AS 'Fecha', FicLega, FicHora, THoDesc, THoDesc2, THoID, THoColu, FicObse, FicEsta, FICHAS1.FicHsHe AS 'HorasCalc', FICHAS1.FicHsAu AS 'HorasHechas', FICHAS1.FicHsAu2 AS 'HorasAuto', THoCCodi, THoCDesc FROM FICHAS1 LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora WHERE FICHAS1.FicLega > 0 $wcFicFechHor $IlegHor";
+    $qHor = "SELECT FICHAS1.FicFech AS 'Fecha', FicLega, FicHora, THoDesc, THoDesc2, THoID, THoColu, FicObse, FicEsta, FICHAS1.FicHsHe AS 'HorasCalc', FICHAS1.FicHsAu AS 'HorasHechas', FICHAS1.FicHsAu2 AS 'HorasAuto', THoCCodi, THoCDesc FROM FICHAS1 LEFT JOIN TIPOHORA ON FICHAS1.FicHora=TIPOHORA.THoCodi LEFT JOIN TIPOHORACAUSA ON FICHAS1.FicCaus=TIPOHORACAUSA.THoCCodi AND FICHAS1.FicHora=TIPOHORACAUSA.THoCHora WHERE FICHAS1.FicLega > 0 AND FICHAS1.FicTurn = 1 $wcFicFechHor $IlegHor";
 
     if (!empty($dp['HoraMin']) && validarHora($dp['HoraMin']) && !empty($dp['HoraMax']) && validarHora($dp['HoraMax'])) {
         $qHor .= " AND (dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('" . $dp['HoraMin'] . "') AND  dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('" . $dp['HoraMax'] . "'))";
@@ -360,44 +359,82 @@ foreach ($stmtFic as $key => $v) {
 }
 
 if ($hayLimit) {
-    $limit = $dp['DiasLimite'];
+    $limit = intval($dp['DiasLimite']);
+
+    // Agrupa fechas (d/m/Y) por legajo
     $conteoLegajos = [];
     foreach ($data as $item) {
         $legajo = $item['Lega'];
         if (!isset($conteoLegajos[$legajo])) {
             $conteoLegajos[$legajo] = [
-                'count' => 0,
-                'ApNo' => $item['ApNo'],
-                'Fechas' => []
+                'ApNo'   => $item['ApNo'],
+                'Fechas' => [],
             ];
         }
-        $conteoLegajos[$legajo]['count']++;
-        // Agregar la fecha a la lista de fechas
         if (!empty($item['FechF'])) {
             $conteoLegajos[$legajo]['Fechas'][] = $item['FechF'];
         }
     }
     unset($data);
     $data = [];
-    // Filtrar legajos que aparecen más de X veces (según DiasLimite)
-    $resultado = [];
+
     foreach ($conteoLegajos as $legajo => $info) {
-        if ($info['count'] >= intval($limit)) {
+        // Convertir fechas d/m/Y a clave numérica Ymd para ordenar
+        $mapaYmd = [];
+        foreach ($info['Fechas'] as $f) {
+            $dt = \DateTime::createFromFormat('d/m/Y', $f);
+            if ($dt !== false) {
+                $mapaYmd[intval($dt->format('Ymd'))] = $f;
+            }
+        }
+        ksort($mapaYmd);
+        $ymdKeys = array_keys($mapaYmd);
+
+        if (empty($ymdKeys)) {
+            continue;
+        }
+
+        // Detectar secuencias de días consecutivos
+        $secuencias   = [];
+        $secActual    = [$ymdKeys[0]];
+
+        for ($i = 1, $n = count($ymdKeys); $i < $n; $i++) {
+            $prev = \DateTime::createFromFormat('Ymd', (string)$ymdKeys[$i - 1]);
+            $curr = \DateTime::createFromFormat('Ymd', (string)$ymdKeys[$i]);
+            $diff = (int)$prev->diff($curr)->days;
+
+            if ($diff === 1) {
+                $secActual[] = $ymdKeys[$i];
+            } else {
+                if (count($secActual) >= $limit) {
+                    $secuencias[] = array_map(fn($k) => $mapaYmd[$k], $secActual);
+                }
+                $secActual = [$ymdKeys[$i]];
+            }
+        }
+        // Evaluar la última secuencia acumulada
+        if (count($secActual) >= $limit) {
+            $secuencias[] = array_map(fn($k) => $mapaYmd[$k], $secActual);
+        }
+
+        // Incluir el legajo solo si tiene al menos una secuencia válida
+        if (!empty($secuencias)) {
             $data[] = [
-                'Lega' => $legajo,
-                'ApNo' => $info['ApNo'],
-                'Count' => $info['count'],
-                'Fechas' => $info['Fechas']
+                'Lega'       => $legajo,
+                'ApNo'       => $info['ApNo'],
+                'Count'      => count($secuencias),
+                'Secuencias' => $secuencias,
             ];
         }
     }
+
     $stmtFicCount = count($data);
     http_response_code(200);
     $arrayResponse = [
         'RESPONSE_CODE' => 200,
-        'COUNT' => intval($stmtFicCount),
-        'MESSAGE' => 'OK',
-        'DATA' => $data,
+        'COUNT'         => intval($stmtFicCount),
+        'MESSAGE'       => 'OK',
+        'DATA'          => $data,
     ];
     echo json_encode($arrayResponse, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     exit;
