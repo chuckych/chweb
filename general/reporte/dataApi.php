@@ -102,11 +102,17 @@ $dataParametros = [
 ];
 
 $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
-$dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true) ?: [
-    'DATA' => '',
-    'MESSAGE' => '',
-    'RESPONSE_CODE' => ''
-];
+$dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
+$dataApi = parseApiResponse($dataApi);
+
+// error_log(json_encode($dataApi, true));
+
+if (($dataApi['RESPONSE_CODE'] ?? '') != 200) {
+    http_response_code(400);
+    $data = ['status' => 'Error', 'Mensaje' => 'Error al generar el reporte'];
+    echo json_encode($data);
+    exit;
+}
 
 /** Obtenemos los Tipos de Horas */
 $dataParamThColu = ["Codi" => [], "ID" => [], "Desc" => "", "Desc2" => "", "start" => 0, "length" => 500];

@@ -3769,7 +3769,7 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
 
     // TIMEOUTS CRÍTICOS - Evitar esperas largas
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout); // Timeout de conexión: 2 segundos
-    curl_setopt($ch, CURLOPT_TIMEOUT, 1); // Timeout total de ejecución: 1 segundo
+    curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); // Timeout total de ejecución: 10 segundo
     curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 60); // Cache DNS por 60 segundos
 
     curl_setopt($ch, CURLOPT_HEADER, 0); // set to 0 to eliminate header info from response

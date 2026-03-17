@@ -1,10 +1,14 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
-echo '<body backtop="5mm" backbottom="10mm">';
 require __DIR__ . '/dataApi.php';
+echo '<body backtop="5mm" backbottom="10mm">';
 
 $groupLega = _group_by_keys($dataApi['DATA'], $keys = array('Lega')); // Agrupamos los datos obtenidos de la api por legajo. 
+
+// Inicializamos acumuladores generales para evitar notices por variables no definidas.
+$arrNoveGeneral = [];
+$arrNoveCantGeneral = [];
 
 if ($THColu) {
     foreach ($THColu as $cc) {
@@ -35,7 +39,7 @@ foreach ($groupLega as $key => $encabezado) {
         '</tr>',
         '</table>', // Fin Encabezado
         '<hr>',
-        '<table border=0 width:100%>',
+        '<table border=0 width=100%>',
         '<tr>',
         '<th class="pr-2 bold">Fecha</th>',
         '<th class="px-2 bold">Día</th>',
@@ -153,10 +157,10 @@ foreach ($groupLega as $key => $encabezado) {
                     if ($key < $TotalNovedades - 1 && $TotalNovedades > 1) {
                         echo '<hr style="margin:2px; padding:0px; color:#fff">';
                     }
-                    $arrNove[$n['Desc']] += horaMin($n['Horas']);
-                    $arrNoveGeneral[$n['Desc']] += horaMin($n['Horas']);
-                    $arrNoveCant[$n['Desc']] += 1;
-                    $arrNoveCantGeneral[$n['Desc']] += 1;
+                    $arrNove[$n['Desc']] = ($arrNove[$n['Desc']] ?? 0) + horaMin($n['Horas']);
+                    $arrNoveGeneral[$n['Desc']] = ($arrNoveGeneral[$n['Desc']] ?? 0) + horaMin($n['Horas']);
+                    $arrNoveCant[$n['Desc']] = ($arrNoveCant[$n['Desc']] ?? 0) + 1;
+                    $arrNoveCantGeneral[$n['Desc']] = ($arrNoveCantGeneral[$n['Desc']] ?? 0) + 1;
                 }
                 // echo '</table>';
                 echo '</td>';

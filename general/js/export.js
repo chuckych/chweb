@@ -301,6 +301,7 @@ $(document).ready(function () {
             headers: { "Content-Type": "multipart/form-data" },
         }).then(function (response) {
             let data = response.data
+            console.log(response);
             if (data.destino == "V") {
                 $('#Exportar').modal('hide');
                 var homehost = $("#_homehost").val();
@@ -322,10 +323,9 @@ $(document).ready(function () {
             }
 
         }).catch(function (error) {
-            console.log('ERROR al descargar\n' + error);
             ActiveBTN(false, "#btnExportar", 'Generando.!', btnPDF)
             $.notifyClose();
-            notify(`${data.Mensaje}`, 'danger', 5000, 'right')
+            notify(`Error al generar el reporte`, 'danger', 5000, 'right')
         })
 
 
