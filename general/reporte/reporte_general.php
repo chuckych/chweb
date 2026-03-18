@@ -4,20 +4,58 @@ ini_set('display_errors', '0');
 require __DIR__ . '/dataApi.php';
 echo '<body backtop="5mm" backbottom="10mm">';
 
-$groupLega = _group_by_keys($dataApi['DATA'], $keys = array('Lega')); // Agrupamos los datos obtenidos de la api por legajo. 
+// ── Pre-computar días de semana una sola vez (evita timeZone()+setlocale() por cada fila) ──
+timeZone();
+setlocale(LC_TIME, 'spanish');
+$_diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
 
-// Inicializamos acumuladores generales para evitar notices por variables no definidas.
-$arrNoveGeneral = [];
+// ── Agrupamiento O(n): un único recorrido reemplaza _group_by_keys() + filtrarObjetoArr() ──
+// Antes: O(n²) con serialize/unserialize por grupo + re-filtrado completo por cada legajo.
+$groupLega = []; // primer registro por legajo (encabezado)
+$cuerpoMap  = []; // todos los registros por legajo (cuerpo)
+foreach ($dataApi['DATA'] as $_row) {
+    $_lega = $_row['Lega'];
+    if (!isset($groupLega[$_lega])) {
+        $groupLega[$_lega] = $_row;
+    }
+    $cuerpoMap[$_lega][] = $_row;
+}
+
+// ── Acumuladores generales ──────────────────────────────────────────────────────
+$arrNoveGeneral     = [];
 $arrNoveCantGeneral = [];
 
 if ($THColu) {
     foreach ($THColu as $cc) {
-        $TotalHorasGeneral[$cc['Desc']] = []; // creamos array vacíos de los códigos de Tipos de horas para luego hacer push acumulando los totales y mostrarlos al final de a comlumna.
+        $TotalHorasGeneral[$cc['Desc']] = [];
+    }
+    // ── Pre-índice de THColu por Hora: elimina mergeArrayIfValue() en cada fila ──
+    $THColuMap = [];
+    foreach ($THColu as $_th) {
+        $THColuMap[$_th['Hora']] = $_th;
+    }
+    // ── Pre-cache de fechas y días: strtotime() se ejecuta 1 vez por fecha única en lugar de 1 vez por legajo×día ──
+    $_dateCache = [];
+    // ── Cache de horario: combinación (ent,sal,labo,feri) se repite para todos los legajos del mismo turno ──
+    $_horarioCache = [];
+    foreach ($dataApi['DATA'] as $_dr) {
+        $_f = $_dr['Fech'];
+        if (!isset($_dateCache[$_f])) {
+            $_dateCache[$_f] = [
+                substr($_f, 8, 2) . '/' . substr($_f, 5, 2) . '/' . substr($_f, 0, 4),
+                $_diasSemana[date('w', strtotime($_f))]
+            ];
+        }
+        // Pre-cache de horario con clave compuesta (los 4 campos definen el resultado unívocamente)
+        $_hk = $_dr['Tur']['ent'] . '|' . $_dr['Tur']['sal'] . '|' . $_dr['Labo'] . '|' . $_dr['Feri'];
+        if (!isset($_horarioCache[$_hk])) {
+            $_horarioCache[$_hk] = horarioApi($_dr['Tur']['ent'], $_dr['Tur']['sal'], $_dr['Labo'], $_dr['Feri']);
+        }
     }
 }
 
 $TotalLegajos = count($groupLega);
-foreach ($groupLega as $key => $encabezado) {
+foreach ($groupLega as $encabezado) {
     $ResumenNovedades = [];
     if ($THColu) {
         foreach ($THColu as $c) {
@@ -25,35 +63,31 @@ foreach ($groupLega as $key => $encabezado) {
         }
     }
     // Usar array y implode es mucho más rápido que concatenación con .=
+    // page-break-inside:avoid en el div del legajo completo fuerza a mPDF a
+    // guardar en RAM el layout de TODAS las filas antes de renderizar.
+    // Se elimina del wrapper externo; la paginación se controla con page-break-before en los saltos.
+    // ── Header con divs en lugar de tabla: elimina 182 inicializaciones de motor de tabla en mPDF ──
     $headerParts = [
-        '<div style="page-break-inside: avoid">',
+        '<div>',
         '<hr>',
-        '<table border=0 width=100%>', // encabezado
-        '<tr>',
-        '<th class="bold" style="width:50px">Legajo: </th>',
-        "<th><span class='bold'>({$encabezado['Lega']}) {$encabezado['ApNo']}</span></th>",
-        '</tr>',
-        '<tr>',
-        '<th class="bold">Cuil: </th>',
-        "<th class='bold'>{$encabezado['Cuil']}</th>",
-        '</tr>',
-        '</table>', // Fin Encabezado
+        "<div style='font-size:8pt'><b>Legajo:</b> ({$encabezado['Lega']}) {$encabezado['ApNo']}</div>",
+        "<div style='font-size:8pt'><b>Cuil:</b> {$encabezado['Cuil']}</div>",
         '<hr>',
-        '<table border=0 width=100%>',
+        '<table class="trep" border=0 width=100%>',
         '<tr>',
-        '<th class="pr-2 bold">Fecha</th>',
-        '<th class="px-2 bold">Día</th>',
-        '<th class="px-2 bold">Horario</th>',
-        '<th class="px-2 bold">Entra</th>',
+        '<th>Fecha</th>',
+        '<th>Día</th>',
+        '<th>Horario</th>',
+        '<th>Entra</th>',
         '<th></th>',
-        '<th class="px-2 bold">Sale</th>',
+        '<th>Sale</th>',
         '<th></th>',
-        '<th class="px-2 bold">Novedades</th>',
-        '<th class="bold center"></th>',
+        '<th>Novedades</th>',
+        '<th></th>',
     ];
 
     $cantidadTHColu = count($THColu);
-    
+
     // Generar encabezados de horas
     if ($_agrupar_thcolu === true) {
         // Agrupar encabezados por columna
@@ -64,39 +98,38 @@ foreach ($groupLega as $key => $encabezado) {
                 $encabezadosAgrupados[$colu] = $dataTHoDesc2['Desc2'];
             }
         }
-        // Agregar encabezados agrupados al array
         foreach ($encabezadosAgrupados as $colu => $desc2) {
-            $headerParts[] = "<th class='px-2 bold center'>$desc2</th>";
+            $headerParts[] = "<th class='c'>$desc2</th>";
         }
     } else {
         // Agregar encabezados sin agrupar
         foreach ($THColu as $dataTHoDesc2) {
-            $headerParts[] = "<th class='px-2 bold center'>{$dataTHoDesc2['Desc2']}</th>";
+            $headerParts[] = "<th class='c'>{$dataTHoDesc2['Desc2']}</th>";
         }
     }
-    
+
     $headerParts[] = '</tr>';
     echo implode('', $headerParts);
-    $cuerpoLegajo = filtrarObjetoArr($dataApi['DATA'], 'Lega', $encabezado['Lega']); // Filtramos los datos por legajo
-    
+    // O(1): acceso directo al grupo de filas del legajo (sin re-filtrar el dataset completo)
+    $cuerpoLegajo = $cuerpoMap[$encabezado['Lega']];
+
     // Inicializar arrays correctamente
     $arrNove = [];
     $arrNoveCant = [];
-    foreach ($cuerpoLegajo as $key => $valueLegajo) {
+    foreach ($cuerpoLegajo as $valueLegajo) {
 
         $ent = $valueLegajo['Tur']['ent'];
         $sal = $valueLegajo['Tur']['sal'];
         $labo = $valueLegajo['Labo'];
         $feri = $valueLegajo['Feri'];
-        $horario = horarioApi($ent, $sal, $labo, $feri);
-        $fecha = FechaFormatVar($valueLegajo['Fech'], 'd/m/Y');
-        $dia = DiaSemana3($valueLegajo['Fech']);
-        $FrancoColor = '';
+        $_hk = $ent . '|' . $sal . '|' . $labo . '|' . $feri;
+        $horario = $_horarioCache[$_hk] ?? horarioApi($ent, $sal, $labo, $feri);
+        [$fecha, $dia] = $_dateCache[$valueLegajo['Fech']];
 
-        echo '<tr ' . $FrancoColor . '>';
-        echo "<td class='pr-2 vtop'>$fecha</td>";
-        echo "<td class='px-2 vtop'>$dia</td>";
-        echo "<td class='px-2 vtop'>$horario</td>";
+        echo '<tr>';
+        echo "<td>$fecha</td>";
+        echo "<td>$dia</td>";
+        echo "<td>$horario</td>";
 
         if ($valueLegajo['Fich']) { // Mostramos Las Fichadas E/S
             $fichadas = $valueLegajo['Fich'];
@@ -107,147 +140,104 @@ foreach ($groupLega as $key => $encabezado) {
             $ultima = $fichadas[$lastKey]['HoRe'];
             $ultima = ($primera == $ultima) ? '.' : $ultima;
             
-            // Determinar color y tipo de la primera fichada
-            $color = "style='color:black'";
+            // color:black es el default — solo asignamos estilo cuando difiere
+            $color  = '';
             if ($fichadas[0]['Tipo'] === 'Manual') {
                 $color = "style='color:blue'";
             } elseif ($fichadas[0]['Esta'] === 'Modificada') {
                 $color = "style='color:red'";
             }
-            
-            // Determinar color y tipo de la última fichada
-            $color2 = "style='color:black'";
+
+            $color2 = '';
             if ($fichadas[$lastKey]['Tipo'] === 'Manual') {
                 $color2 = "style='color:blue'";
             } elseif ($fichadas[$lastKey]['Esta'] === 'Modificada') {
                 $color2 = "style='color:red'";
             }
             
-            echo "<td class='px-2 vtop' $color>$primera</td>";
-            echo "<td class='vtop'>$masFich</td>";
-            echo "<td class='px-2 vtop' $color2>$ultima</td>";
-            echo "<td class='vtop'>$incons</td>";
+            echo "<td $color>$primera</td>";
+            echo '<td>' . $masFich . '</td>';
+            echo "<td $color2>$ultima</td>";
+            echo '<td>' . $incons . '</td>';
         } else {
-            echo "<td class='px-2 vtop'>.</td>";
-            echo "<td class='vtop'></td>";
-            echo "<td class='px-2 vtop'>.</td>";
-            echo "<td class='vtop'></td>";
+            echo '<td>.</td>';
+            echo '<td></td>';
+            echo '<td>.</td>';
+            echo '<td></td>';
         }
         if ($valueLegajo['Nove']) { // Mostramos novedades
 
             $TotalNovedades = count($valueLegajo['Nove']);
             if ($TotalNovedades > 0) {
-                echo "<td  class='px-2 vtop'>";
-                // echo '<table border=1 width="100%" autosize="1">';
+                echo '<td>';
+                $noveDescs = [];
                 foreach ($valueLegajo['Nove'] as $key => $n) {
-                    // echo '<tr>';
-                    // echo "<td class='vtop'>";
-                    // echo '<p style="border:0px solid #333;">';
-                    echo "<p>";
-                    echo "<span>" . $n['Desc'] . "</span>";
-                    // echo "&nbsp;";
-                    // echo "</td>";
-                    // echo "<td class='vtop' style='text-align:right'>";
-                    // echo "<span style='float-right'>" . $n['Horas'] . "</span>";
-                    echo "</p>";
-                    // echo "</td>";
-                    // echo '</tr>';
-                    // si la ultima $key es mayor a 0 y la cantidad de novedades es mayor a 1, mostramos un hr
-                    // echo '</p>';
-                    if ($key < $TotalNovedades - 1 && $TotalNovedades > 1) {
-                        echo '<hr style="margin:2px; padding:0px; color:#fff">';
-                    }
+                    $noveDescs[] = $n['Desc'];
                     $arrNove[$n['Desc']] = ($arrNove[$n['Desc']] ?? 0) + horaMin($n['Horas']);
                     $arrNoveGeneral[$n['Desc']] = ($arrNoveGeneral[$n['Desc']] ?? 0) + horaMin($n['Horas']);
                     $arrNoveCant[$n['Desc']] = ($arrNoveCant[$n['Desc']] ?? 0) + 1;
                     $arrNoveCantGeneral[$n['Desc']] = ($arrNoveCantGeneral[$n['Desc']] ?? 0) + 1;
                 }
-                // echo '</table>';
+                echo implode('<br>', $noveDescs);
                 echo '</td>';
             }
-            echo "<td  class='vtop center'>";
-            foreach ($valueLegajo['Nove'] as $key => $n2) {
-                echo "<p>";
-                echo "<span>" . $n2['Horas'] . "</span>";
-                echo "</p>";
-                if ($key < $TotalNovedades - 1 && $TotalNovedades > 1) {
-                    echo '<hr style="margin:2px; padding:0px; color:#fff">';
-                }
+            echo "<td class='c'>";
+            $noveHoras = [];
+            foreach ($valueLegajo['Nove'] as $n2) {
+                $noveHoras[] = $n2['Horas'];
             }
+            echo implode('<br>', $noveHoras);
             echo '</td>';
         } else {
-            echo "<td class='px-2 vtop'>.</td>";
-            echo "<td class='vtop center'></td>";
+            echo '<td>.</td>';
+            echo "<td class='c'></td>";
         }
 
         if ($THColu) { // Mostramos Horas
 
-            $o[] = [
-                'Hora' => $THColu[0]['Hora'],
-                'Desc' => $THColu[0]['Desc'],
-                'Desc2' => $THColu[0]['Desc2'],
-                'Colu' => $THColu[0]['Colu'],
-                'Calc' => '',
-                'Hechas' => '',
-                'Auto' => ''
-            ]; // Objeto de horas vacio.
+            // Lookup liviano de valores reales: evita copiar THColuMap completo por cada fila
+            $_horaAuto = [];
+            if ($valueLegajo['Horas']) {
+                foreach ($valueLegajo['Horas'] as $_h) {
+                    $_horaAuto[$_h['Hora']] = $_h['Auto'];
+                }
+            }
 
-            $objHoras = ($valueLegajo['Horas']) ? $valueLegajo['Horas'] : $o;
-
-            $Horas = mergeArrayIfValue(
-                $THColu,
-                $objHoras,
-                'Hora'
-            ); // Se crea un array con el array de tipos de horas y las horas, haciendo un merge entre ambos y combinandolos para luego imprimir las columnas con las horas correspondientes a cada tipo de horas. 
-            // error_log(print_r($Horas, true));
-            // error_log(print_r($Horas, true));
-            
             if ($_agrupar_thcolu === true) {
                 // Agrupar horas por columna
                 $horasAgrupadas = [];
-                
-                foreach ($Horas as $h) {
+                foreach ($THColuMap as $_hora => $h) {
                     $colu = $h['Colu'];
                     if (!isset($horasAgrupadas[$colu])) {
-                        $horasAgrupadas[$colu] = [
-                            'Colu' => $colu,
-                            'Desc' => $h['Desc'],
-                            'TotalMinutos' => 0,
-                            'Hora' => $h['Hora']
-                        ];
+                        $horasAgrupadas[$colu] = ['Desc' => $h['Desc'], 'TotalMinutos' => 0, 'Hora' => $_hora];
                     }
-                    // Sumar los minutos de las horas de esta columna
-                    if (($h['Auto']) && $h['Auto'] != '00:00') {
-                        $horasAgrupadas[$colu]['TotalMinutos'] += horaMin($h['Auto']);
+                    $auto = $_horaAuto[$_hora] ?? '';
+                    if ($auto && $auto !== '00:00') {
+                        $horasAgrupadas[$colu]['TotalMinutos'] += horaMin($auto);
                     }
                 }
-                
                 // Mostrar las horas agrupadas
-                foreach ($horasAgrupadas as $colu => $horaAgrupada) {
-                    echo "<td class='px-2 vtop' style='text-align:center'>";
+                foreach ($horasAgrupadas as $horaAgrupada) {
                     if ($horaAgrupada['TotalMinutos'] > 0) {
                         $horasFormato = MinHora($horaAgrupada['TotalMinutos']);
-                        echo $horasFormato;
-                        // Usar sintaxis de array en lugar de array_push (más rápido)
                         $TotalHoras[$horaAgrupada['Hora']][] = $horaAgrupada['TotalMinutos'];
                         $TotalHorasGeneral[$horaAgrupada['Desc']][] = $horaAgrupada['TotalMinutos'];
+                        echo "<td class='c'>$horasFormato</td>";
                     } else {
-                        echo '.';
+                        echo "<td class='c'>.</td>";
                     }
-                    echo "</td>";
                 }
             } else {
                 // Mostrar horas sin agrupar (comportamiento original)
-                foreach ($Horas as $key => $h) {
-                    echo "<td class='px-2 vtop' style='text-align:center'>";
-                    if (($h['Auto']) && $h['Auto'] != '00:00') {
-                        echo $h['Auto'];
-                        $TotalHoras[$h['Hora']][] = horaMin($h['Auto']);
-                        $TotalHorasGeneral[$h['Desc']][] = horaMin($h['Auto']);
+                foreach ($THColuMap as $_hora => $h) {
+                    $auto = $_horaAuto[$_hora] ?? '';
+                    if ($auto && $auto !== '00:00') {
+                        $TotalHoras[$_hora][] = horaMin($auto);
+                        $TotalHorasGeneral[$h['Desc']][] = horaMin($auto);
+                        echo "<td class='c'>$auto</td>";
                     } else {
-                        echo '.';
+                        echo "<td class='c'>.</td>";
                     }
-                    echo "</td>";
                 }
             }
         }
@@ -261,7 +251,7 @@ foreach ($groupLega as $key => $encabezado) {
     
     echo '<tr>';
     echo '<td colspan="8"></td>';
-    echo '<td class="bold" style="text-align:right">Totales:</td>';
+    echo '<td class="rb">Totales:</td>';
     
     if ($_agrupar_thcolu === true) {
         // Agrupar totales por columna
@@ -277,45 +267,35 @@ foreach ($groupLega as $key => $encabezado) {
             }
         }
         // Mostrar totales agrupados
-        foreach ($totalesAgrupados as $colu => $totalMinutos) {
-            echo "<td class='px-2 vtop center bold' style='text-align:center'>" . MinHora($totalMinutos) . "</td>";
+        foreach ($totalesAgrupados as $totalMinutos) {
+            echo "<td class='cb'>" . MinHora($totalMinutos) . "</td>";
         }
     } else {
         // Mostrar totales sin agrupar (comportamiento original)
-        foreach ($TotalHoras as $key => $ColHoras) {
-            echo "<td class='px-2 vtop center bold' style='text-align:center'>" . MinHora($ColHoras) . "</td>";
+        foreach ($TotalHoras as $ColHoras) {
+            echo "<td class='cb'>" . MinHora($ColHoras) . "</td>";
         }
     }
     
     echo '</tr>';
     echo '</table>';
-    echo ($_SaltoPag == '1') ? '<hr>' : '';
+    // echo ($_SaltoPag == '1') ? '' : '';
     if ($arrNove) {
-        echo ($_SaltoPag == '1') ? '' : '<hr>';
-        echo '<table border=0 width=100%>';
-        echo '<tr>';
-        echo '<td class="bold py-1"><u>Resumen de novedades: (' . $valueLegajo['Lega'] . ') ' . $valueLegajo['ApNo'] . '</u></td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<table border=0>';
+        echo ($_SaltoPag == '1') ? '' : '';
+        echo "<div style='font-size:8pt'><b>Resumen de novedades: ({$valueLegajo['Lega']}) {$valueLegajo['ApNo']}</b><br>";
         $chunks = array_chunk($arrNove, 5, true);
         foreach ($chunks as $chunk) {
-            echo '<tr>';
             foreach ($chunk as $key => $value) {
                 $valueCant = $arrNoveCant[$key] ?? 0;
-                echo "<td class='pr-2 vtop'>$key:</td>";
-                echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
+                echo "$key: <b>" . MinHora($value) . " ($valueCant)</b> &nbsp; ";
             }
-            echo '</tr>';
+            echo '<br>';
         }
-        echo '</table>';
-        echo '<br>';
+        echo '</div>';
     }
     echo '</div>';
     if ($_SaltoPag == '1' && $TotalLegajos > 1) {
-        if (($groupLega[$TotalLegajos - 1])) {
-            echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina 
-        }
+        echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina
     }
 }
 if ($_SaltoPag != '1' && $TotalLegajos > 1) {
@@ -325,45 +305,26 @@ if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales gener
 
     if ($arrNoveGeneral) {
         echo '<hr>';
-        echo '<table border=0 width=100%>';
-        echo '<tr>';
-        echo '<td class="bold py-1"><u>Resumen general de Novedades: </u></td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<table border=0>';
+        echo "<div style='font-size:8pt'><b><u>Resumen general de Novedades:</u></b><br>";
         foreach ($arrNoveGeneral as $key => $value) {
             $valueCant = $arrNoveCantGeneral[$key] ?? 0;
-            echo '<tr>';
-            echo "<td class='pr-2 vtop'>$key:</td>";
-            echo "<td class='pr-2 vtop bold'>" . MinHora($value) . " ($valueCant)</td>";
-            echo '</tr>';
+            echo "$key: <b>" . MinHora($value) . " ($valueCant)</b><br>";
         }
-        echo '</table>';
-        echo '<br>';
+        echo '</div>';
     }
 
     if ($TotalHorasGeneral) {
         echo '<hr>';
-        echo '<table border=0 width=100%>';
-        echo '<tr>';
-        echo '<td class="bold py-1"><u>Resumen general de Horas: </u></td>';
-        echo '</tr>';
-        echo '</table>';
-        echo '<table border=0>';
+        echo "<div style='font-size:8pt'><b><u>Resumen general de Horas:</u></b><br>";
 
         foreach ($TotalHorasGeneral as $key => $tt) {
             $TotalHorasGeneral[$key] = array_sum(($tt));
         }
         foreach ($TotalHorasGeneral as $key => $ColHorasGeneral) {
             if ($ColHorasGeneral) {
-                echo '<tr>';
-                echo "<td class='pr-2 vtop'>" . ($key) . "</td>";
-                echo "<td class='pr-2 vtop bold'>" . MinHora($ColHorasGeneral) . "</td>";
-                echo '</tr>';
+                echo ($key) . ": <b>" . MinHora($ColHorasGeneral) . "</b><br>";
             }
         }
-
-        echo '</table>';
-        echo '<br>';
+        echo '</div>';
     }
 }

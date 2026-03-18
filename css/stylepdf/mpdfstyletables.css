@@ -406,6 +406,28 @@ h6 {
 	padding-top: 5px;
 }
 
+/* Celda de horas: reemplaza class='px-2 vtop' + style='text-align:center' en cada td de columnas de horas */
+.thc {
+	text-align: center;
+	vertical-align: top;
+	padding: 2px 6px;
+}
+
+/* Clases alias: reducen el tamaño del buffer HTML para el PDF */
+.tpr { padding-right: 6px; vertical-align: top; }  /* pr-2 vtop */
+.tpx { padding-left: 6px; padding-right: 6px; vertical-align: top; }  /* px-2 vtop */
+.tvc { vertical-align: top; text-align: center; }  /* vtop center */
+
+/* .trep: tabla de datos del reporte. Define defaults para todas las celdas,
+   eliminando la necesidad de clases en cada <td> (~45.000 celdas por reporte) */
+table.trep td { vertical-align: top; line-height:1.2; }
+table.trep th { font-weight: bold; }
+table.trep td.c  { text-align: center; }
+table.trep td.cb { text-align: center; font-weight: bold; }
+table.trep td.rb { text-align: right;  font-weight: bold; }
+/* Espaciado entre novedades dentro de celda: ajustar margin-bottom para más/menos separación */
+.nv { margin-bottom: 4pt; margin-top: 0; }
+
 .fontq {
 	font-size: 10px;
 	font-family: Arial

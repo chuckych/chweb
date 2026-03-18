@@ -86,6 +86,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         ob_start();
         require_once 'reporte_general.php';
         $buffer = ob_get_clean();
+        $t_html = microtime(true);
+        error_log('[reporte] 1) HTML generado en ' . round($t_html - $start_time, 2) . 's  | buffer: ' . round(strlen($buffer) / 1024, 1) . ' KB');
+
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'c',
             'format' => $_format,
@@ -98,6 +101,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
             'margin_footer' => 5,
             'orientation' => $_orientation
         ]);
+        $t_init = microtime(true);
+        error_log('[reporte] 2) new Mpdf() en ' . round($t_init - $t_html, 2) . 's');
+
         $mpdf->SetDisplayMode('fullpage'); // fullpage, fullwidth, real
         $mpdf->shrink_tables_to_fit = 0;
         $mpdf->SetAuthor('Control Horario WEB - ' . $_SESSION['NOMBRE_SESION']);
@@ -107,6 +113,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf->SetCompression(true); // Habilitar compresión
         $mpdf->simpleTables = true; // Mejora el manejo de tablas simples
         $mpdf->useSubstitutions = false; // Evita que mpdf reemplace caracteres especiales
+        $mpdf->packTableData = true; // Almacena datos de tabla comprimidos: reduce memoria y acelera layout
+        // ── Flags de rendimiento críticos: evitan análisis carácter por carácter ──
+        $mpdf->autoScriptToLang = false; // Sin detección de script por carácter
+        $mpdf->autoLangToFont   = false; // Sin sustitución de fuente por idioma
+        $mpdf->biDirectional    = false; // Sin procesamiento bidi (RTL/LTR)
+        $mpdf->allow_charset_conversion = false; // Ya UTF-8, sin conversión
 
         $_watermark = FusNuloPOST("_watermark", '');
         /** Marca de Agua */
@@ -152,15 +164,22 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $stylesheet = file_get_contents('../../css/stylepdf/mpdfstyletables.css');
 
         $mpdf->WriteHTML($stylesheet, 1); // The parameter 1 tells that this is css/style only and no body/html/text
-        $chunks = explode("chunk", $buffer);
-        foreach ($chunks as $key => $val) {
-            $mpdf->WriteHTML($val, 2);
-        }
-        // $mpdf->WriteHTML($val,2);
+        $t_css = microtime(true);
+        error_log('[reporte] 3) WriteHTML CSS en ' . round($t_css - $t_init, 2) . 's');
+
+        // Una sola llamada WriteHTML: el chunking probado no tuvo ningún efecto
+        // (25.09s con 182 calls = 25.34s con 19 calls → overhead por llamada mínimo).
+        // El tiempo depende del volumen de HTML procesado, no de la cantidad de llamadas.
+        $mpdf->WriteHTML($buffer, 2);
+        $t_write = microtime(true);
+        error_log('[reporte] 4) WriteHTML (single call) en ' . round($t_write - $t_css, 2) . 's  | buffer: ' . round(strlen($buffer) / 1024, 1) . ' KB');
 
         ob_end_clean();
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
+        $t_output = microtime(true);
+        error_log('[reporte] 5) Output PDF en ' . round($t_output - $t_write, 2) . 's');
+        error_log('[reporte] TOTAL: ' . round($t_output - $start_time, 2) . 's');
 
         $data = array('status' => 'ok', 'Mensaje' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
         echo json_encode($data);
