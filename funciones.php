@@ -506,10 +506,11 @@ function host(): string
 }
 function valida_campo($name)
 {
-    if (($name) == '') {
-        return true;
-    } else {
-        return false;
+    switch ($name) {
+        case '':
+            return true;
+        default:
+            return false;
     }
 }
 function pagina($pagina)
@@ -2064,8 +2065,11 @@ function rutaWebService($Comando)
     return $_SESSION["WEBSERVICE"] . "/RRHHWebService/" . $Comando;
 }
 /** PARA EL WEBSERVICE CH*/
-function respuestaWebService($respuesta)
+function respuestaWebService($respuesta, $split = true)
 {
+    if (!$split) {
+        return $respuesta;
+    }
     $respuesta = substr($respuesta, 1, -1);
     $respuesta = explode("=", $respuesta);
     return $respuesta[0];
@@ -2344,6 +2348,7 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
     $curl_error = curl_error($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     $text = "Error al procesar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
+
     if ($curl_errno > 0) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         fileLog('No hay conexión con WebService CH', __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2351,17 +2356,22 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         exit;
     }
     curl_close($ch);
+
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         fileLog($respuesta, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         PrintRespuestaJson('error', $respuesta);
         exit;
     }
-    $processID = respuestaWebService($respuesta);
-    $url = rutaWebService("Estado?ProcesoId=" . $processID);
 
-    if ($httpCode == 201) {
-        return ['ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url)];
+    $processID = respuestaWebService($respuesta, $httpCode !== 201 ? false : true) ?? '';
+    $url = rutaWebService("Estado?ProcesoId=$processID");
+
+    switch ($httpCode) {
+        case 201:
+            return ['ProcesoId' => $processID, 'EstadoProceso' => EstadoProceso($url)];
+        default:
+            return ['error' => $processID, 'ProcesoId' => $processID, 'EstadoProceso' => ''];
     }
 
     fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2574,8 +2584,8 @@ function getRemoteFile($url, $timeout = 10)
     if ($file_contents) {
         return $file_contents;
     } else {
-        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; 
-        fileLog('Error al obtener datos', $pathLog); 
+        $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log';
+        fileLog('Error al obtener datos', $pathLog);
         return false;
     }
 }
@@ -2937,7 +2947,8 @@ function fileLog($text, $ruta_archivo, $type = false)
     fclose($log);
     log_local($text);
 }
-function log_local($msg){
+function log_local($msg)
+{
     if ($_SERVER['HTTP_HOST'] == 'chweb.local') {
         error_log($msg);
     }
@@ -3794,7 +3805,6 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
     );
 
     $file_contents = curl_exec($ch);
-    // error_log('CURL response: ' . $file_contents); // Log de la respuesta CURL para depuración
 
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
