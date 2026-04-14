@@ -3764,7 +3764,7 @@ function calcLimitTar($start, $end)
     );
     return $obj;
 }
-function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
+function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method = 'POST')
 {
 
     if (session_status() === PHP_SESSION_ACTIVE) {
@@ -3792,8 +3792,16 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
 
-    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+    switch ($method) {
+        case 'POST':
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+            break;
+        case "GET":
+            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+            break;
+    }
+    
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,

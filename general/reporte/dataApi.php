@@ -99,12 +99,14 @@ $dataParametros = [
     "getNov" => "1",
     "getONov" => "0",
     "getHor" => "1",
+    "getEstruct" => "1",
 ];
 
 $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 $dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
 $dataApi = parseApiResponse($dataApi);
 
+// error_log(json_encode($dataParametros, true));
 // error_log(json_encode($dataApi, true));
 
 if (($dataApi['RESPONSE_CODE'] ?? '') != 200) {

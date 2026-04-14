@@ -172,6 +172,7 @@ try {
     $Lega = ($dp['Estruct'] == 'Lega') ? true : '';
     $NovC = ($dp['Estruct'] == 'NovC') ? true : '';
     $Nov = ($dp['Estruct'] == 'Nov') ? true : '';
+    $Emp = ($dp['Estruct'] == 'Emp') ? true : '';
     $JoinSe2 = ($dp['Estruct'] == 'Se2') ? "INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi" : '';
     $SecDesc = ($dp['Estruct'] == 'Se2') ? ",SECTORES.SecDesc" : '';
 
@@ -239,6 +240,9 @@ try {
                 $item["CodMens2"] = $v['NovCol2'];
                 $item["CodJor1"] = $v['NovCol3'];
                 $item["CodJor2"] = $v['NovCol4'];
+                break;
+            case $Emp:
+                $item["Cuit"] = $v['EmpCUIT'];
                 break;
         }
 

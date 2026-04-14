@@ -1,0 +1,772 @@
+{
+    "7660214": {
+        "Lega": "7660214",
+        "ApNo": "Carlos Gonzalez Comerio",
+        "Docu": "7660214",
+        "Cuil": "",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:02",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "7660214",
+                "FeRe": "2026-04-01",
+                "Hora": "06:00",
+                "FeAs": "2026-04-01",
+                "HoRe": "06:00",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "7660214",
+                "FeRe": "2026-04-01",
+                "Hora": "14:02",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:02",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:02",
+                "Hechas": "08:02",
+                "Auto": "08:02",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "1",
+            "Plan": "2",
+            "Conv": "0",
+            "Sect": "1",
+            "Sec2": "1",
+            "Grup": "2",
+            "Sucu": "3"
+        },
+        "Cierre": []
+    },
+    "17038725": {
+        "Lega": "17038725",
+        "ApNo": "ROTELLA LILIANA",
+        "Docu": "17038725",
+        "Cuil": "",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:03",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "17038725",
+                "FeRe": "2026-04-01",
+                "Hora": "05:58",
+                "FeAs": "2026-04-01",
+                "HoRe": "05:58",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "17038725",
+                "FeRe": "2026-04-01",
+                "Hora": "14:01",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:01",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:03",
+                "Hechas": "08:03",
+                "Auto": "08:03",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "20",
+                "Desc": "Horas Extras 50%",
+                "Desc2": "Extra 50%",
+                "ID": "EXT",
+                "Colu": "3",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:03",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "40",
+                "Desc": "Plus Nocturno",
+                "Desc2": "Plus Noct",
+                "ID": "NOC",
+                "Colu": "7",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:02",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "100",
+                "Desc": "Horas Par\/imp",
+                "Desc2": "Par\/imp",
+                "ID": "P\/I",
+                "Colu": "10",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "2",
+            "Plan": "1",
+            "Conv": "2",
+            "Sect": "4",
+            "Sec2": "2",
+            "Grup": "1",
+            "Sucu": "2"
+        },
+        "Cierre": []
+    },
+    "29988600": {
+        "Lega": "29988600",
+        "ApNo": "Norberto CH",
+        "Docu": "29988600",
+        "Cuil": "20-29988600-0",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:03",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "29988600",
+                "FeRe": "2026-04-01",
+                "Hora": "05:59",
+                "FeAs": "2026-04-01",
+                "HoRe": "05:59",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "29988600",
+                "FeRe": "2026-04-01",
+                "Hora": "14:02",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:02",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:03",
+                "Hechas": "08:03",
+                "Auto": "08:03",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "20",
+                "Desc": "Horas Extras 50%",
+                "Desc2": "Extra 50%",
+                "ID": "EXT",
+                "Colu": "3",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:03",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "40",
+                "Desc": "Plus Nocturno",
+                "Desc2": "Plus Noct",
+                "ID": "NOC",
+                "Colu": "7",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:01",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "100",
+                "Desc": "Horas Par\/imp",
+                "Desc2": "Par\/imp",
+                "ID": "P\/I",
+                "Colu": "10",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "3",
+            "Plan": "1",
+            "Conv": "0",
+            "Sect": "4",
+            "Sec2": "1",
+            "Grup": "1",
+            "Sucu": "1"
+        },
+        "Cierre": []
+    },
+    "30720014": {
+        "Lega": "30720014",
+        "ApNo": "Daniel Sandonato",
+        "Docu": "30720014",
+        "Cuil": "",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:03",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "30720014",
+                "FeRe": "2026-04-01",
+                "Hora": "05:59",
+                "FeAs": "2026-04-01",
+                "HoRe": "05:59",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "30720014",
+                "FeRe": "2026-04-01",
+                "Hora": "14:02",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:02",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:03",
+                "Hechas": "08:03",
+                "Auto": "08:03",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "20",
+                "Desc": "Horas Extras 50%",
+                "Desc2": "Extra 50%",
+                "ID": "EXT",
+                "Colu": "3",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:03",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "40",
+                "Desc": "Plus Nocturno",
+                "Desc2": "Plus Noct",
+                "ID": "NOC",
+                "Colu": "7",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:01",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "100",
+                "Desc": "Horas Par\/imp",
+                "Desc2": "Par\/imp",
+                "ID": "P\/I",
+                "Colu": "10",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "2",
+            "Plan": "1",
+            "Conv": "0",
+            "Sect": "4",
+            "Sec2": "2",
+            "Grup": "1",
+            "Sucu": "4"
+        },
+        "Cierre": []
+    },
+    "42952786": {
+        "Lega": "42952786",
+        "ApNo": "Administracion",
+        "Docu": "42952786",
+        "Cuil": "",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:04",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "42952786",
+                "FeRe": "2026-04-01",
+                "Hora": "06:00",
+                "FeAs": "2026-04-01",
+                "HoRe": "06:00",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "42952786",
+                "FeRe": "2026-04-01",
+                "Hora": "14:04",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:04",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:04",
+                "Hechas": "08:04",
+                "Auto": "08:04",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "20",
+                "Desc": "Horas Extras 50%",
+                "Desc2": "Extra 50%",
+                "ID": "EXT",
+                "Colu": "3",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:04",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "100",
+                "Desc": "Horas Par\/imp",
+                "Desc2": "Par\/imp",
+                "ID": "P\/I",
+                "Colu": "10",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "2",
+            "Plan": "1",
+            "Conv": "0",
+            "Sect": "3",
+            "Sec2": "2",
+            "Grup": "1",
+            "Sucu": "1"
+        },
+        "Cierre": []
+    },
+    "43379170": {
+        "Lega": "43379170",
+        "ApNo": "Casali Sofia",
+        "Docu": "43379170",
+        "Cuil": "  -        -",
+        "Fech": "2026-04-01",
+        "FechD": "Miercoles",
+        "FechF": "01\/04\/2026",
+        "Labo": "1",
+        "Feri": "0",
+        "ATra": "08:00",
+        "Trab": "08:02",
+        "Falta": "0",
+        "FichC": 2,
+        "Tur": {
+            "ent": "06:00",
+            "sal": "14:00",
+            "des": "00:00"
+        },
+        "TurStr": "06:00 a 14:00",
+        "Fich": [
+            {
+                "Tarj": "43379170",
+                "FeRe": "2026-04-01",
+                "Hora": "05:58",
+                "FeAs": "2026-04-01",
+                "HoRe": "05:58",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            },
+            {
+                "Tarj": "43379170",
+                "FeRe": "2026-04-01",
+                "Hora": "14:00",
+                "FeAs": "2026-04-01",
+                "HoRe": "14:00",
+                "Relo": "",
+                "Lect": "",
+                "Tipo": "Manual",
+                "Esta": ""
+            }
+        ],
+        "Nove": [],
+        "ONove": [],
+        "Horas": [
+            {
+                "Hora": "60",
+                "Desc": "Horas Presencia",
+                "Desc2": "Presencia",
+                "ID": "PRE",
+                "Colu": "1",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:02",
+                "Hechas": "08:02",
+                "Auto": "08:02",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "90",
+                "Desc": "Hs Normales",
+                "Desc2": "Normales",
+                "ID": "NOR",
+                "Colu": "2",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "20",
+                "Desc": "Horas Extras 50%",
+                "Desc2": "Extra 50%",
+                "ID": "EXT",
+                "Colu": "3",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:02",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "40",
+                "Desc": "Plus Nocturno",
+                "Desc2": "Plus Noct",
+                "ID": "NOC",
+                "Colu": "7",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "00:02",
+                "Hechas": "00:00",
+                "Auto": "00:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            },
+            {
+                "Hora": "100",
+                "Desc": "Horas Par\/imp",
+                "Desc2": "Par\/imp",
+                "ID": "P\/I",
+                "Colu": "10",
+                "Obse": "",
+                "Esta": "0",
+                "Calc": "08:00",
+                "Hechas": "08:00",
+                "Auto": "08:00",
+                "Causa": {
+                    "Cod": "",
+                    "Desc": ""
+                }
+            }
+        ],
+        "Estruct": {
+            "Empr": "2",
+            "Plan": "2",
+            "Conv": "0",
+            "Sect": "4",
+            "Sec2": "3",
+            "Grup": "1",
+            "Sucu": "3"
+        },
+        "Cierre": []
+    }
+}

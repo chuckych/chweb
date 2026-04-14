@@ -12,7 +12,7 @@ $_diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes',
 // ── Agrupamiento O(n): un único recorrido reemplaza _group_by_keys() + filtrarObjetoArr() ──
 // Antes: O(n²) con serialize/unserialize por grupo + re-filtrado completo por cada legajo.
 $groupLega = []; // primer registro por legajo (encabezado)
-$cuerpoMap  = []; // todos los registros por legajo (cuerpo)
+$cuerpoMap = []; // todos los registros por legajo (cuerpo)
 foreach ($dataApi['DATA'] as $_row) {
     $_lega = $_row['Lega'];
     if (!isset($groupLega[$_lega])) {
@@ -20,9 +20,84 @@ foreach ($dataApi['DATA'] as $_row) {
     }
     $cuerpoMap[$_lega][] = $_row;
 }
+// Obtenemos estructuras únicas para consulta posterior (evita múltiples llamadas a la API por cada legajo)
+$EstructUnique = [];
+foreach ($groupLega as $_row) {
+    foreach ($_row['Estruct'] as $_key => $_val) {
+        if ($_val !== '' && !in_array($_val, $EstructUnique[$_key] ?? [])) {
+            $EstructUnique[$_key][] = $_val;
+        }
+    }
+    // Secc = Sect concatenado con Sec2
+    $_secc = ($_row['Estruct']['Sect'] ?? '') . ($_row['Estruct']['Sec2'] ?? '');
+    if ($_secc !== '' && !in_array($_secc, $EstructUnique['Secc'] ?? [])) {
+        $EstructUnique['Secc'][] = $_secc;
+    }
+}
+// Convertir arrays de estructuras únicas a formato de query string para consulta API
+foreach ($EstructUnique as $_key => $_vals) {
+    $EstructUnique[$_key] = implode(',', $_vals);
+}
+
+// Obtenemos datos de estructuras para mostrar descripciones en el reporte (evita llamadas individuales por cada legajo)
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/estructuras/";
+$estructuras = requestApi($url, $token, $authBasic, $EstructUnique, 20);
+$estructuras = parseApiResponse($estructuras);
+
+// Mapeo de claves de estructuras a tabla y prefijo para construcción dinámica de query y validación de parámetros
+$mapKeyEstructuras = [
+    'Empresas' => 'Empr',
+    'Plantas' => 'Plan',
+    'Convenios' => 'Conv',
+    'Sectores' => 'Sect',
+    'Secciones' => 'Sec2',
+    'Grupos' => 'Grup',
+    'Sucursales' => 'Sucu',
+];
+
+// Estructuras válidas con su tabla y prefijo correspondiente para validación de parámetros y construcción dinámica de query
+$estructurasMap = [];
+if (($estructuras['DATA'] ?? []) && is_array($estructuras['DATA'])) {
+    foreach ($mapKeyEstructuras as $_apiKey => $_shortKey) {
+        if (isset($estructuras['DATA'][$_apiKey])) {
+            $estructurasMap[$_shortKey] = $estructuras['DATA'][$_apiKey];
+        }
+    }
+}
+
+// Re-indexar por clave de código para lookup O(1)
+$_codeKeyMap = [
+    'Empr' => ['EmpCodi'],
+    'Plan' => ['PlaCodi'],
+    'Conv' => ['ConCodi'],
+    'Sect' => ['SecCodi'],
+    'Sec2' => ['SecCodi', 'Se2Codi'], // clave = SecCodi . Se2Codi
+    'Grup' => ['GruCodi'],
+    'Sucu' => ['SucCodi'],
+];
+
+// Re-indexar estructuras por código para lookup O(1) en lugar de O(n) con búsqueda por cada fila
+foreach ($estructurasMap as $_shortKey => $_items) {
+    $_fields = $_codeKeyMap[$_shortKey] ?? [];
+    $_indexed = [];
+    foreach ($_items as $_item) {
+        $_k = implode('', array_map(fn($f) => $_item[$f], $_fields));
+        $_indexed[$_k] = $_item;
+    }
+    $estructurasMap[$_shortKey] = $_indexed;
+}
+
+// Obtener datos de empresas para mostrar CUIT en el reporte (evita llamadas individuales por cada legajo)
+$estructurasMapEmpr = array_keys($estructurasMap['Empr']) ?? [];
+$_codiQuery = $estructurasMapEmpr ? implode('&', array_map(fn($v) => 'Codi[]=' . urlencode($v), $estructurasMapEmpr)) : '';
+$url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct?length=1000&" . $_codiQuery . "&Estruct=Emp";
+$infoEmpresas = requestApi($url, $token, $authBasic, [], 20, 'GET');
+$infoEmpresas = parseApiResponse($infoEmpresas);
+// Re-indexar empresas por código para lookup O(1)
+$infoEmpresasMap = $infoEmpresas ? array_column($infoEmpresas['DATA'] ?? [], null, 'Codi') : [];
 
 // ── Acumuladores generales ──────────────────────────────────────────────────────
-$arrNoveGeneral     = [];
+$arrNoveGeneral = [];
 $arrNoveCantGeneral = [];
 
 if ($THColu) {
@@ -53,9 +128,30 @@ if ($THColu) {
         }
     }
 }
-
+$codString = fn($cod) => ($cod === '00' || $cod === '0') ? '' : "($cod)";
 $TotalLegajos = count($groupLega);
 foreach ($groupLega as $encabezado) {
+    $Estruct = $encabezado['Estruct'];
+
+    $EstructEmpr = $Estruct['Empr'] ?? '';
+    $EstructPlan = $Estruct['Plan'] ?? '';
+    $EstructConv = $Estruct['Conv'] ?? '';
+    $EstructSect = $Estruct['Sect'] ?? '';
+    $EstructSec2 = $Estruct['Sec2'] ?? '';
+    $EstructSecc = $Estruct['Sect'] . $Estruct['Sec2'] ?? '';
+    $EstructGrup = $Estruct['Grup'] ?? '';
+    $EstructSucu = $Estruct['Sucu'] ?? '';
+
+    $EstructEmprString = $estructurasMap['Empr'][$EstructEmpr]['EmpRazon'] ?? '';
+    $EstructPlanString = $estructurasMap['Plan'][$EstructPlan]['PlaDesc'] ?? '';
+    $EstructConvString = $estructurasMap['Conv'][$EstructConv]['ConDesc'] ?? '';
+    $EstructSectString = $estructurasMap['Sect'][$EstructSect]['SecDesc'] ?? '';
+    $EstructSec2String = $estructurasMap['Sec2'][$EstructSecc]['Se2Desc'] ?? '';
+    $EstructGrupString = $estructurasMap['Grup'][$EstructGrup]['GruDesc'] ?? '';
+    $EstructSucuString = $estructurasMap['Sucu'][$EstructSucu]['SucDesc'] ?? '';
+
+    $Cuit = $infoEmpresasMap[$EstructEmpr]['Cuit'] ?? '';
+
     $ResumenNovedades = [];
     if ($THColu) {
         foreach ($THColu as $c) {
@@ -67,11 +163,45 @@ foreach ($groupLega as $encabezado) {
     // guardar en RAM el layout de TODAS las filas antes de renderizar.
     // Se elimina del wrapper externo; la paginación se controla con page-break-before en los saltos.
     // ── Header con divs en lugar de tabla: elimina 182 inicializaciones de motor de tabla en mPDF ──
+    $codConvStr = $EstructConv == '0' ? '':"({$EstructConv})";
     $headerParts = [
         '<div>',
         '<hr>',
-        "<div style='font-size:8pt'><b>Legajo:</b> ({$encabezado['Lega']}) {$encabezado['ApNo']}</div>",
-        "<div style='font-size:8pt'><b>Cuil:</b> {$encabezado['Cuil']}</div>",
+        '<table class="trep" border=0 width=100%>',
+        '<tr>',
+        "<td style='width:5%'><b>Legajo:</b></td>",
+        "<td style='width:28%'><b>({$encabezado['Lega']}) {$encabezado['ApNo']}</b></td>",
+        "<td style='width:5%'><b>CUIL:</b></td>",
+        "<td style='width:28%'>{$encabezado['Cuil']}</td>",
+        "<td style='width:5%'><b>DU:</b></td>",
+        "<td style='width:28%'>{$encabezado['Docu']}</td>",
+        '</tr>',
+        '<tr>',
+        "<td style='width:5%'><b>Empresa:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructEmpr) . " {$EstructEmprString}</td>",
+        "<td style='width:5%'><b>CUIT:</b></td>",
+        "<td style='width:28%'>{$Cuit}</td>",
+        "<td style='width:5%'><b>Planta:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructPlan) . " {$EstructPlanString}</td>",
+        '</tr>',
+        '<tr>',
+        "<td style='width:5%'><b>Sucursal:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructSucu) . " {$EstructSucuString}</td>",
+        "<td style='width:5%'><b>Sector:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructSect) . " {$EstructSectString}</td>",
+        "<td style='width:5%'><b>Sección:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructSec2) . " " . ($EstructSec2String == 'Todas' ? '' : $EstructSec2String) . "</td>",
+        '</tr>',
+        '<tr>',
+        "<td style='width:5%'><b>Grupo:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructGrup) . " {$EstructGrupString}</td>",
+        "<td style='width:5%'><b>Convenio:</b></td>",
+        "<td style='width:28%'>" . $codString($EstructConv) . " {$EstructConvString}</td>",
+        "<td></td>",
+        '</tr>',
+        '</table>',
+        // "<div style='font-size:8pt'><b>Legajo:</b> ({$encabezado['Lega']}) {$encabezado['ApNo']}</div>",
+        // "<div style='font-size:8pt'><b>Cuil:</b> {$encabezado['Cuil']}</div>",
         '<hr>',
         '<table class="trep" border=0 width=100%>',
         '<tr>',
@@ -139,9 +269,9 @@ foreach ($groupLega as $encabezado) {
             $primera = $fichadas[0]['HoRe'];
             $ultima = $fichadas[$lastKey]['HoRe'];
             $ultima = ($primera == $ultima) ? '.' : $ultima;
-            
+
             // color:black es el default — solo asignamos estilo cuando difiere
-            $color  = '';
+            $color = '';
             if ($fichadas[0]['Tipo'] === 'Manual') {
                 $color = "style='color:blue'";
             } elseif ($fichadas[0]['Esta'] === 'Modificada') {
@@ -154,7 +284,7 @@ foreach ($groupLega as $encabezado) {
             } elseif ($fichadas[$lastKey]['Esta'] === 'Modificada') {
                 $color2 = "style='color:red'";
             }
-            
+
             echo "<td $color>$primera</td>";
             echo '<td>' . $masFich . '</td>';
             echo "<td $color2>$ultima</td>";
@@ -243,16 +373,16 @@ foreach ($groupLega as $encabezado) {
         }
         echo '</tr>';
     } // fin cuerpoLegajo
-    
+
     // Calcular totales
     foreach ($TotalHoras as $key => $t) {
         $TotalHoras[$key] = array_sum($t);
     }
-    
+
     echo '<tr>';
     echo '<td colspan="8"></td>';
     echo '<td class="rb">Totales:</td>';
-    
+
     if ($_agrupar_thcolu === true) {
         // Agrupar totales por columna
         $totalesAgrupados = [];
@@ -276,7 +406,7 @@ foreach ($groupLega as $encabezado) {
             echo "<td class='cb'>" . MinHora($ColHoras) . "</td>";
         }
     }
-    
+
     echo '</tr>';
     echo '</table>';
     // echo ($_SaltoPag == '1') ? '' : '';
