@@ -122,22 +122,22 @@
     </div>
     <!-- fin container -->
     <?php
+    require 'modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DataTable.php";
-    require 'modal_Filtros.html';
     ?>
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
-    <script src="js/ctacteXLS.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?<?= version_file("/ctacte/js/data.js") ?>"></script>
+    <script src="js/select.js?v=<?= version_file("/ctacte/js/select.js") ?>"></script>
+    <script src="js/trashSelect.js?v=<?= version_file("/ctacte/js/trashSelect.js") ?>"></script>
+    <script src="js/ctacteXLS.js?v=<?= version_file("/ctacte/js/ctacteXLS.js") ?>"></script>
 </body>
 
 </html>

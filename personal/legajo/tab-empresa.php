@@ -3,8 +3,8 @@
         <div class="col-12 py-3">
             <div class="form-inline mt-2">
                 <!-- Empresa -->
-                <label for="LegEmpr" class="mr-2 w80 ReqLegEmpr">Empresa <span class="requerido ml-1"></span></label>
-                <select class="form-control selectjs_empresas w200" id="LegEmpr" name="LegEmpr">
+                <label for="LegEmpr" class="mr-2 w80 ReqLegEmpr"><?=$labelEmpr?> <span class="requerido ml-1"></span></label>
+                <select class="form-control selectjs_empresas w200" id="LegEmpr" name="LegEmpr" data-label="<?=$labelEmpr?>">
                 </select>
                 <span data-toggle="modal" data-target="#altaEmpresa" class="pointer">
                     <button type="button" class="ml-1 btn btn-sm btn-light" data-toggle="tooltip" data-placement="right" title="CREAR" style="z-index: 1;">
@@ -15,8 +15,8 @@
             </div>
             <div class="form-inline mt-2">
                 <!-- Planta -->
-                <label for="LegPlan" class="mr-2 w80">Planta</label>
-                <select class="form-control selectjs_plantas w200" id="LegPlan" name="LegPlan">
+                <label for="LegPlan" class="mr-2 w80"><?=$labelPlan?></label>
+                <select class="form-control selectjs_plantas w200" id="LegPlan" name="LegPlan" data-label="<?=$labelPlan?>">
                 </select>
                 <span data-toggle="modal" data-target="#altaPlanta" class="pointer">
                     <button type="button" class="ml-1 btn btn-sm btn-light" data-toggle="tooltip" data-placement="right" title="CREAR">
@@ -39,8 +39,8 @@
             </div>
             <div class="form-inline mt-2">
                 <!-- Sector -->
-                <label for="LegSect" class="mr-2 w80">Sector</label>
-                <select class="form-control selectjs_sectores w200" id="LegSect" name="LegSect">
+                <label for="LegSect" class="mr-2 w80"><?=$labelSect?></label>
+                <select class="form-control selectjs_sectores w200" id="LegSect" name="LegSect" data-label="<?=$labelSect?>">
                 </select>
                 <!-- Button modal modalSectores-->
                 <span data-toggle="modal" data-target="#altaSector" class="pointer">
@@ -52,8 +52,8 @@
             </div>
             <div class="form-inline mt-2 d-none" id="select_seccion">
                 <!-- Seccion -->
-                <label for="LegSec2" class="mr-2 w80">Sección</label>
-                <select class="form-control selectjs_secciones w200" id="LegSec2" name="LegSec2" >
+                <label for="LegSec2" class="mr-2 w80"><?=$labelSecc?></label>
+                <select class="form-control selectjs_secciones w200" id="LegSec2" name="LegSec2" data-label="<?=$labelSecc?>">
                 </select>
                 <!-- Button modal altaSeccion-->
                 <span data-toggle="modal" data-target="#altaseccion" class="pointer">
@@ -65,8 +65,8 @@
             </div><small id="SectorHelpBlock2" class="form-text text-muted"></small>
             <div class="form-inline mt-2">
                 <!-- Grupos -->
-                <label for="LegGrup" class="mr-2 w80">Grupos</label>
-                <select class="form-control selectjs_grupos w200" id="LegGrup" name="LegGrup">
+                <label for="LegGrup" class="mr-2 w80"><?=$labelGrup?></label>
+                <select class="form-control selectjs_grupos w200" id="LegGrup" name="LegGrup" data-label="<?=$labelGrup?>">
                 </select>
                 <span data-toggle="modal" data-target="#altaGrupo" class="pointer">
                     <button type="button" class="ml-1 btn btn-sm btn-light" data-toggle="tooltip" data-placement="right" title="CREAR">
@@ -77,8 +77,8 @@
             </div>
             <div class="form-inline mt-2">
                 <!-- Sucursal -->
-                <label for="LegSucu" class="mr-2 w80">Sucursal</label>
-                <select class="form-control selectjs_sucursal w200" id="LegSucu" name="LegSucu">
+                <label for="LegSucu" class="mr-2 w80"><?=$labelSucu?></label>
+                <select class="form-control selectjs_sucursal w200" id="LegSucu" name="LegSucu" data-label="<?=$labelSucu?>">
                 </select>
                 <span data-toggle="modal" data-target="#altasucur" class="pointer">
                     <button type="button" class="ml-1 btn btn-sm btn-light" data-toggle="tooltip" data-placement="right" title="CREAR">

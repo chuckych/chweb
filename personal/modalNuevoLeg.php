@@ -26,8 +26,8 @@
                         <div class="col-12 mt-2">
                             <!-- Empresa -->
                             <label class="mr-2 w-100">
-                                <div class="mb-2">Empresa</div>
-                                <select class="form-control h40 mt-2" id="LegEmpr" name="LegEmpr">
+                                <div class="mb-2"><?=$labelEmpr?> </div>
+                                <select class="form-control h40 mt-2" id="LegEmpr" name="LegEmpr" data-label="<?=$labelEmpr?>">
                                 </select>
                             </label>
                         </div>

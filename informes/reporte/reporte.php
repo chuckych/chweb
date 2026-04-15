@@ -68,7 +68,7 @@
                 </div>
             </div>
         </div>
-        <?php require 'filtros.html'; ?>
+        <?php require 'filtros.php'; ?>
         <section id="section_tablas" class="mb-3" style="display:none">
             <div id="div_tabla">
                 <p class="font-weight-bold opa8 mb-1 p-1 text-left text-uppercase font09">Horas</p>

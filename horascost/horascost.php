@@ -34,7 +34,7 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
@@ -117,10 +117,10 @@
                                     <th class="text-center" title="Horas Hechas y Autorizadas">Horas</th>
                                     <th class="text-center" title="">Costo</th>
                                     <th class="" title="Tarea de producción">Tarea</th>
-                                    <th class="" title="Planta">Planta</th>
-                                    <th class="" title="Sucursal">Sucursal</th>
-                                    <th class="" title="Grupo">Grupo</th>
-                                    <th class="text-nowrap" title="Sector / Secci&oacute;n">Sector / Secci&oacute;n</th>
+                                    <th class="" title="<?=$labelPlan?>"><?=$labelPlan?></th>
+                                    <th class="" title="<?=$labelSucu?>"><?=$labelSucu?></th>
+                                    <th class="" title="<?=$labelGrup?>"><?=$labelGrup?></th>
+                                    <th class="text-nowrap" title="<?=$labelSect?> / <?=$labelSecc?>"><?=$labelSect?> / <?=$labelSecc?></th>
                                     <!-- <th class="" title="Secci&oacute;">Secci&oacute;n</th> -->
                                 </tr>
                             </thead>
@@ -148,11 +148,11 @@
                                     <th class="d-none" title="">CodTar</th>
                                     <th class="text-center" title="">Costo</th>
                                     <!-- <th class="text-center" title="Horas Autorizadas">Autor.</th> -->
-                                    <th class="" title="Tarea">Tarea Prod.</th>
-                                    <th class="" title="Planta">Planta</th>
-                                    <th class="" title="Sucursal">Sucursal</th>
-                                    <th class="" title="Grupo">Grupo</th>
-                                    <th class="text-nowrap" title="Sector / Secci&oacute;n">Sector / Secci&oacute;n</th>
+                                    <th class="" title="Tarea">Tarea</th>
+                                    <th class="" title="<?=$labelPlan?>"><?=$labelPlan?></th>
+                                    <th class="" title="<?=$labelSucu?>"><?=$labelSucu?></th>
+                                    <th class="" title="<?=$labelGrup?>"><?=$labelGrup?></th>
+                                    <th class="text-nowrap" title="<?=$labelSect?> / <?=$labelSecc?>"><?=$labelSect?> / <?=$labelSecc?></th>
                                     <!-- <th class="" title="Secci&oacute;">Secci&oacute;n</th> -->
                                 </tr>
                             </thead>
@@ -170,22 +170,22 @@
     </div>
     <!-- fin container -->
     <?php
+    require 'modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DataTable.php";
-    require 'modal_Filtros.html';
     ?>
-    <script src="https://cdn.datatables.net/rowgroup/1.1.2/js/dataTables.rowGroup.min.js"></script>
+    <script src="../js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/js-cookie/src/js.cookie.js"></script>
-    <script src="js/data-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
-    <script src="js/HorXLS.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?v=<?= version_file("/horascost/js/data.js") ?>"></script>
+    <script src="js/select.js?<?= version_file("/horascost/js/select.js") ?>"></script>
+    <script src="js/trash-select.js?v=<?= version_file("/horascost/js/trash-select.js") ?>"></script>
+    <script src="js/HorXLS.js?v=<?= version_file("/horascost/js/HorXLS.js") ?>"></script>
 </body>
 
 </html>

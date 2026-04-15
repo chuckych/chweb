@@ -64,56 +64,55 @@
                             <input type="text" class="form-control w-100 h40 ls1 text-center" name="_dr">
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcEmp">Empresa</label><br>
+                            <label for="ProcEmp"><?=$labelEmprPlu?></label><br>
                             <div class="d-inline-flex align-items-center w-100">
                                 <!-- Empresa -->
-                                <select class="form-control selectjs_empresa w-100" id="ProcEmp" name="ProcEmp">
+                                <select class="form-control selectjs_empresa w-100" id="ProcEmp" name="ProcEmp" data-label="<?=$labelEmprPlu?>">
                                 </select>
-                                <!-- <span id="trash_emp" class="btn btn-sm btn-link opa1""><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcPlan">Planta</label><br>
+                            <label for="ProcPlan"><?=$labelPlanPlu?></label><br>
                             <div class="d-inline-flex align-items-center w-100">
                                 <!-- Planta -->
-                                <select class="form-control selectjs_plantas w-100" id="ProcPlan" name="ProcPlan">
+                                <select class="form-control selectjs_plantas w-100" id="ProcPlan" name="ProcPlan" data-label="<?=$labelPlanPlu?>">
                                 </select>
                                 <!-- <span id="trash_plan" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcSect">Sector</label>
+                            <label for="ProcSect"><?=$labelSectPlu?></label>
                             <div class="d-inline-flex align-items-center w-100"><br>
                                 <!-- Sector -->
-                                <select class="form-control selectjs_sectores w-100" id="ProcSect" name="ProcSect">
+                                <select class="form-control selectjs_sectores w-100" id="ProcSect" name="ProcSect" data-label="<?=$labelSectPlu?>">
                                 </select>
                                 <!-- <span id="trash_sect" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcSec2">Sección</label>
+                            <label for="ProcSec2"><?=$labelSeccPlu?></label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
                                 <!-- Seccion -->
                                 <select class="form-control select_seccion w-100" id="ProcSec2"
-                                    name="ProcSec2"></select>
+                                    name="ProcSec2" data-label="<?=$labelSeccPlu?>"></select>
                                 <!-- <span id="trash_secc" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcGrup">Grupos</label>
+                            <label for="ProcGrup"><?=$labelGrupPlu?></label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
                                 <!-- Grupos -->
                                 <select class="form-control selectjs_grupos w-100" id="ProcGrup"
-                                    name="ProcGrup"></select>
+                                    name="ProcGrup" data-label="<?=$labelGrupPlu?>"></select>
                                 <!-- <span id="trash_grup" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 pt-2">
-                            <label for="ProcSucur">Sucursal</label>
+                            <label for="ProcSucur"><?=$labelSucuPlu?></label>
                             <div class="d-inline-flex align-items-center w-100" id="select_seccion"><br>
-                                <!-- Grupos -->
+                                <!-- Sucursal -->
                                 <select class="form-control selectjs_sucursal w-100" id="ProcSucur"
-                                    name="ProcSucur"></select>
+                                    name="ProcSucur" data-label="<?=$labelSucuPlu?>"></select>
                                 <!-- <span id="trash_sucur" class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span> -->
                             </div>
                         </div>
@@ -168,10 +167,9 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
-
+    <script src="js/procesar.js?<?= version_file("/procesar/js/select.js") ?>"></script>
+    <script src="js/select.js?<?= version_file("/procesar/js/select.js") ?>"></script>
+    <script src="js/trash-select.js?<?= version_file("/procesar/js/trash-select.js") ?>"></script>
 </body>
 
 </html>

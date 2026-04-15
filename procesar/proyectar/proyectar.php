@@ -33,7 +33,7 @@
         <!-- Encabezado -->
         <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar'], ''); ?>
         <!-- Fin Encabezado -->
-        <?php require 'filtros.html'; ?>
+        <?php require 'filtros.php'; ?>
         <div class="form-row mb-3">
             <div class="col-12">
                 <a href="javascript:void(0)" id="btnHoras" class="float-right btn btn-link font08 mt-1">

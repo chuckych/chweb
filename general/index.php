@@ -8,6 +8,7 @@ existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $bgcolor = 'bg-custom';
 $FechaIni2 = date("Y-m-d", strtotime(hoy() . "- 1 month"));
 $FechaFin2 = date("Y-m-d", strtotime(hoy() . "- 0 days"));
+
 define("TIPO_HOJA", [
     'A4' => 'A4',
     'Oficio' => 'LEGAL',

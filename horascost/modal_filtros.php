@@ -14,40 +14,40 @@
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Empresa -->
-                        <label for="Emp" class="mb-1 fontq">Empresas</label>
-                        <select class="form-control selectjs_empresa" id="Emp" name="Emp">
+                        <label for="Emp" class="mb-1 fontq"><?=$labelEmprPlu?></label>
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?=$labelEmprPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Planta -->
-                        <label for="Plan" class="mb-1 w100 fontq">Plantas </label>
-                        <select class="form-control selectjs_plantas" id="Plan" name="Plan">
+                        <label for="Plan" class="mb-1 w100 fontq"><?=$labelPlanPlu?></label>
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?=$labelPlanPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sector -->
-                        <label for="Sect" class="mb-1 w100 fontq">Sectores</label>
-                        <select class="form-control selectjs_sectores" id="Sect" name="Sect">
+                        <label for="Sect" class="mb-1 w100 fontq"><?=$labelSectPlu?></label>
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?=$labelSectPlu?>">
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-4">
                         <!-- Seccion -->
-                        <label for="Sec2" class="mb-1 w100 fontq">Secciónes</label>
-                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
+                        <label for="Sec2" class="mb-1 w100 fontq"><?=$labelSeccPlu?></label>
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" data-label="<?=$labelSeccPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Grupos -->
-                        <label for="Grup" class="mb-1 w100 fontq">Grupos</label>
-                        <select class="form-control selectjs_grupos" id="Grup" name="Grup">
+                        <label for="Grup" class="mb-1 w100 fontq"><?=$labelGrupPlu?></label>
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?=$labelGrupPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sucursal -->
-                        <label for="Sucur" class="mb-1 w100 fontq">Sucursales</label>
-                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur">
+                        <label for="Sucur" class="mb-1 w100 fontq"><?=$labelSucuPlu?></label>
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?=$labelSucuPlu?>">
                         </select>
                     </div>
                 </div>

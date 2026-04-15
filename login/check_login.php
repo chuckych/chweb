@@ -1,5 +1,4 @@
 <?php
-// obtener el dominio con $Server
 // try {
 $authenticated = false;
 $Server = $_SERVER['SERVER_NAME'] ?? '';
@@ -304,7 +303,19 @@ if ($authenticated) {
 	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
 	$_SESSION['MODULOS'] = $modRol;
 
-	// $_SESSION["HOST_NAME"] = gethostbyaddr($_SERVER['REMOTE_ADDR']);
+	// OBTENER ETIQUETAS DE ESTRUCTURA PARA EL CLIENTE
+	$url = gethostCHWeb() . "/" . HOMEHOST . "/api/v1/parametros/paragene";
+	$authBasic = base64_encode('chweb:' . HOMEHOST);
+	$token = sha1($row["recid_cliente"]);
+	$paragene = requestApi($url, $token, $authBasic, [], 20, 'GET');
+	$paragene = parseApiResponse($paragene);
+	$Etiquetas = $paragene['DATA']['Etiquetas'] ?? [];
+
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		session_start();
+	}
+	$_SESSION['LABELS'] = $Etiquetas;
+	
 	login_logs('1');
 
 	if ($_POST['lasturl'] ?? '') {

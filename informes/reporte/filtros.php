@@ -84,40 +84,40 @@
     <div class="row py-2">
         <div class="col-12 col-sm-4">
             <!-- Empresa -->
-            <label for="select_empresa" class="mb-1">Empresas</label>
-            <select class="form-control" id="select_empresa" name="select_empresa">
+            <label for="select_empresa" class="mb-1"><?=$labelEmprPlu?></label>
+            <select class="form-control" id="select_empresa" name="select_empresa" data-label="<?=$labelEmprPlu?>">
             </select>
         </div>
         <div class="col-12 col-sm-4">
             <!-- Planta -->
-            <label for="select_planta" class="mb-1">Plantas </label>
-            <select class="form-control" id="select_planta" name="select_planta">
+            <label for="select_planta" class="mb-1"><?=$labelPlanPlu?></label>
+            <select class="form-control" id="select_planta" name="select_planta" data-label="<?=$labelPlanPlu?>">
             </select>
         </div>
         <div class="col-12 col-sm-4">
             <!-- Sector -->
-            <label for="select_sector" class="mb-1">Sectores</label>
-            <select class="form-control select_sector" id="select_sector" name="select_sector">
+            <label for="select_sector" class="mb-1"><?=$labelSectPlu?></label>
+            <select class="form-control select_sector" id="select_sector" name="select_sector" data-label="<?=$labelSectPlu?>">
             </select>
         </div>
     </div>
     <div class="row mt-1">
         <div class="col-12 col-sm-4">
             <!-- Sección -->
-            <label for="select_seccion" class="mb-1">Secciones</label>
-            <select disabled class="form-control" id="select_seccion" name="select_seccion">
+            <label for="select_seccion" class="mb-1"><?=$labelSeccPlu?></label>
+            <select disabled class="form-control" id="select_seccion" name="select_seccion" data-label="<?=$labelSeccPlu?>">
             </select>
         </div>
         <div class="col-12 col-sm-4">
             <!-- Grupos -->
-            <label for="select_grupo" class="mb-1">Grupos</label>
-            <select class="form-control" id="select_grupo" name="select_grupo">
+            <label for="select_grupo" class="mb-1"><?=$labelGrupPlu?></label>
+            <select class="form-control" id="select_grupo" name="select_grupo" data-label="<?=$labelGrupPlu?>">
             </select>
         </div>
         <div class="col-12 col-sm-4">
             <!-- Sucursal -->
-            <label for="select_sucursal" class="mb-1">Sucursales</label>
-            <select class="form-control" id="select_sucursal" name="select_sucursal">
+            <label for="select_sucursal" class="mb-1"><?=$labelSucuPlu?></label>
+            <select class="form-control" id="select_sucursal" name="select_sucursal" data-label="<?=$labelSucuPlu?>">
             </select>
         </div>
     </div>

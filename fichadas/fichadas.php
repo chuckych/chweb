@@ -96,13 +96,13 @@
     require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DataTable.php";
-    require 'modal_Filtros.html';
+    require 'modal_filtros.php';
     ?>
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data-min.js?<?= version_file("/fichadas/js/data-min.js") ?>"></script>
+    <script src="js/data.js?<?= version_file("/fichadas/js/data.js") ?>"></script>
     <script src="js/toExcel-min.js?<?= version_file("/fichadas/js/toExcel-min.js") ?>"></script>
 
 </body>

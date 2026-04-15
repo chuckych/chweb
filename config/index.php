@@ -1,11 +1,13 @@
 <?php
-require __DIR__ . '/../funciones.php';
+require_once __DIR__ . '/../funciones.php';
 E_ALL();
 header("Content-Type: text/html;charset=UTF-8");
 timeZone();
 timeZone_lang();
-define("HOMEHOST", 'chweb');
-define("CUSTOMER", 'HRConsulting');
+
+defined('HOMEHOST') || define('HOMEHOST', 'chweb');
+defined('CUSTOMER') || define('CUSTOMER', 'HRConsulting');
+
 $array_mod = [
        'cuentas' => 'Cuentas', // Cuentas ID 01
        'novedades' => 'Novedades', // Novedades ID 02
@@ -45,6 +47,8 @@ $array_mod = [
        'prysmian' => 'Reporte Prysmian', // Reporte de totales ID 46
        'proyectar' => 'Proyectar Horas' // Proyectar Horas ID 47
 ];
-define("MODULOS", $array_mod);
+defined('MODULOS') || define('MODULOS', $array_mod);
+
 $_SESSION['HOST_CHWEB'] ??= gethostCHWeb();
+require __DIR__ . '/labels.php';
 // $_SESSION['HOST_CHWEB'] = $_SESSION['HOST_CHWEB'] ?: gethostCHWeb();

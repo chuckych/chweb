@@ -1,4 +1,3 @@
-/** Select Empresas */
 $(function () {
     "use strict";
     var opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250" };
@@ -8,7 +7,7 @@ $(function () {
     $(".selectjs_empresa").select2({
         multiple: false,
         language: "es",
-        placeholder: "Empresa",
+        placeholder: $(".selectjs_empresa").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],
@@ -57,7 +56,7 @@ $(function () {
     $(".selectjs_plantas").select2({
         multiple: false,
         language: "es",
-        placeholder: "Planta",
+        placeholder: $(".selectjs_plantas").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],
@@ -106,7 +105,7 @@ $(function () {
     $(".selectjs_sectores").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sector",
+        placeholder: $(".selectjs_sectores").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],
@@ -155,7 +154,7 @@ $(function () {
     $(".selectjs_grupos").select2({
         multiple: false,
         language: "es",
-        placeholder: "Grupo",
+        placeholder: $(".selectjs_grupos").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],
@@ -204,7 +203,7 @@ $(function () {
     $(".selectjs_sucursal").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sucursal",
+        placeholder: $(".selectjs_sucursal").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],
@@ -253,7 +252,7 @@ $(function () {
     $(".select_seccion").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sección",
+        placeholder: $(".select_seccion").data("label") || 'Seleccionar',
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 2,
         maximumInputLength: opt2["MaxInpLength"],

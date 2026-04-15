@@ -1,7 +1,7 @@
 /** Select */
 $(document).ready(function () {
-    $('#Tipo').css({"width": "200px"});
-    $('.form-control').css({"width": "100%"});
+    $('#Tipo').css({ "width": "200px" });
+    $('.form-control').css({ "width": "100%" });
     // $('#RegHora').mask('00:00');
     // $('#RegHora_mod').mask('00:00');
     $('#Filtros').on('shown.bs.modal', function () {
@@ -12,7 +12,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Empresas",
+            placeholder: $(".selectjs_empresa").data("label") || 'Empresas',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -48,19 +48,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
                         // Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -75,7 +75,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Plantas",
+            placeholder: $(".selectjs_plantas").data("label") || 'Plantas',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -111,19 +111,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
                         // Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -138,7 +138,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Sectores",
+            placeholder: $(".selectjs_sectores").data("label") || 'Sectores',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -174,19 +174,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
                         // Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -201,7 +201,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Secciones",
+            placeholder: $(".select_seccion").data("label") || 'Secciones',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -237,19 +237,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
                         // Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -264,7 +264,7 @@ $(document).ready(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Grupos",
+            placeholder: $(".selectjs_grupos").data("label") || 'Grupos',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -300,19 +300,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
                         // Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -327,7 +327,7 @@ $(document).ready(function () {
             multiple: true,
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: "Sucursales",
+            placeholder: $(".selectjs_sucursal").data("label") || 'Sucursales',
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],
@@ -363,19 +363,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
                         // Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -426,19 +426,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
+                        q: params.term,
                         // Per    : $("#Per").val(),
-                        Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -489,19 +489,19 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q      : params.term,
-                        Per    : $("#Per").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
                         // Tipo   : $("#Tipo").val(),
-                        Emp    : $("#Emp").val(),
-                        Plan   : $("#Plan").val(),
-                        Sect   : $("#Sect").val(),
-                        Sec2   : $("#Sec2").val(),
-                        Grup   : $("#Grup").val(),
-                        Sucur  : $("#Sucur").val(),
-                        _dr    : $("#_dr").val(),
-                        _l     : $("#_l").val(),
-                        FicNoTi : $("#FicNoTi").val(),
-                        FicONove : $("#FicONove").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
+                        FicNoTi: $("#FicNoTi").val(),
+                        FicONove: $("#FicONove").val(),
                     }
                 },
                 processResults: function (data) {
@@ -552,17 +552,17 @@ $(document).ready(function () {
                 delay: opt2["delay"],
                 data: function (params) {
                     return {
-                        q          : params.term,
-                        Per        : $("#Per").val(),
-                        Tipo       : $("#Tipo").val(),
-                        Emp        : $("#Emp").val(),
-                        Plan       : $("#Plan").val(),
-                        Sect       : $("#Sect").val(),
-                        Sec2       : $("#Sec2").val(),
-                        Grup       : $("#Grup").val(),
-                        Sucur      : $("#Sucur").val(),
-                        _dr        : $("#_dr").val(),
-                        _l         : $("#_l").val(),
+                        q: params.term,
+                        Per: $("#Per").val(),
+                        Tipo: $("#Tipo").val(),
+                        Emp: $("#Emp").val(),
+                        Plan: $("#Plan").val(),
+                        Sect: $("#Sect").val(),
+                        Sec2: $("#Sec2").val(),
+                        Grup: $("#Grup").val(),
+                        Sucur: $("#Sucur").val(),
+                        _dr: $("#_dr").val(),
+                        _l: $("#_l").val(),
                         // FicONove : $("#FicONove").val(),
                     }
                 },
@@ -586,7 +586,7 @@ $(document).ready(function () {
                 ActualizaTablas()
             });
         }
-             
+
         refreshSelected('.selectjs_empresa');
         refreshSelected('.selectjs_plantas');
         refreshSelected('.select_seccion');
@@ -630,4 +630,4 @@ $(document).ready(function () {
 $('#Filtros').on('hidden.bs.modal', function (e) {
     CheckSesion()
     $('#Filtros').modal('dispose');
-  });
+});

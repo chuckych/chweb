@@ -1,12 +1,11 @@
-<!-- Modal -->
-<div class="modal animate__animated animate__fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
+<div class="modal fadeIn" id="Filtros" tabindex="-1" aria-labelledby="FiltrosLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-body">
                 <div class="row">
                     <div class="col-12">
-                        
+
                         <label for="Tipo" class="mb-1 fontq">Tipo Personal: </label>
                         <select class="selectjs_tipoper" id="Tipo" name="Tipo">
                         </select>
@@ -15,40 +14,40 @@
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Empresa -->
-                        <label for="Emp" class="mb-1 fontq">Empresas</label>
-                        <select class="form-control selectjs_empresa" id="Emp" name="Emp">
+                        <label for="Emp" class="mb-1 fontq"><?=$labelEmprPlu?></label>
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" data-label="<?=$labelEmprPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Planta -->
-                        <label for="Plan" class="mb-1 w100 fontq">Plantas </label>
-                        <select class="form-control selectjs_plantas" id="Plan" name="Plan">
+                        <label for="Plan" class="mb-1 w100 fontq"><?=$labelPlanPlu?></label>
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" data-label="<?=$labelPlanPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sector -->
-                        <label for="Sect" class="mb-1 w100 fontq">Sectores</label>
-                        <select class="form-control selectjs_sectores" id="Sect" name="Sect">
+                        <label for="Sect" class="mb-1 w100 fontq"><?=$labelSectPlu?></label>
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" data-label="<?=$labelSectPlu?>">
                         </select>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-12 col-sm-4">
                         <!-- Seccion -->
-                        <label for="Sec2" class="mb-1 w100 fontq">Secciónes</label>
-                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2">
+                        <label for="Sec2" class="mb-1 w100 fontq"><?=$labelSeccPlu?></label>
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" data-label="<?=$labelSeccPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Grupos -->
-                        <label for="Grup" class="mb-1 w100 fontq">Grupos</label>
-                        <select class="form-control selectjs_grupos" id="Grup" name="Grup">
+                        <label for="Grup" class="mb-1 w100 fontq"><?=$labelGrupPlu?></label>
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" data-label="<?=$labelGrupPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
                         <!-- Sucursal -->
-                        <label for="Sucur" class="mb-1 w100 fontq">Sucursales</label>
-                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur">
+                        <label for="Sucur" class="mb-1 w100 fontq"><?=$labelSucuPlu?></label>
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" data-label="<?=$labelSucuPlu?>">
                         </select>
                     </div>
                 </div>
@@ -56,7 +55,7 @@
                     <div class="col-12 col-sm-4">
                         <!-- Tareas -->
                         <label for="Tare" class="mb-1 w100 fontq">Tareas</label>
-                        <select class="form-control selectjs_tareprod" id="Tare" name="Tare">
+                        <select class="form-control selectjs_tareProd" id="Tare" name="Tare">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4">
@@ -92,6 +91,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-custom btn-sm fontq" data-dismiss="modal">Aplicar Filtros</button>
             </div>
-        </div> 
+        </div>
     </div>
 </div>

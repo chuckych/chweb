@@ -44,7 +44,7 @@
         <!-- Encabezado -->
         <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <!-- Fin Encabezado -->
-        <?php require 'body.html'; ?>
+        <?php require 'body.php'; ?>
     </div>
     <!-- fin container -->
     <?php

@@ -55,7 +55,7 @@ $totales = $payload['totales'] ?? '';
 
 // Flight::json($detalle) . exit;
 if (!$detalle) {
-    $data = array('status' => 'error', 'mensaje' => 'No hay datos para exportar');
+    $data = ['status' => 'error', 'mensaje' => 'No hay datos para exportar'];
     echo json_encode($data);
     exit;
 }
@@ -64,16 +64,52 @@ $encabezado = [
     "Legajo",
     "Nombre",
 ];
+
+if (!is_callable($LABEL_ESTRUCT ?? null)) {
+    $LABEL_ESTRUCT = function ($struct, $plural = false) {
+        $labels = $_SESSION['LABELS'] ?? [];
+        if (empty($labels))
+            return '';
+
+        $map = [
+            'Empr' => ['EmprSin', 'EmprPlu'],
+            'Plan' => ['PlanSin', 'PlanPlu'],
+            'Sucu' => ['SucuSin', 'SucuPlu'],
+            'Grup' => ['GrupSin', 'GrupPlu'],
+            'Sect' => ['SectSin', 'SectPlu'],
+            'Secc' => ['SeccSin', 'SeccPlu'],
+        ];
+
+        if (!isset($map[$struct]))
+            return '';
+
+        return $labels[$map[$struct][(int) $plural]] ?? '';
+    };
+}
+
+$labelEmpr = $LABEL_ESTRUCT('Empr');
+$labelEmprPlu = $LABEL_ESTRUCT('Empr', true);
+$labelPlan = $LABEL_ESTRUCT('Plan');
+$labelPlanPlu = $LABEL_ESTRUCT('Plan', true);
+$labelSucu = $LABEL_ESTRUCT('Sucu');
+$labelSucuPlu = $LABEL_ESTRUCT('Sucu', true);
+$labelGrup = $LABEL_ESTRUCT('Grup');
+$labelGrupPlu = $LABEL_ESTRUCT('Grup', true);
+$labelSect = $LABEL_ESTRUCT('Sect');
+$labelSectPlu = $LABEL_ESTRUCT('Sect', true);
+$labelSecc = $LABEL_ESTRUCT('Secc');
+$labelSeccPlu = $LABEL_ESTRUCT('Secc', true);
+
 if ($getEstructura == '1') {
 
     $encabezadoEstructuras = [
-        "Empresa",
-        "Planta",
+        $labelEmpr,
+        $labelPlan,
         "Convenio",
-        "Sector",
-        "Sección",
-        "Grupo",
-        "Sucursal"
+        $labelSect,
+        $labelSecc,
+        $labelGrup,
+        $labelSucu
     ];
 
     foreach ($encabezadoEstructuras as $key => $value) {

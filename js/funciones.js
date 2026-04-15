@@ -500,7 +500,7 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
 }
 function select2Simple(selector, placeholder, clear, selclose, width = '') {
     $(selector).select2({
-        placeholder: placeholder,
+        placeholder: $(selector).data("label") || placeholder,
         minimumResultsForSearch: 10,
         allowClear: clear,
         selectOnClose: selclose,

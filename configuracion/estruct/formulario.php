@@ -21,52 +21,52 @@ switch ($Tipo) {
         $titleForm = '¿Eliminar Empresa <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_empresas':
-        $titleForm = 'Nueva Empresa';
+        $titleForm = '';
         break;
     case 'u_plantas':
         $titleForm = 'Editar: <span class="fw5">' . $Desc . '</span>';
         break;
     case 'd_plantas':
-        $titleForm = '¿Eliminar Planta <span class="fw5">' . $Desc . '?</span>';
+        $titleForm = '¿Eliminar <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_plantas':
-        $titleForm = 'Nueva Planta';
+        $titleForm = '';
         break;
     case 'u_sucur':
         $titleForm = 'Editar: <span class="fw5">' . $Desc . '</span>';
         break;
     case 'd_sucur':
-        $titleForm = '¿Eliminar Sucursal <span class="fw5">' . $Desc . '?</span>';
+        $titleForm = '¿Eliminar <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_sucur':
-        $titleForm = 'Nueva Sucursal';
+        $titleForm = '';
         break;
     case 'u_grupos':
         $titleForm = 'Editar: <span class="fw5">' . $Desc . '</span>';
         break;
     case 'd_grupos':
-        $titleForm = '¿Eliminar Grupo <span class="fw5">' . $Desc . '?</span>';
+        $titleForm = '¿Eliminar <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_grupos':
-        $titleForm = 'Nuevo Grupo';
+        $titleForm = '';
         break;
     case 'u_sector':
         $titleForm = 'Editar: <span class="fw5">' . $Desc . '</span>';
         break;
     case 'd_sector':
-        $titleForm = '¿Eliminar Sector <span class="fw5">' . $Desc . '?</span>';
+        $titleForm = '¿Eliminar <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_sector':
-        $titleForm = 'Nuevo Sector';
+        $titleForm = '';
         break;
     case 'u_tareas':
         $titleForm = 'Editar: <span class="fw5">' . $Desc . '</span>';
         break;
     case 'd_tareas':
-        $titleForm = '¿Eliminar Tarea <span class="fw5">' . $Desc . '?</span>';
+        $titleForm = '¿Eliminar <span class="fw5">' . $Desc . '?</span>';
         break;
     case 'c_tareas':
-        $titleForm = 'Nuevo Tarea';
+        $titleForm = '';
         break;
     default:
         $titleForm = '';

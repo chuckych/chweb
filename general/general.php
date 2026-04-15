@@ -205,7 +205,7 @@
     require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DataTable.php";
-    require 'modal_Filtros.html';
+    require 'modal_Filtros.php';
     require 'modal_Exportar.php';
     require __DIR__ . "/ModalGeneral.php";
     ?>
@@ -215,7 +215,7 @@
     <script src="../js/select2.min.js"></script>
     <script src="js/data.js?<?= version_file("/general/js/data.js") ?>"></script>
     <script src="js/proceso.js?<?= version_file("/general/js/proceso.js") ?>"></script>
-    <script src="js/select-min.js?<?= version_file("/general/js/select-min.js") ?>"></script>
+    <script src="js/select.js?<?= version_file("/general/js/select.js") ?>"></script>
     <script src="js/trash-select-min.js?<?= version_file("/general/js/trash-select-min.js") ?>"></script>
     <script src="js/export.js?<?= version_file("/general/js/export.js") ?>"></script>
 </body>

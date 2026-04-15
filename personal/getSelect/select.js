@@ -11,7 +11,7 @@ $(function () {
             allowClear: opt2["allowClear"],
             language: "es",
             dropdownParent: parent,
-            placeholder: placeholder,
+            placeholder: $(selector).data("label") || placeholder,
             minimumInputLength: opt2["MinLength"],
             minimumResultsForSearch: 5,
             maximumInputLength: opt2["MaxInpLength"],

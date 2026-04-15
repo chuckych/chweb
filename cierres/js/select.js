@@ -7,7 +7,7 @@ $(document).ready(function () {
     $(".selectjs_empresa").select2({
         multiple: false,
         language: "es",
-        placeholder: "Empresa",
+        placeholder: $(".selectjs_empresa").data("label") || "Empresa",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],
@@ -64,7 +64,7 @@ $(document).ready(function () {
     $(".selectjs_plantas").select2({
         multiple: false,
         language: "es",
-        placeholder: "Planta",
+        placeholder: $(".selectjs_plantas").data("label") || "Planta",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],
@@ -121,7 +121,7 @@ $(document).ready(function () {
     $(".selectjs_sectores").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sector",
+        placeholder: $(".selectjs_sectores").data("label") || "Sector",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],
@@ -178,7 +178,7 @@ $(document).ready(function () {
     $(".select_seccion").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sección",
+        placeholder: $(".select_seccion").data("label") || "Sección",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],
@@ -236,7 +236,7 @@ $(document).ready(function () {
     $(".selectjs_grupos").select2({
         multiple: false,
         language: "es",
-        placeholder: "Grupo",
+        placeholder: $(".selectjs_grupos").data("label") || "Grupo",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],
@@ -293,7 +293,7 @@ $(document).ready(function () {
     $(".selectjs_sucursal").select2({
         multiple: false,
         language: "es",
-        placeholder: "Sucursal",
+        placeholder: $(".selectjs_sucursal").data("label") || "Sucursal",
         minimumInputLength: opt2["MinLength"],
         minimumResultsForSearch: 5,
         maximumInputLength: opt2["MaxInpLength"],

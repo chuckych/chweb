@@ -78,23 +78,23 @@
                         </div>
                         <div class="col-12 col-sm-6 mt-2">
                             <!-- Empresa -->
-                            <label for="Emp" class="mr-2 w-100">Empresa</label>
-                            <select class="form-control selectjs_empresa w-100" id="Emp" name="Emp">
+                            <label for="Emp" class="mr-2 w-100"><?=$labelEmpr?></label>
+                            <select class="form-control selectjs_empresa w-100" id="Emp" name="Emp" data-label="<?=$labelEmpr?>">
                             </select>
                             <span id="trash_emp" class="trash"></span>
                         </div>
                         <div class="col-12 col-sm-6 mt-1">
                             <!-- Planta -->
-                            <label for="Plan" class="mr-2 w-100">Planta</label>
-                            <select class="form-control selectjs_plantas w-100" id="Plan" name="Plan">
+                            <label for="Plan" class="mr-2 w-100"><?=$labelPlan?></label>
+                            <select class="form-control selectjs_plantas w-100" id="Plan" name="Plan" data-label="<?=$labelPlan?>">
                             </select>
                             <span id="trash_plan" class="trash"></span>
                         </div>
                         <div class="col-12 col-sm-6 mt-1">
                             <div class="">
                                 <!-- Sector -->
-                                <label for="Sect" class="mr-2 w-100">Sector</label>
-                                <select class="form-control selectjs_sectores w-100" id="Sect" name="Sect">
+                                <label for="Sect" class="mr-2 w-100"><?=$labelSect?></label>
+                                <select class="form-control selectjs_sectores w-100" id="Sect" name="Sect" data-label="<?=$labelSect?>">
                                 </select>
                                 <span id="trash_sect" class="trash"></span>
                             </div>
@@ -102,23 +102,23 @@
                         <div class="col-12 col-sm-6 mt-1">
                             <div class="" id="select_seccion">
                                 <!-- Seccion -->
-                                <label for="Sec2" class="mr-2 w-100">Sección</label>
-                                <select disabled class="form-control select_seccion w-100" id="Sec2" name="Sec2">
+                                <label for="Sec2" class="mr-2 w-100"><?=$labelSecc?></label>
+                                <select disabled class="form-control select_seccion w-100" id="Sec2" name="Sec2" data-label="<?=$labelSecc?>">
                                 </select>
                                 <span id="trash_secc" class="trash"></span>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 mt-1">
                             <!-- Grupos -->
-                            <label for="Grup" class="mr-2 w120">Grupos</label>
-                            <select class="form-control selectjs_grupos w-100" id="Grup" name="Grup">
+                            <label for="Grup" class="mr-2 w120"><?=$labelGrup?></label>
+                            <select class="form-control selectjs_grupos w-100" id="Grup" name="Grup" data-label="<?=$labelGrup?>">
                             </select>
                             <span id="trash_grup" class="trash"></span>
                         </div>
                         <div class="col-12 col-sm-6 mt-1">
                             <!-- Sucursal -->
-                            <label for="Sucur" class="mr-2">Sucursal</label>
-                            <select class="form-control selectjs_sucursal w-100" id="Sucur" name="Sucur">
+                            <label for="Sucur" class="mr-2"><?=$labelSucu?></label>
+                            <select class="form-control selectjs_sucursal w-100" id="Sucur" name="Sucur" data-label="<?=$labelSucu?>">
                             </select>
                             <span id="trash_sucur" class="trash"></span>
                         </div>
@@ -219,10 +219,9 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/moment.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/select-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
-
+    <script src="js/procesar.js?v=<?= version_file("/liquidar/js/procesar.js") ?>"></script>
+    <script src="js/select.js?v=<?= version_file("/liquidar/js/select.js") ?>"></script>
+    <script src="js/trash-select.js?v=<?= version_file("/liquidar/js/trash-select.js") ?>"></script>
 </body>
 
 </html>

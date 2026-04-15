@@ -162,7 +162,7 @@ $(function () {
             multiple: multiple,
             allowClear: true,
             language: "es",
-            placeholder: placeholder,
+            placeholder: $(selector).data('label') || placeholder,
             minimumInputLength: 0,
             minimumResultsForSearch: 50,
             maximumInputLength: 10,

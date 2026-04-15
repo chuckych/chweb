@@ -26,8 +26,8 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
 
 require __DIR__ . '/valores.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
@@ -98,11 +98,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
         'Tarea Prod' => $row['Tarea'],
         'TareaDesc' => '<span title="' . $row['Tarea'] . '" class="d-inline-block text-truncate Mxw150">' . $Tarea . '</span>',
         'Tarea' => $Tarea,
-        'Planta' => $Planta,
-        'Sucursal' => $Sucursal,
-        'Grupo' => $Grupo,
-        'Sector' => $Sector,
-        'Seccción' => $Seccion,
+        $labelPlan => $Planta,
+        $labelSucu => $Sucursal,
+        $labelGrup => $Grupo,
+        $labelSect => $Sector,
+        $labelSecc => $Seccion,
         'PlantaDesc' => '<span title="' . $row['Planta'] . '" class="d-inline-block text-truncate Mxw150">' . $Planta . '</span>',
         'SucurDesc' => '<span title="' . $row['Sucursal'] . '" class="d-inline-block text-truncate Mxw150">' . $Sucursal . '</span>',
         'GrupDesc' => '<span title="' . $row['Grupos'] . '" class="d-inline-block text-truncate Mxw150">' . $Grupo . '</span>',

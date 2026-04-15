@@ -132,6 +132,7 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
         ?>
     </div>
     <?php
+    require 'modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
@@ -139,7 +140,6 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "/../../js/DataTable.php";
     $array_cta = 'array_cte_hora';
-    require 'modal_Filtros.html';
     require 'modal_Detalle.html';
     ?>
 
@@ -169,10 +169,10 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
         });
     </script>
     <script src="../../js/select2.min.js"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
-    <script src="js/detalle.js?v=<?= vjs() ?>"></script>
-    <script src="js/cteHorasXLS.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?<?= version_file("/ctacte/horas/js/select.js") ?>"></script>
+    <script src="js/trash-select.js?<?= version_file("/ctacte/horas/js/trash-select.js") ?>"></script>
+    <script src="js/detalle.js?<?= version_file("/ctacte/horas/js/detalle.js") ?>"></script>
+    <script src="js/cteHorasXLS.js?<?= version_file("/ctacte/horas/js/cteHorasXLS.js") ?>"></script>
     <script>
         $('#datos').val('2');
         $(document).ready(function () {

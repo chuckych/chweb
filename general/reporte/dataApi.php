@@ -1,11 +1,11 @@
 <?php
 $params = $_REQUEST;
-$data = array();
+$data = [];
 $authBasic = base64_encode('chweb:' . HOMEHOST);
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$params['start'] = $params['start'] ?? '0';
-$params['length'] = $params['length'] ?? '99999';
-$_POST['_dr'] = $_POST['_dr'] ?? '';
+$params['start'] ??= '0';
+$params['length'] ??= '99999';
+$_POST['_dr'] ??= '';
 (!$_POST['_dr']) ? exit : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
@@ -106,8 +106,6 @@ $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 $dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
 $dataApi = parseApiResponse($dataApi);
 
-// error_log(json_encode($dataParametros, true));
-// error_log(json_encode($dataApi, true));
 
 if (($dataApi['RESPONSE_CODE'] ?? '') != 200) {
     http_response_code(400);

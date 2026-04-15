@@ -51,19 +51,19 @@
                     <div class="col-12 col-sm-4 mt-2">
                         <!-- Empresa -->
                         <!-- <label for="Emp" class="my-1 d-none d-sm-block"><span class="fontq ">Empresas</span> </label> -->
-                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" title="Empresas">
+                        <select class="form-control selectjs_empresa" id="Emp" name="Emp" title="Empresas" data-label="<?=$labelEmprPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-2">
                         <!-- Planta -->
                         <!-- <label for="Plan" class="w100 my-1 d-none d-sm-block"><span class="fontq">Plantas</span></label> -->
-                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" title="Plantas">
+                        <select class="form-control selectjs_plantas" id="Plan" name="Plan" title="Plantas" data-label="<?=$labelPlanPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-2">
                         <!-- Sector -->
                         <!-- <label for="Sect" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sectores</span></label> -->
-                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" title="Sectores">
+                        <select class="form-control selectjs_sectores" id="Sect" name="Sect" title="Sectores" data-label="<?=$labelSectPlu?>">
                         </select>
                     </div>
                 </div>
@@ -72,20 +72,20 @@
                         <!-- Seccion -->
                         <!-- <label for="Sec2" class="w100 my-1 d-none d-sm-block"><span class="fontq">Secciones</span>
                         </label> -->
-                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" title="Secciones">
+                        <select disabled class="form-control select_seccion" id="Sec2" name="Sec2" title="Secciones" data-label="<?=$labelSeccPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-2">
                         <!-- Grupos -->
                         <!-- <label for="Grup" class="w100 my-1 d-none d-sm-block"><span class="fontq">Grupos</span> </label> -->
-                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" title="Grupos">
+                        <select class="form-control selectjs_grupos" id="Grup" name="Grup" title="Grupos" data-label="<?=$labelGrupPlu?>">
                         </select>
                     </div>
                     <div class="col-12 col-sm-4 mt-2">
                         <!-- Sucursal -->
                         <!-- <label for="Sucur" class="w100 my-1 d-none d-sm-block"><span class="fontq">Sucursales</span>
                         </label> -->
-                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" title="Sucursales">
+                        <select class="form-control selectjs_sucursal" id="Sucur" name="Sucur" title="Sucursales" data-label="<?=$labelSucuPlu?>">
                         </select>
                     </div>
                 </div>

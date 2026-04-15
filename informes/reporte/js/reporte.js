@@ -306,7 +306,7 @@ dateRange().then(() => {
             allowClear: true,
             language: "es",
             dropdownParent: $('#Filtros'),
-            placeholder: placeholder,
+            placeholder: $(selector).data('label') || placeholder,
             minimumInputLength: 0,
             minimumResultsForSearch: 5,
             maximumInputLength: 10,

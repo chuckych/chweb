@@ -307,13 +307,14 @@
     </div>
     <!-- fin container -->
     <?php
-
+    require 'modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLES */
     require __DIR__ . "/../../js/DataTable.php";
+
     ?>
     <script src="../../js/bootbox.min.js"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>

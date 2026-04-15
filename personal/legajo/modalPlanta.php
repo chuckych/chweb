@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content w300 mx-auto">
             <div class="modal-header border-bottom-0">
-                <h6 class="modal-title" id="staticBackdropLabel">Planta</h6>
+                <h6 class="modal-title" id="staticBackdropLabel"><?=$labelPlan?></h6>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

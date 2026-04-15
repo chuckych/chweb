@@ -13,7 +13,7 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
@@ -66,7 +66,7 @@
         // $FechaFin = date("Y-m-d", strtotime(hoy() . "- 0 days"));
         ?>
         <div class="row bg-white pb-sm-3" id="pagLega">
-            <div class="col-12 d-flex justify-content-sm-end align-items-center animate__animated animate__fadeIn">
+            <div class="col-12 d-flex justify-content-sm-end align-items-center fadeIn">
                 <input type="text" data-mask="000000000" reverse="true" id="Per2"
                     class="form-control mr-2 w100 mt-n2 d-none text-center" style="height: 15px;">
                 <table class="table table-borderless text-nowrap w-auto table-sm" id="GetPersonal">
@@ -75,14 +75,14 @@
             </div>
         </div>
         <div class="row bg-white pb-sm-3" id="pagFech">
-            <div class="col-12 d-flex justify-content-sm-end animate__animated animate__fadeIn">
+            <div class="col-12 d-flex justify-content-sm-end fadeIn">
                 <table class="table table-borderless text-nowrap w-auto table-sm" id="GetFechas">
 
                 </table>
             </div>
         </div>
         <div class="row bg-white radius mt-sm-n5">
-            <div class="col-12 animate__animated animate__fadeIn">
+            <div class="col-12 fadeIn">
                 <div class="table-responsive" id="GetNovedadesTable">
                     <table class="table table-hover text-nowrap w-100" id="GetNovedades">
                         <thead class="">
@@ -103,7 +103,7 @@
                 </div>
                 <p id="resultNov" class="text-dark w-100 text-center fontq mt-5"></p>
             </div>
-            <div class="col-12 animate__animated animate__fadeIn">
+            <div class="col-12 fadeIn">
                 <div class="table-responsive" id="GetNovedadesFechaTable">
                     <!-- <table class="table table-hover text-nowrap w-100" id=""> -->
                     <table class="table table-hover text-nowrap w-100" id="GetNovedadesFecha">
@@ -127,22 +127,22 @@
     </div>
     <!-- fin container -->
     <?php
+    require 'modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DateRanger.php";
     /** INCLUIMOS LIBRERÍAS y script DATERANGER */
     require __DIR__ . "/../js/DataTable.php";
-    require 'modal_Filtros.html';
     ?>
     <script src="../js/bootbox.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/data.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trashSelect.js?v=<?= vjs() ?>"></script>
-    <script src="js/ONovXLS.js?v=<?= vjs() ?>"></script>
+    <script src="js/data.js?v=<?= version_file("/otrasnov/js/data.js") ?>"></script>
+    <script src="js/select.js?v=<?= version_file("/otrasnov/js/select.js") ?>"></script>
+    <script src="js/trashSelect.js?v=<?= version_file("/otrasnov/js/trashSelect.js") ?>"></script>
+    <script src="js/ONovXLS.js?v=<?= version_file("/otrasnov/js/ONovXLS.js") ?>"></script>
 </body>
 
 </html>

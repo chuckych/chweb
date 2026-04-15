@@ -53,47 +53,47 @@
                     <div class="col-12 mt-3">
                         <div class="form-inline mt-2">
                             <!-- Empresa -->
-                            <label for="FichEmp" class="mr-2 w120">Empresa</label>
-                            <select class="form-control selectjs_empresa w300" id="FichEmp" name="FichEmp">
+                            <label for="FichEmp" class="mr-2 w120"><?=$labelEmpr?></label>
+                            <select class="form-control selectjs_empresa w300" id="FichEmp" name="FichEmp" data-label="<?=$labelEmpr?>">
                             </select>
                             <span id="trash_emp" class="btn btn-sm btn-link opa1""><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
                 </div>
                 <div class=" form-inline mt-2">
                                 <!-- Planta -->
-                                <label for="FichPlan" class="mr-2 w120">Planta</label>
-                                <select class="form-control selectjs_plantas w300" id="FichPlan" name="FichPlan">
+                                <label for="FichPlan" class="mr-2 w120"><?=$labelPlan?></label>
+                                <select class="form-control selectjs_plantas w300" id="FichPlan" name="FichPlan" data-label="<?=$labelPlan?>">
                                 </select>
                                 <span id="trash_plan"
                                     class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
                         </div>
                         <div class="form-inline mt-2">
                             <!-- Sector -->
-                            <label for="FichSect" class="mr-2 w120">Sector</label>
-                            <select class="form-control selectjs_sectores w300" id="FichSect" name="FichSect">
+                            <label for="FichSect" class="mr-2 w120"><?=$labelSect?></label>
+                            <select class="form-control selectjs_sectores w300" id="FichSect" name="FichSect" data-label="<?=$labelSect?>">
                             </select>
                             <span id="trash_sect"
                                 class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
                         </div>
                         <div class="form-inline mt-2 d-none" id="select_seccion">
                             <!-- Seccion -->
-                            <label for="FichSec2" class="mr-2 w120">Sección</label>
-                            <select class="form-control select_seccion w300" id="FichSec2" name="FichSec2">
+                            <label for="FichSec2" class="mr-2 w120"><?=$labelSecc?></label>
+                            <select class="form-control select_seccion w300" id="FichSec2" name="FichSec2" data-label="<?=$labelSecc?>">
                             </select>
                             <span id="trash_secc"
                                 class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
                         </div><small id="SectorHelpBlock2" class="form-text text-muted"></small>
                         <div class="form-inline mt-2">
                             <!-- Grupos -->
-                            <label for="FichGrup" class="mr-2 w120">Grupos</label>
-                            <select class="form-control selectjs_grupos w300" id="FichGrup" name="FichGrup">
+                            <label for="FichGrup" class="mr-2 w120"><?=$labelGrup?></label>
+                            <select class="form-control selectjs_grupos w300" id="FichGrup" name="FichGrup" data-label="<?=$labelGrup?>">
                             </select>
                             <span id="trash_grup"
                                 class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
                         </div>
                         <div class="form-inline mt-2">
                             <!-- Sucursal -->
-                            <label for="FichSucur" class="mr-2 w120">Sucursal</label>
-                            <select class="form-control selectjs_sucursal w300" id="FichSucur" name="FichSucur">
+                            <label for="FichSucur" class="mr-2 w120"><?=$labelSucu?></label>
+                            <select class="form-control selectjs_sucursal w300" id="FichSucur" name="FichSucur" data-label="<?=$labelSucu?>">
                             </select>
                             <span id="trash_sucur"
                                 class="btn btn-sm btn-link opa1"><?= imgIcon('trash3', 'Limpiar Selección ', 'w15'); ?></span>
@@ -146,7 +146,7 @@
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="js/procesar-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/select-min.js?v=<?= vjs() ?>"></script>
+    <script src="js/select.js?v=<?= vjs() ?>"></script>
     <script src="js/trash-select-min.js?v=<?= vjs() ?>"></script>
 
 </body>

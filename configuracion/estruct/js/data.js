@@ -131,7 +131,7 @@ $(function () {
     }
     function tableEstruct(selectorDT, selectoraddbutton, urlajax, checkEstructClass, className1, className2, className3, actionForm, phfilter, nameidbtn0, nameidbtn1, nameidbtn2, d_,u_, estruct, urlajaxselect, formaction){
         // var table = 'tablePersonal'
-        tableDT = $(selectorDT).DataTable({
+        const tableDT = $(selectorDT).DataTable({
             initComplete: function () {
                 $(selectorDT+' thead').remove()
                 // $("#tableempresas_filter").addClass('d-inline-flex ')
@@ -218,17 +218,17 @@ $(function () {
         $(selectorDT).mouseenter().off("mouseenter")
     }
     /** DATA EMPRESAS */
-    tableEstruct("#tableempresas","AddEmpresas","getEmpresas.php",".CheckEmpresas","align-middle val pointer py-4 text-center","align-middle val pointer CheckEmpresas w-100","align-middle pointer","#actionForm_e","Buscar empresa","c_empresas","editEmpresas","deleteEmpresas","d_empresas","u_empresas","Empresa","getEmpresas.php","crud.php");   
+    tableEstruct("#tableempresas","AddEmpresas","getEmpresas.php",".CheckEmpresas","align-middle val pointer py-4 text-center","align-middle val pointer CheckEmpresas w-100","align-middle pointer","#actionForm_e","Buscar","c_empresas","editEmpresas","deleteEmpresas","d_empresas","u_empresas","Empresa","getEmpresas.php","crud.php");   
     /** DATA PLANTAS */
-    tableEstruct("#tableplantas","AddPlantas","getPlantas.php",".CheckPlantas","align-middle val pointer py-4 text-center","align-middle val pointer CheckPlantas w-100","align-middle pointer","#actionForm","Buscar planta","c_plantas","editPlantas","deletePlantas","d_plantas","u_plantas","Planta","getPlantas.php","crud.php");
+    tableEstruct("#tableplantas","AddPlantas","getPlantas.php",".CheckPlantas","align-middle val pointer py-4 text-center","align-middle val pointer CheckPlantas w-100","align-middle pointer","#actionForm","Buscar","c_plantas","editPlantas","deletePlantas","d_plantas","u_plantas","Planta","getPlantas.php","crud.php");
     /** DATA SUCURSALES */
-    tableEstruct("#tablesucur","AddSucur","getSucur.php",".CheckSucur","align-middle val pointer py-4 text-center","align-middle val pointer CheckSucur w-100","align-middle pointer","#actionForm_suc","Buscar sucursal","c_sucur","editSucur","deleteSucur","d_sucur","u_sucur","Sucursal","getSucursales.php","crud.php");
+    tableEstruct("#tablesucur","AddSucur","getSucur.php",".CheckSucur","align-middle val pointer py-4 text-center","align-middle val pointer CheckSucur w-100","align-middle pointer","#actionForm_suc","Buscar","c_sucur","editSucur","deleteSucur","d_sucur","u_sucur","Sucursal","getSucursales.php","crud.php");
     /** DATA GRUPOS */
-    tableEstruct("#tablegrupos","AddGrupos","getGrupos.php",".CheckGrupos","align-middle val pointer py-4 text-center","align-middle val pointer CheckGrupos w-100","align-middle pointer","#actionForm_grupos","Buscar grupo","c_grupos","editGrupos","deleteGrupos","d_grupos","u_grupos","Grupo","getGrupos.php","crud.php");
+    tableEstruct("#tablegrupos","AddGrupos","getGrupos.php",".CheckGrupos","align-middle val pointer py-4 text-center","align-middle val pointer CheckGrupos w-100","align-middle pointer","#actionForm_grupos","Buscar","c_grupos","editGrupos","deleteGrupos","d_grupos","u_grupos","Grupo","getGrupos.php","crud.php");
     /** DATA SECTORES */
-    tableEstruct("#tablesector","AddSector","getSector.php",".CheckSector","align-middle val pointer py-4 text-center","align-middle val pointer CheckSector w-100","align-middle pointer","#actionForm_sector","Buscar sector","c_sector","editSector","deleteSector","d_sector","u_sector","Sector","getSectores.php","crud.php");
+    tableEstruct("#tablesector","AddSector","getSector.php",".CheckSector","align-middle val pointer py-4 text-center","align-middle val pointer CheckSector w-100","align-middle pointer","#actionForm_sector","Buscar","c_sector","editSector","deleteSector","d_sector","u_sector","Sector","getSectores.php","crud.php");
     /** DATA TAREAS */
-    tableEstruct("#tabletareas","AddTarea","getTareas.php",".CheckTarea","align-middle val pointer py-4 text-center","align-middle val pointer CheckTarea w-100","align-middle pointer","#actionForm_tareas","Buscar tarea","c_tareas","editTarea","deleteTarea","d_tareas","u_tareas","Tarea","gettareas.php","crud.php");
+    tableEstruct("#tabletareas","AddTarea","getTareas.php",".CheckTarea","align-middle val pointer py-4 text-center","align-middle val pointer CheckTarea w-100","align-middle pointer","#actionForm_tareas","Buscar","c_tareas","editTarea","deleteTarea","d_tareas","u_tareas","Tarea","gettareas.php","crud.php");
     
     $("#Encabezado").addClass('pointer')
     $("#Encabezado").on("click", function () {

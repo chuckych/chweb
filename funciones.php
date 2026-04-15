@@ -3801,7 +3801,7 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method =
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
             break;
     }
-    
+
     curl_setopt(
         $ch,
         CURLOPT_HTTPHEADER,
@@ -4038,3 +4038,22 @@ function auth_ad($passLogin, $row)
         }
     }
 }
+$LABEL_ESTRUCT = function ($struct, $plural = false) {
+    $labels = $_SESSION['LABELS'] ?? [];
+    if (empty($labels))
+        return '';
+
+    $map = [
+        'Empr' => ['EmprSin', 'EmprPlu'],
+        'Plan' => ['PlanSin', 'PlanPlu'],
+        'Sucu' => ['SucuSin', 'SucuPlu'],
+        'Grup' => ['GrupSin', 'GrupPlu'],
+        'Sect' => ['SectSin', 'SectPlu'],
+        'Secc' => ['SeccSin', 'SeccPlu'],
+    ];
+
+    if (!isset($map[$struct]))
+        return '';
+
+    return $labels[$map[$struct][(int) $plural]] ?? '';
+};

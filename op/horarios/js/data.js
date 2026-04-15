@@ -1855,7 +1855,7 @@ $(function () {
                 allowClear: opt2["allowClear"],
                 language: "es",
                 dropdownParent: parent,
-                placeholder: placeholder,
+                placeholder: $(selector).data("label") || placeholder,
                 minimumInputLength: opt2["MinLength"],
                 minimumResultsForSearch: 5,
                 maximumInputLength: opt2["MaxInpLength"],
@@ -1987,14 +1987,7 @@ $(function () {
         });
     }
 
-    axios.get('modal_Filtros.html' + '?t=' + new Date().getTime()).then(function (response) {
-        const divModal = document.getElementById('divModal');
-        divModal.innerHTML = response.data;
-        select_filtros();
-    }).catch(function (error) {
-        console.error(error);
-    });
-
+    select_filtros();
 
     const dateRange = async () => {
 

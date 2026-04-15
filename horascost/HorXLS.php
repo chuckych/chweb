@@ -57,12 +57,12 @@ $encabezado = [
     /** COL: I */ "Hs Autor.",
     /** COL: J */ "Costo",
     /** COL: K */ "Tarea",
-    /** COL: L */ "Empresa",
-    /** COL: M */ "Planta",
-    /** COL: N */ "Sucursal",
-    /** COL: O */ "Grupo",
-    /** COL: P */ "Sector",
-    /** COL: Q */ "Sección"
+    /** COL: L */ $labelEmpr ?? 'Empresa',
+    /** COL: M */ $labelPlan ?? 'Planta',
+    /** COL: N */ $labelSucu ?? 'Sucursal',
+    /** COL: O */ $labelGrup ?? 'Grupo',
+    /** COL: P */ $labelSect ?? 'Sector',
+    /** COL: Q */ $labelSecc ?? 'Sección'
 ];
 
 $styleArray = [
@@ -166,43 +166,6 @@ $spreadsheet->getSheetView()->setZoomScale(100);
 /** Color de pestaña de hoja */
 $spreadsheet->getTabColor()->setRGB('FFFFFF');
 
-// $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
-$Letras = array('A', 'B', 'C', 'D', 'E', 'G', 'K', 'L', 'M', 'N', 'O', 'P', 'Q');
-foreach ($Letras as $col) {
-    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-}
-
-$Letras = array('F', 'H', 'I', 'J');
-foreach ($Letras as $col) {
-    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-    $spreadsheet->getStyle($col . '1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
-}
-
-$spreadsheet->getStyle('C')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
-
-$spreadsheet->getStyle('F')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-$spreadsheet->getStyle('H')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-$spreadsheet->getStyle('I')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME3);
-
-$spreadsheet->getStyle('A')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
-$spreadsheet->getStyle('J')
-    ->getNumberFormat()
-    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
-
-$spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
-
-$spreadsheet->getStyle('A1:Q1')->getAlignment()->setIndent(1);
-$spreadsheet->getStyle('A:Q')->getAlignment()->setIndent(1);
 
 /** Mostrar / ocultar una columna */
 // $spreadsheet->getColumnDimension('E')->setVisible(true);
@@ -250,8 +213,6 @@ ORDER BY FICHAS01.FicLega,
     FICHAS01.FicHora,
     FICHAS01.FicCFec";
 
-
-// print_r($query); exit;
 $result = sqlsrv_query($link, $query, $param, $options);
 
 function FormatoHoraToExcel($Hora)
@@ -314,23 +275,23 @@ while ($row = sqlsrv_fetch_array($result)) {
     $Fecha = FormatoFechaToExcel($Fecha);
     $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(19);
     # Escribirlos en el documento
-    $spreadsheet->setCellValueByColumnAndRow(1, $numeroDeFila, $Legajo);
-    $spreadsheet->setCellValueByColumnAndRow(2, $numeroDeFila, $Nombre);
-    $spreadsheet->setCellValueByColumnAndRow(3, $numeroDeFila, $Fecha);
-    $spreadsheet->setCellValueByColumnAndRow(4, $numeroDeFila, $Dia);
-    $spreadsheet->setCellValueByColumnAndRow(5, $numeroDeFila, $Horario);
-    $spreadsheet->setCellValueByColumnAndRow(6, $numeroDeFila, $Desde);
-    $spreadsheet->setCellValueByColumnAndRow(7, $numeroDeFila, $TipoHora);
-    $spreadsheet->setCellValueByColumnAndRow(8, $numeroDeFila, $HsHechas);
-    $spreadsheet->setCellValueByColumnAndRow(9, $numeroDeFila, $HsAutor);
-    $spreadsheet->setCellValueByColumnAndRow(10, $numeroDeFila, $Costo);
-    $spreadsheet->setCellValueByColumnAndRow(11, $numeroDeFila, $Tarea);
-    $spreadsheet->setCellValueByColumnAndRow(12, $numeroDeFila, $Empresa);
-    $spreadsheet->setCellValueByColumnAndRow(13, $numeroDeFila, $Planta);
-    $spreadsheet->setCellValueByColumnAndRow(14, $numeroDeFila, $Sucursal);
-    $spreadsheet->setCellValueByColumnAndRow(15, $numeroDeFila, $Grupos);
-    $spreadsheet->setCellValueByColumnAndRow(16, $numeroDeFila, $Sector);
-    $spreadsheet->setCellValueByColumnAndRow(17, $numeroDeFila, $Seccion);
+    $spreadsheet->setCellValue("A{$numeroDeFila}", $Legajo);
+    $spreadsheet->setCellValue("B{$numeroDeFila}", $Nombre);
+    $spreadsheet->setCellValue("C{$numeroDeFila}", $Fecha);
+    $spreadsheet->setCellValue("D{$numeroDeFila}", $Dia);
+    $spreadsheet->setCellValue("E{$numeroDeFila}", $Horario);
+    $spreadsheet->setCellValue("F{$numeroDeFila}", $Desde);
+    $spreadsheet->setCellValue("G{$numeroDeFila}", $TipoHora);
+    $spreadsheet->setCellValue("H{$numeroDeFila}", $HsHechas);
+    $spreadsheet->setCellValue("I{$numeroDeFila}", $HsAutor);
+    $spreadsheet->setCellValue("J{$numeroDeFila}", $Costo);
+    $spreadsheet->setCellValue("K{$numeroDeFila}", $Tarea);
+    $spreadsheet->setCellValue("L{$numeroDeFila}", $Empresa);
+    $spreadsheet->setCellValue("M{$numeroDeFila}", $Planta);
+    $spreadsheet->setCellValue("N{$numeroDeFila}", $Sucursal);
+    $spreadsheet->setCellValue("O{$numeroDeFila}", $Grupos);
+    $spreadsheet->setCellValue("P{$numeroDeFila}", $Sector);
+    $spreadsheet->setCellValue("Q{$numeroDeFila}", $Seccion);
 
     $numeroDeFila++;
 }
@@ -338,36 +299,36 @@ $UltimaFila = $numeroDeFila - 1;
 $UltimaFila2 = $numeroDeFila;
 $UltimaFila3 = $numeroDeFila + 1;
 
-$UltimaI = 'I' . ($UltimaFila);
-$UltimaI_2 = 'I' . ($UltimaFila2);
-$UltimaI_3 = 'I' . ($UltimaFila3);
+$UltimaI = "I$UltimaFila";
+$UltimaI_2 = "I$UltimaFila2";
+$UltimaI_3 = "I$UltimaFila3";
 
-$UltimaH = 'H' . ($UltimaFila);
-$UltimaH_2 = 'H' . ($UltimaFila2);
-$UltimaH_3 = 'H' . ($UltimaFila3);
+$UltimaH = "H$UltimaFila";
+$UltimaH_2 = "H$UltimaFila2";
+$UltimaH_3 = "H$UltimaFila3";
 
-$UltimaJ = 'J' . ($UltimaFila);
-$UltimaJ_2 = 'J' . ($UltimaFila2);
-$UltimaJ_3 = 'J' . ($UltimaFila3);
+$UltimaJ = "J$UltimaFila";
+$UltimaJ_2 = "J$UltimaFila2";
+$UltimaJ_3 = "J$UltimaFila3";
 
-$UltimaA_2 = 'A' . ($UltimaFila2);
-$UltimaA_3 = 'A' . ($UltimaFila3);
+$UltimaA_2 = "A$UltimaFila2";
+$UltimaA_3 = "A$UltimaFila3";
 
-$UltimaQ = 'Q' . ($UltimaFila);
-$UltimaQ_2 = 'Q' . ($UltimaFila2);
-$UltimaQ_3 = 'Q' . ($UltimaFila3);
+$UltimaQ = "Q$UltimaFila";
+$UltimaQ_2 = "Q$UltimaFila2";
+$UltimaQ_3 = "Q$UltimaFila3";
 
-$UltimaG_2 = 'G' . ($UltimaFila2);
-$UltimaG_3 = 'G' . ($UltimaFila3);
+$UltimaG_2 = "G$UltimaFila2";
+$UltimaG_3 = "G$UltimaFila3";
 
-$FormulaAutor = '=SUBTOTAL(109,I2:' . $UltimaI . ')';
-$FormulaAutorTotal = '=SUM(I2:' . $UltimaI . ')';
-$FormulaHechas = '=SUBTOTAL(109,H2:' . $UltimaH . ')';
-$FormulaHechasTotal = '=SUM(H2:' . $UltimaH . ')';
-$FormulaCosto = '=SUBTOTAL(109,J2:' . $UltimaJ . ')';
-$FormulaCostoTotal = '=SUM(J2:' . $UltimaJ . ')';
+$FormulaAutor = "=SUBTOTAL(109,I2:$UltimaI)";
+$FormulaAutorTotal = "=SUM(I2:$UltimaI)";
+$FormulaHechas = "=SUBTOTAL(109,H2:$UltimaH)";
+$FormulaHechasTotal = "=SUM(H2:$UltimaH)";
+$FormulaCosto = "=SUBTOTAL(109,J2:$UltimaJ)";
+$FormulaCostoTotal = "=SUM(J2:$UltimaJ)";
 
-$spreadsheet->setAutoFilter('A1:' . $UltimaQ);
+$spreadsheet->setAutoFilter("A1:$UltimaQ");
 
 $spreadsheet->setCellValue($UltimaI_2, $FormulaAutor);
 // $spreadsheet->setCellValue($UltimaI_3,$FormulaAutorTotal);
@@ -380,35 +341,53 @@ $spreadsheet->getCell($UltimaG_2)->setValue('Total');
 $spreadsheet->getRowDimension($UltimaFila2)->setRowHeight(25);
 // $spreadsheet->getRowDimension($UltimaFila3)->setRowHeight(25);
 
-$spreadsheet->getStyle($UltimaI_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
-// $spreadsheet->getStyle($UltimaI_3)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
-$spreadsheet->getStyle($UltimaH_2)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
-// $spreadsheet->getStyle($UltimaH_3)->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_TIME9);
-// $spreadsheet->getStyle('J')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_SIMPLE);
+// $spreadsheet->getStyle('A1:M1')->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF');
+$Letras = ['A', 'B', 'C', 'D', 'E', 'G', 'K', 'L', 'M', 'N', 'O', 'P', 'Q'];
+foreach ($Letras as $col) {
+    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+}
+$Letras = ['F', 'H', 'I', 'J'];
+foreach ($Letras as $col) {
+    $spreadsheet->getStyle($col)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+    $spreadsheet->getStyle("{$col}1")->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+}
+$spreadsheet->getStyle('C')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+// $spreadsheet->getStyle('F')->getNumberFormat()->setFormatCode("[h]:mm");
+$spreadsheet->getStyle('H')->getNumberFormat()->setFormatCode("h:mm");
+$spreadsheet->getStyle('I')->getNumberFormat()->setFormatCode("h:mm");
 
-$spreadsheet->getStyle($UltimaA_2 . ':' . $UltimaQ_2)->applyFromArray($styleArray2);
-// $spreadsheet->getStyle($UltimaA_3.':'.$UltimaQ_3)->applyFromArray($styleArray2);
+$spreadsheet->getStyle('A')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_NUMBER);
+$spreadsheet->getStyle('J')->getNumberFormat()->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD_INTEGER);
+
+$spreadsheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT);
+
+$spreadsheet->getStyle('A1:Q1')->getAlignment()->setIndent(1);
+$spreadsheet->getStyle('A:Q')->getAlignment()->setIndent(1);
+
+$spreadsheet->getStyle($UltimaI_2)->getNumberFormat()->setFormatCode("[h]:mm");
+$spreadsheet->getStyle($UltimaH_2)->getNumberFormat()->setFormatCode("[h]:mm");
+$spreadsheet->getStyle("$UltimaA_2:$UltimaQ_2")->applyFromArray($styleArray2);
 
 sqlsrv_free_stmt($result);
 sqlsrv_close($link);
-# Crear un "escritor"
+
 try {
     BorrarArchivosPDF('archivos/*.xls'); /** Borra los archivos anteriores a la fecha actual */
     $MicroTime = microtime(true);
-    $NombreArchivo = "Reporte_Horas_Costeadas_" . $MicroTime . ".xls";
+    $NombreArchivo = "Reporte_Horas_Costeadas_$MicroTime.xls";
 
     $writer = new Xls($documento);
     # Le pasamos la ruta de guardado
     $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, 'Xls');
-    $writer->save('archivos/' . $NombreArchivo);
+    $writer->save("archivos/$NombreArchivo");
     // $writer->save('php://output');
 
-    $data = array('status' => 'ok', 'archivo' => 'archivos/' . $NombreArchivo, 'Otros' => $UltimaQ_3);
+    $data = ['status' => 'ok', 'archivo' => "archivos/$NombreArchivo", 'Otros' => $UltimaQ_3];
     echo json_encode($data);
     exit;
 
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = ['status' => 'error'];
     echo json_encode($data);
     exit;
 }

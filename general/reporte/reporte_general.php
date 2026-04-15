@@ -128,8 +128,19 @@ if ($THColu) {
         }
     }
 }
+
+$Etiquetas = $_SESSION['LABELS'] ?? [];
+
 $codString = fn($cod) => ($cod === '00' || $cod === '0') ? '' : "($cod)";
 $TotalLegajos = count($groupLega);
+
+$labelEmpr = $LABEL_ESTRUCT('Empr');
+$labelPlan = $LABEL_ESTRUCT('Plan');
+$labelSucu = $LABEL_ESTRUCT('Sucu');
+$labelGrup = $LABEL_ESTRUCT('Grup');
+$labelSect = $LABEL_ESTRUCT('Sect');
+$labelSecc = $LABEL_ESTRUCT('Secc');
+
 foreach ($groupLega as $encabezado) {
     $Estruct = $encabezado['Estruct'];
 
@@ -177,25 +188,25 @@ foreach ($groupLega as $encabezado) {
         "<td style='width:28%'>{$encabezado['Docu']}</td>",
         '</tr>',
         '<tr>',
-        "<td style='width:5%'><b>Empresa:</b></td>",
+        "<td style='width:5%'><b>{$labelEmpr}</b></td>",
         "<td style='width:28%'>" . $codString($EstructEmpr) . " {$EstructEmprString}</td>",
         "<td style='width:5%'><b>CUIT:</b></td>",
         "<td style='width:28%'>{$Cuit}</td>",
-        "<td style='width:5%'><b>Planta:</b></td>",
+        "<td style='width:5%'><b>{$labelPlan}</b></td>",
         "<td style='width:28%'>" . $codString($EstructPlan) . " {$EstructPlanString}</td>",
         '</tr>',
         '<tr>',
-        "<td style='width:5%'><b>Sucursal:</b></td>",
+        "<td style='width:5%'><b>{$labelSucu}</b></td>",
         "<td style='width:28%'>" . $codString($EstructSucu) . " {$EstructSucuString}</td>",
-        "<td style='width:5%'><b>Sector:</b></td>",
+        "<td style='width:5%'><b>{$labelSect}</b></td>",
         "<td style='width:28%'>" . $codString($EstructSect) . " {$EstructSectString}</td>",
-        "<td style='width:5%'><b>Sección:</b></td>",
+        "<td style='width:5%'><b>{$labelSecc}</b></td>",
         "<td style='width:28%'>" . $codString($EstructSec2) . " " . ($EstructSec2String == 'Todas' ? '' : $EstructSec2String) . "</td>",
         '</tr>',
         '<tr>',
-        "<td style='width:5%'><b>Grupo:</b></td>",
+        "<td style='width:5%'><b>{$labelGrup}</b></td>",
         "<td style='width:28%'>" . $codString($EstructGrup) . " {$EstructGrupString}</td>",
-        "<td style='width:5%'><b>Convenio:</b></td>",
+        "<td style='width:5%'><b>Convenio</b></td>",
         "<td style='width:28%'>" . $codString($EstructConv) . " {$EstructConvString}</td>",
         "<td></td>",
         '</tr>',

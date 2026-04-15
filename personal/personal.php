@@ -48,14 +48,12 @@
                     <thead class="text-uppercase border-top-0">
                         <tr>
                             <th class="text-center p-2"><i class="bi bi-pencil"></i></th>
-                            <th><span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    data-original-title="<strong>Legajo</strong>">LEG.</span></th>
+                            <th><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Legajo</strong>">LEG.</span></th>
                             <!-- <th>NOMBRE y APELLIDO</th> -->
-                            <th class="text-center"><span data-toggle="tooltip" data-placement="top" data-html="true"
-                                    data-original-title="<strong>Tipo de personal</strong>">TIPO</span></th>
-                            <th>EMPRESA / PLANTA</th>
-                            <th>SECTOR / SECCION</th>
-                            <th>GRUPO / SUCURSAL</th>
+                            <th class="text-center"><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Tipo de personal</strong>">TIPO</span></th>
+                            <th><?=$labelEmpr?> / <?=$labelPlan?></th>
+                            <th><?=$labelSect?> / <?=$labelSecc?></th>
+                            <th><?=$labelGrup?> / <?=$labelSucu?></th>
                             <th>CONVENIO / REGLA</th>
                         </tr>
                     </thead>
@@ -65,11 +63,11 @@
     </div>
     <!-- fin container -->
     <?php
+    require __DIR__ . '/modal_filtros.php';
     /** INCLUIMOS LIBRERÍAS JQUERY */
     require __DIR__ . "/../js/jquery.php";
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "/../js/DataTable.php";
-    require __DIR__ . '/modal_Filtros.html';
     require __DIR__ . '/modalNuevoLeg.php';
     ?>
     <script src="altaLeg-min.js?v=<?= version_file("/personal/altaLeg-min.js") ?>"></script>
@@ -84,24 +82,22 @@
         //Fetch data using Axios Ajax
         $('#LegNume').mask('000000000');
 
-        axios.get('getEstruct.php?Estruct=Emp&length=1000')
-            .then(function (response) {
-                //Get the select element
-                let LegEmpr = document.getElementById("LegEmpr");
+        axios.get('getEstruct.php?Estruct=Emp&length=1000').then(function (response) {
+            //Get the select element
+            let LegEmpr = document.getElementById("LegEmpr");
 
-                //Loop through the response data and create a new option element for each item
-                response.data.forEach(function (item) {
-                    let option = document.createElement("option");
-                    option.value = item.id;
-                    option.text = item.text;
+            //Loop through the response data and create a new option element for each item
+            response.data.forEach(function (item) {
+                let option = document.createElement("option");
+                option.value = item.id;
+                option.text = item.text;
 
-                    //Add the new option element to the select element
-                    LegEmpr.add(option);
-                });
-            })
-            .catch(function (error) {
-                console.log(error);
+                //Add the new option element to the select element
+                LegEmpr.add(option);
             });
+        }).catch(function (error) {
+            console.log(error);
+        });
         select2Simple('#LegEmpr', 'Empresa', true, false, '100%')
     </script>
 </body>

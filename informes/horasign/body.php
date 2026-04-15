@@ -80,14 +80,14 @@
     <div class="form-row py-2" id="filters">
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Empresa -->
-            <label for="selectjs_empresa" class="mb-1">Empresas</label>
-            <select class="form-control" id="selectjs_empresa">
+            <label for="selectjs_empresa" class="mb-1"><?=$labelEmprPlu?></label>
+            <select class="form-control" id="selectjs_empresa" data-label="<?=$labelEmprPlu?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Planta -->
-            <label for="selectjs_planta" class="mb-1">Plantas </label>
-            <select class="form-control" id="selectjs_planta" name="selectjs_planta">
+            <label for="selectjs_planta" class="mb-1"><?=$labelPlanPlu?></label>
+            <select class="form-control" id="selectjs_planta" name="selectjs_planta" data-label="<?=$labelPlanPlu?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
@@ -98,26 +98,26 @@
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Sector -->
-            <label for="selectjs_sector" class="mb-1">Sectores</label>
-            <select class="form-control" id="selectjs_sector" name="selectjs_sector">
+            <label for="selectjs_sector" class="mb-1"><?=$labelSectPlu?></label>
+            <select class="form-control" id="selectjs_sector" name="selectjs_sector" data-label="<?=$labelSectPlu?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Secciones -->
-            <label for="selectjs_seccion" class="mb-1">Secciones</label>
-            <select class="form-control" id="selectjs_seccion" name="selectjs_seccion">
+            <label for="selectjs_seccion" class="mb-1"><?=$labelSeccPlu?></label>
+            <select class="form-control" id="selectjs_seccion" name="selectjs_seccion" data-label="<?=$labelSeccPlu?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Grupos -->
-            <label for="selectjs_grupos" class="mb-1">Grupos</label>
-            <select class="form-control" id="selectjs_grupos" name="selectjs_grupos">
+            <label for="selectjs_grupos" class="mb-1"><?=$labelGrupPlu?></label>
+            <select class="form-control" id="selectjs_grupos" name="selectjs_grupos" data-label="<?=$labelGrupPlu?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Sucursal -->
-            <label for="selectjs_sucursal" class="mb-1">Sucursales</label>
-            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal">
+            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucuPlu?></label>
+            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucuPlu?>">
             </select>
         </div>
     </div>

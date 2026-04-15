@@ -41,43 +41,43 @@
                         <div class="col-12 mt-3">
                             <div class="form-inline">
                                 <!-- Empresa -->
-                                <label for="Emp" class="mr-2 w120">Empresa</label>
-                                <select class="form-control selectjs_empresa w300" id="Emp" name="Emp">
+                                <label for="Emp" class="mr-2 w120"><?=$labelEmpr?></label>
+                                <select class="form-control selectjs_empresa w300" id="Emp" name="Emp" data-label="<?=$labelEmpr?>">
                                 </select>
                                 <span id="trash_emp" class="trash"></span>
                             </div>
                             <div class=" form-inline mt-2">
                                 <!-- Planta -->
-                                <label for="Plan" class="mr-2 w120">Planta</label>
-                                <select class="form-control selectjs_plantas w300" id="Plan" name="Plan">
+                                <label for="Plan" class="mr-2 w120"><?=$labelPlan?></label>
+                                <select class="form-control selectjs_plantas w300" id="Plan" name="Plan" data-label="<?=$labelPlan?>">
                                 </select>
                                 <span id="trash_plan" class="trash"></span>
                             </div>
                             <div class="form-inline mt-2">
                                 <!-- Sector -->
-                                <label for="Sect" class="mr-2 w120">Sector</label>
-                                <select class="form-control selectjs_sectores w300" id="Sect" name="Sect">
+                                <label for="Sect" class="mr-2 w120"><?=$labelSect?></label>
+                                <select class="form-control selectjs_sectores w300" id="Sect" name="Sect" data-label="<?=$labelSect?>">
                                 </select>
                                 <span id="trash_sect" class="trash"></span>
                             </div>
                             <div class="form-inline mt-2" id="select_seccion">
                                 <!-- Seccion -->
-                                <label for="Sec2" class="mr-2 w120">Sección</label>
-                                <select disabled class="form-control select_seccion w300" id="Sec2" name="Sec2">
+                                <label for="Sec2" class="mr-2 w120"><?=$labelSecc?></label>
+                                <select disabled class="form-control select_seccion w300" id="Sec2" name="Sec2" data-label="<?=$labelSecc?>">
                                 </select>
                                 <span id="trash_secc" class="trash"></span>
                             </div>
                             <div class="form-inline mt-2">
                                 <!-- Grupos -->
-                                <label for="Grup" class="mr-2 w120">Grupos</label>
-                                <select class="form-control selectjs_grupos w300" id="Grup" name="Grup">
+                                <label for="Grup" class="mr-2 w120"><?=$labelGrup?></label>
+                                <select class="form-control selectjs_grupos w300" id="Grup" name="Grup" data-label="<?=$labelGrup?>">
                                 </select>
                                 <span id="trash_grup" class="trash"></span>
                             </div>
                             <div class="form-inline mt-2">
                                 <!-- Sucursal -->
-                                <label for="Sucur" class="mr-2 w120">Sucursal</label>
-                                <select class="form-control selectjs_sucursal w300" id="Sucur" name="Sucur">
+                                <label for="Sucur" class="mr-2 w120"><?=$labelSucu?></label>
+                                <select class="form-control selectjs_sucursal w300" id="Sucur" name="Sucur" data-label="<?=$labelSucu?>">
                                 </select>
                                 <span id="trash_sucur" class="trash"></span>
                             </div>
@@ -155,9 +155,9 @@
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
-    <script src="js/procesar-min.js?v=<?= vjs() ?>"></script>
-    <script src="js/select.js?v=<?= vjs() ?>"></script>
-    <script src="js/trash-select.js?v=<?= vjs() ?>"></script>
+    <script src="js/procesar.js?v=<?= version_file("/cierres/js/procesar.js") ?>"></script>
+    <script src="js/select.js?v=<?= version_file("/cierres/js/select.js") ?>"></script>
+    <script src="js/trash-select.js?v=<?= version_file("/cierres/js/trash-select.js") ?>"></script>
 
 </body>
 
