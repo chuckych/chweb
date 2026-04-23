@@ -36,7 +36,7 @@ function version($html = false)
 }
 function verDBLocal(): int
 {
-    return 20251016; // Version de la base de datos local
+    return 20260422; // Version de la base de datos local
 }
 function checkDBLocal()
 {
@@ -44,6 +44,7 @@ function checkDBLocal()
     if ($v['a'] != verDBLocal()) {
         session_destroy();
         header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login si la version de la base de datos es distinta a la version del servidor
+        exit;
     }
 }
 function E_ALL()
@@ -62,47 +63,43 @@ function secure_auth_ch()
 {
     if (!$_SESSION) {
         header("location:/" . HOMEHOST . "/login/?l=" . urlencode(($_SERVER['HTTP_REFERER'] ?? '')));
+        exit;
     }
     timeZone();
     timeZone_lang();
-    $_SESSION["secure_auth_ch"] = $_SESSION["secure_auth_ch"] ?? ''; // Si no existe la variable la crea
-    $_SESSION['VER_DB_LOCAL'] = $_SESSION['VER_DB_LOCAL'] ?? ''; // Si no existe la variable la crea
-    if (
-        $_SESSION["secure_auth_ch"] !== true // Si no esta autenticado
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID'])) // Si no existe el UID
-        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR']) // Si la IP no es la misma
-        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT']) // Si el USER_AGENT no es el mismo
-        || (!$_SESSION['VER_DB_LOCAL']) // Si no existe la variable de la version de la base de datos local
-        // || ($_SESSION['DIA_ACTUAL'] !== hoy()) // Si eliminar dia actual no es el mismo
-    ) {
-        // echo '<script>window.location.href="/' . HOMEHOST . '/login/"</script>';
-        // PrintRespuestaJson('error', 'Sesión Expirada');
+    $_SESSION["secure_auth_ch"] ??= '';
+    $_SESSION['VER_DB_LOCAL'] ??= '';
+
+    // Si no existe la variable de la version de la base de datos local
+    if ($_SESSION["secure_auth_ch"] !== true || empty($_SESSION['UID']) || (!$_SESSION['VER_DB_LOCAL'])) {
         if (isset($_SERVER['HTTP_REFERER'])) {
-            header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER'])); // Redirecciona a login
+            // Redirecciona a login con la URL de referencia
+            header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER']));
         } else {
             header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login
         }
         exit;
-    } else {
-        // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
-        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
-        $fechaGuardada = $_SESSION["ultimoAcceso"]; // Fecha de ultimo acceso
-        $ahora = date("Y-m-d H:i:s"); // Fecha actual
-        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada)); // Tiempo transcurrido
-        /** comparamos el tiempo transcurrido */
-        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) { // Si el tiempo transcurrido es mayor a la variable LIMIT_SESION
-            /** Si pasaron 60 minutos o más */
-            session_destroy(); // Destruye la sesión
-            /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'] ?? '')); // Redirecciona a login
-            /** envío al usuario a la pag. de autenticación */
-            exit(); // Fin del script
-            /** sino, actualizo la fecha de la sesión */
-        } else {
-            $_SESSION["ultimoAcceso"] = $ahora; // Actualizo la fecha de la sesión
-        }
-        checkDBLocal();
     }
+
+    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
+    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+
+    $fechaGuardada = $_SESSION["ultimoAcceso"]; // Fecha de ultimo acceso
+    $ahora = date("Y-m-d H:i:s"); // Fecha actual
+    $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada)); // Tiempo transcurrido
+    // comparamos el tiempo transcurrido 
+    if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) { // Si el tiempo transcurrido es mayor a la variable LIMIT_SESION
+        // Si pasaron 60 minutos o más
+        session_destroy(); // Destruye la sesión
+        // destruyo la sesión
+        // envío al usuario a la pag. de autenticación
+        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'] ?? ''));
+        exit();
+    } else {
+        // sino, actualizo la fecha de la sesión
+        $_SESSION["ultimoAcceso"] = $ahora; // Actualizo la fecha de la sesión
+    }
+    checkDBLocal();
     // session_regenerate_id(); // Regenera la sesión
     E_ALL(); // Funciones de error
 }
@@ -112,36 +109,30 @@ function secure_auth_ch_json()
     timeZone_lang();
 
     $secure_auth_ch = $_SESSION["secure_auth_ch"] ?? '';
-    if (
-        $secure_auth_ch !== true
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-        // || ($_SESSION['DIA_ACTUAL'] !== hoy())
-    ) {
+    if ($secure_auth_ch !== true || empty($_SESSION['UID'])) {
         $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
         $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($HTTP_REFERER) . '">Iniciar sesi&oacute;n </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
+    }
+
+    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
+    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+
+    $fechaGuardada = $_SESSION["ultimoAcceso"];
+    $ahora = date("Y-m-d H:i:s");
+    $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+    // comparamos el tiempo transcurrido
+    if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+        // Si pasaron 60 minutos o más
+        // destruyo la sesión
+        // envío al usuario a la pag. de autenticación
+        session_destroy();
+        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER']));
+        exit();
     } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
-        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
-        /** */
-        $fechaGuardada = $_SESSION["ultimoAcceso"];
-        $ahora = date("Y-m-d H:i:s");
-        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
-        /** comparamos el tiempo transcurrido */
-        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
-            /** Si pasaron 60 minutos o más */
-            session_destroy();
-            /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER']));
-            /** envío al usuario a la pag. de autenticación */
-            exit();
-            /** sino, actualizo la fecha de la sesión */
-        } else {
-            $_SESSION["ultimoAcceso"] = $ahora;
-        }
+        // sino, actualizo la fecha de la sesión
+        $_SESSION["ultimoAcceso"] = $ahora;
     }
     // session_regenerate_id(); // Regenera la sesión para prevenir ataques de fijación de sesión
     E_ALL();
@@ -150,38 +141,30 @@ function secure_auth_ch2()
 {
     timeZone();
     timeZone_lang();
-    if (
-        $_SESSION["secure_auth_ch"] !== true
-        || (empty($_SESSION['UID']) || is_int($_SESSION['UID']))
-        // || ($_SESSION['IP_CLIENTE'] !== $_SERVER['REMOTE_ADDR'])
-        // || ($_SESSION['USER_AGENT'] !== $_SERVER['HTTP_USER_AGENT'])
-        // || ($_SESSION['DIA_ACTUAL'] !== hoy())
-    ) {
-        // PrintRespuestaJson('error', 'Session Expirada');
+    if ($_SESSION["secure_auth_ch"] !== true
+        || empty($_SESSION['UID'])) {
         echo '<div class="p-3 fw5 text-danger">Sesión Expirada</div>';
         exit;
-    } else {
-        /** chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave */
-        (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
-        /** */
-        $fechaGuardada = $_SESSION["ultimoAcceso"];
-        $ahora = date("Y-m-d H:i:s");
-        $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
-        /** comparamos el tiempo transcurrido */
-        if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
-            /** Si pasaron 60 minutos o más */
-            session_destroy();
-            /** destruyo la sesión */
-            header("location:/" . HOMEHOST . "/login/?sesion");
-            /** envío al usuario a la pag. de autenticación */
-            exit();
-            /** sino, actualizo la fecha de la sesión */
-        } else {
-            $_SESSION["ultimoAcceso"] = $ahora;
-        }
-        checkDBLocal();
     }
-    // session_regenerate_id(); // Regenera la sesión para prevenir ataques de fijación de sesión
+    // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
+    (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
+
+    $fechaGuardada = $_SESSION["ultimoAcceso"];
+    $ahora = date("Y-m-d H:i:s");
+    $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada));
+    // Comparamos el tiempo transcurrido
+    if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) {
+        // Si pasaron 60 minutos o más
+        // destruyo la sesión
+        // envío al usuario a la pag. de autenticación
+        session_destroy();
+        header("location:/" . HOMEHOST . "/login/?sesion");
+        exit();
+    } else {
+        // sino, actualizo la fecha de la sesión
+        $_SESSION["ultimoAcceso"] = $ahora;
+    }
+    checkDBLocal();
     E_ALL();
 }
 /** ultimaacc */
@@ -204,10 +187,12 @@ function secureVar($key)
 }
 function vjs()
 {
-    if ($_SERVER['SERVER_NAME'] == 'localhost') {
-        return time();
-    } else {
-        return version();
+    switch ($_SERVER['SERVER_NAME']) {
+        case 'localhost':
+        case 'chweb.local':
+            return time();
+        default:
+            return version();
     }
 }
 function version_file($pathFile)
@@ -1019,9 +1004,9 @@ function ExisteModRol($modulo)
     define('ID_MODULO', $modulo);
     if (intval($modulo) > 0) {
         $r = array_filter($_SESSION["MODS_ROL"], function ($e) {
-            return $e['modsrol'] === ID_MODULO;
+            return $e['modsrol'] == ID_MODULO;
         });
-        $modulo_actual = (filtrarObjeto($_SESSION['MODULOS'], 'id', $modulo))['modulo']; // Nombre del modulo actual
+        $modulo_actual = (filtrarObjeto(($_SESSION['MODULOS'] ?? []), 'id', $modulo))['modulo']; // Nombre del modulo actual
         access_log($modulo_actual);
         if (!$r) {
             header("Location:/" . HOMEHOST . "/");
@@ -2096,7 +2081,19 @@ function EstadoProceso($url)
         $respuesta = curl_exec($ch);
         $curl_errno = curl_errno($ch);
 
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                if (PHP_VERSION_ID >= 80000) {
+                    unset($ch);
+                } else {
+                    curl_close($ch);
+                }
+            }
+        }
 
         // Si hay error de curl, retornar error
         if ($curl_errno > 0) {
@@ -2153,13 +2150,21 @@ function pingWebService($textError) // Función para validar que el Webservice d
     if ($curl_errno > 0) { // si hay error
         $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
-        curl_close($ch); // Cerrar curl antes de salir
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // Cerrar curl antes de salir
         PrintRespuestaJson('Error', $textError);
         exit; // salimos del script
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    curl_close($ch); // close curl handle
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    } // close curl handle
 
     return ($http_code == 201) ? true : PrintRespuestaJson('Error', $textError) . exit; // escribir en el log
 }
@@ -2202,7 +2207,11 @@ function pingWS()
     }
 
     $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-    curl_close($ch); // close curl handle
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    } // close curl handle
 
     return ($http_code == 201) ? true : false; // escribir en el log
 }
@@ -2229,7 +2238,11 @@ function procesar_legajo($legajo, $FechaDesde, $FechaHasta)
             return "Error";
             // exit;
         }
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        }
         if ($httpCode == 404) {
             fileLog("Error al procesar. Legajo \"$legajo\" desde \"$FechaDesde\" a \"$FechaHasta\"", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
             return $respuesta;
@@ -2266,7 +2279,11 @@ function FicharHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $Ti
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($httpCode == 404) {
         $text = "Error al ingresar fichadas \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2310,7 +2327,11 @@ function Liquidar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($httpCode == 404) {
         $text = "Error al Liquidar. Legajo \"$LegajoDesde\" a \"$LegajoHasta\". Fecha \"$FechaDesde\" a \"$FechaHasta\""; // set error message
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2355,7 +2376,11 @@ function Procesar($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoDeP
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
 
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
@@ -2400,7 +2425,11 @@ function IngresarNovedad($TipoDePersonal, $LegajoDesde, $LegajoHasta, $FechaDesd
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         echo $respuesta;
@@ -2438,7 +2467,11 @@ function getHorario($FechaDesde, $FechaHasta, $LegajoDesde, $LegajoHasta, $TipoD
         PrintRespuestaJson('error', 'No hay Conexión..');
         exit;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($httpCode == 404) {
         fileLog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         $data = array('status' => 'error', 'dato' => $respuesta);
@@ -2573,6 +2606,7 @@ function getRemoteFile($url, $timeout = 10)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
     curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     $file_contents = curl_exec($ch);
+    // error_log("file_contents: " . print_r($file_contents, true)); // Log para depuración
     $curl_errno = curl_errno($ch); // get error code
     $curl_error = curl_error($ch); // get error information
     if ($curl_errno > 0) { // si hay error
@@ -2580,12 +2614,16 @@ function getRemoteFile($url, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($file_contents) {
         return $file_contents;
     } else {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log';
-        fileLog('Error al obtener datos', $pathLog);
+        // fileLog('Error al obtener datos', $pathLog);
         return false;
     }
 }
@@ -2630,14 +2668,17 @@ function sendRemoteData($url, $payload, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($file_contents) {
         return $file_contents;
     } else {
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog('Error al obtener datos', $pathLog); // escribir en el log de errores el error
     }
-    exit;
 }
 function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
 {
@@ -2659,7 +2700,11 @@ function sendApiData($url, $payload, $method = 'POST', $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2690,7 +2735,11 @@ function curlAPI($url, $payload, $method, $token, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     if ($file_contents) {
         return $file_contents;
     } else {
@@ -2949,8 +2998,11 @@ function fileLog($text, $ruta_archivo, $type = false)
 }
 function log_local($msg)
 {
-    if ($_SERVER['HTTP_HOST'] == 'chweb.local') {
-        error_log($msg);
+    switch ($_SERVER['HTTP_HOST'] ?? '') {
+        case 'localhost':
+        case 'chweb.local':
+            error_log($msg);
+            break;
     }
 }
 function fileLogJson($text, $ruta_archivo, $date = true)
@@ -3157,7 +3209,7 @@ function rowCount_pdoQuery($sql)
 function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
-        return $e[$key] === $valor;
+        return $e[$key] == $valor;
     });
     foreach ($r as $key => $value) {
         return ($value);
@@ -3166,7 +3218,7 @@ function filtrarObjeto($array, $key, $valor) // Funcion para filtrar un objeto
 function filtrarObjetoArr($array, $key, $valor) // Funcion para filtrar un objeto
 {
     $r = array_filter($array, function ($e) use ($key, $valor) {
-        return $e[$key] === $valor;
+        return $e[$key] == $valor;
     });
     foreach ($r as $key => $value) {
         $v[] = $value;
@@ -3178,7 +3230,7 @@ function filtrarObjetoArr2($array, $key, $key2, $valor, $valor2) // Funcion para
     $a = [];
     if ($array && $key && $key2 && $valor && $valor2) {
         foreach ($array as $v) {
-            if ($v[$key] === $valor && $v[$key2] === $valor2) {
+            if ($v[$key] == $valor && $v[$key2] == $valor2) {
                 $a[] = $v;
             }
         }
@@ -3425,7 +3477,11 @@ function pingApiMobileHRP($urlAppMobile)
     ];
     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     $file_contents = curl_exec($ch);
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     return ($file_contents) ? $file_contents : false;
     // exit;
 }
@@ -3454,7 +3510,11 @@ function sendApiMobileHRP($payload, $urlApp, $paramsUrl, $idCompany, $post = tru
         (response(0, 1, $MESSAGE, '', 0, 1, $idCompany));
         exit; // salimos del script
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
     return ($file_contents) ? $file_contents : false;
 }
 function confidenceFaceStr($confidence, $id_api, $threshold)
@@ -3823,7 +3883,11 @@ function requestApi($url, $token, $authBasic, $payload, $timeout = 10, $method =
         $text = "cURL Error ($curl_errno): $curl_error"; // set error message
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
 
     if ($file_contents) {
         return $file_contents;
@@ -3961,7 +4025,11 @@ function actualizar_cache($endpoint)
             $text = "cURL Error ($curl_errno): $curl_error"; // set error message
             throw new Exception($text);
         }
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        }
     } catch (Exception $e) {
         filelog($e->getMessage(), 'error.log');
     }
