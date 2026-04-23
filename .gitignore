@@ -23,11 +23,13 @@ mobileApikey.php
 /general/dataGeneral2.php
 confTarea.php
 confTarea.ini
+confTarea.ini
 pruebaApiWF.php
 pruebaDataWFlow.php
 pruebaApiML.php
 /sidebar
 /.test
+/.github
 /mobile/hrp/*.json
 /mobile/hrp/fotos/*.jpg
 /mobile/hrp/fotos/*.png
@@ -45,6 +47,7 @@ pruebaApiML.php
 *.tar
 *.backup
 *.ini
+*.lock
 app-data/json/*.json
 *--old.php
 *--old.js

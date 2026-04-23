@@ -984,4 +984,13 @@ if ($verDB < 20251016) {
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
 }
+if ($verDB < 20260422) {
+
+    $verDB = 20260422; // nueva version de la DB. modificar tambien en la funcion verDBLocal() del archivo de funciones.php
+
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('48', 'L1q1d-rC', 'Liquidar Custom', 83, '1', 1)");
+    fileLog("Se inserto el modulo: \"Liquidar Custom\"", $pathLog); // escribir en el log
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
+}
 

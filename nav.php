@@ -54,6 +54,10 @@ $mapOperaciones = [
         'url' => '/' . HOMEHOST . '/liquidar/',
         'title' => 'Generar Liquidación',
     ],
+    'Liquidar Custom' => [
+        'url' => '/' . HOMEHOST . '/liquidar/custom/',
+        'title' => 'Generar Liquidación Custom',
+    ],
     'Dashboard' => [
         'url' => '/' . HOMEHOST . '/dashboard/',
         'title' => 'Dashboard',
@@ -279,6 +283,7 @@ $mapConfiguracion = [
                                         && ($Modulo2 != 'Otras Novedades')
                                         && ($Modulo2 != 'Horas')
                                         && ($Modulo2 != 'Liquidar')
+                                        && ($Modulo2 != 'Liquidar Custom')
                                         && ($Modulo2 != 'Cta Cte Horas')
                                         && ($Modulo2 != 'Cta Cte')
                                         && ($Modulo2 != 'Novedades')

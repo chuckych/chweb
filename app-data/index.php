@@ -1267,6 +1267,84 @@ Flight::route('GET /params', function () {
     $params = get_params($queryColumn) ?? [];
     Flight::json($params);
 });
+
+Flight::route('GET /liquidar/custom/campos', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $campos = procesarCamposLiquidarLeerCampos();
+        Flight::json($campos ?? []);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('POST /ficnovhor', function () {
+    try {
+        $request = Flight::request();
+        $payload = $request->data;
+        $fic_nove_horas = fic_nove_horas($payload);
+        Flight::json($fic_nove_horas ?? []);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('POST /liquidar/custom/campos', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $request = Flight::request();
+        $payload = $request->data;
+        $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
+        $campos = $payloadData['campos'] ?? [];
+
+        $guardados = procesarCamposLiquidarGuardarCampos($campos);
+
+        Flight::json([
+            'status' => 'ok',
+            'message' => 'Campos guardados correctamente.',
+            'data' => $guardados,
+        ]);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('POST /liquidar/custom/export', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $request = Flight::request();
+        $payload = $request->data;
+        $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
+
+        $resultado = procesarCamposLiquidarExportarTxt($payloadData);
+
+        Flight::json([
+            'status' => 'ok',
+            'message' => 'Archivo exportado correctamente.',
+            'archivo' => $resultado['archivo'] ?? '',
+            'registros' => $resultado['registros'] ?? 0,
+        ]);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
 Flight::route('POST /personal/filtros', function () {
 
     $request = Flight::request();
