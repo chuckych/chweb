@@ -49,6 +49,7 @@ pruebaApiML.php
 *.ini
 *.lock
 app-data/json/*.json
+app-data/json/config/*.json
 *--old.php
 *--old.js
 *--old.css

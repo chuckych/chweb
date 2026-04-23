@@ -20,6 +20,9 @@
         HORAS: 'horas',
         ATRA: 'atra',
         TRAB: 'trab',
+        PRIMER_FICHADA: 'primer_fichada',
+        ULTIMA_FICHADA: 'ultima_fichada',
+        TODAS_FICHADAS: 'todas_fichadas',
         TURSTR: 'turstr',
         LABO: 'labo',
         FERI: 'feri'
@@ -28,10 +31,17 @@
     const FORMATOS = {
         NUMERO: 'numero',
         DECIMAL: 'decimal',
+        HORAS: 'horas',
         TEXTO: 'texto',
         FECHA_YMD: 'YYYY-MM-DD',
+        FECHA_YMD_COMPACTA: 'YYYYMMDD',
+        FECHA_YMD_SLASH: 'YYYY/MM/DD',
         FECHA_MDY: 'MM-DD-YYYY',
-        FECHA_DMY: 'DD-MM-YYYY'
+        FECHA_MDY_COMPACTA: 'MMDDYYYY',
+        FECHA_MDY_SLASH: 'MM/DD/YYYY',
+        FECHA_DMY: 'DD-MM-YYYY',
+        FECHA_DMY_COMPACTA: 'DDMMYYYY',
+        FECHA_DMY_SLASH: 'DD/MM/YYYY'
     };
 
     const cacheCatalogos = {
@@ -75,6 +85,9 @@
         [TIPOS.HORAS]: 'Horas',
         [TIPOS.ATRA]: 'Horas a trabajar',
         [TIPOS.TRAB]: 'Horas trabajadas',
+        [TIPOS.PRIMER_FICHADA]: 'Primer Fichada',
+        [TIPOS.ULTIMA_FICHADA]: 'Ultima Fichada',
+        [TIPOS.TODAS_FICHADAS]: 'Todas las fichadas',
         [TIPOS.TURSTR]: 'Horario',
         [TIPOS.LABO]: 'Laboral',
         [TIPOS.FERI]: 'Feriado'
@@ -83,14 +96,22 @@
     const labelsFormato = {
         [FORMATOS.NUMERO]: 'Numero',
         [FORMATOS.DECIMAL]: 'Decimal',
+        [FORMATOS.HORAS]: 'Horas (HH:MM)',
         [FORMATOS.TEXTO]: 'Texto',
         [FORMATOS.FECHA_YMD]: 'YYYY-MM-DD',
+        [FORMATOS.FECHA_YMD_COMPACTA]: 'YYYYMMDD',
+        [FORMATOS.FECHA_YMD_SLASH]: 'YYYY/MM/DD',
         [FORMATOS.FECHA_MDY]: 'MM-DD-YYYY',
-        [FORMATOS.FECHA_DMY]: 'DD-MM-YYYY'
+        [FORMATOS.FECHA_MDY_COMPACTA]: 'MMDDYYYY',
+        [FORMATOS.FECHA_MDY_SLASH]: 'MM/DD/YYYY',
+        [FORMATOS.FECHA_DMY]: 'DD-MM-YYYY',
+        [FORMATOS.FECHA_DMY_COMPACTA]: 'DDMMYYYY',
+        [FORMATOS.FECHA_DMY_SLASH]: 'DD/MM/YYYY'
     };
     const DEFAULT_SEPARADOR = ',';
 
     let idSecuencial = 1;
+    let uidEnEdicion = null;
     let timerGuardarSeparador = null;
     const ENDPOINT_CAMPOS = '../../app-data/liquidar/custom/campos';
     const ENDPOINT_EXPORT = '../../app-data/liquidar/custom/export';
@@ -114,8 +135,12 @@
     const $resultadoExportacionContenido = $('#resultado-exportacion-contenido');
     const $definirCampos = $('#definirCampos');
 
+    const TEXTO_BOTON_AGREGAR = 'Agregar campo';
+    const TEXTO_BOTON_EDITAR = 'Editar campo';
+
     $(document).ready(function () {
         inicializarSelects();
+        actualizarTextoBotonCampo();
         enlazarEventos();
         inicializarOrdenamientoTabla();
         cargarEtiquetasParagene();
@@ -268,7 +293,7 @@
             '<span>Descargar</span>' +
             '</div>' +
             '</a>' +
-            '<button type="button" class="btn btn-dark border btn-sm font08 w150 mostrar-liquidar-custom" data-archivo="' + escapeHtml(archivo) + '">Mostrar Resultados</button>' +
+            '<button type="button" class="d-none btn btn-dark border btn-sm font08 w150 mostrar-liquidar-custom" data-archivo="' + escapeHtml(archivo) + '">Mostrar Resultados</button>' +
             '</div>' +
             '</div>';
 
@@ -325,7 +350,8 @@
                     return;
                 }
 
-                mostrarNotificacionDescarga(data.archivo, data.message || 'Archivo exportado correctamente.');
+                mostrarNotificacionDescarga(data.archivo, data.message || 'Archivo generado correctamente.');
+                mostrarResultadosArchivo(data.archivo);
             })
             .catch(function (error) {
                 const mensajeBackend = error
@@ -375,7 +401,9 @@
             const posicion = parseInt(item.posicion, 10);
             const tamano = parseInt(item.tamano, 10);
 
-            const tamanoValido = item.formato === FORMATOS.TEXTO ? tamano === 0 : esEnteroPositivo(tamano);
+            const tamanoValido = (item.formato === FORMATOS.TEXTO || item.formato === FORMATOS.HORAS)
+                ? tamano === 0
+                : (esFormatoFecha(item.formato) ? tamano >= 0 : esEnteroPositivo(tamano));
 
             if (!esEnteroPositivo(posicion) || !tamanoValido || !item.tipo || !item.formato) {
                 return null;
@@ -438,7 +466,6 @@
 
         $separador.on('input', function () {
             aplicarReglasSeparador();
-
             if (($separador.val() || '').length === 1) {
                 guardarSeparadorConDebounce();
             }
@@ -470,6 +497,11 @@
         $tablaBody.on('click', '.btn-eliminar-campo', function () {
             const uid = String($(this).data('uid'));
             eliminarCampo(uid);
+        });
+
+        $tablaBody.on('click', '.btn-editar-campo', function () {
+            const uid = String($(this).data('uid'));
+            editarCampo(uid);
         });
 
         $(document).on('click', '.download-liquidar-custom', function () {
@@ -557,14 +589,14 @@
         if (cacheCatalogos[tipo]) {
             inicializarSubtipoSelect(cacheCatalogos[tipo]);
             setSubtipoCargando(false);
-            return;
+            return Promise.resolve();
         }
 
         const endpoint = tipo === TIPOS.NOVEDADES
             ? '../../app-data/novedades'
             : '../../app-data/horas';
 
-        axios.get(endpoint)
+        return axios.get(endpoint)
             .then(function (response) {
                 const listado = normalizarListado(response.data);
                 const opciones = mapearSubtipos(tipo, listado);
@@ -625,14 +657,28 @@
             return;
         }
 
-        insertarOActualizarPorPosicion(datos);
+        const enEdicion = uidEnEdicion !== null;
+
+        if (enEdicion) {
+            actualizarCampoEnEdicion(datos);
+        } else {
+            insertarOActualizarPorPosicion(datos);
+        }
+
         renderizarLista();
-        prepararProximoCampo();
         guardarCampos().catch(function () {
             notificar('No se pudo guardar la configuración.', 'danger');
         });
 
-        notificar('Campo agregado correctamente.', 'success');
+        salirModoEdicion();
+
+        if (enEdicion) {
+            resetFormularioCampo();
+        } else {
+            prepararProximoCampo();
+        }
+
+        notificar(enEdicion ? 'Campo editado correctamente.' : 'Campo agregado correctamente.', 'success');
     }
 
     function leerFormulario() {
@@ -666,8 +712,12 @@
             cantidadErrores += 1;
         }
 
-        if (datos.formato === FORMATOS.TEXTO) {
+        if (datos.formato === FORMATOS.TEXTO || datos.formato === FORMATOS.HORAS) {
             if (datos.tamano !== 0) {
+                cantidadErrores += 1;
+            }
+        } else if (esFormatoFecha(datos.formato)) {
+            if (datos.tamano < 0 || Number.isNaN(datos.tamano)) {
                 cantidadErrores += 1;
             }
         } else if (!esEnteroPositivo(datos.tamano)) {
@@ -715,13 +765,40 @@
         compactarPosiciones();
     }
 
+    function actualizarCampoEnEdicion(nuevoCampo) {
+        const uidEditando = String(uidEnEdicion);
+        const campoOriginal = $.grep(window.camposLiquidar, function (campo) {
+            return String(campo.uid) === uidEditando;
+        })[0];
+
+        if (!campoOriginal) {
+            insertarOActualizarPorPosicion(nuevoCampo);
+            return;
+        }
+
+        nuevoCampo.uid = campoOriginal.uid;
+
+        // Mantener todos menos: el campo original en edición y el campo de la posicion destino.
+        window.camposLiquidar = $.grep(window.camposLiquidar, function (campo) {
+            const esOriginal = String(campo.uid) === uidEditando;
+            const esPosicionDestino = Number(campo.posicion) === Number(nuevoCampo.posicion)
+                && String(campo.uid) !== uidEditando;
+
+            return !esOriginal && !esPosicionDestino;
+        });
+
+        window.camposLiquidar.push(nuevoCampo);
+
+        compactarPosiciones();
+    }
+
     function renderizarLista() {
         ordenarCampos();
 
         if (!window.camposLiquidar.length) {
             $tablaBody.html(
                 '<tr id="tabla-campos-vacio">' +
-                '<td colspan="6" class="text-center text-muted">Todavia no hay campos agregados.</td>' +
+                '<td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>' +
                 '</tr>'
             );
             return;
@@ -735,11 +812,14 @@
                 '<td>' + escapeHtml(String(campo.posicion)) + '</td>' +
                 '<td>' + escapeHtml(tipoColumna) + '</td>' +
                 '<td>' + (campo.subtipoLabel || '-') + '</td>' +
-                '<td>' + escapeHtml(String(campo.tamano)) + '</td>' +
+                '<td class="text-center">' + escapeHtml(String(campo.tamano)) + '</td>' +
                 '<td>' + escapeHtml(campo.formatoLabel) + '</td>' +
-                '<td class="text-right">' +
-                '<button aria-label="Arrastrar para ordenar" type="button" class="hint--left btn btn-sm btn-outline-secondary border-0 btn-ordenar-campo" title="Arrastrar para ordenar"><i class="bi bi-list"></i></button>' +
-                '<button aria-label="Eliminar campo" type="button" class="hint--left btn btn-sm btn-outline-danger border-0 btn-eliminar-campo" data-uid="' + escapeHtml(String(campo.uid)) + '"><i class="bi bi-trash"></i></button>' +
+                '<td class="text-center">' +
+                '<div class="p-1 shadow-sm radius d-inline-flex gap5">' +
+                '<button aria-label="Arrastrar para ordenar" type="button" class="hint--top btn btn-sm btn-outline-secondary border-0 btn-ordenar-campo" title="Arrastrar para ordenar"><i class="bi bi-list"></i></button>' +
+                '<button aria-label="Editar campo" type="button" class="hint--top btn btn-sm btn-outline-info border-0 btn-editar-campo" data-uid="' + escapeHtml(String(campo.uid)) + '" title="Editar"><i class="bi bi-pen"></i></button>' +
+                '<button aria-label="Eliminar campo" type="button" class="hint--top btn btn-sm btn-outline-danger border-0 btn-eliminar-campo" data-uid="' + escapeHtml(String(campo.uid)) + '"><i class="bi bi-trash"></i></button>' +
+                '</div>' +
                 '</td>' +
                 '</tr>';
         });
@@ -765,6 +845,10 @@
         window.camposLiquidar = $.grep(window.camposLiquidar, function (campo) {
             return String(campo.uid) !== String(uid);
         });
+
+        if (String(uidEnEdicion) === String(uid)) {
+            salirModoEdicion();
+        }
 
         compactarPosiciones();
         renderizarLista();
@@ -796,6 +880,78 @@
         $posicion.trigger('focus');
     }
 
+    function resetFormularioCampo() {
+        limpiarErrores();
+        ocultarSubtipo();
+        $tipo.val(null).trigger('change.select2');
+        renderizarOpcionesFormato('');
+        $formato.val(null).trigger('change.select2');
+        $tamano.val('').prop('disabled', false);
+        $posicion.val(String(obtenerSiguientePosicion()));
+        $posicion.trigger('focus');
+    }
+
+    function actualizarTextoBotonCampo() {
+        $btnAgregar.text(uidEnEdicion === null ? TEXTO_BOTON_AGREGAR : TEXTO_BOTON_EDITAR);
+    }
+
+    function salirModoEdicion() {
+        uidEnEdicion = null;
+        actualizarTextoBotonCampo();
+    }
+
+    function setSubtipoSeleccionado(valor, etiqueta) {
+        const value = String(valor || '');
+
+        if (!value) {
+            $subtipo.val(null).trigger('change.select2');
+            return;
+        }
+
+        if ($subtipo.find('option[value="' + value.replace(/"/g, '\\"') + '"]').length === 0) {
+            const texto = etiqueta || value;
+            $subtipo.append($('<option></option>').val(value).text(texto));
+        }
+
+        $subtipo.val(value).trigger('change.select2');
+    }
+
+    function editarCampo(uid) {
+        const campo = $.grep(window.camposLiquidar, function (item) {
+            return String(item.uid) === String(uid);
+        })[0];
+
+        if (!campo) {
+            notificar('No se encontró el campo a editar.', 'danger');
+            return;
+        }
+
+        uidEnEdicion = campo.uid;
+        actualizarTextoBotonCampo();
+
+        $posicion.val(String(campo.posicion));
+        $tipo.val(campo.tipo).trigger('change');
+
+        const aplicarValores = function () {
+            if (esTipoConSubtipo(campo.tipo)) {
+                setSubtipoSeleccionado(campo.subtipo, campo.subtipoLabel);
+            }
+
+            $formato.val(campo.formato).trigger('change');
+            $tamano.val(String(campo.tamano));
+        };
+
+        if (esTipoConSubtipo(campo.tipo)) {
+            cargarSubtipo(campo.tipo).then(function () {
+                aplicarValores();
+            });
+        } else {
+            aplicarValores();
+        }
+
+        $posicion.trigger('focus');
+    }
+
     function obtenerSiguientePosicion() {
         return window.camposLiquidar.length + 1;
     }
@@ -808,8 +964,14 @@
 
     function esFormatoFecha(formato) {
         return formato === FORMATOS.FECHA_YMD
+            || formato === FORMATOS.FECHA_YMD_COMPACTA
+            || formato === FORMATOS.FECHA_YMD_SLASH
             || formato === FORMATOS.FECHA_MDY
-            || formato === FORMATOS.FECHA_DMY;
+            || formato === FORMATOS.FECHA_MDY_COMPACTA
+            || formato === FORMATOS.FECHA_MDY_SLASH
+            || formato === FORMATOS.FECHA_DMY
+            || formato === FORMATOS.FECHA_DMY_COMPACTA
+            || formato === FORMATOS.FECHA_DMY_SLASH;
     }
 
     function esTipoConSubtipo(tipo) {
@@ -819,12 +981,26 @@
     function obtenerOpcionesFormatoPorTipo(tipo) {
         switch (tipo) {
             case TIPOS.FECHA:
-                return [FORMATOS.FECHA_YMD, FORMATOS.FECHA_MDY, FORMATOS.FECHA_DMY];
+                return [
+                    FORMATOS.FECHA_YMD,
+                    FORMATOS.FECHA_YMD_COMPACTA,
+                    FORMATOS.FECHA_YMD_SLASH,
+                    FORMATOS.FECHA_MDY,
+                    FORMATOS.FECHA_MDY_COMPACTA,
+                    FORMATOS.FECHA_MDY_SLASH,
+                    FORMATOS.FECHA_DMY,
+                    FORMATOS.FECHA_DMY_COMPACTA,
+                    FORMATOS.FECHA_DMY_SLASH
+                ];
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
             case TIPOS.ATRA:
             case TIPOS.TRAB:
-                return [FORMATOS.DECIMAL];
+                return [FORMATOS.DECIMAL, FORMATOS.HORAS];
+            case TIPOS.PRIMER_FICHADA:
+            case TIPOS.ULTIMA_FICHADA:
+            case TIPOS.TODAS_FICHADAS:
+                return [FORMATOS.HORAS];
             case TIPOS.LEGAJO:
             case TIPOS.DNI_LEGAJO:
             case TIPOS.COD_EMPRESA:
@@ -883,12 +1059,12 @@
             case TIPOS.FECHA:
                 $formato.prop('disabled', false);
                 $formato.val(FORMATOS.FECHA_YMD).trigger('change');
-                $tamano.prop('disabled', true).val('10');
+                $tamano.prop('disabled', true).val('0');
                 break;
             case TIPOS.LEGAJO:
                 $formato.val(FORMATOS.NUMERO).trigger('change');
                 $formato.prop('disabled', true);
-                $tamano.prop('disabled', false).val('11');
+                $tamano.prop('disabled', false).val('1');
                 break;
             case TIPOS.APNO:
                 $formato.val(FORMATOS.TEXTO).trigger('change');
@@ -898,7 +1074,7 @@
             case TIPOS.DNI_LEGAJO:
                 $formato.val(FORMATOS.NUMERO).trigger('change');
                 $formato.prop('disabled', true);
-                $tamano.prop('disabled', false).val('8');
+                $tamano.prop('disabled', false).val('1');
                 break;
             case TIPOS.CUIL_LEGAJO:
                 $formato.val(FORMATOS.TEXTO).trigger('change');
@@ -914,7 +1090,7 @@
             case TIPOS.COD_SUCURSAL:
                 $formato.val(FORMATOS.NUMERO).trigger('change');
                 $formato.prop('disabled', true);
-                $tamano.prop('disabled', false).val('3');
+                $tamano.prop('disabled', false).val('1');
                 break;
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
@@ -922,7 +1098,14 @@
             case TIPOS.TRAB:
                 $formato.prop('disabled', false);
                 $formato.val(FORMATOS.DECIMAL).trigger('change');
-                $tamano.prop('disabled', false).val('8');
+                $tamano.prop('disabled', false).val('1');
+                break;
+            case TIPOS.PRIMER_FICHADA:
+            case TIPOS.ULTIMA_FICHADA:
+            case TIPOS.TODAS_FICHADAS:
+                $formato.val(FORMATOS.HORAS).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', true).val('0');
                 break;
             case TIPOS.TURSTR:
                 $formato.val(FORMATOS.TEXTO).trigger('change');
@@ -942,7 +1125,7 @@
     }
 
     function aplicarReglasFormato() {
-        if ($formato.val() === FORMATOS.TEXTO) {
+        if ($formato.val() === FORMATOS.TEXTO || $formato.val() === FORMATOS.HORAS) {
             $tamano.val('0');
             $tamano.prop('disabled', true);
             return;
@@ -952,7 +1135,7 @@
             if (!esFormatoFecha($formato.val())) {
                 $formato.val(FORMATOS.FECHA_YMD).trigger('change.select2');
             }
-            $tamano.val('10');
+            $tamano.val('0');
             $tamano.prop('disabled', true);
             return;
         }
@@ -960,6 +1143,14 @@
         if ($tipo.val() === TIPOS.LEGAJO) {
             $tamano.prop('disabled', false);
             return;
+        }
+
+        if (
+            ($tipo.val() === TIPOS.NOVEDADES || $tipo.val() === TIPOS.HORAS || $tipo.val() === TIPOS.ATRA || $tipo.val() === TIPOS.TRAB)
+            && $formato.val() === FORMATOS.DECIMAL
+            && !esEnteroPositivo(parseInt($tamano.val(), 10))
+        ) {
+            $tamano.val('8');
         }
 
         $tamano.prop('disabled', false);

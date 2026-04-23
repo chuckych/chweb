@@ -7,7 +7,7 @@ function procesarCamposLiquidarClienteId(): string
     $clienteId = preg_replace('/[^A-Za-z0-9_-]/', '', $clienteId) ?: '';
 
     if ($clienteId === '') {
-        throw new Exception('No se encontro el ID_CLIENTE de la sesion.', 400);
+        throw new Exception('No se encontró el ID_CLIENTE de la sesion.', 400);
     }
 
     return $clienteId;
@@ -45,7 +45,9 @@ function procesarCamposLiquidarNormalizarCampo($item): ?array
     $tamano = isset($item['tamano']) ? (int) $item['tamano'] : 0;
     $formato = isset($item['formato']) ? (string) $item['formato'] : '';
 
-    $tamanoValido = ($formato === 'texto') ? ($tamano === 0) : ($tamano > 0);
+    $tamanoValido = ($formato === 'texto' || $formato === 'horas')
+        ? ($tamano === 0)
+        : (procesarCamposLiquidarEsFormatoFecha($formato) ? ($tamano >= 0) : ($tamano > 0));
 
     if ($posicion <= 0 || $tipo === '' || !$tamanoValido || $formato === '') {
         return null;
@@ -143,17 +145,17 @@ function procesarCamposLiquidarLeerConfiguracion(): array
     $data = json_decode($contenido, true);
 
     if (json_last_error() !== JSON_ERROR_NONE) {
-        throw new Exception('El archivo de configuracion de campos no es valido.', 500);
+        throw new Exception('El archivo de configuración de campos no es valido.', 500);
     }
 
     $config = procesarCamposLiquidarNormalizarConfiguracion($data);
 
-    // Si se leyo desde la ruta legacy, intenta migrar a la nueva carpeta de config.
+    // Si se leyó desde la ruta legacy, intenta migrar a la nueva carpeta de config.
     if ($rutaArchivo === $rutaArchivoLegacy) {
         try {
             procesarCamposLiquidarGuardarConfiguracion($config['campos'] ?? [], $config['separador'] ?? ',');
         } catch (Throwable $th) {
-            // Mantener lectura funcional aunque falle migracion automatica.
+            // Mantener lectura funcional aunque falle migración automática.
         }
     }
 
@@ -176,7 +178,7 @@ function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ','): 
     $json = json_encode($config, JSON_PRETTY_PRINT);
 
     if ($json === false) {
-        throw new Exception('No se pudo serializar la configuracion de campos.', 500);
+        throw new Exception('No se pudo serializar la configuración de campos.', 500);
     }
 
     $rutaArchivo = procesarCamposLiquidarRutaArchivo();
@@ -184,14 +186,14 @@ function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ','): 
 
     if (!is_dir($directorio)) {
         if (!mkdir($directorio, 0777, true) && !is_dir($directorio)) {
-            throw new Exception('No se pudo crear la carpeta de configuracion.', 500);
+            throw new Exception('No se pudo crear la carpeta de configuración.', 500);
         }
     }
 
     $bytes = file_put_contents($rutaArchivo, $json, LOCK_EX);
 
     if ($bytes === false) {
-        throw new Exception('No se pudo guardar la configuracion de campos.', 500);
+        throw new Exception('No se pudo guardar la configuración de campos.', 500);
     }
 
     return $config;
@@ -222,6 +224,23 @@ function procesarCamposLiquidarNormalizarRegistrosFicNovHor($data): array
     return [];
 }
 
+function procesarCamposLiquidarEsFormatoFecha(string $formato): bool
+{
+    static $formatosFecha = [
+        'YYYY-MM-DD',
+        'YYYYMMDD',
+        'YYYY/MM/DD',
+        'MM-DD-YYYY',
+        'MMDDYYYY',
+        'MM/DD/YYYY',
+        'DD-MM-YYYY',
+        'DDMMYYYY',
+        'DD/MM/YYYY',
+    ];
+
+    return in_array($formato, $formatosFecha, true);
+}
+
 function procesarCamposLiquidarFormatearFecha(string $fecha, string $formato): string
 {
     $timestamp = strtotime($fecha);
@@ -230,10 +249,22 @@ function procesarCamposLiquidarFormatearFecha(string $fecha, string $formato): s
     }
 
     switch ($formato) {
+        case 'YYYYMMDD':
+            return date('Ymd', $timestamp);
+        case 'YYYY/MM/DD':
+            return date('Y/m/d', $timestamp);
         case 'MM-DD-YYYY':
             return date('m-d-Y', $timestamp);
+        case 'MMDDYYYY':
+            return date('mdY', $timestamp);
+        case 'MM/DD/YYYY':
+            return date('m/d/Y', $timestamp);
         case 'DD-MM-YYYY':
             return date('d-m-Y', $timestamp);
+        case 'DDMMYYYY':
+            return date('dmY', $timestamp);
+        case 'DD/MM/YYYY':
+            return date('d/m/Y', $timestamp);
         case 'YYYY-MM-DD':
         default:
             return date('Y-m-d', $timestamp);
@@ -325,6 +356,58 @@ function procesarCamposLiquidarBuscarNovedadPorSubtipo(array $registro, string $
     return '';
 }
 
+function procesarCamposLiquidarObtenerFichadas(array $registro): array
+{
+    $fichadas = (isset($registro['Fich']) && is_array($registro['Fich'])) ? $registro['Fich'] : [];
+    return array_values(array_filter($fichadas, 'is_array'));
+}
+
+function procesarCamposLiquidarObtenerPrimerFichada(array $registro): string
+{
+    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    if (empty($fichadas)) {
+        return '';
+    }
+
+    foreach ($fichadas as $fichada) {
+        $hora = trim((string) ($fichada['Hora'] ?? ''));
+        if ($hora !== '') {
+            return $hora;
+        }
+    }
+
+    return '';
+}
+
+function procesarCamposLiquidarObtenerUltimaFichada(array $registro): string
+{
+    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    if (count($fichadas) <= 1) {
+        return '';
+    }
+
+    $ultima = $fichadas[count($fichadas) - 1];
+    return (string) ($ultima['Hora'] ?? '');
+}
+
+function procesarCamposLiquidarObtenerTodasLasFichadas(array $registro): string
+{
+    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    if (empty($fichadas)) {
+        return '';
+    }
+
+    $horas = [];
+    foreach ($fichadas as $fichada) {
+        $hora = trim((string) ($fichada['Hora'] ?? ''));
+        if ($hora !== '') {
+            $horas[] = $hora;
+        }
+    }
+
+    return implode(' ', $horas);
+}
+
 function procesarCamposLiquidarObtenerValorCrudoCampo(array $registro, array $campo): string
 {
     $tipo = (string) ($campo['tipo'] ?? '');
@@ -363,6 +446,12 @@ function procesarCamposLiquidarObtenerValorCrudoCampo(array $registro, array $ca
             return (string) ($registro['ATra'] ?? '');
         case 'trab':
             return (string) ($registro['Trab'] ?? '');
+        case 'primer_fichada':
+            return procesarCamposLiquidarObtenerPrimerFichada($registro);
+        case 'ultima_fichada':
+            return procesarCamposLiquidarObtenerUltimaFichada($registro);
+        case 'todas_fichadas':
+            return procesarCamposLiquidarObtenerTodasLasFichadas($registro);
         case 'turstr':
             return (string) ($registro['TurStr'] ?? '');
         case 'labo':
@@ -384,7 +473,21 @@ function procesarCamposLiquidarFormatearValorCampo(string $valorCrudo, array $ca
         return procesarCamposLiquidarSanitizarTextoSeparador($valorCrudo, $separador);
     }
 
+    if ($formato === 'horas') {
+        $valorCrudo = trim($valorCrudo);
+
+        if (in_array($tipo, ['primer_fichada', 'ultima_fichada', 'todas_fichadas'], true)) {
+            return $valorCrudo;
+        }
+
+        return $valorCrudo === '' ? '00:00' : $valorCrudo;
+    }
+
     if ($valorCrudo === '') {
+        if ($tipo === 'fecha') {
+            return '';
+        }
+
         if ($tipo === 'cuil_legajo') {
             return procesarCamposLiquidarPadDerechaEspacios('', $tamano);
         }
@@ -411,7 +514,7 @@ function procesarCamposLiquidarFormatearValorCampo(string $valorCrudo, array $ca
         case 'cuil_legajo':
             return procesarCamposLiquidarPadDerechaEspacios($valorCrudo, $tamano);
         case 'fecha':
-            return procesarCamposLiquidarPadIzquierda(procesarCamposLiquidarFormatearFecha($valorCrudo, $formato), $tamano);
+            return procesarCamposLiquidarFormatearFecha($valorCrudo, $formato);
         case 'horas':
         case 'novedades':
         case 'atra':
@@ -473,22 +576,50 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
 
     $diasRango = (int) $fechaInicioDt->diff($fechaFinDt)->days + 1;
     if ($diasRango > 31) {
-        throw new Exception('El rango de fechas no puede superar 31 dias.', 400);
+        throw new Exception('El rango de fechas no puede superar 31 días.', 400);
     }
 
     $campos = $config['campos'] ?? [];
     if (!$campos) {
         throw new Exception('No hay campos configurados para exportar.', 400);
     }
+    
+    $hayCamposFichadas = false;
+    $hayCamposHoras = false;
+    $hayCamposNovedades = false;
+    $hayCamposEstructura = false;
+
+    $mapCampoFichadas = ['primer_fichada', 'ultima_fichada', 'todas_fichadas'];
+    $mapCampoHoras = ['horas', 'atra', 'trab'];
+    $mapCampoNovedades = ['novedades'];
+    $mapCampoEstructura = ['cod_empresa', 'cod_planta', 'cod_convenio', 'cod_sector', 'cod_seccion', 'cod_grupo', 'cod_sucursal'];
+
+    foreach ($campos as $campo) {
+
+        if (in_array($campo['tipo'] ?? '', $mapCampoHoras, true)) {
+            $hayCamposHoras = true;
+        }
+        if (in_array($campo['tipo'] ?? '', $mapCampoFichadas, true)) {
+            $hayCamposFichadas = true;
+        }
+        if (in_array($campo['tipo'] ?? '', $mapCampoNovedades, true)) {
+            $hayCamposNovedades = true;
+        }
+        if (in_array($campo['tipo'] ?? '', $mapCampoEstructura, true)) {
+            $hayCamposEstructura = true;
+        }
+    }
 
     $payloadFicNovHor = [
         'FechIni' => $fechaInicio,
         'FechFin' => $fechaFin,
-        'getNov' => 1,
-        'getHor' => 1,
-        'getEstruct' => 1,
+        'getNov' => $hayCamposNovedades ? 1 : 0,
+        'getHor' => $hayCamposHoras ? 1 : 0,
+        'getFic' => $hayCamposFichadas ? 1 : 0,
+        'getReg' => $hayCamposFichadas ? 1 : 0,
+        'getEstruct' => $hayCamposEstructura ? 1 : 0,
         'start' => 0,
-        'length' => 100000,
+        'length' => 1000000,
     ];
 
     $ficNovHor = fic_nove_horas($payloadFicNovHor);
@@ -506,7 +637,7 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
     $bytes = file_put_contents($rutaArchivo, $contenido, LOCK_EX);
 
     if ($bytes === false) {
-        throw new Exception('No se pudo generar el archivo de exportacion.', 500);
+        throw new Exception('No se pudo generar el archivo de exportación.', 500);
     }
 
     return [

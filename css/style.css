@@ -1986,3 +1986,19 @@
  .gap5 {
      gap: 5px !important;
  }
+
+ .gap8 {
+     gap: 8px !important;
+ }
+
+ .gap10 {
+     gap: 10px !important;
+ }
+ .fit-content {
+     width: fit-content !important;
+ }
+
+ /* clase para eliminar el punto en los <li> esto se aplica a los elementos de lista */
+ .no-dot {
+     list-style-type: none !important;
+ }

@@ -1344,7 +1344,7 @@ Flight::route('POST /liquidar/custom/export', function () {
 
         Flight::json([
             'status' => 'ok',
-            'message' => 'Archivo exportado correctamente.',
+            'message' => 'Archivo generado correctamente.',
             'archivo' => $resultado['archivo'] ?? '',
             'registros' => $resultado['registros'] ?? 0,
         ]);
