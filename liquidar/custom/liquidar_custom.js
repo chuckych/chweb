@@ -217,10 +217,12 @@
     function exportarDatos() {
         const rango = obtenerRangoFechas();
         const errorRango = validarRangoExportacion(rango);
+        $definirCampos.collapse('hide');
         if (errorRango) {
             notificar(errorRango, 'danger');
             return;
         }
+        notificar('Procesando datos... Aguarde', 'info', 0, 'right');
 
         $btnExportar.prop('disabled', true);
 
@@ -771,12 +773,12 @@
         $feedback.removeClass('d-none alert-danger alert-success').addClass(clase).text(mensaje);
     }
 
-    function notificar(mensaje, tipo) {
+    function notificar(mensaje, tipo, delay = 3000, placement = 'right') {
         if (typeof $.notify !== 'function') {
             return;
         }
         $.notifyClose();
-        notify(mensaje, tipo, 3000, 'right');
+        notify(mensaje, tipo, delay, placement);
     }
 
     function escapeHtml(value) {
