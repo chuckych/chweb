@@ -38,16 +38,34 @@ function debugLog($message, $nameLog = 'debug')
 }
 function clean_files($path, $days, $ext)
 {
+    // Normaliza a ruta absoluta para glob
+    $absPath = (strpos($path, DIRECTORY_SEPARATOR) === 0 || preg_match('/^[a-zA-Z]:/', $path))
+        ? $path
+        : __DIR__ . DIRECTORY_SEPARATOR . $path;
+
+    // Lock siempre en __DIR__ (app-data/) donde PHP tiene escritura garantizada
+    $lockSlug = preg_replace('/[^a-z0-9]/i', '_', trim($path, '/\\'));
+    $lock = __DIR__ . DIRECTORY_SEPARATOR . '.clean_' . $lockSlug . '.lock';
+    if (file_exists($lock) && date('Ymd', filemtime($lock)) === date('Ymd')) return; // ya se ejecutó hoy
+
     $inicio = microtime(true);
-    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    $files = glob($absPath . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    if (!$files) {
+        touch($lock);
+        return;
+    }
     foreach ($files as $file) { // recorremos todos los ficheros.
         $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
         $currentTime = time(); // obtenemos la fecha actual
         $dateDiff = dateDifference(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
-        ($dateDiff >= $days) ? unlink($file) : ''; //elimino el fichero
+        if ($dateDiff >= $days && is_writable($file)) {
+            @unlink($file); // suprimir warning si el archivo está bloqueado
+        }
     }
     $fin = microtime(true);
     debugLog("clean_files {$path}: " . round($fin - $inicio, 2) . " segundos");
+
+    touch($lock); // actualiza mtime → marca como ejecutado hoy
 }
 /**
  * Realiza una llamada a la API CH.
@@ -133,11 +151,19 @@ function ch_api()
         if (!$file_contents) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
         }
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
         return $file_contents;
     } catch (\Exception $e) {
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         return false;
     }
 }
@@ -297,7 +323,6 @@ function v1_api($endpoint, $method, $payload)
         $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1" . $endpoint;
         $data = ch_api($endpoint, $payload, $method, '');
         $arrayData = json_decode($data, true);
-
         $DATA = $arrayData['DATA'] ?? [];
         if (empty($DATA)) {
             return [];
@@ -307,7 +332,7 @@ function v1_api($endpoint, $method, $payload)
         error_log("Error en v1_api: " . $th->getMessage());
     }
 }
-function cacheData($nameFile, $payload, $nameCache = '', $endpoint, $method = 'POST')
+function cacheData($nameFile, $payload, $endpoint, $method = 'POST', $nameCache = '')
 {
     $inicio = microtime(true);
     $filePath = __DIR__ . "/json/{$nameFile}.json";
@@ -859,7 +884,7 @@ function horas_custom($legajosColumn, $payload, $claveCustom)
         $totData = $tot['data'] ?? [];
         // error_log(print_r($payload, true));
         $totColumn = array_column($totData ?? [], null, 'Lega');
-        error_log(print_r($payload, true));
+        // error_log(print_r($payload, true));
         array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
             if (!empty($value['Totales']) && is_array($value['Totales'])) {
                 $totalMinutos = 0;

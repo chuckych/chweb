@@ -9,8 +9,7 @@ secure_auth_ch_json();
 header("Content-Type: application/json");
 
 if (!$_SESSION) {
-    Flight::json(["error" => "Sesión finalizada."]);
-    exit;
+    Flight::jsonHalt(["error" => "Sesión finalizada."]);
 }
 // sleep(1);
 $token = sha1($_SESSION['RECID_CLIENTE']);
@@ -26,22 +25,22 @@ clean_files('archivos/', 1, 'pdf');
 Flight::route('/novedades-all', function () {
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
-    $queryParams = array(
+    $queryParams = [
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov",
         "Codi" => novedadesRol()
-    );
+    ];
 
-    $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las novedades
+    $data = ch_api($endpoint, [], 'GET', $queryParams); // Obtenemos las novedades
     $arrayData = json_decode($data, true);
     $novedades = $arrayData['DATA'] ?? [];
 
-    $queryParams = array(
+    $queryParams = [
         "start" => 0,
         "length" => 5000,
         "Estruct" => "NovC",
-    );
+    ];
     $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
     $arrayData = json_decode($data, true);
     $causas = $arrayData['DATA'] ?? [];
@@ -55,11 +54,11 @@ Flight::route('/novedades-all', function () {
         return $result;
     }, []);
 
-    $arr = array(
+    $arr = [
         "novedades" => $novedades ?? [],
         "causas" => $causas ?? [],
         "agrupadas" => $noveAgrupaPorTipo ?? []
-    );
+    ];
 
     Flight::json($arr);
 });
@@ -88,20 +87,20 @@ Flight::route('/novedades-agrupa', function () {
         return $result;
     }, []);
 
-    $json = array(
-        "novedades" => ($noveAgrupaPorTipo) ?? [],
-    );
+    $json = [
+        "novedades" => $noveAgrupaPorTipo ?? [],
+    ];
     Flight::json($json);
 });
 Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi) {
     // sleep('2');
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
-    $queryParams = array(
+    $queryParams = [
         "start" => 0,
         "length" => 5000,
         "Estruct" => "Nov"
-    );
+    ];
 
     $data = ch_api($endpoint, '', $method, $queryParams);
 
@@ -356,8 +355,7 @@ Flight::route('POST /horas/totales', function () {
         fwrite($file2, json_encode($payload));
         fclose($file);
         fclose($file2);
-        Flight::json($data);
-        exit;
+        Flight::jsonHalt($data);
     }
     // Flight::json($payload) . exit;
 
@@ -370,17 +368,17 @@ Flight::route('POST /novedades/totales', function () {
     $payload = Flight::request()->data->getData();
     // Flight::json($payload) . exit;
 
-    $payload['DTNovedades'] = $payload['DTNovedades'] ?? false;
-    $payload['flag'] = $payload['flag'] ?? false;
+    $payload['DTNovedades'] ??= false;
+    $payload['flag'] ??= false;
 
-    $payload['Empr'] = $payload['Empr'] ?? [];
-    $payload['Plan'] = $payload['Plan'] ?? [];
-    $payload['Conv'] = $payload['Conv'] ?? [];
-    $payload['Sect'] = $payload['Sect'] ?? [];
-    $payload['Sec2'] = $payload['Sec2'] ?? [];
-    $payload['Grup'] = $payload['Grup'] ?? [];
-    $payload['Sucu'] = $payload['Sucu'] ?? [];
-    $payload['Lega'] = $payload['Lega'] ?? [];
+    $payload['Empr'] ??= [];
+    $payload['Plan'] ??= [];
+    $payload['Conv'] ??= [];
+    $payload['Sect'] ??= [];
+    $payload['Sec2'] ??= [];
+    $payload['Grup'] ??= [];
+    $payload['Sucu'] ??= [];
+    $payload['Lega'] ??= [];
 
     $emprRol = ($_SESSION['EmprRol']) ? explode(',', $_SESSION['EmprRol']) : [];
     $planRol = ($_SESSION['PlanRol']) ? explode(',', $_SESSION['PlanRol']) : [];
@@ -402,7 +400,7 @@ Flight::route('POST /novedades/totales', function () {
 
     $data = [];
 
-    if ($payload['DTNovedades'] == 'true') {
+    if ($payload['DTNovedades'] === 'true') {
         $data = getNovedadesTotalesDT($payload);
         $nameFile = $payload['flag'];
         $file = fopen("json/total_novedades_$nameFile.json", "w") or die("Unable to open file!");
@@ -411,8 +409,7 @@ Flight::route('POST /novedades/totales', function () {
         fwrite($file2, json_encode($payload));
         fclose($file);
         fclose($file2);
-        Flight::json($data);
-        exit;
+        Flight::jsonHalt($data);
     }
 
     $data = getNovedadesTotales($payload);
@@ -1065,11 +1062,13 @@ Flight::route('POST /estruct/fichas/', function () {
 
     $arrayData = json_decode($data, true);
 
-    if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
-        $arrayData = $arrayData['DATA'] ?? [];
-    } else {
-        Flight::json(array('status' => 'error', 'message' => $arrayData['MESSAGE']), 204);
-        exit;
+    switch (($arrayData['RESPONSE_CODE'] ?? '')) {
+        case 200:
+            $arrayData = $arrayData['DATA'] ?? [];
+            break;
+        default:
+            Flight::jsonHalt(['status' => 'error', 'message' => $arrayData['MESSAGE'] ?? 'Error desconocido'], 204);
+            break;
     }
     Flight::json($arrayData ?? []);
 });
@@ -1271,8 +1270,8 @@ Flight::route('GET /params', function () {
 Flight::route('GET /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
-        $campos = procesarCamposLiquidarLeerCampos();
-        Flight::json($campos ?? []);
+        $config = procesarCamposLiquidarLeerConfiguracion();
+        Flight::json($config ?? ['separador' => ',', 'campos' => []]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);
         if ($code < 100 || $code > 599) {
@@ -1296,6 +1295,18 @@ Flight::route('POST /ficnovhor', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
+Flight::route('GET /paragene', function () {
+    try {
+        $paragene = v1_api('/parametros/paragene', 'GET', []);
+        Flight::json($paragene ?? []);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
 
 Flight::route('POST /liquidar/custom/campos', function () {
     try {
@@ -1304,12 +1315,13 @@ Flight::route('POST /liquidar/custom/campos', function () {
         $payload = $request->data;
         $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
         $campos = $payloadData['campos'] ?? [];
+        $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
 
-        $guardados = procesarCamposLiquidarGuardarCampos($campos);
+        $guardados = procesarCamposLiquidarGuardarConfiguracion($campos, $separador);
 
         Flight::json([
             'status' => 'ok',
-            'message' => 'Campos guardados correctamente.',
+            'message' => 'Configuracion guardada correctamente.',
             'data' => $guardados,
         ]);
     } catch (\Throwable $th) {
@@ -1638,19 +1650,18 @@ foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
     });
 }
 Flight::map('Forbidden', function ($mensaje) {
-    Flight::json(['status' => 'error', 'message' => $mensaje], 403);
-    exit;
+    Flight::jsonHalt(['status' => 'error', 'message' => $mensaje], 403);
 });
 Flight::map('notFound', function () {
     $request = Flight::request();
     $url = $request->url ?? '';
     $method = $request->method ?? '';
-    Flight::json(['status' => 'error', 'message' => "Not found: ({$method}) {$url}"], 404);
-    exit;
+    Flight::jsonHalt(['status' => 'error', 'message' => "Not found: ({$method}) {$url}"], 404);
 });
-Flight::set('flight.log_errors', true);
+// Flight::set('flight.log_errors', true);
 Flight::map('error', function ($ex) {
     $code_protected = $ex->getCode() ?? 400;
+    // error_log($ex->getMessage());
 
     // Asegurar que el código de estado sea válido (entre 100-599)
     if ($code_protected < 100 || $code_protected > 599) {

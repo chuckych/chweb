@@ -18,9 +18,24 @@
                         <select id="campo-tipo" class="form-control" style="width:100%;">
                             <option value=""></option>
                             <option value="legajo">Legajo</option>
+                            <option value="apno">Apellido y Nombre</option>
+                            <option value="dni_legajo">DNI Legajo</option>
+                            <option value="cuil_legajo">CUIL Legajo</option>
+                            <option value="cod_empresa"><?= $labelEmpr ?></option>
+                            <option value="cod_planta"> <?= $labelPlan ?></option>
+                            <option value="cod_convenio">Convenio</option>
+                            <option value="cod_sector"> <?= $labelSect ?></option>
+                            <option value="cod_seccion"> <?= $labelSecc ?></option>
+                            <option value="cod_grupo"> <?= $labelGrup ?></option>
+                            <option value="cod_sucursal"> <?= $labelSucu ?></option>
                             <option value="fecha">Fecha</option>
                             <option value="novedades">Novedades</option>
                             <option value="horas">Horas</option>
+                            <option value="atra">Horas a trabajar</option>
+                            <option value="trab">Horas trabajadas</option>
+                            <option value="turstr">Horario</option>
+                            <option value="labo">Laboral</option>
+                            <option value="feri">Feriado</option>
                         </select>
                     </div>
 
@@ -42,24 +57,38 @@
                             <option value=""></option>
                             <option value="numero">Numero</option>
                             <option value="decimal">Decimal</option>
+                            <option value="texto">Texto</option>
                             <option value="YYYY-MM-DD">Fecha YYYY-MM-DD</option>
                             <option value="MM-DD-YYYY">Fecha MM-DD-YYYY</option>
                             <option value="DD-MM-YYYY">Fecha DD-MM-YYYY</option>
                         </select>
                     </div>
                 </div>
-                <!-- Nota -->
-                <div class="mt-2">
-                    <small>
-                        <ul class="m-0 pl-3">
-                            <li>Para editar un campo, debe añadir otro en la misma posición.</li>
-                            <li>El orden de los campos se puede modificar arrastrando el ícono <i class="bi bi-list"></i></li>
-                            <li>Puede eliminar un campo haciendo clic en el ícono <i class="bi bi-trash"></i></li>
-                        </ul>
-                    </small>
-                </div>
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-custom font09" id="btn-agregar-campo">Agregar campo</button>
+                </div>
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <label for="campo-separador">Separador</label>
+                        <div class="d-inline-flex align-items-center" style="gap: 5px">
+                        <input type="text" class="form-control h40 w70 text-center" id="campo-separador" placeholder="Ej: ," maxlength="1" value=",">
+                            <small class="resultado_separador text-secondary"></small>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <!-- Nota -->
+                        <div class="mt-2">
+                            <small>
+                                <ul class="m-0 pl-3 border p-3 px-4 radius bg-light">
+                                    <li>Para editar un campo, debe añadir otro en la misma posición.</li>
+                                    <li>El orden de los campos se puede modificar arrastrando el ícono <i class="bi bi-list"></i>.</li>
+                                    <li>Puede eliminar un campo haciendo clic en el ícono <i class="bi bi-trash"></i>.</li>
+                                    <li>Los campos de numéricos y decimal se completan con ceros a la izquierda si el tamaño es mayor al valor obtenido.</li>
+                                    <li>Los campos de texto reemplazan caracteres que sean igual al separador por un espacio.</li>
+                                </ul>
+                            </small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -83,7 +112,7 @@
                     </thead>
                     <tbody id="tabla-campos-body">
                         <tr id="tabla-campos-vacio">
-                            <td colspan="6" class="text-center text-muted">Todavia no hay campos agregados.</td>
+                            <td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>
                         </tr>
                     </tbody>
                 </table>

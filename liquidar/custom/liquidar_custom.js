@@ -5,14 +5,30 @@
 
     const TIPOS = {
         LEGAJO: 'legajo',
+        APNO: 'apno',
+        DNI_LEGAJO: 'dni_legajo',
+        CUIL_LEGAJO: 'cuil_legajo',
+        COD_EMPRESA: 'cod_empresa',
+        COD_PLANTA: 'cod_planta',
+        COD_CONVENIO: 'cod_convenio',
+        COD_SECTOR: 'cod_sector',
+        COD_SECCION: 'cod_seccion',
+        COD_GRUPO: 'cod_grupo',
+        COD_SUCURSAL: 'cod_sucursal',
         FECHA: 'fecha',
         NOVEDADES: 'novedades',
-        HORAS: 'horas'
+        HORAS: 'horas',
+        ATRA: 'atra',
+        TRAB: 'trab',
+        TURSTR: 'turstr',
+        LABO: 'labo',
+        FERI: 'feri'
     };
 
     const FORMATOS = {
         NUMERO: 'numero',
         DECIMAL: 'decimal',
+        TEXTO: 'texto',
         FECHA_YMD: 'YYYY-MM-DD',
         FECHA_MDY: 'MM-DD-YYYY',
         FECHA_DMY: 'DD-MM-YYYY'
@@ -20,25 +36,62 @@
 
     const cacheCatalogos = {
         novedades: null,
-        horas: null
+        horas: null,
+        etiquetasParagene: null
+    };
+
+    const MAP_TIPO_ETIQUETA = {
+        cod_empresa: 'EmprSin',
+        cod_planta: 'PlanSin',
+        cod_sector: 'SectSin',
+        cod_sucursal: 'SucuSin',
+        cod_grupo: 'GrupSin',
+        cod_seccion: 'SeccSin'
+    };
+
+    const MAP_TIPO_ETIQUETA_FALLBACK = {
+        cod_empresa: 'Empresa',
+        cod_planta: 'Planta',
+        cod_sector: 'Sector',
+        cod_sucursal: 'Sucursal',
+        cod_grupo: 'Grupo',
+        cod_seccion: 'Seccion'
     };
 
     const labelsTipo = {
         [TIPOS.LEGAJO]: 'Legajo',
+        [TIPOS.APNO]: 'Apellido y Nombre',
+        [TIPOS.DNI_LEGAJO]: 'DNI Legajo',
+        [TIPOS.CUIL_LEGAJO]: 'CUIL Legajo',
+        [TIPOS.COD_EMPRESA]: 'Empresa',
+        [TIPOS.COD_PLANTA]: 'Planta',
+        [TIPOS.COD_CONVENIO]: 'Convenio',
+        [TIPOS.COD_SECTOR]: 'Sector',
+        [TIPOS.COD_SECCION]: 'Seccion',
+        [TIPOS.COD_GRUPO]: 'Grupo',
+        [TIPOS.COD_SUCURSAL]: 'Sucursal',
         [TIPOS.FECHA]: 'Fecha',
         [TIPOS.NOVEDADES]: 'Novedades',
-        [TIPOS.HORAS]: 'Horas'
+        [TIPOS.HORAS]: 'Horas',
+        [TIPOS.ATRA]: 'Horas a trabajar',
+        [TIPOS.TRAB]: 'Horas trabajadas',
+        [TIPOS.TURSTR]: 'Horario',
+        [TIPOS.LABO]: 'Laboral',
+        [TIPOS.FERI]: 'Feriado'
     };
 
     const labelsFormato = {
         [FORMATOS.NUMERO]: 'Numero',
         [FORMATOS.DECIMAL]: 'Decimal',
+        [FORMATOS.TEXTO]: 'Texto',
         [FORMATOS.FECHA_YMD]: 'YYYY-MM-DD',
         [FORMATOS.FECHA_MDY]: 'MM-DD-YYYY',
         [FORMATOS.FECHA_DMY]: 'DD-MM-YYYY'
     };
+    const DEFAULT_SEPARADOR = ',';
 
     let idSecuencial = 1;
+    let timerGuardarSeparador = null;
     const ENDPOINT_CAMPOS = '../../app-data/liquidar/custom/campos';
     const ENDPOINT_EXPORT = '../../app-data/liquidar/custom/export';
 
@@ -50,6 +103,8 @@
     const $tamano = $('#campo-tamano');
     const $formato = $('#campo-formato');
     const $feedback = $('#campo-feedback');
+    const $separador = $('#campo-separador');
+    const $resultadoSeparador = $('.resultado_separador');
     const $tablaBody = $('#tabla-campos-body');
     const $btnAgregar = $('#btn-agregar-campo');
     const $btnExportar = $('#btn-exportar');
@@ -63,9 +118,29 @@
         inicializarSelects();
         enlazarEventos();
         inicializarOrdenamientoTabla();
+        cargarEtiquetasParagene();
         cargarCamposGuardados();
         inicializarDatePicker();
     });
+
+    function cargarEtiquetasParagene() {
+        if (cacheCatalogos.etiquetasParagene) {
+            return;
+        }
+
+        axios.get('../../app-data/paragene')
+            .then(function (response) {
+                const etiquetas = response && response.data && response.data.Etiquetas
+                    ? response.data.Etiquetas
+                    : {};
+
+                cacheCatalogos.etiquetasParagene = etiquetas;
+                renderizarLista();
+            })
+            .catch(function () {
+                cacheCatalogos.etiquetasParagene = {};
+            });
+    }
 
     function inicializarOrdenamientoTabla() {
         if (typeof Sortable === 'undefined' || !$tablaBody.length) {
@@ -84,7 +159,7 @@
                 reordenarCamposDesdeTabla();
                 renderizarLista();
                 guardarCampos().catch(function () {
-                    notificar('No se pudo guardar la configuracion.', 'danger');
+                    notificar('No se pudo guardar la configuración.', 'danger');
                 });
                 notificar('Orden actualizado.', 'success');
             }
@@ -116,22 +191,29 @@
     function cargarCamposGuardados() {
         axios.get(ENDPOINT_CAMPOS)
             .then(function (response) {
-                window.camposLiquidar = normalizarCamposPersistidos(response.data);
+                const config = normalizarConfiguracionPersistida(response.data);
+                window.camposLiquidar = config.campos;
+                $separador.val(config.separador);
+                aplicarReglasSeparador();
+                actualizarResultadoSeparador();
                 recalcularIdSecuencial();
                 renderizarLista();
                 actualizarPosicionSugerida();
             })
             .catch(function () {
                 window.camposLiquidar = [];
+                $separador.val(DEFAULT_SEPARADOR);
+                actualizarResultadoSeparador();
                 renderizarLista();
                 actualizarPosicionSugerida();
-                notificar('No se pudo cargar la configuracion guardada.', 'danger');
+                notificar('No se pudo cargar la configuración guardada.', 'danger');
             });
     }
 
     function guardarCampos() {
         return axios.post(ENDPOINT_CAMPOS, {
-            campos: window.camposLiquidar
+            campos: window.camposLiquidar,
+            separador: obtenerSeparadorNormalizado()
         });
     }
 
@@ -165,7 +247,7 @@
 
         const diasRango = fin.diff(inicio, 'days') + 1;
         if (diasRango > 31) {
-            return 'El rango de fechas no puede superar 31 dias.';
+            return 'El rango de fechas no puede superar 31 días.';
         }
 
         return '';
@@ -201,7 +283,7 @@
             .then(function (response) {
                 const contenido = typeof response.data === 'string' ? response.data : '';
                 $resultadoExportacionArchivo.text(archivo);
-                $resultadoExportacionContenido.text(contenido || 'Archivo vacio.');
+                $resultadoExportacionContenido.text(contenido || 'Archivo vacío.');
                 $resultadoExportacion.removeClass('d-none');
 
                 $('html, body').animate({
@@ -260,10 +342,32 @@
             });
     }
 
-    function normalizarCamposPersistidos(data) {
-        const listado = $.isArray(data) ? data : [];
+    function normalizarConfiguracionPersistida(data) {
+        let separador = DEFAULT_SEPARADOR;
+        let listado = [];
 
-        const normalizados = $.map(listado, function (item) {
+        if ($.isArray(data)) {
+            listado = data;
+        } else if (data && $.isArray(data.campos)) {
+            listado = data.campos;
+            separador = normalizarSeparadorCliente(data.separador);
+        } else if (data && data.data && $.isArray(data.data.campos)) {
+            listado = data.data.campos;
+            separador = normalizarSeparadorCliente(data.data.separador);
+        } else if (data && $.isArray(data.data)) {
+            listado = data.data;
+        }
+
+        return {
+            separador: separador,
+            campos: normalizarCamposPersistidos(listado)
+        };
+    }
+
+    function normalizarCamposPersistidos(listado) {
+        const listadoSeguro = $.isArray(listado) ? listado : [];
+
+        const normalizados = $.map(listadoSeguro, function (item) {
             if (!item) {
                 return null;
             }
@@ -271,7 +375,9 @@
             const posicion = parseInt(item.posicion, 10);
             const tamano = parseInt(item.tamano, 10);
 
-            if (!esEnteroPositivo(posicion) || !esEnteroPositivo(tamano) || !item.tipo || !item.formato) {
+            const tamanoValido = item.formato === FORMATOS.TEXTO ? tamano === 0 : esEnteroPositivo(tamano);
+
+            if (!esEnteroPositivo(posicion) || !tamanoValido || !item.tipo || !item.formato) {
                 return null;
             }
 
@@ -330,6 +436,25 @@
             aplicarReglasFormato();
         });
 
+        $separador.on('input', function () {
+            aplicarReglasSeparador();
+
+            if (($separador.val() || '').length === 1) {
+                guardarSeparadorConDebounce();
+            }
+        });
+
+        $separador.on('blur', function () {
+            if (($separador.val() || '') === '') {
+                $separador.val(DEFAULT_SEPARADOR);
+            }
+
+            aplicarReglasSeparador();
+            guardarCampos().catch(function () {
+                notificar('No se pudo guardar el separador.', 'danger');
+            });
+        });
+
         $btnAgregar.on('click', function () {
             agregarCampo();
         });
@@ -354,7 +479,7 @@
         $(document).on('click', '.mostrar-liquidar-custom', function () {
             const archivo = String($(this).data('archivo') || '');
             if (!archivo) {
-                notificar('No se encontro archivo para mostrar.', 'danger');
+                notificar('No se encontró archivo para mostrar.', 'danger');
                 return;
             }
 
@@ -504,7 +629,7 @@
         renderizarLista();
         prepararProximoCampo();
         guardarCampos().catch(function () {
-            notificar('No se pudo guardar la configuracion.', 'danger');
+            notificar('No se pudo guardar la configuración.', 'danger');
         });
 
         notificar('Campo agregado correctamente.', 'success');
@@ -541,7 +666,11 @@
             cantidadErrores += 1;
         }
 
-        if (!esEnteroPositivo(datos.tamano)) {
+        if (datos.formato === FORMATOS.TEXTO) {
+            if (datos.tamano !== 0) {
+                cantidadErrores += 1;
+            }
+        } else if (!esEnteroPositivo(datos.tamano)) {
             cantidadErrores += 1;
         }
 
@@ -599,11 +728,13 @@
         }
 
         const filas = $.map(window.camposLiquidar, function (campo) {
+            const tipoColumna = obtenerTextoColumnaTipo(campo);
+
             return '' +
                 '<tr data-uid="' + escapeHtml(String(campo.uid)) + '">' +
                 '<td>' + escapeHtml(String(campo.posicion)) + '</td>' +
-                '<td>' + escapeHtml(campo.tipoLabel) + '</td>' +
-                '<td>' + escapeHtml(campo.subtipoLabel || '-') + '</td>' +
+                '<td>' + escapeHtml(tipoColumna) + '</td>' +
+                '<td>' + (campo.subtipoLabel || '-') + '</td>' +
                 '<td>' + escapeHtml(String(campo.tamano)) + '</td>' +
                 '<td>' + escapeHtml(campo.formatoLabel) + '</td>' +
                 '<td class="text-right">' +
@@ -616,6 +747,20 @@
         $tablaBody.html(filas.join(''));
     }
 
+    function obtenerTextoColumnaTipo(campo) {
+        if (!campo || !campo.tipo) {
+            return '-';
+        }
+
+        const keyEtiqueta = MAP_TIPO_ETIQUETA[campo.tipo];
+        if (!keyEtiqueta) {
+            return campo.tipoLabel || '-';
+        }
+
+        const etiquetas = cacheCatalogos.etiquetasParagene || {};
+        return etiquetas[keyEtiqueta] || MAP_TIPO_ETIQUETA_FALLBACK[campo.tipo] || '-';
+    }
+
     function eliminarCampo(uid) {
         window.camposLiquidar = $.grep(window.camposLiquidar, function (campo) {
             return String(campo.uid) !== String(uid);
@@ -624,7 +769,7 @@
         compactarPosiciones();
         renderizarLista();
         guardarCampos().catch(function () {
-            notificar('No se pudo guardar la configuracion.', 'danger');
+            notificar('No se pudo guardar la configuración.', 'danger');
         });
 
         mostrarFeedback('Campo eliminado.', 'success');
@@ -677,11 +822,27 @@
                 return [FORMATOS.FECHA_YMD, FORMATOS.FECHA_MDY, FORMATOS.FECHA_DMY];
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
+            case TIPOS.ATRA:
+            case TIPOS.TRAB:
                 return [FORMATOS.DECIMAL];
             case TIPOS.LEGAJO:
+            case TIPOS.DNI_LEGAJO:
+            case TIPOS.COD_EMPRESA:
+            case TIPOS.COD_PLANTA:
+            case TIPOS.COD_CONVENIO:
+            case TIPOS.COD_SECTOR:
+            case TIPOS.COD_SECCION:
+            case TIPOS.COD_GRUPO:
+            case TIPOS.COD_SUCURSAL:
+            case TIPOS.LABO:
+            case TIPOS.FERI:
                 return [FORMATOS.NUMERO];
+            case TIPOS.CUIL_LEGAJO:
+            case TIPOS.APNO:
+            case TIPOS.TURSTR:
+                return [FORMATOS.TEXTO];
             default:
-                return [FORMATOS.NUMERO, FORMATOS.DECIMAL];
+                return [FORMATOS.NUMERO, FORMATOS.DECIMAL, FORMATOS.TEXTO];
         }
     }
 
@@ -729,11 +890,50 @@
                 $formato.prop('disabled', true);
                 $tamano.prop('disabled', false).val('11');
                 break;
+            case TIPOS.APNO:
+                $formato.val(FORMATOS.TEXTO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', true).val('0');
+                break;
+            case TIPOS.DNI_LEGAJO:
+                $formato.val(FORMATOS.NUMERO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', false).val('8');
+                break;
+            case TIPOS.CUIL_LEGAJO:
+                $formato.val(FORMATOS.TEXTO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', true).val('0');
+                break;
+            case TIPOS.COD_EMPRESA:
+            case TIPOS.COD_PLANTA:
+            case TIPOS.COD_CONVENIO:
+            case TIPOS.COD_SECTOR:
+            case TIPOS.COD_SECCION:
+            case TIPOS.COD_GRUPO:
+            case TIPOS.COD_SUCURSAL:
+                $formato.val(FORMATOS.NUMERO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', false).val('3');
+                break;
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
+            case TIPOS.ATRA:
+            case TIPOS.TRAB:
                 $formato.prop('disabled', false);
                 $formato.val(FORMATOS.DECIMAL).trigger('change');
                 $tamano.prop('disabled', false).val('8');
+                break;
+            case TIPOS.TURSTR:
+                $formato.val(FORMATOS.TEXTO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', true).val('0');
+                break;
+            case TIPOS.LABO:
+            case TIPOS.FERI:
+                $formato.val(FORMATOS.NUMERO).trigger('change');
+                $formato.prop('disabled', true);
+                $tamano.prop('disabled', false).val('1');
                 break;
             default:
                 $formato.prop('disabled', false);
@@ -742,6 +942,12 @@
     }
 
     function aplicarReglasFormato() {
+        if ($formato.val() === FORMATOS.TEXTO) {
+            $tamano.val('0');
+            $tamano.prop('disabled', true);
+            return;
+        }
+
         if ($tipo.val() === TIPOS.FECHA) {
             if (!esFormatoFecha($formato.val())) {
                 $formato.val(FORMATOS.FECHA_YMD).trigger('change.select2');
@@ -757,6 +963,55 @@
         }
 
         $tamano.prop('disabled', false);
+    }
+
+    function aplicarReglasSeparador() {
+        const separador = $separador.val() || '';
+        if (separador.length > 1) {
+            mostrarFeedback('El separador solo puede tener un caracter.', 'danger');
+            $separador.val(separador.charAt(0));
+        } else {
+            limpiarErrores();
+        }
+
+        actualizarResultadoSeparador();
+    }
+
+    function actualizarResultadoSeparador() {
+        if (!$resultadoSeparador.length) {
+            return;
+        }
+
+        $resultadoSeparador.text(($separador.val() || '') === ' ' ? 'Espacio' : '');
+    }
+
+    function guardarSeparadorConDebounce() {
+        if (timerGuardarSeparador) {
+            clearTimeout(timerGuardarSeparador);
+        }
+
+        timerGuardarSeparador = setTimeout(function () {
+            guardarCampos().catch(function () {
+                notificar('No se pudo guardar el separador.', 'danger');
+            });
+        }, 250);
+    }
+
+    function normalizarSeparadorCliente(valor) {
+        if (valor === null || valor === undefined) {
+            return DEFAULT_SEPARADOR;
+        }
+
+        const separador = String(valor);
+        if (separador.length === 0) {
+            return DEFAULT_SEPARADOR;
+        }
+
+        return separador.charAt(0);
+    }
+
+    function obtenerSeparadorNormalizado() {
+        return normalizarSeparadorCliente($separador.val());
     }
 
     function obtenerTextoSeleccionado($select) {
@@ -808,10 +1063,10 @@
             ranges: {
                 'Esta semana': [moment().day(1), moment().day(7)],
                 'Semana Anterior': [moment().subtract(1, 'week').day(1), moment().subtract(1, 'week').day(7)],
-                'Ultimos 7 dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
                 'Este mes': [moment().startOf('month'), moment().endOf('month')],
                 'Mes anterior': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-                'Ultimos 30 dias': [moment().subtract(29, 'days'), moment()]
+                'Últimos 30 días': [moment().subtract(29, 'days'), moment()]
             },
             locale: {
                 format: 'DD/MM/YYYY',
