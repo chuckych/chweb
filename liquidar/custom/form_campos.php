@@ -78,12 +78,21 @@
                     <button type="button" class="btn btn-custom font09" id="btn-agregar-campo">Agregar campo</button>
                 </div>
                 <div class="row">
-                    <div class="col-12 mb-2 d-flex flex-column">
+                    <div class="col-2 mb-2 d-flex flex-column">
                         <label for="campo-separador " class="fit-content">Separador de campo</label>
                         <div class="d-inline-flex align-items-center" style="gap: 5px">
                             <input type="text" class="form-control h40 w70 text-center" id="campo-separador"
                                 placeholder="Ej: ," maxlength="1" value=",">
                             <small class="resultado_separador text-secondary"></small>
+                        </div>
+                    </div>
+                    <div class="col-2 mb-2 d-flex flex-column">
+                        <label for="encabezados" class="fit-content">Exportar Encabezados</label>
+                        <div class="custom-control custom-switch d-inline-flex align-items-center gap5">
+                            <input type="checkbox" class="custom-control-input" id="encabezados">
+                            <label class="custom-control-label" for="encabezados">
+                                <div class="switch_encabezados_text" style="margin-top: 3px;">No</div>
+                            </label>
                         </div>
                     </div>
                     <div class="col-12">

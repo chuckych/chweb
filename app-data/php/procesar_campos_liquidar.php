@@ -103,23 +103,34 @@ function procesarCamposLiquidarNormalizarSeparador($separador): string
     return substr($separador, 0, 1);
 }
 
+function procesarCamposLiquidarNormalizarEncabezados($encabezados): int
+{
+    return ((int) $encabezados) === 1 ? 1 : 0;
+}
+
 function procesarCamposLiquidarNormalizarConfiguracion($data): array
 {
     $separador = ',';
+    $encabezados = 0;
     $campos = [];
 
     if (is_array($data) && array_key_exists('campos', $data)) {
         $campos = $data['campos'];
         $separador = procesarCamposLiquidarNormalizarSeparador($data['separador'] ?? ',');
+        $encabezados = procesarCamposLiquidarNormalizarEncabezados($data['encabezados'] ?? 0);
     } else {
         $campos = $data;
         if (is_array($data) && array_key_exists('separador', $data)) {
             $separador = procesarCamposLiquidarNormalizarSeparador($data['separador']);
         }
+        if (is_array($data) && array_key_exists('encabezados', $data)) {
+            $encabezados = procesarCamposLiquidarNormalizarEncabezados($data['encabezados']);
+        }
     }
 
     return [
         'separador' => $separador,
+        'encabezados' => $encabezados,
         'campos' => procesarCamposLiquidarNormalizarCampos($campos),
     ];
 }
@@ -134,12 +145,12 @@ function procesarCamposLiquidarLeerConfiguracion(): array
     }
 
     if (!file_exists($rutaArchivo)) {
-        return ['separador' => ',', 'campos' => []];
+        return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
     }
 
     $contenido = file_get_contents($rutaArchivo);
     if ($contenido === false || $contenido === '') {
-        return ['separador' => ',', 'campos' => []];
+        return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
     }
 
     $data = json_decode($contenido, true);
@@ -168,11 +179,12 @@ function procesarCamposLiquidarLeerCampos(): array
     return $config['campos'] ?? [];
 }
 
-function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ','): array
+function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ',', $encabezados = 0): array
 {
     $normalizados = procesarCamposLiquidarNormalizarCampos($campos);
     $config = [
         'separador' => procesarCamposLiquidarNormalizarSeparador($separador),
+        'encabezados' => procesarCamposLiquidarNormalizarEncabezados($encabezados),
         'campos' => $normalizados,
     ];
     $json = json_encode($config, JSON_PRETTY_PRINT);
@@ -199,10 +211,28 @@ function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ','): 
     return $config;
 }
 
-function procesarCamposLiquidarGuardarCampos($campos, $separador = ','): array
+function procesarCamposLiquidarGuardarCampos($campos, $separador = ',', $encabezados = 0): array
 {
-    $config = procesarCamposLiquidarGuardarConfiguracion($campos, $separador);
+    $config = procesarCamposLiquidarGuardarConfiguracion($campos, $separador, $encabezados);
     return $config['campos'] ?? [];
+}
+
+function procesarCamposLiquidarConstruirEncabezados(array $campos, string $separador): string
+{
+    $headers = [];
+
+    foreach ($campos as $campo) {
+        $tipo = (string) ($campo['tipo'] ?? '');
+
+        if ($tipo === 'horas' || $tipo === 'novedades') {
+            $headers[] = (string) ($campo['subtipoLabel'] ?? '');
+            continue;
+        }
+
+        $headers[] = (string) ($campo['tipoLabel'] ?? '');
+    }
+
+    return implode($separador, $headers);
 }
 
 function procesarCamposLiquidarLeerSeparador(): string
@@ -559,6 +589,7 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
     $fechaFin = trim((string) ($payload['FechFin'] ?? ''));
     $config = procesarCamposLiquidarLeerConfiguracion();
     $separador = procesarCamposLiquidarNormalizarSeparador($config['separador'] ?? ',');
+    $encabezados = procesarCamposLiquidarNormalizarEncabezados($config['encabezados'] ?? 0);
 
     if ($fechaInicio === '' || $fechaFin === '') {
         throw new Exception('Debe indicar rango de fechas para exportar.', 400);
@@ -630,6 +661,11 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
     }
 
     $contenido = procesarCamposLiquidarGenerarContenidoExport($campos, $registros, $separador);
+
+    if ($encabezados === 1) {
+        $lineaEncabezados = procesarCamposLiquidarConstruirEncabezados($campos, $separador);
+        $contenido = $lineaEncabezados . "\r\n" . $contenido;
+    }
 
     $timestamp = date('Ymd_His');
     $nombreArchivo = 'liquidar_' . $timestamp . '.txt';

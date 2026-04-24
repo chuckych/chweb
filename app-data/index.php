@@ -1271,7 +1271,7 @@ Flight::route('GET /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
         $config = procesarCamposLiquidarLeerConfiguracion();
-        Flight::json($config ?? ['separador' => ',', 'campos' => []]);
+        Flight::json($config ?? ['separador' => ',', 'encabezados' => 0, 'campos' => []]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);
         if ($code < 100 || $code > 599) {
@@ -1316,8 +1316,9 @@ Flight::route('POST /liquidar/custom/campos', function () {
         $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
         $campos = $payloadData['campos'] ?? [];
         $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
+        $encabezados = array_key_exists('encabezados', $payloadData) ? (int) $payloadData['encabezados'] : 0;
 
-        $guardados = procesarCamposLiquidarGuardarConfiguracion($campos, $separador);
+        $guardados = procesarCamposLiquidarGuardarConfiguracion($campos, $separador, $encabezados);
 
         Flight::json([
             'status' => 'ok',

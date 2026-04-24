@@ -126,6 +126,8 @@
     const $feedback = $('#campo-feedback');
     const $separador = $('#campo-separador');
     const $resultadoSeparador = $('.resultado_separador');
+    const $encabezados = $('#encabezados');
+    const $switchEncabezadosText = $('.switch_encabezados_text');
     const $tablaBody = $('#tabla-campos-body');
     const $btnAgregar = $('#btn-agregar-campo');
     const $btnExportar = $('#btn-exportar');
@@ -219,6 +221,8 @@
                 const config = normalizarConfiguracionPersistida(response.data);
                 window.camposLiquidar = config.campos;
                 $separador.val(config.separador);
+                $encabezados.prop('checked', config.encabezados === 1);
+                actualizarTextoSwitchEncabezados();
                 aplicarReglasSeparador();
                 actualizarResultadoSeparador();
                 recalcularIdSecuencial();
@@ -228,6 +232,8 @@
             .catch(function () {
                 window.camposLiquidar = [];
                 $separador.val(DEFAULT_SEPARADOR);
+                $encabezados.prop('checked', false);
+                actualizarTextoSwitchEncabezados();
                 actualizarResultadoSeparador();
                 renderizarLista();
                 actualizarPosicionSugerida();
@@ -238,7 +244,8 @@
     function guardarCampos() {
         return axios.post(ENDPOINT_CAMPOS, {
             campos: window.camposLiquidar,
-            separador: obtenerSeparadorNormalizado()
+            separador: obtenerSeparadorNormalizado(),
+            encabezados: $encabezados.is(':checked') ? 1 : 0
         });
     }
 
@@ -370,6 +377,7 @@
 
     function normalizarConfiguracionPersistida(data) {
         let separador = DEFAULT_SEPARADOR;
+        let encabezados = 0;
         let listado = [];
 
         if ($.isArray(data)) {
@@ -377,15 +385,18 @@
         } else if (data && $.isArray(data.campos)) {
             listado = data.campos;
             separador = normalizarSeparadorCliente(data.separador);
+            encabezados = normalizarEncabezados(data.encabezados);
         } else if (data && data.data && $.isArray(data.data.campos)) {
             listado = data.data.campos;
             separador = normalizarSeparadorCliente(data.data.separador);
+            encabezados = normalizarEncabezados(data.data.encabezados);
         } else if (data && $.isArray(data.data)) {
             listado = data.data;
         }
 
         return {
             separador: separador,
+            encabezados: encabezados,
             campos: normalizarCamposPersistidos(listado)
         };
     }
@@ -479,6 +490,13 @@
             aplicarReglasSeparador();
             guardarCampos().catch(function () {
                 notificar('No se pudo guardar el separador.', 'danger');
+            });
+        });
+
+        $encabezados.on('change', function () {
+            actualizarTextoSwitchEncabezados();
+            guardarCampos().catch(function () {
+                notificar('No se pudo guardar la opción de encabezados.', 'danger');
             });
         });
 
@@ -1199,6 +1217,18 @@
         }
 
         return separador.charAt(0);
+    }
+
+    function normalizarEncabezados(valor) {
+        return Number(valor) === 1 ? 1 : 0;
+    }
+
+    function actualizarTextoSwitchEncabezados() {
+        if (!$switchEncabezadosText.length) {
+            return;
+        }
+
+        $switchEncabezadosText.text($encabezados.is(':checked') ? 'Sí' : 'No');
     }
 
     function obtenerSeparadorNormalizado() {
