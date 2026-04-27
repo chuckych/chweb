@@ -76,17 +76,23 @@
                 <div class="d-flex justify-content-end">
                     <button type="button" class="btn btn-custom font09" id="btn-agregar-campo">Agregar campo</button>
                 </div>
-                <div class="row">
-                    <div class="col-2 mb-2 d-flex flex-column">
-                        <label for="campo-separador " class="fit-content">Separador de campo</label>
+                <div class="row mt-3 mt-sm-0">
+                    <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
+                        <label for="campo-separador" class="fit-content">
+                            <span class="d-none d-sm-block">Separador de campo</span>
+                            <span class="d-block d-sm-none">Separador</span>
+                        </label>
                         <div class="d-inline-flex align-items-center" style="gap: 5px">
                             <input type="text" class="form-control h40 w70 text-center" id="campo-separador"
                                 placeholder="Ej: ," maxlength="1" value=",">
                             <small class="resultado_separador text-secondary"></small>
                         </div>
                     </div>
-                    <div class="col-2 mb-2 d-flex flex-column">
-                        <label for="encabezados" class="fit-content">Exportar Encabezados</label>
+                    <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
+                        <label for="encabezados" class="fit-content">
+                            <span class="d-none d-sm-block">Exportar Encabezados</span>
+                            <span class="d-block d-sm-none">Encabezados</span>
+                        </label>
                         <div class="custom-control custom-switch d-inline-flex align-items-center gap5">
                             <input type="checkbox" class="custom-control-input" id="encabezados">
                             <label class="custom-control-label" for="encabezados">
@@ -99,29 +105,28 @@
                         <div class="mt-2">
                             <small>
                                 <ul class="m-0 p-4 radius bg-light no-dot border-left">
-                                    <li>
+                                    <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        Para editar un campo, debe añadir otro en la misma posición o haciendo clic en
+                                        Para editar un campo, agregar otro en su posición o usá el ícono de edición
                                         <i class="bi bi-pen"></i>
                                     </li>
-                                    <li>
+                                    <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        El orden de los campos se puede modificar arrastrando el ícono
+                                        El orden se modifica arrastrando el ícono.
                                         <i class="bi bi-list"></i>.
                                     </li>
-                                    <li>
+                                    <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        Puede eliminar un campo haciendo clic en el ícono <i class="bi bi-trash"></i>.
+                                        Se puede eliminar campos con el ícono de borrar
+                                        <i class="bi bi-trash"></i>.
                                     </li>
-                                    <li>
+                                    <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        Los campos de numéricos y decimal se completan con ceros a la izquierda si el
-                                        tamaño es mayor al valor obtenido.
+                                        Los campos numéricos se rellenan con ceros a la izquierda según el tamaño definido
                                     </li>
-                                    <li>
+                                    <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        Los campos de texto reemplazan caracteres que sean igual al separador por un
-                                        espacio.
+                                        Los campos de texto reemplazan el separador por un espacio.
                                     </li>
                                 </ul>
                             </small>
@@ -129,27 +134,27 @@
                     </div>
                 </div>
 
-                <div class="table-responsive mt-3">
-                    <div class="p-3 border">
-                        <table class="table text-nowrap w-100 fadeIn">
-                            <thead class="font08">
-                                <tr>
-                                    <th class="h40">Posición</th>
-                                    <th>Tipo</th>
-                                    <th>Valor</th>
-                                    <th class="text-center">Tamaño</th>
-                                    <th>Formato</th>
-                                    <th class="text-right" style="width: 140px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabla-campos-body">
-                                <tr id="tabla-campos-vacio">
-                                    <td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <!-- <div class="table-responsive"> -->
+                <div class="p-3 border mt-3 table-responsive">
+                    <table class="table text-nowrap w-100 fadeIn">
+                        <thead class="font08">
+                            <tr>
+                                <th class="h40">Posición</th>
+                                <th>Tipo</th>
+                                <th>Valor</th>
+                                <th class="text-center">Tamaño</th>
+                                <th>Formato</th>
+                                <th class="text-right" style="width: 140px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-campos-body">
+                            <tr id="tabla-campos-vacio">
+                                <td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <!-- </div> -->
             </div>
         </div>
     </div>
