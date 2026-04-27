@@ -1,32 +1,10 @@
-<div class="row mt-2" id="form-nuevo-campo">
+<div class="row mt-3" id="form-nuevo-campo">
     <div class="col-12">
-        <div class="card border radius">
-            <div class="card-body border">
-                <!-- <h6 class="mb-3">Definir campos</h6> -->
-
+        <div class="card">
+            <div class="card-body border shadow-sm radius">
                 <div id="campo-feedback" class="alert alert-danger d-none mb-3" role="alert"></div>
 
                 <div class="form-row align-items-end">
-
-                    <div class="col-12 d-flex align-items-center justify-content-between border-bottom radius pb-3 mb-3">
-                        <div class="">
-                            <label for="campo-plantilla">Plantilla</label>
-                            <select id="campo-plantilla" class="form-control" style="width:100%;">
-                            </select>
-                        </div>
-                        <div class="d-flex align-items-center" style="gap:8px;">
-                            <button type="button" class="btn btn-outline-secondary font09 h40 border"
-                                id="btn-crear-plantilla">
-                                Crear Plantilla
-                            </button>
-                            <button type="button" class="hint--top btn btn-outline-danger font09 h40 border"
-                                id="btn-eliminar-plantilla" aria-label="Eliminar Plantilla">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="col-12 my-3"></div>
 
                     <div class="col-sm-6 col-md-2 mb-3">
                         <label for="campo-posicion">Posición</label>
@@ -150,58 +128,28 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row mt-3 mb-3">
-    <div class="col-12">
-        <div class="table-responsive">
-            <div class="border radius p-3">
-                <table class="table text-nowrap w-100 fadeIn">
-                    <thead class="font08">
-                        <tr>
-                            <th class="h40">Posición</th>
-                            <th>Tipo</th>
-                            <th>Valor</th>
-                            <th class="text-center">Tamaño</th>
-                            <th>Formato</th>
-                            <th class="text-right" style="width: 140px;"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-campos-body">
-                        <tr id="tabla-campos-vacio">
-                            <td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fadeIn" id="modal-crear-plantilla" tabindex="-1" role="dialog"
-    aria-labelledby="modal-crear-plantilla-title" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header border-0">
-                <h6 class="modal-title" id="modal-crear-plantilla-title">Crear Plantilla</h6>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group mb-0">
-                    <label for="nombre-plantilla">Nombre de plantilla</label>
-                    <input type="text" class="form-control h40" id="nombre-plantilla" maxlength="50">
-                    <small id="nombre-plantilla-error" class="text-danger d-none"></small>
+                <div class="table-responsive mt-3">
+                    <div class="p-3 border">
+                        <table class="table text-nowrap w-100 fadeIn">
+                            <thead class="font08">
+                                <tr>
+                                    <th class="h40">Posición</th>
+                                    <th>Tipo</th>
+                                    <th>Valor</th>
+                                    <th class="text-center">Tamaño</th>
+                                    <th>Formato</th>
+                                    <th class="text-right" style="width: 140px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-campos-body">
+                                <tr id="tabla-campos-vacio">
+                                    <td colspan="6" class="text-center text-muted">Todavía no hay campos agregados.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-secondary border-0 font09"
-                    data-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-custom font09" id="btn-guardar-plantilla">Guardar</button>
             </div>
         </div>
     </div>
