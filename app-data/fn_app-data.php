@@ -762,6 +762,19 @@ function add_params($payloadParams = [])
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
+function delete_plantilla($descripcion)
+{
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
+    $queryParams = [
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+        'modulo' => 48,
+        'descripcion' => (string) $descripcion,
+    ];
+
+    $data = ch_api($endpoint, [], 'DELETE', $queryParams);
+    $arrayData = json_decode($data, true);
+    return $arrayData['DATA'] ?? [];
+}
 function horasCustom($params)
 {
     if (!$params) {

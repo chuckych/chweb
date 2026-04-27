@@ -16,8 +16,9 @@
         <!-- Fin Encabezado -->
         <div class="row">
             <div class="col-12 col-sm-6 mt-2">
-                <button class="mt-2 mt-sm-4 pt-1 btn btn-outline-secondary border font09 h40" type="button" data-toggle="collapse"
-                    data-target="#definirCampos" aria-expanded="false" aria-controls="definirCampos">
+                <button class="mt-2 mt-sm-4 pt-1 btn btn-outline-secondary border font09 h40" type="button"
+                    data-toggle="collapse" data-target="#definirCampos" aria-expanded="false"
+                    aria-controls="definirCampos">
                     <span class="d-inline-flex gap5">
                         <i class="bi bi-gear-fill"></i>
                         <span class="d-block d-sm-none">Campos</span>
@@ -43,14 +44,15 @@
                 </div>
             </div>
             <div class="col-12 mt-3" id="resultado-exportacion">
-                <div class="card border radius">
-                    <div class="card-header py-2 d-flex align-items-center justify-content-between bg-white">
+                <div class="p-2 border radius shadow-sm">
+                    <div class="card-header d-flex align-items-center justify-content-between bg-white">
                         <span class="font09">Resultados generados</span>
-                        <small class="text-muted d-none d-sm-block" id="resultado-exportacion-archivo"></small>
+                        <small class="text-muted d-none d-sm-block fadeInDown"
+                            id="resultado-exportacion-archivo"></small>
                     </div>
-                    <div class="card-body p-0">
-                        <pre id="resultado-exportacion-contenido" class="mb-0 p-3"
-                            style="max-height: 550px; overflow: auto; white-space: pre;">Sin resultados cargados.</pre>
+                    <div class="card-body">
+                        <pre id="resultado-exportacion-contenido" class="mb-0"
+                            style="height: 500px; overflow: auto; white-space: pre;">Sin resultados cargados.</pre>
                     </div>
                 </div>
             </div>

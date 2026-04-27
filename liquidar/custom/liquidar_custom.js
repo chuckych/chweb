@@ -44,6 +44,34 @@
         FECHA_DMY_SLASH: 'DD/MM/YYYY'
     };
 
+    const LANGUAGE_SELECT2 = {
+        noResults: function () {
+            return 'No hay resultados..'
+        },
+        inputTooLong: function (args) {
+            var message = 'Máximo ' + maximumInputLength + ' caracteres. Elimine ' + overChars + ' caracter';
+            if (overChars != 1) {
+                message += 'es'
+            }
+            return message
+        },
+        searching: function () {
+            return 'Buscando..'
+        },
+        errorLoading: function () {
+            return 'Sin datos..'
+        },
+        inputTooShort: function () {
+            return 'Ingresar ' + minimumInputLength + ' o mas caracteres'
+        },
+        maximumSelected: function () {
+            return 'Puede seleccionar solo una opción'
+        },
+        removeAllItems: function () {
+            return "Eliminar Selección"
+        }
+    }
+
     const cacheCatalogos = {
         novedades: null,
         horas: null,
@@ -109,13 +137,17 @@
         [FORMATOS.FECHA_DMY_SLASH]: 'DD/MM/YYYY'
     };
     const DEFAULT_SEPARADOR = ',';
+    const DEFAULT_PLANTILLA = '';
+    const STORAGE_PLANTILLA_KEY = 'liquidar_custom_plantilla';
 
     let idSecuencial = 1;
     let uidEnEdicion = null;
     let timerGuardarSeparador = null;
     const ENDPOINT_CAMPOS = '../../app-data/liquidar/custom/campos';
     const ENDPOINT_EXPORT = '../../app-data/liquidar/custom/export';
+    const ENDPOINT_PLANTILLAS = '../../app-data/liquidar/custom/plantillas';
 
+    const $plantilla = $('#campo-plantilla');
     const $posicion = $('#campo-posicion');
     const $tipo = $('#campo-tipo');
     const $subtipo = $('#campo-subtipo');
@@ -136,6 +168,12 @@
     const $resultadoExportacionArchivo = $('#resultado-exportacion-archivo');
     const $resultadoExportacionContenido = $('#resultado-exportacion-contenido');
     const $definirCampos = $('#definirCampos');
+    const $btnCrearPlantilla = $('#btn-crear-plantilla, .btn-crear-plantilla');
+    const $btnEliminarPlantilla = $('#btn-eliminar-plantilla, .btn-eliminar-plantilla');
+    const $modalCrearPlantilla = $('#modal-crear-plantilla');
+    const $inputNombrePlantilla = $('#nombre-plantilla');
+    const $errorNombrePlantilla = $('#nombre-plantilla-error');
+    const $btnGuardarPlantilla = $('#btn-guardar-plantilla');
 
     const TEXTO_BOTON_AGREGAR = 'Agregar campo';
     const TEXTO_BOTON_EDITAR = 'Editar campo';
@@ -146,9 +184,88 @@
         enlazarEventos();
         inicializarOrdenamientoTabla();
         cargarEtiquetasParagene();
-        cargarCamposGuardados();
+        const plantillaGuardada = obtenerPlantillaGuardada() || DEFAULT_PLANTILLA;
+        cargarPlantillas(plantillaGuardada)
+            .then(function () {
+                return cargarCamposGuardados();
+            })
+            .catch(function () {
+                return cargarCamposGuardados();
+            });
         inicializarDatePicker();
     });
+
+    function obtenerPlantillaActiva() {
+        return String($plantilla.val() || '').trim();
+    }
+
+    function guardarPlantillaEnStorage(slug) {
+        try {
+            if (slug) {
+                localStorage.setItem(STORAGE_PLANTILLA_KEY, slug);
+            } else {
+                localStorage.removeItem(STORAGE_PLANTILLA_KEY);
+            }
+        } catch (e) {
+            // Ignorar fallos de localStorage por privacidad o cuota.
+        }
+    }
+
+    function obtenerPlantillaGuardada() {
+        try {
+            return String(localStorage.getItem(STORAGE_PLANTILLA_KEY) || '').trim();
+        } catch (e) {
+            return '';
+        }
+    }
+
+    function cargarPlantillas(slugSeleccionado, forzarSinSeleccion) {
+        return axios.get(ENDPOINT_PLANTILLAS)
+            .then(function (response) {
+                const listado = $.isArray(response.data) ? response.data : [];
+                const opciones = listado.length ? listado : [{ slug: DEFAULT_PLANTILLA, nombre: 'LIQUIDAR_CUSTOM' }];
+                const slugDestino = String(slugSeleccionado || obtenerPlantillaActiva() || obtenerPlantillaGuardada() || DEFAULT_PLANTILLA);
+
+                $plantilla.empty();
+                $plantilla.append($('<option></option>').val('').text(''));
+
+                $.each(opciones, function (_, item) {
+                    const slug = String(item.slug || '');
+                    if (!slug) {
+                        return;
+                    }
+
+                    const nombre = String(item.nombre || slug);
+                    $plantilla.append($('<option></option>').val(slug).text(nombre));
+                });
+
+                const existeSlugDestino = $plantilla.find('option').filter(function () {
+                    return String($(this).val()) === slugDestino;
+                }).length > 0;
+
+                if (forzarSinSeleccion === true) {
+                    $plantilla.val(null).trigger('change.select2');
+                    return;
+                }
+
+                if (existeSlugDestino) {
+                    $plantilla.val(slugDestino).trigger('change.select2');
+                } else {
+                    $plantilla.val(null).trigger('change.select2');
+                }
+            })
+            .catch(function () {
+                $plantilla.empty();
+                $plantilla.append($('<option></option>').val('').text(''));
+                $plantilla.append($('<option></option>').val(DEFAULT_PLANTILLA).text('LIQUIDAR_CUSTOM'));
+                if (forzarSinSeleccion === true) {
+                    $plantilla.val(null).trigger('change.select2');
+                } else {
+                    $plantilla.val(DEFAULT_PLANTILLA).trigger('change.select2');
+                }
+                throw new Error('No se pudo cargar la lista de plantillas.');
+            });
+    }
 
     function cargarEtiquetasParagene() {
         if (cacheCatalogos.etiquetasParagene) {
@@ -216,7 +333,17 @@
     }
 
     function cargarCamposGuardados() {
-        axios.get(ENDPOINT_CAMPOS)
+        const plantilla = obtenerPlantillaActiva();
+        if (!plantilla) {
+            limpiarConfiguracionVista();
+            return Promise.resolve();
+        }
+
+        return axios.get(ENDPOINT_CAMPOS, {
+            params: {
+                plantilla: plantilla
+            }
+        })
             .then(function (response) {
                 const config = normalizarConfiguracionPersistida(response.data);
                 window.camposLiquidar = config.campos;
@@ -227,7 +354,7 @@
                 actualizarResultadoSeparador();
                 recalcularIdSecuencial();
                 renderizarLista();
-                actualizarPosicionSugerida();
+                actualizarPosicionSugerida(true);
             })
             .catch(function () {
                 window.camposLiquidar = [];
@@ -236,16 +363,22 @@
                 actualizarTextoSwitchEncabezados();
                 actualizarResultadoSeparador();
                 renderizarLista();
-                actualizarPosicionSugerida();
+                actualizarPosicionSugerida(true);
                 notificar('No se pudo cargar la configuración guardada.', 'danger');
             });
     }
 
     function guardarCampos() {
+        const plantilla = obtenerPlantillaActiva();
+        if (!plantilla) {
+            return Promise.resolve();
+        }
+
         return axios.post(ENDPOINT_CAMPOS, {
             campos: window.camposLiquidar,
             separador: obtenerSeparadorNormalizado(),
-            encabezados: $encabezados.is(':checked') ? 1 : 0
+            encabezados: $encabezados.is(':checked') ? 1 : 0,
+            plantilla: plantilla
         });
     }
 
@@ -310,14 +443,12 @@
 
     function mostrarResultadosArchivo(archivo) {
         const href = '../../app-data/' + archivo;
-
         axios.get(href, { responseType: 'text' })
             .then(function (response) {
                 const contenido = typeof response.data === 'string' ? response.data : '';
                 $resultadoExportacionArchivo.text(archivo);
                 $resultadoExportacionContenido.text(contenido || 'Archivo vacío.');
                 $resultadoExportacion.removeClass('d-none');
-
                 $('html, body').animate({
                     scrollTop: $resultadoExportacion.offset().top - 20
                 }, 300);
@@ -329,13 +460,23 @@
     }
 
     function exportarDatos() {
+        const plantilla = obtenerPlantillaActiva();
+        if (!plantilla) {
+            notificar('Debe seleccionar una plantilla para exportar.', 'danger');
+            return;
+        }
+
         const rango = obtenerRangoFechas();
         const errorRango = validarRangoExportacion(rango);
         $definirCampos.collapse('hide');
+
         if (errorRango) {
             notificar(errorRango, 'danger');
             return;
         }
+
+        $resultadoExportacionArchivo.text('');
+        $resultadoExportacionContenido.text('Procesando datos... Aguarde.');
         notificar('Procesando datos... Aguarde', 'info', 0, 'right');
 
         $btnExportar.prop('disabled', true);
@@ -343,10 +484,7 @@
         const payload = {
             FechIni: rango.inicio,
             FechFin: rango.fin,
-            getNov: 1,
-            getHor: 1,
-            start: 0,
-            length: 1000
+            plantilla: plantilla
         };
 
         axios.post(ENDPOINT_EXPORT, payload)
@@ -454,10 +592,19 @@
     }
 
     function inicializarSelects() {
+
+        $plantilla.select2({
+            placeholder: 'Seleccionar plantilla',
+            allowClear: true,
+            width: '100%',
+            language: LANGUAGE_SELECT2
+        });
+
         $tipo.select2({
             placeholder: 'Seleccionar tipo',
             allowClear: true,
-            width: '100%'
+            width: '100%',
+            language: LANGUAGE_SELECT2
         });
 
         renderizarOpcionesFormato('');
@@ -467,6 +614,19 @@
     }
 
     function enlazarEventos() {
+        $plantilla.on('change', function () {
+            const plantilla = obtenerPlantillaActiva();
+            guardarPlantillaEnStorage(plantilla);
+            salirModoEdicion();
+
+            if (!plantilla) {
+                limpiarConfiguracionVista();
+                return;
+            }
+
+            cargarCamposGuardados();
+        });
+
         $tipo.on('change', function () {
             manejarCambioTipo();
         });
@@ -498,6 +658,23 @@
             guardarCampos().catch(function () {
                 notificar('No se pudo guardar la opción de encabezados.', 'danger');
             });
+        });
+
+        $btnCrearPlantilla.on('click', function () {
+            $inputNombrePlantilla.val('');
+            $errorNombrePlantilla.addClass('d-none').text('');
+
+            if ($modalCrearPlantilla.length && typeof $modalCrearPlantilla.modal === 'function') {
+                $modalCrearPlantilla.modal('show');
+            }
+        });
+
+        $btnGuardarPlantilla.on('click', function () {
+            crearPlantillaDesdeModal();
+        });
+
+        $btnEliminarPlantilla.on('click', function () {
+            eliminarPlantillaSeleccionada();
         });
 
         $btnAgregar.on('click', function () {
@@ -874,7 +1051,7 @@
             notificar('No se pudo guardar la configuración.', 'danger');
         });
 
-        mostrarFeedback('Campo eliminado.', 'success');
+        // mostrarFeedback('Campo eliminado.', 'success');
         notificar('Campo eliminado.', 'success');
     }
 
@@ -974,8 +1151,8 @@
         return window.camposLiquidar.length + 1;
     }
 
-    function actualizarPosicionSugerida() {
-        if (!$posicion.val()) {
+    function actualizarPosicionSugerida(forzar) {
+        if (forzar === true || !$posicion.val()) {
             $posicion.val(String(obtenerSiguientePosicion()));
         }
     }
@@ -1221,6 +1398,151 @@
 
     function normalizarEncabezados(valor) {
         return Number(valor) === 1 ? 1 : 0;
+    }
+
+    function validarNombrePlantilla(nombre) {
+        return /^(?=.*[\p{L}\p{N}])[\p{L}\p{N} ]{1,50}$/u.test(nombre);
+    }
+
+    function slugPlantillaDesdeNombre(nombre) {
+        const base = String(nombre || '').trim().toLowerCase();
+        const sinAcentos = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        const conUnderscore = sinAcentos.replace(/\s+/g, '_');
+        const limpio = conUnderscore
+            .replace(/[^a-z0-9_]/g, '')
+            .replace(/_+/g, '_')
+            .replace(/^_+|_+$/g, '');
+
+        if (!limpio) {
+            return DEFAULT_PLANTILLA;
+        }
+
+        return limpio.slice(0, 50);
+    }
+
+    function existePlantillaEnSelect(slug) {
+        return $plantilla.find('option').filter(function () {
+            return String($(this).val()) === String(slug);
+        }).length > 0;
+    }
+
+    function limpiarConfiguracionVista() {
+        window.camposLiquidar = [];
+        $separador.val(DEFAULT_SEPARADOR);
+        $encabezados.prop('checked', false);
+        actualizarTextoSwitchEncabezados();
+        actualizarResultadoSeparador();
+        recalcularIdSecuencial();
+        renderizarLista();
+        actualizarPosicionSugerida(true);
+    }
+
+    function crearPlantillaDesdeModal() {
+        const nombre = String($inputNombrePlantilla.val() || '').trim();
+        const slug = slugPlantillaDesdeNombre(nombre);
+
+        if (!validarNombrePlantilla(nombre)) {
+            $errorNombrePlantilla
+                .removeClass('d-none')
+                .text('Ingrese un nombre válido (solo letras, números, acentos y espacios, máximo 50).');
+            return;
+        }
+
+        if (existePlantillaEnSelect(slug)) {
+            $errorNombrePlantilla
+                .removeClass('d-none')
+                .text('Ya existe una plantilla con ese nombre.');
+            return;
+        }
+
+        $errorNombrePlantilla.addClass('d-none').text('');
+        $btnGuardarPlantilla.prop('disabled', true);
+
+        const payload = {
+            nombre: nombre,
+            campos: window.camposLiquidar,
+            separador: obtenerSeparadorNormalizado(),
+            encabezados: $encabezados.is(':checked') ? 1 : 0
+        };
+
+        axios.post(ENDPOINT_PLANTILLAS, payload)
+            .then(function (response) {
+                const data = response.data || {};
+                if (data.status !== 'ok' || !data.slug) {
+                    throw new Error(data.message || 'No se pudo crear la plantilla.');
+                }
+
+                return cargarPlantillas(data.slug).then(function () {
+                    guardarPlantillaEnStorage(data.slug);
+                    return cargarCamposGuardados();
+                });
+            })
+            .then(function () {
+                if ($modalCrearPlantilla.length && typeof $modalCrearPlantilla.modal === 'function') {
+                    $modalCrearPlantilla.modal('hide');
+                }
+
+                notificar('Plantilla creada correctamente.', 'success');
+            })
+            .catch(function (error) {
+                const mensajeBackend = error
+                    && error.response
+                    && error.response.data
+                    && error.response.data.message
+                    ? error.response.data.message
+                    : (error.message || 'No se pudo crear la plantilla.');
+
+                $errorNombrePlantilla.removeClass('d-none').text(mensajeBackend);
+            })
+            .then(function () {
+                $btnGuardarPlantilla.prop('disabled', false);
+            });
+    }
+
+    function eliminarPlantillaSeleccionada() {
+        const plantilla = obtenerPlantillaActiva();
+        if (!plantilla) {
+            notificar('Debe seleccionar una plantilla para eliminar.', 'danger');
+            return;
+        }
+
+        if (!window.confirm('¿Eliminar la plantilla seleccionada?')) {
+            return;
+        }
+
+        $btnEliminarPlantilla.prop('disabled', true);
+
+        axios.delete(ENDPOINT_PLANTILLAS, {
+            params: {
+                plantilla: plantilla
+            }
+        })
+            .then(function (response) {
+                const data = response.data || {};
+                if (data.status !== 'ok') {
+                    throw new Error(data.message || 'No se pudo eliminar la plantilla.');
+                }
+
+                return cargarPlantillas('', true);
+            })
+            .then(function () {
+                guardarPlantillaEnStorage('');
+                limpiarConfiguracionVista();
+                notificar('Plantilla eliminada correctamente.', 'success');
+            })
+            .catch(function (error) {
+                const mensajeBackend = error
+                    && error.response
+                    && error.response.data
+                    && error.response.data.message
+                    ? error.response.data.message
+                    : (error.message || 'No se pudo eliminar la plantilla.');
+
+                notificar(mensajeBackend, 'danger');
+            })
+            .then(function () {
+                $btnEliminarPlantilla.prop('disabled', false);
+            });
     }
 
     function actualizarTextoSwitchEncabezados() {

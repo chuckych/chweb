@@ -1,39 +1,38 @@
 <?php
-
-function procesarCamposLiquidarClienteId(): string
+function ClienteId(): string
 {
     $clienteId = (string) ($_SESSION['ID_CLIENTE'] ?? '');
     $clienteId = trim($clienteId);
     $clienteId = preg_replace('/[^A-Za-z0-9_-]/', '', $clienteId) ?: '';
 
     if ($clienteId === '') {
-        throw new Exception('No se encontró el ID_CLIENTE de la sesion.', 400);
+        throw new Exception('No se encontró el ID_CLIENTE de la sesión.', 400);
     }
 
     return $clienteId;
 }
 
-function procesarCamposLiquidarNombreArchivo(): string
+function NombreArchivo(): string
 {
-    return procesarCamposLiquidarClienteId() . '_liquidar_custom.json';
+    return ClienteId() . '_liquidar_custom.json';
 }
 
-function procesarCamposLiquidarRutaDirectorioConfig(): string
+function RutaDirectorioConfig(): string
 {
     return __DIR__ . '/../json/config/';
 }
 
-function procesarCamposLiquidarRutaArchivoLegacy(): string
+function RutaArchivoLegacy(): string
 {
-    return __DIR__ . '/../json/' . procesarCamposLiquidarNombreArchivo();
+    return __DIR__ . '/../json/' . NombreArchivo();
 }
 
-function procesarCamposLiquidarRutaArchivo(): string
+function RutaArchivo(): string
 {
-    return procesarCamposLiquidarRutaDirectorioConfig() . procesarCamposLiquidarNombreArchivo();
+    return RutaDirectorioConfig() . NombreArchivo();
 }
 
-function procesarCamposLiquidarNormalizarCampo($item): ?array
+function NormalizarCampo($item): ?array
 {
     if (!is_array($item)) {
         return null;
@@ -47,7 +46,7 @@ function procesarCamposLiquidarNormalizarCampo($item): ?array
 
     $tamanoValido = ($formato === 'texto' || $formato === 'horas')
         ? ($tamano === 0)
-        : (procesarCamposLiquidarEsFormatoFecha($formato) ? ($tamano >= 0) : ($tamano > 0));
+        : (EsFormatoFecha($formato) ? ($tamano >= 0) : ($tamano > 0));
 
     if ($posicion <= 0 || $tipo === '' || !$tamanoValido || $formato === '') {
         return null;
@@ -66,7 +65,7 @@ function procesarCamposLiquidarNormalizarCampo($item): ?array
     ];
 }
 
-function procesarCamposLiquidarNormalizarCampos($campos): array
+function NormalizarCampos($campos): array
 {
     if (!is_array($campos)) {
         throw new Exception('El payload de campos no es valido.', 400);
@@ -75,7 +74,7 @@ function procesarCamposLiquidarNormalizarCampos($campos): array
     $normalizados = [];
 
     foreach ($campos as $item) {
-        $campo = procesarCamposLiquidarNormalizarCampo($item);
+        $campo = NormalizarCampo($item);
         if ($campo !== null) {
             $normalizados[] = $campo;
         }
@@ -88,7 +87,7 @@ function procesarCamposLiquidarNormalizarCampos($campos): array
     return $normalizados;
 }
 
-function procesarCamposLiquidarNormalizarSeparador($separador): string
+function NormalizarSeparador($separador): string
 {
     if ($separador === null) {
         return ',';
@@ -103,54 +102,202 @@ function procesarCamposLiquidarNormalizarSeparador($separador): string
     return substr($separador, 0, 1);
 }
 
-function procesarCamposLiquidarNormalizarEncabezados($encabezados): int
+function NormalizarEncabezados($encabezados): int
 {
     return ((int) $encabezados) === 1 ? 1 : 0;
 }
 
-function procesarCamposLiquidarNormalizarConfiguracion($data): array
+function NormalizarPlantillaSlug($slug): string
+{
+    $slug = trim((string) $slug);
+
+    if (function_exists('iconv')) {
+        $slugTransliterado = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $slug);
+        if ($slugTransliterado !== false) {
+            $slug = $slugTransliterado;
+        }
+    }
+
+    $slug = strtolower($slug);
+    $slug = preg_replace('/\s+/', '_', $slug) ?: '';
+    $slug = preg_replace('/[^a-z0-9_]/', '', $slug) ?: '';
+    $slug = preg_replace('/_+/', '_', $slug) ?: '';
+    $slug = trim($slug, '_');
+
+    if ($slug === '') {
+        return '';
+    }
+
+    return substr($slug, 0, 50);
+}
+
+function NormalizarNombrePlantilla($nombre, $fallbackSlug = ''): string
+{
+    $nombre = trim((string) $nombre);
+
+    if ($nombre !== '' && preg_match('/^(?=.*[\p{L}\p{N}])[\p{L}\p{N} ]{1,50}$/u', $nombre)) {
+        return $nombre;
+    }
+
+    $fallbackSlug = NormalizarPlantillaSlug($fallbackSlug);
+    if ($fallbackSlug === '') {
+        return '';
+    }
+
+    return $fallbackSlug;
+}
+
+function PlantillaSlugDesdeNombre($nombre): string
+{
+    $nombre = trim((string) $nombre);
+    if ($nombre === '') {
+        throw new Exception('Debe indicar un nombre de plantilla.', 400);
+    }
+
+    if (!preg_match('/^(?=.*[\p{L}\p{N}])[\p{L}\p{N} ]{1,50}$/u', $nombre)) {
+        throw new Exception('El nombre de la plantilla solo puede contener letras, números, acentos y espacios (máximo 50).', 400);
+    }
+
+    return NormalizarPlantillaSlug($nombre);
+}
+
+function ExistePlantillaPorSlug($plantillaSlug): bool
+{
+    $slug = NormalizarPlantillaSlug($plantillaSlug);
+    if ($slug === '') {
+        return false;
+    }
+
+    $queryParams = [
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+        'descripcion' => '',
+        'modulo' => 48,
+        'valores' => ''
+    ];
+
+    $rows = get_params($queryParams) ?? [];
+
+    foreach ($rows as $row) {
+        $actual = NormalizarPlantillaSlug($row['descripcion'] ?? '');
+        if ($actual === $slug) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function ListarPlantillas(): array
+{
+    $queryParams = [
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+        'descripcion' => '',
+        'modulo' => 48,
+        'valores' => ''
+    ];
+
+    $rows = get_params($queryParams) ?? [];
+    $plantillas = [];
+
+    foreach ($rows as $row) {
+        $slug = NormalizarPlantillaSlug($row['descripcion'] ?? '');
+        $valores = (string) ($row['valores'] ?? '');
+
+        if ($slug === '' || $valores === '') {
+            continue;
+        }
+
+        $json = json_decode($valores, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($json) || !array_key_exists('campos', $json)) {
+            continue;
+        }
+
+        $nombreReal = NormalizarNombrePlantilla($json['nombre'] ?? ($json['nombrePlantilla'] ?? ''), $slug);
+
+        $plantillas[$slug] = [
+            'slug' => $slug,
+            'nombre' => $nombreReal !== '' ? $nombreReal : $slug,
+            'descripcion' => $slug,
+        ];
+    }
+
+    // if (!isset($plantillas['liquidar_custom'])) {
+    //     $plantillas['liquidar_custom'] = [
+    //         'slug' => 'liquidar_custom',
+    //         'nombre' => 'liquidar_custom',
+    //         'descripcion' => 'liquidar_custom',
+    //     ];
+    // }
+
+    ksort($plantillas);
+    return array_values($plantillas);
+}
+
+function NormalizarConfiguracion($data): array
 {
     $separador = ',';
     $encabezados = 0;
+    $nombre = '';
     $campos = [];
 
     if (is_array($data) && array_key_exists('campos', $data)) {
         $campos = $data['campos'];
-        $separador = procesarCamposLiquidarNormalizarSeparador($data['separador'] ?? ',');
-        $encabezados = procesarCamposLiquidarNormalizarEncabezados($data['encabezados'] ?? 0);
+        $separador = NormalizarSeparador($data['separador'] ?? ',');
+        $encabezados = NormalizarEncabezados($data['encabezados'] ?? 0);
+        $nombre = (string) ($data['nombre'] ?? ($data['nombrePlantilla'] ?? ''));
     } else {
         $campos = $data;
         if (is_array($data) && array_key_exists('separador', $data)) {
-            $separador = procesarCamposLiquidarNormalizarSeparador($data['separador']);
+            $separador = NormalizarSeparador($data['separador']);
         }
         if (is_array($data) && array_key_exists('encabezados', $data)) {
-            $encabezados = procesarCamposLiquidarNormalizarEncabezados($data['encabezados']);
+            $encabezados = NormalizarEncabezados($data['encabezados']);
+        }
+        if (is_array($data) && array_key_exists('nombre', $data)) {
+            $nombre = (string) $data['nombre'];
+        } elseif (is_array($data) && array_key_exists('nombrePlantilla', $data)) {
+            $nombre = (string) $data['nombrePlantilla'];
         }
     }
 
     return [
         'separador' => $separador,
         'encabezados' => $encabezados,
-        'campos' => procesarCamposLiquidarNormalizarCampos($campos),
+        'nombre' => $nombre,
+        'campos' => NormalizarCampos($campos),
     ];
 }
 
-function procesarCamposLiquidarLeerConfiguracion(): array
+function LeerConfiguracion($plantillaSlug = ''): array
 {
-    $rutaArchivo = procesarCamposLiquidarRutaArchivo();
-    $rutaArchivoLegacy = procesarCamposLiquidarRutaArchivoLegacy();
+    // $rutaArchivo = RutaArchivo();
+    // $rutaArchivoLegacy = RutaArchivoLegacy();
 
-    if (!file_exists($rutaArchivo) && file_exists($rutaArchivoLegacy)) {
-        $rutaArchivo = $rutaArchivoLegacy;
-    }
+    // if (!file_exists($rutaArchivo) && file_exists($rutaArchivoLegacy)) {
+    //     $rutaArchivo = $rutaArchivoLegacy;
+    // }
 
-    if (!file_exists($rutaArchivo)) {
-        return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
-    }
+    // if (!file_exists($rutaArchivo)) {
+    //     return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
+    // }
 
-    $contenido = file_get_contents($rutaArchivo);
+    // $contenido = file_get_contents($rutaArchivo);
+
+    $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
+
+    $queryParams = [
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+        'descripcion' => $plantillaSlug,
+        'modulo' => 48,
+        'valores' => ''
+    ];
+
+    $get_params = get_params($queryParams) ?? [];
+
+    $contenido =  $get_params[0]['valores'] ?? [];
+
     if ($contenido === false || $contenido === '') {
-        return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
+        return ['separador' => ',', 'encabezados' => 0, 'nombre' => $plantillaSlug, 'campos' => []];
     }
 
     $data = json_decode($contenido, true);
@@ -159,42 +306,53 @@ function procesarCamposLiquidarLeerConfiguracion(): array
         throw new Exception('El archivo de configuración de campos no es valido.', 500);
     }
 
-    $config = procesarCamposLiquidarNormalizarConfiguracion($data);
+    $config = NormalizarConfiguracion($data);
 
-    // Si se leyó desde la ruta legacy, intenta migrar a la nueva carpeta de config.
-    if ($rutaArchivo === $rutaArchivoLegacy) {
-        try {
-            procesarCamposLiquidarGuardarConfiguracion($config['campos'] ?? [], $config['separador'] ?? ',');
-        } catch (Throwable $th) {
-            // Mantener lectura funcional aunque falle migración automática.
-        }
-    }
+    // // Si se leyó desde la ruta legacy, intenta migrar a la nueva carpeta de config.
+    // if ($rutaArchivo === $rutaArchivoLegacy) {
+    //     try {
+    //         GuardarConfiguracion($config['campos'] ?? [], $config['separador'] ?? ',');
+    //     } catch (Throwable $th) {
+    //         // Mantener lectura funcional aunque falle migración automática.
+    //     }
+    // }
 
     return $config;
 }
 
-function procesarCamposLiquidarLeerCampos(): array
+function LeerCampos($plantillaSlug = ''): array
 {
-    $config = procesarCamposLiquidarLeerConfiguracion();
+    $config = LeerConfiguracion($plantillaSlug);
     return $config['campos'] ?? [];
 }
 
-function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ',', $encabezados = 0): array
+function GuardarConfiguracion($campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
 {
-    $normalizados = procesarCamposLiquidarNormalizarCampos($campos);
+    $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
+
+    $nombrePlantilla = '';
+    try {
+        $configExistente = LeerConfiguracion($plantillaSlug);
+        $nombrePlantilla = NormalizarNombrePlantilla($configExistente['nombre'] ?? '', $plantillaSlug);
+    } catch (Throwable $th) {
+        $nombrePlantilla = NormalizarNombrePlantilla('', $plantillaSlug);
+    }
+
+    $normalizados = NormalizarCampos($campos);
     $config = [
-        'separador' => procesarCamposLiquidarNormalizarSeparador($separador),
-        'encabezados' => procesarCamposLiquidarNormalizarEncabezados($encabezados),
+        'separador' => NormalizarSeparador($separador),
+        'encabezados' => NormalizarEncabezados($encabezados),
+        'nombre' => $nombrePlantilla,
         'campos' => $normalizados,
     ];
-    $json = json_encode($config, JSON_PRETTY_PRINT);
+    $json = json_encode($config);
 
     if ($json === false) {
         throw new Exception('No se pudo serializar la configuración de campos.', 500);
     }
 
-    $rutaArchivo = procesarCamposLiquidarRutaArchivo();
-    $directorio = procesarCamposLiquidarRutaDirectorioConfig();
+    $rutaArchivo = RutaArchivo();
+    $directorio = RutaDirectorioConfig();
 
     if (!is_dir($directorio)) {
         if (!mkdir($directorio, 0777, true) && !is_dir($directorio)) {
@@ -208,16 +366,70 @@ function procesarCamposLiquidarGuardarConfiguracion($campos, $separador = ',', $
         throw new Exception('No se pudo guardar la configuración de campos.', 500);
     }
 
+    $bodyAdd[] = [
+        'descripcion' => $plantillaSlug,
+        'valores' => $json,
+        'modulo' => 48,
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+    ];
+
+    add_params($bodyAdd);
+
     return $config;
 }
 
-function procesarCamposLiquidarGuardarCampos($campos, $separador = ',', $encabezados = 0): array
+function GuardarCampos($campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
 {
-    $config = procesarCamposLiquidarGuardarConfiguracion($campos, $separador, $encabezados);
+    $config = GuardarConfiguracion($campos, $separador, $encabezados, $plantillaSlug);
     return $config['campos'] ?? [];
 }
 
-function procesarCamposLiquidarConstruirEncabezados(array $campos, string $separador): string
+function GuardarPlantilla($nombrePlantilla, $campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
+{
+    $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
+    $nombrePlantilla = NormalizarNombrePlantilla($nombrePlantilla, $plantillaSlug);
+
+    $normalizados = NormalizarCampos($campos);
+    $config = [
+        'separador' => NormalizarSeparador($separador),
+        'encabezados' => NormalizarEncabezados($encabezados),
+        'nombre' => $nombrePlantilla,
+        'campos' => $normalizados,
+    ];
+    $json = json_encode($config);
+
+    if ($json === false) {
+        throw new Exception('No se pudo serializar la configuración de campos.', 500);
+    }
+
+    $rutaArchivo = RutaArchivo();
+    $directorio = RutaDirectorioConfig();
+
+    if (!is_dir($directorio)) {
+        if (!mkdir($directorio, 0777, true) && !is_dir($directorio)) {
+            throw new Exception('No se pudo crear la carpeta de configuración.', 500);
+        }
+    }
+
+    $bytes = file_put_contents($rutaArchivo, $json, LOCK_EX);
+
+    if ($bytes === false) {
+        throw new Exception('No se pudo guardar la configuración de campos.', 500);
+    }
+
+    $bodyAdd[] = [
+        'descripcion' => $plantillaSlug,
+        'valores' => $json,
+        'modulo' => 48,
+        'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
+    ];
+
+    add_params($bodyAdd);
+
+    return $config;
+}
+
+function ConstruirEncabezados(array $campos, string $separador): string
 {
     $headers = [];
 
@@ -235,13 +447,13 @@ function procesarCamposLiquidarConstruirEncabezados(array $campos, string $separ
     return implode($separador, $headers);
 }
 
-function procesarCamposLiquidarLeerSeparador(): string
+function LeerSeparador($plantillaSlug = ''): string
 {
-    $config = procesarCamposLiquidarLeerConfiguracion();
-    return procesarCamposLiquidarNormalizarSeparador($config['separador'] ?? ',');
+    $config = LeerConfiguracion($plantillaSlug);
+    return NormalizarSeparador($config['separador'] ?? ',');
 }
 
-function procesarCamposLiquidarNormalizarRegistrosFicNovHor($data): array
+function NormalizarRegistrosFicNovHor($data): array
 {
     if (is_array($data) && isset($data['DATA']) && is_array($data['DATA'])) {
         return $data['DATA'];
@@ -254,24 +466,24 @@ function procesarCamposLiquidarNormalizarRegistrosFicNovHor($data): array
     return [];
 }
 
-function procesarCamposLiquidarEsFormatoFecha(string $formato): bool
+function EsFormatoFecha(string $formato): bool
 {
     static $formatosFecha = [
-        'YYYY-MM-DD',
-        'YYYYMMDD',
-        'YYYY/MM/DD',
-        'MM-DD-YYYY',
-        'MMDDYYYY',
-        'MM/DD/YYYY',
-        'DD-MM-YYYY',
-        'DDMMYYYY',
-        'DD/MM/YYYY',
+    'YYYY-MM-DD',
+    'YYYYMMDD',
+    'YYYY/MM/DD',
+    'MM-DD-YYYY',
+    'MMDDYYYY',
+    'MM/DD/YYYY',
+    'DD-MM-YYYY',
+    'DDMMYYYY',
+    'DD/MM/YYYY',
     ];
 
     return in_array($formato, $formatosFecha, true);
 }
 
-function procesarCamposLiquidarFormatearFecha(string $fecha, string $formato): string
+function FormatearFecha(string $fecha, string $formato): string
 {
     $timestamp = strtotime($fecha);
     if ($timestamp === false) {
@@ -301,7 +513,7 @@ function procesarCamposLiquidarFormatearFecha(string $fecha, string $formato): s
     }
 }
 
-function procesarCamposLiquidarHoraADecimal(string $hora): string
+function HoraADecimal(string $hora): string
 {
     $hora = trim($hora);
     if ($hora === '') {
@@ -319,7 +531,7 @@ function procesarCamposLiquidarHoraADecimal(string $hora): string
     return number_format((float) $hora, 2, '.', '');
 }
 
-function procesarCamposLiquidarPadIzquierda(string $valor, int $tamano): string
+function PadIzquierda(string $valor, int $tamano): string
 {
     if ($tamano <= 0) {
         return $valor;
@@ -332,7 +544,7 @@ function procesarCamposLiquidarPadIzquierda(string $valor, int $tamano): string
     return str_pad($valor, $tamano, '0', STR_PAD_LEFT);
 }
 
-function procesarCamposLiquidarPadDerechaEspacios(string $valor, int $tamano): string
+function PadDerechaEspacios(string $valor, int $tamano): string
 {
     if ($tamano <= 0) {
         return $valor;
@@ -345,13 +557,13 @@ function procesarCamposLiquidarPadDerechaEspacios(string $valor, int $tamano): s
     return str_pad($valor, $tamano, ' ', STR_PAD_RIGHT);
 }
 
-function procesarCamposLiquidarObtenerCodigoEstructura(array $registro, string $clave): string
+function ObtenerCodigoEstructura(array $registro, string $clave): string
 {
     $estruct = (isset($registro['Estruct']) && is_array($registro['Estruct'])) ? $registro['Estruct'] : [];
     return (string) ($estruct[$clave] ?? '');
 }
 
-function procesarCamposLiquidarSanitizarTextoSeparador(string $valor, string $separador): string
+function SanitizarTextoSeparador(string $valor, string $separador): string
 {
     if ($separador === '') {
         return $valor;
@@ -360,7 +572,7 @@ function procesarCamposLiquidarSanitizarTextoSeparador(string $valor, string $se
     return str_replace($separador, ' ', $valor);
 }
 
-function procesarCamposLiquidarBuscarHoraPorSubtipo(array $registro, string $subtipo): string
+function BuscarHoraPorSubtipo(array $registro, string $subtipo): string
 {
     $horas = (isset($registro['Horas']) && is_array($registro['Horas'])) ? $registro['Horas'] : [];
 
@@ -373,7 +585,7 @@ function procesarCamposLiquidarBuscarHoraPorSubtipo(array $registro, string $sub
     return '';
 }
 
-function procesarCamposLiquidarBuscarNovedadPorSubtipo(array $registro, string $subtipo): string
+function BuscarNovedadPorSubtipo(array $registro, string $subtipo): string
 {
     $novedades = (isset($registro['Nove']) && is_array($registro['Nove'])) ? $registro['Nove'] : [];
 
@@ -386,15 +598,15 @@ function procesarCamposLiquidarBuscarNovedadPorSubtipo(array $registro, string $
     return '';
 }
 
-function procesarCamposLiquidarObtenerFichadas(array $registro): array
+function ObtenerFichadas(array $registro): array
 {
     $fichadas = (isset($registro['Fich']) && is_array($registro['Fich'])) ? $registro['Fich'] : [];
     return array_values(array_filter($fichadas, 'is_array'));
 }
 
-function procesarCamposLiquidarObtenerPrimerFichada(array $registro): string
+function ObtenerPrimerFichada(array $registro): string
 {
-    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    $fichadas = ObtenerFichadas($registro);
     if (empty($fichadas)) {
         return '';
     }
@@ -409,9 +621,9 @@ function procesarCamposLiquidarObtenerPrimerFichada(array $registro): string
     return '';
 }
 
-function procesarCamposLiquidarObtenerUltimaFichada(array $registro): string
+function ObtenerUltimaFichada(array $registro): string
 {
-    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    $fichadas = ObtenerFichadas($registro);
     if (count($fichadas) <= 1) {
         return '';
     }
@@ -420,9 +632,9 @@ function procesarCamposLiquidarObtenerUltimaFichada(array $registro): string
     return (string) ($ultima['Hora'] ?? '');
 }
 
-function procesarCamposLiquidarObtenerTodasLasFichadas(array $registro): string
+function ObtenerTodasLasFichadas(array $registro): string
 {
-    $fichadas = procesarCamposLiquidarObtenerFichadas($registro);
+    $fichadas = ObtenerFichadas($registro);
     if (empty($fichadas)) {
         return '';
     }
@@ -438,7 +650,7 @@ function procesarCamposLiquidarObtenerTodasLasFichadas(array $registro): string
     return implode(' ', $horas);
 }
 
-function procesarCamposLiquidarObtenerValorCrudoCampo(array $registro, array $campo): string
+function ObtenerValorCrudoCampo(array $registro, array $campo): string
 {
     $tipo = (string) ($campo['tipo'] ?? '');
     $subtipo = (string) ($campo['subtipo'] ?? '');
@@ -453,35 +665,35 @@ function procesarCamposLiquidarObtenerValorCrudoCampo(array $registro, array $ca
         case 'cuil_legajo':
             return (string) ($registro['Cuil'] ?? '');
         case 'cod_empresa':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Empr');
+            return ObtenerCodigoEstructura($registro, 'Empr');
         case 'cod_planta':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Plan');
+            return ObtenerCodigoEstructura($registro, 'Plan');
         case 'cod_convenio':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Conv');
+            return ObtenerCodigoEstructura($registro, 'Conv');
         case 'cod_sector':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Sect');
+            return ObtenerCodigoEstructura($registro, 'Sect');
         case 'cod_seccion':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Sec2');
+            return ObtenerCodigoEstructura($registro, 'Sec2');
         case 'cod_grupo':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Grup');
+            return ObtenerCodigoEstructura($registro, 'Grup');
         case 'cod_sucursal':
-            return procesarCamposLiquidarObtenerCodigoEstructura($registro, 'Sucu');
+            return ObtenerCodigoEstructura($registro, 'Sucu');
         case 'fecha':
             return (string) ($registro['Fech'] ?? '');
         case 'horas':
-            return procesarCamposLiquidarBuscarHoraPorSubtipo($registro, $subtipo);
+            return BuscarHoraPorSubtipo($registro, $subtipo);
         case 'novedades':
-            return procesarCamposLiquidarBuscarNovedadPorSubtipo($registro, $subtipo);
+            return BuscarNovedadPorSubtipo($registro, $subtipo);
         case 'atra':
             return (string) ($registro['ATra'] ?? '');
         case 'trab':
             return (string) ($registro['Trab'] ?? '');
         case 'primer_fichada':
-            return procesarCamposLiquidarObtenerPrimerFichada($registro);
+            return ObtenerPrimerFichada($registro);
         case 'ultima_fichada':
-            return procesarCamposLiquidarObtenerUltimaFichada($registro);
+            return ObtenerUltimaFichada($registro);
         case 'todas_fichadas':
-            return procesarCamposLiquidarObtenerTodasLasFichadas($registro);
+            return ObtenerTodasLasFichadas($registro);
         case 'turstr':
             return (string) ($registro['TurStr'] ?? '');
         case 'labo':
@@ -493,14 +705,14 @@ function procesarCamposLiquidarObtenerValorCrudoCampo(array $registro, array $ca
     }
 }
 
-function procesarCamposLiquidarFormatearValorCampo(string $valorCrudo, array $campo, string $separador): string
+function FormatearValorCampo(string $valorCrudo, array $campo, string $separador): string
 {
     $tipo = (string) ($campo['tipo'] ?? '');
     $formato = (string) ($campo['formato'] ?? '');
     $tamano = (int) ($campo['tamano'] ?? 0);
 
     if ($formato === 'texto') {
-        return procesarCamposLiquidarSanitizarTextoSeparador($valorCrudo, $separador);
+        return SanitizarTextoSeparador($valorCrudo, $separador);
     }
 
     if ($formato === 'horas') {
@@ -519,9 +731,9 @@ function procesarCamposLiquidarFormatearValorCampo(string $valorCrudo, array $ca
         }
 
         if ($tipo === 'cuil_legajo') {
-            return procesarCamposLiquidarPadDerechaEspacios('', $tamano);
+            return PadDerechaEspacios('', $tamano);
         }
-        return procesarCamposLiquidarPadIzquierda('', $tamano);
+        return PadIzquierda('', $tamano);
     }
 
     switch ($tipo) {
@@ -537,59 +749,60 @@ function procesarCamposLiquidarFormatearValorCampo(string $valorCrudo, array $ca
         case 'labo':
         case 'feri':
             $soloDigitos = preg_replace('/\D+/', '', $valorCrudo) ?: '';
-            return procesarCamposLiquidarPadIzquierda($soloDigitos, $tamano);
+            return PadIzquierda($soloDigitos, $tamano);
         case 'apno':
-            $sanitizado = procesarCamposLiquidarSanitizarTextoSeparador($valorCrudo, $separador);
-            return procesarCamposLiquidarPadDerechaEspacios($sanitizado, $tamano);
+            $sanitizado = SanitizarTextoSeparador($valorCrudo, $separador);
+            return PadDerechaEspacios($sanitizado, $tamano);
         case 'cuil_legajo':
-            return procesarCamposLiquidarPadDerechaEspacios($valorCrudo, $tamano);
+            return PadDerechaEspacios($valorCrudo, $tamano);
         case 'fecha':
-            return procesarCamposLiquidarFormatearFecha($valorCrudo, $formato);
+            return FormatearFecha($valorCrudo, $formato);
         case 'horas':
         case 'novedades':
         case 'atra':
         case 'trab':
-            return procesarCamposLiquidarPadIzquierda(procesarCamposLiquidarHoraADecimal($valorCrudo), $tamano);
+            return PadIzquierda(HoraADecimal($valorCrudo), $tamano);
         case 'turstr':
-            return procesarCamposLiquidarPadDerechaEspacios($valorCrudo, $tamano);
+            return PadDerechaEspacios($valorCrudo, $tamano);
         default:
             if ($formato === 'decimal') {
-                return procesarCamposLiquidarPadIzquierda(number_format((float) $valorCrudo, 2, '.', ''), $tamano);
+                return PadIzquierda(number_format((float) $valorCrudo, 2, '.', ''), $tamano);
             }
-            return procesarCamposLiquidarPadIzquierda($valorCrudo, $tamano);
+            return PadIzquierda($valorCrudo, $tamano);
     }
 }
 
-function procesarCamposLiquidarConstruirLineaRegistro(array $registro, array $campos, string $separador): string
+function ConstruirLineaRegistro(array $registro, array $campos, string $separador): string
 {
     $valores = [];
 
     foreach ($campos as $campo) {
-        $valorCrudo = procesarCamposLiquidarObtenerValorCrudoCampo($registro, $campo);
-        $valores[] = procesarCamposLiquidarFormatearValorCampo($valorCrudo, $campo, $separador);
+        $valorCrudo = ObtenerValorCrudoCampo($registro, $campo);
+        $valores[] = FormatearValorCampo($valorCrudo, $campo, $separador);
     }
 
     return implode($separador, $valores);
 }
 
-function procesarCamposLiquidarGenerarContenidoExport(array $campos, array $registros, string $separador): string
+function GenerarContenidoExport(array $campos, array $registros, string $separador): string
 {
     $lineas = [];
 
     foreach ($registros as $registro) {
-        $lineas[] = procesarCamposLiquidarConstruirLineaRegistro($registro, $campos, $separador);
+        $lineas[] = ConstruirLineaRegistro($registro, $campos, $separador);
     }
 
     return implode("\r\n", $lineas);
 }
 
-function procesarCamposLiquidarExportarTxt(array $payload): array
+function ExportarTxt(array $payload): array
 {
     $fechaInicio = trim((string) ($payload['FechIni'] ?? ''));
     $fechaFin = trim((string) ($payload['FechFin'] ?? ''));
-    $config = procesarCamposLiquidarLeerConfiguracion();
-    $separador = procesarCamposLiquidarNormalizarSeparador($config['separador'] ?? ',');
-    $encabezados = procesarCamposLiquidarNormalizarEncabezados($config['encabezados'] ?? 0);
+    $plantillaSlug = NormalizarPlantillaSlug($payload['plantilla'] ?? '');
+    $config = LeerConfiguracion($plantillaSlug);
+    $separador = NormalizarSeparador($config['separador'] ?? ',');
+    $encabezados = NormalizarEncabezados($config['encabezados'] ?? 0);
 
     if ($fechaInicio === '' || $fechaFin === '') {
         throw new Exception('Debe indicar rango de fechas para exportar.', 400);
@@ -614,7 +827,7 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
     if (!$campos) {
         throw new Exception('No hay campos configurados para exportar.', 400);
     }
-    
+
     $hayCamposFichadas = false;
     $hayCamposHoras = false;
     $hayCamposNovedades = false;
@@ -654,16 +867,16 @@ function procesarCamposLiquidarExportarTxt(array $payload): array
     ];
 
     $ficNovHor = fic_nove_horas($payloadFicNovHor);
-    $registros = procesarCamposLiquidarNormalizarRegistrosFicNovHor($ficNovHor);
+    $registros = NormalizarRegistrosFicNovHor($ficNovHor);
 
     if (!$registros) {
         throw new Exception('No hay registros para exportar en el rango seleccionado.', 400);
     }
 
-    $contenido = procesarCamposLiquidarGenerarContenidoExport($campos, $registros, $separador);
+    $contenido = GenerarContenidoExport($campos, $registros, $separador);
 
     if ($encabezados === 1) {
-        $lineaEncabezados = procesarCamposLiquidarConstruirEncabezados($campos, $separador);
+        $lineaEncabezados = ConstruirEncabezados($campos, $separador);
         $contenido = $lineaEncabezados . "\r\n" . $contenido;
     }
 

@@ -1270,7 +1270,10 @@ Flight::route('GET /params', function () {
 Flight::route('GET /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
-        $config = procesarCamposLiquidarLeerConfiguracion();
+        $request = Flight::request();
+        $query = method_exists($request->query, 'getData') ? $request->query->getData() : (array) $request->query;
+        $plantilla = $query['plantilla'] ?? 'liquidar_custom';
+        $config = LeerConfiguracion($plantilla);
         Flight::json($config ?? ['separador' => ',', 'encabezados' => 0, 'campos' => []]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);
@@ -1317,13 +1320,92 @@ Flight::route('POST /liquidar/custom/campos', function () {
         $campos = $payloadData['campos'] ?? [];
         $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
         $encabezados = array_key_exists('encabezados', $payloadData) ? (int) $payloadData['encabezados'] : 0;
+        $plantilla = array_key_exists('plantilla', $payloadData) ? (string) $payloadData['plantilla'] : 'liquidar_custom';
 
-        $guardados = procesarCamposLiquidarGuardarConfiguracion($campos, $separador, $encabezados);
+        $guardados = GuardarConfiguracion($campos, $separador, $encabezados, $plantilla);
 
         Flight::json([
             'status' => 'ok',
             'message' => 'Configuracion guardada correctamente.',
             'data' => $guardados,
+        ]);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('GET /liquidar/custom/plantillas', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $plantillas = ListarPlantillas();
+        Flight::json($plantillas ?? []);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('POST /liquidar/custom/plantillas', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $request = Flight::request();
+        $payload = $request->data;
+        $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
+
+        $nombre = (string) ($payloadData['nombre'] ?? '');
+        $slug = PlantillaSlugDesdeNombre($nombre);
+
+        if (ExistePlantillaPorSlug($slug)) {
+            throw new Exception('Ya existe una plantilla con ese nombre.', 409);
+        }
+
+        $campos = $payloadData['campos'] ?? [];
+        $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
+        $encabezados = array_key_exists('encabezados', $payloadData) ? (int) $payloadData['encabezados'] : 0;
+
+        $guardados = GuardarPlantilla($nombre, $campos, $separador, $encabezados, $slug);
+
+        Flight::json([
+            'status' => 'ok',
+            'message' => 'Plantilla guardada correctamente.',
+            'slug' => $slug,
+            'data' => $guardados,
+        ]);
+    } catch (\Throwable $th) {
+        $code = (int) ($th->getCode() ?: 400);
+        if ($code < 100 || $code > 599) {
+            $code = 500;
+        }
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
+    }
+});
+
+Flight::route('DELETE /liquidar/custom/plantillas', function () {
+    try {
+        require __DIR__ . '/php/procesar_campos_liquidar.php';
+        $request = Flight::request();
+        $query = method_exists($request->query, 'getData') ? $request->query->getData() : (array) $request->query;
+
+        $plantilla = (string) ($query['plantilla'] ?? '');
+        $slug = NormalizarPlantillaSlug($plantilla);
+
+        if ($slug === '') {
+            throw new Exception('Debe seleccionar una plantilla para eliminar.', 400);
+        }
+
+        $resultado = delete_plantilla($slug);
+
+        Flight::json([
+            'status' => 'ok',
+            'message' => 'Plantilla eliminada correctamente.',
+            'data' => $resultado,
         ]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);
@@ -1341,7 +1423,7 @@ Flight::route('POST /liquidar/custom/export', function () {
         $payload = $request->data;
         $payloadData = method_exists($payload, 'getData') ? $payload->getData() : (array) $payload;
 
-        $resultado = procesarCamposLiquidarExportarTxt($payloadData);
+        $resultado = ExportarTxt($payloadData);
 
         Flight::json([
             'status' => 'ok',
