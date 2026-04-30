@@ -110,11 +110,5 @@
                 </button>
             </div>
         </div>
-        <!-- <div class="col-12 mt-3">
-            <button class="hint--top btn btn-outline-custom border btn-sm text-white h40 px-5 w-100" id="btnHorarios"
-                aria-label="Obtener horarios">
-                Horarios
-            </button>
-        </div> -->
     </div>
 </section>
