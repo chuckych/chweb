@@ -58,8 +58,8 @@
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Sucursal -->
-            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucurPlu?></label>
-            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucurPlu?>">
+            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucuPlu?></label>
+            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucuPlu?>">
             </select>
         </div>
         <div class="col-12 col-sm-8">
