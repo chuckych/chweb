@@ -1,7 +1,13 @@
 <?php
+// require_once __DIR__ . '/../vendor/autoload.php'; // si no está ya
+
+// use App\Http\ChApiClient;
+// use App\Http\CurlHttpClient;
+// use App\Http\ApiTokenGenerator;
+// use App\Http\UrlBuilder;
 
 // Utilidad: convierte "HH:MM" (o "H:MM") a minutos.
-function to_minutes($hhmm): int
+function to_minutes(string $hhmm = ''): int
 {
     if ($hhmm === null || $hhmm === '')
         return 0;
@@ -15,7 +21,7 @@ function to_minutes($hhmm): int
     [$h, $m] = array_pad(explode(':', $s), 2, '0');
     return ((int) $h) * 60 + (int) $m;
 }
-function debugLog($message, $nameLog = 'debug')
+function debugLog(string $message, string $nameLog = 'debug')
 {
     static $logFiles = [];
     $date = date('Y-m-d');
@@ -36,7 +42,7 @@ function debugLog($message, $nameLog = 'debug')
 
     fwrite($handle, $dateTime . " - " . $message . PHP_EOL);
 }
-function clean_files($path, $days, $ext)
+function clean_files(string $path, int $days, string $ext)
 {
     // Normaliza a ruta absoluta para glob
     $absPath = (strpos($path, DIRECTORY_SEPARATOR) === 0 || preg_match('/^[a-zA-Z]:/', $path))
@@ -46,7 +52,8 @@ function clean_files($path, $days, $ext)
     // Lock siempre en __DIR__ (app-data/) donde PHP tiene escritura garantizada
     $lockSlug = preg_replace('/[^a-z0-9]/i', '_', trim($path, '/\\'));
     $lock = __DIR__ . DIRECTORY_SEPARATOR . '.clean_' . $lockSlug . '.lock';
-    if (file_exists($lock) && date('Ymd', filemtime($lock)) === date('Ymd')) return; // ya se ejecutó hoy
+    if (file_exists($lock) && date('Ymd', filemtime($lock)) === date('Ymd'))
+        return; // ya se ejecutó hoy
 
     $inicio = microtime(true);
     $files = glob($absPath . '*' . $ext); //obtenemos el nombre de todos los ficheros
@@ -68,12 +75,43 @@ function clean_files($path, $days, $ext)
     touch($lock); // actualiza mtime → marca como ejecutado hoy
 }
 /**
+ * @param mixed ...$args
+ * @return string|false
+ */
+function ch_api_new(...$args)
+{
+    static $client = null;
+
+    if ($client === null) {
+        $client = new ChApiClient(
+            new CurlHttpClient(),
+            new ApiTokenGenerator(),
+            new UrlBuilder()
+        );
+    }
+
+    $endpoint = $args[0] ?? '';
+    $payload = $args[1] ?? [];
+    $method = $args[2] ?? 'GET';
+    $queryParams = $args[3] ?? [];
+    if (!is_array($queryParams)) {
+        error_log('ch_api: queryParams no es array, valor: ' . print_r($queryParams, true) . ' — ' . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2), true));
+        $queryParams = [];
+    }
+    $recid = $args[4] ?? '';
+
+    $respuesta = $client->call($endpoint, $payload, $method, $queryParams, $recid);
+    error_log(print_r($respuesta, true));
+    return $respuesta;
+}
+/**
  * Realiza una llamada a la API CH.
  *
- * @param string $endpoint El endpoint de la API.
- * @param array $payload El payload de la solicitud (opcional).
- * @param string $method El método de la solicitud (opcional, por defecto es GET).
- * @param array $queryParams Los parámetros de la consulta (opcional).
+ *     [0]: string $endpoint El endpoint de la API.
+ *     [1]: array $payload El payload de la solicitud (opcional).
+ *     [2]: string $method El método de la solicitud (opcional, por defecto es GET).
+ *     [3]: array $queryParams Los parámetros de la consulta (opcional).
+ *     [4]: string $recid El recid para el token (opcional).
  * @return mixed Los datos devueltos por la API o false si hay un error.
  * @throws Exception Si ocurre un error durante la llamada a la API.
  */
@@ -81,15 +119,15 @@ function ch_api()
 {
     timeZone();
     timeZone_lang();
-
-    $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
-    $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
-    $payload = $argumento[1] ?? []; // Obtengo el payload
-    $method = $argumento[2] ?? 'GET'; // Obtengo el método
-    $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
-    $recid = $argumento[4] ?? ''; // Obtengo el recid para el token
-    $method = strtoupper($method); // Convierto el método a mayúsculas
     try {
+
+        $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
+        $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
+        $payload = $argumento[1] ?? []; // Obtengo el payload
+        $method = $argumento[2] ?? 'GET'; // Obtengo el método
+        $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
+        $recid = $argumento[4] ?? ''; // Obtengo el recid para el token
+        $method = strtoupper($method); // Convierto el método a mayúsculas
 
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
@@ -138,7 +176,7 @@ function ch_api()
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
         $file_contents = curl_exec($ch); // Ejecuto curl
-        //file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
+        // error_log( print_r($file_contents, true)); // log error
 
         $curl_errno = curl_errno($ch); // get error code
         $curl_error = curl_error($ch); // get error information
@@ -151,18 +189,21 @@ function ch_api()
         if (!$file_contents) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
         }
-        if (PHP_VERSION_ID >= 80000) {
+        if (PHP_VERSION_ID >= 80500) {
             unset($ch);
         } else {
             curl_close($ch);
-        } // close curl handle
+        }
         $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
         return $file_contents;
     } catch (\Exception $e) {
-        if (PHP_VERSION_ID >= 80000) {
+        error_log("Error en fn_app-data.php ch_api:164: " . $e->getMessage());
+        if (PHP_VERSION_ID >= 80500) {
             unset($ch);
         } else {
-            curl_close($ch);
+            if (is_resource($ch ?? null)) {
+                curl_close($ch ?? null);
+            }
         } // close curl handle
         return false;
     }
@@ -177,13 +218,13 @@ function getNoveCausas($novedad)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
     $method = 'GET';
-    $queryParams = array(
+    $queryParams = [
         "start" => 0,
         "length" => 5000,
         "Estruct" => "NovC"
-    );
+    ];
 
-    $data = ch_api($endpoint, '', $method, $queryParams);
+    $data = ch_api($endpoint, [], $method, $queryParams);
 
     $arrayData = json_decode($data, true);
 
@@ -193,11 +234,27 @@ function getNoveCausas($novedad)
 
     return array_values($rs) ?? array();
 }
+function getEmpresas()
+{
+    $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct/";
+    $method = 'GET';
+    $queryParams = [
+        "start" => 0,
+        "length" => 5000,
+        "Estruct" => "Emp"
+    ];
+
+    $data = ch_api($endpoint, [], $method, $queryParams);
+
+    $arrayData = json_decode($data, true);
+
+    return $arrayData['DATA'] ?? [];
+}
 function getParamLiquid()
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/parametros/liquid";
     $method = 'GET';
-    $data = ch_api($endpoint, '', $method, []);
+    $data = ch_api($endpoint, [], $method, []);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
@@ -205,11 +262,11 @@ function getFichasMinMax()
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
     $method = 'GET';
-    $data = ch_api($endpoint, '', $method, []);
+    $data = ch_api($endpoint, [], $method, []);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
-function estructuras($estructuras)
+function estructuras(array $estructuras = [])
 {
     // estructuras
     // {
@@ -223,7 +280,7 @@ function estructuras($estructuras)
     // }
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/estructuras";
 
-    $data = ch_api($endpoint, $estructuras, 'POST', '');
+    $data = ch_api($endpoint, $estructuras, 'POST', []);
 
     $arrayData = json_decode($data, true);
 
@@ -298,7 +355,7 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
         "length" => $opt['length'] ?? 1
     ];
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
     if (empty($DATA)) {
@@ -306,10 +363,10 @@ function getFicNovHorSimple($legajo, $fecha, $opt)
     }
     return [$DATA[0]];
 }
-function fic_nove_horas($payload)
+function fic_nove_horas(array $payload = []): array
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     $DATA = $arrayData['DATA'] ?? [];
     if (empty($DATA)) {
@@ -317,11 +374,11 @@ function fic_nove_horas($payload)
     }
     return $DATA;
 }
-function v1_api($endpoint, $method, $payload)
+function v1_api(string $endpoint = '', string $method = 'GET', array $payload = [], array $queryParams = [], string $recid = '')
 {
     try {
         $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1" . $endpoint;
-        $data = ch_api($endpoint, $payload, $method, '');
+        $data = ch_api($endpoint, $payload, $method, [], $recid);
         $arrayData = json_decode($data, true);
         $DATA = $arrayData['DATA'] ?? [];
         if (empty($DATA)) {
@@ -332,35 +389,40 @@ function v1_api($endpoint, $method, $payload)
         error_log("Error en v1_api: " . $th->getMessage());
     }
 }
-function cacheData($nameFile, $payload, $endpoint, $method = 'POST', $nameCache = '')
+function cacheData(string $nameFile, array $payload, string $endpoint, string $method = 'POST', string $nameCache = '')
 {
     $inicio = microtime(true);
     $filePath = __DIR__ . "/json/{$nameFile}.json";
     $r = [];
 
-    if (is_file($filePath)) {
-        $json = @file_get_contents($filePath);
-        if ($json !== false) {
-            $r = json_decode($json, true) ?? [];
+    try {
+
+        if (is_file($filePath)) {
+            $json = @file_get_contents($filePath);
+            if ($json !== false) {
+                $r = json_decode($json, true) ?? [];
+                $fin = microtime(true);
+                debugLog("Cache hit {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
+            }
+        } else {
+            $api = v1_api($endpoint, $method, $payload) ?? [];
+            if (@file_put_contents($filePath, json_encode($api, JSON_PRETTY_PRINT)) === false) {
+                debugLog("Error al guardar cache en {$filePath} - {$nameCache}");
+            }
+            $r = $api;
             $fin = microtime(true);
-            debugLog("Cache hit {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
+            debugLog("Cache miss {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
         }
-    } else {
-        $api = v1_api($endpoint, $method, $payload) ?? [];
-        if (@file_put_contents($filePath, json_encode($api, JSON_PRETTY_PRINT)) === false) {
-            debugLog("Error al guardar cache en {$filePath} - {$nameCache}");
-        }
-        $r = $api;
-        $fin = microtime(true);
-        debugLog("Cache miss {$nameCache} - Tiempo: " . round($fin - $inicio, 2));
+        return $r;
+
+    } catch (\Throwable $th) {
+        error_log("Error en cacheData: " . $th->getMessage());
+        return [];
     }
-    return $r;
 }
-;
-function get_estructura($query)
+function get_estructura(array $query = [])
 {
     $hashPayload = md5(json_encode($query));
-
 
     $get = function () use ($hashPayload, $query) {
         $inicio = microtime(true);
@@ -376,7 +438,7 @@ function get_estructura($query)
             }
         } else {
             $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/estruct";
-            $data = ch_api($endpoint, [], 'GET', $query);
+            $data = ch_api($endpoint, [], 'GET', $query ?? []);
             $arrayData = json_decode($data, true);
             $DATA = $arrayData['DATA'] ?? [];
             if (@file_put_contents($filePath, json_encode($DATA, JSON_PRETTY_PRINT)) === false) {
@@ -391,10 +453,10 @@ function get_estructura($query)
 
     return $get();
 }
-function getHorasTotales($payload)
+function getHorasTotales(array $payload)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/totales/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     // print_r($payload) . exit;
     $arrayData['DATA'] = $arrayData['DATA'] ?? '';
@@ -403,10 +465,10 @@ function getHorasTotales($payload)
     }
     return ($arrayData['DATA']);
 }
-function getNovedadesTotales($payload)
+function getNovedadesTotales(array $payload)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/totales/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     // print_r($payload) . exit;
     $Data = $arrayData['DATA'] ?? '';
@@ -415,41 +477,41 @@ function getNovedadesTotales($payload)
     }
     return $Data;
 }
-function getHorasTotalesDT($payload)
+function getHorasTotalesDT(array $payload)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/totales/";
     // print_r($payload) . exit;
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     $arrayData['DATA'] = $arrayData['DATA'] ?? [];
     // if (empty($arrayData['DATA'])) {
     //     return [];
     // }
-    $dt_data = array(
+    $dt_data = [
         "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
         "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
         "data" => $arrayData['DATA']['data'] ?? [],
         "totales" => $arrayData['DATA']['totales'] ?? [],
         "totalesTryAT" => $arrayData['DATA']['totalesTryAT'] ?? '',
         "tiposHoras" => $arrayData['DATA']['tiposHoras'] ?? [],
-    );
+    ];
     return ($dt_data);
 }
-function getNovedadesTotalesDT($payload)
+function getNovedadesTotalesDT(array $payload)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/totales/";
     // print_r($payload) . exit;
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     $arrayData['DATA'] = $arrayData['DATA'] ?? [];
 
-    $dt_data = array(
+    $dt_data = [
         "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
         "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,
         "data" => $arrayData['DATA']['data'] ?? [],
         "totales" => $arrayData['DATA']['totales'] ?? [],
         "novedades" => $arrayData['DATA']['novedades'] ?? [],
-    );
+    ];
     return ($dt_data);
 }
 /**
@@ -487,15 +549,15 @@ function getNovedad($novedad)
         "Codi" => (is_array($novedad)) ? $novedad : [$novedad]
     );
 
-    $data = ch_api($endpoint, '', $method, $queryParams);
+    $data = ch_api($endpoint, [], $method, $queryParams ?? []);
 
     $arrayData = json_decode($data, true);
     return ($arrayData['DATA']) ?? array();
 }
-function getPersonal($payload)
+function getPersonal(array $payload = [])
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/personal/";
-    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $personal = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($personal, true);
     if ($arrayData['RESPONSE_CODE'] == '200') {
         $arrayData = $arrayData['DATA'] ?? [];
@@ -504,9 +566,9 @@ function getPersonal($payload)
     }
     return $arrayData;
 }
-function get_horario_actual($Legajos)
+function get_horario_actual(array $Legajos = [])
 {
-    if (!$Legajos) {
+    if (empty($Legajos)) {
         return [];
     }
 
@@ -526,7 +588,7 @@ function get_horario_actual($Legajos)
     ];
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/horasign/";
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     $data = $arrayData['DATA'] ?? '';
     if (empty($data)) {
@@ -537,14 +599,14 @@ function get_horario_actual($Legajos)
 
 Flight::map('personal', function ($payload) {
     $endpoint = URLAPI . "/api/personal/";
-    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $personal = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($personal, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData['DATA'] : [];
     return $result;
 });
 Flight::map('asignados', function ($payload) {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/asignados";
-    $horarios = ch_api($endpoint, $payload, 'POST', '');
+    $horarios = ch_api($endpoint, $payload, 'POST', []);
     $horarios = json_decode($horarios, true);
     return $horarios ?? [];
 });
@@ -603,7 +665,7 @@ function legajosRol()
     $l = ($l && $l != '-') ? explode(',', $l) : [];
     return $l;
 }
-function estructRol($key)
+function estructRol(string $key)
 {
     $l = $_SESSION[$key] ?? '';
     $l = ($l && $l != '-') ? explode(',', $l) : [];
@@ -612,8 +674,8 @@ function estructRol($key)
 /**
  * Combina dos arrays eliminando duplicados.
  *
- * @param array $arr1 El primer array.
- * @param array $arr2 El segundo array.
+ * @param array $data El primer array.
+ * @param array $session El segundo array.
  * @return array El array resultante de combinar los dos arrays sin duplicados.
  */
 function mergeArray($data, $session)
@@ -624,12 +686,12 @@ function mergeArray($data, $session)
     return $session ? array_unique(array_merge($data, $session)) : $data;
 }
 
-function dateCustomDay($day)
+function dateCustomDay(int $day)
 {
     return date('Y-m-d', strtotime(date('Y-m-') . $day));
 }
 ;
-function procesar_por_intervalos($data, $payload, $flag)
+function procesar_por_intervalos(array $data, array $payload, string $flag)
 {
     $intervals = [];
     $currentIntervals = [];
@@ -735,7 +797,7 @@ function procesar_por_intervalos($data, $payload, $flag)
 function get_tipo_hora()
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/data";
-    $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
+    $data = ch_api($endpoint, [], 'GET', ['start' => 0, 'length' => 9000]);
 
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
@@ -743,41 +805,41 @@ function get_tipo_hora()
 function get_novedades()
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades/data";
-    $data = ch_api($endpoint, '', 'GET', ['start' => 0, 'length' => 9000]);
+    $data = ch_api($endpoint, [], 'GET', ['start' => 0, 'length' => 9000]);
 
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
-function get_params($queryParams = [])
+function get_params(array $queryParams = [])
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
-    $data = ch_api($endpoint, '', 'GET', $queryParams);
+    $data = ch_api($endpoint, [], 'GET', $queryParams);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
-function add_params($payloadParams = [])
+function add_params(array $payloadParams = [])
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
-    $data = ch_api($endpoint, $payloadParams, 'POST', '');
+    $data = ch_api($endpoint, $payloadParams, 'POST', []);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
-function delete_plantilla($descripcion)
+function delete_plantilla(string $descripcion)
 {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/_local/params";
     $queryParams = [
         'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
         'modulo' => 48,
-        'descripcion' => (string) $descripcion,
+        'descripcion' => $descripcion,
     ];
 
     $data = ch_api($endpoint, [], 'DELETE', $queryParams);
     $arrayData = json_decode($data, true);
     return $arrayData['DATA'] ?? [];
 }
-function horasCustom($params)
+function horasCustom(array $params = []): array
 {
-    if (!$params) {
+    if (empty($params)) {
         return [];
     }
     foreach ($params as $key => $valueParams) {
@@ -827,7 +889,7 @@ function colsExcel(): array
         }
     }
     $colsExcel = [];
-    foreach ($horasOrdenadas as $key => $value) {
+    foreach ($horasOrdenadas ?? [] as $key => $value) {
         $colsExcel[$value['THoDesc2']] = [
             'ancho' => 15,
             'key' => $value['THoDesc2'],
@@ -838,7 +900,7 @@ function colsExcel(): array
     }
     return $colsExcel ?? [];
 }
-function minutos_a_horas($min)
+function minutos_a_horas(int $min)
 {
     if (!is_int($min) || $min < 0) {
         return false;
@@ -851,44 +913,14 @@ function minutos_a_horas($min)
     $minutos = $min % 60;
     return sprintf('%02d:%02d', $horas, $minutos);
 }
-function minutos_a_horas_decimal($min)
+function minutos_a_horas_decimal(int $min)
 {
     if (!is_int($min) || $min < 0) {
         return false;
     }
     return $min / 60;
 }
-function horas_custom_old($legajosColumn, $payload, $claveCustom)
-{
-    try {
-        $lc = $legajosColumn;
-        logger($payload);
-        $tot = v1_api('/novedades/totales', 'POST', $payload) ?? []; // Obtener tipos de horas
-        // logger($tot);
-        $totData = $tot['data'] ?? []; // Obtener datos de horas totales por legajo
-        $totColumn = array_column($totData ?? [], null, 'Lega');
-        // añadir las horas a legajosColumn con el valor correspondiente según el tipo de hora
-        array_walk($totColumn, function ($value, $Lega) use (&$lc, $claveCustom) {
-            if (!empty($value['Totales'])) { // Si hay datos en 'Totales'
-                foreach ($value['Totales'] as $total) { // Iterar sobre 'Totales'
-                    $clave = $lc[$Lega] ?? ''; // Obtener el valor de $claveCustom
-                    // $clave = $lc[$Lega][$claveCustom] ?? ''; // Obtener el valor de $claveCustom
-                    $totResult = $total['EnMinutos'] ?? 0; // Obtener 'EnMinutos'
-                    if ($clave) { // Si $clave no está vacío
-
-                        $clave += $totResult; // Asignar 'EnHoras' a $claveCustom
-                    }
-                }
-                // $lc[$Lega][$claveCustom] = minutos_a_horas($lc[$Lega][$claveCustom]);
-            }
-        });
-        return $lc;
-    } catch (\Throwable $th) {
-        logger("Error: " . $th->getMessage());
-    }
-
-}
-function horas_custom($legajosColumn, $payload, $claveCustom)
+function horas_custom(array $legajosColumn, array $payload, string $claveCustom): array
 {
     try {
         $lc = $legajosColumn;
@@ -934,11 +966,11 @@ function horas_custom($legajosColumn, $payload, $claveCustom)
         return $legajosColumn;
     }
 }
-function logger($value)
+function logger(string $value)
 {
     file_put_contents(__DIR__ . '/logger.txt', json_encode($value, JSON_PRETTY_PRINT), FILE_APPEND);
 }
-function totalEjecution($start)
+function totalEjecution(float $start): float
 {
     return round(microtime(true) - $start, 2);
 }
