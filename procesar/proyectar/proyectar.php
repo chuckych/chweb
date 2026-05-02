@@ -31,7 +31,7 @@
         </svg>';
         ?>
         <!-- Encabezado -->
-        <?= encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar'], ''); ?>
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar'], ''); ?>
         <!-- Fin Encabezado -->
         <?php require 'filtros.php'; ?>
         <div class="form-row mb-3">

@@ -3,103 +3,128 @@
         <div class="card">
             <div class="card-body border shadow-sm radius">
                 <div id="campo-feedback" class="alert alert-danger d-none mb-3" role="alert"></div>
+                <div class="p-3 border w-100 mt-3">
+                    <p class="font09">Definir Campos</p>
+                    <div class="form-row align-items-end">
 
-                <div class="form-row align-items-end">
+                        <div class="col mb-3">
+                            <label for="campo-posicion">Posición</label>
+                            <input type="number" min="1" step="1" class="form-control h40" id="campo-posicion"
+                                placeholder="Ej: 1">
+                        </div>
 
-                    <div class="col-sm-6 col-md-2 mb-3">
-                        <label for="campo-posicion">Posición</label>
-                        <input type="number" min="1" step="1" class="form-control h40" id="campo-posicion"
-                            placeholder="Ej: 1">
-                    </div>
+                        <div class="col-sm-10 col-12 mb-3">
+                            <label for="campo-tipo">Tipo de campo</label>
+                            <select id="campo-tipo" class="form-control" style="width:100%;">
+                                <option value=""></option>
+                                <option value="legajo">Legajo</option>
+                                <option value="apno">Apellido y Nombre</option>
+                                <option value="dni_legajo">DNI Legajo</option>
+                                <option value="cuil_legajo">CUIL Legajo</option>
+                                <option value="cod_empresa"><?= $labelEmpr ?? '' ?></option>
+                                <option value="cuit_empresa">Cuit <?= $labelEmpr ?? '' ?></option>
+                                <option value="cod_planta"> <?= $labelPlan ?? '' ?></option>
+                                <option value="cod_convenio">Convenio</option>
+                                <option value="cod_sector"> <?= $labelSect ?? '' ?></option>
+                                <option value="cod_seccion"> <?= $labelSecc ?? '' ?></option>
+                                <option value="cod_grupo"> <?= $labelGrup ?? '' ?></option>
+                                <option value="cod_sucursal"> <?= $labelSucu ?? '' ?></option>
+                                <option value="fecha">Fecha</option>
+                                <option value="novedades">Novedades</option>
+                                <option value="horas">Horas</option>
+                                <option value="horas_agrupadas">Horas agrupadas</option>
+                                <option value="atra">Horas a trabajar</option>
+                                <option value="trab">Horas trabajadas</option>
+                                <option value="primer_fichada">Primer Fichada</option>
+                                <option value="ultima_fichada">Ultima Fichada</option>
+                                <option value="todas_fichadas">Todas las fichadas</option>
+                                <option value="turstr">Horario</option>
+                                <option value="labo">Laboral</option>
+                                <option value="feri">Feriado</option>
+                            </select>
+                        </div>
 
-                    <div class="col-sm-6 col-md-3 mb-3">
-                        <label for="campo-tipo">Tipo de campo</label>
-                        <select id="campo-tipo" class="form-control" style="width:100%;">
-                            <option value=""></option>
-                            <option value="legajo">Legajo</option>
-                            <option value="apno">Apellido y Nombre</option>
-                            <option value="dni_legajo">DNI Legajo</option>
-                            <option value="cuil_legajo">CUIL Legajo</option>
-                            <option value="cod_empresa"><?= $labelEmpr ?></option>
-                            <option value="cod_planta"> <?= $labelPlan ?></option>
-                            <option value="cod_convenio">Convenio</option>
-                            <option value="cod_sector"> <?= $labelSect ?></option>
-                            <option value="cod_seccion"> <?= $labelSecc ?></option>
-                            <option value="cod_grupo"> <?= $labelGrup ?></option>
-                            <option value="cod_sucursal"> <?= $labelSucu ?></option>
-                            <option value="fecha">Fecha</option>
-                            <option value="novedades">Novedades</option>
-                            <option value="horas">Horas</option>
-                            <option value="atra">Horas a trabajar</option>
-                            <option value="trab">Horas trabajadas</option>
-                            <option value="primer_fichada">Primer Fichada</option>
-                            <option value="ultima_fichada">Ultima Fichada</option>
-                            <option value="todas_fichadas">Todas las fichadas</option>
-                            <option value="turstr">Horario</option>
-                            <option value="labo">Laboral</option>
-                            <option value="feri">Feriado</option>
-                        </select>
-                    </div>
+                        <div class="col-12 mb-3 d-none fadeIn" id="subtipo-wrapper">
+                            <label for="campo-subtipo">Valor</label>
+                            <select id="campo-subtipo" class="form-control h40" style="width:100%;"></select>
+                            <small id="subtipo-help" class="form-text text-muted d-none">Cargando...</small>
+                        </div>
 
-                    <div class="col-sm-6 col-md-3 mb-3 d-none fadeIn" id="subtipo-wrapper">
-                        <label for="campo-subtipo">Valor</label>
-                        <select id="campo-subtipo" class="form-control" style="width:100%;"></select>
-                        <small id="subtipo-help" class="form-text text-muted d-none">Cargando...</small>
-                    </div>
+                        <div class="col-12 mb-3 d-none fadeIn" id="agrupacion-wrapper">
+                            <label for="campo-agrupacion">Nombre de agrupación</label>
+                            <input type="text" class="form-control h40" id="campo-agrupacion" maxlength="20"
+                                placeholder="Ej: Extras">
+                        </div>
 
-                    <div class="col-sm-6 col-md-2 mb-3">
-                        <label for="campo-tamano">Tamaño</label>
-                        <input type="number" min="1" step="1" class="form-control h40" id="campo-tamano"
-                            placeholder="Ej: 5">
-                    </div>
+                        <div class="col-sm-6 col-12 mb-3">
+                            <label for="campo-tamano">Tamaño</label>
+                            <input type="number" min="1" step="1" class="form-control h40" id="campo-tamano"
+                                placeholder="Ej: 5">
+                        </div>
 
-                    <div class="col-sm-6 col-md-2 mb-3">
-                        <label for="campo-formato">Formato</label>
-                        <select id="campo-formato" class="form-control" style="width:100%;">
-                            <option value=""></option>
-                            <option value="numero">Numero</option>
-                            <option value="decimal">Decimal</option>
-                            <option value="horas">Horas (HH:MM)</option>
-                            <option value="texto">Texto</option>
-                            <option value="YYYY-MM-DD">Fecha YYYY-MM-DD</option>
-                            <option value="YYYYMMDD">Fecha YYYYMMDD</option>
-                            <option value="YYYY/MM/DD">Fecha YYYY/MM/DD</option>
-                            <option value="MM-DD-YYYY">Fecha MM-DD-YYYY</option>
-                            <option value="MMDDYYYY">Fecha MMDDYYYY</option>
-                            <option value="MM/DD/YYYY">Fecha MM/DD/YYYY</option>
-                            <option value="DD-MM-YYYY">Fecha DD-MM-YYYY</option>
-                            <option value="DDMMYYYY">Fecha DDMMYYYY</option>
-                            <option value="DD/MM/YYYY">Fecha DD/MM/YYYY</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-custom font09" id="btn-agregar-campo">Agregar campo</button>
-                </div>
-                <div class="row mt-3 mt-sm-0">
-                    <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
-                        <label for="campo-separador" class="fit-content">
-                            <span class="d-none d-sm-block">Separador de campo</span>
-                            <span class="d-block d-sm-none">Separador</span>
-                        </label>
-                        <div class="d-inline-flex align-items-center" style="gap: 5px">
-                            <input type="text" class="form-control h40 w70 text-center" id="campo-separador"
-                                placeholder="Ej: ," maxlength="1" value=",">
-                            <small class="resultado_separador text-secondary"></small>
+                        <div class="col-sm-6 col-12 mb-3">
+                            <label for="campo-formato">Formato</label>
+                            <select id="campo-formato" class="form-control" style="width:100%;">
+                                <option value=""></option>
+                                <option value="numero">Numero</option>
+                                <option value="decimal">Decimal</option>
+                                <option value="horas">Horas (HH:MM)</option>
+                                <option value="texto">Texto</option>
+                                <option value="YYYY-MM-DD">Fecha YYYY-MM-DD</option>
+                                <option value="YYYYMMDD">Fecha YYYYMMDD</option>
+                                <option value="YYYY/MM/DD">Fecha YYYY/MM/DD</option>
+                                <option value="MM-DD-YYYY">Fecha MM-DD-YYYY</option>
+                                <option value="MMDDYYYY">Fecha MMDDYYYY</option>
+                                <option value="MM/DD/YYYY">Fecha MM/DD/YYYY</option>
+                                <option value="DD-MM-YYYY">Fecha DD-MM-YYYY</option>
+                                <option value="DDMMYYYY">Fecha DDMMYYYY</option>
+                                <option value="DD/MM/YYYY">Fecha DD/MM/YYYY</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
-                        <label for="encabezados" class="fit-content">
-                            <span class="d-none d-sm-block">Exportar Encabezados</span>
-                            <span class="d-block d-sm-none">Encabezados</span>
-                        </label>
-                        <div class="custom-control custom-switch d-inline-flex align-items-center gap5">
-                            <input type="checkbox" class="custom-control-input" id="encabezados">
-                            <label class="custom-control-label" for="encabezados">
-                                <div class="switch_encabezados_text" style="margin-top: 3px;">No</div>
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-custom font09" id="btn-agregar-campo">
+                            Agregar campo
+                        </button>
+                    </div>
+                </div>
+                <div class="p-3 border w-100 mt-3">
+                    <p class="font09">Parámetros generales</p>
+                    <div class="row mt-3 mt-sm-0">
+                        <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
+                            <label for="encabezados" class="fit-content">
+                                Estructura <span class="asignados hint--top" aria-label="Asignados"></span>
                             </label>
+                            <button id="btn-filtros" class="w120 btn btn-secondary border font09 h40" type="button">
+                                <span><i class="bi bi-plus-lg mr-2"></i>Asignar</span>
+                            </button>
+                        </div>
+                        <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
+                            <label for="campo-separador" class="fit-content">
+                                <span class="d-none d-sm-block">Separador de campo</span>
+                                <span class="d-block d-sm-none">Separador</span>
+                            </label>
+                            <div class="d-inline-flex align-items-center" style="gap: 5px">
+                                <input type="text" class="form-control h40 w70 text-center" id="campo-separador"
+                                    placeholder="Ej: ," maxlength="1" value=",">
+                                <small class="resultado_separador text-secondary"></small>
+                            </div>
+                        </div>
+                        <div class="col-sm-2 col-6 mb-2 d-flex flex-column">
+                            <label for="encabezados" class="fit-content">
+                                <span class="d-none d-sm-block">Exportar Encabezados</span>
+                                <span class="d-block d-sm-none">Encabezados</span>
+                            </label>
+                            <div class="custom-control custom-switch d-inline-flex align-items-center gap5">
+                                <input type="checkbox" class="custom-control-input" id="encabezados">
+                                <label class="custom-control-label" for="encabezados">
+                                    <div class="switch_encabezados_text" style="margin-top: 3px;">No</div>
+                                </label>
+                            </div>
                         </div>
                     </div>
+                </div>
+                <div class="row mt-3 mt-sm-1">
                     <div class="col-12">
                         <!-- Nota -->
                         <div class="mt-2">
@@ -122,7 +147,8 @@
                                     </li>
                                     <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
-                                        Los campos numéricos se rellenan con ceros a la izquierda según el tamaño definido
+                                        Los campos numéricos se rellenan con ceros a la izquierda según el tamaño
+                                        definido
                                     </li>
                                     <li class="mt-1">
                                         <i class="bi bi-chevron-right font06"></i>
@@ -133,10 +159,9 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- <div class="table-responsive"> -->
                 <div class="p-3 border mt-3 table-responsive">
-                    <table class="table text-nowrap w-100 fadeIn">
+                    <p class="font09">Campos Definidos</p>
+                    <table class="table text-nowrap w-100 fadeIn" aria-label="tabla de campos definidos">
                         <thead class="font08">
                             <tr>
                                 <th class="h40">Posición</th>
@@ -154,7 +179,6 @@
                         </tbody>
                     </table>
                 </div>
-                <!-- </div> -->
             </div>
         </div>
     </div>

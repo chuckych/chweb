@@ -2,6 +2,7 @@
     'use strict';
 
     window.camposLiquidar = window.camposLiquidar || [];
+    const homehost = $("#_homehost").val();
 
     const TIPOS = {
         LEGAJO: 'legajo',
@@ -9,6 +10,7 @@
         DNI_LEGAJO: 'dni_legajo',
         CUIL_LEGAJO: 'cuil_legajo',
         COD_EMPRESA: 'cod_empresa',
+        CUIT_EMPRESA: 'cuit_empresa',
         COD_PLANTA: 'cod_planta',
         COD_CONVENIO: 'cod_convenio',
         COD_SECTOR: 'cod_sector',
@@ -18,6 +20,7 @@
         FECHA: 'fecha',
         NOVEDADES: 'novedades',
         HORAS: 'horas',
+        HORAS_AGRUPADAS: 'horas_agrupadas',
         ATRA: 'atra',
         TRAB: 'trab',
         PRIMER_FICHADA: 'primer_fichada',
@@ -80,6 +83,7 @@
 
     const MAP_TIPO_ETIQUETA = {
         cod_empresa: 'EmprSin',
+        cuit_empresa: 'EmprSin',
         cod_planta: 'PlanSin',
         cod_sector: 'SectSin',
         cod_sucursal: 'SucuSin',
@@ -89,6 +93,7 @@
 
     const MAP_TIPO_ETIQUETA_FALLBACK = {
         cod_empresa: 'Empresa',
+        cuit_empresa: 'Empresa',
         cod_planta: 'Planta',
         cod_sector: 'Sector',
         cod_sucursal: 'Sucursal',
@@ -102,6 +107,7 @@
         [TIPOS.DNI_LEGAJO]: 'DNI Legajo',
         [TIPOS.CUIL_LEGAJO]: 'CUIL Legajo',
         [TIPOS.COD_EMPRESA]: 'Empresa',
+        [TIPOS.CUIT_EMPRESA]: 'Cuit Empresa',
         [TIPOS.COD_PLANTA]: 'Planta',
         [TIPOS.COD_CONVENIO]: 'Convenio',
         [TIPOS.COD_SECTOR]: 'Sector',
@@ -111,6 +117,7 @@
         [TIPOS.FECHA]: 'Fecha',
         [TIPOS.NOVEDADES]: 'Novedades',
         [TIPOS.HORAS]: 'Horas',
+        [TIPOS.HORAS_AGRUPADAS]: 'Horas Agrupadas',
         [TIPOS.ATRA]: 'Horas a trabajar',
         [TIPOS.TRAB]: 'Horas trabajadas',
         [TIPOS.PRIMER_FICHADA]: 'Primer Fichada',
@@ -136,6 +143,7 @@
         [FORMATOS.FECHA_DMY_COMPACTA]: 'DDMMYYYY',
         [FORMATOS.FECHA_DMY_SLASH]: 'DD/MM/YYYY'
     };
+
     const DEFAULT_SEPARADOR = ',';
     const DEFAULT_PLANTILLA = '';
     const STORAGE_PLANTILLA_KEY = 'liquidar_custom_plantilla';
@@ -143,9 +151,21 @@
     let idSecuencial = 1;
     let uidEnEdicion = null;
     let timerGuardarSeparador = null;
+    let timerGuardarFiltros = null;
     const ENDPOINT_CAMPOS = '../../app-data/liquidar/custom/campos';
     const ENDPOINT_EXPORT = '../../app-data/liquidar/custom/export';
     const ENDPOINT_PLANTILLAS = '../../app-data/liquidar/custom/plantillas';
+    const MAPA_FILTROS_SELECT = {
+        Lega: '#selectjs_personal',
+        Empr: '#selectjs_empresa',
+        Plan: '#selectjs_planta',
+        Conv: '#selectjs_convenio',
+        Sect: '#selectjs_sector',
+        Sec2: '#selectjs_seccion',
+        Grup: '#selectjs_grupos',
+        Sucu: '#selectjs_sucursal'
+    };
+    const SELECTORES_FILTROS = Object.values(MAPA_FILTROS_SELECT).join(',');
 
     const $plantilla = $('#campo-plantilla');
     const $posicion = $('#campo-posicion');
@@ -153,6 +173,8 @@
     const $subtipo = $('#campo-subtipo');
     const $subtipoWrapper = $('#subtipo-wrapper');
     const $subtipoHelp = $('#subtipo-help');
+    const $agrupacionWrapper = $('#agrupacion-wrapper');
+    const $agrupacionNombre = $('#campo-agrupacion');
     const $tamano = $('#campo-tamano');
     const $formato = $('#campo-formato');
     const $feedback = $('#campo-feedback');
@@ -169,17 +191,32 @@
     const $resultadoExportacionContenido = $('#resultado-exportacion-contenido');
     const $definirCampos = $('#definirCampos');
     const $btnCrearPlantilla = $('#btn-crear-plantilla, .btn-crear-plantilla');
+    const $btnFiltros = $('#btn-filtros');
     const $btnEliminarPlantilla = $('#btn-eliminar-plantilla, .btn-eliminar-plantilla');
     const $modalCrearPlantilla = $('#modal-crear-plantilla');
+    const $modalFiltros = $('#modal-filtros');
     const $inputNombrePlantilla = $('#nombre-plantilla');
     const $errorNombrePlantilla = $('#nombre-plantilla-error');
     const $btnGuardarPlantilla = $('#btn-guardar-plantilla');
+    const $footerFilters = $('#footer-filters');
+    const $tiposLega = $('#tipos-lega');
+    const $trashAllIn = $('#trash_allIn');
+    const $asignados = $('.asignados');
+    const $totalRegistros = $('.total-registros');
+    const $camposAsignados = $('[aria-label="Asignados"]');
+
+
+    let filtrosInicializados = false;
+    let filtrosSeleccionadosPlantilla = crearFiltrosVacios();
+    let filtrosDescripcionPlantilla = crearFiltrosDescripcionVacia();
+    let aplicandoFiltrosPersistidos = false;
 
     const TEXTO_BOTON_AGREGAR = 'Agregar campo';
     const TEXTO_BOTON_EDITAR = 'Editar campo';
 
     $(document).ready(function () {
         inicializarSelects();
+        inicializarSelectsFiltros();
         actualizarTextoBotonCampo();
         enlazarEventos();
         inicializarOrdenamientoTabla();
@@ -194,6 +231,161 @@
             });
         inicializarDatePicker();
     });
+
+    const optionSelect2 = (item) => {
+        if (!item.id) return item.text;
+
+        const checked = item.selected ? 'checked' : '';
+        const disabled = item.disabled ? 'disabled' : '';
+        const estructura = item.estructura || '';
+        const cantidad = item.Cantidad ?? 0;
+
+        // Caso especial: personal con id == 0
+        if (estructura === 'personal' && item.id == '0') {
+            return ''; // Retorna cadena vacía para evitar mostrarlo
+        }
+
+        // Texto del sector si aplica
+        const getSectorText = () => {
+            if (estructura === 'secciones' && item.Sector) {
+                return `<span class="font07">Sector: (${item.CodSect}) ${item.Sector}</span>`;
+            }
+            return '';
+        };
+
+        const sectorText = getSectorText();
+
+        // Función auxiliar para crear el checkbox
+        const createCheckbox = () => {
+            return $(`
+            <div class="d-flex justify-content-between align-items-center w-100 ${disabled}">
+                ${createLabelContent()}
+                <div class="font08 badge badge-light">${estructura !== 'personal' ? cantidad : ''}</div>
+            </div>
+            ${sectorText}
+        `);
+        };
+
+        // Contenido del label según tipo de estructura
+        const createLabelContent = () => {
+
+            if (estructura === 'personal') {
+                return `
+                <div>
+                    <span class="font08">${item.id}</span><br>
+                    <span class="font09">${item.text}</span>
+                </div>
+            `;
+            }
+
+            return `
+            <div class="d-inline-flex align-items-center" style="gap:5px;">
+                <div class="font08" style="white-space: nowrap;margin-bottom:2px">(${item.id2})</div>
+                <div class="font09">${item.text}</div>
+            </div>
+        `;
+        };
+
+        return createCheckbox();
+    };
+
+    let preventOpenOnClear = false;
+    let closeTimeout = null;
+
+    const select2Estruct = (selector, multiple, placeholder, estruct) => {
+
+        const url = "/" + homehost + "/app-data/personal/filtros";
+
+        $(selector).select2({
+            multiple: multiple,
+            allowClear: true,
+            language: "es",
+            placeholder: $(selector).data("label") || placeholder,
+            minimumInputLength: 0,
+            minimumResultsForSearch: 50,
+            maximumInputLength: 10,
+            width: "100%",
+            selectOnClose: false,
+            templateResult: function (item) {
+                return optionSelect2(item);
+            },
+            ajax: {
+                url: url,
+                dataType: "json",
+                type: "POST",
+                delay: 250,
+                cache: true,
+                data: function (params) {
+                    const tipo = $('input[name="Tipo"]:checked').val() || 0;
+                    return {
+                        descripcion: params.term,
+                        estructura: estruct,
+                        nullCant: 0,
+                        activo: 1,
+                        strict: 1,
+                        estado: 0,
+                        proyectar: 1,
+                        tipo: tipo,
+                        empresas: $("#selectjs_empresa").val(),
+                        plantas: $("#selectjs_planta").val(),
+                        convenios: $("#selectjs_convenio").val(),
+                        sectores: $("#selectjs_sector").val(),
+                        secciones: $("#selectjs_seccion").val(),
+                        grupos: $("#selectjs_grupos").val(),
+                        sucursales: $("#selectjs_sucursal").val(),
+                        personal: $("#selectjs_personal").val(),
+                    }
+                },
+                processResults: function (data) {
+                    const datos = data.data || [];
+                    const estructura = data?.estructura || '';
+                    const selectedValues = $(selector).val() || [];
+
+                    if (datos.length === 0) {
+                        return {
+                            results: [{ id: '', text: 'No hay resultados..' }]
+                        }
+                    }
+                    return {
+                        results: datos.map(function (item) {
+                            const ID = (estructura === 'secciones') ? item.CodSect + item.Cod : item.Cod;
+                            return {
+                                id: ID,
+                                // id: ID == '00' ? '0' : ID,
+                                id2: item.Cod,
+                                text: item.Descripcion || 'Sin Definir' || 'Sin descripción',
+                                Sector: item.Sector || '',
+                                CodSect: item.CodSect || '',
+                                Cantidad: item.Cantidad,
+                                disabled: item.Cantidad === 0,
+                                estructura: estructura,
+                                selected: selectedValues.includes(String(ID))
+                            };
+                        })
+                    }
+                },
+            },
+        }).on('select2:select', function (e) {
+            const id = e.params.data.id;
+        }).on('select2:clear', function (e) {
+            preventOpenOnClear = true;
+        }).on('select2:close', function () {
+            if (closeTimeout) clearTimeout(closeTimeout);
+            closeTimeout = setTimeout(function () {
+                // getHoras_();
+                // getPersonal();
+            }, 50);
+        }).on('select2:opening', function (e) {
+            if (preventOpenOnClear) {
+                e.preventDefault();
+                preventOpenOnClear = false;
+            }
+        }).on('select2:open', function (e) {
+            // limpiar el select2 para que ajax vuelva a renderizar el contenido
+            $(this).data('select2').$container.find('.select2-search__field').val('');
+        });
+
+    }
 
     function obtenerPlantillaActiva() {
         return String($plantilla.val() || '').trim();
@@ -347,6 +539,8 @@
             .then(function (response) {
                 const config = normalizarConfiguracionPersistida(response.data);
                 window.camposLiquidar = config.campos;
+                filtrosSeleccionadosPlantilla = normalizarFiltrosConfiguracion(config.filtros);
+                filtrosDescripcionPlantilla = normalizarFiltrosDescripcionConfiguracion(config.filtrosDescripcion);
                 $separador.val(config.separador);
                 $encabezados.prop('checked', config.encabezados === 1);
                 actualizarTextoSwitchEncabezados();
@@ -354,15 +548,19 @@
                 actualizarResultadoSeparador();
                 recalcularIdSecuencial();
                 renderizarLista();
+                aplicarFiltrosConfiguradosEnVista();
                 actualizarPosicionSugerida(true);
             })
             .catch(function () {
                 window.camposLiquidar = [];
+                filtrosSeleccionadosPlantilla = crearFiltrosVacios();
+                filtrosDescripcionPlantilla = crearFiltrosDescripcionVacia();
                 $separador.val(DEFAULT_SEPARADOR);
                 $encabezados.prop('checked', false);
                 actualizarTextoSwitchEncabezados();
                 actualizarResultadoSeparador();
                 renderizarLista();
+                aplicarFiltrosConfiguradosEnVista();
                 actualizarPosicionSugerida(true);
                 notificar('No se pudo cargar la configuración guardada.', 'danger');
             });
@@ -378,6 +576,8 @@
             campos: window.camposLiquidar,
             separador: obtenerSeparadorNormalizado(),
             encabezados: $encabezados.is(':checked') ? 1 : 0,
+            filtros: obtenerFiltrosActuales(),
+            filtrosDescripcion: obtenerFiltrosDescripcionActuales(),
             plantilla: plantilla
         });
     }
@@ -497,6 +697,7 @@
 
                 mostrarNotificacionDescarga(data.archivo, data.message || 'Archivo generado correctamente.');
                 mostrarResultadosArchivo(data.archivo);
+                $totalRegistros.text(`Resultados generados (${data.registros || 0})`);
             })
             .catch(function (error) {
                 const mensajeBackend = error
@@ -517,6 +718,8 @@
         let separador = DEFAULT_SEPARADOR;
         let encabezados = 0;
         let listado = [];
+        let filtros = crearFiltrosVacios();
+        let filtrosDescripcion = crearFiltrosDescripcionVacia();
 
         if ($.isArray(data)) {
             listado = data;
@@ -524,10 +727,14 @@
             listado = data.campos;
             separador = normalizarSeparadorCliente(data.separador);
             encabezados = normalizarEncabezados(data.encabezados);
+            filtros = normalizarFiltrosConfiguracion(data.filtros);
+            filtrosDescripcion = normalizarFiltrosDescripcionConfiguracion(data.filtrosDescripcion);
         } else if (data && data.data && $.isArray(data.data.campos)) {
             listado = data.data.campos;
             separador = normalizarSeparadorCliente(data.data.separador);
             encabezados = normalizarEncabezados(data.data.encabezados);
+            filtros = normalizarFiltrosConfiguracion(data.data.filtros);
+            filtrosDescripcion = normalizarFiltrosDescripcionConfiguracion(data.data.filtrosDescripcion);
         } else if (data && $.isArray(data.data)) {
             listado = data.data;
         }
@@ -535,7 +742,9 @@
         return {
             separador: separador,
             encabezados: encabezados,
-            campos: normalizarCamposPersistidos(listado)
+            campos: normalizarCamposPersistidos(listado),
+            filtros: filtros,
+            filtrosDescripcion: filtrosDescripcion
         };
     }
 
@@ -578,6 +787,253 @@
         return normalizados;
     }
 
+    function crearFiltrosVacios() {
+        return {
+            Lega: [],
+            Empr: [],
+            Plan: [],
+            Conv: [],
+            Sect: [],
+            Sec2: [],
+            Grup: [],
+            Sucu: []
+        };
+    }
+
+    function crearFiltrosDescripcionVacia() {
+        return {
+            Lega: [],
+            Empr: [],
+            Plan: [],
+            Conv: [],
+            Sect: [],
+            Sec2: [],
+            Grup: [],
+            Sucu: []
+        };
+    }
+
+    function normalizarListaFiltros(lista) {
+        if (!$.isArray(lista)) {
+            return [];
+        }
+
+        const salida = [];
+        $.each(lista, function (_, item) {
+            const codigo = String(item || '').trim();
+            if (codigo !== '') {
+                salida.push(codigo);
+            }
+        });
+
+        return Array.from(new Set(salida));
+    }
+
+    function actualizarContadorAsignados(filtrosNormalizados) {
+        if (!$asignados.length) {
+            return;
+        }
+
+        let counter = 0;
+        $.each(filtrosNormalizados || {}, function (_, lista) {
+            if ($.isArray(lista)) {
+                counter += lista.length;
+            }
+        });
+
+        $asignados.text(`(${counter})`);
+        $camposAsignados.attr('aria-label', `Asignados (${counter})`);
+    }
+
+    function normalizarFiltrosConfiguracion(filtros) {
+        const normalizados = crearFiltrosVacios();
+        if (!filtros || typeof filtros !== 'object') {
+            actualizarContadorAsignados(normalizados);
+            return normalizados;
+        }
+
+        $.each(normalizados, function (clave) {
+            normalizados[clave] = normalizarListaFiltros(filtros[clave]);
+        });
+
+        actualizarContadorAsignados(normalizados);
+        return normalizados;
+    }
+
+    function normalizarFiltrosDescripcionConfiguracion(filtrosDescripcion) {
+        const normalizados = crearFiltrosDescripcionVacia();
+        if (!filtrosDescripcion || typeof filtrosDescripcion !== 'object') {
+            return normalizados;
+        }
+
+        $.each(normalizados, function (clave) {
+            const items = $.isArray(filtrosDescripcion[clave]) ? filtrosDescripcion[clave] : [];
+            const salida = [];
+
+            $.each(items, function (_, item) {
+                if (!item || typeof item !== 'object') {
+                    return;
+                }
+
+                const id = String(item.id || '').trim();
+                const text = String(item.text || '').trim();
+                if (id !== '') {
+                    salida.push({
+                        id: id,
+                        text: text !== '' ? text : id
+                    });
+                }
+            });
+
+            normalizados[clave] = salida;
+        });
+
+        return normalizados;
+    }
+
+    function obtenerFiltrosDesdeSelects() {
+        const filtros = crearFiltrosVacios();
+
+        $.each(MAPA_FILTROS_SELECT, function (clave, selector) {
+            filtros[clave] = normalizarListaFiltros($(selector).val());
+        });
+
+        return filtros;
+    }
+
+    function obtenerFiltrosDescripcionDesdeSelects() {
+        const descripciones = crearFiltrosDescripcionVacia();
+
+        $.each(MAPA_FILTROS_SELECT, function (clave, selector) {
+            const $select = $(selector);
+            const selectedIds = normalizarListaFiltros($select.val());
+            const dataSelect2 = ($select.data('select2') && $.isFunction($select.select2)) ? ($select.select2('data') || []) : [];
+            const textoPorId = {};
+
+            $.each(dataSelect2, function (_, item) {
+                if (!item) {
+                    return;
+                }
+
+                const id = String(item.id || '').trim();
+                const text = String(item.text || '').trim();
+                if (id !== '') {
+                    textoPorId[id] = text !== '' ? text : id;
+                }
+            });
+
+            const salida = [];
+            $.each(selectedIds, function (_, id) {
+                let text = textoPorId[id] || '';
+                if (text === '') {
+                    text = String($select.find('option[value="' + id.replace(/"/g, '\\"') + '"]').text() || '').trim();
+                }
+                salida.push({
+                    id: id,
+                    text: text !== '' ? text : id
+                });
+            });
+
+            descripciones[clave] = salida;
+        });
+
+        return descripciones;
+    }
+
+    function obtenerFiltrosActuales() {
+        if (filtrosInicializados) {
+            return normalizarFiltrosConfiguracion(obtenerFiltrosDesdeSelects());
+        }
+
+        return normalizarFiltrosConfiguracion(filtrosSeleccionadosPlantilla);
+    }
+
+    function obtenerFiltrosDescripcionActuales() {
+        if (filtrosInicializados) {
+            return normalizarFiltrosDescripcionConfiguracion(obtenerFiltrosDescripcionDesdeSelects());
+        }
+
+        return normalizarFiltrosDescripcionConfiguracion(filtrosDescripcionPlantilla);
+    }
+
+    function setearSeleccionSelectFiltro(selector, valores, descripciones) {
+        const $select = $(selector);
+        if (!$select.length) {
+            return;
+        }
+
+        const lista = normalizarListaFiltros(valores);
+        const descripcionesLista = $.isArray(descripciones) ? descripciones : [];
+        const descripcionPorId = {};
+
+        $.each(descripcionesLista, function (_, item) {
+            if (!item || typeof item !== 'object') {
+                return;
+            }
+
+            const id = String(item.id || '').trim();
+            const text = String(item.text || '').trim();
+            if (id !== '') {
+                descripcionPorId[id] = text !== '' ? text : id;
+            }
+        });
+
+        $select.find('option[data-filtro-persistido="1"]').remove();
+
+        const opcionesExistentes = {};
+        $select.find('option').each(function () {
+            opcionesExistentes[String($(this).val())] = true;
+        });
+
+        $.each(lista, function (_, codigo) {
+            if (!opcionesExistentes[codigo]) {
+                const texto = descripcionPorId[codigo] || codigo;
+                const option = new Option(texto, codigo, false, false);
+                $(option).attr('data-filtro-persistido', '1');
+                $select.append(option);
+            }
+        });
+
+        if (lista.length === 0) {
+            $select.val(null).trigger('change');
+            return;
+        }
+
+        $select.val(lista).trigger('change');
+    }
+
+    function aplicarFiltrosConfiguradosEnVista() {
+        if (!filtrosInicializados) {
+            return;
+        }
+
+        aplicandoFiltrosPersistidos = true;
+
+        $.each(MAPA_FILTROS_SELECT, function (clave, selector) {
+            setearSeleccionSelectFiltro(
+                selector,
+                filtrosSeleccionadosPlantilla[clave] || [],
+                filtrosDescripcionPlantilla[clave] || []
+            );
+        });
+
+        $("#selectjs_seccion").prop("disabled", (filtrosSeleccionadosPlantilla.Sect || []).length === 0);
+
+        aplicandoFiltrosPersistidos = false;
+    }
+
+    function guardarFiltrosConDebounce() {
+        if (timerGuardarFiltros) {
+            clearTimeout(timerGuardarFiltros);
+        }
+
+        timerGuardarFiltros = setTimeout(function () {
+            guardarCampos().catch(function () {
+                notificar('No se pudieron guardar los filtros.', 'danger');
+            });
+        }, 300);
+    }
+
     function recalcularIdSecuencial() {
         let maxUid = 0;
 
@@ -591,7 +1047,109 @@
         idSecuencial = maxUid + 1;
     }
 
+    function LimpiarFiltros() {
+        $.each(MAPA_FILTROS_SELECT, function (_, selector) {
+            $(selector).val(null).trigger('change');
+        });
+
+        $("#selectjs_seccion").prop("disabled", true);
+    }
+
+    function reinicializarSelectsFiltrosPorPlantilla() {
+        $.each(MAPA_FILTROS_SELECT, function (_, selector) {
+            const $select = $(selector);
+            if (!$select.length) {
+                return;
+            }
+
+            if ($select.hasClass('select2-hidden-accessible')) {
+                $select.select2('destroy');
+            }
+
+            $select.find('option[data-filtro-persistido="1"]').remove();
+            $select.val(null);
+        });
+
+        filtrosInicializados = false;
+        inicializarSelectsFiltros();
+    }
+
+    function inicializarSelectsFiltros() {
+        const filtrosNs = '.filtrosModal';
+
+        $btnFiltros.off('click' + filtrosNs).on('click' + filtrosNs, function () {
+            if ($modalFiltros.length && typeof $modalFiltros.modal === 'function') {
+                $modalFiltros.modal('show');
+            }
+        });
+
+        $modalFiltros.off('shown.bs.modal' + filtrosNs).on('shown.bs.modal' + filtrosNs, function () {
+            if (!filtrosInicializados) {
+                select2Estruct("#selectjs_empresa", true, "Empresas", 1);
+                select2Estruct("#selectjs_planta", true, "Plantas", 2);
+                select2Estruct("#selectjs_convenio", true, "Convenios", 3);
+                select2Estruct("#selectjs_sector", true, "Sectores", 4);
+                select2Estruct("#selectjs_seccion", true, "Secciones", 5);
+                select2Estruct("#selectjs_grupos", true, "Grupos", 6);
+                select2Estruct("#selectjs_sucursal", true, "Sucursales", 7);
+                select2Estruct("#selectjs_personal", true, "Legajos", 8);
+                $("#selectjs_seccion").prop("disabled", true);
+                filtrosInicializados = true;
+                aplicarFiltrosConfiguradosEnVista();
+            }
+
+            $('#selectjs_sector').off('select2:close' + filtrosNs).on('select2:close' + filtrosNs, function (e) {
+                e.preventDefault()
+                $("#selectjs_seccion").prop("disabled", false);
+                $('#selectjs_seccion').val(null).trigger('change');
+            });
+            
+            $('#selectjs_sector').off('select2:unselect' + filtrosNs).on('select2:unselect' + filtrosNs, function (e) {
+                e.preventDefault()
+                $("#selectjs_seccion").prop("disabled", true);
+                $('#selectjs_seccion').val(null).trigger('change');
+                $('#selectjs_sector').val(null).trigger("change");
+            });
+        });
+
+        $(document).off('change' + filtrosNs, SELECTORES_FILTROS).on('change' + filtrosNs, SELECTORES_FILTROS, function () {
+            if (aplicandoFiltrosPersistidos) {
+                return;
+            }
+
+            filtrosSeleccionadosPlantilla = normalizarFiltrosConfiguracion(obtenerFiltrosDesdeSelects());
+            filtrosDescripcionPlantilla = normalizarFiltrosDescripcionConfiguracion(obtenerFiltrosDescripcionDesdeSelects());
+            guardarFiltrosConDebounce();
+        });
+
+
+        $trashAllIn.off('click' + filtrosNs).on('click' + filtrosNs, async function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            LimpiarFiltros();
+
+            // const todos = document.querySelectorAll('input[name="Tipo"]');
+            // todos.forEach((item) => {
+            //     item.checked = false;
+            //     item.closest('label').classList.remove('active');
+            // });
+
+            // const TipoTodos = document.querySelector('#TipoTodos');
+            // TipoTodos.checked = true;
+            // TipoTodos.closest('label').classList.add('active');
+            // $('input[name="Tipo"]').trigger('change');
+
+            $('.select2-results__option[aria-selected=true]').each(function () {
+                $(this).removeClass('select2-results__option--highlighted');
+                $(this).removeAttr('aria-selected');
+            });
+        });
+    }
     function inicializarSelects() {
+
+        $footerFilters.remove();
+        $tiposLega.remove();
 
         $plantilla.select2({
             placeholder: 'Seleccionar plantilla',
@@ -618,6 +1176,7 @@
             const plantilla = obtenerPlantillaActiva();
             guardarPlantillaEnStorage(plantilla);
             salirModoEdicion();
+            reinicializarSelectsFiltrosPorPlantilla();
 
             if (!plantilla) {
                 limpiarConfiguracionVista();
@@ -633,6 +1192,13 @@
 
         $formato.on('change', function () {
             aplicarReglasFormato();
+        });
+
+        $agrupacionNombre.on('input', function () {
+            const limpio = String($(this).val() || '')
+                .replace(/[^\p{L}\p{N} ]/gu, '')
+                .slice(0, 20);
+            $(this).val(limpio);
         });
 
         $separador.on('input', function () {
@@ -666,6 +1232,7 @@
 
             if ($modalCrearPlantilla.length && typeof $modalCrearPlantilla.modal === 'function') {
                 $modalCrearPlantilla.modal('show');
+                $inputNombrePlantilla.trigger('focus');
             }
         });
 
@@ -715,24 +1282,85 @@
     }
 
     function inicializarSubtipoSelect(datos) {
+        const esMultiple = $subtipo.prop('multiple') === true;
+
+        const placeholderText = esMultiple ? 'Seleccionar uno o más valores' : 'Seleccionar valor';
+
         if ($subtipo.hasClass('select2-hidden-accessible')) {
             $subtipo.select2('destroy');
         }
 
         $subtipo.empty();
-        $subtipo.append('<option value=""></option>');
+        if (!esMultiple) {
+            $subtipo.append('<option value=""></option>');
+        }
 
         $.each(datos, function (_, item) {
+            const children = $.isArray(item.children) ? item.children : [];
+
+            if (children.length) {
+                const $optgroup = $('<optgroup></optgroup>').attr('label', String(item.text || ''));
+
+                $.each(children, function (_, child) {
+                    const childValue = String(child.id || child.value || '').trim();
+                    if (!childValue) {
+                        return;
+                    }
+
+                    $optgroup.append(
+                        $('<option></option>').val(childValue).text(String(child.text || childValue))
+                    );
+                });
+
+                if ($optgroup.children().length) {
+                    $subtipo.append($optgroup);
+                }
+                return;
+            }
+
+            const value = String(item.value || item.id || '').trim();
+            if (!value) {
+                return;
+            }
+
             $subtipo.append(
-                $('<option></option>').val(item.value).text(item.text)
+                $('<option></option>').val(value).text(String(item.text || value))
             );
         });
 
         $subtipo.select2({
-            placeholder: 'Seleccionar valor',
-            allowClear: true,
+            placeholder: placeholderText,
+            allowClear: !esMultiple,
             width: '100%'
         });
+
+        if (esMultiple) {
+            // Evita que quede seleccionado el valor vacío heredado del modo simple.
+            $subtipo.val(null).trigger('change.select2');
+        }
+    }
+
+    function esTipoSubtipoMultiple(tipo) {
+        return tipo === TIPOS.HORAS_AGRUPADAS;
+    }
+
+    function configurarModoSubtipo(tipo) {
+        const multiple = esTipoSubtipoMultiple(tipo);
+        $subtipo.prop('multiple', multiple);
+
+        if (multiple) {
+            // Limpia estado previo para que Select2 pueda mostrar placeholder al primer render.
+            $subtipo.val(null);
+        }
+    }
+
+    function mostrarAgrupacion() {
+        $agrupacionWrapper.removeClass('d-none');
+    }
+
+    function ocultarAgrupacion() {
+        $agrupacionWrapper.addClass('d-none');
+        $agrupacionNombre.val('');
     }
 
     function mostrarSubtipo() {
@@ -744,6 +1372,7 @@
             $subtipo.select2('destroy');
         }
 
+        $subtipo.prop('multiple', false);
         $subtipo.empty().append('<option value=""></option>');
         $subtipoWrapper.addClass('d-none');
         $subtipo.val('');
@@ -767,14 +1396,19 @@
         aplicarReglasTipo(tipo);
         aplicarReglasFormato();
 
+        if (tipo === TIPOS.HORAS_AGRUPADAS) {
+            mostrarAgrupacion();
+        } else {
+            ocultarAgrupacion();
+        }
+
         if (!esTipoConSubtipo(tipo)) {
             ocultarSubtipo();
             return;
         }
 
-        setTimeout(function () {
-            mostrarSubtipo();
-        }, 500);
+        configurarModoSubtipo(tipo);
+        mostrarSubtipo();
         cargarSubtipo(tipo);
     }
 
@@ -821,23 +1455,68 @@
 
     function mapearSubtipos(tipo, listado) {
         if (tipo === TIPOS.NOVEDADES) {
-            return $.map(listado, function (item) {
-                const codigo = item.NovCodi || '';
-                const descripcion = item.NovDesc || '';
-                return {
-                    value: codigo,
-                    text: codigo + ' - ' + descripcion
-                };
+            const grupos = {};
+            const ordenGrupos = [];
+
+            $.each(listado, function (_, item) {
+                const codigo = String(item.NovCodi || '').trim();
+                if (!codigo) {
+                    return;
+                }
+
+                const descripcion = String(item.NovDesc || '').trim();
+                const textoOpcion = descripcion ? (codigo + ' - ' + descripcion) : codigo;
+                const tipoGrupo = String(item.NovTipoDesc || item.tipo || 'Sin tipo').trim() || 'Sin tipo';
+
+                if (!grupos[tipoGrupo]) {
+                    grupos[tipoGrupo] = {
+                        text: tipoGrupo,
+                        children: []
+                    };
+                    ordenGrupos.push(tipoGrupo);
+                }
+
+                grupos[tipoGrupo].children.push({
+                    id: codigo,
+                    text: textoOpcion
+                });
+            });
+
+            return $.map(ordenGrupos, function (key) {
+                return grupos[key];
             });
         }
 
-        return $.map(listado, function (item) {
-            const codigo = item.THoCodi || '';
-            const descripcion = item.THoDesc || '';
-            return {
-                value: codigo,
-                text: codigo + ' - ' + descripcion
-            };
+        const grupos = {};
+        const ordenGrupos = [];
+
+        $.each(listado, function (_, item) {
+            const codigo = String(item.THoCodi || '').trim();
+            if (!codigo) {
+                return;
+            }
+
+            const descripcion = String(item.THoDesc || '').trim();
+            const id = String(item.THoID || item.id || '').trim();
+            const textoOpcion = descripcion ? (codigo + ' - ' + descripcion) : codigo;
+            const idGrupo = id || 'Sin id';
+
+            if (!grupos[idGrupo]) {
+                grupos[idGrupo] = {
+                    text: idGrupo,
+                    children: []
+                };
+                ordenGrupos.push(idGrupo);
+            }
+
+            grupos[idGrupo].children.push({
+                id: codigo,
+                text: textoOpcion
+            });
+        });
+
+        return $.map(ordenGrupos, function (key) {
+            return grupos[key];
         });
     }
 
@@ -878,18 +1557,29 @@
 
     function leerFormulario() {
         const tipo = $tipo.val();
+        const nombreAgrupacion = String($agrupacionNombre.val() || '').trim();
+        const subtipoValor = esTipoSubtipoMultiple(tipo)
+            ? (($subtipo.val() || []).filter(function (item) { return String(item || '').trim() !== ''; }))
+            : $subtipo.val();
+        const subtipoLabel = esTipoSubtipoMultiple(tipo)
+            ? nombreAgrupacion
+            : obtenerTextoSeleccionado($subtipo);
 
         return {
             uid: idSecuencial++,
             posicion: parseInt($posicion.val(), 10),
             tipo: tipo,
             tipoLabel: labelsTipo[tipo] || '',
-            subtipo: $subtipo.val(),
-            subtipoLabel: obtenerTextoSeleccionado($subtipo),
+            subtipo: subtipoValor,
+            subtipoLabel: subtipoLabel,
             tamano: parseInt($tamano.val(), 10),
             formato: $formato.val(),
             formatoLabel: labelsFormato[$formato.val()] || ''
         };
+    }
+
+    function esNombreAgrupacionValido(nombre) {
+        return /^[\p{L}\p{N} ]{1,20}$/u.test(nombre);
     }
 
     function validarFormulario(datos) {
@@ -903,7 +1593,21 @@
             cantidadErrores += 1;
         }
 
-        if (esTipoConSubtipo(datos.tipo) && !datos.subtipo) {
+        if (esTipoConSubtipo(datos.tipo)) {
+            if (esTipoSubtipoMultiple(datos.tipo)) {
+                if (!$.isArray(datos.subtipo) || !datos.subtipo.length) {
+                    cantidadErrores += 1;
+                }
+
+                if (!esNombreAgrupacionValido(String(datos.subtipoLabel || '').trim())) {
+                    cantidadErrores += 1;
+                }
+            } else if (!datos.subtipo) {
+                cantidadErrores += 1;
+            }
+        }
+
+        if (datos.tipo === TIPOS.HORAS_AGRUPADAS && (datos.formato !== FORMATOS.DECIMAL && datos.formato !== FORMATOS.HORAS)) {
             cantidadErrores += 1;
         }
 
@@ -1033,7 +1737,13 @@
         }
 
         const etiquetas = cacheCatalogos.etiquetasParagene || {};
-        return etiquetas[keyEtiqueta] || MAP_TIPO_ETIQUETA_FALLBACK[campo.tipo] || '-';
+        const etiquetaBase = etiquetas[keyEtiqueta] || MAP_TIPO_ETIQUETA_FALLBACK[campo.tipo] || '-';
+
+        if (campo.tipo === TIPOS.CUIT_EMPRESA) {
+            return 'Cuit ' + etiquetaBase;
+        }
+
+        return etiquetaBase;
     }
 
     function eliminarCampo(uid) {
@@ -1078,6 +1788,7 @@
     function resetFormularioCampo() {
         limpiarErrores();
         ocultarSubtipo();
+        ocultarAgrupacion();
         $tipo.val(null).trigger('change.select2');
         renderizarOpcionesFormato('');
         $formato.val(null).trigger('change.select2');
@@ -1096,6 +1807,30 @@
     }
 
     function setSubtipoSeleccionado(valor, etiqueta) {
+        if ($subtipo.prop('multiple') === true) {
+            const values = $.isArray(valor)
+                ? $.map(valor, function (item) { return String(item || '').trim(); })
+                : [];
+
+            if (!values.length) {
+                $subtipo.val(null).trigger('change.select2');
+                return;
+            }
+
+            $.each(values, function (_, valueItem) {
+                if (!valueItem) {
+                    return;
+                }
+
+                if ($subtipo.find('option[value="' + valueItem.replace(/"/g, '\\"') + '"]').length === 0) {
+                    $subtipo.append($('<option></option>').val(valueItem).text(valueItem));
+                }
+            });
+
+            $subtipo.val(values).trigger('change.select2');
+            return;
+        }
+
         const value = String(valor || '');
 
         if (!value) {
@@ -1130,6 +1865,10 @@
         const aplicarValores = function () {
             if (esTipoConSubtipo(campo.tipo)) {
                 setSubtipoSeleccionado(campo.subtipo, campo.subtipoLabel);
+            }
+
+            if (campo.tipo === TIPOS.HORAS_AGRUPADAS) {
+                $agrupacionNombre.val(String(campo.subtipoLabel || ''));
             }
 
             $formato.val(campo.formato).trigger('change');
@@ -1170,7 +1909,7 @@
     }
 
     function esTipoConSubtipo(tipo) {
-        return tipo === TIPOS.NOVEDADES || tipo === TIPOS.HORAS;
+        return tipo === TIPOS.NOVEDADES || tipo === TIPOS.HORAS || tipo === TIPOS.HORAS_AGRUPADAS;
     }
 
     function obtenerOpcionesFormatoPorTipo(tipo) {
@@ -1189,6 +1928,7 @@
                 ];
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
+            case TIPOS.HORAS_AGRUPADAS:
             case TIPOS.ATRA:
             case TIPOS.TRAB:
                 return [FORMATOS.DECIMAL, FORMATOS.HORAS];
@@ -1210,6 +1950,7 @@
                 return [FORMATOS.NUMERO];
             case TIPOS.CUIL_LEGAJO:
             case TIPOS.APNO:
+            case TIPOS.CUIT_EMPRESA:
             case TIPOS.TURSTR:
                 return [FORMATOS.TEXTO];
             default:
@@ -1262,6 +2003,7 @@
                 $tamano.prop('disabled', false).val('1');
                 break;
             case TIPOS.APNO:
+            case TIPOS.CUIT_EMPRESA:
                 $formato.val(FORMATOS.TEXTO).trigger('change');
                 $formato.prop('disabled', true);
                 $tamano.prop('disabled', true).val('0');
@@ -1289,6 +2031,7 @@
                 break;
             case TIPOS.NOVEDADES:
             case TIPOS.HORAS:
+            case TIPOS.HORAS_AGRUPADAS:
             case TIPOS.ATRA:
             case TIPOS.TRAB:
                 $formato.prop('disabled', false);
@@ -1428,12 +2171,15 @@
 
     function limpiarConfiguracionVista() {
         window.camposLiquidar = [];
+        filtrosSeleccionadosPlantilla = crearFiltrosVacios();
+        filtrosDescripcionPlantilla = crearFiltrosDescripcionVacia();
         $separador.val(DEFAULT_SEPARADOR);
         $encabezados.prop('checked', false);
         actualizarTextoSwitchEncabezados();
         actualizarResultadoSeparador();
         recalcularIdSecuencial();
         renderizarLista();
+        aplicarFiltrosConfiguradosEnVista();
         actualizarPosicionSugerida(true);
     }
 
@@ -1462,7 +2208,9 @@
             nombre: nombre,
             campos: window.camposLiquidar,
             separador: obtenerSeparadorNormalizado(),
-            encabezados: $encabezados.is(':checked') ? 1 : 0
+            encabezados: $encabezados.is(':checked') ? 1 : 0,
+            filtros: obtenerFiltrosActuales(),
+            filtrosDescripcion: obtenerFiltrosDescripcionActuales()
         };
 
         axios.post(ENDPOINT_PLANTILLAS, payload)

@@ -32,7 +32,7 @@ function RutaArchivo(): string
     return RutaDirectorioConfig() . NombreArchivo();
 }
 
-function NormalizarCampo($item): ?array
+function NormalizarCampo(array $item): ?array
 {
     if (!is_array($item)) {
         return null;
@@ -40,15 +40,38 @@ function NormalizarCampo($item): ?array
 
     $posicion = isset($item['posicion']) ? (int) $item['posicion'] : 0;
     $tipo = isset($item['tipo']) ? (string) $item['tipo'] : '';
-    $subtipo = isset($item['subtipo']) ? (string) $item['subtipo'] : '';
+    $subtipo = '';
+    if ($tipo === 'horas_agrupadas') {
+        $subtipo = [];
+        if (isset($item['subtipo']) && is_array($item['subtipo'])) {
+            foreach ($item['subtipo'] as $subtipoItem) {
+                $codigo = trim((string) $subtipoItem);
+                if ($codigo !== '') {
+                    $subtipo[] = $codigo;
+                }
+            }
+        }
+        $subtipo = array_values(array_unique($subtipo));
+    } else {
+        $subtipo = isset($item['subtipo']) ? (string) $item['subtipo'] : '';
+    }
     $tamano = isset($item['tamano']) ? (int) $item['tamano'] : 0;
     $formato = isset($item['formato']) ? (string) $item['formato'] : '';
+    $subtipoLabel = isset($item['subtipoLabel']) ? trim((string) $item['subtipoLabel']) : '';
 
     $tamanoValido = ($formato === 'texto' || $formato === 'horas')
         ? ($tamano === 0)
         : (EsFormatoFecha($formato) ? ($tamano >= 0) : ($tamano > 0));
 
-    if ($posicion <= 0 || $tipo === '' || !$tamanoValido || $formato === '') {
+    $horasAgrupadasValido = true;
+    if ($tipo === 'horas_agrupadas') {
+        $horasAgrupadasValido = is_array($subtipo)
+            && !empty($subtipo)
+            && in_array($formato, ['decimal', 'horas'], true)
+            && preg_match('/^[\p{L}\p{N} ]{1,20}$/u', $subtipoLabel) === 1;
+    }
+
+    if ($posicion <= 0 || $tipo === '' || !$tamanoValido || $formato === '' || !$horasAgrupadasValido) {
         return null;
     }
 
@@ -58,23 +81,23 @@ function NormalizarCampo($item): ?array
         'tipo' => $tipo,
         'tipoLabel' => isset($item['tipoLabel']) ? (string) $item['tipoLabel'] : '',
         'subtipo' => $subtipo,
-        'subtipoLabel' => isset($item['subtipoLabel']) ? (string) $item['subtipoLabel'] : '',
+        'subtipoLabel' => $subtipoLabel,
         'tamano' => $tamano,
         'formato' => $formato,
         'formatoLabel' => isset($item['formatoLabel']) ? (string) $item['formatoLabel'] : '',
     ];
 }
 
-function NormalizarCampos($campos): array
+function NormalizarCampos(array $campos): array
 {
-    if (!is_array($campos)) {
-        throw new Exception('El payload de campos no es valido.', 400);
-    }
-
     $normalizados = [];
 
     foreach ($campos as $item) {
-        $campo = NormalizarCampo($item);
+        try {
+            $campo = NormalizarCampo($item);
+        } catch (TypeError $e) {
+            throw new Exception('El payload de campos no es valido.', 400);
+        }
         if ($campo !== null) {
             $normalizados[] = $campo;
         }
@@ -87,7 +110,7 @@ function NormalizarCampos($campos): array
     return $normalizados;
 }
 
-function NormalizarSeparador($separador): string
+function NormalizarSeparador(string $separador): string
 {
     if ($separador === null) {
         return ',';
@@ -102,12 +125,190 @@ function NormalizarSeparador($separador): string
     return substr($separador, 0, 1);
 }
 
-function NormalizarEncabezados($encabezados): int
+function NormalizarEncabezados(int $encabezados): int
 {
-    return ((int) $encabezados) === 1 ? 1 : 0;
+    return $encabezados === 1 ? 1 : 0;
 }
 
-function NormalizarPlantillaSlug($slug): string
+function FiltrosVacios(): array
+{
+    return [
+        'Lega' => [],
+        'Empr' => [],
+        'Plan' => [],
+        'Conv' => [],
+        'Sect' => [],
+        'Sec2' => [],
+        'Grup' => [],
+        'Sucu' => [],
+    ];
+}
+
+function NormalizarFiltros($filtros): array
+{
+    $normalizados = FiltrosVacios();
+    if (!is_array($filtros)) {
+        return $normalizados;
+    }
+
+    foreach ($normalizados as $clave => $_) {
+        $items = $filtros[$clave] ?? [];
+        if (!is_array($items)) {
+            continue;
+        }
+
+        $valores = [];
+        foreach ($items as $item) {
+            $codigo = trim((string) $item);
+            if ($codigo !== '') {
+                $valores[] = $codigo;
+            }
+        }
+
+        $normalizados[$clave] = array_values(array_unique($valores));
+    }
+
+    return $normalizados;
+}
+
+function CsvSesionALista($valorSesion): array
+{
+    $texto = trim((string) ($valorSesion ?? ''));
+    if ($texto === '') {
+        return [];
+    }
+
+    $partes = explode(',', $texto);
+    $salida = [];
+    foreach ($partes as $parte) {
+        $item = trim((string) $parte);
+        if ($item !== '') {
+            $salida[] = $item;
+        }
+    }
+
+    return array_values(array_unique($salida));
+}
+
+function AplicarRestriccionesSesionEnFiltros(array $filtros): array
+{
+    $resultado = NormalizarFiltros($filtros);
+
+    $mapaSesionAFiltro = [
+        'EstrUser' => 'Lega',
+        'EmprRol' => 'Empr',
+        'PlanRol' => 'Plan',
+        'ConvRol' => 'Conv',
+        'SectRol' => 'Sect',
+        'Sec2Rol' => 'Sec2',
+        'GrupRol' => 'Grup',
+        'SucuRol' => 'Sucu',
+    ];
+
+    foreach ($mapaSesionAFiltro as $claveSesion => $claveFiltro) {
+        $permitidos = CsvSesionALista($_SESSION[$claveSesion] ?? '');
+        if (empty($permitidos)) {
+            continue;
+        }
+
+        $actuales = isset($resultado[$claveFiltro]) && is_array($resultado[$claveFiltro])
+            ? $resultado[$claveFiltro]
+            : [];
+
+        if (empty($actuales)) {
+            $resultado[$claveFiltro] = $permitidos;
+            continue;
+        }
+
+        $permitidosMap = array_fill_keys(array_map('strval', $permitidos), true);
+        $validados = [];
+        foreach ($actuales as $item) {
+            $codigo = trim((string) $item);
+            if ($codigo !== '' && isset($permitidosMap[$codigo])) {
+                $validados[] = $codigo;
+            }
+        }
+
+        $validados = array_values(array_unique($validados));
+        if (empty($validados)) {
+            // Si hay restricción en sesión, siempre debe aplicarse como mínimo.
+            $resultado[$claveFiltro] = $permitidos;
+            continue;
+        }
+
+        $resultado[$claveFiltro] = $validados;
+    }
+
+    return $resultado;
+}
+
+function HayRestriccionesEstructuraEnSesion(): bool
+{
+    $clavesSesion = ['EmprRol', 'PlanRol', 'ConvRol', 'SectRol', 'Sec2Rol', 'GrupRol', 'SucuRol'];
+
+    foreach ($clavesSesion as $claveSesion) {
+        if (!empty(CsvSesionALista($_SESSION[$claveSesion] ?? ''))) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function FiltrosDescripcionVacios(): array
+{
+    return [
+        'Lega' => [],
+        'Empr' => [],
+        'Plan' => [],
+        'Conv' => [],
+        'Sect' => [],
+        'Sec2' => [],
+        'Grup' => [],
+        'Sucu' => [],
+    ];
+}
+
+function NormalizarFiltrosDescripcion($filtrosDescripcion): array
+{
+    $normalizados = FiltrosDescripcionVacios();
+    if (!is_array($filtrosDescripcion)) {
+        return $normalizados;
+    }
+
+    foreach ($normalizados as $clave => $_) {
+        $items = $filtrosDescripcion[$clave] ?? [];
+        if (!is_array($items)) {
+            continue;
+        }
+
+        $salida = [];
+        $ids = [];
+        foreach ($items as $item) {
+            if (!is_array($item)) {
+                continue;
+            }
+
+            $id = trim((string) ($item['id'] ?? ''));
+            if ($id === '' || isset($ids[$id])) {
+                continue;
+            }
+
+            $text = trim((string) ($item['text'] ?? ''));
+            $salida[] = [
+                'id' => $id,
+                'text' => $text !== '' ? $text : $id,
+            ];
+            $ids[$id] = true;
+        }
+
+        $normalizados[$clave] = $salida;
+    }
+
+    return $normalizados;
+}
+
+function NormalizarPlantillaSlug(string $slug): string
 {
     $slug = trim((string) $slug);
 
@@ -131,9 +332,9 @@ function NormalizarPlantillaSlug($slug): string
     return substr($slug, 0, 50);
 }
 
-function NormalizarNombrePlantilla($nombre, $fallbackSlug = ''): string
+function NormalizarNombrePlantilla(string $nombre, string $fallbackSlug = ''): string
 {
-    $nombre = trim((string) $nombre);
+    $nombre = trim($nombre);
 
     if ($nombre !== '' && preg_match('/^(?=.*[\p{L}\p{N}])[\p{L}\p{N} ]{1,50}$/u', $nombre)) {
         return $nombre;
@@ -147,9 +348,9 @@ function NormalizarNombrePlantilla($nombre, $fallbackSlug = ''): string
     return $fallbackSlug;
 }
 
-function PlantillaSlugDesdeNombre($nombre): string
+function PlantillaSlugDesdeNombre(string $nombre): string
 {
-    $nombre = trim((string) $nombre);
+    $nombre = trim($nombre);
     if ($nombre === '') {
         throw new Exception('Debe indicar un nombre de plantilla.', 400);
     }
@@ -161,7 +362,7 @@ function PlantillaSlugDesdeNombre($nombre): string
     return NormalizarPlantillaSlug($nombre);
 }
 
-function ExistePlantillaPorSlug($plantillaSlug): bool
+function ExistePlantillaPorSlug(string $plantillaSlug): bool
 {
     $slug = NormalizarPlantillaSlug($plantillaSlug);
     if ($slug === '') {
@@ -233,18 +434,22 @@ function ListarPlantillas(): array
     return array_values($plantillas);
 }
 
-function NormalizarConfiguracion($data): array
+function NormalizarConfiguracion(array $data): array
 {
     $separador = ',';
     $encabezados = 0;
     $nombre = '';
     $campos = [];
+    $filtros = FiltrosVacios();
+    $filtrosDescripcion = FiltrosDescripcionVacios();
 
     if (is_array($data) && array_key_exists('campos', $data)) {
         $campos = $data['campos'];
         $separador = NormalizarSeparador($data['separador'] ?? ',');
         $encabezados = NormalizarEncabezados($data['encabezados'] ?? 0);
         $nombre = (string) ($data['nombre'] ?? ($data['nombrePlantilla'] ?? ''));
+        $filtros = NormalizarFiltros($data['filtros'] ?? []);
+        $filtrosDescripcion = NormalizarFiltrosDescripcion($data['filtrosDescripcion'] ?? []);
     } else {
         $campos = $data;
         if (is_array($data) && array_key_exists('separador', $data)) {
@@ -258,31 +463,31 @@ function NormalizarConfiguracion($data): array
         } elseif (is_array($data) && array_key_exists('nombrePlantilla', $data)) {
             $nombre = (string) $data['nombrePlantilla'];
         }
+        if (is_array($data) && array_key_exists('filtros', $data)) {
+            $filtros = NormalizarFiltros($data['filtros']);
+        }
+        if (is_array($data) && array_key_exists('filtrosDescripcion', $data)) {
+            $filtrosDescripcion = NormalizarFiltrosDescripcion($data['filtrosDescripcion']);
+        }
     }
 
+    try {
+        $camposNormalizados = NormalizarCampos($campos);
+    } catch (TypeError $e) {
+        throw new Exception('El payload de campos no es valido.', 400);
+    }
     return [
         'separador' => $separador,
         'encabezados' => $encabezados,
         'nombre' => $nombre,
-        'campos' => NormalizarCampos($campos),
+        'campos' => $camposNormalizados ?? [],
+        'filtros' => $filtros,
+        'filtrosDescripcion' => $filtrosDescripcion,
     ];
 }
 
-function LeerConfiguracion($plantillaSlug = ''): array
+function LeerConfiguracion(string $plantillaSlug = ''): array
 {
-    // $rutaArchivo = RutaArchivo();
-    // $rutaArchivoLegacy = RutaArchivoLegacy();
-
-    // if (!file_exists($rutaArchivo) && file_exists($rutaArchivoLegacy)) {
-    //     $rutaArchivo = $rutaArchivoLegacy;
-    // }
-
-    // if (!file_exists($rutaArchivo)) {
-    //     return ['separador' => ',', 'encabezados' => 0, 'campos' => []];
-    // }
-
-    // $contenido = file_get_contents($rutaArchivo);
-
     $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
 
     $queryParams = [
@@ -294,10 +499,10 @@ function LeerConfiguracion($plantillaSlug = ''): array
 
     $get_params = get_params($queryParams) ?? [];
 
-    $contenido =  $get_params[0]['valores'] ?? [];
+    $contenido = $get_params[0]['valores'] ?? [];
 
     if ($contenido === false || $contenido === '') {
-        return ['separador' => ',', 'encabezados' => 0, 'nombre' => $plantillaSlug, 'campos' => []];
+        return ['separador' => ',', 'encabezados' => 0, 'nombre' => $plantillaSlug, 'campos' => [], 'filtros' => FiltrosVacios(), 'filtrosDescripcion' => FiltrosDescripcionVacios()];
     }
 
     $data = json_decode($contenido, true);
@@ -306,7 +511,11 @@ function LeerConfiguracion($plantillaSlug = ''): array
         throw new Exception('El archivo de configuración de campos no es valido.', 500);
     }
 
-    $config = NormalizarConfiguracion($data);
+    try {
+        $config = NormalizarConfiguracion($data);
+    } catch (TypeError $e) {
+        throw new Exception('El archivo de configuración de campos no es valido.', 500);
+    }
 
     // // Si se leyó desde la ruta legacy, intenta migrar a la nueva carpeta de config.
     // if ($rutaArchivo === $rutaArchivoLegacy) {
@@ -320,30 +529,48 @@ function LeerConfiguracion($plantillaSlug = ''): array
     return $config;
 }
 
-function LeerCampos($plantillaSlug = ''): array
+function LeerCampos(string $plantillaSlug = ''): array
 {
     $config = LeerConfiguracion($plantillaSlug);
     return $config['campos'] ?? [];
 }
 
-function GuardarConfiguracion($campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
+function GuardarConfiguracion(array $campos, string $separador = ',', int $encabezados = 0, string $plantillaSlug = '', $filtros = null, $filtrosDescripcion = null): array
 {
     $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
 
     $nombrePlantilla = '';
+    $filtrosConfiguracion = FiltrosVacios();
+    $filtrosDescripcionConfiguracion = FiltrosDescripcionVacios();
     try {
         $configExistente = LeerConfiguracion($plantillaSlug);
         $nombrePlantilla = NormalizarNombrePlantilla($configExistente['nombre'] ?? '', $plantillaSlug);
+        $filtrosConfiguracion = NormalizarFiltros($configExistente['filtros'] ?? []);
+        $filtrosDescripcionConfiguracion = NormalizarFiltrosDescripcion($configExistente['filtrosDescripcion'] ?? []);
     } catch (Throwable $th) {
         $nombrePlantilla = NormalizarNombrePlantilla('', $plantillaSlug);
     }
 
-    $normalizados = NormalizarCampos($campos);
+    try {
+        $normalizados = NormalizarCampos($campos);
+    } catch (TypeError $e) {
+        throw new Exception('El payload de campos no es valido.', 400);
+    }
+
+    if ($filtros !== null) {
+        $filtrosConfiguracion = NormalizarFiltros($filtros);
+    }
+    if ($filtrosDescripcion !== null) {
+        $filtrosDescripcionConfiguracion = NormalizarFiltrosDescripcion($filtrosDescripcion);
+    }
+
     $config = [
         'separador' => NormalizarSeparador($separador),
         'encabezados' => NormalizarEncabezados($encabezados),
         'nombre' => $nombrePlantilla,
-        'campos' => $normalizados,
+        'campos' => $normalizados ?? [],
+        'filtros' => $filtrosConfiguracion,
+        'filtrosDescripcion' => $filtrosDescripcionConfiguracion,
     ];
     $json = json_encode($config);
 
@@ -378,23 +605,38 @@ function GuardarConfiguracion($campos, $separador = ',', $encabezados = 0, $plan
     return $config;
 }
 
-function GuardarCampos($campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
+function GuardarCampos(array $campos, string $separador = ',', int $encabezados = 0, string $plantillaSlug = '', $filtros = null, $filtrosDescripcion = null): array
 {
-    $config = GuardarConfiguracion($campos, $separador, $encabezados, $plantillaSlug);
+    // $config = GuardarConfiguracion($campos, $separador, $encabezados, $plantillaSlug);
+    try {
+        $config = GuardarConfiguracion($campos, $separador, $encabezados, $plantillaSlug, $filtros, $filtrosDescripcion);
+    } catch (TypeError $e) {
+        throw new Exception('El payload de campos no es valido.', 400);
+    }
     return $config['campos'] ?? [];
 }
 
-function GuardarPlantilla($nombrePlantilla, $campos, $separador = ',', $encabezados = 0, $plantillaSlug = ''): array
+function GuardarPlantilla( string $nombrePlantilla, array $campos, string $separador = ',', int $encabezados = 0, string $plantillaSlug = '', $filtros = null, $filtrosDescripcion = null): array
 {
     $plantillaSlug = NormalizarPlantillaSlug($plantillaSlug);
     $nombrePlantilla = NormalizarNombrePlantilla($nombrePlantilla, $plantillaSlug);
 
-    $normalizados = NormalizarCampos($campos);
+    try {
+        $normalizados = NormalizarCampos($campos);
+    } catch (TypeError $e) {
+        throw new Exception('El payload de campos no es valido.', 400);
+    }
+
+    $filtrosConfiguracion = NormalizarFiltros($filtros);
+    $filtrosDescripcionConfiguracion = NormalizarFiltrosDescripcion($filtrosDescripcion);
+
     $config = [
         'separador' => NormalizarSeparador($separador),
         'encabezados' => NormalizarEncabezados($encabezados),
         'nombre' => $nombrePlantilla,
-        'campos' => $normalizados,
+        'campos' => $normalizados ?? [],
+        'filtros' => $filtrosConfiguracion,
+        'filtrosDescripcion' => $filtrosDescripcionConfiguracion,
     ];
     $json = json_encode($config);
 
@@ -436,7 +678,7 @@ function ConstruirEncabezados(array $campos, string $separador): string
     foreach ($campos as $campo) {
         $tipo = (string) ($campo['tipo'] ?? '');
 
-        if ($tipo === 'horas' || $tipo === 'novedades') {
+        if ($tipo === 'horas' || $tipo === 'novedades' || $tipo === 'horas_agrupadas') {
             $headers[] = (string) ($campo['subtipoLabel'] ?? '');
             continue;
         }
@@ -447,13 +689,13 @@ function ConstruirEncabezados(array $campos, string $separador): string
     return implode($separador, $headers);
 }
 
-function LeerSeparador($plantillaSlug = ''): string
+function LeerSeparador(string $plantillaSlug = ''): string
 {
     $config = LeerConfiguracion($plantillaSlug);
     return NormalizarSeparador($config['separador'] ?? ',');
 }
 
-function NormalizarRegistrosFicNovHor($data): array
+function NormalizarRegistrosFicNovHor(array $data = []): array
 {
     if (is_array($data) && isset($data['DATA']) && is_array($data['DATA'])) {
         return $data['DATA'];
@@ -563,6 +805,35 @@ function ObtenerCodigoEstructura(array $registro, string $clave): string
     return (string) ($estruct[$clave] ?? '');
 }
 
+function ObtenerEmpresasPorCodigo(): array
+{
+    if (!function_exists('getEmpresas')) {
+        return [];
+    }
+
+    $empresas = getEmpresas();
+    if (!is_array($empresas)) {
+        return [];
+    }
+
+    $empresasPorCodigo = [];
+
+    foreach ($empresas as $empresa) {
+        if (!is_array($empresa)) {
+            continue;
+        }
+
+        $codigo = trim((string) ($empresa['Codi'] ?? ''));
+        if ($codigo === '') {
+            continue;
+        }
+
+        $empresasPorCodigo[$codigo] = trim((string) ($empresa['Cuit'] ?? ''));
+    }
+
+    return $empresasPorCodigo;
+}
+
 function SanitizarTextoSeparador(string $valor, string $separador): string
 {
     if ($separador === '') {
@@ -583,6 +854,50 @@ function BuscarHoraPorSubtipo(array $registro, string $subtipo): string
     }
 
     return '';
+}
+
+function DecimalAHora(float $decimal): string
+{
+    if ($decimal <= 0) {
+        return '00:00';
+    }
+
+    $totalMinutos = (int) round($decimal * 60);
+    $horas = (int) floor($totalMinutos / 60);
+    $minutos = $totalMinutos % 60;
+
+    return sprintf('%02d:%02d', $horas, $minutos);
+}
+
+function BuscarHorasAgrupadasPorSubtipos(array $registro, array $subtipos, string $formato): string
+{
+    if (empty($subtipos)) {
+        return $formato === 'horas' ? '00:00' : '0.00';
+    }
+
+    $subtiposMap = array_fill_keys(array_map('strval', $subtipos), true);
+    $horas = (isset($registro['Horas']) && is_array($registro['Horas'])) ? $registro['Horas'] : [];
+    $totalDecimal = 0.0;
+
+    foreach ($horas as $hora) {
+        if (!is_array($hora)) {
+            continue;
+        }
+
+        $codigo = (string) ($hora['Hora'] ?? '');
+        if (!isset($subtiposMap[$codigo])) {
+            continue;
+        }
+
+        $valor = (string) ($hora['Auto'] ?? '');
+        $totalDecimal += (float) HoraADecimal($valor);
+    }
+
+    if ($formato === 'horas') {
+        return DecimalAHora($totalDecimal);
+    }
+
+    return number_format($totalDecimal, 2, '.', '');
 }
 
 function BuscarNovedadPorSubtipo(array $registro, string $subtipo): string
@@ -650,10 +965,14 @@ function ObtenerTodasLasFichadas(array $registro): string
     return implode(' ', $horas);
 }
 
-function ObtenerValorCrudoCampo(array $registro, array $campo): string
+function ObtenerValorCrudoCampo(array $registro, array $campo, array $empresasPorCodigo = []): string
 {
     $tipo = (string) ($campo['tipo'] ?? '');
-    $subtipo = (string) ($campo['subtipo'] ?? '');
+    $subtipoRaw = $campo['subtipo'] ?? '';
+    $subtipo = is_array($subtipoRaw) ? '' : (string) $subtipoRaw;
+    $subtipos = is_array($subtipoRaw) ? array_values(array_filter(array_map('strval', $subtipoRaw), function ($item) {
+        return trim($item) !== '';
+    })) : [];
 
     switch ($tipo) {
         case 'legajo':
@@ -666,6 +985,9 @@ function ObtenerValorCrudoCampo(array $registro, array $campo): string
             return (string) ($registro['Cuil'] ?? '');
         case 'cod_empresa':
             return ObtenerCodigoEstructura($registro, 'Empr');
+        case 'cuit_empresa':
+            $codigoEmpresa = ObtenerCodigoEstructura($registro, 'Empr');
+            return (string) ($empresasPorCodigo[$codigoEmpresa] ?? '');
         case 'cod_planta':
             return ObtenerCodigoEstructura($registro, 'Plan');
         case 'cod_convenio':
@@ -682,6 +1004,8 @@ function ObtenerValorCrudoCampo(array $registro, array $campo): string
             return (string) ($registro['Fech'] ?? '');
         case 'horas':
             return BuscarHoraPorSubtipo($registro, $subtipo);
+        case 'horas_agrupadas':
+            return BuscarHorasAgrupadasPorSubtipos($registro, $subtipos, (string) ($campo['formato'] ?? 'decimal'));
         case 'novedades':
             return BuscarNovedadPorSubtipo($registro, $subtipo);
         case 'atra':
@@ -758,6 +1082,7 @@ function FormatearValorCampo(string $valorCrudo, array $campo, string $separador
         case 'fecha':
             return FormatearFecha($valorCrudo, $formato);
         case 'horas':
+        case 'horas_agrupadas':
         case 'novedades':
         case 'atra':
         case 'trab':
@@ -772,24 +1097,24 @@ function FormatearValorCampo(string $valorCrudo, array $campo, string $separador
     }
 }
 
-function ConstruirLineaRegistro(array $registro, array $campos, string $separador): string
+function ConstruirLineaRegistro(array $registro, array $campos, string $separador, array $empresasPorCodigo = []): string
 {
     $valores = [];
 
     foreach ($campos as $campo) {
-        $valorCrudo = ObtenerValorCrudoCampo($registro, $campo);
+        $valorCrudo = ObtenerValorCrudoCampo($registro, $campo, $empresasPorCodigo);
         $valores[] = FormatearValorCampo($valorCrudo, $campo, $separador);
     }
 
     return implode($separador, $valores);
 }
 
-function GenerarContenidoExport(array $campos, array $registros, string $separador): string
+function GenerarContenidoExport(array $campos, array $registros, string $separador, array $empresasPorCodigo = []): string
 {
     $lineas = [];
 
     foreach ($registros as $registro) {
-        $lineas[] = ConstruirLineaRegistro($registro, $campos, $separador);
+        $lineas[] = ConstruirLineaRegistro($registro, $campos, $separador, $empresasPorCodigo);
     }
 
     return implode("\r\n", $lineas);
@@ -803,6 +1128,10 @@ function ExportarTxt(array $payload): array
     $config = LeerConfiguracion($plantillaSlug);
     $separador = NormalizarSeparador($config['separador'] ?? ',');
     $encabezados = NormalizarEncabezados($config['encabezados'] ?? 0);
+    $filtros = AplicarRestriccionesSesionEnFiltros(NormalizarFiltros($config['filtros'] ?? []));
+
+    // error_log(print_r($_SESSION['EmprRol'], true));
+    // error_log(print_r($filtros, true));
 
     if ($fechaInicio === '' || $fechaFin === '') {
         throw new Exception('Debe indicar rango de fechas para exportar.', 400);
@@ -832,11 +1161,12 @@ function ExportarTxt(array $payload): array
     $hayCamposHoras = false;
     $hayCamposNovedades = false;
     $hayCamposEstructura = false;
+    $hayCampoCuitEmpresa = false;
 
     $mapCampoFichadas = ['primer_fichada', 'ultima_fichada', 'todas_fichadas'];
-    $mapCampoHoras = ['horas', 'atra', 'trab'];
+    $mapCampoHoras = ['horas', 'horas_agrupadas', 'atra', 'trab'];
     $mapCampoNovedades = ['novedades'];
-    $mapCampoEstructura = ['cod_empresa', 'cod_planta', 'cod_convenio', 'cod_sector', 'cod_seccion', 'cod_grupo', 'cod_sucursal'];
+    $mapCampoEstructura = ['cod_empresa', 'cuit_empresa', 'cod_planta', 'cod_convenio', 'cod_sector', 'cod_seccion', 'cod_grupo', 'cod_sucursal'];
 
     foreach ($campos as $campo) {
 
@@ -852,8 +1182,15 @@ function ExportarTxt(array $payload): array
         if (in_array($campo['tipo'] ?? '', $mapCampoEstructura, true)) {
             $hayCamposEstructura = true;
         }
+        if (($campo['tipo'] ?? '') === 'cuit_empresa') {
+            $hayCampoCuitEmpresa = true;
+        }
     }
 
+    if (HayRestriccionesEstructuraEnSesion()) {
+        $hayCamposEstructura = true;
+    }
+    
     $payloadFicNovHor = [
         'FechIni' => $fechaInicio,
         'FechFin' => $fechaFin,
@@ -862,6 +1199,14 @@ function ExportarTxt(array $payload): array
         'getFic' => $hayCamposFichadas ? 1 : 0,
         'getReg' => $hayCamposFichadas ? 1 : 0,
         'getEstruct' => $hayCamposEstructura ? 1 : 0,
+        'Lega' => $filtros['Lega'],
+        'Empr' => $filtros['Empr'],
+        'Plan' => $filtros['Plan'],
+        'Conv' => $filtros['Conv'],
+        'Sect' => $filtros['Sect'],
+        'Sec2' => $filtros['Sec2'],
+        'Grup' => $filtros['Grup'],
+        'Sucu' => $filtros['Sucu'],
         'start' => 0,
         'length' => 1000000,
     ];
@@ -873,7 +1218,8 @@ function ExportarTxt(array $payload): array
         throw new Exception('No hay registros para exportar en el rango seleccionado.', 400);
     }
 
-    $contenido = GenerarContenidoExport($campos, $registros, $separador);
+    $empresasPorCodigo = $hayCampoCuitEmpresa ? ObtenerEmpresasPorCodigo() : [];
+    $contenido = GenerarContenidoExport($campos, $registros, $separador, $empresasPorCodigo);
 
     if ($encabezados === 1) {
         $lineaEncabezados = ConstruirEncabezados($campos, $separador);

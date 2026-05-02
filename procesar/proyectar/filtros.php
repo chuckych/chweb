@@ -1,5 +1,5 @@
 <section id="Filtros" class="border radius p-2 px-3 mt-4 shadow-sm ">
-    <div class="row mt-2">
+    <div class="row mt-2" id="tipos-lega">
         <div class="col-12">
             <div class="d-flex align-items-center">
                 <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
@@ -22,14 +22,14 @@
     <div class="form-row py-2" id="filters">
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Empresa -->
-            <label for="selectjs_empresa" class="mb-1"><?=$labelEmprPlu?></label>
-            <select class="form-control" id="selectjs_empresa" data-label="<?=$labelEmprPlu?>">
+            <label for="selectjs_empresa" class="mb-1"><?=$labelEmprPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_empresa" data-label="<?=$labelEmprPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Planta -->
-            <label for="selectjs_planta" class="mb-1"><?=$labelPlanPlu?></label>
-            <select class="form-control" id="selectjs_planta" name="selectjs_planta" data-label="<?=$labelPlanPlu?>">
+            <label for="selectjs_planta" class="mb-1"><?=$labelPlanPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_planta" name="selectjs_planta" data-label="<?=$labelPlanPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
@@ -40,26 +40,26 @@
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Sector -->
-            <label for="selectjs_sector" class="mb-1"><?=$labelSectPlu?></label>
-            <select class="form-control" id="selectjs_sector" name="selectjs_sector" data-label="<?=$labelSectPlu?>">
+            <label for="selectjs_sector" class="mb-1"><?=$labelSectPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_sector" name="selectjs_sector" data-label="<?=$labelSectPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Secciones -->
-            <label for="selectjs_seccion" class="mb-1"><?=$labelSeccPlu?></label>
-            <select class="form-control" id="selectjs_seccion" name="selectjs_seccion" data-label="<?=$labelSeccPlu?>">
+            <label for="selectjs_seccion" class="mb-1"><?=$labelSeccPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_seccion" name="selectjs_seccion" data-label="<?=$labelSeccPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Grupos -->
-            <label for="selectjs_grupos" class="mb-1"><?=$labelGrupPlu?></label>
-            <select class="form-control" id="selectjs_grupos" name="selectjs_grupos" data-label="<?=$labelGrupPlu?>">
+            <label for="selectjs_grupos" class="mb-1"><?=$labelGrupPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_grupos" name="selectjs_grupos" data-label="<?=$labelGrupPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
             <!-- Sucursal -->
-            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucuPlu?></label>
-            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucuPlu?>">
+            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucuPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucuPlu ?? '' ?>">
             </select>
         </div>
         <div class="col-12 col-sm-8">
@@ -78,7 +78,7 @@
             </span>
         </div>
     </div>
-    <div class="form-row my-2">
+    <div class="form-row my-2" id="footer-filters">
         <div class="col-12 col-lg-8">
             <div class="input-group d-inline-flex justify-content-end">
                 <div class="hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"

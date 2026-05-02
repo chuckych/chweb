@@ -12,7 +12,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-custom', 'white', 'descargar.png', MODULOS['liquidar_custom'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'descargar.png', MODULOS['liquidar_custom'], ''); ?>
         <!-- Fin Encabezado -->
         <div class="border radius p-3 mt-3 shadow-sm">
             <div class="row">
@@ -37,20 +37,20 @@
                 <div class="col-12">
                     <div class="d-flex align-items-end justify-content-between">
                         <div>
-                            <button class="mt-2 mt-sm-4 pt-1 btn btn-outline-secondary border font09 h40" type="button"
+                            <button class="mt-2 mt-sm-4 pt-1 btn btn-secondary border font09 h40" type="button"
                                 data-toggle="collapse" data-target="#definirCampos" aria-expanded="false"
                                 aria-controls="definirCampos">
                                 <span class="d-inline-flex gap5">
                                     <i class="bi bi-gear-fill"></i>
-                                    <span class="d-block d-sm-none">Campos</span>
-                                    <span class="d-none d-sm-block">Definir Campos</span>
+                                    <span class="d-block d-sm-none">Configurar</span>
+                                    <span class="d-none d-sm-block">Configurar Plantilla</span>
                                 </span>
                             </button>
                         </div>
                         <div class="d-flex align-items-center" style="gap:8px;">
-                            <button type="button" class="btn btn-outline-secondary font09 border"
+                            <button type="button" class="btn btn-secondary font09 border"
                                 id="btn-crear-plantilla" title="Crear Plantilla">
-                                <span class="d-none d-sm-block">Crear Plantilla</span>
+                                <span class="d-none d-sm-block"><i class="bi bi-plus-lg mr-2"></i>Crear Plantilla</span>
                                 <div class="d-flex flex-column gap5 d-block d-sm-none">
                                     <span>
                                         <i class="bi bi-plus-lg"></i>
@@ -80,7 +80,7 @@
             <div class="col-12 mt-3" id="resultado-exportacion">
                 <div class="p-2 border radius shadow-sm">
                     <div class="card-header d-flex align-items-center justify-content-between bg-white">
-                        <span class="font09">Resultados generados</span>
+                        <span class="font09 total-registros">Resultados generados</span></span>
                         <small class="text-muted d-none d-sm-block fadeInDown"
                             id="resultado-exportacion-archivo"></small>
                     </div>
@@ -113,6 +113,30 @@
                         <button type="button" class="btn btn-outline-secondary border-0 font09"
                             data-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-custom font09" id="btn-guardar-plantilla">Guardar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fadeIn" id="modal-filtros" tabindex="-1" role="dialog" aria-labelledby="modal-filtros-title"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h6 class="modal-title" id="modal-filtros-title">Definir Estructura</h6>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true" class="bi bi-x-lg"></span>
+                            </button>
+                        </div>
+                        <?php
+                        require __DIR__ . '/../../procesar/proyectar/filtros.php';
+                        ?>
+                        <button type="button"
+                            class="font09 pointer mt-3 float-right btn btn-outline-secondary border"
+                            aria-label="Cerrar" data-dismiss="modal">
+                            Cerrar
+                        </button>
                     </div>
                 </div>
             </div>
