@@ -5,10 +5,11 @@ header("Content-Type: application/json");
 
 use Carbon\Carbon;
 $rsEnd = false;
-$data = array();
+$data = [];
 $request = Flight::request();
+// error_log(print_r($request, true));
 
-$endPoints = array("/?redondear=1", "/?descanso=1");
+$endPoints = ["/?redondear=1", "/?descanso=1"];
 
 foreach ($endPoints as $v) {
     if ($v == $request->url) {
@@ -17,22 +18,20 @@ foreach ($endPoints as $v) {
 }
 
 if (!$rsEnd) {
-    $data = array(
+    $data = [
         'status' => 'error',
-        'msg' => 'Not Found: ' . $request->url,
-    );
-    Flight::json($data, 404);
-    exit;
+        'msg' => "Not Found: {$request->url}",
+    ];
+    Flight::jsonHalt($data, 404);
 }
 
 if ($request->method != 'POST') {
-    $data = array(
+    $data = [
         'status' => 'error',
-        'msg' => 'Method Not Allowed: ' . $request->method,
+        'msg' => "Method Not Allowed: {$request->method}",
         'request' => $request,
-    );
-    Flight::json($data, 405);
-    exit;
+    ];
+    Flight::jsonHalt($data, 405);
 }
 
 if ($request->query->redondear == '1') {
@@ -40,22 +39,21 @@ if ($request->query->redondear == '1') {
     $fechahora = ($request->data->datetime);
 
     if (empty($fechahora)) {
-        $data = array(
+        $data = [
             'status' => 'error',
             'msg' => 'datetime required',
-        );
-        Flight::json($data, 400);
-        exit;
+        ];
+        Flight::jsonHalt($data, 400);
     }
 
     foreach (getConfTar() as $v) {
-        $confTar = array(
+        $confTar = [
             'ProcDescTar' => $v['ProcDescTar'],
             'ProcRedTar' => $v['ProcRedTar'],
             'MinimoDesc' => HoraMin($v['MinimoDesc']),
             'LimitTar' => intval($v['LimitTar']) * 60, // Limite de tiempo maximo en tareas
             'RecRedTar' => ($v['RecRedTar']), // Recorte y redondeo de tareas
-        );
+        ];
     }
 
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
@@ -78,38 +76,37 @@ if ($request->query->redondear == '1') {
             $min = $date->format("i");
             $date = Carbon::create($year, $month, $day, $hour, $min, 0);
             $nearestSec = $redondearEn * 60;
-            $minimumMoment = $date->subMinute($limite);
+            $minimumMoment = $date->subMinutes((int)$limite);
             $futureTimestamp = ceil($minimumMoment->timestamp / $nearestSec) * $nearestSec;
             $futureMoment = Carbon::createFromTimestamp($futureTimestamp);
             $futureMoment->startOfMinute()->format("Y-m-d H:i");
             return ($futureMoment);
         } catch (exception $e) {
-            $data = array(
+            $data = [
                 'status' => 'error',
                 'msg' => $e->getMessage(),
                 "resultado" => '',
                 "redondear" => $redondearEn,
                 "limite" => $limite
-            );
-            Flight::json($data, 400);
-            exit;
+            ];
+            Flight::jsonHalt($data, 400);
         }
     }
     if ($confTar['RecRedTar'] && $confTar['ProcRedTar']) {
-        $rs = (redondear($fechahora, $redondear, $limite));
+        $rs = (redondear(   $fechahora, $redondear, $limite));
         $rs = new DateTime($rs);
     } else {
         $d = new DateTime($fechahora);
         $rs = $d;
     }
 
-    $data = array(
+    $data = [
         'status' => 'ok',
         'msg' => '',
         "resultado" => $rs,
         "redondear" => $redondear,
         "limite" => $limite
-    );
+    ];
     Flight::json($data);
     exit;
 }
@@ -131,29 +128,27 @@ if ($request->query->descanso == '1') {
         $start = new DateTime($start);
         $start = $start->format("Y-m-d H:i");
     } catch (exception $e) {
-        $data = array(
+        $data = [
             'status' => 'error',
             'msg' => $e->getMessage()
-        );
-        Flight::json($data, 400);
-        exit;
+        ];
+        Flight::jsonHalt($data, 400);
     }
     try {
         $end = new DateTime($end);
         $end = $end->format("Y-m-d H:i");
     } catch (exception $e) {
-        $data = array(
+        $data = [
             'status' => 'error',
             'msg' => $e->getMessage()
-        );
-        Flight::json($data, 400);
-        exit;
+        ];
+        Flight::jsonHalt($data, 400);
     }
 
-    $confUser = array();
-    $confGeneral = array();
-    $confDesc = array();
-    $calcDesc = array();
+    $confUser = [];
+    $confGeneral = [];
+    $confDesc = [];
+    $calcDesc = [];
     $status = '';
     $msg = '';
     $diff_1 = 0;
@@ -255,7 +250,7 @@ if ($request->query->descanso == '1') {
         if (intval($confTar['MinimoDesc']) > 0) {
             $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $b) : 0;
             $diff_desc2 = ($diff_2) ? diffStartEnd($b, $d) : 0; // calculo tiempo de descanso
-            $diff_desc = (intval($diff_desc2['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc2 : 0; // comparo total desc. con delta de config.desc.
+            $diff_desc = (intval($diff_desc2['diffInMinutes'] ?? 0) <= intval($confTar['MinimoDesc'])) ? $diff_desc2 : 0; // comparo total desc. con delta de config.desc.
         } else {
             $diff_2 = ($a1 < $b1 && $d1 <= $c1 && $d1 > $b1) ? diffStartEnd($a, $d) : 0;
         }
@@ -267,7 +262,7 @@ if ($request->query->descanso == '1') {
         /** particion 4 * ejemplo de 11:00 a 14:00 (antes y despues del descanso)*/
         $diff_4 = ($a1 < $b1 && $d1 > $c1) ? diffStartEnd($a, $d) : 0;
         $diff_desc_4 = ($diff_4) ? diffStartEnd($b, $c) : 0; // calculo tiempo de descanso
-        if ($diff_desc_4['diffInMinutes']) {
+        if ($diff_desc_4['diffInMinutes'] ?? 0) {
             $diff_4['diffInMinutes'] = ($diff_4['diffInMinutes'] - $diff_desc_4['diffInMinutes']); // resto descanso del total 
             $diff_desc_4 = 0;
         }
@@ -275,7 +270,7 @@ if ($request->query->descanso == '1') {
         /** particion 5 * ejemplo de 12:30 a 18:00 (inicio dentro del descanso y fin fuera del descanso)*/
         $diff_5 = ($a1 >= $b1 && $d1 > $c1 && $a1 < $c1) ? diffStartEnd($c, $d) : 0;
         $diff_desc5 = ($diff_5) ? diffStartEnd($a, $c) : 0; // calculo tiempo de descanso
-        $diff_desc_5 = (intval($diff_desc5['diffInMinutes']) <= intval($confTar['MinimoDesc'])) ? $diff_desc5 : 0; // comparo total desc. con delta de config.desc.
+        $diff_desc_5 = (intval($diff_desc5['diffInMinutes'] ?? 0) <= intval($confTar['MinimoDesc'])) ? $diff_desc5 : 0; // comparo total desc. con delta de config.desc.
         /** */
 
         /** */
@@ -283,17 +278,17 @@ if ($request->query->descanso == '1') {
         $diff_6 = ($a1 >= $c1) ? diffStartEnd($a, $d) : 0;
         /** */
 
-        $arrValores = array(
-            $diff_1['diffInMinutes'],
-            $diff_2['diffInMinutes'],
-            $diff_3['diffInMinutes'],
-            $diff_4['diffInMinutes'],
-            $diff_5['diffInMinutes'],
-            $diff_6['diffInMinutes'],
-            $diff_desc['diffInMinutes'],
-            $diff_desc_5['diffInMinutes'],
-            $diff_desc_4['diffInMinutes'],
-        );
+        $arrValores = [
+            $diff_1['diffInMinutes'] ?? 0,
+            $diff_2['diffInMinutes'] ?? 0,
+            $diff_3['diffInMinutes'] ?? 0,
+            $diff_4['diffInMinutes'] ?? 0,
+            $diff_5['diffInMinutes'] ?? 0,
+            $diff_6['diffInMinutes'] ?? 0,
+            $diff_desc['diffInMinutes'] ?? 0,
+            $diff_desc_5['diffInMinutes'] ?? 0,
+            $diff_desc_4['diffInMinutes'] ?? 0,
+        ];
 
         // Flight::json($arrValores).exit;
 
@@ -306,18 +301,18 @@ if ($request->query->descanso == '1') {
             $status = 'ok';
         }
 
-        $calcDesc = array(
-            "part_1" => $diff_1['diffInMinutes'],
-            "part_2" => $diff_2['diffInMinutes'],
-            "part_3" => $diff_3['diffInMinutes'],
-            "part_4" => $diff_4['diffInMinutes'],
-            "part_5" => $diff_5['diffInMinutes'],
-            "part_6" => $diff_6['diffInMinutes'],
-            "part_desc" => $diff_desc['diffInMinutes'],
+        $calcDesc = [
+            "part_1" => $diff_1['diffInMinutes'] ?? 0,
+            "part_2" => $diff_2['diffInMinutes'] ?? 0,
+            "part_3" => $diff_3['diffInMinutes'] ?? 0,
+            "part_4" => $diff_4['diffInMinutes'] ?? 0,
+            "part_5" => $diff_5['diffInMinutes'] ?? 0,
+            "part_6" => $diff_6['diffInMinutes'] ?? 0,
+            "part_desc" => $diff_desc['diffInMinutes'] ?? 0,
             "tipo" => '1', // en descanso
             "min" => $totalMin,
             "horas" => MinHora($totalMin)
-        );
+        ];
     }
     /** Arrancamos con el calculo */
     $f = Carbon::parse($start); // Fecha hora de inicio
@@ -326,29 +321,29 @@ if ($request->query->descanso == '1') {
     $total = MinHora($f2->diffInMinutes($f)); // Diferencia en formato Horas y minutos -> 06:00
 
     if (!$confDesc) {
-        $calcDesc = array(
+        $calcDesc = [
             "tipo" => '0', // sin calculo de descanso
             "min" => $minutos,
             "horas" => MinHora($minutos)
-        );
+        ];
     }
 
-    $calculos = array(
-        "reales" => array(
+    $calculos = [
+        "reales" => [
             'min' => $minutos,
             'horas' => $total,
-        ),
+        ],
         "calculadas" => $calcDesc
-    );
+    ];
 
-    $data = array(
+    $data = [
         'totales' => $calculos,
         'status' => 'ok',
         'msg' => $msg,
-    );
+    ];
 
     Flight::json($data);
     exit;
 }
 
-// Flight::start();
+Flight::start();

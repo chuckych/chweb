@@ -22,11 +22,11 @@ $FiltroQ = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1
 $query = "SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 INNER JOIN $Col ON $id = $DescCodi INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FilterEstruct $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
 // print_r($query); exit;
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $result = sqlsrv_query($link, $query, $params, $options);
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row = sqlsrv_fetch_array($result)):
@@ -34,12 +34,12 @@ if (sqlsrv_num_rows($result) > 0) {
         $id = $row['id'];
         $text = $row['Desc'];
 
-        $data[] = array(
+        $data[] = [
             'id' => $id,
             'text' => $text,
             'title' => $id . ' - ' . $text,
             'html' => "<label class='m-0 fontq'>$text</label><span class='float-right fontp'>$id</span>",
-        );
+        ];
     endwhile;
 }
 sqlsrv_free_stmt($result);

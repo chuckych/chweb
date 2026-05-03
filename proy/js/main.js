@@ -471,8 +471,8 @@ function formatDuracion(hours) {
     return (d[0] + ':' + d[1]);
 }
 $(document).ready(function () {
-    axios.get('op/api/import-proy');
+    axios.get('op/api/import-proy').catch(e => console.error('import-proy init:', e));
     setInterval(() => {
-        axios.get('op/api/import-proy');
+        axios.get('op/api/import-proy').catch(e => console.error('import-proy interval:', e));
     }, 3600000); // 60 minutos
 });

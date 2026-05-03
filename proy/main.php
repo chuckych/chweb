@@ -1,5 +1,5 @@
 <?php
-$_SESSION["RECID_ROL"] = $_SESSION["RECID_ROL"] ?? '';
+$_SESSION["RECID_ROL"] ??= '';
 ($_SESSION["RECID_ROL"]) ? '' : header('Location: ../logout.php');
 ?>
 <!doctype html>

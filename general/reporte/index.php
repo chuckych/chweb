@@ -12,72 +12,73 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 E_ALL();
 
 if (($_SERVER["REQUEST_METHOD"] == "POST")) {
-    $start_time = microtime(true);
 
-    /** Tipo de Hoja */
-    $_format = FusNuloPOST('_format', 'A4');
-    /** L: Horizontal; P: Vertical */
-    $_orientation = FusNuloPOST('_orientation', 'L');
-    /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
-    $_destino = FusNuloPOST('_destino', 'F');
-    /** Password de apertura del archivo */
-    $_password = FusNuloPOST('_password', '');
-    /**  Bloquea la impresión del archivo */
-    $_print = FusNuloPOST('_print', '');
-    /**  Bloquea la modificación archivo */
-    $_modify = FusNuloPOST('_modify', '');
-    /**  Bloquea la copiar datos del archivo */
-    $_copy = FusNuloPOST('_copy', '');
-    /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
-    $_annotforms = FusNuloPOST('_annotforms', '');
-    /**  Nombre del archivo*/
-    $_nombre = FusNuloPOST('_nombre', "FicNoveHoras");
-    /**  titulo del reporte*/
-    $_titulo = FusNuloPOST('_titulo', "");
-    /** salto de pagina por legajo */
-    $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
-    /** Mostrar Total de Horas por legajos */
-    $_TotHoras = FusNuloPOST('_TotHoras', "0");
-    /** Mostrar Total de Novedades por legajos */
-    $_TotNove = FusNuloPOST('_TotNove', "0");
-    /** Mostrar Horas */
-    $_VerHoras = FusNuloPOST('_VerHoras', "0");
-    /** Mostrar Novedades */
-    $_VerNove = FusNuloPOST('_VerNove', "0");
-    /** Mostrar Fichadas */
-    $_VerFic = FusNuloPOST('_VerFic', "0");
-    /** Agrupar las columnas que se repiten en el reporte */
-    $_agrupar_thcolu = $_POST['_agrupar_thcolu'] ?? '0';
-    $_agrupar_thcolu = ($_agrupar_thcolu == '1') ? true : false;
-
-    $_titulo = $_titulo == '' ? 'REPORTE CONTROL HORARIO' : $_titulo;
-    $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
-    // h1($_nombre); exit;
-    $title = ($_nombre == 'FicNoveHoras') ? strtoupper($_titulo) : $_nombre;
-
-    $_path = $_SERVER['DOCUMENT_ROOT'] . '/' . HOMEHOST . '/general/reporte/archivos/';
-    $fecha = new DateTime();
-    $MicroTime = microtime(true);
-    $NombreArchivo = $_path . $_nombre . "_" . $MicroTime . ".pdf";
-    $NombreArchivo = str_replace(' ', '_', $NombreArchivo);
-    $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
-    $NombreArchivo2 = str_replace(' ', '_', $NombreArchivo2);
-
-    $DateRange = explode(' al ', $_POST['_dr']);
-    $FechaIni = test_input(dr_fecha($DateRange[0]));
-    $FechaFin = test_input(dr_fecha($DateRange[1]));
-
-    $fecha1 = new DateTime($FechaIni);
-    $fecha2 = new DateTime($FechaFin);
-    $diff = $fecha1->diff($fecha2);
-    // echo $diff->days . ' dias'; exit;
-
-    if ($diff->days > '31') {
-        $data = array('status' => 'error', 'Mensaje' => 'Error: Rango de fechas superior a 31 d&iacute;as');
-        echo json_encode($data);
-        exit;
-    }
     try {
+        $start_time = microtime(true);
+
+        /** Tipo de Hoja */
+        $_format = FusNuloPOST('_format', 'A4');
+        /** L: Horizontal; P: Vertical */
+        $_orientation = FusNuloPOST('_orientation', 'L');
+        /** I: Muestra PDF en pantalla; D: Descarga el archivo; F: Descarga el Archivo; V: Abre otra Pestaña */
+        $_destino = FusNuloPOST('_destino', 'F');
+        /** Password de apertura del archivo */
+        $_password = FusNuloPOST('_password', '');
+        /**  Bloquea la impresión del archivo */
+        $_print = FusNuloPOST('_print', '');
+        /**  Bloquea la modificación archivo */
+        $_modify = FusNuloPOST('_modify', '');
+        /**  Bloquea la copiar datos del archivo */
+        $_copy = FusNuloPOST('_copy', '');
+        /**  Bloquea la Anotaciones del archivo 'annot-forms'*/
+        $_annotforms = FusNuloPOST('_annotforms', '');
+        /**  Nombre del archivo*/
+        $_nombre = FusNuloPOST('_nombre', "FicNoveHoras");
+        /**  titulo del reporte*/
+        $_titulo = FusNuloPOST('_titulo', "");
+        /** salto de pagina por legajo */
+        $_SaltoPag = FusNuloPOST('_SaltoPag', "0");
+        /** Mostrar Total de Horas por legajos */
+        $_TotHoras = FusNuloPOST('_TotHoras', "0");
+        /** Mostrar Total de Novedades por legajos */
+        $_TotNove = FusNuloPOST('_TotNove', "0");
+        /** Mostrar Horas */
+        $_VerHoras = FusNuloPOST('_VerHoras', "0");
+        /** Mostrar Novedades */
+        $_VerNove = FusNuloPOST('_VerNove', "0");
+        /** Mostrar Fichadas */
+        $_VerFic = FusNuloPOST('_VerFic', "0");
+        /** Agrupar las columnas que se repiten en el reporte */
+        $_agrupar_thcolu = $_POST['_agrupar_thcolu'] ?? '0';
+        $_agrupar_thcolu = ($_agrupar_thcolu == '1') ? true : false;
+
+        $_titulo = $_titulo == '' ? 'REPORTE CONTROL HORARIO' : $_titulo;
+        $_nombre = $_nombre == '' ? strtoupper($_titulo) : $_nombre;
+        // h1($_nombre); exit;
+        $title = ($_nombre == 'FicNoveHoras') ? strtoupper($_titulo) : $_nombre;
+
+        $_path = $_SERVER['DOCUMENT_ROOT'] . '/' . HOMEHOST . '/general/reporte/archivos/';
+        $fecha = new DateTime();
+        $MicroTime = microtime(true);
+        $NombreArchivo = $_path . $_nombre . "_" . $MicroTime . ".pdf";
+        $NombreArchivo = str_replace(' ', '_', $NombreArchivo);
+        $NombreArchivo2 = $_nombre . "_" . $MicroTime . ".pdf";
+        $NombreArchivo2 = str_replace(' ', '_', $NombreArchivo2);
+
+        $DateRange = explode(' al ', $_POST['_dr']);
+        $FechaIni = test_input(dr_fecha($DateRange[0]));
+        $FechaFin = test_input(dr_fecha($DateRange[1]));
+
+        $fecha1 = new DateTime($FechaIni);
+        $fecha2 = new DateTime($FechaFin);
+        $diff = $fecha1->diff($fecha2);
+        // echo $diff->days . ' dias'; exit;
+
+        if ($diff->days > '31') {
+            $data = ['status' => 'error', 'Mensaje' => 'Error: Rango de fechas superior a 31 d&iacute;as'];
+            echo json_encode($data);
+            exit;
+        }
 
         BorrarArchivosPDF('archivos/*.pdf');
         /** Borra los archivos anteriores a la fecha actual */
@@ -116,8 +117,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf->packTableData = true; // Almacena datos de tabla comprimidos: reduce memoria y acelera layout
         // ── Flags de rendimiento críticos: evitan análisis carácter por carácter ──
         $mpdf->autoScriptToLang = false; // Sin detección de script por carácter
-        $mpdf->autoLangToFont   = false; // Sin sustitución de fuente por idioma
-        $mpdf->biDirectional    = false; // Sin procesamiento bidi (RTL/LTR)
+        $mpdf->autoLangToFont = false; // Sin sustitución de fuente por idioma
+        $mpdf->biDirectional = false; // Sin procesamiento bidi (RTL/LTR)
         $mpdf->allow_charset_conversion = false; // Ya UTF-8, sin conversión
 
         $_watermark = FusNuloPOST("_watermark", '');
@@ -181,12 +182,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         // error_log('[reporte] 5) Output PDF en ' . round($t_output - $t_write, 2) . 's');
         // error_log('[reporte] TOTAL: ' . round($t_output - $start_time, 2) . 's');
 
-        $data = array('status' => 'ok', 'Mensaje' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
+        $data = ['status' => 'ok', 'Mensaje' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid()];
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {
-        // echo $e->getMessage();
-        // echo $formatter->getHtmlMessage();
+        error_log('[reporte] Error al generar PDF: ' . $e->getMessage());
         file_put_contents("../../logs/error/Error_PDF_FicNovHor_" . date('Ymd') . ".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
         exit();
     }

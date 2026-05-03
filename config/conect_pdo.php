@@ -27,13 +27,17 @@ if (!isset($connpdo) || !($connpdo instanceof PDO)) {
 		$dsn = "mysql:host=$host;dbname=$db;charset=UTF8";
 
 		// Opciones PDO mejoradas
+		$mysqlAttrInitCommand = PHP_VERSION_ID >= 80500
+			? Pdo\Mysql::ATTR_INIT_COMMAND  // PHP 8.5+
+			: PDO::MYSQL_ATTR_INIT_COMMAND; // PHP < 8.5
+
 		$options = [
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, // Lanzar excepciones en errores
 			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC, // Fetch asociativo por defecto
 			// PDO::ATTR_EMULATE_PREPARES => false, // Usar prepared statements reales
 			PDO::ATTR_PERSISTENT => false, // Desactivar conexiones persistentes por defecto
 			PDO::ATTR_TIMEOUT => 5, // Timeout de conexión de 5 segundos
-			PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci", // Soporte completo UTF-8
+			$mysqlAttrInitCommand => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci, SESSION sql_mode = REPLACE(REPLACE(REPLACE(@@sql_mode, 'NO_ZERO_DATE', ''), 'NO_ZERO_IN_DATE', ''), 'ONLY_FULL_GROUP_BY', '')", // Soporte completo UTF-8 + permitir '0000-00-00' + GROUP BY legacy
 		];
 
 		$connpdo = new PDO($dsn, $user, $pw, $options);

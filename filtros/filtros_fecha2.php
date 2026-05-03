@@ -44,7 +44,7 @@ if (($_datos == 'general') || ($_datos == 'mishoras')) {
 </div>
 <?php
 if (($_datos != 'cta_horas') && ($_datos != 'mobile')) {
-    $array = array();
+    $array = [];
     $url   = host() . "/" . HOMEHOST . "/data/$getData.php?tk=" . token() . "&_c=" . $_SESSION["RECID_CLIENTE"] . "&FechaIni=" . $FechaIni . "&FechaFin=" . $FechaFin . "&" . $_SERVER['QUERY_STRING'] . "&_r=" . $_SESSION["RECID_ROL"];
     // echo "<a href='".$url."' target='_blank'>".$url."</a>"; br();
     $json      = file_get_contents($url);

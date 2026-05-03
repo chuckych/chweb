@@ -41,7 +41,7 @@ try {
     $mpdf = new \Mpdf\Mpdf([
         'mode' => 'c',
         'format' => $format,
-        'default_font_size' => '10pt',
+        'default_font_size' => 10,
         'margin_left' => 5,
         'margin_right' => 5,
         'margin_top' => 10,

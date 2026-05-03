@@ -105,20 +105,7 @@ $("#btnExportar").html(btnPDF);
                 } else {
                     $("#btnExportar").prop("disabled", false);
                     $("#btnExportar").html(btnPDF);
-                    $.notify(`<span class='fonth fw4'><span data-icon='&#xe41a;' class='mr-2'></span><span class="text-dark">Error: ${data.dato}</span></span>`, {
-                        type: 'danger',
-                        z_index: NotifZindex,
-                        delay: NotifDelay,
-                        offset: NotifOffset,
-                        mouse_over: NotifMouseOver,
-                        placement: {
-                            align: NotifAlign
-                        },
-                        animate: {
-                            enter: NotifEnter,
-                            exit: NotifExit
-                        }
-                    });
+                    notify(`<span class='fonth fw4'><span data-icon='&#xe41a;' class='mr-2'></span><span class="text-dark">${data.dato}</span></span>`, 'info', 2000, 'right');
                 }
             },
             error: function () {

@@ -307,15 +307,28 @@ function response($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start 
  */
 function cleanFile($path, $Dias, $ext) // borra los archivo a partir de una cantidad de días
 {
-    $files = glob($path . '*' . $ext); //obtenemos el nombre de todos los ficheros
-    if ($files) {
-        foreach ($files as $file) { // recorremos todos los ficheros.
-            $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
-            $currentTime = time(); // obtenemos la fecha actual
-            $dateDiff = dateDiff(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
-            ($dateDiff >= intval($Dias)) ? unlink($file) : ''; //elimino el fichero
-        }
+    $lock = "$path.cleanFile.lock";
+    if (file_exists($lock) && date('Ymd', filemtime($lock)) === date('Ymd'))
+        return; // ya se ejecutó hoy
+
+    $files = glob("$path*$ext"); //obtenemos el nombre de todos los ficheros
+    // si no hay ficheros no hacemos nada, si los hay recorremos el array de ficheros
+    if (!$files) {
+        touch($lock);
+        return;
     }
+
+    foreach ($files as $file) {
+        error_log("File: $file");
+        if (!$file)
+            continue;
+        $lastModifiedTime = filemtime($file); // obtenemos la fecha de modificación del fichero
+        $currentTime = time(); // obtenemos la fecha actual
+        $dateDiff = dateDiff(date('Ymd', $lastModifiedTime), date('Ymd', $currentTime)); // obtenemos la diferencia de fechas
+        ($dateDiff >= intval($Dias)) ? unlink($file) : ''; //elimino el fichero
+    }
+
+    touch($lock); // actualiza mtime → marca como ejecutado hoy
 }
 /** 
  * @query {string} query sql obligatorio
@@ -633,6 +646,8 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = [])
                     exit;
                 }
                 foreach (array_unique($value) as $v) {
+                    if (empty($v))
+                        continue;
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
@@ -668,6 +683,8 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = [])
                 }
                 foreach ($value as $v) {
                     if ($v) {
+                        if (empty($v))
+                            continue;
                         if (!is_numeric($v)) {
                             http_response_code(400);
                             (response([], 0, "Parámetro '$key' de ser {int}. Valor = '$v'", 400, timeStart(), 0, 0));
@@ -706,6 +723,8 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = [])
                     exit;
                 }
                 foreach ($value as $v) {
+                    if (empty($v))
+                        continue;
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
@@ -744,6 +763,8 @@ function vp($value, $key, $type = 'str', $length = 1, $validArr = [])
                     exit;
                 }
                 foreach ($value as $v) {
+                    if (empty($v))
+                        continue;
                     if ($v) {
                         if (!is_numeric($v)) {
                             http_response_code(400);
@@ -1394,7 +1415,11 @@ $requestApi = function ($url, $payload, $timeout = 10) use ($authBasic, $token) 
         writelog($text, $pathLog); // escribir en el log de errores el error
     }
 
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    }
 
     if ($file_contents) {
         return $file_contents;
@@ -1734,4 +1759,14 @@ function validarJsonRequest(?string $json = null, bool $returnDecoded = false)
     }
 
     return $returnDecoded ? $data : true;
+}
+
+/**
+ * Filtra un array eliminando valores vacíos, null y false, pero conservando '0' y 0
+ * @param array $arr Array a filtrar
+ * @return array Array filtrado
+ */
+function filterArr(array $arr): array
+{
+    return array_filter($arr, fn($v) => $v !== false && $v !== null && ($v != '' || $v == '0'));
 }

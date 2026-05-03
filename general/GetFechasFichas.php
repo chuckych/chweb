@@ -18,12 +18,12 @@ $json_data = [];
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
-    $json_data = array(
+    $json_data = [
         "draw" => intval($params['draw']),
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => $data
-    );
+    ];
     echo json_encode($json_data);
     exit;
 }
@@ -49,8 +49,8 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 $sqlRec .= " ORDER BY FICHAS.FicFech OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
@@ -63,19 +63,19 @@ if ($totalRecords > 0) {
         $FicFech = $row['FicFech']->format('d/m/Y');
         $FicFechStr = $row['FicFech']->format('Ymd');
 
-        $data[] = array(
+        $data[] = [
             'FicFech' => '<span class="fadeIn">' . $FicFech . '</span><input type="hidden" class="" id="_f" value=' . $FicFechStr . '>',
             'Dia' => '<span class="fadeIn">' . $Dia . '</span>',
             'null' => '',
-        );
+        ];
     }
     sqlsrv_free_stmt($queryRecords);
 }
 sqlsrv_close($link);
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $data
-);
+];
 echo json_encode($json_data);

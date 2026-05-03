@@ -17,7 +17,7 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <div class="container shadow pb-2">
         <div class="row">
             <div class="col-12">

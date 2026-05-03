@@ -63,7 +63,7 @@ const tablePerInEg = () => {
         $('#Perineg').DataTable().ajax.reload();
         return;
     }
-    $('#Perineg').DataTable({
+    const Perineg = $('#Perineg').DataTable({
         dom: "<'row '<'col-12't>>",
         "ajax": {
             url: "../../data/getPerineg.php",
@@ -130,6 +130,9 @@ const tablePerInEg = () => {
         language: {
             "url": "../../js/DataTableSpanish.json"
         },
+    });
+    Perineg.on('draw', function (e, settings, json) {
+        console.log({settings, json});
     });
 }
 const tablePerPremio = () => {

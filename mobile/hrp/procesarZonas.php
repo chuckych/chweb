@@ -33,14 +33,14 @@ $start = microtime(true);
 $_GET['company'] = $_GET['company'] ?? '';
 
 if (empty($_GET['company'])) {
-    $data = array(
+    $data = [
         'Mensaje' => 'Falta de parametros',
         'date' => date('Y-m-d H:i:s'),
         'status' => 'no',
         'time' => '',
         'total' => '',
-    );
-    echo json_encode(array('Response' => $data));
+    ];
+    echo json_encode(['Response' => $data]);
     exit;
 }
 
@@ -52,14 +52,14 @@ $dataReg = array_pdoQuery($queryReg);
 // print_r($data);
 // exit;
 if (empty($dataReg)) {
-    $data = array(
+    $data = [
         'Mensaje' => 'No hay Registros Fuera de Zona',
         'date' => date('Y-m-d H:i:s'),
         'status' => 'no',
         'time' => '',
         'total' => '',
-    );
-    echo json_encode(array('Response' => $data));
+    ];
+    echo json_encode(['Response' => $data]);
     exit;
 }
 
@@ -95,21 +95,21 @@ $end = microtime(true);
 $time = round($end - $start, 2);
 // header("Content-Type: application/json");
 if ($counter > 0) {
-    $data = array(
+    $data = [
         'Mensaje' => 'Se actualizaron ' . $counter . ' registros',
         'date' => date('Y-m-d H:i:s'),
         'status' => 'ok',
         'time' => ($time),
         'total' => $counter,
-    );
+    ];
 } else {
-    $data = array(
+    $data = [
         'Mensaje' => 'No se encontraron registros para actualizar',
         'date' => date('Y-m-d H:i:s'),
         'status' => 'no',
         'time' => ($time),
         'total' => $counter,
-    );
+    ];
 }
-echo json_encode(array('Response' => $data));
+echo json_encode(['Response' => $data]);
 exit;

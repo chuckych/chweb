@@ -87,13 +87,21 @@ class Request
             if (!$file_contents) {
                 throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
             }
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
             $this->log->write($text, date('Ymd') . '_Request.log');
             return $file_contents;
         } catch (\Exception $e) {
             $this->log->write($e->getPrevious(), date('Ymd') . '_Request.log');
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             return false;
         }
     }
@@ -149,13 +157,21 @@ class Request
             if (!$file_contents) {
                 throw new Exception('API Interna: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
             }
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             $text = 'API Interna: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
             $this->log->write($text, date('Ymd') . '_Request.log');
             return $file_contents;
         } catch (\Exception $e) {
             $this->log->write($e->getMessage(), date('Ymd') . '_Request.log');
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             return false;
         }
     }

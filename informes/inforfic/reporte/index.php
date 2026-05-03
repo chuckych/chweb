@@ -81,7 +81,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'c',
             'format' => $_format,
-            'default_font_size' => '10pt',
+            'default_font_size' => 10,
             'margin_left' => 5,
             'margin_right' => 5,
             'margin_top' => 10,
@@ -151,13 +151,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         $mpdf->Output($NombreArchivo, \Mpdf\Output\Destination::FILE);
 
-        $data = array('status' => 'ok', 'dato' => 'Reporte Creado.' . $_nombre, 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid());
+        $data = ['status' => 'ok', 'dato' => "Reporte Creado.$_nombre", 'archivo' => $NombreArchivo2, 'destino' => $_destino, 'x' => getmypid()];
         echo json_encode($data);
         exit();
     } catch (\Mpdf\MpdfException $e) {
-        // $e->getMessage();
-        // echo $formatter->getHtmlMessage();
-        file_put_contents("../../logs/error/Error_PDF_InforFic_" . date('Ymd') . ".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
+        $data = ['status' => 'error', 'dato' => $e->getMessage()];
+        echo json_encode($data);
+        file_put_contents(__DIR__ . "/../../../logs/error/Error_PDF_InforFic_" . date('Ymd') . ".log", $e->getMessage(), FILE_APPEND | LOCK_EX);
         exit();
     }
 }

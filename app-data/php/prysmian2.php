@@ -1,11 +1,4 @@
 <?php
-function debug_to_json($data)
-{
-    Flight::json([
-        'debug' => $data
-    ]);
-    exit;
-}
 try {
     unset($payload['data']);
 
@@ -27,16 +20,17 @@ try {
     $legajos = cacheData(
         "legajos-{$hashPayload}",
         $payload,
+        '/fichas/legajos',
+        'POST',
         'legajos',
-        '/fichas/legajos'
     );
 
     if (!$legajos) { // Si no hay datos, retornar un array vacío
         throw new Exception('No se encontraron legajos', 200);
     }
-
+    $sectores = [];
     // Itera sobre la estructura obtenida con los parámetros especificados
-    foreach (get_estructura(['length' => 1000, 'Estruct' => 'Sec', 'flag' => $flag]) ?? [] as $sector) {
+    foreach (get_estructura(['length' => 1000, 'Estruct' => 'Sec', 'flag' => $flag ?? '']) ?? [] as $sector) {
         // Asigna al array $sectores el código del sector como clave y la primera palabra de la descripción como valor
         // Si no hay un espacio en la descripción, usa la descripción completa
         $sectores[$sector['Codi']] = strstr($sector['Desc'], ' ', true) ?: $sector['Desc'];
@@ -73,8 +67,9 @@ try {
     $horas = cacheData(
         "horas-totales-{$hashPayload}",
         $payload,
+        '/horas/totales',
+        'POST',
         'horas totales',
-        '/horas/totales'
     );
 
     $horasData = $horas['data'] ?? []; // Obtener datos de horas totales por legajo
@@ -173,8 +168,9 @@ try {
     $datosHorasDia = cacheData(
         "horas-dia-{$hashPayload}",
         $payloadHorasDia,
-        'horas dia',
-        '/horarios/asignados'
+        '/horarios/asignados',
+        'POST',
+        'horas dia'
     );
 
     $idealesHorasDia = $sumarMinutosPorClave($datosHorasDia);
@@ -232,7 +228,7 @@ try {
         unset($payload[$value]);
     }
 
-    function sumarHoras23a90(&$array)
+    function sumarHoras23a90(array &$array)
     {
         foreach ($array as &$empleado) {
             if (!empty($empleado['Totales'])) {
@@ -309,12 +305,12 @@ try {
         'Incid' => 'Incid',
     ];
 
-    $valoresCustom = get_params(['cliente' => $cliente, 'descripcion' => '', 'modulo' => 46]) ?? [];
+    $valoresCustom = get_params(['cliente' => $cliente ?? '', 'descripcion' => '', 'modulo' => 46]) ?? [];
     $params = $valoresCustom;
     $valoresCustom = array_column($valoresCustom, null, 'descripcion');
-    
+
     foreach ($clavesCustom as $key => $clave) {
-        
+
         $valores = $valoresCustom[$key]['valores'] ?? '';
         // error_log(print_r($valores, true));
 
@@ -328,7 +324,7 @@ try {
 
         // Re-indexar para tener índices consecutivos
         $codNove = array_values($codNove);
-        
+
         $payload['Nove'] = $codNove;
 
         if (count($codNove) > 0) {
@@ -344,13 +340,13 @@ try {
             unset($payload['Nove']);
         }
     }
-
+    $flag ??= '';
     $tipoHora = cacheData(
         "tipo-horas-{$flag}",
         [],
-        'tipos horas',
         '/horas/data',
-        'GET'
+        'GET',
+        'tipos horas'
     );
 
     $horasParams = horasCustom($params);
@@ -397,7 +393,7 @@ try {
     // recorrer legajosColumn y todos los valores que sean del tipo integer aplicarle al funcion minutos_a_horas_decimal
     array_walk_recursive($legajosColumn, function (&$item, $key) {
         if (is_int($item)) {
-            $item = minutos_a_horas_decimal($item);
+            $item = round(minutos_a_horas_decimal($item), 2);
         }
     });
 
@@ -428,18 +424,18 @@ try {
         ];
     }
 
-    $columnKeys = array_merge($initKeys, $columnKeys);
+    $columnKeys = array_merge($initKeys, $columnKeys ?? []);
 
     $rs = [
         'data' => array_values($legajosColumn),
         'columnKeys' => $columnKeys,
     ];
 
-    if ($tipo == 'view') {
+    if (($tipo ?? '') == 'view') {
         return Flight::json($rs);
     }
 
-    if ($tipo == 'xls') {
+    if (($tipo ?? '') == 'xls') {
         $Datos['Data'] = $legajosColumn;
         require __DIR__ . '/../fn_spreadsheet.php';
         $colsExcel = colsExcel();

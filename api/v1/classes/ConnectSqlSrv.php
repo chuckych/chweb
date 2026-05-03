@@ -25,10 +25,10 @@ class ConnectSqlSrv
         $this->log = new Log; // Instancia de la clase Log
         // $this->resp = new Response;
         $this->mapDB = [
-            'DBHost' => getenv('DB_HOST') !== false ? getenv('DB_HOST') : '', // Servidor de la base de datos
-            'DBUser' => getenv('DB_USER') !== false ? getenv('DB_USER') : '', //
-            'DBPass' => getenv('DB_PASS') !== false ? getenv('DB_PASS') : '', //
-            'DBName' => getenv('DB_NAME') !== false ? getenv('DB_NAME') : '' //
+            'DBHost' => $_SERVER['DB_HOST'] ?? (getenv('DB_HOST') ?: ''),
+            'DBUser' => $_SERVER['DB_USER'] ?? (getenv('DB_USER') ?: ''),
+            'DBPass' => $_SERVER['DB_PASS'] ?? (getenv('DB_PASS') ?: ''),
+            'DBName' => $_SERVER['DB_NAME'] ?? (getenv('DB_NAME') ?: ''),
         ];
         $this->check_data_connection($this->mapDB);
         // $this->conn = $this->conn();

@@ -24,16 +24,18 @@ class Log
         $date = $this->date;
         $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
         $text = ($ext == 'sql') ? "-- " . $date . "\n" . $textOriginal . ';' . "\n" : $text;
-        file_put_contents($path . $nameFile, $text, FILE_APPEND | LOCK_EX);
+        if (!is_dir($path)) mkdir($path, 0777, true);
+        file_put_contents($path . $nameFile, $text, FILE_APPEND);
     }
     public function cache($text, $nameFile, $ext = '.json')
     {
         $path = $this->pathCache;
         $fullPath = "{$path}" . ID_COMPANY . "_{$nameFile}{$ext}";
+        if (!is_dir($path)) mkdir($path, 0777, true);
         if ($ext == '.json') {
             $text = json_encode($text, $this->optJson);
         }
-        file_put_contents($fullPath, $text, LOCK_EX);
+        file_put_contents($fullPath, $text);
     }
     public function get_cache($nameFile, $ext = '.json')
     {

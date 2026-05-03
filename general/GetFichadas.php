@@ -12,15 +12,15 @@ E_ALL();
 
 require __DIR__ . '/../config/conect_mssql.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $Datos = explode('-', $_GET['Datos']);
 
 $Fecha = $Datos[1];
 $Legajo = $Datos[0];
 
-$data = array();
+$data = [];
 
 /** FICHADAS */
 // if ($Fecha < '20210319') {
@@ -57,7 +57,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $editar = $_SESSION["ABM_ROL"]['mFic'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bFic'] == '0' ? '' : $eliminar;
 
-        $data[] = array(
+        $data[] = [
             'Fic' => color_Fichada2($row_Fic['Fic_Tipo'], $row_Fic['Fic_Estado'], $row_Fic['Fic_Hora']),
             'Estado' => $row_Fic['Fic_Estado'],
             'Tipo' => $row_Fic['Fic_Tipo'],
@@ -66,14 +66,14 @@ if (sqlsrv_num_rows($result) > 0) {
             'editar' => $editar,
             'eliminar' => $eliminar,
             'null' => ''
-        );
+        ];
     endwhile;
     sqlsrv_free_stmt($result);
 }
 
 /** FIN FICHADAS */
 
-echo json_encode(array('Fichadas' => $data));
+echo json_encode(['Fichadas' => $data]);
 
 sqlsrv_close($link);
 exit;

@@ -1,10 +1,11 @@
 <?php
-header("Content-type: application/json; charset=utf-8");
-header('Access-Control-Allow-Origin: *');
+ob_start();
 require __DIR__ . '/../config/session_start.php';
 require __DIR__ . '/../config/index.php';
-E_ALL();
-
+ob_clean();
+ini_set('display_errors', '0');
+header("Content-type: application/json; charset=utf-8");
+header('Access-Control-Allow-Origin: *');
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();
 }
@@ -17,7 +18,7 @@ try {
 
     $legajo = $_GET['q2'] ?? '';
 
-    if($legajo == '' || $legajo === null || !is_numeric($legajo)) {
+    if ($legajo == '' || $legajo === null || !is_numeric($legajo)) {
         throw new Exception('Legajo es obligatorio', 1);
     }
 
@@ -43,10 +44,8 @@ try {
         $InEgFeEg = ($fila['FeEg'] == '') ? '' : $InEgFeEg;
         $InEgCaus = $fila['Caus'];
         $FechaHora = date('d/m/Y', strtotime($fila['FechaHora']));
-        $eliminar = '<div data-titlet="Eliminar registro"  id="item-' . $InEgFeIn2 . '"><div class="item">
-            <a class="btn btn-light btn-sm delete_perineg" data="' . $InEgFeIn2 . '" data2="' . $InEgLega . '" data3="true">' . $icon_trash . '</a></div></div>';
-        $editar = '<div data-titlet="Editar registro" id="item-' . $InEgFeIn2 . '"><div class="item">
-            <a class="btn btn-light btn-sm edita_perineg" data="' . $InEgFeIn . '" data2="' . $InEgLega . '" data3="true" data4="' . $InEgFeEg . '" data5="' . $InEgCaus . '">' . $icon_edit . '</a></div></div>';
+        $eliminar = "<div data-titlet=\"Eliminar registro\"  id=\"item-$InEgFeIn2\"><div class=\"item\">\r\n<a class=\"btn btn-light btn-sm delete_perineg\" data=\"$InEgFeIn2\" data2=\"$InEgLega\" data3=\"true\">$icon_trash</a></div></div>";
+        $editar = "<div data-titlet=\"Editar registro\" id=\"item-$InEgFeIn2\"><div class=\"item\">\r\n<a class=\"btn btn-light btn-sm edita_perineg\" data=\"$InEgFeIn\" data2=\"$InEgLega\" data3=\"true\" data4=\"$InEgFeEg\" data5=\"$InEgCaus\">$icon_edit</a></div></div>";
 
         $data[] = [
             "InEgLega" => $InEgLega,
@@ -59,9 +58,10 @@ try {
             "Diff" => $Diff
         ];
     }
-    Flight::json(["data" => $data]);
+    echo json_encode(["data" => $data]);
 
 } catch (Exception $e) {
+    error_log("Error en getPerineg: " . $e->getMessage());
     $data['error'] = $e->getMessage();
-    Flight::json(["data" => $data]);
+    echo json_encode(["data" => $data]);
 }

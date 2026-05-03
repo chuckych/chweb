@@ -16,28 +16,28 @@ require __DIR__ . '/../config/conect_mssql.php';
 FusNuloPOST('Excel', false);
 $Excel = $_POST['Excel'];
 $params = $_REQUEST;
-$data = array();
+$data = [];
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
-    $json_data = array(
+    $json_data = [
         "draw" => intval($params['draw']),
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => $data
-    );
+    ];
     echo json_encode($json_data);
     exit;
 }
 $_POST['_f'] = $_POST['_f'] ?? '';
 
 if (empty($_POST['_f'])) {
-    $json_data = array(
+    $json_data = [
         "draw" => intval($params['draw']),
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => $data
-    );
+    ];
     echo json_encode($json_data);
     exit;
 } else {
@@ -45,8 +45,8 @@ if (empty($_POST['_f'])) {
 }
 require __DIR__ . '/valores.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
@@ -110,22 +110,22 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     // print_r($query_Fic).PHP_EOL; exit;
     if (sqlsrv_num_rows($result_Fic) > 0) {
         while ($row_Fic = sqlsrv_fetch_array($result_Fic)):
-            $Fic_Hora[] = array(
+            $Fic_Hora[] = [
                 'Fic' => $row_Fic['Fic_Hora'],
                 'Estado' => $row_Fic['Fic_Estado'],
                 'Tipo' => $row_Fic['Fic_Tipo']
-            );
+            ];
         endwhile;
         sqlsrv_free_stmt($result_Fic);
         $primero = (array_key_first($Fic_Hora));
         $ultimo = (array_key_last($Fic_Hora));
         $primero = (array_values($Fic_Hora)[$primero]);
         $ultimo = (array_values($Fic_Hora)[$ultimo]);
-        $ultimo = ($ultimo == $primero) ? array('Fic' => "", 'Estado' => "", 'Tipo' => "") : $ultimo;
+        $ultimo = ($ultimo == $primero) ? ['Fic' => "", 'Estado' => "", 'Tipo' => ""] : $ultimo;
     } else {
-        $Fic_Hora[] = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
-        $primero = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
-        $ultimo = array('Fic' => "", 'Estado' => "", 'Tipo' => "");
+        $Fic_Hora[] = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
+        $primero = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
+        $ultimo = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
     }
     // if (is_array($Fic_Hora)) {
     //     foreach ($Fic_Hora as $fila) {
@@ -147,21 +147,21 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
 
     if (sqlsrv_num_rows($result_Nov) > 0) {
         while ($row_Nov = sqlsrv_fetch_array($result_Nov)):
-            $Novedad[] = array(
+            $Novedad[] = [
                 'Cod' => $row_Nov['nov_novedad'],
                 'Descripcion' => $row_Nov['nov_descripcion'],
                 'Horas' => $row_Nov['nov_horas'],
                 'Tipo' => $row_Nov['nov_tipo']
-            );
+            ];
         endwhile;
         sqlsrv_free_stmt($result_Nov);
     } else {
-        $Novedad[] = array(
+        $Novedad[] = [
             'Cod' => "",
             'Descripcion' => "",
             'Horas' => "",
             'Tipo' => ""
-        );
+        ];
     }
     if (is_array($Novedad)) {
         foreach ($Novedad as $fila) {
@@ -188,25 +188,25 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
 
     if (sqlsrv_num_rows($result_Hor) > 0) {
         while ($row_Hor = sqlsrv_fetch_array($result_Hor)):
-            $Horas[] = array(
+            $Horas[] = [
                 'Cod' => $row_Hor['Hora'],
                 'Descripcion' => $row_Hor['HoraDesc'],
                 'Descripcion2' => $row_Hor['HoraDesc2'],
                 'HsHechas' => $row_Hor['HsHechas'],
                 'HsCalc' => $row_Hor['HsCalculadas'],
                 'HsAuto' => $row_Hor['HsAutorizadas']
-            );
+            ];
         endwhile;
         sqlsrv_free_stmt($result_Hor);
     } else {
-        $Horas[] = array(
+        $Horas[] = [
             'Cod' => '',
             'Descripcion' => '',
             'Descripcion2' => '',
             'HsHechas' => '',
             'HsCalc' => '',
             'HsAuto' => ''
-        );
+        ];
     }
     if (is_array($Horas)) {
         foreach ($Horas as $fila) {
@@ -237,8 +237,8 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     }
     /** Fin HORAS */
 
-    $entrada = color_fichada(array($primero));
-    $salida = color_fichada(array($ultimo));
+    $entrada = color_fichada([$primero]);
+    $salida = color_fichada([$ultimo]);
 
     $modal = '<button type="button" class="btn open-modal btn-outline-custom border-0" data-titler="Detalle del Registro" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"><i class="bi bi-clipboard-data"></i></button>';
     // $modal = '<button type="button" class="btn open-modal btn-outline-custom border-0" data-titler="Detalle del Registro" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '" ><i class="bi bi-clipboard-data"></i></button>';
@@ -254,7 +254,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     }
 
     if ($Excel) {
-        $data[] = array(
+        $data[] = [
             'Gen_Lega' => $Gen_Lega,
             'LegNombre' => $Gen_Nombre,
             'Gen_Nombre' => $Gen_Nombre,
@@ -270,7 +270,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
             'HsCalc' => ($horas4),
             'HsAuto' => $horas5,
             'num_dia' => nombre_dia($Gen_Dia_Semana),
-        );
+        ];
     } else {
         $Fichadas = "<div class='d-flex flex-column font09'><div>{$entrada['Fic']}</div><div>{$salida['Fic']}</div></div>";
 
@@ -278,7 +278,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
         $data4 = "{$Gen_Dia_Semana2} {$Gen_Fecha}";
         $FichadasDiv = "<button title='Ver Fichada' type='button' class='btn btn-link font09 p-0 mFic open-modal text-secondary' data-toggle='modal' data='{$dataGenLega}' data2='{$Gen_Nombre}' data3='{$Gen_Fecha}' data4='{$data4}' data5='{$Gen_Horario}' data6='{$Gen_Fecha3}' dataFechDR='{$Gen_Fecha}' data_mFic='1' >$Fichadas </button>";
 
-        $data[] = array(
+        $data[] = [
             'LegNombre' => '<span ' . $title_regla . ' data-nombre="' . $Gen_Nombre . '" data-lega="' . $Gen_Lega . '" data-fechaini="' . ($Gen_Fecha2) . '" data-fechafin="' . ($Gen_Fecha2) . '" data-procLega="true" class="d-inline-block text-truncate pointer procReg" style="max-width: 200px;">' . $Gen_Nombre . '<br>' . $Gen_Lega . '</span>',
             'Gen_Lega' => $Gen_Lega,
             'Gen_Nombre' => $Gen_Nombre,
@@ -305,7 +305,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
             //    'FichaFirst'  => ($primero),
             //    'FichaLast'   => ($ultimo),
             //    'Horas'       => $Horas
-        );
+        ];
     }
     unset($Fic_Hora);
     unset($Novedad);
@@ -316,12 +316,12 @@ endwhile;
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $data
-);
+];
 
 if ($Excel) {
     echo json_encode($data);

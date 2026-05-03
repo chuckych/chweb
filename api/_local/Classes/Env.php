@@ -12,7 +12,7 @@ class Env
     private $inicio;
     private $OS;
 
-    function __construct()
+    public function __construct()
     {
         // $this->fileEnv = __DIR__ . '/../../../../../config_chweb/';
         // $this->fileEnv = $this->getConfigPath();
@@ -43,12 +43,12 @@ class Env
     private function configFile()
     {
         $DS = $this->ds();
-        return __DIR__ . "..{$DS}..{$DS}..{$DS}path_config.txt";
+        // error_log("Ruta del archivo de configuración:" . __DIR__ . "..{$DS}..{$DS}..{$DS}..{$DS}/config/path_config.txt");
+        return __DIR__ . "..{$DS}..{$DS}..{$DS}..{$DS}/config/path_config.txt";
     }
     /**
      * Obtiene la ruta de configuración normalizada
      * 
-     * @param string $configFile Nombre del archivo de configuración
      * @return string Ruta de configuración normalizada
      */
     private function getConfigPath(): string

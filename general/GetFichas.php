@@ -11,15 +11,15 @@ secure_auth_ch_json();
 E_ALL();
 require __DIR__ . '/../config/conect_mssql.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $Datos = explode('-', $_GET['Datos']);
 
 $Fecha = $Datos[1];
 $Legajo = $Datos[0];
 
-$data = array();
+$data = [];
 
 /** fichas */
 $query = "SELECT FICHAS.FicHsTr AS HsTrabajadas, FICHAS.FicHsAT AS HsTrabajar
@@ -31,19 +31,19 @@ $result = sqlsrv_query($link, $query, $param, $options);
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row_Hor = sqlsrv_fetch_array($result)):
-        $data[] = array(
+        $data[] = [
             'HsTrabT' => "Horas Trabajadas: " . "<span class='ls1 fw5 HsTrab'>" . $row_Hor['HsTrabajadas'] . "</span>",
             'HsaTrabT' => "Horas a Trabajar: " . "<span class='ls1 fw5'>" . $row_Hor['HsTrabajar'] . "</span>",
             'HsTrab' => $row_Hor['HsTrabajadas'],
             'HsaTrab' => $row_Hor['HsTrabajar'],
             'null' => ''
-        );
+        ];
     endwhile;
     sqlsrv_free_stmt($result);
 }
 /** Fin HORAS */
 
-echo json_encode(array('Horas' => $data));
+echo json_encode(['Horas' => $data]);
 sqlsrv_close($link);
 exit;
 

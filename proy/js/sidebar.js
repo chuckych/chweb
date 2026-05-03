@@ -15,43 +15,43 @@ $(function () {
                     let li = document.createElement('li'); // crear el li
                     liClassName = 'nav-item';
                     switch (item.modsrol) {
-                        case '35':
+                        case 35:
                             liIcon = 'easel'
                             liId = 'sidebarProyectos'
                             break;
-                        case '36':
+                        case 36:
                             liIcon = 'list-task'
                             liId = 'sidebarMisTareas'
                             break;
-                        case '37':
+                        case 37:
                             liIcon = 'list-task'
                             liId = 'sidebarTareas'
                             break;
-                        case '38':
+                        case 38:
                             liIcon = 'card-checklist'
                             liId = 'sidebarEstados'
                             break;
-                        case '39':
+                        case 39:
                             liIcon = 'diagram-2'
                             liId = 'sidebarProcesos'
                             break;
-                        case '40':
+                        case 40:
                             liIcon = 'diagram-3'
                             liId = 'sidebarPlantillas'
                             break;
-                        case '41':
+                        case 41:
                             liIcon = 'map'
                             liId = 'sidebarPlanos'
                             break;
-                        case '42':
+                        case 42:
                             liIcon = 'building'
                             liId = 'sidebarEmpresas'
                             break;
-                        case '43':
+                        case 43:
                             liIcon = 'house'
                             liId = 'sidebarInicio'
                             break;
-                        case '44':
+                        case 44:
                             liIcon = 'map'
                             liId = 'sidebarPlantillasPlanos'
                             break;
@@ -60,17 +60,18 @@ $(function () {
                             liId = ''
                             break;
                     }
+                    
                     li.innerHTML = `
-                <li class="${liClassName} ${liId}" id="${liId}">
-                    <a class="nav-link" href="./#">
-                        <span class="nav-link-icon d-md-none d-lg-inline-block">
-                            <i class="bi bi-${liIcon}"></i>
-                        </span>
-                        <span class="nav-link-title">
-                            ${item.modulo}
-                        </span>
-                    </a>
-                </li>`;
+                    <li class="${liClassName} ${liId}" id="${liId}">
+                        <a class="nav-link" href="./#">
+                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                <i class="bi bi-${liIcon}"></i>
+                            </span>
+                            <span class="nav-link-title">
+                                ${item.modulo}
+                            </span>
+                        </a>
+                    </li>`;
                     // agregar el li al ul
                     document.getElementById('ulsidebar').appendChild(li);
                 });

@@ -15,10 +15,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && ($_POST['page'] == 'sidebar')) {
     // $arrMod = array_filter($data_mod, function ($item) {
     //     return $item['tipo'] == 6;
     // });
+    // parsear como int a los elementos modsrol de $arrMod
+    $arrMod = array_map(function ($item) {
+        $item['modsrol'] = (int)$item['modsrol'];
+        $item['tipo'] = (int)$item['tipo'];
+        $item['orden'] = (int)$item['orden'];
+        return $item;
+    }, $arrMod);
     // ordenar por orden 
-    usort($arrMod, function ($a, $b) {
-        return $a['orden'] > $b['orden'];
-    });
+    usort($arrMod, fn($a, $b) => $a['orden'] <=> $b['orden']);
     echo json_encode($arrMod);
     exit;
 }

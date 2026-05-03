@@ -19,8 +19,7 @@ if (in_array($requestedEndpoint, $noValidateSession)) {
 
 if (!$_SESSION && !$noValidate) {
     secure_auth_ch_json();
-    Flight::json(["error" => "Sesión finalizada."]);
-    exit;
+    Flight::jsonHalt(["error" => "Sesión finalizada."]);
 }
 
 // sleep(1);
@@ -121,11 +120,19 @@ function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
         if (!$file_contents) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
         }
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
         return $file_contents;
     } catch (\Exception $e) {
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         return false;
     }
 }
@@ -194,15 +201,13 @@ Flight::route('POST /clientes', function () use ($requestData) {
     Flight::json($arrayData);
 });
 Flight::map('Forbidden', function ($mensaje) {
-    Flight::json(['status' => 'error', 'message' => $mensaje], 403);
-    exit;
+    Flight::jsonHalt(['status' => 'error', 'message' => $mensaje], 403);
 });
 Flight::map('notFound', function () {
     $request = Flight::request();
     $url = $request->url ?? '';
     $method = $request->method ?? '';
-    Flight::json(['status' => 'error', 'message' => "Not found: ({$method}) {$url}"], 404);
-    exit;
+    Flight::jsonHalt(['status' => 'error', 'message' => "Not found: ({$method}) {$url}"], 404);
 });
 Flight::set('flight.log_errors', true);
 Flight::map('error', function ($ex) {

@@ -23,11 +23,11 @@ $query = "SELECT TOP 20 $id AS 'id', $Desc AS 'Desc' FROM $ColData $joinFichas3 
 
 // print_r($query); exit;
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $result = sqlsrv_query($link, $query, $params, $options);
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row = sqlsrv_fetch_array($result)):
@@ -35,12 +35,12 @@ if (sqlsrv_num_rows($result) > 0) {
         $id = $row['id'];
         $text = $row['Desc'];
 
-        $data[] = array(
+        $data[] = [
             'id' => $id,
             'text' => "$id - $text",
             'html' => "<label class='font-weight-bold m-0'>$id</label><br><span class='fontq'>$text</span>",
             'title' => $id . ' - ' . $text,
-        );
+        ];
     endwhile;
 }
 sqlsrv_free_stmt($result);

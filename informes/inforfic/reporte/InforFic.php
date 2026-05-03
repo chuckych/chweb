@@ -1,11 +1,16 @@
+<?php
+require __DIR__ . '/data.php';
+if (empty($dataAgrup)) {
+    throw new \Mpdf\MpdfException('No hay registros para el período seleccionado.');
+}
+?>
+
 <body>
     chunk
-    <?php
-    require __DIR__ . '/data.php';
-    ?>
     <!-- <hr class="border-top">   -->
     <!-- Encabezado -->
     <?php
+
     foreach ($dataAgrup as $key => $valueAgrup) { /** Recorremos matriz de legajos o fecha segun fecha Ini y Fin */
         ?>
         <div style="page-break-inside: avoid">

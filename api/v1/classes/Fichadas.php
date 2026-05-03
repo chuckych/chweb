@@ -92,7 +92,7 @@ class Fichadas
             $setInsert = $this->insert_fichada($params, $systemVer, $conn);
         }
 
-        $this->webservice->procesar_legajos([$RegLega], $datos['FeAs'], $datos['FeAs']);
+        $this->webservice->procesar_legajos($datos['FeAs'], $datos['FeAs'], [$RegLega]);
         sleep(1);
         $this->resp->respuesta(['setUpdate' => $setUpdate ?? false, 'setInsert' => $setInsert ?? false], 0, 'OK', 200, $inicio, 0, 0);
     }

@@ -20,13 +20,13 @@ $params['key'] = $params['key'] ?? '';
 
 $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-$paramsApi = array(
+$paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => ($params['start']),
     'length' => ($params['length']),
     'zoneLat' => ($params['zoneLat']),
     'zoneLng' => ($params['zoneLng']),
-);
+];
 $parametros = '';
 foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
@@ -36,10 +36,10 @@ $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api
 $api = getRemoteFile($url, $timeout = 10);
 $api = parseApiResponse($api);
 
-$totalRecords = $api['TOTAL'];
-if ($api['COUNT'] > 0) {
+$totalRecords = $api['TOTAL'] ?? 0;
+if (($api['COUNT'] ?? 0) > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
-        $arrayData[] = array(
+        $arrayData[] = [
             'zoneID' => $r['zoneID'],
             'zoneName' => $r['zoneName'],
             'zoneRadio' => intval($r['zoneRadio']),
@@ -47,13 +47,13 @@ if ($api['COUNT'] > 0) {
             'zoneLng' => $r['zoneLng'],
             'idCompany' => $r['idCompany'],
             'distance' => round(floatval($r['zoneDistance']) * 1000, 2)
-        );
+        ];
     }
 }
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $arrayData
-);
+];
 echo json_encode($json_data);

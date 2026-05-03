@@ -32,12 +32,12 @@ $datos = $array[0]['personal'];
 // print_r($datos);exit;
 if (isset($_GET['q'])) {
     $q = $_GET['q'];
-    $data = array();
+    $data = [];
     foreach ($datos as $key => $value) {
-        $data[] = array(
+        $data[] = [
             'id' => $value['pers_legajo'],
             'text' => $value['pers_nombre'],
-        );
+        ];
     }
 }
 

@@ -103,8 +103,8 @@ if (sqlsrv_num_rows($rs) > 0) {
         }
 
         $TotalDias = $presentes + $TotDiasAus;
-        $ConvPres = (ConvMesesPresentes($presentes, $TotalMeses, $TotalDias));
-        $ConvAus = (ConvMesesPresentes($TotDiasAus, $TotalMeses, $TotalDias));
+        $ConvPres = ConvMesesPresentes($presentes, $TotalMeses, $TotalDias) ?? 0;
+        $ConvAus = ConvMesesPresentes($TotDiasAus, $TotalMeses, $TotalDias) ?? 0;
         $TotalMesesConv = ($ConvPres) + ($ConvAus);
         $TotalMesesConv = number_format($TotalMesesConv, 0);
         $ConvAus = number_format($ConvAus, 2, ',', '.');

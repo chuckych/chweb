@@ -81,7 +81,7 @@ $paramsApi = [
     'identified' => $params['identified'] ?? '',
     'userIDName' => urlencode($params['search']['value'] ?? $params['qUser']),
     'zoneIDName' => urlencode($params['qZone']),
-    'deviceIDName' => urlencode($params['qDevice'])
+    'deviceIDName' => urlencode($params['qDevice'] ?? ''),
 ];
 $parametros = '';
 foreach ($paramsApi as $key => $value) {
@@ -91,7 +91,6 @@ $api = "api/v1/checks/$parametros";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = parseApiResponse($api);
-
 $error = $api['error'] ?? '';
 $totalRecords = $api['TOTAL'] ?? 0;
 $tm = (microtime(true));
@@ -107,7 +106,7 @@ if ($api['COUNT'] ?? 0 > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
 
         $jsonMarcador = json_encode(
-            array(
+            [
                 'name' => $r['userName'],
                 'lat' => $r['regLat'],
                 'lng' => $r['regLng'],
@@ -115,7 +114,7 @@ if ($api['COUNT'] ?? 0 > 0) {
                 'regDay' => $r['regDay'],
                 'regHora' => $r['regTime'],
                 // 'map_size' => $r['map_size'],
-            )
+            ]
         );
 
         $zoneDistance = round(floatval($r['zoneDistance']) * 1000, 2);
@@ -124,7 +123,7 @@ if ($api['COUNT'] ?? 0 > 0) {
         if ($params['type'] == 'selectUsers') {
             $name = ($r['userName'] == '') ? 'Usuario Inválido' : $r['userName'];
             if ($r['userName']) {
-                $arraySelect[] = array(
+                $arraySelect[] = [
                     'id' => $r['userID'],
                     'text' => $name,
                     'html' => '
@@ -136,13 +135,13 @@ if ($api['COUNT'] ?? 0 > 0) {
                         <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
                     </div>
                     ',
-                );
+                ];
             }
         }
         if ($params['type'] == 'selectZone') {
             $zoneName = $r['zoneName'] ?? 'Fuera de Zona';
             if ($r['zoneName']) {
-                $arraySelect[] = array(
+                $arraySelect[] = [
                     'id' => $r['zoneID'],
                     'text' => $zoneName,
                     'html' => '
@@ -151,12 +150,12 @@ if ($api['COUNT'] ?? 0 > 0) {
                         <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
                     </div>
                     ',
-                );
+                ];
             }
         }
         if ($params['type'] == 'selectDevice') {
             if ($r['deviceName']) {
-                $arraySelect[] = array(
+                $arraySelect[] = [
                     'id' => $r['deviceID'],
                     'text' => $r['deviceName'],
                     'html' => '
@@ -165,11 +164,11 @@ if ($api['COUNT'] ?? 0 > 0) {
                         <span class="badge badge-light p-1">' . $r['countGroup'] . '</span>
                     </div>
                     ',
-                );
+                ];
             }
         }
 
-        $arrayData[] = array(
+        $arrayData[] = [
             'appVersion' => $r['appVersion'],
             'attPhoto' => $r['attPhoto'],
             'createdDate' => $r['createdDate'],
@@ -207,11 +206,11 @@ if ($api['COUNT'] ?? 0 > 0) {
             'id_api' => $r['id_api'],
             'imageData' => $r['imageData'],
             'basePhoto' => $r['basePhoto']
-        );
+        ];
         // print_r($arrayData).exit;
         if (($params['typeDownload'] ?? '') == 'downloadTxt') { //downloadTxt
 
-            $txtData = array(
+            $txtData = [
                 'userID' => (padLeft($r['userID'], 11, ' ')),
                 'userName' => html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8'),
                 'zoneID' => $r['zoneID'],
@@ -222,7 +221,7 @@ if ($api['COUNT'] ?? 0 > 0) {
                 'regDateTime' => ($r['regDateTime']),
                 'eventZone' => ($r['eventZone']),
                 'appVersion' => $r['appVersion'],
-            );
+            ];
             // print_r($txtData) . exit;
 
             if ($txtData['userName']) {
@@ -233,7 +232,7 @@ if ($api['COUNT'] ?? 0 > 0) {
         }
         if (($params['typeDownload'] ?? '') == 'downloadXls') { //xls
             if ($r['userName']) {
-                $xlsData[] = array(
+                $xlsData[] = [
                     'userID' => $r['userID'],
                     'userName' => trim(html_entity_decode($r['userName'], ENT_QUOTES, 'UTF-8')),
                     'zoneID' => $r['zoneID'],
@@ -254,7 +253,7 @@ if ($api['COUNT'] ?? 0 > 0) {
                     'eventZone' => ($r['eventZone']),
                     'eventDevice' => ($r['eventDevice']),
                     'appVersion' => $r['appVersion'],
-                );
+                ];
             }
         }
     }
@@ -285,14 +284,14 @@ switch ($params['typeDownload'] ?? '') {
 }
 $endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw'] ?? 0),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $arrayData,
     "error" => $error,
     "timeScript" => $timeScript,
-);
+];
 // sleep(2);
 if ($params['type'] == 'selectUsers' || $params['type'] == 'selectZone' || $params['type'] == 'selectDevice') {
     echo json_encode($arraySelect);

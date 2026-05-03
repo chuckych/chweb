@@ -24,6 +24,7 @@ $arrEnv = [
 
 foreach ($arrEnv as $key => $value) {
     putenv("$key=$value");
+    $_SERVER[$key] = $value;
 }
 
 $tools = new Classes\Tools; // Instancia de la clase Tools
@@ -87,9 +88,9 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
     $inicio = microtime(true);
 
     $proyectar = $RRHHWebService->proyectar_horas(
-        $data['Legajos'],
         $data['FechaDesde'],
-        $data['FechaHasta']
+        $data['FechaHasta'],
+        $data['Legajos'] ?? []
     );
 
     $response->respuesta($proyectar, 0, '', 200, $inicio, 0, ID_COMPANY);
@@ -114,7 +115,6 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
     $Novedad = $data['Novedad'] ?? '0';
 
     $Params = [
-        $data['Legajos'] ?? [],
         $data['FechaDesde'],
         $data['FechaHasta'],
         $Novedad,
@@ -128,10 +128,9 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
         $Sector == "" ? '0' : $Sector,
         $Seccion == "" ? '0' : $Seccion,
         $Grupo == "" ? '0' : $Grupo,
-        $Sucursal == "" ? '0' : $Sucursal
+        $Sucursal == "" ? '0' : $Sucursal,
+        $data['Legajos'] ?? []
     ];
-    // Flight::json($Params);
-    // exit;
     $ingreso = $RRHHWebService->ingresar_novedades(...$Params);
 
     $response->respuesta($ingreso, 0, '', 200, $inicio, 0, ID_COMPANY);
@@ -181,7 +180,6 @@ Flight::set('flight.log_errors', true);
 Flight::map('Forbidden', function ($mensaje) use ($response) {
     $inicio = microtime(true);
     $response->respuesta('', 0, $mensaje, 403, $inicio, 0, 0);
-    exit;
 });
 
 Flight::map('error', function ($ex) use ($response, $log) {

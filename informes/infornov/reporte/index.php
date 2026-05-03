@@ -80,7 +80,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $mpdf = new \Mpdf\Mpdf([
             'mode' => 'c',
             'format' => $_format,
-            'default_font_size' => '10pt',
+            'default_font_size' => 10,
             'margin_left' => 5,
             'margin_right' => 5,
             'margin_top' => 10,

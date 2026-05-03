@@ -16,26 +16,26 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni = date('Ymd');
     $FechaFin = date('Ymd');
 }
-$params['Per'] = $params['Per'] ?? '';
-$params['Per2'] = $params['Per2'] ?? '';
-$params['Emp'] = $params['Emp'] ?? '';
-$params['Plan'] = $params['Plan'] ?? '';
-$params['Sect'] = $params['Sect'] ?? '';
-$params['Sec2'] = $params['Sec2'] ?? '';
-$params['Grup'] = $params['Grup'] ?? '';
-$params['Sucur'] = $params['Sucur'] ?? '';
-$params['_l'] = $params['_l'] ?? [];
-$params['draw'] = $params['draw'] ?? '';
-$params['FicFalta'] = $params['FicFalta'] ?? '';
-$params['Tipo'] = $params['Tipo'] ?? '';
-$params['FicNovT'] = $params['FicNovT'] ?? '';
-$params['FicDiaL'] = $params['FicDiaL'] ?? '';
-$params['FicNovI'] = $params['FicNovI'] ?? '';
-$params['FicNovS'] = $params['FicNovS'] ?? '';
-$params['FicNovA'] = $params['FicNovA'] ?? '';
-$params['Filtros'] = $params['Filtros'] ?? [];
-$params['Fic3Nov'] = $params['Fic3Nov'] ?? '';
-$params['NovEx'] = $params['NovEx'] ?? '';
+$params['Per'] ??= '';
+$params['Per2'] ??= '';
+$params['Emp'] ??= '';
+$params['Plan'] ??= '';
+$params['Sect'] ??= '';
+$params['Sec2'] ??= '';
+$params['Grup'] ??= '';
+$params['Sucur'] ??= '';
+$params['_l'] ??= [];
+$params['draw'] ??= '';
+$params['FicFalta'] ??= '';
+$params['Tipo'] ??= '';
+$params['FicNovT'] ??= '';
+$params['FicDiaL'] ??= '';
+$params['FicNovI'] ??= '';
+$params['FicNovS'] ??= '';
+$params['FicNovA'] ??= '';
+$params['Filtros'] ??= [];
+$params['Fic3Nov'] ??= '';
+$params['NovEx'] ??= '';
 
 
 function arrParams($params)
@@ -51,6 +51,8 @@ $Sect = $params['Sect'] ? arrParams($params['Sect']) : explode(',', $_SESSION['S
 $Grup = $params['Grup'] ? arrParams($params['Grup']) : explode(',', $_SESSION['GrupRol']);
 $Sucu = $params['Sucur'] ? arrParams($params['Sucur']) : explode(',', $_SESSION['SucuRol']);
 $Sec2 = $params['Sec2'] ? arrParams($params['Sec2']) : explode(',', $_SESSION['Sec2Rol']);
+
+// error_log(print_r($Empr, true));
 
 $Filtros = json_decode($params['Filtros'], true) ?: [];
 
@@ -105,7 +107,6 @@ $dataParametros = [
 $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
 $dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
 $dataApi = parseApiResponse($dataApi);
-
 
 if (($dataApi['RESPONSE_CODE'] ?? '') != 200) {
     http_response_code(400);

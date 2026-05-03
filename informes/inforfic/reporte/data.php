@@ -2,7 +2,7 @@
 
 require __DIR__ . '/../../../filtros/filtros.php';
 require __DIR__ . '/../../../config/conect_mssql.php';
-//require __DIR__ . '/../valores.php';
+$dataAgrup = [];
 
 $DateRange = explode(' al ', $_POST['_dr']);
 $FechaIni = test_input(dr_fecha($DateRange[0]));
@@ -36,7 +36,6 @@ $Sucur = test_input($_POST['Sucur']);
 $Sec2 = test_input($_POST['Sec2']);
 $FicFalta = test_input($_POST['FicFalta']);
 $Tipo = test_input($_POST['Tipo']);
-
 
 
 switch ($Tipo) {
@@ -92,42 +91,42 @@ switch ($_Por) {
         $order = 'FICHAS.FicLega';
         break;
 }
-if ($_Por == 'Fech') { /** Si agrupamos por Fecha */
-    $query = "SELECT FICHAS.FicFech AS 'Fecha', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia'
+switch ($_Por) {
+    case 'Fech':
+        /** Si agrupamos por Fecha */
+        $query = "SELECT FICHAS.FicFech AS 'Fecha', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Dia'
     FROM FICHAS
     INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
     INNER JOIN REGISTRO ON FICHAS.FicFech = REGISTRO.RegFeAs AND FICHAS.FicLega = REGISTRO.RegLega
     WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas
     GROUP BY FICHAS.FicFech ORDER BY $order";
-} else {
-    $query = "SELECT DISTINCT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil'
-FROM FICHAS
-INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
-INNER JOIN REGISTRO ON FICHAS.FicFech = REGISTRO.RegFeAs AND FICHAS.FicLega = REGISTRO.RegLega
-WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas 
-ORDER BY $order";
+        break;
+    default:
+        $query = "SELECT DISTINCT FICHAS.FicLega AS 'Legajo', PERSONAL.LegApNo AS 'Nombre', PERSONAL.LegCUIT AS 'Cuil'
+        FROM FICHAS
+        INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
+        INNER JOIN REGISTRO ON FICHAS.FicFech = REGISTRO.RegFeAs AND FICHAS.FicLega = REGISTRO.RegLega
+        WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas 
+        ORDER BY $order";
+        break;
 }
-// h4($query);
 $result = sqlsrv_query($link, $query, $param, $options);
 
 while ($row = sqlsrv_fetch_array($result)) {
 
-    $Dia = isset($row['Dia']) ? $row['Dia'] : '';
-    $Cuil = isset($row['Cuil']) ? $row['Cuil'] : '';
-    $Legajo = isset($row['Legajo']) ? $row['Legajo'] : '';
-    $Nombre = isset($row['Nombre']) ? $row['Nombre'] : '';
+    $Dia = $row['Dia'] ?? '';
+    $Cuil = $row['Cuil'] ?? '';
+    $Legajo = $row['Legajo'] ?? '';
+    $Nombre = $row['Nombre'] ?? '';
     $Fecha = isset($row['Fecha']) ? $row['Fecha']->format('Ymd') : '';
 
-    $dataAgrup[] = array(
+    $dataAgrup[] = [
         'Legajo' => $Legajo,
         'Nombre' => $Nombre,
         'Cuil' => $Cuil,
         'Fecha' => $Fecha,
         'Dia' => $Dia,
-    );
+    ];
 }
-// h1($query);
-// echo json_encode($dataAgrup); exit;
 
 sqlsrv_free_stmt($result);
-// sqlsrv_close($link);

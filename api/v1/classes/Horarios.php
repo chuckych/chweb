@@ -111,7 +111,7 @@ class Horarios
                 }
             }
 
-            $legajosUpdate = $this->check_horario_data($conn, $datos);
+            $legajosUpdate = $this->check_horario_data($datos, $conn);
             $legajosInsert = array_values(array_diff($Legajos, $legajosUpdate));
 
             if ($this->desde) {
@@ -187,13 +187,13 @@ class Horarios
 
             if ($Proc) {
                 if ($this->desde) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $this->conect->Fecha());
+                    $this->ws->procesar_legajos($Fecha, $this->conect->Fecha(), $Legajos);
                 }
                 if ($this->desdeHasta) {
-                    $this->ws->procesar_legajos($Legajos, $FechaD, $FechaH);
+                    $this->ws->procesar_legajos($FechaD, $FechaH, $Legajos);
                 }
                 if ($this->citacion) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $this->conect->Fecha());
+                    $this->ws->procesar_legajos($Fecha, $this->conect->Fecha(), $Legajos);
                 }
             }
 
@@ -348,16 +348,16 @@ class Horarios
 
             if ($Proc) {
                 if ($this->desde) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $this->conect->Fecha());
+                    $this->ws->procesar_legajos($Fecha, $this->conect->Fecha(), $Legajos);
                 }
                 if ($this->desdeHasta) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $FechaH);
+                    $this->ws->procesar_legajos($Fecha, $FechaH, $Legajos);
                 }
                 if ($this->citacion) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $Fecha);
+                    $this->ws->procesar_legajos($Fecha, $Fecha, $Legajos);
                 }
                 if ($this->rotacion) {
-                    $this->ws->procesar_legajos($Legajos, $Fecha, $FechaH);
+                    $this->ws->procesar_legajos($Fecha, $FechaH, $Legajos);
                 }
             }
 
@@ -421,13 +421,13 @@ class Horarios
                 }
             }
 
-            $totalDias = $this->return_total_dias_rotacion($conn, $Codi);
+            $totalDias = $this->return_total_dias_rotacion($Codi, $conn);
 
             if ($Dias > $totalDias) {
                 throw new \Exception("El día inicio no puede ser mayor a la cantidad total de días de rotación", 400);
             }
 
-            $legajosUpdate = $this->check_rotacion_data($conn, $datos);
+            $legajosUpdate = $this->check_rotacion_data($datos, $conn);
             $legajosInsert = array_values(array_diff($Legajos, $legajosUpdate));
 
 
@@ -435,7 +435,7 @@ class Horarios
             $AudText = "Rotación {$fechaFormat}";
 
             if ($legajosUpdate) {
-                $filas += $this->update_rotacion([$conn, $legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
+                $filas += $this->update_rotacion($conn, [$legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
                 $audUDesde = $this->auditoria([$legajosUpdate, $Codi, 'M', $AudText, $User], 'rotaciones');
             }
 
@@ -451,7 +451,7 @@ class Horarios
             $this->auditor->add($auditorCH); // Guarda un registro en la tabla AUDITOR
 
             if ($Proc) {
-                $this->ws->procesar_legajos($Legajos, $Fecha, $this->conect->Fecha());
+                $this->ws->procesar_legajos($Fecha, $this->conect->Fecha(), $Legajos);
             }
 
             $this->resp->respuesta($arrayAud, $filas, 'OK', 200, $inicio, 0, 0);
@@ -544,7 +544,7 @@ class Horarios
 
         return $this->tools->validar_datos($datos, $rules, $customValueKey, 'validar_request_rotacion');
     }
-    private function check_horario($connDB = '', $datos)
+    private function check_horario($datos, $connDB = '')
     {
         $conn = $this->conect->check_connection($connDB);
 
@@ -569,7 +569,7 @@ class Horarios
             return $result;
         }
     }
-    private function check_horario_data($connDB = '', $datos)
+    private function check_horario_data($datos, $connDB = '')
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -615,7 +615,7 @@ class Horarios
 
         return $result ? array_column($result, 'LegNume') : [];
     }
-    private function check_rotacion_data($connDB = '', $datos)
+    private function check_rotacion_data($datos, $connDB = '')
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -646,7 +646,7 @@ class Horarios
     {
         try {
             $conn = $this->conect->check_connection($connDB);
-            $getCache = $this->tools->return_cache($conn, 'HORARIOS', 'fechaHoraHorarios', 'horarios');
+            $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horarios', $conn);
 
             // if ($getCache->data) {
             //     return $getCache->data;
@@ -677,7 +677,7 @@ class Horarios
     {
         try {
             $conn = $this->conect->check_connection($connDB);
-            $getCache = $this->tools->return_cache($conn, 'ROTACION', 'fechaHoraRotaciones', 'rotaciones');
+            $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotaciones', $conn);
 
             // if ($getCache->data) {
             //     return $getCache->data;
@@ -703,7 +703,7 @@ class Horarios
 
         }
     }
-    private function return_total_dias_rotacion($connDB = '', $Codi)
+    private function return_total_dias_rotacion($Codi, $connDB = '')
     {
         try {
             $conn = $this->conect->check_connection($connDB);
@@ -1234,7 +1234,7 @@ class Horarios
 
         $conn = $this->conect->check_connection($connDB);
 
-        $getCache = $this->tools->return_cache($conn, 'HORARIOS', 'fechaHoraHorarios', 'horariosFull');
+        $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horariosFull', $conn);
         if ($getCache->data) {
             $total = $getCache->total;
             return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
@@ -1301,7 +1301,7 @@ class Horarios
     {
         $conn = $this->conect->check_connection($connDB);
 
-        $getCache = $this->tools->return_cache($conn, 'ROTACION', 'fechaHoraRotaciones', 'rotacionesFull');
+        $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotacionesFull', $conn);
 
         if ($getCache->data) {
             $total = $getCache->total;

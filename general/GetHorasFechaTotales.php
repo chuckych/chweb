@@ -12,25 +12,25 @@ E_ALL();
 
 require __DIR__ . '/../filtros/filtros.php';
 require __DIR__ . '/../config/conect_mssql.php';
-$data = array();
+$data = [];
 $Fecha = test_input(FusNuloPOST('_f', 'vacio'));
 
 if ($Fecha == 'vacio') {
 
-    $json_data = array(
+    $json_data = [
         "draw" => 0,
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => $data
-    );
+    ];
 
     echo json_encode($json_data);
     exit;
 }
 require __DIR__ . '/valores.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $params = $columns = $totalRecords = '';
 $params = $_REQUEST;
@@ -71,25 +71,25 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     $FicHsAu = MinHora($row['FicHsAu']);
     $FicHsAu2 = MinHora($row['FicHsAu2']);
 
-    $data[] = array(
+    $data[] = [
         'FicHora' => $FicHora,
         'THoDesc' => $THoDesc,
         'FicHsHe' => $FicHsHe,
         'FicHsAu' => $FicHsAu,
         'FicHsAu2' => $FicHsAu2,
         'null' => '',
-    );
+    ];
 
 endwhile;
 
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
 
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $data
-);
+];
 
 echo json_encode($json_data);

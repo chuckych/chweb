@@ -65,7 +65,7 @@ if ($api['COUNT'] ?? 0 > 0) {
         }
 
         if ($params['data_array'] == 'select') {
-            $arrayData[] = array(
+            $arrayData[] = [
                 'id' => $r['userID'],
                 'text' => $r['userName'],
                 'html' => '
@@ -77,9 +77,9 @@ if ($api['COUNT'] ?? 0 > 0) {
                         <span class="badge badge-light">' . $r['userChecks'] . '</span>
                     </div>
                 ',
-            );
+            ];
         } else {
-            $arrayData[] = array(
+            $arrayData[] = [
                 'userID' => $r['userID'],
                 'userName' => $r['userName'],
                 'userChecks' => $r['userChecks'],
@@ -92,18 +92,18 @@ if ($api['COUNT'] ?? 0 > 0) {
                 'bloqueado' => $bloqueado,
                 'tipoBloqueo' => $tipoBloqueo,
                 'trained' => $r['trained']
-            );
+            ];
         }
     }
 }
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw'] ?? ''),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $arrayData,
     'localCH' => $siControlaChLocal ?? false,
     'recidCompany' => $recidCompany ?? '',
-);
+];
 if ($params['data_array'] == 'select') {
     echo json_encode($arrayData);
     exit;

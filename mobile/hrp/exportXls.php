@@ -26,8 +26,8 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = []; 
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET]; 
 
 $documento = new Spreadsheet();
 $documento
@@ -172,7 +172,7 @@ $spreadsheet->getStyle('A1')
 
 // $spreadsheet->freezePane('A2');
 
-$ColNume = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M");
+$ColNume = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M"]; 
 foreach ($ColNume as $colN) {
     $spreadsheet->getStyle($colN)->getAlignment()->setIndent(1);
     $spreadsheet->getStyle($colN . '1')->getAlignment()->setIndent(1);
@@ -186,7 +186,7 @@ $spreadsheet->freezePaneByColumnAndRow($ColumnCount, $RowIndex);
 // $spreadsheet->getColumnDimension('F')->setVisible(true);
 
 $numeroDeFila = 2;
-$respuesta = array();
+$respuesta = []; 
 
 function FormatoHoraToExcel($Hora)
 {
@@ -279,7 +279,7 @@ try {
     $writer->save($routeFile3); // Guardamos el archivo en la ruta especificada
     // $writer->save('php://output');
 } catch (\Exception $e) {
-    $data = array('status' => 'error');
+    $data = ['status' => 'error']; 
     echo json_encode($data);
     exit;
 }

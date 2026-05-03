@@ -15,25 +15,25 @@ $params = $columns = $totalRecords = '';
 $params = ($_REQUEST);
 
 if (empty($params['userID'])) {
-    $json_data = array(
+    $json_data = [
         "draw" => 0,
         "recordsTotal" => 0,
         "recordsFiltered" => 0,
         "data" => [],
         "timeScript" => 0,
-    );
+    ];
     echo json_encode($json_data);
     exit;
 }
 
 $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-$paramsApi = array(
+$paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => 0,
     'length' => 50,
     'userID' => intval($params['userID']),
-);
+];
 // checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], intval($params['userID']), $_SESSION["APIMOBILEHRP_MOBILE"], 0);
 $parametros = '';
 
@@ -71,14 +71,14 @@ if ($api2['COUNT'] > 0) {
 $endScript = microtime(true);
 $timeScript = round($endScript - $startScript, 2);
 
-$json_data = array(
+$json_data = [
     "draw" => 0,
     "recordsTotal" => $api['TOTAL'],
     "recordsFiltered" => $api['COUNT'],
     "data" => $data,
     "data2" => $data2,
     "timeScript" => $timeScript,
-);
+];
 
 echo json_encode($json_data);
 exit;

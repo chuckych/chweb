@@ -11,15 +11,15 @@ secure_auth_ch_json();
 E_ALL();
 require __DIR__ . '/../config/conect_mssql.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $Datos = (explode('-', ($_GET['Datos'])));
 
 $FicFech = test_input($Datos[1]);
 $FicLega = test_input($Datos[0]);
 
-$data = array();
+$data = [];
 
 /** OTRAS NOVEDADES */
 $query = "SELECT FICHAS2.FicONov as FicONov, OTRASNOV.ONovDesc as Descrip, OTRASNOV.ONovColo as Color, FICHAS2.FicObsN as Observ, FICHAS2.FicValor as FicValor, OTRASNOV.ONovTipo AS ONovTipo, FICHAS2.FicFech as FicFech From FICHAS2,OTRASNOV Where FICHAS2.FicLega = '$FicLega' and FICHAS2.FicFech = '$FicFech' and FICHAS2.FicTurn = 1 and FICHAS2.FicONov = OTRASNOV.ONovCodi and FICHAS2.FicONov > 0 Order By FICHAS2.FicLega,FICHAS2.FicFech,FICHAS2.FicTurn,FICHAS2.FicONov";
@@ -72,7 +72,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $editar = $_SESSION["ABM_ROL"]['mONov'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bONov'] == '0' ? '' : $eliminar;
 
-        $data[] = array(
+        $data[] = [
             'Cod' => $row['FicONov'],
             'Descripcion' => $row['Descrip'],
             'FicValor' => ($FicValor),
@@ -81,12 +81,12 @@ if (sqlsrv_num_rows($result) > 0) {
             'editar' => $editar,
             'eliminar' => $eliminar,
             'null' => ''
-        );
+        ];
     endwhile;
     sqlsrv_free_stmt($result);
 }
 /** FIN NOVEDADES */
-echo json_encode(array('ONovedades' => $data));
+echo json_encode(['ONovedades' => $data]);
 sqlsrv_close($link);
 exit;
 

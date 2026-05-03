@@ -618,7 +618,7 @@ class Clientes
             $datos = $this->validar_campos_login_ad();
             // error_log(print_r($datos, true));
 
-            $datosCliente = $this->get_cliente_ad($datos['id_cliente'] ?? '', $conn);
+            $datosCliente = $this->get_cliente_ad($conn, $datos['id_cliente'] ?? '');
 
             $AD = new ADAuthenticator(
                 $datosCliente['serverAD'] ?? '',
@@ -699,7 +699,7 @@ class Clientes
             throw new $nameInstance($e->getMessage(), $code);
         }
     }
-    private function get_cliente_ad($id_cliente = null, $conn)
+    private function get_cliente_ad($conn, $id_cliente = null)
     {
         try {
 

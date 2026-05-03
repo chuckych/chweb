@@ -1,7 +1,7 @@
 <?php
 FusNuloPOST('q', '');
 $q = test_input($_POST['q']);
-$data = array();
+$data = [];
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $DateRange = explode(' al ', $_POST['_dr']);
     $FechaIni  = test_input(dr_fecha($DateRange[0]));
@@ -95,7 +95,7 @@ $tipoNovI = ($FicNovINov) ? '1' : '';
 $tipoNovS = ($FicNovSNov) ? '2' : '';
 $tipoNovA = ($FicNovANov) ? '3,4,5,6,7,8' : '';
 
-$arraTipo = array();
+$arraTipo = [];
 ($tipoNovT) ? array_push($arraTipo, $tipoNovT) : '';
 ($tipoNovI) ? array_push($arraTipo, $tipoNovI) : '';
 ($tipoNovS) ? array_push($arraTipo, $tipoNovS) : '';

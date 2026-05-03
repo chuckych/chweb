@@ -32,27 +32,27 @@ $params['Sect'] = $params['Sect'] ?? '';
 $params['Sec2'] = $params['Sec2'] ?? '';
 $params['Grup'] = $params['Grup'] ?? '';
 $params['Sucur'] = $params['Sucur'] ?? '';
-$params['_l'] = $params['_l'] ?? $data = array();
+$params['_l'] = $params['_l'] ?? $data = [];
 $params['draw'] = $params['draw'] ?? '';
 $params['FicFalta'] = $params['FicFalta'] ?? '';
 $params['Tipo'] = ($params['Tipo']) ?? '';
 $params['onlyReg'] = ($params['onlyReg']) ?? '';
 
 $Empr = setParamsOrSession($params['Emp'], $_SESSION['EmprRol']);
-$Per = $params['Per'] ? ($params['Per']) : array();
-$Per2 = $params['Per2'] ? array($params['Per2']) : explodeSession($_SESSION['EstrUser']);
+$Per = $params['Per'] ? ($params['Per']) : [];
+$Per2 = $params['Per2'] ? [$params['Per2']] : explodeSession($_SESSION['EstrUser']);
 $Plan = setParamsOrSession($params['Plan'], $_SESSION['PlanRol']);
 $Sect = setParamsOrSession($params['Sect'], $_SESSION['SectRol']);
 $Grup = setParamsOrSession($params['Grup'], $_SESSION['GrupRol']);
 $Sucu = setParamsOrSession($params['Sucur'], $_SESSION['SucuRol']);
 $Sec2 = setParamsOrSession($params['Sec2'], $_SESSION['Sec2Rol']);
-$FicFalta = $params['FicFalta'] ? array(intval($params['FicFalta'])) : [];
-$LegTipo = $params['Tipo'] ? $params['Tipo'] : array();
+$FicFalta = $params['FicFalta'] ? [intval($params['FicFalta'])] : [];
+$LegTipo = $params['Tipo'] ? $params['Tipo'] : [];
 
 $Legajos = ($Per2) ? ($Per2) : $Per;
 $Legajos = ($Per) ? ($Per) : $Legajos;
 
-$dataParametros = array(
+$dataParametros = [
     'Lega' => ($Legajos),
     'Falta' => $FicFalta,
     'Empr' => ($Empr),
@@ -70,7 +70,7 @@ $dataParametros = array(
     'length' => intval($params['length']),
     'getReg' => 1,
     'onlyReg' => ($params['onlyReg'])
-);
+];
 
 $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficdatafech/";
 
@@ -81,20 +81,20 @@ $MESSAGE = $dataApi['MESSAGE'] ?? '';
 
 if ($DATA) {
     foreach ($DATA as $row) {
-        $data[] = array(
+        $data[] = [
             'FechaFormat' => FechaFormatVar($row['Fecha'], 'd/m/Y'),
             'Dia' => DiaSemana3($row['Fecha']),
             'Fecha' => FechaFormatVar($row['Fecha'], 'Y-m-d'),
-        );
+        ];
     }
 }
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw'] ?? 0),
     "recordsTotal" => intval($dataApi['TOTAL'] ?? 0),
     "recordsFiltered" => intval($dataApi['TOTAL'] ?? 0),
     "data" => $data,
     "dataParametros" => $dataParametros,
     "Mensaje" => $MESSAGE
-);
+];
 
 echo json_encode($json_data);

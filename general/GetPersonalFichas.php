@@ -14,7 +14,7 @@ require __DIR__ . '/../config/conect_mssql.php';
 
 require __DIR__ . '/valores.php';
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
@@ -36,8 +36,8 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 $sqlRec .= " ORDER BY FICHAS.FicLega OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
@@ -48,7 +48,7 @@ $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
 while ($row = sqlsrv_fetch_array($queryRecords)) {
     $pers_legajo = $row['pers_legajo'];
     $pers_nombre = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
-    $data[] = array(
+    $data[] = [
         'pers_legajo' => '<span class="numlega fadeIn pointer p-0 fontq text-dark fw4">' . $pers_legajo . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
         'pers_nombre' => '<span 
         data-nombre="' . $pers_nombre . '" 
@@ -58,7 +58,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
         data-procLega=""
         title="Procesar registro: ' . $pers_nombre . '. ' . fechformat($FechaIni) . ' al ' . fechformat($FechaFin) . '"  class="fadeIn pointer procReg">' . $pers_nombre . '</span>',
         'null' => '',
-    );
+    ];
 }
 if (!empty($Per2)) {
     if (
@@ -66,7 +66,7 @@ if (!empty($Per2)) {
     INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume
     WHERE FICHAS.FicLega = $Per3 AND PERSONAL.LegFeEg = '17530101'")
     ) {
-        $data[] = array(
+        $data[] = [
             'pers_legajo' => '<span class="numlega fadeIn btn pointer p-0 fontq text-dark fw4">' . $Per3 . '</span><input type="hidden" id="_l" value=' . $pers_legajo . '>',
             'pers_nombre' => '<span 
             data-nombre="' . $pers_nombre . '" 
@@ -76,16 +76,16 @@ if (!empty($Per2)) {
             data-procLega=""
             title="Procesar registro: ' . $pers_nombre . '. ' . fechformat($FechaIni) . ' al ' . fechformat($FechaFin) . '" class="fadeIn text-danger fw5">Legajo inválido</span>',
             'null' => '',
-        );
+        ];
     }
 }
 
 sqlsrv_free_stmt($queryRecords);
 sqlsrv_close($link);
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $data
-);
+];
 echo json_encode($json_data);

@@ -8,6 +8,7 @@ errorReport();
 
 $iLega2 = $total = $wcFicFech = $FicCountSelect = $joinFichas4 = $joinFichas3 = $joinFichas2 = $joinFichas1 = $colCierre = $joinCierres = $onlyRegCount = '';
 $IlegFic = [];
+$data = [];
 
 $control->check_method("POST");
 $control->check_json();
@@ -192,7 +193,7 @@ foreach ($stmtFic as $key => $v) {
         // if ($SumNov) {
         if ($stmtNov) {
             $arrNov = filtrarObjetoArr2($stmtNov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-            foreach ($arrNov as $key => $n) {
+            foreach ($arrNov as $n) {
                 $dataNov[] = [
                     'Codi' => $n['NovCodi'],
                     'Desc' => $n['NovDesc'],
@@ -216,7 +217,7 @@ foreach ($stmtFic as $key => $v) {
     if ($dp['getONov']) {
         if ($stmtONov) {
             $arrONov = filtrarObjetoArr2($stmtONov, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-            foreach ($arrONov as $key => $vo) {
+            foreach ($arrONov as $vo) {
                 $dataONov[] = [
                     'ONov' => $vo['FicONov'],
                     'Valor' => ($vo['ONovTipo']) ? decimalToTime($vo['FicValor']) : $vo['FicValor'],
@@ -233,7 +234,7 @@ foreach ($stmtFic as $key => $v) {
             // if (horaMin($v['FicHsTr']) > 0) {
             $dataHora = filtrarObjetoArr2($stmtHoras, 'FicLega', 'Fecha', $v['FicLega'], $v['Fecha']);
 
-            foreach ($dataHora as $key => $h) {
+            foreach ($dataHora as $h) {
                 $dataHoras[] = [
                     'Hora' => $h['FicHora'],
                     'Desc' => $h['THoDesc'],
@@ -259,7 +260,7 @@ foreach ($stmtFic as $key => $v) {
             // if ($v['FicNovA'] == 0 && $v['FicCount'] > 0) {
             if ($stmtRegistros) {
                 $dataFichada = filtrarObjetoArr2($stmtRegistros, 'RegLega', 'Fecha', $v['FicLega'], $v['Fecha']);
-                foreach ($dataFichada as $key => $r) {
+                foreach ($dataFichada as $r) {
                     $esta = ($r['RegHora'] == $r['RegHoRe']) ? '' : 'Modificada';
                     $dataFichadas[] = [
                         'Tarj' => $r['RegTarj'],

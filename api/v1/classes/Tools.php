@@ -152,7 +152,7 @@ class Tools
         }
         return $result ?? [];
     }
-    public function get_fecha_hora($connDB = '', $tabla)
+    public function get_fecha_hora($tabla, $connDB = '')
     {
         try {
             if (!$tabla) throw new \Exception("Tabla en get_fecha_hora no especificada", 400);
@@ -168,11 +168,11 @@ class Tools
             throw new \Exception("Error al obtener FechaHora en {$tabla}", 400);
         }
     }
-    public function return_cache($connDB = '', $tabla, $cacheFecha, $cacheName)
+    public function return_cache($tabla, $cacheFecha, $cacheName, $connDB = '')
     {
         $conn = $this->conect->check_connection($connDB);
 
-        $FHora      = $this->get_fecha_hora($conn, $tabla);
+        $FHora      = $this->get_fecha_hora($tabla, $conn);
         $FHoraCache = $this->log->get_cache($cacheFecha, '.txt') ?? 0;
 
         $obj = new \stdClass();

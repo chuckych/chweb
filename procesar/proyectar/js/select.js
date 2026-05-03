@@ -225,6 +225,7 @@ $(function () {
         });
 
     }
+    
     const getPersonal = async () => {
         const url = "/" + homehost + "/app-data/personal/filtros";
 

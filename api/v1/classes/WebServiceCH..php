@@ -33,7 +33,11 @@ class WebServiceCH
             writelog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
         }
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-        curl_close($ch); // close curl handle
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        }// close curl handle
         if ($http_code == '201') {
             // writelog('Ping correcto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
             http_response_code(204);
@@ -60,7 +64,11 @@ class WebServiceCH
             $respuesta = (curl_exec($ch));
             writelog("to: " . ($this->apiData . "Estado?" . $processID), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log'); // 
             writelog("do: " . ($respuesta), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log'); // 
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
         } while (($respuesta) === '{Pendiente}');
         writelog("end: " . ($respuesta), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
         return 'Proceso terminado';
@@ -88,7 +96,11 @@ class WebServiceCH
             }
 
             $processID = str_replace(array('{', '}'), '', $respuesta);
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             writelog("processID: $processID", __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
             if ($httpCode == 201) {
                 $respuesta = '';
@@ -156,7 +168,11 @@ class WebServiceCH
         }
 
         $processID = str_replace(array('{', '}'), '', $respuesta);
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         // writelog("processID: $processID", __DIR__ . '/logs/' . date('Ymd') . '_request.log');
         if ($httpCode == 201) {
             $respuesta = '';

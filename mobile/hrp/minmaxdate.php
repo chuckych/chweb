@@ -12,14 +12,14 @@ $api = "api/v1/checks/dates.php?key=$_SESSION[RECID_CLIENTE_MOBILE]";
 $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
 $api = getRemoteFile($url, $timeout = 10);
 $api = json_decode($api, true);
-$arrayFech = $api['RESPONSE_DATA'];
+$arrayFech = $api['RESPONSE_DATA'] ?? [];
 
-$min = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
-$minFormat = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'd/m/Y') : date('d/m/Y');
-$max = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
-$maxFormat = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'd/m/Y') : date('d/m/Y');
-$aniomin = !empty($arrayFech['min']) ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
-$aniomax = !empty($arrayFech['max']) ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
+$min = !empty($arrayFech['min'] ?? '') ? FechaFormatVar($arrayFech['min'], 'd-m-Y') : date('d-m-Y');
+$minFormat = !empty($arrayFech['min'] ?? '') ? FechaFormatVar($arrayFech['min'], 'd/m/Y') : date('d/m/Y');
+$max = !empty($arrayFech['max'] ?? '') ? FechaFormatVar($arrayFech['max'], 'd-m-Y') : date('d-m-Y');
+$maxFormat = !empty($arrayFech['max'] ?? '') ? FechaFormatVar($arrayFech['max'], 'd/m/Y') : date('d/m/Y');
+$aniomin = !empty($arrayFech['min'] ?? '') ? FechaFormatVar($arrayFech['min'], 'Y') : date('Y');
+$aniomax = !empty($arrayFech['max'] ?? '') ? FechaFormatVar($arrayFech['max'], 'Y') : date('Y');
 
 $data = [
     'aniomax' => $aniomax,

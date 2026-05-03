@@ -2,10 +2,10 @@
 require __DIR__ . '/../config/index.php';
 session_start();
 E_ALL();
-$_SESSION["RECID_ROL"] = $_SESSION["RECID_ROL"] ?? '';
-$_SESSION["MODS_ROL"] = $_SESSION["MODS_ROL"] ?? '';
-$_SESSION["MODS_ROL_PROY"] = $_SESSION["MODS_ROL_PROY"] ?? '';
-$_GET['page'] = $_GET['page'] ?? '';
+$_SESSION["RECID_ROL"] ??= '';
+$_SESSION["MODS_ROL"] ??= '';
+$_SESSION["MODS_ROL_PROY"] ??= '';
+$_GET['page'] ??= '';
 ($_SESSION["RECID_ROL"]) ? '' : require __DIR__ . '/salir.php';
 
 function progressBar($step)
@@ -57,76 +57,76 @@ function checkModulo($modulo)
 ($_SESSION["MODS_ROL_PROY"] == 'error') ? require __DIR__ . '/errMod.php' : '';
 ($_SESSION["MODS_ROL_PROY"] == 'error') ? exit : '';
 
-$rutas = array(
-    'log_rfid' => array(
+$rutas = [
+    'log_rfid' => [
         "url" => 'login/login_rfid.php',
         "mod" => 0,
-    ),
-    'log_user' => array(
+    ],
+    'log_user' => [
         "url" => 'login/login_user.php',
         "mod" => 0,
-    ),
-    'inicio' => array(
+    ],
+    'inicio' => [
         "url" => 'inicio/index.php',
         "mod" => 43,
-    ),
-    'salir' => array(
+    ],
+    'salir' => [
         "url" => 'salir.php',
         "mod" => 0,
-    ),
-    'empresas' => array(
+    ],
+    'empresas' => [
         "url" => 'op/empresas.php',
         "mod" => 42,
-    ),
-    'estados' => array(
+    ],
+    'estados' => [
         "url" => 'op/estados.php',
         "mod" => 38,
-    ),
-    'procesos' => array(
+    ],
+    'procesos' => [
         "url" => 'op/procesos.php',
         "mod" => 39,
-    ),
-    'planos' => array(
+    ],
+    'planos' => [
         "url" => 'op/planos.php',
         "mod" => 41,
-    ),
-    'plantillas procesos' => array(
+    ],
+    'plantillas procesos' => [
         "url" => 'op/plantillas.php',
         "mod" => 40,
-    ),
-    'plantillas planos' => array(
+    ],
+    'plantillas planos' => [
         "url" => 'op/plantillasPlanos.php',
         "mod" => 44,
-    ),
-    'proyectos' => array(
+    ],
+    'proyectos' => [
         "url" => 'op/proyectos.php',
         "mod" => 35,
-    ),
-    'tareas' => array(
+    ],
+    'tareas' => [
         "url" => 'op/tareas.php',
         "mod" => 37,
-    ),
-    'mistareas' => array(
+    ],
+    'mistareas' => [
         "url" => 'op/misTareas.php',
         "mod" => 36,
-    ),
-    'selProc' => array(
+    ],
+    'selProc' => [
         "url" => 'selProc/index.php',
         "mod" => 0,
-    ),
-    'selPlano' => array(
+    ],
+    'selPlano' => [
         "url" => 'selPlano/index.php',
         "mod" => 0,
-    ),
-    'finalizar' => array(
+    ],
+    'finalizar' => [
         "url" => 'finalizar/index.php',
         "mod" => 0,
-    ),
-    'finTar' => array(
+    ],
+    'finTar' => [
         "url" => 'finalizar/fin.php',
         "mod" => 0,
-    ),
-);
+    ],
+];
 
 $request = $_GET['page'];
 foreach ($rutas as $key => $pagina) {

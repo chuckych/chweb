@@ -12,15 +12,15 @@ E_ALL();
 
 require __DIR__ . '/../config/conect_mssql.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $Datos = (explode('-', test_input($_GET['Datos'])));
 
 $Fecha = $Datos[1];
 $Legajo = $Datos[0];
 
-$data = array();
+$data = [];
 
 /** NOVEDADES */
 $query = "SELECT FICHAS3.FicNove AS nov_novedad, FICHAS3.FicFech as FicFech, FICHAS3.FicLega as FicLega, NOVEDAD.NovDesc AS nov_descripcion, NOVEDAD.NovTipo AS nov_tipo, FICHAS3.FicHoras AS nov_horas, 
@@ -85,7 +85,7 @@ if (sqlsrv_num_rows($result) > 0) {
         $editar = $_SESSION["ABM_ROL"]['mNov'] == '0' ? '' : $editar;
         $eliminar = $_SESSION["ABM_ROL"]['bNov'] == '0' ? '' : $eliminar;
 
-        $data[] = array(
+        $data[] = [
             'Cod' => $row['nov_novedad'],
             'Descripcion' => $row['nov_descripcion'],
             'Horas' => ($row['nov_horas']),
@@ -98,11 +98,11 @@ if (sqlsrv_num_rows($result) > 0) {
             'editar' => $editar,
             'eliminar' => $eliminar,
             'null' => ''
-        );
+        ];
     endwhile;
     sqlsrv_free_stmt($result);
 }
 /** FIN NOVEDADES */
-echo json_encode(array('Novedades' => $data));
+echo json_encode(['Novedades' => $data]);
 sqlsrv_close($link);
 exit;

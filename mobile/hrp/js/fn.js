@@ -135,7 +135,7 @@ const focusRowTables = () => {
 }
 const minmaxDate = () => {
     axios({
-        method: 'post', 
+        method: 'post',
         url: 'minmaxdate.php'
     }).then(function (response) {
         const data = response.data
@@ -190,7 +190,10 @@ function fetchCreatedDate(url) {
     });
 }
 const getMap = async (lat, lng, zoom, zona, radio, latZona, lngZona, mtsZona, user, dateTime, zoneID) => {
-
+    if (isNaN(lat) || isNaN(lng)) {
+        console.log('Coordenadas inválidas: lat=' + lat + ', lng=' + lng);
+        return; // saltar esta zona
+    }
     RemoveExistingMap(map)
     initializingMap()
 
@@ -551,22 +554,26 @@ const formatDateTime = (date) => {
 
 function loadMap(data, customId) {
     const $mapContainer = $('#mapid');
-    
+
     // Validación temprana
     if (!data || data.length === 0) {
         $mapContainer.hide();
         return false;
     }
-    
+
     // Agregar clase loader al iniciar
     $mapContainer.addClass('loader-in');
-    
+
     // Una sola manipulación del DOM
     $mapContainer.show().html(`<div style="width:100%; height:550px;" id="${customId}"></div>`);
 
     // Extraer zonas únicas
     const uniqueZones = new Map();
     data.forEach(item => {
+        if (isNaN(item.zoneLat) || isNaN(item.zoneLng)) {
+            console.log(`Zona con coordenadas inválidas: zoneID=${item.zoneID}, zoneLat=${item.zoneLat}, zoneLng=${item.zoneLng}`);
+            return; // saltar esta zona
+        }
         if (item.zoneID > 0 && !uniqueZones.has(item.zoneID)) {
             uniqueZones.set(item.zoneID, {
                 zoneID: item.zoneID,
@@ -579,19 +586,19 @@ function loadMap(data, customId) {
     });
 
     const uniqueZonesArray = Array.from(uniqueZones.values());
-    
+
     // Obtener primer elemento para centrar el mapa
     const primerElemento = data[0];
-    
+
     // Determinar path una sola vez con validación
     const apiMobile = document.getElementById('apiMobile');
-    const path = apiMobile?.value === 'http://localhost:8050' 
-        ? '' 
+    const path = apiMobile?.value === 'http://localhost:8050'
+        ? ''
         : `${apiMobile?.value || ''}/chweb/mobile/hrp/`;
 
     // Inicializar mapa de forma simple como loadMap_old
     const myMap = L.map(customId).setView([primerElemento.regLat, primerElemento.regLng], 12);
-    
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: `Zonas encontradas: ${uniqueZonesArray.length}`,
         maxZoom: 20
@@ -634,13 +641,13 @@ function loadMap(data, customId) {
         const marker = L.marker([pos.regLat, pos.regLng], {
             icon: pos.zoneID > 0 ? greenMarker : redMarker
         });
-        
+
         // Tooltip directo como en loadMap_old - más rápido que lazy loading
         const imgSrc = pos.r2FileName || (pos.imageData?.img ? path + pos.imageData.img : '');
         const zonaClass = pos.zoneName ? 'text-success' : 'text-danger';
         const zonaText = pos.zoneName || 'Fuera de zona';
         const distanciaText = pos.zoneDistance > 0 ? `Distancia: ${pos.zoneDistance} m.` : '';
-        
+
         const infoMarker = `
             <div class='d-inline-flex'>
                 ${imgSrc ? `<img src='${imgSrc}' style='width:40px; height:40px' alt='${pos.userName}'>` : ''}
@@ -654,20 +661,20 @@ function loadMap(data, customId) {
                 ${distanciaText ? `<span>${distanciaText}</span>` : ''}
             </div>
         `;
-        
+
         marker.bindTooltip(infoMarker);
-        
+
         // Separar marcadores según estén en zona o fuera de zona
         if (pos.zoneID > 0) {
             markersEnZonaGroup.addLayer(marker);
             countEnZona++;
-            
+
             // Si está en zona, agregar línea SIN renderer canvas
             if (pos.zoneLat && pos.zoneLng) {
                 const line = L.polyline(
-                    [[pos.regLat, pos.regLng], [pos.zoneLat, pos.zoneLng]], 
-                    { 
-                        color: 'green', 
+                    [[pos.regLat, pos.regLng], [pos.zoneLat, pos.zoneLng]],
+                    {
+                        color: 'green',
                         weight: 1,
                         interactive: false
                     }
@@ -682,14 +689,19 @@ function loadMap(data, customId) {
 
     // Agregar zonas únicas - SIN Canvas renderer
     uniqueZonesArray.forEach(zone => {
+        
+        if (isNaN(zone.zoneLat) || isNaN(zone.zoneLng) || zone.zoneID <= 0 || zone.zoneID === null) {
+            return; // saltar esta zona
+        }
+
         const circle = L.circle([zone.zoneLat, zone.zoneLng], {
             ...circleOptions,
             radius: zone.zoneRadio
         });
         circle.bindTooltip(`Zona: <b>${zone.zoneName}</b><br>Radio: ${zone.zoneRadio}`);
-        
+
         const centerCircle = L.circle([zone.zoneLat, zone.zoneLng], circleOptions2);
-        
+
         zonesGroup.addLayer(circle);
         zonesGroup.addLayer(centerCircle);
     });
@@ -700,7 +712,7 @@ function loadMap(data, customId) {
     overlays[`Fuera de Zona (${countFueraZona})`] = markersFueraZonaGroup;
     overlays["Líneas"] = linesGroup;
     overlays[`Zonas (${uniqueZonesArray.length})`] = zonesGroup;
-    
+
     const layerControl = L.control.layers(null, overlays, { collapsed: false }).addTo(myMap);
 
     // Agregar todos los grupos al mapa por defecto (todos los checkboxes marcados)
@@ -710,7 +722,7 @@ function loadMap(data, customId) {
     myMap.addLayer(zonesGroup);
 
     // Vincular líneas con marcadores "En Zona"
-    myMap.on('overlayadd', function(e) {
+    myMap.on('overlayadd', function (e) {
         // Si se activa "En Zona", mostrar las líneas automáticamente
         if (e.name === `En Zona (${countEnZona})`) {
             if (!myMap.hasLayer(linesGroup)) {
@@ -729,13 +741,13 @@ function loadMap(data, customId) {
         }
     });
 
-    myMap.on('overlayremove', function(e) {
+    myMap.on('overlayremove', function (e) {
         // Si se desactiva "En Zona", ocultar automáticamente las líneas
         if (e.name === `En Zona (${countEnZona})`) {
             if (myMap.hasLayer(linesGroup)) {
                 // Remover el grupo de líneas del mapa
                 myMap.removeLayer(linesGroup);
-                
+
                 // Actualizar el checkbox de líneas
                 const inputs = document.querySelectorAll('.leaflet-control-layers-overlays input');
                 inputs.forEach(input => {
@@ -758,23 +770,23 @@ function loadMap(data, customId) {
             layerControlDiv.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
             layerControlDiv.style.border = '1px solid rgba(0, 0, 0, 0.1)';
         }
-        
+
         // Remover loader cuando termine de renderizar
         $mapContainer.removeClass('loader-in');
     }, 100);
-    
+
     return myMap; // Retornar el mapa para posible uso externo
 }
 
 function loadMapZones(data, customId) {
     const $mapContainer = $('#mapid-zones');
-    
+
     // Validación temprana
     if (!data || data.length === 0) {
         $mapContainer.hide();
         return false;
     }
-    
+
     // Una sola manipulación del DOM
     $mapContainer.show().html(`<div style="width:100%; height:550px;" id="${customId}"></div>`);
 
@@ -785,7 +797,7 @@ function loadMapZones(data, customId) {
 
     // Inicializar mapa
     const myMap = L.map(customId).setView([centerLat, centerLng], 12);
-    
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: `Total de zonas: ${data.length}`,
         maxZoom: 20
@@ -835,7 +847,7 @@ function loadMapZones(data, customId) {
 
         // Crear marcador en el centro de la zona
         const marker = L.marker([lat, lng], { icon: blueMarker });
-        
+
         // Tooltip con información de la zona
         const infoMarker = `
             <div class='d-flex flex-column'>
@@ -845,7 +857,7 @@ function loadMapZones(data, customId) {
                 <span>Evento: ${zone.zoneEvent}</span>
             </div>
         `;
-        
+
         marker.bindTooltip(infoMarker);
         markersGroup.addLayer(marker);
 
@@ -854,7 +866,7 @@ function loadMapZones(data, customId) {
             ...circleOptions,
             radius: radio
         });
-        
+
         const tooltipZone = `
             <b>${zone.zoneName}</b><br>
             Radio: ${zone.zoneRadio} m<br>
@@ -864,7 +876,7 @@ function loadMapZones(data, customId) {
 
         // Crear punto central SIN Canvas renderer
         const centerCircle = L.circle([lat, lng], centerCircleOptions);
-        
+
         zonesGroup.addLayer(circle);
         zonesGroup.addLayer(centerCircle);
     });
@@ -873,7 +885,7 @@ function loadMapZones(data, customId) {
     const overlays = {};
     overlays[`Marcadores (${data.length})`] = markersGroup;
     overlays["Zonas"] = zonesGroup;
-    
+
     L.control.layers(null, overlays, { collapsed: false }).addTo(myMap);
 
     // Agregar todos los grupos al mapa por defecto
@@ -890,11 +902,11 @@ function loadMapZones(data, customId) {
             layerControlDiv.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.15)';
             layerControlDiv.style.border = '1px solid rgba(0, 0, 0, 0.1)';
         }
-        
+
         // Remover loader cuando termine de renderizar
         $mapContainer.removeClass('loader-in');
     }, 100);
-    
+
     return myMap; // Retornar el mapa para posible uso externo
 }
 

@@ -12,7 +12,7 @@ E_ALL();
 $Datos = explode('-', $_GET['Datos']);
 $Fecha = test_input($Datos[1]);
 $Legajo = test_input($Datos[0]);
-$data = array();
+$data = [];
 /** FICHADAS */
 $queryFic = "SELECT REGISTRO.RegHoRe FROM REGISTRO WHERE REGISTRO.RegFeAs='$Fecha' AND REGISTRO.RegLega='$Legajo'";
 /** NOVEDADES */
@@ -27,12 +27,12 @@ $queryONov = "SELECT FICHAS2.FicONov AS FicONov FROM FICHAS2 WHERE FICHAS2.FicLe
 // $ONov = NumRowsQueryMSQL($queryONov);
 // $Hor  = NumRowsQueryMSQL($queryHora);
 
-$data = array(
+$data = [
     // 'Fic'  => $Fic,
     // 'Nov'  => $Nov,
     // 'Hor'  => $Hor,
     // 'Onov' => $ONov,
-);
+];
 
 echo json_encode($data);
 sqlsrv_close($link);

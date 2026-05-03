@@ -4,7 +4,7 @@ header('Access-Control-Allow-Origin: *');
 // session_start();
 require __DIR__ . '/../config/index.php';
 E_ALL();
-$data = array();
+$data = [];
 $url = host() . "/" . HOMEHOST . "/data/GetEstructura.php?tk=" . token() . "&_c=" . $_GET['_c'] . "&_r=" . $_GET['_r'] . "&e=" . $_GET['e'] . "&act&q=" . $_GET['q'];
 // echo $url; exit;
 // $json  = file_get_contents($url);
@@ -18,10 +18,10 @@ $datos = $array[0][$_GET['e']];
 if (isset($_GET['q'])) {
     $q = $_GET['q'];
     foreach ($datos as $key => $value) {
-        $data[] = array(
+        $data[] = [
             'id' => $value['cod'],
             'text' => $value['desc'],
-        );
+        ];
     }
 }
 

@@ -20,13 +20,13 @@ $params['key'] = $params['key'] ?? '';
 
 $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-$paramsApi = array(
+$paramsApi = [
     'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
     'start' => ($params['start']),
     'length' => ($params['length']),
     'zoneName' => urlencode($params['search']['value']),
     'zoneID' => ($params['zoneID']),
-);
+];
 $parametros = '';
 foreach ($paramsApi as $key => $value) {
     $parametros .= ($key == 'key') ? "?$key=$value" : "&$key=$value";
@@ -39,7 +39,7 @@ $api = parseApiResponse($api);
 $totalRecords = $api['TOTAL'] ?? 0;
 if ($api['COUNT'] ?? 0 > 0) {
     foreach ($api['RESPONSE_DATA'] as $r) {
-        $arrayData[] = array(
+        $arrayData[] = [
             'zoneID' => $r['zoneID'],
             'zoneName' => $r['zoneName'],
             'zoneRadio' => $r['zoneRadio'],
@@ -49,13 +49,13 @@ if ($api['COUNT'] ?? 0 > 0) {
             'idCompany' => $r['idCompany'],
             'totalZones' => $r['totalZones'],
             'zoneEvent' => $r['zoneEvent'],
-        );
+        ];
     }
 }
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $arrayData
-);
+];
 echo json_encode($json_data);

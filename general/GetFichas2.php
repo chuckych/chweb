@@ -11,15 +11,15 @@ secure_auth_ch_json();
 E_ALL();
 require __DIR__ . '/../config/conect_mssql.php';
 
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $Datos = explode('-', $_GET['Datos']);
 
 $Fecha = test_input($Datos[1]);
 $Legajo = test_input($Datos[0]);
 
-$data = array();
+$data = [];
 
 /** fichas */
 $query = "SELECT TOP 1 FICHAS.FicHsTr, FICHAS.FicHsAT, FICHAS.FicDiaL, FICHAS.FicDiaF,FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicLega, dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF) AS Horario, dbo.fn_STRMinutos(FicHsTr) AS FicHsTrMin, dbo.fn_STRMinutos(FicHsAT) AS FicHsATMin FROM FICHAS WHERE FICHAS.FicLega='$Legajo' AND FICHAS.FicFech='$Fecha'";
@@ -31,7 +31,7 @@ if (sqlsrv_num_rows($result) > 0) {
     while ($row_Hor = sqlsrv_fetch_array($result)):
         $HorasNeg = ($row_Hor['FicHsTrMin'] < $row_Hor['FicHsATMin']) ? '1' : '0';
         $FicDiaL = ($row_Hor['FicDiaL'] == '0') ? '0' : '1';
-        $data = array(
+        $data = [
             'status' => "ok",
             'FicHsTr' => $row_Hor['FicHsTr'],
             'FicHsAT' => $row_Hor['FicHsAT'],
@@ -40,7 +40,7 @@ if (sqlsrv_num_rows($result) > 0) {
             'FicHorario' => $row_Hor['Horario'],
             'FicDiaL' => $row_Hor['FicDiaL'],
             'HorasNeg' => $HorasNeg
-        );
+        ];
     endwhile;
     sqlsrv_free_stmt($result);
     echo json_encode($data);

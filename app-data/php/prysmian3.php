@@ -67,7 +67,7 @@ function obtenerSumaHorasNovedades($novedades, $codigosNovedad)
     // Sumar todas las horas encontradas y redondear
     return round(array_sum($horasEncontradas), 2);
 }
-function cacheDataFicNoveHoras($nameFile, $payload, $nameCache = '')
+function cacheDataFicNoveHoras(string $nameFile, array $payload, string $nameCache = ''): array
 {
     $inicio = microtime(true);
     $filePath = __DIR__ . "/../json/{$nameFile}.json";
@@ -91,19 +91,19 @@ function cacheDataFicNoveHoras($nameFile, $payload, $nameCache = '')
     }
     return $r;
 }
-function horasADecimal($hora)
+function horasADecimal( string $hora): float
 {
-    return round(minutos_a_horas_decimal(to_minutes($hora)));
+    return round(minutos_a_horas_decimal(to_minutes($hora)) ?? 0, 2);
 }
 try {
     $result = [];
     $inicioScript = microtime(true);
 
     foreach (['FechIni', 'FechFin'] as $key) {
-        if (!$payload[$key] ?? '') { // Validar que las fechas estén presentes
+        if (!($payload[$key] ?? '')) { // Validar que las fechas estén presentes
             throw new Exception("{$key} es requerida", 400);
         }
-        $payload[$key] = date('Y-m-d', strtotime($payload[$key])); // Convertir la fecha a formato 'Y-m-d'
+        $payload[$key] = date('Y-m-d', strtotime($payload[$key] ?? '')); // Convertir la fecha a formato 'Y-m-d'
     }
     $payload['getHor'] = "1";
     $payload['getNov'] = "1";
@@ -214,17 +214,17 @@ try {
         'totalEjecutionScript' => totalEjecution($inicioScript),
     ];
 
-    if ($tipo == 'view') {
+    if (($tipo ?? '') == 'view') {
         return Flight::json($rs);
     }
 
-    if ($tipo == 'xls') {
+    if (($tipo ?? '') == 'xls') {
         $Datos['Data'] = $result;
         require __DIR__ . '/../fn_spreadsheet.php';
         $colsExcel = array_keys($result[0] ?? []);
         require __DIR__ . '/../../informes/custom/prysmian/xls3.php';
     }
-    if ($tipo == 'pdf') {
+    if (($tipo ?? '') == 'pdf') {
         require __DIR__ . '/../../informes/custom/prysmian/pdf3.php';
     }
 

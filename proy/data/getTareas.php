@@ -209,7 +209,7 @@ if ($params['tarTotales']) {
 
     $qTotales .= " GROUP BY `TareProy`";
 
-    $r = array_pdoQuery($qTotales);
+    $r = array_pdoQuery($qTotales) ?? [];
 
     foreach ($r as $key => $row) {
 

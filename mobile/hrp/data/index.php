@@ -144,10 +144,18 @@ function get_data($url)
         $text = "cURL Error ($curl_errno) : $curl_error $url"; // set error message
         $pathLog = date('Ymd') . '_get_data.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         return false;
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    } // close curl handle
     return $output;
 }
 
@@ -243,15 +251,15 @@ Flight::route('GET /devices', function () { // Ruta para obtener los dispositivo
     $baseDevices = $_SESSION["APIMOBILEHRP_MOBILE"] . "/chweb/mobile/hrp/api/v1/devices"; // URL base de la API
     $endpointSetCache = "$baseDevices/cache.php?key=$recid"; // Endpoint para actualizar la cache
     $endpointGetCache = "$baseDevices/cache_$recid.txt"; // Endpoint para obtener la cache
-    $output = get_data($endpointGetCache); // Obtener la cache
+    $output = get_data($endpointGetCache) ?? []; // Obtener la cache
 
     if (!$output) { // Si no hay cache
         actualizar_cache($endpointSetCache); // Actualizar la cache
-        $output = get_data($endpointGetCache); // Obtener la cache
+        $output = get_data($endpointGetCache) ?? []; // Obtener la cache
     }
 
     $data = ($output) ? (unserialize(stripcslashes($output))) : ''; // Deserializer la cache
-    Flight::json(array('data' => $data ?? '')); // Responder con la cache
+    Flight::json(['data' => $data ?? '']); // Responder con la cache
 });
 
 Flight::map('notFound', function () {

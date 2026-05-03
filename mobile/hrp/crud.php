@@ -44,12 +44,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $query = "INSERT INTO FICHADAS (RegTarj, RegFech, RegHora, RegRelo, RegLect, RegEsta) VALUES ('$legajo', '$fecha', '$hora', '9999', '9999', '0')";
 
         if (InsertRegistroMS($query)) {
-            $data = array(
+            $data = [
                 'status' => 'ok',
-                'Mensaje' => 'Se tranfirio el registro.<br>ID: ' . $legajo . '<br>Fecha: ' . fechformat($fecha) . ' Hora: ' . $hora,
-                'Legajo' => ($legajo),
-                'Fecha' => ($fecha),
-            );
+                'Mensaje' => "Se tranfirio el registro.<br>ID: $legajo<br>Fecha: " . fechformat($fecha) . ' Hora: ' . $hora,
+                'Legajo' => $legajo,
+                'Fecha' => $fecha,
+            ];
             echo json_encode($data);
             exit;
         } else {
@@ -81,12 +81,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
-            'deviceEvent' => ($formDeviceEvento),
-            'devicePhoneID' => ($formDevicePhoneID)
-        );
+            'deviceEvent' => $formDeviceEvento,
+            'devicePhoneID' => $formDevicePhoneID
+        ];
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/devices/add/";
@@ -95,20 +95,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
-            $arrayData = $api['RESPONSE_DATA'];
-            auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
+            $arrayData = $api['RESPONSE_DATA'] ?? '';
+            auditoria($api['RESPONSE_DATA']['textAud'] ?? '', 'A', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'upd_device') { // auditado
@@ -136,32 +136,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
             'deviceEvent' => ($formDeviceEvento),
             'devicePhoneID' => ($formDevicePhoneID)
-        );
+        ];
         $api = "api/v1/devices/upd/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'del_device') { // auditado
@@ -184,32 +184,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'deviceName' => urlencode($formDeviceNombre),
             'deviceEvent' => ($formDeviceEvento),
             'devicePhoneID' => ($formDevicePhoneID)
-        );
+        ];
         $api = "api/v1/devices/del/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'add_usuario') { //auditado
@@ -255,7 +255,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'expiredStart' => ($FechaIni),
             'expiredEnd' => ($FechaFin),
             'textLock' => ($formUserMotivo),
-        );
+        ];
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/add/";
@@ -274,20 +274,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $$totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'add_usuarios') {
@@ -372,7 +372,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
@@ -382,7 +382,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'expiredStart' => ($FechaIni),
             'expiredEnd' => ($FechaFin),
             'textLock' => ($formUserMotivo),
-        );
+        ];
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/upd/";
@@ -391,20 +391,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'del_usuario') { //auditado
@@ -427,12 +427,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userName' => urlencode($formUserName),
             'userID' => ($formUserID),
             'userRegid' => ($formUserRegid)
-        );
+        ];
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/users/del/";
@@ -441,20 +441,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'send_mensaje') { // auditado
@@ -479,11 +479,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'phoneRegId' => urlencode($modalMsgRegID),
             'message' => urlencode($modalMsgMensaje),
-        );
+        ];
 
         $api = "api/v1/msg/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -491,21 +491,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
             auditoria("Mensaje Mobile Enviado. Mensaje = $modalMsgMensaje - Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'send_UserSet') { // auditado
@@ -532,11 +532,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'userID' => $userID,
             'phoneRegId' => $phoneRegId,
-        );
+        ];
         // $api = "api/v1/devices/upd/$parametros";
         // $api = "api/v1/devices/del/$parametros";
         $api = "api/v1/set/";
@@ -545,22 +545,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        $totalRecords = $api['TOTAL'];
-
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             $usuario = simple_pdoQuery("SELECT * FROM reg_user_ where reg_user_.id_user  = '$userID' LIMIT 1");
             auditoria("Seteo Mobile Enviado. Usuario = $userID $usuario[nombre]", 'A', $usuario['id_company'], '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'send_DeviceSet') { // auditado    
@@ -596,7 +595,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'rememberUser' => $rememberUser,
             'TMEF' => $deviceTMEF,
@@ -604,7 +603,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'regid' => $params['deviceRegid'],
             'initialize' => $deviceInitialize,
             'AppVersion' => $params['deviceAppVersion'],
-        );
+        ];
 
         // echo Flight::json($paramsApi) . exit;
 
@@ -626,10 +625,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $status = 'error';
             $arrayData = ($api['MESSAGE'] ?? '');
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'add_zone') { // auditado
@@ -672,14 +671,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat' => ($lat),
             'zoneLng' => ($lng),
             'zoneEvent' => ($evento)
-        );
+        ];
 
         $api = "api/v1/zones/add/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -687,20 +686,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'A', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'create_zone') { // auditado
@@ -750,14 +749,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // PrintRespuestaJson('error', 'procesarZonas.php?company='.$idCompany);
         // exit;
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
             'zoneLat' => ($lat),
             'zoneLng' => ($lng),
             'zoneEvent' => ($evento),
-        );
+        ];
 
         $api = "api/v1/zones/add/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -765,9 +764,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
 
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
@@ -777,12 +776,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $regLng = test_input($post['regLng']);
             $regUID = test_input($post['regUID']);
 
-            $paramsApi = array(
+            $paramsApi = [
                 'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'zoneLat' => ($regLat),
                 'zoneLng' => ($regLng),
                 'regUID' => ($regUID)
-            );
+            ];
 
             // $u = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/procesarZonas.php?company=".$idCompany;
             // $g = json_decode(file_get_contents("$u"));
@@ -798,9 +797,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $api = json_decode($api, true);
 
-            $totalRecords = $api['TOTAL'];
+            $totalRecords = $api['TOTAL'] ?? 0;
 
-            if ($api['COUNT'] > 0) {
+            if (($api['COUNT'] ?? 0) > 0) {
                 $status2 = 'ok';
                 $arrayData2 = $api['RESPONSE_DATA'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'P', $idCompany, '32');
@@ -810,12 +809,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'upd_zone') { // auditado
@@ -865,7 +864,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneName' => urlencode($nombre),
             'zoneRadio' => ($radio),
@@ -873,7 +872,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'zoneLng' => ($lng),
             'idZone' => ($idZone),
             'zoneEvent' => ($evento)
-        );
+        ];
 
         $api = "api/v1/zones/upd/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -881,20 +880,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'del_zone') { // auditado
@@ -916,10 +915,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'idZone' => ($idZone)
-        );
+        ];
 
         $api = "api/v1/zones/del/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -927,20 +926,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'B', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'proccesZone') { // auditado
@@ -972,12 +971,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         ;
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'zoneLat' => ($lat),
             'zoneLng' => ($lng),
             'regUID' => ($reguid)
-        );
+        ];
 
         $api = "api/v1/zones/process/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -985,19 +984,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'proccesRegFace') { //auditado
@@ -1016,30 +1015,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $idCompany = $_SESSION['ID_CLIENTE_MOBILE'];
 
-        $paramsApi = array(
+        $paramsApi = [
             'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
             'idApi' => ($id_api),
-        );
+        ];
         $api = "api/v1/enroll/process/";
         $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
         $api = sendRemoteData($url, $paramsApi, $timeout = 10);
 
         $api = json_decode($api, true);
 
-        $totalRecords = $api['TOTAL'];
+        $totalRecords = $api['TOTAL'] ?? 0;
 
-        if ($api['COUNT'] > 0) {
+        if (($api['COUNT'] ?? 0) > 0) {
             $status = 'ok';
             $arrayData = $api['RESPONSE_DATA'];
             auditoria($api['RESPONSE_DATA']['textAud'], 'P', $idCompany, '32');
         } else {
             $status = 'error';
-            $arrayData = $api['MESSAGE'];
+            $arrayData = $api['MESSAGE'] ?? '';
         }
-        $json_data = array(
+        $json_data = [
             "Mensaje" => $arrayData,
             'status' => $status,
-        );
+        ];
         echo json_encode($json_data);
         exit;
     } else if ($_POST['tipo'] == 'formTrain') { // enrolar fotos
@@ -1075,12 +1074,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         if ($type == 'enroll') {
 
-            $params = array(
+            $params = [
                 'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'userID' => $userID,
                 // "idPunchEvent" => implode(',', $post['idPunchEvent']),
                 "idPunchEvent" => $selected,
-            );
+            ];
 
             $api = "api/v1/enroll/enroll/"; //enroll 
             $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
@@ -1088,53 +1087,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $api = sendApiData($url, $params, 'POST');
             $api = json_decode($api, true);
 
-            $totalRecords = $api['TOTAL'];
+            $totalRecords = $api['TOTAL'] ?? 0;
 
-            if ($api['MESSAGE'] == 'OK') {
+            if (($api['MESSAGE'] ?? '') == 'OK') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
                 checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
-                $arrayData = $api['MESSAGE'];
+                $arrayData = $api['MESSAGE'] ?? '';
             }
-            $json_data = array(
+            $json_data = [
                 "Mensaje" => $arrayData,
                 'status' => $status,
-            );
+            ];
             echo json_encode($json_data);
             exit;
         }
         if ($type == 'update') {
 
-            $params = array(
+            $params = [
                 'key' => $_SESSION["RECID_CLIENTE_MOBILE"],
                 'userID' => $userID,
                 // "idPunchEvent" => implode(',', $post['idPunchEvent']),
                 "idPunchEvent" => $selected,
-            );
+            ];
 
             $api = "api/v1/enroll/update/";
             $url = $_SESSION["APIMOBILEHRP_MOBILE"] . "/" . HOMEHOST . "/mobile/hrp/" . $api;
             $api = sendApiData($url, $params, 'POST');
             $api = json_decode($api, true);
 
-            $totalRecords = $api['TOTAL'];
+            $totalRecords = $api['TOTAL'] ?? 0;
 
-            if ($api['MESSAGE'] == 'OK') {
+            if (($api['MESSAGE'] ?? '') == 'OK') {
                 $status = 'ok';
                 $arrayData = $api['RESPONSE_DATA']['responseApi'];
                 auditoria($api['RESPONSE_DATA']['textAud'], 'M', $idCompany, '32');
                 checkenroll($_SESSION["RECID_CLIENTE_MOBILE"], $userID, $_SESSION["APIMOBILEHRP_MOBILE"], 4);
             } else {
                 $status = 'error';
-                $arrayData = $api['MESSAGE'];
+                $arrayData = $api['MESSAGE'] ?? '';
             }
-            $json_data = array(
+            $json_data = [
                 "Mensaje" => $arrayData,
                 'status' => $status,
-            );
+            ];
             echo json_encode($json_data);
             exit;
         }
@@ -1220,7 +1219,7 @@ function sendRemoteDatausuarios($url, $payload, $timeout = 10)
     // Si el payload contiene arrays complejos, convertirlo a JSON
     if (is_array($payload) && array_key_exists('usuarios', $payload)) {
         $jsonPayload = json_encode($payload);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonPayload);
     } else {
@@ -1236,7 +1235,11 @@ function sendRemoteDatausuarios($url, $payload, $timeout = 10)
         $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorCurl.log'; // ruta del archivo de Log de errores
         fileLog($text, $pathLog); // escribir en el log de errores el error
     }
-    curl_close($ch);
+    if (PHP_VERSION_ID >= 80000) {
+        unset($ch);
+    } else {
+        curl_close($ch);
+    } // close curl handle
     if ($file_contents) {
         return $file_contents;
     } else {

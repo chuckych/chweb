@@ -3,9 +3,11 @@ $params = $_REQUEST;
 $data = [];
 $authBasic = base64_encode('chweb:' . HOMEHOST);
 $token = sha1($_SESSION['RECID_CLIENTE']);
-$params['start'] = $params['start'] ?? '0';
-$params['length'] = $params['length'] ?? '99999';
-$_POST['_dr'] = $_POST['_dr'] ?? '';
+
+$params['start'] ??= '0';
+$params['length'] ??= '99999';
+$_POST['_dr'] ??= '';
+
 (!$_POST['_dr']) ? exit : '';
 
 if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
@@ -16,26 +18,27 @@ if (isset($_POST['_dr']) && !empty($_POST['_dr'])) {
     $FechaIni = date('Ymd');
     $FechaFin = date('Ymd');
 }
-$params['Per'] = $params['Per'] ?? '';
-$params['Per2'] = $params['Per2'] ?? '';
-$params['Emp'] = $params['Emp'] ?? '';
-$params['Plan'] = $params['Plan'] ?? '';
-$params['Sect'] = $params['Sect'] ?? '';
-$params['Sec2'] = $params['Sec2'] ?? '';
-$params['Grup'] = $params['Grup'] ?? '';
-$params['Sucur'] = $params['Sucur'] ?? '';
-$params['_l'] = $params['_l'] ?? [];
-$params['draw'] = $params['draw'] ?? '';
-$params['FicFalta'] = $params['FicFalta'] ?? '';
-$params['Tipo'] = $params['Tipo'] ?? '';
-$params['FicNovT'] = $params['FicNovT'] ?? '';
-$params['FicDiaL'] = $params['FicDiaL'] ?? '';
-$params['FicNovI'] = $params['FicNovI'] ?? '';
-$params['FicNovS'] = $params['FicNovS'] ?? '';
-$params['FicNovA'] = $params['FicNovA'] ?? '';
-$params['Filtros'] = $params['Filtros'] ?? [];
-$params['Fic3Nov'] = $params['Fic3Nov'] ?? '';
-$params['NovEx'] = $params['NovEx'] ?? '';
+
+$params['Per'] ??= '';
+$params['Per2'] ??= '';
+$params['Emp'] ??= '';
+$params['Plan'] ??= '';
+$params['Sect'] ??= '';
+$params['Sec2'] ??= '';
+$params['Grup'] ??= '';
+$params['Sucur'] ??= '';
+$params['_l'] ??= [];
+$params['draw'] ??= '';
+$params['FicFalta'] ??= '';
+$params['Tipo'] ??= '';
+$params['FicNovT'] ??= '';
+$params['FicDiaL'] ??= '';
+$params['FicNovI'] ??= '';
+$params['FicNovS'] ??= '';
+$params['FicNovA'] ??= '';
+$params['Filtros'] ??= [];
+$params['Fic3Nov'] ??= '';
+$params['NovEx'] ??= '';
 
 function arrParams($params)
 {
@@ -53,7 +56,7 @@ $Grup = $params['Grup'] ? arrParams($params['Grup']) : explode(',', $_SESSION['G
 $Sucu = $params['Sucur'] ? arrParams($params['Sucur']) : explode(',', $_SESSION['SucuRol']);
 $Sec2 = $params['Sec2'] ? arrParams($params['Sec2']) : explode(',', $_SESSION['Sec2Rol']);
 
-$Filtros = json_decode($params['Filtros'], true) ?: [];
+$Filtros = is_array($params['Filtros']) ? $params['Filtros'] : (json_decode($params['Filtros'], true) ?: []);
 
 $FicNovT = $params['FicNovT'] ? arrParams($params['FicNovT']) : [];
 $FicNovI = $params['FicNovI'] ? arrParams($params['FicNovI']) : [];
@@ -69,8 +72,6 @@ $LegHa = $Filtros['LegHa'] ?? '';
 
 $FicFalta = $params['FicFalta'] ? [intval($params['FicFalta'])] : [];
 $LegTipo = ($params['Tipo'] == '2') ? ["0"] : [];
-
-// $Legajos = $Per ?: ($Per2 ?: []);
 
 $dataParametros = [
     'Lega' => $Per,
@@ -104,27 +105,25 @@ $dataParametros = [
 
 $t_api1 = microtime(true);
 $url = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/ficnovhor/";
-$dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true) ?: [
-    'DATA' => '',
-    'MESSAGE' => '',
-    'RESPONSE_CODE' => ''
-];
+
+$dataApi = requestApi($url, $token, $authBasic, $dataParametros, 20);
+$dataApi = parseApiResponse($dataApi);
+$dataApi['DATA'] ??= [];
+
 $t_api1_end = microtime(true);
-// error_log(print_r($dataApi, true));
 
 /** Obtenemos los Tipos de Horas */
 $t_api2 = microtime(true);
 $dataParamThColu = ["Codi" => [], "ID" => [], "Desc" => "", "Desc2" => "", "start" => 0, "length" => 500];
 $urlTHColu = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/tipohora/";
-$dataApiTHColu = json_decode(requestApi($urlTHColu, $token, $authBasic, $dataParamThColu, 10), true) ?: [
-    'DATA' => '',
-    'MESSAGE' => ''
-];
-$t_api2_end = microtime(true);
+$dataApiTHColu = requestApi($urlTHColu, $token, $authBasic, $dataParamThColu, 20);
+$dataApiTHColu = parseApiResponse($dataApiTHColu);
+$dataApiTHColu['DATA'] ??= [];
 
+$t_api2_end = microtime(true);
 // Procesar tipos de horas para usar en el reporte
 $tiposHora = [];
-if (!empty($dataApiTHColu['DATA'])) {
+if (!empty(($dataApiTHColu['DATA']))) {
     foreach ($dataApiTHColu['DATA'] as $th) {
         $tiposHora[] = [
             'Codi' => $th['Codi'],

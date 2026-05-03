@@ -30,7 +30,7 @@ try {
      * | (0) Eliminar archivos de logs antiguos                        |    
      * +---------------------------------------------------------------+
      */
-    deleteOldLogs(2, __DIR__ . '/../archivos/logs');
+    deleteOldLogs(__DIR__ . '/../archivos/logs', 2);
     /**
      * +---------------------------------------------------------------+
      * | (1) Importar configuración de proyectos desde archivo .json   |

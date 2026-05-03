@@ -14,11 +14,11 @@ $query_Fic = "SELECT REGISTRO.RegLega, REGISTRO.RegHoRe, REGISTRO.RegFeAs FROM R
 
 $stmt = sqlsrv_query($link, $query_Fic);
 while ($row = sqlsrv_fetch_array($stmt)) {
-    $array_Fic[] = array(
+    $array_Fic[] = [
         'Legajo' => $row['RegLega'],
         'RegHoRe' => $row['RegHoRe'],
         'Fecha' => $row['RegFeAs']->format('d/m/Y'),
-    );
+    ];
 }
 sqlsrv_free_stmt($stmt);
 
@@ -30,14 +30,14 @@ while ($row = sqlsrv_fetch_array($stmt)) {
 
     foreach ($array_Fic as $key => $value) {
         if ($row['Gen_Fecha']->format('d/m/Y') == $value['Fecha']) {
-            $array_users[] = array(
+            $array_users[] = [
                 'Legajo' => $row['Gen_Lega'],
                 'Nombre' => $row['Gen_Nombre'],
                 'Fecha' => $row['Gen_Fecha']->format('d/m/Y'),
                 'Dia' => $row['Gen_dia'],
                 'Horario' => $row['Gen_Horario'],
                 'Fichadas' => $array_Fic
-            );
+            ];
         }
     }
 

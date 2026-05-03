@@ -78,4 +78,4 @@
         </div>
     </div>
 </form>
-<script src="op/js/selectTar.js?<?= vjs() ?>"></script>
+<script src="op/js/selectTar.js?<?= time() ?>"></script>

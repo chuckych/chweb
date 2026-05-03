@@ -4,7 +4,7 @@ function opt_encode(): int
 {
     return JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT;
 }
-function deleteOldLogs($days = 2, $path)
+function deleteOldLogs($path, $days = 2)
 {
     $files = glob($path . '/*_import-conf-proy.log');
     foreach ($files as $file) {
@@ -41,7 +41,7 @@ function sumar_dias($fecha, $dias)
 }
 function str_ucwords($str)
 {
-    return trim(ucwords(strtolower($str)));
+    return trim(ucwords(strtolower(strval($str ?? ''))));
 }
 function put_json($path, $data)
 {
@@ -283,11 +283,11 @@ function procesarDatosPlanilla(
 
             $datos = [
                 'nombre' => str_ucwords($fila[0]),
-                'nombreOri' => trim($fila[0]) ?? '',
-                'descripcion' => trim($fila[2]),
-                'empresa' => str_ucwords(trim($fila[3])),
-                'observaciones' => trim($fila[4]),
-                'estado' => str_ucwords(trim($fila[6])),
+                'nombreOri' => trim(strval($fila[0] ?? '')),
+                'descripcion' => trim(strval($fila[2] ?? '')),
+                'empresa' => str_ucwords(trim(strval($fila[3] ?? ''))),
+                'observaciones' => trim(strval($fila[4] ?? '')),
+                'estado' => str_ucwords(trim(strval($fila[6] ?? ''))),
                 'responsable' => $ProyectoResponsable,
                 'procesos' => $ProyectoProcesos,
                 'duracion' => $ProyectoDuracion,

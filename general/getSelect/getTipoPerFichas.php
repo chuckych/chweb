@@ -17,11 +17,11 @@ $ColData = 'FICHAS';
 
 $query = "SELECT $id AS 'id' FROM $ColData $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinRegistros WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY $id ORDER BY $id";
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $result = sqlsrv_query($link, $query, $params, $options);
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row = sqlsrv_fetch_array($result)):
@@ -44,10 +44,10 @@ if (sqlsrv_num_rows($result) > 0) {
         }
 
 
-        $data[] = array(
+        $data[] = [
             'id' => $id,
             'text' => $text,
-        );
+        ];
     endwhile;
 }
 sqlsrv_free_stmt($result);

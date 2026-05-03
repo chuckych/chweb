@@ -25,8 +25,8 @@ function Filtro_Personal($get_per)
     $Filtro_Per = $cond ? "WHERE PERSONAL.LegNume IN (" . implode(',', $get_per) . ")" : '';
     require __DIR__ . '/../config/conect_mssql.php';
     $query = "SELECT PERSONAL.LegNume AS pers_legajo FROM PERSONAL $Filtro_Per";
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($row = sqlsrv_fetch_array($result)):

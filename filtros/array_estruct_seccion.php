@@ -16,10 +16,10 @@ $datos = $array[0][$_GET['e']];
 if (isset($_GET['q'])) {
     $q = $_GET['q'];
     foreach ($datos as $key => $value) {
-        $data[] = array(
+        $data[] = [
             'id' => $value['cod'],
             'text' => $value['desc'],
-        );
+        ];
     }
 }
 

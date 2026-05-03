@@ -122,7 +122,7 @@ class Novedades
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
                     if ($procesar) {
-                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                        $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
                     }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
@@ -226,7 +226,7 @@ class Novedades
                     $Hasta = $agrup['Fechas']['Hasta'];
 
                     if ($procesar) {
-                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                        $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
                     }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
@@ -312,7 +312,7 @@ class Novedades
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
                     if ($procesar) {
-                        $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                        $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
                     }
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');

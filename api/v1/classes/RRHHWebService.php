@@ -57,7 +57,7 @@ class RRHHWebService
      * @example $FechaDesde = '2023-08-23';
      * @example $FechaHasta = '2023-08-26';
      */
-    function procesar_legajos($Legajos = [], $FechaDesde, $FechaHasta): bool
+    public function procesar_legajos(string $FechaDesde, string $FechaHasta, array $Legajos = []): bool
     {
         try {
 
@@ -137,7 +137,11 @@ class RRHHWebService
                     }
                 }
 
-                curl_close($ch);
+                if (PHP_VERSION_ID >= 80000) {
+                    unset($ch);
+                } else {
+                    curl_close($ch);
+                } // close curl handle
                 return true;
             }
             return false;
@@ -181,7 +185,11 @@ class RRHHWebService
                 $text = "{$respuesta}: Error al procesar."; // set error 
                 throw new \Exception($text, $httpCode);
             }
-            curl_close($ch);
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            } // close curl handle
             return true;
         } catch (\Exception $e) {
             $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
@@ -215,7 +223,11 @@ class RRHHWebService
         }
 
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
-        curl_close($ch); // close curl handle
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
         try {
             if ($http_code != '201') {
                 throw new \Exception("Error Ping WebService. \"Cod: $curl_errno: $curl_error\"", 1);
@@ -239,7 +251,7 @@ class RRHHWebService
      * @example $FechaDesde = '2023-08-23';
      * @example $FechaHasta = '2023-08-26';
      */
-    function proyectar_horas($Legajos = [], $FechaDesde, $FechaHasta)
+    public function proyectar_horas(string $FechaDesde, string $FechaHasta, array $Legajos = [])
     {
         try {
 
@@ -315,7 +327,11 @@ class RRHHWebService
                     }
                 }
 
-                curl_close($ch);
+                if (PHP_VERSION_ID >= 80000) {
+                    unset($ch);
+                } else {
+                    curl_close($ch);
+                } // close curl handle
                 return true;
             }
             return false;
@@ -334,7 +350,7 @@ class RRHHWebService
      * @example $FechaDesde = '2023-08-23';
      * @example $FechaHasta = '2023-08-26';
      */
-    function ingresar_novedades($Legajos = [], $FechaDesde, $FechaHasta, $CodNovedad, $HorasNovedad = '00:00', $Laboral = '0', $Justifica = '0', $Observacion = '', $Causa = '0', $Empresa = '0', $Planta = '0', $Sector = '0', $Seccion = '0', $Grupo = '0', $Sucursal = '0')
+    public function ingresar_novedades(string $FechaDesde, string $FechaHasta, $CodNovedad, $HorasNovedad = '00:00', $Laboral = '0', $Justifica = '0', $Observacion = '', $Causa = '0', $Empresa = '0', $Planta = '0', $Sector = '0', $Seccion = '0', $Grupo = '0', $Sucursal = '0', array $Legajos = [])
     {
         try {
             // Validaciones
@@ -343,15 +359,15 @@ class RRHHWebService
 
             $ruta = $this->baseUrl() . '/Novedades';
             $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta);
-            
+
             if (!$dateSegments) {
                 return false;
             }
 
             $LegajosSegment = empty($Legajos) ? [[]] : array_chunk($Legajos, 50);
-            
+
             $parametrosBase = compact('CodNovedad', 'HorasNovedad', 'Laboral', 'Justifica', 'Observacion', 'Causa', 'Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal');
-            
+
             $this->procesarNovedadesPorSegmentos($ruta, $LegajosSegment, $dateSegments, $parametrosBase);
 
             return true;
@@ -410,7 +426,7 @@ class RRHHWebService
 
         foreach ($LegajosSegment as $Legajos) {
             $esSegmentoVacio = empty($Legajos);
-            
+
             if (!$esSegmentoVacio) {
                 $countLegajos = count($Legajos);
                 $Legajo = ($countLegajos === 1) ? $Legajos[0] : '';
@@ -444,7 +460,11 @@ class RRHHWebService
             }
         }
 
-        curl_close($ch);
+        if (PHP_VERSION_ID >= 80000) {
+            unset($ch);
+        } else {
+            curl_close($ch);
+        } // close curl handle
     }
 
     /**

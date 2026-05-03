@@ -41,7 +41,7 @@ class Personal
     public function return_legajos($connDB = '')
     {
         $conn = $this->conect->check_connection($connDB);
-        $FHora = $this->tools->get_fecha_hora($conn, 'PERSONAL');
+        $FHora = $this->tools->get_fecha_hora('PERSONAL', $conn);
         $FHoraCache = $this->log->get_cache('fechaHoraPersonal', '.txt') ?? 0;
 
         if ($FHoraCache >= $FHora) {
@@ -56,7 +56,7 @@ class Personal
     public function get_existing_legajos($connDB, $arrayDeLegajos)
     {
         $conn = $this->conect->check_connection($connDB);
-        $legajos = $this->query_legajos_in($conn, $arrayDeLegajos);
+        $legajos = $this->query_legajos_in($arrayDeLegajos, $conn);
         return $legajos;
     }
     public function legajos()
@@ -106,7 +106,7 @@ class Personal
         $this->log->cache($FechaHora, 'fechaHoraPersonal', '.txt');
         return $data ?? [];
     }
-    private function query_legajos_in($connDB = '', $array)
+    private function query_legajos_in($array, $connDB = '')
     {
         try {
             if (!$array) {

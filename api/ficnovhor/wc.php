@@ -340,10 +340,7 @@ foreach ($arrDPFichas as $key => $Fichas) {
     $e = [];
     if (is_array($Fichas)) {
         $v = '';
-        $e = array_filter($Fichas, function ($v) {
-            return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
-        });
-        $e = array_unique($e);
+        $e = array_unique(filterArr($Fichas));
         if (($e)) {
             if (count($e) > 1) {
                 $e = "'" . implode("','", $e) . "'";
@@ -366,10 +363,7 @@ foreach ($arrDPSec2 as $key => $Fichas) {
     $e = [];
     if (is_array($Fichas)) {
         $v = '';
-        $e = array_filter($Fichas, function ($v) {
-            return ($v !== false && !is_null($v) && ($v != '' || $v == '0'));
-        });
-        $e = array_unique($e);
+        $e = array_unique(filterArr($Fichas));
         $FichasSeccion = " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2)";
         if (($e)) {
             if (count($e) > 1) {
@@ -392,7 +386,8 @@ foreach ($arrDPSec2 as $key => $Fichas) {
 foreach ($arrDPPersonal as $key => $v) {
 
     if (is_array($v)) {
-        if ($e = array_filter($v)) {
+
+        if ($e = filterArr($v)) {
             if ($e) {
                 if (count($e) > 1) {
                     $e = "'" . implode("','", $e) . "'";
@@ -408,14 +403,18 @@ foreach ($arrDPPersonal as $key => $v) {
         }
     } else {
         if ($v) {
-            if ($key == 'LegApNo') {
-                $wc .= " AND PERSONAL.$key LIKE '%$v%'";
-            } else {
-                $wc .= " AND PERSONAL.$key = '$v'";
+            switch ($key) {
+                case 'LegApNo':
+                    $wc .= " AND PERSONAL.$key LIKE '%$v%'";
+                    break;
+                default:
+                    $wc .= " AND PERSONAL.$key = '$v'";
+                    break;
             }
         }
     }
 }
+// error_log("WHERE: " . print_r($wc, true));
 if ($dp['FechIni'] && $dp['FechFin']) {
     $fecha1 = fechFormat($dp['FechIni'], 'Ymd');
     $fecha2 = fechFormat($dp['FechFin'], 'Ymd');

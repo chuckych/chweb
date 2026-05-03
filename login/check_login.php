@@ -159,6 +159,13 @@ if ($authenticated) {
 	}
 	$data_mod = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
 
+	$data_mod = array_map(function ($item) {
+        $item['modsrol'] = (int)$item['modsrol'];
+        $item['tipo'] = (int)$item['tipo'];
+        $item['orden'] = (int)$item['orden'];
+        return $item;
+    }, $data_mod);
+
 	$_SESSION["MODS_ROL"] = $data_mod; // Guardo en la session los módulos asociados al rol
 	$_SESSION["ABM_ROL"] = $ABMRol; // Guardo en la session los permisos del rol
 	$_SESSION["USER_AD"] = $row['user_ad']; // Guardo en la session los permisos del rol
@@ -301,6 +308,10 @@ if ($authenticated) {
 	$_SESSION['VER_DB_CH'] = false;
 	$_SESSION['CONECT_MSSQL'] = false;
 	$modRol = array_pdoQuery("SELECT mod_roles.modulo AS 'id', modulos.nombre as 'modulo' FROM mod_roles INNER JOIN modulos ON mod_roles.modulo = modulos.id WHERE mod_roles.recid_rol ='$row[recid_rol]'");
+	$modRol = array_map(function ($item) {
+		$item['id'] = (string)$item['id'];
+		return $item;
+	}, $modRol);
 	$_SESSION['MODULOS'] = $modRol;
 
 	// OBTENER ETIQUETAS DE ESTRUCTURA PARA EL CLIENTE

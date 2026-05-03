@@ -42,16 +42,16 @@ $_POST['EmpCodi'] = $_POST['EmpCodi'] ?? '';
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $NacDesc = (test_input(($_POST['NacDesc'])));
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
     // sleep(2);
     if (valida_campo($_POST['NacDesc'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -64,7 +64,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $NacDesc);
+            $data = ['status' => 'duplicado', 'desc' => $NacDesc];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -84,11 +84,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
             $NacCodi = $fila['NacCodi'] + 1;
             $Dato = 'Nacionalidad: ' . $NacDesc . ': ' . $NacCodi;
 
-            $procedure_params = array(
-                array(&$NacCodi),
-                array(&$NacDesc),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$NacCodi],
+                [&$NacDesc],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_NACIONESInsert @NacCodi=?,@NacDesc=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -104,11 +104,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $NacCodi, 'desc' => $NacDesc);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $NacCodi, 'desc' => $NacDesc];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $NacCodi, 'desc' => $NacDesc);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $NacCodi, 'desc' => $NacDesc];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -126,16 +126,16 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_nacion'] == 'true'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta_provincia')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_prov = (test_input(($_POST['desc_prov'])));
     /** Descripcion */
     $FechaHora = date('Ymd H:i:s');
 
     if (valida_campo($_POST['desc_prov'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -147,7 +147,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_prov);
+            $data = ['status' => 'duplicado', 'desc' => $desc_prov];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -167,11 +167,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
             $ProCodi = $fila['ProCodi'] + 1;
             $Dato = 'Provincia: ' . $desc_prov . ': ' . $ProCodi;
 
-            $procedure_params = array(
-                array(&$ProCodi),
-                array(&$desc_prov),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$ProCodi],
+                [&$desc_prov],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_PROVINCIInsert @ProCodi=?,@ProDesc=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -187,11 +187,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $ProCodi, 'desc' => $desc_prov];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -209,9 +209,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_provincia'] == 'alta
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta_localidad')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_local = test_input($_POST['desc_local']);
     /** Descripcion */
@@ -219,7 +219,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
     // print_r($desc_local);
     // exit;
     if (valida_campo($_POST['desc_local'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -231,7 +231,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_local);
+            $data = ['status' => 'duplicado', 'desc' => $desc_local];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -251,11 +251,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
             $LocCodi = $fila['LocCodi'] + 1;
             $Dato = 'Localidad: ' . $desc_local . ': ' . $LocCodi;
 
-            $procedure_params = array(
-                array(&$LocCodi),
-                array(&$desc_local),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$LocCodi],
+                [&$desc_local],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_LOCALIDAInsert @LocCodi=?,@LocDesc=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -271,11 +271,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_localidad'] == 'alta
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $LocCodi, 'desc' => $desc_local];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -301,7 +301,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
         $payload = Flight::request()->data;
 
         if (valida_campo($payload['desc_planta'] ?? '')) {
-            $data = array('status' => 'requerido');
+            $data = ['status' => 'requerido'];
             Flight::json($data);
             exit;
         }
@@ -323,17 +323,17 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             $desc_planta = $result['DATA']['Desc'];
             $Dato = 'Planta: ' . $desc_planta . ': ' . $PlaCodi;
             audito_ch('A', $Dato, '10');
-            $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
+            $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta];
         } else {
-            $data = array('status' => 'error', 'dato' => $result['MESSAGE'], 'cod' => '', 'desc' => $payload['desc_planta']);
+            $data = ['status' => 'error', 'dato' => $result['MESSAGE'], 'cod' => '', 'desc' => $payload['desc_planta']];
         }
         Flight::json($data);
         exit;
     }
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_planta = test_input($_POST['desc_planta']);
     /** Descripcion */
@@ -341,7 +341,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
 
 
     if (valida_campo($_POST['desc_planta'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -352,7 +352,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_planta);
+            $data = ['status' => 'duplicado', 'desc' => $desc_planta];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -372,11 +372,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
             $PlaCodi = $fila['PlaCodi'] + 1;
             $Dato = 'Planta: ' . $desc_planta . ': ' . $PlaCodi;
 
-            $procedure_params = array(
-                array(&$PlaCodi),
-                array(&$desc_planta),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$PlaCodi],
+                [&$desc_planta],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_PLANTASInsert @PlaCodi=?,@PlaDesc=?,@FechaHora=?";
             /** Query del Store Procedure */
@@ -392,11 +392,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $PlaCodi, 'desc' => $desc_planta];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -414,9 +414,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_planta'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
     $EmpRazon = test_input($_POST['EmpRazon']);
     /** Razon Social */
     $EmpTipo = test_input($_POST['EmpTipo']);
@@ -448,7 +448,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
     $FechaHora = date('Ymd H:i:s');
 
     if (valida_campo($_POST['EmpRazon'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -459,7 +459,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $EmpRazon);
+            $data = ['status' => 'duplicado', 'desc' => $EmpRazon];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -497,11 +497,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(1);
-        $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon);
+        $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon);
+        $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $EmpCodi, 'desc' => $EmpRazon];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -517,9 +517,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_sector = test_input($_POST['desc_sector']);
     /** Descripcion */
@@ -527,7 +527,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
 
 
     if (valida_campo($_POST['desc_sector'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -539,7 +539,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_sector);
+            $data = ['status' => 'duplicado', 'desc' => $desc_sector];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -560,12 +560,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
             $Dato = 'Sector: ' . $desc_sector . ': ' . $SecCodi;
             $SecTaIn = '';
 
-            $procedure_params = array(
-                array(&$SecCodi),
-                array(&$desc_sector),
-                array(&$SecTaIn),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$SecCodi],
+                [&$desc_sector],
+                [&$SecTaIn],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_SECTORESInsert @SecCodi=?,@SecDesc=?,@SecTaIn=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -580,12 +580,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
                 try {
                     $Se2Codi = 0;
                     $Se2Desc = '';
-                    $procedure_params_seccion = array(
-                        array(&$SecCodi),
-                        array(&$Se2Codi),
-                        array(&$Se2Desc),
-                        array(&$FechaHora)
-                    );
+                    $procedure_params_seccion = [
+                        [&$SecCodi],
+                        [&$Se2Codi],
+                        [&$Se2Desc],
+                        [&$FechaHora]
+                    ];
                     // INSERTAMOS EN LA TABLA SECCIONES EL REGISTRO CON VALOR 0
                     $sql = "exec DATA_SECCIONInsert @SecCodi=?,@Se2Codi=?,@Se2Desc=?,@FechaHora=?";
                     $stmt = sqlsrv_prepare($link, $sql, $procedure_params_seccion);
@@ -595,7 +595,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
                     sqlsrv_execute($stmt); // ejecuto la sentencia
                 } catch (Exception $e) {
                     echo $e->getMessage();
-                    $data = array('status' => 'Error', 'dato' => $e->getMessage());
+                    $data = ['status' => 'Error', 'dato' => $e->getMessage()];
                     echo json_encode($data);
                     exit;
                 }
@@ -606,11 +606,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $SecCodi, 'desc' => $desc_sector];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -628,9 +628,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sector'))
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $Se2Desc = test_input($_POST['Se2Desc']);
     /** Descripcion */
@@ -640,7 +640,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
 
 
     if (valida_campo($_POST['Se2Desc'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -652,7 +652,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $Se2Desc);
+            $data = ['status' => 'duplicado', 'desc' => $Se2Desc];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -673,12 +673,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
     $Se2Codi = $Se2Codi ?? '1';
     $Dato = 'Seccion: ' . $Se2Codi . ': ' . $Se2Desc . '. Sector: ' . $SecCodi;
 
-    $procedure_params = array(
-        array(&$SecCodi),
-        array(&$Se2Codi),
-        array(&$Se2Desc),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$SecCodi],
+        [&$Se2Codi],
+        [&$Se2Desc],
+        [&$FechaHora]
+    ];
     // echo json_encode($procedure_params);exit;
 
     $sql = "exec DATA_SECCIONInsert @SecCodi=?,@Se2Codi=?,@Se2Desc=?,@FechaHora=?";
@@ -695,14 +695,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(1);
-        $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $Se2Codi, 'desc' => $Se2Desc);
+        $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $Se2Codi, 'desc' => $Se2Desc];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $data[] = array("status" => "error", "dato" => $mensaje[3], 'cod' => $Se2Codi, 'desc' => $Se2Desc);
+                $data[] = ["status" => "error", "dato" => $mensaje[3], 'cod' => $Se2Codi, 'desc' => $Se2Desc];
             }
         }
 
@@ -725,9 +725,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_seccion')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_grupo = test_input($_POST['desc_grupo']);
     /** Descripcion */
@@ -735,7 +735,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
 
 
     if (valida_campo($_POST['desc_grupo'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -747,7 +747,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_grupo);
+            $data = ['status' => 'duplicado', 'desc' => $desc_grupo];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -767,11 +767,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
             $GruCodi = $fila['GruCodi'] + 1;
             $Dato = 'Grupo: ' . $desc_grupo . ': ' . $GruCodi;
 
-            $procedure_params = array(
-                array(&$GruCodi),
-                array(&$desc_grupo),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$GruCodi],
+                [&$desc_grupo],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_GRUPOSInsert @GruCodi=?,@GruDesc=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -787,11 +787,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(1);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $GruCodi, 'desc' => $desc_grupo];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -809,9 +809,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_grupo')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_sucur = test_input($_POST['desc_sucur']);
     /** Descripcion */
@@ -819,7 +819,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
 
 
     if (valida_campo($_POST['desc_sucur'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -831,7 +831,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_sucur);
+            $data = ['status' => 'duplicado', 'desc' => $desc_sucur];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -851,11 +851,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
             $SucCodi = $fila['SucCodi'] + 1;
             $Dato = 'Sucursal: ' . $desc_sucur . ': ' . $SucCodi;
 
-            $procedure_params = array(
-                array(&$SucCodi),
-                array(&$desc_sucur),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$SucCodi],
+                [&$desc_sucur],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_SUCURSALESInsert @SucCodi=?,@SucDesc=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -871,11 +871,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $SucCodi, 'desc' => $desc_sucur];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -893,9 +893,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_sucur')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_tarea = test_input($_POST['desc_tarea']);
     /** Descripcion */
@@ -903,7 +903,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
 
 
     if (valida_campo($_POST['desc_tarea'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -915,7 +915,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_tarea);
+            $data = ['status' => 'duplicado', 'desc' => $desc_tarea];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -936,12 +936,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
             $Dato = 'Tareas Prod: ' . $desc_tarea . ': ' . $TareCodi;
             $TareEstado = '0';
 
-            $procedure_params = array(
-                array(&$TareCodi),
-                array(&$desc_tarea),
-                array(&$TareEstado),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$TareCodi],
+                [&$desc_tarea],
+                [&$TareEstado],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_TAREASInsert @TareCodi=?,@TareDesc=?,@TareEstado=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -957,11 +957,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $TareCodi, 'desc' => $desc_tarea];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -979,9 +979,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_tarea')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_convenio')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_convenio = test_input($_POST['desc_convenio']);
     /** Descripcion */
@@ -993,7 +993,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
 
 
     if (valida_campo($_POST['desc_convenio'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -1005,7 +1005,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_convenio);
+            $data = ['status' => 'duplicado', 'desc' => $desc_convenio];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -1026,13 +1026,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
             $Dato = 'Convenio: ' . $desc_convenio . ': ' . $ConCodi;
             $TareEstado = '0';
 
-            $procedure_params = array(
-                array(&$ConCodi),
-                array(&$desc_convenio),
-                array(&$ConDias),
-                array(&$ConTDias),
-                array(&$FechaHora)
-            );
+            $procedure_params = [
+                [&$ConCodi],
+                [&$desc_convenio],
+                [&$ConDias],
+                [&$ConTDias],
+                [&$FechaHora]
+            ];
 
             $sql = "exec DATA_CONVENIOInsert @ConCodi=?,@ConDesc=?,@ConDias=?,@ConTDias=?,@FechaHora=?";
             /** Query del Store Prcedure */
@@ -1048,11 +1048,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
                 audito_ch('A', $Dato, '10');
                 /** */
                 // sleep(3);
-                $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias);
+                $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias];
                 echo json_encode($data);
                 /** retorno resultados en formato json */
             } else {
-                $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio);
+                $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $ConCodi, 'desc' => $desc_convenio];
                 echo json_encode($data);
                 die(print_r(sqlsrv_errors(), true));
             }
@@ -1070,9 +1070,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'alta_conv
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_convenio')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $desc_convenio = test_input($_POST['desc_convenio']);
     /** Descripcion */
@@ -1086,7 +1086,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
 
 
     if (valida_campo($_POST['desc_convenio'])) {
-        $data = array('status' => 'requerido');
+        $data = ['status' => 'requerido'];
         echo json_encode($data);
         exit;
     }
@@ -1097,7 +1097,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'nomod', 'desc' => $desc_convenio);
+            $data = ['status' => 'nomod', 'desc' => $desc_convenio];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -1110,7 +1110,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'duplicado', 'desc' => $desc_convenio);
+            $data = ['status' => 'duplicado', 'desc' => $desc_convenio];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -1121,13 +1121,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
     $Dato = 'Convenio: ' . $desc_convenio . ': ' . $codConv;
     $TareEstado = '0';
 
-    $procedure_params = array(
-        array(&$codConv),
-        array(&$desc_convenio),
-        array(&$ConDias),
-        array(&$ConTDias),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$codConv],
+        [&$desc_convenio],
+        [&$ConDias],
+        [&$ConTDias],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_CONVENIOUpdate @ConCodi=?,@ConDesc=?,@ConDias=?,@ConTDias=?,@FechaHora=?";
     /** Query del Store Prcedure */
@@ -1143,11 +1143,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato_conv'] == 'mod_conve
         audito_ch('M', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'okm', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias);
+        $data = ['status' => 'okm', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio, 'ConDias' => $ConDias, 'ConTDias' => $ConTDias];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio);
+        $data = ['status' => 'error', 'dato' => $Dato, 'cod' => $codConv, 'desc' => $desc_convenio];
         echo json_encode($data);
         die(print_r(sqlsrv_errors(), true));
     }
@@ -1163,15 +1163,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
     if (valida_campo($_POST['cod-diasvac'])) {
-        $data = array('status' => 'cod_requerido');
+        $data = ['status' => 'cod_requerido'];
         echo json_encode($data);
         exit;
     }
     ;
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $CVConv = test_input($_POST['cod-diasvac']);
     /** cod-diasvac */
@@ -1191,20 +1191,20 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'Conv: ' . $CVConv . '. Años: ' . $CVAnios . '. Meses: ' . $CVMeses);
+            $data = ['status' => 'existe', 'dato' => 'Conv: ' . $CVConv . '. Años: ' . $CVAnios . '. Meses: ' . $CVMeses];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
         exit;
     }
     /** fin */
-    $procedure_params = array(
-        array(&$CVConv),
-        array(&$CVAnios),
-        array(&$CVMeses),
-        array(&$CVDias),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$CVConv],
+        [&$CVAnios],
+        [&$CVMeses],
+        [&$CVDias],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_CONVVACAInsert @CVConv=?,@CVAnios=?,@CVMeses=?,@CVDias=?,@FechaHora=?";
     /** Query del Store Prcedure */
@@ -1220,11 +1220,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = ['status' => 'ok', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1238,9 +1238,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-diasvac'] == 'alta-d
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $CVConv = test_input($_POST['del_cod']);
     /** cod-diasvac */
@@ -1254,11 +1254,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true'))
 
     $Dato = 'Antiguedad Convenio: ' . $CVConv . ': ' . $CVAnios . '-' . $CVMeses . '-' . $CVDias;
 
-    $procedure_params = array(
-        array(&$CVConv),
-        array(&$CVAnios),
-        array(&$CVMeses),
-    );
+    $procedure_params = [
+        [&$CVConv],
+        [&$CVAnios],
+        [&$CVMeses],
+    ];
 
     $sql = "exec DATA_CONVVACADelete @CVConv=?,@CVAnios=?,@CVMeses=?";
     /** Query del Store Prcedure */
@@ -1274,11 +1274,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvVac'] == 'true'))
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1294,15 +1294,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     // $data = array('status' => 'diasvac_ok');
     // echo json_encode($data);exit;
     if (valida_campo($_POST['CFConv']) || valida_campo($_POST['CFFech']) || valida_campo($_POST['CFDesc'])) {
-        $data = array('status' => 'requeridos');
+        $data = ['status' => 'requeridos'];
         echo json_encode($data);
         exit;
     }
     ;
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $FechaHora = date('Ymd H:i:s');
 
@@ -1317,7 +1317,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     $CFCodJ = test_input($_POST['CFCodJ']);
     $CFInfM = ($_POST['CFInfM'] == 'on') ? '1' : '0';
     $CFInfJ = ($_POST['CFInfJ'] == 'on') ? '1' : '0';
-    ;
+    
     $CFCodM2 = test_input($_POST['CFCodM2']);
     $CFCodJ2 = test_input($_POST['CFCodJ2']);
     $CFCodM3 = test_input($_POST['CFCodM3']);
@@ -1336,7 +1336,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'Feriado convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y'));
+            $data = ['status' => 'existe', 'dato' => 'Feriado convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y')];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -1344,23 +1344,23 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
     }
     /** fin */
 
-    $procedure_params = array(
-        array(&$CFConv),
-        array(&$CFFech),
-        array(&$CFDesc),
-        array(&$CFCodM),
-        array(&$CFCodJ),
-        array(&$CFInfM),
-        array(&$CFInfJ),
-        array(&$CFCodM2),
-        array(&$CFCodJ2),
-        array(&$CFCodM3),
-        array(&$CFCodJ3),
-        array(&$CFInFeTR),
-        array(&$CFInMeNL),
-        array(&$CFInJoNL),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$CFConv],
+        [&$CFFech],
+        [&$CFDesc],
+        [&$CFCodM],
+        [&$CFCodJ],
+        [&$CFInfM],
+        [&$CFInfJ],
+        [&$CFCodM2],
+        [&$CFCodJ2],
+        [&$CFCodM3],
+        [&$CFCodJ3],
+        [&$CFInFeTR],
+        [&$CFInMeNL],
+        [&$CFInJoNL],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_CONVFERIInsert @CFConv=?,@CFFech=?,@CFDesc=?,@CFCodM=?,@CFCodJ=?,@CFInfM=?,@CFInfJ=?,@CFCodM2=?,@CFCodJ2=?,@CFCodM3=?,@CFCodJ3=?,@CFInFeTR=?,@CFInMeNL=?,@CFInJoNL=?,@FechaHora=?";
     /** Query del Store Prcedure */
@@ -1376,11 +1376,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato, 'cod' => $CFConv);
+        $data = ['status' => 'ok', 'dato' => $Dato, 'cod' => $CFConv];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1394,9 +1394,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta-feriConv'] == 'alta-
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $CFConv = test_input($_POST['CFConv']);
     $CFFech = test_input($_POST['CFFech']);
@@ -1406,10 +1406,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
 
     $Dato = 'Feriado Convenio: ' . $CFConv . '. Fecha: ' . Fech_Format_Var($CFFech, 'd/m/Y') . '. Desc: ' . $CFDesc;
 
-    $procedure_params = array(
-        array(&$CFConv),
-        array(&$CFFech),
-    );
+    $procedure_params = [
+        [&$CFConv],
+        [&$CFFech],
+    ];
 
     $sql = "exec DATA_CONVFERIDelete @CFConv=?,@CFFech=?";
     /** Query del Store Prcedure */
@@ -1425,11 +1425,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1443,7 +1443,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['del_ConvFeri'] == 'true')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')) {
 
     if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
-        $data = array('status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida');
+        $data = ['status' => 'requeridos', 'dato' => 'Fecha de Ingreso es requerida'];
         echo json_encode($data);
         exit;
     }
@@ -1463,12 +1463,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
 
     $InEgCaus = test_input($_POST['InEgCaus']);
 
-    $payload = array(
+    $payload = [
         "Lega" => $InEgLega,
         "FeIn" => $InEgFeIn,
         "FeEg" => $InEgFeEg,
         "Caus" => $InEgCaus
-    );
+    ];
 
     // print_r($payload).exit;
 
@@ -1483,11 +1483,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
     if ($sendApi['MESSAGE'] == 'OK') {
 
         audito_ch('A', $Dato, '10');
-        $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
+        $data = ['status' => 'ok', 'dato' => $sendApi['DATA']];
         echo json_encode($data);
     } else {
 
-        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        $data = ['status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']];
         echo json_encode($data);
     }
 
@@ -1630,7 +1630,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_perineg')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg')) {
 
     if (valida_campo($_POST['InEgLega']) || valida_campo($_POST['InEgFeIn'])) {
-        $data = array('status' => 'requeridos');
+        $data = ['status' => 'requeridos'];
         echo json_encode($data);
         exit;
     }
@@ -1650,12 +1650,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
 
     $InEgCaus = test_input($_POST['InEgCaus']);
 
-    $payload = array(
+    $payload = [
         "Lega" => $InEgLega,
         "FeIn" => $InEgFeIn,
         "FeEg" => $InEgFeEg,
         "Caus" => $InEgCaus
-    );
+    ];
 
     // print_r($payload).exit;
 
@@ -1670,11 +1670,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'edita_perineg'
     if ($sendApi['MESSAGE'] == 'OK') {
 
         audito_ch('M', $Dato, '10');
-        $data = array('status' => 'ok', 'dato' => $sendApi['DATA']);
+        $data = ['status' => 'ok', 'dato' => $sendApi['DATA']];
         echo json_encode($data);
     } else {
 
-        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        $data = ['status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']];
         echo json_encode($data);
     }
 
@@ -1685,7 +1685,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
 
 
     if (valida_campo($_POST['DelInEgLega']) || valida_campo($_POST['DelInEgFeIn'])) {
-        $data = array('status' => 'requeridos');
+        $data = ['status' => 'requeridos'];
         echo json_encode($data);
         exit;
     }
@@ -1696,10 +1696,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
 
     $Dato = 'Leg: ' . $InEgLega . '. In: ' . Fech_Format_Var($InEgFeIn, 'd/m/Y');
 
-    $payload = array(
+    $payload = [
         "Lega" => $InEgLega,
         "FeIn" => $InEgFeIn
-    );
+    ];
 
     $sendApi['DATA'] = $sendApi['DATA'] ?? '';
     $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
@@ -1712,14 +1712,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
     if ($sendApi['MESSAGE'] == 'OK') {
 
         audito_ch('B', $Dato, '10');
-        $data = array('status' => 'ok_delete', 'dato' => $sendApi['DATA']);
+        $data = ['status' => 'ok_delete', 'dato' => $sendApi['DATA']];
         Flight::json($data);
 
         audito_ch('B', $Dato, '10');
         exit;
     } else {
 
-        $data = array('status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']);
+        $data = ['status' => $sendApi['MESSAGE'], 'dato' => $sendApi['DATA']];
         Flight::json($data);
     }
 
@@ -1778,15 +1778,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
     // echo json_encode($data);exit;
     $_POST['LPreCodi'] = $_POST['LPreCodi'] ?? '';
     if (valida_campo($_POST['LPreCodi'])) {
-        $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.');
+        $data = ['status' => 'cod_requerido', 'dato' => 'Debe seleccionar un premio.'];
         echo json_encode($data);
         exit;
     }
     ;
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $LPreLega = test_input($_POST['LPreLega']);
     /** Legajo */
@@ -1802,18 +1802,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'Ya existe premio.');
+            $data = ['status' => 'existe', 'dato' => 'Ya existe premio.'];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
         exit;
     }
     /** fin */
-    $procedure_params = array(
-        array(&$LPreLega),
-        array(&$LPreCodi),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$LPreLega],
+        [&$LPreCodi],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_PERPREMIInsert @LPreLega=?,@LPreCodi=?,@FechaHora=?";
     /** Query del Store Prcedure */
@@ -1829,11 +1829,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = ['status' => 'ok', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1847,9 +1847,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERPREMI'] == 'PERPREMI')
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $LPreLega = test_input($_POST['DelLPreLega']);
     $LPreCodi = test_input(($_POST['DelLPreCodi']));
@@ -1857,10 +1857,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
 
     $Dato = 'Premio: (' . $LPreCodi . '). Legajo: ' . $LPreLega;
 
-    $procedure_params = array(
-        array(&$LPreLega),
-        array(&$LPreCodi),
-    );
+    $procedure_params = [
+        [&$LPreLega],
+        [&$LPreCodi],
+    ];
     // echo json_encode($procedure_params);exit; 
 
     $sql = "exec DATA_PERPREMIDelete @LPreLega=?,@LPreCodi=?";
@@ -1877,11 +1877,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerPremi'] == 'true'))
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -1896,15 +1896,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
     require_once __DIR__ . '/../../config/conect_mssql.php';
     $_POST['OTROConCodi'] = $_POST['OTROConCodi'] ?? '';
     if (valida_campo($_POST['OTROConCodi'])) {
-        $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.');
+        $data = ['status' => 'cod_requerido', 'dato' => 'Debe seleccionar un concepto.'];
         echo json_encode($data);
         exit;
     }
     ;
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $OTROConLega = test_input($_POST['OTROConLega']);
     /** Legajo */
@@ -1920,19 +1920,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'Ya existe concepto.');
+            $data = ['status' => 'existe', 'dato' => 'Ya existe concepto.'];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
         exit;
     }
     /** fin */
-    $procedure_params = array(
-        array(&$OTROConLega),
-        array(&$OTROConCodi),
-        array(&$OTROConValor),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$OTROConLega],
+        [&$OTROConCodi],
+        [&$OTROConValor],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_OTROCONLEGInsert @OTROConLega=?,@OTROConCodi=?, @OTROConValor=?, @FechaHora=?";
     /** Query del Store Prcedure */
@@ -1948,11 +1948,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = ['status' => 'ok', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         die(print_r(sqlsrv_errors(), true));
     }
@@ -1967,9 +1967,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['OTROCONLEG'] == 'OTROCONL
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $OTROConLega = test_input($_POST['OTROConLega']);
     $OTROConCodi = test_input(($_POST['OTROConCodi']));
@@ -1977,10 +1977,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
 
     $Dato = 'Concepto: (' . $OTROConCodi . '). Legajo: ' . $OTROConLega;
 
-    $procedure_params = array(
-        array(&$OTROConLega),
-        array(&$OTROConCodi),
-    );
+    $procedure_params = [
+        [&$OTROConLega],
+        [&$OTROConCodi],
+    ];
     // echo json_encode($procedure_params);exit; 
 
     $sql = "exec DATA_OTROCONLEGDelete @OTROConLega=?,@OTROConCodi=?";
@@ -1997,11 +1997,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelOtroConLeg'] == 'true'
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -2017,15 +2017,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
     require_once __DIR__ . '/../../config/conect_mssql.php';
     $_POST['LegHoAl'] = $_POST['LegHoAl'] ?? '';
     if (valida_campo($_POST['LegHoAl'])) {
-        $data = array('status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.');
+        $data = ['status' => 'cod_requerido', 'dato' => 'Debe seleccionar un horario.'];
         echo json_encode($data);
         exit;
     }
     ;
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $LegHoAl = test_input($_POST['LegHoAl']);
     /** Legajo */
@@ -2040,18 +2040,18 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => 'Ya existe horario.');
+            $data = ['status' => 'existe', 'dato' => 'Ya existe horario.'];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
         exit;
     }
     /** fin */
-    $procedure_params = array(
-        array(&$LeHALega),
-        array(&$LegHoAl),
-        array(&$FechaHora)
-    );
+    $procedure_params = [
+        [&$LeHALega],
+        [&$LegHoAl],
+        [&$FechaHora]
+    ];
 
     $sql = "exec DATA_PERHOALTInsert @LeHALega=?,@LeHAHora=?, @FechaHora=?";
     /** Query del Store Prcedure */
@@ -2067,11 +2067,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
         audito_ch('A', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = ['status' => 'ok', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         die(print_r(sqlsrv_errors(), true));
     }
@@ -2086,19 +2086,19 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERHOAL'] == 'PERHOAL')) 
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $LeHALega = test_input($_POST['LeHALega']);
     $LeHAHora = test_input(($_POST['LeHAHora']));
 
 
     $Dato = 'Horario Alternativo: (' . $LeHAHora . '). Legajo: ' . $LeHALega;
-    $procedure_params = array(
-        array(&$LeHALega),
-        array(&$LeHAHora),
-    );
+    $procedure_params = [
+        [&$LeHALega],
+        [&$LeHAHora],
+    ];
     // echo json_encode($procedure_params);exit; 
 
     $sql = "exec DATA_PERHOALTDelete @LeHALega=?,@LeHAHora=?";
@@ -2115,11 +2115,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerHoAl'] == 'true')) 
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -2626,9 +2626,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $IDCodigo = test_input($_POST['IDCodigo']);
     $IDLegajo = test_input($_POST['IDLegajo']);
@@ -2637,9 +2637,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
 
     $Dato = 'Identificador: (' . $IDCodigo . '). Legajo: ' . $IDLegajo;
 
-    $procedure_params = array(
-        array(&$IDCodigo)
-    );
+    $procedure_params = [
+        [&$IDCodigo]
+    ];
 
     $sql = "exec DATA_IDENTIFICADelete @IDCodigo=?";
     /** Query del Store Prcedure */
@@ -2655,11 +2655,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
         audito_ch('B', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -2674,9 +2674,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelIdentifica'] == 'true'
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $LegGrHa = test_input($_POST['LegGrHa2']);
     $LegajoGrHa = test_input($_POST['LegajoGrHa']);
@@ -2699,11 +2699,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['GrupoHabi'] == 'true')) {
         audito_ch('M', $Dato, '10');
         /** */
         // sleep(3);
-        $data = array('status' => 'ok', 'dato' => $Dato, 'LegGrHa' => $LegGrHa);
+        $data = ['status' => 'ok', 'dato' => $Dato, 'LegGrHa' => $LegGrHa];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }
@@ -2719,14 +2719,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
     if (valida_campo($_POST['ReloMarca']) or valida_campo($_POST['RelFech']) or valida_campo($_POST['RelFech2'])) {
-        $data = array('status' => 'cod_requerido', 'dato' => 'Datos requeridos.');
+        $data = ['status' => 'cod_requerido', 'dato' => 'Datos requeridos.'];
         echo json_encode($data);
         exit;
     }
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $ReloMarca = ($_POST['ReloMarca']);
     $ReloMarca = explode("-", $ReloMarca);
@@ -2739,7 +2739,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
     $FechaHora = date('Ymd H:i:s');
 
     if ($RelFech > $RelFech2) {
-        $data = array('status' => 'error', 'dato' => 'Fecha Inválida.');
+        $data = ['status' => 'error', 'dato' => 'Fecha Inválida.'];
         echo json_encode($data);
         exit;
     }
@@ -2754,7 +2754,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
     $result = sqlsrv_query($link, $query, $params, $options);
     if (sqlsrv_num_rows($result) > 0) {
         while ($fila = sqlsrv_fetch_array($result)) {
-            $data = array('status' => 'existe', 'dato' => '');
+            $data = ['status' => 'existe', 'dato' => ''];
             echo json_encode($data);
         }
         sqlsrv_free_stmt($result);
@@ -2762,14 +2762,14 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
     }
 
     /** fin */
-    $procedure_params = array(
-        array(&$RelLega),
-        array(&$RelReMa),
-        array(&$RelRelo),
-        array(&$RelFech),
-        array(&$RelFech2),
-        array(&$FechaHora),
-    );
+    $procedure_params = [
+        [&$RelLega],
+        [&$RelReMa],
+        [&$RelRelo],
+        [&$RelFech],
+        [&$RelFech2],
+        [&$FechaHora],
+    ];
 
     $sql = "exec DATA_PERRELOInsert @RelLega=?,@RelReMa=?,@RelRelo=?,@RelFech=?,@RelFech2=?,@FechaHora=?";
     /** Query del Store Prcedure */
@@ -2783,11 +2783,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
         /** ejecuto la sentencia */
         /** Grabo en la tabla Auditor */
         audito_ch('A', $Dato, '10');
-        $data = array('status' => 'ok', 'dato' => $Dato);
+        $data = ['status' => 'ok', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error', 'dato' => $Dato);
+        $data = ['status' => 'error', 'dato' => $Dato];
         echo json_encode($data);
         die(print_r(sqlsrv_errors(), true));
     }
@@ -2802,9 +2802,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['PERRELO'] == 'true')) {
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) {
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
-    $params = array();
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-    $data = array();
+    $params = [];
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+    $data = [];
 
     $RelRelo = test_input($_POST['RelRelo']);
     $RelReMa = test_input($_POST['RelReMa']);
@@ -2814,11 +2814,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) 
 
     $Dato = 'Reloj habilitado: (' . $RelRelo . '), Marca: (' . $RelReMa . '). Legajo: ' . $RelLega;
 
-    $procedure_params = array(
-        array(&$RelLega),
-        array(&$RelReMa),
-        array(&$RelRelo),
-    );
+    $procedure_params = [
+        [&$RelLega],
+        [&$RelReMa],
+        [&$RelRelo],
+    ];
 
     $sql = "exec DATA_PERRELODelete @RelLega=?, @RelReMa=?, @RelRelo=?";
     /** Query del Store Prcedure */
@@ -2834,11 +2834,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerrelo'] == 'true')) 
         audito_ch('B', $Dato);
         /** */
         // sleep(3);
-        $data = array('status' => 'ok_delete', 'dato' => $Dato);
+        $data = ['status' => 'ok_delete', 'dato' => $Dato];
         echo json_encode($data);
         /** retorno resultados en formato json */
     } else {
-        $data = array('status' => 'error_delete', 'dato' => $Dato);
+        $data = ['status' => 'error_delete', 'dato' => $Dato];
         echo json_encode($data);
         // die(print_r(sqlsrv_errors(), true));
     }

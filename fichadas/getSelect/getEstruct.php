@@ -90,11 +90,11 @@ switch ($estruct) {
 
 // print_r($query); exit;
 
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
 
 $result = sqlsrv_query($link, $query, $params, $options);
-$data = array();
+$data = [];
 
 if (sqlsrv_num_rows($result) > 0) {
     while ($row = sqlsrv_fetch_array($result)):
@@ -103,33 +103,33 @@ if (sqlsrv_num_rows($result) > 0) {
             case 'Tipo':
                 $id = $row['id'];
                 $text = ($id == '0') ? 'Mensuales' : 'Jornales';
-                $data[] = array(
+                $data[] = [
                     'id' => $id,
                     'text' => $text,
                     'title' => $text,
-                );
+                ];
                 break;
             case 'Sec2':
                 $id = $row['id'];
                 $id2 = $row['id2'];
                 $text = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
-                $data[] = array(
+                $data[] = [
                     'id' => $id2,
                     'text' => $id . ' - ' . $text,
                     'title' => $id . ' - ' . $text,
-                );
+                ];
                 break;
             default:
                 $id = $row['id'];
                 $text = ($row['Desc'] != '') ? $row['Desc'] : 'Sin Asignar';
 
-                $data[] = array(
+                $data[] = [
                     'id' => $id,
                     'text' => $id . ' - ' . $text,
                     'title' => $id . ' - ' . $text,
                     'data-title' => $id . ' - ' . $text,
-                );
+                ];
                 break;
         }
 
