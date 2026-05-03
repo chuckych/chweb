@@ -21,6 +21,7 @@ clean_files('json/', 1, 'json');
 clean_files('logs/', 1, 'log');
 clean_files('archivos/', 1, 'xls');
 clean_files('archivos/', 1, 'pdf');
+clean_files('archivos/', 1, 'txt');
 
 Flight::route('/novedades-all', function () {
 
@@ -41,7 +42,7 @@ Flight::route('/novedades-all', function () {
         "length" => 5000,
         "Estruct" => "NovC",
     ];
-    $data = ch_api($endpoint, '', 'GET', $queryParams); // Obtenemos las causas de las novedades
+    $data = ch_api($endpoint, [], 'GET', $queryParams); // Obtenemos las causas de las novedades
     $arrayData = json_decode($data, true);
     $causas = $arrayData['DATA'] ?? [];
 
@@ -72,7 +73,7 @@ Flight::route('/novedades-agrupa', function () {
         "Codi" => novedadesRol()
     );
 
-    $data = ch_api($endpoint, '', 'GET', $queryParams);
+    $data = ch_api($endpoint, [], 'GET', $queryParams);
 
     $arrayData = json_decode($data, true);
 
@@ -102,7 +103,7 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
         "Estruct" => "Nov"
     ];
 
-    $data = ch_api($endpoint, '', $method, $queryParams);
+    $data = ch_api($endpoint, [], $method, $queryParams);
 
     $arrayData = json_decode($data, true);
 
@@ -166,7 +167,7 @@ Flight::route('PUT /novedad', function () {
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades";
     $method = 'PUT';
-    $rs = ch_api($endpoint, array($payload), $method, '');
+    $rs = ch_api($endpoint, array($payload), $method, []);
     $result = json_decode($rs, true);
 
     $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
@@ -262,7 +263,7 @@ Flight::route('POST /novedad', function () {
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
 
-    $rs = ch_api($endpoint, [$payload], 'POST', '');
+    $rs = ch_api($endpoint, [$payload], 'POST', []);
 
     $result = json_decode($rs, true);
 
@@ -295,7 +296,7 @@ Flight::route('DELETE /novedad', function () {
     }
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/novedades?procesar=1";
-    $rs = ch_api($endpoint, array($payload->data), 'DELETE', '');
+    $rs = ch_api($endpoint, array($payload->data), 'DELETE', []);
     $result = json_decode($rs, true);
 
     $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
@@ -401,7 +402,7 @@ Flight::route('POST /novedades/totales', function () {
     $data = [];
 
     if ($payload['DTNovedades'] === 'true') {
-        $data = getNovedadesTotalesDT($payload);
+        $data = getNovedadesTotalesDT($payload ?? []);
         $nameFile = $payload['flag'];
         $file = fopen("json/total_novedades_$nameFile.json", "w") or die("Unable to open file!");
         $file2 = fopen("json/payload_novedades_$nameFile.json", "w") or die("Unable to open file!");
@@ -581,7 +582,7 @@ Flight::route('GET /export/totales', function () {
 });
 Flight::route('/fechas/horas', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horas/dateMinMax";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $arrayData = json_decode($data, true);
     if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
         $arrayData = $arrayData['DATA'] ?? [];
@@ -592,7 +593,7 @@ Flight::route('/fechas/horas', function () {
 });
 Flight::route('/fechas/fichas', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/fichas/dateMinMax";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $arrayData = json_decode($data, true);
     if (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') {
         $arrayData = $arrayData['DATA'] ?? [];
@@ -648,7 +649,7 @@ Flight::route('POST /get_personal_horarios', function () {
     }, $dataHorarios);
 
     // Alternativa más eficiente usando generador (para datasets grandes)
-    function procesarHorarios($DATA)
+    function procesarHorarios(array $DATA)
     {
         foreach ($DATA as $legajoData) {
             foreach ($legajoData as $horario) {
@@ -702,12 +703,12 @@ Flight::route('POST /get_personal_horarios', function () {
 });
 Flight::route('/horarios', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $arrayDataHorarios = json_decode($data, true);
     $arrayDataHorarios = (($arrayDataHorarios['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayDataHorarios['DATA'] ?? [] : [];
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $arrayDataRotacion = json_decode($data, true);
     $arrayDataRotacion = (($arrayDataRotacion['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayDataRotacion['DATA'] ?? [] : [];
 
@@ -734,7 +735,7 @@ Flight::route('/horarios', function () {
 Flight::route('/horarios/asign/@legajo', function ($legajo) {
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/asign/legajo/$legajo";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $asign = json_decode($data, true);
     $asign = (($asign['RESPONSE_CODE'] ?? '') == '200 OK') ? $asign['DATA'] ?? [] : [];
     if ($asign['desde-hasta']) {
@@ -770,7 +771,7 @@ Flight::route('/horarios/asign/@legajo', function ($legajo) {
 });
 Flight::route('/rotacion', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/rotacion";
-    $data = ch_api($endpoint, '', 'GET', '');
+    $data = ch_api($endpoint, [], 'GET', []);
     $arrayData = json_decode($data, true);
     $arrayData = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] ?? [] : [];
     Flight::json($arrayData ?? []);
@@ -793,6 +794,7 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
         '/horarios/edit-legajo-rotacion',
         '/horarios/delete-legajo-rotacion',
     ];
+    $payloadHorarios = [];
 
     $acciones = new stdClass();
     $acciones->aCit = intval($_SESSION['ABM_ROL']['aCit']) ?? 0;
@@ -1026,7 +1028,7 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
     }
 
     $endpoint = URLAPI . "/api/v1/horarios/{$tipo}/"; // URL API
-    $data = ch_api($endpoint, $payloadHorarios, $method, ''); // Consumimos API
+    $data = ch_api($endpoint, $payloadHorarios, $method, []); // Consumimos API
     $arrayData = json_decode($data, true); // Decodificamos JSON
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? true : false;
     $status = $result ? 'ok' : 'error'; // Estado de la respuesta
@@ -1051,14 +1053,14 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
 Flight::route('POST /test_connect', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/conectar";
     $payload = Flight::request()->data;
-    $data = ch_api($endpoint, $payload, 'POST', '');
+    $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
     Flight::json($arrayData ?? []);
 });
 Flight::route('POST /estruct/fichas/', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/fichasestruct/";
     $payload = Flight::request()->data;
-    $data = ch_api($endpoint, ($payload), 'POST', '');
+    $data = ch_api($endpoint, ($payload), 'POST', []);
 
     $arrayData = json_decode($data, true);
 
@@ -1077,7 +1079,7 @@ Flight::route('POST /estructuras/alta/', function () {
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/estructuras/alta/";
     $payload = Flight::request()->data;
 
-    $data = ch_api($endpoint, ($payload), 'POST', '');
+    $data = ch_api($endpoint, ($payload), 'POST', []);
 
     $arrayData = json_decode($data, true);
 
@@ -1148,7 +1150,7 @@ Flight::route('GET /nove-horas/data', function () {
                 'cliente' => $_SESSION['ID_CLIENTE'] ?? '',
             ];
         }
-        add_params($bodyAdd);
+        add_params($bodyAdd ?? []);
         $params = get_params($queryParams) ?? [];
     }
 
@@ -1274,7 +1276,7 @@ Flight::route('GET /liquidar/custom/campos', function () {
         $query = method_exists($request->query, 'getData') ? $request->query->getData() : (array) $request->query;
         $plantilla = $query['plantilla'] ?? 'liquidar_custom';
         $config = LeerConfiguracion($plantilla);
-        Flight::json($config ?? ['separador' => ',', 'encabezados' => 0, 'campos' => []]);
+        Flight::json($config ?? ['separador' => ',', 'encabezados' => 0, 'campos' => [], 'filtros' => ['Lega' => [], 'Empr' => [], 'Plan' => [], 'Conv' => [], 'Sect' => [], 'Sec2' => [], 'Grup' => [], 'Sucu' => []], 'filtrosDescripcion' => ['Lega' => [], 'Empr' => [], 'Plan' => [], 'Conv' => [], 'Sect' => [], 'Sec2' => [], 'Grup' => [], 'Sucu' => []]]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);
         if ($code < 100 || $code > 599) {
@@ -1287,7 +1289,7 @@ Flight::route('GET /liquidar/custom/campos', function () {
 Flight::route('POST /ficnovhor', function () {
     try {
         $request = Flight::request();
-        $payload = $request->data;
+        $payload = $request['data'] ?? [];
         $fic_nove_horas = fic_nove_horas($payload);
         Flight::json($fic_nove_horas ?? []);
     } catch (\Throwable $th) {
@@ -1321,8 +1323,10 @@ Flight::route('POST /liquidar/custom/campos', function () {
         $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
         $encabezados = array_key_exists('encabezados', $payloadData) ? (int) $payloadData['encabezados'] : 0;
         $plantilla = array_key_exists('plantilla', $payloadData) ? (string) $payloadData['plantilla'] : 'liquidar_custom';
+        $filtros = array_key_exists('filtros', $payloadData) ? $payloadData['filtros'] : null;
+        $filtrosDescripcion = array_key_exists('filtrosDescripcion', $payloadData) ? $payloadData['filtrosDescripcion'] : null;
 
-        $guardados = GuardarConfiguracion($campos, $separador, $encabezados, $plantilla);
+        $guardados = GuardarConfiguracion($campos, $separador, $encabezados, $plantilla, $filtros, $filtrosDescripcion);
 
         Flight::json([
             'status' => 'ok',
@@ -1369,8 +1373,14 @@ Flight::route('POST /liquidar/custom/plantillas', function () {
         $campos = $payloadData['campos'] ?? [];
         $separador = array_key_exists('separador', $payloadData) ? (string) $payloadData['separador'] : ',';
         $encabezados = array_key_exists('encabezados', $payloadData) ? (int) $payloadData['encabezados'] : 0;
+        $filtros = array_key_exists('filtros', $payloadData) ? $payloadData['filtros'] : null;
+        $filtrosDescripcion = array_key_exists('filtrosDescripcion', $payloadData) ? $payloadData['filtrosDescripcion'] : null;
 
-        $guardados = GuardarPlantilla($nombre, $campos, $separador, $encabezados, $slug);
+        try {
+            $guardados = GuardarPlantilla($nombre, $campos, $separador, $encabezados, $slug, $filtros, $filtrosDescripcion);
+        } catch (TypeError $e) {
+            throw new Exception('Error al guardar la plantilla: ' . $e->getMessage(), 500);
+        }
 
         Flight::json([
             'status' => 'ok',
@@ -1506,7 +1516,7 @@ Flight::route('POST /personal/filtros', function () {
         ]
     ];
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/personal/filtros";
-    $personal = ch_api($endpoint, $payload, 'POST', '');
+    $personal = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($personal, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] : [];
 
@@ -1516,9 +1526,9 @@ Flight::route('POST /proyectar', function () {
 
     $request = Flight::request();
     $payload = $request->data ?? [];
-
+    $arrayAuditoria = [];
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/proyectar";
-    $proyectar = ch_api($endpoint, $payload, 'POST', '');
+    $proyectar = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($proyectar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
     // $result['payload'] = $payload; // Agregar los legajos al resultado
@@ -1552,7 +1562,7 @@ Flight::route('DELETE /proyectar', function () {
     $payload = $request->data ?? [];
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/proyectar";
-    $proyectar = ch_api($endpoint, $payload, 'DELETE', '');
+    $proyectar = ch_api($endpoint, $payload, 'DELETE', []);
     $arrayData = json_decode($proyectar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
     // $result['payload'] = $payload; // Agregar los legajos al resultado
@@ -1573,7 +1583,7 @@ Flight::route('DELETE /proyectar', function () {
             ];
         }
 
-        auditoria_multiple($arrayAuditoria, 47);
+        auditoria_multiple($arrayAuditoria ?? [], 47);
     }
 
     Flight::json($result ?? []);
@@ -1581,11 +1591,12 @@ Flight::route('DELETE /proyectar', function () {
 });
 Flight::route('POST /asignados', function () {
     $request = Flight::request();
-    $payload = $request->data ?? [];
+    $payloadRaw = $request->data ?? [];
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/horarios/asignados";
-    $horarios = ch_api($endpoint, $payload, 'POST', '');
+    $horarios = ch_api($endpoint, $payloadRaw, 'POST', []);
     $horarios = json_decode($horarios, true);
     $result = $horarios;
+
     Flight::json($result ?? []);
 });
 Flight::route('POST /asignados/exportar', function () {
@@ -1649,7 +1660,7 @@ Flight::route('POST /ws_novedades', function () {
     $payload = $request->data ?? [];
 
     $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/ws_novedades";
-    $ingresar = ch_api($endpoint, $payload, 'POST', '');
+    $ingresar = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($ingresar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
     // $result['payload'] = $payload; // Agregar los legajos al resultado
@@ -1686,7 +1697,7 @@ Flight::route('POST /ws_novedades', function () {
             ];
         }
 
-        auditoria_multiple($arrayAuditoria, 2);
+        auditoria_multiple($arrayAuditoria ?? [], 2);
     }
 
     Flight::json($arrayData ?? []);
@@ -1710,7 +1721,7 @@ Flight::route('POST /personal/(@recid)', function ($recid = '') {
     $payload['Sucu'] = $payload['Sucu'] ?: $sucursalesRol;
     $data = [];
     $endpoint = URLAPI . "/api/personal/";
-    $personal = ch_api($endpoint, $payload, 'POST', '', $recid);
+    $personal = ch_api($endpoint, $payload, 'POST', [], $recid);
     $arrayData = json_decode($personal, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200') ? $arrayData : [];
     $data['recordsFiltered'] = $result['TOTAL'] ?? 0;
@@ -1726,7 +1737,7 @@ foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
     Flight::route("GET /{$ruta}", function () use ($ruta) {
         $endpoint = $_SESSION['HOST_CHWEB'] . "/" . HOMEHOST . "/api/v1/acceso/{$ruta}";
         $queryParams = Flight::request()->query->getData() ?? [];
-        $data = ch_api($endpoint, '', 'GET', $queryParams);
+        $data = ch_api($endpoint, [], 'GET', $queryParams);
         $arrayData = json_decode($data, true);
         $arrayData = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] ?? [] : [];
         Flight::json($arrayData ?? []);

@@ -1,10 +1,10 @@
 <?php
-// require_once __DIR__ . '/../vendor/autoload.php'; // si no está ya
+require_once __DIR__ . '/../vendor/autoload.php'; // si no está ya
 
-// use App\Http\ChApiClient;
-// use App\Http\CurlHttpClient;
-// use App\Http\ApiTokenGenerator;
-// use App\Http\UrlBuilder;
+use App\Http\ChApiClient;
+use App\Http\CurlHttpClient;
+use App\Http\ApiTokenGenerator;
+use App\Http\UrlBuilder;
 
 // Utilidad: convierte "HH:MM" (o "H:MM") a minutos.
 function to_minutes(string $hhmm = ''): int
@@ -44,19 +44,24 @@ function debugLog(string $message, string $nameLog = 'debug')
 }
 function clean_files(string $path, int $days, string $ext)
 {
+    $ext = ltrim(trim($ext), '.');
+
     // Normaliza a ruta absoluta para glob
     $absPath = (strpos($path, DIRECTORY_SEPARATOR) === 0 || preg_match('/^[a-zA-Z]:/', $path))
         ? $path
         : __DIR__ . DIRECTORY_SEPARATOR . $path;
 
+    $absPath = rtrim($absPath, '/\\') . DIRECTORY_SEPARATOR;
+
     // Lock siempre en __DIR__ (app-data/) donde PHP tiene escritura garantizada
-    $lockSlug = preg_replace('/[^a-z0-9]/i', '_', trim($path, '/\\'));
+    $lockSlug = preg_replace('/[^a-z0-9]/i', '_', trim($path, '/\\') . '_' . $ext);
     $lock = __DIR__ . DIRECTORY_SEPARATOR . '.clean_' . $lockSlug . '.lock';
     if (file_exists($lock) && date('Ymd', filemtime($lock)) === date('Ymd'))
         return; // ya se ejecutó hoy
 
     $inicio = microtime(true);
-    $files = glob($absPath . '*' . $ext); //obtenemos el nombre de todos los ficheros
+    $files = glob($absPath . '*.' . $ext); //obtenemos el nombre de todos los ficheros
+
     if (!$files) {
         touch($lock);
         return;
@@ -75,10 +80,39 @@ function clean_files(string $path, int $days, string $ext)
     touch($lock); // actualiza mtime → marca como ejecutado hoy
 }
 /**
+ * Normaliza argumentos dinámicos a array para llamadas de API.
+ *
+ * Acepta arrays directos, objetos con getData() (Flight Collection)
+ * y objetos genéricos casteables a array.
+ *
+ * @param mixed $value
+ */
+function normalize_api_arg_to_array($value, string $argName): array
+{
+    if (is_array($value)) {
+        return $value;
+    }
+
+    if (is_object($value) && method_exists($value, 'getData')) {
+        $data = $value->getData();
+        if (is_array($data)) {
+            return $data;
+        }
+    }
+
+    if (is_object($value)) {
+        return (array) $value;
+    }
+
+    error_log('ch_api: ' . $argName . ' no es array ni objeto, valor: ' . print_r($value, true) . ' — ' . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2), true));
+    return [];
+}
+
+/**
  * @param mixed ...$args
  * @return string|false
  */
-function ch_api_new(...$args)
+function ch_api(...$args)
 {
     static $client = null;
 
@@ -91,17 +125,13 @@ function ch_api_new(...$args)
     }
 
     $endpoint = $args[0] ?? '';
-    $payload = $args[1] ?? [];
-    $method = $args[2] ?? 'GET';
-    $queryParams = $args[3] ?? [];
-    if (!is_array($queryParams)) {
-        error_log('ch_api: queryParams no es array, valor: ' . print_r($queryParams, true) . ' — ' . print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2), true));
-        $queryParams = [];
-    }
-    $recid = $args[4] ?? '';
+    $payload = normalize_api_arg_to_array($args[1] ?? [], 'payload');
 
+    $method = $args[2] ?? 'GET';
+    $queryParams = normalize_api_arg_to_array($args[3] ?? [], 'queryParams');
+    $recid = $args[4] ?? '';
     $respuesta = $client->call($endpoint, $payload, $method, $queryParams, $recid);
-    error_log(print_r($respuesta, true));
+    $queryParams = [];
     return $respuesta;
 }
 /**
@@ -115,7 +145,7 @@ function ch_api_new(...$args)
  * @return mixed Los datos devueltos por la API o false si hay un error.
  * @throws Exception Si ocurre un error durante la llamada a la API.
  */
-function ch_api()
+function ch_api_old()
 {
     timeZone();
     timeZone_lang();
