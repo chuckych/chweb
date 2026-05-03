@@ -324,7 +324,7 @@
                         activo: 1,
                         strict: 1,
                         estado: 0,
-                        proyectar: 1,
+                        proyectar: 2,
                         tipo: tipo,
                         empresas: $("#selectjs_empresa").val(),
                         plantas: $("#selectjs_planta").val(),
