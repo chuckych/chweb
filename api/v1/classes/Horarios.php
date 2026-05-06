@@ -1555,7 +1555,7 @@ class Horarios
             throw new \Exception("El campo Legajo debe ser un número entero y menor a 2147483647", 400);
         }
     }
-    private function intToRgb(int $colorInt): array
+    private function intToRgb(string $colorInt): array
     {
         // Convertir el entero a hexadecimal y quitar el prefijo '0x'
         $hexColor = strtoupper(dechex($colorInt & 0xFFFFFF));
@@ -1575,7 +1575,7 @@ class Horarios
         // Fórmula para calcular el brillo percibido
         return ($r * 299 + $g * 587 + $b * 114) / 1000;
     }
-    private function getTextColor(int $backgroundColor)
+    private function getTextColor(string $backgroundColor)
     {
         list($r, $g, $b) = $this->intToRgb($backgroundColor);
         $brightness = $this->getBrightness($r, $g, $b);

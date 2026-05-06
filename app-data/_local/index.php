@@ -33,8 +33,8 @@ if (!$_SESSION && !$noValidate) {
 $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
 
 define('HOSTCHWEB', gethostCHWeb());
-define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
-
+// define('URLAPI', HOSTCHWEB . "/" . HOMEHOST);
+define('URLAPI', api_internal_base_url() . "/" . HOMEHOST);
 function dataSession()
 {
     return [

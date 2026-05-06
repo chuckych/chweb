@@ -4125,3 +4125,7 @@ $LABEL_ESTRUCT = function ($struct, $plural = false) {
 
     return $labels[$map[$struct][(int) $plural]] ?? '';
 };
+function api_internal_base_url(): string
+{
+    return OS() === 'linux' ? 'http://localhost' : $_SESSION['HOST_CHWEB'] ?? '';
+}
