@@ -320,7 +320,11 @@
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
     <script src="../../js/select2.min.js"></script>
-    <script src="js/data.js?<?= version_file("/op/horarios/js/data.js") ?>"></script>
+    <script type="module">
+        import Storage from "../../js/classes/storage.js";
+        window.CHStorageClass = Storage;
+    </script>
+    <script defer src="js/data.js?<?= version_file("/op/horarios/js/data.js") ?>"></script>
 </body>
 
 </html>

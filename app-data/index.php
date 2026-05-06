@@ -1268,7 +1268,6 @@ Flight::route('GET /params', function () {
     $params = get_params($queryColumn) ?? [];
     Flight::json($params);
 });
-
 Flight::route('GET /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
@@ -1285,7 +1284,6 @@ Flight::route('GET /liquidar/custom/campos', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
-
 Flight::route('POST /ficnovhor', function () {
     try {
         $request = Flight::request();
@@ -1312,7 +1310,6 @@ Flight::route('GET /paragene', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
-
 Flight::route('POST /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
@@ -1743,6 +1740,12 @@ foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
         Flight::json($arrayData ?? []);
     });
 }
+
+Flight::route('GET /estruct/emp', function () {
+    $data = getEmpEstruct();
+    Flight::json($data);
+});
+
 Flight::map('Forbidden', function ($mensaje) {
     Flight::jsonHalt(['status' => 'error', 'message' => $mensaje], 403);
 });

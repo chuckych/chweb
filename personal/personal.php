@@ -12,7 +12,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-fich', 'white', 'usuarios3.png', MODULOS['personal'], '') ?>
+        <?php encabezado_mod('bg-fich', 'white', 'usuarios3.png', MODULOS['personal'], '') ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white pt-3">
             <div class="col-12">
@@ -48,12 +48,14 @@
                     <thead class="text-uppercase border-top-0">
                         <tr>
                             <th class="text-center p-2"><i class="bi bi-pencil"></i></th>
-                            <th><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Legajo</strong>">LEG.</span></th>
+                            <th><span data-toggle="tooltip" data-placement="top" data-html="true"
+                                    data-original-title="<strong>Legajo</strong>">LEG.</span></th>
                             <!-- <th>NOMBRE y APELLIDO</th> -->
-                            <th class="text-center"><span data-toggle="tooltip" data-placement="top" data-html="true" data-original-title="<strong>Tipo de personal</strong>">TIPO</span></th>
-                            <th><?=$labelEmpr?> / <?=$labelPlan?></th>
-                            <th><?=$labelSect?> / <?=$labelSecc?></th>
-                            <th><?=$labelGrup?> / <?=$labelSucu?></th>
+                            <th class="text-center"><span data-toggle="tooltip" data-placement="top" data-html="true"
+                                    data-original-title="<strong>Tipo de personal</strong>">TIPO</span></th>
+                            <th><?= $labelEmpr ?> / <?= $labelPlan ?></th>
+                            <th><?= $labelSect ?> / <?= $labelSecc ?></th>
+                            <th><?= $labelGrup ?> / <?= $labelSucu ?></th>
                             <th>CONVENIO / REGLA</th>
                         </tr>
                     </thead>
@@ -70,35 +72,39 @@
     require __DIR__ . "/../js/DataTable.php";
     require __DIR__ . '/modalNuevoLeg.php';
     ?>
-    <script src="altaLeg-min.js?v=<?= version_file("/personal/altaLeg-min.js") ?>"></script>
+    <script src="altaLeg.js?v=<?= version_file("/personal/altaLeg.js") ?>"></script>
     <script src="script.js?v=<?= version_file("/personal/script.js") ?>"></script>
-    <script src="perExcel-min.js?v=<?= version_file("/personal/perExcel-min.js") ?>"></script>
+    <script src="perExcel.js?v=<?= version_file("/personal/perExcel.js") ?>"></script>
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="getSelect/select.js?v=<?= version_file("/personal/getSelect/select.js") ?>"></script>
     <script src="../vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
 
     <script>
-        //Fetch data using Axios Ajax
         $('#LegNume').mask('000000000');
 
-        axios.get('getEstruct.php?Estruct=Emp&length=1000').then(function (response) {
-            //Get the select element
-            let LegEmpr = document.getElementById("LegEmpr");
+        axios.get('../app-data/estruct/emp').then(function (response) {
+            const LegEmpr = document.getElementById("LegEmpr");
+            const data = response.data || [];
+            
+            if (!Array.isArray(data) || data.length === 0) {                
+                const option = document.createElement("option");
+                option.value = '0';
+                option.text = 'No hay datos';
+                LegEmpr.add(option);
+                return;
+            }
 
-            //Loop through the response data and create a new option element for each item
-            response.data.forEach(function (item) {
-                let option = document.createElement("option");
-                option.value = item.id;
-                option.text = item.text;
-
-                //Add the new option element to the select element
+            data.forEach(function (item) {
+                const option = document.createElement("option");
+                option.value = item.Codi;
+                option.text = item.Desc;
                 LegEmpr.add(option);
             });
         }).catch(function (error) {
             console.log(error);
         });
-        select2Simple('#LegEmpr', 'Empresa', true, false, '100%')
+        select2Simple('#LegEmpr', 'Empresa', true, false, '100%');
     </script>
 </body>
 

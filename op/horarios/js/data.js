@@ -1,5 +1,29 @@
 /* use sessionStorage */
-ls.config.storage = sessionStorage;
+const canUseStorage = (storage) => {
+    try {
+        if (!storage) return false;
+        const testKey = '__ls_test__';
+        storage.setItem(testKey, '1');
+        storage.removeItem(testKey);
+        return true;
+    } catch (error) {
+        return false;
+    }
+};
+
+const resolveLSStorage = () => {
+    if (canUseStorage(sessionStorage)) {
+        return sessionStorage;
+    }
+    if (canUseStorage(localStorage)) {
+        console.warn('sessionStorage no disponible. Se usa localStorage como fallback.');
+        return localStorage;
+    }
+    console.warn('sessionStorage/localStorage no disponibles. localstorage-slim usara memoria temporal.');
+    return undefined;
+};
+
+ls.config.storage = resolveLSStorage();
 
 const iconHoraLe1 = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" /><path d="M18 18m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M15 3v4" /><path d="M7 3v4" /><path d="M3 11h16" /><path d="M18 16.496v1.504l1 1" /></svg>`;
 const iconRota = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12.5 21h-6.5a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v3" /><path d="M16 3v4" /><path d="M8 3v4" /><path d="M4 11h12" /><path d="M20 14l2 2h-3" /><path d="M20 18l2 -2" /><path d="M19 16a3 3 0 1 0 2 5.236" /></svg>`;
@@ -24,6 +48,104 @@ const LS_VALUE_FECHA = `${homehost}_value_fecha`;
 const LS_MARCADOS = `${homehost}_marcados`;
 const LS_MARCADOS_PAGE = `${homehost}_marcados_page`;
 const LS_PAGE_PERSONAL = `${homehost}_page_personal`;
+let HORARIOS_CACHE = null;
+let HORARIOS_INDEXED = null;
+let STORAGE_CLASS_PROMISE = null;
+
+const getStorageClass = async () => {
+    if (window.CHStorageClass) return window.CHStorageClass;
+
+    if (!STORAGE_CLASS_PROMISE) {
+        STORAGE_CLASS_PROMISE = import('../../js/classes/storage.js')
+            .then((mod) => {
+                window.CHStorageClass = mod.default;
+                return mod.default;
+            })
+            .catch((error) => {
+                console.warn('No se pudo cargar Storage class dinamicamente.', error);
+                return null;
+            });
+    }
+
+    return STORAGE_CLASS_PROMISE;
+};
+
+const initHorariosIndexed = async () => {
+    if (HORARIOS_INDEXED) return HORARIOS_INDEXED;
+
+    const StorageClass = await getStorageClass();
+    if (!StorageClass) return null;
+
+    try {
+        HORARIOS_INDEXED = new StorageClass('indexed', {
+            prefix: homehost,
+            dbName: 'chweb_horarios_db',
+            storeName: 'horarios_cache',
+            dbVersion: 1,
+        });
+        return HORARIOS_INDEXED;
+    } catch (error) {
+        console.warn('No se pudo inicializar Storage IndexedDB para horarios.', error);
+        return null;
+    }
+};
+
+const saveHorariosIndexed = async (data) => {
+    const indexed = await initHorariosIndexed();
+    if (!indexed) return false;
+
+    try {
+        const ok = await indexed.set('HORARIOS_CACHE', data);
+        if (!ok) {
+            console.warn('No se pudo persistir HORARIOS_CACHE en IndexedDB.');
+        }
+        return !!ok;
+    } catch (error) {
+        console.warn('Error guardando HORARIOS_CACHE en IndexedDB.', error);
+        return false;
+    }
+};
+
+const loadHorariosIndexed = async () => {
+    const indexed = await initHorariosIndexed();
+    if (!indexed) return null;
+
+    try {
+        const data = await indexed.get('HORARIOS_CACHE', null);
+        if (data) {
+            HORARIOS_CACHE = data;
+            return data;
+        }
+    } catch (error) {
+        console.warn('Error leyendo HORARIOS_CACHE desde IndexedDB.', error);
+    }
+    return null;
+};
+
+const getHorariosStore = () => HORARIOS_CACHE ?? {};
+
+const estimateUtf8Bytes = (value) => {
+    try {
+        const str = typeof value === 'string' ? value : JSON.stringify(value);
+        return new Blob([str]).size;
+    } catch (error) {
+        return 0;
+    }
+};
+
+const safeLSSet = (key, value, label = key) => {
+    const sizeBytes = estimateUtf8Bytes(value);
+    if (sizeBytes > 4.5 * 1024 * 1024) {
+        console.warn(`${label} tiene un tamano aproximado de ${(sizeBytes / (1024 * 1024)).toFixed(2)} MB. Puede exceder la cuota de sessionStorage.`);
+    }
+
+    const setResult = ls.set(key, value);
+    if (setResult === false) {
+        console.error(`No se pudo guardar ${label} en storage (quota, permisos o bloqueo del navegador). Tamano aprox: ${(sizeBytes / 1024).toFixed(1)} KB.`);
+        return false;
+    }
+    return true;
+};
 
 const accionesMasivas = (horarios, citacion) => {
     if (!horarios) {
@@ -44,12 +166,13 @@ const accionesMasivas = (horarios, citacion) => {
 
 const get_horarios = async () => {
     await axios.get('../../app-data/horarios').then(async (response) => {
-        ls.set(LS_HORARIOS, response.data);
+        HORARIOS_CACHE = response.data;
+        await saveHorariosIndexed(response.data);
         accionesMasivas(response.data.acciones['aTur'], response.data.acciones['aCit']);
     })
 }
 const getAcciones = () => {
-    const horarios = ls.get(LS_HORARIOS) ?? [];
+    const horarios = getHorariosStore();
     const acciones = horarios.acciones ?? [];
     return acciones;
 }
@@ -57,6 +180,10 @@ const getAcciones = () => {
 // Inicializar PERMISOS después de cargar los horarios
 let PERMISOS = {};
 (async () => {
+    await loadHorariosIndexed();
+    if (HORARIOS_CACHE?.acciones) {
+        accionesMasivas(HORARIOS_CACHE.acciones['aTur'], HORARIOS_CACHE.acciones['aCit']);
+    }
     await get_horarios();
     PERMISOS = getAcciones();
 })();
@@ -73,10 +200,10 @@ $(function () {
         ls.set(LS_MODAL_ASIGN, response.data);
     });
     const getHorariosColumn = (HorCodi) => {
-        return ls.get(LS_HORARIOS)?.horariosColumn[HorCodi] ?? [];
+        return getHorariosStore()?.horariosColumn?.[HorCodi] ?? [];
     };
     const getRotacionColumn = (RotCodi) => {
-        return ls.get(LS_HORARIOS)?.rotacionColumn[RotCodi] ?? [];
+        return getHorariosStore()?.rotacionColumn?.[RotCodi] ?? [];
     };
     /** agregando los iconos de acciones */
     const m_horale1 = document.querySelector('.m_horale1');
@@ -443,7 +570,7 @@ $(function () {
             await $(selector).DataTable().clear().destroy();
         }
 
-        const horariosColumn = ls.get(LS_HORARIOS)?.horariosColumn ?? {};
+        const horariosColumn = getHorariosStore()?.horariosColumn ?? {};
         const horariosCache = {};
         const htmlCache = {};
 
@@ -518,7 +645,7 @@ $(function () {
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
-        const horariosColumn = ls.get(LS_HORARIOS)?.horariosColumn ?? {};
+        const horariosColumn = getHorariosStore()?.horariosColumn ?? {};
         const horariosCache = {};
         let htmlCache = {};
         const table = $(selector).DataTable({
@@ -692,7 +819,7 @@ $(function () {
         if ($.fn.DataTable.isDataTable(selector)) {
             $(selector).DataTable().clear().destroy();
         }
-        const rotacionColumn = ls.get(LS_HORARIOS)?.rotacionColumn ?? {};
+        const rotacionColumn = getHorariosStore()?.rotacionColumn ?? {};
         const rotacionCache = {};
         let htmlCache = {};
         const table = $(selector).DataTable({
@@ -800,7 +927,8 @@ $(function () {
     }
     const dt_horarios = (selector, action) => {
 
-        let dataHorarios = ls.get(LS_HORARIOS).horarios ?? [];
+        const horariosStore = getHorariosStore();
+        let dataHorarios = horariosStore?.horarios ?? [];
         const submit = qs('#submit');
 
         const mapRotacion = {
@@ -809,7 +937,7 @@ $(function () {
             'edit_rotacion': true,
         }
         if (mapRotacion[action]) {
-            dataHorarios = ls.get(LS_HORARIOS).rotacion ?? [];
+            dataHorarios = horariosStore?.rotacion ?? [];
         }
 
         const table = $(selector).dataTable({

@@ -280,6 +280,30 @@ function getEmpresas()
 
     return $arrayData['DATA'] ?? [];
 }
+function getEmpEstruct()
+{
+    $emprRol = (string) ($_SESSION['EmprRol'] ?? '');
+
+    if ($emprRol !== '') {
+        $empList = explode(',', $emprRol);
+    }
+
+    $endpoint = URLAPI . "/api/estruct";
+    $method = 'GET';
+
+    $queryParams = [
+        "start" => 0,
+        "length" => 1000,
+        "Estruct" => "Emp",
+        "Codi" => $empList ?? []
+    ];
+
+    $data = ch_api($endpoint, [], $method, $queryParams);
+
+    $arrayData = json_decode($data, true);
+
+    return $arrayData['DATA'] ?? [];
+}
 function getParamLiquid()
 {
     $endpoint = URLAPI . "/api/v1/parametros/liquid";
