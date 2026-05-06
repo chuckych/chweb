@@ -52,7 +52,7 @@ class RRHHWebService
      * @param array $Legajos Arreglo de legajos
      * @param string $FechaDesde Fecha desde
      * @param string $FechaHasta Fecha hasta
-     * @return string Respuesta del WebService
+     * @return  bool Respuesta del WebService
      * @example $Legajos = [1,2,3,4,5,6,7,8,9,10];
      * @example $FechaDesde = '2023-08-23';
      * @example $FechaHasta = '2023-08-26';

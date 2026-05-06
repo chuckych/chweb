@@ -93,7 +93,7 @@ class Tools
         }
     }
     // Calcular cantidad de Dias entre las fechas
-    public function diasEntreFechas($fechaIni, $fechaFin)
+    public function diasEntreFechas(string $fechaIni, string $fechaFin)
     {
         try {
             // Validar que existan las fechas 
@@ -110,7 +110,8 @@ class Tools
             $datetime1 = new \DateTime($fechaIni);
             $datetime2 = new \DateTime($fechaFin);
             $interval = $datetime1->diff($datetime2);
-            $days = $interval->format('%a');
+            // Conteo inclusivo: mismo dia = 1, rango de N dias calendario = N.
+            $days = (int) $interval->format('%a') + 1;
             return $days;
         } catch (\Exception $th) {
             return false;

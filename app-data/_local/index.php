@@ -1,8 +1,15 @@
 <?php
 require __DIR__ . '/../../config/session_start.php';
+require_once __DIR__ . '/../../vendor/autoload.php';
 header('Content-type: text/html; charset=utf-8');
 require __DIR__ . '/../../config/index.php';
 header("Content-Type: application/json");
+
+use App\Http\ChApiClient;
+use App\Http\CurlHttpClient;
+use App\Http\ApiTokenGenerator;
+use App\Http\UrlBuilder;
+
 ultimoacc();
 $noValidate = false;
 $request = Flight::request();
@@ -50,89 +57,52 @@ $requestData = array_merge($requestData, dataSession());
 borrarLogs('json', 1, 'json');
 borrarLogs('archivos', 1, 'xls');
 
+function normalize_local_api_arg_to_array($value): array
+{
+    if (is_array($value)) {
+        return $value;
+    }
+
+    if (is_object($value) && method_exists($value, 'getData')) {
+        $data = $value->getData();
+        if (is_array($data)) {
+            return $data;
+        }
+    }
+
+    if (is_object($value)) {
+        return (array) $value;
+    }
+
+    return [];
+}
+
 function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
 {
-    timeZone();
-    timeZone_lang();
+    static $client = null;
 
+    if ($client === null) {
+        // Mantiene timeout de conexión en 10s como en la implementación previa.
+        $client = new ChApiClient(
+            new CurlHttpClient(10, 60),
+            new ApiTokenGenerator(),
+            new UrlBuilder()
+        );
+    }
 
-    $argumento = func_get_args(); // Obtengo los argumentos de la función en un array   
-    $endpoint = $argumento[0] ?? ''; // Obtengo el endpoint
-    $payload = $argumento[1] ?? []; // Obtengo el payload
-    $method = $argumento[2] ?? 'GET'; // Obtengo el método
-    $queryParams = $argumento[3] ?? []; // Obtengo los parámetro de la query
-    $method = strtoupper($method); // Convierto el método a mayúsculas
+    $argumento = func_get_args();
+    $endpoint = (string) ($argumento[0] ?? '');
+    $payload = normalize_local_api_arg_to_array($argumento[1] ?? []);
+    $method = strtoupper((string) ($argumento[2] ?? 'GET'));
+    $queryParams = normalize_local_api_arg_to_array($argumento[3] ?? []);
 
     try {
-
         if (!$endpoint) {
             throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
         }
-
-        $endpoint = $queryParams ? $endpoint . "?" . http_build_query($queryParams) : $endpoint; // Si hay parámetros de query, los agrego al endpoint
-
-        $ch = curl_init(); // Inicializo curl
-
-        curl_setopt($ch, CURLOPT_URL, $endpoint); // Seteo la url
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Seteo el retorno de la respuesta
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // Seteo el timeout de la conexión
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // Seteo el seguimiento de la ubicación
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false); // Seteo la verificación del host (0 = no verificar, 2 = verificar)
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Seteo la verificación del peer
-        if ($method == 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-        if ($method == 'GET') {
-            curl_setopt($ch, CURLOPT_HTTPGET, true);
-        }
-        if ($method == 'PUT') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'PUT');
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-        if ($method == 'DELETE') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-            $payload ? curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload)) : '';
-        }
-
-        $token = sha1($_SESSION['RECID_CLIENTE']);
-        $AGENT = $_SERVER['HTTP_USER_AGENT'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3';
-
-        $headers = [
-            "Accept: */*",
-            'Content-Type: application/json',
-            "Token: {$token}",
-            "User-Agent: {$AGENT}",
-        ];
-
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers); // Seteo los headers
-        $file_contents = curl_exec($ch); // Ejecuto curl
-        // file_put_contents(__DIR__ . '/logs/api.log', print_r($file_contents, true) . PHP_EOL, FILE_APPEND); // log error
-
-        $curl_errno = curl_errno($ch); // get error code
-        $curl_error = curl_error($ch); // get error information
-
-        if ($curl_errno > 0) { // si hay error
-            $text = "cURL Error ($curl_errno): $curl_error"; // set error message
-            // file_put_contents(__DIR__ . '/logs/api.log', $text . PHP_EOL, FILE_APPEND); // log error
-            throw new Exception($text);
-        }
-        if (!$file_contents) {
-            throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Error al obtener datos');
-        }
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        } // close curl handle
-        $text = 'API CH: ' . date('Y-m-d H:i:s') . ' ' . json_encode($file_contents);
-        return $file_contents;
+        return $client->call($endpoint, $payload, $method, $queryParams);
     } catch (\Exception $e) {
-        if (PHP_VERSION_ID >= 80000) {
-            unset($ch);
-        } else {
-            curl_close($ch);
-        } // close curl handle
+        error_log('local_api: ' . $e->getMessage());
         return false;
     }
 }
@@ -142,7 +112,7 @@ Flight::map('request_get', function ($endpoint) {
         throw new Exception('API CH: ' . date('Y-m-d H:i:s') . ' Endpoint no definido');
     }
     $url = URLAPI . "/api/_local/{$endpoint}";
-    $request = local_api($url, '', 'GET', '');
+    $request = local_api($url, [], 'GET', []);
     $arrayData = json_decode($request, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] : [];
     return $result;
@@ -153,7 +123,7 @@ Flight::map('request_test_ad', function ($endpoint) {
     }
     $url = URLAPI . "/api/_local/{$endpoint}";
     $data = Flight::request()->data->getData();
-    $request = local_api($url, $data, 'POST', '');
+    $request = local_api($url, $data, 'POST', []);
     $arrayData = json_decode($request, true);
     return $arrayData;
 });
@@ -171,32 +141,32 @@ Flight::route('POST /test_ad', function () {
 Flight::route('POST /login_ad', function () {
     $url = URLAPI . "/api/_local/login_ad";
     $data = Flight::request()->data->getData();
-    $request = local_api($url, $data, 'POST', '');
+    $request = local_api($url, $data, 'POST', []);
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
 Flight::route('POST /usuarios', function () use ($requestData) {
     $url = URLAPI . "/api/_local/usuarios";
-    $request = local_api($url, $requestData, 'POST', '');
+    $request = local_api($url, $requestData, 'POST', []);
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
 Flight::route('GET /usuarios', function () {
     $url = URLAPI . "/api/_local/usuarios";
     // $data = Flight::request()->data->getData();
-    $request = local_api($url, [], 'GET', '');
+    $request = local_api($url, [], 'GET', []);
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
 Flight::route('PUT /clientes/@id', function ($id) use ($requestData) {
     $url = URLAPI . "/api/_local/clientes/{$id}";
-    $request = local_api($url, $requestData, 'PUT', '');
+    $request = local_api($url, $requestData, 'PUT', []);
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });
 Flight::route('POST /clientes', function () use ($requestData) {
     $url = URLAPI . "/api/_local/clientes/";
-    $request = local_api($url, $requestData, 'POST', '');
+    $request = local_api($url, $requestData, 'POST', []);
     $arrayData = json_decode($request, true);
     Flight::json($arrayData);
 });

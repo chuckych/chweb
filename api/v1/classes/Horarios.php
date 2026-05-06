@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Classes;
 
@@ -11,31 +12,31 @@ use Classes\Tools;
 use Classes\Auditor;
 use Classes\Personal;
 use Flight;
-
+use flight\net\Request;
 
 class Horarios
 {
-    private $resp;
-    private $request;
-    private $getData;
+    private Response $resp;
+    private Request $request;
+    private array $getData;
     // private $query;
-    private $log;
-    private $conect;
-    private $ws;
-    private $tools;
-    private $auditor;
-    private $url;
-    private $desde;
-    private $desdeHasta;
-    private $citacion;
-    private $personal;
-    private $urlMap;
-    private $method;
-    private $rotacion;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private RRHHWebService $ws;
+    private Tools $tools;
+    private Auditor $auditor;
+    private string $url;
+    private bool $desde;
+    private bool $desdeHasta;
+    private bool $citacion;
+    private Personal $personal;
+    private array $urlMap;
+    private string $method;
+    private bool $rotacion;
 
 
 
-    function __construct()
+    public function __construct()
     {
         $this->urlMap = [
             '/horarios/desde/' => ['desde' => true, 'desdeHasta' => false, 'citacion' => false],
@@ -78,11 +79,11 @@ class Horarios
 
     public function set_horario()
     {
+        $conn = $this->conect->conn(); // Conexión a la base de datos
         try {
 
             $inicio = microtime(true); // Inicio del script
             $datos = $this->validar_request_horarios(); // Valida los datos
-            $conn = $this->conect->conn(); // Conexión a la base de datos
 
             $conn->beginTransaction(); // Iniciar transacción
 
@@ -207,14 +208,14 @@ class Horarios
     }
     public function delete_horario()
     {
+        $conn = $this->conect->conn();
+
         try {
             $inicio = microtime(true); // Inicio del script
             $datos = $this->validar_delete(); // Valida los datos
-
-            $conn = $this->conect->conn();
-
             $conn->beginTransaction();
 
+            $FechaH = '';
             $filas = 0;
             $arrayAud = [];
             $auditorCH = [];
@@ -371,11 +372,11 @@ class Horarios
     }
     public function set_rotacion()
     {
+        $conn = $this->conect->conn(); // Conexión a la base de datos
         try {
 
             $inicio = microtime(true); // Inicio del script
             $datos = $this->validar_request_rotacion(); // Valida los datos
-            $conn = $this->conect->conn(); // Conexión a la base de datos
             $conn->beginTransaction(); // Iniciar transacción
 
             $filas = 0;
@@ -435,7 +436,7 @@ class Horarios
             $AudText = "Rotación {$fechaFormat}";
 
             if ($legajosUpdate) {
-                $filas += $this->update_rotacion($conn, [$legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
+                $filas += $this->update_rotacion([$conn, $legajosUpdate, $Codi, $Fecha, $Dias, $Vence]); // Actualiza los horarios
                 $audUDesde = $this->auditoria([$legajosUpdate, $Codi, 'M', $AudText, $User], 'rotaciones');
             }
 
@@ -544,7 +545,7 @@ class Horarios
 
         return $this->tools->validar_datos($datos, $rules, $customValueKey, 'validar_request_rotacion');
     }
-    private function check_horario($datos, $connDB = '')
+    private function check_horario(array $datos, $connDB = '')
     {
         $conn = $this->conect->check_connection($connDB);
 
@@ -569,7 +570,7 @@ class Horarios
             return $result;
         }
     }
-    private function check_horario_data($datos, $connDB = '')
+    private function check_horario_data(array $datos, $connDB = '')
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -579,6 +580,7 @@ class Horarios
             }
 
             $conn = $this->conect->check_connection($connDB);
+            $stmt = null;
 
             // $legajos = implode(',', array_map(callback: 'intval', $legajos));
             $legajos = implode(',', array_map('intval', $legajos)); // Convierto los legajos a enteros y los uno con comas
@@ -602,8 +604,8 @@ class Horarios
             if ($this->citacion) {
                 $sqlCheck = "SELECT CitLega AS 'LegNume' FROM CITACION WHERE CitFech = CONVERT(datetime, :Fecha, 120)";
                 $sqlCheck .= " AND CitLega IN ($legajos)";
-                $stmt = $conn->prepare($sqlCheck);
                 $datos['Fecha'] = date('Ymd', strtotime($datos['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+                $stmt = $conn->prepare($sqlCheck);
                 $stmt->bindValue(':Fecha', $datos['Fecha'], \PDO::PARAM_STR);
             }
 
@@ -615,7 +617,7 @@ class Horarios
 
         return $result ? array_column($result, 'LegNume') : [];
     }
-    private function check_rotacion_data($datos, $connDB = '')
+    private function check_rotacion_data(array $datos, $connDB = '')
     {
         try {
             $legajos = $datos['Lega'] ?? [];
@@ -703,7 +705,7 @@ class Horarios
 
         }
     }
-    private function return_total_dias_rotacion($Codi, $connDB = '')
+    private function return_total_dias_rotacion(int $Codi, $connDB = '')
     {
         try {
             $conn = $this->conect->check_connection($connDB);
@@ -722,7 +724,7 @@ class Horarios
             throw new \Exception("Error al obtener días de rotación", 400);
         }
     }
-    private function update_desde($arrayData): int
+    private function update_desde(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -746,7 +748,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function delete_desde($arrayData): int
+    private function delete_desde(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value)) {
@@ -766,7 +768,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function check_delete_legajos($arrayData): array
+    private function check_delete_legajos(array $arrayData): array
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 3) {
@@ -778,6 +780,7 @@ class Horarios
         $legajos = $arrayData[1];
         $Fecha = $arrayData[2];
         $Codi = $arrayData[3];
+        $sql = '';
 
         $legajosList = implode(',', $legajos);
 
@@ -808,7 +811,7 @@ class Horarios
         $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         return $result ? array_column($result, 'LegNume') : [];
     }
-    private function get_fecha_fin($arrayData)
+    private function get_fecha_fin(array $arrayData)
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 3) {
@@ -817,6 +820,7 @@ class Horarios
         }
 
         $conn = $arrayData[0];
+        $sql = '';
         $legajos = $arrayData[1];
         $Fecha = $arrayData[2];
         $Codi = $arrayData[3];
@@ -836,7 +840,7 @@ class Horarios
         $result = $stmt->fetchColumn() ?? null;
         return $result;
     }
-    private function delete_desde_hasta($arrayData): int
+    private function delete_desde_hasta(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 3) {
@@ -858,7 +862,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function delete_rotacion($arrayData): int
+    private function delete_rotacion(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 3) {
@@ -880,7 +884,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function update_citacion($arrayData): int
+    private function update_citacion(array $arrayData): int
     {
 
         $conn = $arrayData[0];
@@ -903,7 +907,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function delete_citacion($arrayData): int
+    private function delete_citacion(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value)) {
@@ -923,7 +927,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function update_rotacion($arrayData): int
+    private function update_rotacion(array $arrayData): int
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -951,7 +955,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function update_desde_hasta($arrayData)
+    private function update_desde_hasta(array $arrayData)
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -975,7 +979,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas ?? 0;
     }
-    private function insert_desde($arrayData)
+    private function insert_desde(array $arrayData)
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -1013,7 +1017,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas;
     }
-    private function insert_citacion($arrayData)
+    private function insert_citacion(array $arrayData)
     {
         $values = [];
         $params = [];
@@ -1051,7 +1055,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas;
     }
-    private function insert_rotacion($arrayData)
+    private function insert_rotacion(array $arrayData)
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -1098,7 +1102,7 @@ class Horarios
             // throw new \Exception($th->getMessage(), 400);
         }
     }
-    private function insert_desde_hasta($arrayData)
+    private function insert_desde_hasta(array $arrayData)
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 2) {
@@ -1138,7 +1142,7 @@ class Horarios
         $filas = $stmt->rowCount();
         return $filas;
     }
-    private function auditoria($arrayData, $tipo = 'horarios')
+    private function auditoria(array $arrayData, $tipo = 'horarios')
     {
         foreach ($arrayData as $key => $value) {
             if (empty($value) && $key !== 1) {
@@ -1199,38 +1203,39 @@ class Horarios
         $arr2[] = ['AudTipo' => $AudTipo, 'AudDato' => $AudDato2, 'AudUser' => $User];
 
         $arrRespuesta = [
-            'auditor' => $arrayAud,
-            'auditorCH' => $arr2
+            'auditor' => $arrayAud ?? [],
+            'auditorCH' => $arr2 ?? []
         ];
         return $arrRespuesta ?? [];
     }
+    private function arrDia(string $tipo, string $de, string $Ha, string $Des, string $li, string $Ho)  // $tipo, $de, $Ha, $Des, $li, $Ho, $tools
+    {
+        $tools = $this->tools;
+        $mapTipo = [
+            '0' => 'No Laboral',
+            '1' => 'Laboral',
+            '2' => 'Según día',
+        ];
+        $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
+        $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
+        return [
+            "Laboral" => $mapTipo[$tipo],
+            "LaboralID" => intval($tipo),
+            "Desde" => $de,
+            "Hasta" => $Ha,
+            "Descanso" => $Des,
+            "Limite" => intval($li),
+            "Horas" => $Ho,
+            "HorasCalc" => $HorasCalc,
+            "HorasCalcDesc" => $HorasCalcDescanso,
+            "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
+            "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
+            "MinsCalcDesc" => $tools->convertirAMinutos($HorasCalcDescanso),
+            "MinsDescanso" => $tipo != 0 ? $tools->convertirAMinutos($Des) : 0,
+        ];
+    }
     public function get_horarios($connDB = '')
     {
-        function arrDia($tipo, $de, $Ha, $Des, $li, $Ho, $tools)  // $tipo, $de, $Ha, $Des, $li, $Ho, $tools
-        {
-            $mapTipo = [
-                '0' => 'No Laboral',
-                '1' => 'Laboral',
-                '2' => 'Según día',
-            ];
-            $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
-            $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
-            return [
-                "Laboral" => $mapTipo[$tipo],
-                "LaboralID" => intval($tipo),
-                "Desde" => $de,
-                "Hasta" => $Ha,
-                "Descanso" => $Des,
-                "Limite" => intval($li),
-                "Horas" => $Ho,
-                "HorasCalc" => $HorasCalc,
-                "HorasCalcDesc" => $HorasCalcDescanso,
-                "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
-                "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
-                "MinsCalcDesc" => $tools->convertirAMinutos($HorasCalcDescanso),
-                "MinsDescanso" => $tipo != 0 ? $tools->convertirAMinutos($Des) : 0,
-            ];
-        }
 
         $conn = $this->conect->check_connection($connDB);
 
@@ -1246,20 +1251,19 @@ class Horarios
         $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         $conn = null;
 
-
         foreach ($data as $key => $v) {
 
             $backgroundColorRgb = $this->intToRgb($v['HorColor']);
             $textColor = $this->getTextColor($v['HorColor']);
 
-            $HorLun = arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs'], $this->tools);
-            $HorMar = arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs'], $this->tools);
-            $HorMie = arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs'], $this->tools);
-            $HorJue = arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs'], $this->tools);
-            $HorVie = arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs'], $this->tools);
-            $HorSab = arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs'], $this->tools);
-            $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs'], $this->tools);
-            $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs'], $this->tools);
+            $HorLun = $this->arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']);
+            $HorMar = $this->arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']);
+            $HorMie = $this->arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']);
+            $HorJue = $this->arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']);
+            $HorVie = $this->arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']);
+            $HorSab = $this->arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
+            $HorDom = $this->arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
+            $HorFer = $this->arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
 
             $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'];
             $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'];
@@ -1292,10 +1296,10 @@ class Horarios
             ];
         }
 
-        $this->log->cache($horarios, 'horariosFull');
-        $this->log->cache($getCache->FHora, 'fechaHoraHorarios', '.txt');
+        $this->log->cache($horarios ?? [], 'horariosFull');
+        $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
 
-        $this->resp->respuesta($horarios, count($horarios), 'OK', 200, 0, count($horarios), 0);
+        $this->resp->respuesta($horarios ?? [], count($horarios ?? []), 'OK', 200, 0, count($horarios ?? []), 0);
     }
     public function get_rotaciones($connDB = '')
     {
@@ -1340,7 +1344,7 @@ class Horarios
                 $rota[$key] = [
                     "RotCodi" => $key,
                     "RotDesc" => $RotDesc,
-                    "RotData" => $rotDias,
+                    "RotData" => $rotDias ?? [],
                     "RotDias" => $totalDias,
                     // "Horarios" => $arrHorarios,
                 ];
@@ -1354,7 +1358,7 @@ class Horarios
         $this->resp->respuesta($rota, count($rota), 'OK', 200, 0, count($rota), 0);
     }
 
-    public function get_horale_1($Legajo, $connDB = '', $ListHorarios = [], $return = false)
+    public function get_horale_1(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1391,7 +1395,7 @@ class Horarios
 
         $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
     }
-    public function get_horale_2($Legajo, $connDB = '', $ListHorarios = [], $return = false)
+    public function get_horale_2(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1429,7 +1433,7 @@ class Horarios
 
         $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
     }
-    public function get_rotaleg($Legajo, $connDB = '', $return = false)
+    public function get_rotaleg(string $Legajo, $connDB = '', bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1470,7 +1474,7 @@ class Horarios
 
         $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
     }
-    public function get_citacion($Legajo, $connDB = '', $return = false)
+    public function get_citacion(string $Legajo, $connDB = '', bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1509,7 +1513,7 @@ class Horarios
 
         $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
     }
-    public function get_asign_legajo($Legajo, $connDB = '', $return = false)
+    public function get_asign_legajo(string $Legajo, $connDB = '', $return = false)
     {
         $this->validar_legajo($Legajo);
 
@@ -1534,7 +1538,7 @@ class Horarios
 
         $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
     }
-    private function validar_legajo($Legajo)
+    private function validar_legajo(string $Legajo)
     {
         if (empty($Legajo)) {
             throw new \Exception("Debe enviar un Legajo", 400);
@@ -1551,7 +1555,7 @@ class Horarios
             throw new \Exception("El campo Legajo debe ser un número entero y menor a 2147483647", 400);
         }
     }
-    private function intToRgb($colorInt)
+    private function intToRgb(int $colorInt): array
     {
         // Convertir el entero a hexadecimal y quitar el prefijo '0x'
         $hexColor = strtoupper(dechex($colorInt & 0xFFFFFF));
@@ -1566,12 +1570,12 @@ class Horarios
 
         return [$red, $green, $blue];
     }
-    private function getBrightness($r, $g, $b)
+    private function getBrightness(int $r, int $g, int $b): float
     {
         // Fórmula para calcular el brillo percibido
         return ($r * 299 + $g * 587 + $b * 114) / 1000;
     }
-    private function getTextColor($backgroundColor)
+    private function getTextColor(int $backgroundColor)
     {
         list($r, $g, $b) = $this->intToRgb($backgroundColor);
         $brightness = $this->getBrightness($r, $g, $b);
@@ -1579,31 +1583,32 @@ class Horarios
         // Si el brillo es alto, usa texto negro; si es bajo, usa texto blanco
         return ($brightness > 128) ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
     }
-    public function check_horarios($arrayLegajos, $conn)
-    {
+    // public function check_horarios(array $arrayLegajos, $conn)
+    // {
 
-        if (!$arrayLegajos) {
-            throw new \Exception("No se enviaron legajos para comprobar", 400);
-        }
+    //     if (!$arrayLegajos) {
+    //         throw new \Exception("No se enviaron legajos para comprobar", 400);
+    //     }
 
-        $ListaLegajos = $this->personal->return_legajos($conn) ?? [];
+    //     $ListaLegajos = $this->personal->return_legajos($conn) ?? [];
 
-        if (!$ListaLegajos) {
-            throw new \Exception("No se enviaron legajos para comprobar", 400);
-        }
+    //     if (!$ListaLegajos) {
+    //         throw new \Exception("No se enviaron legajos para comprobar", 400);
+    //     }
 
-        $legajosNoExistentes = [];
+    //     $legajosNoExistentes = [];
 
-        foreach ($arrayLegajos as $lega) {
-            if (!array_key_exists($lega, $ListaLegajos)) {
-                $legajosNoExistentes[] = $lega;
-            }
-        }
-        if ($legajosNoExistentes ?? []) {
-            throw new \Exception("Legajos no existentes: " . implode(', ', $legajosNoExistentes), 400);
-        }
-        return true;
-    }
+    //     foreach ($arrayLegajos as $lega) {
+    //         if (!array_key_exists($lega, $ListaLegajos)) {
+    //             $legajosNoExistentes[] = $lega;
+    //         }
+    //     }
+    //     if ($legajosNoExistentes ?? []) {
+    //         throw new \Exception("Legajos no existentes: " . implode(', ', $legajosNoExistentes), 400);
+    //     }
+    //     return true;
+    // }
+
     private function validar_obtener_horarios()
     {
         $datos = $this->getData;
@@ -1661,7 +1666,7 @@ class Horarios
 
         $this->check_version_file_sql_sp();
 
-        if (!$this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
+        if (!$this->check_sp_exists('sp_ObtenerReporteHorarios')) {
             $this->create_sp_horarios($conn);
         }
 
@@ -1687,8 +1692,8 @@ class Horarios
 
         /**
          * Función para construir dinámicamente los datos de filtro
-         * @param string $key Clave del dato a obtener (ej: 'Empresas')
-         * @return array [datos, filtro]
+         * // @param string $key Clave del dato a obtener (ej: 'Empresas')
+         * // @return array [datos, filtro]
          * equivale a:
          * $empresasData = $datos['Empresas'] ?? [];
          * $filtrarPorEmpresa = !empty($empresasData) ? 1 : 0; // Si hay empresas, se filtra por ellas
@@ -1727,11 +1732,11 @@ class Horarios
 
         /**
          * Función para construir dinámicamente los INSERT y binds para parámetros tipo tabla
-         * @param string $paramName Nombre del parámetro (ej: Legajo)
-         * @param string $sqlVar Nombre de la variable SQL (ej: @LegajosParam)
-         * @param array $data Array de datos (ej: [1,2,3])
-         * @param string $placeholderPrefix Prefijo para el placeholder (ej: legajo)
-         * @return array [sqlInsert, bindArray]
+         * // @param string $paramName Nombre del parámetro (ej: Legajo)
+         * // @param string $sqlVar Nombre de la variable SQL (ej: @LegajosParam)
+         * // @param array $data Array de datos (ej: [1,2,3])
+         * // @param string $placeholderPrefix Prefijo para el placeholder (ej: legajo)
+         * // @return array [sqlInsert, bindArray]
          */
         $dinamicInsert = function ($paramName, $sqlVar, $data, $placeholderPrefix) {
             $sql = '';
@@ -1943,76 +1948,84 @@ class Horarios
         // =====================================================================
         // 4. Salida como JSON
         // =====================================================================
-        $this->resp->respuesta($currentResultSet, count($currentResultSet), 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($currentResultSet ?? [], count($currentResultSet ?? []), 'OK', 200, $inicio, 0, 0);
 
     }
-    private function create_type_tables_sp_horarios()
+    private function check_type_exists(string $typeName)
+    {
+        $conn = $this->conect->conn();
+        $sql = "SELECT COUNT(*) FROM sys.types WHERE name = :typeName AND is_table_type = 1";
+        $stmt = $conn->prepare($sql);
+        $stmt->bindValue(':typeName', $typeName, \PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
+    private function create_type(string $typeName)
+    {
+        $log = $this->log_sp();
+        $conn = $this->conect->conn();
+        $sql = "CREATE TYPE dbo.{$typeName} AS TABLE (";
+        switch ($typeName) {
+            case 'TipoTablaLegajos':
+                $sql .= "Legajo INT)";
+                break;
+            case 'TipoTablaEmpresas':
+                $sql .= "Empresa INT)";
+                break;
+            case 'TipoTablaPlantas':
+                $sql .= "Planta SMALLINT)";
+                break;
+            case 'TipoTablaConvenios':
+                $sql .= "Convenio SMALLINT)";
+                break;
+            case 'TipoTablaSectores':
+                $sql .= "Sector SMALLINT)";
+                break;
+            case 'TipoTablaSecciones':
+                $sql .= "Seccion SMALLINT)";
+                break;
+            case 'TipoTablaGrupos':
+                $sql .= "Grupo SMALLINT)";
+                break;
+            case 'TipoTablaSucursales':
+                $sql .= "Sucursal SMALLINT)";
+                break;
+            case 'TipoTablaTareas':
+                $sql .= "Tarea INT)";
+                break;
+            case 'TipoTablaRegCH':
+                $sql .= "RegCH SMALLINT)";
+                break;
+            case 'TipoTablaEstados':
+                $sql .= "Estado SMALLINT)";
+                break;
+            case 'TipoTablaTipos':
+                $sql .= "Tipo SMALLINT)";
+                break;
+            case 'TipoTablaHorarios':
+                $sql .= "Horario INT)";
+                break;
+        }
+        $stmt = $conn->prepare($sql);
+        $result = $stmt->execute();
+        if ($result) {
+            $log("Tipo de tabla $typeName creado correctamente");
+        } else {
+            $log("Error al crear tipo de tabla $typeName");
+        }
+        return $result;
+    }
+    private function log_sp()
     {
         $logFile = date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log';
         $log = function ($text) use ($logFile) {
             $this->log->write($text, $logFile);
         };
-        function check_type_exists($conn, $typeName)
-        {
-            $sql = "SELECT COUNT(*) FROM sys.types WHERE name = :typeName AND is_table_type = 1";
-            $stmt = $conn->prepare($sql);
-            $stmt->bindValue(':typeName', $typeName, \PDO::PARAM_STR);
-            $stmt->execute();
-            return $stmt->fetchColumn() > 0;
-        }
-        function create_type($conn, $typeName, $log)
-        {
-            $sql = "CREATE TYPE dbo.{$typeName} AS TABLE (";
-            switch ($typeName) {
-                case 'TipoTablaLegajos':
-                    $sql .= "Legajo INT)";
-                    break;
-                case 'TipoTablaEmpresas':
-                    $sql .= "Empresa INT)";
-                    break;
-                case 'TipoTablaPlantas':
-                    $sql .= "Planta SMALLINT)";
-                    break;
-                case 'TipoTablaConvenios':
-                    $sql .= "Convenio SMALLINT)";
-                    break;
-                case 'TipoTablaSectores':
-                    $sql .= "Sector SMALLINT)";
-                    break;
-                case 'TipoTablaSecciones':
-                    $sql .= "Seccion SMALLINT)";
-                    break;
-                case 'TipoTablaGrupos':
-                    $sql .= "Grupo SMALLINT)";
-                    break;
-                case 'TipoTablaSucursales':
-                    $sql .= "Sucursal SMALLINT)";
-                    break;
-                case 'TipoTablaTareas':
-                    $sql .= "Tarea INT)";
-                    break;
-                case 'TipoTablaRegCH':
-                    $sql .= "RegCH SMALLINT)";
-                    break;
-                case 'TipoTablaEstados':
-                    $sql .= "Estado SMALLINT)";
-                    break;
-                case 'TipoTablaTipos':
-                    $sql .= "Tipo SMALLINT)";
-                    break;
-                case 'TipoTablaHorarios':
-                    $sql .= "Horario INT)";
-                    break;
-            }
-            $stmt = $conn->prepare($sql);
-            $result = $stmt->execute();
-            if ($result) {
-                $log("Tipo de tabla $typeName creado correctamente");
-            } else {
-                $log("Error al crear tipo de tabla $typeName");
-            }
-            return $result;
-        }
+        return $log;
+    }
+    private function create_type_tables_sp_horarios()
+    {
+        $log = $this->log_sp();
         // -- Crear tipos de tabla
         // CREATE TYPE dbo.TipoTablaLegajos AS TABLE (Legajo INT);
         // CREATE TYPE dbo.TipoTablaEmpresas AS TABLE (Empresa INT);
@@ -2048,15 +2061,16 @@ class Horarios
         ];
 
         foreach ($types as $type) {
-            if (!check_type_exists($conn, $type)) {
-                $log("Tipo de tabla $type no existe, creando...", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
+            if (!$this->check_type_exists($type)) {
+                $log("Tipo de tabla $type no existe, creando...");
                 // $this->log->write("Tipo de tabla $type creado correctamente", date('Ymd') . '_sp_ObtenerReporteHorarios_' . ID_COMPANY . '.log');
-                create_type($conn, $type, $log);
+                $this->create_type($type);
             }
         }
     }
-    private function check_sp_exists($conn, $spName)
+    private function check_sp_exists(string $spName)
     {
+        $conn = $this->conect->conn();
         $sql = "SELECT COUNT(*) FROM sys.procedures WHERE name = :spName";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':spName', $spName, \PDO::PARAM_STR);
@@ -2073,7 +2087,7 @@ class Horarios
         };
 
         // Verificamos si el Stored Procedure ya existe
-        if ($this->check_sp_exists($conn, 'sp_ObtenerReporteHorarios')) {
+        if ($this->check_sp_exists('sp_ObtenerReporteHorarios')) {
             return true; // Si ya existe, no hacemos nada más
         }
 

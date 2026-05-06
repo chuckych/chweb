@@ -40,7 +40,7 @@ class Response
      * @param int $count El total de registros de la respuesta.
      * @param int $idCompany El id de la empresa.
      */
-    function respuesta($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
+    public function respuesta(array $data = [], int $total = 0, string $msg = 'OK', int $code = 200, float $time_start = 0, int $count = 0, int $idCompany = 0)
     {
         $log = new Log; // Log Api
         $code = intval($code); // code response
@@ -86,7 +86,7 @@ class Response
         exit;
         /** END LOG API CONFIG */
     }
-    function start()
+    public function start()
     {
         $request = Flight::request();
 
@@ -96,7 +96,7 @@ class Response
         $start = empty($p->start) ? 0 : $p->start;
         return intval($start);
     }
-    function length()
+    public function length()
     {
         $request = Flight::request();
         $p = (strtolower($request->method) == 'post') ? $request->data : $request->query;
@@ -105,7 +105,7 @@ class Response
         $length = empty($p->length) ? 10 : $p->length;
         return intval($length);
     }
-    function getStatusMessage($code)
+    public function getStatusMessage(int $code): string
     {
         $statusCodes = array(
             100 => 'Continue',

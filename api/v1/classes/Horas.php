@@ -10,20 +10,21 @@ use Classes\RRHHWebService;
 use Classes\Tools;
 use Classes\ParaGene;
 use Flight;
+use flight\net\Request;
 
 class Horas
 {
-    private $resp;
-    private $request;
-    private $getData;
-    private $query;
-    private $log;
-    private $conect;
-    private $webservice;
-    private $tools;
-    private $paraGene;
+    private Response $resp;
+    private Request $request;
+    private array $getData;
+    private array $query;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private RRHHWebService $webservice;
+    private Tools $tools;
+    private ParaGene $paraGene;
 
-    function __construct()
+    public function __construct()
     {
         $this->resp = new Response;
         $this->request = Flight::request();
@@ -108,10 +109,11 @@ class Horas
                     $Legajos = $agrup['Legajos'];
                     $Desde = $agrup['Fechas']['Desde'];
                     $Hasta = $agrup['Fechas']['Hasta'];
-                    // $this->webservice->procesar_legajos($Legajos, $Desde, $Hasta);
+                    // $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
                 } catch (\Exception $e) {
                     $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
                     return false;
+                    
                 }
             }
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
@@ -122,29 +124,30 @@ class Horas
             exit;
         }
     }
-    private function procpend($datos)
-    {
-        $conn = $this->conect->conn();
-        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
-        try {
-            if (empty($datos)) {
-                return false;
-            }
-            foreach ($datos as $dato) {
-                $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
-                $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', CONVERT(datetime, $FechaHoraActual, 121))";
-                $stmt = $conn->prepare($sql);
-                $stmt->execute(); // Ejecuto la consulta
-            }
-            // $stmt = null;
-            $this->conect = null;
-        } catch (\PDOException $e) {
-            // $conn->rollBack();
-            // $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
-            // exit;
-        }
-    }
+    // private function procpend($datos)
+    // {
+    //     $conn = $this->conect->conn();
+    //     $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+    //     try {
+    //         if (empty($datos)) {
+    //             return false;
+    //         }
+    //         foreach ($datos as $dato) {
+    //             $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+    //             $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', CONVERT(datetime, $FechaHoraActual, 121))";
+    //             $stmt = $conn->prepare($sql);
+    //             $stmt->execute(); // Ejecuto la consulta
+    //         }
+    //         // $stmt = null;
+    //         $this->conect = null;
+    //     } catch (\PDOException $e) {
+    //         // $conn->rollBack();
+    //         // $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+    //         // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
+    //         // exit;
+    //     }
+    // }
+
     private function validarInputs()
     {
         $datos = $this->getData;
@@ -153,6 +156,7 @@ class Horas
             if (!is_array($datos)) {
                 throw new \Exception("No se recibieron datos", 1);
             }
+            $datosModificados = []; // Array para guardar los datos modificados
 
             $rules = [ // Reglas de validación
                 'Lega' => ['int'],
@@ -882,6 +886,7 @@ class Horas
             $stmt1->closeCursor(); // Cierro el cursor
             $stmt2->closeCursor(); // Cierro el cursor
 
+            $datHsATyTR = []; // Array que va a contener las horas trabajadas y a trabajar si es que se quieren mostrar
             $nuevo_array = [];
 
             // Recorremos el array original y reestructuramos los datos
@@ -901,7 +906,8 @@ class Horas
                         'HsATEnDecimal' => $this->minutosAHorasDecimal(intval($Horas_AT)),
                     );
                 }
-                $arrayHsATyTR = $arrayHsATyTR ?? [];
+                $arrayHsATyTR ??= [];
+                
 
                 $nuevo_elemento = array(
                     'Lega' => intval($elemento['Lega']),
@@ -1039,7 +1045,7 @@ class Horas
                 'totales' => array_values($sumas),
                 'totalesTryAT' => $totalesATyTr ?? '',
                 'data' => $nuevo_array,
-                'tiposHoras' => $hor,
+                'tiposHoras' => $hor ?? [],
             ];
 
             $this->resp->respuesta($array, count($nuevo_array), 'OK', 200, $inicio, $total['Total'], 0);

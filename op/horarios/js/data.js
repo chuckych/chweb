@@ -1023,19 +1023,22 @@ $(function () {
     }
     const grillaHorarios = (row) => {
 
-        const Desc = row.Desc
-        const Cod = row.Codi
-        const ID = row.ID
-        const colorRgb = row.Color;
-        const colorText = row.ColorText;
+        const Desc = row?.Desc ?? '';
+        const Cod = row?.Codi ?? '';
+        const ID = row?.ID ?? '';
+        const colorRgb = row?.Color ?? '';
+        const colorText = row?.ColorText ?? '';
         const checkIcon = `<i class="bi bi-check-circle-fill text-success"></i>`;
         const dashIcon = `<i class="bi bi-dash-circle text-secondary"></i>`;
         const styleColor = `style="background-color: ${colorRgb}; color: ${colorText}"`
-        const TotalHorasCalc = row.TotalHorasCalc ?? '00:00';
+        const TotalHorasCalc = row?.TotalHorasCalc ?? '00:00';
+
+        const getDayData = (day) => row?.[day] ?? {};
 
         const iconCheck = (day) => {
-            const spanIcon = row[day].LaboralID ? checkIcon : dashIcon
-            const spanHoras = row[day].Horas ? `<span class="font06">${row[day].Horas}</span>` : ''
+            const dayData = getDayData(day);
+            const spanIcon = dayData.LaboralID ? checkIcon : dashIcon;
+            const spanHoras = dayData.Horas ? `<span class="font06">${dayData.Horas}</span>` : '';
             return `
             <div class="d-flex flex-column justify-content-center align-items-center">
                 <span>${spanIcon}</span>
@@ -1044,11 +1047,14 @@ $(function () {
             `
         }
         const hintDay = (day) => {
-            const Descanso = day.Descanso == '00:00' ? '' : `(${day.Descanso})`
-            return `aria-label="${day.Desde} a ${day.Hasta} ${Descanso}"`;
+            const Descanso = day?.Descanso == '00:00' ? '' : (day?.Descanso ? `(${day.Descanso})` : '');
+            const desde = day?.Desde ?? '--:--';
+            const hasta = day?.Hasta ?? '--:--';
+            return `aria-label="${desde} a ${hasta} ${Descanso}"`;
         }
         const classDay = (day, f = row) => {
-            return (parseInt(f[day].LaboralID)) ? 'bg-ddd radius hint--top hint--info hint--no-shadow' : 'bg-white'
+            const dayData = f?.[day] ?? {};
+            return parseInt(dayData.LaboralID ?? 0) ? 'bg-ddd radius hint--top hint--info hint--no-shadow' : 'bg-white';
         }
         const grillaSemanaHtml = `
         <div class="radius p-1 bg-white">
@@ -1060,35 +1066,35 @@ $(function () {
                 </div>
             </div>
             <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white border" style="gap: 2px;">
-                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
+                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row?.Lunes)}>
                     <span>Lun</span>
                     <span>${iconCheck('Lunes')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
+                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row?.Martes)}>
                     <span>Mar</span>
                     <span>${iconCheck('Martes')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
+                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row?.Miércoles)}>
                     <span>Mie</span>
                     <span>${iconCheck('Miércoles')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
+                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row?.Jueves)}>
                     <span>Jue</span>
                     <span>${iconCheck('Jueves')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
+                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row?.Viernes)}>
                     <span>Vie</span>
                     <span>${iconCheck('Viernes')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
+                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row?.Sábado)}>
                     <span>Sab</span>
                     <span>${iconCheck('Sábado')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
+                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row?.Domingo)}>
                     <span>Dom</span>
                     <span>${iconCheck('Domingo')}</span>
                 </div>
-                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
+                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row?.Feriado)}>
                     <span>Fer</span>
                     <span>${iconCheck('Feriado')}</span>
                 </div>
@@ -1109,16 +1115,22 @@ $(function () {
         const colorText = row?.ColorText ?? '';
         const styleColor = `style="width: 40px; background-color: ${colorRgb}; color: ${colorText}; font-size: 10px; height: 25px; padding: 2px 5px; font-size: 12px;"`
 
+        const getDayData = (day) => row?.[day] ?? {};
+
         const iconCheck = (day) => {
-            const spanHoras = row[day].Horas ? `<span>${row[day].Horas}</span>` : ''
+            const dayData = getDayData(day);
+            const spanHoras = dayData.Horas ? `<span>${dayData.Horas}</span>` : ''
             return spanHoras;
         }
         const hintDay = (day) => {
-            const Descanso = day.Descanso == '00:00' ? '' : `(${day.Descanso})`
-            return `aria-label="${day.Desde} a ${day.Hasta} ${Descanso}"`;
+            const Descanso = day?.Descanso == '00:00' ? '' : (day?.Descanso ? `(${day.Descanso})` : '');
+            const desde = day?.Desde ?? '--:--';
+            const hasta = day?.Hasta ?? '--:--';
+            return `aria-label="${desde} a ${hasta} ${Descanso}"`;
         }
         const classDay = (day, f = row) => {
-            return (parseInt(f[day].LaboralID)) ? 'bg-ddd radius hint--top hint--info hint--no-shadow' : 'bg-white'
+            const dayData = f?.[day] ?? {};
+            return parseInt(dayData.LaboralID ?? 0) ? 'bg-ddd radius hint--top hint--info hint--no-shadow' : 'bg-white';
         }
         const grillaSemanaHtml = `
             <div class="d-flex justify-content-between align-items-center">
@@ -1129,35 +1141,35 @@ $(function () {
                 </div>
             </div>
             <div class="d-flex justify-content-between flex-row font07 align-items-center mt-1 radius p-1 bg-white border" style="gap: 2px;">
-                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row.Lunes)}>
+                <div class="dayGrilla ${classDay('Lunes')}" ${hintDay(row?.Lunes)}>
                     Lun
                     ${iconCheck('Lunes')}
                 </div>
-                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row.Martes)}>
+                <div class="dayGrilla ${classDay('Martes')}" ${hintDay(row?.Martes)}>
                     Mar
                     ${iconCheck('Martes')}
                 </div>
-                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row.Miércoles)}>
+                <div class="dayGrilla ${classDay('Miércoles')}" ${hintDay(row?.Miércoles)}>
                     Mie
                     ${iconCheck('Miércoles')}
                 </div>
-                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row.Jueves)}>
+                <div class="dayGrilla ${classDay('Jueves')}" ${hintDay(row?.Jueves)}>
                     Jue
                     ${iconCheck('Jueves')}
                 </div>
-                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row.Viernes)}>
+                <div class="dayGrilla ${classDay('Viernes')}" ${hintDay(row?.Viernes)}>
                     Vie
                     ${iconCheck('Viernes')}
                 </div>
-                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row.Sábado)}>
+                <div class="dayGrilla ${classDay('Sábado')}" ${hintDay(row?.Sábado)}>
                     Sab
                     ${iconCheck('Sábado')}
                 </div>
-                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row.Domingo)}>
+                <div class="dayGrilla ${classDay('Domingo')}" ${hintDay(row?.Domingo)}>
                     Dom
                     ${iconCheck('Domingo')}
                 </div>
-                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row.Feriado)}>
+                <div class="dayGrilla ${classDay('Feriado')}" ${hintDay(row?.Feriado)}>
                     Fer
                     ${iconCheck('Feriado')}
                 </div>
@@ -1520,7 +1532,6 @@ $(function () {
         singleDatePicker('#inputH1FDesde', 'right', 'down') // setear el datepicker
 
         $(`${ID_MODAL}`).modal('show'); // mostrar el modal
-        console.log(PERMISOS['Proc']);
 
         if (!PERMISOS['Proc']) { // si no tiene permisos para procesar ocultar el botón
             qs('.btn-procesar').hidden = true;

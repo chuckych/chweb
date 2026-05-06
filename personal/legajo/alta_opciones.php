@@ -433,6 +433,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['dato'] == 'alta_empresa')
     $EmpMail = test_input($_POST['EmpMail']);
     $EmpCont = test_input($_POST['EmpCont']);
     $EmpObse = test_input($_POST['EmpObse']);
+    $EmpEsta = test_input($_POST['EmpEsta'] ?? '0');
+    $EmpAFIPTipo = 0;
+    $EmpAFIPLiqui = 1;
     $EmpEst = '';
     $EmpCodActi = '';
     $EmpActividad = '';
@@ -1689,7 +1692,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
         echo json_encode($data);
         exit;
     }
-    ;
+
+    $InEgFeEg = test_input(($_POST['InEgFeEg'] ?? ''));
+    $InEgFeEg = !empty(($InEgFeEg)) ? dr_fecha($InEgFeEg, 'Y-m-d') : '';
 
     $InEgLega = test_input($_POST['DelInEgLega']);
     $InEgFeIn = test_input(Fech_Format_Var($_POST['DelInEgFeIn'], 'Y-m-d'));
@@ -1701,8 +1706,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['DelPerineg'] == 'true')) 
         "FeIn" => $InEgFeIn
     ];
 
-    $sendApi['DATA'] = $sendApi['DATA'] ?? '';
-    $sendApi['MESSAGE'] = $sendApi['MESSAGE'] ?? '';
+    $sendApi['DATA'] ??= '';
+    $sendApi['MESSAGE'] ??= '';
 
     $sendApi = curlAPI("$pathApiCH/perineg/", $payload, 'DELETE', $token);
     $sendApi = json_decode($sendApi, true);
@@ -2388,8 +2393,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $IDHikvFing10 ?? '0',
         $IDHikvCardNo ?? '0',
         $IDHikvName ?? '0',
-        $IDHikvPassword,
-        $IDHikvUserType,
+        $IDHikvPassword ?? '0',
+        $IDHikvUserType ?? '0',
         $IDCap07,
         $IDConIdFing, // 60
         $IDConIdRegistration,
@@ -2400,7 +2405,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $IDConIdBegin_time, // 66
         $IDConIdEnd_time, // 67
         $IDConIdUserGroup,
-        $IDConIdCardN // 69
+        $IDConIdCardNo ?? '0' // 69
     ];
 
     $cols70 = [
@@ -2539,9 +2544,9 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['IDENTIFICA'] == 'IDENTIFI
         $IDHikvFing9 ?? '0',
         $IDHikvFing10 ?? '0',
         $IDHikvCardNo ?? '0',
-        $IDHikvName,
-        $IDHikvPassword,
-        $IDHikvUserType,
+        $IDHikvName ?? '0',
+        $IDHikvPassword ?? '0',
+        $IDHikvUserType ?? '0',
         $IDCap07,
         $IDConIdFing,
         $IDConIdRegistration,
