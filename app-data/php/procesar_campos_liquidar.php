@@ -1209,6 +1209,7 @@ function ExportarTxt(array $payload): array
         'Sucu' => $filtros['Sucu'],
         'start' => 0,
         'length' => 1000000,
+        'Order' => ["Lega", "Fecha"]
     ];
 
     $ficNovHor = fic_nove_horas($payloadFicNovHor);

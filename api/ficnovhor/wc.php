@@ -10,6 +10,15 @@ if (!validarJsonRequest()) {
     response([], 0, "Json recibido inválido", 400, timeStart(), 0, 0);
 }
 
+$order = $dp['Order'] ?? [];
+
+$mapOrder = [
+    'Lega' => 'FICHAS.FicLega',
+    'Fecha' => 'FICHAS.FicFech',
+];
+
+$orderByStr = is_array($order) ? buildOrderByClause($order, $mapOrder) : '';
+
 $dp['FechIni'] = $dp['FechIni'] ?: date('Y-m-d'); // Fecha de inicio
 $dp['FechFin'] = $dp['FechFin'] ?: date('Y-m-d'); // Fecha de Fin
 

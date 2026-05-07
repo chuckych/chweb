@@ -194,7 +194,7 @@ $mapConfiguracion = [
                                     <?php
                                     foreach ($dataROL as $values) {
                                         $modulo = $mapInformes[$values['modulo']] ?? null;
-                                        if (!$modulo || $v['modulo'] === '1')
+                                        if (!$modulo || $values['modulo'] === '1')
                                             continue;
                                         echo $dropdownMenu($modulo, $values['modulo']);
                                     }

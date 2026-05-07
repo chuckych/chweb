@@ -95,9 +95,8 @@ if ($wcHoras) {
 $qFicCount .= ") AS FICHAS";
 
 $stmtFicCount = $dbApiQuery($qFicCount)[0]['count'] ?? '';
-$qFic .= " ORDER BY FICHAS.FicFech";
+$qFic .= $orderByStr ?: " ORDER BY FICHAS.FicFech";
 $qFic .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
-// error_log($qFic);
 $stmtFic = $dbApiQuery($qFic) ?? '';
 
 if (empty($stmtFic)) {

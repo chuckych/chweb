@@ -1770,3 +1770,30 @@ function filterArr(array $arr): array
 {
     return array_filter($arr, fn($v) => $v !== false && $v !== null && ($v != '' || $v == '0'));
 }
+function buildOrderByClause(array $order, array $mapOrder): string
+{
+    try {
+
+        if (empty($mapOrder)) {
+            throw new Exception('El mapa de ordenamiento no puede estar vacío');
+        }
+
+        if (empty($order)) {
+            return '';
+        }
+
+        foreach ($order as $field) {
+            if (!array_key_exists($field, $mapOrder)) {
+                $valoresPermitidos = implode(', ', array_keys($mapOrder));
+                throw new Exception("Order inválido: $field. Valores permitidos [ $valoresPermitidos ]");
+            }
+        }
+
+        $columns = array_map(fn($field) => $mapOrder[$field], $order);
+        return $columns ? ' ORDER BY ' . implode(', ', $columns) : '';
+    } catch (Exception $e) {
+        http_response_code(400);
+        response([], 0, $e->getMessage(), 400, timeStart(), 0, 0);
+        exit;
+    }
+}
