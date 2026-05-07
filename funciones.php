@@ -180,9 +180,18 @@ function ultimoacc()
  */
 function secureVar($key)
 {
-    $key = htmlspecialchars(stripslashes($key)); // Limpio la variable
+    if (is_array($key)) {
+        $clean = [];
+        foreach ($key as $k => $value) {
+            $clean[$k] = secureVar($value);
+        }
+        return $clean;
+    }
+
+    $key = (string)($key ?? '');
+    $key = htmlspecialchars(stripslashes($key), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Limpio la variable
     $key = str_ireplace("script", "blocked", $key); // Remplazo el script por una palabra bloqueada
-    $key = htmlentities($key, ENT_QUOTES); // Codifico la variable
+    $key = htmlentities($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Codifico la variable
     return $key;
 }
 function vjs()
@@ -557,30 +566,23 @@ function MinExcel($min)
     $min = ($min / 24);
     return $min;
 }
-function test_input_old($data)
-{
-    if (!$data)
-        return '';
-    $data = $data ?? '';
-    $data = trim($data);
-    // $data = stripslashes($data);
-    // $data = htmlspecialchars($data);
-    $data = utf8str($data);
-    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
-    $data = str_ireplace("script", '', $data);
-    $data = htmlentities($data, ENT_QUOTES);
-
-    return ($data);
-}
 function test_input($data)
 {
+    if (is_array($data)) {
+        $clean = [];
+        foreach ($data as $k => $value) {
+            $clean[$k] = test_input($value);
+        }
+        return $clean;
+    }
+
     if (!$data)
         return '';
-    $data = $data ?? '';
+    $data = (string)($data ?? '');
     $data = utf8str($data);
-    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES);
+    $data = htmlspecialchars(stripslashes($data), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $data = str_ireplace("script", '', $data);
-    $data = htmlentities($data, ENT_QUOTES);
+    $data = htmlentities($data, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $data = str_replace('&nbsp;', ' ', $data); // Reemplaza &nbsp; con un espacio en blanco
     $data = trim($data);
 

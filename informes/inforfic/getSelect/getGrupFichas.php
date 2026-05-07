@@ -19,7 +19,7 @@ $Col = 'GRUPOS';
 $ColData = 'FICHAS';
 $FiltroQ = (!empty($q)) ? "AND CONCAT($id, $Desc) LIKE '%$q%'" : '';
 
-$query = "SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume INNER JOIN $Col ON $id = $DescCodi WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
+$query = "SELECT TOP 100 $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume INNER JOIN $Col ON $id = $DescCodi WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ $FiltrosFichas GROUP BY $id, $Desc ORDER BY $Desc";
 // print_r($query); exit;
 
 $params = array();

@@ -20,7 +20,7 @@ $Col = 'PERSONAL';
 $ColData = 'FICHAS';
 $FiltroQ = (!empty($q)) ? "AND CONCAT($id, $Desc) collate SQL_Latin1_General_CP1_CI_AS LIKE '%$q%'" : '';
 
-$query = "SELECT $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn INNER JOIN $Col ON $id=$DescCodi WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ  $FiltrosFichas $FilterEstruct GROUP BY $id, $Desc ORDER BY FICHAS.FicLega";
+$query = "SELECT TOP 100 $id AS 'id', $Desc AS 'Desc' FROM $ColData INNER JOIN FICHAS3 ON FICHAS.FicLega = FICHAS3.FicLega AND FICHAS.FicFech = FICHAS3.FicFech AND FICHAS.FicTurn = FICHAS3.FicTurn INNER JOIN $Col ON $id=$DescCodi WHERE $ColData.FicFech BETWEEN '$FechaIni' AND '$FechaFin' AND $id >0 $FiltroQ  $FiltrosFichas $FilterEstruct GROUP BY $id, $Desc ORDER BY FICHAS.FicLega";
 // print_r($query); exit;
 
 $params = array();
