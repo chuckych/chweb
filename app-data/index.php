@@ -63,6 +63,7 @@ Flight::route('/novedades-all', function () {
 
     Flight::json($arr);
 });
+
 Flight::route('/novedades-agrupa', function () {
     // sleep('2');
     $endpoint = URLAPI . "/api/estruct/";
@@ -93,6 +94,7 @@ Flight::route('/novedades-agrupa', function () {
     ];
     Flight::json($json);
 });
+
 Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi) {
     // sleep('2');
     $endpoint = URLAPI . "/api/estruct/";
@@ -125,12 +127,14 @@ Flight::route('/novedades/@NoveTipo/(@NoveCodi)', function ($NoveTipo, $NoveCodi
     );
     Flight::json($json);
 });
+
 Flight::route('/causas/@NoveCodi', function ($NoveCodi) {
     $json = array(
         "causas" => (getNoveCausas($NoveCodi)) ?? [],
     );
     Flight::json($json);
 });
+
 Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
 
     $opt = ["getNov" => "1", "getONov" => "0", "getHor" => "1", "getFic" => "1"];
@@ -144,6 +148,7 @@ Flight::route('POST /ficha/@legajo/@fecha', function ($legajo, $fecha) {
     // print_r($data) . exit;
     Flight::json($data);
 });
+
 Flight::route('PUT /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['mNov'] == '0') {
@@ -193,6 +198,7 @@ Flight::route('PUT /novedad', function () {
 
     Flight::json($result);
 });
+
 Flight::route('POST /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['aNov'] == '0') {
@@ -276,6 +282,7 @@ Flight::route('POST /novedad', function () {
 
     Flight::json($result);
 });
+
 Flight::route('DELETE /novedad', function () {
 
     if ($_SESSION['ABM_ROL']['bNov'] == '0') {
@@ -309,6 +316,7 @@ Flight::route('DELETE /novedad', function () {
 
     Flight::json($result);
 });
+
 Flight::route('POST /horas/totales', function () {
 
     $payload = Flight::request()->data->getData();
@@ -364,6 +372,7 @@ Flight::route('POST /horas/totales', function () {
 
     Flight::json($data);
 });
+
 Flight::route('POST /novedades/totales', function () {
 
     $payload = Flight::request()->data->getData();
@@ -417,6 +426,7 @@ Flight::route('POST /novedades/totales', function () {
 
     Flight::json($data);
 });
+
 Flight::route('GET /horas/payload', function () {
 
     $payload = Flight::request()->query->getData();
@@ -455,6 +465,7 @@ Flight::route('GET /horas/payload', function () {
 
     Flight::json($dataPayload);
 });
+
 Flight::route('GET /export/totales', function () {
     $payload = Flight::request()->query->getData();
     $payload['flag'] = $payload['flag'] ?? false;
@@ -580,6 +591,7 @@ Flight::route('GET /export/totales', function () {
 
     include '../informes/reporte/xls.php';
 });
+
 Flight::route('/fechas/horas', function () {
     $endpoint = URLAPI . "/api/v1/horas/dateMinMax";
     $data = ch_api($endpoint, [], 'GET', []);
@@ -591,6 +603,7 @@ Flight::route('/fechas/horas', function () {
     }
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('/fechas/fichas', function () {
     $endpoint = URLAPI . "/api/v1/fichas/dateMinMax";
     $data = ch_api($endpoint, [], 'GET', []);
@@ -602,6 +615,7 @@ Flight::route('/fechas/fichas', function () {
     }
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('POST /get_personal_horarios', function () {
     require __DIR__ . '/../op/horarios/getPersonal.php';
 
@@ -700,6 +714,7 @@ Flight::route('POST /get_personal_horarios', function () {
 
     Flight::json($json_data);
 });
+
 Flight::route('/horarios', function () {
     $endpoint = URLAPI . "/api/v1/horarios/";
     $data = ch_api($endpoint, [], 'GET', []);
@@ -731,6 +746,7 @@ Flight::route('/horarios', function () {
     ];
     Flight::json($datos ?? []);
 });
+
 Flight::route('/horarios/asign/@legajo', function ($legajo) {
 
     $endpoint = URLAPI . "/api/v1/horarios/asign/legajo/$legajo";
@@ -768,6 +784,7 @@ Flight::route('/horarios/asign/@legajo', function ($legajo) {
     }
     Flight::json($asign ?? []);
 });
+
 Flight::route('/rotacion', function () {
     $endpoint = URLAPI . "/api/v1/horarios/rotacion";
     $data = ch_api($endpoint, [], 'GET', []);
@@ -775,6 +792,7 @@ Flight::route('/rotacion', function () {
     $arrayData = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData['DATA'] ?? [] : [];
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('POST /horarios/@tipo', function ($tipo) {
 
     $urlValid = [
@@ -1049,6 +1067,7 @@ Flight::route('POST /horarios/@tipo', function ($tipo) {
         'aud' => $aud ?? false
     ]);
 });
+
 Flight::route('POST /test_connect', function () {
     $endpoint = URLAPI . "/api/v1/conectar";
     $payload = Flight::request()->data;
@@ -1056,6 +1075,7 @@ Flight::route('POST /test_connect', function () {
     $arrayData = json_decode($data, true);
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('POST /estruct/fichas/', function () {
     $endpoint = URLAPI . "/api/fichasestruct/";
     $payload = Flight::request()->data;
@@ -1073,6 +1093,7 @@ Flight::route('POST /estruct/fichas/', function () {
     }
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('POST /estructuras/alta/', function () {
 
     $endpoint = URLAPI . "/api/v1/estructuras/alta/";
@@ -1091,22 +1112,27 @@ Flight::route('POST /estructuras/alta/', function () {
 
     Flight::json($arrayData ?? []);
 });
+
 Flight::route('/parametros/liquid', function () {
     $data = getParamLiquid();
     Flight::json($data);
 });
+
 Flight::route('/fichas/dates', function () {
     $data = getFichasMinMax();
     Flight::json($data);
 });
+
 Flight::route('GET /horas', function () {
     $data = get_tipo_hora();
     Flight::json($data);
 });
+
 Flight::route('GET /novedades', function () {
     $data = get_novedades();
     Flight::json($data);
 });
+
 Flight::route('GET /nove-horas/data', function () {
     $nove = get_novedades();
     $horas = get_tipo_hora();
@@ -1199,6 +1225,7 @@ Flight::route('GET /nove-horas/data', function () {
         'horasRestantes' => $horasRestantes ?? [],
     ]);
 });
+
 Flight::route('POST /prysmian/@tipo', function ($tipo) {
 
     try {
@@ -1249,6 +1276,7 @@ Flight::route('POST /prysmian/@tipo', function ($tipo) {
     }
 
 });
+
 Flight::route('POST /params', function () {
 
     $request = Flight::request();
@@ -1258,6 +1286,7 @@ Flight::route('POST /params', function () {
     Flight::json(add_params([$payload]));
 
 });
+
 Flight::route('GET /params', function () {
     $request = Flight::request();
     $queryData = $request->query ?? '';
@@ -1267,6 +1296,7 @@ Flight::route('GET /params', function () {
     $params = get_params($queryColumn) ?? [];
     Flight::json($params);
 });
+
 Flight::route('GET /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
@@ -1283,6 +1313,7 @@ Flight::route('GET /liquidar/custom/campos', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
+
 Flight::route('POST /ficnovhor', function () {
     try {
         $request = Flight::request();
@@ -1297,6 +1328,7 @@ Flight::route('POST /ficnovhor', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
+
 Flight::route('GET /paragene', function () {
     try {
         $paragene = v1_api('/parametros/paragene', 'GET', []);
@@ -1309,6 +1341,7 @@ Flight::route('GET /paragene', function () {
         Flight::json(['status' => 'error', 'message' => $th->getMessage()], $code);
     }
 });
+
 Flight::route('POST /liquidar/custom/campos', function () {
     try {
         require __DIR__ . '/php/procesar_campos_liquidar.php';
@@ -1518,6 +1551,7 @@ Flight::route('POST /personal/filtros', function () {
 
     Flight::json($result ?? []);
 });
+
 Flight::route('POST /proyectar', function () {
 
     $request = Flight::request();
@@ -1552,6 +1586,7 @@ Flight::route('POST /proyectar', function () {
     Flight::json($result ?? []);
 
 });
+
 Flight::route('DELETE /proyectar', function () {
 
     $request = Flight::request();
@@ -1585,230 +1620,16 @@ Flight::route('DELETE /proyectar', function () {
     Flight::json($result ?? []);
 
 });
-                
-Flight::route('POST /datatables/horarios', function () {
+
+Flight::route('POST /asignados', function () {
     $request = Flight::request();
     $payloadRaw = $request->data ?? [];
-    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
-    $draw = $payloadRaw['draw'] ?? 0;
-    $payload = [
-        'Desc' => $payloadRaw['search']['value'] ?? '',
-        'start' => $payloadRaw['start'] ?? 0,
-        'length' => $payloadRaw['length'] ?? 10,
-        'LastCodi' => $payloadRaw['LastCodi'] ?? 0,
-        'OrderBy' => $payloadRaw['OrderBy'] ?? '',
-    ];
-    $endpoint = URLAPI . "/api/horarios/";
-    $horarios = ch_api($endpoint, $payload, 'POST', []);
-    $horarios = json_decode($horarios ?? [], true);
-    $result = $horarios ?? [];
-    $jsonData = [
-        'draw' => $draw,
-        'recordsFiltered' => $result['TOTAL'] ?? 0,
-        'recordsTotal' => $result['COUNT'] ?? 0,
-        'data' => $result['DATA'] ?? [],
-    ];
-    Flight::json($jsonData ?? []);
-});
-Flight::route('POST /horario', function () {
-    $request = Flight::request();
-    $payloadRaw = $request->data ?? [];
-    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+    $endpoint = URLAPI . "/api/v1/horarios/asignados";
+    $horarios = ch_api($endpoint, $payloadRaw, 'POST', []);
+    $horarios = json_decode($horarios, true);
+    $result = $horarios;
 
-    // Algunos parsers dejan el body como ['undefined' => ''] cuando se envía mal serializado.
-    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
-        $payloadRaw = [];
-    }
-
-    // Fallback: leer JSON crudo para soportar arrays raíz enviados por axios.
-    if (empty($payloadRaw)) {
-        $rawInput = file_get_contents('php://input');
-        if (!empty($rawInput)) {
-            $decoded = json_decode($rawInput, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $payloadRaw = $decoded;
-            }
-        }
-    }
-
-    // La API /api/v1/horario procesa en modo batch: normalizamos siempre a array de items.
-    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
-    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
-
-    $endpoint = URLAPI . "/api/v1/horario";
-    $horario = ch_api($endpoint, $payload, 'POST', []);
-    $horario = json_decode($horario ?? [], true);
-    $result = $horario ?? [];
     Flight::json($result ?? []);
-});
-
-Flight::route('DELETE /horario', function () {
-    $request = Flight::request();
-    $payloadRaw = $request->data ?? [];
-    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
-
-    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
-        $payloadRaw = [];
-    }
-
-    if (empty($payloadRaw)) {
-        $rawInput = file_get_contents('php://input');
-        if (!empty($rawInput)) {
-            $decoded = json_decode($rawInput, true);
-            if (json_last_error() === JSON_ERROR_NONE) {
-                $payloadRaw = $decoded;
-            }
-        }
-    }
-
-    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
-    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
-
-    $endpoint = URLAPI . "/api/v1/horario";
-    $horario = ch_api($endpoint, $payload, 'DELETE', []);
-    $horario = json_decode($horario ?? [], true);
-    $result = $horario ?? [];
-    Flight::json($result ?? []);
-});
-
-Flight::route('GET /horario', function () {
-    $endpoint = URLAPI . "/api/v1/horario";
-    $horario = ch_api($endpoint, [], 'GET', []);
-    $horario = json_decode($horario ?? [], true);
-    $result = $horario ?? [];
-    Flight::json($result ?? []);
-});
-
-Flight::route('POST /horario/exportar-xls', function () {
-    try {
-        $endpoint = URLAPI . "/api/v1/horario";
-        $horario = ch_api($endpoint, [], 'GET', []);
-        $horario = json_decode($horario ?? '[]', true);
-
-        if (($horario['RESPONSE_CODE'] ?? '') !== '200 OK') {
-            $message = $horario['MESSAGE'] ?? 'No se pudieron obtener los horarios crudos para exportar.';
-            throw new Exception($message);
-        }
-
-        $rows = $horario['DATA'] ?? [];
-        if (!is_array($rows) || empty($rows)) {
-            throw new Exception('No hay datos para exportar.');
-        }
-
-        $exporter = require __DIR__ . '/php/horarios_export_xls.php';
-
-        $relativeFile = 'app-data/archivos/config_horarios_'.date('Ymd_His').'.xls';
-        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
-        if (!is_callable($exporter)) {
-            throw new Exception('No se pudo inicializar el exportador XLS de horarios.');
-        }
-        $exporter($rows, $absoluteFile);
-
-        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
-    } catch (\Throwable $th) {
-        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
-    }
-});
-
-Flight::route('POST /horario/exportar-xls-ejemplo', function () {
-    try {
-        $exporter = require __DIR__ . '/php/horarios_export_xls_ejemplo.php';
-
-        $relativeFile = 'configuracion/horarios/exporta-ejemplo.xls';
-        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
-        if (!is_callable($exporter)) {
-            throw new Exception('No se pudo inicializar el exportador XLS de ejemplo.');
-        }
-        $exporter([], $absoluteFile);
-
-        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
-    } catch (\Throwable $th) {
-        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
-    }
-});
-
-Flight::route('POST /horario/importar-xls', function () {
-    try {
-        if (!isset($_FILES['archivo']) || !is_array($_FILES['archivo'])) {
-            throw new Exception('No se recibió el archivo a importar.');
-        }
-
-        $file = $_FILES['archivo'];
-        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
-        if ($error !== UPLOAD_ERR_OK) {
-            $mapUploadError = [
-                UPLOAD_ERR_INI_SIZE => 'El archivo supera el tamaño permitido por el servidor.',
-                UPLOAD_ERR_FORM_SIZE => 'El archivo supera el tamaño permitido por el formulario.',
-                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Reintente.',
-                UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo.',
-                UPLOAD_ERR_NO_TMP_DIR => 'No existe el directorio temporal de subida.',
-                UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en disco.',
-                UPLOAD_ERR_EXTENSION => 'La subida fue detenida por una extensión de PHP.',
-            ];
-            $msg = $mapUploadError[$error] ?? 'Error al subir archivo.';
-            throw new Exception($msg);
-        }
-
-        $tmpFile = (string) ($file['tmp_name'] ?? '');
-        $originalName = (string) ($file['name'] ?? '');
-        $fileSize = (int) ($file['size'] ?? 0);
-        if ($tmpFile === '' || !is_uploaded_file($tmpFile)) {
-            throw new Exception('No se pudo validar el archivo temporal subido.');
-        }
-
-        error_log('[horarios.importar_xls] upload=' . json_encode([
-            'name' => $originalName,
-            'size' => $fileSize,
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        $importer = require __DIR__ . '/php/horarios_import_xls.php';
-        if (!is_callable($importer)) {
-            throw new Exception('No se pudo inicializar el importador de horarios.');
-        }
-
-        $parsed = $importer($tmpFile, $originalName);
-        $warnings = is_array($parsed['warnings'] ?? null) ? $parsed['warnings'] : [];
-
-        // error_log('[horarios.importar_xls] parsed=' . json_encode([
-        //     'meta' => $parsed['meta'] ?? [],
-        //     'warningsCount' => count($warnings),
-        //     'rowsCount' => is_array($parsed['rows'] ?? null) ? count($parsed['rows']) : 0,
-        // ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        if (!empty($warnings)) {
-            // error_log('[horarios.importar_xls] warnings=' . json_encode(array_slice($warnings, 0, 50), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-            Flight::json([
-                'status' => 'validation_error',
-                'message' => 'Se detectaron advertencias en el archivo. Corrija las filas indicadas antes de importar.',
-                'advertencias' => $warnings,
-                'meta' => $parsed['meta'] ?? [],
-            ], 422);
-            return;
-        }
-
-        $payload = is_array($parsed['rows'] ?? null) ? $parsed['rows'] : [];
-        // error_log('[horarios.importar_xls] payload_sample=' . json_encode(array_slice($payload, 0, 5), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-        if (empty($payload)) {
-            throw new Exception('No se encontraron filas válidas para importar.');
-        }
-
-        $endpoint = URLAPI . "/api/v1/horario";
-        $horario = ch_api($endpoint, $payload, 'POST', []);
-        $horario = json_decode($horario ?? '[]', true);
-        $result = is_array($horario) ? $horario : [];
-
-        // error_log('[horarios.importar_xls] api_response=' . json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
-
-        Flight::json([
-            'status' => 'ok',
-            'totalImportados' => count($payload),
-            'response' => $result,
-            'meta' => $parsed['meta'] ?? [],
-        ]);
-    } catch (\Throwable $th) {
-        error_log('[horarios.importar_xls] exception=' . $th->getMessage());
-        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
-    }
 });
 
 Flight::route('POST /asignados/exportar', function () {
@@ -1960,6 +1781,257 @@ foreach (['relohabi', 'perrelo', 'identifica'] as $ruta) {
 Flight::route('GET /estruct/emp', function () {
     $data = getEmpEstruct();
     Flight::json($data);
+});
+
+Flight::route('POST /datatables/horarios', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+    $draw = $payloadRaw['draw'] ?? 0;
+    $payload = [
+        'Desc' => $payloadRaw['search']['value'] ?? '',
+        'start' => $payloadRaw['start'] ?? 0,
+        'length' => $payloadRaw['length'] ?? 10,
+        'LastCodi' => $payloadRaw['LastCodi'] ?? 0,
+        'OrderBy' => $payloadRaw['OrderBy'] ?? '',
+    ];
+    $endpoint = URLAPI . "/api/horarios/";
+    $horarios = ch_api($endpoint, $payload, 'POST', []);
+    $horarios = json_decode($horarios ?? [], true);
+    $result = $horarios ?? [];
+    $jsonData = [
+        'draw' => $draw,
+        'recordsFiltered' => $result['TOTAL'] ?? 0,
+        'recordsTotal' => $result['COUNT'] ?? 0,
+        'data' => $result['DATA'] ?? [],
+    ];
+    Flight::json($jsonData ?? []);
+});
+
+Flight::route('POST /horario', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+
+    // Algunos parsers dejan el body como ['undefined' => ''] cuando se envía mal serializado.
+    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
+        $payloadRaw = [];
+    }
+
+    // Fallback: leer JSON crudo para soportar arrays raíz enviados por axios.
+    if (empty($payloadRaw)) {
+        $rawInput = file_get_contents('php://input');
+        if (!empty($rawInput)) {
+            $decoded = json_decode($rawInput, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $payloadRaw = $decoded;
+            }
+        }
+    }
+
+    // La API /api/v1/horario procesa en modo batch: normalizamos siempre a array de items.
+    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
+    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
+
+    $endpoint = URLAPI . "/api/v1/horario";
+    $horario = ch_api($endpoint, $payload, 'POST', []);
+    $horario = json_decode($horario ?? [], true);
+    $result = $horario ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('DELETE /horario', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+
+    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
+        $payloadRaw = [];
+    }
+
+    if (empty($payloadRaw)) {
+        $rawInput = file_get_contents('php://input');
+        if (!empty($rawInput)) {
+            $decoded = json_decode($rawInput, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $payloadRaw = $decoded;
+            }
+        }
+    }
+
+    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
+    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
+
+    $endpoint = URLAPI . "/api/v1/horario";
+    $horario = ch_api($endpoint, $payload, 'DELETE', []);
+    $horario = json_decode($horario ?? [], true);
+    $result = $horario ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('GET /horario', function () {
+    $endpoint = URLAPI . "/api/v1/horario";
+    $horario = ch_api($endpoint, [], 'GET', []);
+    $horario = json_decode($horario ?? [], true);
+    $result = $horario ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('POST /datatables/horarios', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+    $draw = $payloadRaw['draw'] ?? 0;
+    $payload = [
+        'Desc' => $payloadRaw['search']['value'] ?? '',
+        'start' => $payloadRaw['start'] ?? 0,
+        'length' => $payloadRaw['length'] ?? 10,
+        'LastCodi' => $payloadRaw['LastCodi'] ?? 0,
+        'OrderBy' => $payloadRaw['OrderBy'] ?? '',
+    ];
+    $endpoint = URLAPI . "/api/horarios/";
+    $horarios = ch_api($endpoint, $payload, 'POST', []);
+    $horarios = json_decode($horarios ?? [], true);
+    $result = $horarios ?? [];
+    $jsonData = [
+        'draw' => $draw,
+        'recordsFiltered' => $result['TOTAL'] ?? 0,
+        'recordsTotal' => $result['COUNT'] ?? 0,
+        'data' => $result['DATA'] ?? [],
+    ];
+    Flight::json($jsonData ?? []);
+});
+
+Flight::route('POST /horario/exportar-xls', function () {
+    try {
+        $endpoint = URLAPI . "/api/v1/horario";
+        $horario = ch_api($endpoint, [], 'GET', []);
+        $horario = json_decode($horario ?? '[]', true);
+
+        if (($horario['RESPONSE_CODE'] ?? '') !== '200 OK') {
+            $message = $horario['MESSAGE'] ?? 'No se pudieron obtener los horarios crudos para exportar.';
+            throw new Exception($message);
+        }
+
+        $rows = $horario['DATA'] ?? [];
+        if (!is_array($rows) || empty($rows)) {
+            throw new Exception('No hay datos para exportar.');
+        }
+
+        $exporter = require __DIR__ . '/php/horarios_export_xls.php';
+
+        $relativeFile = 'app-data/archivos/config_horarios_'.date('Ymd_His').'.xls';
+        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
+        if (!is_callable($exporter)) {
+            throw new Exception('No se pudo inicializar el exportador XLS de horarios.');
+        }
+        $exporter($rows, $absoluteFile);
+
+        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
+});
+
+Flight::route('POST /horario/exportar-xls-ejemplo', function () {
+    try {
+        $exporter = require __DIR__ . '/php/horarios_export_xls_ejemplo.php';
+
+        $relativeFile = 'configuracion/horarios/exporta-ejemplo.xls';
+        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
+        if (!is_callable($exporter)) {
+            throw new Exception('No se pudo inicializar el exportador XLS de ejemplo.');
+        }
+        $exporter([], $absoluteFile);
+
+        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
+});
+
+Flight::route('POST /horario/importar-xls', function () {
+    try {
+        if (!isset($_FILES['archivo']) || !is_array($_FILES['archivo'])) {
+            throw new Exception('No se recibió el archivo a importar.');
+        }
+
+        $file = $_FILES['archivo'];
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        if ($error !== UPLOAD_ERR_OK) {
+            $mapUploadError = [
+                UPLOAD_ERR_INI_SIZE => 'El archivo supera el tamaño permitido por el servidor.',
+                UPLOAD_ERR_FORM_SIZE => 'El archivo supera el tamaño permitido por el formulario.',
+                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Reintente.',
+                UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo.',
+                UPLOAD_ERR_NO_TMP_DIR => 'No existe el directorio temporal de subida.',
+                UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en disco.',
+                UPLOAD_ERR_EXTENSION => 'La subida fue detenida por una extensión de PHP.',
+            ];
+            $msg = $mapUploadError[$error] ?? 'Error al subir archivo.';
+            throw new Exception($msg);
+        }
+
+        $tmpFile = (string) ($file['tmp_name'] ?? '');
+        $originalName = (string) ($file['name'] ?? '');
+        $fileSize = (int) ($file['size'] ?? 0);
+        if ($tmpFile === '' || !is_uploaded_file($tmpFile)) {
+            throw new Exception('No se pudo validar el archivo temporal subido.');
+        }
+
+        error_log('[horarios.importar_xls] upload=' . json_encode([
+            'name' => $originalName,
+            'size' => $fileSize,
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        $importer = require __DIR__ . '/php/horarios_import_xls.php';
+        if (!is_callable($importer)) {
+            throw new Exception('No se pudo inicializar el importador de horarios.');
+        }
+
+        $parsed = $importer($tmpFile, $originalName);
+        $warnings = is_array($parsed['warnings'] ?? null) ? $parsed['warnings'] : [];
+
+        // error_log('[horarios.importar_xls] parsed=' . json_encode([
+        //     'meta' => $parsed['meta'] ?? [],
+        //     'warningsCount' => count($warnings),
+        //     'rowsCount' => is_array($parsed['rows'] ?? null) ? count($parsed['rows']) : 0,
+        // ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        if (!empty($warnings)) {
+            // error_log('[horarios.importar_xls] warnings=' . json_encode(array_slice($warnings, 0, 50), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            Flight::json([
+                'status' => 'validation_error',
+                'message' => 'Se detectaron advertencias en el archivo. Corrija las filas indicadas antes de importar.',
+                'advertencias' => $warnings,
+                'meta' => $parsed['meta'] ?? [],
+            ], 422);
+            return;
+        }
+
+        $payload = is_array($parsed['rows'] ?? null) ? $parsed['rows'] : [];
+        // error_log('[horarios.importar_xls] payload_sample=' . json_encode(array_slice($payload, 0, 5), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        if (empty($payload)) {
+            throw new Exception('No se encontraron filas válidas para importar.');
+        }
+
+        $endpoint = URLAPI . "/api/v1/horario";
+        $horario = ch_api($endpoint, $payload, 'POST', []);
+        $horario = json_decode($horario ?? '[]', true);
+        $result = is_array($horario) ? $horario : [];
+
+        // error_log('[horarios.importar_xls] api_response=' . json_encode($result, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+
+        Flight::json([
+            'status' => 'ok',
+            'totalImportados' => count($payload),
+            'response' => $result,
+            'meta' => $parsed['meta'] ?? [],
+        ]);
+    } catch (\Throwable $th) {
+        error_log('[horarios.importar_xls] exception=' . $th->getMessage());
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
 });
 
 Flight::map('Forbidden', function ($mensaje) {
