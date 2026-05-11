@@ -164,18 +164,18 @@
                     <strong>(${row.Codi}) ${row.Desc}</strong>
                 </div>
                 <div class="border p-1 rounded d-flex justify-content-center align-items-center gap5">
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-editar-horario" data-id="${row.ID}" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></button>
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-duplicar-horario" data-id="${row.ID}" title="Duplicar" aria-label="Duplicar Horario"><i class="bi bi-copy"></i></button>
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-eliminar-horario" data-id="${row.ID}" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-editar-horario" data-codi="${row.Codi}" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></button>
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-duplicar-horario" data-codi="${row.Codi}" title="Duplicar" aria-label="Duplicar Horario"><i class="bi bi-copy"></i></button>
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-eliminar-horario" data-codi="${row.Codi}" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
                 </div>
             </div>`;
     };
 
-    const getDataRowById = (table, id) => {
+    const getDataRowByCodi = (table, codi) => {
         const rows = table.rows().data().toArray();
-        const selectedId = String(id ?? '');
+        const selectedCodi = String(codi ?? '');
         return rows.find(function (row) {
-            return String(row.ID ?? '') === selectedId;
+            return String(row.Codi ?? '') === selectedCodi;
         }) || null;
     };
 
@@ -1507,9 +1507,9 @@
                 });
             }
 
-            $('#tblHorarios').on('click', '.btn-editar-horario', function () {
-                const dataId = $(this).data('id');
-                const dataRow = getDataRowById(table, dataId);
+            $('#tblHorarios tbody').on('click', '.btn-editar-horario', function () {
+                const dataCodi = $(this).data('codi');
+                const dataRow = getDataRowByCodi(table, dataCodi);                
                 editarHorario(dataRow);
             });
 
@@ -1538,14 +1538,14 @@
             });
 
             $('#tblHorarios').on('click', '.btn-duplicar-horario', function () {
-                const dataId = $(this).data('id');
-                const dataRow = getDataRowById(table, dataId);
+                const dataCodi = $(this).data('codi');
+                const dataRow = getDataRowByCodi(table, dataCodi);
                 openCreateHorarioModal(dataRow);
             });
 
             $('#tblHorarios').on('click', '.btn-eliminar-horario', function () {
-                const dataId = $(this).data('id');
-                const dataRow = getDataRowById(table, dataId);
+                const dataCodi = $(this).data('codi');
+                const dataRow = getDataRowByCodi(table, dataCodi);
                 deleteHorarioByRow(dataRow, $(this));
             });
             $('.table-responsive').show();
