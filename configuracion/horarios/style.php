@@ -118,6 +118,10 @@ tr.dtrg-group>td {
 .table td {
     border-top: 0px solid var(--border-color);
 }
+
+#tblUnused.table td {
+    border-top: 1px solid var(--border-color);
+}
 .custom-file-input {
     width: 100%;
     padding: 8px;

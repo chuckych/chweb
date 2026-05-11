@@ -160,7 +160,7 @@
         return `
             <div class="d-flex justify-content-between align-items-center pt-3 px-2 m-0">
                 <div class="d-flex justify-content-strat align-items-center gap5">
-                    <span class="badge radius w50 opa7 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID}</span>
+                    <span class="badge radius w50 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID || '&nbsp;'} </span>
                     <strong>(${row.Codi}) ${row.Desc}</strong>
                 </div>
                 <div class="border p-1 rounded d-flex justify-content-center align-items-center gap5">
