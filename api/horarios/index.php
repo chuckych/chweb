@@ -130,7 +130,7 @@ foreach ($arrDPSTR as $key => $v) {
 if ($LastCodi > 0) {
     $queryLastCodi = "SELECT MAX(HorCodi) as LastCodi FROM HORARIOS WHERE HORARIOS.HorCodi > 0";
     $stmtLastCodi = $dbApiQuery($queryLastCodi)[0]['LastCodi'] ?? 0;
-    $countData = count($stmtLastCodi ?? []);
+    $countData = ((int) $stmtLastCodi > 0) ? 1 : 0;
     http_response_code(200);
     (response($stmtLastCodi ?? [], 1, 'OK', 200, $time_start, $countData, $idCompany));
     exit;
