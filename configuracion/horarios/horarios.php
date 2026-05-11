@@ -25,6 +25,7 @@
         <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, '<span>Configuración de Horarios</span>', ''); ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white py-3">
+            <div class="col-12" id="table-responsive-horarios"></div>
             <div class="col-12">
                 <div class="table-responsive" style="display:none;">
                     <table id="tblHorarios" class="shadow-sm table table-borderless w-100 p-3 border radius loader-in"></table>

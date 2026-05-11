@@ -118,3 +118,51 @@ tr.dtrg-group>td {
 .table td {
     border-top: 0px solid var(--border-color);
 }
+.custom-file-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    color: #495057;
+    cursor: pointer;
+}
+
+/* Botón interno */
+.custom-file-input::file-selector-button {
+    margin-right: 12px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    background: #0d6efd;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease;
+}
+
+/* Hover */
+.custom-file-input::file-selector-button:hover {
+    background: #0b5ed7;
+}
+
+/* Focus */
+.custom-file-input:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 3px rgba(13,110,253,.25);
+}
+.btn-upload {
+    display: inline-block;
+    padding: 10px 16px;
+    background: #198754;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-upload:hover {
+    background: #157347;
+}

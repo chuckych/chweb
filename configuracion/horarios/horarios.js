@@ -91,11 +91,13 @@
     const renderDia = (dia, Color, ColorText, title) => {
         if (!dia) return '';
         const laboral = dia.LaboralID >= 1;
-        const style = laboral ? `style="border: 1px solid #727171; color: #333;"` : '';
+        const style = laboral ? `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"` : '';
         const classLaboral = laboral ? 'LaboralID' : '';
         const Horas = laboral ? dia.Horas + ' hs' : 'Franco';
         const tittleDay = `<span class="font08 text-secondary">${title}</span>`;
-        return `<div class="p-1">${tittleDay}<br>${dia.Desde}<br>${dia.Hasta}<br><span class="font08"><span class="${classLaboral}" ${style}>${Horas}</span></span></div>`;
+        return `<div class="p-1">
+            <div class="p-1">${tittleDay}<br>${dia.Desde}<br>${dia.Hasta}<br><span class="font08"><span class="${classLaboral}" ${style}>${Horas}</span></span></div>
+        </div>`;
     };
 
     // Renderiza badge con el color del horario
@@ -103,7 +105,7 @@
         return `<span class="badge radius w10 h10" style="background-color:${row.Color}; color:${row.ColorText};">&nbsp;</span>`;
     };
     const renderHorasSemanales = (data, row) => {
-        const style = `style="border: 1px solid #727171; color: #333;"`;
+        const style = `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"`;
         return `<div class="p-1"><span class="font08 text-secondary">Horas</span><br><span class="LaboralID" ${style}>${data} hs</span></div>`;
     };
 
@@ -979,9 +981,15 @@
         }
 
         const $fileInput = $modalImportarHorarios.find('#import-horarios-file');
+        const $fileInputSelected = $modalImportarHorarios.find('#selected-file-name');
         if ($fileInput.length) {
             $fileInput.val('');
         }
+
+        $fileInput.off('change.file').on('change.file', function () {
+            // console.log(this.files[0].name);
+            $fileInputSelected.text(this.files[0] ? this.files[0].name : 'Ningún archivo seleccionado');
+        });
 
         const $alert = $modalImportarHorarios.find('#import-horarios-alert');
         const $list = $modalImportarHorarios.find('#import-horarios-alert-list');
@@ -1364,7 +1372,7 @@
         $modalHorario.modal('show');
     };
 
-    const renderOpt = `<div class="opt-tbl mb-3 d-flex justify-content-between align-items-center gap5"></div>`; 
+    const renderOpt = `<div class="opt-tbl mb-3 d-flex justify-content-between align-items-center gap5"></div>`;
 
     const renderOptExport = () => {
         let html = `<div class="btn-group dropright"><button type="button" class="btn btn-sm h40 btn-outline-custom border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button><div class="dropdown-menu shadow border-0 p-0 radius" x-placement="right-start" style="position: absolute; transform: translate3d(30px, 0px, 0px); top: 0px; left: 0px; will-change: transform;"><ul class="list-group" id="export-options">`;
@@ -1377,10 +1385,10 @@
     };
 
     const renderOptNuevoHorario = () => {
-        return `<div id="div-nuevo-horario" class="d-inline-flex gap5"><button class="btn h40 px-3 btn-sm btn-custom border-0 ml-1" id="btn-nuevo-horario"><i class="bi bi-plus-lg"></i> Nuevo Horario</button></div>`;
+        return `<div id="div-nuevo-horario" class="d-inline-flex gap5"><button class="btn h40 px-3 btn-sm btn-custom border-0 ml-1" id="btn-nuevo-horario"><span class="d-none d-sm-block"><i class="bi bi-plus-lg"></i> Nuevo Horario</span><span class="d-block d-sm-none">Nuevo</span></button></div>`;
     };
     const renderSelectOrder = () => {
-        let html = `<div class="d-flex align-items-center"><label class="font08 mb-0 mr-2">Ordenar por:</label><select id="select-order" class="form-control form-control-sm">`;
+        let html = `<div class="d-flex align-items-center"><label class="font08 mb-0 mr-2 d-none d-sm-block">Ordenar por:</label><select id="select-order" class="form-control form-control-sm">`;
         Object.keys(MAP_ORDENAR_POR).forEach(function (key) {
             html += `<option value="${key}">${MAP_ORDENAR_POR[key].column}</option>`;
         });
@@ -1431,13 +1439,13 @@
             const htmlOpt = renderOpt;
 
             $inputFilter.attr('placeholder', 'Código / Descripcion / ID').removeClass('form-control-sm');
-            $('.table-responsive').prepend(htmlOpt);
+            $('#table-responsive-horarios').prepend(htmlOpt);
 
             const htmlNuevoHorario = renderOptNuevoHorario();
             const htmlSelectOrder = renderSelectOrder();
             const htmlOptExport = renderOptExport();
 
-            const $optTbl = $('.table-responsive .opt-tbl');
+            const $optTbl = $('#table-responsive-horarios .opt-tbl');
 
             $optTbl.append(htmlNuevoHorario);
             const $divNuevohorario = $('#div-nuevo-horario');
@@ -1445,7 +1453,7 @@
 
             $optTbl.append(htmlSelectOrder);
 
-            select2Simple('#select-order', 'Seleccionar orden', false, false, '250px');
+            select2Simple('#select-order', 'Seleccionar orden', false, false, '220px');
 
             const $selectOrder = $('#select-order');
             if ($selectOrder.length) {
@@ -1497,7 +1505,6 @@
                 const dataRow = getDataRowById(table, dataId);
                 deleteHorarioByRow(dataRow, $(this));
             });
-            
             $('.table-responsive').show();
         });
 

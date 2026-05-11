@@ -201,7 +201,8 @@ foreach ($mapDays as $key => $day) {
                 <p class="mb-0" id="confirm-delete-horario-text">¿Confirma eliminar este horario?</p>
             </div>
             <div class="modal-footer border-0">
-                <button type="button" class="font09 pointer float-right btn btn-outline-secondary border" data-dismiss="modal">Cancelar</button>
+                <button type="button" class="font09 pointer float-right btn btn-outline-secondary border"
+                    data-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-danger font09" id="btn-confirm-delete-horario">Eliminar</button>
             </div>
         </div>
@@ -218,25 +219,30 @@ foreach ($mapDays as $key => $day) {
                 </button>
             </div>
             <div class="modal-body">
-                <p class="mb-2 font09">Descargue el archivo de ejemplo para completar los horarios con el formato correcto.</p>
-                <div class="form-group mb-2">
-                    <label for="import-horarios-file" class="font08 mb-1">Archivo a importar</label>
-                    <input type="file" class="form-control-file" id="import-horarios-file" accept=".xls,.xlsx">
-                    <small class="form-text text-muted">Solo se permiten archivos .xls o .xlsx válidos.</small>
-                </div>
+                <p class="mb-2 font09">Descargue el archivo de ejemplo para completar los horarios con el formato
+                    correcto.</p>
+                <label for="import-horarios-file" class="btn btn-outline-custom font09 border mb-2 radius pointer">
+                    Seleccionar archivo Excel
+                </label>
+                <br>
+                <span id="selected-file-name" class="font08 ml-2 text-muted">Ningún archivo seleccionado</span>
+                <input type="file" id="import-horarios-file" hidden accept=".xls,.xlsx">
+                <br>
                 <div id="import-horarios-alert" class="alert alert-warning d-none mb-0" role="alert">
                     <div class="font-weight-bold mb-1">Advertencias encontradas antes de importar</div>
                     <ul class="mb-0 pl-3 font08" id="import-horarios-alert-list"></ul>
                 </div>
             </div>
             <div class="modal-footer border-0 d-flex justify-content-between">
-                <button type="button" class="font09 pointer btn btn-outline-secondary border" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="font09 pointer btn btn-outline-secondary border"
+                    data-dismiss="modal">Cerrar</button>
                 <div class="d-flex align-items-center" style="gap:8px;">
-                    <button type="button" class="btn btn-outline-custom font09 border" id="btn-descargar-ejemplo-importar-xls">
-                        <i class="bi bi-file-earmark-arrow-down"></i> Descargar ejemplo
+                    <button type="button" class="btn btn-outline-custom font09 border"
+                        id="btn-descargar-ejemplo-importar-xls">
+                        Descargar ejemplo
                     </button>
                     <button type="button" class="btn btn-custom font09" id="btn-importar-xls-modal">
-                        <i class="bi bi-upload"></i> Importar XLS
+                        Importar XLS
                     </button>
                 </div>
             </div>
