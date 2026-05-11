@@ -1994,6 +1994,7 @@
  .gap10 {
      gap: 10px !important;
  }
+
  .fit-content {
      width: fit-content !important;
  }
@@ -2001,4 +2002,12 @@
  /* clase para eliminar el punto en los <li> esto se aplica a los elementos de lista */
  .no-dot {
      list-style-type: none !important;
+ }
+
+ .hover-bg:hover {
+     background-color: #ebe9e9 !important;
+     transition: var(--main-transition) !important;
+ }
+ .btn-hide {
+     display: none !important;
  }

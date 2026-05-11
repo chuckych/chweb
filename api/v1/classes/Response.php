@@ -16,7 +16,7 @@ class Response
      * @param int $code El código de respuesta HTTP.
      * @param mixed $data Los datos a incluir en la respuesta.
      */
-    function json($data, $code = 200)
+    public function json($data, $code = 200)
     {
         // Establecemos el código de respuesta HTTP.
         http_response_code($code);
@@ -26,7 +26,6 @@ class Response
 
         // Convertimos los datos a formato JSON, escapando correctamente los caracteres UTF-8.
         $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-
         echo $json;
     }
     /**
@@ -43,47 +42,56 @@ class Response
     public function respuesta(array $data = [], int $total = 0, string $msg = 'OK', int $code = 200, float $time_start = 0, int $count = 0, int $idCompany = 0)
     {
         $log = new Log; // Log Api
-        $code = intval($code); // code response
-        $start = ($code != 400) ? $this->start() : 0; // start response
-        $length = ($code != 400) ? $this->length() : 0; // length response
-
-        $time_end = microtime(true);
-        $tiempoScript = number_format($time_end - $time_start, 4);
-
-        $array = array(
-            'RESPONSE_CODE' => $code . ' ' . $this->getStatusMessage($code),
-            'START' => intval($start),
-            'LENGTH' => intval($length),
-            'TOTAL' => intval($total),
-            'COUNT' => intval($count),
-            'MESSAGE' => $msg,
-            'TIME' => floatval($tiempoScript),
-            'DATA' => $data ?? [],
-        );
-        $this->json($array, $code); // response json
-
-        $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
-
-        $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
-        $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-
-        if ($agent) {
-            $parser = new UserAgentParser();
-            $ua = $parser->parse();
-            $ua = $parser();
-            $ua->platform();
-            $ua->browser();
-            $ua->browserVersion();
-            $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
-        }
-        // si ID_COMPANY no esta definido
-        $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
         $nameLog = date('Ymd') . '_request_' . $idCompany . '.log'; // path Log Api
-        /** start text log*/
-        $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
-        /** end text log*/
-        $log->write($TextLog, $nameLog); // Log Api
-        exit;
+        try {
+            $code = intval($code); // code response
+            $start = ($code != 400) ? $this->start() : 0; // start response
+            $length = ($code != 400) ? $this->length() : 0; // length response
+
+            $time_end = microtime(true);
+            $tiempoScript = number_format($time_end - $time_start, 4);
+
+            $array = [
+                'RESPONSE_CODE' => $code . ' ' . $this->getStatusMessage($code),
+                'START' => intval($start),
+                'LENGTH' => intval($length),
+                'TOTAL' => intval($total),
+                'COUNT' => intval($count),
+                'MESSAGE' => $msg,
+                'TIME' => floatval($tiempoScript),
+                'DATA' => $data ?? [],
+            ];
+            $this->json($array, $code); // response json
+
+            $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
+
+            $ipAdress = $_SERVER['REMOTE_ADDR'] = $_SERVER['REMOTE_ADDR'] ?? '';
+            $agent = $_SERVER['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+            if ($agent) {
+                $parser = new UserAgentParser();
+                $ua = $parser->parse();
+                $ua = $parser();
+                $ua->platform();
+                $ua->browser();
+                $ua->browserVersion();
+                $agent = $ua->platform() . ' ' . $ua->browser() . ' ' . $ua->browserVersion();
+            }
+            // si ID_COMPANY no esta definido
+            $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
+            /** start text log*/
+            $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
+            /** end text log*/
+            $log->write($TextLog, $nameLog); // Log Api
+            exit;
+            //code...
+        } catch (\Throwable $th) {
+            $log->write($th->getMessage(), $nameLog);
+            $this->json(['error' => 'Error al procesar la respuesta'], 500);
+            // error_log(print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2), true));
+            $log->traceError($th->getMessage());
+            exit;
+        }
         /** END LOG API CONFIG */
     }
     public function start()

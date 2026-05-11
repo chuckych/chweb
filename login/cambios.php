@@ -1,7 +1,8 @@
 <?php
 $pathLog = __DIR__ . '/../logs/info/' . date('Ymd') . '_cambios_db.log';
+$verDB ??= 0; // si no existe la variable $verDB, se inicializa en 0
 
-function createTable($tableName, $fields, $engine, $pathLog)
+function createTable(string $tableName, string $fields, string $engine, string $pathLog)
 {
     if (!checkTable($tableName)) {
         $sql = "CREATE TABLE `$tableName` (";
@@ -998,6 +999,16 @@ if ($verDB < 20260423) {
     $verDB = 20260423; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
     pdoQuery("UPDATE modulos SET estado = '0' WHERE id = 48"); // desactivar el modulo "Liquidar Custom"
     fileLog("Se activo el modulo: \"Liquidar Custom\"", $pathLog); // escribir en el log
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
+    
+}
+
+if ($verDB < 20260508) {
+
+    $verDB = 20260508; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('49', 'C0nfH0r4', 'Horarios Config', 12, '0', 3)");
+    fileLog("Se inserto el modulo: \"Horarios Config\"", $pathLog); // escribir en el log
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
     

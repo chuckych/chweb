@@ -22,12 +22,12 @@
     </style>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<div class="fadeInDown">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod2('bg-custom', 'white', 'gear-fill', MODULOS['estruct'], '25', 'text-white mr-2'); ?>
+        <?php $noNav ? '': encabezado_mod2('bg-custom', 'white', 'gear-fill', MODULOS['estruct'], '25', 'text-white mr-2'); ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white py-2">
             <div class="col-12 p-3">
@@ -80,6 +80,6 @@
     <script src="js/data.js?v=<?= version_file("/configuracion/estruct/js/data.js") ?>"></script>
     <script src="../../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
-</body>
+</div>
 
 </html>

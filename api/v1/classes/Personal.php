@@ -63,7 +63,7 @@ class Personal
     {
         $conn = $this->conect->check_connection();
         $data = $this->return_legajos($conn);
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data), 'OK', 200, 0, count($data), 0);
     }
 
     public function check_legajos($arrayLegajos, $connDB = '')
@@ -347,10 +347,10 @@ class Personal
                     'personal' => $Per
                 ]
             ];
-            $this->resp->respuesta($data, $total, 'OK', 200, 0, $total, 0);
+            $this->resp->respuesta($data ?? [], $total, 'OK', 200, 0, $total, 0);
         } catch (\Throwable $th) {
             $this->log->write($th->getMessage(), date('Ymd') . '_personal_filtros_estructura.log');
-            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
         }
     }
     private function data_estructura($estructura, $Descripcion = '')
@@ -492,8 +492,8 @@ class Personal
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         try {
@@ -565,7 +565,7 @@ class Personal
             // Flight::json($datos);
             return $datos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_inputs_filtros_estructura.log');
         }
     }

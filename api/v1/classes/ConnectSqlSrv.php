@@ -116,7 +116,7 @@ class ConnectSqlSrv
             ];
             $stmt = null;
             $conectar = null;
-            $this->resp->respuesta($info, 1, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($info ?? [], 1, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
             $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_test_connect_' . $idCompany . '.log');

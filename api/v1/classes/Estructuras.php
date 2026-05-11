@@ -42,7 +42,7 @@ class Estructuras
         $data = $this->getData;
 
         if (empty($data)) {
-            $this->resp->respuesta('No hay datos', 0, 'Error', 400, microtime(true), 0, 0);
+            $this->resp->respuesta(['No hay datos'], 0, 'Error', 400, microtime(true), 0, 0);
             exit;
         }
 
@@ -147,7 +147,7 @@ class Estructuras
 
         $this->conect->close($conn);
 
-        $this->resp->respuesta($estructuras, 1, 'OK', 200, microtime(true), 0, 0);
+        $this->resp->respuesta($estructuras ?? [], 1, 'OK', 200, microtime(true), 0, 0);
     }
     public function create()
     {
@@ -204,7 +204,7 @@ class Estructuras
 
         if ($existe) {
             $this->conect->close($conn);
-            $this->resp->respuesta('', 0, 'El código (' . $datos['Cod'] . ') ya existe', 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, 'El código (' . $datos['Cod'] . ') ya existe', 400, $inicio, 0, 0);
         }
 
         // validar si ya existe la descripción
@@ -229,7 +229,7 @@ class Estructuras
 
         if ($existe) {
             $this->conect->close($conn);
-            $this->resp->respuesta('', 0, 'La descripción (' . $datos['Desc'] . ') ya existe', 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, 'La descripción (' . $datos['Desc'] . ') ya existe', 400, microtime(true), 0, 0);
         }
 
         $queryEstruct = [
@@ -280,19 +280,19 @@ class Estructuras
             $data['SecCodi'] = $datos['SecCodi'];
         }
 
-        $this->resp->respuesta($data, 1, 'OK', 200, microtime(true), 0, 0);
+        $this->resp->respuesta($data ?? [], 1, 'OK', 200, microtime(true), 0, 0);
     }
     private function validarDataEstruct()
     {
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         if (!$datos) {
-            $this->resp->respuesta('', 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
         }
 
         $Estruct = $datos['Estruct'] ?? '';
@@ -353,7 +353,7 @@ class Estructuras
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarDataEstruct.log');
         }
     }

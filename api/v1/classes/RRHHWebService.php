@@ -237,7 +237,7 @@ class RRHHWebService
             return true;
         } catch (\Exception $th) {
             $this->log->write($th->getMessage(), date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
-            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
             return false;
         }
     }

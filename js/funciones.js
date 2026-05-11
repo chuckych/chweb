@@ -498,7 +498,7 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         }
     })
 }
-function select2Simple(selector, placeholder, clear, selclose, width = '') {
+function select2Simple(selector, placeholder, clear, selclose, width = '') {    
     $(selector).select2({
         placeholder: $(selector).data("label") || placeholder,
         minimumResultsForSearch: 10,
@@ -1266,6 +1266,30 @@ const DT_SPANISH_SHORT2 = {
     "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
     "sInfoEmpty": "No se encontraron resultados",
     "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+    "sInfoPostFix": "",
+    "sSearch": "",
+    "sUrl": "",
+    "sInfoThousands": ",",
+    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
+    "oPaginate": {
+        "sFirst": "<i class='bi bi-chevron-double-left'></i>",
+        "sLast": "<i class='bi bi-chevron-double-right'></i>",
+        "sNext": "<i class='bi bi-chevron-right'></i>",
+        "sPrevious": "<i class='bi bi-chevron-left'></i>"
+    },
+    "oAria": {
+        "sSortAscending": ":Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ":Activar para ordenar la columna de manera descendente"
+    }
+};
+const DT_SPANISH_2 = {
+    "bProcessing": "Actualizando . . .",
+    "sLengthMenu": "_MENU_",
+    "sZeroRecords": "",
+    "sEmptyTable": "",
+    "sInfo": "Mostrando _START_ al _END_ de _TOTAL_ Registros",
+    "sInfoEmpty": "No se encontraron resultados",
+    "sInfoFiltered": "",
     "sInfoPostFix": "",
     "sSearch": "",
     "sUrl": "",

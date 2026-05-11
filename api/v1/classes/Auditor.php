@@ -10,17 +10,18 @@ use Classes\RRHHWebService;
 use Classes\Tools;
 use Classes\ParaGene;
 use Flight;
+use flight\net\Request;
 
 class Auditor
 {
-    private $resp;
-    private $request;
-    private $getData;
-    private $query;
-    private $log;
-    private $conect;
-    private $tools;
-    function __construct()
+    private Response $resp;
+    private Request $request;
+    private array $getData;
+    private array $query;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private Tools $tools;
+    public function __construct()
     {
         $this->resp    = new Response;
         $this->request = Flight::request();
@@ -47,14 +48,14 @@ class Auditor
 
             $sql = $get_dbdata < 70 ? $sqlMenos70 : $sqlMas70;
             $totalAffectedRows = 0;
-            $seconds = 0.0001;
+            $ms_offset = 0;
             $FechaHora = $this->conect->FechaHora();
             foreach ($datos as $dato) { // Recorro los datos
                 // $this->log->write($dato['FechaHora'], date('Ymd') . '_Auditor_sql_' . ID_COMPANY . '.log');
                 $stmt = $conn->prepare($sql); // Preparo la consulta
                 $AudUser = substr($dato['AudUser'], 0, 10);
                 $AudDato = substr($dato['AudDato'], 0, 100); // Limita la cantidad de caracteres a 100
-                $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $seconds);
+                $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $ms_offset);
                 $stmt->bindValue(':AudFech', $AudFech, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudHora', $dato['AudHora'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudUser', $AudUser, \PDO::PARAM_STR);
@@ -64,7 +65,7 @@ class Auditor
                 $stmt->bindValue(':AudDato', $AudDato, \PDO::PARAM_STR);
                 $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
                 $get_dbdata < 70 ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
-                $seconds += 0.0004;
+                $ms_offset += 3; // SQL Server DATETIME mínimo paso ~3ms
                 $stmt->execute(); // Ejecuta la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Devuelve el número de filas afectadas por la última sentencia SQL
             }
@@ -75,11 +76,10 @@ class Auditor
         } catch (\PDOException $e) {
             $conn->rollBack();
             $this->log->write($e->getMessage(), date('Ymd') . '_Auditor_' . ID_COMPANY . '.log');
-            // $this->resp->respuesta($datos, 0, $e->getMessage(), 400, $inicio, 0, 0);
         }
     }
 
-    private function validarDatos($data)
+    private function validarDatos(array $data)
     {
         $datos              = $data ?? $this->getData;
         $request            = $this->request;
@@ -123,12 +123,13 @@ class Auditor
                 $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
-            return $datosModificados;
+            return $datosModificados ?? []; // Devuelvo los datos modificados o un array vacío si no hay datos
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsAuditor.log');
         }
     }
+
     public function get_dbdata()
     {
         // return data from table DBData
@@ -137,7 +138,8 @@ class Auditor
         $resultSet = $this->conect->executeQueryWhithParams($sql, $params);
         return $resultSet;
     }
-    public function sumar_segundos_a_fecha_old($fecha, $seconds)
+
+    public function sumar_segundos_a_fecha_old( string $fecha, int $seconds)
     {
         $fecha = \DateTime::createFromFormat('Ymd H:i:s.u', $fecha);
         $fecha->modify("+{$seconds} seconds");
@@ -145,15 +147,17 @@ class Auditor
         $fechaStr = substr($fechaStr, 0, 21);
         return $fechaStr;
     }
-    private function sumar_segundos_a_fecha($fecha, $segundos)
+
+    private function sumar_segundos_a_fecha(string $fecha, int $milisegundos): string
     {
         try {
             $date = new \DateTime($fecha);
-            $date->modify("+{$segundos} seconds");
-            return $date->format('Y-m-d H:i:s');
+            if ($milisegundos > 0) {
+                $date->modify("+{$milisegundos} milliseconds");
+            }
+            return $date->format('Y-m-d H:i:s.v'); // v = milliseconds (3 dígitos), formato compatible con SQL Server DATETIME
         } catch (\Exception $e) {
-            // Manejo de errores
-            return false;
+            return $fecha;
         }
     }
 }

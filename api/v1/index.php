@@ -42,6 +42,7 @@ $ParaGene = new Classes\ParaGene;
 $Personal = new Classes\Personal;
 $Fichadas = new Classes\Fichadas;
 $Acceso = new Classes\Acceso;
+$horario = new Classes\Horario;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -59,7 +60,7 @@ Flight::route('GET /system/data', function () use ($envData, $response, $ParaGen
         'chver' => $dbData['SystemVer'] ?? '',
         'token' => $envData['Token'] ?? '',
     ];
-    $response->respuesta($data, 0, '', 200, $inicio, 0, ID_COMPANY);
+    $response->respuesta($data ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
 });
 
 Flight::route('PUT /novedades', [$novedades, 'update']);
@@ -82,6 +83,9 @@ Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
 Flight::route('GET /parametros/liquid', [$ParaGene, 'liquid']);
 Flight::route('GET /horarios/', [$horarios, 'get_horarios']);
+Flight::route('GET /horario', [$horario, 'get']);
+Flight::route('POST /horario', [$horario, 'create']);
+Flight::route('DELETE /horario', [$horario, 'delete']);
 Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
     $request = Flight::request();
     $data = $request->data->getData();
@@ -93,7 +97,7 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
         $data['Legajos'] ?? []
     );
 
-    $response->respuesta($proyectar, 0, '', 200, $inicio, 0, ID_COMPANY);
+    $response->respuesta($proyectar ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
 });
 Flight::route('DELETE /proyectar', [$horas, 'eliminar_proyeccion']);
 
@@ -133,7 +137,7 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
     ];
     $ingreso = $RRHHWebService->ingresar_novedades(...$Params);
 
-    $response->respuesta($ingreso, 0, '', 200, $inicio, 0, ID_COMPANY);
+    $response->respuesta($ingreso ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
 });
 
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
@@ -179,7 +183,7 @@ Flight::set('flight.log_errors', true);
 
 Flight::map('Forbidden', function ($mensaje) use ($response) {
     $inicio = microtime(true);
-    $response->respuesta('', 0, $mensaje, 403, $inicio, 0, 0);
+    $response->respuesta([], 0, $mensaje, 403, $inicio, 0, 0);
 });
 
 Flight::map('error', function ($ex) use ($response, $log) {
@@ -197,6 +201,9 @@ Flight::map('error', function ($ex) use ($response, $log) {
         case 1:
             $error_message = 'Error interno';
             break;
+        default:
+            $error_message = $ex->getMessage() ?? 'Error desconocido';  
+            break;
     }
 
     $inicio = microtime(true);
@@ -210,7 +217,7 @@ Flight::map('error', function ($ex) use ($response, $log) {
         $log->write($error_message, $nameLog);
     }
     $company = getenv('ID_COMPANY') !== false ? getenv('ID_COMPANY') : '';
-    $response->respuesta('', 0, $error_message, $code_protected, $inicio, 0, $company);
+    $response->respuesta([], 0, $error_message, $code_protected, $inicio, 0, $company);
 });
 
 Flight::start();

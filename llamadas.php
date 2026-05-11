@@ -13,139 +13,72 @@
 <meta name="theme-color" content="#fafafa">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/normalize-min.css" type="text/css" />
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/animate.min.css" type="text/css" />
-<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>"
-	type="text/css">
-<link rel="stylesheet"
-	href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css?v=<?= version_file("/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css") ?>"
-	type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/css/bootstrap.min.css?v=<?= version_file("/css/bootstrap.min.css") ?>" type="text/css">
+<link rel="stylesheet" href="/<?= HOMEHOST ?>/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css?v=<?= version_file("/vendor/twbs/bootstrap-icons/font/bootstrap-icons.css") ?>" type="text/css">
 <?php
-switch ($Modulo) {
-	case '1':
-		/** Modulo novedades. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #795548; } </style>';
-		break;
-	case '2':
-	case '22':
-		/** Modulo novedades. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #0288d1; } </style>';
-		break;
-	case '29':
-		/** Modulo novedades custom. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #0276aa; } </style>';
-		break;
-	case '3':
-		/** Modulo fichadas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #009688; } </style>';
-		break;
-	case '23':
-		/** Modulo fichadas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #009688; } </style>';
-		break;
-	case '4':
-		/** Modulo general. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #68518f; } </style>';
-		break;
-	case '5':
-	/** Modulo mobile fichadas. Color predeterminado */
-	case '25':
-	/** Modulo mobile zonas. Color predeterminado */
-	case '26':
-	/** Modulo mobile Usuarios. Color predeterminado */
-	case '27':
-		/** Modulo mobile Mensajes. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #b71c1c; } </style>';
-		break;
-	case '6':
-		/** Modulo Mis Horas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #2196f3; } </style>';
-		/** AZUL */
-		// echo '<style>:root { --main-bg-modcolor : #646C74; } </style>'; /** GRIS */
-		break;
-	case '8':
-		/** Modulo Dashboard. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #b22a00; } </style>';
-		break;
-	case '9':
-		/** Modulo cta cte. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #78909c; } </style>';
-		break;
-	case '10':
-		/** Modulo Personal. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #2980B9; } </style>';
-		break;
-	case '12':
-	case '47':
-		/** Modulo Procesar. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #455a64; } </style>';
-		break;
-	case '14':
-		/** Modulo Cierres. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #795548; } </style>';
-		break;
-	case '15':
-		/** Modulo Liquidar. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #455a64; } </style>';
-		break;
-	case '16':
-		/** Modulo Informe Horas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #bc5100; } </style>';
-		break;
-	case '24':
-	case '34':
-		/** Modulo Horas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #bc5100; } </style>';
-		break;
-	case '28':
-		/** Modulo Horas costeadas. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #bf360c; } </style>';
-		break;
-	case '17':
-		/** Modulo OTRAS novedades. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #4267B2; } </style>';
-		break;
-	case '19':
-		/** Modulo Horarios Asignados. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #4263eb; } </style>';
-		break;
-	case '21':
-		/** Modulo Horarios Asignados. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #d32f2f; } </style>';
-		break;
-	case '99':
-		/** Modulo custom. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #689f38; } </style>';
-		break;
-	case '30':
-	case '31':
-		/** Modulo Configuración. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #757575; } </style>';
-		break;
-	case '999':
-		/** Modulo custom2. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #009688; } </style>';
-		break;
-	case '32':
-		/** Modulo custom2. Color predeterminado */
-		// echo '<style>:root { --main-bg-modcolor : #677587; } </style>';
-		echo '<style>:root { --main-bg-modcolor : #4a5461; } </style>';
-		// echo '<style>:root { --main-bg-modcolor : #F48024; } </style>';
-		break;
-	case '33':
-		/** Modulo custom2. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #198754; } </style>';
-		break;
-	case '45':
-		/** Modulo custom2. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #d9403a; } </style>';
-		break;
-	case '46':
-		/** Modulo Liquidar. Color predeterminado */
-		echo '<style>:root { --main-bg-modcolor : #343a40; } </style>';
-		break;
-	default:
-		echo '<style>:root { --main-bg-modcolor : #17a2b8; } </style>';
-		break;
-}
+$mapColor = [
+	// ─────────────────────────────────────────────────────────────────
+    // Operaciones
+    // ─────────────────────────────────────────────────────────────────
+    '2'   => '#0288d1', // Novedades
+    '3'   => '#009688', // Fichadas
+    '4'   => '#68518f', // General
+    '6'   => '#2196f3', // Mis Horas
+    '8'   => '#b22a00', // Dashboard
+    '9'   => '#78909c', // Cta Cte
+    '10'  => '#2980B9', // Personal
+    '11'  => '#2980B9', // Fichar
+    '12'  => '#455a64', // Procesar
+    '13'  => '#78909c', // Cta Cte Horas
+    '14'  => '#795548', // Cierres
+    '15'  => '#455a64', // Liquidar
+    '16'  => '#bc5100', // Horas
+    '17'  => '#4267B2', // Otras Novedades
+    '28'  => '#bf360c', // Horas Costeadas
+	'33'  => '#198754', // Horarios
+    '47'  => '#455a64', // Proyectar Horas
+    '48'  => '#455a64', // Liquidar Custom
+	// ─────────────────────────────────────────────────────────────────
+    // Informes
+    // ─────────────────────────────────────────────────────────────────
+    '19'  => '#4263eb', // Horarios Asignados
+    '20'  => '#4263eb', // Planilla Horaria
+	'21'  => '#d32f2f', // Parte Diario
+    '22'  => '#0288d1', // Informe de Novedades
+	'23'  => '#009688', // Informe de Fichadas
+    '24'  => '#bc5100', // Informe de Horas
+	'29'  => '#0276aa', // Informe de Presentismo
+    '34'  => '#bc5100', // Informe FAR
+    '45'  => '#d9403a', // Reporte de Totales
+    '46'  => '#343a40', // Reporte Prysmian
+	// ─────────────────────────────────────────────────────────────────
+    // Configuración
+    // ─────────────────────────────────────────────────────────────────
+    '30'  => '#343a40', // Datos
+    '31'  => '#343a40', // Estructura
+    '49'  => '#343a40', // Horarios
+	// ─────────────────────────────────────────────────────────────────
+    // Mobile
+    // ─────────────────────────────────────────────────────────────────
+    '5'   => '#b71c1c', // Mobile
+    '25'  => '#b71c1c', // Zonas Mobile
+    '26'  => '#b71c1c', // Usuarios Mobile
+    '27'  => '#b71c1c', // Mensajes Mobile
+    '32'  => '#4a5461', // Mobile HRP
+	// ─────────────────────────────────────────────────────────────────
+    // Cuentas
+    // ─────────────────────────────────────────────────────────────────
+    '1'  => '#795548', // Cuentas
+	'7'  => '#795548', // Mi Cuenta
+	'18' => '#795548', // Auditoría
+	// ─────────────────────────────────────────────────────────────────
+    // Otros
+    // ─────────────────────────────────────────────────────────────────
+    '99'  => '#689f38', // Otros
+    '999' => '#009688', // Otros
+];
+echo '<style>:root { --main-bg-modcolor : ' . ($mapColor[$Modulo ?? ''] ?? '#17a2b8') . '; } </style>';
+echo PHP_EOL;
 ?>
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/hint/hint.css?v=<?= version_file("/css/hint/hint.css") ?>">
 <link rel="stylesheet" href="/<?= HOMEHOST ?>/css/style.css?v=<?= version_file("/css/style.css") ?>">
@@ -154,10 +87,8 @@ if (getBrowser($_SERVER['HTTP_USER_AGENT']) == 'Internet explorer') {
 	echo '<link rel="stylesheet" type="text/css" href="/' . HOMEHOST . '/css/ie.css?v=' . version_file("/css/ie.css") . '" />';
 }
 ?>
-<!--
-****************************
-****************************
- Autor : nch@outlook.com.ar
-****************************
-****************************
+<!-- 
+// ─────────────────────────────────────────────────────────────────
+// Autor : nch@outlook.com.ar
+// ───────────────────────────────────────────────────────────────── 
 -->

@@ -198,7 +198,7 @@ class Horarios
                 }
             }
 
-            $this->resp->respuesta($arrayAud, $filas, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($arrayAud ?? [], $filas, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $code = $e->getCode();
             $conn->rollBack();
@@ -362,7 +362,7 @@ class Horarios
                 }
             }
 
-            $this->resp->respuesta($arrayAud, $filas, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($arrayAud ?? [], $filas, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $code = $e->getCode();
             $conn->rollBack();
@@ -407,6 +407,7 @@ class Horarios
             // )
 
             // si Vence es Menor o igual a Fecha. Lanzar excepción
+
             if ($this->tools->formatDateTime($Vence, 'Ymd') <= $this->tools->formatDateTime($Fecha, 'Ymd')) {
                 throw new \Exception("La fecha de vencimiento debe ser mayor a la fecha de inicio", 400);
             }
@@ -455,7 +456,7 @@ class Horarios
                 $this->ws->procesar_legajos($Fecha, $this->conect->Fecha(), $Legajos);
             }
 
-            $this->resp->respuesta($arrayAud, $filas, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($arrayAud ?? [], $filas, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $code = $e->getCode();
             $conn->rollBack();
@@ -1210,96 +1211,125 @@ class Horarios
     }
     private function arrDia(string $tipo, string $de, string $Ha, string $Des, string $li, string $Ho)  // $tipo, $de, $Ha, $Des, $li, $Ho, $tools
     {
-        $tools = $this->tools;
-        $mapTipo = [
-            '0' => 'No Laboral',
-            '1' => 'Laboral',
-            '2' => 'Según día',
-        ];
-        $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
-        $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
-        return [
-            "Laboral" => $mapTipo[$tipo],
-            "LaboralID" => intval($tipo),
-            "Desde" => $de,
-            "Hasta" => $Ha,
-            "Descanso" => $Des,
-            "Limite" => intval($li),
-            "Horas" => $Ho,
-            "HorasCalc" => $HorasCalc,
-            "HorasCalcDesc" => $HorasCalcDescanso,
-            "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
-            "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
-            "MinsCalcDesc" => $tools->convertirAMinutos($HorasCalcDescanso),
-            "MinsDescanso" => $tipo != 0 ? $tools->convertirAMinutos($Des) : 0,
-        ];
+        try {
+
+            $tools = $this->tools;
+
+            $mapTipo = [
+                '0' => 'No Laboral',
+                '1' => 'Laboral',
+                '2' => 'Según día',
+                '3' => 'Según día con Horario',
+            ];
+
+            $HorasCalc = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, '00:00') : '00:00';
+            $HorasCalcDescanso = $tipo != 0 ? $tools->calcularHorasTrabajadas($de, $Ha, $Des) : '00:00';
+            return [
+                "Laboral" => $mapTipo[$tipo] ?? 'Desconocido',
+                "LaboralID" => intval($tipo),
+                "Desde" => $de,
+                "Hasta" => $Ha,
+                "Descanso" => $Des,
+                "Limite" => intval($li),
+                "Horas" => $Ho,
+                "HorasCalc" => $HorasCalc,
+                "HorasCalcDesc" => $HorasCalcDescanso,
+                "Mins" => $tipo != 0 ? $tools->convertirAMinutos($Ho) : 0,
+                "MinsCalc" => $tools->convertirAMinutos($HorasCalc),
+                "MinsCalcDesc" => $tools->convertirAMinutos($HorasCalcDescanso),
+                "MinsDescanso" => $tipo != 0 ? $tools->convertirAMinutos($Des) : 0,
+            ];
+
+        } catch (\Throwable $th) {
+            $this->log->traceError("Error al procesar el día: " . $th->getMessage());
+            throw new \Exception("Error al procesar el día: " . $th->getMessage(), 400);
+        }
     }
     public function get_horarios($connDB = '')
     {
-
         $conn = $this->conect->check_connection($connDB);
+        try {
 
-        $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horariosFull', $conn);
-        if ($getCache->data) {
-            $total = $getCache->total;
-            return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+            $getCache = $this->tools->return_cache('HORARIOS', 'fechaHoraHorarios', 'horariosFull', $conn);
+            if ($getCache->data) {
+                $total = $getCache->total;
+                return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
+            }
+
+            $sql = "SELECT * FROM HORARIOS";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $conn = null;
+
+            foreach ($data as $key => $v) {
+                try {
+
+                    $backgroundColorRgb = $this->intToRgb($v['HorColor']);
+                    $textColor = $this->getTextColor($v['HorColor']);
+
+                    $HorLun = $this->arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']);
+                    $HorMar = $this->arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']);
+                    $HorMie = $this->arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']);
+                    $HorJue = $this->arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']);
+                    $HorVie = $this->arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']);
+                    $HorSab = $this->arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
+                    $HorDom = $this->arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
+                    $HorFer = $this->arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
+
+                    $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'];
+                    $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'];
+                    $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'];
+                    $TotalMinsDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'];
+
+
+                    $Color = sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]);
+                    $ColorInt = floatval($v['HorColor']);
+                    $FechaHora = $this->tools->formatDateTime($v['FechaHora'], 'Y-m-d H:i:s');
+                    $TotalHoras = $this->tools->convertirAHorasMinutos($TotalMins);
+                    $TotalHorasCalc = $this->tools->convertirAHorasMinutos($TotalMinsCalc);
+                    $TotalHorasCalcDesc = $this->tools->convertirAHorasMinutos($TotalMinsCalcDesc);
+                    $TotalDescanso = $this->tools->convertirAHorasMinutos($TotalMinsDescanso);
+
+                    $horarios[] = [
+                        "Codi" => $v['HorCodi'],
+                        "Desc" => $v['HorDesc'],
+                        "ID" => $v['HorID'],
+                        "ColorInt" => $ColorInt ?? 0,
+                        "Color" => $Color ?? 'rgb(255, 255, 255)',
+                        "ColorText" => $textColor ?? '#000000',
+                        "FechaHora" => $FechaHora ?? '',
+                        "Lunes" => $HorLun,
+                        "Martes" => $HorMar,
+                        "Miércoles" => $HorMie,
+                        "Jueves" => $HorJue,
+                        "Viernes" => $HorVie,
+                        "Sábado" => $HorSab,
+                        "Domingo" => $HorDom,
+                        "Feriado" => $HorFer,
+                        "TotalHoras" => $TotalHoras ?? '00:00',
+                        "TotalMins" => $TotalMins,
+                        "TotalHorasCalc" => $TotalHorasCalc ?? '00:00',
+                        "TotalMinsCalc" => $TotalMinsCalc,
+                        "TotalHorasCalcDesc" => $TotalHorasCalcDesc ?? '00:00',
+                        "TotalMinsCalcDesc" => $TotalMinsCalcDesc,
+                        "TotalDescanso" => $TotalDescanso,
+                        "TotalMinsDescanso" => $TotalDescanso,
+                    ];
+                } catch (\Throwable $th) {
+                    $this->log->traceError("Error al procesar horario ID {$v['HorCodi']}: " . $th->getMessage());
+                    continue; // Salta al siguiente horario en caso de error
+                }
+            }
+
+            $this->log->cache($horarios ?? [], 'horariosFull');
+            $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
+
+            $this->resp->respuesta($horarios ?? [], count($horarios ?? []), 'OK', 200, 0, count($horarios ?? []), 0);
+        } catch (\Throwable $th) {
+            $this->log->traceError("Error en get_horarios: " . $th->getMessage());
+            $this->resp->respuesta([], 0, 'Error al obtener horarios', 500, 0, 0, 0);
         }
-
-        $sql = "SELECT * FROM HORARIOS";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $conn = null;
-
-        foreach ($data as $key => $v) {
-
-            $backgroundColorRgb = $this->intToRgb($v['HorColor']);
-            $textColor = $this->getTextColor($v['HorColor']);
-
-            $HorLun = $this->arrDia($v['HorLune'], $v['HorLuDe'], $v['HorLuHa'], $v['HorLuRe'], $v['HorLuLi'], $v['HorLuHs']);
-            $HorMar = $this->arrDia($v['HorMart'], $v['HorMaDe'], $v['HorMaHa'], $v['HorMaRe'], $v['HorMaLi'], $v['HorMaHs']);
-            $HorMie = $this->arrDia($v['HorMier'], $v['HorMiDe'], $v['HorMiHa'], $v['HorMiRe'], $v['HorMiLi'], $v['HorMiHs']);
-            $HorJue = $this->arrDia($v['HorJuev'], $v['HorJuDe'], $v['HorJuHa'], $v['HorJuRe'], $v['HorJuLi'], $v['HorJuHs']);
-            $HorVie = $this->arrDia($v['HorVier'], $v['HorViDe'], $v['HorViHa'], $v['HorViRe'], $v['HorViLi'], $v['HorViHs']);
-            $HorSab = $this->arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
-            $HorDom = $this->arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
-            $HorFer = $this->arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
-
-            $TotalMins = $HorLun['Mins'] + $HorMar['Mins'] + $HorMie['Mins'] + $HorJue['Mins'] + $HorVie['Mins'] + $HorSab['Mins'] + $HorDom['Mins'];
-            $TotalMinsCalc = $HorLun['MinsCalc'] + $HorMar['MinsCalc'] + $HorMie['MinsCalc'] + $HorJue['MinsCalc'] + $HorVie['MinsCalc'] + $HorSab['MinsCalc'] + $HorDom['MinsCalc'];
-            $TotalMinsCalcDesc = $HorLun['MinsCalcDesc'] + $HorMar['MinsCalcDesc'] + $HorMie['MinsCalcDesc'] + $HorJue['MinsCalcDesc'] + $HorVie['MinsCalcDesc'] + $HorSab['MinsCalcDesc'] + $HorDom['MinsCalcDesc'];
-            $TotalDescanso = $HorLun['MinsDescanso'] + $HorMar['MinsDescanso'] + $HorMie['MinsDescanso'] + $HorJue['MinsDescanso'] + $HorVie['MinsDescanso'] + $HorSab['MinsDescanso'] + $HorDom['MinsDescanso'];
-            $horarios[] = [
-                "Codi" => $v['HorCodi'],
-                "Desc" => $v['HorDesc'],
-                "ID" => $v['HorID'],
-                "ColorInt" => floatval($v['HorColor']),
-                "Color" => sprintf('rgb(%d, %d, %d)', $backgroundColorRgb[0], $backgroundColorRgb[1], $backgroundColorRgb[2]),
-                "ColorText" => $textColor,
-                "FechaHora" => $this->tools->formatDateTime($v['FechaHora'], 'Y-m-d H:i:s'),
-                "Lunes" => $HorLun,
-                "Martes" => $HorMar,
-                "Miércoles" => $HorMie,
-                "Jueves" => $HorJue,
-                "Viernes" => $HorVie,
-                "Sábado" => $HorSab,
-                "Domingo" => $HorDom,
-                "Feriado" => $HorFer,
-                "TotalHoras" => $this->tools->convertirAHorasMinutos($TotalMins),
-                // "TotalMins" => $TotalMins,
-                "TotalHorasCalc" => $this->tools->convertirAHorasMinutos($TotalMinsCalc),
-                // "TotalMinsCalc" => $TotalMinsCalc,
-                "TotalHorasCalcDesc" => $this->tools->convertirAHorasMinutos($TotalMinsCalcDesc),
-                // "TotalMinsCalcDesc" => $TotalMinsCalcDesc,
-                "TotalDescanso" => $this->tools->convertirAHorasMinutos($TotalDescanso),
-                // "TotalMinsDescanso" => $TotalDescanso,
-            ];
-        }
-
-        $this->log->cache($horarios ?? [], 'horariosFull');
-        $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
-
-        $this->resp->respuesta($horarios ?? [], count($horarios ?? []), 'OK', 200, 0, count($horarios ?? []), 0);
     }
     public function get_rotaciones($connDB = '')
     {
@@ -1309,7 +1339,7 @@ class Horarios
 
         if ($getCache->data) {
             $total = $getCache->total;
-            return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+            return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
         }
 
         $sql = "SELECT * FROM ROTACIO1";
@@ -1355,7 +1385,7 @@ class Horarios
         $rota = array_values($rota);
         $this->log->cache($rota, 'rotacionesFull');
         $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
-        $this->resp->respuesta($rota, count($rota), 'OK', 200, 0, count($rota), 0);
+        $this->resp->respuesta($rota ?? [], count($rota ?? []), 'OK', 200, 0, count($rota ?? []), 0);
     }
 
     public function get_horale_1(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
@@ -1369,9 +1399,9 @@ class Horarios
         // if ($getCache->data) {
         //     $total = $getCache->total;
         //     if ($return) {
-        //         return $getCache->data;
+        //         return $getCache->data ?? [];
         //     }
-        //     return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+        //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
         // }
 
         $sql = "SELECT * FROM HORALE1 WHERE Ho1Lega = :Legajo ORDER BY Ho1Fech DESC";
@@ -1393,7 +1423,7 @@ class Horarios
             return $data;
         }
 
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
     public function get_horale_2(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
     {
@@ -1406,9 +1436,9 @@ class Horarios
         // if ($getCache->data) {
         //     $total = $getCache->total;
         //     if ($return) {
-        //         return $getCache->data;
+        //         return $getCache->data ?? [];
         //     }
-        //     return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+        //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
         // }
 
         $sql = "SELECT * FROM HORALE2 WHERE Ho2Lega = :Legajo ORDER BY Ho2Fec1 DESC";
@@ -1431,7 +1461,7 @@ class Horarios
             return $data;
         }
 
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
     public function get_rotaleg(string $Legajo, $connDB = '', bool $return = false)
     {
@@ -1444,9 +1474,9 @@ class Horarios
         // if ($getCache->data) {
         //     $total = $getCache->total;
         //     if ($return) {
-        //         return $getCache->data;
+        //         return $getCache->data ?? [];
         //     }
-        //     return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+        //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
         // }
 
         $sql = "SELECT * FROM ROTALEG WHERE RolLega = :Legajo ORDER BY RolFech DESC";
@@ -1472,7 +1502,7 @@ class Horarios
             return $data;
         }
 
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
     public function get_citacion(string $Legajo, $connDB = '', bool $return = false)
     {
@@ -1485,9 +1515,9 @@ class Horarios
         // if ($getCache->data) {
         //     $total = $getCache->total;
         //     if ($return) {
-        //         return $getCache->data;
+        //         return $getCache->data ?? [];
         //     }
-        //     return $this->resp->respuesta($getCache->data, $total, 'OK', 200, 0, $total, 0);
+        //     return $this->resp->respuesta($getCache->data ?? [], $total, 'OK', 200, 0, $total, 0);
         // }
 
 
@@ -1511,7 +1541,7 @@ class Horarios
             return $data;
         }
 
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
     public function get_asign_legajo(string $Legajo, $connDB = '', $return = false)
     {
@@ -1536,7 +1566,7 @@ class Horarios
             return $data;
         }
 
-        $this->resp->respuesta($data, count($data), 'OK', 200, 0, count($data), 0);
+        $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
     private function validar_legajo(string $Legajo)
     {

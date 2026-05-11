@@ -46,7 +46,7 @@ class DataCompany
             $data = parse_ini_file($url, true); // Obtenemos los datos del mobileApikey.php
             return $data; // devolvemos el json
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_getIni_' . ID_COMPANY . '.log');
         }
     }
@@ -83,7 +83,7 @@ class DataCompany
             return $firstElement;
             // $this->resp->respuesta($firstElement, 0, '', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 401, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 401, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_getToken.log');
             exit;
         }

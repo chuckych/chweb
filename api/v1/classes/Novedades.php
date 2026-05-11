@@ -132,7 +132,7 @@ class Novedades
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_updateNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -236,7 +236,7 @@ class Novedades
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_addNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -322,7 +322,7 @@ class Novedades
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_deleteNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -331,8 +331,8 @@ class Novedades
     {
         $datos = $this->getData;
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
         try {
 
@@ -377,10 +377,10 @@ class Novedades
                 $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
-            return $datosModificados;
+            return $datosModificados ?? [];
             // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
@@ -388,8 +388,8 @@ class Novedades
     {
         $datos = $this->getData;
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
         try {
 
@@ -432,10 +432,10 @@ class Novedades
                 $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
-            return $datosModificados;
+            return $datosModificados ?? [];
             // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsAdd.log');
         }
     }
@@ -444,8 +444,8 @@ class Novedades
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         try {
@@ -477,10 +477,10 @@ class Novedades
                 $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
                 $validator->validate(); // Valido los datos
             }
-            return $datosModificados;
+            return $datosModificados ?? [];
             // $this->resp->respuesta($datosModificados, 0, 'Todo bien con los datos', 200, microtime(true), 0, 0);
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsDelete.log');
         }
     }
@@ -578,9 +578,9 @@ class Novedades
             // print_r($params) . exit;
             $data = $this->conect->executeQueryWhithParams($sql, $params);
             $total = count($data);
-            $this->resp->respuesta($data, $total, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($data ?? [], $total, 'OK', 200, $inicio, 0, 0);
         } catch (\Exception $th) {
-            $this->resp->respuesta('', 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
             exit;
         }
     }
@@ -589,7 +589,7 @@ class Novedades
         $arrValidEstruct = ["empr", "plan", "grup", "sect", "sec2", "sucu", "tare", "conv", "regla", "nove", "novetipo", "lega", "tipo"];
 
         if (!in_array(strtolower($estruct), $arrValidEstruct)) { // Si la estructura no es valida
-            $this->resp->respuesta('', 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
             exit;
         }
 
@@ -630,8 +630,8 @@ class Novedades
             $datos = ($this->getData);
 
             if ($this->tools->jsonNoValido()) {
-                $errores = $this->tools->jsonNoValido();
-                $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+                $errores[] = $this->tools->jsonNoValido();
+                $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
             }
 
             if ($estruct == 'sec2' && empty($datos['Sector'] ?? '')) {
@@ -658,7 +658,7 @@ class Novedades
                 $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
             }
         } catch (\Throwable $th) {
-            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
             exit;
         }
         return $datos;
@@ -895,10 +895,10 @@ class Novedades
             if ($return) {
                 return $novedades;
             } else {
-                $this->resp->respuesta($novedades, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
+                $this->resp->respuesta($novedades ?? [], count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
             }
         } catch (\PDOException $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_dataNovedades_' . ID_COMPANY . '.log');
             exit;
         }
@@ -938,7 +938,7 @@ class Novedades
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
@@ -970,12 +970,12 @@ class Novedades
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         if (!$datos) {
-            $this->resp->respuesta('', 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
         }
 
         $FechIni = $datos['FechIni'] ?? '';
@@ -1078,7 +1078,7 @@ class Novedades
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsTotales.log');
         }
     }
@@ -1357,9 +1357,9 @@ class Novedades
                 'novedades' => $nov,
             ];
 
-            $this->resp->respuesta($array, count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
+            $this->resp->respuesta($array ?? [], count($novedades), 'OK', 200, $inicio, $total['Total'], 0);
         } catch (\PDOException $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_totalesNovedades_' . ID_COMPANY . '.log');
             exit;
         }

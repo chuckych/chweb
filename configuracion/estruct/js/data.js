@@ -106,9 +106,7 @@ $(function () {
             info: true,
             ordering: false,
             autoWidth: true,
-            language: {
-                "url": "../../js/DataTableSpanishShort.json?v=" + vjs()
-            },
+            language: DT_SPANISH,
         })
     }
     function printForm(cod, desc, tipo, selectorAction) {
@@ -154,7 +152,7 @@ $(function () {
             iDisplayLength: 5,
             bLengthChange: true,
             "ajax": {
-                url: urlajax,
+                url: "/" + _homehost + "/configuracion/estruct/" + urlajax,
                 type: "POST",
                 "data": function (data) {},
                 error: function () { },
@@ -172,9 +170,7 @@ $(function () {
             info: true,
             ordering: false,
             autoWidth: true,
-            language: {
-                "url": "../../js/DataTableSpanishShort.json?v=" + vjs()
-            },
+            language: DT_SPANISH,
         })
         $(selectorDT+' tbody').on(eventoOn(mxwidth), checkEstructClass, function (e) {
             e.preventDefault();
@@ -228,7 +224,7 @@ $(function () {
     /** DATA SECTORES */
     tableEstruct("#tablesector","AddSector","getSector.php",".CheckSector","align-middle val pointer py-4 text-center","align-middle val pointer CheckSector w-100","align-middle pointer","#actionForm_sector","Buscar","c_sector","editSector","deleteSector","d_sector","u_sector","Sector","getSectores.php","crud.php");
     /** DATA TAREAS */
-    tableEstruct("#tabletareas","AddTarea","getTareas.php",".CheckTarea","align-middle val pointer py-4 text-center","align-middle val pointer CheckTarea w-100","align-middle pointer","#actionForm_tareas","Buscar","c_tareas","editTarea","deleteTarea","d_tareas","u_tareas","Tarea","gettareas.php","crud.php");
+    tableEstruct("#tabletareas","AddTarea",'getTareas.php',".CheckTarea","align-middle val pointer py-4 text-center","align-middle val pointer CheckTarea w-100","align-middle pointer","#actionForm_tareas","Buscar","c_tareas","editTarea","deleteTarea","d_tareas","u_tareas","Tarea","gettareas.php","crud.php");
     
     $("#Encabezado").addClass('pointer')
     $("#Encabezado").on("click", function () {

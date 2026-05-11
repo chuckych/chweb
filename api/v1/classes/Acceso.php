@@ -70,7 +70,7 @@ class Acceso
         $data = $this->procesarDatosRelojes($data);
 
         $totalAffectedRows = $stmt->rowCount();
-        $this->resp->respuesta($data, $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($data ?? [], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
     }
 
     private function procesarDatosRelojes(array $data): array
@@ -133,7 +133,7 @@ class Acceso
 
             return $datos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_inputs_relojes_habilitados.log');
         }
     }
@@ -174,7 +174,7 @@ class Acceso
         // Procesar resultados
         $data = $this->procesarDatosPersonalRelojes($data);
         $totalAffectedRows = $stmt->rowCount();
-        $this->resp->respuesta($data, $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($data ?? [], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
     }
     private function procesarDatosPersonalRelojes(array $data): array
     {
@@ -242,7 +242,7 @@ class Acceso
 
             return $datos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_inputs_perrelo.log');
         }
     }
@@ -283,7 +283,7 @@ class Acceso
         // Procesar resultados
         $data = $this->procesar_datos_identifica($data);
         $totalAffectedRows = $stmt->rowCount();
-        $this->resp->respuesta($data, $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($data ?? [], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
 
     }
     private function inputs_identifica()
@@ -317,7 +317,7 @@ class Acceso
 
             return $datos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_inputs_perrelo.log');
         }
     }

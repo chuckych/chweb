@@ -70,7 +70,7 @@ class ParaGene
                 'FechaHora' => $element['FechaHora'],
             ];
         }
-        $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($rs ?? [], 0, 'OK', 200, $inicio, 0, 0);
     }
     public function liquid()
     {
@@ -89,7 +89,7 @@ class ParaGene
                 // 'FechaHora' => $element['FechaHora'],
             ];
         }
-        $this->resp->respuesta($rs, 0, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta($rs ?? [], 0, 'OK', 200, $inicio, 0, 0);
     }
     /**
      * Devuelve una matriz de datos de la tabla PARAGENE.
@@ -153,10 +153,10 @@ class ParaGene
             if ($return) {
                 return $Data;
             }
-            $this->resp->respuesta($Data, 0, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($Data ?? [], 0, 'OK', 200, $inicio, 0, 0);
         } catch (\Throwable $th) {
             $this->log->write($th->getMessage(), 'error');
-            $this->resp->respuesta($th->getMessage(), 1, 'Error', 400, $inicio, 0, 0);
+            $this->resp->respuesta([$th->getMessage()], 1, 'Error', 400, $inicio, 0, 0);
         }
     }
 }

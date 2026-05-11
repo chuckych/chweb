@@ -46,7 +46,8 @@ $array_mod = [
        'reporte' => 'Reporte de Totales', // Reporte de totales ID 45
        'prysmian' => 'Reporte Prysmian', // Reporte de totales ID 46
        'proyectar' => 'Proyectar Horas', // Proyectar Horas ID 47
-       'liquidar_custom' => 'Generar Liquidación Custom' // Liquidar Custom ID 48
+       'liquidar_custom' => 'Generar Liquidación Custom', // Liquidar Custom ID 48
+       'Horarios Config' => 'Horarios Configuración' // Horarios Configuración ID 49
 ];
 defined('MODULOS') || define('MODULOS', $array_mod);
 

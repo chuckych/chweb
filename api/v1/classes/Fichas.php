@@ -66,7 +66,7 @@ class Fichas
             'años' => $yearsWithMonths, // "years": {2024: [9, 10], 2025: [1, 2, ..., 12]}
         ];
 
-        $this->resp->respuesta($a, 1, 'OK', 200, microtime(true), 0, 0);
+        $this->resp->respuesta($a ?? [], 1, 'OK', 200, microtime(true), 0, 0);
         $stmt->closeCursor(); // Cierro el cursor
     }
     public function legajos()
@@ -128,7 +128,7 @@ class Fichas
 
         // $data = array_combine(array_column($data, 'FicLega'), array_column($data, 'FicApNo'));
 
-        $this->resp->respuesta($data, $total, 'OK', 200, microtime(true), $total, 0);
+        $this->resp->respuesta($data ?? [], $total, 'OK', 200, microtime(true), $total, 0);
         $stmt->closeCursor(); // Cierro el cursor
     }
     private function validar_request_legajos(): array
@@ -136,12 +136,12 @@ class Fichas
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         if (!$datos) {
-            $this->resp->respuesta('', 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
         }
 
         $FechIni = $datos['FechIni'] ?? '';
@@ -173,7 +173,7 @@ class Fichas
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validar_request_legajos.log');
         }
         return $datosRecibidos;

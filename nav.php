@@ -6,7 +6,9 @@
 <input type="hidden" hidden id="_vjs" value="<?= vjs() ?>">
 <input type="hidden" id="_sesion" value="0">
 <?php
-$_SERVER['REQUEST_URI'] = $_SERVER['REQUEST_URI'] ?? '';
+$_GET['nonav'] ??= '';
+$noNav = ($_GET['nonav'] === '1') ? 'd-none' : '';
+$_SERVER['REQUEST_URI']??= '';
 // ExisteModRol(0)
 if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost
     echo '<div class="loader"></div>';
@@ -106,15 +108,25 @@ $mapInformes = [
 ];
 
 $mapConfiguracion = [
-    'Datos' => '/' . HOMEHOST . '/configuracion/datos/',
-    'Estructura' => '/' . HOMEHOST . '/configuracion/estruct/',
+    'Datos' => [
+        'url' => '/' . HOMEHOST . '/configuracion/datos/',
+        'title' => 'Datos',
+    ],
+    'Estructura' => [
+        'url' => '/' . HOMEHOST . '/configuracion/estruct/',
+        'title' => 'Estructura',
+    ],
+    'Horarios Config' => [
+        'url' => '/' . HOMEHOST . '/configuracion/horarios/',
+        'title' => 'Horarios',
+    ],
 ];
 
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI'] ?? '') ?>">
 <input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?? '' ?>">
 <!-- navBar -->
-<div id="navBarPrimary" class="sticky-top d-print-none" style="z-index:1040;">
+<div id="navBarPrimary" class="sticky-top d-print-none <?= $noNav ?>" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">
         <!-- brandLogo -->
         <?php if (HOMEHOST == 'chweb') { ?>
@@ -212,11 +224,12 @@ $mapConfiguracion = [
                                     aria-expanded="false">Configuración</a>
                                 <div class="dropdown-menu radius" aria-labelledby="navbarDropdownConf">
                                     <?php
-                                    foreach ($dataROL as $v) {
-                                        $modulo = $mapConfiguracion[$v['modulo']] ?? null;
+                                    foreach ($dataROL as $key => $v) {
+                                        $modulo = $mapConfiguracion[$v['modulo']]['title'] ?? null;
+                                        $url = $mapConfiguracion[$v['modulo']]['url'] ?? '#';   
                                         if (!$modulo)
                                             continue;
-                                        echo $dropdownMenu($modulo, $v['modulo']);
+                                        echo $dropdownMenu($url, $modulo);
                                     }
                                     ?>
                                 </div>
@@ -306,6 +319,7 @@ $mapConfiguracion = [
                                         && ($Modulo2 != 'Informe Presentismo')
                                         && ($Modulo2 != 'Datos')
                                         && ($Modulo2 != 'Estructura')
+                                        && ($Modulo2 != 'Horarios Config')
                                         && ($Modulo2 != 'Mobile HRP')
                                         && ($Modulo2 != 'Dashboard')
                                         && ($Modulo2 != 'Horarios')

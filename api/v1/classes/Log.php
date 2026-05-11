@@ -8,14 +8,14 @@ class Log
     private $pathCache;
     private $date;
     private $optJson;
-    function __construct()
+    public function __construct()
     {
         $this->path = __DIR__ . '/../logs/';
         $this->pathCache = __DIR__ . '/../cache/';
         $this->date = $this->dateTimeNow();
         $this->optJson = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRETTY_PRINT;
     }
-    function write($text, $nameFile, $type = false)
+    public function write($text, $nameFile, $type = false)
     {
         // obtener la extension de $nameFile
         $textOriginal = $text;
@@ -50,7 +50,7 @@ class Log
         }
         return false;
     }
-    function delete($ext, $days = 1)
+    public function delete($ext, $days = 1)
     {
         $path = $this->path;
         $files = glob($path . '*.' . $ext);
@@ -63,18 +63,26 @@ class Log
             }
         }
     }
-    function tz($tz = 'America/Argentina/Buenos_Aires')
+    public function tz($tz = 'America/Argentina/Buenos_Aires')
     {
         return date_default_timezone_set($tz);
     }
-    function tzLang($tzLang = "es_ES")
+    public function tzLang($tzLang = "es_ES")
     {
         return setlocale(LC_TIME, $tzLang);
     }
-    function dateTimeNow()
+    public function dateTimeNow()
     {
         $this->tz(); // Llama al método tz() usando $this->
         $t = date("Y-m-d H:i:s");
         return $t;
+    }
+    public function traceError(string $error = '')
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $file = $trace[0]['file'] ?? 'unknown file';
+        $line = $trace[0]['line'] ?? 'unknown line';
+        $text = $error ? "Error: {$error} in {$file} on line {$line}" : "Error in {$file} on line {$line}";
+        \error_log($text);
     }
 }

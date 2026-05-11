@@ -8,7 +8,6 @@ errorReport();
 $request = Flight::request();
 
 $checkMethod('POST');
-
 function intToRgb($colorInt)
 {
     // Convertir el entero a hexadecimal y quitar el prefijo '0x'
@@ -46,6 +45,16 @@ $dp = $request->data;
 
 $start = start();
 $length = length();
+
+$LastCodi = $dp->LastCodi ?? 0;
+$OrderBy = $dp->OrderBy ?? '';
+
+$mapOrderBy = [
+    'Fecha' => 'FechaHora desc',
+    'Codi' => 'HorCodi asc',
+    'ID' => 'HorID asc',
+    'Desc' => 'HorDesc asc'
+];
 
 $dp->Codi = ($dp->Codi) ?? [];
 $dp->Codi = vp($dp->Codi, 'Codi', 'intArrayM0', 11);
@@ -99,9 +108,9 @@ foreach ($arrDPSTR as $key => $v) {
                     $e = "'" . implode("','", $e) . "'";
                     $wc .= " AND HORARIOS.$key LIKE '%$e%'";
                 } else {
-                    foreach ($e as $v) {
-                        if ($v !== NULL) {
-                            $wc .= " AND HORARIOS.$key LIKE '%$v%'";
+                    foreach ($e as $v1) {
+                        if ($v1 !== NULL) {
+                            $wc .= " AND HORARIOS.$key LIKE '%$v1%'";
                         }
                     }
                 }
@@ -110,16 +119,24 @@ foreach ($arrDPSTR as $key => $v) {
     } else {
         if ($v) {
             if ($key == 'HorDesc') {
-                $wc .= " AND HORARIOS.Hor$key LIKE '%$v%'";
+                $wc .= " AND CONCAT(HORARIOS.HorID, HORARIOS.HorCodi, HORARIOS.Hor$key) LIKE '%$v%'";
             } else {
-                $wc .= " AND HORARIOS.Hor$key LIKE '%$v%'";
+                $wc .= " AND CONCAT(HORARIOS.HorID, HORARIOS.HorCodi, HORARIOS.Hor$key) LIKE '%$v%'";
             }
         }
     }
 }
-
-$query = "SELECT * FROM HORARIOS WHERE HORARIOS.HorCodi >= 0";
-$queryCount = "SELECT count(1) as 'count' FROM HORARIOS WHERE HORARIOS.HorCodi >= 0";
+// si LastCodi es mayor a 0, entonces retornar solo el MAX(HorCodi) menor a LastCodi de la tabla HORARIOS
+if ($LastCodi > 0) {
+    $queryLastCodi = "SELECT MAX(HorCodi) as LastCodi FROM HORARIOS WHERE HORARIOS.HorCodi > 0";
+    $stmtLastCodi = $dbApiQuery($queryLastCodi)[0]['LastCodi'] ?? 0;
+    $countData = count($stmtLastCodi ?? []);
+    http_response_code(200);
+    (response($stmtLastCodi ?? [], 1, 'OK', 200, $time_start, $countData, $idCompany));
+    exit;
+}
+$query = "SELECT * FROM HORARIOS WHERE HORARIOS.HorCodi > 0";
+$queryCount = "SELECT count(1) as 'count' FROM HORARIOS WHERE HORARIOS.HorCodi > 0";
 
 if ($wc) {
     $query .= $wc;
@@ -128,11 +145,18 @@ if ($wc) {
 
 $stmtCount = $dbApiQuery($queryCount)[0]['count'] ?? '';
 
-$query .= " ORDER BY HORARIOS.HorCodi";
+$query .= ($OrderBy && isset($mapOrderBy[$OrderBy])) ? " ORDER BY " . $mapOrderBy[$OrderBy] : " ORDER BY HorCodi";
 $query .= " OFFSET $start ROWS FETCH NEXT $length ROWS ONLY";
 
 // print_r($query).exit;
 $stmt = $dbApiQuery($query) ?? '';
+
+function minutosAHorasSemanales(int $minutos)
+{
+    $horas = floor($minutos / 60);
+    $minutosRestantes = $minutos % 60;
+    return sprintf('%02d:%02d', $horas, $minutosRestantes);
+}
 
 function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
 {
@@ -147,10 +171,14 @@ function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
         case '2':
             $tipoStr = 'Según día';
             break;
+        case '3':
+            $tipoStr = 'Según día con Horario';
+            break;
         default:
             $tipoStr = 'No definido';
             break;
     }
+    $HorasMin = intval($tipo) === 1 ? HoraMin($Ho) : 0;
     return [
         "Laboral" => $tipoStr,
         "LaboralID" => intval($tipo),
@@ -159,9 +187,11 @@ function arrDia($tipo, $de, $Ha, $Des, $li, $Ho)
         "Descanso" => $Des,
         "Limite" => intval($li),
         "Horas" => $Ho,
+        "HorasMin" => $HorasMin,
     ];
 }
 foreach ($stmt as $key => $v) {
+    $HorasMin = 0;
     $backgroundColorRgb = intToRgb($v['HorColor']);
     $textColor = getTextColor($v['HorColor']);
 
@@ -173,8 +203,9 @@ foreach ($stmt as $key => $v) {
     $HorSab = arrDia($v['HorSaba'], $v['HorSaDe'], $v['HorSaHa'], $v['HorSaRe'], $v['HorSaLi'], $v['HorSaHs']);
     $HorDom = arrDia($v['HorDomi'], $v['HorDoDe'], $v['HorDoHa'], $v['HorDoRe'], $v['HorDoLi'], $v['HorDoHs']);
     $HorFer = arrDia($v['HorFeri'], $v['HorFeDe'], $v['HorFeHa'], $v['HorFeRe'], $v['HorFeLi'], $v['HorFeHs']);
-
-    $data[] = array(
+    $HorasMin += $HorLun['HorasMin'] + $HorMar['HorasMin'] + $HorMie['HorasMin'] + $HorJue['HorasMin'] + $HorVie['HorasMin'] + $HorSab['HorasMin'] + $HorDom['HorasMin'] + $HorFer['HorasMin'];
+    $HorasSemanales = minutosAHorasSemanales($HorasMin);
+    $data[] = [
         "Codi" => $v['HorCodi'],
         "Desc" => $v['HorDesc'],
         "ID" => $v['HorID'],
@@ -190,15 +221,17 @@ foreach ($stmt as $key => $v) {
         "Sábado" => $HorSab,
         "Domingo" => $HorDom,
         "Feriado" => $HorFer,
-    );
+        "HorasMin" => $HorasMin,
+        "HorasSem" => $HorasSemanales,
+    ];
 }
 
 if (empty($stmt)) {
     http_response_code(200);
-    (response('', 0, 'OK', 200, $time_start, 0, $idCompany));
+    (response([], 0, 'OK', 200, $time_start, 0, $idCompany));
     exit;
 }
-$countData = count($data);
+$countData = count($data ?? []);
 http_response_code(200);
-(response($data, $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
+(response($data ?? [], $stmtCount, 'OK', 200, $time_start, $countData, $idCompany));
 exit;

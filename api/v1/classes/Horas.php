@@ -119,7 +119,7 @@ class Horas
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $conn->rollBack();
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras_' . ID_COMPANY . '.log');
             exit;
         }
@@ -142,7 +142,7 @@ class Horas
     //         $this->conect = null;
     //     } catch (\PDOException $e) {
     //         // $conn->rollBack();
-    //         // $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+    //         // $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
     //         // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
     //         // exit;
     //     }
@@ -195,7 +195,7 @@ class Horas
             }
             return $datosModificados;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
         }
     }
@@ -293,9 +293,9 @@ class Horas
             // print_r($params) . exit;
             $data = $this->conect->executeQueryWhithParams($sql, $params);
             $total = count($data);
-            $this->resp->respuesta($data, $total, 'OK', 200, $inicio, 0, 0);
+            $this->resp->respuesta($data ?? [], $total, 'OK', 200, $inicio, 0, 0);
         } catch (\Exception $th) {
-            $this->resp->respuesta('', 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
             exit;
         }
     }
@@ -303,7 +303,7 @@ class Horas
     {
         $arrValidEstruct = ["empr", "plan", "grup", "sect", "sec2", "sucu", "tare", "conv", "regla", "thora", "lega", "tipo"];
         if (!in_array(strtolower($estruct), $arrValidEstruct)) { // Si la estructura no es valida
-            $this->resp->respuesta('', 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
             exit;
         }
 
@@ -368,7 +368,7 @@ class Horas
                 $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
             }
         } catch (\Throwable $th) {
-            $this->resp->respuesta('', 0, $th->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
             exit;
         }
         return $datos;
@@ -560,12 +560,12 @@ class Horas
         $datos = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         if (!$datos) {
-            $this->resp->respuesta('', 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
         }
 
         $FechIni = $datos['FechIni'] ?? '';
@@ -671,7 +671,7 @@ class Horas
             $validator->validate(); // Valido los datos
             return $datosRecibidos;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsTotalesHoras.log');
         }
     }
@@ -1050,7 +1050,7 @@ class Horas
 
             $this->resp->respuesta($array, count($nuevo_array), 'OK', 200, $inicio, $total['Total'], 0);
         } catch (\PDOException $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, $inicio, 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_totalesHoras_' . ID_COMPANY . '.log');
             exit;
         }
@@ -1120,7 +1120,7 @@ class Horas
         $stmt = $conn->prepare($sql);
         $stmt->execute(); // Ejecuto la consulta
         $array = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
-        $this->resp->respuesta($array, count($array), 'OK', 200, microtime(true), 0, 0);
+        $this->resp->respuesta($array ?? [], count($array), 'OK', 200, microtime(true), 0, 0);
         $stmt->closeCursor(); // Cierro el cursor
     }
 
@@ -1129,8 +1129,8 @@ class Horas
         $filtros = $this->getData;
 
         if ($this->tools->jsonNoValido()) {
-            $errores = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores, 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
+            $errores[] = $this->tools->jsonNoValido();
+            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
         }
 
         try {
@@ -1157,7 +1157,7 @@ class Horas
             }
             return $filtros;
         } catch (\Exception $e) {
-            $this->resp->respuesta('', 0, $e->getMessage(), 400, microtime(true), 0, 0);
+            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
             $this->log->write($e->getMessage(), date('Ymd') . '_inputs_filtros_estructura.log');
         }
     }
@@ -1187,6 +1187,6 @@ class Horas
             $totalEliminados += $stmt->rowCount(); // Obtengo el número de filas afectadas
         }
 
-        $this->resp->respuesta('', $totalEliminados, 'OK', 200, $inicio, 0, 0);
+        $this->resp->respuesta([], $totalEliminados, 'OK', 200, $inicio, 0, 0);
     }
 }

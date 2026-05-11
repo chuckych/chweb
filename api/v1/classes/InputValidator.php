@@ -63,6 +63,8 @@ class InputValidator
             'allowed01' => "El campo $field debe tener un valor permitido. [0, 1]",
             'allowed012' => "El campo $field debe tener un valor permitido. [0, 1, 2]",
             'allowed1a7' => "El campo $field debe tener un valor permitido. [1, 2, 3, 4, 5, 6, 7]",
+            'allowed0a3' => "El campo $field debe tener un valor permitido. [0, 1, 2, 3]",
+            'allowed0a100' => "El campo $field debe tener un valor permitido. [0, 1, 2, ..., 100]",
             'arrAllowed01' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'arrAllowed01Opt' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1]",
             'arrAllowed012' => "El campo $field debe ser un arreglo con valores permitidos. [0, 1, 2]",
@@ -94,6 +96,7 @@ class InputValidator
             'varchar20' => "El campo $field debe tener una longitud menor a 20 caracteres",
             'varchar40' => "El campo $field debe tener una longitud menor a 40 caracteres",
             'varcharMax' => "El campo $field debe tener una longitud menor a 2147483647 caracteres",
+            'rgbColor' => "El campo $field debe ser un color RGB válido con formato #RRGGBB",
         ];
 
         return $messages[$rule] ?? "Error desconocido en la regla de validación";
@@ -263,6 +266,16 @@ class InputValidator
                     }
                 }
                 break;
+            case 'allowed0a100':
+                if ($value && (!is_numeric($value) || $value < 0 || $value > 100)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'allowed0a3':
+                if ($value && (!is_numeric($value) || $value < 0 || $value > 3)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
             case 'arrAllowed01':
                 $value = $value ?? [];
                 if (!is_array($value)) {
@@ -348,6 +361,11 @@ class InputValidator
                 break;
             case 'boolean':
                 if (!is_bool($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'rgbColor':
+                if (!preg_match('/^#([0-9a-fA-F]{6})$/', $value)) {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
