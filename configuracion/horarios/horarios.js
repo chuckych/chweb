@@ -16,11 +16,15 @@
     const ENDPOINT_HORARIO_EXPORT_XLS = '/' + homehost + '/app-data/horario/exportar-xls';
     const ENDPOINT_HORARIO_EXPORT_XLS_EJEMPLO = '/' + homehost + '/app-data/horario/exportar-xls-ejemplo';
     const ENDPOINT_HORARIO_IMPORT_XLS = '/' + homehost + '/app-data/horario/importar-xls';
+    const ENDPOINT_HORARIO_UNUSED = '/' + homehost + '/app-data/horario/unused';
     const LS_KEY_ORDERBY = homehost + '.configuracion.horarios.ordenarPor';
 
     const $modalHorario = $('#modal-horario');
     const $modalImportarHorarios = $('#modal-importar-horarios');
+    const $modalUnusedHorarios = $('#modal-unused-horarios');
     let tablaHorarios = null;
+    let tableHorariosUnused = null;
+    let tablaUnused = null;
     let editingHorCodi = null;
     let saveButtonDefaultText = 'Guardar';
 
@@ -38,6 +42,7 @@
     const MAP_HTML_EXPORT = [
         { id: 'btn-exportar-xls', text: 'Exportar .xls' },
         { id: 'btn-importar-xls', text: 'Importar .xls' },
+        { id: 'btn-eliminar-unused', text: 'Eliminar no asignados' },
     ];
 
     const DAY_ORDER = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
@@ -912,6 +917,33 @@
         }
         return false;
     };
+    const notifyDeleteUnused = (response) => {
+        console.log(response);
+
+        const code = String(response?.RESPONSE_CODE ?? '');
+        const data = response?.DATA ?? {};
+        const eliminados = Array.isArray(data.eliminados) ? data.eliminados.length : 0;
+        const errores = Array.isArray(data.errores) ? data.errores : [];
+
+        if (code === '200 OK') {
+            if (eliminados > 0) {
+                notify(`Horarios eliminados (${eliminados})`, 'success', 3000, 'right');
+            }
+            if (errores.length > 0) {
+                const firstErr = errores[0]?.error || 'Error de validacion';
+                notify(`Se detectaron ${errores.length} error(es): ${firstErr}`, 'warning', 4500, 'right');
+            }
+            return true;
+        }
+
+        if (errores.length > 0) {
+            const firstErr = errores[0]?.error || response?.MESSAGE || 'No se pudo eliminar el horario';
+            notify(firstErr, 'danger', 4500, 'right');
+        } else {
+            notify(response?.MESSAGE || 'No se pudo eliminar el horario', 'danger', 4500, 'right');
+        }
+        return false;
+    };
 
     const notifyHorarioExportReady = (archivo) => {
         const cleanPath = String(archivo ?? '').replace(/^\/+/, '');
@@ -1001,6 +1033,15 @@
         }
 
         $modalImportarHorarios.modal('show');
+    };
+
+    const openUnusedHorariosModal = () => {
+        if (!$modalUnusedHorarios.length) {
+            notify('No se encontró el modal de horarios no utilizados', 'danger', 4500, 'right');
+            return;
+        }
+        initTablaUnused();
+        $modalUnusedHorarios.modal('show');
     };
 
     const escapeHtml = (value) => {
@@ -1375,7 +1416,7 @@
     const renderOpt = `<div class="opt-tbl mb-3 d-flex justify-content-between align-items-center gap5"></div>`;
 
     const renderOptExport = () => {
-        let html = `<div class="btn-group dropright"><button type="button" class="btn btn-sm h40 btn-outline-custom border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button><div class="dropdown-menu shadow border-0 p-0 radius" x-placement="right-start" style="position: absolute; transform: translate3d(30px, 0px, 0px); top: 0px; left: 0px; will-change: transform;"><ul class="list-group" id="export-options">`;
+        let html = `<div class="btn-group dropright"><button type="button" class="btn btn-sm h40 btn-outline-custom border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button><div class="dropdown-menu w200 shadow border-0 p-0 radius" x-placement="right-start" style="position: absolute; transform: translate3d(30px, 0px, 0px); top: 0px; left: 0px; will-change: transform;"><ul class="list-group" id="export-options">`;
         MAP_HTML_EXPORT.forEach(function (item) {
             const label = item.text || item.label || item.id;
             html += `<button class="btn btn-outline-custom border-0 radius font08 w-100 text-left" id="${item.id}"><div class="ml-1">${label}</div></button>`;
@@ -1396,8 +1437,6 @@
         return html;
     };
 
-
-    // Inicializa la tabla DataTable con AJAX server-side
     const initTablaHorarios = () => {
         let selectedOrderBy = getStoredOrderBy();
 
@@ -1486,6 +1525,10 @@
                 openImportarHorariosModal();
             });
 
+            $('.opt-tbl').off('click.unusedHorario').on('click.unusedHorario', '#btn-eliminar-unused', function () {
+                openUnusedHorariosModal();
+            });
+
             $modalImportarHorarios.off('click.importarHorarios');
             $modalImportarHorarios.on('click.importarHorarios', '#btn-descargar-ejemplo-importar-xls', function () {
                 exportHorariosEjemploXls($(this));
@@ -1518,6 +1561,152 @@
 
         tablaHorarios = table;
         return table;
+    };
+
+    const initTablaUnused = () => {
+
+        if (tablaUnused && $.fn.DataTable.isDataTable('#tblUnused')) {
+            tablaUnused.ajax.reload(null, false);
+            return tablaUnused;
+        }
+
+        const renderColorBadgeUnused = (HorColor) => {
+            return `<span class="badge radius w10" style="background-color:${HorColor};">&nbsp;</span>`;
+        };
+        const $btnDeleteConfirm = $('#btn-confirm-unused-horario');
+        const buildColumnsUnused = () => {
+            const colCodi = {
+                data: 'HorCodi', className: '', targets: '', title: 'Cód.',
+                visible: true,
+                render: function (data, type) { return data; },
+            };
+            const colID = {
+                data: 'HorID', className: '', targets: '', title: 'ID',
+                visible: true,
+                render: function (data, type) { return data; },
+            };
+            const colDesc = {
+                data: 'HorDesc', className: 'w-100', targets: '', title: 'Descripción',
+                visible: true,
+                render: function (data, type) { return data; },
+            };
+            const colColor = {
+                data: 'HorColor', className: '', targets: '', title: '',
+                orderable: false,
+                visible: true,
+                render: function (data, type, row) { if (type !== 'display') return ''; return renderColorBadgeUnused(data); },
+            };
+            return [colCodi, colDesc, colID, colColor];
+
+        };
+
+
+        tablaUnused = $('#tblUnused').DataTable({
+            lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
+            bProcessing: false,
+            serverSide: false,
+            deferRender: true,
+            ajax: {
+                url: ENDPOINT_HORARIO_UNUSED,
+                type: 'GET',
+                dataSrc: function (json) {
+                    if (!json || (Array.isArray(json) && json.length === 0) || (json.data && Array.isArray(json.data) && json.data.length === 0) || (json.DATA && Array.isArray(json.DATA) && json.DATA.length === 0)) {
+                        $btnDeleteConfirm.prop('disabled', true).addClass('disabled');
+                        return [];
+                    }
+
+                    $btnDeleteConfirm.prop('disabled', false).removeClass('disabled');
+
+                    if (Array.isArray(json)) return json;
+                    if (Array.isArray(json?.data)) return json.data;
+                    if (Array.isArray(json?.DATA)) return json.DATA;
+                    return [];
+                },
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('fadeIn');
+            },
+            columns: buildColumnsUnused(),
+            paging: true,
+            info: true,
+            searching: true,
+            ordering: false,
+            language: DT_SPANISH_2,
+        });
+
+        tablaUnused.on('init.dt', function (e, settings) {
+            // $('#tblUnused thead').remove();
+
+            const $lenght = $('#tblUnused_length select');
+            const $inputFilter = $('#tblUnused_filter input');
+
+            if ($lenght.length) {
+                $lenght.removeClass('form-control-sm');
+            }
+
+            $inputFilter.attr('placeholder', 'Buscar').removeClass('form-control-sm');
+
+            $('#modal-unused-horarios').on('click', '#btn-confirm-unused-horario', function () {
+                deleteHorarioUnused($(this));
+            });
+
+            $('.table-responsive').show();
+        });
+
+        tablaUnused.on('draw.dt', function () {
+            $('#tblUnused').removeClass('loader-in');
+        });
+
+        tablaUnused.on('page.dt', function (e, settings) {
+            $('#tblUnused').addClass('loader-in');
+        });
+
+        $modalUnusedHorarios.off('shown.bs.modal.unusedTable').on('shown.bs.modal.unusedTable', function () {
+            if (tableHorariosUnused) {
+                tableHorariosUnused.columns.adjust().draw(false);
+            }
+        });
+
+        tableHorariosUnused = tablaUnused;
+
+        return tablaUnused;
+    };
+
+    const deleteHorarioUnused = async ($triggerBtn) => {
+
+        if (!window.axios || typeof window.axios.delete !== 'function') {
+            notify('No se encontró axios para eliminar el horario', 'danger', 4500, 'right');
+            return;
+        }
+
+        const $btn = $triggerBtn && $triggerBtn.length ? $triggerBtn : null;
+
+        if ($btn) {
+            $btn.prop('disabled', true);
+            $btn.addClass('disabled');
+        }
+
+        try {
+            const res = await window.axios.delete(ENDPOINT_HORARIO_UNUSED, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const ok = notifyDeleteUnused(res?.data ?? {});
+            if (ok && tableHorariosUnused) {
+                tableHorariosUnused.ajax.reload(null, false);
+                $modalUnusedHorarios.modal('hide');
+            }
+        } catch (err) {
+            const text = err?.response?.data?.message || err?.response?.data?.MESSAGE || 'Error al eliminar horarios';
+            notify(text, 'danger', 4500, 'right');
+        } finally {
+            if ($btn) {
+                $btn.prop('disabled', false);
+                $btn.removeClass('disabled');
+            }
+        }
     };
 
 })(jQuery);

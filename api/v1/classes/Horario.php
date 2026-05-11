@@ -313,6 +313,135 @@ class Horario
         }
     }
 
+    public function getUnused(): void
+    {
+        $this->inicio = microtime(true);
+        $idCompany    = defined('ID_COMPANY') ? ID_COMPANY : 0;
+
+        try {
+            $conn = $this->conect;
+
+            $sql = "SELECT HorCodi, HorDesc, HorID, HorColor FROM HORARIOS h
+                    WHERE h.HorCodi > 0
+                      AND NOT EXISTS (SELECT 1 FROM ROTACIO1 WHERE RotHora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM PERHOALT WHERE LeHAHora = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORALE1  WHERE Ho1Hora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORALE2  WHERE Ho2Hora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORAGR1  WHERE Ho3Hora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORAGR2  WHERE Ho4Hora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORASE1  WHERE Ho5Hora  = h.HorCodi)
+                      AND NOT EXISTS (SELECT 1 FROM HORASE2  WHERE Ho6Hora  = h.HorCodi)
+                    ORDER BY h.HorCodi";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            foreach ($data as &$row) {
+                $row['HorColor'] = $this->decimalToRgbHex((int) $row['HorColor']);
+            }
+            unset($row);
+
+            $this->resp->respuesta(
+                $data,
+                count($data),
+                'OK',
+                200,
+                $this->inicio,
+                count($data),
+                $idCompany
+            );
+        } catch (\PDOException $e) {
+            $this->log->write(
+                'Horario::getUnused - ' . $e->getMessage(),
+                date('Ymd') . '_horario_' . $idCompany . '.log'
+            );
+            $this->resp->respuesta([], 0, 'Error interno del servidor', 500, $this->inicio, 0, $idCompany);
+        }
+    }
+
+    public function deleteUnused(): void
+    {
+        $this->inicio = microtime(true);
+        $idCompany    = defined('ID_COMPANY') ? ID_COMPANY : 0;
+
+        $body    = $this->getData;
+        $audUser = (isset($body['User']) && $body['User'] !== '') ? $body['User'] : '';
+
+        $conn = $this->conect;
+
+        try {
+            // Obtener todos los HorCodi sin referencias
+            $sqlSelect = "SELECT HorCodi, HorDesc FROM HORARIOS h
+                          WHERE h.HorCodi > 0
+                            AND NOT EXISTS (SELECT 1 FROM ROTACIO1 WHERE RotHora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM PERHOALT WHERE LeHAHora = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORALE1  WHERE Ho1Hora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORALE2  WHERE Ho2Hora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORAGR1  WHERE Ho3Hora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORAGR2  WHERE Ho4Hora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORASE1  WHERE Ho5Hora  = h.HorCodi)
+                            AND NOT EXISTS (SELECT 1 FROM HORASE2  WHERE Ho6Hora  = h.HorCodi)";
+
+            $stmt = $conn->prepare($sqlSelect);
+            $stmt->execute();
+            $unused = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+            if (empty($unused)) {
+                $this->resp->respuesta(
+                    ['eliminados' => []],
+                    0,
+                    'No hay horarios sin uso para eliminar',
+                    200,
+                    $this->inicio,
+                    0,
+                    $idCompany
+                );
+                return;
+            }
+
+            $conn->beginTransaction();
+
+            $sqlDelete = "DELETE FROM HORARIOS WHERE HorCodi = :HorCodi";
+            $stmtDel   = $conn->prepare($sqlDelete);
+
+            $eliminados  = [];
+            $auditItems  = [];
+
+            foreach ($unused as $row) {
+                $horCodi = (int) $row['HorCodi'];
+                $stmtDel->bindValue(':HorCodi', $horCodi, \PDO::PARAM_INT);
+                $stmtDel->execute();
+                $eliminados[] = ['HorCodi' => $horCodi, 'HorDesc' => $row['HorDesc']];
+                $auditItems[] = ['AudUser' => $audUser, 'AudTipo' => 'B', 'AudDato' => 'Horario ' . $horCodi];
+            }
+
+            $this->updateFechaHoraFranco($conn);
+            $conn->commit();
+
+            $this->auditor->add($auditItems);
+
+            $this->resp->respuesta(
+                ['eliminados' => $eliminados],
+                count($eliminados),
+                'OK',
+                200,
+                $this->inicio,
+                count($eliminados),
+                $idCompany
+            );
+        } catch (\PDOException $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->write(
+                'Horario::deleteUnused - ' . $e->getMessage(),
+                date('Ymd') . '_horario_' . $idCompany . '.log'
+            );
+            $this->resp->respuesta([], 0, 'Error interno del servidor', 500, $this->inicio, 0, $idCompany);
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────
     // Métodos privados
     // ─────────────────────────────────────────────────────────────────

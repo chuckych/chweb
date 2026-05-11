@@ -48,7 +48,7 @@ class Auditor
 
             $sql = $get_dbdata < 70 ? $sqlMenos70 : $sqlMas70;
             $totalAffectedRows = 0;
-            $ms_offset = 0;
+            $ms_offset = 0; // Desfase inicial en milisegundos para evitar colisiones de timestamp en SQL Server DATETIME
             $FechaHora = $this->conect->FechaHora();
             foreach ($datos as $dato) { // Recorro los datos
                 // $this->log->write($dato['FechaHora'], date('Ymd') . '_Auditor_sql_' . ID_COMPANY . '.log');
@@ -65,7 +65,7 @@ class Auditor
                 $stmt->bindValue(':AudDato', $AudDato, \PDO::PARAM_STR);
                 $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
                 $get_dbdata < 70 ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
-                $ms_offset += 3; // SQL Server DATETIME mínimo paso ~3ms
+                $ms_offset += 5; // SQL Server DATETIME mínimo paso ~10ms
                 $stmt->execute(); // Ejecuta la consulta
                 $totalAffectedRows += $stmt->rowCount(); // Devuelve el número de filas afectadas por la última sentencia SQL
             }
@@ -75,6 +75,7 @@ class Auditor
             }
         } catch (\PDOException $e) {
             $conn->rollBack();
+            error_log(print_r($e->getMessage(), true));
             $this->log->write($e->getMessage(), date('Ymd') . '_Auditor_' . ID_COMPANY . '.log');
         }
     }

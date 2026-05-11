@@ -1833,10 +1833,41 @@ Flight::route('POST /horario', function () {
     $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
     $payload = $isBatch ? $payloadRaw : [$payloadRaw];
 
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+    foreach ($payload as &$item) {
+        $item['User'] = $User;
+    }
+
     $endpoint = URLAPI . "/api/v1/horario";
     $horario = ch_api($endpoint, $payload, 'POST', []);
     $horario = json_decode($horario ?? [], true);
     $result = $horario ?? [];
+    $insertados = $result['DATA']['insertados'] ?? [];
+    $actualizados = $result['DATA']['actualizados'] ?? [];
+    if ($insertados || $actualizados) {
+        foreach ($insertados as $key => $el) {
+            $HorCodi = $el['HorCodi'] ?? '';
+            $HorDesc = $el['HorDesc'] ?? '';
+            if (!$HorCodi || !$HorDesc)
+                continue;
+            $arrayAuditoria[] = [
+                'AudTipo' => 'A',
+                'AudDato' => "Horario: {$HorCodi} {$HorDesc}.",
+            ];
+        }
+        foreach ($actualizados as $key => $el) {
+            $HorCodi = $el['HorCodi'] ?? '';
+            $HorDesc = $el['HorDesc'] ?? '';
+            if (!$HorCodi || !$HorDesc)
+                continue;
+
+            $arrayAuditoria[] = [
+                'AudTipo' => 'M',
+                'AudDato' => "Horario: {$el['HorCodi']} {$el['HorDesc']}.",
+            ];
+        }
+        auditoria_multiple($arrayAuditoria ?? [], 49);
+    }
     Flight::json($result ?? []);
 });
 
@@ -1863,9 +1894,30 @@ Flight::route('DELETE /horario', function () {
     $payload = $isBatch ? $payloadRaw : [$payloadRaw];
 
     $endpoint = URLAPI . "/api/v1/horario";
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+
+    foreach ($payload as &$item) {
+        $item['User'] = $User;
+    }
+
     $horario = ch_api($endpoint, $payload, 'DELETE', []);
     $horario = json_decode($horario ?? [], true);
     $result = $horario ?? [];
+    $eliminados = $result['DATA']['eliminados'] ?? [];
+
+    if ($eliminados) {
+        foreach ($eliminados as $key => $el) {
+            $HorCodi = $el['HorCodi'] ?? '';
+            if (!$HorCodi) {
+                continue;
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'B',
+                'AudDato' => "Horario: {$HorCodi} eliminado.",
+            ];
+        }
+        auditoria_multiple($arrayAuditoria ?? [], 49);
+    }
     Flight::json($result ?? []);
 });
 
@@ -1874,6 +1926,33 @@ Flight::route('GET /horario', function () {
     $horario = ch_api($endpoint, [], 'GET', []);
     $horario = json_decode($horario ?? [], true);
     $result = $horario ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('GET /horario/unused', function () {
+    $endpoint = URLAPI . "/api/v1/horario/unused";
+    $horario = ch_api($endpoint, [], 'GET', []);
+    $horario = json_decode($horario ?? [], true);
+    $result = $horario['DATA'] ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('DELETE /horario/unused', function () {
+    $endpoint = URLAPI . "/api/v1/horario/unused";
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+    $horario = ch_api($endpoint, ['User' => $User], 'DELETE', []);
+    $horario = json_decode($horario ?? [], true);
+    $result = $horario ?? [];
+    $elminados = $result['DATA']['eliminados'] ?? [];
+    if ($elminados) {
+        foreach ($elminados as $key => $el) {
+            $arrayAuditoria[] = [
+                'AudTipo' => 'B',
+                'AudDato' => "Horario: {$el['HorCodi']} {$el['HorDesc']} eliminado por no estar asignado a ningún legajo.",
+            ];
+        }
+        auditoria_multiple($arrayAuditoria ?? [], 49);
+    }
     Flight::json($result ?? []);
 });
 
@@ -1920,7 +1999,7 @@ Flight::route('POST /horario/exportar-xls', function () {
 
         $exporter = require __DIR__ . '/php/horarios_export_xls.php';
 
-        $relativeFile = 'app-data/archivos/config_horarios_'.date('Ymd_His').'.xls';
+        $relativeFile = 'app-data/archivos/config_horarios_' . date('Ymd_His') . '.xls';
         $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
         if (!is_callable($exporter)) {
             throw new Exception('No se pudo inicializar el exportador XLS de horarios.');

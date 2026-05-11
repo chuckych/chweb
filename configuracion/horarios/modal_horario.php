@@ -249,3 +249,27 @@ foreach ($mapDays as $key => $day) {
         </div>
     </div>
 </div>
+
+<div class="modal fadeIn" id="modal-unused-horarios" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Horarios no utilizados</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" class="bi bi-x-lg"></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive" style="display: none;">
+                    <table class="shadow-sm text-nowrap w-100 table p-3 border radius loader-in" id="tblUnused">
+                    </table>
+                </div>
+            </div>
+             <div class="modal-footer border-0">
+                <button type="button" class="font09 pointer float-right btn btn-outline-secondary border"
+                    data-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger font09" id="btn-confirm-unused-horario">Eliminar Todo</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -83,8 +83,10 @@ Flight::route('GET /parametros/paragene', [$ParaGene, 'get']);
 Flight::route('GET /parametros/dbdata', [$ParaGene, 'dbData']);
 Flight::route('GET /parametros/liquid', [$ParaGene, 'liquid']);
 Flight::route('GET /horarios/', [$horarios, 'get_horarios']);
+Flight::route('GET /horario/unused', [$horario, 'getUnused']);
 Flight::route('GET /horario', [$horario, 'get']);
 Flight::route('POST /horario', [$horario, 'create']);
+Flight::route('DELETE /horario/unused', [$horario, 'deleteUnused']);
 Flight::route('DELETE /horario', [$horario, 'delete']);
 Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
     $request = Flight::request();
