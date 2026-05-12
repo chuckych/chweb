@@ -9,6 +9,7 @@ use Classes\InputValidator;
 use Classes\RRHHWebService;
 use Classes\Tools;
 use Classes\ParaGene;
+use Error;
 use Flight;
 use flight\net\Request;
 
@@ -23,18 +24,18 @@ class Auditor
     private Tools $tools;
     public function __construct()
     {
-        $this->resp    = new Response;
+        $this->resp = new Response;
         $this->request = Flight::request();
         $this->getData = $this->request->data->getData();
-        $this->log     = new Log;
-        $this->conect  = new ConnectSqlSrv;
-        $this->tools   = new Tools;
+        $this->log = new Log;
+        $this->conect = new ConnectSqlSrv;
+        $this->tools = new Tools;
     }
     public function add($data = [])
     {
-        $inicio          = microtime(true); // Tiempo de inicio del proceso
-        $datos           = $this->validarDatos($data); // Valida los datos
-        $conn            = $this->conect->conn(); // Conexión a la base de datos
+        $inicio = microtime(true); // Tiempo de inicio del proceso
+        $datos = $this->validarDatos($data); // Valida los datos
+        $conn = $this->conect->conn(); // Conexión a la base de datos
 
         $get_dbdata = $this->get_dbdata();
         $get_dbdata = $get_dbdata ? explode("_", $get_dbdata[0]['BDVersion']) : '';
@@ -50,20 +51,24 @@ class Auditor
             $totalAffectedRows = 0;
             $ms_offset = 0; // Desfase inicial en milisegundos para evitar colisiones de timestamp en SQL Server DATETIME
             $FechaHora = $this->conect->FechaHora();
+            $FechaHoraSql = $this->formatSqlDateTime121($FechaHora);
+            // error_log(sprintf('string(%d) "%s"', strlen((string) $FechaHora), (string) $FechaHora));
+
             foreach ($datos as $dato) { // Recorro los datos
                 // $this->log->write($dato['FechaHora'], date('Ymd') . '_Auditor_sql_' . ID_COMPANY . '.log');
                 $stmt = $conn->prepare($sql); // Preparo la consulta
                 $AudUser = substr($dato['AudUser'], 0, 10);
                 $AudDato = substr($dato['AudDato'], 0, 100); // Limita la cantidad de caracteres a 100
                 $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $ms_offset);
-                $stmt->bindValue(':AudFech', $AudFech, \PDO::PARAM_STR);
+                $AudFechSql = $this->formatSqlDateTime121($AudFech);
+                $stmt->bindValue(':AudFech', $AudFechSql, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudHora', $dato['AudHora'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudUser', $AudUser, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudTerm', $dato['AudTerm'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudModu', $dato['AudModu'], \PDO::PARAM_INT);
                 $stmt->bindValue(':AudTipo', $dato['AudTipo'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudDato', $AudDato, \PDO::PARAM_STR);
-                $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
+                $stmt->bindValue(':FechaHora', $FechaHoraSql, \PDO::PARAM_STR);
                 $get_dbdata < 70 ? '' : $stmt->bindValue(':AudZonaHoraria', $dato['AudZonaHoraria'], \PDO::PARAM_STR);
                 $ms_offset += 5; // SQL Server DATETIME mínimo paso ~10ms
                 $stmt->execute(); // Ejecuta la consulta
@@ -75,17 +80,18 @@ class Auditor
             }
         } catch (\PDOException $e) {
             $conn->rollBack();
-            error_log(print_r($e->getMessage(), true));
+            // error_log(print_r($e->getMessage(), true));
+            $this->log->traceError("auditar: " . $e->getMessage());
             $this->log->write($e->getMessage(), date('Ymd') . '_Auditor_' . ID_COMPANY . '.log');
         }
     }
 
     private function validarDatos(array $data)
     {
-        $datos              = $data ?? $this->getData;
-        $request            = $this->request;
-        $ip                 = $request->ip;
-        $FechaHoraActual    = $this->conect->FechaHora(); // Fecha y hora actual
+        $datos = $data ?? $this->getData;
+        $request = $this->request;
+        $ip = $request->ip;
+        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
         $FechaHoraActualUTC = $this->conect->FechaHora('UTC'); // Fecha y hora actual en UTC
         $HoraActual = $this->conect->hora(); // Fecha y hora actual en UTC
 
@@ -101,14 +107,14 @@ class Auditor
                 'AudDato' => ['required', 'varchar200'], // Luego se recorta a 100 caracteres en la función add
             ];
             $customValueKey = [ // Valores por defecto
-                'AudFech'        => $FechaHoraActual, // Fecha actual
-                'AudHora'        => $HoraActual, // Hora actual
-                'AudUser'        => 'API', // Usuario de la API
-                'AudTerm'        => $ip, // IP del cliente
-                'AudModu'        => '21',
-                'AudTipo'        => '',
-                'AudDato'        => '',
-                'FechaHora'      => $FechaHoraActualUTC, // Fecha y hora actual
+                'AudFech' => $FechaHoraActual, // Fecha actual
+                'AudHora' => $HoraActual, // Hora actual
+                'AudUser' => 'API', // Usuario de la API
+                'AudTerm' => $ip, // IP del cliente
+                'AudModu' => '21',
+                'AudTipo' => '',
+                'AudDato' => '',
+                'FechaHora' => $FechaHoraActualUTC, // Fecha y hora actual
                 'AudZonaHoraria' => '(UTC-03:00) Ciudad de Buenos Aires', // Zona horaria
             ];
 
@@ -140,7 +146,7 @@ class Auditor
         return $resultSet;
     }
 
-    public function sumar_segundos_a_fecha_old( string $fecha, int $seconds)
+    public function sumar_segundos_a_fecha_old(string $fecha, int $seconds)
     {
         $fecha = \DateTime::createFromFormat('Ymd H:i:s.u', $fecha);
         $fecha->modify("+{$seconds} seconds");
@@ -156,9 +162,22 @@ class Auditor
             if ($milisegundos > 0) {
                 $date->modify("+{$milisegundos} milliseconds");
             }
-            return $date->format('Y-m-d H:i:s.v'); // v = milliseconds (3 dígitos), formato compatible con SQL Server DATETIME
+            // return $date->format('Y-m-d H:i:s.v'); // v = milliseconds (3 dígitos), formato compatible con SQL Server DATETIME
+            return substr($date->format('Y-m-d\TH:i:s.u'), 0, 23);
         } catch (\Exception $e) {
+            error_log("Error al sumar milisegundos a la fecha: " . $e->getMessage());
             return $fecha;
+        }
+    }
+
+    private function formatSqlDateTime121(string $fecha): string
+    {
+        try {
+            $date = new \DateTimeImmutable($fecha);
+            return $date->format('Y-m-d H:i:s.v');
+        } catch (\Exception $e) {
+            $normalizada = str_replace('T', ' ', $fecha);
+            return strlen($normalizada) > 23 ? substr($normalizada, 0, 23) : $normalizada;
         }
     }
 }

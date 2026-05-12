@@ -137,9 +137,9 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
         $Sucursal == "" ? '0' : $Sucursal,
         $data['Legajos'] ?? []
     ];
-    $ingreso = $RRHHWebService->ingresar_novedades(...$Params);
-
-    $response->respuesta($ingreso ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
+    $ingreso = $RRHHWebService->ingresar_novedades(...$Params) ?? [];
+    // error_log("Params: " . print_r($ingreso, true));
+    $response->respuesta([$ingreso] ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
 });
 
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);

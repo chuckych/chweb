@@ -170,6 +170,7 @@ class Horario
                 'Horario::create - ' . $e->getMessage(),
                 date('Ymd') . '_horario_' . $idCompany . '.log'
             );
+            error_log('Horario::create - ' . $e->getMessage());
             $this->resp->respuesta([], 0, 'Error interno del servidor', 500, $this->inicio, 0, $idCompany);
         }
     }
@@ -279,13 +280,13 @@ class Horario
 
     public function get(): void
     {
-        $this->inicio  = microtime(true);
-        $idCompany     = defined('ID_COMPANY') ? ID_COMPANY : 0;
+        $this->inicio = microtime(true);
+        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
 
         try {
             $conn = $this->conect;
 
-            $sql  = "SELECT * FROM HORARIOS WHERE HorCodi > 0 ORDER BY HorCodi";
+            $sql = "SELECT * FROM HORARIOS WHERE HorCodi > 0 ORDER BY HorCodi";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -316,7 +317,7 @@ class Horario
     public function getUnused(): void
     {
         $this->inicio = microtime(true);
-        $idCompany    = defined('ID_COMPANY') ? ID_COMPANY : 0;
+        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
 
         try {
             $conn = $this->conect;
@@ -363,9 +364,9 @@ class Horario
     public function deleteUnused(): void
     {
         $this->inicio = microtime(true);
-        $idCompany    = defined('ID_COMPANY') ? ID_COMPANY : 0;
+        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
 
-        $body    = $this->getData;
+        $body = $this->getData;
         $audUser = (isset($body['User']) && $body['User'] !== '') ? $body['User'] : '';
 
         $conn = $this->conect;
@@ -403,10 +404,10 @@ class Horario
             $conn->beginTransaction();
 
             $sqlDelete = "DELETE FROM HORARIOS WHERE HorCodi = :HorCodi";
-            $stmtDel   = $conn->prepare($sqlDelete);
+            $stmtDel = $conn->prepare($sqlDelete);
 
-            $eliminados  = [];
-            $auditItems  = [];
+            $eliminados = [];
+            $auditItems = [];
 
             foreach ($unused as $row) {
                 $horCodi = (int) $row['HorCodi'];
@@ -501,7 +502,8 @@ class Horario
 
     private function insertHorario(array $data, \PDO $conn): void
     {
-        $sql = "INSERT INTO HORARIOS (
+        // try {
+            $sql = "INSERT INTO HORARIOS (
             HorCodi, HorDesc, HorID, HorColor,
             HorDomi, HorLune, HorMart, HorMier, HorJuev, HorVier, HorSaba, HorFeri,
             HorDoDe, HorLuDe, HorMaDe, HorMiDe, HorJuDe, HorViDe, HorSaDe, HorFeDe,
@@ -521,85 +523,90 @@ class Horario
             :FechaHora
         )";
 
-        $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql);
 
-        // SMALLINT → PARAM_INT
-        $stmt->bindValue(':HorCodi', (int) $data['HorCodi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorDomi', (int) $data['HorDomi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorLune', (int) $data['HorLune'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMart', (int) $data['HorMart'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMier', (int) $data['HorMier'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorJuev', (int) $data['HorJuev'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorVier', (int) $data['HorVier'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorSaba', (int) $data['HorSaba'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorFeri', (int) $data['HorFeri'], \PDO::PARAM_INT);
+            // SMALLINT → PARAM_INT
+            $stmt->bindValue(':HorCodi', (int) $data['HorCodi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorDomi', (int) $data['HorDomi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorLune', (int) $data['HorLune'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMart', (int) $data['HorMart'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMier', (int) $data['HorMier'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorJuev', (int) $data['HorJuev'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorVier', (int) $data['HorVier'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorSaba', (int) $data['HorSaba'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorFeri', (int) $data['HorFeri'], \PDO::PARAM_INT);
 
-        // Límites allowed0a100 → PARAM_INT
-        $stmt->bindValue(':HorDoLi', (int) $data['HorDoLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorLuLi', (int) $data['HorLuLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMaLi', (int) $data['HorMaLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMiLi', (int) $data['HorMiLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorJuLi', (int) $data['HorJuLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorViLi', (int) $data['HorViLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorSaLi', (int) $data['HorSaLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorFeLi', (int) $data['HorFeLi'], \PDO::PARAM_INT);
+            // Límites allowed0a100 → PARAM_INT
+            $stmt->bindValue(':HorDoLi', (int) $data['HorDoLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorLuLi', (int) $data['HorLuLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMaLi', (int) $data['HorMaLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMiLi', (int) $data['HorMiLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorJuLi', (int) $data['HorJuLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorViLi', (int) $data['HorViLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorSaLi', (int) $data['HorSaLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorFeLi', (int) $data['HorFeLi'], \PDO::PARAM_INT);
 
-        // HorColor decimal negativo → PARAM_INT
-        $stmt->bindValue(':HorColor', (int) $data['HorColor'], \PDO::PARAM_INT);
+            // HorColor decimal negativo → PARAM_INT
+            $stmt->bindValue(':HorColor', (int) $data['HorColor'], \PDO::PARAM_INT);
 
-        // VARCHAR → PARAM_STR
-        $stmt->bindValue(':HorDesc', $data['HorDesc'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorID', $data['HorID'], \PDO::PARAM_STR);
+            // VARCHAR → PARAM_STR
+            $stmt->bindValue(':HorDesc', $data['HorDesc'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorID', $data['HorID'], \PDO::PARAM_STR);
 
-        // Horas De (HH:MM) → PARAM_STR
-        $stmt->bindValue(':HorDoDe', $data['HorDoDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuDe', $data['HorLuDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaDe', $data['HorMaDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiDe', $data['HorMiDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuDe', $data['HorJuDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViDe', $data['HorViDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaDe', $data['HorSaDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeDe', $data['HorFeDe'], \PDO::PARAM_STR);
+            // Horas De (HH:MM) → PARAM_STR
+            $stmt->bindValue(':HorDoDe', $data['HorDoDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuDe', $data['HorLuDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaDe', $data['HorMaDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiDe', $data['HorMiDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuDe', $data['HorJuDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViDe', $data['HorViDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaDe', $data['HorSaDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeDe', $data['HorFeDe'], \PDO::PARAM_STR);
 
-        // Horas Ha (HH:MM) → PARAM_STR
-        $stmt->bindValue(':HorDoHa', $data['HorDoHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuHa', $data['HorLuHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaHa', $data['HorMaHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiHa', $data['HorMiHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuHa', $data['HorJuHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViHa', $data['HorViHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaHa', $data['HorSaHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeHa', $data['HorFeHa'], \PDO::PARAM_STR);
+            // Horas Ha (HH:MM) → PARAM_STR
+            $stmt->bindValue(':HorDoHa', $data['HorDoHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuHa', $data['HorLuHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaHa', $data['HorMaHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiHa', $data['HorMiHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuHa', $data['HorJuHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViHa', $data['HorViHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaHa', $data['HorSaHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeHa', $data['HorFeHa'], \PDO::PARAM_STR);
 
-        // Horas Re (HH:MM) → PARAM_STR
-        $stmt->bindValue(':HorDoRe', $data['HorDoRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuRe', $data['HorLuRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaRe', $data['HorMaRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiRe', $data['HorMiRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuRe', $data['HorJuRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViRe', $data['HorViRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaRe', $data['HorSaRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeRe', $data['HorFeRe'], \PDO::PARAM_STR);
+            // Horas Re (HH:MM) → PARAM_STR
+            $stmt->bindValue(':HorDoRe', $data['HorDoRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuRe', $data['HorLuRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaRe', $data['HorMaRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiRe', $data['HorMiRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuRe', $data['HorJuRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViRe', $data['HorViRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaRe', $data['HorSaRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeRe', $data['HorFeRe'], \PDO::PARAM_STR);
 
-        // Horas Hs (HH:MM) → PARAM_STR
-        $stmt->bindValue(':HorDoHs', $data['HorDoHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuHs', $data['HorLuHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaHs', $data['HorMaHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiHs', $data['HorMiHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuHs', $data['HorJuHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViHs', $data['HorViHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaHs', $data['HorSaHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeHs', $data['HorFeHs'], \PDO::PARAM_STR);
+            // Horas Hs (HH:MM) → PARAM_STR
+            $stmt->bindValue(':HorDoHs', $data['HorDoHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuHs', $data['HorLuHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaHs', $data['HorMaHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiHs', $data['HorMiHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuHs', $data['HorJuHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViHs', $data['HorViHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaHs', $data['HorSaHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeHs', $data['HorFeHs'], \PDO::PARAM_STR);
 
-        // FechaHora → PARAM_STR
-        $stmt->bindValue(':FechaHora', $data['FechaHora'], \PDO::PARAM_STR);
+            // FechaHora → PARAM_STR
+            $stmt->bindValue(':FechaHora', $data['FechaHora'], \PDO::PARAM_STR);
 
-        $stmt->execute();
+            $stmt->execute();
+        // } catch (\Throwable $th) {
+            // error_log('Error en insertHorario: ' . $th->getMessage());
+        // }
     }
 
     private function updateHorario(array $data, \PDO $conn): void
     {
-        $sql = "UPDATE HORARIOS SET
+        // try {
+
+            $sql = "UPDATE HORARIOS SET
             HorDesc    = :HorDesc,
             HorID      = :HorID,
             HorColor   = :HorColor,
@@ -654,82 +661,85 @@ class Horario
             FechaHora  = :FechaHora
         WHERE HorCodi = :HorCodi";
 
-        $stmt = $conn->prepare($sql);
+            $stmt = $conn->prepare($sql);
 
-        // PK
-        $stmt->bindValue(':HorCodi', (int) $data['HorCodi'], \PDO::PARAM_INT);
+            // PK
+            $stmt->bindValue(':HorCodi', (int) $data['HorCodi'], \PDO::PARAM_INT);
 
-        // SMALLINT días → PARAM_INT
-        $stmt->bindValue(':HorDomi', (int) $data['HorDomi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorLune', (int) $data['HorLune'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMart', (int) $data['HorMart'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMier', (int) $data['HorMier'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorJuev', (int) $data['HorJuev'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorVier', (int) $data['HorVier'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorSaba', (int) $data['HorSaba'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorFeri', (int) $data['HorFeri'], \PDO::PARAM_INT);
+            // SMALLINT días → PARAM_INT
+            $stmt->bindValue(':HorDomi', (int) $data['HorDomi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorLune', (int) $data['HorLune'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMart', (int) $data['HorMart'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMier', (int) $data['HorMier'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorJuev', (int) $data['HorJuev'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorVier', (int) $data['HorVier'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorSaba', (int) $data['HorSaba'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorFeri', (int) $data['HorFeri'], \PDO::PARAM_INT);
 
-        // Límites → PARAM_INT
-        $stmt->bindValue(':HorDoLi', (int) $data['HorDoLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorLuLi', (int) $data['HorLuLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMaLi', (int) $data['HorMaLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorMiLi', (int) $data['HorMiLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorJuLi', (int) $data['HorJuLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorViLi', (int) $data['HorViLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorSaLi', (int) $data['HorSaLi'], \PDO::PARAM_INT);
-        $stmt->bindValue(':HorFeLi', (int) $data['HorFeLi'], \PDO::PARAM_INT);
+            // Límites → PARAM_INT
+            $stmt->bindValue(':HorDoLi', (int) $data['HorDoLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorLuLi', (int) $data['HorLuLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMaLi', (int) $data['HorMaLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorMiLi', (int) $data['HorMiLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorJuLi', (int) $data['HorJuLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorViLi', (int) $data['HorViLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorSaLi', (int) $data['HorSaLi'], \PDO::PARAM_INT);
+            $stmt->bindValue(':HorFeLi', (int) $data['HorFeLi'], \PDO::PARAM_INT);
 
-        // HorColor decimal negativo → PARAM_INT
-        $stmt->bindValue(':HorColor', (int) $data['HorColor'], \PDO::PARAM_INT);
+            // HorColor decimal negativo → PARAM_INT
+            $stmt->bindValue(':HorColor', (int) $data['HorColor'], \PDO::PARAM_INT);
 
-        // VARCHAR → PARAM_STR
-        $stmt->bindValue(':HorDesc', $data['HorDesc'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorID', $data['HorID'], \PDO::PARAM_STR);
+            // VARCHAR → PARAM_STR
+            $stmt->bindValue(':HorDesc', $data['HorDesc'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorID', $data['HorID'], \PDO::PARAM_STR);
 
-        // Horas De → PARAM_STR
-        $stmt->bindValue(':HorDoDe', $data['HorDoDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuDe', $data['HorLuDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaDe', $data['HorMaDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiDe', $data['HorMiDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuDe', $data['HorJuDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViDe', $data['HorViDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaDe', $data['HorSaDe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeDe', $data['HorFeDe'], \PDO::PARAM_STR);
+            // Horas De → PARAM_STR
+            $stmt->bindValue(':HorDoDe', $data['HorDoDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuDe', $data['HorLuDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaDe', $data['HorMaDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiDe', $data['HorMiDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuDe', $data['HorJuDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViDe', $data['HorViDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaDe', $data['HorSaDe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeDe', $data['HorFeDe'], \PDO::PARAM_STR);
 
-        // Horas Ha → PARAM_STR
-        $stmt->bindValue(':HorDoHa', $data['HorDoHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuHa', $data['HorLuHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaHa', $data['HorMaHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiHa', $data['HorMiHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuHa', $data['HorJuHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViHa', $data['HorViHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaHa', $data['HorSaHa'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeHa', $data['HorFeHa'], \PDO::PARAM_STR);
+            // Horas Ha → PARAM_STR
+            $stmt->bindValue(':HorDoHa', $data['HorDoHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuHa', $data['HorLuHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaHa', $data['HorMaHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiHa', $data['HorMiHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuHa', $data['HorJuHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViHa', $data['HorViHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaHa', $data['HorSaHa'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeHa', $data['HorFeHa'], \PDO::PARAM_STR);
 
-        // Horas Re → PARAM_STR
-        $stmt->bindValue(':HorDoRe', $data['HorDoRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuRe', $data['HorLuRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaRe', $data['HorMaRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiRe', $data['HorMiRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuRe', $data['HorJuRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViRe', $data['HorViRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaRe', $data['HorSaRe'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeRe', $data['HorFeRe'], \PDO::PARAM_STR);
+            // Horas Re → PARAM_STR
+            $stmt->bindValue(':HorDoRe', $data['HorDoRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuRe', $data['HorLuRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaRe', $data['HorMaRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiRe', $data['HorMiRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuRe', $data['HorJuRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViRe', $data['HorViRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaRe', $data['HorSaRe'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeRe', $data['HorFeRe'], \PDO::PARAM_STR);
 
-        // Horas Hs → PARAM_STR
-        $stmt->bindValue(':HorDoHs', $data['HorDoHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorLuHs', $data['HorLuHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMaHs', $data['HorMaHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorMiHs', $data['HorMiHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorJuHs', $data['HorJuHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorViHs', $data['HorViHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorSaHs', $data['HorSaHs'], \PDO::PARAM_STR);
-        $stmt->bindValue(':HorFeHs', $data['HorFeHs'], \PDO::PARAM_STR);
+            // Horas Hs → PARAM_STR
+            $stmt->bindValue(':HorDoHs', $data['HorDoHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorLuHs', $data['HorLuHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMaHs', $data['HorMaHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorMiHs', $data['HorMiHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorJuHs', $data['HorJuHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorViHs', $data['HorViHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorSaHs', $data['HorSaHs'], \PDO::PARAM_STR);
+            $stmt->bindValue(':HorFeHs', $data['HorFeHs'], \PDO::PARAM_STR);
 
-        // FechaHora → PARAM_STR
-        $stmt->bindValue(':FechaHora', $data['FechaHora'], \PDO::PARAM_STR);
-
-        $stmt->execute();
+            // FechaHora → PARAM_STR
+            $stmt->bindValue(':FechaHora', $data['FechaHora'], \PDO::PARAM_STR);
+            // error_log(sprintf('string(%d) "%s"', strlen((string) $data['FechaHora']), (string) $data['FechaHora']));
+            $stmt->execute();
+        // } catch (\Throwable $th) {
+            // $this->log->traceError("Error al procesar el día: " . $th->getMessage());
+        // }
     }
 
     private function decimalToRgbHex(int $decimal): string

@@ -255,7 +255,12 @@ class ConnectSqlSrv
         $t = date("Ymd H:i:s", $t[1]) . substr((string) $t[0], 1, 4);
         return $t ?? '';
     }
-    public function FechaHora($timezone = 'America/Argentina/Buenos_Aires'): string
+    public function FechaHora(string $timezone = 'America/Argentina/Buenos_Aires'): string
+    {
+        $dt = new \DateTimeImmutable('now', new \DateTimeZone($timezone));
+        return substr($dt->format('Y-m-d\TH:i:s.u'), 0, 23);
+    }
+    public function FechaHora_oldd($timezone = 'America/Argentina/Buenos_Aires'): string
     {
         date_default_timezone_set($timezone);
         $t = explode(" ", microtime());

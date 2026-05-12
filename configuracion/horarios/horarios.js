@@ -157,11 +157,12 @@
     };
 
     const renderRowGroup = (row) => {
+        const style = `style="border: 1px solid #ddd; color: #333; background-color: #f8f9fa; min-width: 50px;"`;
         return `
             <div class="d-flex justify-content-between align-items-center pt-3 px-2 m-0">
                 <div class="d-flex justify-content-strat align-items-center gap5">
                     <span class="badge radius w50 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID || '&nbsp;'} </span>
-                    <strong>(${row.Codi}) ${row.Desc}</strong>
+                        <strong>(${row.Codi})<strong> ${row.Desc}</strong>
                 </div>
                 <div class="border p-1 rounded d-flex justify-content-center align-items-center gap5">
                     <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-editar-horario" data-codi="${row.Codi}" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></button>
@@ -1696,6 +1697,7 @@
             const ok = notifyDeleteUnused(res?.data ?? {});
             if (ok && tableHorariosUnused) {
                 tableHorariosUnused.ajax.reload(null, false);
+                tablaHorarios.ajax.reload(null, false);
                 $modalUnusedHorarios.modal('hide');
             }
         } catch (err) {

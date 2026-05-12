@@ -30,7 +30,7 @@ foreach ($mapDays as $key => $day) {
 <div class="modal fadeIn" id="modal-horario" tabindex="-1" role="dialog" aria-labelledby="modal-title"
     aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
-        <div class="modal-content">
+        <div class="modal-content bg-light">
             <div class="modal-header border-0 pb-0">
                 <div class="d-flex flex-column w-100">
                     <div class="d-inline-flex w-100 align-items-center mb-2 justify-content-between">
@@ -65,7 +65,7 @@ foreach ($mapDays as $key => $day) {
                         </div>
                     </div>
                     <div class="">
-                        <div class="btn-group-toggle mt-n2 p-1 border radius fit-content shadow-sm"
+                        <div class="bg-white btn-group-toggle mt-n2 p-1 border radius fit-content shadow-sm"
                             data-toggle="buttons">
                             <?php
                             foreach ($daysConfig as $dayCfg) {
@@ -104,7 +104,7 @@ foreach ($mapDays as $key => $day) {
                         $laboral .= "</div>";
                     }
                     ?>
-                    <div class="config-card">
+                    <div class="config-card shadow-sm">
                         <div class="row align-items-center mb-3">
                             <div class="col-1">
                                 <span class="day-label"><?= $dayCfgLabel ?></span>

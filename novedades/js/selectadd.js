@@ -748,8 +748,12 @@ $(document).ready(function () {
                 console.log(response.data);
                 throw new Error(response.data?.MESSAGE);
             }
-            if (response.data?.DATA !== true) {
-                console.log(response.data);
+            const dataResult = Array.isArray(response.data?.DATA)
+                ? response.data.DATA[0]
+                : response.data?.DATA;
+
+            if (dataResult !== true && dataResult !== 'true') {
+                console.log(dataResult);
                 throw new Error(response.data?.MESSAGE);
             }
 

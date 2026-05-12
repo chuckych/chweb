@@ -1,7 +1,7 @@
 :root {
     --primary-purple: #4B0082;
-    --bg-light: #f8f9fa;
-    --border-color: #ddd;
+    /* --bg-light: #f8f9fa; */
+    --border-color: #cecece;
 }
 
 .jscolor-btn-close {
@@ -38,11 +38,12 @@
 
 .timeline-container {
     position: relative;
-    height: 40px;
+    height: 20px;
     background: #f1f3f5;
     border-radius: 4px;
     margin-top: 1.5rem;
     display: flex;
+    border: 1px solid #e0e0e0;
 }
 
 .timeline-hour {
@@ -65,12 +66,13 @@
 
 .timeline-next-day {
     margin-left: 4px;
-    font-weight: 600;
-    color: #666;
+    font-weight: 500;
+    color: #333;
     position: static;
     top: auto;
     left: auto;
     display: inline;
+    font-size: 0.8rem;
 }
 
 .timeline-bar {
