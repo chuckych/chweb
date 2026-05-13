@@ -38,7 +38,7 @@
 
 .timeline-container {
     position: relative;
-    height: 20px;
+    height: 30px;
     background: #f1f3f5;
     border-radius: 4px;
     margin-top: 1.5rem;
@@ -171,4 +171,9 @@ tr.dtrg-group>td {
 
 .btn-upload:hover {
     background: #157347;
+}
+
+#tblHorarios_paginate {
+  margin-bottom: 0px !important;
+  margin-top: 0px !important;
 }

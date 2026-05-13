@@ -26,7 +26,7 @@
     let tableHorariosUnused = null;
     let tablaUnused = null;
     let editingHorCodi = null;
-    let saveButtonDefaultText = 'Guardar';
+    let saveButtonDefaultText = 'Guardar';        
 
     const MAP_DIAS_MODAL = [
         { key: 'Lunes', dayId: 'HorLune', prefix: 'HorLu', shortId: 'Lu', control: 'checkbox' },
@@ -90,86 +90,6 @@
             // noop: si localStorage falla, se mantiene solo en memoria de la vista.
         }
         return normalized;
-    };
-
-    // Renderiza Desde - Hasta de cada día
-    const renderDia = (dia, Color, ColorText, title) => {
-        if (!dia) return '';
-        const laboral = dia.LaboralID >= 1;
-        const style = laboral ? `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"` : '';
-        const classLaboral = laboral ? 'LaboralID' : '';
-        const Horas = laboral ? dia.Horas + ' hs' : 'Franco';
-        const tittleDay = `<span class="font08 text-secondary">${title}</span>`;
-        return `<div class="p-1">
-            <div class="p-1">${tittleDay}<br>${dia.Desde}<br>${dia.Hasta}<br><span class="font08"><span class="${classLaboral}" ${style}>${Horas}</span></span></div>
-        </div>`;
-    };
-
-    // Renderiza badge con el color del horario
-    const renderColorBadge = (row) => {
-        return `<span class="badge radius w10 h10" style="background-color:${row.Color}; color:${row.ColorText};">&nbsp;</span>`;
-    };
-    const renderHorasSemanales = (data, row) => {
-        const style = `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"`;
-        return `<div class="p-1"><span class="font08 text-secondary">Horas</span><br><span class="LaboralID" ${style}>${data} hs</span></div>`;
-    };
-
-    const buildColumns = () => {
-        const colCodi = {
-            data: 'Codi', className: 'text-center', targets: '', title: 'Cód',
-            visible: false,
-            render: function (data, type) { if (type !== 'display') return ''; return data; },
-        };
-        const colDesc = {
-            data: 'Desc', className: '', targets: '', title: 'Descripción',
-            visible: false,
-            render: function (data, type) { if (type !== 'display') return ''; return data; },
-        };
-        const colColor = {
-            data: '', className: 'text-center', targets: '', title: 'Color',
-            orderable: false,
-            visible: false,
-            render: function (data, type, row) { if (type !== 'display') return ''; return renderColorBadge(row); },
-        };
-        const colHorasSemanales = {
-            data: 'HorasSem', className: 'text-center', targets: '', title: '',
-            render: function (data, type, row) {
-                if (type !== 'display') return '';
-                return renderHorasSemanales(data, type, row);
-            },
-        };
-        const colsDias = DIAS.map(function ({ key, title }) {
-            return {
-                data: key, className: 'text-center', targets: '', title: '',
-                orderable: false,
-                render: function (data, type, row) {
-                    if (type !== 'display') return '';
-                    return renderDia(data, row.Color, row.ColorText, title);
-                },
-                createdCell: function (td, cellData) {
-                    if (cellData && cellData.LaboralID !== 1) {
-                        $(td).addClass('text-secondary');
-                    }
-                },
-            };
-        });
-        return [colCodi, colDesc, colColor, ...colsDias, colHorasSemanales];
-    };
-
-    const renderRowGroup = (row) => {
-        const style = `style="border: 1px solid #ddd; color: #333; background-color: #f8f9fa; min-width: 50px;"`;
-        return `
-            <div class="d-flex justify-content-between align-items-center pt-3 px-2 m-0">
-                <div class="d-flex justify-content-strat align-items-center gap5">
-                    <span class="badge radius w50 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID || '&nbsp;'} </span>
-                        <strong>(${row.Codi})<strong> ${row.Desc}</strong>
-                </div>
-                <div class="border p-1 rounded d-flex justify-content-center align-items-center gap5">
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-editar-horario" data-codi="${row.Codi}" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></button>
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-duplicar-horario" data-codi="${row.Codi}" title="Duplicar" aria-label="Duplicar Horario"><i class="bi bi-copy"></i></button>
-                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-eliminar-horario" data-codi="${row.Codi}" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
-                </div>
-            </div>`;
     };
 
     const getDataRowByCodi = (table, codi) => {
@@ -481,7 +401,7 @@
     };
 
     const renderTimelineContainer = (opts) => {
-        const STEP_MINUTES = 60; // 1h por marca base
+        const STEP_MINUTES = 180; // 1h por marca base
         const buildBaseHours = () => Array.from({ length: 25 }, function (_, i) {
             const label = (i % 3 === 0 || i === 24) ? String(i) : '';
             return `<div class="timeline-hour"><span>${label}</span></div>`;
@@ -918,9 +838,8 @@
         }
         return false;
     };
-    const notifyDeleteUnused = (response) => {
-        console.log(response);
 
+    const notifyDeleteUnused = (response) => {
         const code = String(response?.RESPONSE_CODE ?? '');
         const data = response?.DATA ?? {};
         const eliminados = Array.isArray(data.eliminados) ? data.eliminados.length : 0;
@@ -1414,7 +1333,7 @@
         $modalHorario.modal('show');
     };
 
-    const renderOpt = `<div class="opt-tbl mb-3 d-flex justify-content-between align-items-center gap5"></div>`;
+    const renderOpt = `<div class="opt-tbl mb-4 d-flex justify-content-between align-items-center gap5"></div>`;
 
     const renderOptExport = () => {
         let html = `<div class="btn-group dropright"><button type="button" class="btn btn-sm h40 btn-outline-custom border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="bi bi-three-dots-vertical"></i></button><div class="dropdown-menu w200 shadow border-0 p-0 radius" x-placement="right-start" style="position: absolute; transform: translate3d(30px, 0px, 0px); top: 0px; left: 0px; will-change: transform;"><ul class="list-group" id="export-options">`;
@@ -1438,14 +1357,107 @@
         return html;
     };
 
+    // Renderiza Desde - Hasta de cada día
+    const renderDia = (dia, Color, ColorText, title) => {
+        if (!dia) return '';
+        const laboral = dia.LaboralID >= 1;
+        const style = laboral ? `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"` : '';
+        const classLaboral = laboral ? 'LaboralID' : '';
+        const Horas = laboral ? dia.Horas + ' hs' : 'Franco';
+        const tittleDay = `<span class="font08 text-secondary">${title}</span>`;
+        return `<div class="p-1" style="line-height: 1.7;">
+            <div class="p-1">${tittleDay}<br>${dia.Desde}<br>${dia.Hasta}<br><span class="font08"><span class="${classLaboral}" ${style}>${Horas}</span></span></div>
+        </div>`;
+    };
+
+    // Renderiza badge con el color del horario
+    const renderColorBadge = (row) => {
+        return `<span class="badge radius w10 h10" style="background-color:${row.Color}; color:${row.ColorText};">&nbsp;</span>`;
+    };
+    const renderHorasSemanales = (data, row) => {
+        const style = `style="border: 1px solid #727171; color: #333; background-color: #f8f9fa;"`;
+        return `<div class="p-2" style="line-height: 1.9;"><span class="font08 text-secondary">Horas</span><br><span class="LaboralID" ${style}>${data} hs</span></div>`;
+    };
+    const buildColumns = () => {
+        const colCodi = {
+            data: 'Codi', className: 'text-center', targets: '', title: 'Cód',
+            visible: false,
+            render: function (data, type) { if (type !== 'display') return ''; return data; },
+        };
+        const colDesc = {
+            data: 'Desc', className: '', targets: '', title: 'Descripción',
+            visible: false,
+            render: function (data, type) { if (type !== 'display') return ''; return data; },
+        };
+        const colColor = {
+            data: '', className: 'text-center', targets: '', title: 'Color',
+            orderable: false,
+            visible: false,
+            render: function (data, type, row) { if (type !== 'display') return ''; return renderColorBadge(row); },
+        };
+        const colHorasSemanales = {
+            data: 'HorasSem', className: 'text-center', targets: '', title: '',
+            render: function (data, type, row) {
+                if (type !== 'display') return '';
+                return renderHorasSemanales(data, type, row);
+            },
+        };
+        const colsDias = DIAS.map(function ({ key, title }) {
+            return {
+                data: key, className: 'text-center', targets: '', title: '',
+                orderable: false,
+                render: function (data, type, row) {
+                    if (type !== 'display') return '';
+                    return renderDia(data, row.Color, row.ColorText, title);
+                },
+                createdCell: function (td, cellData) {
+                    if (cellData && cellData.LaboralID !== 1) {
+                        $(td).addClass('text-secondary');
+                    }
+                },
+            };
+        });
+        return [colCodi, colDesc, colColor, ...colsDias, colHorasSemanales];
+    };
+
+    const renderRowGroup = (row) => {
+        const style = `style="border: 1px solid #ddd; color: #333; background-color: #f8f9fa; min-width: 50px;"`;
+        return `
+            <div class="d-flex justify-content-between align-items-center pt-3 px-2 m-0">
+                <div class="d-flex justify-content-strat align-items-center gap5">
+                    <span class="badge radius w50 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID || '&nbsp;'} </span>
+                        <strong>(${row.Codi})<strong> ${row.Desc}</strong>
+                </div>
+                <div class="border p-1 rounded d-flex justify-content-center align-items-center gap5">
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-editar-horario" data-codi="${row.Codi}" title="Editar" aria-label="Editar"><i class="bi bi-pen"></i></button>
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-duplicar-horario" data-codi="${row.Codi}" title="Duplicar" aria-label="Duplicar Horario"><i class="bi bi-copy"></i></button>
+                    <button class="hint--top btn btn-sm btn-outline-custom border-0 btn-eliminar-horario" data-codi="${row.Codi}" title="Eliminar" aria-label="Eliminar"><i class="bi bi-trash"></i></button>
+                </div>
+            </div>`;
+    };
+
     const initTablaHorarios = () => {
         let selectedOrderBy = getStoredOrderBy();
-
+        const renderDomTableHorarios = () => {
+            return `
+                <'row mb-2'
+                    <'col-sm-12 col-md-6 d-inline-flex align-items-center justify-content-start gap5'lp>
+                    <'col-sm-12 col-md-6'f>
+                >
+                <'row 
+                    '<'col-12 table-responsive'<'text-nowrap'rt>>
+                >
+                <'row'
+                    <'col-sm-12 col-md-5'i>
+                    <'col-sm-12 col-md-7'p>
+                >`;
+        }
         const table = $('#tblHorarios').DataTable({
             lengthMenu: [[5, 10, 25, 50, 100], [5, 10, 25, 50, 100]],
             bProcessing: true,
             serverSide: true,
             deferRender: true,
+            dom: renderDomTableHorarios(),
             ajax: {
                 url: ENDPOINT_HORARIOS,
                 type: 'POST',
@@ -1473,19 +1485,24 @@
         table.on('init.dt', function (e, settings) {
             $('#tblHorarios thead').remove();
 
-            const $lenght = $('#tblHorarios_length select');
+            const $tblHorariosLength = $('#tblHorarios_length');
+            const $tblHorariosPaginate = $('#tblHorarios_paginate');
+            const $length = $('#tblHorarios_length select');
             const $inputFilter = $('#tblHorarios_filter input');
-            $('#tblHorarios_filter').prepend('<label class="font08 mb-1">Buscar:</label>');
+            $('#tblHorarios_filter').prepend('<label class="font08 mb-1"><span class="d-none d-sm-block">Buscar:</span></label>');
             const htmlOpt = renderOpt;
 
             $inputFilter.attr('placeholder', 'Código / Descripcion / ID').removeClass('form-control-sm');
-            $('#table-responsive-horarios').prepend(htmlOpt);
+            $('#table-opt-horarios').prepend(htmlOpt);
 
             const htmlNuevoHorario = renderOptNuevoHorario();
             const htmlSelectOrder = renderSelectOrder();
             const htmlOptExport = renderOptExport();
+            $tblHorariosLength.addClass(['mt-1', 'h40']);
+            $tblHorariosPaginate.addClass('h40');
+            $inputFilter.addClass(['mt-2 mt-sm-0']);
 
-            const $optTbl = $('#table-responsive-horarios .opt-tbl');
+            const $optTbl = $('#table-opt-horarios .opt-tbl');
 
             $optTbl.append(htmlNuevoHorario);
             const $divNuevohorario = $('#div-nuevo-horario');
@@ -1510,7 +1527,7 @@
 
             $('#tblHorarios tbody').on('click', '.btn-editar-horario', function () {
                 const dataCodi = $(this).data('codi');
-                const dataRow = getDataRowByCodi(table, dataCodi);                
+                const dataRow = getDataRowByCodi(table, dataCodi);
                 editarHorario(dataRow);
             });
 
@@ -1549,7 +1566,7 @@
                 const dataRow = getDataRowByCodi(table, dataCodi);
                 deleteHorarioByRow(dataRow, $(this));
             });
-            $('.table-responsive').show();
+            $('#tblHorarios').show();
         });
 
         table.on('draw.dt', function () {
@@ -1638,11 +1655,11 @@
         tablaUnused.on('init.dt', function (e, settings) {
             // $('#tblUnused thead').remove();
 
-            const $lenght = $('#tblUnused_length select');
+            const $length = $('#tblUnused_length select');
             const $inputFilter = $('#tblUnused_filter input');
 
-            if ($lenght.length) {
-                $lenght.removeClass('form-control-sm');
+            if ($length.length) {
+                $length.removeClass('form-control-sm');
             }
 
             $inputFilter.attr('placeholder', 'Buscar').removeClass('form-control-sm');

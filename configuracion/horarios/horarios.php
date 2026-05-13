@@ -24,12 +24,11 @@
         <!-- Encabezado -->
         <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, '<span>Configuración de Horarios</span>', ''); ?>
         <!-- Fin Encabezado -->
-        <div class="row bg-white py-3">
-            <div class="col-12" id="table-responsive-horarios"></div>
+        <div class="row py-3">
+            <div class="col-12" id="table-opt-horarios"></div>
             <div class="col-12">
-                <div class="table-responsive" style="display:none;">
-                    <table id="tblHorarios" class="shadow-sm table table-borderless w-100 p-3 border radius loader-in"></table>
-                </div>
+                <table id="tblHorarios" class="shadow-sm table w-100 p-3 border radius loader-in" style="display:none;">
+                </table>
             </div>
         </div>
         <?php require __DIR__ . "/modal_horario.php"; ?>
