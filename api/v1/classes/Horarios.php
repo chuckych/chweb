@@ -1008,7 +1008,7 @@ class Horarios
         $valuesList = implode(',', $values);
         
         try {
-            $sql = "INSERT INTO HORALE1s (Ho1Lega, Ho1Fech, Ho1Hora, FechaHora) VALUES $valuesList";
+            $sql = "INSERT INTO HORALE1 (Ho1Lega, Ho1Fech, Ho1Hora, FechaHora) VALUES $valuesList";
             $stmt = $conn->prepare($sql);
             foreach ($params as $key => $value) {
                 $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
