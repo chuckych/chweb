@@ -116,7 +116,6 @@ class Horarios
             $legajosInsert = array_values(array_diff($Legajos, $legajosUpdate));
 
             if ($this->desde) {
-
                 $fechaFormat = $this->tools->formatDateTime($Fecha, 'd-m-Y');
                 $AudText = "Horario desde {$fechaFormat}";
 
@@ -740,7 +739,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
-        $sql = "UPDATE HORALE1 SET Ho1Hora = :Codi, FechaHora = CONVERT(datetime, :FechaHora, 121) WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
+        $sql = "UPDATE HORALE1 SET Ho1Hora = :Codi, FechaHora = :FechaHora WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
         $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
@@ -897,7 +896,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
-        $sql = "UPDATE CITACION SET CitEntra = :Entr, CitSale = :Sale, CitDesc = :Desc, FechaHora = CONVERT(datetime, :FechaHora, 121) WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
+        $sql = "UPDATE CITACION SET CitEntra = :Entr, CitSale = :Sale, CitDesc = :Desc, FechaHora = :FechaHora WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':Entr', $Entr, \PDO::PARAM_STR);
         $stmt->bindValue(':Sale', $Sale, \PDO::PARAM_STR);
@@ -945,7 +944,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
-        $sql = "UPDATE ROTALEG SET RolRota = :Codi, FechaHora = CONVERT(datetime, :FechaHora, 121), RolVenc = CONVERT(datetime, :Vence, 120), RolDias = :RolDias WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120)";
+        $sql = "UPDATE ROTALEG SET RolRota = :Codi, FechaHora = :FechaHora, RolVenc = CONVERT(datetime, :Vence, 120), RolDias = :RolDias WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
         $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
@@ -971,7 +970,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         $legajosList = implode(',', $legajos);
-        $sql = "UPDATE HORALE2 SET Ho2Hora = :Codi, FechaHora = CONVERT(datetime, :FechaHora, 121) WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
+        $sql = "UPDATE HORALE2 SET Ho2Hora = :Codi, FechaHora = :FechaHora WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
         $stmt = $conn->prepare($sql);
         $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
         $stmt->bindValue(':FechaD', $FechaD, \PDO::PARAM_STR);
@@ -998,7 +997,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         foreach ($legajos as $lega) {
-            $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Codi{$index}, CONVERT(datetime, :FechaHora{$index}, 121))";
+            $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Codi{$index}, :FechaHora{$index})";
             $params[":Lega{$index}"] = $lega;
             $params[":Fecha{$index}"] = $Fecha;
             $params[":Codi{$index}"] = $Codi;
@@ -1007,16 +1006,21 @@ class Horarios
         }
 
         $valuesList = implode(',', $values);
-        $sql = "INSERT INTO HORALE1 (Ho1Lega, Ho1Fech, Ho1Hora, FechaHora) VALUES $valuesList";
-        $stmt = $conn->prepare($sql);
+        
+        try {
+            $sql = "INSERT INTO HORALE1s (Ho1Lega, Ho1Fech, Ho1Hora, FechaHora) VALUES $valuesList";
+            $stmt = $conn->prepare($sql);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            }
 
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas;
+        } catch (\Throwable $th) {
+            error_log("error: " . $th->getMessage());
+            throw new \Exception("Error al insertar horarios desde", 400);
         }
-
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas;
     }
     private function insert_citacion(array $arrayData)
     {
@@ -1033,7 +1037,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         foreach ($legajos as $lega) {
-            $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Turn{$index}, :Entr{$index}, :Sale{$index}, :Desc{$index}, CONVERT(datetime, :FechaHora{$index}, 121))";
+            $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Turn{$index}, :Entr{$index}, :Sale{$index}, :Desc{$index}, :FechaHora{$index})";
             $params[":Lega{$index}"] = $lega;
             $params[":Fecha{$index}"] = $Fecha;
             $params[":Turn{$index}"] = $Turn;
@@ -1076,7 +1080,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
         try {
             foreach ($legajos as $lega) {
-                $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Codi{$index}, :Dias{$index}, CONVERT(datetime, :Vence{$index}, 120), CONVERT(datetime, :FechaHora{$index}, 120))";
+                $values[] = "(:Lega{$index}, CONVERT(datetime, :Fecha{$index}, 120), :Codi{$index}, :Dias{$index}, CONVERT(datetime, :Vence{$index}, 120), :FechaHora{$index})";
                 $params[":Lega{$index}"] = $lega;
                 $params[":Fecha{$index}"] = $Fecha;
                 $params[":Codi{$index}"] = $Codi;
@@ -1122,7 +1126,7 @@ class Horarios
         $FechaHora = $this->conect->FechaHora();
 
         foreach ($legajos as $lega) {
-            $values[] = "(:Lega{$index}, CONVERT(datetime, :FechaD{$index}, 120), CONVERT(datetime, :FechaH{$index}, 120), :Codi{$index}, CONVERT(datetime, :FechaHora{$index}, 121))";
+            $values[] = "(:Lega{$index}, CONVERT(datetime, :FechaD{$index}, 120), CONVERT(datetime, :FechaH{$index}, 120), :Codi{$index}, :FechaHora{$index})";
             $params[":Lega{$index}"] = $lega;
             $params[":FechaD{$index}"] = $FechaD;
             $params[":FechaH{$index}"] = $FechaH;
