@@ -61,7 +61,7 @@ class Auditor
                 $AudDato = substr($dato['AudDato'], 0, 100); // Limita la cantidad de caracteres a 100
                 $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $ms_offset);
                 $AudFechSql = $this->formatSqlDateTime121($AudFech);
-                $stmt->bindValue(':AudFech', $AudFechSql, \PDO::PARAM_STR);
+                $stmt->bindValue(':AudFech', $FechaHora, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudHora', $dato['AudHora'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudUser', $AudUser, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudTerm', $dato['AudTerm'], \PDO::PARAM_STR);
