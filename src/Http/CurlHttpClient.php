@@ -27,9 +27,10 @@ final class CurlHttpClient implements HttpClientInterface
             $response = \curl_exec($ch);
             $errorCode = \curl_errno($ch);
             $errorMsg = \curl_error($ch);
-        }catch (\Throwable $e) {
+
+        } catch (\Throwable $e) {
             \error_log('CurlHttpClient::request — ' . $e->getMessage());
-             throw new RuntimeException('Error al realizar la solicitud cURL: ' . $e->getMessage(), 0, $e);
+            throw new RuntimeException('Error al realizar la solicitud cURL: ' . $e->getMessage(), 0, $e);
         } finally {
             $this->closeHandle($ch);
         }

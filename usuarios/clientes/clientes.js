@@ -88,27 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 searching: true,
                 info: true,
                 ordering: true,
-                language:
-                {
-                    "sProcessing": "Actualizando . . .",
-                    "sLengthMenu": "_MENU_",
-                    "sZeroRecords": "",
-                    "sEmptyTable": "",
-                    "sInfo": "Pag. _START_ a _END_ de _TOTAL_ Clientes",
-                    "sInfoEmpty": "No se encontraron resultados",
-                    "sInfoFiltered": "(filtrado de un total de _MAX_ Clientes)",
-                    "sInfoPostFix": "",
-                    "sSearch": "",
-                    "sUrl": "",
-                    "sInfoThousands": ",",
-                    "oPaginate": {
-                        "sFirst": "<i class='bi bi-chevron-left'></i>",
-                        "sLast": "<i class='bi bi-chevron-right'></i>",
-                        "sNext": "<i class='bi bi-chevron-right'></i>",
-                        "sPrevious": "<i class='bi bi-chevron-left'></i>"
-                    },
-                    "sLoadingRecords": "<div class='spinner-border text-light'></div>",
-                },
+                language: DT_SPANISH_SHORT2
             });
 
             const dataTablesLength = document?.querySelector(`.dataTables_length select`);
@@ -178,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
         $('#host').val(data.host)
         $('#db').val(data.db)
         $('#user').val(data.user)
-        $('#pass').val(data.pass)
+        $('#pass').val('%nbsp;'.repeat(2))
         $('#hostCHWeb').val(data.hostLocal)
         $('#AppCode').val(data.recid)
         $('#token_api').text(data.token_api ?? '');

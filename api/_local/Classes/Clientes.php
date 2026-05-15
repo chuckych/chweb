@@ -8,21 +8,21 @@ use Classes\ADAuthenticator;
 use Classes\Auditor;
 use Classes\Log;
 
-
 use Flight;
+use flight\net\Request;
 
 class Clientes
 {
-    private $conect;
-    private $response;
-    private $getData;
-    private $request;
-    private $tools;
-    private $AD;
+    private ConnectDB $conect;
+    private Response $response;
+    private array $getData;
+    private Request $request;
+    private Tools $tools;
+    private ADAuthenticator $AD;
     private $getQuery;
-    private $auditor;
-    private $log;
-    private $cacheClienteInsertado;
+    private Auditor $auditor;
+    private Log $log;
+    private array $cacheClienteInsertado;
 
 
     public function __construct()
@@ -34,6 +34,7 @@ class Clientes
         $this->getData = $this->request->data->getData();
         $this->tools = new Tools;
         $this->log = new Log();
+        $this->cacheClienteInsertado = [];
     }
     public function get_clientes(): void
     {
@@ -82,6 +83,8 @@ class Clientes
                     $clientes[$key]['count_roles'] = $count_roles[$value['id']] ?? 0;
                     $clientes[$key]['token_api'] = sha1($value['recid']);
                 }
+                // no enviar pass de la base de datos
+                $clientes[$key]['pass'] = '';
             }
 
             $this->response->respuesta($clientes, $count, 'OK', 200, 0, $count, $inicio);
@@ -90,7 +93,7 @@ class Clientes
             throw new $get_class($e->getMessage(), (int) $e->getCode());
         }
     }
-    private function count_usuarios_clientes($conn)
+    private function count_usuarios_clientes(\PDO $conn)
     {
         $sql = "SELECT COUNT(*) as 'count', cliente FROM usuarios WHERE id > 1 group by cliente";
         $stmt = $conn->prepare($sql);
@@ -100,7 +103,7 @@ class Clientes
         $usuarios = array_column($usuarios, 'count', 'cliente');
         return $usuarios;
     }
-    private function count_usuarios_rol($conn)
+    private function count_usuarios_rol(\PDO $conn)
     {
         $sql = "SELECT COUNT(*) as 'count', cliente FROM roles WHERE id > 1 group by cliente";
         $stmt = $conn->prepare($sql);
@@ -250,7 +253,7 @@ class Clientes
             $this->response->respuesta($cuenta, 1, 'OK', 200, $inicio, 1, 0);
         }
     }
-    private function si_existe_ident($ident, $conn)
+    private function si_existe_ident(string $ident, \PDO $conn)
     {
         if (!$ident) {
             return false;
@@ -265,7 +268,7 @@ class Clientes
         $conn = null;
         return ($count > 0) ? true : false;
     }
-    private function si_existe_nombre_cliente($nombre, $conn, $IDCliente = null)
+    private function si_existe_nombre_cliente(string $nombre, \PDO $conn, $IDCliente = null)
     {
         $sql = "SELECT nombre FROM clientes WHERE nombre = :nombre";
         $sql .= $IDCliente ? " AND id != :id" : '';
@@ -278,7 +281,7 @@ class Clientes
         $count = $stmt->rowCount() ?? 0;
         return $count ? true : false;
     }
-    private function si_no_existe_id_cliente($IDCliente, $conn)
+    private function si_no_existe_id_cliente(int $IDCliente, \PDO $conn)
     {
         $sql = "SELECT id FROM clientes WHERE id = :id";
         $stmt = $conn->prepare($sql);
@@ -287,7 +290,7 @@ class Clientes
         $count = $stmt->rowCount() ?? 0;
         return $count ? false : true;
     }
-    private function si_existe_recid($recid, $conn)
+    private function si_existe_recid(string $recid, \PDO $conn)
     {
         $sql = "SELECT recid FROM clientes WHERE recid = :recid";
         $stmt = $conn->prepare($sql);
@@ -298,7 +301,7 @@ class Clientes
         $conn = null;
         return ($count > 0) ? true : false;
     }
-    private function insert_cliente($data, $conn)
+    private function insert_cliente(array $data, \PDO $conn)
     {
         $params = [];
         $params[':Recid'] = $data['Recid'];
@@ -331,18 +334,18 @@ class Clientes
                 $get_cliente_recid = $this->get_cliente_recid($data['Recid'], $conn);
                 $id = $get_cliente_recid['id'];
                 $Host = $data['Host'];
-                $set_params_host = $this->set_params_host($Host, $id, $conn);
-                
+                $set_params_host = $this->set_params_host($Host, intval($id), $conn);
+
                 // Almacenar en caché para usar en alta_cliente
                 $this->cacheClienteInsertado = $get_cliente_recid;
             }
 
-            return $set_params_host;
+            return $set_params_host ?? false;
         } catch (\Throwable $th) {
             throw new \Exception($th->getMessage(), $th->getCode());
         }
     }
-    private function get_cliente_recid($recid, $conn)
+    private function get_cliente_recid(string $recid, \PDO $conn)
     {
         $sql = "SELECT id, nombre FROM clientes WHERE recid = :recid";
         $stmt = $conn->prepare($sql);
@@ -352,7 +355,7 @@ class Clientes
         $stmt = null;
         return $cliente;
     }
-    private function set_params_host($host, $id, $conn)
+    private function set_params_host(string $host, int $id, \PDO $conn)
     {
         $sqlI = "INSERT INTO `params` (`descripcion`, `modulo`, `cliente`, `valores`) VALUES ('host', 1, :id, :host)";
         $sqlU = "UPDATE `params` SET `valores` = :host WHERE `descripcion` = 'host' and `modulo` = 1 and `cliente` = :id";
@@ -367,7 +370,7 @@ class Clientes
         $this->write_apiKeysFile($conn);
         return $affectedRows > 0 ? true : false;
     }
-    private function si_existe_params_host($id, $conn)
+    private function si_existe_params_host(int $id, \PDO $conn)
     {
         $sql = "SELECT * FROM `params` where `descripcion` = 'host' and `modulo` = 1 and `cliente` = :id";
         $stmt = $conn->prepare($sql);
@@ -377,7 +380,7 @@ class Clientes
         $stmt = null;
         return ($count > 0) ? true : false;
     }
-    private function write_apiKeysFile($conn)
+    private function write_apiKeysFile(\PDO $conn)
     {
 
         $path = PATH_APIKEY;
@@ -390,6 +393,7 @@ class Clientes
         $stmt = $conn->prepare($q);
         $stmt->execute();
         $assoc_arr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $assoc = [];
 
         foreach ($assoc_arr as $key => $value) {
             $assoc[] = [
@@ -410,6 +414,7 @@ class Clientes
                 'WebServiceCH' => ($value['WebService']),
             ];
         }
+
         $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! --> \n";
         foreach ($assoc as $key => $elem) {
             $content .= "[" . $key . "]\n";
@@ -431,7 +436,7 @@ class Clientes
         fclose($handle);
         return $success;
     }
-    public function edita_cliente($IDCliente)
+    public function edita_cliente(int $IDCliente)
     {
         $datos = $this->validar_alta_cuenta();
         $conn = $this->conect->conn();
@@ -441,7 +446,7 @@ class Clientes
         if ($this->si_existe_nombre_cliente($Nombre, $conn, $IDCliente)) {
             throw new \ValueError("Ya existe una cuenta con el nombre: {$Nombre}", 400);
         }
-        if ($this->si_no_existe_id_cliente($IDCliente, $conn)) {
+        if ($this->si_no_existe_id_cliente(intval($IDCliente), $conn)) {
             throw new \ValueError("No existe una cuenta con el id: {$IDCliente}", 400);
         }
 
@@ -472,12 +477,20 @@ class Clientes
             $this->response->respuesta($datos, 1, 'OK', 200, $inicio, 1, 0);
         }
     }
-    private function update_cliente($datos, $conn, $IDCliente)
+    private function update_cliente(array $datos, \PDO $conn, int $IDCliente)
     {
 
         $sql = "UPDATE clientes SET nombre = :Nombre, host = :Host, db = :DB, user = :DBUser, pass = :DBPass, auth = :DBAuth, WebService = :WebService, ApiMobileHRP = :ApiMobileHRP, urlAppMobile = :urlAppMobile, localCH = :LocalCH, fecha = :Fecha WHERE id = :id";
+
         try {
-            $fecha = $this->tools->formatDateTime('now');
+
+            $DBPass = $this->sanitize_dbpass($datos['DBPass']);
+
+            // ===== si la password de db viene vacia, =====
+            // ===== entonces obtengo la password actual para no perderla =====
+            $datos['DBPass'] = empty($DBPass) ? $this->obtener_db_pass(\intval($IDCliente), $conn) : $DBPass;
+
+            $fecha = $this->tools->FechaHora();
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':Nombre', $datos['Nombre'], \PDO::PARAM_STR);
             $stmt->bindParam(':Host', $datos['DBHost'], \PDO::PARAM_STR);
@@ -529,6 +542,21 @@ class Clientes
         $count = $stmt->rowCount() ?? 0;
         $stmt = null;
         return ($count > 0) ? true : false;
+    }
+    private function obtener_db_pass(int $IDCliente, \PDO $conn)
+    {
+        try {
+            $sql = "SELECT pass FROM clientes WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $IDCliente, \PDO::PARAM_INT);
+            $stmt->execute();
+            $pass = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt = null;
+            return $pass['pass'] ?? '';
+        } catch (\PDOException $th) {
+            $this->log->write($th->getMessage(), '_obtener_db_pass.log');
+            throw new \PDOException($th->getMessage(), $th->getCode());
+        }
     }
     private function validar_campos_test_ad()
     {
@@ -618,7 +646,7 @@ class Clientes
             $datos = $this->validar_campos_login_ad();
             // error_log(print_r($datos, true));
 
-            $datosCliente = $this->get_cliente_ad($conn, $datos['id_cliente'] ?? '');
+            $datosCliente = $this->get_cliente_ad($conn, intval($datos['id_cliente'] ?? 0));
 
             $AD = new ADAuthenticator(
                 $datosCliente['serverAD'] ?? '',
@@ -699,7 +727,7 @@ class Clientes
             throw new $nameInstance($e->getMessage(), $code);
         }
     }
-    private function get_cliente_ad($conn, $id_cliente = null)
+    private function get_cliente_ad(\PDO $conn, int $id_cliente): array
     {
         try {
 
@@ -731,5 +759,11 @@ class Clientes
         } catch (\Throwable $th) {
             throw new \Exception($th->getMessage(), $th->getCode());
         }
+    }
+
+    private function sanitize_dbpass(string $pass){
+        $pass = \trim($pass);
+        $pass = str_replace('%nbsp;', '', $pass);
+        return $pass;
     }
 }

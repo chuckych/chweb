@@ -2,13 +2,20 @@
 
 namespace Classes;
 
+use Classes\Log;
+
 class WebServiceCH
 {
-    private $apiData;
+    private string $apiData;
+    private string $NameLog;
+    private Log $log;
 
-    public function __construct($apiData)
+    public function __construct(string $apiData)
     {
-        $this->apiData = $apiData . '/RRHHWebService';
+        $this->apiData = "{$apiData}/RRHHWebService";
+        $this->NameLog = date('Ymd') . '_WebServiceCH.log';
+        $this->log = new Log();
+
     }
     public function ping()
     {
@@ -18,10 +25,10 @@ class WebServiceCH
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, false); // Establecer que retorne el contenido del servidor
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // The number of seconds to wait while trying to connect
         // Especificar cabeceras
-        $headers = array(
+        $headers = [
             'Connection: keep-alive',
             'Accept: */*',
-        );
+        ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         // Especificar método
         curl_setopt($ch, CURLOPT_HTTPGET, true);
@@ -30,7 +37,7 @@ class WebServiceCH
         $curl_error = curl_error($ch); // get error information
         if ($curl_errno > 0) { // si hay error
             $text = "Error Ping WebService. \"Cod: $curl_errno: $curl_error\""; // set error message
-            writelog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': ', $this->NameLog);
         }
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE); // get http response code
         if (PHP_VERSION_ID >= 80000) {
@@ -43,13 +50,13 @@ class WebServiceCH
             http_response_code(204);
             return true;
         } else {
-            writelog('Ping incorrecto', __DIR__ . '/logs/' . date('Ymd') . '_ping.log'); // escribir en el log
+            $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': Ping incorrecto', $this->NameLog);
             http_response_code(408);
             return false;
         }
     }
 
-    public function estado($processID)
+    public function estado(string $processID)
     {
         do {
             $ch = curl_init();
@@ -70,7 +77,7 @@ class WebServiceCH
                 curl_close($ch);
             } // close curl handle
         } while (($respuesta) === '{Pendiente}');
-        writelog("end: " . ($respuesta), __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
+        $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': EstadoWS end ' . $respuesta, $this->NameLog);
         return 'Proceso terminado';
     }
 
@@ -87,11 +94,11 @@ class WebServiceCH
             // $curl_getinfo = json_encode(curl_getinfo($ch));
             if ($curl_errno > 0) {
                 $text = "Error al procesar INTERPERSONAL"; // set error message
-                writelog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+                $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
                 return "Error";
             }
             if ($httpCode == 404) {
-                writelog("Error al procesar INTERPERSONAL", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+                $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': Error al procesar INTERPERSONAL', $this->NameLog);
                 return curl_exec($ch);
             }
 
@@ -101,7 +108,8 @@ class WebServiceCH
             } else {
                 curl_close($ch);
             } // close curl handle
-            writelog("processID: $processID", __DIR__ . '/logs/' . date('Ymd') . '_EstadoWS.log');
+            $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': processID: ' . $processID, $this->NameLog);
+
             if ($httpCode == 201) {
                 $respuesta = '';
                 if ($proceso == '1') {
@@ -159,11 +167,11 @@ class WebServiceCH
         $curl_getinfo = json_encode(curl_getinfo($ch));
         if ($curl_errno > 0) {
             $text = "Error al procesar $endpoint . $curl_error"; // set error message
-            writelog($text, __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
             return "Error";
         }
         if ($httpCode == 404) {
-            writelog("Error al procesar $endpoint", __DIR__ . '/logs/' . date('Ymd') . '_errorWebService.log'); // escribir en el log
+            $this->log->trace('WebServiceCH::' . __FUNCTION__ . ': Error al procesar $endpoint', $this->NameLog);
             return curl_exec($ch);
         }
 

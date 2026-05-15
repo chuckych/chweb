@@ -12,11 +12,11 @@ class FnArray
      * @param string $key La clave en la cual se basará la comparación.
      * @return array Un arreglo con tres arreglos distintos: duplicados1, duplicados2 y no_duplicados.
      */
-    public function comparar($array1, $array2, $key)
+    public function comparar(array $array1, array $array2, string $key): array
     {
-        $no_duplicados = array();
-        $duplicados1 = array();
-        $duplicados2 = array();
+        $no_duplicados = [];
+        $duplicados1 = [];
+        $duplicados2 = [];
         // Iterar sobre el primer array y crear un nuevo array indexado por "$key"
         foreach ($array1 as $item) {
             $no_duplicados[$item[$key]] = $item;
@@ -42,9 +42,9 @@ class FnArray
 
     /** 
      * Toma como parámetro un array multidimensional y elimina subArrays vacíos. Se recorre cada subarray dentro del array principal y se comprueba si está vacío o no. Si el subarray está vacío, se elimina ese subarray del array principal. la función retorna el array resultante con los subarrays vacíos eliminados.
-     * @param array arrayMultidimensional
+     * @param array arrayMulti-dimensional
      */
-    public static function removeEmptySubArrays($array)
+    public static function removeEmptySubArrays(array $array)
     {
         if ($array) {
             foreach ($array as $key => $subarray) {

@@ -23,6 +23,7 @@ class Horas
     private RRHHWebService $webservice;
     private Tools $tools;
     private ParaGene $paraGene;
+    private string $NameLog;
 
     public function __construct()
     {
@@ -35,17 +36,21 @@ class Horas
         $this->webservice = new RRHHWebService;
         $this->tools = new Tools;
         $this->paraGene = new ParaGene;
+        $this->NameLog = date('Ymd') . '_horas.log';
     }
+
+    // ========= METODOS PUBLICOS =========
     public function update()
     {
         $inicio = microtime(true);
-        $datos = $this->validarInputs();
         $conn = $this->conect->conn();
-        $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+
         try {
+            $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+            $datos = $this->validarInputs();
             $conn->beginTransaction(); // Iniciar transacción
 
-            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = CONVERT(datetime, :FechaHora, 121), FicValor = :Valor WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
+            $sql = "UPDATE FICHAS1 SET FicHsAu2 = :HsAu, FicEsta = :Esta, FicCaus = :Moti, FicObse = :Obse, FechaHora = :FechaHora, FicValor = :Valor WHERE FicLega = :Lega AND FicFech = :Fecha AND FicTurn = 1 AND FicHora = :Hora";
             $stmt = $conn->prepare($sql);
 
             $totalAffectedRows = 0;
@@ -98,114 +103,46 @@ class Horas
             ];
 
             if ($agrup) { // Si hay datos para procesar
-                try { // Procesar los legajos en el WebService
-                    if (!isset($agrup['Fechas']['Desde']) || !isset($agrup['Fechas']['Hasta']) || empty($agrup['Fechas']['Desde']) || empty($agrup['Fechas']['Hasta'])) {
-                        throw new \Exception("No se recibieron las fechas", 1);
-                    }
-                    // Validar que existan los legajos
-                    if (!isset($agrup['Legajos']) || empty($agrup['Legajos'])) {
-                        throw new \Exception("No se recibieron los legajos", 1);
-                    }
-                    $Legajos = $agrup['Legajos'];
-                    $Desde = $agrup['Fechas']['Desde'];
-                    $Hasta = $agrup['Fechas']['Hasta'];
-                    // $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
-                } catch (\Exception $e) {
-                    $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
-                    return false;
-                    
+                if (!isset($agrup['Fechas']['Desde']) || !isset($agrup['Fechas']['Hasta']) || empty($agrup['Fechas']['Desde']) || empty($agrup['Fechas']['Hasta'])) {
+                    throw new \Exception("No se recibieron las fechas", 1);
                 }
+                // Validar que existan los legajos
+                if (!isset($agrup['Legajos']) || empty($agrup['Legajos'])) {
+                    throw new \Exception("No se recibieron los legajos", 1);
+                }
+                $Legajos = $agrup['Legajos'];
+                $Desde = $agrup['Fechas']['Desde'];
+                $Hasta = $agrup['Fechas']['Hasta'];
+                // if ($procesar ?? '') {
+                //     $this->webservice->procesar_legajos($Desde, $Hasta, $Legajos);
+                // }
             }
             $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
+
         } catch (\PDOException $e) {
-            $conn->rollBack();
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_updateHoras_' . ID_COMPANY . '.log');
-            exit;
-        }
-    }
-    // private function procpend($datos)
-    // {
-    //     $conn = $this->conect->conn();
-    //     $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
-    //     try {
-    //         if (empty($datos)) {
-    //             return false;
-    //         }
-    //         foreach ($datos as $dato) {
-    //             $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
-    //             $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', CONVERT(datetime, $FechaHoraActual, 121))";
-    //             $stmt = $conn->prepare($sql);
-    //             $stmt->execute(); // Ejecuto la consulta
-    //         }
-    //         // $stmt = null;
-    //         $this->conect = null;
-    //     } catch (\PDOException $e) {
-    //         // $conn->rollBack();
-    //         // $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-    //         // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
-    //         // exit;
-    //     }
-    // }
-
-    private function validarInputs()
-    {
-        $datos = $this->getData;
-        try {
-
-            if (!is_array($datos)) {
-                throw new \Exception("No se recibieron datos", 1);
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
             }
-            $datosModificados = []; // Array para guardar los datos modificados
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al actualizar horas', 400);
 
-            $rules = [ // Reglas de validación
-                'Lega' => ['int'],
-                'Fecha' => ['required', 'date'],
-                'Hora' => ['required', 'smallint'],
-                'HsAu' => ['required', 'time'],
-                'Esta' => ['allowed012'],
-                'Obse' => ['varcharMax'],
-                'Moti' => ['smallint'],
-                'Valor' => ['decima12.2'],
-            ];
-
-            $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
-            $customValueKey = array( // Valores por defecto
-                'Lega' => "0",
-                'Fecha' => '00000000',
-                'Hora' => "0",
-                'HsAu' => '00:00',
-                'Esta' => "2",
-                'Obse' => '',
-                'Moti' => "0",
-                'Valor' => "0",
-                'FechaHora' => ''
-            );
-            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
-
-            foreach ($datos as $dato) { // Recorro los datos recibidos
-                foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
-                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
-                        $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
-                    }
-                }
-                $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
-                $validator->validate(); // Valido los datos
-            }
-            return $datosModificados;
         } catch (\Exception $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputs.log');
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
-    public function estruct($estruct)
+
+    public function estruct(string $estruct)
     {
         $estruct = strtolower($estruct); // Convierto a minúscula
         $inicio = microtime(true); // Tiempo de inicio de la consulta
-        $datos = $this->getEstruct($estruct); // retorna la estructura de datos validada
 
         try {
+
+            $datos = $this->getEstruct($estruct); // retorna la estructura de datos validada
 
             $FechaIni = date('Ymd', strtotime($datos['FechaIni'])); // Fecha de inicio
             $FechaFin = date('Ymd', strtotime($datos['FechaFin'])); // Fecha de fin
@@ -248,7 +185,6 @@ class Horas
             $estructTare = in_array($estruct, $estructuras); // Si la estructura esta en el array $estructuras
             $paramPers = $estructTare || in_array(true, $parametros); // Si la estructura esta en el array $estructuras o si algún parámetro esta en el array $parámetros
             /** FIN Fragmento */
-
             /** SELECT */
             $sql = "SELECT";
             $sql .= $this->columnsEstruct($estruct); // Columnas de la estructura, campos descripción, código y cantidad
@@ -294,394 +230,22 @@ class Horas
             $data = $this->conect->executeQueryWhithParams($sql, $params);
             $total = count($data);
             $this->resp->respuesta($data ?? [], $total, 'OK', 200, $inicio, 0, 0);
-        } catch (\Exception $th) {
-            $this->resp->respuesta([], 0, $th->getMessage(), $th->getCode(), $inicio, 0, 0);
-            exit;
-        }
-    }
-    private function getEstruct($estruct)
-    {
-        $arrValidEstruct = ["empr", "plan", "grup", "sect", "sec2", "sucu", "tare", "conv", "regla", "thora", "lega", "tipo"];
-        if (!in_array(strtolower($estruct), $arrValidEstruct)) { // Si la estructura no es valida
-            $this->resp->respuesta([], 0, "Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400, microtime(true), 0, 0);
-            exit;
-        }
-
-        $rules = [ // Reglas de validación
-            'Cod' => ['arrInt'], // Código de la estructura
-            'Desc' => ['varchar40'], // Descripción de la estructura
-            'Sector' => ['arrSmallint'], // Sector
-            'Docu' => ['arrInt'], // DNI Del Legajo
-            'Lega' => ['arrInt'], // Legajo
-            'ApNo' => ['varchar40'], // Apellido y Nombre
-            'ApNoLega' => ['varchar40'], // Apellido y Nombre del legajo
-            'Empr' => ['arrSmallint'], // Empresa
-            'Plan' => ['arrSmallint'], // Planta
-            'Conv' => ['arrSmallint'], // Convenio
-            'Sect' => ['arrSmallint'], // Sección
-            'Sec2' => ['arrSmallint'], // Sección 2
-            'Grup' => ['arrSmallint'], // Grupo
-            'Sucu' => ['arrSmallint'], // Sucursal
-            'TareProd' => ['arrSmallint'], // Tarea de producción
-            'RegCH' => ['arrSmallint'], // Regla de Control Horario
-            'Tipo' => ['arrSmallint'], // Tipo de Personal
-            'THora' => ['arrSmallint'], // Tipo de Hora
-            'Esta' => ['arrAllowed012'], // Estado de la ficha hora (FicEsta)
-            'FechaIni' => ['required', 'date'], // Fecha de inicio
-            'FechaFin' => ['required', 'date'], // Fecha de fin
-            'HoraMax' => ['time'], // Hora maxima
-            'HoraMin' => ['time'], // Hora minima
-            'DiaL' => ['arrAllowed01'], // Si Dia laboral
-            'DiaF' => ['arrAllowed01'], // Si Dia feriado
-            'HsTr' => ['allowed01'], // Solo horas trabajadas
-            'start' => ['intempty'], // Pagina de inicio
-            'length' => ['intempty'] // Cantidad de registros
-        ];
-
-        try {
-            $datos = ($this->getData);
-
-            if ($estruct == 'sec2' && empty($datos['Sector'] ?? '')) {
-                throw new \Exception("Parámetro Sector es requerido cuando solicita estruct sección (sec2).", 1);
-            }
-
-            $datos['HsTr'] = $datos['HsTr'] ?? "0"; // Solo horas trabajadas. 0 = No, 1 = Si
-            $datos['HoraMin'] = $datos['HoraMin'] ?? ''; // Hora minima
-            $datos['HoraMax'] = $datos['HoraMax'] ?? ''; // Hora maxima
-            $datos['start'] = $datos['start'] ?? 0; // Pagina de inicio si no viene en los datos
-            $datos['length'] = $datos['length'] ?? 5; // Cantidad de registros si no viene en los datos
-            $datos['FechaIni'] = $datos['FechaIni'] ?? date('Y-m-d'); // Fecha de inicio si no viene en los datos
-            $datos['FechaFin'] = $datos['FechaFin'] ?? date('Y-m-d'); // Fecha de fin si no viene en los datos
-
-            $validator = new InputValidator($datos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
-            $validator->validate(); // Valido los datos
-
-            $keyString = ['ApNo', 'ApNoLega', 'Desc'];
-
-            foreach ($keyString as $key) {
-                $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacío
-            }
-
-            $keysArray = ['Sector', 'Cod', 'Lega', 'Docu', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'TareProd', 'RegCH', 'Tipo', 'THora', 'Esta', 'DiaL', 'DiaF'];
-
-            foreach ($keysArray as $key) { // Recorro las claves del array $keysArray
-                $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
-            }
-        } catch (\Throwable $th) {
-            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
-            exit;
-        }
-        return $datos;
-    }
-    private function joinEstruct($estruct)
-    {
-        $JoinEstruct = [
-            'empr' => " INNER JOIN EMPRESAS ON FICHAS.FicEmpr = EMPRESAS.EmpCodi",
-            'plan' => " INNER JOIN PLANTAS ON FICHAS.FicPlan = PLANTAS.PlaCodi",
-            'grup' => " INNER JOIN GRUPOS ON FICHAS.FicGrup = GRUPOS.GruCodi",
-            'sect' => " INNER JOIN SECTORES ON FICHAS.FicSect = SECTORES.SecCodi",
-            'sucu' => " INNER JOIN SUCURSALES ON FICHAS.FicSucu = SUCURSALES.SucCodi",
-            'tare' => " INNER JOIN TAREAS ON PERSONAL.LegTareProd = TAREAS.TareCodi",
-            'conv' => " INNER JOIN CONVENIO ON FICHAS.FicConv = CONVENIO.ConCodi",
-            'regla' => " INNER JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi",
-            'thora' => " INNER JOIN TIPOHORA ON FICHAS1.FicHora = TIPOHORA.THoCodi",
-            'sec2' => " INNER JOIN SECCION ON FICHAS.FicSec2 = SECCION.Se2Codi AND FICHAS.FicSect = SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi",
-        ];
-        return $JoinEstruct[$estruct] ?? '';
-    }
-    private function columnsEstruct($estruct)
-    {
-        $cod = 'Cod';
-        $count = 'Count';
-
-        $labelEstruct = ($this->paraGene->return());
-
-        $sinEmpr = "Sin " . $labelEstruct['Etiquetas']['EmprSin'];
-        $sinPlan = "Sin " . $labelEstruct['Etiquetas']['PlanSin'];
-        $sinGrup = "Sin " . $labelEstruct['Etiquetas']['GrupSin'];
-        $sinSect = "Sin " . $labelEstruct['Etiquetas']['SectSin'];
-        $sinSucu = "Sin " . $labelEstruct['Etiquetas']['SucuSin'];
-        $sinSec2 = "Sin " . $labelEstruct['Etiquetas']['SeccSin'];
-
-        $Select = [
-            'empr' => $this->caseWhen('EmpRazon', $sinEmpr) . ", FicEmpr AS '$cod', count(FicEmpr) AS '$count'",
-            'plan' => $this->caseWhen('PlaDesc', $sinPlan) . ", FicPlan AS '$cod', count(FicPlan) AS '$count'",
-            'grup' => $this->caseWhen('GruDesc', $sinGrup) . ", FicGrup AS '$cod', count(FicGrup) AS '$count'",
-            'sect' => $this->caseWhen('SecDesc', $sinSect) . ", FicSect AS '$cod', count(FicSect) AS '$count'",
-            'sucu' => $this->caseWhen('SucDesc', $sinSucu) . ", FicSucu AS '$cod', count(FicSucu) AS '$count'",
-            'tare' => $this->caseWhen('TareDesc', "Sin Tarea") . ", LegTareProd AS '$cod', count(LegTareProd) AS '$count'",
-            'conv' => $this->caseWhen('ConDesc', "Fuera de Convenio") . ", FicConv AS '$cod', count(FicConv) AS '$count'",
-            'regla' => $this->caseWhen('RCDesc', "Sin Regla CH") . ", LegRegCH AS '$cod', count(LegRegCH) AS '$count'",
-            'thora' => $this->caseWhen('THoDesc', "Sin Tipo de Hora") . ", FicHora AS '$cod', count(FicHora) AS '$count'",
-            'lega' => $this->caseWhen('LegApNo', "Sin Nombre") . ", FICHAS.FicLega AS '$cod', count(FICHAS.FicLega) AS '$count'",
-            'tipo' => " dbo.fn_TipoDePersonal(LegTipo) as 'Desc', LegTipo AS '$cod', count(LegTipo) AS '$count'",
-            'sec2' => $this->caseWhen('Se2Desc', $sinSec2) . ", SECCION.SecCodi AS 'Sect', SECTORES.SecDesc AS 'SectDesc', FicSec2 AS '$cod', count(FicSec2) AS '$count'",
-        ];
-        return $Select[$estruct];
-    }
-    private function groupByEstruct($estruct)
-    {
-        $group = 'GROUP BY';
-        $order = 'ORDER BY';
-        $GroupBY = [
-            'empr' => " $group EmpRazon, FicEmpr $order EmpRazon",
-            'plan' => " $group PlaDesc, FicPlan $order PlaDesc",
-            'grup' => " $group GruDesc, FicGrup $order GruDesc",
-            'sect' => " $group SecDesc, FicSect $order SecDesc",
-            'sucu' => " $group SucDesc, FicSucu $order SucDesc",
-            'tare' => " $group TareDesc, LegTareProd $order TareDesc",
-            'conv' => " $group ConDesc, FicConv $order ConDesc",
-            'regla' => " $group RCDesc, LegRegCH $order RCDesc",
-            'thora' => " $group THoDesc, FicHora $order THoDesc",
-            'lega' => " $group LegApNo, FICHAS.FicLega $order LegApNo",
-            'tipo' => " $group LegTipo $order LegTipo",
-            'sec2' => " GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc $order Se2Desc",
-        ];
-        return $GroupBY[$estruct];
-    }
-    private function queryEstructDesc($estruct, $Desc)
-    {
-        if (!$Desc)
-            return '';
-        $arr = [
-            'empr' => " AND EMPRESAS.EmpRazon LIKE :Desc",
-            'plan' => " AND PLANTAS.PlaDesc LIKE :Desc",
-            'grup' => " AND GRUPOS.GruDesc LIKE :Desc",
-            'sect' => " AND SECTORES.SecDesc LIKE :Desc",
-            'sucu' => " AND SUCURSALES.SucDesc LIKE :Desc",
-            'tare' => " AND TAREAS.TareDesc LIKE :Desc",
-            'conv' => " AND CONVENIO.ConDesc LIKE :Desc",
-            'regla' => " AND REGLASCH.RCDesc LIKE :Desc",
-            'thora' => " AND TIPOHORA.THoDesc LIKE :Desc",
-            'lega' => " AND PERSONAL.LegApNo LIKE :Desc",
-            'tipo' => " AND dbo.fn_TipoDePersonal(LegTipo) LIKE :Desc",
-            'sec2' => " AND SECCION.Se2Desc LIKE :Desc"
-        ];
-        return $arr[$estruct];
-    }
-    private function queryEstructCod($estruct, $Cod)
-    {
-        if (!($Cod))
-            return '';
-        $arr = [
-            'empr' => " AND FICHAS.FicEmpr IN (" . implode(",", $Cod) . ")",
-            'plan' => " AND FICHAS.FicPlan IN (" . implode(",", $Cod) . ")",
-            'grup' => " AND FICHAS.FicGrup IN (" . implode(",", $Cod) . ")",
-            'sect' => " AND FICHAS.FicSect IN (" . implode(",", $Cod) . ")",
-            'sucu' => " AND FICHAS.FicSucu IN (" . implode(",", $Cod) . ")",
-            'tare' => " AND PERSONAL.LegTareProd IN (" . implode(",", $Cod) . ")",
-            'conv' => " AND FICHAS.FicConv IN (" . implode(",", $Cod) . ")",
-            'regla' => " AND PERSONAL.LegRegCH IN (" . implode(",", $Cod) . ")",
-            'thora' => " AND FICHAS1.FicHora IN (" . implode(",", $Cod) . ")",
-            'lega' => " AND FICHAS.FicLega IN (" . implode(",", $Cod) . ")",
-            'tipo' => " AND PERSONAL.LegTipo IN (" . implode(",", $Cod) . ")",
-            'sec2' => " AND FICHAS.FicSec2 IN (" . implode(",", $Cod) . ")"
-        ];
-        return $arr[$estruct];
-    }
-    private function queryEstructSect($estruct, $Sector)
-    {
-        if (!$Sector)
-            return '';
-        $arr = [
-            'sec2' => " AND FICHAS.FicSect IN (" . implode(",", $Sector) . ")"
-        ];
-        return $arr[$estruct] ?? '';
-    }
-    private function joinPersonalEstruct($paramPers)
-    {
-        return ($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
-    }
-    private function joinFichas1Estruct()
-    {
-        return " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
-    }
-    private function queryFichasEstruct($Lega, $Empr, $Plan, $Conv, $Sect, $Sec2, $Grup, $Sucu, $DiaL, $DiaF)
-    {
-        $Filtros = [
-            'Lega' => $Lega,
-            'Empr' => $Empr,
-            'Plan' => $Plan,
-            'Conv' => $Conv,
-            'Sect' => $Sect,
-            'Sec2' => $Sec2,
-            'Grup' => $Grup,
-            'Sucu' => $Sucu,
-            'DiaL' => $DiaL,
-            'DiaF' => $DiaF
-        ];
-
-        $sql = " WHERE FICHAS.FicLega > 0 AND FICHAS.FicFech BETWEEN :FechaIni AND :FechaFin";
-
-        $FiltrosNombres = ['Lega', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'NoveI', 'NoveA', 'NoveS', 'NoveT', 'DiaL', 'DiaF'];
-
-        foreach ($FiltrosNombres as $Nombre) {
-            if (!empty($Filtros[$Nombre])) { // Si el filtro no esta vacío
-                if ($Nombre == 'Sec2') {
-                    $sql .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN (" . implode(",", $Filtros[$Nombre]) . ")";
-                    continue;
-                }
-                $sql .= " AND FICHAS.Fic{$Nombre} IN (" . implode(",", $Filtros[$Nombre]) . ")";
-            }
-        }
-        // file_put_contents('queryFichasEstruct.log', print_r($sql, true) . PHP_EOL, FILE_APPEND);
-
-        return $sql;
-    }
-    private function queryPersonalEstruct($paramPers, $ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare)
-    {
-        $sql = '';
-        if ($paramPers) {
-            $sql .= ($ApNo) ? " AND PERSONAL.LegApNo LIKE :ApNo" : '';
-            $sql .= ($ApNoLega) ? " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE :ApNoLega" : '';
-            $sql .= ($Docu) ? " AND PERSONAL.LegDocu IN (" . implode(",", $Docu) . ")" : '';
-            $sql .= ($Tipo) ? " AND PERSONAL.LegTipo IN (" . implode(",", $Tipo) . ")" : '';
-            $sql .= ($RegCH) ? " AND PERSONAL.LegRegCH IN (" . implode(",", $RegCH) . ")" : '';
-            $sql .= ($Tare) ? " AND PERSONAL.LegTareProd IN (" . implode(",", $Tare) . ")" : '';
-        }
-        return $sql;
-    }
-    private function queryFichas1Estruct($THora, $Esta, $HoraMin, $HoraMax, $HsTr)
-    {
-        $sql = '';
-        $sql .= ($THora) ? " AND FICHAS1.FicHora IN (" . implode(",", $THora) . ")" : ''; // Tipo de Hora
-        $sql .= ($Esta) ? " AND FICHAS1.FicEsta IN (" . implode(",", $Esta) . ")" : ''; // Estado de la ficha hora (FicEsta)
-        $sql .= ($HoraMin) ? " AND dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('$HoraMin')" : ''; // Hora minima
-        $sql .= ($HoraMax) ? " AND dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('$HoraMax')" : ''; // Hora maxima
-        $sql .= ($HsTr) ? "AND dbo.fn_STRMinutos(FICHAS.FicHstr) > 0" : ''; // Solo registros con horas trabajadas
-        return $sql;
-    }
-    private function caseWhen($ColumDesc, $sinDesc)
-    {
-        return " CASE WHEN LTRIM(RTRIM($ColumDesc)) = '' THEN '$sinDesc' ELSE $ColumDesc END AS 'Desc'";
-    }
-    private function validarInputsTotales()
-    {
-        $datos = $this->getData;
-
-        if ($this->tools->jsonNoValido()) {
-            $errores[] = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
-        }
-
-        if (!$datos) {
-            $this->resp->respuesta([], 0, "No se recibieron datos o hay errores", 400, microtime(true), 0, 0);
-        }
-
-        $FechIni = $datos['FechIni'] ?? '';
-        $FechFin = $datos['FechFin'] ?? '';
-        $LegApNo = $datos['LegApNo'] ?? '';
-        $LegDocu = $datos['LegDocu'] ?? [];
-        $LegRegCH = $datos['LegRegCH'] ?? [];
-        $LegTipo = $datos['LegTipo'] ?? [];
-        $LegaD = $datos['LegaD'] ?? '';
-        $LegaH = $datos['LegaH'] ?? '';
-        $Lega = $datos['Lega'] ?? [];
-        $Empr = $datos['Empr'] ?? [];
-        $Plan = $datos['Plan'] ?? [];
-        $Conv = $datos['Conv'] ?? [];
-        $Sec2 = $datos['Sec2'] ?? [];
-        $Sect = $datos['Sect'] ?? [];
-        $Grup = $datos['Grup'] ?? [];
-        $Sucu = $datos['Sucu'] ?? [];
-        $DiaL = $datos['DiaL'] ?? [];
-        $DiaF = $datos['DiaF'] ?? [];
-        $Hora = $datos['Hora'] ?? [];
-        $Esta = $datos['Esta'] ?? [];
-        $Dias = $datos['Dias'] ?? []; // Dias de la semana
-        $HsTrAT = $datos['HsTrAT'] ?? '';
-        $HoraMin = $datos['HoraMin'] ?? ''; // Hora minima
-        $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
-        $MinMaxH = $datos['MinMaxH'] ?? 0; // Si se quiere el mínimo y máximo de horas
-        $Estruct = $datos['Estruct'] ?? 0; //  Estructura a consultar 0 = Personal, 1 = Fichas.
-
-        $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
-        $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
-
-
-        $datosRecibidos = array( // Valores por defecto
-            'FechIni' => empty($FechIni) ? '' : $FechIni,
-            'FechFin' => empty($FechFin) ? '' : $FechFin,
-            'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
-            'LegDocu' => !is_array($LegDocu) ? [] : $LegDocu,
-            'LegRegCH' => !is_array($LegRegCH) ? [] : $LegRegCH,
-            'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
-            'LegaD' => empty($LegaD) ? '' : $LegaD,
-            'LegaH' => empty($LegaH) ? '' : $LegaH,
-            'Lega' => !is_array($Lega) ? [] : $Lega,
-            'Empr' => !is_array($Empr) ? [] : $Empr,
-            'Plan' => !is_array($Plan) ? [] : $Plan,
-            'Conv' => !is_array($Conv) ? [] : $Conv,
-            'Sec2' => !is_array($Sec2) ? [] : $Sec2,
-            'Sect' => !is_array($Sect) ? [] : $Sect,
-            'Grup' => !is_array($Grup) ? [] : $Grup,
-            'Sucu' => !is_array($Sucu) ? [] : $Sucu,
-            'DiaL' => !is_array($DiaL) ? [] : $DiaL,
-            'DiaF' => !is_array($DiaF) ? [] : $DiaF,
-            'Dias' => !is_array($Dias) ? [] : $Dias,
-            'Hora' => !is_array($Hora) ? [] : $Hora,
-            'Esta' => !is_array($Esta) ? [] : $Esta,
-            'HoraMin' => empty($HoraMin) ? '' : ($HoraMin),
-            'HoraMax' => empty($HoraMax) ? '' : ($HoraMax),
-            'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
-            'Estruct' => empty($Estruct) ? 0 : ($Estruct),
-            'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
-            'start' => empty($start) ? 0 : ($start),
-            'length' => empty($length) ? 5 : ($length),
-        );
-
-        try {
-
-            if (!is_array($datos)) {
-                throw new \Exception("No se recibieron datos", 1);
-            }
-
-            $rules = [ // Reglas de validación
-                'FechIni' => ['required', 'date'],
-                'FechFin' => ['required', 'date'],
-                'LegApNo' => ['varchar40'],
-                'LegDocu' => ['arrInt'],
-                'LegRegCH' => ['arrSmallint'],
-                'LegTipo' => ['arrSmallint'],
-                'LegaD' => ['intempty'],
-                'LegaH' => ['intempty'],
-                'Lega' => ['arrInt'],
-                'Empr' => ['arrSmallint'],
-                'Plan' => ['arrSmallint'],
-                'Conv' => ['arrSmallint'],
-                'Sec2' => ['arrSmallint'],
-                'Sect' => ['arrSmallint'],
-                'Grup' => ['arrSmallint'],
-                'Sucu' => ['arrSmallint'],
-                'DiaL' => ['arrAllowed01'],
-                'DiaF' => ['arrAllowed01'],
-                'Dias' => ['arrAllowed1a7'],
-                'Hora' => ['arrSmallint'],
-                'Esta' => ['arrSmallint'],
-                'HoraMin' => ['time'],
-                'HoraMax' => ['time'],
-                'MinMaxH' => ['allowed01'],
-                'HsTrAT' => ['allowed01'],
-                'Estruct' => ['allowed01'],
-                'start' => ['intempty'],
-                'length' => ['intempty'],
-            ];
-
-            $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
-            $validator->validate(); // Valido los datos
-            return $datosRecibidos;
+        } catch (\PDOException $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener estruturas', 400);
         } catch (\Exception $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsTotalesHoras.log');
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
+
     public function totales()
     {
         $inicio = microtime(true);
-        $datos = $this->validarInputsTotales(); // Valido los datos
         $conn = $this->conect->conn();
 
         try {
+            $datos = $this->validarInputsTotales(); // Valido los datos
 
             $FechIni = date('Ymd', strtotime($datos['FechIni'])); // Fecha de inicio
             $FechFin = date('Ymd', strtotime($datos['FechFin'])); // Fecha de fin
@@ -761,7 +325,7 @@ class Horas
             $ApNo = "%{$datos['LegApNo']}%";
             ($datos['LegApNo']) ? $stmt->bindParam("LegApNo", $ApNo, \PDO::PARAM_STR) : '';
             $stmt->execute(); // Ejecuto la consulta
-            $colHoras = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+            $colHoras = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? []; // Obtengo los datos de la consulta
 
             // print_r($colHoras) . exit;
 
@@ -769,6 +333,7 @@ class Horas
                 $this->resp->respuesta([], 0, 'No se encontraron horas', 200, $inicio, 0, 0);
                 exit;
             }
+            
             $countHoraCols = array_map(function ($v) {
                 return "COUNT(CASE WHEN FICHAS1.FicHora = " . $v['HoraCodi'] . " THEN 1 END) as 'Total_" . $v['HoraCodi'] . "'";
             }, $colHoras);
@@ -907,7 +472,7 @@ class Horas
                     );
                 }
                 $arrayHsATyTR ??= [];
-                
+
 
                 $nuevo_elemento = array(
                     'Lega' => intval($elemento['Lega']),
@@ -1049,37 +614,558 @@ class Horas
             ];
 
             $this->resp->respuesta($array, count($nuevo_array), 'OK', 200, $inicio, $total['Total'], 0);
+
         } catch (\PDOException $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, $inicio, 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_totalesHoras_' . ID_COMPANY . '.log');
-            exit;
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener totales', 400);
+
+        } catch (\Exception $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
+
     public function dateMinMax()
     {
         $conn = $this->conect->conn();
+        try {
+            $sql = "SELECT MIN(FICHAS1.FicFech) AS 'min', MAX(FICHAS1.FicFech) AS 'max' FROM FICHAS1 WHERE FICHAS1.FicFech !='17530101' AND FICHAS1.FicFech < GETDATE()";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(); // Ejecuto la consulta
+            $array = $stmt->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
 
-        $sql = "SELECT MIN(FICHAS1.FicFech) AS 'min', MAX(FICHAS1.FicFech) AS 'max' FROM FICHAS1 WHERE FICHAS1.FicFech !='17530101' AND FICHAS1.FicFech < GETDATE()";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute(); // Ejecuto la consulta
-        $array = $stmt->fetch(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
-        $array['min'] = date('Y-m-d', strtotime($array['min']));
-        $array['max'] = date('Y-m-d', strtotime($array['max']));
-        $a = array(
-            'min' => ($array['min']),
-            'max' => $array['max']
-        );
-        $this->resp->respuesta($array, 1, 'OK', 200, microtime(true), 0, 0);
-        $stmt->closeCursor(); // Cierro el cursor
+            $array['min'] = date('Y-m-d', strtotime($array['min']));
+            $array['max'] = date('Y-m-d', strtotime($array['max']));
+
+            $a = [
+                'min' => ($array['min']),
+                'max' => $array['max']
+            ];
+
+            $this->resp->respuesta($a, 1, 'OK', 200, microtime(true), 0, 0);
+            $stmt->closeCursor(); // Cierro el cursor
+        } catch (\PDOException $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener fechas mínima y máxima', 400);
+
+        } catch (\Exception $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
+        }
 
     }
-    private function minutosAHoras($minutos)
+
+    public function data()
+    {
+        $conn = $this->conect->conn();
+        try {
+            $sql = "SELECT THoCodi, THoDesc, THoDesc2, THoID, THoColu, FechaHora FROM TIPOHORA WHERE TIPOHORA.THoCodi > 0";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute(); // Ejecuto la consulta
+            $array = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
+            $this->resp->respuesta($array ?? [], count($array), 'OK', 200, microtime(true), 0, 0);
+            $stmt->closeCursor(); // Cierro el cursor
+        } catch (\PDOException $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener datos de tipo de hora', 400);
+
+        } catch (\Exception $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
+        }
+    }
+
+    public function inputs_delete_proyeccion()
+    {
+        $filtros = $this->getData;
+
+        if (!is_array($filtros)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+
+        if ($this->tools->jsonNoValido()) {
+            throw new \Exception("Formato JSON invalido", 400);
+        }
+
+        // Asegúrate de actualizar $filtros con los cambios
+        $rulesFiltros = [ // Reglas de validación para los filtros
+            'FechaDesde' => ['required', 'futuredate'],
+            'FechaHasta' => ['required', 'futuredate'],
+            'Legajos' => ['required', 'arrInt'],
+        ];
+
+        if (is_array($filtros)) {
+            $validatorFiltros = new InputValidator($filtros, $rulesFiltros); // Instancia 
+            $validatorFiltros->validate(); // Valido los datos
+        }
+        // si fechahasta es menor a fechadesde, lanzo un error
+        if (strtotime($filtros['FechaDesde']) > strtotime($filtros['FechaHasta'])) {
+            throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 1);
+        }
+        return $filtros;
+    }
+
+    public function eliminar_proyeccion()
+    {
+
+        $inicio = microtime(true);
+        $conn = $this->conect->conn();
+        try {
+            $datos = $this->inputs_delete_proyeccion();
+
+            $Legajos = $datos['Legajos'] ?? [];
+
+            //  chunk de legajos en lotes de 50
+            $chunksLegajos = array_chunk($Legajos, 50);
+            $totalEliminados = 0;
+            foreach ($chunksLegajos as $chunk) {
+
+                $LegajosStr = implode(',', $chunk);
+                $FechaDesde = date('Ymd', strtotime($datos['FechaDesde']));
+                $FechaHasta = date('Ymd', strtotime($datos['FechaHasta']));
+
+                $sql = "DELETE FROM FICHAS1 WHERE FicLega IN ($LegajosStr) AND FicFech BETWEEN '$FechaDesde' AND '$FechaHasta' and FICHAS1.FicTurn = 1";
+                $stmt = $conn->prepare($sql);
+                $stmt->execute(); // Ejecuto la consulta
+                // $this->log->write($sql, date('Ymd') . '_eliminar_proyeccion_' . ID_COMPANY . '.log');
+                $totalEliminados += $stmt->rowCount(); // Obtengo el número de filas afectadas
+            }
+
+            $this->resp->respuesta([], $totalEliminados, 'OK', 200, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al eliminar proyecciones', 400);
+
+        } catch (\Exception $e) {
+            $this->log->trace('Horas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
+        }
+    }
+
+    // ========= METODOS PRIVADOS =========
+    private function validarInputs()
+    {
+        $datos = $this->getData;
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+        $datosModificados = []; // Array para guardar los datos modificados
+
+        $rules = [ // Reglas de validación
+            'Lega' => ['int'],
+            'Fecha' => ['required', 'date'],
+            'Hora' => ['required', 'smallint'],
+            'HsAu' => ['required', 'time'],
+            'Esta' => ['allowed012'],
+            'Obse' => ['varcharMax'],
+            'Moti' => ['smallint'],
+            'Valor' => ['decima12.2'],
+        ];
+
+        $FechaHoraActual = date('YmdHis') . substr((string) microtime(), 1, 8); // Fecha y hora actual
+        $customValueKey = array( // Valores por defecto
+            'Lega' => "0",
+            'Fecha' => '00000000',
+            'Hora' => "0",
+            'HsAu' => '00:00',
+            'Esta' => "2",
+            'Obse' => '',
+            'Moti' => "0",
+            'Valor' => "0",
+            'FechaHora' => ''
+        );
+        $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+
+        foreach ($datos as $dato) { // Recorro los datos recibidos
+            foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
+                    $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                }
+            }
+            $datosModificados[] = $dato; // Guardo los datos modificados en un array
+            $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+            $validator->validate(); // Valido los datos
+        }
+        return $datosModificados;
+    }
+    private function getEstruct(string $estruct)
+    {
+        $arrValidEstruct = ["empr", "plan", "grup", "sect", "sec2", "sucu", "tare", "conv", "regla", "thora", "lega", "tipo"];
+        if (!in_array(strtolower($estruct), $arrValidEstruct)) { // Si la estructura no es valida
+            throw new \Exception("Estructura ($estruct) no valida. Valores permitidos " . json_encode($arrValidEstruct), 400);
+        }
+
+        $rules = [ // Reglas de validación
+            'Cod' => ['arrInt'], // Código de la estructura
+            'Desc' => ['varchar40'], // Descripción de la estructura
+            'Sector' => ['arrSmallint'], // Sector
+            'Docu' => ['arrInt'], // DNI Del Legajo
+            'Lega' => ['arrInt'], // Legajo
+            'ApNo' => ['varchar40'], // Apellido y Nombre
+            'ApNoLega' => ['varchar40'], // Apellido y Nombre del legajo
+            'Empr' => ['arrSmallint'], // Empresa
+            'Plan' => ['arrSmallint'], // Planta
+            'Conv' => ['arrSmallint'], // Convenio
+            'Sect' => ['arrSmallint'], // Sección
+            'Sec2' => ['arrSmallint'], // Sección 2
+            'Grup' => ['arrSmallint'], // Grupo
+            'Sucu' => ['arrSmallint'], // Sucursal
+            'TareProd' => ['arrSmallint'], // Tarea de producción
+            'RegCH' => ['arrSmallint'], // Regla de Control Horario
+            'Tipo' => ['arrSmallint'], // Tipo de Personal
+            'THora' => ['arrSmallint'], // Tipo de Hora
+            'Esta' => ['arrAllowed012'], // Estado de la ficha hora (FicEsta)
+            'FechaIni' => ['required', 'date'], // Fecha de inicio
+            'FechaFin' => ['required', 'date'], // Fecha de fin
+            'HoraMax' => ['time'], // Hora maxima
+            'HoraMin' => ['time'], // Hora minima
+            'DiaL' => ['arrAllowed01'], // Si Dia laboral
+            'DiaF' => ['arrAllowed01'], // Si Dia feriado
+            'HsTr' => ['allowed01'], // Solo horas trabajadas
+            'start' => ['intempty'], // Pagina de inicio
+            'length' => ['intempty'] // Cantidad de registros
+        ];
+
+        $datos = ($this->getData);
+
+        if ($estruct == 'sec2' && empty($datos['Sector'] ?? '')) {
+            throw new \Exception("Parámetro Sector es requerido cuando solicita estruct sección (sec2).", 1);
+        }
+
+        $datos['HsTr'] = $datos['HsTr'] ?? "0"; // Solo horas trabajadas. 0 = No, 1 = Si
+        $datos['HoraMin'] = $datos['HoraMin'] ?? ''; // Hora minima
+        $datos['HoraMax'] = $datos['HoraMax'] ?? ''; // Hora maxima
+        $datos['start'] = $datos['start'] ?? 0; // Pagina de inicio si no viene en los datos
+        $datos['length'] = $datos['length'] ?? 5; // Cantidad de registros si no viene en los datos
+        $datos['FechaIni'] = $datos['FechaIni'] ?? date('Y-m-d'); // Fecha de inicio si no viene en los datos
+        $datos['FechaFin'] = $datos['FechaFin'] ?? date('Y-m-d'); // Fecha de fin si no viene en los datos
+
+        $validator = new InputValidator($datos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+        $validator->validate(); // Valido los datos
+
+        $keyString = ['ApNo', 'ApNoLega', 'Desc'];
+
+        foreach ($keyString as $key) {
+            $datos[$key] = $datos[$key] ?? ''; // Si no existe la clave en el array $datos le asigno un string vacío
+        }
+
+        $keysArray = ['Sector', 'Cod', 'Lega', 'Docu', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'TareProd', 'RegCH', 'Tipo', 'THora', 'Esta', 'DiaL', 'DiaF'];
+
+        foreach ($keysArray as $key) { // Recorro las claves del array $keysArray
+            $datos[$key] = $datos[$key] ?? []; // Si no existe la clave en el array $datos le asigno un array vacío
+        }
+
+        return $datos;
+    }
+    private function joinEstruct(string $estruct)
+    {
+        $JoinEstruct = [
+            'empr' => " INNER JOIN EMPRESAS ON FICHAS.FicEmpr = EMPRESAS.EmpCodi",
+            'plan' => " INNER JOIN PLANTAS ON FICHAS.FicPlan = PLANTAS.PlaCodi",
+            'grup' => " INNER JOIN GRUPOS ON FICHAS.FicGrup = GRUPOS.GruCodi",
+            'sect' => " INNER JOIN SECTORES ON FICHAS.FicSect = SECTORES.SecCodi",
+            'sucu' => " INNER JOIN SUCURSALES ON FICHAS.FicSucu = SUCURSALES.SucCodi",
+            'tare' => " INNER JOIN TAREAS ON PERSONAL.LegTareProd = TAREAS.TareCodi",
+            'conv' => " INNER JOIN CONVENIO ON FICHAS.FicConv = CONVENIO.ConCodi",
+            'regla' => " INNER JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi",
+            'thora' => " INNER JOIN TIPOHORA ON FICHAS1.FicHora = TIPOHORA.THoCodi",
+            'sec2' => " INNER JOIN SECCION ON FICHAS.FicSec2 = SECCION.Se2Codi AND FICHAS.FicSect = SECCION.SecCodi INNER JOIN SECTORES ON SECCION.SecCodi = SECTORES.SecCodi",
+        ];
+        return $JoinEstruct[$estruct] ?? '';
+    }
+    private function columnsEstruct(string $estruct)
+    {
+        $cod = 'Cod';
+        $count = 'Count';
+
+        $labelEstruct = ($this->paraGene->return());
+
+        $sinEmpr = "Sin " . $labelEstruct['Etiquetas']['EmprSin'];
+        $sinPlan = "Sin " . $labelEstruct['Etiquetas']['PlanSin'];
+        $sinGrup = "Sin " . $labelEstruct['Etiquetas']['GrupSin'];
+        $sinSect = "Sin " . $labelEstruct['Etiquetas']['SectSin'];
+        $sinSucu = "Sin " . $labelEstruct['Etiquetas']['SucuSin'];
+        $sinSec2 = "Sin " . $labelEstruct['Etiquetas']['SeccSin'];
+
+        $Select = [
+            'empr' => $this->caseWhen('EmpRazon', $sinEmpr) . ", FicEmpr AS '$cod', count(FicEmpr) AS '$count'",
+            'plan' => $this->caseWhen('PlaDesc', $sinPlan) . ", FicPlan AS '$cod', count(FicPlan) AS '$count'",
+            'grup' => $this->caseWhen('GruDesc', $sinGrup) . ", FicGrup AS '$cod', count(FicGrup) AS '$count'",
+            'sect' => $this->caseWhen('SecDesc', $sinSect) . ", FicSect AS '$cod', count(FicSect) AS '$count'",
+            'sucu' => $this->caseWhen('SucDesc', $sinSucu) . ", FicSucu AS '$cod', count(FicSucu) AS '$count'",
+            'tare' => $this->caseWhen('TareDesc', "Sin Tarea") . ", LegTareProd AS '$cod', count(LegTareProd) AS '$count'",
+            'conv' => $this->caseWhen('ConDesc', "Fuera de Convenio") . ", FicConv AS '$cod', count(FicConv) AS '$count'",
+            'regla' => $this->caseWhen('RCDesc', "Sin Regla CH") . ", LegRegCH AS '$cod', count(LegRegCH) AS '$count'",
+            'thora' => $this->caseWhen('THoDesc', "Sin Tipo de Hora") . ", FicHora AS '$cod', count(FicHora) AS '$count'",
+            'lega' => $this->caseWhen('LegApNo', "Sin Nombre") . ", FICHAS.FicLega AS '$cod', count(FICHAS.FicLega) AS '$count'",
+            'tipo' => " dbo.fn_TipoDePersonal(LegTipo) as 'Desc', LegTipo AS '$cod', count(LegTipo) AS '$count'",
+            'sec2' => $this->caseWhen('Se2Desc', $sinSec2) . ", SECCION.SecCodi AS 'Sect', SECTORES.SecDesc AS 'SectDesc', FicSec2 AS '$cod', count(FicSec2) AS '$count'",
+        ];
+        return $Select[$estruct];
+    }
+    private function groupByEstruct(string $estruct)
+    {
+        $group = 'GROUP BY';
+        $order = 'ORDER BY';
+        $GroupBY = [
+            'empr' => " $group EmpRazon, FicEmpr $order EmpRazon",
+            'plan' => " $group PlaDesc, FicPlan $order PlaDesc",
+            'grup' => " $group GruDesc, FicGrup $order GruDesc",
+            'sect' => " $group SecDesc, FicSect $order SecDesc",
+            'sucu' => " $group SucDesc, FicSucu $order SucDesc",
+            'tare' => " $group TareDesc, LegTareProd $order TareDesc",
+            'conv' => " $group ConDesc, FicConv $order ConDesc",
+            'regla' => " $group RCDesc, LegRegCH $order RCDesc",
+            'thora' => " $group THoDesc, FicHora $order THoDesc",
+            'lega' => " $group LegApNo, FICHAS.FicLega $order LegApNo",
+            'tipo' => " $group LegTipo $order LegTipo",
+            'sec2' => " GROUP BY FICHAS.FicSec2, SECCION.Se2Desc, SECCION.SecCodi, SECTORES.SecDesc $order Se2Desc",
+        ];
+        return $GroupBY[$estruct];
+    }
+    private function queryEstructDesc(string $estruct, string $Desc)
+    {
+        if (!$Desc)
+            return '';
+        $arr = [
+            'empr' => " AND EMPRESAS.EmpRazon LIKE :Desc",
+            'plan' => " AND PLANTAS.PlaDesc LIKE :Desc",
+            'grup' => " AND GRUPOS.GruDesc LIKE :Desc",
+            'sect' => " AND SECTORES.SecDesc LIKE :Desc",
+            'sucu' => " AND SUCURSALES.SucDesc LIKE :Desc",
+            'tare' => " AND TAREAS.TareDesc LIKE :Desc",
+            'conv' => " AND CONVENIO.ConDesc LIKE :Desc",
+            'regla' => " AND REGLASCH.RCDesc LIKE :Desc",
+            'thora' => " AND TIPOHORA.THoDesc LIKE :Desc",
+            'lega' => " AND PERSONAL.LegApNo LIKE :Desc",
+            'tipo' => " AND dbo.fn_TipoDePersonal(LegTipo) LIKE :Desc",
+            'sec2' => " AND SECCION.Se2Desc LIKE :Desc"
+        ];
+        return $arr[$estruct];
+    }
+    private function queryEstructCod(string $estruct, array $Cod)
+    {
+        if (!($Cod))
+            return '';
+        $arr = [
+            'empr' => " AND FICHAS.FicEmpr IN (" . implode(",", $Cod) . ")",
+            'plan' => " AND FICHAS.FicPlan IN (" . implode(",", $Cod) . ")",
+            'grup' => " AND FICHAS.FicGrup IN (" . implode(",", $Cod) . ")",
+            'sect' => " AND FICHAS.FicSect IN (" . implode(",", $Cod) . ")",
+            'sucu' => " AND FICHAS.FicSucu IN (" . implode(",", $Cod) . ")",
+            'tare' => " AND PERSONAL.LegTareProd IN (" . implode(",", $Cod) . ")",
+            'conv' => " AND FICHAS.FicConv IN (" . implode(",", $Cod) . ")",
+            'regla' => " AND PERSONAL.LegRegCH IN (" . implode(",", $Cod) . ")",
+            'thora' => " AND FICHAS1.FicHora IN (" . implode(",", $Cod) . ")",
+            'lega' => " AND FICHAS.FicLega IN (" . implode(",", $Cod) . ")",
+            'tipo' => " AND PERSONAL.LegTipo IN (" . implode(",", $Cod) . ")",
+            'sec2' => " AND FICHAS.FicSec2 IN (" . implode(",", $Cod) . ")"
+        ];
+        return $arr[$estruct];
+    }
+    private function queryEstructSect(string $estruct, array $Sector)
+    {
+        if (!$Sector)
+            return '';
+        $arr = [
+            'sec2' => " AND FICHAS.FicSect IN (" . implode(",", $Sector) . ")"
+        ];
+        return $arr[$estruct] ?? '';
+    }
+    private function joinPersonalEstruct($paramPers)
+    {
+        return ($paramPers) ? " INNER JOIN PERSONAL ON FICHAS.FicLega = PERSONAL.LegNume" : '';
+    }
+    private function joinFichas1Estruct()
+    {
+        return " INNER JOIN FICHAS1 ON FICHAS.FicLega = FICHAS1.FicLega AND FICHAS.FicFech = FICHAS1.FicFech AND FICHAS.FicTurn = FICHAS1.FicTurn";
+    }
+    private function queryFichasEstruct($Lega, $Empr, $Plan, $Conv, $Sect, $Sec2, $Grup, $Sucu, $DiaL, $DiaF)
+    {
+        $Filtros = [
+            'Lega' => $Lega,
+            'Empr' => $Empr,
+            'Plan' => $Plan,
+            'Conv' => $Conv,
+            'Sect' => $Sect,
+            'Sec2' => $Sec2,
+            'Grup' => $Grup,
+            'Sucu' => $Sucu,
+            'DiaL' => $DiaL,
+            'DiaF' => $DiaF
+        ];
+
+        $sql = " WHERE FICHAS.FicLega > 0 AND FICHAS.FicFech BETWEEN :FechaIni AND :FechaFin";
+
+        $FiltrosNombres = ['Lega', 'Empr', 'Plan', 'Conv', 'Sect', 'Sec2', 'Grup', 'Sucu', 'NoveI', 'NoveA', 'NoveS', 'NoveT', 'DiaL', 'DiaF'];
+
+        foreach ($FiltrosNombres as $Nombre) {
+            if (!empty($Filtros[$Nombre])) { // Si el filtro no esta vacío
+                if ($Nombre == 'Sec2') {
+                    $sql .= " AND CONCAT(FICHAS.FicSect, FICHAS.FicSec2) IN (" . implode(",", $Filtros[$Nombre]) . ")";
+                    continue;
+                }
+                $sql .= " AND FICHAS.Fic{$Nombre} IN (" . implode(",", $Filtros[$Nombre]) . ")";
+            }
+        }
+        // file_put_contents('queryFichasEstruct.log', print_r($sql, true) . PHP_EOL, FILE_APPEND);
+
+        return $sql;
+    }
+    private function queryPersonalEstruct($paramPers, $ApNo, $ApNoLega, $Docu, $Tipo, $RegCH, $Tare)
+    {
+        $sql = '';
+        if ($paramPers) {
+            $sql .= ($ApNo) ? " AND PERSONAL.LegApNo LIKE :ApNo" : '';
+            $sql .= ($ApNoLega) ? " AND CONCAT(PERSONAL.LegApNo, PERSONAL.LegNume) LIKE :ApNoLega" : '';
+            $sql .= ($Docu) ? " AND PERSONAL.LegDocu IN (" . implode(",", $Docu) . ")" : '';
+            $sql .= ($Tipo) ? " AND PERSONAL.LegTipo IN (" . implode(",", $Tipo) . ")" : '';
+            $sql .= ($RegCH) ? " AND PERSONAL.LegRegCH IN (" . implode(",", $RegCH) . ")" : '';
+            $sql .= ($Tare) ? " AND PERSONAL.LegTareProd IN (" . implode(",", $Tare) . ")" : '';
+        }
+        return $sql;
+    }
+    private function queryFichas1Estruct($THora, $Esta, $HoraMin, $HoraMax, $HsTr)
+    {
+        $sql = '';
+        $sql .= ($THora) ? " AND FICHAS1.FicHora IN (" . implode(",", $THora) . ")" : ''; // Tipo de Hora
+        $sql .= ($Esta) ? " AND FICHAS1.FicEsta IN (" . implode(",", $Esta) . ")" : ''; // Estado de la ficha hora (FicEsta)
+        $sql .= ($HoraMin) ? " AND dbo.fn_STRMinutos(FICHAS1.FicHsAu) >= dbo.fn_STRMinutos('$HoraMin')" : ''; // Hora minima
+        $sql .= ($HoraMax) ? " AND dbo.fn_STRMinutos(FICHAS1.FicHsAu) <= dbo.fn_STRMinutos('$HoraMax')" : ''; // Hora maxima
+        $sql .= ($HsTr) ? "AND dbo.fn_STRMinutos(FICHAS.FicHstr) > 0" : ''; // Solo registros con horas trabajadas
+        return $sql;
+    }
+    private function caseWhen(string $ColumDesc, string $sinDesc)
+    {
+        return " CASE WHEN LTRIM(RTRIM($ColumDesc)) = '' THEN '$sinDesc' ELSE $ColumDesc END AS 'Desc'";
+    }
+    private function validarInputsTotales()
+    {
+        $datos = $this->getData;
+
+
+        if (!$datos) {
+            throw new \Exception("No se recibieron datos", 400);
+        }
+
+        if ($this->tools->jsonNoValido()) {
+            throw new \Exception("Formato JSON invalido", 400);
+        }
+
+        $FechIni = $datos['FechIni'] ?? '';
+        $FechFin = $datos['FechFin'] ?? '';
+        $LegApNo = $datos['LegApNo'] ?? '';
+        $LegDocu = $datos['LegDocu'] ?? [];
+        $LegRegCH = $datos['LegRegCH'] ?? [];
+        $LegTipo = $datos['LegTipo'] ?? [];
+        $LegaD = $datos['LegaD'] ?? '';
+        $LegaH = $datos['LegaH'] ?? '';
+        $Lega = $datos['Lega'] ?? [];
+        $Empr = $datos['Empr'] ?? [];
+        $Plan = $datos['Plan'] ?? [];
+        $Conv = $datos['Conv'] ?? [];
+        $Sec2 = $datos['Sec2'] ?? [];
+        $Sect = $datos['Sect'] ?? [];
+        $Grup = $datos['Grup'] ?? [];
+        $Sucu = $datos['Sucu'] ?? [];
+        $DiaL = $datos['DiaL'] ?? [];
+        $DiaF = $datos['DiaF'] ?? [];
+        $Hora = $datos['Hora'] ?? [];
+        $Esta = $datos['Esta'] ?? [];
+        $Dias = $datos['Dias'] ?? []; // Dias de la semana
+        $HsTrAT = $datos['HsTrAT'] ?? '';
+        $HoraMin = $datos['HoraMin'] ?? ''; // Hora minima
+        $HoraMax = $datos['HoraMax'] ?? ''; // Hora maxima
+        $MinMaxH = $datos['MinMaxH'] ?? 0; // Si se quiere el mínimo y máximo de horas
+        $Estruct = $datos['Estruct'] ?? 0; //  Estructura a consultar 0 = Personal, 1 = Fichas.
+
+        $start = $datos['start'] ?? ''; // Pagina de inicio si no viene en los datos
+        $length = $datos['length'] ?? ''; // Cantidad de registros si no viene en los datos
+
+
+        $datosRecibidos = array( // Valores por defecto
+            'FechIni' => empty($FechIni) ? '' : $FechIni,
+            'FechFin' => empty($FechFin) ? '' : $FechFin,
+            'LegApNo' => empty($LegApNo) ? '' : $LegApNo,
+            'LegDocu' => !is_array($LegDocu) ? [] : $LegDocu,
+            'LegRegCH' => !is_array($LegRegCH) ? [] : $LegRegCH,
+            'LegTipo' => !is_array($LegTipo) ? [] : $LegTipo,
+            'LegaD' => empty($LegaD) ? '' : $LegaD,
+            'LegaH' => empty($LegaH) ? '' : $LegaH,
+            'Lega' => !is_array($Lega) ? [] : $Lega,
+            'Empr' => !is_array($Empr) ? [] : $Empr,
+            'Plan' => !is_array($Plan) ? [] : $Plan,
+            'Conv' => !is_array($Conv) ? [] : $Conv,
+            'Sec2' => !is_array($Sec2) ? [] : $Sec2,
+            'Sect' => !is_array($Sect) ? [] : $Sect,
+            'Grup' => !is_array($Grup) ? [] : $Grup,
+            'Sucu' => !is_array($Sucu) ? [] : $Sucu,
+            'DiaL' => !is_array($DiaL) ? [] : $DiaL,
+            'DiaF' => !is_array($DiaF) ? [] : $DiaF,
+            'Dias' => !is_array($Dias) ? [] : $Dias,
+            'Hora' => !is_array($Hora) ? [] : $Hora,
+            'Esta' => !is_array($Esta) ? [] : $Esta,
+            'HoraMin' => empty($HoraMin) ? '' : ($HoraMin),
+            'HoraMax' => empty($HoraMax) ? '' : ($HoraMax),
+            'MinMaxH' => empty($MinMaxH) ? 0 : ($MinMaxH),
+            'Estruct' => empty($Estruct) ? 0 : ($Estruct),
+            'HsTrAT' => empty($HsTrAT) ? '' : ($HsTrAT),
+            'start' => empty($start) ? 0 : ($start),
+            'length' => empty($length) ? 5 : ($length),
+        );
+
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+
+        $rules = [ // Reglas de validación
+            'FechIni' => ['required', 'date'],
+            'FechFin' => ['required', 'date'],
+            'LegApNo' => ['varchar40'],
+            'LegDocu' => ['arrInt'],
+            'LegRegCH' => ['arrSmallint'],
+            'LegTipo' => ['arrSmallint'],
+            'LegaD' => ['intempty'],
+            'LegaH' => ['intempty'],
+            'Lega' => ['arrInt'],
+            'Empr' => ['arrSmallint'],
+            'Plan' => ['arrSmallint'],
+            'Conv' => ['arrSmallint'],
+            'Sec2' => ['arrSmallint'],
+            'Sect' => ['arrSmallint'],
+            'Grup' => ['arrSmallint'],
+            'Sucu' => ['arrSmallint'],
+            'DiaL' => ['arrAllowed01'],
+            'DiaF' => ['arrAllowed01'],
+            'Dias' => ['arrAllowed1a7'],
+            'Hora' => ['arrSmallint'],
+            'Esta' => ['arrSmallint'],
+            'HoraMin' => ['time'],
+            'HoraMax' => ['time'],
+            'MinMaxH' => ['allowed01'],
+            'HsTrAT' => ['allowed01'],
+            'Estruct' => ['allowed01'],
+            'start' => ['intempty'],
+            'length' => ['intempty'],
+        ];
+
+        $validator = new InputValidator($datosRecibidos, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+        $validator->validate(); // Valido los datos
+        return $datosRecibidos;
+    }
+    private function minutosAHoras(int $minutos)
     {
         $horas = floor($minutos / 60);
         $minutos = $minutos % 60;
         return sprintf("%02d:%02d", $horas, $minutos);
     }
-    private function minutosAHorasDecimal($minutos)
+    private function minutosAHorasDecimal(int $minutos)
     {
         $horas = floor($minutos / 60);
         $minutosRestantes = $minutos % 60;
@@ -1094,7 +1180,7 @@ class Horas
      * @param string $FechFin The end date of the date range in 'YYYY-MM-DD' format.
      * @return array An array containing the employee ID, total hours worked, and overtime hours for each employee.
      */
-    private function horasATyTR($arrayLegajos, $FechIni, $FechFin)
+    private function horasATyTR(array $arrayLegajos, string $FechIni, string $FechFin)
     {
         if (!$arrayLegajos)
             return [];
@@ -1113,80 +1199,27 @@ class Horas
         $stmt->closeCursor();
         return $data;
     }
-    public function data()
-    {
-        $conn = $this->conect->conn();
-        $sql = "SELECT THoCodi, THoDesc, THoDesc2, THoID, THoColu, FechaHora FROM TIPOHORA WHERE TIPOHORA.THoCodi > 0";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute(); // Ejecuto la consulta
-        $array = $stmt->fetchAll(\PDO::FETCH_ASSOC); // Obtengo los datos de la consulta
-        $this->resp->respuesta($array ?? [], count($array), 'OK', 200, microtime(true), 0, 0);
-        $stmt->closeCursor(); // Cierro el cursor
-    }
-
-    public function inputs_delete_proyeccion()
-    {
-        $filtros = $this->getData;
-
-        if ($this->tools->jsonNoValido()) {
-            $errores[] = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
-        }
-
-        try {
-
-            if (!is_array($filtros)) {
-                throw new \Exception("No se recibieron datos", 1);
-            }
-
-            // Asegúrate de actualizar $filtros con los cambios
-            // \file_put_contents('filtros_estructura.json', print_r(json_encode($filtros), true), FILE_APPEND);
-            $rulesFiltros = [ // Reglas de validación para los filtros
-                'FechaDesde' => ['required', 'futuredate'],
-                'FechaHasta' => ['required', 'futuredate'],
-                'Legajos' => ['required', 'arrInt'],
-            ];
-
-            if (is_array($filtros)) {
-                $validatorFiltros = new InputValidator($filtros, $rulesFiltros); // Instancia 
-                $validatorFiltros->validate(); // Valido los datos
-            }
-            // si fechahasta es menor a fechadesde, lanzo un error
-            if (strtotime($filtros['FechaDesde']) > strtotime($filtros['FechaHasta'])) {
-                throw new \Exception("La fecha de inicio no puede ser mayor a la fecha de fin", 1);
-            }
-            return $filtros;
-        } catch (\Exception $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_inputs_filtros_estructura.log');
-        }
-    }
-    public function eliminar_proyeccion()
-    {
-
-        $inicio = microtime(true);
-        $datos = $this->inputs_delete_proyeccion();
-        $conn = $this->conect->conn();
-
-        $Legajos = $datos['Legajos'] ?? [];
-
-        //  chunk de legajos en lotes de 50
-        $chunksLegajos = array_chunk($Legajos, 50);
-        $totalEliminados = 0;
-
-        foreach ($chunksLegajos as $chunk) {
-
-            $LegajosStr = implode(',', $chunk);
-            $FechaDesde = date('Ymd', strtotime($datos['FechaDesde']));
-            $FechaHasta = date('Ymd', strtotime($datos['FechaHasta']));
-
-            $sql = "DELETE FROM FICHAS1 WHERE FicLega IN ($LegajosStr) AND FicFech BETWEEN '$FechaDesde' AND '$FechaHasta' and FICHAS1.FicTurn = 1";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute(); // Ejecuto la consulta
-            // $this->log->write($sql, date('Ymd') . '_eliminar_proyeccion_' . ID_COMPANY . '.log');
-            $totalEliminados += $stmt->rowCount(); // Obtengo el número de filas afectadas
-        }
-
-        $this->resp->respuesta([], $totalEliminados, 'OK', 200, $inicio, 0, 0);
-    }
+    // private function procpend($datos)
+    // {
+    //     $conn = $this->conect->conn();
+    //     $FechaHoraActual = $this->conect->FechaHora(); // Fecha y hora actual
+    //     try {
+    //         if (empty($datos)) {
+    //             return false;
+    //         }
+    //         foreach ($datos as $dato) {
+    //             $dato['Fecha'] = date('Ymd', strtotime($dato['Fecha'])); // Convierto la fecha a formato YYYYMMDD
+    //             $sql = "INSERT INTO PROCPEND (PrPeTipo, PrPeLega, PrPeFech, FechaHora) VALUES (0, '$dato[Lega]',  '$dato[Fecha]', CONVERT(datetime, $FechaHoraActual, 121))";
+    //             $stmt = $conn->prepare($sql);
+    //             $stmt->execute(); // Ejecuto la consulta
+    //         }
+    //         // $stmt = null;
+    //         $this->conect = null;
+    //     } catch (\PDOException $e) {
+    //         // $conn->rollBack();
+    //         // $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
+    //         // $this->log->write($e->getMessage(), date('Ymd') . '_procPend_' . ID_COMPANY . '.log');
+    //         // exit;
+    //     }
+    // }
 }

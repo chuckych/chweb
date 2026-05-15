@@ -10,18 +10,18 @@ class ValidationException extends \Exception
 
 class InputValidator
 {
-    private $data;
-    private $fields = [];
-    private $rules = [];
-    private $customRules = [];
-    private $errors = [];
+    private array $data;
+    private array $fields = [];
+    private array $rules = [];
+    private array $customRules = [];
+    private array $errors = [];
 
-    public function __construct($data, $rules)
+    public function __construct(array $data, array $rules)
     {
         $this->data = $data;
         $this->rules = $rules;
     }
-    public function addCustomRule($ruleName, $validationFunction, $errorMessage)
+    public function addCustomRule( string $ruleName, callable $validationFunction, string $errorMessage)
     {
         $this->customRules[$ruleName] = [
             'validate' => $validationFunction,

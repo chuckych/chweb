@@ -33,8 +33,7 @@ class Horarios
     private array $urlMap;
     private string $method;
     private bool $rotacion;
-
-
+    private string $NameLog;
 
     public function __construct()
     {
@@ -62,6 +61,7 @@ class Horarios
         $this->auditor = new Auditor;
         $this->url = (substr($this->request->url, -1) !== '/') ? "{$this->request->url}/" : $this->request->url;
         $this->method = $this->request->method;
+        $this->NameLog = date('Ymd') . '_horarios.log';
 
         if (isset($this->urlMap[$this->url])) {
             $this->desde = $this->urlMap[$this->url]['desde'] ?? false;
@@ -199,10 +199,17 @@ class Horarios
 
             $this->resp->respuesta($arrayAud ?? [], $filas, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
-            $code = $e->getCode();
-            $conn->rollBack();
-            $this->log->write($e->getMessage(), date('Ymd') . '_Horarios_' . ID_COMPANY . '.log');
-            throw new \Exception($e->getMessage(), $code);
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al crear horario', 400);
+        } catch (\Exception $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
     public function delete_horario()
@@ -365,7 +372,7 @@ class Horarios
         } catch (\PDOException $e) {
             $code = $e->getCode();
             $conn->rollBack();
-            $this->log->write($e->getMessage(), date('Ymd') . '_Horarios_Delete_' . ID_COMPANY . '.log');
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
             throw new \Exception($e->getMessage(), $code);
         }
     }
@@ -385,8 +392,8 @@ class Horarios
             $Fecha = $datos['Fecha'];
             $Vence = $datos['Vence'];
             $Legajos = $datos['Lega'];
-            $Codi = $datos['Codi'];
-            $Dias = $datos['Dias'];
+            $Codi = intval($datos['Codi']);
+            $Dias = intval($datos['Dias']);
             $User = $datos['User'];
 
             //             Array de Datos
@@ -459,8 +466,8 @@ class Horarios
         } catch (\PDOException $e) {
             $code = $e->getCode();
             $conn->rollBack();
-            $this->log->write($e->getMessage(), date('Ymd') . '_Horarios_' . ID_COMPANY . '.log');
-            throw new \Exception($e->getMessage(), $code);
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception("Error al asignar rotación", $code);
         }
     }
     private function validar_request_horarios()
@@ -610,7 +617,7 @@ class Horarios
             }
 
             $stmt->execute(); // Ejecuto la consulta
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
         } catch (\Throwable $th) {
             $result = [];
         }
@@ -637,7 +644,7 @@ class Horarios
             $stmt->bindValue(':Fecha', $datos['Fecha'], \PDO::PARAM_STR);
 
             $stmt->execute(); // Ejecuto la consulta
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
         } catch (\Throwable $th) {
             $result = [];
         }
@@ -671,8 +678,8 @@ class Horarios
             $this->log->cache($getCache->FHora, 'fechaHoraHorarios', '.txt');
             return $result;
         } catch (\Throwable $th) {
-            // throw new \Exception("Error al obtener horarios", 400);
-            throw new \Exception("Error al obtener horarios: " . $th->getMessage(), 400);
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al obtener horarios", 400);
         }
     }
     private function return_rotaciones($connDB = ''): array
@@ -700,9 +707,8 @@ class Horarios
             $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
             return $result;
         } catch (\Throwable $th) {
-            // throw new \Exception("Error al obtener rotaciones", 400);
-            throw new \Exception("Error al obtener rotaciones: " . $th->getMessage(), 400);
-
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al obtener rotaciones", 400);
         }
     }
     private function return_total_dias_rotacion(int $Codi, $connDB = '')
@@ -737,16 +743,20 @@ class Horarios
         $Codi = $arrayData[2];
         $Fecha = $arrayData[3];
         $FechaHora = $this->conect->FechaHora();
-
-        $legajosList = implode(',', $legajos);
-        $sql = "UPDATE HORALE1 SET Ho1Hora = :Codi, FechaHora = :FechaHora WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "UPDATE HORALE1 SET Ho1Hora = :Codi, FechaHora = :FechaHora WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al actualizar horario desde", 400);
+        }
     }
     private function delete_desde(array $arrayData): int
     {
@@ -759,14 +769,18 @@ class Horarios
         $conn = $arrayData[0];
         $legajos = $arrayData[1];
         $Fecha = $arrayData[2];
-
-        $legajosList = implode(',', $legajos);
-        $sql = "DELETE FROM HORALE1 WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "DELETE FROM HORALE1 WHERE Ho1Lega IN ({$legajosList}) AND Ho1Fech = CONVERT(datetime, :Fecha, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al eliminar horario desde", 400);
+        }
     }
     private function check_delete_legajos(array $arrayData): array
     {
@@ -852,15 +866,19 @@ class Horarios
         $legajos = $arrayData[1];
         $Fecha = $arrayData[2];
         $Codi = $arrayData[3];
-
-        $legajosList = implode(',', $legajos);
-        $sql = "DELETE FROM HORALE2 WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :Fecha, 120) AND Ho2Hora = :Codi";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->bindValue(':Codi', $Codi, $Codi ? \PDO::PARAM_INT : \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "DELETE FROM HORALE2 WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :Fecha, 120) AND Ho2Hora = :Codi";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->bindValue(':Codi', $Codi, $Codi ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al eliminar periodo", 400);
+        }
     }
     private function delete_rotacion(array $arrayData): int
     {
@@ -875,14 +893,19 @@ class Horarios
         $Fecha = $arrayData[2];
         $Codi = $arrayData[3];
 
-        $legajosList = implode(',', $legajos);
-        $sql = "DELETE FROM ROTALEG WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120) AND RolRota = :Codi";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "DELETE FROM ROTALEG WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120) AND RolRota = :Codi";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al eliminar rotación", 400);
+        }
     }
     private function update_citacion(array $arrayData): int
     {
@@ -895,17 +918,22 @@ class Horarios
         $Desc = $arrayData[5];
         $FechaHora = $this->conect->FechaHora();
 
-        $legajosList = implode(',', $legajos);
-        $sql = "UPDATE CITACION SET CitEntra = :Entr, CitSale = :Sale, CitDesc = :Desc, FechaHora = :FechaHora WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Entr', $Entr, \PDO::PARAM_STR);
-        $stmt->bindValue(':Sale', $Sale, \PDO::PARAM_STR);
-        $stmt->bindValue(':Desc', $Desc, \PDO::PARAM_STR);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "UPDATE CITACION SET CitEntra = :Entr, CitSale = :Sale, CitDesc = :Desc, FechaHora = :FechaHora WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Entr', $Entr, \PDO::PARAM_STR);
+            $stmt->bindValue(':Sale', $Sale, \PDO::PARAM_STR);
+            $stmt->bindValue(':Desc', $Desc, \PDO::PARAM_STR);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al actualizar citación", 400);
+        }
     }
     private function delete_citacion(array $arrayData): int
     {
@@ -918,14 +946,18 @@ class Horarios
         $conn = $arrayData[0];
         $legajos = $arrayData[1];
         $Fecha = $arrayData[2];
-
-        $legajosList = implode(',', $legajos);
-        $sql = "DELETE FROM CITACION WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "DELETE FROM CITACION WHERE CitLega IN ({$legajosList}) AND CitFech = CONVERT(datetime, :Fecha, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al eliminar citación", 400);
+        }
     }
     private function update_rotacion(array $arrayData): int
     {
@@ -943,17 +975,22 @@ class Horarios
         $Vence = $arrayData[5];
         $FechaHora = $this->conect->FechaHora();
 
-        $legajosList = implode(',', $legajos);
-        $sql = "UPDATE ROTALEG SET RolRota = :Codi, FechaHora = :FechaHora, RolVenc = CONVERT(datetime, :Vence, 120), RolDias = :RolDias WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
-        $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
-        $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
-        $stmt->bindValue(':Vence', $Vence, \PDO::PARAM_STR);
-        $stmt->bindValue(':RolDias', $Dias, \PDO::PARAM_INT);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "UPDATE ROTALEG SET RolRota = :Codi, FechaHora = :FechaHora, RolVenc = CONVERT(datetime, :Vence, 120), RolDias = :RolDias WHERE RolLega IN ({$legajosList}) AND RolFech = CONVERT(datetime, :Fecha, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
+            $stmt->bindValue(':Fecha', $Fecha, \PDO::PARAM_STR);
+            $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
+            $stmt->bindValue(':Vence', $Vence, \PDO::PARAM_STR);
+            $stmt->bindValue(':RolDias', $Dias, \PDO::PARAM_INT);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al actualizar rotación", 400);
+        }
     }
     private function update_desde_hasta(array $arrayData)
     {
@@ -969,15 +1006,20 @@ class Horarios
         $FechaD = $arrayData[3];
         $FechaHora = $this->conect->FechaHora();
 
-        $legajosList = implode(',', $legajos);
-        $sql = "UPDATE HORALE2 SET Ho2Hora = :Codi, FechaHora = :FechaHora WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
-        $stmt->bindValue(':FechaD', $FechaD, \PDO::PARAM_STR);
-        $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas ?? 0;
+        try {
+            $legajosList = implode(',', $legajos);
+            $sql = "UPDATE HORALE2 SET Ho2Hora = :Codi, FechaHora = :FechaHora WHERE Ho2Lega IN ({$legajosList}) AND Ho2Fec1 = CONVERT(datetime, :FechaD, 120)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindValue(':Codi', $Codi, \PDO::PARAM_INT);
+            $stmt->bindValue(':FechaD', $FechaD, \PDO::PARAM_STR);
+            $stmt->bindValue(':FechaHora', $FechaHora, \PDO::PARAM_STR);
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas ?? 0;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al actualizar periodo", 400);
+        }
     }
     private function insert_desde(array $arrayData)
     {
@@ -1006,7 +1048,7 @@ class Horarios
         }
 
         $valuesList = implode(',', $values);
-        
+
         try {
             $sql = "INSERT INTO HORALE1 (Ho1Lega, Ho1Fech, Ho1Hora, FechaHora) VALUES $valuesList";
             $stmt = $conn->prepare($sql);
@@ -1018,7 +1060,7 @@ class Horarios
             $filas = $stmt->rowCount();
             return $filas;
         } catch (\Throwable $th) {
-            error_log("error: " . $th->getMessage());
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
             throw new \Exception("Error al insertar horarios desde", 400);
         }
     }
@@ -1048,17 +1090,23 @@ class Horarios
             $index++;
         }
         $valuesList = implode(',', $values);
+        try {
 
-        $sql = "INSERT INTO CITACION (CitLega, CitFech, CitTurn, CitEntra, CitSale, CitDesc, FechaHora) VALUES $valuesList";
-        $stmt = $conn->prepare($sql);
+            $sql = "INSERT INTO CITACION (CitLega, CitFech, CitTurn, CitEntra, CitSale, CitDesc, FechaHora) VALUES $valuesList";
+            $stmt = $conn->prepare($sql);
 
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas;
+
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al insertar citacion", 400);
         }
-
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas;
     }
     private function insert_rotacion(array $arrayData)
     {
@@ -1102,9 +1150,9 @@ class Horarios
             $stmt->execute();
             $filas = $stmt->rowCount();
             return $filas;
-        } catch (\PDOException $th) {
-            throw new \Exception('Error al insertar rotaciones', 400);
-            // throw new \Exception($th->getMessage(), 400);
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al insertar rotaciones", 400);
         }
     }
     private function insert_desde_hasta(array $arrayData)
@@ -1136,16 +1184,21 @@ class Horarios
         }
 
         $valuesList = implode(',', $values);
-        $sql = "INSERT INTO HORALE2 (Ho2Lega, Ho2Fec1, Ho2Fec2, Ho2Hora, FechaHora) VALUES $valuesList";
-        $stmt = $conn->prepare($sql);
+        try {
+            $sql = "INSERT INTO HORALE2 (Ho2Lega, Ho2Fec1, Ho2Fec2, Ho2Hora, FechaHora) VALUES $valuesList";
+            $stmt = $conn->prepare($sql);
 
-        foreach ($params as $key => $value) {
-            $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            foreach ($params as $key => $value) {
+                $stmt->bindValue($key, $value, is_int($value) ? \PDO::PARAM_INT : \PDO::PARAM_STR);
+            }
+
+            $stmt->execute();
+            $filas = $stmt->rowCount();
+            return $filas;
+        } catch (\Throwable $th) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al insertar desde hasta", 400);
         }
-
-        $stmt->execute();
-        $filas = $stmt->rowCount();
-        return $filas;
     }
     private function auditoria(array $arrayData, $tipo = 'horarios')
     {
@@ -1190,9 +1243,6 @@ class Horarios
             if ($tipo === 'citaciones') {
                 $AudDato = sprintf("%s. Legajo: %s.", $AudTipoText, $lega);
             }
-            // if ($tipo === 'horarios-delete') {
-            //     $AudDato = sprintf("%s. Legajo: %s.", $AudTipoText, $lega);
-            // }
             $arrayAud[] = ['AudTipo' => $AudTipo, 'AudDato' => $AudDato, 'AudUser' => $User];
         }
 
@@ -1201,9 +1251,6 @@ class Horarios
         if ($tipo === 'citaciones') {
             $AudDato2 = sprintf("%s. Legajos: (%s).", $AudTipoText, count($legajos));
         }
-        // if ($tipo === 'horarios-delete') {
-        //     $AudDato2 = sprintf("%s. Legajos: (%s).", $AudTipoText, count($legajos));
-        // }
 
         $arr2[] = ['AudTipo' => $AudTipo, 'AudDato' => $AudDato2, 'AudUser' => $User];
 
@@ -1245,11 +1292,11 @@ class Horarios
             ];
 
         } catch (\Throwable $th) {
-            $this->log->traceError("Error al procesar el día: " . $th->getMessage());
-            throw new \Exception("Error al procesar el día: " . $th->getMessage(), 400);
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \Exception("Error al procesar el día", 400);
         }
     }
-    public function get_horarios($connDB = '')
+    public function get_horarios(?\PDO $connDB = null)
     {
         $conn = $this->conect->check_connection($connDB);
         try {
@@ -1321,7 +1368,7 @@ class Horarios
                         "TotalMinsDescanso" => $TotalDescanso,
                     ];
                 } catch (\Throwable $th) {
-                    $this->log->traceError("Error al procesar horario ID {$v['HorCodi']}: " . $th->getMessage());
+                    $this->log->traceError("Error al procesar horario ID {$v['HorCodi']}: ");
                     continue; // Salta al siguiente horario en caso de error
                 }
             }
@@ -1330,14 +1377,17 @@ class Horarios
             $this->log->cache($getCache->FHora ?? '', 'fechaHoraHorarios', '.txt');
 
             $this->resp->respuesta($horarios ?? [], count($horarios ?? []), 'OK', 200, 0, count($horarios ?? []), 0);
-        } catch (\Throwable $th) {
-            $this->log->traceError("Error en get_horarios: " . $th->getMessage());
-            $this->resp->respuesta([], 0, 'Error al obtener horarios', 500, 0, 0, 0);
+        } catch (\PDOException $e) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener horarios', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('Horarios::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
-    public function get_rotaciones($connDB = '')
+    public function get_rotaciones()
     {
-        $conn = $this->conect->check_connection($connDB);
+        $conn = $this->conect->check_connection();
 
         $getCache = $this->tools->return_cache('ROTACION', 'fechaHoraRotaciones', 'rotacionesFull', $conn);
 
@@ -1391,7 +1441,6 @@ class Horarios
         $this->log->cache($getCache->FHora, 'fechaHoraRotaciones', '.txt');
         $this->resp->respuesta($rota ?? [], count($rota ?? []), 'OK', 200, 0, count($rota ?? []), 0);
     }
-
     public function get_horale_1(string $Legajo, $connDB = '', array $ListHorarios = [], bool $return = false)
     {
         $this->validar_legajo($Legajo);
@@ -1547,13 +1596,13 @@ class Horarios
 
         $this->resp->respuesta($data ?? [], count($data ?? []), 'OK', 200, 0, count($data ?? []), 0);
     }
-    public function get_asign_legajo(string $Legajo, $connDB = '', $return = false)
+    public function get_asign_legajo(string $Legajo, bool $return = false)
     {
         $this->validar_legajo($Legajo);
 
-        $conn = $this->conect->check_connection($connDB);
+        $conn = $this->conect->check_connection();
 
-        $ListHorarios = $this->return_horarios($connDB) ?? []; // Devuelve los horarios
+        $ListHorarios = $this->return_horarios($conn) ?? []; // Devuelve los horarios
         $horale1 = $this->get_horale_1($Legajo, $conn, $ListHorarios, true);
         $horale2 = $this->get_horale_2($Legajo, $conn, $ListHorarios, true);
         $rotaleg = $this->get_rotaleg($Legajo, $conn, true);

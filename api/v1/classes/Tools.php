@@ -139,12 +139,12 @@ class Tools
         $date = new \DateTime($date);
         return $date->format($format);
     }
-    public function date_time_str($date, $format = 'YmdHis')
+    public function date_time_str(string $date, $format = 'YmdHis')
     {
         $date = new \DateTime($date);
         return $date->format($format);
     }
-    public function agrupar_por($array, $key)
+    public function agrupar_por(array $array, string $key)
     {
         if (!$array) return [];
         $result = [];
@@ -153,7 +153,7 @@ class Tools
         }
         return $result ?? [];
     }
-    public function get_fecha_hora($tabla, $connDB = '')
+    public function get_fecha_hora(string $tabla, ?\PDO $connDB = null)
     {
         try {
             if (!$tabla) throw new \Exception("Tabla en get_fecha_hora no especificada", 400);
@@ -169,7 +169,7 @@ class Tools
             throw new \Exception("Error al obtener FechaHora en {$tabla}", 400);
         }
     }
-    public function return_cache($tabla, $cacheFecha, $cacheName, $connDB = '')
+    public function return_cache(string $tabla, string $cacheFecha, string $cacheName, ?\PDO $connDB = null)
     {
         $conn = $this->conect->check_connection($connDB);
 

@@ -19,7 +19,7 @@ class DataCompany
     private $iniData;
     private $token;
 
-    function __construct()
+    public function __construct()
     {
         $this->urlData = __DIR__ . '/../../../mobileApikey.php'; // url del archivo ;
         $this->resp = new Response;
@@ -28,7 +28,7 @@ class DataCompany
         $this->iniData = $this->info();
         $this->token = $_SERVER['HTTP_TOKEN'] ?? '';
     }
-    function info() // obtiene el json de la url
+    private function info() // obtiene el json de la url
     {
 
         $url = $this->urlData; // url del archivo
@@ -50,7 +50,7 @@ class DataCompany
             $this->log->write($e->getMessage(), date('Ymd') . '_getIni_' . ID_COMPANY . '.log');
         }
     }
-    function get($key = '')
+    public function get($key = '')
     {
         $iniData = $this->iniData;
         $token = $this->token;
@@ -88,7 +88,11 @@ class DataCompany
             exit;
         }
     }
-    function checkToken()
+    public function get_all()
+    {
+        return array_column($this->iniData, null, 'idCompany');
+    }
+    public function checkToken()
     {
         $iniData = $this->iniData;
         $token = $this->token;

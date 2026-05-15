@@ -2,7 +2,7 @@
 
 namespace Classes;
 
-// use Classes\DataCompany;
+use Classes\DataCompany;
 use Classes\Log;
 use Classes\InputValidator;
 use Classes\Tools;
@@ -15,11 +15,14 @@ use Flight;
 
 class ConnectSqlSrv
 {
-    private $conn;
-    private $log;
-    private $mapDB;
-    private $tools;
-    private $resp;
+    private ?\PDO $conn = null;
+    private Log $log;
+    private array $mapDB;
+    private Tools $tools;
+    private Response $resp;
+    private DataCompany $dataCompany;
+    private string $NameLog;
+
     public function __construct()
     {
         $this->log = new Log; // Instancia de la clase Log
@@ -31,7 +34,9 @@ class ConnectSqlSrv
             'DBName' => $_SERVER['DB_NAME'] ?? (getenv('DB_NAME') ?: ''),
         ];
         $this->check_data_connection($this->mapDB);
+        $this->dataCompany = new DataCompany;
         // $this->conn = $this->conn();
+        $this->NameLog = date('Ymd') . '_connectsql.log';
     }
     private function check_data_connection($mapDB = [])
     {
@@ -48,10 +53,10 @@ class ConnectSqlSrv
      * Devuelve la conexión a la base de datos
      * @return \PDO Conexión a la base de datos
      */
-    public function conn()
+    public function conn(): \PDO
     {
-        if ($this->conn) { // Si ya hay una conexión establecida
-            return $this->conn; // Retorna la conexión existente si ya está establecida
+        if ($this->conn instanceof \PDO) {
+            return $this->conn;
         }
 
         try { // Intenta conectar a la base de datos
@@ -65,9 +70,10 @@ class ConnectSqlSrv
             );
             // file_put_contents('log.log', print_r('log', true) . PHP_EOL, FILE_APPEND); // genera log
         } catch (\PDOException $e) {
+            $this->conn = null;
             $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
-            $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_connect_' . $idCompany . '.log');
-            throw new \Exception($e->getMessage(), (int) $e->getCode());
+            $this->log->trace('ConnectSqlSrv::' . __FUNCTION__ . ': idCompany = ' . $idCompany, $this->NameLog, $e);
+            throw new \PDOException('No se pudo establecer la conexión a la base de datos', 400);
         }
         return $this->conn;
     }
@@ -79,7 +85,7 @@ class ConnectSqlSrv
             'DBHost' => ['required', 'varchar100'],
             'DBName' => ['required', 'varchar100'],
             'DBUser' => ['required', 'varchar100'],
-            'DBPass' => ['varchar100'],
+            'DBPass' => ['required', 'varchar100'],
         ];
         $customValueKey = [ // Valores por defecto
             'DBHost' => "",
@@ -90,6 +96,18 @@ class ConnectSqlSrv
         $this->tools = new Tools;
 
         $data = Flight::request()->data->getData();
+
+        $IDCliente = $data['IDCliente'] ?? 0;
+
+        $dataCompany = $this->dataCompany->get_all()[$IDCliente] ?? null;
+
+        $data = array_merge($data, [
+            'DBHost' => $dataCompany['DBHost'] ?? '',
+            'DBName' => $dataCompany['DBName'] ?? '',
+            'DBUser' => $dataCompany['DBUser'] ?? '',
+            'DBPass' => $dataCompany['DBPass'] ?? '',
+        ]);
+
         $datos = $this->tools->validar_datos($data, $rules, $customValueKey, 'test_connect');
         $this->resp = new Response;
         try { // Intenta conectar a la base de datos
@@ -119,8 +137,23 @@ class ConnectSqlSrv
             $this->resp->respuesta($info ?? [], 1, 'OK', 200, $inicio, 0, 0);
         } catch (\PDOException $e) {
             $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
-            $this->log->write($e->getMessage(), date('Ymd') . '_sqlsr_test_connect_' . $idCompany . '.log');
+            $this->log->trace('ConnectSqlSrv::' . __FUNCTION__ . ': idCompany = ' . $idCompany, $this->NameLog, $e);
             throw new \PDOException($e->getMessage(), (int) $e->getCode());
+        }
+    }
+    private function obtener_cdn_mssql(int $IDCliente, \PDO $conn)
+    {
+        try {
+            $sql = "SELECT host, db, user,pass FROM clientes WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $IDCliente, \PDO::PARAM_INT);
+            $stmt->execute();
+            $cdn = $stmt->fetch(\PDO::FETCH_ASSOC);
+            $stmt = null;
+            return $cdn ?? ['host' => '', 'db' => '', 'user' => '', 'pass' => ''];
+        } catch (\PDOException $th) {
+            $this->log->trace('ConnectSqlSrv::' . __FUNCTION__ . ': ', $this->NameLog, $th);
+            throw new \PDOException($th->getMessage(), $th->getCode());
         }
     }
     public function close($conn)
@@ -144,38 +177,32 @@ class ConnectSqlSrv
      */
     public function executeQueryWhithParams($sql, $params = [])
     {
-        try {
-            $conn = $this->check_connection($this->conn);
-            $stmt = $conn->prepare($sql);
+        $conn = $this->check_connection($this->conn);
+        $stmt = $conn->prepare($sql);
 
-            foreach ($params as $paramName => $paramValue) {
-                $paramType = \PDO::PARAM_STR; // Tipo de dato por defecto
+        foreach ($params as $paramName => $paramValue) {
+            $paramType = \PDO::PARAM_STR; // Tipo de dato por defecto
 
-                // Determina el tipo de dato basado en el valor proporcionado
-                if (is_int($paramValue)) {
-                    $paramType = \PDO::PARAM_INT;
-                } elseif (is_bool($paramValue)) {
-                    $paramType = \PDO::PARAM_BOOL;
-                } else {
-                    $paramType = \PDO::PARAM_STR;
-                }
-
-                $stmt->bindValue($paramName, $paramValue, $paramType);
+            // Determina el tipo de dato basado en el valor proporcionado
+            if (is_int($paramValue)) {
+                $paramType = \PDO::PARAM_INT;
+            } elseif (is_bool($paramValue)) {
+                $paramType = \PDO::PARAM_BOOL;
+            } else {
+                $paramType = \PDO::PARAM_STR;
             }
 
-            $stmt->execute();
-
-            $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
-
-            $stmt = null;
-            // $this->conn = null;
-            $conn = null;
-
-            return $resultSet;
-        } catch (\PDOException $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_executeQuery_' . ID_COMPANY . '.log');
-            throw new \PDOException($e->getMessage(), (int) $e->getCode());
+            $stmt->bindValue($paramName, $paramValue, $paramType);
         }
+
+        $stmt->execute();
+
+        $resultSet = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
+
+        $stmt = null;
+        $conn = null;
+
+        return $resultSet;
     }
 
     /**
@@ -279,7 +306,7 @@ class ConnectSqlSrv
         $t = date("H:i:s");
         return $t ?? '';
     }
-    public function fn_aud_tipo($tipo)
+    public function fn_aud_tipo(string $tipo)
     {
         switch ($tipo) {
             case 'alta':
@@ -294,14 +321,20 @@ class ConnectSqlSrv
                 return '';
         }
     }
-    public function check_connection($connDB = '')
+    public function check_connection(?\PDO $connDB = null): \PDO
     {
-        $connect = !empty($connDB) ? $connDB : $this->conn(); // Si se proporciona una conexión, la utiliza, de lo contrario, utiliza la conexión actual
+        try {
+            $connect = $connDB instanceof \PDO ? $connDB : $this->conn(); // Si se proporciona una conexión, la utiliza, de lo contrario, utiliza la conexión actual
 
-        if (!$connect) {
-            throw new \Exception("No hay conexión a la base de datos", 400);
+            if (!($connect instanceof \PDO)) {
+                throw new \Exception("No hay conexión a la base de datos", 400);
+            }
+            return $connect;
+        } catch (\Exception $e) {
+            $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
+            $this->log->trace('ConnectSqlSrv::' . __FUNCTION__ . ': idCompany = ' . $idCompany, $this->NameLog, $e);
+            throw new \Exception($e->getMessage(), (int) $e->getCode());
         }
-        return $connect;
     }
     public function getMapDB()
     {

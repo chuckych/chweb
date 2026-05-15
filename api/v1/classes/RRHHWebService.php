@@ -8,23 +8,26 @@ use Classes\Tools;
 
 class RRHHWebService
 {
-    private $url;
-    private $log;
-    private $resp;
-    private $tools;
+    private string $url;
+    private Log $log;
+    private Response $resp;
+    private Tools $tools;
+    private string $NameLog;
+
     public function __construct()
     {
         $this->log = new Log; // Instancia de la clase Log
         $this->resp = new Response;
         $this->tools = new Tools;
         $this->url = getenv('WEBSERVICE') . '/RRHHWebService';
+        $this->NameLog = date('Ymd') . '_RRHHWebService.log';
     }
     public function baseUrl()
     {
         if (!getenv('WEBSERVICE')) { // Si no hay url del WebService
-            $this->log->write('No se estableció el baseUrl del webservice', date('Ymd') . '_RRHHWebService_' . ID_COMPANY . '.log');
-            throw new \Exception('No se estableció el baseUrl del webservice', 1); // Error
-            // return; // Salir
+            $text = "No se estableció el baseUrl del webservice"; // set error message
+            $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+            throw new \Exception($text, 1);
         }
         return $this->url;
     }
@@ -61,9 +64,7 @@ class RRHHWebService
     {
         try {
 
-            if (!$this->ping()) {
-                throw new \Exception('Error al conectar con el WebService', 1);
-            }
+            $this->ping();
 
             if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
                 throw new \Exception('Parametros no validos', 1);
@@ -133,7 +134,7 @@ class RRHHWebService
                         }
                         $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
                         $text = "Legajos procesados [{$Legajos}] - {$FechaDesde} a {$FechaHasta} {$days} días";
-                        $this->log->write($text, date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
+                        $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
                     }
                 }
 
@@ -146,7 +147,7 @@ class RRHHWebService
             }
             return false;
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
+            $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);
             return false;
         }
     }
@@ -192,11 +193,11 @@ class RRHHWebService
             } // close curl handle
             return true;
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_procesar_legajos_' . ID_COMPANY . '.log');
+            $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);
             return false;
         }
     }
-    function ping()
+    private function ping()
     {
         $ch = curl_init(); // Inicializar el objeto curl
         curl_setopt($ch, CURLOPT_URL, $this->baseUrl() . '/Ping?'); // Establecer la URL
@@ -228,18 +229,12 @@ class RRHHWebService
         } else {
             curl_close($ch);
         } // close curl handle
-        try {
-            if ($http_code != '201') {
-                throw new \Exception("Error Ping WebService. \"Cod: $curl_errno: $curl_error\"", 1);
-            }
-            // $this->resp->response('', 0, 'Ping Correcto', $http_code, microtime(true), 0, 0);
-            $this->log->write('Ping Webservice Correcto', date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
-            return true;
-        } catch (\Exception $th) {
-            $this->log->write($th->getMessage(), date('Ymd') . '_ws_ping_' . ID_COMPANY . '.log');
-            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
-            return false;
+
+        if ($http_code != '201') {
+            throw new \Exception("Error Ping WebService. \"Cod: $curl_errno: $curl_error\"", 1);
         }
+        // $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': Ping Correcto', $this->NameLog);
+        return true;
     }
     /** 
      * Proyectar Horas a partir de un arreglo de legajos
@@ -255,11 +250,9 @@ class RRHHWebService
     {
         try {
 
-            if (!$this->ping()) {
-                throw new \Exception('Error al conectar con el WebService', 1);
-            }
+            $this->ping();
 
-            if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
+            if (!\is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
                 throw new \Exception('Parametros no validos', 1);
             }
 
@@ -284,9 +277,9 @@ class RRHHWebService
 
                 $ch = curl_init();
 
-                foreach ($LegajosSegment as $Legajos) { // Recorre los bloques de legajos
+                foreach ($LegajosSegment as $Legas) { // Recorre los bloques de legas
 
-                    $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
+                    $Legas = (is_array($Legas)) ? implode(';', $Legas) : '';
 
                     foreach ($dateSegments as $segment) { // Recorre los segmentos
 
@@ -300,7 +293,7 @@ class RRHHWebService
                             throw new \Exception('Fecha hasta no puede ser menor o igual a la fecha actual', 1);
                         }
 
-                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legajos}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legas}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
 
                         curl_setopt($ch, CURLOPT_URL, $ruta);
                         curl_setopt($ch, CURLOPT_POST, TRUE);
@@ -322,8 +315,8 @@ class RRHHWebService
                             throw new \Exception($text, $httpCode);
                         }
                         $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
-                        $text = "Legajos procesados [{$Legajos}] - {$FechaDesde} a {$FechaHasta} {$days} días";
-                        $this->log->write($text, date('Ymd') . '_proyectar_' . ID_COMPANY . '.log');
+                        $text = "Legajos procesados [{$Legas}] - {$FechaDesde} a {$FechaHasta} {$days} días";
+                        $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
                     }
                 }
 
@@ -336,8 +329,8 @@ class RRHHWebService
             }
             return false;
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_proyectar_' . ID_COMPANY . '.log');
-            return false;
+            $this->log->trace('RRHHWebService::' . __FUNCTION__, $this->NameLog, $e);
+            return $e;
         }
     }
     /** 
@@ -372,7 +365,7 @@ class RRHHWebService
 
             return true;
         } catch (\Exception $e) {
-            $this->log->write($e->getMessage(), date('Ymd') . '_ingresar_novedades' . ID_COMPANY . '.log');
+            $this->log->trace('RRHHWebService::' . __FUNCTION__, $this->NameLog, $e);
             throw new \Exception($e->getMessage(), 400);
         }
     }
@@ -382,9 +375,7 @@ class RRHHWebService
      */
     private function validarConexionWebService()
     {
-        if (!$this->ping()) {
-            throw new \Exception('Error al conectar con el WebService', 1);
-        }
+        $this->ping();
     }
 
     /**
@@ -455,8 +446,8 @@ class RRHHWebService
                 $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
                 $legajosInfo = $esSegmentoVacio ? 'Todos los legajos' : "[$Legajos]";
                 $text = "Legajos procesados {$legajosInfo} - {$FechaDesde} a {$FechaHasta} {$days} días";
-                $this->log->write($text, date('Ymd') . '_ingresar_novedades_' . ID_COMPANY . '.log');
-                $this->log->write($post_data, date('Ymd') . '_ingresar_novedades_post_data_' . ID_COMPANY . '.log');
+                $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+                // $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $post_data, $this->NameLog);
             }
         }
 

@@ -22,6 +22,8 @@ class Auditor
     private Log $log;
     private ConnectSqlSrv $conect;
     private Tools $tools;
+    private string $NameLog;
+
     public function __construct()
     {
         $this->resp = new Response;
@@ -30,18 +32,20 @@ class Auditor
         $this->log = new Log;
         $this->conect = new ConnectSqlSrv;
         $this->tools = new Tools;
+        $this->NameLog = date('Ymd') . '_auditor.log';
     }
     public function add($data = [])
     {
-        $inicio = microtime(true); // Tiempo de inicio del proceso
-        $datos = $this->validarDatos($data); // Valida los datos
+
         $conn = $this->conect->conn(); // Conexión a la base de datos
-
-        $get_dbdata = $this->get_dbdata();
-        $get_dbdata = $get_dbdata ? explode("_", $get_dbdata[0]['BDVersion']) : '';
-        $get_dbdata = intval($get_dbdata[1] ?? 60) ?? ''; // Ver_61_20230622
-
         try {
+
+            $inicio = microtime(true); // Tiempo de inicio del proceso
+            $datos = $this->validarDatos($data); // Valida los datos
+
+            $get_dbdata = $this->get_dbdata();
+            $get_dbdata = $get_dbdata ? explode("_", $get_dbdata[0]['BDVersion']) : '';
+            $get_dbdata = intval($get_dbdata[1] ?? 60) ?? ''; // Ver_61_20230622
             $conn->beginTransaction(); // Iniciar transacción
 
             $sqlMas70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, CONVERT(datetime, :FechaHora, 121), :AudZonaHoraria)";
@@ -79,10 +83,15 @@ class Auditor
                 $this->resp->respuesta([], $totalAffectedRows, 'OK', 200, $inicio, 0, 0);
             }
         } catch (\PDOException $e) {
-            $conn->rollBack();
-            // error_log(print_r($e->getMessage(), true));
-            $this->log->traceError("auditar: " . $e->getMessage());
-            $this->log->write($e->getMessage(), date('Ymd') . '_Auditor_' . ID_COMPANY . '.log');
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Auditor::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+        } catch (\Exception $e) {
+            if ($conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Auditor::' . __FUNCTION__ . ': ', $this->NameLog, $e);
         }
     }
 
@@ -95,66 +104,49 @@ class Auditor
         $FechaHoraActualUTC = $this->conect->FechaHora('UTC'); // Fecha y hora actual en UTC
         $HoraActual = $this->conect->hora(); // Fecha y hora actual en UTC
 
-        try {
-
-            if (!is_array($datos)) {
-                throw new \Exception("No se recibieron datos", 1);
-            }
-
-            $rules = [ // Reglas de validación
-                'AudUser' => ['required', 'varchar100'], // Luego se recorta a 10 caracteres en la función add
-                'AudTipo' => ['required', 'varchar1'],
-                'AudDato' => ['required', 'varchar200'], // Luego se recorta a 100 caracteres en la función add
-            ];
-            $customValueKey = [ // Valores por defecto
-                'AudFech' => $FechaHoraActual, // Fecha actual
-                'AudHora' => $HoraActual, // Hora actual
-                'AudUser' => 'API', // Usuario de la API
-                'AudTerm' => $ip, // IP del cliente
-                'AudModu' => '21',
-                'AudTipo' => '',
-                'AudDato' => '',
-                'FechaHora' => $FechaHoraActualUTC, // Fecha y hora actual
-                'AudZonaHoraria' => '(UTC-03:00) Ciudad de Buenos Aires', // Zona horaria
-            ];
-
-            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
-
-            foreach ($datos as $dato) { // Recorro los datos recibidos
-                foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
-                    if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
-                        $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
-                    }
-                }
-                $datosModificados[] = $dato; // Guardo los datos modificados en un array
-                $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
-                $validator->validate(); // Valido los datos
-            }
-            return $datosModificados ?? []; // Devuelvo los datos modificados o un array vacío si no hay datos
-        } catch (\Exception $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_validarInputsAuditor.log');
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
         }
+
+        $rules = [ // Reglas de validación
+            'AudUser' => ['required', 'varchar100'], // Luego se recorta a 10 caracteres en la función add
+            'AudTipo' => ['required', 'varchar1'],
+            'AudDato' => ['required', 'varchar200'], // Luego se recorta a 100 caracteres en la función add
+        ];
+        $customValueKey = [ // Valores por defecto
+            'AudFech' => $FechaHoraActual, // Fecha actual
+            'AudHora' => $HoraActual, // Hora actual
+            'AudUser' => 'API', // Usuario de la API
+            'AudTerm' => $ip, // IP del cliente
+            'AudModu' => '21',
+            'AudTipo' => '',
+            'AudDato' => '',
+            'FechaHora' => $FechaHoraActualUTC, // Fecha y hora actual
+            'AudZonaHoraria' => '(UTC-03:00) Ciudad de Buenos Aires', // Zona horaria
+        ];
+
+        $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+
+        foreach ($datos as $dato) { // Recorro los datos recibidos
+            foreach ($keyData as $keyD) { // Recorro las claves del array $customValueKey
+                if (!array_key_exists($keyD, $dato) || empty($dato[$keyD])) { // Si no existe la clave en el array $dato o esta vacío
+                    $dato[$keyD] = $customValueKey[$keyD]; // Le asigno el valor por defecto del array $customValueKey
+                }
+            }
+            $datosModificados[] = $dato; // Guardo los datos modificados en un array
+            $validator = new InputValidator($dato, $rules); // Instancia la clase InputValidator y le paso los datos y las reglas de validación del array $rules
+            $validator->validate(); // Valido los datos
+        }
+        return $datosModificados ?? []; // Devuelvo los datos modificados o un array vacío si no hay datos
     }
 
     public function get_dbdata()
     {
-        // return data from table DBData
         $sql = "SELECT * FROM DBData";
         $params = [];
         $resultSet = $this->conect->executeQueryWhithParams($sql, $params);
         return $resultSet;
     }
-
-    public function sumar_segundos_a_fecha_old(string $fecha, int $seconds)
-    {
-        $fecha = \DateTime::createFromFormat('Ymd H:i:s.u', $fecha);
-        $fecha->modify("+{$seconds} seconds");
-        $fechaStr = $fecha->format('Ymd H:i:s.u');
-        $fechaStr = substr($fechaStr, 0, 21);
-        return $fechaStr;
-    }
-
     private function sumar_segundos_a_fecha(string $fecha, int $milisegundos): string
     {
         try {
@@ -165,7 +157,6 @@ class Auditor
             // return $date->format('Y-m-d H:i:s.v'); // v = milliseconds (3 dígitos), formato compatible con SQL Server DATETIME
             return substr($date->format('Y-m-d\TH:i:s.u'), 0, 23);
         } catch (\Exception $e) {
-            error_log("Error al sumar milisegundos a la fecha: " . $e->getMessage());
             return $fecha;
         }
     }

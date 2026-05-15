@@ -635,6 +635,7 @@ const tableNoveEdit = async (data) => {
 
         if (Ficha.length === 0) {
             $.notifyClose();
+            $('#modal').modal('hide');
             notify('No se encontró la ficha', 'danger', 2000, 'right');
             return;
         }
@@ -643,7 +644,8 @@ const tableNoveEdit = async (data) => {
 
         if (Novedades.length === 0) {
             $.notifyClose();
-            notify('La novedad no tiene ficha asociada', 'danger', 2000, 'right');
+            $('#modal').modal('hide');
+            notify('No hay mas novedades en la ficha', 'danger', 2000, 'right');
             return;
         }
 
@@ -923,13 +925,22 @@ function generarOptgroupYOptions(objeto, selector) {
         select.appendChild(optgroup);
     });
 }
+const reloadFicha = (data) => {
+    getFicha(data.Lega, data.Fech).then((rs) => { // Recarga la ficha para actualizar la tabla
+        if (!rs) {
+            $('#modal').modal('hide');
+            return;
+        }
+        return tableNoveEdit(rs[0]); // Recarga la tabla de novedades
+    });
+}
 
 const formGuardar = async () => {
     $(document).on('click', '#modal .btnGuardar', async function (e) {
         e.preventDefault();
         e.stopPropagation();
 
-        let data = ls.get(LS_FICHA_FORM);
+        const data = ls.get(LS_FICHA_FORM);
         if (!data) return;
 
         if (!data) {
@@ -947,7 +958,7 @@ const formGuardar = async () => {
             return;
         }
 
-        let formData = {
+        const formData = {
             Lega: data.Lega,
             Fecha: data.Fech,
             Cate: $('#NoveSec').is(':checked') ? '2' : '0',
@@ -958,27 +969,29 @@ const formGuardar = async () => {
             Causa: $('#Causa').val(),
             Esta: "1"
         }
-        let rs = await axios.put('../app-data/novedad', formData);
-        // console.log(rs.data);
-        if (rs.data.error) {
+
+        const rs = await axios.put('../app-data/novedad', formData).catch((err) => {
             $.notifyClose();
-            notify(rs.data.error, 'danger', 2000, 'right');
+            notify(err.response?.data?.MESSAGE ?? 'Error al editar la novedad', 'danger', 2000, 'right');
+            reloadFicha(data);
+            return;
+        });
+
+        const MESSAGE = rs.data?.MESSAGE ?? 'No se pudo editar la novedad';
+
+        if (MESSAGE != "OK") {
+            $.notifyClose();
+            notify(MESSAGE, 'danger', 2000, 'right');
+            reloadFicha(data);
             return;
         }
-        if (rs.data.MESSAGE == "OK") {
-            $.notifyClose();
-            $('#modal #btnGuardar').off('click')
-            ActualizaTablas();
-            notify('Novedad editada correctamente', 'success', 2000, 'right');
-            getFicha(data.Lega, data.Fech).then((rs) => {
-                if (!rs) {
-                    $('#modal').modal('hide');
-                    return;
-                }
-                tableNoveEdit(rs[0]);
-            });
-            return;
-        }
+
+        $.notifyClose();
+        $('#modal #btnGuardar').off('click')
+        ActualizaTablas();
+        notify('Novedad editada correctamente', 'success', 2000, 'right');
+        reloadFicha(data);
+        return;
     });
 }
 formGuardar();
@@ -996,19 +1009,17 @@ const addNovedad = () => {
         $('#modal #btnGuardar').html('Agregar')
         $('#modal #rowForm').addClass('loader-in');
 
-        let idTableNovedades = '#tableNovEdit tbody tr';
+        const idTableNovedades = '#tableNovEdit tbody tr';
 
         if ($(idTableNovedades).length > 0) {
             $(idTableNovedades).removeClass('selected');
-            // uncheck all checkboxes
             $(idTableNovedades).find('input[type="checkbox"]').prop('checked', false);
-            // $(idTableNovedades).first().trigger('click');
         }
         disabledForm(false);
 
         generarOptgroupYOptions(ls.get(LS_NOVEDADES).agrupadas, '#Nove') // Agrega las novedades al select
 
-        let data = ls.get(LS_FICHA_FORM);
+        const data = ls.get(LS_FICHA_FORM);
         if (!data) return;
 
         if (data.NoveAdd == '0') {
@@ -1031,7 +1042,7 @@ const formAgregar = async () => {
         e.preventDefault();
         e.stopPropagation();
 
-        let data = ls.get(LS_FICHA_FORM);
+        const data = ls.get(LS_FICHA_FORM);
         if (!data) return;
 
         if (!data) {
@@ -1049,7 +1060,7 @@ const formAgregar = async () => {
             return;
         }
 
-        let formData = {
+        const formData = {
             Lega: data.Lega,
             Fecha: data.Fech,
             Cate: $('#NoveSec').is(':checked') ? '2' : '0',
@@ -1059,27 +1070,19 @@ const formAgregar = async () => {
             Causa: $('#Causa').val(),
             Esta: "2"
         }
-        let rs = await axios.post('../app-data/novedad', formData);
-        // console.log(rs.data);
-        if (rs.data.error) {
+        const rs = await axios.post('../app-data/novedad', formData).catch((err) => {
             $.notifyClose();
-            $('#modal .modal-body').removeClass('loader-in');
-            notify(rs.data.error, 'danger', 2000, 'right');
+            notify(err.response?.data?.MESSAGE ?? 'Error al editar la novedad', 'danger', 2000, 'right');
+            reloadFicha(data);
             return;
-        }
+        });
+
         if (rs.data.MESSAGE == "OK") {
             $.notifyClose();
             $('#modal #btnGuardar').off('click')
             ActualizaTablas();
             notify('Novedad creada correctamente', 'success', 2000, 'right');
-            getFicha(data.Lega, data.Fech).then((rs) => {
-                if (!rs) {
-                    ls.remove(LS_FICHA_FORM)
-                    $('#modal').modal('hide');
-                    return;
-                }
-                tableNoveEdit(rs[0]);
-            });
+            reloadFicha(data);
             return;
         }
     });
@@ -1103,32 +1106,28 @@ const deleteNovedad = async (data) => {
         return;
     }
 
-    let formData = {
+    const formData = {
         Lega: data.Lega,
         Fecha: data.Fech,
         Nove: data.Codi,
     }
-    let rs = await axios.delete('../app-data/novedad', { data: formData });
-    if (rs.data.error) {
+
+    const rs = await axios.delete('../app-data/novedad', { data: formData }).catch((err) => {
         $.notifyClose();
-        notify(rs.data.error, 'danger', 2000, 'right');
+        reloadFicha(data);
+        notify(err.response?.data?.MESSAGE ?? 'Error al eliminar la novedad', 'danger', 2000, 'right');
         return;
-    }
+    });
+
     if (rs.data.MESSAGE == "OK") {
         $.notifyClose();
         notify('Novedad eliminada correctamente', 'success', 2000, 'right');
         ActualizaTablas();
-        getFicha(data.Lega, data.Fech).then((rs) => {
-            if (!rs) {
-                $('#modal').modal('hide');
-                return;
-            }
-            tableNoveEdit(rs[0]);
-        });
+        reloadFicha(data);
         return;
     }
-    notify(rs.data.MESSAGE ?? '' == "OK", 'danger', 2000, 'right');
 
+    notify(rs.data.MESSAGE ?? '' == "OK", 'danger', 2000, 'right');
 }
 
 const tableInfoFicha = () => {

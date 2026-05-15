@@ -63,7 +63,7 @@ try {
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
 	$stmt->bindParam(':user', $userLogin, PDO::PARAM_STR); // enlaza el parámetro :user con el valor de $userLogin
 	$stmt->execute(); // ejecuta la consulta
-	$row = $stmt->fetch(PDO::FETCH_ASSOC); // obtiene el resultado de la consulta
+	$row = $stmt->fetch(PDO::FETCH_ASSOC) ?? []; // obtiene el resultado de la consulta
 	$connpdo = null; // cierra la conexión con la base de datos
 
 } catch (\Throwable $th) { // si hay error en la consulta
@@ -75,7 +75,7 @@ try {
 // Si el usuario no es de AD, se procede con la autenticación normal
 $authenticated = (($row['user_ad'] ?? '') === '1') ?
 	auth_ad($passLogin, $row) :
-	password_verify($passLogin, $row['clave']);
+	password_verify($passLogin ?? '', $row['clave'] ?? ''); // Verifica la contraseña utilizando password_verify
 
 // Si la autenticación es correcta (true)
 if ($authenticated) {

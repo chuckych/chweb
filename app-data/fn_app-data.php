@@ -512,8 +512,7 @@ function getHorasTotales(array $payload)
     $endpoint = URLAPI . "/api/v1/horas/totales/";
     $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
-    // print_r($payload) . exit;
-    $arrayData['DATA'] = $arrayData['DATA'] ?? '';
+    $arrayData['DATA'] ??= [];
     if (empty($arrayData['DATA'])) {
         return [];
     }
@@ -534,13 +533,10 @@ function getNovedadesTotales(array $payload)
 function getHorasTotalesDT(array $payload)
 {
     $endpoint = URLAPI . "/api/v1/horas/totales/";
-    // print_r($payload) . exit;
     $data = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($data, true);
-    $arrayData['DATA'] = $arrayData['DATA'] ?? [];
-    // if (empty($arrayData['DATA'])) {
-    //     return [];
-    // }
+    $arrayData['DATA'] ??= [];
+
     $dt_data = [
         "recordsTotal" => intval($arrayData['TOTAL']) ?? 0,
         "recordsFiltered" => intval($arrayData['COUNT']) ?? 0,

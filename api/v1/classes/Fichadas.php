@@ -9,21 +9,22 @@ use Classes\RRHHWebService;
 use Classes\Tools;
 use Classes\ParaGene;
 use Flight;
+use flight\net\Request;
 
 class Fichadas
 {
-    private $resp;
-    private $request;
-    private $getData;
-    private $query;
+    private Response $resp;
+    private Request $request;
+    private array $getData;
+    private array $query;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private RRHHWebService $webservice;
+    private Tools $tools;
+    private ParaGene $paragene;
+    private string $NameLog;
 
-    private $log;
-    private $conect;
-    private $webservice;
-    private $tools;
-    private $paragene;
-
-    function __construct()
+    public function __construct()
     {
         $this->resp = new Response();
         $this->request = Flight::request();
@@ -34,6 +35,7 @@ class Fichadas
         $this->webservice = new RRHHWebService();
         $this->tools = new Tools();
         $this->paragene = new ParaGene();
+        $this->NameLog = date('Ymd') . '_fichadas.log';
     }
 
     public function create()
@@ -41,60 +43,70 @@ class Fichadas
         $conn = $this->conect->check_connection();
         $inicio = microtime(true);
 
-        $datos = $this->validateInput();
+        try {
 
-        $cerrado = $this->check_cierre($datos['Fecha'], $datos['Legajo'], $conn);
-        if ($cerrado) {
-            throw new \Exception('El periodo esta cerrado', 400);
+            $datos = $this->validateInput();
+
+            $cerrado = $this->check_cierre($datos['Fecha'], \intval($datos['Legajo']), $conn);
+            if ($cerrado) {
+                throw new \Exception('El periodo esta cerrado', 400);
+            }
+
+            $identificador = $this->get_identifica(\intval($datos['Legajo']), $conn);
+
+            if (!$identificador) {
+                throw new \Exception('No se encontró el identificador para el legajo.', 400);
+            }
+
+            $existeFichada = $this->check_fichada(\intval($identificador), $datos['Fecha'], $datos['Hora'], $conn);
+
+            $dbData = $this->paragene->dbData(true);
+            $systemVer = $dbData['SystemVer'] ?? null;
+
+            $RegFech = date('Ymd', strtotime($datos['Fecha']));
+            $RegFeAs = date('Ymd', strtotime($datos['FeAs']));
+            $RegHora = $datos['Hora'];
+            $RegTipo = '1';
+            $RegFeRe = $RegFech;
+            $RegHoRe = $datos['HoRe'];
+            $RegTran = '1';
+            $RegSect = '0';
+            $RegRelo = '0';
+            $RegLect = '0';
+            $RegLega = $datos['Legajo'];
+
+            $params = [
+                $identificador,
+                $RegLega,
+                $RegTipo,
+                $RegFech,
+                $RegFeAs,
+                $RegHora,
+                $RegFeRe,
+                $RegHoRe,
+                $RegTran,
+                $RegSect,
+                $RegRelo,
+                $RegLect
+            ];
+
+            if ($existeFichada) {
+                $setUpdate = $this->update_fichada($params, $systemVer, $conn);
+            } else {
+                $setInsert = $this->insert_fichada($params, $systemVer, $conn);
+            }
+
+            $this->webservice->procesar_legajos($datos['FeAs'], $datos['FeAs'], [$RegLega]);
+            sleep(1);
+            $this->resp->respuesta(['setUpdate' => $setUpdate ?? false, 'setInsert' => $setInsert ?? false], 0, 'OK', 200, $inicio, 0, 0);
+
+        } catch (\PDOException $e) {
+            $this->log->trace('Fichadas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al crear fichadas', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('Fichadas::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
-
-        $identificador = $this->get_identifica($datos['Legajo'], $conn);
-
-        if (!$identificador) {
-            throw new \Exception('No se encontró el identificador para el legajo.', 400);
-        }
-
-        $existeFichada = $this->check_fichada($identificador, $datos['Fecha'], $datos['Hora'], $conn);
-
-        $dbData = $this->paragene->dbData(true);
-        $systemVer = $dbData['SystemVer'] ?? null;
-
-        $RegFech = date('Ymd', strtotime($datos['Fecha']));
-        $RegFeAs = date('Ymd', strtotime($datos['FeAs']));
-        $RegHora = $datos['Hora'];
-        $RegTipo = '1';
-        $RegFeRe = $RegFech;
-        $RegHoRe = $datos['HoRe'];
-        $RegTran = '1';
-        $RegSect = '0';
-        $RegRelo = '0';
-        $RegLect = '0';
-        $RegLega = $datos['Legajo'];
-
-        $params = [
-            $identificador,
-            $RegLega,
-            $RegTipo,
-            $RegFech,
-            $RegFeAs,
-            $RegHora,
-            $RegFeRe,
-            $RegHoRe,
-            $RegTran,
-            $RegSect,
-            $RegRelo,
-            $RegLect
-        ];
-
-        if ($existeFichada) {
-            $setUpdate = $this->update_fichada($params, $systemVer, $conn);
-        } else {
-            $setInsert = $this->insert_fichada($params, $systemVer, $conn);
-        }
-
-        $this->webservice->procesar_legajos($datos['FeAs'], $datos['FeAs'], [$RegLega]);
-        sleep(1);
-        $this->resp->respuesta(['setUpdate' => $setUpdate ?? false, 'setInsert' => $setInsert ?? false], 0, 'OK', 200, $inicio, 0, 0);
     }
     private function validateInput()
     {
@@ -135,7 +147,7 @@ class Fichadas
         return $datos;
     }
 
-    private function check_cierre($Fecha, $Legajo, $conn = null)
+    private function check_cierre(string $Fecha, int $Legajo, ?\PDO $conn = null)
     {
         $conn = $this->conect->check_connection($conn);
 
@@ -160,7 +172,7 @@ class Fichadas
         }
         return false;
     }
-    private function get_identifica($Legajo, $conn = null)
+    private function get_identifica(int $Legajo, ?\PDO $conn = null)
     {
         $conn = $this->conect->check_connection($conn);
         $sql = "SELECT TOP 1 IDCodigo FROM IDENTIFICA WHERE IDAsigna = '1' AND IDLegajo = :Legajo AND IDFichada = '1' ORDER BY IDCodigo";
@@ -170,7 +182,7 @@ class Fichadas
         $result = $stmt->fetch(\PDO::FETCH_ASSOC) ?? [];
         return $result['IDCodigo'] ?? null;
     }
-    private function check_fichada($Identificador, $Fecha, $Hora, $conn = null)
+    private function check_fichada(int $Identificador, string $Fecha, string $Hora, ?\PDO $conn = null)
     {
         $sql = "SELECT TOP 1 REGISTRO.RegTarj FROM REGISTRO WHERE RegTarj = :Identificador and RegFech = :Fecha and RegHora = :Hora ORDER BY RegTarj,RegFech,RegHora";
         $stmt = $conn->prepare($sql);
@@ -181,7 +193,7 @@ class Fichadas
         $result = $stmt->fetch(\PDO::FETCH_ASSOC) ?? [];
         return !empty($result['RegTarj']);
     }
-    private function update_fichada($params, $systemVer, $conn = null)
+    private function update_fichada(array $params, string $systemVer, ?\PDO $conn = null)
     {
         [$identificador, $RegLega, $RegTipo, $RegFech, $RegFeAs, $RegHora, $RegFeRe, $RegHoRe, $RegTran, $RegSect, $RegRelo, $RegLect] = $params;
 
@@ -220,7 +232,7 @@ class Fichadas
         return true;
 
     }
-    private function insert_fichada($params, $systemVer, $conn = null)
+    private function insert_fichada(array $params, string $systemVer, ?\PDO $conn = null)
     {
         [$identificador, $RegLega, $RegTipo, $RegFech, $RegFeAs, $RegHora, $RegFeRe, $RegHoRe, $RegTran, $RegSect, $RegRelo, $RegLect] = $params;
 

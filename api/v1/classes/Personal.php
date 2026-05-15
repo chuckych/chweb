@@ -11,21 +11,23 @@ use Classes\Tools;
 use Classes\ParaGene;
 use Classes\Auditor;
 use Flight;
+use flight\net\Request;
 
 class Personal
 {
-    private $resp;
-    private $request;
-    private $getData;
-    private $query;
-    private $log;
-    private $conect;
-    private $tools;
-    private $paraGene;
-    private $auditor;
-    private $url;
+    private Response $resp;
+    private Request $request;
+    private array $getData;
+    private array $query;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private Tools $tools;
+    private ParaGene $paraGene;
+    private Auditor $auditor;
+    private string $url;
+    private string $NameLog;
 
-    function __construct()
+    public function __construct()
     {
         $this->resp = new Response;
         $this->request = Flight::request();
@@ -37,99 +39,17 @@ class Personal
         $this->paraGene = new ParaGene;
         $this->auditor = new Auditor;
         $this->url = $this->request->url;
-    }
-    public function return_legajos($connDB = '')
-    {
-        $conn = $this->conect->check_connection($connDB);
-        $FHora = $this->tools->get_fecha_hora('PERSONAL', $conn);
-        $FHoraCache = $this->log->get_cache('fechaHoraPersonal', '.txt') ?? 0;
-
-        if ($FHoraCache >= $FHora) {
-            $legajos = $this->log->get_cache('legajos');
-            if ($legajos) {
-                $conn = null;
-                return $legajos;
-            }
-        }
-        return $this->query_legajos($conn, $FHora);
-    }
-    public function get_existing_legajos($connDB, $arrayDeLegajos)
-    {
-        $conn = $this->conect->check_connection($connDB);
-        $legajos = $this->query_legajos_in($arrayDeLegajos, $conn);
-        return $legajos;
-    }
-    public function legajos()
-    {
-        $conn = $this->conect->check_connection();
-        $data = $this->return_legajos($conn);
-        $this->resp->respuesta($data ?? [], count($data), 'OK', 200, 0, count($data), 0);
+        $this->NameLog = date('Ymd') . '_personal.log';
     }
 
-    public function check_legajos($arrayLegajos, $connDB = '')
-    {
+    // ------ METODOS PUBLICOS -------
 
-
-        if (!$arrayLegajos) {
-            throw new \Exception("No se enviaron legajos para comprobar", 400);
-        }
-
-        $conn = $this->conect->check_connection($connDB);
-
-        $ListaLegajos = $this->return_legajos($conn) ?? [];
-
-        if (!$ListaLegajos) {
-            throw new \Exception("No se enviaron legajos para comprobar", 400);
-        }
-
-        $legajosNoExistentes = [];
-
-        foreach ($arrayLegajos as $lega) {
-            if (!array_key_exists($lega, $ListaLegajos)) {
-                $legajosNoExistentes[] = $lega;
-            }
-        }
-        if ($legajosNoExistentes ?? []) {
-            throw new \Exception("Legajos no existentes: " . implode(', ', $legajosNoExistentes), 400);
-        }
-        return true;
-    }
-    private function query_legajos($conn, $FechaHora)
-    {
-        $sql = "SELECT LegNume, LegApNo FROM PERSONAL WHERE LegNume > 0 ORDER BY LegNume";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        $data = array_column($data, 'LegApNo', 'LegNume');
-        $conn = null;
-        $this->log->cache($data, 'legajos');
-        $this->log->cache($FechaHora, 'fechaHoraPersonal', '.txt');
-        return $data ?? [];
-    }
-    private function query_legajos_in($array, $connDB = '')
-    {
-        try {
-            if (!$array) {
-                throw new \Exception("No se enviaron legajos para comprobar (query_legajos_in)", 400);
-            }
-            $conn = $this->conect->check_connection($connDB);
-
-            $sql = "SELECT LegNume FROM PERSONAL WHERE LegNume IN (" . implode(',', $array) . ") ORDER BY LegNume";
-            $stmt = $conn->prepare($sql);
-            $stmt->execute();
-            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-            $conn = null;
-            $data = array_column($data, 'LegNume');
-            return $data ?? [];
-        } catch (\Throwable $th) {
-            return [];
-        }
-    }
     public function filtros_estructura()
     {
-        $data = $this->inputs_filtros_estructura(); // Validación de inputs
 
         try {
+
+            $data = $this->inputs_filtros_estructura(); // Validación de inputs
 
             $FiltroEstructura = $data['estructura'] ?? 1;
             $Descripcion = $data['descripcion'] ?? '';
@@ -173,6 +93,7 @@ class Personal
                         return " AND P.LegEsta = 0";
                 }
             };
+
             $fnFiltroProyectar = function () use ($FiltroProyectar) {
                 switch ($FiltroProyectar) {
                     case 2:
@@ -184,7 +105,6 @@ class Personal
                 }
             };
 
-
             $fnFiltroFechaEgreso = function () use ($FiltroFechaEgreso) {
                 switch ($FiltroFechaEgreso) {
                     case 1:
@@ -195,6 +115,7 @@ class Personal
                         return '';
                 }
             };
+
             $fnFiltroTipo = function () use ($FiltroTipo) {
                 switch ($FiltroTipo) {
                     case 2:
@@ -207,6 +128,7 @@ class Personal
             };
 
             $arr = array_values($stringCod);
+
             $fnPersonalFilters = function () use ($arr, $FiltroEstructura, $Strict) {
 
                 $campos = [
@@ -250,17 +172,11 @@ class Personal
 
             $db = $this->conect->check_connection();
 
-            $sql = "";
+            $sql = '';
 
             $dataE = $this->data_estructura($FiltroEstructura, $Descripcion);
 
-
-            $entidades = $NullCant ? $this->get_entidades(
-                $db,
-                $FiltroEstructura,
-                $stringCod[$FiltroEstructura] ?? '',
-                $dataE
-            ) : [];
+            $entidades = $NullCant ? $this->get_entidades($db, $FiltroEstructura, $stringCod[$FiltroEstructura] ?? '', $dataE) : [];
 
             $sql .= $dataE['sql'] ?? '';
             $sql .= $fnPersonalFilters(); // Filtros en tabla de entidades
@@ -271,13 +187,9 @@ class Personal
             $sql .= $fnFiltroTipo(); // Filtro de tipo de personal LegTipo
             $sql .= $fnFiltroProyectar(); // Filtro de proyección de horas LegProyeHoras
             $sql .= $dataE['sqlGroup'] ?? '';
-
-            // $this->log->write($sql, 'sql_filtros.sql');
-
             $stmt = $db->prepare($sql);
             $stmt->execute();
-            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+            $result = $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
 
             if ($entidades && $NullCant) {
                 $count = 0;
@@ -348,12 +260,112 @@ class Personal
                 ]
             ];
             $this->resp->respuesta($data ?? [], $total, 'OK', 200, 0, $total, 0);
-        } catch (\Throwable $th) {
-            $this->log->write($th->getMessage(), date('Ymd') . '_personal_filtros_estructura.log');
-            $this->resp->respuesta([], 0, $th->getMessage(), 400, microtime(true), 0, 0);
+        } catch (\PDOException $e) {
+            $this->log->trace('Personal::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener filtros', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('Personal::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
-    private function data_estructura($estructura, $Descripcion = '')
+
+    public function get_existing_legajos(?\PDO $PDO, array $arrayDeLegajos)
+    {
+        $conn = $this->conect->check_connection($PDO);
+        $legajos = $this->query_legajos_in($arrayDeLegajos, $conn);
+        return $legajos;
+    }
+
+    public function legajos()
+    {
+        $conn = $this->conect->check_connection();
+        $data = $this->return_legajos($conn);
+        $this->resp->respuesta($data ?? [], count($data), 'OK', 200, 0, count($data), 0);
+    }
+
+    public function check_legajos(array $arrayLegajos, ?\PDO $connDB = null)
+    {
+
+
+        if (!$arrayLegajos) {
+            throw new \Exception("No se enviaron legajos para comprobar", 400);
+        }
+
+        $conn = $this->conect->check_connection($connDB);
+
+        $ListaLegajos = $this->return_legajos($conn) ?? [];
+
+        if (!$ListaLegajos) {
+            throw new \Exception("No se enviaron legajos para comprobar", 400);
+        }
+
+        $legajosNoExistentes = [];
+
+        foreach ($arrayLegajos as $lega) {
+            if (!array_key_exists($lega, $ListaLegajos)) {
+                $legajosNoExistentes[] = $lega;
+            }
+        }
+        if ($legajosNoExistentes ?? []) {
+            throw new \Exception("Legajos no existentes: " . implode(', ', $legajosNoExistentes), 400);
+        }
+        return true;
+    }
+
+    // ------- METODOS PRIVADOS -------
+    private function return_legajos(?\PDO $PDO = null)
+    {
+        $conn = $this->conect->check_connection($PDO);
+        $FHora = $this->tools->get_fecha_hora('PERSONAL', $conn);
+        $FHoraCache = $this->log->get_cache('fechaHoraPersonal', '.txt') ?? 0;
+
+        if ($FHoraCache >= $FHora) {
+            $legajos = $this->log->get_cache('legajos');
+            if ($legajos) {
+                $conn = null;
+                return $legajos;
+            }
+        }
+        return $this->query_legajos($conn, $FHora);
+    }
+
+    private function query_legajos(?\PDO $conn, string $FechaHora)
+    {
+        $sql = "SELECT LegNume, LegApNo FROM PERSONAL WHERE LegNume > 0 ORDER BY LegNume";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        $data = array_column($data, 'LegApNo', 'LegNume');
+        $conn = null;
+        $this->log->cache($data, 'legajos');
+        $this->log->cache($FechaHora, 'fechaHoraPersonal', '.txt');
+        return $data ?? [];
+    }
+
+    private function query_legajos_in(array $array, ?\PDO $connDB = null)
+    {
+        try {
+            if (!$array) {
+                throw new \Exception("No se enviaron legajos para comprobar (query_legajos_in)", 400);
+            }
+            $conn = $this->conect->check_connection($connDB);
+
+            $sql = "SELECT LegNume FROM PERSONAL WHERE LegNume IN (" . implode(',', $array) . ") ORDER BY LegNume";
+            $stmt = $conn->prepare($sql);
+            $stmt->execute();
+            $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $conn = null;
+            $data = array_column($data, 'LegNume');
+            return $data ?? [];
+        } catch (\PDOException $e) {
+            $this->log->trace('Personal::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener legajos', 400);
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    private function data_estructura(string $estructura, string $Descripcion = '')
     {
         static $cache = [];
         $cacheKey = "{$estructura}-{$Descripcion}";
@@ -450,7 +462,85 @@ class Personal
         // \file_put_contents('data_estructura.txt', "Cache miss for key: {$cacheKey}\n", FILE_APPEND);
         return $cache[$cacheKey] = $a[$estructura];
     }
-    private function get_entidades($db, $estructura, $codi, $dataE)
+
+    private function inputs_filtros_estructura()
+    {
+        $datos = $this->getData;
+
+        if (!is_array($datos)) {
+            throw new \Exception("No se recibieron datos", 1);
+        }
+
+        if ($this->tools->jsonNoValido()) {
+            throw new \Exception("Formato JSON invalido", 400);
+        }
+
+
+        $rules = [ // Reglas de validación
+            'estructura' => ['required', 'numeric'],
+            'activo' => ['allowed012'],
+            'tipo' => ['allowed012'],
+            'estado' => ['allowed012'],
+            'descripcion' => ['varchar100'],
+            'nullCant' => ['allowed01'],
+            'strict' => ['allowed01'],
+            'proyectar' => ['allowed012'],
+        ];
+
+        $customValueKey = array( // Valores por defecto
+            'estructura' => 1,
+            'activo' => 1,
+            'tipo' => 2,
+            'estado' => 2,
+            'nullCant' => 0,
+            'strict' => 0,
+            'proyectar' => 2,
+        );
+        $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
+        foreach ($keyData as $key) { // Recorro las claves
+            if (!array_key_exists($key, $datos)) { // Si no existe la clave en $datos
+                $datos[$key] = $customValueKey[$key]; // Asigno el valor por defecto
+            }
+        }
+
+        $this->data_estructura($datos['estructura'] ?? '', $datos['descripcion'] ?? ''); // Validación de la estructura
+
+        $validator = new InputValidator($datos, $rules); // Instancia 
+        $validator->validate(); // Valido los datos
+
+        $filtros = $datos['filtros'] ?? []; // Obtengo los filtros del array $datos
+        // \file_put_contents('filtros_estructura.json', print_r(json_encode($datos['filtros']), true), FILE_APPEND);
+        if (($datos['filtros']['secciones'] ?? false) && is_array($datos['filtros']['secciones'])) {
+            foreach ($datos['filtros']['secciones'] as $key => $value) {
+                if ($value === '00' || $value == '0' || $value == '00') {
+                    $datos['filtros']['secciones'][$key] = "0";
+                }
+            }
+        }
+        // Asegúrate de actualizar $filtros con los cambios
+        $filtros = $datos['filtros'];
+        // \file_put_contents('filtros_estructura.json', print_r(json_encode($datos['filtros']), true), FILE_APPEND);
+        $rulesFiltros = [ // Reglas de validación para los filtros
+            'empresas' => ['arrInt'],
+            'plantas' => ['arrInt'],
+            'convenios' => ['arrInt'],
+            'sectores' => ['arrInt'],
+            'secciones' => ['arrInt'],
+            'grupos' => ['arrInt'],
+            'sucursales' => ['arrInt'],
+            'personal' => ['arrInt'],
+        ];
+
+        if (is_array($filtros)) {
+            $validatorFiltros = new InputValidator($filtros, $rulesFiltros); // Instancia 
+            $validatorFiltros->validate(); // Valido los datos
+        }
+
+        // Flight::json($datos);
+        return $datos;
+    }
+
+    private function get_entidades(?\PDO $db, int $estructura, string $codi, array $dataE)
     {
         if ($estructura === 8) {
             return [];
@@ -487,89 +577,8 @@ class Personal
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC) ?? [];
     }
-    public function inputs_filtros_estructura()
-    {
-        $datos = $this->getData;
 
-        if ($this->tools->jsonNoValido()) {
-            $errores[] = $this->tools->jsonNoValido();
-            $this->resp->respuesta($errores ?? [], 0, "Formato JSON invalido", 400, microtime(true), 0, 0);
-        }
-
-        try {
-
-            if (!is_array($datos)) {
-                throw new \Exception("No se recibieron datos", 1);
-            }
-
-            $rules = [ // Reglas de validación
-                'estructura' => ['required', 'numeric'],
-                'activo' => ['allowed012'],
-                'tipo' => ['allowed012'],
-                'estado' => ['allowed012'],
-                'descripcion' => ['varchar100'],
-                'nullCant' => ['allowed01'],
-                'strict' => ['allowed01'],
-                'proyectar' => ['allowed012'],
-            ];
-
-            $customValueKey = array( // Valores por defecto
-                'estructura' => 1,
-                'activo' => 1,
-                'tipo' => 2,
-                'estado' => 2,
-                'nullCant' => 0,
-                'strict' => 0,
-                'proyectar' => 2,
-            );
-            $keyData = array_keys($customValueKey); // Obtengo las claves del array $customValueKey
-            foreach ($keyData as $key) { // Recorro las claves
-                if (!array_key_exists($key, $datos)) { // Si no existe la clave en $datos
-                    $datos[$key] = $customValueKey[$key]; // Asigno el valor por defecto
-                }
-            }
-
-            $this->data_estructura($datos['estructura'] ?? '', $datos['descripcion'] ?? ''); // Validación de la estructura
-
-            $validator = new InputValidator($datos, $rules); // Instancia 
-            $validator->validate(); // Valido los datos
-
-            $filtros = $datos['filtros'] ?? []; // Obtengo los filtros del array $datos
-            // \file_put_contents('filtros_estructura.json', print_r(json_encode($datos['filtros']), true), FILE_APPEND);
-            if (($datos['filtros']['secciones'] ?? false) && is_array($datos['filtros']['secciones'])) {
-                foreach ($datos['filtros']['secciones'] as $key => $value) {
-                    if ($value === '00' || $value == '0' || $value == '00') {
-                        $datos['filtros']['secciones'][$key] = "0";
-                    }
-                }
-            }
-            // Asegúrate de actualizar $filtros con los cambios
-            $filtros = $datos['filtros'];
-            // \file_put_contents('filtros_estructura.json', print_r(json_encode($datos['filtros']), true), FILE_APPEND);
-            $rulesFiltros = [ // Reglas de validación para los filtros
-                'empresas' => ['arrInt'],
-                'plantas' => ['arrInt'],
-                'convenios' => ['arrInt'],
-                'sectores' => ['arrInt'],
-                'secciones' => ['arrInt'],
-                'grupos' => ['arrInt'],
-                'sucursales' => ['arrInt'],
-                'personal' => ['arrInt'],
-            ];
-
-            if (is_array($filtros)) {
-                $validatorFiltros = new InputValidator($filtros, $rulesFiltros); // Instancia 
-                $validatorFiltros->validate(); // Valido los datos
-            }
-
-            // Flight::json($datos);
-            return $datos;
-        } catch (\Exception $e) {
-            $this->resp->respuesta([], 0, $e->getMessage(), 400, microtime(true), 0, 0);
-            $this->log->write($e->getMessage(), date('Ymd') . '_inputs_filtros_estructura.log');
-        }
-    }
-    private function array_to_string($array)
+    private function array_to_string(array $array)
     {
         if (empty($array)) {
             return '';

@@ -1,5 +1,55 @@
 $(function () {
     "use strict";
+
+    const FORMAT_BACKEND = 'YYYY-MM-DD';
+    const FORMAT_VIEW = 'DD-MM-YYYY';
+
+    const syncDateInputs = function (viewSelector, hiddenSelector) {
+        const $view = $(viewSelector);
+        const $hidden = $(hiddenSelector);
+
+        if (!$view.length || !$hidden.length || typeof moment === 'undefined' || !$.fn.daterangepicker) {
+            return;
+        }
+
+        const currentHidden = $hidden.val();
+        const initialDate = moment(currentHidden, FORMAT_BACKEND, true).isValid()
+            ? moment(currentHidden, FORMAT_BACKEND)
+            : moment();
+
+        $hidden.val(initialDate.format(FORMAT_BACKEND));
+        $view.val(initialDate.format(FORMAT_VIEW));
+
+        singleDatePicker(viewSelector, 'right', 'down', '', false, true);
+
+        const picker = $view.data('daterangepicker');
+        if (picker) {
+            picker.locale.format = FORMAT_VIEW;
+            picker.setStartDate(initialDate);
+            picker.setEndDate(initialDate);
+        }
+
+        $view.on('apply.daterangepicker', function (ev, pickerDate) {
+            $(this).val(pickerDate.startDate.format(FORMAT_VIEW));
+            $hidden.val(pickerDate.startDate.format(FORMAT_BACKEND));
+        });
+
+        $view.on('change', function () {
+            const typedDate = moment($(this).val(), FORMAT_VIEW, true);
+            if (typedDate.isValid()) {
+                $hidden.val(typedDate.format(FORMAT_BACKEND));
+                $(this).val(typedDate.format(FORMAT_VIEW));
+                return;
+            }
+
+            const hiddenDate = moment($hidden.val(), FORMAT_BACKEND, true);
+            $(this).val((hiddenDate.isValid() ? hiddenDate : moment()).format(FORMAT_VIEW));
+        });
+    };
+
+    syncDateInputs('#FichFechaIniView', '#FichFechaIni');
+    syncDateInputs('#FichFechaFinView', '#FichFechaFin');
+
     onOpenSelect2()
     ActiveBTN(false, "#submit", '', 'Ingresar Fichadas')
     $(".FicharHorario").bind("submit", function (e) {

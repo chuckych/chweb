@@ -14,13 +14,12 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['FicharHorario'] == 'true'
         echo json_encode($data);
         exit;
     }
-    ;
+
     if (!ValNumerico($_POST['FichLegaIni']) || (!ValNumerico($_POST['FichLegaFin']))) {
         $data = ['status' => 'error', 'dato' => 'Campos de Legajo deben ser Números'];
         echo json_encode($data);
         exit;
     }
-    ;
 
     $SelEmpresa = FusNuloPOST('SelEmpresa', '');
     $SelPlanta = FusNuloPOST('SelPlanta', '');
@@ -48,14 +47,11 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['FicharHorario'] == 'true'
         echo json_encode($data);
         exit;
     }
-    ;
     if ((FechaString($FechaIni) > FechaString($FechaFin))) {
         $data = ['status' => 'error', 'dato' => 'Rango de Fecha Incorrecto.</span>'];
         echo json_encode($data);
         exit;
     }
-    ;
-
     $FicharHorario = FicharHorario($FechaIni, $FechaFin, $LegaIni, $LegaFin, $Tipo, $Emp, $Plan, $Sucur, $Grup, $Sect, $Sec2, $Ingresar, $Laboral);
 
     $arrEstruct = [
@@ -70,30 +66,28 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['FicharHorario'] == 'true'
     foreach ($arrEstruct as $key => $value) {
         $datas[] = ($value) ? '<br />' . $key . ': <b>' . $value . '</b>' : '';
     }
-    $datas = implode("", $datas);
+    $datas = implode("", $datas ?? []);
 
-    function dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin)
+    function dato_proceso(int $LegaIni, int $LegaFin, string $FechaIni, string $FechaFin)
     {
-        $textoLegajo = ($LegaIni == $LegaFin) ? 'Legajo: ' . $LegaIni : 'Legajos: ' . $LegaIni . ' a ' . $LegaFin;
-        $textoFecha = (FechaString($FechaIni) == FechaString($FechaFin)) ? '. Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y') : '. Desde: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' hasta ' . Fech_Format_Var($FechaFin, 'd/m/Y');
+        $textoLegajo = ($LegaIni === $LegaFin) ? 'Legajo: ' . $LegaIni : 'Legajos: ' . $LegaIni . ' a ' . $LegaFin;
+        $textoFecha = (FechaString($FechaIni) === FechaString($FechaFin)) ? '. Fecha: ' . Fech_Format_Var($FechaIni, 'd/m/Y') : '. Desde: ' . Fech_Format_Var($FechaIni, 'd/m/Y') . ' hasta ' . Fech_Format_Var($FechaFin, 'd/m/Y');
         $Dato = 'Ingreso de Fichadas. ' . $textoLegajo . $textoFecha;
         return $Dato;
     }
 
-    if (($FicharHorario) == 'Terminado') {
+    if (($FicharHorario ?? '') == 'Terminado') {
         $data = ['status' => 'ok', 'Mensaje' => '<b>Ingreso de Fichadas enviado correctamente!</b> <br>De Legajos <b>' . $_POST['FichLegaIni'] . '</b> a <b>' . $_POST['FichLegaFin'] . '</b><br/>Desde: <b>' . Fech_Format_Var($_POST['FichFechaIni'], 'd/m/Y') . '</b> hasta: <b>' . Fech_Format_Var($_POST['FichFechaFin'], 'd/m/Y') . '</b>' . $datas];
         /** Insertar en tabla Auditor */
-        $Dato = dato_proceso($LegaIni, $LegaFin, $FechaIni, $FechaFin);
+        $Dato = dato_proceso(intval($LegaIni), intval($LegaFin), $FechaIni, $FechaFin);
         audito_ch('P', $Dato, '11');
-        /** */
         echo json_encode($data);
         exit;
     } else {
-        $data = ['status' => 'error', 'Mensaje' => 'Error'];
+        $data = ['status' => 'error', 'Mensaje' => 'Error al enviar el Ingreso de Fichadas!'];
         echo json_encode($data);
         exit;
     }
-    ;
 } else {
     $data = ['status' => 'error', 'Mensaje' => 'Error!'];
     echo json_encode($data);

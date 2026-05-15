@@ -369,6 +369,7 @@ $(function () {
             }),
             dataType: "json"
         });
+        console.log(response);
         return response; // Debe incluir response.tiposHoras y response.data
     }
 
@@ -392,9 +393,10 @@ $(function () {
         const response = await getTiposHorasYDatos();
 
         if (!response || !response.totales || !response.data) {
-            console.log('Error: La respuesta no contiene los datos esperados.');
+            // console.log('Error: La respuesta no contiene los datos esperados.');
             $('#btnExportar').hide();
             $('#btnExportarPDF').hide();
+            // notify('No se pudieron cargar los datos de horas calculadas.', 'danger', 5000, 'right');
             return; // Detener la ejecución si no hay datos válidos
         }
         $('#btnExportar').show();
@@ -826,18 +828,19 @@ $(function () {
             });
             $.notifyClose();
             if (response.data?.RESPONSE_CODE === '200 OK') {
-                if (response.data?.DATA === true) {
+                if (response.data?.DATA[0] === true) {
                     notify('Proyección de horas enviado correctamente', 'success', 5000, 'right')
                 } else {
                     notify('No se pudo procesar la proyección de horas', 'danger', 5000, 'right');
                 }
                 getHoras_();
             } else {
-                alert('Error al procesar');
+                notify('Error al procesar la proyección de horas', 'danger', 5000, 'right');
             }
         } catch (error) {
-            console.error('Error en la solicitud:', error);
-            // alert('Ocurrió un error al procesar los datos.');
+            console.log(error);
+            
+            notify('Ocurrió un error al procesar los datos.', 'danger', 5000, 'right');
         } finally {
             $(this).prop('disabled', false).text('Generar').removeClass('hint--info').attr('aria-label', 'Generar proyección de horas');
         }

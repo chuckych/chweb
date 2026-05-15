@@ -39,11 +39,6 @@
                                 <a class="nav-link text-secondary" id="AD-tab" data-toggle="tab" href="#AD" role="tab"
                                     aria-controls="AD" aria-selected="false">AD</a>
                             </li>
-                            <li class="nav-item text-secondary d-none" role="presentation">
-                                <a class="nav-link text-secondary" id="XmartClock-tab" data-toggle="tab"
-                                    href="#XmartClock" role="tab" aria-controls="XmartClock"
-                                    aria-selected="false">XmartClock</a>
-                            </li>
                         </ul>
                         <div class="tab-content py-2 mt-1" id="myTabContent">
                             <div class="tab-pane show active" id="Cuenta" role="tabpanel" aria-labelledby="Cuenta-tab">
@@ -100,12 +95,12 @@
                                     </div>
                                     <div class="col-6 col-sm-6 mt-sm-2">
                                         <p class="font08 mb-1">Password: </p>
-                                        <input type="text" name="pass" id="pass" placeholder="Password"
+                                        <input type="password" name="pass" id="pass" placeholder="Password"
                                             class="h40 form-control my-2">
                                         <input type="hidden" name="recid" id="recid" placeholder="recid" class="">
                                     </div>
                                     <div class="col-12 d-inline-flex w-100 mt-2">
-                                        <div class="custom-control custom-switch">
+                                        <div class="custom-control custom-switch d-none">
                                             <input type="checkbox" name="auth" class="custom-control-input" id="auth"
                                                 value="1">
                                             <label class="custom-control-label fw4" for="auth">

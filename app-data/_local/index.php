@@ -77,7 +77,7 @@ function normalize_local_api_arg_to_array($value): array
     return [];
 }
 
-function local_api($endpoint, $payload = [], $method = 'GET', $queryParams = [])
+function local_api(string $endpoint, $payload = [], $method = 'GET', $queryParams = [])
 {
     static $client = null;
 

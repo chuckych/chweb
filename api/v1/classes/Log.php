@@ -24,14 +24,16 @@ class Log
         $date = $this->date;
         $text = ($type == 'export') ? $text . "\n" : $date . ' ' . $text . "\n";
         $text = ($ext == 'sql') ? "-- " . $date . "\n" . $textOriginal . ';' . "\n" : $text;
-        if (!is_dir($path)) mkdir($path, 0777, true);
+        if (!is_dir($path))
+            mkdir($path, 0777, true);
         file_put_contents($path . $nameFile, $text, FILE_APPEND);
     }
     public function cache($text, $nameFile, $ext = '.json')
     {
         $path = $this->pathCache;
         $fullPath = "{$path}" . ID_COMPANY . "_{$nameFile}{$ext}";
-        if (!is_dir($path)) mkdir($path, 0777, true);
+        if (!is_dir($path))
+            mkdir($path, 0777, true);
         if ($ext == '.json') {
             $text = json_encode($text, $this->optJson);
         }
@@ -82,7 +84,25 @@ class Log
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $file = $trace[0]['file'] ?? 'unknown file';
         $line = $trace[0]['line'] ?? 'unknown line';
-        $text = $error ? "Error: {$error} in {$file} on line {$line}" : "Error in {$file} on line {$line}";
+        $desde = $trace[1]['file'] ?? 'unknown file';
+        $desdeLine = $trace[1]['line'] ?? 'unknown line';
+        $text = $error ? "Error: {$error} in {$file} on line {$line} (called from {$desde} on line {$desdeLine})" : "Error in {$file} on line {$line} (called from {$desde} on line {$desdeLine})";
         \error_log($text);
+    }
+    public function trace(string $error = '', $nameFile = '', $exception = null)
+    {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $file = $trace[0]['file'] ?? 'unknown file';
+        $line = $trace[0]['line'] ?? 'unknown line';
+        $desde = $trace[1]['file'] ?? 'unknown file';
+        $desdeLine = $trace[1]['line'] ?? 'unknown line';
+        $fn = $trace[1]['function'] ?? 'unknown function';
+        $getMessage = $exception ? $exception->getMessage() : '';
+        $strError =  $exception ? 'Error: ': '';
+        $text = $error ? "{$strError}{$error} {$getMessage}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\n" : "{$strError}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\n";
+        $this->write($text, $nameFile);
+        if($exception){
+            \error_log($text);
+        }
     }
 }

@@ -174,8 +174,9 @@ Flight::route('PUT /novedad', function () {
     $method = 'PUT';
     $rs = ch_api($endpoint, array($payload), $method, []);
     $result = json_decode($rs, true);
+    $result['MESSAGE'] ??= 'ERROR';
 
-    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+    $HTTP_STATUS = $result['HTTP_STATUS'] ?? 500;
 
     if ($result['MESSAGE'] == "OK") {
 
@@ -196,7 +197,7 @@ Flight::route('PUT /novedad', function () {
         audito_ch('M', $aud, '2');
     }
 
-    Flight::json($result);
+    Flight::json($result, $HTTP_STATUS);
 });
 
 Flight::route('POST /novedad', function () {
@@ -274,13 +275,13 @@ Flight::route('POST /novedad', function () {
     $result = json_decode($rs, true);
 
     $result['MESSAGE'] ??= 'ERROR';
-
+    $HTTP_STATUS = $result['HTTP_STATUS'] ?? 500;
     if ($result['MESSAGE'] == "OK") {
         $aud = 'Alta Novedad: (' . $payload['Nove'] . ') ' . $getNovedad[0]['Desc'] . ' de Legajo: ' . $legajo . ' Fecha: ' . fechformat($fecha);
         audito_ch('A', $aud, '2');
     }
 
-    Flight::json($result);
+    Flight::json($result, $HTTP_STATUS);
 });
 
 Flight::route('DELETE /novedad', function () {
@@ -306,7 +307,8 @@ Flight::route('DELETE /novedad', function () {
     $rs = ch_api($endpoint, array($payload->data), 'DELETE', []);
     $result = json_decode($rs, true);
 
-    $result['MESSAGE'] = $result['MESSAGE'] ?? 'ERROR';
+    $result['MESSAGE'] ??= 'ERROR';
+    $HTTP_STATUS = $result['HTTP_STATUS'] ?? 500;
 
     if ($result['MESSAGE'] == "OK") {
         $getNovedad = getNovedad($nove);
@@ -314,13 +316,11 @@ Flight::route('DELETE /novedad', function () {
         audito_ch('B', $aud, '2');
     }
 
-    Flight::json($result);
+    Flight::json($result, $HTTP_STATUS);
 });
 
 Flight::route('POST /horas/totales', function () {
-
     $payload = Flight::request()->data->getData();
-    // Flight::json($payload) . exit;
 
     $payload['DTHoras'] = $payload['DTHoras'] ?? false;
     $payload['flag'] = $payload['flag'] ?? false;
@@ -352,7 +352,6 @@ Flight::route('POST /horas/totales', function () {
     $payload['Grup'] = (!$payload['Grup']) ? mergeArray($payload['Grup'], $grupRol) : $payload['Grup'];
     $payload['Sucu'] = (!$payload['Sucu']) ? mergeArray($payload['Sucu'], $sucuRol) : $payload['Sucu'];
     $payload['Lega'] = (!$payload['Lega']) ? mergeArray($payload['Lega'], $persRol) : $payload['Lega'];
-
     $data = [];
 
     if ($payload['DTHoras'] == 'true') {
@@ -366,7 +365,6 @@ Flight::route('POST /horas/totales', function () {
         fclose($file2);
         Flight::jsonHalt($data);
     }
-    // Flight::json($payload) . exit;
 
     $data = getHorasTotales($payload);
 
@@ -1582,7 +1580,7 @@ Flight::route('POST /proyectar', function () {
         auditoria_multiple($arrayAuditoria, 47);
     }
 
-    sleep(5); // Simular un tiempo de espera para la proyección
+    // sleep(5); // Simular un tiempo de espera para la proyección
     Flight::json($result ?? []);
 
 });
@@ -2058,10 +2056,10 @@ Flight::route('POST /horario/importar-xls', function () {
             throw new Exception('No se pudo validar el archivo temporal subido.');
         }
 
-        error_log('[horarios.importar_xls] upload=' . json_encode([
-            'name' => $originalName,
-            'size' => $fileSize,
-        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        // error_log('[horarios.importar_xls] upload=' . json_encode([
+        //     'name' => $originalName,
+        //     'size' => $fileSize,
+        // ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
 
         $importer = require __DIR__ . '/php/horarios_import_xls.php';
         if (!is_callable($importer)) {

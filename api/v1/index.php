@@ -1,4 +1,8 @@
 <?php
+if (!ob_get_level()) { // Verificar si no hay un buffer de salida activo
+    ob_start(); // Iniciar el buffer de salida para evitar problemas con las cabeceras HTTP
+}
+
 require 'vendor/autoload.php';
 
 $_SERVER['HTTP_TOKEN'] ?? ''; // Token de la petición
@@ -37,7 +41,7 @@ $horarios = new Classes\Horarios;
 $auditor = new Classes\Auditor;
 $novedades = new Classes\Novedades;
 $RRHHWebService = new Classes\RRHHWebService;
-$connectSqlSrv = new Classes\ConnectSqlSrv;
+// $connectSqlSrv = new Classes\ConnectSqlSrv;
 $ParaGene = new Classes\ParaGene;
 $Personal = new Classes\Personal;
 $Fichadas = new Classes\Fichadas;
@@ -92,14 +96,17 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
     $request = Flight::request();
     $data = $request->data->getData();
     $inicio = microtime(true);
+    try {
+        $proyectar = $RRHHWebService->proyectar_horas(
+            $data['FechaDesde'],
+            $data['FechaHasta'],
+            $data['Legajos'] ?? []
+        ) ?? 'No se pudieron proyectar las horas';
 
-    $proyectar = $RRHHWebService->proyectar_horas(
-        $data['FechaDesde'],
-        $data['FechaHasta'],
-        $data['Legajos'] ?? []
-    );
-
-    $response->respuesta($proyectar ?? [], 0, '', 200, $inicio, 0, ID_COMPANY);
+        $response->respuesta([$proyectar], 0, '', 200, $inicio, 0, ID_COMPANY);
+    } catch (\Exception $e) {
+        \error_log('Error en la ruta /proyectar: ' . $e->getMessage());
+    }
 });
 Flight::route('DELETE /proyectar', [$horas, 'eliminar_proyeccion']);
 
@@ -190,21 +197,29 @@ Flight::map('Forbidden', function ($mensaje) use ($response) {
 
 Flight::map('error', function ($ex) use ($response, $log) {
 
-    $code_protected = $ex->getCode() ?? 400;
+    $code_protected = (int) ($ex->getCode() ?? 0);
+    if ($code_protected < 100 || $code_protected > 599) {
+        $code_protected = 400;
+    }
     $error_message = $ex->getMessage() ?? 'Error desconocido';
 
     switch ($code_protected) {
         case 404:
+            \http_response_code(404); // Set response code
             Flight::notFound();
             break;
         case 403:
+            \http_response_code(403); // Set response code
             Flight::Forbidden($ex->getMessage());
+            break;
+        case 400:
+            \http_response_code(400); // Set response code
             break;
         case 1:
             $error_message = 'Error interno';
             break;
         default:
-            $error_message = $ex->getMessage() ?? 'Error desconocido';  
+            $error_message = $ex->getMessage() ?? 'Error desconocido';
             break;
     }
 
@@ -212,11 +227,11 @@ Flight::map('error', function ($ex) use ($response, $log) {
     $nameLog = date('Ymd') . '_error_.log'; // path Log Api
 
     if ($ex instanceof Exception) {
-        $log->write($error_message, $nameLog);
+        $log->trace('Map::' . __FUNCTION__ . ': ' . $error_message, $nameLog);
     } elseif ($ex instanceof Error) {
-        $log->write($error_message, $nameLog);
+        $log->trace('Map::' . __FUNCTION__ . ': ' . $error_message, $nameLog);
     } elseif ($ex instanceof PDOException) {
-        $log->write($error_message, $nameLog);
+        $log->trace('Map::' . __FUNCTION__ . ': ' . $error_message, $nameLog);
     }
     $company = getenv('ID_COMPANY') !== false ? getenv('ID_COMPANY') : '';
     $response->respuesta([], 0, $error_message, $code_protected, $inicio, 0, $company);

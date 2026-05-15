@@ -10,16 +10,16 @@
         $('input[name="_dr"]').daterangepicker({
             singleDatePicker: true,
             showDropdowns: true,
-            minYear: <?= $FirstYear ?>,
-            maxYear: <?= $maxYear ?>,
+            minYear: <?= $FirstYear ?? '' ?>,
+            maxYear: <?= $maxYear ?? '' ?>,
             // showWeekNumbers: true,
             autoUpdateInput:true,
             opens: "left",
-            startDate: '<?= fechformat($FechaIni) ?>',
-            endDate: '<?= fechformat($FechaFin) ?>',
+            startDate: '<?= fechformat($FechaIni ?? '') ?>',
+            endDate: '<?= fechformat($FechaFin ?? '') ?>',
             autoApply: true,
-            minDate: "<?= fechformat($FirstDate) ?>",
-            maxDate: "<?= fechformat($maxDate) ?>",
+            minDate: "<?= fechformat($FirstDate ?? '') ?>",
+            maxDate: "<?= fechformat($maxDate ?? '') ?>",
             ranges: {
                 'Hoy': [moment(), moment()],
                 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -38,7 +38,7 @@
                 firstDay: 1,
                 alwaysShowCalendars: true,
                 applyButtonClasses: "text-white <?= $bgcolor ?>",
-            },
+            }
         });
         $('input[name="_dr"]').on('apply.daterangepicker', function(ev, picker) {
             $("#range").submit();
@@ -49,16 +49,16 @@
         $('.drs').daterangepicker({
             singleDatePicker: true,
             showDropdowns: false,
-            minYear: <?= $FirstYear ?>,
-            maxYear: <?= $maxYear ?>,
+            minYear: <?= $FirstYear ?? '' ?>,
+            maxYear: <?= $maxYear ?? '' ?>,
             showWeekNumbers: true,
             autoUpdateInput:true,
             opens: "left",
-            startDate: '<?= fechformat($FechaIni) ?>',
-            endDate: '<?= fechformat($FechaFin) ?>',
+            startDate: '<?= fechformat($FechaIni ?? '') ?>',
+            endDate: '<?= fechformat($FechaFin ?? '') ?>',
             autoApply: true,
-            minDate: "<?= fechformat($FirstDate) ?>",
-            maxDate: "<?= fechformat($maxDate) ?>",
+            minDate: "<?= fechformat($FirstDate ?? '') ?>",
+            maxDate: "<?= fechformat($maxDate ?? '') ?>",
             ranges: {
                 // 'Hoy': [moment(), moment()],
                 // 'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],

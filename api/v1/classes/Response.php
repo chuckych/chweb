@@ -10,6 +10,11 @@ use Flight;
 
 class Response
 {
+    private function normalizeHttpCode(int $code): int
+    {
+        return ($code >= 100 && $code <= 599) ? $code : 500;
+    }
+    
     /**
      * Devuelve una respuesta JSON con el código de respuesta especificado.
      *
@@ -18,12 +23,17 @@ class Response
      */
     public function json($data, $code = 200)
     {
-        // Establecemos el código de respuesta HTTP.
-        http_response_code($code);
+        $code = $this->normalizeHttpCode((int) $code);
 
-        // Establecemos las cabeceras para indicar que la respuesta es JSON.
-        header('Content-Type: application/json; charset=utf-8');
-
+        // En algunos entornos CGI/FastCGI Apache puede conservar 200 si no se envía Status explícito.
+        if (!headers_sent()) {
+            $statusText = $this->getStatusMessage($code);
+            $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
+            header($protocol . ' ' . $code . ' ' . $statusText, true, $code);
+            header('Status: ' . $code . ' ' . $statusText, true, $code);
+            http_response_code($code);
+            header('Content-Type: application/json; charset=utf-8', true, $code);
+        }
         // Convertimos los datos a formato JSON, escapando correctamente los caracteres UTF-8.
         $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         echo $json;
@@ -43,8 +53,15 @@ class Response
     {
         $log = new Log; // Log Api
         $nameLog = date('Ymd') . '_request_' . $idCompany . '.log'; // path Log Api
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $file = $trace[0]['file'] ?? 'unknown file';
+        $line = $trace[0]['line'] ?? 'unknown line';
+
         try {
-            $code = intval($code); // code response
+            $code = $this->normalizeHttpCode((int) $code); // code response
+            if (!headers_sent()) {
+                \http_response_code($code); // Set response code
+            }
             $start = ($code != 400) ? $this->start() : 0; // start response
             $length = ($code != 400) ? $this->length() : 0; // length response
 
@@ -53,6 +70,7 @@ class Response
 
             $array = [
                 'RESPONSE_CODE' => $code . ' ' . $this->getStatusMessage($code),
+                'HTTP_STATUS' => $code,
                 'START' => intval($start),
                 'LENGTH' => intval($length),
                 'TOTAL' => intval($total),
@@ -79,17 +97,14 @@ class Response
             }
             // si ID_COMPANY no esta definido
             $idCompany = (defined('ID_COMPANY')) ? ID_COMPANY : 0;
-            /** start text log*/
-            $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ]\n----------";
-            /** end text log*/
+            
+            $fn = $trace[1]['function'] ?? 'unknown function';
+            $TextLog = "\n REQUEST  = [ $textParams ]\n RESPONSE = [ RESPONSE_CODE=\"$array[RESPONSE_CODE]\" START=\"$array[START]\" LENGTH=\"$array[LENGTH]\" TOTAL=\"$array[TOTAL]\" COUNT=\"$array[COUNT]\" MESSAGE=\"$array[MESSAGE]\" TIME=\"$array[TIME]\" IP=\"$ipAdress\" AGENT=\"$agent\" ] TRACE: File: {$file} Line: {$line} fn -> {$fn}\n";
             $log->write($TextLog, $nameLog); // Log Api
             exit;
-            //code...
         } catch (\Throwable $th) {
-            $log->write($th->getMessage(), $nameLog);
+            $log->trace('Response::' . __FUNCTION__ . ': ', $nameLog, $th);
             $this->json(['error' => 'Error al procesar la respuesta'], 500);
-            // error_log(print_r(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2), true));
-            $log->traceError($th->getMessage());
             exit;
         }
         /** END LOG API CONFIG */

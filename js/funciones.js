@@ -1142,15 +1142,16 @@ const test_conect = async (data, options = {}) => {
     notifyWait('Aguarde... conectando con control horario...')
     try {
 
-        if (!data.host || !data.db || !data.user, !data.pass) {
+        if (!data.host || !data.db || !data.user) {
             throw new Error('Faltan datos de conexión');
         }
 
         const res = await axios.post(`/${_homehost}/app-data/test_connect`, {
-            'DBHost': data.host,
-            'DBName': data.db,
-            'DBUser': data.user,
-            'DBPass': data.pass
+            'IDCliente' : data.id,
+            // 'DBHost'    : data.host,
+            // 'DBName'    : data.db,
+            // 'DBUser'    : data.user,
+            // 'DBPass'    : data.pass
         });
 
         if (res.data.RESPONSE_CODE == '200 OK') {
@@ -1173,7 +1174,7 @@ const test_conect = async (data, options = {}) => {
             notify(html, 'success', 5000, 'right')
             return true;
         } else {
-            throw new Error(res.data.MESSAGE)
+            throw new Error('Error de conexión ' + (res.data.MESSAGE ?? ''));
         }
     } catch (err) {
         $.notifyClose();
@@ -1211,7 +1212,8 @@ const test_connect_recid_c = async (recid_c) => {
         host: cuenta.host,
         db: cuenta.db,
         user: cuenta.user,
-        pass: cuenta.pass
+        pass: cuenta.pass,
+        id: cuenta.id
     }, { returnBool: true, dontNotify: true });
 
     return resultado;

@@ -7,19 +7,22 @@ use Classes\Log;
 use Classes\ConnectSqlSrv;
 use Classes\Tools;
 use Flight;
+use flight\net\Request;
 
 
 class ParaGene
 {
-    private $resp;
-    private $request;
-    private $getData;
-    private $query;
-    private $log;
-    private $conect;
-    private $tools;
+    private Response $resp;
+    private Request $request;
+    private array $getData;
+    private array $query;
+    private Log $log;
+    private ConnectSqlSrv $conect;
+    private Tools $tools;
+    private string $NameLog;
 
-    function __construct()
+
+    public function __construct()
     {
         $this->resp = new Response;
         $this->request = Flight::request();
@@ -28,6 +31,7 @@ class ParaGene
         $this->log = new Log;
         $this->conect = new ConnectSqlSrv;
         $this->tools = new Tools;
+        $this->NameLog = date('Ymd') . '_paragene.log';
     }
 
     /**
@@ -35,42 +39,50 @@ class ParaGene
      */
     public function get()
     {
-        $inicio = microtime(true);
-        $sql = "SELECT * FROM PARAGENE";
-        $Data = $this->conect->executeQueryWhithParams($sql);
-        foreach ($Data as &$element) {
-            $rs = [
-                'Etiquetas' => [
-                    'EmprSin' => $element['ParEmprSin'],
-                    'EmprPlu' => $element['ParEmprPlu'],
-                    'PlanSin' => $element['ParPlanSin'],
-                    'PlanPlu' => $element['ParPlanPlu'],
-                    'SucuSin' => $element['ParSucuSin'],
-                    'SucuPlu' => $element['ParSucuPlu'],
-                    'GrupSin' => $element['ParGrupSin'],
-                    'GrupPlu' => $element['ParGrupPlu'],
-                    'SectSin' => $element['ParSectSin'],
-                    'SectPlu' => $element['ParSectPlu'],
-                    'SeccSin' => $element['ParSeccSin'],
-                    'SeccPlu' => $element['ParSeccPlu'],
-                ],
-                'ParDato' => [
-                    'LegDocu' => $element['ParDatoLegDocu'],
-                    'LegCUIL' => $element['ParDatoLegCUIL'],
-                    'LegEmpr' => $element['ParDatoLegEmpr'],
-                    'LegPlan' => $element['ParDatoLegPlan'],
-                    'LegSucu' => $element['ParDatoLegSucu'],
-                    'LegGrup' => $element['ParDatoLegGrup'],
-                    'LegSect' => $element['ParDatoLegSect'],
-                    'LegSecc' => $element['ParDatoLegSecc'],
-                    'LegTare' => $element['ParDatoLegTare'],
-                    'LegFeIn' => $element['ParDatoLegFeIn'],
-                    'LegReCH' => $element['ParDatoLegReCH'],
-                ],
-                'FechaHora' => $element['FechaHora'],
-            ];
+        try {
+            $inicio = microtime(true);
+            $sql = "SELECT * FROM PARAGENE";
+            $Data = $this->conect->executeQueryWhithParams($sql);
+            foreach ($Data as &$element) {
+                $rs = [
+                    'Etiquetas' => [
+                        'EmprSin' => $element['ParEmprSin'],
+                        'EmprPlu' => $element['ParEmprPlu'],
+                        'PlanSin' => $element['ParPlanSin'],
+                        'PlanPlu' => $element['ParPlanPlu'],
+                        'SucuSin' => $element['ParSucuSin'],
+                        'SucuPlu' => $element['ParSucuPlu'],
+                        'GrupSin' => $element['ParGrupSin'],
+                        'GrupPlu' => $element['ParGrupPlu'],
+                        'SectSin' => $element['ParSectSin'],
+                        'SectPlu' => $element['ParSectPlu'],
+                        'SeccSin' => $element['ParSeccSin'],
+                        'SeccPlu' => $element['ParSeccPlu'],
+                    ],
+                    'ParDato' => [
+                        'LegDocu' => $element['ParDatoLegDocu'],
+                        'LegCUIL' => $element['ParDatoLegCUIL'],
+                        'LegEmpr' => $element['ParDatoLegEmpr'],
+                        'LegPlan' => $element['ParDatoLegPlan'],
+                        'LegSucu' => $element['ParDatoLegSucu'],
+                        'LegGrup' => $element['ParDatoLegGrup'],
+                        'LegSect' => $element['ParDatoLegSect'],
+                        'LegSecc' => $element['ParDatoLegSecc'],
+                        'LegTare' => $element['ParDatoLegTare'],
+                        'LegFeIn' => $element['ParDatoLegFeIn'],
+                        'LegReCH' => $element['ParDatoLegReCH'],
+                    ],
+                    'FechaHora' => $element['FechaHora'],
+                ];
+            }
+            $this->resp->respuesta($rs ?? [], 0, 'OK', 200, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener parametros generales', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
-        $this->resp->respuesta($rs ?? [], 0, 'OK', 200, $inicio, 0, 0);
     }
     public function liquid()
     {
@@ -149,14 +161,17 @@ class ParaGene
             $BDVersion = $Data['BDVersion'];
             $BDVersion = explode("_", $BDVersion);
             $Data['SystemVer'] = intval($BDVersion[1]) ?? 0;
-            $Data['FechaHora'] = $this->tools->formatDateTime($Data['FechaHora']);
+            $Data['FechaHora'] = $this->tools->formatDateTime($Data['FechaHora']) ?? '';
             if ($return) {
-                return $Data;
+                return $Data ?? [];
             }
             $this->resp->respuesta($Data ?? [], 0, 'OK', 200, $inicio, 0, 0);
-        } catch (\Throwable $th) {
-            $this->log->write($th->getMessage(), 'error');
-            $this->resp->respuesta([$th->getMessage()], 1, 'Error', 400, $inicio, 0, 0);
+        } catch (\PDOException $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw new \Exception('Error al obtener dbData', 400);
+        } catch (\Exception $e) {
+            $this->log->trace('ParaGene::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            throw $e;
         }
     }
 }

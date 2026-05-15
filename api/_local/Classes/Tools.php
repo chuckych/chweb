@@ -136,6 +136,11 @@ class Tools
         $date = new \DateTime($date);
         return $date->format($format);
     }
+    public function FechaHora(string $timezone = 'America/Argentina/Buenos_Aires'): string
+    {
+        $dt = new \DateTimeImmutable('now', new \DateTimeZone($timezone));
+        return substr($dt->format('Y-m-d\TH:i:s.u'), 0, 23);
+    }
     public function date_time_str($date, $format = 'YmdHis')
     {
         $date = new \DateTime($date);
