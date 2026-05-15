@@ -19,6 +19,7 @@
         COD_SUCURSAL: 'cod_sucursal',
         FECHA: 'fecha',
         NOVEDADES: 'novedades',
+        NOVEDADES_AGRUPADAS: 'novedades_agrupadas',
         HORAS: 'horas',
         HORAS_AGRUPADAS: 'horas_agrupadas',
         ATRA: 'atra',
@@ -116,6 +117,7 @@
         [TIPOS.COD_SUCURSAL]: 'Sucursal',
         [TIPOS.FECHA]: 'Fecha',
         [TIPOS.NOVEDADES]: 'Novedades',
+        [TIPOS.NOVEDADES_AGRUPADAS]: 'Novedades Agrupadas',
         [TIPOS.HORAS]: 'Horas',
         [TIPOS.HORAS_AGRUPADAS]: 'Horas Agrupadas',
         [TIPOS.ATRA]: 'Horas a trabajar',
@@ -204,7 +206,7 @@
     const $asignados = $('.asignados');
     const $totalRegistros = $('.total-registros');
     const $camposAsignados = $('[aria-label="Asignados"]');
-
+    const $labelNombreAgrupacion = $('[for="campo-agrupacion"]');
 
     let filtrosInicializados = false;
     let filtrosSeleccionadosPlantilla = crearFiltrosVacios();
@@ -1103,7 +1105,7 @@
                 $("#selectjs_seccion").prop("disabled", false);
                 $('#selectjs_seccion').val(null).trigger('change');
             });
-            
+
             $('#selectjs_sector').off('select2:unselect' + filtrosNs).on('select2:unselect' + filtrosNs, function (e) {
                 e.preventDefault()
                 $("#selectjs_seccion").prop("disabled", true);
@@ -1341,7 +1343,7 @@
     }
 
     function esTipoSubtipoMultiple(tipo) {
-        return tipo === TIPOS.HORAS_AGRUPADAS;
+        return tipo === TIPOS.HORAS_AGRUPADAS || tipo === TIPOS.NOVEDADES_AGRUPADAS;
     }
 
     function configurarModoSubtipo(tipo) {
@@ -1388,6 +1390,18 @@
             $subtipoHelp.addClass('d-none').text('Cargando...');
         }
     }
+    function placeholderAgrupacion(tipo) {
+        if (tipo === TIPOS.HORAS_AGRUPADAS) {
+            $agrupacionNombre.attr('placeholder', 'Ej.: Extras');
+            $labelNombreAgrupacion.text('Nombre de agrupación de Horas');
+        } else if (tipo === TIPOS.NOVEDADES_AGRUPADAS) {
+            $agrupacionNombre.attr('placeholder', 'Ej.: Ausencias');
+            $labelNombreAgrupacion.text('Nombre de agrupación de Novedades');
+        } else {
+            $agrupacionNombre.attr('placeholder', '');
+            $labelNombreAgrupacion.text('');
+        }
+    }
 
     function manejarCambioTipo() {
         limpiarErrores();
@@ -1395,8 +1409,10 @@
         const tipo = $tipo.val();
         aplicarReglasTipo(tipo);
         aplicarReglasFormato();
+        placeholderAgrupacion(tipo);
 
-        if (tipo === TIPOS.HORAS_AGRUPADAS) {
+
+        if (tipo === TIPOS.HORAS_AGRUPADAS || tipo === TIPOS.NOVEDADES_AGRUPADAS) {
             mostrarAgrupacion();
         } else {
             ocultarAgrupacion();
@@ -1421,7 +1437,7 @@
             return Promise.resolve();
         }
 
-        const endpoint = tipo === TIPOS.NOVEDADES
+        const endpoint = (tipo === TIPOS.NOVEDADES || tipo === TIPOS.NOVEDADES_AGRUPADAS)
             ? '../../app-data/novedades'
             : '../../app-data/horas';
 
@@ -1454,7 +1470,7 @@
     }
 
     function mapearSubtipos(tipo, listado) {
-        if (tipo === TIPOS.NOVEDADES) {
+        if (tipo === TIPOS.NOVEDADES || tipo === TIPOS.NOVEDADES_AGRUPADAS) {
             const grupos = {};
             const ordenGrupos = [];
 
@@ -1607,7 +1623,8 @@
             }
         }
 
-        if (datos.tipo === TIPOS.HORAS_AGRUPADAS && (datos.formato !== FORMATOS.DECIMAL && datos.formato !== FORMATOS.HORAS)) {
+        if ((datos.tipo === TIPOS.HORAS_AGRUPADAS || datos.tipo === TIPOS.NOVEDADES_AGRUPADAS)
+            && (datos.formato !== FORMATOS.DECIMAL && datos.formato !== FORMATOS.HORAS)) {
             cantidadErrores += 1;
         }
 
@@ -1867,7 +1884,7 @@
                 setSubtipoSeleccionado(campo.subtipo, campo.subtipoLabel);
             }
 
-            if (campo.tipo === TIPOS.HORAS_AGRUPADAS) {
+            if (campo.tipo === TIPOS.HORAS_AGRUPADAS || campo.tipo === TIPOS.NOVEDADES_AGRUPADAS) {
                 $agrupacionNombre.val(String(campo.subtipoLabel || ''));
             }
 
@@ -1909,7 +1926,7 @@
     }
 
     function esTipoConSubtipo(tipo) {
-        return tipo === TIPOS.NOVEDADES || tipo === TIPOS.HORAS || tipo === TIPOS.HORAS_AGRUPADAS;
+        return tipo === TIPOS.NOVEDADES || tipo === TIPOS.NOVEDADES_AGRUPADAS || tipo === TIPOS.HORAS || tipo === TIPOS.HORAS_AGRUPADAS;
     }
 
     function obtenerOpcionesFormatoPorTipo(tipo) {
@@ -1927,6 +1944,7 @@
                     FORMATOS.FECHA_DMY_SLASH
                 ];
             case TIPOS.NOVEDADES:
+            case TIPOS.NOVEDADES_AGRUPADAS:
             case TIPOS.HORAS:
             case TIPOS.HORAS_AGRUPADAS:
             case TIPOS.ATRA:
@@ -2030,6 +2048,7 @@
                 $tamano.prop('disabled', false).val('1');
                 break;
             case TIPOS.NOVEDADES:
+            case TIPOS.NOVEDADES_AGRUPADAS:
             case TIPOS.HORAS:
             case TIPOS.HORAS_AGRUPADAS:
             case TIPOS.ATRA:
@@ -2084,7 +2103,7 @@
         }
 
         if (
-            ($tipo.val() === TIPOS.NOVEDADES || $tipo.val() === TIPOS.HORAS || $tipo.val() === TIPOS.ATRA || $tipo.val() === TIPOS.TRAB)
+            ($tipo.val() === TIPOS.NOVEDADES || $tipo.val() === TIPOS.NOVEDADES_AGRUPADAS || $tipo.val() === TIPOS.HORAS || $tipo.val() === TIPOS.ATRA || $tipo.val() === TIPOS.TRAB)
             && $formato.val() === FORMATOS.DECIMAL
             && !esEnteroPositivo(parseInt($tamano.val(), 10))
         ) {

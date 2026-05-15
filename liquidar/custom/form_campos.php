@@ -31,6 +31,7 @@
                                 <option value="cod_sucursal"> <?= $labelSucu ?? '' ?></option>
                                 <option value="fecha">Fecha</option>
                                 <option value="novedades">Novedades</option>
+                                <option value="novedades_agrupadas">Novedades agrupadas</option>
                                 <option value="horas">Horas</option>
                                 <option value="horas_agrupadas">Horas agrupadas</option>
                                 <option value="atra">Horas a trabajar</option>

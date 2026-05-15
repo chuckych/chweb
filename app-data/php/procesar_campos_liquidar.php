@@ -41,7 +41,7 @@ function NormalizarCampo(array $item): ?array
     $posicion = isset($item['posicion']) ? (int) $item['posicion'] : 0;
     $tipo = isset($item['tipo']) ? (string) $item['tipo'] : '';
     $subtipo = '';
-    if ($tipo === 'horas_agrupadas') {
+    if ($tipo === 'horas_agrupadas' || $tipo === 'novedades_agrupadas') {
         $subtipo = [];
         if (isset($item['subtipo']) && is_array($item['subtipo'])) {
             foreach ($item['subtipo'] as $subtipoItem) {
@@ -64,7 +64,7 @@ function NormalizarCampo(array $item): ?array
         : (EsFormatoFecha($formato) ? ($tamano >= 0) : ($tamano > 0));
 
     $horasAgrupadasValido = true;
-    if ($tipo === 'horas_agrupadas') {
+    if ($tipo === 'horas_agrupadas' || $tipo === 'novedades_agrupadas') {
         $horasAgrupadasValido = is_array($subtipo)
             && !empty($subtipo)
             && in_array($formato, ['decimal', 'horas'], true)
@@ -678,7 +678,7 @@ function ConstruirEncabezados(array $campos, string $separador): string
     foreach ($campos as $campo) {
         $tipo = (string) ($campo['tipo'] ?? '');
 
-        if ($tipo === 'horas' || $tipo === 'novedades' || $tipo === 'horas_agrupadas') {
+        if ($tipo === 'horas' || $tipo === 'novedades' || $tipo === 'horas_agrupadas' || $tipo === 'novedades_agrupadas') {
             $headers[] = (string) ($campo['subtipoLabel'] ?? '');
             continue;
         }
@@ -913,6 +913,37 @@ function BuscarNovedadPorSubtipo(array $registro, string $subtipo): string
     return '';
 }
 
+function BuscarNovedadesAgrupadasPorSubtipos(array $registro, array $subtipos, string $formato): string
+{
+    if (empty($subtipos)) {
+        return $formato === 'horas' ? '00:00' : '0.00';
+    }
+
+    $subtiposMap = array_fill_keys(array_map('strval', $subtipos), true);
+    $novedades = (isset($registro['Nove']) && is_array($registro['Nove'])) ? $registro['Nove'] : [];
+    $totalDecimal = 0.0;
+
+    foreach ($novedades as $novedad) {
+        if (!is_array($novedad)) {
+            continue;
+        }
+
+        $codigo = (string) ($novedad['Codi'] ?? '');
+        if (!isset($subtiposMap[$codigo])) {
+            continue;
+        }
+
+        $valor = (string) ($novedad['Horas'] ?? '');
+        $totalDecimal += (float) HoraADecimal($valor);
+    }
+
+    if ($formato === 'horas') {
+        return DecimalAHora($totalDecimal);
+    }
+
+    return number_format($totalDecimal, 2, '.', '');
+}
+
 function ObtenerFichadas(array $registro): array
 {
     $fichadas = (isset($registro['Fich']) && is_array($registro['Fich'])) ? $registro['Fich'] : [];
@@ -1008,6 +1039,8 @@ function ObtenerValorCrudoCampo(array $registro, array $campo, array $empresasPo
             return BuscarHorasAgrupadasPorSubtipos($registro, $subtipos, (string) ($campo['formato'] ?? 'decimal'));
         case 'novedades':
             return BuscarNovedadPorSubtipo($registro, $subtipo);
+        case 'novedades_agrupadas':
+            return BuscarNovedadesAgrupadasPorSubtipos($registro, $subtipos, (string) ($campo['formato'] ?? 'decimal'));
         case 'atra':
             return (string) ($registro['ATra'] ?? '');
         case 'trab':
@@ -1084,6 +1117,7 @@ function FormatearValorCampo(string $valorCrudo, array $campo, string $separador
         case 'horas':
         case 'horas_agrupadas':
         case 'novedades':
+        case 'novedades_agrupadas':
         case 'atra':
         case 'trab':
             return PadIzquierda(HoraADecimal($valorCrudo), $tamano);
@@ -1165,7 +1199,7 @@ function ExportarTxt(array $payload): array
 
     $mapCampoFichadas = ['primer_fichada', 'ultima_fichada', 'todas_fichadas'];
     $mapCampoHoras = ['horas', 'horas_agrupadas', 'atra', 'trab'];
-    $mapCampoNovedades = ['novedades'];
+    $mapCampoNovedades = ['novedades', 'novedades_agrupadas'];
     $mapCampoEstructura = ['cod_empresa', 'cuit_empresa', 'cod_planta', 'cod_convenio', 'cod_sector', 'cod_seccion', 'cod_grupo', 'cod_sucursal'];
 
     foreach ($campos as $campo) {
