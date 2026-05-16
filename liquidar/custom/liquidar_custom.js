@@ -643,22 +643,57 @@
         notify(contenido, 'warning', 0, 'right');
     }
 
-    function mostrarResultadosArchivo(archivo) {
-        const href = '../../app-data/' + archivo;
-        axios.get(href, { responseType: 'text' })
-            .then(function (response) {
-                const contenido = typeof response.data === 'string' ? response.data : '';
-                $resultadoExportacionArchivo.text(archivo);
-                $resultadoExportacionContenido.text(contenido || 'Archivo vacío.');
-                $resultadoExportacion.removeClass('d-none');
-                $('html, body').animate({
-                    scrollTop: $resultadoExportacion.offset().top - 20
-                }, 300);
-                $definirCampos.collapse('hide');
-            })
-            .catch(function () {
-                notificar('No se pudo mostrar el archivo exportado.', 'danger');
-            });
+    function destruirTablaResultadoExportacion() {
+        if (typeof $.fn.DataTable === 'function' && $.fn.DataTable.isDataTable($resultadoExportacionContenido)) {
+            $resultadoExportacionContenido.DataTable().clear().destroy();
+        }
+        $resultadoExportacionContenido.empty();
+    }
+
+    function mostrarResultadosDataTable(encabezados, filas) {
+        const headers = $.isArray(encabezados) ? encabezados : [];
+        const data = $.isArray(filas) ? filas : [];
+
+        destruirTablaResultadoExportacion();
+
+        if (!headers.length) {
+            $resultadoExportacionContenido.html('<tbody><tr><td class="text-muted">Sin resultados cargados.</td></tr></tbody>');
+            return;
+        }
+
+        const columns = $.map(headers, function (header, index) {
+            return {
+                title: String(header || ('Columna ' + (index + 1))),
+                data: index,
+                defaultContent: ''
+            };
+        });
+
+        $resultadoExportacionContenido.DataTable({
+            data: data,
+            columns: columns,
+            deferRender: true,
+            paging: true,
+            pageLength: 10,
+            lengthMenu: [[10, 50, 100, 200, -1], [10, 50, 100, 200, 'Todos']],
+            scrollX: true,
+            scrollY: '380px',
+            scrollCollapse: true,
+            ordering: true,
+            language: DT_SPANISH_SHORT2,
+            columnDefs: [{
+                targets: '_all',
+                render: function (value) {
+                    return escapeHtml(value === null || value === undefined ? '' : String(value));
+                }
+            }]
+        });
+
+        $resultadoExportacion.removeClass('d-none');
+        $('html, body').animate({
+            scrollTop: $resultadoExportacion.offset().top - 20
+        }, 300);
+        $definirCampos.collapse('hide');
     }
 
     function exportarDatos() {
@@ -678,7 +713,8 @@
         }
 
         $resultadoExportacionArchivo.text('');
-        $resultadoExportacionContenido.text('Procesando datos... Aguarde.');
+        destruirTablaResultadoExportacion();
+        $resultadoExportacionContenido.html('<tbody><tr><td class="text-muted">Procesando datos... Aguarde.</td></tr></tbody>');
         notificar('Procesando datos... Aguarde', 'info', 0, 'right');
 
         $btnExportar.prop('disabled', true);
@@ -698,7 +734,7 @@
                 }
 
                 mostrarNotificacionDescarga(data.archivo, data.message || 'Archivo generado correctamente.');
-                mostrarResultadosArchivo(data.archivo);
+                mostrarResultadosDataTable(data.encabezados, data.data);
                 $totalRegistros.text(`Resultados generados (${data.registros || 0})`);
             })
             .catch(function (error) {
@@ -1273,13 +1309,7 @@
         });
 
         $(document).on('click', '.mostrar-liquidar-custom', function () {
-            const archivo = String($(this).data('archivo') || '');
-            if (!archivo) {
-                notificar('No se encontró archivo para mostrar.', 'danger');
-                return;
-            }
-
-            mostrarResultadosArchivo(archivo);
+            notificar('Los resultados ya se muestran automáticamente al exportar.', 'info');
         });
     }
 

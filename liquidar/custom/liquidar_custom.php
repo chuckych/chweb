@@ -5,6 +5,11 @@
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
     <title><?= MODULOS['liquidar'] ?></title>
+    <style>
+        th{
+            font-size: 0.8rem;
+        }
+    </style>
 </head>
 
 <body class="fadeIn">
@@ -84,9 +89,9 @@
                         <small class="text-muted d-none d-sm-block fadeInDown"
                             id="resultado-exportacion-archivo"></small>
                     </div>
-                    <div class="card-body">
-                        <pre id="resultado-exportacion-contenido" class="mb-0"
-                            style="height: 500px; overflow: auto; white-space: pre;">Sin resultados cargados.</pre>
+                    <div class="card-body p-1 mt-2">
+                        <table id="resultado-exportacion-contenido" class="table table-bordereless p-2 border radius text-nowrap w-100">
+                        </table>
                     </div>
                 </div>
             </div>

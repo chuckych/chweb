@@ -1467,6 +1467,8 @@ Flight::route('POST /liquidar/custom/export', function () {
             'message' => 'Archivo generado correctamente.',
             'archivo' => $resultado['archivo'] ?? '',
             'registros' => $resultado['registros'] ?? 0,
+            'encabezados' => $resultado['encabezados'] ?? [],
+            'data' => $resultado['data'] ?? [],
         ]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);

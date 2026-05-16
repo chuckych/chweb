@@ -673,6 +673,12 @@ function GuardarPlantilla( string $nombrePlantilla, array $campos, string $separ
 
 function ConstruirEncabezados(array $campos, string $separador): string
 {
+    $headers = ConstruirEncabezadosArray($campos);
+    return implode($separador, $headers);
+}
+
+function ConstruirEncabezadosArray(array $campos): array
+{
     $headers = [];
 
     foreach ($campos as $campo) {
@@ -686,7 +692,7 @@ function ConstruirEncabezados(array $campos, string $separador): string
         $headers[] = (string) ($campo['tipoLabel'] ?? '');
     }
 
-    return implode($separador, $headers);
+    return $headers;
 }
 
 function LeerSeparador(string $plantillaSlug = ''): string
@@ -1133,6 +1139,12 @@ function FormatearValorCampo(string $valorCrudo, array $campo, string $separador
 
 function ConstruirLineaRegistro(array $registro, array $campos, string $separador, array $empresasPorCodigo = []): string
 {
+    $valores = ConstruirFilaRegistro($registro, $campos, $separador, $empresasPorCodigo);
+    return implode($separador, $valores);
+}
+
+function ConstruirFilaRegistro(array $registro, array $campos, string $separador, array $empresasPorCodigo = []): array
+{
     $valores = [];
 
     foreach ($campos as $campo) {
@@ -1140,18 +1152,41 @@ function ConstruirLineaRegistro(array $registro, array $campos, string $separado
         $valores[] = FormatearValorCampo($valorCrudo, $campo, $separador);
     }
 
-    return implode($separador, $valores);
+    return $valores;
+}
+
+function ConstruirFilasExport(array $registros, array $campos, string $separador, array $empresasPorCodigo = []): array
+{
+    $filas = [];
+
+    foreach ($registros as $registro) {
+        if (!is_array($registro)) {
+            continue;
+        }
+        $filas[] = ConstruirFilaRegistro($registro, $campos, $separador, $empresasPorCodigo);
+    }
+
+    return $filas;
+}
+
+function GenerarContenidoExportDesdeFilas(array $filas, string $separador): string
+{
+    $lineas = [];
+
+    foreach ($filas as $fila) {
+        if (!is_array($fila)) {
+            continue;
+        }
+        $lineas[] = implode($separador, $fila);
+    }
+
+    return implode("\r\n", $lineas);
 }
 
 function GenerarContenidoExport(array $campos, array $registros, string $separador, array $empresasPorCodigo = []): string
 {
-    $lineas = [];
-
-    foreach ($registros as $registro) {
-        $lineas[] = ConstruirLineaRegistro($registro, $campos, $separador, $empresasPorCodigo);
-    }
-
-    return implode("\r\n", $lineas);
+    $filas = ConstruirFilasExport($registros, $campos, $separador, $empresasPorCodigo);
+    return GenerarContenidoExportDesdeFilas($filas, $separador);
 }
 
 function ExportarTxt(array $payload): array
@@ -1254,10 +1289,12 @@ function ExportarTxt(array $payload): array
     }
 
     $empresasPorCodigo = $hayCampoCuitEmpresa ? ObtenerEmpresasPorCodigo() : [];
-    $contenido = GenerarContenidoExport($campos, $registros, $separador, $empresasPorCodigo);
+    $encabezadosTabla = ConstruirEncabezadosArray($campos);
+    $filasTabla = ConstruirFilasExport($registros, $campos, $separador, $empresasPorCodigo);
+    $contenido = GenerarContenidoExportDesdeFilas($filasTabla, $separador);
 
     if ($encabezados === 1) {
-        $lineaEncabezados = ConstruirEncabezados($campos, $separador);
+        $lineaEncabezados = implode($separador, $encabezadosTabla);
         $contenido = $lineaEncabezados . "\r\n" . $contenido;
     }
 
@@ -1273,5 +1310,7 @@ function ExportarTxt(array $payload): array
     return [
         'archivo' => 'archivos/' . $nombreArchivo,
         'registros' => count($registros),
+        'encabezados' => $encabezadosTabla,
+        'data' => $filasTabla,
     ];
 }
