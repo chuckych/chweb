@@ -149,6 +149,7 @@
     const DEFAULT_SEPARADOR = ',';
     const DEFAULT_PLANTILLA = '';
     const STORAGE_PLANTILLA_KEY = 'liquidar_custom_plantilla';
+    const DEFAULT_LIMIT_ROWS_EXPORT = 5000;
 
     let idSecuencial = 1;
     let uidEnEdicion = null;
@@ -650,6 +651,14 @@
         $resultadoExportacionContenido.empty();
     }
 
+    function obtenerLimiteFilasExportacion() {
+        const desdeAtributo = parseInt($resultadoExportacion.data('limitRows'), 10);
+        if (Number.isInteger(desdeAtributo) && desdeAtributo > 0) {
+            return desdeAtributo;
+        }
+        return DEFAULT_LIMIT_ROWS_EXPORT;
+    }
+
     function mostrarResultadosDataTable(encabezados, filas) {
         const headers = $.isArray(encabezados) ? encabezados : [];
         const data = $.isArray(filas) ? filas : [];
@@ -668,8 +677,12 @@
                 defaultContent: ''
             };
         });
+        const initTable = function () {
+            const $inputFilter = $('#resultado-exportacion-contenido_filter input');
+            $inputFilter.attr('placeholder', 'Buscar').removeClass('form-control-sm');
+        };
 
-        $resultadoExportacionContenido.DataTable({
+        const tableContenido = $resultadoExportacionContenido.DataTable({
             data: data,
             columns: columns,
             deferRender: true,
@@ -681,12 +694,22 @@
             scrollCollapse: true,
             ordering: true,
             language: DT_SPANISH_SHORT2,
+            // on init and on draw, to re-apply escaping to all cells (in case of redraw with new data)
+            initComplete: function (settings, json) {
+                initTable();
+            },
             columnDefs: [{
                 targets: '_all',
                 render: function (value) {
                     return escapeHtml(value === null || value === undefined ? '' : String(value));
                 }
             }]
+        });
+
+        tableContenido.on('init.dt', function (e, settings) {
+            const $inputFilter = $('#resultado-exportacion-contenido_filter input');
+            console.log($inputFilter);
+            $inputFilter.attr('placeholder', 'Buscar').removeClass('form-control-sm');
         });
 
         $resultadoExportacion.removeClass('d-none');
@@ -722,7 +745,8 @@
         const payload = {
             FechIni: rango.inicio,
             FechFin: rango.fin,
-            plantilla: plantilla
+            plantilla: plantilla,
+            limitRows: obtenerLimiteFilasExportacion()
         };
 
         axios.post(ENDPOINT_EXPORT, payload)
@@ -735,7 +759,13 @@
 
                 mostrarNotificacionDescarga(data.archivo, data.message || 'Archivo generado correctamente.');
                 mostrarResultadosDataTable(data.encabezados, data.data);
-                $totalRegistros.text(`Resultados generados (${data.registros || 0})`);
+                const totalRegistros = Number(data.registros || 0);
+                const filasMostradas = Number(data.filasMostradas || ($.isArray(data.data) ? data.data.length : 0));
+                $totalRegistros.text(`Resultados generados (${totalRegistros}) - Mostrando ${filasMostradas}`);
+
+                // if (data.filasLimitadas === true) {
+                //     notificar(`Se muestran las primeras ${filasMostradas} filas (límite configurable: ${data.limitRows || filasMostradas}).`, 'info');
+                // }
             })
             .catch(function (error) {
                 const mensajeBackend = error

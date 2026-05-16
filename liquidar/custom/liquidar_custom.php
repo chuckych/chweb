@@ -8,6 +8,7 @@
     <style>
         th{
             font-size: 0.8rem;
+            border-bottom: 0px solid #dee2e6 !important;
         }
     </style>
 </head>
@@ -78,11 +79,11 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <div class="collapse" id="definirCampos">
+                <div class="collapse shadow-sm" id="definirCampos">
                     <?php require __DIR__ . '/form_campos.php'; ?>
                 </div>
             </div>
-            <div class="col-12 mt-3" id="resultado-exportacion">
+            <div class="col-12 mt-3" id="resultado-exportacion" data-limit-rows="5000">
                 <div class="p-2 border radius shadow-sm">
                     <div class="card-header d-flex align-items-center justify-content-between bg-white">
                         <span class="font09 total-registros">Resultados generados</span></span>

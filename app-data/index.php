@@ -1469,6 +1469,9 @@ Flight::route('POST /liquidar/custom/export', function () {
             'registros' => $resultado['registros'] ?? 0,
             'encabezados' => $resultado['encabezados'] ?? [],
             'data' => $resultado['data'] ?? [],
+            'filasMostradas' => $resultado['filasMostradas'] ?? 0,
+            'filasLimitadas' => $resultado['filasLimitadas'] ?? false,
+            'limitRows' => $resultado['limitRows'] ?? 0,
         ]);
     } catch (\Throwable $th) {
         $code = (int) ($th->getCode() ?: 400);

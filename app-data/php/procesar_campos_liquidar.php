@@ -130,6 +130,23 @@ function NormalizarEncabezados(int $encabezados): int
     return $encabezados === 1 ? 1 : 0;
 }
 
+function NormalizarLimiteFilasTabla(int $limitRows): int
+{
+    $defaultLimit = 5000;
+    $maxLimit = 50000;
+
+    if ($limitRows === null || $limitRows === '') {
+        return $defaultLimit;
+    }
+
+    $valor = (int) $limitRows;
+    if ($valor <= 0) {
+        return $defaultLimit;
+    }
+
+    return min($valor, $maxLimit);
+}
+
 function FiltrosVacios(): array
 {
     return [
@@ -1096,7 +1113,7 @@ function FormatearValorCampo(string $valorCrudo, array $campo, string $separador
         if ($tipo === 'cuil_legajo') {
             return PadDerechaEspacios('', $tamano);
         }
-        return PadIzquierda('', $tamano);
+        return PadIzquierda('0.00', $tamano);
     }
 
     switch ($tipo) {
@@ -1197,6 +1214,7 @@ function ExportarTxt(array $payload): array
     $config = LeerConfiguracion($plantillaSlug);
     $separador = NormalizarSeparador($config['separador'] ?? ',');
     $encabezados = NormalizarEncabezados($config['encabezados'] ?? 0);
+    $limiteFilasTabla = NormalizarLimiteFilasTabla(intval($payload['limitRows']) ?? null);
     $filtros = AplicarRestriccionesSesionEnFiltros(NormalizarFiltros($config['filtros'] ?? []));
 
     // error_log(print_r($_SESSION['EmprRol'], true));
@@ -1291,6 +1309,8 @@ function ExportarTxt(array $payload): array
     $empresasPorCodigo = $hayCampoCuitEmpresa ? ObtenerEmpresasPorCodigo() : [];
     $encabezadosTabla = ConstruirEncabezadosArray($campos);
     $filasTabla = ConstruirFilasExport($registros, $campos, $separador, $empresasPorCodigo);
+    $filasMostradasTabla = array_slice($filasTabla, 0, $limiteFilasTabla);
+    $filasTablaLimitadas = count($filasMostradasTabla) < count($filasTabla);
     $contenido = GenerarContenidoExportDesdeFilas($filasTabla, $separador);
 
     if ($encabezados === 1) {
@@ -1311,6 +1331,9 @@ function ExportarTxt(array $payload): array
         'archivo' => 'archivos/' . $nombreArchivo,
         'registros' => count($registros),
         'encabezados' => $encabezadosTabla,
-        'data' => $filasTabla,
+        'data' => $filasMostradasTabla,
+        'filasMostradas' => count($filasMostradasTabla),
+        'filasLimitadas' => $filasTablaLimitadas,
+        'limitRows' => $limiteFilasTabla,
     ];
 }
