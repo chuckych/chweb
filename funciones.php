@@ -4257,7 +4257,7 @@ function api_internal_base_url(): string
 
 function redirectToLogin(): void
 {
-    $hostCHWeb = gethostCHWeb();
+    $hostCHWeb = host();
     $homeHost = getHomeHost();
 
     if ($hostCHWeb === false || $homeHost === false) {
