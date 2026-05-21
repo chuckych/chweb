@@ -2,6 +2,7 @@
 require __DIR__ . '/../fn.php';
 header("Content-Type: application/json");
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
+ini_set('memory_limit', '1024M');
 tz();
 tzLang();
 errorReport();

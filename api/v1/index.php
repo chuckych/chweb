@@ -47,6 +47,7 @@ $Personal = new Classes\Personal;
 $Fichadas = new Classes\Fichadas;
 $Acceso = new Classes\Acceso;
 $horario = new Classes\Horario;
+$rotacion = new Classes\Rotacion;
 
 define('ID_COMPANY', $tools->padLeft(getenv('ID_COMPANY'), 3, 0)); // ID de la empresa con formato
 
@@ -150,12 +151,13 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
 });
 
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
+Flight::route('GET /rotacion', [$horarios, 'get_rotaciones']);
 Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
 Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);
 Flight::route('GET /horarios/asign/rotacion/(@Legajo)', [$horarios, 'get_rotaleg']);
 Flight::route('GET /horarios/asign/citacion/(@Legajo)', [$horarios, 'get_citacion']);
 Flight::route('GET /horarios/asign/legajo/(@Legajo)', [$horarios, 'get_asign_legajo']);
-Flight::route('POST /horarios/rotacion', [$horarios, 'set_rotacion']);
+Flight::route('POST /rotacion', [$rotacion, 'create']);
 Flight::route('POST /horarios/legajo-rotacion', [$horarios, 'set_rotacion']);
 Flight::route('POST /horarios/desde', [$horarios, 'set_horario']);
 Flight::route('POST /horarios/asignados', [$horarios, 'obtener_horarios']); // para horarios asignados
@@ -167,7 +169,7 @@ Flight::route('DELETE /horarios/desde-hasta', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/legajo-desde-hasta', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/citacion', [$horarios, 'delete_horario']);
 Flight::route('DELETE /horarios/legajo-citacion', [$horarios, 'delete_horario']);
-Flight::route('DELETE /horarios/rotacion', [$horarios, 'delete_horario']);
+Flight::route('DELETE /rotacion', [$rotacion, 'delete']);
 Flight::route('DELETE /horarios/legajo-rotacion', [$horarios, 'delete_horario']);
 Flight::route('POST /horarios/legajo-desde', [$horarios, 'set_horario']);
 Flight::route('POST /horarios/desde-hasta', [$horarios, 'set_horario']);

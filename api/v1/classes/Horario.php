@@ -13,7 +13,7 @@ use flight\net\Request;
 
 class Horario
 {
-    private $conect;
+    private ConnectSqlSrv $conect;
     private Request $request;
     private array $getData;
     private Response $resp;
@@ -25,7 +25,7 @@ class Horario
 
     public function __construct()
     {
-        $this->conect = (new ConnectSqlSrv())->conn();
+        $this->conect = new ConnectSqlSrv;
         $this->resp = new Response();
         $this->log = new Log();
         $this->auditor = new Auditor();
@@ -51,7 +51,7 @@ class Horario
         $insertados = [];
         $actualizados = [];
         $errores = [];
-        $conn = $this->conect;
+        $conn = $this->conect->conn();
 
         try {
             $conn->beginTransaction();
@@ -192,7 +192,7 @@ class Horario
 
         $eliminados = [];
         $errores = [];
-        $conn = $this->conect;
+        $conn = $this->conect->conn();
 
         $rules = [
             'HorCodi' => ['required', 'smallint'],
@@ -290,7 +290,7 @@ class Horario
         $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
 
         try {
-            $conn = $this->conect;
+            $conn = $this->conect->conn();
             $sql = "SELECT * FROM HORARIOS WHERE HorCodi > 0 ORDER BY HorCodi";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
@@ -325,7 +325,7 @@ class Horario
         $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
 
         try {
-            $conn = $this->conect;
+            $conn = $this->conect->conn();
 
             $sql = "SELECT HorCodi, HorDesc, HorID, HorColor FROM HORARIOS h
                     WHERE h.HorCodi > 0
@@ -369,9 +369,9 @@ class Horario
     public function deleteUnused(): void
     {
         $this->inicio = microtime(true);
-        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
+        $idCompany = \defined('ID_COMPANY') ? ID_COMPANY : 0;
 
-        $conn = $this->conect;
+        $conn = $this->conect->conn();
         
         try {
 
@@ -502,8 +502,9 @@ class Horario
 
     private function existeHorario(int $horCodi): bool
     {
+        $conn = $this->conect->conn();
         $sql = "SELECT COUNT(*) FROM HORARIOS WHERE HorCodi = :HorCodi";
-        $stmt = $this->conect->prepare($sql);
+        $stmt = $conn->prepare($sql);
         $stmt->bindValue(':HorCodi', $horCodi, \PDO::PARAM_INT);
         $stmt->execute();
         return (int) $stmt->fetchColumn() > 0;

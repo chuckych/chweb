@@ -7,6 +7,7 @@ use Classes\Log;
 use Classes\Tools;
 // use Classes\DataCompany;
 use Flight;
+use flight\net\Request;
 
 class Response
 {
@@ -24,16 +25,6 @@ class Response
     public function json($data, $code = 200)
     {
         $code = $this->normalizeHttpCode((int) $code);
-
-        // En algunos entornos CGI/FastCGI Apache puede conservar 200 si no se envía Status explícito.
-        if (!headers_sent()) {
-            $statusText = $this->getStatusMessage($code);
-            $protocol = $_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1';
-            header($protocol . ' ' . $code . ' ' . $statusText, true, $code);
-            header('Status: ' . $code . ' ' . $statusText, true, $code);
-            http_response_code($code);
-            header('Content-Type: application/json; charset=utf-8', true, $code);
-        }
         // Convertimos los datos a formato JSON, escapando correctamente los caracteres UTF-8.
         $json = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         echo $json;
@@ -79,7 +70,8 @@ class Response
                 'TIME' => floatval($tiempoScript),
                 'DATA' => $data ?? [],
             ];
-            $this->json($array, $code); // response json
+            // $this->json($array, $code); // response json
+            Flight::json($array, $code); // response json Flight
 
             $textParams = urldecode($_SERVER['REQUEST_URI']); // convert to string
 
@@ -104,7 +96,8 @@ class Response
             exit;
         } catch (\Throwable $th) {
             $log->trace('Response::' . __FUNCTION__ . ': ', $nameLog, $th);
-            $this->json(['error' => 'Error al procesar la respuesta'], 500);
+            // $this->json(['error' => 'Error al procesar la respuesta'], 500);
+            Flight::json(['error' => 'Error al procesar la respuesta'], $code);
             exit;
         }
         /** END LOG API CONFIG */

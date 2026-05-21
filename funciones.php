@@ -7,6 +7,12 @@ $routeEnv = getConfigPath();
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 
+function isUriLogin(): bool|int
+{
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
+    return preg_match('/\/login(\/|$)/', $uri);
+}
+
 function version($html = false)
 {
     try {
@@ -34,53 +40,53 @@ function version($html = false)
         return '';
     }
 }
+
 function verDBLocal(): int
 {
-    return 20260508; // Version de la base de datos local
+    return 20260519; // Version de la base de datos local
 }
-function checkDBLocal()
+function checkDBIntegrity()
 {
     $v = simple_pdoQuery("SELECT valores as 'a' FROM params WHERE modulo = 0 AND cliente = 0 LIMIT 1");
-    if ($v['a'] != verDBLocal()) {
-        session_destroy();
-        header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login si la version de la base de datos es distinta a la version del servidor
-        exit;
+    $dbLocal = intval($v['a'] ?? 0);
+
+    if ($dbLocal !== verDBLocal()) {
+        $msq = "Integridad de base de datos comprometida. DB Local: $dbLocal, DB Esperada: " . verDBLocal();
+        $path = __DIR__ . '/logs/info/' . date('Ymd') . '_cambios_db.log';
+        fileLog($msq, $path); // escribir en el Log
+        redirectToLogin();
     }
+}
+function configureErrorReporting(): void
+{
+    $isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'localhost';
+
+    error_reporting(E_ALL);
+    ini_set('display_errors', $isLocal ? '1' : '0');
 }
 function E_ALL()
 {
-    $SERVER_NAME = $_SERVER['SERVER_NAME'] ?? '';
-    if ($SERVER_NAME == 'localhost') { // Si es localhost
-        error_reporting(E_ALL); // Muestra todos los errores
-        ini_set('display_errors', '1'); // Muestra todos los errores
-    } else {
-        error_reporting(E_ALL);
-        ini_set('display_errors', '0');
-    }
+    configureErrorReporting();
 }
 // Función para validar si esta autenticado
 function secure_auth_ch()
 {
+
     if (!$_SESSION) {
-        header("location:/" . HOMEHOST . "/login/?l=" . urlencode(($_SERVER['HTTP_REFERER'] ?? '')));
-        exit;
+        redirectToLogin();
     }
+
     timeZone();
     timeZone_lang();
     $_SESSION["secure_auth_ch"] ??= '';
     $_SESSION['VER_DB_LOCAL'] ??= '';
 
     // Si no existe la variable de la version de la base de datos local
-    if ($_SESSION["secure_auth_ch"] !== true || empty($_SESSION['UID']) || (!$_SESSION['VER_DB_LOCAL'])) {
-        if (isset($_SERVER['HTTP_REFERER'])) {
-            // Redirecciona a login con la URL de referencia
-            header("location:/" . HOMEHOST . "/login/?l=" . urlencode($_SERVER['HTTP_REFERER']));
-        } else {
-            header("location:/" . HOMEHOST . "/login/"); // Redirecciona a login
-        }
-        exit;
+    if (($_SESSION["secure_auth_ch"] ?? '') !== true || empty($_SESSION['UID'] ?? '') || (!$_SESSION['VER_DB_LOCAL'] ?? null)) {
+        redirectToLogin();
     }
 
+    checkDBIntegrity();
     // chequeamos si el usuario y la password son iguales. si se cumple la condición, lo redirigimos a cambiar la clave
     (password_verify($_SESSION["user"], $_SESSION["HASH_CLAVE"])) ? header('Location:/' . HOMEHOST . '/usuarios/perfil/') : '';
 
@@ -99,9 +105,8 @@ function secure_auth_ch()
         // sino, actualizo la fecha de la sesión
         $_SESSION["ultimoAcceso"] = $ahora; // Actualizo la fecha de la sesión
     }
-    checkDBLocal();
     // session_regenerate_id(); // Regenera la sesión
-    E_ALL(); // Funciones de error
+    configureErrorReporting(); // Funciones de error
 }
 function secure_auth_ch_json()
 {
@@ -135,7 +140,7 @@ function secure_auth_ch_json()
         $_SESSION["ultimoAcceso"] = $ahora;
     }
     // session_regenerate_id(); // Regenera la sesión para prevenir ataques de fijación de sesión
-    E_ALL();
+    configureErrorReporting(); // Funciones de error
 }
 function secure_auth_ch2()
 {
@@ -164,8 +169,8 @@ function secure_auth_ch2()
         // sino, actualizo la fecha de la sesión
         $_SESSION["ultimoAcceso"] = $ahora;
     }
-    checkDBLocal();
-    E_ALL();
+    checkDBIntegrity();
+    configureErrorReporting();
 }
 /** ultimaacc */
 // Función para obtener la fecha hora del ultimo acceso
@@ -188,7 +193,7 @@ function secureVar($key)
         return $clean;
     }
 
-    $key = (string)($key ?? '');
+    $key = (string) ($key ?? '');
     $key = htmlspecialchars(stripslashes($key), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Limpio la variable
     $key = str_ireplace("script", "blocked", $key); // Remplazo el script por una palabra bloqueada
     $key = htmlentities($key, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); // Codifico la variable
@@ -578,7 +583,7 @@ function test_input($data)
 
     if (!$data)
         return '';
-    $data = (string)($data ?? '');
+    $data = (string) ($data ?? '');
     $data = utf8str($data);
     $data = htmlspecialchars(stripslashes($data), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     $data = str_ireplace("script", '', $data);
@@ -3410,7 +3415,7 @@ function getDataIni($url) // obtiene el json de la url
         fileLog($e->getMessage(), __DIR__ . "/logs/" . date('Ymd') . "_getDataIni.log", ''); // escribimos en el log
     }
 }
-function gethostCHWeb()
+function gethostCHWeb_old()
 {
     $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
     if (!file_exists(__DIR__ . '/mobileApikey.php')) {
@@ -3424,7 +3429,56 @@ function gethostCHWeb()
         }
     }
 }
-;
+function getHomeHost_old()
+{
+    $token = sha1(($_SESSION['RECID_CLIENTE'] ?? ''));
+    if (!file_exists(__DIR__ . '/mobileApikey.php')) {
+        return false;
+    }
+    $iniData = getDataIni(__DIR__ . '/mobileApikey.php');
+    foreach ($iniData as $v) {
+        if ($v['Token'] == $token) {
+            $data = [$v];
+            return $data[0]['homeHost'];
+        }
+    }
+}
+/**
+ * Busca en mobileApikey.php el registro que coincide con el token del cliente
+ * y retorna el valor de la clave solicitada.
+ *
+ * @param  string      $key  Clave a retornar ('hostCHWeb', 'homeHost', etc.)
+ * @return string|false      El valor, o false si no se encontró
+ */
+function getClientHostData(string $key): string|false
+{
+    $apiKeyFile = __DIR__ . '/mobileApikey.php';
+
+    if (!file_exists($apiKeyFile)) {
+        return false;
+    }
+
+    $token = sha1((string) ($_SESSION['RECID_CLIENTE'] ?? ''));
+    $iniData = getDataIni($apiKeyFile);
+
+    foreach ($iniData as $entry) {
+        if (($entry['Token'] ?? '') === $token) {
+            return $entry[$key] ?? false;
+        }
+    }
+
+    return false;
+}
+
+function gethostCHWeb(): string|false
+{
+    return getClientHostData('hostCHWeb');
+}
+
+function getHomeHost(): string|false
+{
+    return getClientHostData('homeHost');
+}
 /**
  * @param $str = string a escapar
  * @param $length = cantidad de caracteres a devolver
@@ -4130,4 +4184,83 @@ $LABEL_ESTRUCT = function ($struct, $plural = false) {
 function api_internal_base_url(): string
 {
     return OS() === 'linux' ? 'http://localhost' : $_SESSION['HOST_CHWEB'] ?? '';
+}
+
+function redirectToLogin(): void
+{
+    $hostCHWeb = gethostCHWeb();
+    $homeHost = getHomeHost();
+
+    if ($hostCHWeb === false || $homeHost === false) {
+        error_log('redirectToLogin: no se pudo resolver el host del cliente.');
+        exit;
+    }
+
+    $host = $hostCHWeb . '/' . $homeHost;
+    $trace = buildTraceContext();
+    $referer = sanitizeReferer($_SERVER['HTTP_REFERER'] ?? '');
+    $location = "{$host}/login/";
+
+    if ($referer) {
+        $location .= '?l=' . urlencode($referer);
+    }
+
+    session_destroy();
+    sleep(1); // Pequeña pausa para asegurar que la sesión se cierre antes de redirigir
+    error_log(buildRedirectLogMessage($trace, $referer));
+    header('location:' . $location);
+    exit;
+}
+/**
+ * Extrae los datos relevantes del backtrace.
+ *
+ * @return array{file: string, line: string, callerFile: string, callerLine: string, callerFn: string}
+ */
+function buildTraceContext(): array
+{
+    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3);
+
+    return [
+        'file' => $trace[1]['file'] ?? 'unknown file',
+        'line' => $trace[1]['line'] ?? 'unknown line',
+        'callerFile' => $trace[2]['file'] ?? 'unknown file',
+        'callerLine' => $trace[2]['line'] ?? 'unknown line',
+        'callerFn' => $trace[2]['function'] ?? 'unknown function',
+    ];
+}
+
+/**
+ * @param array{file: string, line: string, callerFile: string, callerLine: string, callerFn: string} $trace
+ */
+function buildRedirectLogMessage(array $trace, string $referer = ''): string
+{
+    return sprintf(
+        'Redirigiendo a login desde %s on line %s (called from %s on line %s in function %s()) Referer: %s',
+        $trace['file'],
+        $trace['line'],
+        $trace['callerFile'],
+        $trace['callerLine'],
+        $trace['callerFn'],
+        $referer
+    );
+}
+
+/**
+ * Devuelve la URL saneada o cadena vacía si no es válida.
+ */
+function sanitizeReferer(string $referer): string
+{
+    if ($referer === '') {
+        return '';
+    }
+
+    // FILTER_SANITIZE_URL está deprecado en 8.1+; validamos directo.
+    $sanitized = filter_var($referer, FILTER_SANITIZE_URL);
+
+    // Doble chequeo: que sea una URL estructuralmente válida.
+    if ($sanitized === false || filter_var($sanitized, FILTER_VALIDATE_URL) === false) {
+        return '';
+    }
+
+    return $sanitized;
 }

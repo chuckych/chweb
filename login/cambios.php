@@ -1001,7 +1001,7 @@ if ($verDB < 20260423) {
     fileLog("Se activo el modulo: \"Liquidar Custom\"", $pathLog); // escribir en el log
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
-    
+
 }
 
 if ($verDB < 20260508) {
@@ -1011,6 +1011,76 @@ if ($verDB < 20260508) {
     fileLog("Se inserto el modulo: \"Horarios Config\"", $pathLog); // escribir en el log
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
     fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
-    
-}
 
+}
+if ($verDB < 20260519) {
+
+    $verDB = 20260519; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
+
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('50', 'R074c10n', 'Rotación Config', 13, '0', 3)");
+    fileLog("Se inserto el modulo: \"Rotación Config\"", $pathLog); // escribir en el log
+
+    insert_pdoQuery("ALTER TABLE `modulos` ADD COLUMN `descripcion` VARCHAR(30) NOT NULL AFTER `nombre`;");
+    fileLog("Se añadió la columna `descripcion` a la tabla `modulos`", $pathLog); // escribir en el log
+
+    $array_mod = [
+        1 => 'Cuentas',
+        2 => 'Novedades',
+        3 => 'Fichadas',
+        4 => 'General',
+        5 => 'Mobile',
+        6 => 'Mis Horas',
+        7 => 'Mi Cuenta',
+        8 => 'Dashboard',
+        9 => 'Cta Cte Novedades',
+        10 => 'Personal',
+        11 => 'Ingreso de Fichadas',
+        12 => 'Procesar',
+        13 => 'Cta Cte Horas',
+        14 => 'Generar Cierres',
+        15 => 'Generar Liquidación',
+        16 => 'Horas Trabajadas',
+        17 => 'Otras Novedades',
+        18 => 'Auditoría',
+        19 => 'Horarios Asignados',
+        20 => 'Planilla Horaria',
+        21 => 'Parte Diario',
+        22 => 'Informe de Novedades',
+        23 => 'Informe de Fichadas',
+        24 => 'Informe de Horas',
+        25 => 'Zonas Mobile',
+        26 => 'Usuarios Mobile',
+        27 => 'Mensajes Mobile',
+        28 => 'Horas Costeadas',
+        29 => 'Informe de Presentismo',
+        30 => 'Datos',
+        31 => 'Estructura',
+        32 => 'Mobile HRP',
+        33 => 'Horarios',
+        34 => 'Informe FAR',
+        35 => 'Proyectos',
+        36 => 'Mis Tareas',
+        37 => 'Tareas',
+        38 => 'Estados',
+        39 => 'Procesos',
+        40 => 'Plantilla Procesos',
+        41 => 'Planos',
+        42 => 'Empresas',
+        43 => 'Inicio',
+        44 => 'Plantilla Planos',
+        45 => 'Reporte de Totales',
+        46 => 'Reporte Prysmian',
+        47 => 'Proyectar Horas',
+        48 => 'Liquidar Custom',
+        49 => 'Configuración de Horarios',
+        50 => 'Configuración de Rotación',
+    ];
+
+    foreach ($array_mod as $id_mod => $desc_mod) {
+        pdoQuery("UPDATE modulos SET descripcion = '$desc_mod' WHERE id = $id_mod");
+        fileLog("Se actualizó la descripción del módulo con ID $id_mod a \"$desc_mod\"", $pathLog); // escribir en el log
+    }
+
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0"); // seteo la fecha de actualización de la version de DB
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog); // escribir en el Log
+}

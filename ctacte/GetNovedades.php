@@ -8,8 +8,10 @@ header("Content-Type: application/json");
 require __DIR__ . '/../filtros/filtros.php';
 require __DIR__ . '/../config/conect_mssql.php';
 E_ALL();
-$data = array();
+$data = [];
 $params = $_REQUEST;
+$CTA2Lega = 0;
+
 if (isset($_POST['_l']) && !empty($_POST['_l'])) {
     $legajo = test_input(FusNuloPOST('_l', 'vacio'));
 } else {
@@ -24,8 +26,8 @@ if (isset($_POST['_l']) && !empty($_POST['_l'])) {
 }
 
 
-$data = array();
-$param = array();
+$data = [];
+$param = [];
 $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
 require __DIR__ . '/valores.php';
 $periodo2 = $periodo + 1;
@@ -47,7 +49,7 @@ while ($fila = sqlsrv_fetch_array($res)) {
 sqlsrv_free_stmt($res);
 $Lega = ((isset($_GET['_per'])) && (!empty($_GET['_per']))) ? implode(",", $_GET['_per']) : $CTA2Lega;
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 

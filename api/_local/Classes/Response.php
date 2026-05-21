@@ -7,22 +7,17 @@ use donatj\UserAgent\UserAgentParser;
 // use Classes\Tools;
 // use Classes\DataCompany;
 use Flight;
+use flight\net\Request;
 
 class Response
 {
-    private $request;
-    /**
-     * Devuelve una respuesta JSON con el código de respuesta especificado.
-     *
-     * @param int $code El código de respuesta HTTP.
-     * @param mixed $data Los datos a incluir en la respuesta.
-     */
+    private Request $request;
 
-    function __construct()
+    public function __construct()
     {
         $this->request = Flight::request();
     }
-    function json($data, $code = 200)
+    private function json($data, $code = 200)
     {
         // Establecemos el código de respuesta HTTP.
         http_response_code($code);
@@ -46,10 +41,10 @@ class Response
      * @param int $count El total de registros de la respuesta.
      * @param int $idCompany El id de la empresa.
      */
-    function respuesta($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
+    public function respuesta($data = [], $total = 0, $msg = 'OK', $code = 200, $time_start = 0, $count = 0, $idCompany = 0)
     {
         // $log = new Log; // Log Api
-        $code = intval($code); // code response
+        $code = \intval($code); // code response
         $start = ($code != 400) ? $this->start() : 0; // start response
         $length = ($code != 400) ? $this->length() : 0; // length response
 
@@ -58,12 +53,12 @@ class Response
 
         $array = [
             'RESPONSE_CODE' => $code . ' ' . $this->getStatusMessage($code),
-            'START' => intval($start),
-            'LENGTH' => intval($length),
-            'TOTAL' => intval($total),
-            'COUNT' => intval($count),
+            'START' => \intval($start),
+            'LENGTH' => \intval($length),
+            'TOTAL' => \intval($total),
+            'COUNT' => \intval($count),
             'MESSAGE' => $msg,
-            'TIME' => floatval($tiempoScript),
+            'TIME' => \floatval($tiempoScript),
             'DATA' => $data ?? [],
         ];
         $this->json($array, $code); // response json

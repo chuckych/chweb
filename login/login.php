@@ -4,7 +4,7 @@ $usuario = (isset($_COOKIE['user'])) ? $_COOKIE['user'] : '';
 $clave = (isset($_COOKIE['clave'])) ? $_COOKIE['clave'] : '';
 $Modulo = '999';
 $bgcolor = 'bg-custom ';
-$_GET['l'] = $_GET['l'] ?? false;
+$_GET['l'] ??= '';
 // session_destroy();
 $self = explode('/', $_SERVER['PHP_SELF']);
 $self = $self[1];

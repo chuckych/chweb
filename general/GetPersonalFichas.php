@@ -16,7 +16,7 @@ require __DIR__ . '/valores.php';
 
 $params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
-$where_condition = $sqlTot = $sqlRec = "";
+$where_condition = $sqlTot = $sqlRec = $pers_legajo = $pers_nombre = "";
 
 //$sql_query="SELECT FICHAS.FicLega AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume WHERE FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, PERSONAL.LegApNo ";
 
