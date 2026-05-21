@@ -82,7 +82,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
 
         BorrarArchivosPDF('archivos/*.pdf');
         /** Borra los archivos anteriores a la fecha actual */
-        ini_set("pcre.backtrack_limit", "5000000");
+        ini_set("pcre.backtrack_limit", "50000000");
+        ini_set("pcre.recursion_limit", "1000000");
 
         ob_start();
         require_once 'reporte_general.php';
@@ -168,10 +169,15 @@ if (($_SERVER["REQUEST_METHOD"] == "POST")) {
         $t_css = microtime(true);
         // error_log('[reporte] 3) WriteHTML CSS en ' . round($t_css - $t_init, 2) . 's');
 
-        // Una sola llamada WriteHTML: el chunking probado no tuvo ningún efecto
-        // (25.09s con 182 calls = 25.34s con 19 calls → overhead por llamada mínimo).
-        // El tiempo depende del volumen de HTML procesado, no de la cantidad de llamadas.
-        $mpdf->WriteHTML($buffer, 2);
+        // Procesar el cuerpo en bloques para evitar errores de PCRE con HTML muy grande.
+        $chunks = explode('<!--CHWEB_MPDF_CHUNK-->', $buffer);
+        foreach ($chunks as $chunk) {
+            $chunk = trim($chunk);
+            if ($chunk === '') {
+                continue;
+            }
+            $mpdf->WriteHTML($chunk, 2);
+        }
         $t_write = microtime(true);
         // error_log('[reporte] 4) WriteHTML (single call) en ' . round($t_write - $t_css, 2) . 's  | buffer: ' . round(strlen($buffer) / 1024, 1) . ' KB');
 

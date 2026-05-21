@@ -4162,6 +4162,7 @@ function auth_ad($passLogin, $row)
         }
     }
 }
+
 $LABEL_ESTRUCT = function ($struct, $plural = false) {
     $labels = $_SESSION['LABELS'] ?? [];
     if (empty($labels))
@@ -4175,12 +4176,86 @@ $LABEL_ESTRUCT = function ($struct, $plural = false) {
         'Sect' => ['SectSin', 'SectPlu'],
         'Secc' => ['SeccSin', 'SeccPlu'],
     ];
+    $mapDefault = [
+        'Empr' => [
+            0 => 'Empresas',
+            1 => 'Empresa',
+        ],
+        'Plan' => [
+            0 => 'Plantas',
+            1 => 'Planta'
+        ],
+        'Sucu' => [
+            0 => 'Sucursales',
+            1 => 'Sucursal'
+        ],
+        'Grup' => [
+            0 => 'Grupos',
+            1 => 'Grupo'
+        ],
+        'Sect' => [
+            0 => 'Sectores',
+            1 => 'Sector'
+        ],
+        'Secc' => [
+            0 => 'Secciones',
+            1 => 'Sección'
+        ],
+    ];
 
     if (!isset($map[$struct]))
         return '';
 
-    return $labels[$map[$struct][(int) $plural]] ?? '';
+    $etiqueta = $labels[$map[$struct][(int) $plural]] ?: $mapDefault[$struct][(int) $plural];
+    return $etiqueta;
 };
+function labelEstruct(string $struct, bool $plural = false): string
+{
+    $labels = $_SESSION['LABELS'] ?? [];
+    if (empty($labels))
+        return '';
+
+    $map = [
+        'Empr' => ['EmprSin', 'EmprPlu'],
+        'Plan' => ['PlanSin', 'PlanPlu'],
+        'Sucu' => ['SucuSin', 'SucuPlu'],
+        'Grup' => ['GrupSin', 'GrupPlu'],
+        'Sect' => ['SectSin', 'SectPlu'],
+        'Secc' => ['SeccSin', 'SeccPlu'],
+    ];
+    $mapDefault = [
+        'Empr' => [
+            1 => 'Empresas',
+            0 => 'Empresa',
+        ],
+        'Plan' => [
+            1 => 'Plantas',
+            0 => 'Planta'
+        ],
+        'Sucu' => [
+            1 => 'Sucursales',
+            0 => 'Sucursal'
+        ],
+        'Grup' => [
+            1 => 'Grupos',
+            0 => 'Grupo'
+        ],
+        'Sect' => [
+            1 => 'Sectores',
+            0 => 'Sector'
+        ],
+        'Secc' => [
+            1 => 'Secciones',
+            0 => 'Sección'
+        ],
+    ];
+
+    if (!isset($map[$struct]))
+        return '';
+
+    $etiqueta = $labels[$map[$struct][(int) $plural]] ?: $mapDefault[$struct][(int) $plural];
+    return $etiqueta;
+}
 function api_internal_base_url(): string
 {
     return OS() === 'linux' ? 'http://localhost' : $_SESSION['HOST_CHWEB'] ?? '';

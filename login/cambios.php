@@ -1017,7 +1017,7 @@ if ($verDB < 20260519) {
 
     $verDB = 20260519; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
 
-    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('50', 'R074c10n', 'Rotación Config', 13, '0', 3)");
+    insert_pdoQuery("INSERT INTO modulos (id, recid, nombre, orden, estado, idtipo) VALUES ('50', 'R074c10n', 'Rotación Config', 13, '1', 3)");
     fileLog("Se inserto el modulo: \"Rotación Config\"", $pathLog); // escribir en el log
 
     insert_pdoQuery("ALTER TABLE `modulos` ADD COLUMN `descripcion` VARCHAR(30) NOT NULL AFTER `nombre`;");

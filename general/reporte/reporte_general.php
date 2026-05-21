@@ -134,14 +134,15 @@ $Etiquetas = $_SESSION['LABELS'] ?? [];
 $codString = fn($cod) => ($cod === '00' || $cod === '0') ? '' : "($cod)";
 $TotalLegajos = count($groupLega);
 
-$labelEmpr = $LABEL_ESTRUCT('Empr');
-$labelPlan = $LABEL_ESTRUCT('Plan');
-$labelSucu = $LABEL_ESTRUCT('Sucu');
-$labelGrup = $LABEL_ESTRUCT('Grup');
-$labelSect = $LABEL_ESTRUCT('Sect');
-$labelSecc = $LABEL_ESTRUCT('Secc');
+$labelEmpr = labelEstruct('Empr') ?? 'Empresa';
+$labelPlan = labelEstruct('Plan') ?? 'Planta';
+$labelSucu = labelEstruct('Sucu') ?? 'Sucursal';
+$labelGrup = labelEstruct('Grup') ?? 'Grupo';
+$labelSect = labelEstruct('Sect') ?? 'Sector';
+$labelSecc = labelEstruct('Secc') ?? 'Sección';
 
 foreach ($groupLega as $encabezado) {
+    echo '<!--CHWEB_MPDF_CHUNK-->';
     $Estruct = $encabezado['Estruct'];
 
     $EstructEmpr = $Estruct['Empr'] ?? '';
@@ -443,6 +444,7 @@ if ($_SaltoPag != '1' && $TotalLegajos > 1) {
     echo '<div style="page-break-before: always; clear:both"></div>'; // Salto de pagina 
 }
 if ($TotalLegajos > 1) { // si hay mas de un legajos mostramos los totales generales
+    echo '<!--CHWEB_MPDF_CHUNK-->';
 
     if ($arrNoveGeneral) {
         echo '<hr>';
