@@ -7,12 +7,6 @@ $routeEnv = getConfigPath();
 $dotenv = Dotenv\Dotenv::createImmutable($routeEnv);
 $dotenv->safeLoad();
 
-function isUriLogin(): bool|int
-{
-    $uri = $_SERVER['REQUEST_URI'] ?? '';
-    return preg_match('/\/login(\/|$)/', $uri);
-}
-
 function version($html = false)
 {
     try {
@@ -3450,7 +3444,7 @@ function getHomeHost_old()
  * @param  string      $key  Clave a retornar ('hostCHWeb', 'homeHost', etc.)
  * @return string|false      El valor, o false si no se encontró
  */
-function getClientHostData(string $key): string|false
+function getClientHostData(string $key)
 {
     $apiKeyFile = __DIR__ . '/mobileApikey.php';
 
@@ -3470,12 +3464,12 @@ function getClientHostData(string $key): string|false
     return false;
 }
 
-function gethostCHWeb(): string|false
+function gethostCHWeb()
 {
     return getClientHostData('hostCHWeb');
 }
 
-function getHomeHost(): string|false
+function getHomeHost()
 {
     return getClientHostData('homeHost');
 }
