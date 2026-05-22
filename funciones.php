@@ -4307,13 +4307,14 @@ function buildTraceContext(): array
 function buildRedirectLogMessage(array $trace, string $referer = ''): string
 {
     return sprintf(
-        'Redirigiendo a login desde %s on line %s (called from %s on line %s in function %s()) Referer: %s',
+        'Redirigiendo a login desde %s on line %s (called from %s on line %s in function %s()) Referer: %s IP: %s',
         $trace['file'],
         $trace['line'],
         $trace['callerFile'],
         $trace['callerLine'],
         $trace['callerFn'],
-        $referer
+        $referer,
+        $ip = get_client_ip()
     );
 }
 
