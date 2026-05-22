@@ -1089,9 +1089,9 @@ if ($verDB < 20260521) {
 
     $verDB = 20260521; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
 
-    pdoQuery("UPDATE `chweb`.`modulos` SET `descripcion`='Control General' WHERE  `id`=4;");
-    pdoQuery("UPDATE `chweb`.`modulos` SET `descripcion`='Cta Cte' WHERE  `id`=9;");
-    pdoQuery("UPDATE `chweb`.`modulos` SET `descripcion`='Administración de Personal' WHERE  `id`=10;");
+    pdoQuery("UPDATE modulos SET descripcion='Control General' WHERE  id=4;");
+    pdoQuery("UPDATE modulos SET descripcion='Cta Cte' WHERE  id=9;");
+    pdoQuery("UPDATE modulos SET descripcion='Administración de Personal' WHERE  id=10;");
     fileLog("Se actualizaron las descripciones de los módulos con ID 4, 9 y 10", $pathLog);
     // seteo la fecha de actualización de la version de DB
     pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
