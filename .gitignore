@@ -33,6 +33,7 @@ pruebaApiML.php
 /mobile/hrp/*.json
 /mobile/hrp/fotos/*.jpg
 /mobile/hrp/fotos/*.png
+/mobile/hrp/api
 *.pdf
 *.log
 *.zip
