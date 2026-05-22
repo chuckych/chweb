@@ -96,13 +96,24 @@ class Log
         $line = $trace[0]['line'] ?? 'unknown line';
         $desde = $trace[1]['file'] ?? 'unknown file';
         $desdeLine = $trace[1]['line'] ?? 'unknown line';
+        $realIp = $this->returnRealIpAddress();
         $fn = $trace[1]['function'] ?? 'unknown function';
         $getMessage = $exception ? $exception->getMessage() : '';
         $strError =  $exception ? 'Error: ': '';
-        $text = $error ? "{$strError}{$error} {$getMessage}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\n" : "{$strError}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\n";
+        $text = $error ? "{$strError}{$error} {$getMessage}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\nIP -> {$realIp}\n" : "{$strError}\nin {$file} on line {$line}\n(called from {$desde} on line {$desdeLine})\nfn -> {$fn}()\nIP -> {$realIp}\n";
         $this->write($text, $nameFile);
         if($exception){
             \error_log($text);
+        }
+    }
+    private function returnRealIpAddress()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } else {
+            return $_SERVER['REMOTE_ADDR'] ?? 'unknown IP';
         }
     }
 }
