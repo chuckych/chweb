@@ -4361,19 +4361,41 @@ function loadModulos(): array
 }
 function updateModulosCache(): void
 {
-    $pathModulos = __DIR__ . '/config/modulos.php';
+    try {
+        $pathModulos = __DIR__ . '/config/modulos.php';
 
-    $dataMod = array_pdoQuery("SELECT nombre, descripcion FROM modulos") ?? [];
-    $dataMod = array_column($dataMod, 'descripcion', 'nombre');
+        $dataMod = array_pdoQuery("SELECT nombre, descripcion FROM modulos") ?? [];
+        $dataMod = array_column($dataMod, 'descripcion', 'nombre');
 
-    $normalized = [];
+        $normalized = [];
 
-    foreach ($dataMod as $key => $value) {
-        $newKey = transliterator_transliterate('Any-Latin; Latin-ASCII', (string) $key);
-        $newKey = str_replace(' ', '_', strtolower($newKey));
-        $normalized[$newKey] = $value;
+        foreach ($dataMod as $key => $value) {
+            $newKey = removeAccents((string) $key);
+            $newKey = str_replace(' ', '_', strtolower($newKey));
+            $normalized[$newKey] = $value;
+        }
+
+        $phpText = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($normalized, true) . ';' . PHP_EOL;
+        file_put_contents($pathModulos, $phpText);
+    } catch (\Throwable $th) {
+        error_log("Error actualizando cache de módulos: " . $th->getMessage());
+    }
+}
+function removeAccents(string $str): string
+{
+    if (function_exists('transliterator_transliterate')) {
+        return transliterator_transliterate('Any-Latin; Latin-ASCII', $str);
     }
 
-    $phpText = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($normalized, true) . ';' . PHP_EOL;
-    file_put_contents($pathModulos, $phpText);
+    $from = ['á', 'é', 'í', 'ó', 'ú', 'à', 'è', 'ì', 'ò', 'ù', 'ä', 'ë', 'ï', 'ö', 'ü',
+        'â', 'ê', 'î', 'ô', 'û', 'ã', 'õ', 'ñ', 'ç', 'ý', 'ÿ',
+        'Á', 'É', 'Í', 'Ó', 'Ú', 'À', 'È', 'Ì', 'Ò', 'Ù', 'Ä', 'Ë', 'Ï', 'Ö', 'Ü',
+        'Â', 'Ê', 'Î', 'Ô', 'Û', 'Ã', 'Õ', 'Ñ', 'Ç', 'Ý'];
+
+    $to = ['a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u', 'a', 'e', 'i', 'o', 'u',
+        'a', 'e', 'i', 'o', 'u', 'a', 'o', 'n', 'c', 'y', 'y',
+        'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U', 'A', 'E', 'I', 'O', 'U',
+        'A', 'E', 'I', 'O', 'U', 'A', 'O', 'N', 'C', 'Y'];
+
+    return str_replace($from, $to, $str);
 }
