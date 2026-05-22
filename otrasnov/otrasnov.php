@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title><?= MODULOS['otrasnov'] ?></title>
+    <title><?= MODULOS['otras_novedades'] ?></title>
     <style>
         .dataTables_info {
             font-size: small;
@@ -18,7 +18,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'novedades.png', MODULOS['otrasnov'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'novedades.png', MODULOS['otras_novedades'], '') ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">

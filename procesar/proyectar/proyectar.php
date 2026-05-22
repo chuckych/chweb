@@ -7,7 +7,7 @@
     <!-- daterangepicker.css -->
     <link rel="stylesheet" type="text/css" href="/<?= HOMEHOST ?>/js/dateranger/daterangepicker.css" />
     <title>
-        <?= MODULOS['proyectar'] ?>
+        <?= MODULOS['proyectar_horas'] ?>
     </title>
     <style>
         /* .select2-results__option[aria-selected=true] {
@@ -31,7 +31,7 @@
         </svg>';
         ?>
         <!-- Encabezado -->
-        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar'], ''); ?>
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['proyectar_horas'], ''); ?>
         <!-- Fin Encabezado -->
         <?php require 'filtros.php'; ?>
         <div class="form-row mb-3">

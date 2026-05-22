@@ -128,7 +128,7 @@ $mapConfiguracion = [
 
 ?>
 <input type="hidden" hidden id="_referer" value="<?= urlencode($_SERVER['REQUEST_URI'] ?? '') ?>">
-<input type="hidden" hidden id="ID_MODULO" value="<?= ID_MODULO ?? '' ?>">
+<input type="hidden" id="ID_MODULO" value="<?= defined('ID_MODULO') ? ID_MODULO : '' ?>">
 <!-- navBar -->
 <div id="navBarPrimary" class="sticky-top d-print-none <?= $noNav ?>" style="z-index:1040;">
     <nav class="navbar navbar-expand-lg navbar-light bg-white row d-flex align-items-center">

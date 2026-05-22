@@ -65,40 +65,18 @@ $encabezado = [
     "Nombre",
 ];
 
-if (!is_callable($LABEL_ESTRUCT ?? null)) {
-    $LABEL_ESTRUCT = function ($struct, $plural = false) {
-        $labels = $_SESSION['LABELS'] ?? [];
-        if (empty($labels))
-            return '';
-
-        $map = [
-            'Empr' => ['EmprSin', 'EmprPlu'],
-            'Plan' => ['PlanSin', 'PlanPlu'],
-            'Sucu' => ['SucuSin', 'SucuPlu'],
-            'Grup' => ['GrupSin', 'GrupPlu'],
-            'Sect' => ['SectSin', 'SectPlu'],
-            'Secc' => ['SeccSin', 'SeccPlu'],
-        ];
-
-        if (!isset($map[$struct]))
-            return '';
-
-        return $labels[$map[$struct][(int) $plural]] ?? '';
-    };
-}
-
-$labelEmpr = $LABEL_ESTRUCT('Empr');
-$labelEmprPlu = $LABEL_ESTRUCT('Empr', true);
-$labelPlan = $LABEL_ESTRUCT('Plan');
-$labelPlanPlu = $LABEL_ESTRUCT('Plan', true);
-$labelSucu = $LABEL_ESTRUCT('Sucu');
-$labelSucuPlu = $LABEL_ESTRUCT('Sucu', true);
-$labelGrup = $LABEL_ESTRUCT('Grup');
-$labelGrupPlu = $LABEL_ESTRUCT('Grup', true);
-$labelSect = $LABEL_ESTRUCT('Sect');
-$labelSectPlu = $LABEL_ESTRUCT('Sect', true);
-$labelSecc = $LABEL_ESTRUCT('Secc');
-$labelSeccPlu = $LABEL_ESTRUCT('Secc', true);
+$labelEmpr = labelEstruct('Empr');
+$labelEmprPlu = labelEstruct('Empr', true);
+$labelPlan = labelEstruct('Plan');
+$labelPlanPlu = labelEstruct('Plan', true);
+$labelSucu = labelEstruct('Sucu');
+$labelSucuPlu = labelEstruct('Sucu', true);
+$labelGrup = labelEstruct('Grup');
+$labelGrupPlu = labelEstruct('Grup', true);
+$labelSect = labelEstruct('Sect');
+$labelSectPlu = labelEstruct('Sect', true);
+$labelSecc = labelEstruct('Secc');
+$labelSeccPlu = labelEstruct('Secc', true);
 
 if ($getEstructura == '1') {
 

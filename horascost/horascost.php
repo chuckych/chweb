@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title><?= MODULOS['horascost'] ?></title>
+    <title><?= MODULOS['horas_costeadas'] ?></title>
     <style>
         .dataTables_info {
             font-size: small;
@@ -39,7 +39,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'horascost.png', MODULOS['horascost'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'horascost.png', MODULOS['horas_costeadas'], '') ?>
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <?php

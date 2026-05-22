@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['liquidar'] ?></title>
+    <title><?= MODULOS['liquidar_custom'] ?></title>
     <style>
         th{
             font-size: 0.8rem;

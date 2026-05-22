@@ -5,15 +5,15 @@
     <meta charset="utf-8">
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['infornovc'] ?></title>
+    <title><?= MODULOS['informe_presentismo'] ?></title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['infornovc'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['informe_presentismo'], '') ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white py-2">
             <div class="col-12 col-sm-6 mt-2">

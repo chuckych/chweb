@@ -37,7 +37,7 @@ function version($html = false)
 
 function verDBLocal(): int
 {
-    return 20260519; // Version de la base de datos local
+    return 20260521; // Version de la base de datos local
 }
 function checkDBIntegrity()
 {
@@ -54,7 +54,6 @@ function checkDBIntegrity()
 function configureErrorReporting(): void
 {
     $isLocal = ($_SERVER['SERVER_NAME'] ?? '') === 'localhost';
-
     error_reporting(E_ALL);
     ini_set('display_errors', $isLocal ? '1' : '0');
 }
@@ -87,13 +86,15 @@ function secure_auth_ch()
     $fechaGuardada = $_SESSION["ultimoAcceso"]; // Fecha de ultimo acceso
     $ahora = date("Y-m-d H:i:s"); // Fecha actual
     $tiempo_transcurrido = (strtotime($ahora) - strtotime($fechaGuardada)); // Tiempo transcurrido
+    $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
     // comparamos el tiempo transcurrido 
     if ($tiempo_transcurrido >= $_SESSION["LIMIT_SESION"]) { // Si el tiempo transcurrido es mayor a la variable LIMIT_SESION
+        error_log($HTTP_REFERER);
         // Si pasaron 60 minutos o más
         session_destroy(); // Destruye la sesión
         // destruyo la sesión
         // envío al usuario a la pag. de autenticación
-        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER'] ?? ''));
+        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($HTTP_REFERER));
         exit();
     } else {
         // sino, actualizo la fecha de la sesión
@@ -108,8 +109,9 @@ function secure_auth_ch_json()
     timeZone_lang();
 
     $secure_auth_ch = $_SESSION["secure_auth_ch"] ?? '';
+    $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
     if ($secure_auth_ch !== true || empty($_SESSION['UID'])) {
-        $HTTP_REFERER = $_SERVER['HTTP_REFERER'] ?? '';
+        error_log($HTTP_REFERER);
         $f = 'Sesi&oacute;n Expirada. Inicie sesi&oacute;n nuevamente<br><a class="btn btn-sm fontq btn-info mt-2" href="/' . HOMEHOST . '/login/?l=' . urlencode($HTTP_REFERER) . '">Iniciar sesi&oacute;n </a>';
         PrintRespuestaJson('sesion', $f);
         exit;
@@ -127,7 +129,7 @@ function secure_auth_ch_json()
         // destruyo la sesión
         // envío al usuario a la pag. de autenticación
         session_destroy();
-        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($_SERVER['HTTP_REFERER']));
+        header("location:/" . HOMEHOST . "/login/?sesion&l=" . urlencode($HTTP_REFERER));
         exit();
     } else {
         // sino, actualizo la fecha de la sesión
@@ -2997,7 +2999,7 @@ function fileLog($text, $ruta_archivo, $type = false)
     fclose($log);
     log_local($text);
 }
-function log_local($msg)
+function log_local(string $msg)
 {
     switch ($_SERVER['HTTP_HOST'] ?? '') {
         case 'localhost':
@@ -4258,17 +4260,18 @@ function api_internal_base_url(): string
 function redirectToLogin(): void
 {
     $hostCHWeb = host();
-    $homeHost = getHomeHost();
+    $homeHost = HOMEHOST;
 
     if ($hostCHWeb === false || $homeHost === false) {
         error_log('redirectToLogin: no se pudo resolver el host del cliente.');
         exit;
     }
 
-    $host = $hostCHWeb . '/' . $homeHost;
+    $host = "{$hostCHWeb}/{$homeHost}";
     $trace = buildTraceContext();
     $referer = sanitizeReferer($_SERVER['HTTP_REFERER'] ?? '');
     $location = "{$host}/login/";
+    error_log($referer);
 
     if ($referer) {
         $location .= '?l=' . urlencode($referer);
@@ -4331,5 +4334,45 @@ function sanitizeReferer(string $referer): string
         return '';
     }
 
+    // si $sanitized contiene login lo retornamos vacío para evitar loops de redirección
+    if (stripos($sanitized, 'login') !== false) {
+        return '';
+    }
+
     return $sanitized;
+}
+function loadModulos(): array
+{
+    $path = __DIR__ . '/config/modulos.php';
+
+    if (!file_exists($path)) {
+        error_log("Archivo de módulos no encontrado: {$path}");
+        return [];
+    }
+
+    $modulos = require $path;
+
+    if (!is_array($modulos)) {
+        error_log("El archivo de módulos no devuelve un array: {$path}");
+        return [];
+    }
+    return $modulos;
+}
+function updateModulosCache(): void
+{
+    $pathModulos = __DIR__ . '/config/modulos.php';
+
+    $dataMod = array_pdoQuery("SELECT nombre, descripcion FROM modulos") ?? [];
+    $dataMod = array_column($dataMod, 'descripcion', 'nombre');
+
+    $normalized = [];
+
+    foreach ($dataMod as $key => $value) {
+        $newKey = transliterator_transliterate('Any-Latin; Latin-ASCII', (string) $key);
+        $newKey = str_replace(' ', '_', strtolower($newKey));
+        $normalized[$newKey] = $value;
+    }
+
+    $phpText = '<?php' . PHP_EOL . PHP_EOL . 'return ' . var_export($normalized, true) . ';' . PHP_EOL;
+    file_put_contents($pathModulos, $phpText);
 }

@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['estruct'] ?></title>
+    <title><?= MODULOS['estructura'] ?></title>
     <style>
         .dataTables_paginate {
             margin-bottom: 0px !important;
@@ -22,12 +22,12 @@
     </style>
 </head>
 
-<div class="fadeInDown">
+<div class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php $noNav ? '': encabezado_mod2('bg-custom', 'white', 'gear-fill', MODULOS['estruct'], '25', 'text-white mr-2'); ?>
+        <?php $noNav ? '': encabezado_mod2('bg-custom', 'white', 'gear-fill', MODULOS['estructura'], '25', 'text-white mr-2'); ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white py-2">
             <div class="col-12 p-3">

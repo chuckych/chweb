@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title><?= MODULOS['ctacte'] ?>: Novedades</title>
+    <title><?= MODULOS['cta_cte'] ?>: Novedades</title>
     <style>
         .dataTables_info {
             font-size: small;
@@ -18,7 +18,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'ctacte.png', 'Cta Cte: Novedades', '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'ctacte.png', MODULOS['cta_cte'] . ': Novedades', '') ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">

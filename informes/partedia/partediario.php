@@ -4,15 +4,15 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['partedia'] ?></title>
+    <title><?= MODULOS['parte_diario'] ?></title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['partedia'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['parte_diario'], '') ?>
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <?php

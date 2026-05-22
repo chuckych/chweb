@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title><?= MODULOS['mishoras'] ?></title>
+    <title><?= MODULOS['mis_horas'] ?></title>
 </head>
 
 <body class="fadeIn">
@@ -22,9 +22,7 @@
         ?>
         <!-- Encabezado -->
         <div class="sticky-top">
-            <?=
-                encabezado_mod2('bg-custom', 'white', 'clock-history', '<span class="d-none d-sm-inline">' . MODULOS['mishoras'] . '&nbsp;</span><span class="nombre"></span>', '25', 'text-white mr-2');
-            ?>
+            <?php encabezado_mod2('bg-custom', 'white', 'clock-history', '<span class="d-none d-sm-inline">' . MODULOS['mis_horas'] . '&nbsp;</span><span class="nombre"></span>', '25', 'text-white mr-2'); ?>
             <!-- </div> -->
             <!-- Fin Encabezado -->
             <div class="row pt-3 pb-3 pb-sm-2 bg-white">

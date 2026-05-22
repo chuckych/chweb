@@ -14,13 +14,13 @@ $no_cta_cte = (!$nove[0]['peri']) ? 'd-none' : '';
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['ctactehoras'] ?></title>
+    <title><?= MODULOS['cta_cte'] . ': Horas' ?></title>
 </head>
 
 <body class="animate__animated animate__fadeIn">
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
-        <?= encabezado_mod('bg-custom', 'white', 'ctacte_hora.png', MODULOS['ctactehoras'], ''); ?>
+        <?php encabezado_mod('bg-custom', 'white', 'ctacte_hora.png', MODULOS['cta_cte'] . ': Horas', ''); ?>
         <div class="row bg-white radius pt-3 mb-0 pb-0">
             <div class="col-12 col-sm-6">
                 <button type="button" class="btn btn-outline-custom border btn-sm fontq Filtros" data-toggle="modal"

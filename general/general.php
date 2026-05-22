@@ -4,9 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../llamadas.php"; ?>
-    <title>Control
-        <?= MODULOS['general'] ?>
-    </title>
+    <title><?= MODULOS['general'] ?></title>
     <style>
         .dataTables_info {
             font-size: small;
@@ -74,7 +72,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'general.png', 'Control ' . MODULOS['general'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'general.png', MODULOS['general'], '') ?>
         <!-- Fin Encabezado -->
         <!-- <form action="" method="GET" name="fichadas" class="" onsubmit="ShowLoading()" id='range'> -->
         <div class="row bg-white radius pt-3 mb-0 pb-0">

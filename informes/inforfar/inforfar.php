@@ -4,15 +4,15 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['inforhora'] ?></title>
+    <title><?= MODULOS['informe_far'] ?></title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../../nav.php'; ?>
         <!-- Encabezado -->
-        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['inforfar'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'informes.png', MODULOS['informe_far'], '') ?>
         <!-- Fin Encabezado -->
         <?php
         $FechaMinMax = (fecha_min_max2('FICHAS1', 'FICHAS1.FicFech'));

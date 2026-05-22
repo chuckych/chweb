@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../../llamadas.php"; ?>
-    <title><?= MODULOS['prysmian'] ?></title>
+    <title><?= MODULOS['reporte_prysmian'] ?></title>
 </head>
 
 <body class="fadeIn">
@@ -12,8 +12,7 @@
     <div class="container">
         <?php require __DIR__ . '/../../../nav.php'; ?>
         <!-- Encabezado -->
-        <?=
-            encabezado_mod2('bg-custom', 'white', 'folder-symlink-fill', MODULOS['prysmian'], '25', 'text-white mr-2');
+        <?php encabezado_mod2('bg-custom', 'white', 'folder-symlink-fill', MODULOS['reporte_prysmian'], '25', 'text-white mr-2');
         ?>
         <!-- Fin Encabezado -->
         <div class="row bg-white p-2 radius wrapper" hidden>
