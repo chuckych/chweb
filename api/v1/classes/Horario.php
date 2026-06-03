@@ -322,7 +322,7 @@ class Horario
     public function getUnused(): void
     {
         $this->inicio = microtime(true);
-        $idCompany = defined('ID_COMPANY') ? ID_COMPANY : 0;
+        $idCompany = \defined('ID_COMPANY') ? ID_COMPANY : 0;
 
         try {
             $conn = $this->conect->conn();
@@ -350,11 +350,11 @@ class Horario
 
             $this->resp->respuesta(
                 $data,
-                count($data),
+                \count($data),
                 'OK',
                 200,
                 $this->inicio,
-                count($data),
+                \count($data),
                 $idCompany
             );
         } catch (\PDOException $e) {

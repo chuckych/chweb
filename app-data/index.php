@@ -1810,6 +1810,328 @@ Flight::route('POST /datatables/horarios', function () {
     ];
     Flight::json($jsonData ?? []);
 });
+Flight::route('POST /datatables/rotaciones', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+    $draw = $payloadRaw['draw'] ?? 0;
+    $payload = [
+        'RotDesc' => $payloadRaw['search']['value'] ?? '',
+        'start' => $payloadRaw['start'] ?? 0,
+        'length' => $payloadRaw['length'] ?? 10,
+        // 'LastCodi' => $payloadRaw['LastCodi'] ?? 0,
+        // 'OrderBy' => $payloadRaw['OrderBy'] ?? '',
+    ];
+    $endpoint = URLAPI . "/api/v1/rotaciones";
+    $rotacion = ch_api($endpoint, [], 'GET', $payload);
+    $rotacion = json_decode($rotacion ?? [], true);
+    $result = $rotacion ?? [];
+    $jsonData = [
+        'draw' => $draw,
+        'recordsFiltered' => $result['TOTAL'] ?? 0,
+        'recordsTotal' => $result['COUNT'] ?? 0,
+        'data' => $result['DATA'] ?? [],
+    ];
+    Flight::json($jsonData ?? []);
+});
+
+Flight::route('POST /rotacion', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+
+    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
+        $payloadRaw = [];
+    }
+
+    if (empty($payloadRaw)) {
+        $rawInput = file_get_contents('php://input');
+        if (!empty($rawInput)) {
+            $decoded = json_decode($rawInput, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $payloadRaw = $decoded;
+            }
+        }
+    }
+
+    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
+    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
+
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+    foreach ($payload as &$item) {
+        if (!is_array($item)) {
+            $item = [];
+        }
+        if (empty($item['User'])) {
+            $item['User'] = $User;
+        }
+    }
+    unset($item);
+
+    $endpoint = URLAPI . "/api/v1/rotacion";
+    $rotacion = ch_api($endpoint, $payload, 'POST', []);
+    $rotacion = json_decode($rotacion ?? [], true);
+    $result = $rotacion ?? [];
+
+    $insertados = $result['DATA']['insertados'] ?? [];
+    $actualizados = $result['DATA']['actualizados'] ?? [];
+
+    if ($insertados || $actualizados) {
+        foreach ($insertados as $el) {
+            $RotCodi = $el['RotCodi'] ?? '';
+            $RotDesc = $el['RotDesc'] ?? '';
+            if (!$RotCodi) {
+                continue;
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'A',
+                'AudDato' => "Rotación: {$RotCodi} {$RotDesc}.",
+            ];
+        }
+
+        foreach ($actualizados as $el) {
+            $RotCodi = $el['RotCodi'] ?? '';
+            $RotDesc = $el['RotDesc'] ?? '';
+            if (!$RotCodi) {
+                continue;
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'M',
+                'AudDato' => "Rotación: {$RotCodi} {$RotDesc}.",
+            ];
+        }
+
+        auditoria_multiple($arrayAuditoria ?? [], 50);
+    }
+
+    Flight::json($result ?? []);
+});
+
+Flight::route('DELETE /rotacion', function () {
+    $request = Flight::request();
+    $payloadRaw = $request->data ?? [];
+    $payloadRaw = method_exists($payloadRaw, 'getData') ? $payloadRaw->getData() : (array) $payloadRaw;
+
+    if (isset($payloadRaw['undefined']) && count($payloadRaw) === 1) {
+        $payloadRaw = [];
+    }
+
+    if (empty($payloadRaw)) {
+        $rawInput = file_get_contents('php://input');
+        if (!empty($rawInput)) {
+            $decoded = json_decode($rawInput, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $payloadRaw = $decoded;
+            }
+        }
+    }
+
+    $isBatch = isset($payloadRaw[0]) && is_array($payloadRaw[0]);
+    $payload = $isBatch ? $payloadRaw : [$payloadRaw];
+
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+    foreach ($payload as &$item) {
+        if (!is_array($item)) {
+            $item = [];
+        }
+        if (empty($item['User'])) {
+            $item['User'] = $User;
+        }
+    }
+    unset($item);
+
+    $endpoint = URLAPI . "/api/v1/rotacion";
+    $rotacion = ch_api($endpoint, $payload, 'DELETE', []);
+    $rotacion = json_decode($rotacion ?? [], true);
+    $result = $rotacion ?? [];
+    $eliminados = $result['DATA']['eliminados'] ?? [];
+
+    if ($eliminados) {
+        foreach ($eliminados as $el) {
+            $RotCodi = $el['RotCodi'] ?? '';
+            $RotDesc = $el['RotDesc'] ?? '';
+            if (!$RotCodi) {
+                continue;
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'B',
+                'AudDato' => "Rotación: {$RotCodi} {$RotDesc} eliminada.",
+            ];
+        }
+        auditoria_multiple($arrayAuditoria ?? [], 50);
+    }
+
+    Flight::json($result ?? []);
+});
+
+Flight::route('GET /rotacion', function () {
+    $request = Flight::request();
+    $queryParams = method_exists($request->query, 'getData') ? $request->query->getData() : (array) $request->query;
+    $endpoint = URLAPI . "/api/v1/rotacion";
+    $rotacion = ch_api($endpoint, [], 'GET', $queryParams ?? []);
+    $rotacion = json_decode($rotacion ?? [], true);
+    Flight::json($rotacion ?? []);
+});
+
+Flight::route('GET /rotacion/unused', function () {
+    $endpoint = URLAPI . "/api/v1/rotaciones/unused";
+    $rotacion = ch_api($endpoint, [], 'GET', []);
+    $rotacion = json_decode($rotacion ?? [], true);
+    $result = $rotacion['DATA'] ?? [];
+    Flight::json($result ?? []);
+});
+
+Flight::route('DELETE /rotacion/unused', function () {
+    $endpoint = URLAPI . "/api/v1/rotaciones/unused";
+    $User = $_SESSION['NOMBRE_SESION'] ?? '';
+    $rotacion = ch_api($endpoint, ['User' => $User], 'DELETE', []);
+    $rotacion = json_decode($rotacion ?? [], true);
+    $result = $rotacion ?? [];
+    $eliminados = $result['DATA']['eliminados'] ?? [];
+
+    if ($eliminados) {
+        foreach ($eliminados as $el) {
+            $RotCodi = $el['RotCodi'] ?? '';
+            $RotDesc = $el['RotDesc'] ?? '';
+            if (!$RotCodi) {
+                continue;
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'B',
+                'AudDato' => "Rotación: {$RotCodi} {$RotDesc} eliminada por no estar asignada.",
+            ];
+        }
+        auditoria_multiple($arrayAuditoria ?? [], 50);
+    }
+
+    Flight::json($result ?? []);
+});
+
+Flight::route('POST /rotacion/exportar-xls', function () {
+    try {
+        $endpoint = URLAPI . "/api/v1/rotaciones";
+        $rotaciones = ch_api($endpoint, [], 'GET', ['start' => 0, 'length' => 50000]);
+        $rotaciones = json_decode($rotaciones ?? '[]', true);
+
+        if (($rotaciones['RESPONSE_CODE'] ?? '') !== '200 OK') {
+            $message = $rotaciones['MESSAGE'] ?? 'No se pudieron obtener las rotaciones para exportar.';
+            throw new Exception($message);
+        }
+
+        $rows = $rotaciones['DATA'] ?? [];
+        if (!is_array($rows) || empty($rows)) {
+            throw new Exception('No hay datos para exportar.');
+        }
+
+        $exporter = require __DIR__ . '/php/rotaciones_export_xls.php';
+        if (!is_callable($exporter)) {
+            throw new Exception('No se pudo inicializar el exportador XLS de rotaciones.');
+        }
+
+        $relativeFile = 'app-data/archivos/config_rotaciones_' . date('Ymd_His') . '.xls';
+        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
+        $exporter($rows, $absoluteFile);
+
+        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
+});
+
+Flight::route('POST /rotacion/exportar-xls-ejemplo', function () {
+    try {
+        $exporter = require __DIR__ . '/php/rotaciones_export_xls_ejemplo.php';
+        if (!is_callable($exporter)) {
+            throw new Exception('No se pudo inicializar el exportador XLS de ejemplo.');
+        }
+
+        $relativeFile = 'configuracion/rotaciones/exporta-ejemplo.xls';
+        $absoluteFile = dirname(__DIR__) . '/' . $relativeFile;
+        $exporter([], $absoluteFile);
+
+        Flight::json(['status' => 'ok', 'archivo' => $relativeFile]);
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
+});
+
+Flight::route('POST /rotacion/importar-xls', function () {
+    try {
+        if (!isset($_FILES['archivo']) || !is_array($_FILES['archivo'])) {
+            throw new Exception('No se recibió el archivo a importar.');
+        }
+
+        $file = $_FILES['archivo'];
+        $error = (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE);
+        if ($error !== UPLOAD_ERR_OK) {
+            $mapUploadError = [
+                UPLOAD_ERR_INI_SIZE => 'El archivo supera el tamaño permitido por el servidor.',
+                UPLOAD_ERR_FORM_SIZE => 'El archivo supera el tamaño permitido por el formulario.',
+                UPLOAD_ERR_PARTIAL => 'El archivo se subió parcialmente. Reintente.',
+                UPLOAD_ERR_NO_FILE => 'No se seleccionó ningún archivo.',
+                UPLOAD_ERR_NO_TMP_DIR => 'No existe el directorio temporal de subida.',
+                UPLOAD_ERR_CANT_WRITE => 'No se pudo escribir el archivo en disco.',
+                UPLOAD_ERR_EXTENSION => 'La subida fue detenida por una extensión de PHP.',
+            ];
+            $msg = $mapUploadError[$error] ?? 'Error al subir archivo.';
+            throw new Exception($msg);
+        }
+
+        $tmpFile = (string) ($file['tmp_name'] ?? '');
+        $originalName = (string) ($file['name'] ?? '');
+        if ($tmpFile === '' || !is_uploaded_file($tmpFile)) {
+            throw new Exception('No se pudo validar el archivo temporal subido.');
+        }
+
+        $importer = require __DIR__ . '/php/rotaciones_import_xls.php';
+        if (!is_callable($importer)) {
+            throw new Exception('No se pudo inicializar el importador de rotaciones.');
+        }
+
+        $parsed = $importer($tmpFile, $originalName);
+        $warnings = is_array($parsed['warnings'] ?? null) ? $parsed['warnings'] : [];
+
+        if (!empty($warnings)) {
+            Flight::json([
+                'status' => 'validation_error',
+                'message' => 'Se detectaron advertencias en el archivo. Corrija las filas indicadas antes de importar.',
+                'advertencias' => $warnings,
+                'meta' => $parsed['meta'] ?? [],
+            ], 422);
+            return;
+        }
+
+        $payload = is_array($parsed['rows'] ?? null) ? $parsed['rows'] : [];
+        if (empty($payload)) {
+            throw new Exception('No se encontraron filas válidas para importar.');
+        }
+
+        $User = $_SESSION['NOMBRE_SESION'] ?? '';
+        foreach ($payload as &$item) {
+            if (!is_array($item)) {
+                $item = [];
+            }
+            if (empty($item['User'])) {
+                $item['User'] = $User;
+            }
+        }
+        unset($item);
+
+        $endpoint = URLAPI . "/api/v1/rotacion";
+        $rotacion = ch_api($endpoint, $payload, 'POST', []);
+        $rotacion = json_decode($rotacion ?? '[]', true);
+        $result = is_array($rotacion) ? $rotacion : [];
+
+        Flight::json([
+            'status' => 'ok',
+            'totalImportados' => count($payload),
+            'response' => $result,
+            'meta' => $parsed['meta'] ?? [],
+        ]);
+    } catch (\Throwable $th) {
+        Flight::json(['status' => 'error', 'message' => $th->getMessage()], 400);
+    }
+});
 
 Flight::route('POST /horario', function () {
     $request = Flight::request();

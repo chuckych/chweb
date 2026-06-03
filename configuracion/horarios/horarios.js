@@ -1424,7 +1424,7 @@
         const style = `style="border: 1px solid #ddd; color: #333; background-color: #f8f9fa; min-width: 50px;"`;
         return `
             <div class="d-flex justify-content-between align-items-center pt-3 px-2 m-0">
-                <div class="d-flex justify-content-strat align-items-center gap5">
+                <div class="d-flex justify-content-start align-items-center gap5">
                     <span class="badge radius w50 mr-1" style="background-color:${row.Color}; color:${row.ColorText};">${row.ID || '&nbsp;'} </span>
                         <strong>(${row.Codi})<strong> ${row.Desc}</strong>
                 </div>

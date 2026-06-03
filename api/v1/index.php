@@ -92,6 +92,7 @@ Flight::route('GET /horario/unused', [$horario, 'getUnused']);
 Flight::route('GET /horario', [$horario, 'get']);
 Flight::route('POST /horario', [$horario, 'create']);
 Flight::route('DELETE /horario/unused', [$horario, 'deleteUnused']);
+Flight::route('DELETE /rotaciones/unused', [$rotacion, 'deleteUnused']);
 Flight::route('DELETE /horario', [$horario, 'delete']);
 Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
     $request = Flight::request();
@@ -152,6 +153,8 @@ Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService)
 
 Flight::route('GET /horarios/rotacion', [$horarios, 'get_rotaciones']);
 Flight::route('GET /rotacion', [$horarios, 'get_rotaciones']);
+Flight::route('GET /rotaciones', [$rotacion, 'get']);
+Flight::route('GET /rotaciones/unused', [$rotacion, 'getUnused']);
 Flight::route('GET /horarios/asign/desde-hasta/(@Legajo)', [$horarios, 'get_horale_2']);
 Flight::route('GET /horarios/asign/desde/(@Legajo)', [$horarios, 'get_horale_1']);
 Flight::route('GET /horarios/asign/rotacion/(@Legajo)', [$horarios, 'get_rotaleg']);

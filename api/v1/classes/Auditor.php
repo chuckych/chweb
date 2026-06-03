@@ -45,7 +45,7 @@ class Auditor
 
             $get_dbdata = $this->get_dbdata();
             $get_dbdata = $get_dbdata ? explode("_", $get_dbdata[0]['BDVersion']) : '';
-            $get_dbdata = intval($get_dbdata[1] ?? 60) ?? ''; // Ver_61_20230622
+            $get_dbdata = \intval($get_dbdata[1] ?? 60) ?? ''; // Ver_61_20230622
             $conn->beginTransaction(); // Iniciar transacción
 
             $sqlMas70 = "INSERT INTO AUDITOR (AudFech, AudHora, AudUser, AudTerm, AudModu, AudTipo, AudDato, FechaHora, AudZonaHoraria) VALUES (:AudFech, :AudHora, :AudUser, :AudTerm, :AudModu, :AudTipo, :AudDato, CONVERT(datetime, :FechaHora, 121), :AudZonaHoraria)";
@@ -56,15 +56,15 @@ class Auditor
             $ms_offset = 0; // Desfase inicial en milisegundos para evitar colisiones de timestamp en SQL Server DATETIME
             $FechaHora = $this->conect->FechaHora();
             $FechaHoraSql = $this->formatSqlDateTime121($FechaHora);
-            // error_log(sprintf('string(%d) "%s"', strlen((string) $FechaHora), (string) $FechaHora));
 
             foreach ($datos as $dato) { // Recorro los datos
-                // $this->log->write($dato['FechaHora'], date('Ymd') . '_Auditor_sql_' . ID_COMPANY . '.log');
+                $FechaHora = $this->conect->FechaHora();
+                usleep(10000); // Pausa 10ms. Reducir colisiones timestamp SQL DATETIME
                 $stmt = $conn->prepare($sql); // Preparo la consulta
                 $AudUser = substr($dato['AudUser'], 0, 10);
                 $AudDato = substr($dato['AudDato'], 0, 100); // Limita la cantidad de caracteres a 100
-                $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $ms_offset);
-                $AudFechSql = $this->formatSqlDateTime121($AudFech);
+                // $AudFech = $this->sumar_segundos_a_fecha($dato['AudFech'], $ms_offset);
+                // $AudFechSql = $this->formatSqlDateTime121($AudFech);
                 $stmt->bindValue(':AudFech', $FechaHora, \PDO::PARAM_STR);
                 $stmt->bindValue(':AudHora', $dato['AudHora'], \PDO::PARAM_STR);
                 $stmt->bindValue(':AudUser', $AudUser, \PDO::PARAM_STR);
@@ -168,7 +168,7 @@ class Auditor
             return $date->format('Y-m-d H:i:s.v');
         } catch (\Exception $e) {
             $normalizada = str_replace('T', ' ', $fecha);
-            return strlen($normalizada) > 23 ? substr($normalizada, 0, 23) : $normalizada;
+            return \strlen($normalizada) > 23 ? substr($normalizada, 0, 23) : $normalizada;
         }
     }
 }

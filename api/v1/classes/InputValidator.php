@@ -42,6 +42,14 @@ class InputValidator
         }
         return $this;
     }
+    /**
+     * Summary of validateCustomRule
+     * @param mixed $field
+     * @param mixed $validationFunction
+     * @param mixed $errorMessage
+     * @throws ValidationException
+     * @return void
+     */
     private function validateCustomRule($field, $validationFunction, $errorMessage)
     {
         $value = $this->data[$field];
@@ -53,10 +61,22 @@ class InputValidator
     {
         return $this->errors;
     }
+    /**
+     * Summary of getMessage
+     * @param mixed $field
+     * @param mixed $rule
+     * @return string
+     */
     public function getMessage($field, $rule)
     {
         return "El campo \"$field\" no cumple con la regla \"$rule\"";
     }
+    /**
+     * Summary of generateErrorMessage
+     * @param mixed $field
+     * @param mixed $rule
+     * @return string
+     */
     private function generateErrorMessage($field, $rule)
     {
         $messages = [
@@ -101,6 +121,13 @@ class InputValidator
 
         return $messages[$rule] ?? "Error desconocido en la regla de validación";
     }
+    /**
+     * Summary of validateRule
+     * @param mixed $field
+     * @param mixed $rule
+     * @throws ValidationException
+     * @return void
+     */
     private function validateRule($field, $rule)
     {
         $value = $this->data[$field] ?? null;

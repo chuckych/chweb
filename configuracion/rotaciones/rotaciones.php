@@ -4,7 +4,7 @@
 <head>
     <link href="/<?= HOMEHOST ?>/js/select2.min.css" rel="stylesheet" />
     <?php require __DIR__ . "/../../llamadas.php"; ?>
-    <title><?= MODULOS['horarios_config'] ?></title>
+    <title><?= MODULOS['rotacion_config'] ?></title>
     <style>
         <?php require __DIR__ . "/style.php"; ?>
     </style>
@@ -22,16 +22,16 @@
         </svg>';
         ?>
         <!-- Encabezado -->
-        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['horarios_config'], ''); ?>
+        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, MODULOS['rotacion_config'], ''); ?>
         <!-- Fin Encabezado -->
         <div class="row py-3">
-            <div class="col-12" id="table-opt-horarios"></div>
+            <div class="col-12" id="table-opt-rotacion"></div>
             <div class="col-12">
-                <table id="tblHorarios" class="shadow-sm table w-100 p-3 border radius loader-in" style="display:none;">
+                <table id="tblRotaciones" class="shadow-sm table w-100 p-3 border radius loader-in" style="display:none;">
                 </table>
             </div>
         </div>
-        <?php require __DIR__ . "/modal_horario.php"; ?>
+        <?php require __DIR__ . "/modal_rotacion.php"; ?>
     </div>
     <!-- fin container -->
     <?php
@@ -40,10 +40,9 @@
     /** INCLUIMOS LIBRERÍAS y script DATATABLE */
     require __DIR__ . "/../../js/DataTable.php";
     ?>
-    <script src="/<?= HOMEHOST ?>/js/jscolor/jscolor.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/datatable/dataTables.rowGroup.min.js"></script>
     <script src="/<?= HOMEHOST ?>/vendor/igorescobar/jquery-mask-plugin/dist/jquery.mask.min.js"></script>
-    <script src="horarios.js?v=<?= version_file("/configuracion/horarios/horarios.js") ?>"></script>
+    <script src="rotaciones.js?v=<?= version_file("/configuracion/rotaciones/rotaciones.js") ?>"></script>
     <script src="/<?= HOMEHOST ?>/js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="/<?= HOMEHOST ?>/js/select2.min.js"></script>
 </body>
