@@ -12,7 +12,7 @@
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-custom', 'white', 'descargar.png', MODULOS['liquidar'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'descargar.png', MODULOS['liquidar'], '') ?>
         <!-- Fin Encabezado -->
         <form action="insert.php" method="post" class="alta_liquidacion">
             <div class="row bg-white p-3 radius">

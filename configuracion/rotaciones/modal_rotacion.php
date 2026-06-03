@@ -45,7 +45,6 @@
                         </table>
                     </div>
                 </div>
-                <small class="text-muted">Cada fila representa un item de rotación. Item y horario no pueden repetirse dentro de la misma rotación.</small>
             </div>
             <div class="modal-footer border-0">
                 <button type="button" class="font09 pointer float-right btn btn-outline-secondary border" data-dismiss="modal">Cerrar</button>

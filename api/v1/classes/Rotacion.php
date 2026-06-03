@@ -820,7 +820,7 @@ class Rotacion
 
         (new InputValidator($item, $rules))->validate();
 
-        if (!isset($item['Horarios']) || !is_array($item['Horarios']) || empty($item['Horarios'])) {
+        if (!isset($item['Horarios']) || !\is_array($item['Horarios']) || empty($item['Horarios'])) {
             throw new ValidationException('El campo Horarios es requerido y debe ser un arreglo con al menos un elemento', 400);
         }
     }
@@ -847,7 +847,7 @@ class Rotacion
             try {
                 $rules = [
                     'RotItem' => ['required', 'smallint'],
-                    'RotHora' => ['required', 'smallint'],
+                    'RotHora' => ['requiredPermittedCero','smallintEmpty'],
                     'RotDias' => ['smallintEmpty'],
                 ];
                 (new InputValidator($horario, $rules))->validate();

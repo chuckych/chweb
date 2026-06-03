@@ -1114,3 +1114,13 @@ if ($verDB < 20260522) {
     updateModulosCache();
     fileLog("Se actualizó la cache de módulos", $pathLog);
 }
+
+if ($verDB < 20260603) {
+
+    $verDB = 20260603; // nueva version de la DB. modificar también en la función verDBLocal() del archivo de funciones.php
+    pdoQuery("UPDATE modulos SET estado = '0' WHERE id = 50");
+    fileLog("Se actualizó el estado del módulo con ID 50", $pathLog);
+    // seteo la fecha de actualización de la version de DB
+    pdoQuery("UPDATE params set valores = $verDB WHERE modulo = 0");
+    fileLog("Se actualizó la fecha de la versión de DB: \"$verDB\"", $pathLog);
+}

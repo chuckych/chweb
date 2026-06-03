@@ -130,7 +130,7 @@
     const renderDomTableRotaciones = () => {
         return `
                 <'row mt-2'
-                    <'col-sm-12 col-md-6 d-inline-flex align-items-center justify-content-start gap5'l>
+                    <'col-sm-12 col-md-6 d-inline-flex align-items-center justify-content-start gap5'lp>
                     <'col-sm-12 col-md-6'f>
                 >
                 <'row 
@@ -138,7 +138,7 @@
                 >
                 <'row'
                     <'col-sm-12 col-md-5'i>
-                    <'col-sm-12 col-md-7'p>
+                    <'col-sm-12 col-md-7 mt-3'p>
                 >`;
     }
 
@@ -360,7 +360,7 @@
         try {
             await fetchHorariosCatalog();
             resetRotacionModal();
-            
+
             editingRotCodi = String(data.RotCodi ?? '').trim();
             $modalRotacion.find('.modal-title').text(`Editar rotación (${editingRotCodi})`);
             $modalRotacion.find('#RotCodi').val(editingRotCodi).prop('disabled', true);
@@ -368,7 +368,7 @@
             $modalRotacion.find('#tbl-rotacion-items tbody').html('');
 
             const detail = Array.isArray(data.Horarios) ? data.Horarios : [];
-            
+
             if (detail.length) {
                 detail.forEach(function (el) {
                     appendItemRow({
@@ -396,9 +396,10 @@
 
         $modalRotacion.find('#tbl-rotacion-items tbody tr').each(function () {
             const $tr = $(this);
+            const rotHoraRaw = String($tr.find('.rot-hora').val() ?? '').trim();
             Horarios.push({
                 RotItem: toInt($tr.find('.rot-item').val(), 0),
-                RotHora: toInt($tr.find('.rot-hora').val(), 0),
+                RotHora: rotHoraRaw === '' ? null : toInt(rotHoraRaw, 0),
                 RotDias: Math.max(1, toInt($tr.find('.rot-dias').val(), 1)),
             });
         });
@@ -432,7 +433,9 @@
                 notify('Cada item debe tener un número válido', 'danger', 3500, 'right');
                 return false;
             }
-            if (!item.RotHora || item.RotHora < 1) {
+            const hasRotHora = item.RotHora !== null && item.RotHora !== undefined && String(item.RotHora).trim() !== '';
+            const rotHoraValue = toInt(item.RotHora, Number.NaN);
+            if (!hasRotHora || !Number.isFinite(rotHoraValue) || rotHoraValue < 0) {
                 notify('Cada item debe tener un horario seleccionado', 'danger', 3500, 'right');
                 return false;
             }
@@ -445,12 +448,12 @@
                 notify(`El item ${item.RotItem} está repetido`, 'danger', 3500, 'right');
                 return false;
             }
-            // if (usedHoras.has(item.RotHora)) {
-            //     notify(`El horario ${item.RotHora} está repetido dentro de la rotación`, 'danger', 3500, 'right');
+            // if (usedHoras.has(rotHoraValue)) {
+            //     notify(`El horario ${rotHoraValue} está repetido dentro de la rotación`, 'danger', 3500, 'right');
             //     return false;
             // }
             usedItems.add(item.RotItem);
-            usedHoras.add(item.RotHora);
+            usedHoras.add(rotHoraValue);
         }
         return true;
     };
@@ -687,6 +690,28 @@
         }
     };
 
+    const notifyExportReady = (archivo, title = '') => {
+        const cleanPath = String(archivo ?? '').replace(/^\/+/, '');
+        const bannerDownload = `
+            <div class="d-flex flex-column">
+                <div class="font-weight-bold">${title || 'Archivo generado.'}</div>
+                <a href="/${homehost}/${cleanPath}" class="btn btn-custom px-2 w100 btn-sm mt-2 font08 download-horarios-xls" target="_blank" download>
+                    <div class="d-flex align-items-center justify-content-center" style="gap:5px">
+                        <span>Descargar</span>
+                    </div>
+                </a>
+            </div>
+        `;
+        notify(bannerDownload, 'warning', 0, 'right');
+
+        const $download = $('.download-horarios-xls').last();
+        if ($download.length) {
+            $download.off('click.closeNotify').on('click.closeNotify', function () {
+                $.notifyClose();
+            });
+        }
+    };
+
     const exportRotacionesXls = async ($btnExportar) => {
         if (!window.axios || typeof window.axios.post !== 'function') {
             notify('No se encontró axios para exportar rotaciones', 'danger', 4500, 'right');
@@ -711,8 +736,10 @@
                 throw new Error('No se pudo generar el archivo XLS');
             }
 
+            $.notifyClose();
             const cleanPath = String(archivo ?? '').replace(/^\/+/, '');
-            window.open(`/${homehost}/${cleanPath}`, '_blank');
+            notifyExportReady(archivo, 'Archivo de rotaciones generado.');
+            // window.open(`/${homehost}/${cleanPath}`, '_blank');
         } catch (err) {
             const text = err?.response?.data?.message || err?.response?.data?.mensaje || err?.message || 'Error al exportar rotaciones';
             notify(text, 'danger', 4500, 'right');
@@ -746,8 +773,10 @@
                 throw new Error('No se pudo generar el archivo de ejemplo');
             }
 
+            $.notifyClose();
             const cleanPath = String(archivo ?? '').replace(/^\/+/, '');
-            window.open(`/${homehost}/${cleanPath}`, '_blank');
+            notifyExportReady(archivo, 'Archivo de ejemplo generado.');
+            // window.open(`/${homehost}/${cleanPath}`, '_blank');
         } catch (err) {
             const text = err?.response?.data?.message || err?.response?.data?.mensaje || err?.message || 'Error al generar el ejemplo de importación';
             notify(text, 'danger', 4500, 'right');
@@ -855,7 +884,7 @@
                 deleteRotacionUnused($(this));
             });
         });
-        
+
         tablaRotacionesUnused.on('draw.dt', function () {
             $('#tblUnusedRotaciones').removeClass('loader-in');
         });
@@ -956,6 +985,9 @@
             searching: true,
             ordering: false,
             language: DT_SPANISH_2,
+            // scrollX: true,
+            // scrollY: '60dvh',
+            // scrollCollapse: true,
             rowGroup: {
                 dataSrc: function (row) {
                     return renderRowGroup(row);

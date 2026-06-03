@@ -21,7 +21,7 @@ class InputValidator
         $this->data = $data;
         $this->rules = $rules;
     }
-    public function addCustomRule( string $ruleName, callable $validationFunction, string $errorMessage)
+    public function addCustomRule(string $ruleName, callable $validationFunction, string $errorMessage)
     {
         $this->customRules[$ruleName] = [
             'validate' => $validationFunction,
@@ -105,6 +105,7 @@ class InputValidator
             'numeric10' => "El campo $field debe ser un número y menor a 10 dígitos",
             'numeric5' => "El campo $field debe ser un número y menor a 5 dígitos",
             'required' => "El campo $field es requerido",
+            'requiredPermittedCero' => "El campo $field es requerido, pero se permite el valor cero",
             'smallint' => "El campo $field debe ser un número entero y menor a 32767",
             'smallintEmpty' => "El campo $field debe ser un número entero y menor a 32767 o vacío",
             'time' => "El campo $field debe ser una hora válida con formato hh:mm",
@@ -147,6 +148,11 @@ class InputValidator
         switch ($rule) {
             case 'required':
                 if (empty($value)) {
+                    throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
+                }
+                break;
+            case 'requiredPermittedCero':
+                if ($value === null || $value === '') {
                     throw new ValidationException($this->generateErrorMessage($field, $rule), 400);
                 }
                 break;
