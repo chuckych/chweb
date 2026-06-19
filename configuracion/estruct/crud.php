@@ -5,18 +5,18 @@ require __DIR__ . '/../../config/index.php';
 ultimoacc();
 secure_auth_ch();
 header("Content-Type: application/json");
-// error_reporting(E_ALL);
-// ini_set('display_errors', '1');
 E_ALL();
 
 FusNuloPOST('submit', '');
 $FechaHora = date('Ymd H:i:s');
-$params = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$data = array();
-$_POST['tipo'] = $_POST['tipo'] ?? false;
-$_POST['cod'] = $_POST['cod'] ?? '';
-$_POST['desc'] = $_POST['desc'] ?? '';
+$params = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+$data = [];
+
+$_POST['tipo'] ??= false;
+$_POST['cod'] ??= '';
+$_POST['desc'] ??= '';
+
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) {
 
     $Cod = test_input(($_POST['cod'])) ?? '';
@@ -263,12 +263,10 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
     /** Codigo */
     $Desc = test_input(($_POST['desc'])) ?? '';
     /** Descripcion */
-    // sleep(2);
     if (valida_campo($Desc)) {
         PrintRespuestaJson('error', 'Campo descripción requerido');
         exit;
     }
-    ;
 
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
@@ -284,28 +282,33 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             exit;
         }
     }
-    /** fin */
 
     /** Query para obtener el ultimo codigo disponible y sumarle 1 */
     $query = "SELECT TOP 1 PLANTAS.PlaCodi, PLANTAS.PlaDesc FROM PLANTAS ORDER BY PLANTAS.PlaCodi DESC";
     $result = sqlsrv_query($link, $query, $params, $options);
+
     if (sqlsrv_num_rows($result) > 0) {
 
         while ($fila = sqlsrv_fetch_array($result)) {
-            if (!$Cod) {
-                $Codi = $fila['PlaCodi'] + 1;
-            } else {
-                $Codi = $Cod;
-            }
-            $Dato = 'Planta: ' . $Desc . ': ' . $Codi;
 
-            $procedure_params = array(
-                array(&$Codi),
-                array(&$Desc),
-                array(&$FechaHora)
-            );
+            $Codi = (!$Cod) ? $fila['PlaCodi'] + 1 : $Cod;
+            $Dato = "Planta: $Desc: $Codi";
+            
+            $PlaEvEntra = 0;
+            $PlaEvSale = 0;
+            $PlaZonaHoraria = 'Argentina Standard Time';
 
-            $sql = "exec DATA_PLANTASInsert @PlaCodi=?,@PlaDesc=?,@FechaHora=?";
+            $procedure_params = [
+                [&$Codi],
+                [&$Desc],
+                [&$FechaHora],
+                [&$PlaEvEntra],
+                [&$PlaEvSale],
+                [&$PlaZonaHoraria]
+            ];
+
+            $sql = "exec DATA_PLANTASInsert @PlaCodi=?,@PlaDesc=?,@FechaHora=?,@PlaEvEntra=?,@PlaEvSale=?,@PlaZonaHoraria=?";
+            
             /** Query del Store Prcedure */
             $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
             /** preparar la sentencia */
@@ -313,12 +316,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (!$stmt) {
                 die(print_r(sqlsrv_errors(), true));
             }
+            
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
                 audito_ch('A', $Dato, '31');
                 /** */
-                PrintRespuestaJson('ok', 'Planta: <strong>' . $Desc . '</strong> creada correctamente.');
+                PrintRespuestaJson('ok', "Planta: <strong>$Desc</strong> creada correctamente.");
                 sqlsrv_free_stmt($result);
                 sqlsrv_close($link);
                 exit;
