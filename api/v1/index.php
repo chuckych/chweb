@@ -161,6 +161,7 @@ Flight::route('GET /horarios/asign/rotacion/(@Legajo)', [$horarios, 'get_rotaleg
 Flight::route('GET /horarios/asign/citacion/(@Legajo)', [$horarios, 'get_citacion']);
 Flight::route('GET /horarios/asign/legajo/(@Legajo)', [$horarios, 'get_asign_legajo']);
 Flight::route('POST /rotacion', [$rotacion, 'create']);
+Flight::route('POST /horarios/rotacion', [$horarios, 'set_rotacion']);
 Flight::route('POST /horarios/legajo-rotacion', [$horarios, 'set_rotacion']);
 Flight::route('POST /horarios/desde', [$horarios, 'set_horario']);
 Flight::route('POST /horarios/asignados', [$horarios, 'obtener_horarios']); // para horarios asignados
