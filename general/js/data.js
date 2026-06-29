@@ -56,10 +56,10 @@ function ActualizaTablas() {
     actualizarContadorFiltros();
     $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload(null, false);
+        reloadDataTable('#GetFechas');
         $("#GetFechas_paginate .page-link").addClass('border border-0');
     } else {
-        $('#GetPersonal').DataTable().ajax.reload(null, false);
+        reloadDataTable('#GetPersonal');
         $('#Per2').addClass('d-none')
         $('.pers_legajo').removeClass('d-none')
     };
@@ -67,10 +67,10 @@ function ActualizaTablas() {
 function ActualizaTablas2() {
     $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {
-        $('#GetFechas').DataTable().ajax.reload();
+        reloadDataTable('#GetFechas', true);
         $("#GetFechas_paginate .page-link").addClass('border border-0');
     } else {
-        $('#GetPersonal').DataTable().ajax.reload();
+        reloadDataTable('#GetPersonal', true);
         $('#Per2').addClass('d-none')
         $('.pers_legajo').removeClass('d-none')
     };

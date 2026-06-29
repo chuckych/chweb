@@ -1419,3 +1419,21 @@ const dateFormatted = (date, format = 'DD/MM/YYYY') => {
     const dateFormatted = dateDate.isValid() ? dateDate.format(format) : date;
     return dateFormatted;
 };
+/**
+ * Recarga los datos de una tabla DataTable vía AJAX.
+ * Si el selector no corresponde a una DataTable inicializada, no hace nada.
+ *
+ * @param {string|Element|jQuery} selector - Selector de la tabla (ej: '#miTabla')
+ * @param {boolean} [resetPaging=false]    - Si true, vuelve a la primera página tras recargar
+ * @param {Function|null} [callback=null]  - Función a ejecutar al completar la recarga
+ *
+ * @example
+ * reloadDataTable('#miTabla');                          // recarga sin resetear paginación
+ * reloadDataTable('#miTabla', true);                   // recarga y vuelve a página 1
+ * reloadDataTable('#miTabla', false, () => { ... });   // recarga con callback
+ * reloadDataTable('#miTabla', false, () => console.log('miTabla reloaded'));
+ */
+function reloadDataTable(selector, resetPaging = false, callback = null) {
+    if (!$.fn.DataTable.isDataTable(selector)) return;
+    $(selector).DataTable().ajax.reload(callback, resetPaging);
+}

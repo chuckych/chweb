@@ -685,7 +685,7 @@ $(document).on("click", ".open-modal", function (e) {
         handleEditHora = true;
         const dataHora = $(e.target).data('hora');
         const modHora = $('.mod_hora[data-hora="' + dataHora + '"]');
-        $('#RefreshModal').hide();
+        // $('#RefreshModal').hide();
         $('#GetHoras').one('init.dt', function () {
             const dt = $(this).DataTable();
             const modHora = $(dt.rows().nodes()).find('.mod_hora[data="' + dataHora + '"]');
@@ -695,7 +695,7 @@ $(document).on("click", ".open-modal", function (e) {
         });
     } else {
         handleEditHora = false;
-        $('#RefreshModal').show();
+        // $('#RefreshModal').show();
     }
 
 
@@ -955,7 +955,6 @@ $(document).on("click", ".open-modal", function (e) {
                 $("#CitDesc").val('00:00');
             }
         });
-        // });
     }
 
     GetCitacion()
@@ -1521,14 +1520,11 @@ $(document).on("click", ".open-modal", function (e) {
     function RefreshDataTables(refreshFicha = true) {
         DisabledClean();
         if (refreshFicha !== null && refreshFicha === true) {
-            // if (handleEditHora) {
-            $('#GetFichadas').DataTable().ajax.reload(null, false);
-            $('#GetNovedades').DataTable().ajax.reload(null, false);
-            $('#GetOtrasNov').DataTable().ajax.reload(null, false);
-            // }
-            $('#GetHoras').DataTable().ajax.reload(null, false);
+            reloadDataTable('#GetFichadas');
+            reloadDataTable('#GetNovedades');
+            reloadDataTable('#GetOtrasNov');
+            reloadDataTable('#GetHoras');
         }
-        // if (handleEditHora) return;
         ActualizaTablas();
         GetCierre();
         refrescaFichas();
