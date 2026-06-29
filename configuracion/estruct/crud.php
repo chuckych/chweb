@@ -293,7 +293,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
 
             $Codi = (!$Cod) ? $fila['PlaCodi'] + 1 : $Cod;
             $Dato = "Planta: $Desc: $Codi";
-            
+
             $PlaEvEntra = 0;
             $PlaEvSale = 0;
             $PlaZonaHoraria = 'Argentina Standard Time';
@@ -308,7 +308,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             ];
 
             $sql = "exec DATA_PLANTASInsert @PlaCodi=?,@PlaDesc=?,@FechaHora=?,@PlaEvEntra=?,@PlaEvSale=?,@PlaZonaHoraria=?";
-            
+
             /** Query del Store Prcedure */
             $stmt = sqlsrv_prepare($link, $sql, $procedure_params);
             /** preparar la sentencia */
@@ -316,7 +316,7 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
             if (!$stmt) {
                 die(print_r(sqlsrv_errors(), true));
             }
-            
+
             if (sqlsrv_execute($stmt)) {
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
@@ -728,7 +728,6 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
         PrintRespuestaJson('error', 'Campo descripción requerido');
         exit;
     }
-    ;
 
     require_once __DIR__ . '/../../config/conect_mssql.php';
 
@@ -775,6 +774,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
                 die(print_r(sqlsrv_errors(), true));
             }
             if (sqlsrv_execute($stmt)) {
+
+                $data = [
+                    'Cod' => $Codi,
+                ];
+
+                crearSeccionCero($data, $link);
+
                 /** ejecuto la sentencia */
                 /** Grabo en la tabla Auditor */
                 audito_ch('A', $Dato, '31');
@@ -1123,4 +1129,29 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['tipo'] == 'c_empresas')) 
 } else {
     PrintRespuestaJson('error', 'Falta Tipo');
     exit;
+}
+
+/**
+ * Summary of crearSeccionCero
+ * @param array $datos
+ * @param mixed $link
+ * @return void
+ */
+function crearSeccionCero(array $datos, $link)
+{
+    try {
+        $datos['FechaHora'] = date('Ymd H:i:s');
+        $querySeccion = "SELECT Se2Codi FROM SECCION WHERE SecCodi = ?";
+        $stmtSeccion = sqlsrv_prepare($link, $querySeccion, array(&$datos['Cod']));
+        sqlsrv_execute($stmtSeccion);
+        $existe = sqlsrv_fetch_array($stmtSeccion, SQLSRV_FETCH_ASSOC);
+
+        if (!$existe) {
+            $querySeccion = "INSERT INTO SECCION (Se2Codi, SecCodi, Se2Desc, FechaHora) VALUES (0, ?, '', ?)";
+            $stmtSeccion = sqlsrv_prepare($link, $querySeccion, [&$datos['Cod'], &$datos['FechaHora']]);
+            sqlsrv_execute($stmtSeccion);
+        }
+    } catch (\Exception $e) {
+        error_log($e->getMessage());
+    }
 }

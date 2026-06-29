@@ -277,7 +277,6 @@ class Estructuras
 
             $stmt->execute(); // Ejecuto la consulta
 
-            $this->conect->close($conn);
 
             $data = [
                 'Estruct' => $Estruct,
@@ -294,6 +293,12 @@ class Estructuras
                 $data['SecCodi'] = $datos['SecCodi'];
             }
 
+            if ($Estruct == 'Sect') {
+                $this->crearSeccionCero($data, $conn);
+            }
+
+            $this->conect->close($conn);
+
             $this->resp->respuesta($data ?? [], 1, 'OK', 200, microtime(true), 0, 0);
         } catch (\PDOException $e) {
             $this->log->trace('Estructuras::' . __FUNCTION__ . ': ', $this->NameLog, $e);
@@ -301,6 +306,50 @@ class Estructuras
             throw new \Exception('Error al crear estructuras', 400);
         } catch (\Exception $e) {
             $this->log->trace('Estructuras::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            $this->conect->close($conn);
+            throw $e;
+        }
+    }
+    /**
+     * Crea un sector y automáticamente inserta un registro en SECCION con Se2Codi = 0
+     */
+    private function crearSeccionCero(array $datos, \PDO $conn)
+    {
+
+        try {
+            $conn->beginTransaction();
+
+            // Datos del sector
+            $datos['FechaHora'] = date('Ymd H:i:s');
+
+            $querySeccion = "SELECT Se2Codi FROM SECCION WHERE SecCodi = :SecCodi";
+            $stmtSeccion = $conn->prepare($querySeccion);
+            $stmtSeccion->bindParam(':SecCodi', $datos['Cod'], \PDO::PARAM_INT);
+            $stmtSeccion->execute();
+            $existe = $stmtSeccion->fetch(\PDO::FETCH_ASSOC);
+
+            if (!$existe) {
+                $querySeccion = "INSERT INTO SECCION (Se2Codi, SecCodi, Se2Desc, FechaHora) VALUES (0, :SecCodi, '', :FechaHora)";
+                $stmtSeccion = $conn->prepare($querySeccion);
+                $stmtSeccion->bindParam(':SecCodi', $datos['Cod'], \PDO::PARAM_INT);
+                $stmtSeccion->bindParam(':FechaHora', $datos['FechaHora'], \PDO::PARAM_STR);
+                $stmtSeccion->execute();
+            }
+            $conn->commit();
+            $this->conect->close($conn);
+
+        } catch (\PDOException $e) {
+            if (isset($conn) && $conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Estructuras::crearSeccionCero: ', $this->NameLog, $e);
+            $this->conect->close($conn);
+            throw new \Exception('Error al crear sector con sección', 400);
+        } catch (\Exception $e) {
+            if (isset($conn) && $conn->inTransaction()) {
+                $conn->rollBack();
+            }
+            $this->log->trace('Estructuras::crearSeccionCero: ', $this->NameLog, $e);
             $this->conect->close($conn);
             throw $e;
         }

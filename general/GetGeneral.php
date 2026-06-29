@@ -37,9 +37,18 @@ $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
 
 $joinReglasCH = 'LEFT JOIN REGLASCH ON PERSONAL.LegRegCH = REGLASCH.RCCodi';
+$joinCierre = "LEFT JOIN (
+    SELECT CierreLega, MAX(CierreFech) AS UltimoCierre
+    FROM PERCIERRE
+    GROUP BY CierreLega
+) PC ON FICHAS.FicLega = PC.CierreLega";
 
-$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario', REGLASCH.RCDesc AS 'Regla_CH' FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinReglasCH $joinRegistros WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, FICHAS.FicFech, PERSONAL.LegApNo, REGLASCH.RCDesc, dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF)";
-// print_r($sql_query); exit;
+$queryParCierre = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
+$resultParCierre = sqlsrv_query($link, $queryParCierre, $param, $options);
+$ParCierre = sqlsrv_fetch_array($resultParCierre)['ParCierr'] ?? 0;
+$ParCierre = ($ParCierre) ? $ParCierre->format('Y-m-d') : 'N/A';
+
+$sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario', REGLASCH.RCDesc AS 'Regla_CH', PC.UltimoCierre FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinReglasCH $joinRegistros $joinCierre WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, FICHAS.FicFech, PERSONAL.LegApNo, REGLASCH.RCDesc, dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF), PC.UltimoCierre";
 
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
@@ -54,7 +63,8 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlRec .= $where_condition;
 }
 
-$sqlRec .= "ORDER BY .FICHAS.FicFech, FICHAS.FicLega OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+$sqlRec .= " ORDER BY .FICHAS.FicFech, FICHAS.FicLega OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
+// error_log($sqlRec);
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
@@ -99,23 +109,23 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
             ];
         endwhile;
         sqlsrv_free_stmt($result_Fic);
-        $primero = (array_key_first($Fic_Hora));
-        $ultimo = (array_key_last($Fic_Hora));
-        $primero = (array_values($Fic_Hora)[$primero]);
-        $ultimo = (array_values($Fic_Hora)[$ultimo]);
+        $primero = (array_key_first($Fic_Hora ?? []));
+        $ultimo = (array_key_last($Fic_Hora ?? []));
+        $primero = (array_values($Fic_Hora ?? [])[$primero] ?? ['Fic' => "", 'Estado' => "", 'Tipo' => ""]);
+        $ultimo = (array_values($Fic_Hora ?? [])[$ultimo] ?? ['Fic' => "", 'Estado' => "", 'Tipo' => ""]);
         $ultimo = ($ultimo == $primero) ? ['Fic' => "", 'Estado' => "", 'Tipo' => ""] : $ultimo;
     } else {
         $Fic_Hora[] = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
         $primero = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
         $ultimo = ['Fic' => "", 'Estado' => "", 'Tipo' => ""];
     }
-    if (is_array($Fic_Hora)) {
-        foreach ($Fic_Hora as $fila) {
+    if (is_array($Fic_Hora ?? [])) {
+        foreach (($Fic_Hora ?? []) as $fila) {
             // $Fici[] = ("<span class='ls1 mr-1 border-left px-1'>" . ($fila["Fic"]) . "</span>");
             $Fici[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Fic"]) . "</td><td class='px-2'>" . ceronull($fila["Estado"]) . "</td><td class='px-2'>" . ceronull($fila["Tipo"]) . "</td><td class='w-100'></td></tr>";
         }
 
-        $Fichadas = implode("", $Fici);
+        $Fichadas = implode("", $Fici ?? []);
         unset($Fici);
         // var_export($Fichadas); 
     } else {
@@ -145,16 +155,16 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
             'Tipo' => ""
         ];
     }
-    if (is_array($Novedad)) {
-        foreach ($Novedad as $fila) {
+    if (is_array($Novedad ?? [])) {
+        foreach (($Novedad ?? []) as $fila) {
             $desc[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2'>" . ceronull($fila["Horas"]) . "</td><td class='px-2'>" . ceronull(TipoNov($fila["Tipo"])) . "</td><td class='w-100'></td></tr>";
             $desc2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . $fila["Horas"] . 'hs.">' . ($fila["Descripcion"]) . '</span>';
             $desc3[] = ($fila["Horas"]);
         }
 
-        $Novedades = implode("", $desc);
-        $Novedades2 = implode("<br/>", $desc2);
-        $NoveHoras = implode("<br/>", $desc3);
+        $Novedades = implode("", $desc ?? []);
+        $Novedades2 = implode("<br/>", $desc2 ?? []);
+        $NoveHoras = implode("<br/>", $desc3 ?? []);
         unset($desc);
         unset($desc2);
         unset($desc3);
@@ -190,25 +200,26 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
             'HsAuto' => ''
         ];
     }
-    if (is_array($Horas)) {
-        foreach ($Horas as $fila) {
+    if (is_array($Horas ?? [])) {
+        foreach (($Horas ?? []) as $fila) {
             $hor[] = "<tr class='py-2'><td class='px-2'>" . ceronull($fila["Cod"]) . "</td><td class='px-2'>" . ceronull($fila["Descripcion"]) . "</td><td class='px-2 text-center bg-light fw4'>" . ceronull($fila["HsAuto"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsCalc"]) . "</td><td class='px-2 text-center'>" . ceronull($fila["HsHechas"]) . "</td><td class='w-100'></td></tr>";
             // $hor2[] = $fila["Descripcion"];
             $hor2[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion"]) . '</span>';
-            $hor6[] = '<span title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion2"]) . '</span>';
+            $hor6[] = '<span class="edit-element" data-hora="' . $fila['Cod'] . '" title="(' . $fila['Cod'] . ') ' . $fila['Descripcion'] . ' ' . ceronull($fila["HsAuto"]) . 'hs.">' . ($fila["Descripcion2"]) . '</span>';
             $HsHechas[] = ceronull($fila["HsHechas"]);
             $HsCalc[] = ceronull($fila["HsCalc"]);
             $HsAuto[] = ceronull($fila["HsAuto"]);
         }
 
-        $horas = implode("", $hor);
-        $horas2 = implode("<br/>", $hor2);
+
+        $horas = implode("", $hor ?? []);
+        $horas2 = implode("<br/>", $hor2 ?? []);
         /** Descripcion 1 del tipo de hora */
-        $horas6 = implode("<br/>", $hor6);
+        $horas6 = implode("<br/>", $hor6 ?? []);
         /** Descripcion 2 del tipo de hora */
-        $horas3 = implode("<br/>", $HsHechas);
-        $horas4 = implode("<br/>", $HsCalc);
-        $horas5 = implode("<br/>", $HsAuto);
+        $horas3 = implode("<br/>", $HsHechas ?? []);
+        $horas4 = implode("<br/>", $HsCalc ?? []);
+        $horas5 = implode("<br/>", $HsAuto ?? []);
         unset($hor);
         unset($hor2);
         unset($hor6);
@@ -227,9 +238,9 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     // if ($_SESSION['ABM_ROL']['mFic']) {
     // $entrada['Fic'] = '<button title="Ver Fichada" type="button" class="btn btn-link font09 p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mFic="1" >' . $entrada['Fic'] . '</button>';
 
-    $horas6 = '<button title="Ver Horas" type="button" class="text-left btn btn-link font09 p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mHor="1" >' . $horas6 . '</button>';
+    $horas6 = '<button type="button" class="text-left btn btn-link font09 p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mHor="1" >' . ($horas6 ?? '') . '</button>';
 
-    $Novedades2 = '<button title="Ver Horas" type="button" class="text-left btn btn-link font09 p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mNov="1" >' . $Novedades2 . '</button>';
+    $Novedades2 = '<button title="Ver Horas" type="button" class="text-left btn btn-link font09 p-0 mFic open-modal text-secondary" data-toggle="modal" data="' . $Gen_Lega . '-' . $Gen_Fecha2 . '" data2="' . $Gen_Nombre . '" data3="' . $Gen_Fecha . '" data4="' . $Gen_Dia_Semana2 . ' ' . $Gen_Fecha . '" data5="' . $Gen_Horario . '" data6="' . $Gen_Fecha3 . '" dataFechDR="' . $Gen_Fecha . '"  data_mNov="1" >' . ($Novedades2 ?? '') . '</button>';
 
     // }
 
@@ -244,27 +255,43 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     $data4 = "{$Gen_Dia_Semana2} {$Gen_Fecha}";
     $FichadasDiv = "<button title='Ver Fichada' type='button' class='btn btn-link font09 p-0 mFic open-modal text-secondary' data-toggle='modal' data='{$dataGenLega}' data2='{$Gen_Nombre}' data3='{$Gen_Fecha}' data4='{$data4}' data5='{$Gen_Horario}' data6='{$Gen_Fecha3}' dataFechDR='{$Gen_Fecha}' data_mFic='1' >$Fichadas </button>";
 
+    $UltimoCierre = $row['UltimoCierre'] ? $row['UltimoCierre']->format('Y-m-d') : 'N/A';
+
+    $Cierre = false;
+
+    if ($Gen_Fecha3 <= $UltimoCierre) {
+        $Cierre = true;
+    }
+
+    if ($Gen_Fecha3 <= $ParCierre) {
+        $Cierre = true;
+    }
+    $textCierreGeneral = 'Cierre Legajo: ';
+    if ($UltimoCierre <= $ParCierre) {
+        $UltimoCierre = $ParCierre;
+        $textCierreGeneral = 'Cierre General: ';
+    }
+    // UltimoCierre Formato d/m/Y
+    $UltimoCierreF = ($UltimoCierre != 'N/A') ? date('d/m/Y', strtotime($UltimoCierre)) : 'N/A';
+    $textCierre = ($Cierre) ? '<br><div class="badge badge-secondary hint--right opa8" aria-label="' . $textCierreGeneral. $UltimoCierreF . '">Registro Cerrado</div>' : '';
     $data[] = [
-        'LegNombre' => $Gen_Nombre . '<br>' . $Gen_Lega,
+        'Cierre' => $Cierre,
+        'UltimoCierre' => $UltimoCierre,
+        'CierreGeneral' => $ParCierre,
+        'LegNombre' => "$Gen_Nombre<br>$Gen_Lega",
         'Gen_Lega' => $Gen_Lega,
         'Gen_Nombre' => $Gen_Nombre,
         'Fecha' => $Gen_Fecha,
-        'FechaDia' => '<span ' . $title_regla . '  
-            data-nombre="' . $Gen_Nombre . '" 
-            data-lega="' . $Gen_Lega . '"
-            data-fechaini="' . ($Gen_Fecha2) . '"
-            data-fechafin="' . ($Gen_Fecha2) . '"
-            data-procLega="true"
-        title="Procesar registro: ' . $Gen_Nombre . '. ' . $Gen_Fecha . '" class="pointer procReg">' . $Gen_Fecha . '<br />' . ($Gen_Dia_Semana) . '</span>',
+        'FechaDia' => "<span $title_regla\r\n data-nombre=\"$Gen_Nombre\" \r\ndata-lega=\"$Gen_Lega\"\r\ndata-fechaini=\"$Gen_Fecha2\"\r\ndata-fechafin=\"$Gen_Fecha2\"\r\ndata-procLega=\"true\"\r\ntitle=\"Procesar registro: $Gen_Nombre. $Gen_Fecha\" class=\"pointer procReg\">$Gen_Fecha<br />$Gen_Dia_Semana</span>$textCierre",
         'Fechastr' => $Gen_Fecha2,
         // 'Primera' => $entrada['Fic'] . '<br />' . $salida['Fic'],
         'Primera' => $FichadasDiv,
         'Novedades' => $Novedades2,
-        'NovHor' => $NoveHoras,
+        'NovHor' => $NoveHoras ?? '',
         'DescHoras' => $horas6,
-        'HsHechas' => ($horas3),
-        'HsCalc' => ($horas4),
-        'HsAuto' => $horas5,
+        'HsHechas' => ($horas3 ?? ''),
+        'HsCalc' => ($horas4 ?? ''),
+        'HsAuto' => ($horas5 ?? ''),
         //    'Primera' => '',
         'num_dia' => $Gen_Dia_Semana,
         'Gen_Horario' => $Gen_Horario,

@@ -1229,7 +1229,7 @@
  table.dataTable tbody>tr>.selected {
      background-color: #c9c8c8 !important;
  }
-
+ 
  table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before,
  table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
      background-color: var(--main-bg-modcolor) !important;
@@ -2012,6 +2012,12 @@
      background-color: #ebe9e9 !important;
      transition: var(--main-transition) !important;
  }
+
  .btn-hide {
      display: none !important;
+ }
+
+ .edit-element:hover {
+     text-decoration: underline !important;
+     cursor: pointer !important;
  }

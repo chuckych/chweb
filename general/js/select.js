@@ -1,5 +1,46 @@
 /** Select */
 $(document).ready(function () {
+
+    const SELECT2_LANGUAGE_ES = {
+        noResults: function () {
+            return 'No hay resultados..';
+        },
+        inputTooLong: function (args) {
+            var overChars = args.input.length - args.maximum;
+            var message = 'Máximo ' + args.maximum + ' caracteres. Elimine ' + overChars + ' caracter';
+            if (overChars != 1) {
+                message += 'es';
+            }
+            return message;
+        },
+        searching: function () {
+            return 'Buscando..';
+        },
+        errorLoading: function () {
+            return 'Sin datos..';
+        },
+        removeAllItems: function () {
+            return 'Borrar';
+        },
+        inputTooShort: function () {
+            return 'Ingresar 2 o mas caracteres';
+        },
+        maximumSelected: function () {
+            return 'Puede seleccionar solo una opción';
+        },
+        loadingMore: function () {
+            return "Cargando más resultados…";
+        }
+    };
+
+    const getSelect2Values = function (selectId) {
+        var values = [];
+        $(selectId + " option:selected").each(function () {
+            values.push({ id: $(this).val(), text: $(this).text() });
+        });
+        return values;
+    };
+
     $('#Tipo').css({ "width": "200px" });
     // SelectSelect2('.select2Plantilla', true, "Plantilla", 0, -1, 10, false)
     $('.form-control').css({ "width": "100%" });
@@ -8,17 +49,19 @@ $(document).ready(function () {
 
         function template(data) {
             if ($(data.html).length === 0) {
-                return data.text;
+                return data.text;  // Usar 'text' en lugar de 'html'
             }
             return $(data.html);
         }
-        function selectionTemplate (state) {
-            if (!state.id) { return state.id; }
+
+        function selectionTemplate(state) {
+            if (!state.id) { return state.text; }  // Cambiar state.id por state.text
             let $state = $(
-                '<span class="fontp">' + state.title + '</span>'
+                '<span class="fontp">' + state.text + '</span>'  // Usar 'text' en lugar de 'title'
             );
             return $state;
-        };
+        }
+
         $(".selectjs_empresa").select2({
             multiple: true,
             allowClear: opt2["allowClear"],
@@ -31,36 +74,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getEmpFichas.php",
                 dataType: "json",
@@ -108,36 +122,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getPlanFichas.php",
                 dataType: "json",
@@ -185,36 +170,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSectFichas.php",
                 dataType: "json",
@@ -262,36 +218,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSec2Fichas.php",
                 dataType: "json",
@@ -339,36 +266,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getGrupFichas.php",
                 dataType: "json",
@@ -416,36 +314,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + opt2["MinLength"] + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getSucFichas.php",
                 dataType: "json",
@@ -493,36 +362,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             templateSelection: template,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + "2" + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichas.php",
                 dataType: "json",
@@ -573,36 +413,7 @@ $(document).ready(function () {
             tags: true,
             width: "150px",
             tokenSeparators: [',', ' '],
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return ''
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
                 dataType: "json",
@@ -664,36 +475,7 @@ $(document).ready(function () {
             tags: true,
             width: "150px",
             tokenSeparators: [',', ' '],
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + "1" + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getLegajosFichasDeHa.php",
                 dataType: "json",
@@ -750,36 +532,7 @@ $(document).ready(function () {
             minimumResultsForSearch: -1,
             maximumInputLength: opt2["MaxInpLength"],
             selectOnClose: opt2["SelClose"],
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + "2" + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getTipoPerFichas.php",
                 dataType: "json",
@@ -827,36 +580,7 @@ $(document).ready(function () {
             selectOnClose: opt2["SelClose"],
             templateResult: template,
             // templateSelection: selectionTemplate,
-            language: {
-                noResults: function () {
-                    return 'No hay resultados..'
-                },
-                inputTooLong: function (args) {
-                    var message = 'Máximo ' + opt2["MaxInpLength"] + ' caracteres. Elimine ' + overChars + ' caracter';
-                    if (overChars != 1) {
-                        message += 'es'
-                    }
-                    return message
-                },
-                searching: function () {
-                    return 'Buscando..'
-                },
-                errorLoading: function () {
-                    return 'Sin datos..'
-                },
-                removeAllItems: function () {
-                    return 'Borrar'
-                },
-                inputTooShort: function () {
-                    return 'Ingresar ' + "2" + ' o mas caracteres'
-                },
-                maximumSelected: function () {
-                    return 'Puede seleccionar solo una opción'
-                },
-                loadingMore: function () {
-                    return "Cargando más resultados…"
-                },
-            },
+            language: SELECT2_LANGUAGE_ES,
             ajax: {
                 url: "/" + $("#_homehost").val() + "/general/getSelect/getNovNovedades.php",
                 dataType: "json",
@@ -895,16 +619,22 @@ $(document).ready(function () {
         $('#Per2').on('change', function () {
             CheckSesion()
         })
-        function refreshSelected(slectjs) {
+        function refreshSelected(slectjs, LS_KEY = '') {
             $(slectjs).on('select2:select', function (e) {
-                $('#Per2').val(null)
-                ActualizaTablas2()
+                $('#Per2').val(null);
+                if (LS_KEY) {
+                    ls.set(LS_KEY, getSelect2Values(slectjs));
+                }
+                ActualizaTablas2();
             });
         }
-        function refreshUnselected(slectjs) {
+        function refreshUnselected(slectjs, LS_KEY = '') {
             $(slectjs).on('select2:unselecting', function (e) {
                 $('#Per2').val(null)
-                ActualizaTablas2()
+                if (LS_KEY) {
+                    ls.set(LS_KEY, getSelect2Values(slectjs));
+                }
+                ActualizaTablas2();
             });
         }
 
@@ -918,6 +648,7 @@ $(document).ready(function () {
         function closeSelect2(slectjs) {
             $(slectjs).on('select2:close', function (e) {
                 $('#Per2').val(null)
+                ls.remove(LS_PERSONAL);
                 ActualizaTablas2()
             });
         }
@@ -928,48 +659,132 @@ $(document).ready(function () {
         closeSelect2('#LegHa')
 
         // refreshSelected('#LegHa');
-        refreshSelected('.selectjs_empresa');
-        refreshSelected('.selectjs_plantas');
-        refreshSelected('.select_seccion');
-        refreshSelected('.selectjs_grupos');
-        refreshSelected('.selectjs_sucursal');
-        refreshSelected('.selectjs_personal');
-        refreshSelected('.selectjs_tipoper');
-        refreshSelected('#datoNovedad');
+        refreshSelected('.selectjs_empresa', LS_EMPRESAS);
+        refreshSelected('.selectjs_plantas', LS_PLANTAS);
+        refreshSelected('.select_seccion', LS_SECCION);
+        refreshSelected('.selectjs_grupos', LS_GRUPOS);
+        refreshSelected('.selectjs_sucursal', LS_SUCURSAL);
+        refreshSelected('.selectjs_personal', LS_PERSONAL);
+        refreshSelected('.selectjs_tipoper', LS_TIPOPER);
+        refreshSelected('#datoNovedad', LS_NOVEDAD);
 
 
-        refreshUnselected('.selectjs_empresa');
-        refreshUnselected('#datoNovedad');
-        refreshUnselected('.selectjs_plantas');
-        refreshUnselected('.select_seccion');
-        refreshUnselected('.selectjs_grupos');
-        refreshUnselected('.selectjs_sucursal');
-        refreshUnselected('.selectjs_personal');
-        refreshUnselected('.selectjs_tipoper');
+        refreshUnselected('.selectjs_empresa', LS_EMPRESAS);
+        refreshUnselected('#datoNovedad', LS_NOVEDAD);
+        refreshUnselected('.selectjs_plantas', LS_PLANTAS);
+        refreshUnselected('.select_seccion', LS_SECCION);
+        refreshUnselected('.selectjs_grupos', LS_GRUPOS);
+        refreshUnselected('.selectjs_sucursal', LS_SUCURSAL);
+        refreshUnselected('.selectjs_personal', LS_PERSONAL);
+        refreshUnselected('.selectjs_tipoper', LS_TIPOPER);
 
         $('.selectjs_sectores').on('select2:select', function (e) {
             $('#Per2').val(null)
+            ls.set(LS_SECTORES, getSelect2Values('.selectjs_sectores'));
             $(".select_seccion").prop("disabled", false);
             $('.select_seccion').val(null).trigger('change');
             ActualizaTablas2()
-            var nombresector = $('.selectjs_sectores :selected').text();
+            const nombresector = $('.selectjs_sectores :selected').text();
             $("#DatosFiltro").html('Sector: ' + nombresector);
         });
         $('.selectjs_sectores').on('select2:unselecting', function (e) {
-            $('#Per2').val(null)
+            $('#Per2').val(null);
+            ls.set(LS_SECTORES, getSelect2Values('.selectjs_sectores'));
             $(".select_seccion").prop("disabled", true);
             $('.select_seccion').val(null).trigger('change');
             ActualizaTablas2()
         });
         $('.selectjs_personal').on('select2:select', function (e) {
-            $('#Per2').val(null)
+            $('#Per2').val(null);
+            ls.set(LS_PERSONAL, getSelect2Values('.selectjs_personal'));
             ActualizaTablas2()
         });
+        cargarSelectsMultiples();
+        // const getLSPersonal = ls.get(LS_PERSONAL);
+        // if (getLSPersonal) {
+        //     Select2ValueMultiple(getLSPersonal, '.selectjs_personal');
+        // }
+        // const getLSEmpresas = ls.get(LS_EMPRESAS);
+        // if (getLSEmpresas) {
+        //     Select2ValueMultiple(getLSEmpresas, '.selectjs_empresa');
+        // }
+        // const getLSPlantas = ls.get(LS_PLANTAS);
+        // if (getLSPlantas) {
+        //     Select2ValueMultiple(getLSPlantas, '.selectjs_plantas');
+        // }
+        // const getLSSectores = ls.get(LS_SECTORES);
+        // const getLSSeccion = ls.get(LS_SECCION);
 
+        // if (getLSSectores) {
+        //     Select2ValueMultiple(getLSSectores, '.selectjs_sectores');
+        //     if (getLSSeccion) {
+        //         $(".select_seccion").prop("disabled", false);
+        //         Select2ValueMultiple(getLSSeccion, '.select_seccion');
+        //     }
+        // }
+
+        // const getLSGrupos = ls.get(LS_GRUPOS);
+        // if (getLSGrupos) {
+        //     Select2ValueMultiple(getLSGrupos, '.selectjs_grupos');
+        // }
+        // const getLSSucursal = ls.get(LS_SUCURSAL);
+        // if (getLSSucursal) {
+        //     Select2ValueMultiple(getLSSucursal, '.selectjs_sucursal');
+        // }
+        // const getLSTipoper = ls.get(LS_TIPOPER);
+        // if (getLSTipoper) {
+        //     Select2ValueMultiple(getLSTipoper, '.selectjs_tipoper');
+        // }
+        // const getLSNovedad = ls.get(LS_NOVEDAD);
+        // if (getLSNovedad) {
+        //     Select2ValueMultiple(getLSNovedad, '#datoNovedad');
+        // }
     });
+    const getLSDaterange = ls.get(LS_DATERANGE);
+    if (getLSDaterange) {
+        const [startDate, endDate] = getLSDaterange.split(' - ');
+        $('#_drFiltro').data('daterangepicker').setStartDate(startDate);
+        $('#_drFiltro').data('daterangepicker').setEndDate(endDate);
+        $('#_dr').data('daterangepicker').setStartDate(startDate);
+        $('#_dr').data('daterangepicker').setEndDate(endDate);
+    }
 });
+
 
 $('#Filtros').on('hidden.bs.modal', function (e) {
     $('#Filtros').modal('dispose');
     $('.show-calendar').hide();
 });
+
+const SELECTS_MULTIPLE_MAP = [
+    { key: LS_PERSONAL, selector: '.selectjs_personal' },
+    { key: LS_EMPRESAS, selector: '.selectjs_empresa' },
+    { key: LS_PLANTAS, selector: '.selectjs_plantas' },
+    { key: LS_GRUPOS, selector: '.selectjs_grupos' },
+    { key: LS_SUCURSAL, selector: '.selectjs_sucursal' },
+    { key: LS_TIPOPER, selector: '.selectjs_tipoper' },
+    { key: LS_NOVEDAD, selector: '#datoNovedad' },
+    {
+        key: LS_SECTORES,
+        selector: '.selectjs_sectores',
+        onLoad: () => {
+            const seccion = ls.get(LS_SECCION);
+            if (seccion) {
+                $('.select_seccion').prop('disabled', false);
+                Select2ValueMultiple(seccion, '.select_seccion');
+            }
+        }
+    },
+];
+
+const cargarSelectsMultiples = () => {
+    SELECTS_MULTIPLE_MAP.forEach(({ key, selector, onLoad }) => {
+        const stored = ls.get(key);
+        if (!stored) return;
+
+        Select2ValueMultiple(stored, selector);
+        onLoad?.();
+    });
+};
+
+$('#Filtros').on('shown.bs.modal', cargarSelectsMultiples);

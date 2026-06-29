@@ -498,7 +498,7 @@ function select2Ajax(selector, placeholder, clear, selclose, url) {
         }
     })
 }
-function select2Simple(selector, placeholder, clear, selclose, width = '') {    
+function select2Simple(selector, placeholder, clear, selclose, width = '') {
     $(selector).select2({
         placeholder: $(selector).data("label") || placeholder,
         minimumResultsForSearch: 10,
@@ -513,6 +513,64 @@ function Select2Value(id, text, selector) {
         $(selector).append(newOption).trigger('change');
     }
 }
+function Select2ValueMultiple_old(array, selector) {
+    array.forEach(item => {
+        const newOption = new Option(item.text, item.id, false, false);
+        if (item.text != '') {
+            $(selector).append(newOption).trigger('change');
+        }
+    });
+}
+function Select2ValueMultiple_old(array, selector) {
+    // Primero, agregar las opciones que no existen
+    array.forEach(item => {
+        const optionExists = $(selector).find(`option[value="${item.id}"]`).length > 0;
+        if (!optionExists && item.text != '') {
+            console.log('Agregando opción:', item.text, 'con valor:', item.id);
+            const newOption = new Option(item.text, item.id, false, false);
+            $(selector).append(newOption).trigger('change');
+        }
+    });
+
+    // Luego, seleccionar todas las opciones
+    const ids = array.map(item => item.id);
+    $(selector).val(ids).trigger('change');
+}
+
+function Select2ValueMultiple(array, selector) {
+    // Obtener el objeto Select2
+    const select2Instance = $(selector).data('select2');
+
+    if (!select2Instance) {
+        // console.error('Select2 no inicializado en:', selector);
+        return;
+    }
+
+    // Limpiar selección actual
+    $(selector).val(null).trigger('change');
+
+    // Agregar cada opción usando la API de Select2
+    array.forEach(item => {
+        if (item.text && item.text != '') {
+            // Verificar si la opción ya existe
+            const optionExists = $(selector).find(`option[value="${item.id}"]`).length > 0;
+
+            if (!optionExists) {
+                // Crear y agregar la opción
+                const newOption = new Option(item.text, item.id, true, true);
+                $(selector).append(newOption);
+            }
+        }
+    });
+
+    // Seleccionar todas las opciones
+    const ids = array.map(item => item.id);
+    $(selector).val(ids).trigger('change');
+
+    // Forzar actualización del template
+    $(selector).trigger('change.select2');
+}
+
 function CheckUncheck(selectorCheck, selectorUncheck, selectorCheckbox, classActive) {
     $(selectorCheck).click(function (e) {
         $(selectorCheckbox).prop('checked', true)
@@ -1147,7 +1205,7 @@ const test_conect = async (data, options = {}) => {
         }
 
         const res = await axios.post(`/${_homehost}/app-data/test_connect`, {
-            'IDCliente' : data.id,
+            'IDCliente': data.id,
             // 'DBHost'    : data.host,
             // 'DBName'    : data.db,
             // 'DBUser'    : data.user,

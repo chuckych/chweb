@@ -3770,10 +3770,10 @@ function simple_MSQuery($query)
 function MSQuery($query)
 {
     $params = [];
-    $options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
+    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
     require __DIR__ . '/config/conect_mssql.php';
     $stmt = sqlsrv_query($link, $query, $params, $options);
-    if (($stmt)) {
+    if ($stmt) {
         return true;
     } else {
         if (($errors = sqlsrv_errors()) != null) {
@@ -3782,7 +3782,8 @@ function MSQuery($query)
                 $data[] = array("status" => "error", "dato" => $mensaje[3]);
             }
         }
-        sqlsrv_free_stmt($stmt);
+        error_log(json_encode($data[0]));
+        sqlsrv_free_stmt($stmt ?? null);
         echo json_encode($data[0]);
         sqlsrv_close($link);
         return false;
@@ -4398,4 +4399,18 @@ function removeAccents(string $str): string
         'A', 'E', 'I', 'O', 'U', 'A', 'O', 'N', 'C', 'Y'];
 
     return str_replace($from, $to, $str);
+}
+function validarTablaSeccion(string $recid_cliente)
+{
+    try {
+        if(!$recid_cliente) {
+            throw new InvalidArgumentException("El parámetro recid_cliente no puede estar vacío.");
+        }
+        timeZone();
+        $_GET['_c'] = $recid_cliente ?? '';
+        $FechaHora = date('Y-m-d H:i:s');
+        $arrMSQuery = MSQuery("INSERT INTO SECCION (SecCodi, Se2Codi, Se2Desc, FechaHora) SELECT s.SecCodi, '0', '', '$FechaHora' FROM SECTORES s WHERE NOT EXISTS (SELECT 1 FROM SECCION sc WHERE sc.SecCodi = s.SecCodi);");
+    } catch (\Throwable $th) {
+        error_log("Error al sanitizar secciones: " . $th->getMessage());
+    }
 }

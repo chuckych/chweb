@@ -8,4 +8,5 @@ existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
 $getData = 'GetPersonal';
 $_datos = 'personal';
 $bgcolor = 'bg-custom';
+validarTablaSeccion($_SESSION['RECID_CLIENTE'] ?? '');
 require pagina('personal.php');

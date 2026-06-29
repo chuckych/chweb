@@ -1,4 +1,42 @@
 // $(".Filtros").prop('disabled', true);
+const _c = $('#_c').val() ?? 'general';
+const _uid = $('#_uid').val() ?? 0;
+const LS_PREFIX = _uid + '_';
+const LS_SOLOHCALC = LS_PREFIX + 'soloHCalc';
+const LS_SOLOFIC = LS_PREFIX + 'soloFic';
+const LS_FICDIAL = LS_PREFIX + 'ficDiaL';
+const LS_FICFALTA = LS_PREFIX + 'ficFalta';
+const LS_LEGDE = LS_PREFIX + 'legDe';
+const LS_LEGHA = LS_PREFIX + 'legHa';
+const LS_FICNOVT = LS_PREFIX + 'ficNovT';
+const LS_FICNOVI = LS_PREFIX + 'ficNovI';
+const LS_FICNOVS = LS_PREFIX + 'ficNovS';
+const LS_FICNOVA = LS_PREFIX + 'ficNovA';
+const LS_PERSONAL = LS_PREFIX + 'personal';
+const LS_EMPRESAS = LS_PREFIX + 'empresas';
+const LS_PLANTAS = LS_PREFIX + 'plantas';
+const LS_SECCION = LS_PREFIX + 'seccion';
+const LS_SECTORES = LS_PREFIX + 'sectores';
+const LS_GRUPOS = LS_PREFIX + 'grupos';
+const LS_SUCURSAL = LS_PREFIX + 'sucursal';
+const LS_TIPOPER = LS_PREFIX + 'tipoper';
+const LS_NOVEDAD = LS_PREFIX + 'novedad';
+const LS_DATERANGE = LS_PREFIX + 'daterange';
+
+const lsDataSelect = function (LS_KEY, selector) {
+    const data = ls.get(LS_KEY);
+    if (data != null && data.length > 0) {
+        if (selector === '#datoNovedad') {
+            return parseInt(data[0].id);
+        }
+        return data.map(function (value) {
+            return parseInt(value.id);
+        });
+    } else {
+        return $(selector).val();
+    }
+}
+
 const status_ws = function () {
     axios.get("/" + $("#_homehost").val() + '/status_ws.php', {
         params: {
@@ -8,13 +46,14 @@ const status_ws = function () {
         $.notifyClose();
         const status_ws = response?.data?.status ?? '';
         const mensaje_ws = response?.data?.Mensaje ?? '';
-        if(status_ws === 'Error') {
+        if (status_ws === 'Error') {
             notify(mensaje_ws, 'info', 2000, 'right')
         }
     });
 };
 status_ws();
 function ActualizaTablas() {
+    actualizarContadorFiltros();
     $('.modal-footer .result').html('');
     if ($("#Visualizar").is(":checked")) {
         $('#GetFechas').DataTable().ajax.reload(null, false);
@@ -35,6 +74,7 @@ function ActualizaTablas2() {
         $('#Per2').addClass('d-none')
         $('.pers_legajo').removeClass('d-none')
     };
+    actualizarContadorFiltros();
 };
 function atajosTeclado() {
     let map = { 17: false, 18: false, 32: false, 16: false, 39: false, 37: false, 13: false, 27: false };
@@ -86,6 +126,7 @@ $("#GetGeneralFechaTable").hide();
 
 $('#datoFicFalta').val('0');
 $("#FicFalta").change(function () {
+    ls.set(LS_FICFALTA, $('#FicFalta').is(":checked"));
     if ($("#FicFalta").is(":checked")) {
         $('#datoFicFalta').val('1')
         $('#datoFicNovA').val('0')
@@ -100,15 +141,16 @@ $("#FicFalta").change(function () {
 });
 $('#datoFicNovT').val('0');
 $("#FicNovT").change(function () {
+    ls.set(LS_FICNOVT, $('#FicNovT').is(":checked"));
     if ($("#FicNovT").is(":checked")) {
         $('#datoFicNovT').val('1')
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas2()
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
     } else {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovT').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas2()
@@ -116,15 +158,16 @@ $("#FicNovT").change(function () {
 });
 $('#datoFicNovI').val('0');
 $("#FicNovI").change(function () {
+    ls.set(LS_FICNOVI, $('#FicNovI').is(":checked"));
     if ($("#FicNovI").is(":checked")) {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovI').val('1')
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas2()
     } else {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovI').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas2()
@@ -132,15 +175,16 @@ $("#FicNovI").change(function () {
 });
 $('#datoFicNovS').val('0');
 $("#FicNovS").change(function () {
+    ls.set(LS_FICNOVS, $('#FicNovS').is(":checked"));
     if ($("#FicNovS").is(":checked")) {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovS').val('1')
         $('#datoFicNovA').val('0')
         $('#FicNovA').prop('checked', false)
         $('#FicNovA').prop('disabled', true)
         ActualizaTablas2()
     } else {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovS').val('0')
         $('#FicNovA').prop('disabled', false)
         ActualizaTablas2()
@@ -148,8 +192,9 @@ $("#FicNovS").change(function () {
 });
 $('#datoFicNovA').val('0');
 $("#FicNovA").change(function () {
+    ls.set(LS_FICNOVA, $('#FicNovA').is(":checked"));
     if ($("#FicNovA").is(":checked")) {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovA').val('1')
         $('#datoFicFalta').val('0')
         $('#datoFicNovT').val('0')
@@ -165,7 +210,7 @@ $("#FicNovA").change(function () {
         $('#FicNovS').prop('disabled', true)
         ActualizaTablas2()
     } else {
-        $('#datoNovedad').val(null).trigger("change");
+        cleanDatoNovedad();
         $('#datoFicNovA').val('0')
         $('#FicFalta').prop('disabled', false)
         $('#FicNovT').prop('disabled', false)
@@ -187,11 +232,142 @@ function _Filtros() {
     return JSON.stringify(Filtros)
 }
 
-_Filtros()
+const setLSFilter_old = function () {
+    const getSoloHCalc = ls.get(LS_SOLOHCALC);
+    const getSoloFic = ls.get(LS_SOLOFIC);
+    const getFicFalta = ls.get(LS_FICFALTA);
+    const getLegDe = ls.get(LS_LEGDE);
+    const getLegHa = ls.get(LS_LEGHA);
+    const getFicNovT = ls.get(LS_FICNOVT);
+    const getFicNovI = ls.get(LS_FICNOVI);
+    const getFicNovS = ls.get(LS_FICNOVS);
+    const getFicNovA = ls.get(LS_FICNOVA);
+    const getFicDiaL = ls.get(LS_FICDIAL);
+
+    if (getSoloHCalc === null) {
+        ls.set(LS_SOLOHCALC, $('#SoloHCalc').is(":checked"));
+    } else {
+        $('#SoloHCalc').prop('checked', getSoloHCalc);
+    }
+
+    if (getSoloFic === null) {
+        ls.set(LS_SOLOFIC, $('#SoloFic').is(":checked"));
+    } else {
+        $('#SoloFic').prop('checked', getSoloFic);
+    }
+
+    if (getFicFalta === null) {
+        ls.set(LS_FICFALTA, $('#FicFalta').is(":checked"));
+    } else {
+        $('#FicFalta').prop('checked', getFicFalta);
+    }
+
+    if (getLegDe === null) {
+        ls.set(LS_LEGDE, $('#LegDe').val());
+    } else {
+        Select2Value(getLegDe, getLegDe, '#LegDe');
+    }
+
+    if (getLegHa === null) {
+        ls.set(LS_LEGHA, $('#LegHa').val());
+    } else {
+        Select2Value(getLegHa, getLegHa, '#LegHa');
+    }
+
+    if (getFicNovT === null) {
+        ls.set(LS_FICNOVT, $('#FicNovT').is(":checked"));
+    } else {
+        $('#FicNovT').prop('checked', getFicNovT);
+        $('#datoFicNovT').val(getFicNovT ? '1' : '0');
+    }
+
+    if (getFicNovI === null) {
+        ls.set(LS_FICNOVI, $('#FicNovI').is(":checked"));
+    } else {
+        $('#FicNovI').prop('checked', getFicNovI);
+        $('#datoFicNovI').val(getFicNovI ? '1' : '0');
+    }
+
+    if (getFicNovS === null) {
+        ls.set(LS_FICNOVS, $('#FicNovS').is(":checked"));
+    } else {
+        $('#FicNovS').prop('checked', getFicNovS);
+        $('#datoFicNovS').val(getFicNovS ? '1' : '0');
+    }
+
+    if (getFicNovA === null) {
+        ls.set(LS_FICNOVA, $('#FicNovA').is(":checked"));
+    } else {
+        $('#FicNovA').prop('checked', getFicNovA);
+        $('#datoFicNovA').val(getFicNovA ? '1' : '0');
+    }
+
+    if (getFicDiaL === null) {
+        ls.set(LS_FICDIAL, $('#FicDiaL').is(":checked"));
+    } else {
+        $('#FicDiaL').prop('checked', getFicDiaL);
+        $('#FicDiaLFiltro').prop('checked', getFicDiaL);
+        $('#datoFicDiaL').val(getFicDiaL ? '1' : '0');
+    }
+
+}
+
+const FILTROS_LS_MAP = [
+    // Checkboxes simples
+    { key: LS_SOLOHCALC, selector: '#SoloHCalc', type: 'check' },
+    { key: LS_SOLOFIC, selector: '#SoloFic', type: 'check' },
+    { key: LS_FICFALTA, selector: '#FicFalta', type: 'check' },
+
+    // Checkboxes con dato oculto
+    { key: LS_FICNOVT, selector: '#FicNovT', dato: '#datoFicNovT', type: 'check-dato' },
+    { key: LS_FICNOVI, selector: '#FicNovI', dato: '#datoFicNovI', type: 'check-dato' },
+    { key: LS_FICNOVS, selector: '#FicNovS', dato: '#datoFicNovS', type: 'check-dato' },
+    { key: LS_FICNOVA, selector: '#FicNovA', dato: '#datoFicNovA', type: 'check-dato' },
+
+    // FicDiaL: check-dato + sincroniza un segundo checkbox
+    { key: LS_FICDIAL, selector: '#FicDiaL', dato: '#datoFicDiaL', extra: '#FicDiaLFiltro', type: 'check-dato' },
+
+    // Select2
+    { key: LS_LEGDE, selector: '#LegDe', type: 'select2' },
+    { key: LS_LEGHA, selector: '#LegHa', type: 'select2' },
+];
+
+const setLSFilter = () => {
+    FILTROS_LS_MAP.forEach(({ key, selector, dato, extra, type }) => {
+        const stored = ls.get(key);
+        if (stored === null) {
+            const val = type === 'select2'
+                ? $(selector).val()
+                : $(selector).is(':checked');
+            ls.set(key, val);
+            return;
+        }
+
+        if (type === 'check') {
+            $(selector).prop('checked', stored);
+        }
+
+        if (type === 'check-dato') {
+            $(selector).prop('checked', stored);
+            $(dato).val(stored ? '1' : '0');
+            if (extra) $(extra).prop('checked', stored);
+        }
+
+        if (type === 'select2') {
+            Select2Value(stored, stored, selector);
+        }
+    });
+};
+
+setLSFilter();
+_Filtros();
 
 $("._filtroLegDeHa").change(function (e) {
     e.preventDefault();
     $('#Per').val(null).trigger("change");
+    ls.set(LS_LEGDE, $('#LegDe').val());
+    ls.set(LS_LEGHA, $('#LegHa').val());
+    // _Filtros();
 });
 $("._filtro").change(function (e) {
     e.preventDefault();
@@ -199,16 +375,18 @@ $("._filtro").change(function (e) {
 });
 $("#SoloHCalc").change(function (e) {
     e.preventDefault();
+    ls.set(LS_SOLOHCALC, $('#SoloHCalc').is(":checked"));
     _Filtros()
     ActualizaTablas()
 });
 $("#SoloFic").change(function (e) {
     e.preventDefault();
+    ls.set(LS_SOLOFIC, $('#SoloFic').is(":checked"));
     _Filtros()
     ActualizaTablas()
 });
 
-let GetPersonal = $('#GetPersonal').DataTable({
+const GetPersonal = $('#GetPersonal').DataTable({
     initComplete: function (settings, json) {
     },
     // bStateSave: -1,
@@ -224,23 +402,29 @@ let GetPersonal = $('#GetPersonal').DataTable({
         type: "POST",
         "data": function (data) {
             data._l = $("#_l").val();
-            data.Per = $("#Per").val();
+            data.Per = lsDataSelect(LS_PERSONAL, '.selectjs_personal');
             data.Per2 = $("#Per2").val();
             data.Tipo = $("#Tipo").val();
-            data.Emp = $("#Emp").val();
-            data.Plan = $("#Plan").val();
-            data.Sect = $("#Sect").val();
-            data.Sec2 = $("#Sec2").val();
-            data.Grup = $("#Grup").val();
-            data.Sucur = $("#Sucur").val();
-            data._dr = $("#_dr").val();
+            data.Emp = lsDataSelect(LS_EMPRESAS, '#Emp');
+            data.Plan = lsDataSelect(LS_PLANTAS, '#Plan');
+            data.Sect = lsDataSelect(LS_SECTORES, '#Sect');
+            data.Sec2 = lsDataSelect(LS_SECCION, '#Sec2');
+            data.Grup = lsDataSelect(LS_GRUPOS, '#Grup');
+            data.Sucur = lsDataSelect(LS_SUCURSAL, '#Sucur');
+            const getLSDaterange = ls.get(LS_DATERANGE);
+            if (getLSDaterange) {
+                const [startDate, endDate] = getLSDaterange.split(' - ');
+                data._dr = `${startDate} al ${endDate}`;
+            } else {
+                data._dr = $("#_dr").val();
+            }
             data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
             data.FicFalta = $("#datoFicFalta").val();
             data.FicNovT = $("#datoFicNovT").val();
             data.FicNovI = $("#datoFicNovI").val();
             data.FicNovS = $("#datoFicNovS").val();
             data.FicNovA = $("#datoFicNovA").val();
-            data.Fic3Nov = $("#datoNovedad").val();
+            data.Fic3Nov = lsDataSelect(LS_NOVEDAD, '#datoNovedad');
             data.FechaFin = $("#FechaFin").val();
             data.Filtros = _Filtros()
         },
@@ -290,7 +474,8 @@ function textResult(params, selector, tipo) {
     }
     classEfect(selector, 'animate__animated animate__fadeIn')
 }
-$('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
+
+GetPersonal.on('draw.dt', function (e, settings) {
 
     if ((settings.json.recordsTotal > 0)) {
         $('#Visualizar').prop('disabled', false)
@@ -304,13 +489,20 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
     $('#pagLega').removeClass('d-none')
 
     if (settings.iDraw === 1) {
-        atajosTeclado()
+        atajosTeclado();
+
         $('#GetGeneral').DataTable({
             "initComplete": function (settings, json) {
                 $("#Refresh").prop('disabled', false);
                 $('#trash_all').removeClass('invisible');
                 fadeInOnly('#GetGeneralTable')
                 fadeInOnly('#pagLega')
+            },
+            createdRow: function (row, data, dataIndex) {
+                $(row).addClass('fadeIn');
+                if (data.Cierre === true) {
+                    $(row).addClass('text-light');
+                }
             },
             // stateSave: -1,
             lengthMenu: [[30, 60, 90, 120], [30, 60, 90, 120]],
@@ -322,14 +514,14 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
                 url: "/" + $("#_homehost").val() + "/general/GetGeneral.php",
                 type: "POST",
                 "data": function (data) {
-                    data.Per = $("#Per").val();
+                    data.Per = lsDataSelect(LS_PERSONAL);
                     data.Tipo = $("#Tipo").val();
-                    data.Emp = $("#Emp").val();
-                    data.Plan = $("#Plan").val();
-                    data.Sect = $("#Sect").val();
-                    data.Sec2 = $("#Sec2").val();
-                    data.Grup = $("#Grup").val();
-                    data.Sucur = $("#Sucur").val();
+                    data.Emp = lsDataSelect(LS_EMPRESAS, '#Emp');
+                    data.Plan = lsDataSelect(LS_PLANTAS, '#Plan');
+                    data.Sect = lsDataSelect(LS_SECTORES, '#Sect');
+                    data.Sec2 = lsDataSelect(LS_SECCION, '#Sec2');
+                    data.Grup = lsDataSelect(LS_GRUPOS, '#Grup');
+                    data.Sucur = lsDataSelect(LS_SUCURSAL, '#Sucur');
                     data._dr = $("#_dr").val();
                     data._l = $("#_l").val();
                     data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
@@ -338,7 +530,7 @@ $('#GetPersonal').DataTable().on('draw.dt', function (e, settings) {
                     data.FicNovI = $("#datoFicNovI").val();
                     data.FicNovS = $("#datoFicNovS").val();
                     data.FicNovA = $("#datoFicNovA").val();
-                    data.Fic3Nov = $("#datoNovedad").val();
+                    data.Fic3Nov = lsDataSelect(LS_NOVEDAD, '#datoNovedad');
                     data.FechaFin = $("#FechaFin").val();
                     data.Filtros = _Filtros();
                 },
@@ -432,14 +624,14 @@ $('#GetFechas').DataTable({
         url: "/" + $("#_homehost").val() + "/general/GetFechasFichas.php",
         type: "POST",
         "data": function (data) {
-            data.Per = $("#Per").val();
+            data.Per = lsDataSelect(LS_PERSONAL);
             data.Tipo = $("#Tipo").val();
-            data.Emp = $("#Emp").val();
-            data.Plan = $("#Plan").val();
-            data.Sect = $("#Sect").val();
-            data.Sec2 = $("#Sec2").val();
-            data.Grup = $("#Grup").val();
-            data.Sucur = $("#Sucur").val();
+            data.Emp = lsDataSelect(LS_EMPRESAS, '#Emp');
+            data.Plan = lsDataSelect(LS_PLANTAS, '#Plan');
+            data.Sect = lsDataSelect(LS_SECTORES, '#Sect');
+            data.Sec2 = lsDataSelect(LS_SECCION, '#Sec2');
+            data.Grup = lsDataSelect(LS_GRUPOS, '#Grup');
+            data.Sucur = lsDataSelect(LS_SUCURSAL, '#Sucur');
             data._dr = $("#_dr").val();
             data._l = $("#_l").val();
             data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
@@ -448,7 +640,7 @@ $('#GetFechas').DataTable({
             data.FicNovI = $("#datoFicNovI").val();
             data.FicNovS = $("#datoFicNovS").val();
             data.FicNovA = $("#datoFicNovA").val();
-            data.Fic3Nov = $("#datoNovedad").val();
+            data.Fic3Nov = lsDataSelect(LS_NOVEDAD, '#datoNovedad');
             data.FechaFin = $("#FechaFin").val();
             data.Filtros = _Filtros()
         },
@@ -501,14 +693,14 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                 "data": function (data) {
                     // console.log(data);
                     data._f = $("#_f").val();
-                    data.Per = $("#Per").val();
+                    data.Per = lsDataSelect(LS_PERSONAL);
                     data.Tipo = $("#Tipo").val();
-                    data.Emp = $("#Emp").val();
-                    data.Plan = $("#Plan").val();
-                    data.Sect = $("#Sect").val();
-                    data.Sec2 = $("#Sec2").val();
-                    data.Grup = $("#Grup").val();
-                    data.Sucur = $("#Sucur").val();
+                    data.Emp = lsDataSelect(LS_EMPRESAS, '#Emp');
+                    data.Plan = lsDataSelect(LS_PLANTAS, '#Plan');
+                    data.Sect = lsDataSelect(LS_SECTORES, '#Sect');
+                    data.Sec2 = lsDataSelect(LS_SECCION, '#Sec2');
+                    data.Grup = lsDataSelect(LS_GRUPOS, '#Grup');
+                    data.Sucur = lsDataSelect(LS_SUCURSAL, '#Sucur');
                     data._dr = $("#_dr").val();
                     data._l = $("#_l").val();
                     data.FicDiaL = ($("#FicDiaL").is(":checked")) ? 1 : 0;
@@ -517,7 +709,7 @@ $('#GetFechas').DataTable().on('draw.dt', function (e, settings) {
                     data.FicNovI = $("#datoFicNovI").val();
                     data.FicNovS = $("#datoFicNovS").val();
                     data.FicNovA = $("#datoFicNovA").val();
-                    data.Fic3Nov = $("#datoNovedad").val();
+                    data.Fic3Nov = lsDataSelect(LS_NOVEDAD, '#datoNovedad');
                     data.FechaFin = $("#FechaFin").val();
                     data.Filtros = _Filtros()
                 },
@@ -603,39 +795,196 @@ $("#Refresh").on("click", function () {
 });
 
 $('#_dr').on('apply.daterangepicker', function (ev, picker) {
-    let endDate = picker.endDate.format('DD/MM/YYYY');
-    let startDate = picker.startDate.format('DD/MM/YYYY');
+    const endDate = picker.endDate.format('DD/MM/YYYY');
+    const startDate = picker.startDate.format('DD/MM/YYYY');
     $('#_drFiltro').data('daterangepicker').setStartDate(startDate);
     $('#_drFiltro').data('daterangepicker').setEndDate(endDate);
+    ls.set(LS_DATERANGE, startDate + ' - ' + endDate);
     CheckSesion()
     ActualizaTablas()
 })
+
+// // Cuando el input pierde el foco (mouse sale o tab)
+// $('#_dr').on('blur', function () {
+//     const value = $(this).val();
+//     console.log('Blur event triggered. Value:', value);
+//     if (!value || value.trim() === '') {
+//         ls.remove(LS_DATERANGE);
+//         CheckSesion();
+//         ActualizaTablas();
+//         return;
+//     }
+
+//     // Intentar parsear el rango de fechas manual
+//     const dates = value.split(' al ');
+//     if (dates.length === 2) {
+//         const startDate = moment(dates[0], 'DD/MM/YYYY');
+//         const endDate = moment(dates[1], 'DD/MM/YYYY');
+
+//         if (startDate.isValid() && endDate.isValid()) {
+//             // Actualizar el picker con las fechas manuales
+//             const picker = $(this).data('daterangepicker');
+//             if (picker) {
+//                 picker.setStartDate(startDate);
+//                 picker.setEndDate(endDate);
+//             }
+
+//             ls.set(LS_DATERANGE, value);
+
+//             // Actualizar el otro picker
+//             const pickerFiltro = $('#_drFiltro').data('daterangepicker');
+//             if (pickerFiltro) {
+//                 pickerFiltro.setStartDate(startDate);
+//                 pickerFiltro.setEndDate(endDate);
+//                 $('#_drFiltro').val(value);
+//             }
+
+//             CheckSesion();
+//             ActualizaTablas();
+//         }
+//     }
+// });
+
+function processDateRangeChange(input, source = 'manual') {
+    if (manualUpdateInProgress) return;
+
+    const $input = $(input);
+    const value = $input.val().trim();
+
+    if (!value || value === '') {
+        ls.remove(LS_DATERANGE);
+
+        // Limpiar ambos pickers
+        const picker1 = $('#_dr').data('daterangepicker');
+        const picker2 = $('#_drFiltro').data('daterangepicker');
+
+        if (picker1) {
+            picker1.setStartDate(null);
+            picker1.setEndDate(null);
+            $('#_dr').val('');
+        }
+
+        if (picker2) {
+            picker2.setStartDate(null);
+            picker2.setEndDate(null);
+            $('#_drFiltro').val('');
+        }
+
+        CheckSesion();
+        ActualizaTablas();
+        return;
+    }
+
+    // Validar formato
+    const parts = value.split(/\s*al\s*/);
+    if (parts.length !== 2) return;
+
+    const start = moment(parts[0], ['DD/MM/YYYY', 'D/M/YYYY'], true);
+    const end = moment(parts[1], ['DD/MM/YYYY', 'D/M/YYYY'], true);
+
+    if (!start.isValid() || !end.isValid() || end.isBefore(start)) return;
+
+    manualUpdateInProgress = true;
+
+    try {
+        const startStr = start.format('DD/MM/YYYY');
+        const endStr = end.format('DD/MM/YYYY');
+        const rangeText = startStr + ' al ' + endStr;
+
+        // Determinar cuál es el picker que cambió
+        const isMainPicker = $input.attr('id') === '_dr';
+        const mainPicker = isMainPicker ? $input : $('#_dr');
+        const filtroPicker = isMainPicker ? $('#_drFiltro') : $input;
+
+        // Actualizar valor de ambos inputs
+        mainPicker.val(rangeText);
+        filtroPicker.val(rangeText);
+
+        // Actualizar pickers
+        const picker1 = mainPicker.data('daterangepicker');
+        const picker2 = filtroPicker.data('daterangepicker');
+
+        if (picker1) {
+            picker1.setStartDate(start);
+            picker1.setEndDate(end);
+        }
+
+        if (picker2) {
+            picker2.setStartDate(start);
+            picker2.setEndDate(end);
+        }
+
+        // Guardar en localStorage
+        ls.set(LS_DATERANGE, rangeText);
+
+        CheckSesion();
+        ActualizaTablas();
+    } finally {
+        setTimeout(() => {
+            manualUpdateInProgress = false;
+        }, 200);
+    }
+}
+
+// Evento blur (edición manual)
+$('#_dr').on('blur', function () {
+    processDateRangeChange(this, 'blur');
+});
+// Evento Enter
+$('#_dr').on('keypress', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+        $(this).blur();
+    }
+});
+
+// Evento blur (edición manual)
+$('#_drFiltro').on('blur', function () {
+    processDateRangeChange(this, 'blur');
+});
+
+// Evento Enter
+$('#_drFiltro').on('keypress', function (e) {
+    if (e.which === 13) {
+        e.preventDefault();
+        $(this).blur();
+    }
+});
+
+// Variable para evitar bucles
+let manualUpdateInProgress = false;
+
 $('#_drFiltro').on('apply.daterangepicker', function (ev, picker) {
-    let endDate = picker.endDate.format('DD/MM/YYYY');
-    let startDate = picker.startDate.format('DD/MM/YYYY');
+    const endDate = picker.endDate.format('DD/MM/YYYY');
+    const startDate = picker.startDate.format('DD/MM/YYYY');
     $('#_dr').data('daterangepicker').setStartDate(startDate);
     $('#_dr').data('daterangepicker').setEndDate(endDate);
-    CheckSesion()
-    ActualizaTablas()
+    ls.set(LS_DATERANGE, startDate + ' - ' + endDate);
+    CheckSesion();
+    ActualizaTablas();
 });
 $("#FicDiaLFiltro").change(function (e) {
     e.preventDefault();
     if ($("#FicDiaLFiltro").is(":checked")) {
         $("#FicDiaL").prop('checked', true);
+        ls.set(LS_FICDIAL, true);
     } else {
         $("#FicDiaL").prop('checked', false);
+        ls.set(LS_FICDIAL, false);
     }
-    ActualizaTablas()
+    ActualizaTablas();
 });
 $("#FicDiaL").change(function (e) {
     e.preventDefault();
     if ($("#FicDiaL").is(":checked")) {
         $("#FicDiaLFiltro").prop('checked', true);
+        ls.set(LS_FICDIAL, true);
     } else {
         $("#FicDiaLFiltro").prop('checked', false);
+        ls.set(LS_FICDIAL, false);
     }
-    CheckSesion()
-    ActualizaTablas()
+    CheckSesion();
+    ActualizaTablas();
 });
 
 $('#VerPor').html('<span class="d-none d-lg-block">Por Fecha</span>')
@@ -680,46 +1029,21 @@ $("#VisualizarFiltro").change(function (e) {
     ActualizaTablas()
 });
 $('.MaskLega').mask('000000000000', { selectOnFocus: true });
+const cleanDatoNovedad = () => {
+    $('#datoNovedad').val(null).trigger("change");
+    ls.remove(LS_NOVEDAD);
+}
+const FILTROS_KEYS = {
+    check: [LS_FICDIAL, LS_SOLOHCALC, LS_SOLOFIC, LS_FICFALTA, LS_LEGDE, LS_LEGHA, LS_FICNOVT, LS_FICNOVI, LS_FICNOVS, LS_FICNOVA],
+    select: [LS_EMPRESAS, LS_PLANTAS, LS_SECTORES, LS_SECCION, LS_GRUPOS, LS_SUCURSAL, LS_PERSONAL, LS_TIPOPER, LS_NOVEDAD]
+};
 
-// let options = {
-//     onKeyPress: function (cep, e, field, options) {
-//         // console.log(cep.length);
-//         var masks = ['0000-0000', '00 0000-0000', '+00 0 00 0000-0000'];
-//         //   let mask = (cep.length>=17) ? masks[0] : masks[1];
-//         let mask = '0#';
+const actualizarContadorFiltros = () => {
+    const total =
+        FILTROS_KEYS.select.filter(k => ls.get(k)?.length > 0).length +
+        FILTROS_KEYS.check.filter(k => ls.get(k)).length;
 
-//         switch (cep.length) {
-//             case 7 :
-//                 mask = '0000-0000#'
-//                 break;
-//             case 8 :
-//                 mask = '0000-0000#'
-//                 break;
-//             case 9:
-//                 mask = '0000-00000#'
-//                 break;
-//             case 10:
-//                 mask = '00 0000-0000#'
-//                 break;
-//             case 11:
-//                 mask = '00 0000-000#'
-//                 break;
-//             case 12:
-//                 mask = '00 0000-0000#'
-//                 break;
-//             case 13:
-//                 mask =  '+00 0 00 0000-0000#'
-//                 break;
-//             default:
-//                 mask = '0#'
-//                 break;
-//         }
-//         console.log(cep.length+' - '+ mask);
-
-//         $('.MaskLega').mask(mask, options);
-//     }
-// };
-
-// $('.MaskLega').mask('0#', options, {selectOnFocus: true});
-// SelectSelect2Ajax(selector, multiple, allowClear, placeholder, minimumInputLength, minimumResultsForSearch, maximumInputLength, selectOnClose, ajax_url, delay, data_array, type)
-// SelectSelect2Ajax("#datoNovedad", false, true, 'Novedades', 0, 10, 10, true, "../data/getListNovedades.php", '250', '', 'GET')
+    $('.Filtros').text(total ? `Filtros (${total})` : 'Filtros');
+    return total;
+};
+actualizarContadorFiltros();

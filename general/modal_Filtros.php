@@ -31,7 +31,7 @@
                     <div class="col-12 col-lg-6">
                         <div class="d-flex align-items-center justify-content-sm-end justify-content-between">
                             <div class="mt-3 mt-sm-0">
-                                <input type="text" readonly class="mx-1 form-control text-center w250 ls2 h40"
+                                <input type="text" class="mx-1 form-control text-center w250 ls2 h40"
                                     name="_drFiltro" id="_drFiltro">
                             </div>
                             <span class="trash align-middle pb-0 float-right" id="trash_allIn"

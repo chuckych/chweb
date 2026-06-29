@@ -680,13 +680,32 @@ const get_horario_legajo_fecha = async (legajo, fecha, horarioFallback) => {
 /** ABRIR MODAL */
 $(document).on("click", ".open-modal", function (e) {
     e.preventDefault();
+
+    if (e.target.className === 'edit-element') {
+        handleEditHora = true;
+        const dataHora = $(e.target).data('hora');
+        const modHora = $('.mod_hora[data-hora="' + dataHora + '"]');
+        $('#RefreshModal').hide();
+        $('#GetHoras').one('init.dt', function () {
+            const dt = $(this).DataTable();
+            const modHora = $(dt.rows().nodes()).find('.mod_hora[data="' + dataHora + '"]');
+            if (modHora.length) {
+                handleModHora(modHora[0]);
+            }
+        });
+    } else {
+        handleEditHora = false;
+        $('#RefreshModal').show();
+    }
+
+
     $('#modalGeneral').modal('show');
     // $('#modalGeneral').on('shown.bs.modal', function () {
     $(document).off('keydown');
     CheckSesion()
     $.notifyClose();
-    $('#modalGeneral').modal('handleUpdate')
 
+    $('#modalGeneral').modal('handleUpdate')
 
     $('.navbar').addClass('mr-0');
     $('#Fichadas-tab').tab('show');
@@ -698,19 +717,18 @@ $(document).on("click", ".open-modal", function (e) {
     $('#OtrasNov').addClass('d-none')
     $('#FicValor').mask('##.##00.00', { reverse: true });
 
-    var Datos = $(this).attr('data');
-    var Nombre = $(this).attr('data2');
-    var Fecha = $(this).attr('data3');
-    var Dia = $(this).attr('data4');
-    var Horario = $(this).attr('data5');
-    var FechaStr = $(this).attr('data6');
-    var FechaStr = $(this).attr('data6');
-    var dataFechDR = $(this).attr('dataFechDR');
-    var Cita = $(this).attr('data7');
-    var mFic = $(this).attr('data_mFic');
-    var mHor = $(this).attr('data_mHor');
-    var mNov = $(this).attr('data_mNov');
-    var NumLega = Datos.split('-');
+    const Datos = $(this).attr('data');
+    const Nombre = $(this).attr('data2');
+    const Fecha = $(this).attr('data3');
+    const Dia = $(this).attr('data4');
+    const Horario = $(this).attr('data5');
+    const FechaStr = $(this).attr('data6');
+    const dataFechDR = $(this).attr('dataFechDR');
+    const Cita = $(this).attr('data7');
+    const mFic = $(this).attr('data_mFic');
+    const mHor = $(this).attr('data_mHor');
+    const mNov = $(this).attr('data_mNov');
+    const NumLega = Datos.split('-');
 
     $('#FicHorario').html(`Horario: ` + Horario)
 
@@ -736,6 +754,7 @@ $(document).on("click", ".open-modal", function (e) {
         Modal_XL_LG('#TopN')
         $('#Novedades').removeClass('border-top-0')
     }
+
     $('#Fichadas-tab').on('shown.bs.tab', function (e) {
         $('#Fichadas').removeClass('d-none')
         // fadeInOnly('#Fichadas')
@@ -743,6 +762,7 @@ $(document).on("click", ".open-modal", function (e) {
         $('#Novedades').addClass('d-none')
         $('#OtrasNov').addClass('d-none')
     })
+
     $('#Novedades-tab').on('shown.bs.tab', function (e) {
         $('#Novedades').removeClass('d-none')
         // fadeInOnly('#Novedades')
@@ -824,7 +844,7 @@ $(document).on("click", ".open-modal", function (e) {
 
     /** GET FECHA CIERRE */
     function GetCierre() {
-        // event.preventDefault();
+        if (handleEditHora) return;
         $.ajax({
             type: 'GET',
             dataType: "json",
@@ -854,7 +874,6 @@ $(document).on("click", ".open-modal", function (e) {
                     $("#Citacion").show();
                     $("#FicHorario").removeClass('mt-1')
                 }
-
             },
             error: function () {
 
@@ -864,7 +883,7 @@ $(document).on("click", ".open-modal", function (e) {
     GetCierre()
     /** GET FICHAS */
     function refrescaFichas() {
-        // event.preventDefault();
+        if (handleEditHora) return;
         $.ajax({
             type: 'GET',
             dataType: "json",
@@ -911,8 +930,7 @@ $(document).on("click", ".open-modal", function (e) {
 
     /** GET CITACION */
     function GetCitacion() {
-        // $(document).ready(function (e) {
-        // e.preventDefault();
+        if (handleEditHora) return;
         $.ajax({
             type: 'GET',
             dataType: "json",
@@ -939,87 +957,122 @@ $(document).on("click", ".open-modal", function (e) {
         });
         // });
     }
-    // $(document).on('click', '.Citacion', function (e) {
-    // });
+
     GetCitacion()
     /** FIN GET CITACION */
-
-    $('#GetFichadas').DataTable({
-        "initComplete": function (settings, json) {
-        },
-        "drawCallback": function (settings) {
-            $.each(settings.json, function (key, value) {
-                (value.length > 0) ? $("#CantFic").html("(" + value.length + ")") : $("#CantFic").html("");
-            });
-        },
-
-        bProcessing: true,
-        deferRender: true,
-        "ajax": {
-            url: "GetFichadas.php",
-            type: "GET",
-            dataSrc: "Fichadas",
-            'data': {
-                Datos
+    if (!handleEditHora) {
+        $('#GetFichadas').DataTable({
+            "initComplete": function (settings, json) {
             },
-        },
-        columns: [
-            { "class": "align-middle ls1 py-3", "data": "Fic" },
-            { "class": "align-middle", "data": "editar" },
-            { "class": "align-middle", "data": "eliminar" },
-            { "class": "align-middle", "data": "Estado" },
-            { "class": "align-middle", "data": "Tipo" },
-            { "class": "align-middle ls1", "data": "Fecha" },
-            { "class": "align-middle ls1", "data": "Original" },
-            { "class": "align-middle w-100", "data": "null" }
-        ],
-        paging: false,
-        // scrollY: '100px',
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: DT_SPANISH,
-    });
-    $('#GetNovedades').DataTable({
-        "drawCallback": function (settings) {
-            $.each(settings.json, function (key, value) {
-                (value.length > 0) ? $("#CantNov").html("(" + value.length + ")") : $("#CantNov").html("");
-            });
-        },
-        bProcessing: true,
-        deferRender: true,
-        "ajax": {
-            url: "GetNovedades.php",
-            type: "GET",
-            dataSrc: "Novedades",
-            'data': {
-                Datos
+            "drawCallback": function (settings) {
+                $.each(settings.json, function (key, value) {
+                    (value.length > 0) ? $("#CantFic").html("(" + value.length + ")") : $("#CantFic").html("");
+                });
             },
-        },
-        columns: [
-            { "class": "align-middle ls1 py-3", "data": "Cod" },
-            { "class": "align-middle", "data": "Descripcion" },
-            { "class": "align-middle ls1", "data": "Horas" },
-            { "class": "align-middle ", "data": "editar" },
-            { "class": "align-middle ", "data": "eliminar" },
-            { "class": "align-middle", "data": "Obserb" },
-            { "class": "align-middle", "data": "Causa" },
-            { "class": "align-middle", "data": "Just" },
-            { "class": "align-middle", "data": "Tipo" },
-            { "class": "align-middle", "data": "Cate" },
-            { "class": "align-middle w-100", "data": "null" }
-        ],
-        paging: false,
-        // scrollY: '100px',
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: DT_SPANISH,
-    });
+
+            bProcessing: true,
+            deferRender: true,
+            "ajax": {
+                url: "GetFichadas.php",
+                type: "GET",
+                dataSrc: "Fichadas",
+                'data': {
+                    Datos
+                },
+            },
+            columns: [
+                { "class": "align-middle ls1 py-3", "data": "Fic" },
+                { "class": "align-middle", "data": "editar" },
+                { "class": "align-middle", "data": "eliminar" },
+                { "class": "align-middle", "data": "Estado" },
+                { "class": "align-middle", "data": "Tipo" },
+                { "class": "align-middle ls1", "data": "Fecha" },
+                { "class": "align-middle ls1", "data": "Original" },
+                { "class": "align-middle w-100", "data": "null" }
+            ],
+            paging: false,
+            // scrollY: '100px',
+            scrollX: false,
+            scrollCollapse: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: DT_SPANISH,
+        });
+        $('#GetNovedades').DataTable({
+            "drawCallback": function (settings) {
+                $.each(settings.json, function (key, value) {
+                    (value.length > 0) ? $("#CantNov").html("(" + value.length + ")") : $("#CantNov").html("");
+                });
+            },
+            bProcessing: true,
+            deferRender: true,
+            "ajax": {
+                url: "GetNovedades.php",
+                type: "GET",
+                dataSrc: "Novedades",
+                'data': {
+                    Datos
+                },
+            },
+            columns: [
+                { "class": "align-middle ls1 py-3", "data": "Cod" },
+                { "class": "align-middle", "data": "Descripcion" },
+                { "class": "align-middle ls1", "data": "Horas" },
+                { "class": "align-middle ", "data": "editar" },
+                { "class": "align-middle ", "data": "eliminar" },
+                { "class": "align-middle", "data": "Obserb" },
+                { "class": "align-middle", "data": "Causa" },
+                { "class": "align-middle", "data": "Just" },
+                { "class": "align-middle", "data": "Tipo" },
+                { "class": "align-middle", "data": "Cate" },
+                { "class": "align-middle w-100", "data": "null" }
+            ],
+            paging: false,
+            // scrollY: '100px',
+            scrollX: false,
+            scrollCollapse: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: DT_SPANISH,
+        });
+        $('#GetOtrasNov').DataTable({
+            "drawCallback": function (settings) {
+                $.each(settings.json, function (key, value) {
+                    (value.length > 0) ? $("#CantONov").html("(" + value.length + ")") : $("#CantONov").html("");
+                });
+            },
+            bProcessing: true,
+            deferRender: true,
+            "ajax": {
+                url: "GetOtrasNovedades.php",
+                type: "GET",
+                dataSrc: "ONovedades",
+                'data': {
+                    Datos
+                },
+            },
+
+            columns: [
+                { "class": "align-middle text-center py-3", "data": "Cod" },
+                { "class": "align-middle", "data": "Descripcion" },
+                { "class": "align-middle ls1 text-right", "data": "FicValor" },
+                { "class": "align-middle", "data": "Observ" },
+                { "class": "align-middle", "data": "editar" },
+                { "class": "align-middle", "data": "eliminar" },
+                { "class": "align-middle", "data": "Tipo" },
+                { "class": "align-middle w-100", "data": "null" }
+            ],
+            paging: false,
+            scrollX: false,
+            scrollCollapse: false,
+            searching: false,
+            info: false,
+            ordering: false,
+            language: DT_SPANISH
+        });
+    }
     $('#GetHoras').DataTable({
         bProcessing: true,
         deferRender: true,
@@ -1134,41 +1187,7 @@ $(document).on("click", ".open-modal", function (e) {
         }); // fin de each
         return false;
     });
-    $('#GetOtrasNov').DataTable({
-        "drawCallback": function (settings) {
-            $.each(settings.json, function (key, value) {
-                (value.length > 0) ? $("#CantONov").html("(" + value.length + ")") : $("#CantONov").html("");
-            });
-        },
-        bProcessing: true,
-        deferRender: true,
-        "ajax": {
-            url: "GetOtrasNovedades.php",
-            type: "GET",
-            dataSrc: "ONovedades",
-            'data': {
-                Datos
-            },
-        },
 
-        columns: [
-            { "class": "align-middle text-center py-3", "data": "Cod" },
-            { "class": "align-middle", "data": "Descripcion" },
-            { "class": "align-middle ls1 text-right", "data": "FicValor" },
-            { "class": "align-middle", "data": "Observ" },
-            { "class": "align-middle", "data": "editar" },
-            { "class": "align-middle", "data": "eliminar" },
-            { "class": "align-middle", "data": "Tipo" },
-            { "class": "align-middle w-100", "data": "null" }
-        ],
-        paging: false,
-        scrollX: false,
-        scrollCollapse: false,
-        searching: false,
-        info: false,
-        ordering: false,
-        language: DT_SPANISH
-    });
     var optSelect2 = {
         MinLength: 0,
         SelClose: 0,
@@ -1488,7 +1507,7 @@ $(document).on("click", ".open-modal", function (e) {
         $("#CierraModalGeneral").html("Procesando")
         $("#ProcesarLegajo").prop("disabled", true)
         $("#ProcesarLegajo").html("Procesando")
-    }
+    };
     function DisabledClean() {
         $("#ProcesarLegajo").attr("disabled", false);
         $("#ProcesarLegajo").html("Procesar");
@@ -1498,25 +1517,26 @@ $(document).on("click", ".open-modal", function (e) {
         $(".submit_btn").prop("disabled", false);
         $(".submit_btn_mod").prop("disabled", false);
         $(".respuesta_novedad").html('');
-    }
+    };
     function RefreshDataTables(refreshFicha = true) {
         DisabledClean();
         if (refreshFicha !== null && refreshFicha === true) {
+            // if (handleEditHora) {
             $('#GetFichadas').DataTable().ajax.reload(null, false);
             $('#GetNovedades').DataTable().ajax.reload(null, false);
-            $('#GetHoras').DataTable().ajax.reload(null, false);
             $('#GetOtrasNov').DataTable().ajax.reload(null, false);
+            // }
+            $('#GetHoras').DataTable().ajax.reload(null, false);
         }
+        // if (handleEditHora) return;
         ActualizaTablas();
         GetCierre();
         refrescaFichas();
         GetCitacion();
     };
     $('#RefreshModal').click(function (e) {
-        // e.preventDefault();
         CheckSesion()
         RefreshDataTables();
-        // e.stopImmediatePropagation();
     });
     /** ALTA Y MOD FICHADA */
     $(".Form_Fichadas").bind("submit", function (e) {
@@ -1870,38 +1890,8 @@ $(document).on("click", ".open-modal", function (e) {
     });
 
     $(document).on("click", ".mod_hora", function (e) {
-        CheckSesion()
         e.preventDefault();
-        $("#xsTHor").html('Modificar Horas')
-        $(".Form_Horas").removeClass('d-none')
-        $(".Form_Horas").addClass('fadeIn')
-        $(".submit_btn_HorMod").html('Modificar');
-        $("#alta_horas").val("mod").trigger('change');
-        $("#modHora").val("1").trigger('change');
-        $(".submit_btn_HorMod").prop("disabled", false);
-
-        var FicHora = $(this).attr('data');
-        var FicHsAu = $(this).attr('data1');
-        var FicHsAu2 = $(this).attr('data2');
-        var HoraDesc = $(this).attr('data3');
-        var Motivo = $(this).attr('data4');
-        var DescMotivo = $(this).attr('data5');
-        var Observ = $(this).attr('data6');
-
-        var newOption = new Option(HoraDesc, FicHora, true, true);
-        $('.selectjs_TipoHora').append(newOption).trigger('change');
-
-        if (Motivo != 0) {
-            var newOption = new Option(DescMotivo, Motivo, true, true);
-            $('.selectjs_MotivoHora').append(newOption).trigger('change');
-        }
-        $("#Fic1Observ").val(Observ).trigger('change');
-        $("#Fic1HsAu2").val(FicHsAu2).trigger('change');
-        $("#FicHsAu").val(FicHsAu);
-
-        $("#Fic1HsAu2").focus();
-        $('#Fic1HsAu2').select();
-
+        handleModHora(this);
     });
     /** BAJA HORA */
     $(document).on('click', '.baja_Hora', function (e) {
@@ -2255,10 +2245,42 @@ $(document).on("click", ".open-modal", function (e) {
         $("#AddONov").addClass('d-none')
         ClearFormONov();
     });
-    // }
-    // }, 200);
-    // });
 });
+let handleEditHora = false;
+function handleModHora(elemento) {
+    handleEditHora = true;
+    $("#xsTHor").html('Modificar Horas');
+    $(".Form_Horas").removeClass('d-none').addClass('fadeIn');
+    $(".submit_btn_HorMod").html('Modificar');
+    $("#alta_horas").val("mod").trigger('change');
+    $("#modHora").val("1").trigger('change');
+    $(".submit_btn_HorMod").prop("disabled", false);
+
+    const $el = $(elemento);
+    const FicHora = $el.attr('data');
+    const FicHsAu = $el.attr('data1');
+    const FicHsAu2 = $el.attr('data2');
+    const HoraDesc = $el.attr('data3');
+    const Motivo = $el.attr('data4');
+    const DescMotivo = $el.attr('data5');
+    const Observ = $el.attr('data6');
+
+    const newOption = new Option(HoraDesc, FicHora, true, true);
+    $('.selectjs_TipoHora').append(newOption).trigger('change');
+
+    if (Motivo != 0) {
+        const newOption = new Option(DescMotivo, Motivo, true, true);
+        $('.selectjs_MotivoHora').append(newOption).trigger('change');
+    }
+
+    $("#Fic1Observ").val(Observ).trigger('change');
+    $("#Fic1HsAu2").val(FicHsAu2).trigger('change');
+    $("#FicHsAu").val(FicHsAu);
+
+    $("#Fic1HsAu2").focus();
+    $('#Fic1HsAu2').select();
+    handleEditHora = false;
+}
 // });
 /** CIERRA MODAL */
 $('#Exportar').on('shown.bs.modal', function (e) {

@@ -56,8 +56,6 @@ require_once __DIR__ . '/../config/conect_pdo.php'; //Conexión a la base de dat
 try {
 
 	$a = simple_pdoQuery("SELECT valores FROM params WHERE modulo = 0 and cliente = 0 LIMIT 1"); // Traigo el valor de la version de la DB mysql
-	$verDB = intval($a['valores']); // valor de la version de la DB mysql
-	require_once __DIR__ . '/cambios.php'; // Cambios en la DB
 
 	$sql = "SELECT usuarios.usuario AS 'usuario', usuarios.clave AS 'clave', usuarios.nombre AS 'nombre', usuarios.legajo AS 'legajo', usuarios.id AS 'id', usuarios.rol AS 'id_rol', usuarios.cliente AS 'id_cliente', clientes.nombre AS 'cliente', roles.nombre AS 'rol', roles.recid AS 'recid_rol', roles.id AS 'id_rol', clientes.host AS 'host', clientes.db AS 'db', clientes.user AS 'user', clientes.pass AS 'pass', clientes.auth AS 'auth', clientes.recid AS 'recid_cliente', clientes.tkmobile AS 'tkmobile', clientes.WebService AS 'WebService', usuarios.recid AS 'recid_user', usuarios.user_ad FROM usuarios INNER JOIN clientes ON usuarios.cliente=clientes.id INNER JOIN roles ON usuarios.rol=roles.id WHERE usuarios.usuario= :user AND usuarios.estado = '0' LIMIT 1";
 	$stmt = $connpdo->prepare($sql); // prepara la consulta
@@ -133,6 +131,9 @@ if ($authenticated) {
 
 	$_SESSION['VER_DB_LOCAL'] = $verDB; // Version de la DB local
 
+
+	// 	$verDB = intval($a['valores']); // valor de la version de la DB mysql
+	// require_once __DIR__ . '/cambios.php'; // Cambios en la DB
 	/** chequeamos los módulos asociados al rol de usuarios 
 	 * y guardamos en una session el array de los mismos 
 	 * */
@@ -151,11 +152,11 @@ if ($authenticated) {
 	// $abm = simpleQueryData("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1", $link); // Traigo los permisos del rol
 	$abm = simple_pdoQuery("SELECT * FROM abm_roles WHERE recid_rol = '$row[recid_rol]' LIMIT 1"); // Traigo los permisos del rol
 
-	$ABMRol = array(); // Array de permisos del rol
+	$ABMRol = []; // Array de permisos del rol
 	if ($abm) { // Si hay permisos
-		$ABMRol = array('aFic' => $abm['aFic'], 'mFic' => $abm['mFic'], 'bFic' => $abm['bFic'], 'aNov' => $abm['aNov'], 'mNov' => $abm['mNov'], 'bNov' => $abm['bNov'], 'aHor' => $abm['aHor'], 'mHor' => $abm['mHor'], 'bHor' => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc' => $abm['Proc'], 'aCit' => $abm['aCit'], 'mCit' => $abm['mCit'], 'bCit' => $abm['bCit'], 'aTur' => $abm['aTur'], 'mTur' => $abm['mTur'], 'bTur' => $abm['bTur']);
+		$ABMRol = ['aFic' => $abm['aFic'], 'mFic' => $abm['mFic'], 'bFic' => $abm['bFic'], 'aNov' => $abm['aNov'], 'mNov' => $abm['mNov'], 'bNov' => $abm['bNov'], 'aHor' => $abm['aHor'], 'mHor' => $abm['mHor'], 'bHor' => $abm['bHor'], 'aONov' => $abm['aONov'], 'mONov' => $abm['mONov'], 'bONov' => $abm['bONov'], 'Proc' => $abm['Proc'], 'aCit' => $abm['aCit'], 'mCit' => $abm['mCit'], 'bCit' => $abm['bCit'], 'aTur' => $abm['aTur'], 'mTur' => $abm['mTur'], 'bTur' => $abm['bTur']];
 	} else { // Si no hay permisos
-		$ABMRol = array('aFic' => '0', 'mFic' => '0', 'bFic' => '0', 'aNov' => '0', 'mNov' => '0', 'bNov' => '0', 'aHor' => '0', 'mHor' => '0', 'bHor' => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc' => '0', 'aCit' => '0', 'mCit' => '0', 'bCit' => '0', 'aTur' => '0', 'mTur' => '0', 'bTur' => '0');
+		$ABMRol = ['aFic' => '0', 'mFic' => '0', 'bFic' => '0', 'aNov' => '0', 'mNov' => '0', 'bNov' => '0', 'aHor' => '0', 'mHor' => '0', 'bHor' => '0', 'aONov' => '0', 'mONov' => '0', 'bONov' => '0', 'Proc' => '0', 'aCit' => '0', 'mCit' => '0', 'bCit' => '0', 'aTur' => '0', 'mTur' => '0', 'bTur' => '0'];
 	}
 	$data_mod = array_pdoQuery("SELECT `mod_roles`.`modulo` AS `modsrol`, `modulos`.`idtipo` AS `tipo`, `modulos`.`nombre` as `modulo`, `modulos`.`orden` as `orden` FROM `mod_roles` INNER JOIN `modulos` ON `mod_roles`.`modulo` = `modulos`.`id` WHERE `mod_roles`.`recid_rol` ='$row[recid_rol]'"); // Traigo los módulos asociados al rol
 

@@ -105,8 +105,7 @@
             </div>
             <div class="col-12 col-sm-6">
                 <div class="d-flex justify-content-sm-end justify-content-center mt-3 mt-sm-0">
-                    <span data-titlel="Filtrar Fechas"><input type="text" readonly
-                            class="mr-1 form-control text-center w250 ls1 h40" name="_dr" id="_dr"></span>
+                    <span data-titlel="Filtrar Fechas"><input type="text" class="mr-1 form-control text-center w250 ls1 h40" name="_dr" id="_dr"></span>
                     <button data-titlel="Actualizar Grilla" type="button" id="Refresh" disabled
                         class="btn float-right btn-custom">
                         <i class="bi bi-arrow-repeat"></i>
@@ -214,7 +213,7 @@
     <script src="js/data.js?<?= version_file("/general/js/data.js") ?>"></script>
     <script src="js/proceso.js?<?= version_file("/general/js/proceso.js") ?>"></script>
     <script src="js/select.js?<?= version_file("/general/js/select.js") ?>"></script>
-    <script src="js/trash-select-min.js?<?= version_file("/general/js/trash-select-min.js") ?>"></script>
+    <script src="js/trash-select.js?<?= version_file("/general/js/trash-select.js") ?>"></script>
     <script src="js/export.js?<?= version_file("/general/js/export.js") ?>"></script>
 </body>
 

@@ -1,3 +1,4 @@
+<input type="hidden" hidden id="_uid" value="<?= $_SESSION["UID"] ?? 0 ?>">
 <input type="hidden" hidden id="_c" value="<?= $_SESSION["RECID_CLIENTE"] ?? '' ?>">
 <input type="hidden" hidden id="_r" value="<?= $_SESSION["RECID_ROL"] ?? '' ?>">
 <input type="hidden" hidden id="_lega" value="<?= $_SESSION["LEGAJO_SESION"] ?? '' ?>">

@@ -1,10 +1,11 @@
 
- function TrashSelect(slectjs) {
+function TrashSelect(slectjs) {
     $(slectjs).val(null).trigger("change");
     ActualizaTablas()
 }
 
 function LimpiarFiltros() {
+    limpiarLocalStorage();
     $('.selectjs_plantas').val(null).trigger("change");
     $('#datoNovedad').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
@@ -38,7 +39,36 @@ function LimpiarFiltros() {
     $('#FicNovI').prop('disabled', false)
     $('#FicNovS').prop('disabled', false)
 }
+const limpiarLocalStorage = () => {
+    mapLSData = [
+        LS_PERSONAL,
+        LS_EMPRESAS,
+        LS_PLANTAS,
+        LS_SECCION,
+        LS_SECTORES,
+        LS_GRUPOS,
+        LS_SUCURSAL,
+        LS_TIPOPER,
+        LS_NOVEDAD,
+        LS_SOLOHCALC,
+        LS_SOLOFIC,
+        LS_FICFALTA,
+        LS_LEGDE,
+        LS_LEGHA,
+        LS_FICNOVT,
+        LS_FICNOVI,
+        LS_FICNOVS,
+        LS_FICNOVA,
+        LS_DATERANGE
+    ];
+
+    mapLSData.forEach(function (key) {
+        ls.remove(key);
+    });
+    ls.set(LS_SOLOHCALC, true);
+}
 function LimpiarFiltros2() {
+    limpiarLocalStorage();
     $('#datoNovedad').val(null).trigger("change");
     $('.selectjs_plantas').val(null).trigger("change");
     $('.selectjs_empresa').val(null).trigger("change");
@@ -83,6 +113,7 @@ $("#trashDeHa").on("click", function () {
     $('#LegHa').val('')
     $('#LegHa').val(null).trigger("change");
     $('.selectjs_personal').val(null).trigger("change");
+    ls.remove(LS_PERSONAL)
     ActualizaTablas2()
 });
 
@@ -104,16 +135,16 @@ function refreshOnChange(selector) {
         LimpiarFiltros2()
         $('#Filtros').modal('hide')
         ActualizaTablas2()
-        GetPersonal.on( 'xhr', function () {
+        GetPersonal.on('xhr', function () {
             var json = GetPersonal.ajax.json();
             // $("#tableInfo").html(json.recordsTotal)
             if (json.recordsTotal) {
                 $('#GetGeneralTable').removeClass('d-none')
-            }else{
+            } else {
                 $('#GetGeneralTable').addClass('d-none')
             }
         });
         // $('#Per2').val(null)
     });
-};  
+};
 refreshOnChange("#Per2");
