@@ -4403,14 +4403,32 @@ function removeAccents(string $str): string
 function validarTablaSeccion(string $recid_cliente)
 {
     try {
-        if(!$recid_cliente) {
+
+        if (!$recid_cliente) {
             throw new InvalidArgumentException("El parámetro recid_cliente no puede estar vacío.");
         }
-        timeZone();
+
         $_GET['_c'] = $recid_cliente ?? '';
-        $FechaHora = date('Y-m-d H:i:s');
-        $arrMSQuery = MSQuery("INSERT INTO SECCION (SecCodi, Se2Codi, Se2Desc, FechaHora) SELECT s.SecCodi, '0', '', '$FechaHora' FROM SECTORES s WHERE NOT EXISTS (SELECT 1 FROM SECCION sc WHERE sc.SecCodi = s.SecCodi);");
+
+        $dt = new \DateTimeImmutable('now', new \DateTimeZone('America/Argentina/Buenos_Aires'));
+        $FechaHora = substr($dt->format('Y-m-d\TH:i:s.u'), 0, 23);
+
+        $query = "INSERT INTO SECCION (SecCodi, Se2Codi, Se2Desc, FechaHora) SELECT s.SecCodi, '0', '', '$FechaHora' FROM SECTORES s WHERE NOT EXISTS (SELECT 1 FROM SECCION sc WHERE sc.SecCodi = s.SecCodi);";
+        require __DIR__ . '/config/conect_mssql.php';
+        $stmt = sqlsrv_query($link, $query, [], ["Scrollable" => SQLSRV_CURSOR_KEYSET]);
+        if ($stmt === false) {
+            if (($errors = sqlsrv_errors()) != null) {
+                foreach ($errors as $error) {
+                    $mensaje = explode(']', $error['message']);
+                    $data[] = ["status" => "error", "dato" => $mensaje[3]];
+                }
+            }
+            sqlsrv_close($link);
+            throw new RuntimeException("Error al ejecutar la consulta: " . json_encode($data[0]));
+        }
+        sqlsrv_free_stmt($stmt ?? null);
+        sqlsrv_close($link);
     } catch (\Throwable $th) {
-        error_log("Error al sanitizar secciones: " . $th->getMessage());
+        error_log($th->getMessage());
     }
 }
