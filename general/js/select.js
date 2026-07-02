@@ -630,11 +630,13 @@ $(document).ready(function () {
         }
         function refreshUnselected(slectjs, LS_KEY = '') {
             $(slectjs).on('select2:unselecting', function (e) {
-                $('#Per2').val(null)
-                if (LS_KEY) {
-                    ls.set(LS_KEY, getSelect2Values(slectjs));
-                }
-                ActualizaTablas2();
+                setTimeout(() => {
+                    $('#Per2').val(null)
+                    if (LS_KEY) {
+                        ls.set(LS_KEY, getSelect2Values(slectjs));
+                    }
+                    ActualizaTablas2();
+                }, 100);
             });
         }
 
@@ -688,11 +690,13 @@ $(document).ready(function () {
             $("#DatosFiltro").html('Sector: ' + nombresector);
         });
         $('.selectjs_sectores').on('select2:unselecting', function (e) {
-            $('#Per2').val(null);
-            ls.set(LS_SECTORES, getSelect2Values('.selectjs_sectores'));
-            $(".select_seccion").prop("disabled", true);
-            $('.select_seccion').val(null).trigger('change');
-            ActualizaTablas2()
+            setTimeout(() => {
+                $('#Per2').val(null);
+                ls.set(LS_SECTORES, getSelect2Values('.selectjs_sectores'));
+                $(".select_seccion").prop("disabled", true);
+                $('.select_seccion').val(null).trigger('change');
+                ActualizaTablas2()
+            }, 100);
         });
         $('.selectjs_personal').on('select2:select', function (e) {
             $('#Per2').val(null);
@@ -700,45 +704,6 @@ $(document).ready(function () {
             ActualizaTablas2()
         });
         cargarSelectsMultiples();
-        // const getLSPersonal = ls.get(LS_PERSONAL);
-        // if (getLSPersonal) {
-        //     Select2ValueMultiple(getLSPersonal, '.selectjs_personal');
-        // }
-        // const getLSEmpresas = ls.get(LS_EMPRESAS);
-        // if (getLSEmpresas) {
-        //     Select2ValueMultiple(getLSEmpresas, '.selectjs_empresa');
-        // }
-        // const getLSPlantas = ls.get(LS_PLANTAS);
-        // if (getLSPlantas) {
-        //     Select2ValueMultiple(getLSPlantas, '.selectjs_plantas');
-        // }
-        // const getLSSectores = ls.get(LS_SECTORES);
-        // const getLSSeccion = ls.get(LS_SECCION);
-
-        // if (getLSSectores) {
-        //     Select2ValueMultiple(getLSSectores, '.selectjs_sectores');
-        //     if (getLSSeccion) {
-        //         $(".select_seccion").prop("disabled", false);
-        //         Select2ValueMultiple(getLSSeccion, '.select_seccion');
-        //     }
-        // }
-
-        // const getLSGrupos = ls.get(LS_GRUPOS);
-        // if (getLSGrupos) {
-        //     Select2ValueMultiple(getLSGrupos, '.selectjs_grupos');
-        // }
-        // const getLSSucursal = ls.get(LS_SUCURSAL);
-        // if (getLSSucursal) {
-        //     Select2ValueMultiple(getLSSucursal, '.selectjs_sucursal');
-        // }
-        // const getLSTipoper = ls.get(LS_TIPOPER);
-        // if (getLSTipoper) {
-        //     Select2ValueMultiple(getLSTipoper, '.selectjs_tipoper');
-        // }
-        // const getLSNovedad = ls.get(LS_NOVEDAD);
-        // if (getLSNovedad) {
-        //     Select2ValueMultiple(getLSNovedad, '#datoNovedad');
-        // }
     });
     const getLSDaterange = ls.get(LS_DATERANGE);
     if (getLSDaterange) {

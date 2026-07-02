@@ -1,7 +1,4 @@
 // $(".Filtros").prop('disabled', true);
-const _c = $('#_c').val() ?? 'general';
-const _uid = $('#_uid').val() ?? 0;
-const LS_PREFIX = _uid + '_';
 const LS_SOLOHCALC = LS_PREFIX + 'soloHCalc';
 const LS_SOLOFIC = LS_PREFIX + 'soloFic';
 const LS_FICDIAL = LS_PREFIX + 'ficDiaL';

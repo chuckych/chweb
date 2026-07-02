@@ -47,16 +47,90 @@ $FilterEstruct .= $Sucursal;
 $FilterEstruct .= $TipoPersonal;
 $FilterEstruct .= $Per;
 
-$params = $columns = $totalRecords = $data = array();
+$params = $columns = $totalRecords = $data = [];
 $params = $_REQUEST;
 $where_condition = $sqlTot = $sqlRec = "";
+$_GET['flag'] ??= '';
+$_GET['marcadosAll'] ??= false;
+$_GET['marcados'] ??= [];
+$_GET['desmarcados'] ??= [];
 
-if ($_GET['Modulo'] == 'Cierres') {
-    $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
-} else {
-    $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', SECCION.Se2Desc AS 'pers_seccion', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', ( CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END ) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
+// error_log("GET: " . json_encode($_GET));
+
+if ($_GET['Modulo'] === 'ws_novedades') {
+    try {
+
+        $marcadosAll = filter_var($_GET['marcadosAll'], FILTER_VALIDATE_BOOLEAN);
+        $marcados = $_GET['marcados'];
+        $desmarcados = $_GET['desmarcados'];
+
+        // Filtro para obtener los legajos según los marcados y desmarcados
+        $filtros = '';
+        if ($marcadosAll) {
+            if (!empty($desmarcados)) {
+                $desmarcadosList = implode(',', array_map('intval', $desmarcados));
+                $filtros .= " AND PERSONAL.LegNume NOT IN ($desmarcadosList)";
+            }
+        } else {
+            if (!empty($marcados)) {
+                $marcadosList = implode(',', array_map('intval', $marcados));
+                $filtros .= " AND PERSONAL.LegNume IN ($marcadosList)";
+            } else {
+                // Si no hay marcados y marcadosAll es false, no se selecciona ningún legajo
+                $filtros .= " AND 1=0"; // Esto asegura que no se devuelvan resultados
+            }
+        }
+
+        // debemos validar que si marcadosAll es false y no hay marcador, lanzar un error indicando que no hay legajos seleccionados
+        if (!$marcadosAll && empty($marcados)) {
+            throw new Exception('No hay legajos seleccionados.');
+        }
+
+        // validar que el flag este presente y no este vacio
+        if (empty($_GET['flag'])) {
+            throw new Exception('El parámetro "flag" es obligatorio.');
+        }
+
+        // Consulta para obtener los legajos de personal según los filtros aplicados
+        $sql_query_custom = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM PERSONAL WHERE PERSONAL.LegNume > 0 AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
+
+        // Ejecutar la consulta y obtener los resultados
+        $Legajos = arrMSQueryData($sql_query_custom);
+
+        if (!is_array($Legajos) || empty($Legajos)) {
+            throw new Exception('Error al obtener los legajos de personal.');
+        }
+
+        $LegajosArray = array_column($Legajos, 'pers_legajo');
+
+        // Guardar los legajos en un archivo JSON con el flag en el nombre del archivo
+        $path = __DIR__ . "/../app-data/json/" . $_GET['flag'] . "_legajos_ws_novedades.json";
+
+        if (file_put_contents($path, json_encode($LegajosArray)) === false) {
+            throw new Exception("No se pudo escribir el archivo JSON en: $path");
+        }
+
+        echo json_encode(['success' => true, 'message' => 'Archivo JSON generado correctamente.', 'Legajos' => $LegajosArray]);
+        exit;
+
+    } catch (Throwable $e) {
+        error_log(
+            PHP_EOL . 'Message: ' . $e->getMessage() .
+            PHP_EOL . 'Source: "' . ($_SERVER['REQUEST_URI'] ?? 'CLI') . '"'
+        );
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
 }
-// print_r($sql_query); exit;
+
+
+$sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', SECCION.Se2Desc AS 'pers_seccion', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', ( CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END ) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
+
+if ($_GET['Modulo'] === 'Cierres') {
+    $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
+}
+
+// error_log($sql_query);
 $sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
 
@@ -69,14 +143,10 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param = array();
-$options = array("Scrollable" => SQLSRV_CURSOR_KEYSET);
-$_GET['NoPag'] = $_GET['NoPag'] ?? '';
-// if ($_GET['NoPag']) {
-//     $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume";
-// } else {
-//     $sqlRec .=  "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
-// }
+$param = [];
+$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+$_GET['NoPag'] ??= '';
+
 $sqlRec .= "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
@@ -108,19 +178,19 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
     if ($_GET['Modulo'] == 'Cierres') {
         $data[] = array(
             'pers_legajo2' => '<label class="fontq align-middle m-0 fw4" style="margin-top:2px" for="' . $pers_legajo . '">' . $pers_legajo . '</label>',
-            'pers_legajo3' => '<input type="number" class="border w85 bg-light border-0 animate__animated animate__fadeIn" id="_l" value=' . $pers_legajo . '>',
+            'pers_legajo3' => '<input type="number" class="border w85 bg-light border-0 fadeIn" id="_l" value=' . $pers_legajo . '>',
             'pers_nombre2' => '<label class="fontq align-middle m-0 fw4" style="margin-top:2px" for="' . $pers_legajo . '">' . $pers_nombre . '</label>',
-            'pers_nombre3' => '<span class="animate__animated animate__fadeIn">' . $pers_nombre . '</span>',
+            'pers_nombre3' => '<span class="fadeIn">' . $pers_nombre . '</span>',
             'FechaCierre' => $FechaCierre,
             'check' => '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input check checkLega" name="legajo[]" id="' . $pers_legajo . '" value="' . $pers_legajo . '"><label class="custom-control-label" for="' . $pers_legajo . '"></label></div>',
             'null' => '',
         );
     } else {
-        $data[] = array(
+        $data[] = [
             'pers_legajo' => $pers_legajo,
             'pers_nombre' => $pers_nombre,
             'pers_dni' => $pers_dni,
-            'pers_estado' => $pers_estado,
+            'pers_estado' => $pers_estado ?? '',
             'pers_empresa' => $pers_empresa,
             'pers_planta' => $pers_planta,
             'pers_convenio' => $pers_convenio,
@@ -128,9 +198,9 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
             'pers_seccion' => $pers_seccion,
             'pers_grupo' => $pers_grupo,
             'pers_sucur' => $pers_sucur,
-            'editar' => '<a title="Editar Legajo: ' . $pers_nombre . '" href="/' . HOMEHOST . '/personal/legajo/?_leg=' . $pers_legajo . '" id="editar" class="p-2 btn btn-sm btn-link text-decoration-none fontq"><span data-icon="&#xe042;" class="icon ml-2 align-middle mt-1 text-gris"></span></a>',
+            'editar' => "<a title=\"Editar Legajo: $pers_nombre\" href=\"/" . HOMEHOST . '/personal/legajo/?_leg=' . $pers_legajo . '" id="editar" class="p-2 btn btn-sm btn-link text-decoration-none fontq"><span data-icon="&#xe042;" class="icon ml-2 align-middle mt-1 text-gris"></span></a>',
             'null' => '',
-        );
+        ];
     }
 }
 

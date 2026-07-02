@@ -1695,12 +1695,38 @@ Flight::route('POST /ws_novedades', function () {
 
     $request = Flight::request();
     $payload = $request->data ?? [];
+    $payload['flag'] ??= '';
+    $payload['TipoIngreso'] ??= '';
+
+    // Verificar si 'flag' está presente y 'TipoIngreso' es igual a '2' (Legajos Marcados)
+    if($payload['flag'] && $payload['TipoIngreso'] === '2') {
+        // Construir la ruta del archivo JSON basado en el valor de 'flag'
+        $pathFile = __DIR__ . '/json/' . $payload['flag'] . '_legajos_ws_novedades.json';
+
+        // Verificar si el archivo existe
+        if (file_exists($pathFile)) {
+            
+            // Leer el contenido del archivo JSON y decodificarlo en un array
+            $legajosFromFile = json_decode(file_get_contents($pathFile), true);
+
+            // Validar que el contenido del archivo sea un array
+            if (is_array($legajosFromFile)) {
+                $payload['Legajos'] = $legajosFromFile;
+            } else{
+                Flight::json(['status' => 'error', 'message' => 'legajos inválidos'], 400);
+                exit;
+            }
+
+        } else {
+            Flight::json(['status' => 'error', 'message' => 'El archivo de legajos no existe.'], 400);
+            exit;
+        }
+    }
 
     $endpoint = URLAPI . "/api/v1/ws_novedades";
     $ingresar = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($ingresar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
-    // $result['payload'] = $payload; // Agregar los legajos al resultado
 
     if ($result) {
         $FechaDesde = $payload['FechaDesde'] ?? '';

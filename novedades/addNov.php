@@ -10,19 +10,19 @@
                 <div class="col-12 mb-3">
                     <span class="fontq py-2 mr-2">Ingresar Por:</span>
                     <div class="d-flex align-items-center pt-2">
-                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn fontq btn btn-outline-custom border w100 radius" id="TipoIngresoFiltros"
+                        <div class="btn-group btn-group-toggle p-1 border radius" data-toggle="buttons" style="gap: 5px;">
+                            <label class="hint--top btn fontq btn btn-outline-custom border-0 w100 radius" id="TipoIngresoFiltros"
                                 data-toggle="tooltip" data-placement="bottom" data-html="true" title=""
-                                data-original-title="<span class='font1'>Ingresar por Filtros<br>(Carga R&aacute;pida)</span>">
-                                <input checked type="radio" name="TipoIngresos" id="TipoIngreso1"> Filtros
+                                aria-label="Ingresar por Filtros → (Carga R&aacute;pida)">
+                                <input type="radio" name="TipoIngresos" id="TipoIngreso1"> Filtros
                             </label>
-                            <label class="btn fontq btn btn-outline-custom border w100 radius"
+                            <label class="hint--top btn fontq btn btn-outline-custom border-0 w100 radius"
                                 id="TipoIngresoFiltrosLegajos" data-toggle="tooltip" data-placement="bottom"
                                 data-html="true" title=""
-                                data-original-title="<span class='font1'>Ingresar por Legajo<br>(Carga Lenta)</span>">
-                                <input type="radio" name="TipoIngresos" id="TipoIngreso2"> Legajos
+                                aria-label="Ingresar por Legajo → (Carga Lenta)">
+                                <input checked type="radio" name="TipoIngresos" id="TipoIngreso2"> Legajos
                             </label>
-                            <input type="hidden" hidden id="TipoIngreso" name="TipoIngreso">
+                            <input type="hidden" id="TipoIngreso" name="TipoIngreso">
                         </div>
                     </div>
                 </div>
@@ -156,18 +156,19 @@
                 <input type="hidden" name="Cuenta" id="Cuenta">
             </div>
         </div>
-        <div class="col-12 col-sm-6 table-responsive pt-2 d-none loader-in" id="divTablePers">
+        <div class="col-12 col-sm-6 table-responsive pt-2 d-none" id="divTablePers">
             <table class="table table-hover text-nowrap w-100 table-sm" id="GetPers">
                 <thead class="">
-                    <tr>
+                    <tr class="bg-light">
                         <th class="border-0">
                             <div class="custom-control custom-checkbox">
                                 <input class="custom-control-input" name="select_all" value="1" id="Personal-select-all"
                                     type="checkbox">
-                                <label class="custom-control-label" for="Personal-select-all"></label>
+                                <label class="custom-control-label" for="Personal-select-all"
+                                    style="padding-top:4px;"></label>
                             </div>
                         </th>
-                        <th class="border-0"></th>
+                        <th class="border-0"><span id="countMarcados" class="font08"></span></th>
                         <th class="border-0"></th>
                     </tr>
                 </thead>

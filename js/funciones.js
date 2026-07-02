@@ -1,3 +1,5 @@
+const _uid = $('#_uid').val() ?? 0;
+const LS_PREFIX = _uid + '_';
 $('li').on('shown.bs.dropdown', function () {
     $(this).addClass('bg-light shadow-sm radius')
     $(this).children(".dropdown-menu").addClass("fadeIn mt-1");

@@ -3818,6 +3818,50 @@ function arrMSQuery($query)
         exit;
     }
 }
+function arrMSQueryData(string $query)
+{
+    $link = null;
+    $stmt = null;
+
+    try {
+        $params = [];
+        $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+        require __DIR__ . '/config/conect_mssql.php';
+
+        if (!$link) {
+            throw new Exception('No se pudo establecer la conexión a la base de datos');
+        }
+
+        $stmt = sqlsrv_query($link, $query);
+
+        if ($stmt === false) {
+            $errors = sqlsrv_errors();
+            $mensaje = $errors[0]['message'] ?? 'Error desconocido en sqlsrv_query';
+            throw new Exception($mensaje);
+        }
+
+        $registros = [];
+        while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            $registros[] = $r;
+        }
+
+        return $registros;
+
+    } catch (Throwable $e) {
+        error_log(
+            PHP_EOL . 'Message: ' . $e->getMessage() .
+            PHP_EOL . 'Source: "' . ($_SERVER['REQUEST_URI'] ?? 'CLI') . '"'
+        );
+        throw new Exception($e->getMessage());
+    } finally {
+        if ($stmt) {
+            sqlsrv_free_stmt($stmt);
+        }
+        if ($link) {
+            sqlsrv_close($link);
+        }
+    }
+}
 function confTar($assoc, $path)
 {
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! -->\n";
