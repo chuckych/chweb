@@ -44,6 +44,7 @@ $encabezado = [
     "Nombre",
     "Fecha",
     "Dia",
+    "Laboral",
     "Horario",
     "Cant",
     "Entra",
@@ -203,7 +204,6 @@ $dataApi['MESSAGE'] ??= '';
 
 $dataApi = json_decode(requestApi($url, $token, $authBasic, $dataParametros, 10), true);
 $numeroDeFila = 2;
-
 if ($dataApi['DATA'] ?? []) {
     foreach ($dataApi['DATA'] as $row) {
         $spreadsheet->getRowDimension($numeroDeFila)->setRowHeight(20);
@@ -211,9 +211,10 @@ if ($dataApi['DATA'] ?? []) {
         $pers_legajo = $row['Lega'];
         $pers_nombre = empty($row['ApNo']) ? 'Sin Nombre' : $row['ApNo'];
         $dia = DiaSemana3(FechaFormatVar($row['Fech'], 'Ymd'));
-        $ficHorario = $row['Tur']['ent'] . ' a ' . $row['Tur']['sal'];
-        $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $ficHorario;
+        $Horario = $row['Tur']['ent'] . ' a ' . $row['Tur']['sal'];
+        $ficHorario = ($row['Labo'] == '0') ? 'Franco' : $Horario;
         $ficHorario = ($row['Feri'] == '1') ? 'Feriado' : $ficHorario;
+        $ficHorario = ($row['Labo'] == '1') ? $Horario : $ficHorario;
 
         $spreadsheet->setCellValue("A$numeroDeFila", $row['Lega']);
         $spreadsheet->setCellValue("B$numeroDeFila", $pers_nombre);
