@@ -7,12 +7,12 @@
     <title><?= MODULOS['procesar'] ?></title>
 </head>
 
-<body class="animate__animated animate__fadeIn">
+<body class="fadeIn">
     <!-- inicio container -->
     <div class="container shadow pb-2">
         <?php require __DIR__ . '/../nav.php'; ?>
         <!-- Encabezado -->
-        <?= encabezado_mod('bg-custom', 'white', 'rueda2.png', MODULOS['procesar'], '') ?>
+        <?php encabezado_mod('bg-custom', 'white', 'rueda2.png', MODULOS['procesar'], '') ?>
         <!-- Fin Encabezado -->
         <form action="procesando.php" method="post" class="procesando">
             <div class="row p-2">

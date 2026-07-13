@@ -110,6 +110,21 @@ Flight::route('POST /proyectar', function () use ($response, $RRHHWebService) {
         \error_log('Error en la ruta /proyectar: ' . $e->getMessage());
     }
 });
+
+Flight::route('POST /procesar', function () use ($response, $RRHHWebService) {
+    $request = Flight::request();
+    $data = $request->data->getData();
+    $inicio = microtime(true);
+
+    try {
+        $procesado = $RRHHWebService->procesar($data ?? []);
+        $response->respuesta([$procesado], 0, '', 200, $inicio, 0, ID_COMPANY);
+    } catch (\Exception $e) {
+        \error_log('Error en la ruta /procesar: ' . $e->getMessage());
+        throw $e;
+    }
+});
+
 Flight::route('DELETE /proyectar', [$horas, 'eliminar_proyeccion']);
 
 Flight::route('POST /ws_novedades', function () use ($response, $RRHHWebService) {

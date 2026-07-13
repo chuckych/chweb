@@ -298,7 +298,15 @@ function token()
 {
     return sha1('ie&%$sg@dQdtW@!""#');
 }
-function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
+/**
+ * Summary of encabezado_mod
+ * @param mixed $bgc
+ * @param mixed $colortexto
+ * @param mixed $img
+ * @param mixed $titulo
+ * @param mixed $imgclass
+ */
+function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass = '')
 {
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';
@@ -321,7 +329,15 @@ function encabezado_mod($bgc, $colortexto, $img, $titulo, $imgclass)
     </div>
     </div>';
 }
-function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass)
+/**
+ * Summary of encabezado_mod_svgIcon
+ * @param mixed $bgc
+ * @param mixed $colortexto
+ * @param mixed $svg
+ * @param mixed $titulo
+ * @param mixed $imgclass
+ */
+function encabezado_mod_svgIcon($bgc, $colortexto, $svg, $titulo, $imgclass = '')
 {
     $QueryString = empty($_SERVER['QUERY_STRING']) ? '' : '?' . $_SERVER['QUERY_STRING'];
     $VER_DB_CH = $_SESSION['VER_DB_CH'] ?? '';

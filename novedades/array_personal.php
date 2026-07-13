@@ -93,7 +93,7 @@ if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
 
         // Consulta para obtener los legajos de personal según los filtros aplicados
         $sql_query_custom = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM PERSONAL WHERE PERSONAL.LegNume > 0 AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
-        error_log("SQL Query Custom: " . $sql_query_custom);
+        // error_log("SQL Query Custom: " . $sql_query_custom);
 
         // Ejecutar la consulta y obtener los resultados
         $Legajos = arrMSQueryData($sql_query_custom);
@@ -105,7 +105,8 @@ if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
         $LegajosArray = array_column($Legajos, 'pers_legajo');
 
         // Guardar los legajos en un archivo JSON con el flag en el nombre del archivo
-        $path = __DIR__ . "/../app-data/json/" . $_GET['flag'] . "_legajos_ws_novedades.json";
+        $nameFile = $_GET['flag'] . "_legajos_{$_GET['Modulo']}.json";
+        $path = __DIR__ . "/../app-data/json/" . $nameFile;
 
         if (file_put_contents($path, json_encode($LegajosArray)) === false) {
             throw new Exception("No se pudo escribir el archivo JSON en: $path");

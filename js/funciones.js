@@ -1,5 +1,6 @@
 const _uid = $('#_uid').val() ?? 0;
 const LS_PREFIX = _uid + '_';
+const LS_REFERER_URL = LS_PREFIX + 'referer';
 $('li').on('shown.bs.dropdown', function () {
     $(this).addClass('bg-light shadow-sm radius')
     $(this).children(".dropdown-menu").addClass("fadeIn mt-1");
@@ -722,9 +723,9 @@ function CheckSesion(e = null) {
     if (_homehost == null) { return false }
     if (_homehost.value == '') { return false }
 
-    const _referer = document.getElementById('_referer')
+    const _referer = sessionStorage.getItem(LS_REFERER_URL) ?? '';
     const _url = "/" + _homehost.value + "/sesion.php"
-    const _sesion = document.getElementById('_sesion')
+    const _sesion = document.getElementById('_sesion');
 
     axios.get(_url).then(function (response) {
         if (response.status != 200) { return false }
@@ -735,8 +736,8 @@ function CheckSesion(e = null) {
         if (status == 'sesion') {
             _sesion.value = '1'
             if (_referer != null) {
-                if (_referer.value != '') {
-                    window.location.href = "/" + _homehost.value + "/login/?l=" + _referer.value
+                if (_referer != '') {
+                    window.location.href = "/" + _homehost.value + "/login/?l=" + _referer
                 } else {
                     window.location.href = "/" + _homehost.value + "/login/"
                 }
@@ -749,6 +750,9 @@ function CheckSesion(e = null) {
     }).catch(function (error) {
         console.log(error);
     });
+}
+function checkSession() {
+    return CheckSesion();
 }
 function Procesar(FechaIni, FechaFin, LegaIni, LegaFin) {
     $.ajax({
@@ -1439,3 +1443,48 @@ function reloadDataTable(selector, resetPaging = false, callback = null) {
     if (!$.fn.DataTable.isDataTable(selector)) return;
     $(selector).DataTable().ajax.reload(callback, resetPaging);
 }
+/**
+ * Guarda la URL actual en sessionStorage bajo la clave definida por LS_REFERER_URL.
+ * Si la URL es demasiado larga, se trunca a 1000 caracteres.
+ * Se manejan errores de almacenamiento y se muestran advertencias en la consola.
+ */
+const refererURL = () => {
+    try {
+        if (typeof sessionStorage === 'undefined') {
+            console.warn('sessionStorage no disponible');
+            return;
+        }
+        
+        if (typeof LS_REFERER_URL === 'undefined') {
+            console.warn('LS_REFERER_URL no definido');
+            return;
+        }
+        
+        // Validar window.location
+        const url = window?.location?.href;
+        if (!url) {
+            console.warn('URL no disponible');
+            return;
+        }
+        
+        // Truncar URL si es muy larga
+        const encodedUrl = encodeURIComponent(url);
+        const maxLength = 1000;
+        
+        const key = LS_REFERER_URL;
+        const value = encodedUrl.length > maxLength 
+            ? encodedUrl.substring(0, maxLength) 
+            : encodedUrl;
+            
+        sessionStorage.setItem(key, value);
+        
+    } catch (error) {
+        if (error.name === 'QuotaExceededError') {
+            console.warn('sessionStorage lleno, no se pudo guardar la URL');
+        } else {
+            console.error('Error guardando URL:', error);
+        }
+    }
+};
+
+refererURL();

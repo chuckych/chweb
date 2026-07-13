@@ -121,7 +121,7 @@ class WebServiceCH
 
     public function request()
     {
-        $arg = func_get_args();
+        $arg = \func_get_args();
         if (!$arg)
             return false;
 

@@ -66,7 +66,7 @@ class RRHHWebService
 
             $this->ping();
 
-            if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
+            if (!\is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) { // Valida los parametros
                 throw new \Exception('Parametros no validos', 1);
             }
 
@@ -90,11 +90,11 @@ class RRHHWebService
             if ($dateSegments) { // Si hay segmentos de fechas procesa los legajos en cada segmento
                 $ch = curl_init();
 
-                foreach ($LegajosSegment as $Legajos) { // Recorre los bloques de legajos
-                    $countLegajos = count($Legajos); // Cuenta la cantidad de legajos en el bloque
-                    $Legajo = ($countLegajos === 1) ? $Legajos[0] : '';
+                foreach ($LegajosSegment as $Legas) { // Recorre los bloques de legajos
+                    $countLegas = \count($Legas); // Cuenta la cantidad de legajos en el bloque
+                    $Legajo = ($countLegas === 1) ? $Legas[0] : '';
 
-                    $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
+                    $Legas = (\is_array($Legas)) ? implode(';', $Legas) : '';
 
                     foreach ($dateSegments as $segment) { // Recorre los segmentos
 
@@ -108,8 +108,8 @@ class RRHHWebService
                             $FechaHasta = date('d/m/Y'); // La fecha maxima es la fecha actual
                         }
 
-                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legajos}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
-                        if ($countLegajos === 1) {
+                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legas}],FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
+                        if ($countLegas === 1) {
                             $post_data = "{Usuario=Supervisor, Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesde}',FechaHasta='{$FechaHasta}'}"; // Parametros del WebService
                         }
 
@@ -133,7 +133,7 @@ class RRHHWebService
                             throw new \Exception($text, $httpCode);
                         }
                         $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
-                        $text = "Legajos procesados [{$Legajos}] - {$FechaDesde} a {$FechaHasta} {$days} días";
+                        $text = "Legajos procesados [{$Legas}] - {$FechaDesde} a {$FechaHasta} {$days} días";
                         $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
                     }
                 }
@@ -151,52 +151,159 @@ class RRHHWebService
             return false;
         }
     }
-    /** 
-     * Procesa los legajos de un empleado
-     * @param string $Legajo Legajo del empleado
-     * @param string $FechaDesde Fecha desde
-     * @param string $FechaHasta Fecha hasta
-     * @return string Respuesta del WebService
+
+    /**
+     * Procesa legajos o filtros generales en un único parámetro.
+     *
+     * Reglas:
+     * - Si Legajos tiene datos, procesa por bloques de 50 e ignora filtros de Empresa/Planta/etc.
+     * - Si Legajos está vacío, procesa directamente por filtros + TipoDePersonal.
+     *
+     * @param array $params
+     * @return bool
      */
-    function procesar($Legajo, $FechaDesde, $FechaHasta)
+    public function procesar(array $params = []): bool
     {
-
-        $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
-        $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
-        $ruta = $this->baseUrl() . '/' . "Procesar";
-
-        $post_data = "{Usuario=Supervisor,TipoDePersonal=0,Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='$FechaDesde',FechaHasta='$FechaHasta',Empresa=0,Planta=0,Sucursal=0,Grupo=0,Sector=0,Seccion=0}";
-
-        $ch = curl_init();
-
-        curl_setopt($ch, CURLOPT_URL, $ruta);
-        curl_setopt($ch, CURLOPT_POST, TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $respuesta = curl_exec($ch);
-        $curl_errno = curl_errno($ch);
-        // $curl_error = curl_error($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         try {
-            if ($curl_errno > 0) {
-                $text = "{$curl_errno}: Error al procesar."; // set error 
-                throw new \Exception($text, $httpCode);
+            $this->ping();
+
+            $FechaDesde = $params['FechaDesde'] ?? '';
+            $FechaHasta = $params['FechaHasta'] ?? '';
+            $Legajos = $params['Legajos'] ?? [];
+
+            if (!\is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) {
+                throw new \Exception('Parametros no validos', 1);
             }
-            if ($httpCode == 404) {
-                $text = "{$respuesta}: Error al procesar."; // set error 
-                throw new \Exception($text, $httpCode);
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaDesde)) {
+                throw new \Exception('Fecha desde no es valida', 1);
             }
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaHasta)) {
+                throw new \Exception('Fecha hasta no es valida', 1);
+            }
+
+            $ruta = $this->baseUrl() . '/' . 'Procesar';
+            $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta);
+
+            if (!$dateSegments) {
+                return false;
+            }
+
+            $filtros = [
+                'Empresa' => (string) ($params['Empresa'] ?? '0'),
+                'Planta' => (string) ($params['Planta'] ?? '0'),
+                'Sucursal' => (string) ($params['Sucursal'] ?? '0'),
+                'Grupo' => (string) ($params['Grupo'] ?? '0'),
+                'Sector' => (string) ($params['Sector'] ?? '0'),
+                'Seccion' => (string) ($params['Seccion'] ?? '0'),
+                'TipoDePersonal' => (string) ($params['TipoDePersonal'] ?? '0'),
+            ];
+
+            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, 50) : [];
+            $ch = curl_init();
+
+            if (!empty($LegajosSegment)) {
+                foreach ($LegajosSegment as $Legas) {
+                    $countLegas = \count($Legas);
+                    $Legajo = ($countLegas === 1) ? $Legas[0] : '';
+                    $Legas = (\is_array($Legas)) ? implode(';', $Legas) : '';
+
+                    foreach ($dateSegments as $segment) {
+                        $FechaDesdeSegmento = date('d/m/Y', strtotime($segment['FechaMin']));
+                        $FechaHastaSegmento = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                        if (strtotime($segment['FechaMin']) > time()) {
+                            break;
+                        }
+
+                        if (strtotime($segment['FechaMax']) > time()) {
+                            $FechaHastaSegmento = date('d/m/Y');
+                        }
+
+                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legas}],FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}'}";
+                        if ($countLegas === 1) {
+                            $post_data = "{Usuario=Supervisor, Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}'}";
+                        }
+
+                        curl_setopt($ch, CURLOPT_URL, $ruta);
+                        curl_setopt($ch, CURLOPT_POST, TRUE);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                        $respuesta = curl_exec($ch);
+                        $curl_errno = curl_errno($ch);
+                        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                        if ($curl_errno > 0) {
+                            throw new \Exception("{$curl_errno} : Error al procesar.", $httpCode);
+                        }
+
+                        if ($httpCode == 404) {
+                            throw new \Exception("{$respuesta} : Error al procesar.", $httpCode);
+                        }
+
+                        $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
+                        $text = "Legajos procesados [{$Legas}] - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
+                        $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+                    }
+                }
+            } else {
+                foreach ($dateSegments as $segment) {
+                    $FechaDesdeSegmento = date('d/m/Y', strtotime($segment['FechaMin']));
+                    $FechaHastaSegmento = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                    if (strtotime($segment['FechaMin']) > time()) {
+                        break;
+                    }
+
+                    if (strtotime($segment['FechaMax']) > time()) {
+                        $FechaHastaSegmento = date('d/m/Y');
+                    }
+
+                    $post_data = "{Usuario=Supervisor, Legajos=[], TipoDePersonal={$filtros['TipoDePersonal']}, LegajoDesde=1, LegajoHasta=99999999, FechaDesde={$FechaDesdeSegmento}, FechaHasta={$FechaHastaSegmento}, Empresa={$filtros['Empresa']}, Planta={$filtros['Planta']}, Sucursal={$filtros['Sucursal']}, Grupo={$filtros['Grupo']}, Sector={$filtros['Sector']}, Seccion={$filtros['Seccion']}}";
+
+                    curl_setopt($ch, CURLOPT_URL, $ruta);
+                    curl_setopt($ch, CURLOPT_POST, TRUE);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    $respuesta = curl_exec($ch);
+                    $curl_errno = curl_errno($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                    if ($curl_errno > 0) {
+                        throw new \Exception("{$curl_errno} : Error al procesar.", $httpCode);
+                    }
+
+                    if ($httpCode == 404) {
+                        throw new \Exception("{$respuesta} : Error al procesar.", $httpCode);
+                    }
+
+                    $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
+                    $text = "Procesamiento por filtros - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
+                    $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+                }
+            }
+
             if (PHP_VERSION_ID >= 80000) {
                 unset($ch);
             } else {
                 curl_close($ch);
-            } // close curl handle
+            }
+
             return true;
         } catch (\Exception $e) {
             $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);
             return false;
         }
     }
+
+    /**
+     * Summary of ping
+     * @throws \Exception
+     * @return bool
+     */
     private function ping()
     {
         $ch = curl_init(); // Inicializar el objeto curl
@@ -333,11 +440,13 @@ class RRHHWebService
             return $e;
         }
     }
+    
     /** 
      * Ingresa Novedades a partir de un arreglo de legajos
      * @param array $Legajos Arreglo de legajos
      * @param string $FechaDesde Fecha desde
      * @param string $FechaHasta Fecha hasta
+     * @param string $CodNovedad Código de la novedad
      * @return string Respuesta del WebService
      * @example $Legajos = [1,2,3,4,5,6,7,8,9,10];
      * @example $FechaDesde = '2023-08-23';
@@ -383,7 +492,7 @@ class RRHHWebService
      */
     private function validarParametrosNovedades($Legajos, $FechaDesde, $FechaHasta, $CodNovedad, $HorasNovedad)
     {
-        if (!is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) {
+        if (!\is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) {
             throw new \Exception('Parametros no validos', 1);
         }
 
@@ -395,7 +504,7 @@ class RRHHWebService
             throw new \Exception('Fecha hasta no es valida', 1);
         }
 
-        if (strtotime($FechaDesde) > strtotime($FechaHasta)) {
+        if (\strtotime($FechaDesde) > \strtotime($FechaHasta)) {
             throw new \Exception('Fecha desde no puede ser mayor a fecha hasta', 1);
         }
 
@@ -403,7 +512,7 @@ class RRHHWebService
             throw new \Exception('Horas Novedad no tiene formato HH:MM', 1);
         }
 
-        if (empty($CodNovedad) || !is_numeric($CodNovedad)) {
+        if (empty($CodNovedad) || !\is_numeric($CodNovedad)) {
             throw new \Exception('Codigo de Novedad no puede estar vacio y debe ser numerico', 1);
         }
     }
@@ -411,22 +520,24 @@ class RRHHWebService
     /**
      * Procesa novedades por segmentos de fechas y legajos
      */
-    private function procesarNovedadesPorSegmentos($ruta, $LegajosSegment, $dateSegments, $parametrosBase)
+    private function procesarNovedadesPorSegmentos(string $ruta, array $LegajosSegment, array $dateSegments, array $parametrosBase)
     {
         $ch = curl_init();
 
         foreach ($LegajosSegment as $Legajos) {
             $esSegmentoVacio = empty($Legajos);
+            $countLegajos = 0;
+            $Legajo = '';
 
             if (!$esSegmentoVacio) {
-                $countLegajos = count($Legajos);
+                $countLegajos = \count($Legajos);
                 $Legajo = ($countLegajos === 1) ? $Legajos[0] : '';
                 $Legajos = implode(';', $Legajos);
             }
 
             foreach ($dateSegments as $segment) {
-                $FechaDesde = date('d/m/Y', strtotime($segment['FechaMin']));
-                $FechaHasta = date('d/m/Y', strtotime($segment['FechaMax']));
+                $FechaDesde = date('d/m/Y', \strtotime($segment['FechaMin']));
+                $FechaHasta = date('d/m/Y', \strtotime($segment['FechaMax']));
 
                 // Construir parámetros
                 $params = $this->construirParametrosNovedad(
