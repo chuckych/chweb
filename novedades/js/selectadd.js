@@ -963,7 +963,7 @@ $(document).ready(function () {
                 marcadosAll: ls.get(LS_LEGAJOS_MARCADOS_ALL),
                 marcados: ls.get(LS_LEGAJOS_MARCADOS) || [],
                 desmarcados: ls.get(LS_LEGAJOS_DESMARCADOS) || []
-            }; 
+            };
 
             const response = await axios.get(url, { params: payload });
 
@@ -1103,6 +1103,15 @@ $(document).ready(function () {
             const keyName = map_items_names[item.name] || item.name;
             payload[keyName] = item.value;
         });
+
+        // Empresa, Planta, Sector, Sección, Grupo y Sucursal al menos uno es obligatorio cuando TipoIngreso es 1 (Por Filtros)
+        const tieneAlMenosUno = ['Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal']
+            .some(campo => payload[campo] !== "");
+
+        if (!tieneAlMenosUno && payload.TipoIngreso === "1") {
+            notify('Debe seleccionar al menos una Entidad', 'warning', 3000, 'right');
+            return;
+        }
 
         if (payload.Novedad == "") {
             notify('Debe seleccionar una novedad', 'warning', 3000, 'right')
