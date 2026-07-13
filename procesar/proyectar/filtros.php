@@ -1,0 +1,114 @@
+<section id="Filtros" class="border radius p-2 px-3 mt-4 shadow-sm ">
+    <div class="row mt-2" id="tipos-lega">
+        <div class="col-12">
+            <div class="d-flex align-items-center">
+                <div class="btn-group btn-group-toggle bg-light border radius p-1" data-toggle="buttons">
+                    <label class="btn font08 btn-outline-custom border-0 radius w100">
+                        <input type="radio" name="Tipo" id="TipoMensuales" value="0" />
+                        Mensuales
+                    </label>
+                    <label class="btn font08 btn-outline-custom border-0 radius w100">
+                        <input type="radio" name="Tipo" id="TipoJornales" value="1" />
+                        Jornales
+                    </label>
+                    <label class="btn font08 btn-outline-custom border-0 radius w100">
+                        <input type="radio" name="Tipo" id="TipoTodos" value="2" checked />
+                        Todos
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-row py-2" id="filters">
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Empresa -->
+            <label for="selectjs_empresa" class="mb-1"><?=$labelEmprPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_empresa" data-label="<?=$labelEmprPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Planta -->
+            <label for="selectjs_planta" class="mb-1"><?=$labelPlanPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_planta" name="selectjs_planta" data-label="<?=$labelPlanPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Convenio -->
+            <label for="selectjs_convenio" class="mb-1">Convenio</label>
+            <select class="form-control" id="selectjs_convenio" name="selectjs_convenio">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Sector -->
+            <label for="selectjs_sector" class="mb-1"><?=$labelSectPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_sector" name="selectjs_sector" data-label="<?=$labelSectPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Secciones -->
+            <label for="selectjs_seccion" class="mb-1"><?=$labelSeccPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_seccion" name="selectjs_seccion" data-label="<?=$labelSeccPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Grupos -->
+            <label for="selectjs_grupos" class="mb-1"><?=$labelGrupPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_grupos" name="selectjs_grupos" data-label="<?=$labelGrupPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+            <!-- Sucursal -->
+            <label for="selectjs_sucursal" class="mb-1"><?=$labelSucuPlu ?? '' ?></label>
+            <select class="form-control" id="selectjs_sucursal" name="selectjs_sucursal" data-label="<?=$labelSucuPlu ?? '' ?>">
+            </select>
+        </div>
+        <div class="col-12 col-sm-8">
+            <!-- Personal -->
+            <label for="selectjs_personal" class="mb-1">Personal</label>
+            <select class="form-control" id="selectjs_personal" name="selectjs_personal">
+            </select>
+        </div>
+    </div>
+    <div class="row pb-2">
+        <div class="col-12">
+            <span id="trash_allIn" title="Limpiar Filtros"
+                class="font08 pointer align-middle pb-0 float-right mt-2 hint--left hint--rounded hint--no-arrow hint--default hint--no-shadow hint--no-animate"
+                aria-label="Limpiar Filtros">
+                Limpiar Filtros
+            </span>
+        </div>
+    </div>
+    <div class="form-row my-2" id="footer-filters">
+        <div class="col-12 col-lg-8">
+            <div class="input-group d-inline-flex justify-content-end">
+                <div class="hint--top hint--rounded hint--no-arrow hint--default hint--no-shadow"
+                    aria-label="Seleccionar fechas">
+                    <div class="d-inline-flex radius border w-100">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text border-0 bg-white" id="Refresh">
+                                <svg class="bi mr-1" width="18" height="18" fill="currentColor">
+                                    <use xlink:href="../../img/bootstrap-icons.svg#calendar-range"></use>
+                                </svg>
+                            </span>
+                        </div>
+                        <div>
+                            <input id="_dr" name="_dr" type="text" class="form-control text-center border-0 h40 w250" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-4">
+            <div class="d-inline-flex justify-content-end w-100 mt-3 mt-lg-0" style="gap: 0.5rem;">
+                <button class="hint--top btn btn-outline-custom border btn-sm text-white h40 px-5 w-100"
+                    id="btnEliminar" disabled aria-label="Eliminar proyección de horas">
+                    Eliminar
+                </button>
+                <button class="hint--top btn btn-custom btn-sm text-white h40 px-5 w-100" id="btnProcesar" disabled
+                    aria-label="Generar proyección de horas">
+                    Generar
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
