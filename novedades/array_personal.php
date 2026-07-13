@@ -55,9 +55,9 @@ $_GET['marcadosAll'] ??= false;
 $_GET['marcados'] ??= [];
 $_GET['desmarcados'] ??= [];
 
-// error_log("GET: " . json_encode($_GET));
+// error_log("filtros: " . json_encode($filtros));
 
-if ($_GET['Modulo'] === 'ws_novedades') {
+if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
     try {
 
         $marcadosAll = filter_var($_GET['marcadosAll'], FILTER_VALIDATE_BOOLEAN);
@@ -65,7 +65,7 @@ if ($_GET['Modulo'] === 'ws_novedades') {
         $desmarcados = $_GET['desmarcados'];
 
         // Filtro para obtener los legajos según los marcados y desmarcados
-        $filtros = '';
+        $filtros ??= '';
         if ($marcadosAll) {
             if (!empty($desmarcados)) {
                 $desmarcadosList = implode(',', array_map('intval', $desmarcados));
@@ -93,6 +93,7 @@ if ($_GET['Modulo'] === 'ws_novedades') {
 
         // Consulta para obtener los legajos de personal según los filtros aplicados
         $sql_query_custom = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre' FROM PERSONAL WHERE PERSONAL.LegNume > 0 AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
+        error_log("SQL Query Custom: " . $sql_query_custom);
 
         // Ejecutar la consulta y obtener los resultados
         $Legajos = arrMSQueryData($sql_query_custom);
