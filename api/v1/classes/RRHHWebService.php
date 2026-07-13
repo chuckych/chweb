@@ -190,14 +190,26 @@ class RRHHWebService
                 return false;
             }
 
+            $normalizarFiltro = static function ($value): string {
+                if ($value === null) {
+                    return '0';
+                }
+
+                if (\is_string($value) && trim($value) === '') {
+                    return '0';
+                }
+
+                return (string) $value;
+            };
+
             $filtros = [
-                'Empresa' => (string) ($params['Empresa'] ?? '0'),
-                'Planta' => (string) ($params['Planta'] ?? '0'),
-                'Sucursal' => (string) ($params['Sucursal'] ?? '0'),
-                'Grupo' => (string) ($params['Grupo'] ?? '0'),
-                'Sector' => (string) ($params['Sector'] ?? '0'),
-                'Seccion' => (string) ($params['Seccion'] ?? '0'),
-                'TipoDePersonal' => (string) ($params['TipoDePersonal'] ?? '0'),
+                'Empresa' => $normalizarFiltro($params['Empresa'] ?? null),
+                'Planta' => $normalizarFiltro($params['Planta'] ?? null),
+                'Sucursal' => $normalizarFiltro($params['Sucursal'] ?? null),
+                'Grupo' => $normalizarFiltro($params['Grupo'] ?? null),
+                'Sector' => $normalizarFiltro($params['Sector'] ?? null),
+                'Seccion' => $normalizarFiltro($params['Seccion'] ?? null),
+                'TipoDePersonal' => $normalizarFiltro($params['TipoDePersonal'] ?? null),
             ];
 
             $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, 50) : [];
@@ -222,6 +234,7 @@ class RRHHWebService
                         }
 
                         $post_data = "{Usuario=Supervisor, Legajos=[{$Legas}],FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}'}";
+
                         if ($countLegas === 1) {
                             $post_data = "{Usuario=Supervisor, Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}'}";
                         }
@@ -263,6 +276,8 @@ class RRHHWebService
 
                     $post_data = "{Usuario=Supervisor, Legajos=[], TipoDePersonal={$filtros['TipoDePersonal']}, LegajoDesde=1, LegajoHasta=99999999, FechaDesde={$FechaDesdeSegmento}, FechaHasta={$FechaHastaSegmento}, Empresa={$filtros['Empresa']}, Planta={$filtros['Planta']}, Sucursal={$filtros['Sucursal']}, Grupo={$filtros['Grupo']}, Sector={$filtros['Sector']}, Seccion={$filtros['Seccion']}}";
 
+                    // error_log(json_encode($post_data)).exit;
+
                     curl_setopt($ch, CURLOPT_URL, $ruta);
                     curl_setopt($ch, CURLOPT_POST, TRUE);
                     curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -280,8 +295,8 @@ class RRHHWebService
                         throw new \Exception("{$respuesta} : Error al procesar.", $httpCode);
                     }
 
-                    $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
-                    $text = "Procesamiento por filtros - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
+                    $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']) - 1;
+                    $text = "Procesamiento por filtros - {$post_data} - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
                     $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
                 }
             }
@@ -297,6 +312,19 @@ class RRHHWebService
             $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);
             return false;
         }
+    }
+
+    private static function normalizarFiltro(string $value): string
+    {
+        if ($value === null) {
+            return '0';
+        }
+
+        if (\is_string($value) && trim($value) === '') {
+            return '0';
+        }
+
+        return (string) $value;
     }
 
     /**
@@ -440,7 +468,7 @@ class RRHHWebService
             return $e;
         }
     }
-    
+
     /** 
      * Ingresa Novedades a partir de un arreglo de legajos
      * @param array $Legajos Arreglo de legajos

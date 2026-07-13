@@ -1825,6 +1825,7 @@ Flight::route('POST /ws_procesar', function () {
 
     $endpoint = URLAPI . "/api/v1/procesar";
     // error_log(json_encode($payload));
+
     $ingresar = ch_api($endpoint, $payload, 'POST', []);
     $arrayData = json_decode($ingresar, true);
     $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];

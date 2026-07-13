@@ -34,7 +34,7 @@ pruebaApiML.php
 /mobile/hrp/fotos/*.jpg
 /mobile/hrp/fotos/*.png
 /mobile/hrp/api
-/procesar_
+/procesar__
 *.pdf
 *.log
 *.zip
