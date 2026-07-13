@@ -207,7 +207,7 @@ $mappingLabels = [
     <script src="../js/bootstrap-notify-master/bootstrap-notify.min.js"></script>
     <script src="../js/select2.min.js"></script>
     <script src="../js/select2-es.js"></script>
-    <script src="js/main.js?<?= version_file("/procesar_/js/main.js") ?>"></script>
+    <script src="js/main.js?<?= version_file("/procesar/js/main.js") ?>"></script>
 
 </body>
 

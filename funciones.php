@@ -205,12 +205,22 @@ function vjs()
             return version();
     }
 }
-function version_file($pathFile)
+function version_file(string $pathFile)
 {
-    if ($pathFile) {
-        return filesize(dirname(__FILE__) . $pathFile) . '.' . filemtime(dirname(__FILE__) . $pathFile);
+    try {
+        if (!file_exists(dirname(__FILE__) . $pathFile)) {
+            throw new \Exception("El archivo {$pathFile} no existe.");
+        }
+
+        if ($pathFile) {
+            return filesize(dirname(__FILE__) . $pathFile) . '.' . filemtime(dirname(__FILE__) . $pathFile);
+        }
+
+        return time();
+    } catch (\Exception $e) {
+        error_log("Error al obtener la versión del archivo {$pathFile}: " . $e->getMessage());
+        return time();
     }
-    return time();
 }
 function API_KEY_MAPS()
 {
