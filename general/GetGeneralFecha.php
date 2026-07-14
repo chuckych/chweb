@@ -61,7 +61,7 @@ $joinCierre = "LEFT JOIN (
 $queryParCierre = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
 $resultParCierre = sqlsrv_query($link, $queryParCierre, $param, $options);
 $ParCierre = sqlsrv_fetch_array($resultParCierre)['ParCierr'] ?? 0;
-$ParCierre = ($ParCierre) ? $ParCierre->format('Y-m-d') : 'N/A';
+$ParCierre = ($ParCierre) ? $ParCierre->format('Y-m-d') : '1753-01-01';
 
 $sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario', REGLASCH.RCDesc AS 'Regla_CH', PC.UltimoCierre FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinReglasCH $joinRegistros $joinCierre WHERE FICHAS.FicFech='$Fecha' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, FICHAS.FicFech, REGLASCH.RCDesc, PERSONAL.LegApNo, DATEPART(dw,.FICHAS.FicFech), dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF), PC.UltimoCierre";
 
@@ -107,7 +107,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     $Gen_Dia_Semana2 = ($row['Gen_dia']);
     $Gen_Horario = $row['Gen_Horario'];
     $Gen_NombreHTML = "<span $title_regla>$Gen_Nombre</span>";
-    $UltimoCierre = $row['UltimoCierre'] ? $row['UltimoCierre']->format('Y-m-d') : 'N/A';
+    $UltimoCierre = $row['UltimoCierre'] ? $row['UltimoCierre']->format('Y-m-d') : '1753-01-01';
 
     /** FICHADAS */
     $query_Fic = "SELECT REGISTRO.RegHoRe AS Fic_Hora, Fic_Tipo=CASE REGISTRO.RegTipo WHEN 0 THEN 'Capturador' ELSE 'Manual' END, Fic_Estado=CASE REGISTRO.RegFech WHEN REGISTRO.RegFeRe THEN CASE REGISTRO.RegHora WHEN REGISTRO.RegHoRe THEN 'Normal' ELSE 'Modificada' END ELSE 'Modificada' END FROM REGISTRO WHERE REGISTRO.RegFeAs='$Gen_Fecha2' AND REGISTRO.RegLega='$Gen_Lega' ORDER BY REGISTRO.RegFeAs,REGISTRO.RegLega,REGISTRO.RegFeRe,REGISTRO.RegHoRe";
@@ -244,7 +244,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     }
 
     $Cierre = false;
-
+    
     if ($Gen_Fecha3 <= $UltimoCierre) {
         $Cierre = true;
     }
@@ -259,7 +259,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     }
     // UltimoCierre Formato d/m/Y
     $UltimoCierreF = ($UltimoCierre != 'N/A') ? date('d/m/Y', strtotime($UltimoCierre)) : 'N/A';
-    $textCierre = ($Cierre) ? '<br><div class="badge badge-secondary hint--right opa8" aria-label="' . $textCierreGeneral . $UltimoCierreF . '">Registro Cerrado</div>' : '';
+    $textCierre = ($Cierre) ? "<br><div class=\"badge badge-secondary hint--right opa8\" aria-label=\"{$textCierreGeneral}{$UltimoCierreF}\">Registro Cerrado</div>" : '';
 
     if ($Excel) {
         $data[] = [

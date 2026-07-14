@@ -46,7 +46,7 @@ $joinCierre = "LEFT JOIN (
 $queryParCierre = "SELECT ParCierr FROM PARACONT WHERE ParCodi = 0 ORDER BY ParCodi";
 $resultParCierre = sqlsrv_query($link, $queryParCierre, $param, $options);
 $ParCierre = sqlsrv_fetch_array($resultParCierre)['ParCierr'] ?? 0;
-$ParCierre = ($ParCierre) ? $ParCierre->format('Y-m-d') : 'N/A';
+$ParCierre = ($ParCierre) ? $ParCierre->format('Y-m-d') : '1753-01-01';
 
 $sql_query = "SELECT FICHAS.FicLega AS 'Gen_Lega', dbo.fn_DiaDeLaSemana(FICHAS.FicFech) AS 'Gen_dia', PERSONAL.LegApNo AS 'Gen_Nombre', FICHAS.FicFech AS 'Gen_Fecha', DATEPART(dw,.FICHAS.FicFech) AS 'Gen_Dia_Semana', dbo.fn_HorarioAsignado( FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF ) AS 'Gen_Horario', REGLASCH.RCDesc AS 'Regla_CH', PC.UltimoCierre FROM FICHAS $joinFichas3 INNER JOIN PERSONAL ON FICHAS.FicLega=PERSONAL.LegNume $joinReglasCH $joinRegistros $joinCierre WHERE FICHAS.FicLega='$legajo' AND FICHAS.FicFech BETWEEN '$FechaIni' AND '$FechaFin' $FilterEstruct $FiltrosFichas GROUP BY FICHAS.FicLega, FICHAS.FicFech, PERSONAL.LegApNo, REGLASCH.RCDesc, dbo.fn_HorarioAsignado(FICHAS.FicHorE, FICHAS.FicHorS, FICHAS.FicDiaL, FICHAS.FicDiaF), PC.UltimoCierre";
 
@@ -68,7 +68,6 @@ $sqlRec .= " ORDER BY .FICHAS.FicFech, FICHAS.FicLega OFFSET " . $params['start'
 $queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
 $totalRecords = sqlsrv_num_rows($queryTot);
 $queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
-// print_r($sqlRec); exit;
 
 /** BUSCAMOS DENTRO DE FICHAS EL LEGAJO NOMBRE FECHA DIA HORARIO */
 while ($row = sqlsrv_fetch_array($queryRecords)):
@@ -255,7 +254,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)):
     $data4 = "{$Gen_Dia_Semana2} {$Gen_Fecha}";
     $FichadasDiv = "<button title='Ver Fichada' type='button' class='btn btn-link font09 p-0 mFic open-modal text-secondary' data-toggle='modal' data='{$dataGenLega}' data2='{$Gen_Nombre}' data3='{$Gen_Fecha}' data4='{$data4}' data5='{$Gen_Horario}' data6='{$Gen_Fecha3}' dataFechDR='{$Gen_Fecha}' data_mFic='1' >$Fichadas </button>";
 
-    $UltimoCierre = $row['UltimoCierre'] ? $row['UltimoCierre']->format('Y-m-d') : 'N/A';
+    $UltimoCierre = $row['UltimoCierre'] ? $row['UltimoCierre']->format('Y-m-d') : '1753-01-01';
 
     $Cierre = false;
 
