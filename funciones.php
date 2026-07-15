@@ -3805,7 +3805,7 @@ function MSQuery($query)
         if (($errors = sqlsrv_errors()) != null) {
             foreach ($errors as $error) {
                 $mensaje = explode(']', $error['message']);
-                $data[] = array("status" => "error", "dato" => $mensaje[3]);
+                $data[] = ["status" => "error", "dato" => $mensaje[3]];
             }
         }
         error_log(json_encode($data[0]));
@@ -3816,47 +3816,86 @@ function MSQuery($query)
         // exit;
     }
 }
-function arrMSQuery($query)
+function arrMSQuery(string $query)
 {
-    $params = [];
-    $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
-    require __DIR__ . '/config/conect_mssql.php';
-    $stmt = sqlsrv_query($link, $query);
-    if ($stmt) {
-        while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
-            $registros[] = $r;
-        }
-        sqlsrv_free_stmt($stmt);
-        sqlsrv_close($link);
-        return $registros ?? false;
-    } else {
-        if (($errors = sqlsrv_errors()) != null) {
-            foreach ($errors as $error) {
-                $mensaje = explode(']', $error['message']);
-                $data[] = ["status" => "error", "dato" => $mensaje[3]];
-                $pathLog = __DIR__ . '/logs/' . date('Ymd') . '_errorMSQuery.log'; // ruta del archivo de Log de errores
-                fileLog(PHP_EOL . 'Message: ' . json_encode($mensaje, JSON_UNESCAPED_UNICODE) . PHP_EOL . 'Source: ' . '"' . $_SERVER['REQUEST_URI'] . '"', $pathLog); // escribir en el log de errores el error
-            }
-        }
-        // sqlsrv_free_stmt($stmt);
-        echo json_encode($data[0]);
-        sqlsrv_close($link);
-        exit;
-    }
-}
-function arrMSQueryData(string $query)
-{
-    $link = null;
+
+    static $link = null;
+    static $connectionCount = 0;
+    static $queryCount = 0;
     $stmt = null;
 
     try {
-        $params = [];
-        $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
-        require __DIR__ . '/config/conect_mssql.php';
 
-        if (!$link) {
-            throw new Exception('No se pudo establecer la conexión a la base de datos');
+        if ($link === null) {
+            // Solo log cuando se crea la conexión
+            // error_log('[MSSQL CACHE] Nueva conexión creada (#' . ($connectionCount + 1) . ')');
+
+            require __DIR__ . '/config/conect_mssql.php';
+
+            if (!$link) {
+                throw new Exception('No se pudo establecer la conexión a la base de datos');
+            }
+            $connectionCount++;
+        } else {
+            // Log opcional para verificar que usa caché
+            // error_log('[MSSQL CACHE] Reutilizando conexión #' . $connectionCount . ' - Consulta #' . ($queryCount + 1));
         }
+
+        $stmt = sqlsrv_query($link, $query);
+
+        // error_log('[MSSQL CACHE] Consulta #' . ($queryCount + 1) . ' ejecutada: ' . $query);
+        // $queryCount++;
+
+        if ($stmt === false) {
+            $errors = sqlsrv_errors();
+            $mensaje = $errors[0]['message'] ?? 'Error desconocido en sqlsrv_query';
+            throw new Exception($mensaje);
+        }
+
+        while ($r = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            $registros[] = $r;
+        }
+
+        return $registros ?? false;
+
+    } catch (Throwable $e) {
+        error_log(
+            PHP_EOL . '[MSSQL ERROR] ' . $e->getMessage() .
+            PHP_EOL . '[MSSQL ERROR] Query: ' . $query
+        );
+        throw new Exception($e->getMessage());
+    } finally {
+        if ($stmt) {
+            sqlsrv_free_stmt($stmt);
+        }
+    }
+}
+
+function arrMSQueryData(string $query)
+{
+    static $link = null;
+    static $connectionCount = 0;
+    static $queryCount = 0;
+    $stmt = null;
+
+    try {
+        if ($link === null) {
+            // Solo log cuando se crea la conexión
+            // error_log('[MSSQL CACHE] Nueva conexión creada (#' . ($connectionCount + 1) . ')');
+
+            require __DIR__ . '/config/conect_mssql.php';
+
+            if (!$link) {
+                throw new Exception('No se pudo establecer la conexión a la base de datos');
+            }
+            $connectionCount++;
+        } else {
+            // Log opcional para verificar que usa caché
+            // error_log('[MSSQL CACHE] Reutilizando conexión #' . $connectionCount . ' - Consulta #' . ($queryCount + 1));
+        }
+
+        $queryCount++;
+        // $startTime = microtime(true);
 
         $stmt = sqlsrv_query($link, $query);
 
@@ -3871,23 +3910,25 @@ function arrMSQueryData(string $query)
             $registros[] = $r;
         }
 
+        // $executionTime = round((microtime(true) - $startTime) * 1000, 2);
+        // error_log('[MSSQL CACHE] Consulta #' . $queryCount . ' completada en ' . $executionTime . 'ms - ' . count($registros) . ' filas');
+        // error_log('[QUERY] ' . $query);
+
         return $registros;
 
     } catch (Throwable $e) {
         error_log(
-            PHP_EOL . 'Message: ' . $e->getMessage() .
-            PHP_EOL . 'Source: "' . ($_SERVER['REQUEST_URI'] ?? 'CLI') . '"'
+            PHP_EOL . '[MSSQL ERROR] ' . $e->getMessage() .
+            PHP_EOL . '[MSSQL ERROR] Query: ' . $query
         );
         throw new Exception($e->getMessage());
     } finally {
         if ($stmt) {
             sqlsrv_free_stmt($stmt);
         }
-        if ($link) {
-            sqlsrv_close($link);
-        }
     }
 }
+
 function confTar($assoc, $path)
 {
     $content = "; <?php exit; ?> <-- ¡No eliminar esta línea! -->\n";

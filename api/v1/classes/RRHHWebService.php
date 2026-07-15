@@ -314,17 +314,169 @@ class RRHHWebService
         }
     }
 
-    private static function normalizarFiltro(string $value): string
+    /**
+     * Procesa legajos o filtros generales en un único parámetro.
+     *
+     * Reglas:
+     * - Si Legajos tiene datos, procesa por bloques de 50 e ignora filtros de Empresa/Planta/etc.
+     * - Si Legajos está vacío, procesa directamente por filtros + TipoDePersonal.
+     *
+     * @param array $params
+     * @return bool
+     */
+    public function fichar_horario(array $params = []): bool
     {
-        if ($value === null) {
-            return '0';
-        }
+        try {
+            $this->ping();
 
-        if (\is_string($value) && trim($value) === '') {
-            return '0';
-        }
+            $FechaDesde = $params['FechaDesde'] ?? '';
+            $FechaHasta = $params['FechaHasta'] ?? '';
+            $Legajos = $params['Legajos'] ?? [];
 
-        return (string) $value;
+            if (!\is_array($Legajos) || empty($FechaDesde) || empty($FechaHasta)) {
+                throw new \Exception('Parametros no validos', 1);
+            }
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaDesde)) {
+                throw new \Exception('Fecha desde no es valida', 1);
+            }
+
+            if (!\DateTime::createFromFormat('Y-m-d', $FechaHasta)) {
+                throw new \Exception('Fecha hasta no es valida', 1);
+            }
+
+            $ruta = $this->baseUrl() . '/' . 'FicharHorario';
+            $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta);
+
+            if (!$dateSegments) {
+                return false;
+            }
+
+            $normalizarFiltro = static function ($value): string {
+                if ($value === null) {
+                    return '0';
+                }
+
+                if (\is_string($value) && trim($value) === '') {
+                    return '0';
+                }
+
+                return (string) $value;
+            };
+
+            $TipoDeFichada = $normalizarFiltro($params['TipoDeFichada'] ?? null);
+            $Laboral = $normalizarFiltro($params['Laboral'] ?? null);
+
+            $filtros = [
+                'Empresa' => $normalizarFiltro($params['Empresa'] ?? null),
+                'Planta' => $normalizarFiltro($params['Planta'] ?? null),
+                'Sucursal' => $normalizarFiltro($params['Sucursal'] ?? null),
+                'Grupo' => $normalizarFiltro($params['Grupo'] ?? null),
+                'Sector' => $normalizarFiltro($params['Sector'] ?? null),
+                'Seccion' => $normalizarFiltro($params['Seccion'] ?? null),
+                'TipoDePersonal' => $normalizarFiltro($params['TipoDePersonal'] ?? null),
+            ];
+
+            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, 50) : [];
+            $ch = curl_init();
+
+            if (!empty($LegajosSegment)) {
+                foreach ($LegajosSegment as $Legas) {
+                    $countLegas = \count($Legas);
+                    $Legajo = ($countLegas === 1) ? $Legas[0] : '';
+                    $Legas = (\is_array($Legas)) ? implode(';', $Legas) : '';
+
+                    foreach ($dateSegments as $segment) {
+                        $FechaDesdeSegmento = date('d/m/Y', strtotime($segment['FechaMin']));
+                        $FechaHastaSegmento = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                        if (strtotime($segment['FechaMin']) > time()) {
+                            break;
+                        }
+
+                        if (strtotime($segment['FechaMax']) > time()) {
+                            $FechaHastaSegmento = date('d/m/Y');
+                        }
+
+                        $post_data = "{Usuario=Supervisor, Legajos=[{$Legas}],FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}', TipoDeFichada={$TipoDeFichada}, Laboral={$Laboral}}";
+
+                        if ($countLegas === 1) {
+                            $post_data = "{Usuario=Supervisor, Legajos=[], LegajoDesde='$Legajo',LegajoHasta='$Legajo',FechaDesde='{$FechaDesdeSegmento}',FechaHasta='{$FechaHastaSegmento}', TipoDeFichada={$TipoDeFichada}, Laboral={$Laboral}}";
+                        }
+
+                        curl_setopt($ch, CURLOPT_URL, $ruta);
+                        curl_setopt($ch, CURLOPT_POST, TRUE);
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                        $respuesta = curl_exec($ch);
+                        $curl_errno = curl_errno($ch);
+                        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                        if ($curl_errno > 0) {
+                            throw new \Exception("{$curl_errno} : Error al procesar.", $httpCode);
+                        }
+
+                        if ($httpCode == 404) {
+                            throw new \Exception("{$respuesta} : Error al procesar.", $httpCode);
+                        }
+
+                        $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']);
+                        $text = "Legajos procesados [{$Legas}] - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
+                        $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+                    }
+                }
+            } else {
+                foreach ($dateSegments as $segment) {
+                    $FechaDesdeSegmento = date('d/m/Y', strtotime($segment['FechaMin']));
+                    $FechaHastaSegmento = date('d/m/Y', strtotime($segment['FechaMax']));
+
+                    if (strtotime($segment['FechaMin']) > time()) {
+                        break;
+                    }
+
+                    if (strtotime($segment['FechaMax']) > time()) {
+                        $FechaHastaSegmento = date('d/m/Y');
+                    }
+
+                    $post_data = "{Usuario=Supervisor, Legajos=[], TipoDePersonal={$filtros['TipoDePersonal']}, LegajoDesde=1, LegajoHasta=99999999, FechaDesde={$FechaDesdeSegmento}, FechaHasta={$FechaHastaSegmento}, Empresa={$filtros['Empresa']}, Planta={$filtros['Planta']}, Sucursal={$filtros['Sucursal']}, Grupo={$filtros['Grupo']}, Sector={$filtros['Sector']}, Seccion={$filtros['Seccion']}, TipoDeFichada={$TipoDeFichada}, Laboral={$Laboral}}";
+
+                    // error_log(json_encode($post_data)).exit;
+
+                    curl_setopt($ch, CURLOPT_URL, $ruta);
+                    curl_setopt($ch, CURLOPT_POST, TRUE);
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+                    $respuesta = curl_exec($ch);
+                    $curl_errno = curl_errno($ch);
+                    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                    if ($curl_errno > 0) {
+                        throw new \Exception("{$curl_errno} : Error al procesar.", $httpCode);
+                    }
+
+                    if ($httpCode == 404) {
+                        throw new \Exception("{$respuesta} : Error al procesar.", $httpCode);
+                    }
+
+                    $days = $this->tools->diasEntreFechas($segment['FechaMin'], $segment['FechaMax']) - 1;
+                    $text = "Procesamiento por filtros - {$post_data} - {$FechaDesdeSegmento} a {$FechaHastaSegmento} {$days} días";
+                    $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ' . $text, $this->NameLog);
+                }
+            }
+
+            if (PHP_VERSION_ID >= 80000) {
+                unset($ch);
+            } else {
+                curl_close($ch);
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            $this->log->trace('RRHHWebService::' . __FUNCTION__ . ': ', $this->NameLog, $e);
+            return false;
+        }
     }
 
     /**

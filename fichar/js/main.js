@@ -2,19 +2,27 @@
 $(document).ready(function () {
 
     const homehost = $("#_homehost").val();
-    const LS_LEGAJOS_MARCADOS = LS_PREFIX + 'proc_legajos_marcados';
-    const LS_LEGAJOS_DESMARCADOS = LS_PREFIX + 'proc_legajos_desmarcados';
-    const LS_LEGAJOS_MARCADOS_ALL = LS_PREFIX + 'proc_legajos_marcados_all';
-    const LS_LEGAJOS_TOTAL = LS_PREFIX + 'proc_legajos_total';
-    const LS_WAITING_DT = LS_PREFIX + 'proc_waiting_dt';
-    const LS_TIPO_INGRESO = LS_PREFIX + 'proc_procesar_legajos';
+    const LS_LEGAJOS_MARCADOS = LS_PREFIX + 'fich_legajos_marcados';
+    const LS_LEGAJOS_DESMARCADOS = LS_PREFIX + 'fich_legajos_desmarcados';
+    const LS_LEGAJOS_MARCADOS_ALL = LS_PREFIX + 'fich_legajos_marcados_all';
+    const LS_LEGAJOS_TOTAL = LS_PREFIX + 'fich_legajos_total';
+    const LS_WAITING_DT = LS_PREFIX + 'fich_waiting_dt';
+    const LS_TIPO_INGRESO = LS_PREFIX + 'fich_procesar_legajos';
     const FLAG_LEGAJOS_DATA = new Date().getTime();
     const $TipoIngreso = $('#TipoIngreso');
     const $PROCESAR_POR = $('input[name="procesar_por"]');
     const $MAPPING_LABELS = $('#mappingLabels');
+    const $FichIngresar = $('#FichIngresar');
+    const $FichLaboral = $('#FichLaboral');
 
     ls.set(LS_TIPO_INGRESO, $PROCESAR_POR.filter(':checked').val() === '2');
     $('#Personal-select-all').addClass('check');
+
+    select2Simple('#FichIngresar', 'Seleccione una opción', 0, -1, "100%");
+    select2Simple('#FichLaboral', 'Seleccione una opción', 0, -1, "100%");
+
+    $FichIngresar.val('5').trigger('change');
+    $FichLaboral.val('1').trigger('change');
 
     function initDatePicker(selector) {
         const anioMin = parseFloat($('#anioMin').val());
@@ -557,7 +565,7 @@ $(document).ready(function () {
         $('.check').prop('disabled', show);
     }
 
-    ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+    ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
 
     const legajos_data = async () => {
 
@@ -575,7 +583,7 @@ $(document).ready(function () {
                 Sucur: $(".sel_sucursal").val(),
                 _c: $("#_c").val(),
                 _r: $("#_r").val(),
-                Modulo: "ws_procesar",
+                Modulo: "ws_fichar_horario",
                 NoPag: false,
                 flag: FLAG_LEGAJOS_DATA,
                 marcadosAll: ls.get(LS_LEGAJOS_MARCADOS_ALL),
@@ -596,12 +604,12 @@ $(document).ready(function () {
             notify('Error en la solicitud: ' + error.message, 'danger', 5000, 'right');
         }
     }
-    const ws_procesar = async (payload) => {
+    const ws_fichar_horario = async (payload) => {
 
-        const url = "/" + homehost + "/app-data/ws_procesar";
+        const url = "/" + homehost + "/app-data/ws_fichar_horario";
 
         try {
-            ActiveBTN(true, "#submit", 'Procesando', 'Procesar');
+            ActiveBTN(true, "#submit", 'Ingresando', 'Ingresar');
 
             /**
              * Si el valor del campo $TipoIngreso es igual a 2 (Por Legajos), se realiza una llamada a la función legajos_data() para obtener los datos de legajos. Si la llamada falla, se lanza un error indicando que no se pudieron obtener los datos y se solicita al usuario que intente nuevamente.
@@ -643,12 +651,13 @@ $(document).ready(function () {
             }
 
             limpiarFiltros();
-            ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
-            notify('Proceso enviado correctamente', 'success', 5000, 'right');
+            ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
+            notify('Ingreso enviado correctamente', 'success', 5000, 'right');
             reloadDataTable($('#table'), true);
+
         } catch (error) {
             notify('Error: ' + error.message, 'danger', 5000, 'right');
-            ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+            ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
             reloadDataTable($('#table'), true);
         }
     }
@@ -680,7 +689,7 @@ $(document).ready(function () {
             return obj;
         }, {});
 
-        payload.flag = FLAG_LEGAJOS_DATA
+        payload.flag = FLAG_LEGAJOS_DATA;
 
         // Procesar los datos del formulario
         $(this).serializeArray().forEach(item => {
@@ -702,13 +711,6 @@ $(document).ready(function () {
             // Procesamiento especial para legajos (array)
             if (item.name === 'legajo[]') {
                 payload.Legajos.push(item.value);
-                return;
-            }
-
-            // Conversión de checkboxes a valores binarios
-            if (item.name === 'aFicCate' || item.name === 'aLaboral') {
-                const keyName = map_items_names[item.name];
-                payload[keyName] = item.value === 'on' ? 1 : 0;
                 return;
             }
 
@@ -736,7 +738,7 @@ $(document).ready(function () {
         }
 
         if (payload.procesar_por == "2" || payload.procesar_por == "1") {
-            ws_procesar(payload);
+            ws_fichar_horario(payload);
             return;
         }
         e.stopImmediatePropagation();
@@ -758,7 +760,10 @@ $(document).ready(function () {
         });
 
         $(".sel_seccion").prop("disabled", true);
-        ActiveBTN(false, "#submit", 'Procesando', 'Procesar');
+        ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
+
+        $FichIngresar.val('5').trigger('change');
+        $FichLaboral.val('1').trigger('change');
     }
 
 });

@@ -1871,6 +1871,98 @@ Flight::route('POST /ws_procesar', function () {
 
 });
 
+Flight::route('POST /ws_fichar_horario', function () {
+
+    $request = Flight::request();
+    $payload = $request->data ?? [];
+    $payload['flag'] ??= '';
+    $payload['procesar_por'] ??= '';
+
+    // Verificar si 'flag' está presente y 'TipoIngreso' es igual a '2' (Legajos Marcados)
+    if ($payload['flag'] && $payload['procesar_por'] === '2') {
+        // Construir la ruta del archivo JSON basado en el valor de 'flag'
+        $pathFile = __DIR__ . '/json/' . $payload['flag'] . '_legajos_ws_fichar_horario.json';
+
+        // Verificar si el archivo existe
+        if (file_exists($pathFile)) {
+
+            // Leer el contenido del archivo JSON y decodificarlo en un array
+            $legajosFromFile = json_decode(file_get_contents($pathFile), true);
+
+            // Validar que el contenido del archivo sea un array
+            if (is_array($legajosFromFile)) {
+                $payload['Legajos'] = $legajosFromFile;
+            } else {
+                Flight::json(['status' => 'error', 'message' => 'legajos inválidos'], 400);
+                exit;
+            }
+
+        } else {
+            Flight::json(['status' => 'error', 'message' => 'El archivo de legajos no existe.'], 400);
+            exit;
+        }
+    }
+
+    if ($payload['procesar_por'] === '1') {
+        $requiredFields = ['Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal'];
+
+        // Filtrar los campos que tienen valor
+        $camposConValor = array_filter($requiredFields, fn($field) => !empty($payload[$field]));
+        // Si no hay ningún campo con valor → error
+        if (empty($camposConValor)) {
+            echo json_encode(['status' => 'error', 'MESSAGE' => 'Debe completar al menos una Entidad.']);
+            exit;
+        }
+    }
+
+    $endpoint = URLAPI . "/api/v1/fichar_horario";
+    // error_log(json_encode($payload));
+
+    $ingresar = ch_api($endpoint, $payload, 'POST', []);
+    $arrayData = json_decode($ingresar, true);
+    $result = (($arrayData['RESPONSE_CODE'] ?? '') == '200 OK') ? $arrayData : [];
+
+    if ($result) {
+        $FechaDesde = $payload['FechaDesde'] ?? '';
+        $FechaHasta = $payload['FechaHasta'] ?? '';
+        $Legajos = $payload['Legajos'] ?? [];
+
+        // fomatear las fechas a 'd/m/Y'
+        $FechaDesde = date('d/m/Y', strtotime($FechaDesde));
+        $FechaHasta = date('d/m/Y', strtotime($FechaHasta));
+
+        if ($Legajos) {
+            foreach ($Legajos as $legajo) {
+                $arrayAuditoria[] = [
+                    'AudTipo' => 'P',
+                    'AudDato' => "Fichar Horario Legajo: {$legajo} desde {$FechaDesde} hasta {$FechaHasta}",
+                ];
+            }
+        }
+        
+        if ($payload['procesar_por'] === '1') {
+            // crear un string a partir del payload con su clave valor separado por comas, omitiendo la clave Legajos, FechaDesde y FechaHasta
+            $datos = [];
+            foreach ($payload as $key => $value) {
+                if ($value === null || $value === '')
+                    continue;
+                if (in_array($key, ['Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal'])) {
+                    $datos[] = "{$key}: {$value}";
+                }
+            }
+            $arrayAuditoria[] = [
+                'AudTipo' => 'P',
+                'AudDato' => "Fichar Horario: " . implode(", ", $datos) . ' desde ' . $FechaDesde . ' hasta ' . $FechaHasta,
+            ];
+        }
+
+        auditoria_multiple($arrayAuditoria ?? [], 2);
+    }
+
+    Flight::json($arrayData ?? []);
+
+});
+
 Flight::route('POST /personal/(@recid)', function ($recid = '') {
     $empresasRol = empresasRol();
     $plantasRol = plantasRol();

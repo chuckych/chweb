@@ -56,9 +56,17 @@ $_GET['marcados'] ??= [];
 $_GET['desmarcados'] ??= [];
 
 // error_log("filtros: " . json_encode($filtros));
+$mapModulos = [
+    'ws_novedades' => 'Novedades',
+    'ws_procesar' => 'Procesar',
+    'ws_fichar_horario' => 'Fichar Horario',
+];
 
-if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
+if (array_key_exists($_GET['Modulo'], $mapModulos)) {
+
     try {
+
+        $moduloName = $_GET['Modulo'] ?? 'Modulo_desconocido';
 
         $marcadosAll = filter_var($_GET['marcadosAll'], FILTER_VALIDATE_BOOLEAN);
         $marcados = $_GET['marcados'];
@@ -105,7 +113,7 @@ if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
         $LegajosArray = array_column($Legajos, 'pers_legajo');
 
         // Guardar los legajos en un archivo JSON con el flag en el nombre del archivo
-        $nameFile = $_GET['flag'] . "_legajos_{$_GET['Modulo']}.json";
+        $nameFile = $_GET['flag'] . "_legajos_{$moduloName}.json";
         $path = __DIR__ . "/../app-data/json/" . $nameFile;
 
         if (file_put_contents($path, json_encode($LegajosArray)) === false) {
@@ -128,12 +136,12 @@ if ($_GET['Modulo'] === 'ws_novedades' || $_GET['Modulo'] === 'ws_procesar') {
 
 $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', SECCION.Se2Desc AS 'pers_seccion', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', ( CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END ) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
 
+$sqlTot = "SELECT COUNT(PERSONAL.LegNume) as 'total' FROM PERSONAL WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
+
 if ($_GET['Modulo'] === 'Cierres') {
     $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERCIERRE.CierreFech AS 'FechaCierre' FROM PERSONAL LEFT JOIN PERCIERRE ON PERSONAL.LegNume=PERCIERRE.CierreLega WHERE PERSONAL.LegNume >'0' AND PERSONAL.LegEsta = 0 $estado $filtros $FilterEstruct";
 }
 
-// error_log($sql_query);
-$sqlTot .= $sql_query;
 $sqlRec .= $sql_query;
 
 if (!empty($params['search']['value'])) {
@@ -145,18 +153,14 @@ if (isset($where_condition) && $where_condition != '') {
     $sqlTot .= $where_condition;
     $sqlRec .= $where_condition;
 }
-$param = [];
-$options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
+
 $_GET['NoPag'] ??= '';
 
+$totalRecords = arrMSQueryData($sqlTot)[0]['total'] ?? 0;
+
 $sqlRec .= "ORDER BY PERSONAL.LegFeEg, PERSONAL.LegNume OFFSET " . $params['start'] . " ROWS FETCH NEXT " . $params['length'] . " ROWS ONLY";
-$queryTot = sqlsrv_query($link, $sqlTot, $param, $options);
-$totalRecords = sqlsrv_num_rows($queryTot);
-$queryRecords = sqlsrv_query($link, $sqlRec, $param, $options);
-
-// print_r($sqlRec); exit;
-
-while ($row = sqlsrv_fetch_array($queryRecords)) {
+$queryRecords = arrMSQueryData($sqlRec);
+foreach ($queryRecords as $row) {
 
     $pers_legajo = $row['pers_legajo'];
     $FechaCierre = !empty($row['FechaCierre']) ? $row['FechaCierre']->format('d/m/Y') : $row['FechaCierre'];
@@ -164,6 +168,7 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
     $pers_nombre = empty($row['pers_nombre']) ? 'Sin Nombre' : $row['pers_nombre'];
 
     if ($_GET['Modulo'] == 'Cierres') {
+
     } else {
         $pers_dni = ceronull($row['pers_dni']);
         $pers_estado = ($row['pers_estado'] == 0) ? 'Activo' : 'De Baja';
@@ -178,15 +183,15 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
 
 
     if ($_GET['Modulo'] == 'Cierres') {
-        $data[] = array(
-            'pers_legajo2' => '<label class="fontq align-middle m-0 fw4" style="margin-top:2px" for="' . $pers_legajo . '">' . $pers_legajo . '</label>',
-            'pers_legajo3' => '<input type="number" class="border w85 bg-light border-0 fadeIn" id="_l" value=' . $pers_legajo . '>',
-            'pers_nombre2' => '<label class="fontq align-middle m-0 fw4" style="margin-top:2px" for="' . $pers_legajo . '">' . $pers_nombre . '</label>',
-            'pers_nombre3' => '<span class="fadeIn">' . $pers_nombre . '</span>',
+        $data[] = [
+            'pers_legajo2' => "<label class=\"fontq align-middle m-0 fw4\" style=\"margin-top:2px\" for=\"$pers_legajo\">$pers_legajo</label>",
+            'pers_legajo3' => "<input type=\"number\" class=\"border w85 bg-light border-0 fadeIn\" id=\"_l\" value=$pers_legajo>",
+            'pers_nombre2' => "<label class=\"fontq align-middle m-0 fw4\" style=\"margin-top:2px\" for=\"$pers_legajo\">$pers_nombre</label>",
+            'pers_nombre3' => "<span class=\"fadeIn\">$pers_nombre</span>",
             'FechaCierre' => $FechaCierre,
-            'check' => '<div class="custom-control custom-checkbox"><input type="checkbox" class="custom-control-input check checkLega" name="legajo[]" id="' . $pers_legajo . '" value="' . $pers_legajo . '"><label class="custom-control-label" for="' . $pers_legajo . '"></label></div>',
+            'check' => "<div class=\"custom-control custom-checkbox\"><input type=\"checkbox\" class=\"custom-control-input check checkLega\" name=\"legajo[]\" id=\"$pers_legajo\" value=\"$pers_legajo\"><label class=\"custom-control-label\" for=\"$pers_legajo\"></label></div>",
             'null' => '',
-        );
+        ];
     } else {
         $data[] = [
             'pers_legajo' => $pers_legajo,
@@ -206,14 +211,11 @@ while ($row = sqlsrv_fetch_array($queryRecords)) {
     }
 }
 
-
-sqlsrv_free_stmt($queryRecords);
-sqlsrv_close($link);
-$json_data = array(
+$json_data = [
     "draw" => intval($params['draw']),
     "recordsTotal" => intval($totalRecords),
     "recordsFiltered" => intval($totalRecords),
     "data" => $data
-);
+];
 echo json_encode($json_data);
 exit;

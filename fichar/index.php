@@ -4,8 +4,7 @@ require __DIR__ . '/../config/index.php';
 secure_auth_ch();
 $Modulo = '11';
 ExisteModRol($Modulo);
-existConnMSSQL(); // si no existe conexion a MSSQL redirigimos al inicio
-$bgcolor = 'bg-custom';
+existConnMSSQL(); // si no existe conexión a MSSQL redirigimos al inicio
 define("TIPO_PER", [
     'Todos' => '0',
     'Mensuales' => '1',

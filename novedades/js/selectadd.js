@@ -1027,10 +1027,11 @@ $(document).ready(function () {
             ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
             ActualizaTablas();
             notify('Novedades ingresadas correctamente', 'success', 5000, 'right');
-
+            reloadDataTable($('#GetPers'), true);
         } catch (error) {
             notify('Error: ' + error.message, 'danger', 5000, 'right');
             ActiveBTN(false, "#submit", 'Ingresando', 'Ingresar');
+            reloadDataTable($('#GetPers'), true);
         }
     }
 
