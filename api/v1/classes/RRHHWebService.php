@@ -82,8 +82,9 @@ class RRHHWebService
 
             $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta); // Divide las fechas en segmentos de 31 Dias
 
-            // Dividir legajos en bloques de 50 legajos
-            $LegajosSegment = array_chunk($Legajos, 50); // Dividir el arreglo en bloques de 50 legajos
+            // Dividir legajos en bloques de 20 legajos
+            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $LegajosSegment = array_chunk($Legajos, $lengthChunk); // Dividir el arreglo en bloques de 20 legajos
 
             // $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
 
@@ -211,12 +212,13 @@ class RRHHWebService
                 'Seccion' => $normalizarFiltro($params['Seccion'] ?? null),
                 'TipoDePersonal' => $normalizarFiltro($params['TipoDePersonal'] ?? null),
             ];
-
-            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, 50) : [];
+            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, $lengthChunk) : [];
             $ch = curl_init();
 
             if (!empty($LegajosSegment)) {
                 foreach ($LegajosSegment as $Legas) {
+                    \usleep(100000); // Pausa de 0.1 segundos para evitar saturar el WebService
                     $countLegas = \count($Legas);
                     $Legajo = ($countLegas === 1) ? $Legas[0] : '';
                     $Legas = (\is_array($Legas)) ? implode(';', $Legas) : '';
@@ -377,7 +379,8 @@ class RRHHWebService
                 'TipoDePersonal' => $normalizarFiltro($params['TipoDePersonal'] ?? null),
             ];
 
-            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, 50) : [];
+            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $LegajosSegment = !empty($Legajos) ? array_chunk($Legajos, $lengthChunk) : [];
             $ch = curl_init();
 
             if (!empty($LegajosSegment)) {
@@ -555,8 +558,9 @@ class RRHHWebService
 
             $dateSegments = $this->tools->dividefecha31dias($FechaDesde, $FechaHasta); // Divide las fechas en segmentos de 31 Dias
 
-            // Dividir legajos en bloques de 50 legajos
-            $LegajosSegment = array_chunk($Legajos, 50); // Dividir el arreglo en bloques de 50 legajos
+            // Dividir legajos en bloques de 20 legajos
+            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $LegajosSegment = array_chunk($Legajos, $lengthChunk);
 
             // $Legajos = (is_array($Legajos)) ? implode(';', $Legajos) : '';
 
@@ -646,7 +650,8 @@ class RRHHWebService
                 return false;
             }
 
-            $LegajosSegment = empty($Legajos) ? [[]] : array_chunk($Legajos, 50);
+            $lengthChunk = 20; // Tamaño del chunk para legajos
+            $LegajosSegment = empty($Legajos) ? [[]] : array_chunk($Legajos, $lengthChunk);
 
             $parametrosBase = compact('CodNovedad', 'HorasNovedad', 'Laboral', 'Justifica', 'Observacion', 'Causa', 'Empresa', 'Planta', 'Sector', 'Seccion', 'Grupo', 'Sucursal');
 
