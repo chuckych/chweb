@@ -20,6 +20,6 @@ define("INGRESAR", [
     'Según Horario de Entrada Aproximado' => '2',
     'Según Horario de Salida Aproximada' => '3',
     'Según Horario de Entrada y Salida' => '4',
-    'Según Horario de Entrada y Salida Aprox.' => '5',
+    'Según Horario de Entrada y Salida Aproximado' => '5',
 ]);
 require pagina('fichar.php');

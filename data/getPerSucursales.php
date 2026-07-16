@@ -18,17 +18,19 @@ FusNuloGET("Per", '');
 $Per = !empty(($_GET['Per'])) ? implode(',', $_GET['Per']) : '';
 $Per = !empty(($_GET['Per'])) ? "AND PERSONAL.LegNume IN ($Per)" : '';
 $Tipo = test_input($_GET['Tipo']);
+
 switch ($Tipo) {
     case '2':
-        $Tipo = "AND PERSONAL.LegTipo = '0'";
-        break;
-    case '1':
         $Tipo = "AND PERSONAL.LegTipo = '1'";
         break;
-    default:
+    case '1':
         $Tipo = "AND PERSONAL.LegTipo = '0'";
         break;
+    default:
+        $Tipo = "";
+        break;
 }
+
 $Tipo = empty(($_GET['Tipo'])) ? "" : $Tipo;
 
 $Empresa = datosGet($_GET['Emp'], "PERSONAL.LegEmpr");

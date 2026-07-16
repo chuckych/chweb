@@ -11,6 +11,7 @@ $(document).ready(function () {
     const FLAG_LEGAJOS_DATA = new Date().getTime();
     const $TipoIngreso = $('#TipoIngreso');
     const $PROCESAR_POR = $('input[name="procesar_por"]');
+    const $TIPO_DE_PERSONAL = $('input[name="TipoDePersonal"]');
     const $MAPPING_LABELS = $('#mappingLabels');
     const $FichIngresar = $('#FichIngresar');
     const $FichLaboral = $('#FichLaboral');
@@ -20,6 +21,7 @@ $(document).ready(function () {
 
     select2Simple('#FichIngresar', 'Seleccione una opción', 0, -1, "100%");
     select2Simple('#FichLaboral', 'Seleccione una opción', 0, -1, "100%");
+    select2Simple('.select2Tipo', 'Seleccione una opción', 0, -1, "100%");
 
     $FichIngresar.val('5').trigger('change');
     $FichLaboral.val('1').trigger('change');
@@ -258,6 +260,7 @@ $(document).ready(function () {
             type: "GET",
             "data": function (data) {
                 data.Tipo = $("#aTipo").val();
+                // data.Tipo = $TIPO_DE_PERSONAL.filter(':checked').val();
                 data.Emp = $("#aEmp").val();
                 data.Plan = $("#aPlan").val();
                 data.Sect = $("#aSect").val();
@@ -365,8 +368,6 @@ $(document).ready(function () {
 
     const opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
 
-    SelectSelect2('.select2Tipo', true, "Tipo de Personal", 0, -1, 10, false)
-
     const SELECTORES_SELECT2 = ['.sel_empresa', '.sel_plantas', '.sel_sectores', '.sel_seccion', '.sel_grupos', '.sel_sucursal'];
 
     const LANG_SELECT2 = {
@@ -405,83 +406,56 @@ $(document).ready(function () {
         const OPT = {
             '.sel_empresa': {
                 'placeholder': MAPPING_LABELS.Empresas || 'Empresas',
-                'ajax': 'getPerEmpresas.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerEmpresas.php'
             },
             '.sel_plantas': {
                 'placeholder': MAPPING_LABELS.Plantas || 'Plantas',
-                'ajax': 'getPerPlantas.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerPlantas.php'
             },
             '.sel_sectores': {
                 'placeholder': MAPPING_LABELS.Sectores || 'Sectores',
-                'ajax': 'getPerSectores.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerSectores.php'
             },
             '.sel_seccion': {
                 'placeholder': MAPPING_LABELS.Secciones || 'Secciones',
-                'ajax': 'getPerSecciones.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerSecciones.php'
             },
             '.sel_grupos': {
                 'placeholder': MAPPING_LABELS.Grupos || 'Grupos',
-                'ajax': 'getPerGrupos.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerGrupos.php'
             },
             '.sel_sucursal': {
                 'placeholder': MAPPING_LABELS.Sucursales || 'Sucursal',
-                'ajax': 'getPerSucursales.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val()
-                }
+                'ajax': 'getPerSucursales.php'
             }
         };
+
+        const buildDataAjax = (selector, term = '') => {
+            const COMMON = {
+                q: term,
+                Tipo: $("#aTipo").val(),
+                Emp: $(".sel_empresa").val(),
+                Plan: $(".sel_plantas").val(),
+                Sect: $(".sel_sectores").val(),
+                Sec2: $(".sel_seccion").val(),
+                Grup: $(".sel_grupos").val(),
+                Sucur: $(".sel_sucursal").val(),
+            };
+
+            const EXCLUDE_KEYS = {
+                '.sel_empresa': ['Emp'],
+                '.sel_plantas': ['Plan'],
+                '.sel_sectores': ['Sect'],
+                '.sel_seccion': ['Sec2'],
+                '.sel_grupos': ['Grup'],
+                '.sel_sucursal': ['Sucur']
+            };
+
+            const payload = { ...COMMON };
+            (EXCLUDE_KEYS[selector] || []).forEach((key) => delete payload[key]);
+
+            return payload;
+        }
 
         $(selector).select2({
             multiple: false,
@@ -491,7 +465,7 @@ $(document).ready(function () {
             minimumInputLength: '0',
             minimumResultsForSearch: '5',
             maximumInputLength: '10',
-            selectOnClose: true,
+            selectOnClose: false,
             width: '100%',
             language: LANG_SELECT2,
             ajax: {
@@ -500,8 +474,7 @@ $(document).ready(function () {
                 type: 'GET',
                 delay: '250',
                 data: function (params) {
-                    OPT[selector]['dataAjax']['q'] = params.term;
-                    return OPT[selector]['dataAjax'];
+                    return buildDataAjax(selector, params.term || '');
                 },
                 processResults: function (data) {
                     return {
@@ -558,6 +531,11 @@ $(document).ready(function () {
         const isLegajos = $(this).val() === '2';
         ls.set(LS_TIPO_INGRESO, isLegajos);
         toggleDivTablePers(!isLegajos);
+    });
+    
+    $TIPO_DE_PERSONAL.change(function () {
+        console.log('Tipo de Personal seleccionado:', $(this).val());
+        reloadDataTable($('#table'), true);
     });
 
     const toggleDivTablePers = (show) => {

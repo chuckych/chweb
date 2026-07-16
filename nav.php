@@ -8,7 +8,9 @@
 <input type="hidden" id="_sesion" value="0">
 <?php
 $_GET['nonav'] ??= '';
+$iframe = $_GET['iframe'] ?? false;
 $noNav = ($_GET['nonav'] === '1') ? 'd-none' : '';
+$noNav = ($iframe) ? 'd-none' : '';
 $_SERVER['REQUEST_URI']??= '';
 // ExisteModRol(0)
 if ($_SERVER['SERVER_NAME'] != 'localhost') { // Si no es localhost

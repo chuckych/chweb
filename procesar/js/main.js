@@ -357,7 +357,7 @@ $(document).ready(function () {
 
     const opt2 = { MinLength: "0", SelClose: false, MaxInpLength: "10", delay: "250", allowClear: true };
 
-    SelectSelect2('.select2Tipo', true, "Tipo de Personal", 0, -1, 10, false)
+    select2Simple('.select2Tipo', 'Seleccione una opción', 0, -1, "100%");
 
     const SELECTORES_SELECT2 = ['.sel_empresa', '.sel_plantas', '.sel_sectores', '.sel_seccion', '.sel_grupos', '.sel_sucursal'];
 
@@ -397,83 +397,56 @@ $(document).ready(function () {
         const OPT = {
             '.sel_empresa': {
                 'placeholder': MAPPING_LABELS.Empresas || 'Empresas',
-                'ajax': 'getPerEmpresas.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerEmpresas.php'
             },
             '.sel_plantas': {
                 'placeholder': MAPPING_LABELS.Plantas || 'Plantas',
-                'ajax': 'getPerPlantas.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerPlantas.php'
             },
             '.sel_sectores': {
                 'placeholder': MAPPING_LABELS.Sectores || 'Sectores',
-                'ajax': 'getPerSectores.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerSectores.php'
             },
             '.sel_seccion': {
                 'placeholder': MAPPING_LABELS.Secciones || 'Secciones',
-                'ajax': 'getPerSecciones.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Grup: $(".sel_grupos").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerSecciones.php'
             },
             '.sel_grupos': {
                 'placeholder': MAPPING_LABELS.Grupos || 'Grupos',
-                'ajax': 'getPerGrupos.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Sucur: $(".sel_sucursal").val(),
-                }
+                'ajax': 'getPerGrupos.php'
             },
             '.sel_sucursal': {
                 'placeholder': MAPPING_LABELS.Sucursales || 'Sucursal',
-                'ajax': 'getPerSucursales.php',
-                'dataAjax': {
-                    q: '',
-                    Tipo: $("#aTipo").val(),
-                    Emp: $(".sel_empresa").val(),
-                    Plan: $(".sel_plantas").val(),
-                    Sect: $(".sel_sectores").val(),
-                    Sec2: $(".sel_seccion").val(),
-                    Grup: $(".sel_grupos").val()
-                }
+                'ajax': 'getPerSucursales.php'
             }
         };
+
+        const buildDataAjax = (selector, term = '') => {
+            const COMMON = {
+                q: term,
+                Tipo: $("#aTipo").val(),
+                Emp: $(".sel_empresa").val(),
+                Plan: $(".sel_plantas").val(),
+                Sect: $(".sel_sectores").val(),
+                Sec2: $(".sel_seccion").val(),
+                Grup: $(".sel_grupos").val(),
+                Sucur: $(".sel_sucursal").val(),
+            };
+
+            const EXCLUDE_KEYS = {
+                '.sel_empresa': ['Emp'],
+                '.sel_plantas': ['Plan'],
+                '.sel_sectores': ['Sect'],
+                '.sel_seccion': ['Sec2'],
+                '.sel_grupos': ['Grup'],
+                '.sel_sucursal': ['Sucur']
+            };
+
+            const payload = { ...COMMON };
+            (EXCLUDE_KEYS[selector] || []).forEach((key) => delete payload[key]);
+
+            return payload;
+        }
 
         $(selector).select2({
             multiple: false,
@@ -483,7 +456,7 @@ $(document).ready(function () {
             minimumInputLength: '0',
             minimumResultsForSearch: '5',
             maximumInputLength: '10',
-            selectOnClose: true,
+            selectOnClose: false,
             width: '100%',
             language: LANG_SELECT2,
             ajax: {
@@ -492,8 +465,7 @@ $(document).ready(function () {
                 type: 'GET',
                 delay: '250',
                 data: function (params) {
-                    OPT[selector]['dataAjax']['q'] = params.term;
-                    return OPT[selector]['dataAjax'];
+                    return buildDataAjax(selector, params.term || '');
                 },
                 processResults: function (data) {
                     return {

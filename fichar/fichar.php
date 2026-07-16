@@ -13,6 +13,7 @@ $mappingLabels = [
     'Grupos' => $labelGrup,
     'Sucursales' => $labelSucu,
 ];
+$iframe = $_GET['iframe'] ?? false;
 ?>
 <!doctype html>
 <html lang="es">
@@ -27,13 +28,13 @@ $mappingLabels = [
 
 <body class="fadeIn">
     <!-- inicio container -->
-    <div class="container shadow pb-2">
+    <div class="container shadow py-2">
         <?php require __DIR__ . '/../nav.php';
-        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#e3e3e3" viewBox="0 -960 960 960"><path d="M481-781q106 0 200 45.5T838-604q7 9 4.5 16t-8.5 12-14 4.5-14-8.5q-55-78-141.5-119.5T481-741t-182 41.5T158-580q-6 9-14 10t-14-4q-7-5-8.5-12.5T126-602q62-85 155.5-132T481-781m0 94q135 0 232 90t97 223q0 50-35.5 83.5T688-257t-87.5-33.5T564-374q0-33-24.5-55.5T481-452t-58.5 22.5T398-374q0 97 57.5 162T604-121q9 3 12 10t1 15q-2 7-8 12t-15 3q-104-26-170-103.5T358-374q0-50 36-84t87-34 87 34 36 84q0 33 25 55.5t59 22.5 58-22.5 24-55.5q0-116-85-195t-203-79-203 79-85 194q0 24 4.5 60t21.5 84q3 9-.5 16T208-205t-15.5-.5T182-217q-15-39-21.5-77.5T154-374q0-133 96.5-223T481-687m0-192q64 0 125 15.5T724-819q9 5 10.5 12t-1.5 14-10 11-17-1q-53-27-109.5-41.5T481-839q-58 0-114 13.5T260-783q-8 5-16 2.5T232-791t-2-14.5 10-11.5q56-30 117-46t124-16m0 289q93 0 160 62.5T708-374q0 9-5.5 14.5T688-354q-8 0-14-5.5t-6-14.5q0-75-55.5-125.5T481-550t-130.5 50.5T296-374q0 81 28 137.5T406-123q6 6 6 14t-6 14-14 6-14-6q-59-62-90.5-126.5T256-374q0-91 66-153.5T481-590m-1 196q9 0 14.5 6t5.5 14q0 75 54 123t126 48q6 0 17-1t23-3q9-2 15.5 2.5T744-191q2 8-3 14t-13 8q-18 5-31.5 5.5t-16.5.5q-89 0-154.5-60T460-374q0-8 5.5-14t14.5-6"/></svg>';
-        $titulo = "<span style='margin-top:3px'>" . MODULOS['fichar'] . "</span>";
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="#e3e3e3" viewBox="0 -960 960 960"><path d="M481-781q106 0 200 45.5T838-604q7 9 4.5 16t-8.5 12-14 4.5-14-8.5q-55-78-141.5-119.5T481-741t-182 41.5T158-580q-6 9-14 10t-14-4q-7-5-8.5-12.5T126-602q62-85 155.5-132T481-781m0 94q135 0 232 90t97 223q0 50-35.5 83.5T688-257t-87.5-33.5T564-374q0-33-24.5-55.5T481-452t-58.5 22.5T398-374q0 97 57.5 162T604-121q9 3 12 10t1 15q-2 7-8 12t-15 3q-104-26-170-103.5T358-374q0-50 36-84t87-34 87 34 36 84q0 33 25 55.5t59 22.5 58-22.5 24-55.5q0-116-85-195t-203-79-203 79-85 194q0 24 4.5 60t21.5 84q3 9-.5 16T208-205t-15.5-.5T182-217q-15-39-21.5-77.5T154-374q0-133 96.5-223T481-687m0-192q64 0 125 15.5T724-819q9 5 10.5 12t-1.5 14-10 11-17-1q-53-27-109.5-41.5T481-839q-58 0-114 13.5T260-783q-8 5-16 2.5T232-791t-2-14.5 10-11.5q56-30 117-46t124-16m0 289q93 0 160 62.5T708-374q0 9-5.5 14.5T688-354q-8 0-14-5.5t-6-14.5q0-75-55.5-125.5T481-550t-130.5 50.5T296-374q0 81 28 137.5T406-123q6 6 6 14t-6 14-14 6-14-6q-59-62-90.5-126.5T256-374q0-91 66-153.5T481-590m-1 196q9 0 14.5 6t5.5 14q0 75 54 123t126 48q6 0 17-1t23-3q9-2 15.5 2.5T744-191q2 8-3 14t-13 8q-18 5-31.5 5.5t-16.5.5q-89 0-154.5-60T460-374q0-8 5.5-14t14.5-6"/></svg>';
+        $titulo = "<span style='margin-top:1px'>" . MODULOS['fichar'] . "</span>";
         ?>
         <!-- Encabezado -->
-        <?php encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
+        <?php $iframe ? '' : encabezado_mod_svgIcon('bg-custom', 'white', $svg, $titulo, ''); ?>
         <?php
         $FechaMinMax = (fecha_min_max('FICHAS', 'FICHAS.FicFech'));
         $FechaMinMax2 = (fecha_min_max2('FICHAS', 'FICHAS.FicFech'));
@@ -59,7 +60,7 @@ $mappingLabels = [
             <div class="mt-3 px-2">
                 <div class="row">
                     <div class="col-12 col-sm-6">
-                        <div class="row">
+                        <div class="form-row">
                             <div class="col-12">
                                 <div class="d-inline-flex justify-content-between w-100">
                                     <div>
@@ -93,21 +94,9 @@ $mappingLabels = [
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 d-none">
-                                <div class="d-inline-flex mt-1 w-100">
-                                    <!-- Tipo personal -->
-                                    <div style="width:30%;" class="">
-                                        <select class="select2Tipo form-control" id="aTipo" name="aTipo">
-                                            <?php
-                                            foreach (TIPO_PER as $key => $value) {
-                                                echo "<option value=\"$value\">$key</option>";
-                                            }
-                                            ?>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-12 my-2">
+                        </div>
+                        <div class="form-row">
+                            <div class="col-12 mt-2">
                                 <div class="d-inline-flex mt-1 w-100">
                                     <!-- Rango de Fecha -->
                                     <div style="width:100%;">
@@ -116,65 +105,73 @@ $mappingLabels = [
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12">
+                        </div>
+                        <div class="form-row">
+                            <div class="col-12 col-sm-6 mt-2">
                                 <div class="d-inline-flex mt-1 w-100">
-                                    <!-- Empresa -->
-                                    <div style="width:50%;">
-                                        <select class="form-control sel_empresa w200" id="aEmp" name="aEmp">
-                                        </select>
-                                    </div>
-                                    <!-- PLanta -->
-                                    <div class="ml-1" style="width:50%;">
-                                        <select class="form-control sel_plantas w200" id="aPlan" name="aPlan">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="d-inline-flex mt-1 w-100">
-                                    <!-- Sector -->
-                                    <div style="width:50%;">
-                                        <select class="form-control sel_sectores w200" id="aSect" name="aSect">
-                                        </select>
-                                    </div>
-                                    <!-- Seccion -->
-                                    <div class="ml-1" id="select_seccion" style="width:50%;">
-                                        <select class="form-control sel_seccion w200" id="aSec2" name="aSec2">
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="d-inline-flex mt-1 w-100">
-                                    <!-- Grupo -->
-                                    <div style="width:50%;">
-                                        <select class="form-control sel_grupos w200" id="aGrup" name="aGrup">
-                                        </select>
-                                    </div>
-                                    <!-- Sucursal -->
-                                    <div class="ml-1" style="width:50%;">
-                                        <select class="form-control sel_sucursal w200" id="aSucur" name="aSucur">
-                                        </select>
-                                    </div>
+                                    <!-- Tipo personal -->
+                                    <select class="select2Tipo form-control" id="aTipo" name="aTipo2"
+                                        style="width:100%;">
+                                        <?php
+                                        foreach (TIPO_PER as $key => $value) {
+                                            echo "<option value=\"$value\">$key</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
-                            <div class="col-12 mt-3">
-                                <div class="form-inline mt-2">
-                                    <label for="FichIngresar" class="pb-1">Ingresar</label>
-                                    <select class="form-control" id="FichIngresar" name="TipoDeFichada">
-                                        <?php
-                                        foreach (INGRESAR as $key => $value) {
-                                            echo "<option value=\"$value\">$key</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="form-inline mt-2">
-                                    <label for="FichLaboral" class="pb-1">Laboral</label>
-                                    <select class="form-control" id="FichLaboral" name="Laboral">
-                                        <?php
-                                        foreach (LABORAL as $key => $value) {
-                                            echo "<option value=\"$value\">$key</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                            <div class="col-auto"></div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Empresa -->
+                                <select class="form-control sel_empresa" id="aEmp" name="aEmp">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- PLanta -->
+                                <select class="form-control sel_plantas" id="aPlan" name="aPlan">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Sector -->
+                                <select class="form-control sel_sectores w200" id="aSect" name="aSect">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Seccion -->
+                                <select class="form-control sel_seccion w200" id="aSec2" name="aSec2">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Grupo -->
+                                <select class="form-control sel_grupos w200" id="aGrup" name="aGrup">
+                                </select>
+                            </div>
+                            <div class="col-12 col-sm-6 mt-2">
+                                <!-- Sucursal -->
+                                <select class="form-control sel_sucursal w200" id="aSucur" name="aSucur">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 mt-2">
+                                <label for="FichIngresar" class="">Ingresar</label>
+                                <select class="form-control" id="FichIngresar" name="TipoDeFichada">
+                                    <?php
+                                    foreach (INGRESAR as $key => $value) {
+                                        echo "<option value=\"$value\">$key</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <label for="FichLaboral" class="">Laboral</label>
+                                <select class="form-control" id="FichLaboral" name="Laboral">
+                                    <?php
+                                    foreach (LABORAL as $key => $value) {
+                                        echo "<option value=\"$value\">$key</option>";
+                                    }
+                                    ?>
+                                </select>
                             </div>
                             <div class="col-12 mt-3 d-flex justify-content-end">
                                 <button type="submit" class="ml-1 btn bg-custom text-white font08 w100"
