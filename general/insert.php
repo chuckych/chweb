@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . '/../config/session_start.php';
+if (session_status() == PHP_SESSION_NONE) {
+    require __DIR__ . '/../config/session_start.php';
+}
 require __DIR__ . '/../config/index.php';
 ini_set('max_execution_time', 900); //900 seconds = 15 minutes
 header("Content-Type: application/json");
@@ -8,6 +10,18 @@ timeZone();
 timeZone_lang();
 secure_auth_ch_json();
 E_ALL();
+
+function procesarValor(string $valor)
+{
+    $valor = explode('.', $valor);
+    if (count($valor) > 1) {
+        $decimal = array_pop($valor);
+        $valor = implode('', $valor) . '.' . $decimal;
+    } else {
+        $valor = implode('', $valor);
+    }
+    return $valor;
+}
 
 $params = [];
 $options = ["Scrollable" => SQLSRV_CURSOR_KEYSET];
@@ -1026,135 +1040,131 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_horas'] == 'mod')) {
 /** ALTA OTRAS NOVEDAD */
 if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'true')) {
 
-    if ($_SESSION["ABM_ROL"]['aONov'] == '0') {
-        $data = ['status' => 'error', 'Mensaje' => 'No tiene permiso para agregar Otras Novedades.'];
-        echo json_encode($data);
-        exit;
-    }
-    ;
-
-    $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
-    $FicUsua = strtoupper(substr($FicUsua, 0, 10));
-
-    $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
-    $systemVersion = intval($systemVersion[1]) ?? '';
-
-    if (isset($_POST['FicONovFechas']) && !empty($_POST['FicONovFechas'])) {
-        $DateRange = explode(' al ', $_POST['FicONovFechas']);
-        $FechaIni = test_input(dr_fecha($DateRange[0]));
-        $FechaFin = test_input(dr_fecha($DateRange[1]));
-    }
-
-    $FechaIni_F = FechaFormatVar($FechaIni, 'Y-m-d');
-    $FechaFin_F = FechaFormatVar($FechaFin, 'Y-m-d');
-
-    $arrayFechas = (createDateRangeArray($FechaIni_F, $FechaFin_F));
-
-    if (!$arrayFechas) {
-        $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>Fechas</strong> son requeridos!'];
-        echo json_encode($data);
-        exit;
-    }
-
-    $_POST['FicONov'] = $_POST['FicONov'] ?? '';
-    $_POST['FicValor'] = $_POST['FicValor'] ?? '';
-    $_POST['FicObsN'] = $_POST['FicObsN'] ?? '';
-    $_POST['datos_OtrasNov'] = $_POST['datos_OtrasNov'] ?? '';
-
-    if ((valida_campo($_POST['FicONov'])) || (valida_campo($_POST['FicValor']))) {
-        $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>Novedad y Valor</strong> son requeridos!'];
-        echo json_encode($data);
-        exit;
-    }
-    ;
-    if (valida_campo($_POST['datos_OtrasNov'])) {
-        $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!'];
-        echo json_encode($data);
-        exit;
-    }
-    ;
-    $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
-
-    $FicLega = test_input($datos_OtrasNov[0]);
-    $FicFech = test_input($datos_OtrasNov[1]);
-
-    $FicONov = test_input($_POST['FicONov']);
-    $FicValor = test_input($_POST['FicValor']);
-    $FicObsN = test_input($_POST['FicObsN']);
-
-    // if (PerCierre($FicFech, $FicLega)) {
-    //     $data = array('status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y')));
-    //     echo json_encode($data);
-    //     exit;
-    // }
-
-    // $ExisteRegistro = CountRegistrosMayorCero("SELECT * FROM FICHAS2 WHERE FicFech = '$FicFech' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
-
-    // if ($ExisteRegistro) {
-    //     $data = array('status' => 'Error', 'Mensaje' => 'Error. Ya existe el registro');
-    //     echo json_encode($data);
-    //     exit;
-    // }
-    require __DIR__ . '/../config/conect_mssql.php';
-
-    $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
-    $result = sqlsrv_query($link, $query, $params, $options);
-    while ($row = sqlsrv_fetch_array($result)) {
-        $ONovDesc = $row['ONovDesc'];
-        $ONovCodi = $row['ONovCodi'];
-    }
-    sqlsrv_free_stmt($result);
-    sqlsrv_close($link);
-    // $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
-    // $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc;
-
-    $arrayRegistrosInsertados = [];
-
-    foreach ($arrayFechas as $key => $fecha) {
-        $fecha = FechaFormatVar($fecha, 'Ymd');
-
-        if (PerCierre($fecha, $FicLega)) {
-            $data = ['status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . FechaFormatVar($FicFech, ('d/m/Y'))];
+    try {
+        if ($_SESSION["ABM_ROL"]['aONov'] == '0') {
+            $data = ['status' => 'error', 'Mensaje' => 'No tiene permiso para agregar Otras Novedades.'];
             echo json_encode($data);
             exit;
         }
 
-        $ExisteRegistro = CountRegistrosMayorCero("SELECT * FROM FICHAS2 WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+        $FicUsua = $_SESSION['NOMBRE_SESION'] ?? '';
+        $FicUsua = strtoupper(substr($FicUsua, 0, 10));
 
-        if (!$ExisteRegistro) {
+        $systemVersion = explode('_', $_SESSION['VER_DB_CH']);
+        $systemVersion = intval($systemVersion[1]) ?? '';
 
-            $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
-            $valuesFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
-            $insert = InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora $columnFicUsua) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora' $valuesFicUsua)");
-            if (!$insert) {
-                $data = ['status' => 'Error', 'Mensaje' => $Dato];
-                echo json_encode($data);
-                exit;
-            }
-            $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
-            $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (A)';
-            audito_ch('A', $Dato, '4');
-            $arrayRegistrosInsertados[] = $Dato2;
-        } else {
-            $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
-            $update = UpdateRegistro("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
-
-            if (!$update) {
-                $data = ['status' => 'Error', 'Mensaje' => $Dato];
-                echo json_encode($data);
-                sqlsrv_close($link);
-                exit;
-            }
-
-            $Dato = 'Modificación Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
-            $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (M)';
-            audito_ch('M', $Dato, '4');
-            $arrayRegistrosInsertados[] = $Dato2;
+        if (isset($_POST['FicONovFechas']) && !empty($_POST['FicONovFechas'])) {
+            $DateRange = explode(' al ', $_POST['FicONovFechas']);
+            $FechaIni = test_input(dr_fecha($DateRange[0]));
+            $FechaFin = test_input(dr_fecha($DateRange[1]));
         }
+
+        $FechaIni_F = FechaFormatVar(($FechaIni ?? ''), 'Y-m-d');
+        $FechaFin_F = FechaFormatVar(($FechaFin ?? ''), 'Y-m-d');
+
+        $arrayFechas = (createDateRangeArray($FechaIni_F, $FechaFin_F));
+
+        if (!$arrayFechas) {
+            $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>Fechas</strong> son requeridos!'];
+            echo json_encode($data);
+            exit;
+        }
+
+        $_POST['FicONov'] ??= '';
+        $_POST['FicValor'] ??= '';
+        $_POST['FicObsN'] ??= '';
+        $_POST['datos_OtrasNov'] ??= '';
+
+        if ((valida_campo($_POST['FicONov'])) || (valida_campo($_POST['FicValor']))) {
+            $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>Novedad y Valor</strong> son requeridos!'];
+            echo json_encode($data);
+            exit;
+        }
+
+        if (valida_campo($_POST['datos_OtrasNov'])) {
+            $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!'];
+            echo json_encode($data);
+            exit;
+        }
+
+        $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
+
+        $FicLega = test_input($datos_OtrasNov[0]);
+        $FicFech = test_input($datos_OtrasNov[1]);
+
+        $FicONov = test_input($_POST['FicONov']);
+        $FicValor = test_input($_POST['FicValor']);
+        $FicObsN = test_input($_POST['FicObsN']);
+
+        $FicValor = procesarValor($FicValor);
+
+        require __DIR__ . '/../config/conect_mssql.php';
+
+        $query = "SELECT TOP 1 OTRASNOV.ONovCodi, OTRASNOV.ONovDesc FROM OTRASNOV WHERE OTRASNOV.ONovCodi > 0 AND OTRASNOV.ONovCodi = '$FicONov'";
+
+        $result = sqlsrv_query($link, $query, $params, $options);
+        while ($row = sqlsrv_fetch_array($result)) {
+            $ONovDesc = $row['ONovDesc'];
+            $ONovCodi = $row['ONovCodi'];
+        }
+        sqlsrv_free_stmt($result);
+        sqlsrv_close($link);
+
+        // $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . Fech_Format_Var($FicFech, 'd/m/Y');
+        // $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc;
+
+        $arrayRegistrosInsertados = [];
+
+        foreach ($arrayFechas as $key => $fecha) {
+            $fecha = FechaFormatVar($fecha, 'Ymd');
+
+            if (PerCierre($fecha, $FicLega)) {
+                $data = ['status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . FechaFormatVar($FicFech, ('d/m/Y'))];
+                echo json_encode($data);
+                exit;
+            }
+
+            $ExisteRegistro = CountRegistrosMayorCero("SELECT * FROM FICHAS2 WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+
+            if (!$ExisteRegistro) {
+
+                $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua" : '';
+                $valuesFicUsua = ($systemVersion >= 70) ? ", '$FicUsua'" : '';
+                $insert = InsertRegistro("INSERT INTO FICHAS2 (FicLega,FicFech,FicTurn,FicONov,FicValor,FicObsN,FechaHora $columnFicUsua) VALUES ('$FicLega','$fecha',1,'$FicONov', '$FicValor','$FicObsN','$FechaHora' $valuesFicUsua)");
+                if (!$insert) {
+                    $data = ['status' => 'Error', 'Mensaje' => $Dato ?? ''];
+                    echo json_encode($data);
+                    exit;
+                }
+                $Dato = 'Alta Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
+                $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (A)';
+                audito_ch('A', $Dato, '4');
+                $arrayRegistrosInsertados[] = $Dato2;
+            } else {
+                $columnFicUsua = ($systemVersion >= 70) ? ", FicUsua='$FicUsua'" : '';
+                $update = UpdateRegistro("UPDATE FICHAS2 SET FicValor = '$FicValor', FicObsN = '$FicObsN', FechaHora = '$FechaHora' $columnFicUsua WHERE FicFech = '$fecha' AND FicLega = '$FicLega' AND FicTurn = 1 AND FicONov = '$FicONov'");
+
+                if (!$update) {
+                    $data = ['status' => 'Error', 'Mensaje' => $Dato];
+                    echo json_encode($data);
+                    sqlsrv_close($link);
+                    exit;
+                }
+
+                $Dato = 'Modificación Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' de Legajo: ' . $FicLega . ' Fecha: ' . FechaFormatVar($fecha, 'd/m/Y');
+                $Dato2 = 'Otra Novedad: (' . $ONovCodi . ') ' . $ONovDesc . ' ' . FechaFormatVar($fecha, 'd/m/Y') . ' (M)';
+                audito_ch('M', $Dato, '4');
+                $arrayRegistrosInsertados[] = $Dato2;
+            }
+        }
+        $data = ['status' => 'ok', 'Mensaje' => $arrayRegistrosInsertados, 'tipo' => ''];
+        echo json_encode($data);
+        exit;
+    } catch (Exception $e) {
+        $data = ['status' => 'Error', 'Mensaje' => 'Ocurrió un error al procesar la solicitud: ' . $e->getMessage()];
+        echo json_encode($data);
+        exit;
     }
-    $data = ['status' => 'ok', 'Mensaje' => $arrayRegistrosInsertados, 'tipo' => ''];
-    echo json_encode($data);
-    exit;
 
 
     /** Luego insertamos  */
@@ -1242,13 +1252,13 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
         echo json_encode($data);
         exit;
     }
-    ;
+    
     if (valida_campo($_POST['datos_OtrasNov'])) {
         $data = ['status' => 'error', 'Mensaje' => 'Campo <strong>datos_OtrasNov</strong> requerido!'];
         echo json_encode($data);
         exit;
     }
-    ;
+    
     $datos_OtrasNov = explode('-', $_POST['datos_OtrasNov']);
 
     $FicLega = test_input($datos_OtrasNov[0]);
@@ -1257,6 +1267,8 @@ if (($_SERVER["REQUEST_METHOD"] == "POST") && ($_POST['alta_OtrasNov'] == 'mod')
     $FicONov = test_input($_POST['FicONov']);
     $FicValor = test_input($_POST['FicValor']);
     $FicObsN = test_input($_POST['FicObsN']);
+
+    $FicValor = procesarValor($FicValor);
 
     if (PerCierre($FicFech, $FicLega)) {
         $data = ['status' => 'error', 'Mensaje' => 'Fecha de Cierre es Menor o Igual a: ' . Fech_Format_Var($FicFech, ('d/m/Y'))];
