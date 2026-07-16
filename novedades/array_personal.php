@@ -25,8 +25,18 @@ FusNuloGET("Modulo", '');
 
 $Per = !empty(($_GET['Per'])) ? implode(',', $_GET['Per']) : '';
 
-$Tipo = ($_GET['Tipo'] == '2') ? "AND PERSONAL.LegTipo = '0'" : "AND PERSONAL.LegTipo = '$_GET[Tipo]'";
-$Tipo = empty(($_GET['Tipo'])) ? "" : $Tipo;
+$Tipo = test_input($_GET['Tipo'] ?? '');
+switch ($Tipo) {
+    case '2':
+        $Tipo = "AND PERSONAL.LegTipo = '1'";
+        break;
+    case '1':
+        $Tipo = "AND PERSONAL.LegTipo = '0'";
+        break;
+    default:
+        $Tipo = "";
+        break;
+}
 
 $Per = !empty(($_GET['Per'])) ? "AND PERSONAL.LegNume IN ($Per)" : '';
 
@@ -135,6 +145,7 @@ if (array_key_exists($_GET['Modulo'], $mapModulos)) {
 
 
 $sql_query = "SELECT PERSONAL.LegNume AS 'pers_legajo', PERSONAL.LegApNo AS 'pers_nombre', PERSONAL.LegDocu AS 'pers_dni', PERSONAL.LegSect AS 'pers_LegSect', EMPRESAS.EmpRazon AS 'pers_empresa', PLANTAS.PlaDesc AS 'pers_planta', CONVENIO.ConDesc AS 'pers_convenio', SECTORES.SecDesc AS 'pers_sector', SECCION.Se2Desc AS 'pers_seccion', GRUPOS.GruDesc AS 'pers_grupo', SUCURSALES.SucDesc AS 'pers_sucur', PERSONAL.LegMail AS 'pers_mail', PERSONAL.LegDomi AS 'pers_domic', PERSONAL.LegDoNu AS 'pers_numero', PERSONAL.LegDoOb AS 'pers_observ', PERSONAL.LegDoPi AS 'pers_piso', PERSONAL.LegDoDP AS 'pers_depto', LOCALIDA.LocDesc AS 'pers_localidad', PERSONAL.LegCOPO AS 'pers_cp', PROVINCI.ProDesc AS 'pers_prov', NACIONES.NacDesc AS 'pers_nacion', ( CASE PERSONAL.LegFeEg WHEN '17530101' THEN '0' ELSE '1' END ) AS pers_estado FROM PERSONAL INNER JOIN PLANTAS ON PERSONAL.LegPlan=PLANTAS.PlaCodi INNER JOIN SECTORES ON PERSONAL.LegSect=SECTORES.SecCodi INNER JOIN SECCION ON PERSONAL.LegSec2=SECCION.Se2Codi AND SECTORES.SecCodi=SECCION.SecCodi INNER JOIN EMPRESAS ON PERSONAL.LegEmpr=EMPRESAS.EmpCodi INNER JOIN CONVENIO ON PERSONAL.LegConv=CONVENIO.ConCodi INNER JOIN GRUPOS ON PERSONAL.LegGrup=GRUPOS.GruCodi INNER JOIN SUCURSALES ON PERSONAL.LegSucu=SUCURSALES.SucCodi INNER JOIN PROVINCI ON PERSONAL.LegProv=PROVINCI.ProCodi INNER JOIN LOCALIDA ON PERSONAL.LegLoca=LOCALIDA.LocCodi INNER JOIN NACIONES ON PERSONAL.LegNaci=NACIONES.NacCodi WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
+error_log("SQL Query: " . $sql_query);
 
 $sqlTot = "SELECT COUNT(PERSONAL.LegNume) as 'total' FROM PERSONAL WHERE PERSONAL.LegNume >'0' $estado $filtros $FilterEstruct";
 

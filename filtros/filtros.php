@@ -16,7 +16,6 @@ function filtrar_estruc($get, $col)
     $Nombre_Filtro = ($cond ? $valores = implode(",", $get) : $cond) ? "AND PERSONAL.$col IN ($valores)" : '';
     return $Nombre_Filtro;
 }
-;
 
 function Filtro_Personal($get_per)
 {
@@ -38,8 +37,7 @@ function Filtro_Personal($get_per)
     sqlsrv_close($link);
     return 'AND PERSONAL.LegNume IN(' . ($valores) . ')';
 }
-// FusNuloGET("_r",'');
-// $data_emp      = (estructura_rol('GetEstructRol', $_GET['_r'], 'empresas', 'empresa'));
+
 $_SESSION['EmprRol'] = $_SESSION['EmprRol'] ?? '';
 $_SESSION['PlanRol'] = $_SESSION['PlanRol'] ?? '';
 $_SESSION['ConvRol'] = $_SESSION['ConvRol'] ?? '';

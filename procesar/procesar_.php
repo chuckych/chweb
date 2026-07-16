@@ -109,7 +109,7 @@ $mappingLabels = [
                             <div class="col-12 col-sm-6 mt-2">
                                 <div class="d-inline-flex mt-1 w-100">
                                     <!-- Tipo personal -->
-                                    <select class="select2Tipo form-control" id="aTipo" name="aTipo2"
+                                    <select class="select2Tipo form-control" id="aTipo" name="TipoDePersonal"
                                         style="width:100%;">
                                         <?php
                                         foreach (TIPO_PER as $key => $value) {
