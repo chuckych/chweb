@@ -652,11 +652,95 @@ const tableNoveEdit = async (data) => {
         const siFichaCerrada = (Ficha.Cierre.Estado != 'abierto') ? '(Periodo ' + Ficha.Cierre.Estado + ')' : '';
         $('.modal-title').html('Editar Novedades ' + siFichaCerrada ?? '') // Cambia el título del modal
 
+        if (siFichaCerrada) {
+            // console.log('Ficha cerrada, inhabilitando formulario');
+            // setTimeout(() => {
+            //     $('#modal .modal-body').addClass('loader-in');
+            // }, 500);
+        }
+
         if ($.fn.DataTable.isDataTable('#tableNovEdit')) {
             $('#tableNovEdit').DataTable().destroy();
         }
 
         const dt = $('#tableNovEdit').DataTable({
+            "initComplete": function (settings, json) {
+
+                fadeInOnly('#tableNovEdit');
+
+                const tableInfo = tableInfoFicha(); // Crea la tabla de informacion de la ficha
+
+                $("#modal .divFichadas").html('');
+                $("#modal .divFichadas").html(tableInfo);
+
+                let idTableBody = '#tableNovEdit tbody tr';
+
+                setTimeout(() => {
+                    let tr = document.querySelector(idTableBody); // Obtiene el primer tr
+                    if (tr && !tr.classList.contains('selected')) {
+                        $(tr).trigger('click'); // Dispara el evento click del primer tr
+                    }
+                }, 0);
+
+                $(idTableBody).on('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    $('#modal  #rowForm').addClass('loader-in');
+
+                    if (e.target.closest('tr').tagName) {
+                        let data = dt.row(e.target.closest('tr')).data();
+                        if (!data) return;
+
+                        if (e.target.tagName == 'DELETE') {
+                            deleteNovedad(data);
+                            return;
+                        }
+
+                        let checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
+                        let classList = e.currentTarget.classList; // Obtiene la lista de clases del tr
+
+                        if (classList.contains('selected')) { // Si el tr esta seleccionado
+                            classList.remove('selected'); // Quita la clase selected
+                            // $('#modal #rowForm').hide(); // Oculta el formulario
+                            disabledForm(true);
+                            $('#modal  #rowForm').addClass('loader-in');
+                            $('#modal #btnGuardar ').off('click')
+                            checkbox.checked = false; // Desmarca el checkbox
+                        }
+                        else { // Si el tr no esta seleccionado
+                            dt.rows('.selected').nodes().each((row) => row.classList.remove('selected')); // Quita la clase selected de todos los tr
+                            // desmarcar todos los checkbox
+                            dt.rows().nodes().each((row) => row.querySelector('input[type="checkbox"]').checked = false);
+                            classList.add('selected'); // Agrega la clase selected al tr
+                            $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
+                            checkbox.checked = true; // Marca el checkbox
+                            formNovedad(data).then((rs) => {
+                                console.log('formNovedad', rs);
+                                if (rs) {
+
+                                    $('#modal  #rowForm').removeClass('loader-in');
+                                    $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
+
+                                    $('#modal #btnGuardar').prop('disabled', false);
+                                    $('#modal #btnGuardar').removeClass('btnAgregar')
+                                    $('#modal #btnGuardar').addClass('btnGuardar')
+
+                                    $('#modal #btnGuardar').removeClass('btn-success')
+                                    $('#modal #btnGuardar').addClass('btn-custom')
+                                    $('#modal #btnGuardar').html('Aplicar')
+
+                                    if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha esta cerrada
+                                        disabledForm(true); // inhabilita el formulario
+                                        $('#modal #btnGuardar ').off('click') // Quita el evento click del boton guardar
+                                    }
+                                }
+                                $("#modal .modal-body").removeClass('loader-in');
+                            });
+                        }
+                    }
+                })
+            },
             dom: `
                 <'row '
                     <'col-12 divFichadas'>
@@ -754,88 +838,7 @@ const tableNoveEdit = async (data) => {
             ordering: false,
             language: DT_SPANISH_2
         });
-
-        dt.on('init.dt', function (e, settings) {
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            fadeInOnly('#tableNovEdit');
-
-            const tableInfo = tableInfoFicha(); // Crea la tabla de información de la ficha
-
-            $("#modal .divFichadas").html('');
-            $("#modal .divFichadas").html(tableInfo);
-
-            let idTableBody = '#tableNovEdit tbody tr';
-
-            setTimeout(() => {
-                let tr = document.querySelector(idTableBody); // Obtiene el primer tr
-                if (!tr.classList.contains('selected')) {
-                    $(tr).trigger('click'); // Dispara el evento click del primer tr
-                }
-            }, 0);
-
-            $(idTableBody).on('click', (e) => {
-
-                e.preventDefault();
-                e.stopPropagation();
-
-                $('#modal  #rowForm').addClass('loader-in');
-
-                if (e.target.closest('tr').tagName) {
-
-                    let data = dt.row(e.target.closest('tr')).data();
-                    if (!data) return;
-
-                    if (e.target.tagName == 'DELETE') {
-                        deleteNovedad(data);
-                        return;
-                    }
-
-                    let checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
-                    let classList = e.currentTarget.classList; // Obtiene la lista de clases del tr
-
-                    if (classList.contains('selected')) { // Si el tr está seleccionado
-                        classList.remove('selected'); // Quita la clase selected
-                        // $('#modal #rowForm').hide(); // Oculta el formulario
-                        disabledForm(true);
-                        $('#modal  #rowForm').addClass('loader-in');
-                        $('#modal #btnGuardar ').off('click')
-                        checkbox.checked = false; // Desmarca el checkbox
-                    }
-                    else { // Si el tr no está seleccionado
-                        dt.rows('.selected').nodes().each((row) => row.classList.remove('selected')); // Quita la clase selected de todos los tr
-                        // desmarcar todos los checkbox
-                        dt.rows().nodes().each((row) => row.querySelector('input[type="checkbox"]').checked = false);
-                        classList.add('selected'); // Agrega la clase selected al tr
-                        $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
-                        checkbox.checked = true; // Marca el checkbox
-                        formNovedad(data).then((rs) => {
-                            if (rs) {
-
-                                $('#modal  #rowForm').removeClass('loader-in');
-                                $('#modal #rowForm').fadeIn('slow'); // Muestra el formulario
-
-                                $('#modal #btnGuardar').prop('disabled', false);
-                                $('#modal #btnGuardar').removeClass('btnAgregar')
-                                $('#modal #btnGuardar').addClass('btnGuardar')
-
-                                $('#modal #btnGuardar').removeClass('btn-success')
-                                $('#modal #btnGuardar').addClass('btn-custom')
-                                $('#modal #btnGuardar').html('Aplicar')
-
-                                if (Ficha.Cierre.Estado != 'abierto') { // Si la ficha está cerrada
-                                    disabledForm(true); // inhabilita el formulario
-                                    $('#modal #btnGuardar ').off('click') // Quita el evento click del botón guardar
-                                }
-                            }
-                            $("#modal .modal-body").removeClass('loader-in');
-                        });
-                    }
-                }
-            })
-        });
+        console.log('dt', dt);
         resolve();
     });
 }
@@ -1124,7 +1127,6 @@ const deleteNovedad = async (data) => {
 }
 
 const tableInfoFicha = () => {
-
     let Ficha = ls.get(LS_FICHA_FORM);
 
     let Horario = Ficha['TurStr'] ?? 'Sin horario';
